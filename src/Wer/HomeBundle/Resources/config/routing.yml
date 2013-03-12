@@ -1,0 +1,3 @@
+wer_home_homepage:
+    pattern:  /
+    defaults: { _controller: WerHomeBundle:Default:index }

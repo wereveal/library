@@ -1,4 +1,15 @@
-acme_hello:
-    resource: "@AcmeHelloBundle/Resources/config/routing.yml"
+wer_home:
+    resource: "@WerHomeBundle/Resources/config/routing.yml"
     prefix:   /
 
+acme_hello:
+    resource: "@AcmeHelloBundle/Resources/config/routing.yml"
+    prefix:   /hello
+
+wer_guide:
+    resource: "@WerGuideBundle/Resources/config/routing.yml"
+    prefix:   /guide
+
+wer_sobi:
+    resource: "@WerSobiBundle/Resources/config/routing.yml"
+    prefix:   /sobi
