@@ -1,0 +1,36 @@
+{% extends "WerSobiBundle::base.html.twig" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+{{ stylesheets }}
+{% endblock %}
+
+{% block header %}
+<h1>Categories</h1>
+{% endblock %}
+
+{% block body %}
+<p>{{ body }}</p>
+{% if categories is defined %}
+{% if categories is iterable %}
+<ul class="faux-table">
+	{% set x = 1 %}
+	{% for category in categories %}
+	{% set class = x is even ? 'alt-row' : 'normal-row' %}
+	<li class="{{ class }}">
+		<div class="aleft w50 {{ class }}">{{ category.child_id }}</div>
+		<div class="aleft w50 {{ class }}">{% if category.parent_id is defined %}{{ category.parent_id }}{% else %}&nbsp;{% endif %}</div>
+		<div class="aleft w400 {{ class }}">{{ category.name }}</div>
+	</li>
+	{% set x = x + 1 %}
+	{% endfor %}
+</ul>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+{{ javascripts }}
+{% endblock %}

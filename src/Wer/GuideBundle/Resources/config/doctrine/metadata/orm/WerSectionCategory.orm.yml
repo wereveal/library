@@ -1,0 +1,32 @@
+WerSectionCategory:
+  type: entity
+  table: wer_section_category
+  fields:
+    sc_id:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      column: sc_id
+      generator:
+        strategy: IDENTITY
+  manyToOne:
+    sc_category:
+      targetEntity: WerCategory
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        sc_category_id:
+          referencedColumnName: cat_id
+      orphanRemoval: false
+    sc_section:
+      targetEntity: WerSection
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        sc_section_id:
+          referencedColumnName: sec_id
+      orphanRemoval: false
+  lifecycleCallbacks: {  }

@@ -1,0 +1,27 @@
+{% extends "WerSobiBundle::base.html.twig" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+{{ stylesheets }}
+{% endblock %}
+
+{% block header %}<h1>Sobi Import Home</h1>{% endblock %}
+
+{% block message %}
+{% if a_message.message != '' %}
+{% include 'WerSobiBundle:Fragments:message.html.twig' with {'a_message': a_message} %}
+{% endif %}
+{% endblock %}
+
+{% block body %}
+<p>{{ body }}</p>
+<p>
+<a href="{{ path( 'sobi_import_doit' ) }}">Do Import</a>
+</p>
+{% endblock %}
+
+{% block javascripts %}
+{{ javascripts }}
+{% endblock %}

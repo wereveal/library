@@ -1,0 +1,18 @@
+# src/Wer/GuideBundle/Resources/config/doctrine/WerCategoryRelations.orm.yml
+Wer\GuideBundle\Entity\WerCategoryRelations:
+    type: entity
+    table: wer_category_relations
+    id:
+        co_id:
+            type: integer
+            unsigned: false
+            nullable: false
+            generator:
+                strategy: AUTO
+    manyToMany:
+        co_child_cat:
+            targetEntity: WerCategory
+            cascade: {  }
+        co_parent_cat:
+            targetEntity: WerCategory
+            cascade: {  }

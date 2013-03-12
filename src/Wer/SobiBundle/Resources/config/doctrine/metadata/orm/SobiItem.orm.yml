@@ -1,0 +1,111 @@
+SobiItem:
+  type: entity
+  table: sobi_item
+  fields:
+    itemid:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      generator:
+        strategy: IDENTITY
+    title:
+      type: string
+      length: 255
+      fixed: false
+      nullable: true
+    hits:
+      type: integer
+      unsigned: false
+      nullable: true
+    visits:
+      type: integer
+      unsigned: false
+      nullable: true
+    published:
+      type: boolean
+      nullable: true
+    confirm:
+      type: boolean
+      nullable: false
+    approved:
+      type: boolean
+      nullable: false
+    archived:
+      type: boolean
+      nullable: true
+    publishUp:
+      type: datetime
+      nullable: true
+      column: publish_up
+    publishDown:
+      type: datetime
+      nullable: true
+      column: publish_down
+    checkedOut:
+      type: integer
+      unsigned: false
+      nullable: true
+      column: checked_out
+    checkedOutTime:
+      type: datetime
+      nullable: false
+      column: checked_out_time
+    ordering:
+      type: integer
+      unsigned: false
+      nullable: true
+    owner:
+      type: integer
+      unsigned: false
+      nullable: false
+    icon:
+      type: string
+      length: 200
+      fixed: false
+      nullable: false
+    image:
+      type: string
+      length: 200
+      fixed: false
+      nullable: false
+    background:
+      type: string
+      length: 100
+      fixed: false
+      nullable: true
+    options:
+      type: text
+      nullable: true
+    params:
+      type: text
+      nullable: true
+    ip:
+      type: string
+      length: 15
+      fixed: false
+      nullable: false
+    lastUpdate:
+      type: datetime
+      nullable: false
+      column: last_update
+    updatingUser:
+      type: integer
+      unsigned: false
+      nullable: false
+      column: updating_user
+    updatingIp:
+      type: string
+      length: 15
+      fixed: false
+      nullable: false
+      column: updating_ip
+    metakey:
+      type: string
+      length: 200
+      fixed: false
+      nullable: false
+    metadesc:
+      type: text
+      nullable: false
+  lifecycleCallbacks: {  }

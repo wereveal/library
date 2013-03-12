@@ -1,0 +1,29 @@
+Wer\SobiBundle\Entity\WerObject:
+  type: entity
+  table: wer_object
+  fields:
+    objId:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      column: obj_id
+      generator:
+        strategy: IDENTITY
+    objName:
+      type: text
+      nullable: false
+      column: obj_name
+    objCreatedOn:
+      type: datetime
+      nullable: false
+      column: obj_created_on
+    objUpdatedOn:
+      type: datetime
+      nullable: false
+      column: obj_updated_on
+    objActive:
+      type: boolean
+      nullable: false
+      column: obj_active
+  lifecycleCallbacks: {  }

@@ -1,0 +1,38 @@
+{% extends "WerSobiBundle::base.html.twig" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+{{ stylesheets }}
+{% endblock %}
+
+{% block body %}
+{% if o_sections is iterable %}
+<ul class="faux-table w960">
+	<li class="headthing">
+		<div class="aleft w25">ID</div>
+		<div class="aleft w200">Name</div>
+		<div class="aleft w600">Description</div>
+		<div class="aleft w75">Active</div>
+	</li>
+{% set x = 1 %}
+{% for section in o_sections %}
+	{% set class = x is even ? 'alt-row' : 'normal-row' %}
+	<li class="{{ class }}">
+		<div class="aleft w25 {{ class }}">{{ section.secId }}</div>
+		<div class="aleft w200 {{ class }}">{{ section.secName }}</div>
+		<div class="aleft w600 {{ class }}">{{ section.secDescription }}</div>
+		<div class="aleft w75 {{ class }}">{{ section.secActive }}</div>
+	</li>
+	{% set x = x + 1 %}
+{% endfor %}
+</ul>
+{% else %}
+<p>{{ o_sections }}</p>
+{% endif %}
+{% endblock %}
+
+{% block javascripts %}
+{{ javascripts }}
+{% endblock %}

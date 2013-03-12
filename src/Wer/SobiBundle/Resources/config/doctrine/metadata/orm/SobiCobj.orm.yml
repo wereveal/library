@@ -1,0 +1,46 @@
+SobiCobj:
+  type: entity
+  table: sobi_cobj
+  fields:
+    sid:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+    cid:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+    oid:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+    cl:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+    slang:
+      id: true
+      type: string
+      length: 50
+      fixed: false
+      nullable: false
+    atime:
+      type: integer
+      unsigned: false
+      nullable: false
+    svars:
+      type: text
+      nullable: false
+    params:
+      type: text
+      nullable: false
+    schecksum:
+      type: string
+      length: 50
+      fixed: false
+      nullable: false
+  lifecycleCallbacks: {  }

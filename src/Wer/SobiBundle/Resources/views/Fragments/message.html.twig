@@ -1,0 +1,10 @@
+<p class="{{ a_message.class }}">
+	<img src="{{ asset( a_message.image_src ) }}" alt="{{ a_message.alt_text }}" />&nbsp;&nbsp;
+	{% if a_message.class == 'msg-code' %}
+	<pre>
+	{% endif %}
+	{{ a_message.message }}
+	{% if a_message.class == 'msg-code' %}
+	</pre>
+	{% endif %}
+</p>

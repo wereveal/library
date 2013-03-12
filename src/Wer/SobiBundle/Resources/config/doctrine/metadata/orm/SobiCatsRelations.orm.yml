@@ -1,0 +1,26 @@
+SobiCatsRelations:
+  type: entity
+  table: sobi_cats_relations
+  fields:
+    catid:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+    parentid:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+  manyToMany:
+    myParents:
+    targetEntity: SobiCategories
+    joinTable:
+      name: sobi_categories
+      joinColumns:
+        catid:
+          referencedColumnName: parentid
+      inverseJoinColumns:
+        catid:
+          referencedColumnName: catid
+  lifecycleCallbacks: {  }

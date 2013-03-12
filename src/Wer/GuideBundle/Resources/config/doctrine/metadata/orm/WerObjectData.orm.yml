@@ -1,0 +1,44 @@
+WerObjectData:
+  type: entity
+  table: wer_odject_data
+  fields:
+    od_id:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      column: od_id
+      generator:
+        strategy: IDENTITY
+    od_data:
+      type: text
+      nullable: false
+      column: od_data
+    od_created_on:
+      type: datetime
+      nullable: false
+      column: od_created_on
+    od_updated_on:
+      type: datetime
+      nullable: false
+      column: od_updated_on
+  manyToOne:
+    od_object:
+      targetEntity: WerObject
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        od_odject_id:
+          referencedColumnName: odj_id
+      orphanRemoval: false
+    od_field:
+      targetEntity: WerField
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        od_field_id:
+          referencedColumnName: field_id
+      orphanRemoval: false
+  lifecycleCallbacks: {  }

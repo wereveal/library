@@ -1,0 +1,6 @@
+WerCategoryRelations:
+    type: entity
+    table: wer_category_relations
+    manyToMany:
+        groups:
+            targetEntity: WerCategory

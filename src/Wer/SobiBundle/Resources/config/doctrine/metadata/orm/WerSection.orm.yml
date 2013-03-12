@@ -1,0 +1,25 @@
+WerSection:
+  type: entity
+  table: wer_section
+  fields:
+    secId:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      column: sec_id
+      generator:
+        strategy: IDENTITY
+    secName:
+      type: text
+      nullable: false
+      column: sec_name
+    secDescription:
+      type: text
+      nullable: false
+      column: sec_description
+    secActive:
+      type: boolean
+      nullable: false
+      column: sec_active
+  lifecycleCallbacks: {  }

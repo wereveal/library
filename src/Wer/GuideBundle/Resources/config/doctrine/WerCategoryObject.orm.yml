@@ -1,0 +1,32 @@
+Wer\GuideBundle\Entity\WerCategoryObject:
+  type: entity
+  table: wer_category_object
+  fields:
+    co_id:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      column: co_id
+      generator:
+        strategy: IDENTITY
+  manyToOne:
+    co_object:
+      targetEntity: WerObject
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        co_object_id:
+          referencedColumnName: obj_id
+      orphanRemoval: false
+    co_category:
+      targetEntity: WerCategory
+      cascade: {  }
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
+        co_category_id:
+          referencedColumnName: cat_id
+      orphanRemoval: false
+  lifecycleCallbacks: {  }

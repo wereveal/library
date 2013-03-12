@@ -1,0 +1,37 @@
+WerCategory:
+  type: entity
+  table: wer_category
+  fields:
+    catId:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      column: cat_id
+      generator:
+        strategy: IDENTITY
+    catName:
+      type: text
+      nullable: false
+      column: cat_name
+    catDescription:
+      type: text
+      nullable: false
+      column: cat_description
+    catIcon:
+      type: text
+      nullable: false
+      column: cat_icon
+    catActive:
+      type: boolean
+      nullable: false
+      column: cat_active
+  manyToMany:
+    crParent:
+      targetEntity: WerCategory
+      cascade: {  }
+      mappedBy: crChild
+      inversedBy: null
+      joinTable: null
+      orderBy: null
+  lifecycleCallbacks: {  }

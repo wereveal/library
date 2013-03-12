@@ -1,0 +1,29 @@
+Wer\GuideBundle\Entity\WerObject:
+  type: entity
+  table: wer_object
+  fields:
+    obj_id:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+      column: obj_id
+      generator:
+        strategy: IDENTITY
+    obj_name:
+      type: text
+      nullable: false
+      column: obj_name
+    obj_created_on:
+      type: datetime
+      nullable: false
+      column: obj_created_on
+    obj_updated_on:
+      type: datetime
+      nullable: false
+      column: obj_updated_on
+    obj_active:
+      type: boolean
+      nullable: false
+      column: obj_active
+  lifecycleCallbacks: {  }

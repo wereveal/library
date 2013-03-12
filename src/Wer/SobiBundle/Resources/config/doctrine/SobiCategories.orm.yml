@@ -1,0 +1,83 @@
+Wer\SobiBundle\Entity\SobiCategories:
+  type: entity
+  table: sobi_categories
+  id:
+    catid:
+      type: integer
+      unsigned: false
+      nullable: false
+      generator:
+        strategy: AUTO
+  fields:
+    name:
+      type: string
+      length: 100
+      fixed: false
+      nullable: true
+    image:
+      type: string
+      length: 100
+      fixed: true
+      nullable: true
+    imagePosition:
+      type: string
+      length: 10
+      fixed: false
+      nullable: true
+      column: image_position
+    description:
+      type: text
+      nullable: true
+    introtext:
+      type: string
+      length: 100
+      fixed: false
+      nullable: true
+    published:
+      type: boolean
+      nullable: true
+    checkedOut:
+      type: integer
+      unsigned: false
+      nullable: true
+      column: checked_out
+    checkedOutTime:
+      type: datetime
+      nullable: true
+      column: checked_out_time
+    ordering:
+      type: integer
+      unsigned: false
+      nullable: true
+    access:
+      type: boolean
+      nullable: true
+    count:
+      type: integer
+      unsigned: false
+      nullable: true
+    params:
+      type: text
+      nullable: true
+    icon:
+      type: string
+      length: 100
+      fixed: false
+      nullable: false
+  manyToMany:
+    myParents:
+      targetEntity: SobiCategories
+      mappedBy: myChildren
+    myChildren:
+      targetEntity: SobiCategories
+      inversedBy: myParents
+      joinTable:
+        name: sobi_cats_relations
+        joinColumns:
+          catid:
+            referencedColumnName: catid
+        inverseJoinColumns:
+          parentid:
+            referencedColumnName: catid
+
+  lifecycleCallbacks: {  }

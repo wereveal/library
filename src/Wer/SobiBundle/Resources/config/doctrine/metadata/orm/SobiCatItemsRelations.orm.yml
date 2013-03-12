@@ -1,0 +1,19 @@
+SobiCatItemsRelations:
+  type: entity
+  table: sobi_cat_items_relations
+  fields:
+    catid:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+    itemid:
+      id: true
+      type: integer
+      unsigned: false
+      nullable: false
+    ordering:
+      type: integer
+      unsigned: false
+      nullable: false
+  lifecycleCallbacks: {  }

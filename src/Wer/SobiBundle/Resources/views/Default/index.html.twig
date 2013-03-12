@@ -1,0 +1,26 @@
+{% extends "WerSobiBundle::base.html.twig" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+{{ stylesheets }}
+{% endblock %}
+
+{% block header %}<h1>Sobi Import Home</h1>{% endblock %}
+
+
+{% block body %}
+{{ body }}
+<ul>
+<li><a href="{{ path( "sobi_sections" ) }}">Sections</a></li>
+<li><a href="{{ path( "sobi_categories" ) }}">Categories</a></li>
+<li><a href="{{ path( "sobi_fields" ) }}">Fields</a></li>
+<li><a href="{{ path( "sobi_items" ) }}">Items</a></li>
+<li><a href="{{ path( "sobi_import" ) }}">Import</a></li>
+</ul>
+{% endblock %}
+
+{% block javascripts %}
+{{ javascripts }}
+{% endblock %}

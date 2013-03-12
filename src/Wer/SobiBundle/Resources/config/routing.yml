@@ -1,0 +1,63 @@
+# Prefixed by /sobi in app/config/routing.yml
+# List links for the parts of sobi
+sobi_homepage:
+    pattern: /
+    defaults: { _controller: WerSobiBundle:Default:index }
+# List the Sections in Sobi
+sobi_sections:
+    pattern: /sections/
+    defaults: { _controller: WerSobiBundle:Sections:index }
+# Import the Sections from Sobi
+sobi_sections_import:
+    pattern: /sections/import/
+    defaults: { _controller: WerSobiBundle:Sections:import }
+# List the Sections Imported from Sobi
+sobi_sections_list:
+    pattern: /sections/list/
+    defaults: { _controller: WerSobiBundle:Sections:list }
+# List the categories in Sobi
+sobi_categories:
+    pattern: /categories/
+    defaults: { _controller: WerSobiBundle:Categories:index }
+# Import the categories from Sobi
+sobi_categories_import:
+    pattern: /categories/import/
+    defaults: { _controller: WerSobiBundle:Categories:import }
+# List the categories Imported from Sobi
+sobi_categories_list:
+    pattern: /categories/list/
+    defaults: { _controller: WerSobiBundle:Categories:list }
+# List the items in Sobi
+sobi_items:
+    pattern: /items/
+    defaults: { _controller: WerSobiBundle:Items:index }
+# Import the items from Sobi
+sobi_items_import:
+    pattern: /items/import/
+    defaults: { _controller: WerSobiBundle:Items:import }
+# List the items imported from Sobi
+sobi_items_list:
+    pattern: /items/list/
+    defaults: { _controller: WerSobiBundle:Items:list }
+# List the fields in Sobi
+sobi_fields:
+    pattern: /fields/
+    defaults: { _controller: WerSobiBundle:Fields:index }
+# Import the fields from Sobi
+sobi_fields_import:
+    pattern: /fields/import/
+    defaults: { _controller: WerSobiBundle:Fields:import }
+# List the fields imported from Sobi
+sobi_fields_list:
+    pattern: /fields/list/
+    defaults: { _controller: WerSobiBundle:Fields:list }
+# Do a single import
+sobi_import:
+    pattern: /import/
+    defaults: { _controller: WerSobiBundle:Import:index }
+sobi_import_doit:
+    pattern: /import/doit/
+    defaults: { _controller: WerSobiBundle:Import:doit }
+sobi_import_fields:
+    pattern: /import/fields/
+    defaults: { _controller: WerSobiBundle:Import:fields }
