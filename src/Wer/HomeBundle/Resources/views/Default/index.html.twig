@@ -1,1 +1,11 @@
-Hello {{ name }}!
+{% extends '::base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+            <div class="row-fluid">
+                <div class="span12">
+                    <p>{{ body_text }}</p>
+                </div>
+            </div>
+{% endblock %}
