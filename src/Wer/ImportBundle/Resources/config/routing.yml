@@ -1,0 +1,3 @@
+wer_import_homepage:
+    pattern:  /
+    defaults: { _controller: WerImportBundle:Main:index }
