@@ -1,15 +1,7 @@
-wer_home:
-    resource: "@WerHomeBundle/Resources/config/routing.yml"
-    prefix:   /
-
 wer_guide:
     resource: "@WerGuideBundle/Resources/config/routing.yml"
-    prefix:   /guide
+    prefix:   /
 
 wer_import:
     resource: "@WerImportBundle/Resources/config/routing.yml"
-    prefix:   /import
-
-wer_sobi:
-    resource: "@WerSobiBundle/Resources/config/routing.yml"
-    prefix:   /sobi
+    prefix:   /manager/import
