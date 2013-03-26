@@ -1,7 +1,0 @@
-parameters:
-#    wer_home.example.class: Wer\HomeBundle\Example
-
-services:
-#    wer_home.example:
-#        class: %wer_home.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]

@@ -1,9 +1,6 @@
-# /src/Wer/GuideBundle/Resources/config/routing.yml
-# Prefixed by / in app/config/routing.yml
-# List links for guide
 guide_homepage:
     pattern:  /
-    defaults: { _controller: WerGuideBundle:Default:index }
+    defaults: { _controller: WerGuideBundle:Main:index }
 guide_manager:
     pattern: /manager/
     defaults: { _controller: WerGuideBundle:Manager:index }
