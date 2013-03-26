@@ -17,11 +17,7 @@
         "sensio/framework-extra-bundle": "2.2.*",
         "sensio/generator-bundle": "2.2.*",
         "jms/security-extra-bundle": "1.4.*",
-        "jms/di-extra-bundle": "1.3.*",
-        "symfony-cmf/symfony-cmf": "1.0.*",
-        "jackalope/jackalope-doctrine-dbal": "dev-master",
-        "doctrine/phpcr-bundle": "1.0.*",
-        "doctrine/phpcr-odm": "1.0.*"
+        "jms/di-extra-bundle": "1.3.*"
     },
     "scripts": {
         "post-install-cmd": [
