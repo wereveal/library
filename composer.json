@@ -7,7 +7,7 @@
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": "2.2.*",
-        "doctrine/orm": "~2.2,>=2.2.3",
+        "doctrine/orm": "2.3.*",
         "doctrine/doctrine-bundle": "1.2.*",
         "twig/extensions": "1.0.*",
         "symfony/assetic-bundle": "2.1.*",
@@ -17,7 +17,11 @@
         "sensio/framework-extra-bundle": "2.2.*",
         "sensio/generator-bundle": "2.2.*",
         "jms/security-extra-bundle": "1.4.*",
-        "jms/di-extra-bundle": "1.3.*"
+        "jms/di-extra-bundle": "1.3.*",
+        "symfony-cmf/symfony-cmf": "1.0.*",
+        "jackalope/jackalope-doctrine-dbal": "dev-master",
+        "doctrine/phpcr-bundle": "1.0.*",
+        "doctrine/phpcr-odm": "1.0.*"
     },
     "scripts": {
         "post-install-cmd": [
@@ -36,7 +40,7 @@
     "config": {
         "bin-dir": "bin"
     },
-    "minimum-stability": "alpha",
+    "minimum-stability": "dev",
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web",
