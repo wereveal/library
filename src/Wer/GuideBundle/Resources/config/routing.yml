@@ -4,3 +4,6 @@ guide_homepage:
 guide_manager:
     pattern: /manager/
     defaults: { _controller: WerGuideBundle:Manager:index }
+guide_manager_field:
+    pattern: /manager/field/
+    defaults: { _controller: WerGuideBundle:Manager:field }

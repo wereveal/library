@@ -5,31 +5,16 @@
 
 namespace Wer\GuideBundle\Model;
 
-class CategoryModel
+class WerCategory extends ContainerAware
 {
-    private $cat_id;
-    private $cat_name;
-    private $cat_description;
-    private $cat_image;
-    private $cat_order;
-    private $cat_active;
-    private $cat_old_cat_id;
-    private $ci_id;
-    private $ci_category_id;
-    private $ci_object_id;
-    private $ci_order;
-    private $cr_id;
-    private $cr_parent_id;
-    private $cr_child_id;
-
-    private $connection;
+    private $o_db;
 
     /**
      * Stuff to do when the object is created
     **/
     public function __construct()
     {
-        $this->connection = $this->get('database_connection');
+        $this->o_db = $this->get('database_connection');
     }
     /**
      *  Adds a new record to the wer_category table
@@ -114,4 +99,7 @@ class CategoryModel
     public function deleteCategoryRelations()
     {
     }
+
+    ### Setters and Getters ###
+
 }

@@ -5,7 +5,11 @@
 {% block body %}
             <div class="row-fluid">
                 <div class="span12">
-                    <p>{{ body_text }}</p>
+                    <ul>
+                        {% for field in fields %}
+                            {{ include('WerGuideBundle:Manager:field-block.html.twig', {'field': field}) }}
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
 {% endblock %}

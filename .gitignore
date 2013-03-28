@@ -6,3 +6,4 @@
 /app/config/parameters.yml
 codekit-config.json
 /nbproject/
+composer.lock
