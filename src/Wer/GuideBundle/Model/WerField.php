@@ -4,11 +4,10 @@
 **/
 namespace Wer\GuideBundle\Model;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Wer\FrameworkBundle\Library\Elog;
 use Wer\FrameworkBundle\Library\Database;
 
-class WerField extends Controller
+class WerField
 {
     protected $o_db;
     protected $o_elog;
@@ -67,7 +66,10 @@ class WerField extends Controller
             ";
             $a_return_values = $this->o_db->search($sql);
         }
-        return $a_return_values;
+        if (count($a_return_values) > 0) {
+            return $a_return_values;
+        }
+        return false;
     }
     /**
      *  Reads one or more records from wer_field_option table
@@ -76,6 +78,22 @@ class WerField extends Controller
     **/
     public function readFieldOption($a_values = '')
     {
+    }
+    /**
+     *  Returns the record of the field specified by name
+     *  @param id $field_name
+     *      field_name in wer_field is a unique indexed field
+     *  @return mixed array or bool (false)
+    **/
+    public function readFieldByName($field_name = '')
+    {
+        $sql = "SELECT * FROM wer_field WHERE field_name LIKE :field_name";
+        $a_search_values = array(':field_name' => $field_name)
+        $a_values = $this->o_db->search($sql, $a_search_values);
+        if (count($a_values) > 0) {
+            return $a_values[0];
+        }
+        return false;
     }
     /**
      *  Read one or more records from wer_field_type table
