@@ -88,7 +88,7 @@ class WerField
     public function readFieldByName($field_name = '')
     {
         $sql = "SELECT * FROM wer_field WHERE field_name LIKE :field_name";
-        $a_search_values = array(':field_name' => $field_name)
+        $a_search_values = array(':field_name' => $field_name);
         $a_values = $this->o_db->search($sql, $a_search_values);
         if (count($a_values) > 0) {
             return $a_values[0];

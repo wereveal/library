@@ -6,9 +6,11 @@
  *  @class Database
  *  @ingroup wer_framework classes
  *  @author William Reveal <wer@wereveal.com>
- *  @version 2.3.0
- *  @date 2013-03-28 11:58:02
+ *  @version 2.3.1
+ *  @date 2013-03-29 09:21:49
  *  @par Change Log
+ *      v2.3.1 - new method to check for missing keys
+ *               also made a couple changes to clarify what was going on.
  *      v2.3.0 - Modified to work within Symfony
  *      v2.2.0 - FIG-standard changes
  *  @par Wer Framework v4.0.0
@@ -116,6 +118,9 @@ class Database extends Base
     private function setDatabaseParameters($config_file = 'parameters.yml')
     {
         $config_w_path = $this->root_path . '/../app/config/' . $config_file;
+        if (!file_exists($config_w_path)) {
+            $config_w_path = 'app/config/' . $config_file;
+        }
         $file_contents = file_get_contents($config_w_path);
         $a_results = Yaml::parse($file_contents);
         $a_parameters = $a_results['parameters'];
@@ -578,7 +583,6 @@ class Database extends Base
     **/
     public function insert($the_query = '', $a_values = '', $table_name = '')
     {
-        $this->o_elog->setFromMethod(__METHOD__);
         if ($the_query == '') {
             $this->o_elog->write('The query must not be blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return false;
@@ -714,15 +718,15 @@ class Database extends Base
                 return true;
             }
         } elseif (is_array($a_values) && count($a_values) > 0) {
-            $o_results = $this->prepare($the_query);
-            if ($o_results === false) {
+            $o_pdo_stmt = $this->prepare($the_query);
+            if ($o_pdo_stmt === false) {
                 $this->setSqlErrorMessage('pdo');
                 $this->o_elog->setFromMethod(__METHOD__);
                 $this->o_elog->setFromLine(__LINE__);
                 $this->o_elog->write('Could not prepare the query: ' . $this->getSqlErrorMessage(), LOG_OFF);
                 return false;
             } else {
-                return $this->mdQueryPrepared($a_values, $single_record, $o_results);
+                return $this->mdQueryPrepared($a_values, $single_record, $o_pdo_stmt);
             }
         } else {
             $this->o_elog->write('The array of values for a prepared query was empty.', LOG_OFF);
@@ -1063,7 +1067,52 @@ class Database extends Base
                 return \PDO::FETCH_ASSOC;
         }
     }
-
+    /**
+     *  Determines if any required keys are missing
+     *  @param array $a_required_keys required
+     *  @param array $a_check_values required
+     *  @return array $a_missing_keys
+    **/
+    public function findMissingKeys($a_required_keys = '', $a_check_values = '')
+    {
+        if ($a_required_keys == '' || $a_check_values == '') { return array(); }
+        $a_missing_keys = array();
+        foreach ($a_required_keys as $key) {
+            if (
+                array_key_exists($key, $a_check_values)
+                ||
+                array_key_exists(':' . $key, $a_check_values)
+                ||
+                array_key_exists(str_replace(':', '', $key), $a_check_values)
+            ) {
+                // we are happy
+            } else {
+                $a_missing_keys[] = $key;
+            }
+        }
+        return $a_missing_keys;
+    }
+    /**
+     *  Removes unwanted key=>values for a prepared query
+     *  @param array $a_required_keys
+     *  @param array $a_values the array which needs cleaned up
+     *  @return array $a_fixed_values
+    **/
+    public function removeBadKeys($a_required_keys = '', $a_values = '')
+    {
+        foreach ($a_values as $key => $value) {
+            if (
+                array_search($key, $a_required_keys) === false
+                &&
+                array_search(str_replace(':', '', $key), $a_required_keys) === false
+                &&
+                array_search(':' . $key, $a_required_keys) === false
+            ) {
+                unset($a_values[$key]);
+            }
+        }
+        return $a_values;
+    }
     ### Magic Method fix
     public function __clone()
     {

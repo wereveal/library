@@ -23,6 +23,42 @@ class WerItem
         $this->o_model_field = new WerField();
     }
 
+    ### CREATE methods ###
+    /**
+     *  Creates a new item record
+     *  @param array $a_values required defaults to empty
+     *  @return mixed int $new_item_id or bool false
+    **/
+    public function createItem($a_values = '')
+    {
+        if ($a_values == '') { return false; }
+        $current_timestamp = date('Y-m-d H:i:s');
+        if (count($this->o_db->findMissingKeys(array('item_name'), $a_values)) > 0) { // item_name is required
+            return false;
+        }
+        $a_values = $this->setRequiredItemKeys($a_values);
+        $sql = "
+            INSERT INTO wer_item (
+                item_name,
+                item_created_on,
+                item_updated_on,
+                item_active,
+                item_old_id
+            ) VALUES (
+                :item_name,
+                :item_created_on,
+                :item_updated_on,
+                :item_active,
+                :item_old_id
+            )
+        ";
+        $results = $this->o_db->insert($sql, $a_values, 'wer_item');
+        if ($results === false) {
+            return false;
+        }
+        $a_ids = $this->o_db->getNewIds();
+        return $a_ids[0];
+    }
     ### READ methods ###
     /**
      *  Returns the record for the Item specified by item_old_id
@@ -90,4 +126,50 @@ class WerItem
         }
     }
 
+    ### UPDATE methods ###
+
+    ### DELETE methods ###
+
+    ### Utilities ###
+
+    /**
+     *  Sets the required keys for the wer_item table
+     *  @param array $a_required_keys required *  @param array $a_values required
+     *  @return array $a_values
+    **/
+    public function setRequiredItemKeys($a_values = '')
+    {
+        $a_required_keys = array(
+            'item_id',
+            'item_name',
+            'item_created_on',
+            'item_updated_on',
+            'item_active',
+            'item_old_id'
+        );
+        $a_values = $this->o_db->removeBadKeys($a_required_keys, $a_values);
+        $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_values);
+        foreach ($a_missing_keys as $key) {
+            switch ($key) {
+                case 'item_id':
+                    /* probably a create, updates need to check for id in that method */
+                    break;
+                case 'item_name':
+                    return false;
+                    break;
+                case 'item_created_on':
+                    $a_values[':item_created_on'] = $current_timestamp;
+                    break;
+                case 'item_updated_on':
+                    $a_values[':item_updated_on'] = $current_timestamp;
+                    break;
+                case 'item_active':
+                    $a_values[':item_active'] = 1;
+                    break;
+                case 'item_old_id':
+                    $a_values[':item_old_id'] = '';
+                    break;
+            }
+        }
+    }
 }
