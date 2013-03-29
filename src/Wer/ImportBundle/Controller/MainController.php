@@ -3,15 +3,24 @@
 namespace Wer\ImportBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Wer\GuideBundle\Model\WerCategory;
 use Wer\GuideBundle\Model\WerField;
+use Wer\GuideBundle\Model\WerItem;
+use Wer\GuideBundle\Model\WerSection;
 
 class MainController extends Controller
 {
+    private $o_model_category;
     private $o_model_field;
+    private $o_model_item;
+    private $o_model_section;
 
     public function __construct()
     {
-        $o_model_field = new WerField();
+        $this->o_model_category = new WerCategory();
+        $this->o_model_field    = new WerField();
+        $this->o_model_item     = new WerItem();
+        $this->o_model_section  = new WerSection();
     }
     public function indexAction()
     {
@@ -33,8 +42,23 @@ class MainController extends Controller
     public function importAll()
     {
         include $_SERVER['DOCUMENT_ROOT'] . '/assets/files/guide.php';
+        $a_section_values = array(
+            ':section_name'        => $a_data['sec_name'],
+            ':section_description' => $a_data['sec_description'],
+            ':section_active'      => $a_data['sec_active'],
+            ':section_image'       => $a_data['image'],
+            ':sec_old_cat_id'      => $a_data['sec_old_cat_id']
+        );
+        if ($this->sectionExists($a_data['sec_old_cat_id'])) {
+            $a_section = $this->o_model_section->readSectionByOldItemId($a_data['sec_old_cat_id']);
+            // update the section
+            $a_section_values[':section_id'] = $a_section['section_id'];
+            $results = $this->o_model_section->updateSection($a_query_values);
+        } else {
+            $results = $this->o_model_section->createSection($a_query_values);
+        }
         /*
-            if section doesn't exist $this->sectionExists($old_cat_id) === false
+            if section doesn't exist $this->sec($old_cat_id) === false
                 create the section and get the new id, put it in a variable.
             else
                 update the section and put id in variable
@@ -133,7 +157,7 @@ class MainController extends Controller
     **/
     private function sectionExists($old_id = '')
     {
-        $a_results = $this->o_model_item->readSectionByOldItemId($old_item_id);
+        $a_results = $this->o_model_section->readSectionByOldItemId($old_id);
         if ($a_results !== false) {
             return true;
         }
