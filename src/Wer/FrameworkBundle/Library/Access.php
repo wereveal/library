@@ -4,8 +4,9 @@
  *  @file Access.php
  *  @class Access
  *  @author William Reveal  <wer@wereveal.com>
- *  @version 3.5.1
+ *  @version 3.5.2
  *  @par Change Log
+ *      v3.5.2 - database methods were renamed, changed to match
  *      v3.5.1 - changed namespace to match Symfony structure
  *      v3.5.0 - new methods to handle user groups, lots of minor changes
  *      v3.4.5 - modified the code to be closer to FIG standards and removed controller code (this is Model)
@@ -13,7 +14,7 @@
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
  *  @par Wer Framework version 4.0
- *  @date 2013-03-27 15:22:44
+ *  @date 2013-03-30 10:58:56
  *  @ingroup wer_framework classes
 **/
 namespace Wer\FrameworkBundle\Library;
@@ -348,7 +349,7 @@ class Access extends Base
             WHERE id = :user_id
         ";
         $a_values = array(':user_id' => $user_id);
-        return $this->o_db->modify($sql, $a_values, true);
+        return $this->o_db->update($sql, $a_values, true);
     }
     /**
      * Increments the bad_login_ts record by one minute
@@ -363,7 +364,7 @@ class Access extends Base
             WHERE id = :user_id
         ";
         $a_values = array(':user_id' => $user_id);
-        return $this->o_db->modify($sql, $a_values, true);
+        return $this->o_db->update($sql, $a_values, true);
     }
     /** Creates a new user record.
         @param $a_values (array), required, values for user record, needs to
@@ -414,7 +415,7 @@ class Access extends Base
             WHERE id = :user_id
         ";
         $a_values = array(':user_id' => $user_id);
-        return $this->o_db->modify($sql, $a_values, true);
+        return $this->o_db->update($sql, $a_values, true);
     }
     /**
      * Resets the timestamp to 0
@@ -430,7 +431,7 @@ class Access extends Base
             WHERE id = :user_id
         ";
         $a_values = array(':user_id' => $user_id);
-        return $this->o_db->modify($sql, $a_values, true);
+        return $this->o_db->update($sql, $a_values, true);
     }
     /**
      * selects a group by the id
@@ -562,7 +563,7 @@ class Access extends Base
             WHERE id = :user_id
         ";
         $a_values = array(':user_id' => $user_id, ':timestamp' => time());
-        $results = $this->o_db->modify($sql, $a_values, true);
+        $results = $this->o_db->update($sql, $a_values, true);
         return $results;
     }
     /** Updates an existing user.
@@ -595,7 +596,7 @@ class Access extends Base
                     is_default = :is_default
                 WHERE id = :user_id";
         }
-        return $this->o_db->modifyTransaction($sql, $a_values, true);
+        return $this->o_db->updateTransaction($sql, $a_values, true);
     }
     /**
      * Updates the user record with a new password
@@ -611,7 +612,7 @@ class Access extends Base
             SET password = :password
             WHERE id = :user_id
         ";
-        return $this->o_db->modifyTransaction($sql, $a_values, true);
+        return $this->o_db->updateTransaction($sql, $a_values, true);
     }
     /**
      * Updates the user record with a new password but not in a transaction
@@ -627,7 +628,7 @@ class Access extends Base
             SET password = :password
             WHERE id = :user_id
         ";
-        return $this->o_db->modify($sql, $a_values, true);
+        return $this->o_db->update($sql, $a_values, true);
     }
     /**
      * Updates the user record to be make the user active or inactive
@@ -643,7 +644,7 @@ class Access extends Base
             WHERE id = :user_id
         ";
         $a_values = array(':user_id' => $user_id, ':is_active' => $is_active);
-        return $this->o_db->modify($sql, $a_values, true);
+        return $this->o_db->update($sql, $a_values, true);
     }
 
     ### Utility Private/Protected methods ###

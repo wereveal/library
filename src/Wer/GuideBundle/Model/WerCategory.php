@@ -82,7 +82,7 @@ class WerCategory
     }
     /**
      *  Adds a new bridge record in the wer_section_category table.
-     *  @param array $a_values
+     *  @param array $a_values must have both sc_sec_id and sc_cat_id key=>value pairs
      *  @return mixed int $new_record_id or bool false on failure
     **/
     public function createSectionCategory($a_values = '')
@@ -90,14 +90,14 @@ class WerCategory
         if ($a_values == '') { return false; }
         $sql = "
             INSERT INTO wer_section_category (
-                sc_section_id,
-                sc_category_id
+                sc_sec_id,
+                sc_cat_id
             ) VALUES (
-                :sc_section_id,
-                :sc_category_id
+                :sc_sec_id,
+                :sc_cat_id
             )
         ";
-        $a_results = $this->o_db->findMissingKeys(array('sc_section_id', 'sc_category_id'), $a_values);
+        $a_results = $this->o_db->findMissingKeys(array('sc_sec_id', 'sc_cat_id'), $a_values);
         if (count($a_results) > 0) {
             return false;
         }
@@ -112,10 +112,16 @@ class WerCategory
     ### READ methods ###
     /**
      *  Gets the data from wer_category table
+     *  @param array $a_field_values optional, an array of field=>value pairs.
+     *      fields must be valid fields for the wer_category table
+     *      if not specified, returns all categories
      *  @return bool success or failure
     **/
-    public function readCategory()
+    public function readCategory($a_field_value_pairs = '')
     {
+        if ($a_field_value_pairs != '') { // build the where
+
+        }
     }
     /**
      *  Returns the category record found
@@ -133,6 +139,36 @@ class WerCategory
         return false;
     }
     /**
+     *  Returns the categories for a particular section
+     *  @param int $sec_id optional if not specified returns all categories sorted by section
+     *  @param array $a_cat_pairs optional if not specified all categories for section(s)
+     *  @return array $a_categories
+    **/
+    public function readCatBySec($sec_id = '', $a_cat_pairs = '')
+    {
+        $where = '';
+        if ($sec_id != '') { // build the where for the section
+            $where .= "AND sec.sec_id = :sec_id
+            ";
+        }
+        if ($a_cat_pairs != '' && is_array($a_cat_pairs)) { // build that category part of the where and the search_values
+            $a_cat_pairs = $this->o_db->prepareKeys($a_cat_pairs);
+            foreach ($a_cat_pairs as $key => $value) {
+                $where .= "AND cat." . str_replace(":", "", $key) . " = {$key}
+                ";
+            }
+        }
+        $sql = "
+            SELECT sec.*, cat.*
+            FROM wer_section AS sec, wer_category AS cat, wer_section_category as sc
+            WHERE sc.sc_sec_id = sec.sec_id
+            AND sc.sc_cat_id = cat.cat_id
+        ";
+        $order_by = "ORDER BY sec.sec_order ASC, cat.cat_order ASC";
+        $total_sql = $sql . $where . $order_by;
+        return $total_sql;
+    }
+    /**
      *  Gets the data from wer_category_item table
      *  @return bool success or failure
     **/
@@ -145,6 +181,24 @@ class WerCategory
     **/
     public function readCategoryRelations()
     {
+    }
+    /**
+     *  Gets the records from wer_section_category which match the section id
+     *  @param int $sec_id
+     *  @return array $a_records
+    **/
+    public function readSectionCategoryByCatId($cat_id = '')
+    {
+        $sql = "
+            SELECT *
+            FROM wer_section_category
+            WHERE sc_cat_id = :sc_cat_id
+        ";
+        $a_results = $this->o_db->search($sql, array(':sc_cat_id' => $cat_id));
+        if (count($a_results) > 0) {
+            return $a_results;
+        }
+        return false;
     }
 
     ### UPDATE methods ###
@@ -169,7 +223,7 @@ class WerCategory
             return false;
         }
         $a_cat_values = $this->setRequiredCatKeys($a_cat_values);
-        return $this->o_db->modify($sql, $a_cat_values, true);
+        return $this->o_db->update($sql, $a_cat_values, true);
     }
     /**
      *  Updates the wer_category_item table

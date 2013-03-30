@@ -99,6 +99,44 @@ class WerSection
         }
         return false;
     }
+    /**
+     *  Gets the record from wer_section_category which matches both section_id and category_id
+     *  @param int $sec_id
+     *  @param int $cat_id
+     *  @return array $a_record  should always be a single record
+    **/
+    public function readSectionCategoryBySecCat($sec_id = '', $cat_id = '')
+    {
+        $sql = "
+            SELECT *
+            FROM wer_section_category
+            WHERE sc_sec_id = :sc_sec_id
+            AND sc_cat_id = :sc_cat_id
+        ";
+        $a_results = $this->o_db->search($sql, array(':sc_sec_id' => $sec_id, ':sc_cat_id' => $cat_id));
+        if (count($a_results) > 0) {
+            return $a_results[0];
+        }
+        return false;
+    }
+    /**
+     *  Gets the records from wer_section_category which match the section id
+     *  @param int $sec_id
+     *  @return array $a_records
+    **/
+    public function readSectionCategoryBySecId($sec_id = '')
+    {
+        $sql = "
+            SELECT *
+            FROM wer_section_category
+            WHERE sc_sec_id = :sc_sec_id
+        ";
+        $a_results = $this->o_db->search($sql, array(':sc_sec_id' => $sec_id));
+        if (count($a_results) > 0) {
+            return $a_results;
+        }
+        return false;
+    }
 
     ### Update Methods ###
     /**
@@ -128,10 +166,27 @@ class WerSection
         if ($a_query_values === false) {
             return false;
         }
-        return $this->o_db->modify($sql, $a_query_values, true);
+        return $this->o_db->update($sql, $a_query_values, true);
     }
 
     ### Delete Methods ###
+    /**
+     *  Deletes the record specified by id
+     *  @param int $record_id required
+     *  @return bool success or failure
+    **/
+    public function deleteSection($record_id = '')
+    {
+        if($record_id == '' || !is_numeric($record_id)) {
+            return false;
+        }
+        $a_results = $this->readSectionCategoryBySecId($record_id);
+        if ($a_results !== false && count($a_results) > 0) {
+            return false; // a category still exists in the section
+        }
+        $sql = "DELETE FROM wer_section WHERE sec_id = :sec_id";
+        return $this->o_db->delete($sql, array(':sec_id' => $record_id), true);
+    }
 
     ### Utilities ###
 

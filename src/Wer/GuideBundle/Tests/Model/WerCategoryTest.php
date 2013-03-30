@@ -1,17 +1,15 @@
 <?php
 
-namespace Wer\GuideBundle\Tests\Controller;
+namespace Wer\GuideBundle\Tests\Model;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Wer\GuideBundle\Model\WerCategory;
 
-class DefaultControllerTest extends WebTestCase
+class DefaultControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testIndex()
+    public function testReadCatBySec()
     {
-        $client = static::createClient();
-
-        $crawler = $client->request('GET', '/hello/Fabien');
-
-        $this->assertTrue($crawler->filter('html:contains("Hello Fabien")')->count() > 0);
+        $o_cat = new WerCategory();
+        $results = $o_cat->readCatBySec(1, array('cat_name' => 'test cat'));
+        error_log($results);
     }
 }

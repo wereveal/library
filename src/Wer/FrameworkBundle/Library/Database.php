@@ -6,11 +6,15 @@
  *  @class Database
  *  @ingroup wer_framework classes
  *  @author William Reveal <wer@wereveal.com>
- *  @version 2.3.1
- *  @date 2013-03-29 09:21:49
+ *  @version 2.3.2
+ *  @date 2013-03-30 10:25:36
  *  @par Change Log
+ *      v2.3.2 - new method to remove bad keys
+ *               removed some redundant code
+ *               reorganized putting main four commands at top for easy reference
+ *               renamed from modify to update, no good reason truthfully except no legacy code to support
  *      v2.3.1 - new method to check for missing keys
- *               also made a couple changes to clarify what was going on.
+ *               made a couple changes to clarify what was going on.
  *      v2.3.0 - Modified to work within Symfony
  *      v2.2.0 - FIG-standard changes
  *  @par Wer Framework v4.0.0
@@ -81,6 +85,130 @@ class Database extends Base
             return self::$instance_rw;
         }
     }
+
+    ### Main Four Commands (CRUD) ###
+    /**
+     *  Inserts data into the database
+     *  @param $the_query (str) - the INSERT statement, default is empty.
+     *  @param $a_values (mixed) - default is empty
+     *      If blank, the values are in the INSERT string
+     *      If array then the INSERT string is for a prepared query
+     *  @param @table_name - needed only if PostgreSQL is being used, Default ''
+     *  @return BOOL - success or failure
+    **/
+    public function insert($the_query = '', $a_values = '', $table_name = '')
+    {
+        if ($the_query == '') {
+            $this->o_elog->write('The query must not be blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            return false;
+        }
+        $sequence_name = '';
+        if($this->db_type == 'pgsql' && $table_name != '') {
+            $sequence_name = $this->getPgsqlSequenceName($table_name);
+        }
+        if ($a_values == '') {
+            $this->affected_rows = $this->o_db->exec($the_query);
+            if ($this->affected_rows === false) {
+                $this->setSqlErrorMessage();
+                $this->o_elog->write($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                return false;
+            } elseif ($this->affected_rows == 0) {
+                $this->o_elog->write('The INSERT affected no records.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                return false;
+            } else { // note: kind of assumes there was a single record inserted
+                $this->a_new_ids = array($this->o_db->lastInsertId($sequence_name));
+                return true;
+            }
+        } elseif (is_array($a_values) && count($a_values) > 0) {
+            $o_pdo_statement = $this->prepare($the_query);
+            if ($o_pdo_statement === false) {
+                $this->o_elog->write('Could not prepare the statement', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                return false;
+            } else {
+                return $this->insertPrepared($a_values, $o_pdo_statement);
+            }
+        } else {
+            $this->o_elog->write('The array of values for a prepared insert was empty.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            return false;
+        }
+    }
+    /**
+     *  Searches the database for records.
+     *  Can be set up with upto 3 arguments, the first required, the sql
+     *  @param string $the_query, required
+     *  @param array array $a_values associative array, key in named prepared
+     *      format e.g., array(':id'=>1, ':name'=>'fred');
+     *  @param string $type optional, type of results, num, both, assoc which
+     *      specifies the PDO formats, defaults to assoc
+     *  @return mixed results of search or false
+    **/
+    public function search($the_query = '', $a_values = '', $type = 'assoc')
+    {
+        switch ($type) {
+            case 'num':
+                $fetch_style = \PDO::FETCH_NUM;
+                break;
+            case 'both':
+                $fetch_style = \PDO::FETCH_BOTH;
+                break;
+            case 'assoc':
+            default:
+                $fetch_style = \PDO::FETCH_ASSOC;
+        }
+        if ($the_query == '') {
+            $this->o_elog->write('The query must not be blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            return false;
+        }
+        if ($a_values == '' || count($a_values) == 0) {
+            $o_pdo_statement = $this->o_db->prepare($the_query);
+            if ($o_pdo_statement === false) {
+                $this->setSqlErrorMessage();
+                $this->o_elog->write($this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                return false;
+            }
+            $o_pdo_statement->execute();
+            $a_results = $o_pdo_statement->fetchAll($fetch_style);
+            $o_pdo_statement->closeCursor();
+        } elseif (is_array($a_values) && count($a_values) > 0) {
+            $this->o_elog->write("Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write("The array is " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+
+            $o_pdo_statement = $this->prepare($the_query);
+            if ($o_pdo_statement) {
+                $a_results = $this->searchPrepared($a_values, $o_pdo_statement, $type);
+            }
+        } else {
+            $this->o_elog->write("There was a problem with the array", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write("a_values is: " . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            return false;
+        }
+        return $a_results;
+    }
+    /**
+     *  Executes a query to modify one or more records.
+     *  This is a stub. It executes the $this->mdQuery method
+     *  @param $the_query (str)
+     *  @param $a_values (array) - associative array with paramaters
+     *  @param @single_record - specifies if only a single record should be deleted per query
+     *  @return bool - success or failure
+    **/
+    public function update($the_query = '', $a_values = '', $single_record = true)
+    {
+        return $this->mdQuery($the_query, $a_values, $single_record);
+    }
+    /**
+     *  Executes a query to delete one or more records.
+     *  This is a stub. It executes the $this->mdQuery method
+     *  @param $the_query (str)
+     *  @param $a_values (array) - associative array with where paramaters
+     *  @param @single_record - specifies if only a single record should be deleted per query
+     *  @return bool - success or failure
+    **/
+    public function delete($the_query = '', $a_values = '', $single_record = true)
+    {
+        return $this->mdQuery($the_query, $a_values, $single_record);
+    }
+
     ### Getters and Setters
     /**
      *  Get the value of the property specified.
@@ -345,11 +473,7 @@ class Database extends Base
                 if ($this->bindValues($a_values) === false) {
                     return false;
                 }
-                if ($o_pdo_statement->execute()) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return $o_pdo_statement->execute();
             } elseif (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays
                 $this->o_elog->write('The array cannot be an array of array.', LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return false;
@@ -358,11 +482,7 @@ class Database extends Base
                 if ($this->bindValues($a_values) === false) {
                     return false;
                 }
-                if ($o_pdo_statement->execute()) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return $o_pdo_statement->execute();
             }
         } else {
             $this->o_elog->write('Executing a query with pre-bound values', LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -533,7 +653,7 @@ class Database extends Base
         $this->rollbackTransaction();
         return false;
     }
-    public function modifyTransaction($the_query = '', $the_array = '', $single_record = true)
+    public function updateTransaction($the_query = '', $the_array = '', $single_record = true)
     {
         $this->o_elog->write("The query coming in is: $the_query", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $results = $this->queryTransaction($the_query, $the_array, $single_record);
@@ -552,71 +672,6 @@ class Database extends Base
     }
 
     ### Complex Commands
-    /**
-     *  Adds a record to a table.
-     *  A stub for $this->insert. @see Database::insert
-    **/
-    public function add($the_query = '', $a_values = '', $table_name = '')
-    {
-        return $this->insert($the_query, $a_values, $table_name);
-    }
-    /**
-     *  Executes a query to delete one or more records.
-     *  This is a stub. It executes the $this->mdQuery method
-     *  @param $the_query (str)
-     *  @param $a_values (array) - associative array with where paramaters
-     *  @param @single_record - specifies if only a single record should be deleted per query
-     *  @return bool - success or failure
-    **/
-    public function delete($the_query = '', $a_values = '', $single_record = true)
-    {
-        return $this->mdQuery($the_query, $a_values, $single_record);
-    }
-    /**
-     *  Inserts data into the database
-     *  @param $the_query (str) - the INSERT statement, default is empty.
-     *  @param $a_values (mixed) - default is empty
-     *      If blank, the values are in the INSERT string
-     *      If array then the INSERT string is for a prepared query
-     *  @param @table_name - needed only if PostgreSQL is being used, Default ''
-     *  @return BOOL - success or failure
-    **/
-    public function insert($the_query = '', $a_values = '', $table_name = '')
-    {
-        if ($the_query == '') {
-            $this->o_elog->write('The query must not be blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return false;
-        }
-        $sequence_name = '';
-        if($this->db_type == 'pgsql' && $table_name != '') {
-            $sequence_name = $this->getPgsqlSequenceName($table_name);
-        }
-        if ($a_values == '') {
-            $this->affected_rows = $this->o_db->exec($the_query);
-            if ($this->affected_rows === false) {
-                $this->setSqlErrorMessage();
-                $this->o_elog->write($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-                return false;
-            } elseif ($this->affected_rows == 0) {
-                $this->o_elog->write('The INSERT affected no records.', LOG_OFF, __METHOD__ . '.' . __LINE__);
-                return false;
-            } else { // note: kind of assumes there was a single record inserted
-                $this->a_new_ids = array($this->o_db->lastInsertId($sequence_name));
-                return true;
-            }
-        } elseif (is_array($a_values) && count($a_values) > 0) {
-            $o_pdo_statement = $this->prepare($the_query);
-            if ($o_pdo_statement === false) {
-                $this->o_elog->write('Could not prepare the statement', LOG_OFF, __METHOD__ . '.' . __LINE__);
-                return false;
-            } else {
-                return $this->insertPrepared($a_values, $o_pdo_statement);
-            }
-        } else {
-            $this->o_elog->write('The array of values for a prepared insert was empty.', LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return false;
-        }
-    }
     /**
      *  Does an insert based on a prepared query.
      *  @param $a_values (array) - the values to be insert
@@ -675,18 +730,6 @@ class Database extends Base
             $this->o_elog->write('The function executeInsert requires a an array for its first parameter.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
             return false;
         }
-    }
-    /**
-     *  Executes a query to modify one or more records.
-     *  This is a stub. It executes the $this->mdQuery method
-     *  @param $the_query (str)
-     *  @param $a_values (array) - associative array with paramaters
-     *  @param @single_record - specifies if only a single record should be deleted per query
-     *  @return bool - success or failure
-    **/
-    public function modify($the_query = '', $a_values = '', $single_record = true)
-    {
-        return $this->mdQuery($the_query, $a_values, $single_record);
     }
     /**
      *  Used for both modifying and deleting record(s)
@@ -865,58 +908,6 @@ class Database extends Base
             default:
                 return false;
         }
-    }
-    /**
-     *  Searches the database for records.
-     *  Can be set up with upto 3 arguments, the first required, the sql
-     *  @param string $the_query, required
-     *  @param array array $a_values associative array, key in named prepared
-     *      format e.g., array(':id'=>1, ':name'=>'fred');
-     *  @param string $type optional, type of results, num, both, assoc which
-     *      specifies the PDO formats, defaults to assoc
-     *  @return mixed results of search or false
-    **/
-    public function search($the_query = '', $a_values = '', $type = 'assoc')
-    {
-        switch ($type) {
-            case 'num':
-                $fetch_style = \PDO::FETCH_NUM;
-                break;
-            case 'both':
-                $fetch_style = \PDO::FETCH_BOTH;
-                break;
-            case 'assoc':
-            default:
-                $fetch_style = \PDO::FETCH_ASSOC;
-        }
-        if ($the_query == '') {
-            $this->o_elog->write('The query must not be blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return false;
-        }
-        if ($a_values == '' || count($a_values) == 0) {
-            $o_pdo_statement = $this->o_db->prepare($the_query);
-            if ($o_pdo_statement === false) {
-                $this->setSqlErrorMessage();
-                $this->o_elog->write($this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                return false;
-            }
-            $o_pdo_statement->execute();
-            $a_results = $o_pdo_statement->fetchAll($fetch_style);
-            $o_pdo_statement->closeCursor();
-        } elseif (is_array($a_values) && count($a_values) > 0) {
-            $this->o_elog->write("Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->o_elog->write("The array is " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-
-            $o_pdo_statement = $this->prepare($the_query);
-            if ($o_pdo_statement) {
-                $a_results = $this->searchPrepared($a_values, $o_pdo_statement, $type);
-            }
-        } else {
-            $this->o_elog->write("There was a problem with the array", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->o_elog->write("a_values is: " . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return false;
-        }
-        return $a_results;
     }
     public function searchPrepared($a_values = '', $o_pdo_statement = '', $type = 'assoc')
     {
