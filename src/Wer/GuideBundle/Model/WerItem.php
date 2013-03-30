@@ -1,6 +1,15 @@
 <?php
 /**
  *  Handles all the database needs (CRUD) for the Items
+ *  @file WerItem.php
+ *  @class WerItem
+ *  @ingroup guide classes
+ *  @author William E Reveal <wer@revealitconsulting.com>
+ *  @version 0.1.0
+ *  @date 2013-03-29 09:02:46
+ *  @par Change log
+ *      v0.1.0 - initial version
+ *  @par Guide v0.1
 **/
 namespace Wer\GuideBundle\Model;
 
@@ -137,7 +146,7 @@ class WerItem
      *  @param array $a_required_keys required *  @param array $a_values required
      *  @return array $a_values
     **/
-    public function setRequiredItemKeys($a_values = '')
+    public function setRequiredItemKeys($a_values = '', $a_old_record = '')
     {
         $a_required_keys = array(
             'item_id',
@@ -149,6 +158,10 @@ class WerItem
         );
         $a_values = $this->o_db->removeBadKeys($a_required_keys, $a_values);
         $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_values);
+        $current_timestamp = date('Y-m-d H:i:s');
+        if (is_array($a_old_record)) {
+            $a_old_record = $this->o_db->prepareKeys($a_old_record);
+        }
         foreach ($a_missing_keys as $key) {
             switch ($key) {
                 case 'item_id':
@@ -158,16 +171,25 @@ class WerItem
                     return false;
                     break;
                 case 'item_created_on':
-                    $a_values[':item_created_on'] = $current_timestamp;
+                    $a_values[':item_created_on'] =
+                        isset($a_old_record[':item_created_on'])
+                        ? $a_old_record[':item_created_on']
+                        : $current_timestamp;
                     break;
                 case 'item_updated_on':
                     $a_values[':item_updated_on'] = $current_timestamp;
                     break;
                 case 'item_active':
-                    $a_values[':item_active'] = 1;
+                    $a_values[':item_active'] =
+                        isset($a_old_record[':item_active'])
+                        ? $a_old_record[':item_active']
+                        : 1;
                     break;
                 case 'item_old_id':
-                    $a_values[':item_old_id'] = '';
+                    $a_values[':item_old_id'] = 
+                        isset($a_old_record[':item_old_id'])
+                        ? $a_old_record[':item_old_id']
+                        : '';
                     break;
             }
         }

@@ -1,7 +1,17 @@
 <?php
 /**
  *  Handles all the database needs (CRUD) for the Fields
+ *  @file WerField.php
+ *  @class WerField
+ *  @ingroup guide classes
+ *  @author William E Reveal <wer@revealitconsulting.com>
+ *  @version 0.1.0
+ *  @date 2013-03-29 09:02:46
+ *  @par Change log
+ *      v0.1.0 - initial version
+ *  @par Guide v0.1
 **/
+
 namespace Wer\GuideBundle\Model;
 
 use Wer\FrameworkBundle\Library\Elog;
