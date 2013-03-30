@@ -70,6 +70,42 @@ class WerItem
     }
     ### READ methods ###
     /**
+     *  Generic Read, returns one or more records from the wer_item table
+     *  @param array $a_search_pairs optional, field=>value to seach upon
+     *  @param str $search_type optional, values are normally AND and OR
+     *  @param int $limit_to optional, limit the number of records to
+     *  @param int $starting_from optional, starting from record #
+     *  @return array $a_records an array of array(s)
+    **/
+    public function readItem($a_search_pairs = '', $search_type = 'AND', $limit_to = '', $starting_from = '')
+    {
+        $sql = "SELECT * FROM wer_item ";
+        $where = '';
+        if ($a_search_pairs != '' && is_array($a_search_pairs)) {
+            $a_search_pairs = $this->o_db->prepareKeys($a_search_pairs);
+
+            foreach ($a_search_pairs as $key => $value) {
+                $field_name = str_replace(':', '', $key);
+                if ($where == '') {
+                    $where .= "WHERE {$field_name} = {$key} ";
+                } else {
+                    $where .= "{$search_type} {$field_name} = {$key} ";
+                }
+            }
+        }
+        $limit = '';
+        if ($limit_to != '') {
+            if ($starting_from != '') {
+                --$starting_from; // limit offset starts at 0 so if we want to start at record 6 the LIMIT offset is 5
+                $limit = "LIMIT {$starting_from}, {$limit_to}";
+            } else {
+                $limit = "LIMIT {$limit_to}";
+            }
+        }
+        $sql .= $where . 'ORDER BY item_name '. $limit;
+        return $this->o_db->search($sql, $a_search_pairs);
+    }
+    /**
      *  Returns the record for the Item specified by item_old_id
      *  @param int $old_item_id
      *  @return mixed array or false
@@ -79,9 +115,8 @@ class WerItem
         if ($old_item_id == '') {
             return false;
         }
-        $sql = "SELECT * FROM wer_item WHERE item_old_id = :item_old_id";
         $a_search_values = array(':item_old_id' => $old_item_id);
-        $a_values = $this->o_db->search($sql, $a_search_values);
+        $a_values = $this->readItem($a_search_values);
         if (count($a_values) > 0) {
             return $a_values[0];
         }
@@ -143,7 +178,8 @@ class WerItem
 
     /**
      *  Sets the required keys for the wer_item table
-     *  @param array $a_required_keys required *  @param array $a_values required
+     *  @param array $a_values required
+     *  @param array $a_old_record optional
      *  @return array $a_values
     **/
     public function setRequiredItemKeys($a_values = '', $a_old_record = '')
@@ -186,12 +222,13 @@ class WerItem
                         : 1;
                     break;
                 case 'item_old_id':
-                    $a_values[':item_old_id'] = 
+                    $a_values[':item_old_id'] =
                         isset($a_old_record[':item_old_id'])
                         ? $a_old_record[':item_old_id']
                         : '';
                     break;
             }
         }
+        return $a_values;
     }
 }
