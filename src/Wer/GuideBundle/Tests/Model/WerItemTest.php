@@ -99,10 +99,82 @@ class WerItemTest extends \PHPUnit_Framework_TestCase
         $results3 = $o_item->createItem($a_bad_keys);
         $results4 = $o_item->createItem($a_too_many_keys);
 
-        error_log(var_export($results1, true));
-        error_log(var_export($results2, true));
-        error_log(var_export($results3, true));
-        error_log(var_export($results4, true));
+        $this->assertGreaterThanOrEqual(1, $results1);
+        $this->assertGreaterThan($results1, $results2);
+        $this->assertEquals(false, $results3);
+        $this->assertGreaterThan($results2, $results4);
+
+    }
+    public function testUpdateItem()
+    {
+        $o_item = new WerItem();
+        $current_timestamp = date('Y-m-d H:i:s');
+        $item_name1 = 'Test Name 1';
+        $item_name2 = 'Testy Name 2';
+        $item_name3 = 'Test Name ' . mt_rand(0, 20);
+        $item_old_id = mt_rand(0, 9999);
+        $item_id = 2;
+        $a_full_keys = array(
+            ':item_id'         => $item_id,
+            ':item_name'       => $item_name1,
+            ':item_created_on' => '2013-03-30 16:20:50',
+            ':item_updated_on' => $current_timestamp,
+            ':item_active'     => 0,
+            ':item_old_id'     => $item_old_id
+        );
+        $a_partial_ok_keys = array(
+            ':item_id'         => $item_id,
+            ':item_name'       => $item_name2,
+            ':item_active'     => 1
+        );
+        $a_bad_keys = array(
+            ':item_name'       => $item_name1
+        );
+        $a_too_many_keys = array(
+            ':item_id'         => $item_id,
+            ':item_name'       => $item_name3,
+            ':item_created_on' => '2013-03-30 16:20:50',
+            ':item_updated_on' => $current_timestamp,
+            ':item_active'     => 1,
+            ':item_old_id'     => $item_old_id,
+            ':item_not_needed' => 'this should not be here'
+        );
+        $results1 = $o_item->updateItem($a_full_keys);
+        $results2 = $o_item->updateItem($a_partial_ok_keys);
+        $results3 = $o_item->updateItem($a_bad_keys);
+        $results4 = $o_item->updateItem($a_too_many_keys);
+
+        $this->assertEquals(true, $results1);
+        $this->assertEquals(true, $results2);
+        $this->assertEquals(false, $results3);
+        $this->assertEquals(true, $results4);
+    }
+    public function testCreateCategoryItem()
+    {
+        $o_item = new WerItem();
+        $a_full_keys = array(
+            ':ci_category_id' => 1,
+            ':ci_item_id'     => 1,
+            ':ci_order'       => 1
+        );
+        $a_partial_ok_keys = array(
+            ':ci_category_id' => 1,
+            ':ci_item_id'     => 2
+        );
+        $a_bad_keys = array(
+            ':ci_order' => 1
+        );
+        $a_too_many_keys = array(
+            ':ci_category_id' => 1,
+            ':ci_item_id'     => 3,
+            ':ci_order'       => 3,
+            ':do_not_use'     => 'fred'
+        );
+
+        $results1 = $o_item->createCategoryItem($a_full_keys);
+        $results2 = $o_item->createCategoryItem($a_partial_ok_keys);
+        $results3 = $o_item->createCategoryItem($a_bad_keys);
+        $results4 = $o_item->createCategoryItem($a_too_many_keys);
 
         $this->assertGreaterThanOrEqual(1, $results1);
         $this->assertGreaterThan($results1, $results2);

@@ -45,7 +45,7 @@ class WerItem
         if (count($this->o_db->findMissingKeys(array('item_name'), $a_values)) > 0) { // item_name is required
             return false;
         }
-        $a_values = $this->setRequiredItemKeys($a_values);
+        $a_values = $this->setRequiredItemKeys($a_values, 'new');
         $sql = "
             INSERT INTO wer_item (
                 item_name,
@@ -68,6 +68,53 @@ class WerItem
         $a_ids = $this->o_db->getNewIds();
         return $a_ids[0];
     }
+    /**
+     *  Adds a new category item record to the wer_category_item table.
+     *  The connector between the item and its parent category
+     *  @param array $a_values
+     *  @return int $record_id ID of th new record
+    **/
+    public function createCategoryItem($a_values = '')
+    {
+        if ($a_values == '') { return false; }
+        $a_required_keys = array(
+            'ci_category_id',
+            'ci_item_id',
+            'ci_order'
+        );
+        $a_values = $this->o_db->removeBadKeys($a_required_keys, $a_values);
+        $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_values);
+        foreach($a_missing_keys as $key) {
+            switch ($key) {
+                case 'ci_category_id':
+                    return false;
+                case 'ci_item_id':
+                    return false;
+                case 'ci_order':
+                    $a_values[':ci_order'] = 0;
+                default:
+                    $a_values[':' . $key] = '';
+            }
+        }
+        $sql = "
+            INSERT INTO wer_category_item (
+                ci_category_id,
+                ci_item_id,
+                ci_order
+            ) VALUES (
+                :ci_category_id,
+                :ci_item_id,
+                :ci_order
+            )
+        ";
+        $results = $this->o_db->insert($sql, $a_values, 'wer_category_item');
+        if ($results === false) {
+            return false;
+        }
+        $a_ids = $this->o_db->getNewIds();
+        return $a_ids[0];
+    }
+
     ### READ methods ###
     /**
      *  Generic Read, returns one or more records from the wer_item table
@@ -171,6 +218,38 @@ class WerItem
     }
 
     ### UPDATE methods ###
+    /**
+     *  Updates a record in the wer_item table
+     *  @param array $a_values all the values to be saved and the item id
+     *  @return bool true or false
+    **/
+    public function updateItem($a_values = '')
+    {
+        if ($a_values == '') { return false; }
+        $a_values = $this->setRequiredItemKeys($a_values, 'update');
+        if ($a_values === false) { return false; }
+
+        $a_values = $this->o_db->prepareKeys($a_values);
+        // build the sql
+        $set_sql = '';
+        foreach ($a_values as $key => $value) {
+            if ($key == ':item_id') {
+                /* skip it */
+            } else {
+                if ($set_sql == '' ) {
+                    $set_sql = "SET " . str_replace(':', '', $key) . " = {$key} ";
+                } else {
+                    $set_sql .= ", " . str_replace(':', '', $key) . " = {$key} ";
+                }
+            }
+        }
+        $sql = "
+            UPDATE wer_item
+            {$set_sql}
+            WHERE item_id = :item_id
+        ";
+        return $this->o_db->update($sql, $a_values, true);
+    }
 
     ### DELETE methods ###
 
@@ -179,10 +258,11 @@ class WerItem
     /**
      *  Sets the required keys for the wer_item table
      *  @param array $a_values required
-     *  @param array $a_old_record optional
+     *  @param bool $new_or_update optional new records require all fields
+     *      but an update only requires item_id and item_updated_on
      *  @return array $a_values
     **/
-    public function setRequiredItemKeys($a_values = '', $a_old_record = '')
+    public function setRequiredItemKeys($a_values = '', $new_or_update = 'new')
     {
         $a_required_keys = array(
             'item_id',
@@ -195,37 +275,36 @@ class WerItem
         $a_values = $this->o_db->removeBadKeys($a_required_keys, $a_values);
         $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_values);
         $current_timestamp = date('Y-m-d H:i:s');
-        if (is_array($a_old_record)) {
-            $a_old_record = $this->o_db->prepareKeys($a_old_record);
-        }
+
         foreach ($a_missing_keys as $key) {
             switch ($key) {
                 case 'item_id':
-                    /* probably a create, updates need to check for id in that method */
+                    if ($new_or_update == 'update') { // update requires a valid id
+                        return false;
+                    }
                     break;
                 case 'item_name':
-                    return false;
+                    if ($new_or_update == 'new') {
+                        return false;
+                    }
                     break;
                 case 'item_created_on':
-                    $a_values[':item_created_on'] =
-                        isset($a_old_record[':item_created_on'])
-                        ? $a_old_record[':item_created_on']
-                        : $current_timestamp;
+                    if ($new_or_update == 'new') {
+                        $a_values[':item_created_on'] = $current_timestamp;
+                    }
                     break;
                 case 'item_updated_on':
                     $a_values[':item_updated_on'] = $current_timestamp;
                     break;
                 case 'item_active':
-                    $a_values[':item_active'] =
-                        isset($a_old_record[':item_active'])
-                        ? $a_old_record[':item_active']
-                        : 1;
+                    if ($new_or_update == 'new') {
+                        $a_values[':item_active'] = 1;
+                    }
                     break;
                 case 'item_old_id':
-                    $a_values[':item_old_id'] =
-                        isset($a_old_record[':item_old_id'])
-                        ? $a_old_record[':item_old_id']
-                        : '';
+                    if ($new_or_update == 'new') {
+                        $a_values[':item_old_id'] = '';
+                    }
                     break;
             }
         }

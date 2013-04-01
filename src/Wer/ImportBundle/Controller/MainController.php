@@ -127,41 +127,50 @@ class MainController extends Controller
             }
             foreach ($a_category['cat_items'] as $a_item) {
                 $a_item_values = array(
-                    ':item_name' => $a_item['item_name'],
+                    ':item_name'   => $a_item['item_name'],
                     ':item_active' => $a_item['item_active'],
                     ':item_old_id' => $a_item['item_old_id']
                 );
                 if ($this->itemExists($a_item['item_old_id'])) {
-                    $a_old_item = $this->o_item->readItemByOldItemId($a_item['item_old_id']);
-                    if ($a_old_item === false) {
+                    $a_org_item = $this->o_item->readItemByOldItemId($a_item['item_old_id']);
+                    if ($a_org_item === false) {
                         $this->o_db->rollbackTransaction();
                         exit('Could not retrieve the item');
                     }
-                    $a_item_values[':item_id']         = $a_old_item['item_id'];
-                    $a_item_values[':item_created_on'] = $a_old_item['item_created_on'];
+                    $a_item_values[':item_id'] = $a_org_item['item_id'];
                     $a_item_values[':item_updated_on'] = date('Y-m-d H:i:s');
                     $results = $this->o_item->updateItem($a_item_values);
                     if ($results === false) {
                         $this->o_db->rollbackTransaction();
                         exit('Could not update the item');
                     }
-                    $item_id = $a_old_item['item_id'];
+                    $item_id = $a_org_item['item_id'];
                 } else {
                     $current_date = date('Y-m-d H:i:s');
                     $a_item_values[':item_created_on'] = $current_date;
                     $a_item_values[':item_updated_on'] = $current_date;
                     $item_id = $this->o_item->createItem($a_item_values);
-                    if ($results === false) {
+                    if ($item_id === false) {
                         $this->o_db->rollbackTransaction();
                         exit('Could not insert a new item ' . $a_item['item_name']);
                     }
 
                     $a_ci_values = array(
                         ':ci_category_id' => $category_id,
-                        ':ci_item_id'     => $item_id
+                        ':ci_item_id'     => $item_id,
+                        ':ci_order'       => 0
                     );
+                    $ci_id = $this->o_item->createCategoryItem($a_ci_values);
+                    if ($ci_id === false) {
+                        $this->o_db->rollbackTransaction();
+                        exit('Could not create the Category Item bridge record');
+                    }
                 }
-
+                if (is_array($a_item['item_fields'])) {
+                    foreach ($a_item['item_fields'] as $a_fields) {
+                        // next spot to work
+                    }
+                }
             }
         }
         $this->o_db->commitTransaction();
