@@ -34,41 +34,6 @@ class WerItem
 
     ### CREATE methods ###
     /**
-     *  Creates a new item record
-     *  @param array $a_values required defaults to empty
-     *  @return mixed int $new_item_id or bool false
-    **/
-    public function createItem($a_values = '')
-    {
-        if ($a_values == '') { return false; }
-        $current_timestamp = date('Y-m-d H:i:s');
-        if (count($this->o_db->findMissingKeys(array('item_name'), $a_values)) > 0) { // item_name is required
-            return false;
-        }
-        $a_values = $this->setRequiredItemKeys($a_values, 'new');
-        $sql = "
-            INSERT INTO wer_item (
-                item_name,
-                item_created_on,
-                item_updated_on,
-                item_active,
-                item_old_id
-            ) VALUES (
-                :item_name,
-                :item_created_on,
-                :item_updated_on,
-                :item_active,
-                :item_old_id
-            )
-        ";
-        $results = $this->o_db->insert($sql, $a_values, 'wer_item');
-        if ($results === false) {
-            return false;
-        }
-        $a_ids = $this->o_db->getNewIds();
-        return $a_ids[0];
-    }
-    /**
      *  Adds a new category item record to the wer_category_item table.
      *  The connector between the item and its parent category
      *  @param array $a_values
@@ -114,8 +79,95 @@ class WerItem
         $a_ids = $this->o_db->getNewIds();
         return $a_ids[0];
     }
+    /**
+     *  Creates a new item record
+     *  @param array $a_values required defaults to empty
+     *  @return mixed int $new_item_id or bool false
+    **/
+    public function createItem($a_values = '')
+    {
+        if ($a_values == '') { return false; }
+        $current_timestamp = date('Y-m-d H:i:s');
+        if (count($this->o_db->findMissingKeys(array('item_name'), $a_values)) > 0) { // item_name is required
+            return false;
+        }
+        $a_values = $this->setRequiredItemKeys($a_values, 'new');
+        $sql = "
+            INSERT INTO wer_item (
+                item_name,
+                item_created_on,
+                item_updated_on,
+                item_active,
+                item_old_id
+            ) VALUES (
+                :item_name,
+                :item_created_on,
+                :item_updated_on,
+                :item_active,
+                :item_old_id
+            )
+        ";
+        $results = $this->o_db->insert($sql, $a_values, 'wer_item');
+        if ($results === false) {
+            return false;
+        }
+        $a_ids = $this->o_db->getNewIds();
+        return $a_ids[0];
+    }
+    /**
+     *  Creates an item data record in the wer_item_data table
+     *  @param array $a_values
+     *  @return bool success or failure
+    **/
+    public function createItemData($a_values = '')
+    {
+        if ($a_values == '') { return false; }
+        $a_required_keys = array('data_field_id', 'data_item_id');
+        if (count($this->db->findMissingKeys($a_required_keys, $a_values)) > 0) {
+            return false;
+        }
+        $a_values = $this->setRequiredItemDataKeys($a_values, 'new');
+        if ($a_values === false) { return false; }
+        $sql = "
+            INSERT INTO wer_item_data (
+                data_field_id,
+                data_item_id,
+                data_text,
+                data_created_on,
+                data_updated_on
+            ) VALUES (
+                :data_field_id,
+                :data_item_id,
+                :data_text,
+                :data_created_on,
+                :data_updated_on
+            )
+        ";
+        $results = $this->o_db->insert($sql, $a_values, 'wer_item_data');
+        if ($results === false) {
+            return false;
+        }
+        $a_ids = $this->o_db->getNewIds();
+        return $a_ids[0];
+    }
 
     ### READ methods ###
+    /**
+     *  Retuns the values for the field
+     *  @param str $field_name
+     *  @return array field values
+    **/
+    public function readFieldByName($field_name = '')
+    {
+        if ($field_name == '') {
+            return false;
+        }
+        $sql = "SELECT * FROM wer_field WHERE field_name = :field_name";
+        $results = $this->o_db->search($sql, array(':field_name' => $field_name));
+        if (count($results) > 0) {
+            return $results[0];
+        }
+    }
     /**
      *  Generic Read, returns one or more records from the wer_item table
      *  @param array $a_search_pairs optional, field=>value to seach upon
@@ -309,5 +361,51 @@ class WerItem
             }
         }
         return $a_values;
+    }
+    /**
+     *  Sets the required keys for the wer_item_data table
+     *  @param array $a_values required *  @param bool $new_or_update optional defaults to new
+     *  @return array $a_values
+    **/
+    public function setRequiredItemDataKeys($a_values = '', $new_or_update = 'new')
+    {
+        $a_required_keys = array(
+            'data_id',
+            'data_field_id',
+            'data_item_id',
+            'data_text',
+            'data_created_on',
+            'data_updated_on'
+        );
+        $a_values = $this->o_db->removeBadKeys($a_required_keys, $a_values);
+        $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_values);
+        $current_timestamp = date('Y-m-d H:i:s');
+
+        foreach ($a_missing_keys as $key) {
+            switch ($key) {
+                case 'data_id':
+                    if ($new_or_update == 'update') {
+                        return false;
+                    } // else it is a new record so there is no data_id yet.
+                    break;
+                case 'data_field_id':
+                case 'data_item_id':
+                case 'data_text':
+                    if ($new_or_update == 'new') {
+                        return false;
+                    }
+                    break;
+                case 'data_created_on':
+                    if ($new_or_update == 'new') {
+                        $a_values[':data_created_on'] = $current_timestamp;
+                    }
+                    break;
+                case 'data_updated_on':
+                    $a_values[':data_updated_on'] = $current_timestamp;
+                    break;
+                default:
+                    return false;
+            }
+        }
     }
 }

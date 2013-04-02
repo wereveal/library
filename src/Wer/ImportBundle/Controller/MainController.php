@@ -167,8 +167,15 @@ class MainController extends Controller
                     }
                 }
                 if (is_array($a_item['item_fields'])) {
-                    foreach ($a_item['item_fields'] as $a_fields) {
-                        // next spot to work
+                    foreach ($a_item['item_fields'] as $a_field_data) {
+                        $a_item_data = array();
+                        $a_field = $this->o_item->readFieldByName($a_field_data['field_key']);
+                        $a_item_data['data_field_id']   = $a_field['field_id'];
+                        $a_item_data['data_item_id']    = $item_id;
+                        $a_item_data['data_text']       = $a_field_data['field_data'];
+                        $a_item_data['data_created_on'] = $current_date;
+                        $a_item_data['data_updated_on'] = $current_date;
+                        $a_item_data_id = $this->o_item->createItemData($a_item_data);
                     }
                 }
             }
