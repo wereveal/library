@@ -282,10 +282,54 @@ class WerItem
         if ($a_values === false) { return false; }
 
         $a_values = $this->o_db->prepareKeys($a_values);
-        // build the sql
+        $set_sql = $this->buildSqlSet($a_values, array(':item_id'));
+
+        $sql = "
+            UPDATE wer_item
+            {$set_sql}
+            WHERE item_id = :item_id
+        ";
+        return $this->o_db->update($sql, $a_values, true);
+    }
+    /**
+     *  Updates a record in the wer_item_data table
+     *  @param array $a_values required
+     *  @return bool true or false
+    **/
+    public function updateItemData($a_values = '')
+    {
+        if ($a_values == '') { return false; }
+        $a_values = $this->setRequiredItemDataKeys($a_values, 'update');
+        if ($a_values === false) { return false; }
+
+        $a_values = $this->o_db->prepareKeys($a_values);
+        $set_sql = $this->buildSqlSet($a_values, array(':data_id'));
+
+        $sql = "
+            UPDATE wer_item_data
+            {$set_sql}
+            WHERE data_id = :data_id
+        ";
+        return $this->o_db->update($sql, $a_values, true);
+    }
+
+    ### DELETE methods ###
+
+    ### Utilities ###
+    /**
+     *  Builds the SET part of an UPDATE sql statement
+     *  @param array $a_values required key=>value pairs
+     *      pairs are those to be used in the statement fragment
+     *      keys should be in the form for a prepeared sql statement e.g. :this_key
+     *  @param array $a_skip_keys optional list of keys to skip in the set statement
+     *  @return str $set_sql
+    **/
+    public function buildSqlSet($a_values = '', $a_skip_keys = array('nothing_to_skip'))
+    {
+        if ($a_values == '') { return ''; }
         $set_sql = '';
         foreach ($a_values as $key => $value) {
-            if ($key == ':item_id') {
+            if (array_key_exists($key, $a_skip_keys)) {
                 /* skip it */
             } else {
                 if ($set_sql == '' ) {
@@ -295,18 +339,8 @@ class WerItem
                 }
             }
         }
-        $sql = "
-            UPDATE wer_item
-            {$set_sql}
-            WHERE item_id = :item_id
-        ";
-        return $this->o_db->update($sql, $a_values, true);
+
     }
-
-    ### DELETE methods ###
-
-    ### Utilities ###
-
     /**
      *  Sets the required keys for the wer_item table
      *  @param array $a_values required
