@@ -67,6 +67,7 @@ EOT;
                 $cat_name = $a_cat['name'];
                 $write_this =
 <<<EOT
+<?php
 \$a_cat_{$old_cat_id} = array(
     "cat_name"        => "{$cat_name}",
     "cat_description" => "{$a_cat['introtext']} {$a_cat['description']}",
@@ -102,6 +103,7 @@ EOT;
                             $o_item_file = fopen($doc_root . "item_{$item_id}.php", 'w+');
                             $write_this =
 <<<EOT
+<?php
 \$a_item_{$item_id} = array(
     "item_name"   => "$item_name",
     "item_active" => 1,

@@ -10,7 +10,14 @@ class WerItemTest extends \PHPUnit_Framework_TestCase
     {
         $o_item = new WerItem();
         $results1 = $o_item->readItem();
-        $results2 = $o_item->readItem(array(':item_name'=>'Andalusia Family Cafe', ':item_active'=>'1', ':item_old_id'=>1280), 'OR');
+        $results2 = $o_item->readItem(
+            array(
+                ':item_name'=>'Andalusia Family Cafe',
+                ':item_active'=>'1',
+                ':item_old_id'=>1280
+            ),
+            'OR'
+        );
 
         $expected = 'Andalusia Family Cafe';
         $results1_name = $results1[0]['item_name'];

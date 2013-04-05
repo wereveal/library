@@ -45,147 +45,172 @@ class MainController extends Controller
     public function importAllAction()
     {
         $this->o_db->startTransaction();
-        include $_SERVER['DOCUMENT_ROOT'] . '/assets/files/guide.php';
-        $a_section_values = array(
-            ':sec_name'        => $a_data['sec_name'],
-            ':sec_description' => $a_data['sec_description'],
-            ':sec_image'       => $a_data['sec_image'],
-            ':sec_order'       => $a_data['sec_order'],
-            ':sec_active'      => $a_data['sec_active'],
-            ':sec_old_cat_id'  => $a_data['sec_old_cat_id']
-        );
-        $return_this = '';
-        if ($this->sectionExists($a_data['sec_old_cat_id'])) { // update section
-            $return_this .= 'Updating section<br />';
-            $a_section = $this->o_sec->readSectionByOldCatId($a_data['sec_old_cat_id']);
-            if ($a_section === false) {
-                $this->o_db->rollbackTransaction();
-                exit('Could not retrieve section');
+        $doc_root = $_SERVER['DOCUMENT_ROOT'] . '/assets/files/guide/';
+        require $doc_root . 'section_files.php';
+        foreach ($a_section_file_list as $section_file_name) {
+            require $doc_root . $section_file_name;
+            list($name, $extension) = explode('.', $section_file_name);
+            $s_id = str_replace('section_', '', $name);
+            $sec_old_cat_id = ${'a_sec_' . $s_id . '_data'}['sec_old_cat_id'];
+            if ($s_id != $sec_old_cat_id) {
+                exit("Section ID of file {$s_id} does not match section id of data {$sec_old_cat_id}");
             }
-            $a_section_values[':sec_id'] = $a_section['sec_id'];
-            $results = $this->o_sec->updateSection($a_query_values);
-            if ($results === false) {
-                $this->o_db->rollbackTransaction();
-                exit('Could not update the section'
-                    . $a_data['sec_name'] . '('
-                    . $a_data['sec_old_cat_id'] . ')'
-                );
-            }
-            $return_this .= 'Section Updated<br />';
-            $section_id = $a_section['sec_id'];
-        } else { // insert category
-            $return_this .= 'Inserting Section<br />';
-            $section_id = $this->o_sec->createSection($a_section_values);
-            if ($section_id === false) {
-                $this->o_db->rollbackTransaction();
-                exit('Could not insert the section '
-                    . $a_data['sec_name'] . '('
-                    . $a_data['sec_old_cat_id'] . ')'
-                );
-            }
-            $return_this .= 'Section Inserted.<br />';
-        }
-        foreach ($a_data['sec_categories'] as $a_category) {
-            $a_category_values = array(
-                ':cat_name'        => $a_category['cat_name'],
-                ':cat_description' => $a_category['cat_description'],
-                ':cat_image'       => $a_category['cat_image'],
-                ':cat_order'       => $a_category['cat_order'],
-                ':cat_active'      => $a_category['cat_active'],
-                ':cat_old_cat_id'  => $a_category['cat_old_cat_id']
+            $a_section_values = array(
+                ':sec_name'        => ${'a_sec_' . $s_id . '_data'}['sec_name'],
+                ':sec_description' => ${'a_sec_' . $s_id . '_data'}['sec_description'],
+                ':sec_image'       => ${'a_sec_' . $s_id . '_data'}['sec_image'],
+                ':sec_order'       => ${'a_sec_' . $s_id . '_data'}['sec_order'],
+                ':sec_active'      => ${'a_sec_' . $s_id . '_data'}['sec_active'],
+                ':sec_old_cat_id'  => $sec_old_cat_id
             );
-            if ($this->categoryExists($a_category['cat_old_cat_id'])) { // update category
-                $return_this .= "Updating Category: {$a_category['cat_name']}<br>";
-                $a_old_cat = $this->o_cat->readCatByOldCatId($a_category['cat_old_cat_id']);
-                if ($a_old_cat === false) {
+            $return_this = '';
+            if ($this->sectionExists($a_section_values[':sec_old_cat_id'])) { // update section
+                $return_this .= 'Updating section<br />';
+                $a_section = $this->o_sec->readSectionByOldCatId($a_section_values['sec_old_cat_id']);
+                if ($a_section === false) {
                     $this->o_db->rollbackTransaction();
-                    exit('Could not retrieve category');
+                    exit('Could not retrieve section');
                 }
-                $a_category_values[':cat_id'] = $a_old_cat['cat_id'];
-                $results = $this->o_cat->updateCategory($a_category_values);
+                $a_section_values[':sec_id'] = $a_section['sec_id'];
+                $results = $this->o_sec->updateSection($a_section_values);
                 if ($results === false) {
                     $this->o_db->rollbackTransaction();
-                    exit('Could not update the category '
-                        . $a_category['cat_name'] . '('
-                        . $a_category['cat_old_cat_id'] . ')'
+                    exit('Could not update the section'
+                        . $a_data['sec_name'] . '('
+                        . $a_data['sec_old_cat_id'] . ')'
                     );
                 }
-                $return_this .= "Category Updated<br>";
-                $category_id = $a_old_cat['cat_id'];
-            } else { // insert category
-                $return_this .= "Inserting New Category: {$a_category['cat_name']}<br>";
-                $category_id = $this->o_cat->createCategory($a_category_values);
-                if ($category_id === false) {
+                $return_this .= 'Section Updated<br />';
+                $section_id = $a_section['sec_id'];
+            } else { // insert section
+                $return_this .= 'Inserting Section<br />';
+                $section_id = $this->o_sec->createSection($a_section_values);
+                if ($section_id === false) {
                     $this->o_db->rollbackTransaction();
-                    exit('Could not insert the category '
-                        . $a_category['cat_name'] . '('
-                        . $a_category['cat_old_cat_id'] . ')'
+                    exit('Could not insert the section '
+                        . $a_data['sec_name'] . '('
+                        . $a_data['sec_old_cat_id'] . ')'
                     );
                 }
-                $a_sc_values = array(
-                    ':sc_section_id'  => $section_id,
-                    ':sc_category_id' => $category_id
-                );
-                $results = $this->o_cat->createSectionCategory($a_sc_values);
-                if ($results === false) {
-                    $this->o_db->rollbackTransaction();
-                    exit('Could not create the wer_section_category record');
-                }
-                $return_this .= "Category Inserted";
+                $return_this .= 'Section Inserted.<br />';
             }
-            foreach ($a_category['cat_items'] as $a_item) {
-                $a_item_values = array(
-                    ':item_name'   => $a_item['item_name'],
-                    ':item_active' => $a_item['item_active'],
-                    ':item_old_id' => $a_item['item_old_id']
+
+            // next foreach file in ${'a_sec_' . $s_id . '_cat_files'}
+            foreach (${'a_sec_' . $s_id . '_cat_files'} as $cat_file_name) {
+                require_once $doc_root . $cat_file_name;
+                list($c_name, $extension) = explode('.', $cat_file_name);
+                $c_id = str_replace('cat_', '', $c_name);
+                $cat_old_cat_id = ${'a_cat_' . $c_id}['cat_old_cat_id'];
+                $a_category_values = array(
+                    ':cat_name'        => ${'a_cat_' . $c_id}['cat_name'],
+                    ':cat_description' => ${'a_cat_' . $c_id}['cat_description'],
+                    ':cat_image'       => ${'a_cat_' . $c_id}['cat_image'],
+                    ':cat_order'       => ${'a_cat_' . $c_id}['cat_order'],
+                    ':cat_active'      => ${'a_cat_' . $c_id}['cat_active'],
+                    ':cat_old_cat_id'  => $cat_old_cat_id
                 );
-                if ($this->itemExists($a_item['item_old_id'])) {
-                    $return_this .= "Updating Item: {$a_item['item_name']}<br>";
-                    $a_org_item = $this->o_item->readItemByOldItemId($a_item['item_old_id']);
-                    if ($a_org_item === false) {
+                if ($this->categoryExists($cat_old_cat_id)) { // update category
+                    $return_this .= "Updating Category: " . ${'a_cat_' . $c_id}['cat_name'] . "<br>";
+                    $a_old_cat = $this->o_cat->readCatByOldCatId($cat_old_cat_id);
+                    if ($a_old_cat === false) {
                         $this->o_db->rollbackTransaction();
-                        exit('Could not retrieve the item');
+                        exit('Could not retrieve category');
                     }
-                    $a_item_values[':item_id'] = $a_org_item['item_id'];
-                    $a_item_values[':item_updated_on'] = date('Y-m-d H:i:s');
-                    $results = $this->o_item->updateItem($a_item_values);
+                    $a_category_values[':cat_id'] = $a_old_cat['cat_id'];
+                    $results = $this->o_cat->updateCategory($a_category_values);
                     if ($results === false) {
                         $this->o_db->rollbackTransaction();
-                        exit('Could not update the item');
+                        exit('Could not update the category '
+                            . ${'a_cat_' . $c_id}['cat_name'] . '('
+                            . $cat_old_cat_id . ')'
+                        );
                     }
-                    $item_id = $a_org_item['item_id'];
-                    $return_this .= "Item Updated Successfully<br>";
-                } else {
-                    $return_this .= "Inserting New Item: {$a_item['item_name']}<br>";
-                    $current_date = date('Y-m-d H:i:s');
-                    $a_item_values[':item_created_on'] = $current_date;
-                    $a_item_values[':item_updated_on'] = $current_date;
-                    $item_id = $this->o_item->createItem($a_item_values);
-                    if ($item_id === false) {
+                    $return_this .= "Category Updated<br>";
+                    $category_id = $a_old_cat['cat_id'];
+                } else { // insert category
+                    $return_this .= "Inserting New Category: " . ${'a_cat_' . $c_id}['cat_name'] . "<br>";
+                    $category_id = $this->o_cat->createCategory($a_category_values);
+                    if ($category_id === false) {
                         $this->o_db->rollbackTransaction();
-                        exit('Could not insert a new item ' . $a_item['item_name']);
+                        exit('Could not insert the category '
+                            . ${'a_cat_' . $c_id}['cat_name'] . '('
+                            . $cat_old_cat_id . ')'
+                        );
                     }
-                    $return_this .= "Item Inserted<br>";
-
-                    $return_this .= "Inserting Category Item record<br>";
-                    $a_ci_values = array(
-                        ':ci_category_id' => $category_id,
-                        ':ci_item_id'     => $item_id,
-                        ':ci_order'       => 0
+                    $a_sc_values = array(
+                        ':sc_sec_id' => $section_id,
+                        ':sc_cat_id' => $category_id
                     );
-                    $ci_id = $this->o_item->createCategoryItem($a_ci_values);
-                    if ($ci_id === false) {
+                    $results = $this->o_cat->createSectionCategory($a_sc_values);
+                    if ($results === false) {
                         $this->o_db->rollbackTransaction();
-                        exit('Could not create the Category Item bridge record');
+                        exit('Could not create the wer_section_category record');
                     }
+                    $return_this .= "Category Inserted";
                 }
-                if (is_array($a_item['item_fields'])) {
-                    foreach ($a_item['item_fields'] as $a_field_data) {
+
+                foreach (${'a_cat_'. $c_id . '_item_files'} as $item_file_name) {
+                    require_once $doc_root . $item_file_name;
+                    list($i_name, $extension) = explode('.', $item_file_name);
+                    $i_id = str_replace('item_', '', $i_name);
+                    $item_old_id = ${'a_item_' . $i_id}['item_old_id'];
+                    if ($i_id != $item_old_id) {
+                        exit('The file item id !== array item_old_id');
+                    }
+                    $a_item_values = array(
+                        ':item_name'   => ${'a_item_' . $i_id}['item_name'],
+                        ':item_active' => ${'a_item_' . $i_id}['item_active'],
+                        ':item_old_id' => $item_old_id
+                    );
+                    if ($this->itemExists($item_old_id)) {
+                        $return_this .= "Updating Item: " . ${'a_item_' . $i_id}['item_name'] . "<br>";
+                        $a_org_item = $this->o_item->readItemByOldItemId($item_old_id);
+                        if ($a_org_item === false) {
+                            $this->o_db->rollbackTransaction();
+                            exit('Could not retrieve the item');
+                        }
+                        $a_item_values[':item_id'] = $a_org_item['item_id'];
+                        $a_item_values[':item_updated_on'] = date('Y-m-d H:i:s');
+                        $results = $this->o_item->updateItem($a_item_values);
+                        if ($results === false) {
+                            $this->o_db->rollbackTransaction();
+                            exit('Could not update the item');
+                        }
+                        $item_id = $a_org_item['item_id'];
+                        $return_this .= "Item Updated Successfully<br>";
+                    } else {
+                        $return_this .= "Inserting New Item: {$a_item_values[':item_name']}<br>";
+                        $current_date = date('Y-m-d H:i:s');
+                        $a_item_values[':item_created_on'] = $current_date;
+                        $a_item_values[':item_updated_on'] = $current_date;
+                        $item_id = $this->o_item->createItem($a_item_values);
+                        if ($item_id === false) {
+                            $this->o_db->rollbackTransaction();
+                            exit('Could not insert a new item ' . ${'a_item_' . $i_id}['item_name']);
+                        }
+                        $return_this .= "Item Inserted<br>";
+
+                        $return_this .= "Inserting Category Item record<br>";
+                        $a_ci_values = array(
+                            ':ci_category_id' => $category_id,
+                            ':ci_item_id'     => $item_id,
+                            ':ci_order'       => 0
+                        );
+                        $ci_id = $this->o_item->createCategoryItem($a_ci_values);
+                        if ($ci_id === false) {
+                            $this->o_db->rollbackTransaction();
+                            exit('Could not create the Category Item bridge record');
+                        }
+                    }
+                    // $a_item needs to be changed to ${'a_item_'. $i_id . '_data'}
+                    foreach (${'a_item_'. $i_id . '_data'} as $a_field_data) {
+                        error_log('FIELD DATA: ' . var_export($a_field_data, true));
+
                         $a_field = $this->o_item->readFieldByName($a_field_data['field_key']);
                         $a_item_data = array(
-                            'data_field_id' => $a_field['field_id'],
-                            'data_item_id'  => $item_id,
-                            'data_text'     => $a_field_data['field_data'],
+                            'data_field_id'   => $a_field['field_id'],
+                            'data_item_id'    => $item_id,
+                            'data_text'       => $a_field_data['field_data'],
                             'data_updated_on' => $current_date
                         );
                         if ($this->itemDataExists($item_id, $a_field['field_id'])) {
@@ -212,10 +237,10 @@ class MainController extends Controller
                             }
                             $return_this .= "Record created<br>";
                         }
-                    }
-                }
-            }
-        }
+                    } // foreach item data
+                } // foreach item
+            } // foreach category
+        } // foreach section file
         $this->o_db->commitTransaction();
         return $this->render(
             'WerImportBundle:Main:index.html.twig',

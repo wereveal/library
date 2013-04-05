@@ -67,13 +67,6 @@ class WerCategory
         return false;
     }
     /**
-     *  Adds a new record to the wer_category_item table
-     *  @return bool success or failure
-    **/
-    public function createCategoryItem()
-    {
-    }
-    /**
      *  Adds a new record to the wer_category_relations table
      *  @return bool success or failure
     **/
@@ -210,27 +203,16 @@ class WerCategory
     public function updateCategory($a_cat_values = '')
     {
         if ($a_cat_values == '') { return false; }
+        $a_cat_values = $this->setRequiredCatKeys($a_cat_values, 'update');
+        if ($a_cat_values === false) { return false; }
+        $a_cat_values = $this->o_db->prepareKeys($a_cat_values);
+        $set_sql = $this->o_db->buildSqlSet($a_cat_values, array(':cat_id'));
         $sql = "
             UPDATE wer_category
-            SET cat_name        = :cat_name,
-                cat_description = :cat_description,
-                cat_order       = :cat_order,
-                cat_active      = :cat_active,
-                cat_old_cat_id  = :cat_old_cat_id
+            {$set_sql}
             WHERE cat_id = :cat_id
         ";
-        if (count($this->o_db->findMissingKeys(array('cat_name'), $a_values)) > 0) { // cat_name is required
-            return false;
-        }
-        $a_cat_values = $this->setRequiredCatKeys($a_cat_values);
         return $this->o_db->update($sql, $a_cat_values, true);
-    }
-    /**
-     *  Updates the wer_category_item table
-     *  @return bool success or failure
-    **/
-    public function updateCategoryItem()
-    {
     }
     /**
      *  Updates the wer_category_relations tables
@@ -270,12 +252,13 @@ class WerCategory
      *  @param array $a_values required
      *  @return array $a_values
     **/
-    public function setRequiredCatKeys($a_values = '')
+    public function setRequiredCatKeys($a_values = '', $new_or_update = 'new')
     {
         $a_required_keys = array(
             'cat_id',
             'cat_name',
             'cat_description',
+            'cat_image',
             'cat_order',
             'cat_active',
             'cat_old_cat_id'
@@ -285,25 +268,45 @@ class WerCategory
         foreach ($a_missing_keys as $key) {
             switch ($key) {
                 case 'cat_id':
-                    /* probably a create, updates need to check for id in that method */
+                    if ($new_or_update == 'update') { // update requires a valid id
+                        return false;
+                    }
                     break;
                 case 'cat_name':
-                    return false;
+                    if ($new_or_update == 'new') {
+                        return false;
+                    }
                     break;
                 case 'cat_description':
-                    $a_values[':cat_description'] = '';
+                    if ($new_or_update == 'new') {
+                        $a_values[':cat_description'] = '';
+                    }
+                    break;
+                case 'cat_image':
+                    if ($new_or_update == 'new') {
+                        $a_values[':image'] = '';
+                    }
                     break;
                 case 'cat_order':
-                    $a_values[':cat_order'] = 0;
+                    if ($new_or_update == 'new') {
+                        $a_values[':cat_order'] = 0;
+                    }
                     break;
                 case 'cat_active':
-                    $a_values[':cat_active'] = 1;
+                    if ($new_or_update == 'new') {
+                        $a_values[':cat_active'] = 1;
+                    }
                     break;
                 case 'cat_old_id':
-                    $a_values[':cat_old_id'] = '';
+                    if ($new_or_update == 'new') {
+                        $a_values[':cat_old_id'] = '';
+                    }
                     break;
+                default:
+                    return false;
             }
         }
+        return $a_values;
     }
 
 }

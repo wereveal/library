@@ -122,8 +122,11 @@ class WerItem
     public function createItemData($a_values = '')
     {
         if ($a_values == '') { return false; }
-        $a_required_keys = array('data_field_id', 'data_item_id');
-        if (count($this->db->findMissingKeys($a_required_keys, $a_values)) > 0) {
+        $a_required_keys = array('data_field_id', 'data_item_id', 'data_text');
+        if (count($this->o_db->findMissingKeys($a_required_keys, $a_values)) > 0) {
+            return false;
+        }
+        if (count($this->o_db->findMissingValues($a_required_keys, $a_values)) > 0) {
             return false;
         }
         $a_values = $this->setRequiredItemDataKeys($a_values, 'new');
@@ -143,6 +146,7 @@ class WerItem
                 :data_updated_on
             )
         ";
+        // error_log(var_export($a_values, true));
         $results = $this->o_db->insert($sql, $a_values, 'wer_item_data');
         if ($results === false) {
             return false;
@@ -282,7 +286,7 @@ class WerItem
         if ($a_values === false) { return false; }
 
         $a_values = $this->o_db->prepareKeys($a_values);
-        $set_sql = $this->buildSqlSet($a_values, array(':item_id'));
+        $set_sql = $this->o_db->buildSqlSet($a_values, array(':item_id'));
 
         $sql = "
             UPDATE wer_item
@@ -303,7 +307,7 @@ class WerItem
         if ($a_values === false) { return false; }
 
         $a_values = $this->o_db->prepareKeys($a_values);
-        $set_sql = $this->buildSqlSet($a_values, array(':data_id'));
+        $set_sql = $this->o_db->buildSqlSet($a_values, array(':data_id'));
 
         $sql = "
             UPDATE wer_item_data
@@ -316,31 +320,6 @@ class WerItem
     ### DELETE methods ###
 
     ### Utilities ###
-    /**
-     *  Builds the SET part of an UPDATE sql statement
-     *  @param array $a_values required key=>value pairs
-     *      pairs are those to be used in the statement fragment
-     *      keys should be in the form for a prepeared sql statement e.g. :this_key
-     *  @param array $a_skip_keys optional list of keys to skip in the set statement
-     *  @return str $set_sql
-    **/
-    public function buildSqlSet($a_values = '', $a_skip_keys = array('nothing_to_skip'))
-    {
-        if ($a_values == '') { return ''; }
-        $set_sql = '';
-        foreach ($a_values as $key => $value) {
-            if (array_key_exists($key, $a_skip_keys)) {
-                /* skip it */
-            } else {
-                if ($set_sql == '' ) {
-                    $set_sql = "SET " . str_replace(':', '', $key) . " = {$key} ";
-                } else {
-                    $set_sql .= ", " . str_replace(':', '', $key) . " = {$key} ";
-                }
-            }
-        }
-
-    }
     /**
      *  Sets the required keys for the wer_item table
      *  @param array $a_values required
@@ -441,5 +420,6 @@ class WerItem
                     return false;
             }
         }
+        return $a_values;
     }
 }

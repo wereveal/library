@@ -99,7 +99,7 @@ class Database extends Base
     public function insert($the_query = '', $a_values = '', $table_name = '')
     {
         if ($the_query == '') {
-            $this->o_elog->write('The query must not be blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write('The query must not be blank.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
             return false;
         }
         $sequence_name = '';
@@ -113,7 +113,7 @@ class Database extends Base
                 $this->o_elog->write($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
             } elseif ($this->affected_rows == 0) {
-                $this->o_elog->write('The INSERT affected no records.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->o_elog->write('The INSERT affected no records.', LOG_ON, __METHOD__ . '.' . __LINE__);
                 return false;
             } else { // note: kind of assumes there was a single record inserted
                 $this->a_new_ids = array($this->o_db->lastInsertId($sequence_name));
@@ -122,13 +122,13 @@ class Database extends Base
         } elseif (is_array($a_values) && count($a_values) > 0) {
             $o_pdo_statement = $this->prepare($the_query);
             if ($o_pdo_statement === false) {
-                $this->o_elog->write('Could not prepare the statement', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->o_elog->write('Could not prepare the statement', LOG_ON, __METHOD__ . '.' . __LINE__);
                 return false;
             } else {
                 return $this->insertPrepared($a_values, $o_pdo_statement);
             }
         } else {
-            $this->o_elog->write('The array of values for a prepared insert was empty.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write('The array of values for a prepared insert was empty.', LOG_ON, __METHOD__ . '.' . __LINE__);
             return false;
         }
     }
@@ -954,6 +954,95 @@ class Database extends Base
 
     ### Utility Functions
     /**
+     *  Builds the SET part of an UPDATE sql statement
+     *  @param array $a_values required key=>value pairs
+     *      pairs are those to be used in the statement fragment
+     *      keys should be in the form for a prepeared sql statement e.g. :this_key
+     *  @param array $a_skip_keys optional list of keys to skip in the set statement
+     *  @return str $set_sql
+    **/
+    public function buildSqlSet($a_values = '', $a_skip_keys = array('nothing_to_skip'))
+    {
+        if ($a_values == '') { return ''; }
+        $set_sql = '';
+        foreach ($a_values as $key => $value) {
+            if (array_key_exists($key, $a_skip_keys)) {
+                /* skip it */
+            } else {
+                if ($set_sql == '' ) {
+                    $set_sql = "SET " . str_replace(':', '', $key) . " = {$key} ";
+                } else {
+                    $set_sql .= ", " . str_replace(':', '', $key) . " = {$key} ";
+                }
+            }
+        }
+
+    }
+    public function determineFetchStyle($type = 'assoc')
+    {
+        switch ($type) {
+            case 'num':
+                return \PDO::FETCH_NUM;
+                break;
+            case 'both':
+                return \PDO::FETCH_BOTH;
+                break;
+            case 'assoc':
+            default:
+                return \PDO::FETCH_ASSOC;
+        }
+    }
+    /**
+     *  Determines if any required keys are missing
+     *  @param array $a_required_keys required
+     *  @param array $a_check_values required
+     *  @return array $a_missing_keys
+    **/
+    public function findMissingKeys($a_required_keys = '', $a_check_values = '')
+    {
+        if ($a_required_keys == '' || $a_check_values == '') { return array(); }
+        $a_missing_keys = array();
+        foreach ($a_required_keys as $key) {
+            if (
+                array_key_exists($key, $a_check_values)
+                ||
+                array_key_exists(':' . $key, $a_check_values)
+                ||
+                array_key_exists(str_replace(':', '', $key), $a_check_values)
+            ) {
+                // we are happy
+            } else {
+                $a_missing_keys[] = $key;
+            }
+        }
+        return $a_missing_keys;
+    }
+    /**
+     *  Finds missing or empty values for given key => value pair
+     *  @param array $a_required_keys required list of keys that need to have values
+     *  @param array $a_pairs
+     *  @return array $a_keys list of the the keys that are missing values
+    **/
+    public function findMissingValues($a_required_keys = '', $a_pairs = '')
+    {
+        if ($a_pairs == '' || $a_required_keys == '') { return false; }
+        $a_keys = array();
+        foreach ($a_pairs as $key => $value) {
+            if (
+                array_key_exists($key, $a_required_keys)
+                ||
+                array_key_exists(':' . $key, $a_required_keys)
+                ||
+                array_key_exists(str_replace(':', '', $key), $a_required_keys)
+            ) {
+                if ($value == '' || is_null($value)) {
+                    $a_keys[] = $key;
+                }
+            }
+        }
+        return $a_keys;
+    }
+    /**
      *  Verifies that the php mysqli extension is installed
      *  Left over, not sure it is needed now
      *  @return bool
@@ -1043,45 +1132,6 @@ class Database extends Base
             $this->o_elog->write('You must specify a table name for this to work.');
             return false;
         }
-    }
-    public function determineFetchStyle($type = 'assoc')
-    {
-        switch ($type) {
-            case 'num':
-                return \PDO::FETCH_NUM;
-                break;
-            case 'both':
-                return \PDO::FETCH_BOTH;
-                break;
-            case 'assoc':
-            default:
-                return \PDO::FETCH_ASSOC;
-        }
-    }
-    /**
-     *  Determines if any required keys are missing
-     *  @param array $a_required_keys required
-     *  @param array $a_check_values required
-     *  @return array $a_missing_keys
-    **/
-    public function findMissingKeys($a_required_keys = '', $a_check_values = '')
-    {
-        if ($a_required_keys == '' || $a_check_values == '') { return array(); }
-        $a_missing_keys = array();
-        foreach ($a_required_keys as $key) {
-            if (
-                array_key_exists($key, $a_check_values)
-                ||
-                array_key_exists(':' . $key, $a_check_values)
-                ||
-                array_key_exists(str_replace(':', '', $key), $a_check_values)
-            ) {
-                // we are happy
-            } else {
-                $a_missing_keys[] = $key;
-            }
-        }
-        return $a_missing_keys;
     }
     /**
      *  Removes unwanted key=>values for a prepared query
