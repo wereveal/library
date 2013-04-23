@@ -152,6 +152,7 @@ EOT;
                                             $write_this =
 <<<EOT
 array(
+    'field_id'    => {$field_id},
     'field_key'   => '{$field_key}',
     'field_value' => '{$a_field_names['field_value']}',
     'field_data'  => '{$field_data}',
