@@ -976,7 +976,7 @@ class Database extends Base
                 }
             }
         }
-
+        return $set_sql;
     }
     public function determineFetchStyle($type = 'assoc')
     {

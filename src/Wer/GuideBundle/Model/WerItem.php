@@ -157,9 +157,29 @@ class WerItem
 
     ### READ methods ###
     /**
+     *  Returns the values for the field
+     *  @param int $field_id
+     *  @return mixed array $field_values or bool false
+    **/
+    public function readFieldById($field_id = '')
+    {
+        if ($old_field_id == '') { return false; }
+        $sql = '
+            SELECT *
+            FROM wer_field
+            WHERE field_id = :field_id
+        ';
+        $results = $this->o_db->search($sql, array(':field_id' => $field_id));
+        if (count($results) > 0) {
+            return $results[0];
+        } else {
+            return false;
+        }
+    }
+    /**
      *  Retuns the values for the field
      *  @param str $field_name
-     *  @return array field values
+     *  @return mixed array field values or false
     **/
     public function readFieldByName($field_name = '')
     {
@@ -170,6 +190,28 @@ class WerItem
         $results = $this->o_db->search($sql, array(':field_name' => $field_name));
         if (count($results) > 0) {
             return $results[0];
+        } else {
+            return false;
+        }
+    }
+    /**
+     *  Returns the values for the field
+     *  @param int $old_field_id
+     *  @return mixed array $field_values or bool false
+    **/
+    public function readFieldByOldId($old_field_id = '')
+    {
+        if ($old_field_id == '') { return false; }
+        $sql = '
+            SELECT *
+            FROM wer_field
+            WHERE field_old_field_id = :field_old_field_id
+        ';
+        $results = $this->o_db->search($sql, array(':field_old_field_id' => $old_field_id));
+        if (count($results) > 0) {
+            return $results[0];
+        } else {
+            return false;
         }
     }
     /**
@@ -305,8 +347,9 @@ class WerItem
         if ($a_values == '') { return false; }
         $a_values = $this->setRequiredItemDataKeys($a_values, 'update');
         if ($a_values === false) { return false; }
-
+        error_log(var_export($a_values, true));
         $a_values = $this->o_db->prepareKeys($a_values);
+        error_log('Again: ' . var_export($a_values, true));
         $set_sql = $this->o_db->buildSqlSet($a_values, array(':data_id'));
 
         $sql = "
@@ -314,6 +357,7 @@ class WerItem
             {$set_sql}
             WHERE data_id = :data_id
         ";
+        error_log('update sql: ' . $sql);
         return $this->o_db->update($sql, $a_values, true);
     }
 
