@@ -44,6 +44,7 @@ class MainController extends Controller
     **/
     public function importAllAction()
     {
+        ini_set('max_execution_time', 120);
         $this->o_db->startTransaction();
         $doc_root = $_SERVER['DOCUMENT_ROOT'] . '/assets/files/guide/';
         require $doc_root . 'section_files.php';
@@ -65,7 +66,6 @@ class MainController extends Controller
             );
             $return_this = '';
             if ($this->sectionExists($a_section_values[':sec_old_cat_id'])) { // update section
-                $return_this .= 'Updating section<br />';
                 $a_section = $this->o_sec->readSectionByOldCatId($a_section_values['sec_old_cat_id']);
                 if ($a_section === false) {
                     $this->o_db->rollbackTransaction();
@@ -83,7 +83,6 @@ class MainController extends Controller
                 $return_this .= 'Section Updated<br />';
                 $section_id = $a_section['sec_id'];
             } else { // insert section
-                $return_this .= 'Inserting Section<br />';
                 $section_id = $this->o_sec->createSection($a_section_values);
                 if ($section_id === false) {
                     $this->o_db->rollbackTransaction();
@@ -110,7 +109,6 @@ class MainController extends Controller
                     ':cat_old_cat_id'  => $cat_old_cat_id
                 );
                 if ($this->categoryExists($cat_old_cat_id)) { // update category
-                    $return_this .= "Updating Category: " . ${'a_cat_' . $c_id}['cat_name'] . "<br>";
                     $a_old_cat = $this->o_cat->readCatByOldCatId($cat_old_cat_id);
                     if ($a_old_cat === false) {
                         $this->o_db->rollbackTransaction();
@@ -128,7 +126,6 @@ class MainController extends Controller
                     $return_this .= "Category Updated<br>";
                     $category_id = $a_old_cat['cat_id'];
                 } else { // insert category
-                    $return_this .= "Inserting New Category: " . ${'a_cat_' . $c_id}['cat_name'] . "<br>";
                     $category_id = $this->o_cat->createCategory($a_category_values);
                     if ($category_id === false) {
                         $this->o_db->rollbackTransaction();
@@ -163,7 +160,6 @@ class MainController extends Controller
                         ':item_old_id' => $item_old_id
                     );
                     if ($this->itemExists($item_old_id)) {
-                        $return_this .= "Updating Item: " . ${'a_item_' . $i_id}['item_name'] . "<br>";
                         $a_org_item = $this->o_item->readItemByOldItemId($item_old_id);
                         if ($a_org_item === false) {
                             $this->o_db->rollbackTransaction();
@@ -179,7 +175,6 @@ class MainController extends Controller
                         $item_id = $a_org_item['item_id'];
                         $return_this .= "Item Updated Successfully<br>";
                     } else {
-                        $return_this .= "Inserting New Item: {$a_item_values[':item_name']}<br>";
                         $current_date = date('Y-m-d H:i:s');
                         $a_item_values[':item_created_on'] = $current_date;
                         $a_item_values[':item_updated_on'] = $current_date;
@@ -204,48 +199,39 @@ class MainController extends Controller
                     }
                     // $a_item needs to be changed to ${'a_item_'. $i_id . '_data'}
                     foreach (${'a_item_'. $i_id . '_data'} as $a_field_data) {
-                        error_log('FIELD DATA: ' . var_export($a_field_data, true));
-                        switch ($a_field_data['field_id']) {
-                            case 35:
-                            case 36:
-                            case 52:
-                            case 173:
-                                break;
-                            default:
-                                $a_field = $this->o_item->readFieldByOldId($a_field_data['field_id']);
-                                error_log('Old Field ID ' . var_export($a_field, true));
-                                $a_item_data = array(
-                                    'data_field_id'   => $a_field['field_id'],
-                                    'data_item_id'    => $item_id,
-                                    'data_text'       => $a_field_data['field_data'],
-                                    'data_updated_on' => $current_date
-                                );
-                                if ($this->itemDataExists($item_id, $a_field['field_id'])) {
-                                    $return_this .= "Updating item data record: {$a_field['field_id']}<br>";
-                                    $a_old_item_data = $this->o_item->readItemData($item_id, $a_field['field_id']);
-                                    if ($a_old_item_data === false) {
-                                        $this->o_db->rollbackTransaction();
-                                        exit('Could not read old item data during update');
-                                    }
-                                    $a_item_data['data_id'] = $a_old_item_data['data_id'];
-                                    $a_results = $this->o_item->updateItemData($a_item_data);
-                                    if ($a_results === false) {
-                                        $this->o_db->rollbackTransaction();
-                                        exit('Could not updata an existing item data record.');
-                                    }
-                                    $return_this .= "Record Updated<br>";
-                                } else {
-                                    $return_this .= "Inserting new item data record<br>";
-                                    $a_item_data['data_created_on'] = $current_date;
-                                    $new_item_data_id = $this->o_item->createItemData($a_item_data);
-                                    if ($new_item_data_id === false) {
-                                        $this->o_db->rollbackTransaction();
-                                        exit('Could not insert a new item data record.');
-                                    }
-                                    $return_this .= "Record created<br>";
+                        $a_field = $this->o_item->readFieldByOldId($a_field_data['field_id']);
+                        if ($a_field !== false) {
+                            $a_item_data = array(
+                                'data_field_id'   => $a_field['field_id'],
+                                'data_item_id'    => $item_id,
+                                'data_text'       => $a_field_data['field_data'],
+                                'data_updated_on' => $current_date
+                            );
+                            if ($this->itemDataExists($item_id, $a_field['field_id'])) {
+                                $a_old_item_data = $this->o_item->readItemData($item_id, $a_field['field_id']);
+                                if ($a_old_item_data === false) {
+                                    $this->o_db->rollbackTransaction();
+                                    exit('Could not read old item data during update');
                                 }
-                        } // switch field_id
+                                $a_item_data['data_id'] = $a_old_item_data['data_id'];
+                                $a_results = $this->o_item->updateItemData($a_item_data);
+                                if ($a_results === false) {
+                                    $this->o_db->rollbackTransaction();
+                                    exit('Could not updata an existing item data record.');
+                                }
+                                $return_this .= "U";
+                            } else {
+                                $a_item_data['data_created_on'] = $current_date;
+                                $new_item_data_id = $this->o_item->createItemData($a_item_data);
+                                if ($new_item_data_id === false) {
+                                    $this->o_db->rollbackTransaction();
+                                    exit('Could not insert a new item data record.');
+                                }
+                                $return_this .= "I";
+                            }
+                        }
                     } // foreach item data
+                    $return_this .= "<br>";
                     unset(${'a_item' . $i_id});
                     unset(${'a_item' . $i_id . '_data'});
                 } // foreach item file
