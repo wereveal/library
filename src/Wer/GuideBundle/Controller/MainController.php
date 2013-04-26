@@ -28,11 +28,11 @@ class MainController extends Controller
                 display the records
 
         */
-        $quick_form    = $this->formQuickSearch();
-        $alpha_list    = $this->alphaList();
-        $section_list  = $this->sectionList($this->default_section);
-        $category_list = $this->categoryList($this->default_section);
-        $item_cards    = $this->itemCards($this->num_to_display);
+        $a_quick_form    = $this->formQuickSearch();
+        $a_alpha_list    = $this->alphaList();
+        $a_section_list  = $this->sectionList($this->default_section);
+        $a_category_list = $this->categoryList($this->default_section);
+        $a_item_cards    = $this->itemCards($this->num_to_display);
         $a_twig_values = array(
             'title'         => 'Guide',
             'description'   => 'This is a description',
@@ -109,12 +109,25 @@ class MainController extends Controller
         return '';
     }
     /**
+     *
+    **/
+    public function formQuickSearch()
+    {
+        return array(
+            'color' => 'white',
+            'buttonText' => 'Locate'
+        );
+    }
+    /**
      *  creates the values to be used for the item cards
      *  @param int $num_to_display defaults to 10
      *  @return array $a_values
     **/
     public function itemCards($num_to_display = 10)
     {
+        // look for featured items first.
+        // if there are some, grab the first 10 and return them
+        // else grab 10 random items 
         return '';
     }
     /**
