@@ -3,7 +3,7 @@
 namespace Wer\ImportBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Wer\GuideBundle\Model\WerCategory;
+use Wer\GuideBundle\Model\Category;
 use Wer\GuideBundle\Model\WerField;
 use Wer\GuideBundle\Model\WerItem;
 use Wer\GuideBundle\Model\WerSection;
@@ -20,7 +20,7 @@ class MainController extends Controller
     public function __construct()
     {
         $this->o_db    = Database::start();
-        $this->o_cat   = new WerCategory();
+        $this->o_cat   = new Category();
         $this->o_field = new WerField();
         $this->o_item  = new WerItem();
         $this->o_sec   = new WerSection();

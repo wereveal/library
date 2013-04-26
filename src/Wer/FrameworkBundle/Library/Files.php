@@ -399,6 +399,56 @@ class Files extends Location
         $this->sm_file_inc_dir  = SM_INC_DIR . $file_dir . '/' . $this->file_name;
         $this->sm_file_inc_path = SITE_PATH . $this->sm_file_inc_dir;
     }
+    /**
+     *  Finds the location of the file
+     *  the possible places a file could exist.
+     *    <pre>One of several places:
+     *      /$this->file_dir_name
+     *      /assets/themes/$this->theme_name/$this->file_dir_name
+     *      APP_DIR/$this->file_dir_name
+     *      APP_DIR/config
+     *      APP_DIR/namespaces/$this->namespace
+     *      APP_DIR/namespaces/$this->namespace(.*)
+     *      APP_DIR/namespaces/$this->namespace/$this->file_dir_name</pre>     *  @param namespace optional
+     *  @param array $a_values array(
+     *      'file_name' =>'' (required),
+     *      'namespace' => '' (optional),
+     *      'file_dir_name' => 'optional'
+     *  )
+     *  @return str $path_of_file
+    **/
+    public function locateFile($file_name = '', $namespace = '', $file_dir_name = '')
+    {
+        if ($file_name == '') {
+            return false;
+        }
+        $namespace = str_replace('\\', '/', $namespace);
+        $site_dir = $_SERVER['DOCUMENT_ROOT'];
+        $base_dir = dirname(dirname($site_dir . '/index.php'));
+        $src_dir  = $base_dir . '/src';
+        $a_possible_locations = array(
+            'site_dir'      => $site_dir,
+            'base_dir'      => $base_dir,
+            'src_dir'       => $src_dir,
+            'config_dir'    => $base_dir  . '/app/config',
+            'assets_dir'    => $site_dir . '/assets',
+            'no_base'       => '',
+        );
+        $file_w_dir = '/';
+        $file_w_dir .= $namespace != '' ? $namespace . '/' : '';
+        $file_w_dir .= $file_dir_name != '' ? $file_dir_name . '/' : '';
+        $file_w_dir .= $file_name;
+        foreach ($a_possible_locations as $key => $location) {
+            $full_path = $location . $file_w_dir;
+            $full_path = str_replace('//', '/', $full_path);
+            if (file_exists($full_path)) {
+                return $full_path;
+            }
+        }
+        return false;
+    }
+
+
     /*
      *  Inherited from Location without change
      *  getFileName()

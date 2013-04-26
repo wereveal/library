@@ -2,13 +2,13 @@
 
 namespace Wer\GuideBundle\Tests\Model;
 
-use Wer\GuideBundle\Model\WerItem;
+use Wer\GuideBundle\Model\Item;
 
 class WerItemTest extends \PHPUnit_Framework_TestCase
 {
     public function testReadItem()
     {
-        $o_item = new WerItem();
+        $o_item = new Item();
         $results1 = $o_item->readItem();
         $results2 = $o_item->readItem(
             array(
@@ -28,7 +28,7 @@ class WerItemTest extends \PHPUnit_Framework_TestCase
     }
     public function testReadItemByOldItemId()
     {
-        $o_item = new WerItem();
+        $o_item = new Item();
         $results = $o_item->readItemByOldItemId(1280);
         $item_name = $results['item_name'];
         $expected = 'Andalusia Family Cafe';
@@ -36,7 +36,7 @@ class WerItemTest extends \PHPUnit_Framework_TestCase
     }
     public function testSetRequiredItemKeys()
     {
-        $o_item = new WerItem();
+        $o_item = new Item();
         $current_timestamp = date('Y-m-d H:i:s');
         $item_name = 'Test' . mt_rand();
         $item_old_id = mt_rand(0,4000);
@@ -75,7 +75,7 @@ class WerItemTest extends \PHPUnit_Framework_TestCase
     }
     public function testCreateItem()
     {
-        $o_item = new WerItem();
+        $o_item = new Item();
         $current_timestamp = date('Y-m-d H:i:s');
         $item_name = 'Test' . mt_rand();
         $item_old_id = mt_rand(0,4000);
@@ -114,7 +114,7 @@ class WerItemTest extends \PHPUnit_Framework_TestCase
     }
     public function testUpdateItem()
     {
-        $o_item = new WerItem();
+        $o_item = new Item();
         $current_timestamp = date('Y-m-d H:i:s');
         $item_name1 = 'Test Name 1';
         $item_name2 = 'Testy Name 2';
@@ -158,7 +158,7 @@ class WerItemTest extends \PHPUnit_Framework_TestCase
     }
     public function testCreateCategoryItem()
     {
-        $o_item = new WerItem();
+        $o_item = new Item();
         $a_full_keys = array(
             ':ci_category_id' => 1,
             ':ci_item_id'     => 1,

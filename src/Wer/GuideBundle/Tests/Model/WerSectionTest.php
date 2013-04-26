@@ -2,7 +2,7 @@
 
 namespace Wer\GuideBundle\Tests\Model;
 
-use Wer\GuideBundle\Model\WerSection;
+use Wer\GuideBundle\Model\Section;
 
 class WerSectionTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,7 +28,7 @@ class WerSectionTest extends \PHPUnit_Framework_TestCase
     ### Main CRUD ###
     public function testCreateSection()
     {
-        $o_sec = new WerSection();
+        $o_sec = new Section();
         $good_values = $this->a_good_query_values;
         $bad_values = $this->a_bad_query_values;
         $ok_values = $this->a_ok_query_values;
@@ -45,7 +45,7 @@ class WerSectionTest extends \PHPUnit_Framework_TestCase
     }
     public function testReadSectionById()
     {
-        $o_sec = new WerSection();
+        $o_sec = new Section();
         $expected1 = 14;
         $expected2 = false;
         $results1 = $o_sec->readSectionById(1);
@@ -56,7 +56,7 @@ class WerSectionTest extends \PHPUnit_Framework_TestCase
     }
     public function testReadSectionByOldCatId()
     {
-        $o_sec = new WerSection();
+        $o_sec = new Section();
         $expected = 14;
         $results = $o_sec->readSectionByOldCatId($expected);
         $results2 = $o_sec->readSectionByOldCatId(4);
@@ -66,7 +66,7 @@ class WerSectionTest extends \PHPUnit_Framework_TestCase
     }
     public function testUpdateSection()
     {
-        $o_sec = new WerSection();
+        $o_sec = new Section();
         $good_query_values = $this->a_good_query_values;
         $good_query_values[':sec_id'] = 1;
         $good_query_values[':sec_description'] = 'Description ' . mt_rand();
@@ -85,7 +85,7 @@ class WerSectionTest extends \PHPUnit_Framework_TestCase
     }
     public function testDeleteSection()
     {
-        $o_sec = new WerSection();
+        $o_sec = new Section();
         $good_values = $this->a_good_query_values;
         $good_values[':sec_name'] = $good_values[':sec_name'] . mt_rand();
         $sec_id = $o_sec->createSection($good_values);
@@ -117,7 +117,7 @@ class WerSectionTest extends \PHPUnit_Framework_TestCase
             ':sec_active' => 1,
             ':sec_old_cat_id' => '14'
         );
-        $o_sec = new WerSection();
+        $o_sec = new Section();
         $a_results1 = $o_sec->setRequiredSectionKeys($this->a_ok_query_values);
         $a_results2 = $o_sec->setRequiredSectionKeys($this->a_bad_query_values);
 

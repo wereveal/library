@@ -3,7 +3,7 @@
 namespace Wer\GuideBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Wer\GuideBundle\Model\WerField;
+use Wer\GuideBundle\Model\Field;
 
 class ManagerController extends Controller
 {
@@ -18,7 +18,7 @@ class ManagerController extends Controller
             'site_url'    => $site_url,
             'body_text'   => 'This is a test of Manager'
         );
-        $this->o_wer_field = new WerField();
+        $this->o_wer_field = new Field();
     }
     /**
      *  Displays a list of actions that one can do in the manager

@@ -1,0 +1,24 @@
+{% extends 'WerGuideBundle:Default:base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+            <div class="row-fluid">
+                <div class="span12">
+                    {{ quick_search|raw }}
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    {{ alpha_list|raw }}
+                    <br />
+                    <div class="span6">{{ section_list|raw }}</div>
+                    <div class="span6">{{ category_list|raw }}</div>
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    {{ item_cards|raw }}
+                </div>
+            </div>
+{% endblock %}

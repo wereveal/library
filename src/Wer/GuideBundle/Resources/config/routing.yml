@@ -7,3 +7,21 @@ guide_manager:
 guide_manager_field:
     pattern: /manager/field/
     defaults: { _controller: WerGuideBundle:Manager:field }
+guide_search:
+    pattern: /search/
+    defaults: { _controller: WerGuideBundle:Search:index }
+guide_search_advanced:
+    pattern: /search/advanced/
+    defaults: { _controller: WerGuideBundle:Search:index }
+guide_search_alpha:
+    pattern: /search/alpha/
+    defaults: { _controller: WerGuideBundle:Search:results }
+guide_search_section:
+    pattern: /search/section/
+    defaults: { _controller: WerGuideBundle:Search:results }
+guide_search_category:
+    pattern: /search/category/
+    defaults: { _controller: WerGuideBundle:Search:results }
+guide_search_results:
+    pattern: /search/results/
+    defaults: { _controller: WerGuideBundle:Search:results }
