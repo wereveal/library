@@ -1,0 +1,5 @@
+<select name="{{ select.name }}"{% if select.class != '' %} class="{{ select.class }}"{% endif %}>
+    {% for option in select.options %}
+        {% include "WerGuideBundle:Elements:select_options.html.twig" %}
+    {% endfor %}
+</select>

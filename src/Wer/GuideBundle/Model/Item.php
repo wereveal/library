@@ -251,6 +251,23 @@ class Item
         return $this->o_db->search($sql, $a_search_pairs);
     }
     /**
+     *  Returns the records that match the first letter of the item name with the param
+     *  @param str $the_letter
+     *  @return array $a_records
+    **/
+    public function readItemByNameFirstLetter($the_letter = 'A')
+    {
+        $sql = "
+            SELECT *
+            FROM wer_item
+            WHERE item_name LIKE :item_name
+            AND item_active = 1
+            ORDER BY item_name
+        ";
+        $the_letter = substr(trim($the_letter), 0, 1);
+        return $this->o_db->search($sql, array(':item_name' => '{$the_letter}%'));
+    }
+    /**
      *  Returns the record for the Item specified by item_old_id
      *  @param int $old_item_id
      *  @return mixed array or false
@@ -313,6 +330,40 @@ class Item
         } else {
             return false;
         }
+    }
+    /**
+     *  Returns a list of items which are marked as featured
+     *  @param int $num_of_records
+     *  @return array $a_items
+    **/
+    public function readItemFeatured($num_of_records = 10)
+    {
+    }
+    /**
+     *  Returns a list of random items.
+     *  @param int $num_of_records
+     *  @return array $a_items
+    **/
+    public function readItemRandom($num_of_records = 10)
+    {
+        $a_item_ids = $this->readItemIds();
+        $a_keys = array_rand($a_item_ids, $num_of_records);
+        $a_values = array();
+        foreach ($a_keys as $key_id) {
+            $value = $a_item_ids[$key_id]['item_id'];
+            $a_values[] = array(':item_id' => $value);
+        }
+        unset($a_item_ids); // not sure I want the big monster array haning around
+        unset($a_keys);
+        $sql = "
+            SELECT item_id, item_name
+            FROM wer_item
+            WHERE item_id = :item_id
+            AND item_active = 1
+            ORDER BY item_name
+        ";
+        $results = $this->o_db->search($sql, $a_values);
+        return $results;
     }
 
     ### UPDATE methods ###

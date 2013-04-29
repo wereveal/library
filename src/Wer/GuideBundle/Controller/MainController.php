@@ -3,16 +3,17 @@
 namespace Wer\GuideBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Wer\GuideBundle\View\MainView;
+use Wer\GuideBundle\Model\Item;
 
 class MainController extends Controller
 {
     private $default_section = 1;
     private $num_to_display  = 10;
+    private $o_item;
 
     public function __construct()
     {
-        parent::__construct();
+        $this->o_item = new Item();
     }
     public function indexAction()
     {
@@ -38,13 +39,13 @@ class MainController extends Controller
             'description'   => 'This is a description',
             'site_url'      => "http://{$_SERVER['SERVER_NAME']}",
             'rights_holder' => 'William E. Reveal',
-            'quick_form'    => $quick_form,
-            'alpha_list'    => $alpha_list,
-            'section_list'  => $section_list,
-            'category_list' => $category_list,
-            'item_cards'    => $item_cards
+            'quick_form'    => $a_quick_form,
+            'alpha_list'    => $a_alpha_list,
+            'section_list'  => $a_section_list,
+            'category_list' => $a_category_list,
+            'item_cards'    => $a_item_cards
         );
-        return $this->render('WerGuideBundle:Main:index.html.twig', $a_twig_values);
+        return $this->render('WerGuideBundle:Pages:index.html.twig', $a_twig_values);
     }
     /**
      * Displays the results of a search
@@ -76,7 +77,7 @@ class MainController extends Controller
         $main_str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $a_li_values = array();
         $first_row = true;
-        for ($i; $i < strlen($main_str); $i++) {
+        for ($i = 0; $i < strlen($main_str); $i++) {
             $the_letter = $main_str[$i];
             $results = $this->o_item->readItemByNameFirstLetter($the_letter);
             $a_li_row = array(
@@ -96,8 +97,10 @@ class MainController extends Controller
             } else {
                 $a_li_row['is_link'] = false;
             }
-            $a_li_values[] = $a_li_row;
+            $a_li_values[$i] = $a_li_row;
         }
+        return $a_li_values;
+        // return $this->render('WerGuideBundle:Snippets:alphaListUl.html.twig', array('li_rows' => $a_li_values));
     }
     /**
      *  creates the values to be used in the category select
@@ -106,7 +109,7 @@ class MainController extends Controller
     **/
     public function categoryList($section_id = 1)
     {
-        return '';
+        return array();
     }
     /**
      *
@@ -117,6 +120,7 @@ class MainController extends Controller
             'color' => 'white',
             'buttonText' => 'Locate'
         );
+        // return $this->render('WerGuideBundle:Snippets:quickSearch.html.twig', $a_values);
     }
     /**
      *  creates the values to be used for the item cards
@@ -127,8 +131,8 @@ class MainController extends Controller
     {
         // look for featured items first.
         // if there are some, grab the first 10 and return them
-        // else grab 10 random items 
-        return '';
+        // else grab 10 random items
+        return array();
     }
     /**
      *  creates the values needed for the section list
@@ -137,7 +141,7 @@ class MainController extends Controller
     **/
     public function sectionList($section_id = 1)
     {
-        return '';
+        return array();
     }
     ### Utilities ###
 

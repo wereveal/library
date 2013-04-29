@@ -5,20 +5,23 @@
 {% block body %}
             <div class="row-fluid">
                 <div class="span12">
-                    {{ quick_search|raw }}
+                    {{ include("WerGuideBundle:Snippets:quickSearch.html.twig", { 'form': quick_form }) }}
                 </div>
             </div>
             <div class="row-fluid">
                 <div class="span12">
+                    {#
+                    {{ include("WerGuideBundle:Snippets:alphaListUl.html.twig", { 'li_rows': alpha_list }) }}
+                    #}
                     {{ alpha_list|raw }}
                     <br />
-                    <div class="span6">{{ section_list|raw }}</div>
-                    <div class="span6">{{ category_list|raw }}</div>
+                    <div class="span6">{{ include("WerGuideBundle:Elements:select.html.twig", { 'rows': section_list }) }}</div>
+                    <div class="span6">{{ include("WerGuideBundle:Snippets:select.html.twig", { 'rows': category_list }) }}</div>
                 </div>
             </div>
             <div class="row-fluid">
                 <div class="span12">
-                    {{ item_cards|raw }}
+                    {{ include("WerGuideBundle/Snippets/itemCards.html.twig", { 'items': item_cards }) }}
                 </div>
             </div>
 {% endblock %}
