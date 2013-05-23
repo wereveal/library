@@ -8,7 +8,7 @@
  *  @par Change Log
  *      v3.0.0 - FIG standards (mostly)
  *  @par Wer Framework v4.0
- *  @ingroup wer_framework classes
+ *  @ingroup wer_framework library
 **/
 namespace Wer\FrameworkBundle\Library;
 

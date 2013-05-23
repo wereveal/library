@@ -1,0 +1,55 @@
+/* The Alpha List Menu */
+div.alphaList {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+#alphaListMenu {
+    list-style-type: none;
+    margin-left: 0px;
+    margin-bottom: 1rem;
+    li {
+        float: left;
+        padding-left: 3px;
+        padding-right: 3px;
+        font-weight: 900;
+        &.alphaListFirstLetter {
+            border-left: 1px solid $default_dark;
+            border-right: 1px solid $default_dark;
+        }
+        &.alphaListOtherLetter {
+            border-right: 1px solid $default_dark;
+        }
+        &.alphaListLastLetter {
+            border-right: 1px solid $default_dark;
+        }
+        &.alphaListNoLink {
+            color: $default_medium;
+            font-weight: 400;
+            border-right: 1px solid $default_dark;
+        }
+    }
+}
+label.categorySelectLabel, label.sectionSelectLabel {
+    font-weight: 900;
+    display: inline-block;
+    vertical-align: top;
+    margin: 0;
+    margin-right: .75rem;
+}
+#quick-search {
+    legend {
+        display: none;
+    }
+    input {
+        width: 15rem;
+        margin-top: .5rem;
+        margin-right: 1rem;
+        vertical-align: middle;
+    }
+    button {
+        vertical-align: middle;
+    }
+}
+div.quick-form {
+    padding-left: 1rem !important;
+}

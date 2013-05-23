@@ -10,7 +10,7 @@
  *  @par ChangeLog
  *      v1.0.3 - namespace change, changed to an abstract class
  *  @par Wer Framework v4.0.0
- *  @ingroup wer_framework classes
+ *  @ingroup wer_framework library
 **/
 namespace Wer\FrameworkBundle\Library;
 

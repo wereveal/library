@@ -8,9 +8,13 @@
  *  @file Strings.php
  *  @class Strings
  *  @author William Reveal  <wer@wereveal.com>
- *  @version 5.00
- *  @date 2013-03-28 10:47:00
- *  @ingroup wer_framework classes
+ *  @version 5.1.0
+ *  @date 2013-05-14 12:42:32
+ *  @ingroup wer_framework library
+ *  @par Change Log
+ *      v5.1.0 - added formatPhoneNumber method. 2013-05-14
+ *      v5.0.1 - bug fixes and removed unused code left over from old class Output 2013-05-01
+ *      v5.0.0 - renamed new version for Wer Framework v4
  *  @par Wer Framework 4.0
 **/
 namespace Wer\FrameworkBundle\Library;;
@@ -19,64 +23,63 @@ class Strings extends Base
 {
     protected $current_page;
     protected $o_elog;
-    protected $o_files;
     protected $the_original_string = 'Start';
     protected $the_modified_string = '';
-    protected $template_name     = STD_CONTENT_TPL;
     protected $private_properties;
-    protected $a_sm_values = array('sm_dir'   => SM_DIR,
-                                    'sm_path'  => SM_PATH,
-                                    'site_url' => SITE_URL);
     public function __construct()
     {
         $this->o_elog = Elog::start();
-        $this->o_files = new Files('main.tpl', 'templates');
         $this->setPrivateProperties();
         $this->o_elog->setFromFile(__FILE__);
     }
 
-    ### Getters and Setters ###
-    public function getVar($var_name = '')
-    {
-        if (isset($this->$var_name)) {
-            return $this->$var_name;
-        }
-        return false;
-    }
-    public function getSmValues($which_one = '')
-    {
-        if ($which_one == '') {
-            return $this->a_sm_values;
-        } else {
-            if (array_key_exists($which_one, $this->a_sm_values)) {
-                return $this->a_sm_values[$which_one];
-            } else {
-                $this->o_elog->setFrom(basename(__FILE__), __METHOD__);
-                $this->o_elog->write("the key {$which_one} doesn't exist in the array " . var_export($this->a_sm_values, true), LOG_OFF);
-                return false;
-            }
-        }
-    }
-    public function getTheModifiedString()
-    {
-        return $this->the_modified_string;
-    }
-    public function getTheOriginalString()
-    {
-        return $this->the_original_string;
-    }
-    public function setTemplateName($value = '')
-    {
-        if ($value != '') {
-            $this->template_name = $value;
-        }
-    }
-    public function setTheOriginalString($the_string = '')
-    {
-        $this->the_original_string = $the_string;
-    }
-
     ### String Methods ###
+    /**
+     *  Changes the phone number to the specified phone format (or default format)
+     *  This works only for US numbers and is not international (yet).
+     *  @param str $phone_number required defaults to empty str
+     *  @parama str $phone_format optional format to change to
+     *      options are 'AAA-BBB-CCCC', '(AAA) BBB-CCCC', 'AAA BBB CCCC', 'AAA.BBB.CCC.DDDD'
+    **/
+    public function formatPhoneNumber($phone_number = '', $phone_format = 'AAA-BBB-CCCC')
+    {
+        if ($phone_number == '') { return ''; }
+        $phone_number = preg_replace("/[^0-9]/", "", $phone_number);
+        $strlen = strlen($phone_number);
+
+        switch ( $strlen ) {
+            case 7:
+                return preg_replace("/([0-9]{3})([0-9]{4})/", "$1-$2", $phone_number);
+                break;
+            case 10:
+                switch ($phone_format) {
+                    case '(AAA) BBB-CCCC':
+                        return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "($1) $2-$3", $phone_number);
+                    case 'AAA BBB CCCC':
+                        return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 $2 $3", $phone_number);
+                    case 'AAA.BBB.CCCC':
+                        return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "$1.$2.$3", $phone_number);
+                    case 'AAA-BBB-CCCC':
+                    default:
+                        return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "$1-$2-$3", $phone_number);
+                }
+                break;
+            case 11:
+                switch ($phone_format) {
+                    case '(AAA) BBB-CCCC':
+                        return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 ($2) $3-$4", $phone_number);
+                    case 'AAA BBB CCCC':
+                        return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 $2 $3 $4", $phone_number);
+                    case 'AAA.BBB.CCCC':
+                        return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1.$2.$3.$4", $phone_number);
+                    case 'AAA-BBB-CCCC':
+                    default:
+                        return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 $2-$3-$4", $phone_number);
+                }
+            default:
+                return $phone_number;
+        }
+    }
     /**
      *  Takes the input and makes it a boolean.
      *  Basically, looks for the boolean false, int 0, or string of false (case insensitive).
@@ -277,4 +280,26 @@ class Strings extends Base
         $text = preg_replace($search, $replace, $html);
         return $text;
     }
+
+    ### Getters and Setters ###
+    public function getVar($var_name = '')
+    {
+        if (isset($this->$var_name)) {
+            return $this->$var_name;
+        }
+        return false;
+    }
+    public function getTheModifiedString()
+    {
+        return $this->the_modified_string;
+    }
+    public function getTheOriginalString()
+    {
+        return $this->the_original_string;
+    }
+    public function setTheOriginalString($the_string = '')
+    {
+        $this->the_original_string = $the_string;
+    }
+
 }

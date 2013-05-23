@@ -16,7 +16,7 @@
  *               renamed action to form_action to be clearer what it was
  *      v2.2.0 - refactored to be closer to FIG standards
  *  @par Wer Framework version 4.0.0
- *  @ingroup wer_framework classes
+ *  @ingroup wer_framework library
 **/
 namespace Wer\FrameworkBundle\Library;
 

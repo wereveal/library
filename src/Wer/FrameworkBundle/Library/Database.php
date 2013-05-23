@@ -4,11 +4,14 @@
  *  For read/write access to the database based on PDO.
  *  @file Database.php
  *  @class Database
- *  @ingroup wer_framework classes
+ *  @ingroup wer_framework library
  *  @author William Reveal <wer@wereveal.com>
- *  @version 2.3.2
- *  @date 2013-03-30 10:25:36
+ *  @version 2.4.2
+ *  @date 2013-05-09 12:27:58
  *  @par Change Log
+ *      v2.4.2 - added method to build sql where 05/09/2013
+ *      v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
+ *      v2.4.0 - Change to match new Wer Framework layout 04/23/2013
  *      v2.3.2 - new method to remove bad keys
  *               removed some redundant code
  *               reorganized putting main four commands at top for easy reference
@@ -60,9 +63,9 @@ class Database extends Base
         $this->setPrivateProperties();
         $this->o_elog = Elog::start();
         $this->o_arr = new Arrays;
+        $this->o_files = new Files;
         $this->setDatabaseParameters($config_file);
         $this->read_type = $read_type;
-        $this->o_elog->write('Read Type = ' . $this->read_type, LOG_OFF, __METHOD__);
     }
     /**
      *  Starts the Singleton.
@@ -113,7 +116,7 @@ class Database extends Base
                 $this->o_elog->write($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
             } elseif ($this->affected_rows == 0) {
-                $this->o_elog->write('The INSERT affected no records.', LOG_ON, __METHOD__ . '.' . __LINE__);
+                $this->o_elog->write('The INSERT affected no records.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
             } else { // note: kind of assumes there was a single record inserted
                 $this->a_new_ids = array($this->o_db->lastInsertId($sequence_name));
@@ -122,13 +125,13 @@ class Database extends Base
         } elseif (is_array($a_values) && count($a_values) > 0) {
             $o_pdo_statement = $this->prepare($the_query);
             if ($o_pdo_statement === false) {
-                $this->o_elog->write('Could not prepare the statement', LOG_ON, __METHOD__ . '.' . __LINE__);
+                $this->o_elog->write('Could not prepare the statement', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
             } else {
                 return $this->insertPrepared($a_values, $o_pdo_statement);
             }
         } else {
-            $this->o_elog->write('The array of values for a prepared insert was empty.', LOG_ON, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write('The array of values for a prepared insert was empty.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
             return false;
         }
     }
@@ -156,14 +159,14 @@ class Database extends Base
                 $fetch_style = \PDO::FETCH_ASSOC;
         }
         if ($the_query == '') {
-            $this->o_elog->write('The query must not be blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write('The query must not be blank.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
             return false;
         }
         if ($a_values == '' || count($a_values) == 0) {
             $o_pdo_statement = $this->o_db->prepare($the_query);
             if ($o_pdo_statement === false) {
                 $this->setSqlErrorMessage();
-                $this->o_elog->write($this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->o_elog->write($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
             }
             $o_pdo_statement->execute();
@@ -176,6 +179,9 @@ class Database extends Base
             $o_pdo_statement = $this->prepare($the_query);
             if ($o_pdo_statement) {
                 $a_results = $this->searchPrepared($a_values, $o_pdo_statement, $type);
+            } else {
+                $this->o_elog->write("Could not prepare the query " . $the_query, LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                return false;
             }
         } else {
             $this->o_elog->write("There was a problem with the array", LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -216,7 +222,7 @@ class Database extends Base
      *  @return mixed - value of the property
      *  @note - this is normally set to private so not to be used
     **/
-    private function getVar($var_name)
+    public function getVar($var_name)
     {
         return $this->$var_name;
     }
@@ -368,27 +374,30 @@ class Database extends Base
      *  @param $array (array) - Keys must match the prepared query
      *  @return bool - success or failure
     **/
-    public function bindValues($array = '', $o_pdo_statement = '')
+    public function bindValues($a_values = '', $o_pdo_statement = '')
     {
         if ($o_pdo_statement != '' && $o_pdo_statement instanceof \PDOStatement) {
             $this->o_pdo_statement = $o_pdo_statement;
         }
         $this->o_elog->setFromMethod(__METHOD__ . '.' . __LINE__);
-        $this->o_elog->write("bind array: " . var_export($array, true), LOG_OFF);
-        if ($this->o_arr->isAssocArray($array)) {
-            foreach ($array as $key=>$value) {
+        $this->o_elog->write("bind array: " . var_export($a_values, true), LOG_OFF);
+        if ($this->o_arr->isAssocArray($a_values)) {
+            $a_values = $this->prepareKeys($a_values);
+            $this->o_elog->write("prepared array: " . var_export($a_values, true), LOG_OFF);
+            foreach ($a_values as $key => $value) {
+                $this->o_elog->write("Value: " . var_export($value, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 if ($this->o_pdo_statement->bindValue($key, $value) === false) {
                     $a_error = $this->o_pdo_statement->errorInfo();
-                    $this->o_elog->write($a_error[2], 4);
+                    $this->o_elog->write($a_error[2], LOG_ALWAYS);
                     return false;
                 }
             }
             return true;
-        } elseif (is_array($array)) {
+        } elseif (is_array($a_values)) {
             $this->o_elog->write('binding a basic array', LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->o_elog->write($array[0], LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write($a_values[0], LOG_OFF, __METHOD__ . '.' . __LINE__);
             $x = 1;
-            foreach ($array as $value) {
+            foreach ($a_values as $value) {
                 if ($this->o_pdo_statement->bindValue($x++, $value) === false) {
                     $a_error = $this->o_pdo_statement->errorInfo();
                     $this->o_elog->write($a_error[2], LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
@@ -396,7 +405,8 @@ class Database extends Base
                 }
                 $this->o_elog->write("Successful Binding of {$value}", LOG_OFF, __METHOD__ . '.' . __LINE__);
             }
-        } else {
+            return true;
+       } else {
             $this->o_elog->write('The value passed into bindValues must be an array.');
             return false;
         }
@@ -931,7 +941,8 @@ class Database extends Base
                 $a_results = array();
                 foreach ($a_values as $row) {
                     if ($this->execute($row, $this->o_pdo_statement)) {
-                        $a_results[] = $this->o_pdo_statement->fetchAll($fetch_style);
+                        $fetched = $this->o_pdo_statement->fetchAll($fetch_style);
+                        $a_results[] = $fetched;
                     } else {
                         return false;
                     }
@@ -976,7 +987,70 @@ class Database extends Base
                 }
             }
         }
-        return $set_sql;
+
+    }
+    /**
+     *  Builds the WHERE section of a SELECT stmt.
+     *  Also optionally builds the ORDER BY and LIMIT section of a SELECT stmt.
+     *  @param array $a_search_for required assoc array field_name=>field_value
+     *  @param array $a_search_parameters optional allows one to specify various settings
+     *      array(
+     *          'search_type' => 'AND', // can also be or
+     *          'limit_to' => '', // limit the number of records to return
+     *          'starting_from' => '' // which record to start a limited return
+     *          'comparison_type' => '=' // what kind of comparison to use for ALL WHEREs
+     *          'order_by' => '' // column name(s) to sort by eg column_name [ASC,DESC][, column_name]
+     *      )
+     *      Not all parameters need to be in the array, if doesn't exist, the default setting will be used.
+     *  @return str $where
+    **/
+    public function buildSqlWhere($a_search_for = '', $a_search_parameters = '')
+    {
+        $search_type = 'AND';
+        $comparison_type = '=';
+        $starting_from = '';
+        $limit_to = '';
+        $order_by = '';
+        if (is_array($a_search_parameters) && count($a_search_parameters) > 0) {
+            $a_allowed_keys = array(
+                'search_type',
+                'comparison_type',
+                'starting_from',
+                'limit_to',
+                'order_by'
+            );
+            foreach ($a_search_parameters as $key => $value) {
+                if (array_search($key, $a_allowed_keys) !== false) {
+                    $$key = $value;
+                }
+            }
+        }
+        $where = '';
+        if ($a_search_for != '' && is_array($a_search_for)) {
+            $a_search_pairs = $this->prepareKeys($a_search_for);
+            $this->o_elog->write('search pairs prepared: ' . var_export($a_search_pairs, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            foreach ($a_search_pairs as $key => $value) {
+                $field_name = preg_replace('/^:/', '', $key);
+                $key = preg_replace('/^:(.*)\.(.*)/', ':$2', $key);
+                if ($where == '') {
+                    $where .= "WHERE {$field_name} {$comparison_type} {$key} \n";
+                } else {
+                    $where .= "{$search_type} {$field_name} {$comparison_type} {$key} \n";
+                }
+            }
+        }
+        if ($order_by != '') {
+            $where .= "ORDER BY {$order_by} \n";
+        }
+        if ($limit_to != '') {
+            if ($starting_from != '') {
+                --$starting_from; // limit offset starts at 0 so if we want to start at record 6 the LIMIT offset is 5
+                $where .= "LIMIT {$starting_from}, {$limit_to}";
+            } else {
+                $where .= "LIMIT {$limit_to}";
+            }
+        }
+        return $where;
     }
     public function determineFetchStyle($type = 'assoc')
     {
@@ -1118,15 +1192,41 @@ class Database extends Base
         return $this->o_db->quote($value);
     }
     /**
-     *  Returns a list of the fields from a database table.
+     *  Returns a list of the columns from a database table.
      *  @param $table_name (str) - name of the table
      *  @return array - field names
     **/
-    public function selectDbFields($table_name = '')
+    public function selectDbColumns($table_name = '')
     {
         if ($table_name != '') {
-            $get_columns = "SHOW COLUMNS FROM {$table_name}";
-            return $this->search($qet_columns);
+            $a_column_names = array();
+            switch ($this->db_type) {
+                case 'pgsql':
+                    $sql = "
+                        SELECT column_name
+                        FROM information_schema.columns
+                        WHERE table_name ='{$table_name}'
+                    ";
+                    $results = $this->search($sql);
+                    foreach ($results as $row) {
+                        $a_column_names[] = $row['column_name'];
+                    }
+                    return $a_column_names;
+                    break;
+                case 'sqlite':
+                    $sql = "PRAGMA table({$table_name})";
+                    break;
+                case 'mysql':
+                default:
+                    $sql = "SHOW COLUMNS FROM {$table_name}";
+                    $results = $this->search($sql);
+                    foreach ($results as $row) {
+                        $a_column_names = $row['Field'];
+                    }
+                // end both mysql and default
+            }
+            return $a_column_names;
+
         } else {
             $this->o_elog->setFrom(basename(__FILE__), __METHOD__);
             $this->o_elog->write('You must specify a table name for this to work.');

@@ -4,8 +4,10 @@
  *  @file Access.php
  *  @class Access
  *  @author William Reveal  <wer@wereveal.com>
- *  @version 3.5.2
+ *  @version 3.5.3
  *  @par Change Log
+ *      v3.5.3 - changed namespace to match my framework namespace,
+ *               refactored to match Elog method name change
  *      v3.5.2 - database methods were renamed, changed to match
  *      v3.5.1 - changed namespace to match Symfony structure
  *      v3.5.0 - new methods to handle user groups, lots of minor changes
@@ -14,8 +16,8 @@
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
  *  @par Wer Framework version 4.0
- *  @date 2013-03-30 10:58:56
- *  @ingroup wer_framework classes
+ *  @date 2013-04-22 11:30:13
+ *  @ingroup wer_framework library
 **/
 namespace Wer\FrameworkBundle\Library;
 

@@ -12,7 +12,7 @@
  *  @par Change Log
  *      v1.0.1 - some refactoring changes based on changes in other files
  *  @date 2013-03-27 17:28:19
- *  @ingroup wer_framwork classes
+ *  @ingroup wer_framwork library
  *  @par Wer Framework 4.0.0
 **/
 namespace Wer\FrameworkBundle\Library;;
@@ -28,15 +28,13 @@ class HTML extends Base
     protected $the_modified_string = '';
     protected $template_name     = STD_CONTENT_TPL;
     protected $private_properties;
-    protected $a_sm_values = array('sm_dir'   => SM_DIR,
-                                    'sm_path'  => SM_PATH,
-                                    'site_url' => SITE_URL);
+    protected $namespace = 'Wer';
     public function __construct()
     {
         $this->o_str = new Strings;
         $this->o_elog = Elog::start();
         $this->o_arrays = new Arrays();
-        $this->o_files = new Files('main.tpl', 'templates');
+        $this->o_files = new Files('main.tpl', 'templates',  'default', 'Wer');
         $this->setPrivateProperties();
         $this->o_elog->setFromFile(__FILE__);
     }
@@ -190,5 +188,18 @@ class HTML extends Base
             $this->o_elog->write('The template was empty.', LOG_OFF);
         }
         return $tpl_content;
+    }
+
+    ### UTILITIES ###
+    public function updateFilesNamespace($value = 'Wer')
+    {
+        $this->o_files->setNamespace($value);
+    }
+
+    ### SETTERS ###
+    public function setNamespace($value = 'Wer')
+    {
+        $this->namespace = $value;
+        $this->updateFilesNamespace($value);
     }
 }

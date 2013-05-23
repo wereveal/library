@@ -6,7 +6,7 @@
  *  @author William Reveal <wer@wereveal.com>
  *  @version 1.1.0
  *  @date 2011-06-14 15:11:26
- *  @ingroup wer_framework classes
+ *  @ingroup wer_framework library
  *  @par Wer Framework 4.0
 **/
 namespace Wer\FrameworkBundle\Library;

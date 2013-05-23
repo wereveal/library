@@ -5,12 +5,14 @@
  *  @file Elog.php
  *  @class Elog
  *  @author William Reveal  <wer@wereveal.com>
- *  @version:  2.5.0
- *  @date 2013-03-27 17:09:27
+ *  @version:  2.5.2
+ *  @date 2013-04-23 11:24:26
  *  @par Change Log
+ *      v2.5.2 - added some sanity code to setElogConstants to prevent errors
+ *      v2.5.1 - renamed main method from do_it to write (not so silly)
  *      v2.5.0 - FIG standars (mostly)
  *  @par Wer Framework v4.0.0
- *  @ingroup wer_framework classes
+ *  @ingroup wer_framework library
 **/
 namespace Wer\FrameworkBundle\Library;;
 
@@ -79,14 +81,18 @@ class Elog extends Base
     {
         return $this->last_message;
     }
+    /**
+     *  Sets Constants for use whenever Elog is used.
+     *  @return null
+    **/
     private function setElogConstants()
     {
-        define('LOG_OFF',    0);
-        define('LOG_ON',     1);
-        define('LOG_PHP',    1);
-        define('LOG_BOTH',   2);
-        define('LOG_EMAIL',  3);
-        define('LOG_ALWAYS', 4);
+        $results = defined('LOG_OFF')    ? true : define('LOG_OFF',    0);
+        $results = defined('LOG_ON')     ? true : define('LOG_ON',     1);
+        $results = defined('LOG_PHP')    ? true : define('LOG_PHP',    1);
+        $results = defined('LOG_BOTH')   ? true : define('LOG_BOTH',   2);
+        $results = defined('LOG_EMAIL')  ? true : define('LOG_EMAIL',  3);
+        $results = defined('LOG_ALWAYS') ? true : define('LOG_ALWAYS', 4);
     }
     /**
      *  A combo setter for 5 properties.
@@ -173,8 +179,7 @@ class Elog extends Base
         $this->last_message    = $the_string;
         if ($manual_from != '') {
             $from = ' (From: ' . $manual_from. ")\n";
-        } elseif ($this->from_file . $this->from_method . $this->from_class . $this->from_function . $this->from_line != '')
-{
+        } elseif ($this->from_file . $this->from_method . $this->from_class . $this->from_function . $this->from_line != '') {
             $from = ' (From: '
                 . $this->from_file
                 . ($this->from_file != '' ? '  ' : '')
@@ -195,7 +200,10 @@ class Elog extends Base
             case 0:
                 return true;
             case 4:
-                $this->php_log_used    = true;
+                if ($this->php_log_used === false) {
+                    $the_string = "\n\n=== Start Elog ===\n\n" . $the_string;
+                    $this->php_log_used    = true;
+                }
                 return error_log($the_string, 0);
             case 3:
                 return error_log($the_string, 1, $error_email_address,
@@ -213,7 +221,10 @@ class Elog extends Base
                     $this->debug_text .= $this->makeComment($the_string);
                 }
                 if ($this->use_php_log) {
-                    $this->php_log_used    = true;
+                    if ($this->php_log_used === false) {
+                        $the_string = "\n\n=== Start Elog ===\n\n" . $the_string;
+                        $this->php_log_used    = true;
+                    }
                     return error_log($the_string, 0);
                 }
         }

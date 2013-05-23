@@ -105,16 +105,39 @@ class Category
     ### READ methods ###
     /**
      *  Gets the data from wer_category table
-     *  @param array $a_field_values optional, an array of field=>value pairs.
+     *  @param array $a_search_for optional, an assoc array of field=>value pairs.
      *      fields must be valid fields for the wer_category table
      *      if not specified, returns all categories
-     *  @return bool success or failure
+     *  @param array $a_search_parameters optional allows one to specify various settings
+     *      array(
+     *          'search_type' => 'AND', // can also be or
+     *          'limit_to' => '', // limit the number of records to return
+     *          'starting_from' => '' // which record to start a limited return
+     *          'comparison_type' => '=' // what kind of comparison to use for ALL WHEREs
+     *          'order_by' => 'column_name' // name of the column(s) to sort by
+     *      )
+     *      Not all parameters need to be in the array, if doesn't exist, the default setting will be used.
+     *  @return mixed, array of records or bool success or failure
     **/
-    public function readCategory($a_field_value_pairs = '')
+    public function readCategory($a_search_for = '', $a_search_parameters = '')
     {
-        if ($a_field_value_pairs != '') { // build the where
-
+        $where = '';
+        if (isset($a_search_parameters['order_by']) === false) {
+            if (is_array($a_search_parameters)) {
+                $a_search_parameters['order_by'] = 'cat_order ASC';
+            } else {
+                $a_search_parameters = array('order_by' => 'cat_order ASC');
+            }
         }
+        $this->o_elog->write("a_search_for:\n" . var_export($a_search_for, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $where = $this->o_db->buildSqlWhere($a_search_for, $a_search_parameters);
+        $sql = "SELECT * \nFROM wer_category \n{$where}";
+        $this->o_elog->write("SELECT category sql: \n" . $sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $results = $this->o_db->search($sql, $a_search_for);
+        if ($results !== false && count($results) > 0) {
+            return $results[0];
+        }
+        return false;
     }
     /**
      *  Returns the category record found
@@ -133,23 +156,17 @@ class Category
     }
     /**
      *  Returns the categories for a particular section
-     *  @param int $sec_id optional if not specified returns all categories sorted by section
+     *  @param int $sec_id optional if not specified returns all categories for all sections sorted by section
      *  @param array $a_cat_pairs optional if not specified all categories for section(s)
      *  @return array $a_categories
     **/
-    public function readCatBySec($sec_id = '', $a_cat_pairs = '')
+    public function readCatBySec($sec_id = '')
     {
         $where = '';
+        $a_search_values = '';
         if ($sec_id != '') { // build the where for the section
-            $where .= "AND sec.sec_id = :sec_id
-            ";
-        }
-        if ($a_cat_pairs != '' && is_array($a_cat_pairs)) { // build that category part of the where and the search_values
-            $a_cat_pairs = $this->o_db->prepareKeys($a_cat_pairs);
-            foreach ($a_cat_pairs as $key => $value) {
-                $where .= "AND cat." . str_replace(":", "", $key) . " = {$key}
-                ";
-            }
+            $where .= "AND sec.sec_id = :sec_id \n";
+            $a_search_values = array(':sec_id' => $sec_id);
         }
         $sql = "
             SELECT sec.*, cat.*
@@ -159,7 +176,7 @@ class Category
         ";
         $order_by = "ORDER BY sec.sec_order ASC, cat.cat_order ASC";
         $total_sql = $sql . $where . $order_by;
-        return $total_sql;
+        return $this->o_db->search($total_sql, $a_search_values);
     }
     /**
      *  Gets the data from wer_category_item table
@@ -174,6 +191,27 @@ class Category
     **/
     public function readCategoryRelations()
     {
+    }
+    /**
+     *  Returns the id of the first category.
+     *  First category is based on cat_order field in wer_category table
+     *  @param none
+     *  @return array first record from the results (should only be one anyway)
+    **/
+    public function readFirstCategory()
+    {
+        $sql = "
+            SELECT cat_id, cat_name, cat_order
+            FROM wer_category
+            WHERE cat_active = 1
+            ORDER BY cat_order ASC
+            LIMIT 1
+        ";
+        $results = $this->o_db->search($sql);
+        if ($results !== false && count($results) > 0) {
+            return $results[0];
+        }
+        return false;
     }
     /**
      *  Gets the records from wer_section_category which match the section id

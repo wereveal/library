@@ -1,0 +1,74 @@
+@import "color.scss";
+@import "main_common.scss";
+.container {
+    border: 1px solid $default_border;
+    border-radius: 0 2rem 2rem 0;
+    box-shadow: 0.6rem 0.6rem 1rem $default_shadow;
+    padding: 2rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    background-color: $default_container;
+    .row-fluid {
+        [class*="span"] {
+            background-color: $default_span;
+            border: 1px solid $default_border;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            padding: 1rem 2rem;
+        }
+        .no-box {
+            background-color: inherit;
+            border: 0;
+            padding: 0;
+            margin: 0 0 1rem 0;
+            div.no-box {
+                margin-right: 1rem;
+            }
+        }
+        div {
+            &.item-card {
+                a.item-link {
+                    font-size: 1.2rem;
+                    font-weight: 900;
+                }
+            }
+        }
+    }
+    /*
+    @media print {
+
+    }
+    */
+    @media only screen and (min-width: 768px) and (max-width: 979px) {
+
+    }
+    @media only screen and (max-width: 767px) {
+        /* Landscape phone to portrait tablet */
+    }
+    @media only screen and (min-width: 480px) and (max-width: 767px) {
+    }
+    @media only screen and (max-width: 480px) {
+        border: 0;
+        padding-left: 0;
+        padding-right: 0;
+        box-shadow: none;
+        margin-top: 0;
+        margin-bottom: 0;
+        border-radius: 0;
+    }
+    /*
+    @media (max-width: 979px) { }
+    @media (min-width: 980px) { }
+    */
+    @media only screen and (max-width: 559px) {
+        /* small screen */
+    }
+}
+hr.item-card {
+    margin: .5rem 0;
+    width: 50%;
+}
+@import "btn.scss";
+@import "nav.scss";
+@import "niceform.scss";
+@import "search.scss";

@@ -14,7 +14,7 @@
  *      v1.0.1 - new namespace, FIG standards (mostly)
  *  @par Wer Framework version 4.0.0
  *  @date 2013-03-27 15:30:09
- *  @ingroup wer_framework classes
+ *  @ingroup wer_framework library
 **/
 namespace Wer\FrameworkBundle\Library;
 

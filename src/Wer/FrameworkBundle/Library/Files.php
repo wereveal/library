@@ -2,11 +2,11 @@
 /**
  *  Determines the path to the file.
  *  @file Files.php
- *  @ingroup wer_framework classes
+ *  @ingroup wer_framework library
  *  @class Files
- *  <pre>Determines the path to the file, primarily used for templates but
- *  can be used for anything.
- *  @see setFileLocations()
+ *  <pre>Determines the path to the file, primarily used for themes but
+ *      can be used for anything.
+ *      @see setFileLocations()</pre>
  *  @property CONFIG_DIR_NAME - the default directory name for configs
  *  @property CSS_DIR_NAME - the default directory name for css files
  *  @property HTML_DIR_NAME - the default directory name for html files
@@ -17,15 +17,15 @@
  *  @property TEMPLATES_DIR_NAME - the default directory name for templates
  *  @property TMP_DIR_NAME - the default directory name for temporary files
  *  @note <pre>The constants with _DIR_NAME should correspond to dir names in
- *      the site theme directory and the site manager theme directory
- *      with the exception of PRIVATE_DIR_NAME and TMP_DIR_NAME which
- *      really should be outside the web site but will default to
- *      the SM_INC_DIR if not otherwise specified.
+ *      the site theme or namespace (e.g. templates are in namespace)
  *      </pre>
  *  @author William Reveal <wer@wereveal.com>
- *  @version 4.0.0
- *  @date 2013-03-27 17:08:07
+ *  @version 4.1.1
+ *  @date 2013-04-30 12:23:37
  *  @par Change Log
+ *      v4.1.1 - bug fixes and clean up
+ *      v4.1.0 - New Wer Framework Layout serious changes
+ *               BUT method results and names were not changed
  *      v4.0.0 - FIG standards (mostly)
  *  @par Wer Framework 4.0.0
 **/
@@ -33,29 +33,27 @@ namespace Wer\FrameworkBundle\Library;
 
 class Files extends Location
 {
-    const CONFIG_DIR_NAME    = 'configs';
+    const CONFIG_DIR_NAME    = 'config';
     const CSS_DIR_NAME       = 'css';
     const HTML_DIR_NAME      = 'html';
-    const JS_DIR_NAME        = 'js';
-    const LIBS_DIR_NAME      = 'libs';
     const IMAGE_DIR_NAME     = 'images';
+    const JS_DIR_NAME        = 'js';
+    const LIBS_DIR_NAME      = 'Library';
     const PRIVATE_DIR_NAME   = 'private';
     const TEMPLATES_DIR_NAME = 'templates';
     const TMP_DIR_NAME       = 'tmp';
     protected $current_page;
     protected $file_name     = 'no_file.tpl';
     protected $file_dir_name = 'templates';
-    protected $site_file_dir;
-    protected $sm_file_dir;
-    protected $sm_file_inc_dir;
-    protected $site_file_path;
-    protected $sm_file_path;
-    protected $sm_file_inc_path;
-    protected $sm_only       = false;
+    protected $namespace     = 'Wer';
     protected $o_db;
     protected $o_elog;
     protected $private_properties;
-    public function __construct($file_name = '', $the_directory = '')
+    protected $file_w_dir;
+    protected $file_w_path;
+    protected $theme_name = 'default';
+
+    public function __construct($file_name = '', $the_directory = '', $theme_name = '', $namespace = '')
     {
         $this->o_elog = Elog::start();
         $this->setPrivateProperties();
@@ -65,6 +63,12 @@ class Files extends Location
         if ($the_directory != '') {
             $this->file_dir_name = $the_directory;
         }
+        if ($theme_name != '') {
+            $this->theme_name = $theme_name;
+        }
+        if ($namespace != '') {
+            $this->namespace = $namespace;
+        }
         $this->setFileLocations();
     }
     public function getVar($var_name)
@@ -73,16 +77,16 @@ class Files extends Location
     }
     public function getConfigWithDir($file_name)
     {
-        $this->file_dir_name = defined('CONFIGS_DIR_NAME')
-            ? CONFIGS_DIR_NAME
-            : self::CONFIGS_DIR_NAME;
+        $this->file_dir_name = defined('CONFIG_DIR_NAME')
+            ? CONFIG_DIR_NAME
+            : self::CONFIG_DIR_NAME;
         return $this->getFileWithDir($file_name);
     }
     public function getConfigWithPath($file_name)
     {
-        $this->file_dir_name = defined('CONFIGS_DIR_NAME')
-            ? CONFIGS_DIR_NAME
-            : self::CONFIGS_DIR_NAME;
+        $this->file_dir_name = defined('CONFIG_DIR_NAME')
+            ? CONFIG_DIR_NAME
+            : self::CONFIG_DIR_NAME;
         return $this->getFileWithPath($file_name);
     }
     /**
@@ -115,7 +119,7 @@ class Files extends Location
                 /*
                     the file name has been set at a different time but
                     the file locations have been changed based on $file_dir_name
-                    so the file locations have to be set again, kind of a kludge
+                    so the file locations have to be set again.
                 */
                 $this->setFileLocations();
             }
@@ -148,15 +152,11 @@ class Files extends Location
         if ($file_name != '') {
             $this->setFileName($file_name);
         }
-        if (file_exists($this->site_file_path) && !is_dir($this->site_file_path)) {
-            return $this->site_file_dir;
-        } elseif (file_exists($this->sm_file_inc_path) && !is_dir($this->sm_file_inc_path)) {
-            return $this->sm_file_inc_dir;
-        } elseif (file_exists($this->sm_file_path) && !is_dir($this->sm_file_path)) {
-            return $this->sm_file_dir;
+        if (file_exists($this->file_w_path) && !is_dir($this->file_w_path)) {
+            return $this->file_w_dir;
         } else {
             $this->o_elog->setFromMethod(__METHOD__ . '.' . __LINE__);
-            $this->o_elog->write("Couldn't get file on the following paths: $this->site_file_path, $this->sm_file_inc_path, $this->sm_file_path", LOG_OFF);
+            $this->o_elog->write("Couldn't get file on the following paths: $this->file_w_path", LOG_OFF);
             return false;
         }
     }
@@ -165,15 +165,11 @@ class Files extends Location
         if ($file_name != '') {
             $this->setFileName($file_name);
         }
-        if (file_exists($this->site_file_path) && !is_dir($this->site_file_path)) {
-            return $this->site_file_path;
-        } elseif (file_exists($this->sm_file_inc_path) && !is_dir($this->sm_file_inc_path)) {
-            return $this->sm_file_inc_path;
-        } elseif (file_exists($this->sm_file_path) && !is_dir($this->sm_file_path)) {
-            return $this->sm_file_path;
+        if (file_exists($this->file_w_path) && !is_dir($this->file_w_path)) {
+            return $this->file_w_path;
         } else {
             $this->o_elog->setFromMethod(__METHOD__ . '.' . __LINE__);
-            $this->o_elog->write("The file doesn't exist on the following paths: {$this->site_file_path}, {$this->sm_file_inc_path} or {$this->sm_file_path}", LOG_OFF);
+            $this->o_elog->write("The file doesn't exist on the following paths: {$this->file_w_path}", LOG_OFF);
             return false;
         }
     }
@@ -237,13 +233,7 @@ class Files extends Location
     }
     public function getPrivateFile($file_name = '')
     {
-        if (defined('PRIVATE_PATH')) {
-            if (PRIVATE_PATH != '') {
-                $private_path = PRIVATE_PATH;
-            } else {
-                $private_path = SITE_PATH . SM_INC_DIR . '/' . self::PRIVATE_DIR_NAME;
-            }
-        }
+        $private_path = $_SERVER['DOCUMENT_ROOT'] . '/../' . self::PRIVATE_DIR_NAME;
         $file_w_path = $private_path . '/' . $file_name;
         if (file_exists($file_w_path)) {
             return $file_w_path;
@@ -278,35 +268,74 @@ class Files extends Location
     {
         $a_file_locations = array();
         switch($which_one) {
-            case "site_file_dir":
-                $a_file_locations["site_file_dir"] = $this->site_file_dir;
+            case "file_w_dir":
+                $a_file_locations["file_w_dir"] = $this->file_w_dir;
                 break;
-            case "site_file_path":
-                $a_file_locations["site_file_path"] = $this->site_file_path;
-                break;
-            case "sm_file_inc_dir":
-                $a_file_locations["sm_file_inc_dir"] = $this->sm_file_inc_dir;
-                break;
-            case "sm_file_inc_path":
-                $a_file_locations["sm_file_inc_path"] = $this->sm_file_inc_path;
-                break;
-            case "sm_file_dir":
-                $a_file_locations["sm_file_dir"] = $this->sm_file_dir;
-                break;
-            case "sm_file_path":
-                $a_file_locations["sm_file_path"] = $this->sm_file_path;
+            case "file_w_path":
+                $a_file_locations["file_w_path"] = $this->file_w_path;
                 break;
             default:
-                if ($this->sm_only === false) {
-                    $a_file_locations["site_file_dir"]    = $this->site_file_dir;
-                    $a_file_locations["site_file_path"]   = $this->site_file_path;
-                }
-                $a_file_locations["sm_file_dir"]      = $this->sm_file_dir;
-                $a_file_locations["sm_file_inc_dir"]  = $this->sm_file_inc_dir;
-                $a_file_locations["sm_file_path"]     = $this->sm_file_path;
-                $a_file_locations["sm_file_inc_path"] = $this->sm_file_inc_path;
+                $a_file_locations["file_w_dir"]    = $this->file_w_dir;
+                $a_file_locations["file_w_path"]   = $this->file_w_path;
         }
         return $a_file_locations;
+    }
+    /**
+     *  Finds the location of the file
+     *  the possible places a file could exist.
+     *    <pre>One of several places:
+     *      /$this->file_dir_name
+     *      /assets/themes/$this->theme_name/$this->file_dir_name
+     *      APP_DIR/$this->file_dir_name
+     *      APP_DIR/config
+     *      APP_DIR/namespaces/$this->namespace
+     *      APP_DIR/namespaces/$this->namespace(.*)
+     *      APP_DIR/namespaces/$this->namespace/$this->file_dir_name</pre>
+     *  @param str $file_name required
+     *  @param str $namespace optional defaults to $this->namespace
+     *  @param str $file_dir_name optional default to none
+     *  @return mixed str $path_of_file or false
+    **/
+    public function locateFile($file_name = '', $namespace = '', $file_dir_name = '')
+    {
+        if ($file_name == '') {
+            $file_name = $this->file_name;
+        }
+        if ($namespace == '') {
+            $namespace = $this->namespace;
+        }
+        if ($file_dir_name == '') {
+            $file_dir_name = $this->file_dir_name;
+        }
+        $namespace    = str_replace('\\', '/', $namespace);
+        $base_ns_path = APP_PATH . '/namespaces';
+        $ns_path      = $base_ns_path . '/' . $namespace;
+        $a_possible_locations = array(
+            'site_path'      => SITE_PATH,
+            'base_path'      => BASE_PATH,
+            'app_path'       => APP_PATH,
+            'config_path'    => APP_PATH . '/config',
+            'private_path'   => PRIVATE_PATH,
+            'ns_path'        => $ns_path,
+            'ns_res_path'    => $ns_path . '/Resources',
+            'ns_config_path' => $ns_path . '/Resources/config',
+            'ns_tpl_path'    => $ns_path . '/Resources/templates',
+            'assets_path'    => SITE_PATH . '/assets',
+            'themes_path'    => SITE_PATH . '/assets/themes/' . $this->theme_name,
+            'default_theme'  => SITE_PATH . '/assets/themes/default',
+            'no_base'        => '',
+        );
+        $file_w_dir = '/';
+        $file_w_dir .= $file_dir_name != '' ? $file_dir_name . '/' : '';
+        $file_w_dir .= $file_name;
+        foreach ($a_possible_locations as $key => $location) {
+            $full_path = $location . $file_w_dir;
+            $full_path = str_replace('//', '/', $full_path);
+            if (file_exists($full_path)) {
+                return $full_path;
+            }
+        }
+        return false;
     }
     public function setFileDirName($value = '')
     {
@@ -327,128 +356,44 @@ class Files extends Location
         $this->setFileLocations();
         return true;
     }
-    public function setSmOnly($value = false)
+    public function setNamespace($value = 'Wer')
     {
-        $this->sm_only = $value;
+        $this->namespace = $value;
+        $this->setFileLocations();
+        return true;
     }
     /**
-     *  Sets the possible places a file could exist.
-     *    <pre>One of several places:
-     *      /$this->file_dir_name
-     *      /includes/$this->file_dir_name
-     *      /themes/{chosen_theme}/$this->file_dir_name
-     *      SM_DIR/themes/{chosen_theme}/$this->file_dir_name
-     *      SM_INC_DIR/$this->file_dir_name</pre>
+     *  Sets the themename variable
+     *  @param str $theme_name
+     *  @return null
+    **/
+    public function setThemeName($theme_name)
+    {
+        $this->theme_name = $theme_name;
+        $this->setFileLocations();
+        return true;
+    }
+    /**
+     *  Sets the two main file paths. One is server path, one is site path (within web site)
     **/
     protected function setFileLocations()
     {
-        $this->o_elog->write($this->file_dir_name, LOG_OFF, __METHOD__);
-        switch($this->file_dir_name) {
-            case CSS_DIR_NAME:
-                $file_dir = CSS_DIR;
-                $sm_file_dir = SM_CSS_DIR;
-                break;
-            case JS_DIR_NAME:
-                $file_dir = JS_DIR;
-                $sm_file_dir = SM_JS_DIR;
-                break;
-            case IMAGE_DIR_NAME:
-                $file_dir = THEME_IMAGE_DIR;
-                $sm_file_dir = SM_THEME_IMAGE_DIR;
-                break;
-            case HTML_DIR_NAME:
-                $file_dir = HTML_DIR;
-                $sm_file_dir = SM_HTML_DIR;
-                break;
-            case TEMPLATES_DIR_NAME:
-                if (defined('TEMPLATES_DIR')) {
-                    $file_dir = TEMPLATES_DIR;
-                    $sm_file_dir = SM_TEMPLATES_DIR;
-                } else {
-                    $file_dir = THEMES_DIR . '/default/templates';
-                    $sm_file_dir = SM_THEMES_DIR . '/default/templates';
-                }
-                break;
-            case CLASSES_DIR_NAME:
-                $file_dir = CLASSES_DIR;
-                $sm_file_dir = SM_CLASSES_DIR;
-                break;
-            case LIBS_DIR_NAME:
-                $file_dir = LIBS_DIR;
-                $sm_file_dir = SM_LIBS_DIR;
-                break;
-            case INCLUDES_DIR_NAME:
-                $file_dir = INCLUDES_DIR;
-                $sm_file_dir = SM_INC_DIR;
-                break;
-            default:
-                $file_dir = "/" . $this->file_dir_name;
-                $sm_file_dir = SM_DIR . "/" . $this->file_dir_name;
-        }
-        $this->o_elog->write("file_dir: " . $file_dir . " and sm_file_dir: " . $sm_file_dir, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $this->o_elog->write("file_name: " . $this->file_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        if ($this->sm_only === false) {
-            $this->site_file_dir  = $file_dir . "/" . $this->file_name;
-            $this->site_file_path = SITE_PATH . $this->site_file_dir;
-        } else {
-            $this->site_file_dir  = '';
-            $this->site_file_path = '';
-        }
-        $this->sm_file_dir      = $sm_file_dir . "/" . $this->file_name;
-        $this->sm_file_path     = SITE_PATH . $this->sm_file_dir;
-        $this->sm_file_inc_dir  = SM_INC_DIR . $file_dir . '/' . $this->file_name;
-        $this->sm_file_inc_path = SITE_PATH . $this->sm_file_inc_dir;
-    }
-    /**
-     *  Finds the location of the file
-     *  the possible places a file could exist.
-     *    <pre>One of several places:
-     *      /$this->file_dir_name
-     *      /assets/themes/$this->theme_name/$this->file_dir_name
-     *      APP_DIR/$this->file_dir_name
-     *      APP_DIR/config
-     *      APP_DIR/namespaces/$this->namespace
-     *      APP_DIR/namespaces/$this->namespace(.*)
-     *      APP_DIR/namespaces/$this->namespace/$this->file_dir_name</pre>     *  @param namespace optional
-     *  @param array $a_values array(
-     *      'file_name' =>'' (required),
-     *      'namespace' => '' (optional),
-     *      'file_dir_name' => 'optional'
-     *  )
-     *  @return str $path_of_file
-    **/
-    public function locateFile($file_name = '', $namespace = '', $file_dir_name = '')
-    {
-        if ($file_name == '') {
-            return false;
-        }
-        $namespace = str_replace('\\', '/', $namespace);
-        $site_dir = $_SERVER['DOCUMENT_ROOT'];
-        $base_dir = dirname(dirname($site_dir . '/index.php'));
-        $src_dir  = $base_dir . '/src';
-        $a_possible_locations = array(
-            'site_dir'      => $site_dir,
-            'base_dir'      => $base_dir,
-            'src_dir'       => $src_dir,
-            'config_dir'    => $base_dir  . '/app/config',
-            'assets_dir'    => $site_dir . '/assets',
-            'no_base'       => '',
+        $this->o_elog->write(
+            'File name: '  . $this->file_name .
+            ' Namespace: ' . $this->namespace .
+            ' file dir '   . $this->file_dir_name,
+            LOG_OFF,
+            __METHOD__ . '.' . __LINE__
         );
-        $file_w_dir = '/';
-        $file_w_dir .= $namespace != '' ? $namespace . '/' : '';
-        $file_w_dir .= $file_dir_name != '' ? $file_dir_name . '/' : '';
-        $file_w_dir .= $file_name;
-        foreach ($a_possible_locations as $key => $location) {
-            $full_path = $location . $file_w_dir;
-            $full_path = str_replace('//', '/', $full_path);
-            if (file_exists($full_path)) {
-                return $full_path;
-            }
+        $found_file = $this->locateFile($this->file_name, $this->namespace, $this->file_dir_name);
+        $file_w_dir = str_replace(SITE_PATH, '', $found_file);
+        if (file_exists(SITE_PATH . '/' . $file_w_dir)) {
+            $this->file_w_dir  = $file_w_dir;
+        } else {
+            $this->file_w_dir = '';
         }
-        return false;
+        $this->file_w_path = $found_file;
     }
-
-
     /*
      *  Inherited from Location without change
      *  getFileName()

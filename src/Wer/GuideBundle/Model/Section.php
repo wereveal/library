@@ -5,10 +5,11 @@
  *  @class Section
  *  @ingroup guide classes
  *  @author William E Reveal <wer@revealitconsulting.com>
- *  @version 0.1.0
- *  @date 2013-03-29 09:02:46
+ *  @version 0.2.0
+ *  @date 2013-05-09 12:36:02
  *  @par Change log
- *      v0.1.0 - initial version
+ *      v0.2.0 - testing phase for the Read Methods
+ *      v0.1.0 - initial version 03/29/2013
  *  @par Guide v0.1
 **/
 namespace Wer\GuideBundle\Model;
@@ -40,9 +41,9 @@ class Section
     {
         $sql = "
             INSERT INTO wer_section (
-                sec_name, sec_description, sec_image, sec_order, sec_active, sec_old_cat_id
+                sec_name, sec_title, sec_description, sec_image, sec_order, sec_active, sec_old_cat_id
             ) VALUES (
-                :sec_name, :sec_description, :sec_image, :sec_order, :sec_active, :sec_old_cat_id
+                :sec_name, :sec_title, :sec_description, :sec_image, :sec_order, :sec_active, :sec_old_cat_id
             )
         ";
         if ((isset($a_query_values['sec_name']) && $a_query_values['sec_name'] == '')
@@ -62,6 +63,39 @@ class Section
     }
 
     ### Read Methods ###
+    /**
+     *  Returns one or more records from the wer_section table
+     *  @param array $a_search_for optional, assoc array field_name=>field_value
+     *  @param array $a_search_parameters optional allows one to specify various settings
+     *      array(
+     *          'search_type' => 'AND', // can also be or
+     *          'limit_to' => '', // limit the number of records to return
+     *          'starting_from' => '' // which record to start a limited return
+     *          'comparison_type' => '=' // what kind of comparison to use for ALL WHEREs
+     *          'order_by' => 'column_name' // name of the column(s) to sort by
+     *      )
+     *      Not all parameters need to be in the array, if doesn't exist, the default setting will be used.
+     *  @return array $a_records
+    **/
+    public function readSection($a_search_for = '', $a_search_parameters = '')
+    {
+        if (isset($a_search_parameters['order_by']) === false) {
+            if (is_array($a_search_parameters)) {
+                $a_search_parameters['order_by'] = 'sec_order ASC';
+            } else {
+                $a_search_parameters = array('order_by' => 'sec_order ASC');
+            }
+        }
+        $sql = "SELECT * \nFROM wer_section \n";
+        $sql .= $this->o_db->buildSqlWhere($a_search_for, $a_search_parameters);
+        $this->o_elog->write('SQL: ' . $sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $a_results = $this->o_db->search($sql, $a_search_for);
+        $this->o_elog->write('Sections: ' . var_export($a_results , TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        if ($a_results === false) {
+            $this->o_elog->write($this->o_db->getVar('sql_error_message'), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        }
+        return $a_results;
+    }
     /**
      *  Returns a record from the wer_section table
      *  @param int $record_id required
@@ -149,6 +183,7 @@ class Section
         $sql = "
             UPDATE wer_section
             SET sec_name        = :sec_name,
+                sec_title       = :sec_title,
                 sec_description = :sec_description,
                 sec_image       = :sec_image,
                 sec_order       = :sec_order,
@@ -202,6 +237,7 @@ class Section
         $a_required_keys = array(
             'sec_id',
             'sec_name',
+            'sec_title',
             'sec_description',
             'sec_image',
             'sec_order',
@@ -225,6 +261,14 @@ class Section
                 case 'sec_name':
                     /* required for both create and update */
                     return false;
+                case 'sec_title':
+                    $a_query_values[':sec_title'] =
+                        isset($a_old_record[':sec_title'])
+                        ? $a_old_record['sec_title']
+                        : isset($a_query_values['sec_name'])
+                            ? $a_query_values['sec_name']
+                            : '';
+                        break;
                 case 'sec_description':
                     $a_query_values[':sec_description'] =
                         isset($a_old_record[':sec_description'])

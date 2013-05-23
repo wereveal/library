@@ -20,7 +20,8 @@ class Item
 {
     protected $o_db;
     protected $o_elog;
-    protected $o_model_field;
+    protected $o_cat;
+    protected $o_field;
 
     public function __construct()
     {
@@ -29,7 +30,8 @@ class Item
         if ($this->o_db->connect() === false) {
             exit("Could not connect to the database");
         }
-        $this->o_model_field = new Field();
+        $this->o_field = new Field();
+        $this->o_cat   = new Category();
     }
 
     ### CREATE methods ###
@@ -91,7 +93,7 @@ class Item
         if (count($this->o_db->findMissingKeys(array('item_name'), $a_values)) > 0) { // item_name is required
             return false;
         }
-        $a_values = $this->setRequiredItemKeys($a_values, 'new');
+        $a_values = $this->requiredItemKeys($a_values, 'new');
         $sql = "
             INSERT INTO wer_item (
                 item_name,
@@ -129,7 +131,7 @@ class Item
         if (count($this->o_db->findMissingValues($a_required_keys, $a_values)) > 0) {
             return false;
         }
-        $a_values = $this->setRequiredItemDataKeys($a_values, 'new');
+        $a_values = $this->requiredItemDataKeys($a_values, 'new');
         if ($a_values === false) { return false; }
         $sql = "
             INSERT INTO wer_item_data (
@@ -146,7 +148,6 @@ class Item
                 :data_updated_on
             )
         ";
-        // error_log(var_export($a_values, true));
         $results = $this->o_db->insert($sql, $a_values, 'wer_item_data');
         if ($results === false) {
             return false;
@@ -163,7 +164,7 @@ class Item
     **/
     public function readFieldById($field_id = '')
     {
-        if ($old_field_id == '') { return false; }
+        if ($field_id == '') { return false; }
         $sql = '
             SELECT *
             FROM wer_field
@@ -217,55 +218,72 @@ class Item
     /**
      *  Generic Read, returns one or more records from the wer_item table
      *  @param array $a_search_pairs optional, field=>value to seach upon
-     *  @param str $search_type optional, values are normally AND and OR
-     *  @param int $limit_to optional, limit the number of records to
-     *  @param int $starting_from optional, starting from record #
+     *  @param array $a_search_parameters optional allows one to specify various settings
+     *      array(
+     *          'search_type' => 'AND', // can also be or
+     *          'limit_to' => '', // limit the number of records to return
+     *          'starting_from' => '' // which record to start a limited return
+     *          'comparison_type' => '=' // what kind of comparison to use for ALL WHEREs
+     *          'order_by' => 'column_name' // name of column(s) to order by
+     *      )
+     *      Not all parameters need to be in the array, if doesn't exist, the default setting will be used.
      *  @return array $a_records an array of array(s)
     **/
-    public function readItem($a_search_pairs = '', $search_type = 'AND', $limit_to = '', $starting_from = '')
+    public function readItem($a_search_pairs = '', $a_search_parameters = '')
     {
         $sql = "SELECT * FROM wer_item ";
-        $where = '';
-        if ($a_search_pairs != '' && is_array($a_search_pairs)) {
-            $a_search_pairs = $this->o_db->prepareKeys($a_search_pairs);
-
-            foreach ($a_search_pairs as $key => $value) {
-                $field_name = str_replace(':', '', $key);
-                if ($where == '') {
-                    $where .= "WHERE {$field_name} = {$key} ";
-                } else {
-                    $where .= "{$search_type} {$field_name} = {$key} ";
-                }
-            }
-        }
-        $limit = '';
-        if ($limit_to != '') {
-            if ($starting_from != '') {
-                --$starting_from; // limit offset starts at 0 so if we want to start at record 6 the LIMIT offset is 5
-                $limit = "LIMIT {$starting_from}, {$limit_to}";
-            } else {
-                $limit = "LIMIT {$limit_to}";
-            }
-        }
-        $sql .= $where . 'ORDER BY item_name '. $limit;
+        $sql .= $this->o_db->buildSqlWhere($a_search_pairs, $a_search_parameters);
+        $this->o_elog->write('SQL: ' . $sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write('Search Pairs: ' . var_export($a_search_pairs, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_pairs);
     }
     /**
+     *  Returns the records from wer_items from a category.
+     *  @param int $cat_id required, if '' return array()
+     *  @param array $a_search_params optional
+     *  @param array $a_search_pairs optional
+     *  @return array $a_items
+    **/
+    public function readItemByCategory($cat_id = '', $a_search_params = array())
+    {
+        if ($cat_id == '') {
+            return array();
+        }
+        $sql_where = $this->sqlWhere($a_search_params);
+        $sql = "
+            SELECT i.*
+            FROM wer_item as i, wer_category_item as ci
+            WHERE i.item_id = ci.ci_item_id
+            AND ci.ci_category_id = :ci_category_id
+            {$sql_where}
+        ";
+        $this->o_elog->write($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        return $this->o_db->search($sql, array(':ci_category_id' => $cat_id));
+    }
+
+    /**
+     *  Returns the records from wer_item.
+     *  A shortcut which uses the main method readItem()
+     *  @param str $item_name
+     *  @return array $a_items
+    **/
+    public function readItemByName($item_name = '')
+    {
+        return $this->readItem(array(':item_name' => $item_name), array('comparison_type' => 'LIKE', 'limit_to' => 1));
+    }
+    /**
      *  Returns the records that match the first letter of the item name with the param
-     *  @param str $the_letter
+     *  @param str $the_letter required
+     *  @param int $limit_to optional limit the number of records found
      *  @return array $a_records
     **/
-    public function readItemByNameFirstLetter($the_letter = 'A')
+    public function readItemByNameFirstLetter($the_letter = 'A', $limit_to = '')
     {
-        $sql = "
-            SELECT *
-            FROM wer_item
-            WHERE item_name LIKE :item_name
-            AND item_active = 1
-            ORDER BY item_name
-        ";
         $the_letter = substr(trim($the_letter), 0, 1);
-        return $this->o_db->search($sql, array(':item_name' => '{$the_letter}%'));
+        if ($the_letter == '') {
+            return false;
+        }
+        return $this->readItem(array(':item_name' => $the_letter . '%'), array('comparison_type' => 'LIKE', 'limit_to' => $limit_to));
     }
     /**
      *  Returns the record for the Item specified by item_old_id
@@ -277,59 +295,82 @@ class Item
         if ($old_item_id == '') {
             return false;
         }
-        $a_search_values = array(':item_old_id' => $old_item_id);
-        $a_values = $this->readItem($a_search_values);
-        if (count($a_values) > 0) {
-            return $a_values[0];
+        $a_search_values = array('item_old_id' => $old_item_id);
+        return $this->readItem($a_search_values);
+    }
+    /**
+     *  Returns items from specified section.
+     *  This normally is used to return either a set number of random or featured
+     *  items from a specific section. However, search params can change what item records
+     *  from a section will be returned.
+     *  @param int $section_id required, if '' return array()
+     *  @param array $a_search_params optional, defaults as follows
+     *      array(
+     *          'is_active' => true,
+     *          'is_random' => true, // used if is_featured is false
+     *          'is_featured' => true, // affects the use of is_random
+     *          'limit_to' => 10, // limit the number of records to return
+     *          'order_by' => 'i.item_name' // not used if is_random === true
+     *      )
+     *      Not all parameters need to be in the array, if doesn't exist, the default setting will be used.
+     *  @return array $a_items
+    **/
+    public function readItemBySection($section_id = '', $a_search_params = array())
+    {
+        if ($section_id == '') {
+            return array();
         }
-        return false;
+        $sql_where = $this->sqlWhere($a_search_params);
+        $sql = "
+            SELECT i.*
+            FROM wer_item as i, wer_category_item as ci, wer_section_category as sc
+            WHERE i.item_id = ci.ci_item_id
+            AND ci.ci_category_id = sc.sc_cat_id
+            AND sc.sc_sec_id = :sc_sec_id
+            {$sql_where}
+        ";
+        $a_search_pairs = array(":sc_sec_id" => $section_id);
+        return $this->o_db->search($sql, $a_search_pairs);
     }
     /**
      *  Returns the record for the item data specified
-     *  @param int $item_id
-     *  @param int $field_id optional if $field_name is specified else required
-     *  @param str $field_name optional not used if $field_id is specified
+     *  @param array $a_values WHERE search params
+     *  @param array $a_search_parameters optional defaults to Database class values
+     *      array(
+     *          'search_type' => 'AND', // can also be or
+     *          'limit_to' => '', // limit the number of records to return
+     *          'starting_from' => '' // which record to start a limited return
+     *          'comparison_type' => '=' // what kind of comparison to use for ALL WHEREs
+     *          'order_by' => '' // column name(s) to sort by eg column_name [ASC,DESC][, column_name]
+     *      )
      *  @return mixed array or false
     **/
-    public function readItemData($item_id = '', $field_id = '', $field_name = '')
+    public function readItemData($a_values = '', $a_search_parameters = '')
     {
-        if ($item_id == '' || ($field_id == '' && $field_name == '')) {
-            return false;
+        if ($a_values == '' || !is_array($a_values)) {
+            $a_values = array();
         }
-        if ($field_id == '') {
-            $field_sql = "
-                SELECT field_id
-                FROM wer_field
-                WHERE field_name = :field_name
-            ";
-            $a_search_values = array(':field_name' => $field_name);
-            $a_field = $this->o_db->search($field_sql, $a_search_values);
-            if (count($a_field) > 0) {
-                $field_id = $a_field[0]['field_id'];
-            } else {
-                return false;
-            }
+        $a_new_values = array();
+        foreach ($a_values as $key => $value) {
+            $key = preg_replace('/^data_/', 'd.data_', $key);
+            $key = preg_replace('/^field_/', 'f.field_', $key);
+            $a_new_values[$key] = $value;
         }
-        if ($field_id != '') {
-            $sql = "
-                SELECT *
-                FROM wer_item_data
-                WHERE data_item_id = :data_item_id
-                AND data_field_id = :data_field_id
-            ";
-            $a_search_values = array(
-                ':data_item_id'  => $field_id,
-                ':data_field_id' => $field_id
-            );
-            $a_item_data = $this->o_db->search($sql, $a_search_values);
-            if (count($a_item_data) > 0) {
-                return $a_item_data[0];
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+        $where = $this->o_db->buildSqlWhere($a_new_values, $a_search_parameters);
+        $sql = "
+            SELECT d.data_id, f.field_name, d.data_text
+            FROM wer_item_data as d, wer_field as f
+            {$where}
+            AND d.data_field_id = f.field_id
+            ORDER BY f.field_id
+        ";
+        $this->o_elog->write('sql: ' . $sql . "\n", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $results = $this->o_db->search($sql, $a_values);
+        if ($results === false) {
+            $this->o_elog->write('Error Msg: ' . $this->o_db->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
         }
+        $this->o_elog->write('Item data: ' . var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        return $results;
     }
     /**
      *  Returns a list of items which are marked as featured
@@ -338,6 +379,28 @@ class Item
     **/
     public function readItemFeatured($num_of_records = 10)
     {
+        return $this->readItem(
+            array('item_featured' => '1'),
+            array('limit_to' => $num_of_records, 'order_by' => 'item_name')
+        );
+    }
+    /**
+     *  Returns the ids of the records
+     *  @param int $num_of_records optional
+     *  @return array $a_items
+    **/
+    public function readItemIds($num_of_records = 0)
+    {
+        $num_of_records = (int) $num_of_records;
+        $sql = "
+            SELECT item_id
+            FROM wer_item
+            ORDER BY item_id
+        ";
+        if ($num_of_records > 0) {
+            $sql .= "LIMIT {$num_of_records}";
+        }
+        return $this->o_db->search($sql);
     }
     /**
      *  Returns a list of random items.
@@ -346,23 +409,24 @@ class Item
     **/
     public function readItemRandom($num_of_records = 10)
     {
-        $a_item_ids = $this->readItemIds();
-        $a_keys = array_rand($a_item_ids, $num_of_records);
-        $a_values = array();
-        foreach ($a_keys as $key_id) {
-            $value = $a_item_ids[$key_id]['item_id'];
-            $a_values[] = array(':item_id' => $value);
-        }
-        unset($a_item_ids); // not sure I want the big monster array haning around
-        unset($a_keys);
+        $db_type = $this->o_db->getVar('db_type');
         $sql = "
             SELECT item_id, item_name
             FROM wer_item
-            WHERE item_id = :item_id
-            AND item_active = 1
-            ORDER BY item_name
+            WHERE item_active = 1
         ";
-        $results = $this->o_db->search($sql, $a_values);
+        switch ($db_type) {
+            case 'mysql':
+                $sql .= "            ORDER BY rand() LIMIT {$num_of_records}";
+                break;
+            case 'pgsql':
+            case 'sqlite':
+                $sql .= "            ORDER BY random() LIMIT {$num_of_records}";
+                break;
+            default:
+                $sql .= '';
+        }
+        $results = $this->o_db->search($sql);
         return $results;
     }
 
@@ -375,7 +439,7 @@ class Item
     public function updateItem($a_values = '')
     {
         if ($a_values == '') { return false; }
-        $a_values = $this->setRequiredItemKeys($a_values, 'update');
+        $a_values = $this->requiredItemKeys($a_values, 'update');
         if ($a_values === false) { return false; }
 
         $a_values = $this->o_db->prepareKeys($a_values);
@@ -396,11 +460,9 @@ class Item
     public function updateItemData($a_values = '')
     {
         if ($a_values == '') { return false; }
-        $a_values = $this->setRequiredItemDataKeys($a_values, 'update');
+        $a_values = $this->requiredItemDataKeys($a_values, 'update');
         if ($a_values === false) { return false; }
-        error_log(var_export($a_values, true));
         $a_values = $this->o_db->prepareKeys($a_values);
-        error_log('Again: ' . var_export($a_values, true));
         $set_sql = $this->o_db->buildSqlSet($a_values, array(':data_id'));
 
         $sql = "
@@ -408,11 +470,29 @@ class Item
             {$set_sql}
             WHERE data_id = :data_id
         ";
-        error_log('update sql: ' . $sql);
         return $this->o_db->update($sql, $a_values, true);
     }
 
     ### DELETE methods ###
+    /**
+     *  Deletes an item record from wer_item
+     *  @param int $item_id
+     *  @return bool success or failure
+    **/
+    public function deleteItem($item_id = '')
+    {
+        return false;
+    }
+    /**
+     *  Deletes the bridge record between category and item from wer_category_item table.
+     *  @param int $cat_id required
+     *  @param int $item_id required
+     *  @return bool success or failure
+    **/
+    public function deleteCatetoryItem($cat_id = '', $item_id = '')
+    {
+        return false;
+    }
 
     ### Utilities ###
     /**
@@ -422,7 +502,7 @@ class Item
      *      but an update only requires item_id and item_updated_on
      *  @return array $a_values
     **/
-    public function setRequiredItemKeys($a_values = '', $new_or_update = 'new')
+    public function requiredItemKeys($a_values = '', $new_or_update = 'new')
     {
         $a_required_keys = array(
             'item_id',
@@ -450,20 +530,20 @@ class Item
                     break;
                 case 'item_created_on':
                     if ($new_or_update == 'new') {
-                        $a_values[':item_created_on'] = $current_timestamp;
+                        $a_values['item_created_on'] = $current_timestamp;
                     }
                     break;
                 case 'item_updated_on':
-                    $a_values[':item_updated_on'] = $current_timestamp;
+                    $a_values['item_updated_on'] = $current_timestamp;
                     break;
                 case 'item_active':
                     if ($new_or_update == 'new') {
-                        $a_values[':item_active'] = 1;
+                        $a_values['item_active'] = 1;
                     }
                     break;
                 case 'item_old_id':
                     if ($new_or_update == 'new') {
-                        $a_values[':item_old_id'] = '';
+                        $a_values['item_old_id'] = '';
                     }
                     break;
             }
@@ -475,7 +555,7 @@ class Item
      *  @param array $a_values required *  @param bool $new_or_update optional defaults to new
      *  @return array $a_values
     **/
-    public function setRequiredItemDataKeys($a_values = '', $new_or_update = 'new')
+    public function requiredItemDataKeys($a_values = '', $new_or_update = 'new')
     {
         $a_required_keys = array(
             'data_id',
@@ -505,16 +585,81 @@ class Item
                     break;
                 case 'data_created_on':
                     if ($new_or_update == 'new') {
-                        $a_values[':data_created_on'] = $current_timestamp;
+                        $a_values['data_created_on'] = $current_timestamp;
                     }
                     break;
                 case 'data_updated_on':
-                    $a_values[':data_updated_on'] = $current_timestamp;
+                    $a_values['data_updated_on'] = $current_timestamp;
                     break;
                 default:
                     return false;
             }
         }
         return $a_values;
+    }
+    /**
+     *  Creates the sql for the where, order by and limit
+     *  @param array $a_params
+     *  @return str $sql
+    **/
+    public function sqlWhere($a_params = '')
+    {
+        ### Defaults ###
+        $is_active    = true;
+        $is_random    = false;
+        $is_featured  = true;
+        $limit_to     = 10;
+        $order_by     = 'i.item_name';
+
+        $sql_active   = "AND i.item_active = 1 \n";
+        $sql_featured = "            AND i.item_featured = 1 \n";
+        $sql_order_by = "            ORDER BY {$order_by} \n";
+        $sql_limit_to = "            LIMIT {$limit_to} \n";
+        foreach ($a_params as $key => $value) {
+            switch ($key) {
+                case 'is_active':
+                    $is_active = (bool) $value;
+                    break;
+                case 'is_random':
+                    $is_random = (bool) $value;
+                    break;
+                case 'is_featured':
+                    $is_featured = (bool) $value;
+                    break;
+                case 'limit_to':
+                    $limit_to = (int) $value;
+                    if ($limit_to === 0) {
+                        $sql_limit_to = "            -- return all records, no limit \n";
+                    } else {
+                        $sql_limit_to = "            LIMIT {$limit_to} \n";
+                    }
+                    break;
+                case 'order_by':
+                    $order_by = $value;
+                    $sql_order_by = "            ORDER BY {$order_by} \n";
+                    break;
+                default:
+                    // not valid key, skip it
+            }
+        }
+        if ($is_active === false) {
+            $sql_active = "-- active and inactive item records \n";
+        }
+        if ($is_random === true && $is_featured === false) {
+            $sql_featured = "            -- using random and not featured items \n";
+            $db_type = $this->o_db->getVar('db_type');
+            switch ($db_type) {
+                case 'mysql':
+                    $sql_order_by = "            ORDER BY rand() \n";
+                    break;
+                case 'pgsql':
+                case 'sqlite':
+                    $sql_order_by = "            ORDER BY random() \n";
+                    break;
+                default:
+                    $sql_order_by .= "            -- invalid db type, can't set order by random \n";
+            }
+        }
+        return $sql_active . $sql_featured . $sql_order_by . $sql_limit_to;
     }
 }
