@@ -1,6 +1,9 @@
-{{ item.name }}
-{{ item.address }}
-{{ item.city }}, {{ item.state }} {{ item.zip }}
-
-{{ item.description }}
-{{ item.image }}
+<a href="/display/item/{{ item_id }}/" class="item-link">{{ item.item_name }}</a>
+<br>
+{{ item.street }}
+<br>
+{{ item.city }}, {{ item.federal_state }} {{ item.postcode }}
+<br>
+{{ item.phone }}
+<hr class="item-card">
+{{ item.about }}

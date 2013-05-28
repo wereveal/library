@@ -1,12 +1,12 @@
-<form action="/search/results/" method="post" id="quick-search">
+<form action="/search/" method="post" id="quick-search">
     <fieldset class="search-set">
         <legend>Quick Search</legend>
-        Search For: <input type="text" name="search-terms" value="" />
-        <button name="search" class="btn medium {{ form.color }}">{{ form.buttonText }}</button>
+        Search For: <input type="text" name="search-terms" value="{{ form.searchForText }}" />
+        <button name="search" class="btn medium {{ form.buttonColor }}">{{ form.buttonText }}</button>
     </fieldset>
     <fieldset class="help">
         <p>
-            Enter search terms seperated by a space. Use quote marks (") to search on a phrase.
+            Enter search terms separated by a space. Use quote marks (") to search on a phrase.
         </p>
     </fieldset>
 </form>

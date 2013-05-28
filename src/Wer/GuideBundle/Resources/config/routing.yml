@@ -12,16 +12,16 @@ guide_search:
     defaults: { _controller: WerGuideBundle:Search:index }
 guide_search_advanced:
     pattern: /search/advanced/
-    defaults: { _controller: WerGuideBundle:Search:index }
+    defaults: { _controller: WerGuideBundle:Search:advanced }
 guide_search_alpha:
-    pattern: /search/alpha/
-    defaults: { _controller: WerGuideBundle:Search:results }
+    pattern: /search/byAlpha/
+    defaults: { _controller: WerGuideBundle:Search:byAlpha }
 guide_search_section:
-    pattern: /search/section/
-    defaults: { _controller: WerGuideBundle:Search:results }
+    pattern: /search/bySection/
+    defaults: { _controller: WerGuideBundle:Search:bySection }
 guide_search_category:
-    pattern: /search/category/
-    defaults: { _controller: WerGuideBundle:Search:results }
-guide_search_results:
-    pattern: /search/results/
-    defaults: { _controller: WerGuideBundle:Search:results }
+    pattern: /search/byCategory/
+    defaults: { _controller: WerGuideBundle:Search:byCategory }
+guide_display_item:
+    pattern: /display/item/
+    defaults: { _controller: WerGuideBundle:Main:displayItem }

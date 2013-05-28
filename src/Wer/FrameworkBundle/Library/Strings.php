@@ -53,12 +53,16 @@ class Strings extends Base
                 break;
             case 10:
                 switch ($phone_format) {
+                    case '(XXX) XXX-XXXX':
                     case '(AAA) BBB-CCCC':
                         return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "($1) $2-$3", $phone_number);
+                    case 'XXX XXX XXXX':
                     case 'AAA BBB CCCC':
                         return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 $2 $3", $phone_number);
+                    case 'XXX.XXX.XXXX':
                     case 'AAA.BBB.CCCC':
                         return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "$1.$2.$3", $phone_number);
+                    case 'XXX-XXX-XXXX':
                     case 'AAA-BBB-CCCC':
                     default:
                         return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "$1-$2-$3", $phone_number);
@@ -66,12 +70,16 @@ class Strings extends Base
                 break;
             case 11:
                 switch ($phone_format) {
+                    case '(XXX) XXX-XXXX':
                     case '(AAA) BBB-CCCC':
                         return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 ($2) $3-$4", $phone_number);
+                    case 'XXX XXX XXXX':
                     case 'AAA BBB CCCC':
                         return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 $2 $3 $4", $phone_number);
+                    case 'XXX.XXX.XXXX':
                     case 'AAA.BBB.CCCC':
                         return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1.$2.$3.$4", $phone_number);
+                    case 'XXX-XXX-XXXX':
                     case 'AAA-BBB-CCCC':
                     default:
                         return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 $2-$3-$4", $phone_number);

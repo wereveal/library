@@ -3,19 +3,26 @@
 namespace Wer\GuideBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Wer\GuideBundle\Model\Category;
 use Wer\GuideBundle\Model\Item;
+use Wer\GuideBundle\Model\Section;
+use Wer\FrameworkBundle\Library\Arrays;
+use Wer\FrameworkBundle\Library\Elog;
+use Wer\FrameworkBundle\Library\Strings;
 
 class MainController extends Controller
 {
-    private $default_section = 1;
-    private $num_to_display  = 10;
-    private $o_item;
+    protected $default_section = 1;
+    protected $num_to_display  = 10;
+    protected $phone_format    = "AAA-BBB-CCCC";
+    protected $date_format     = "mm/dd/YYYY";
+    protected $o_item;
     protected $o_arr;
     protected $o_cat;
     protected $o_elog;
     protected $o_item;
     protected $o_sec;
-    protected $o_shared_view;
+    protected $o_str;
     protected $o_view;
 
     public function __construct()
@@ -25,8 +32,10 @@ class MainController extends Controller
         $this->o_elog = Elog::start();
         $this->o_item = new Item();
         $this->o_sec  = new Section();
-        $this->o_shared_view = new Shared();
-   }
+        $this->o_str  = new Strings();
+    }
+
+    ### Main Actions called by routing parameters ###
     public function indexAction()
     {
         /*  What are we doing?
@@ -60,24 +69,14 @@ class MainController extends Controller
         return $this->render('WerGuideBundle:Pages:index.html.twig', $a_twig_values);
     }
     /**
-     * Displays the results of a search
+     *  Displays an individual item in all its glory.
+     *  @param none
+     *  @return str the html
     **/
-    public function searchAction()
+    public function displayItemAction()
     {
+        return '';
     }
-    /**
-     *  Display the results from the selection of a category
-    **/
-    public function categoryAction()
-    {
-    }
-    /**
-     *  Displays the results from the selection of an alphanumeric
-    **/
-    public function alphaAction()
-    {
-    }
-
     ### Common Code ###
     /**
      *  creates the values to be used in the twig tpl.
@@ -117,27 +116,63 @@ class MainController extends Controller
             $a_li_values[$i] = $a_li_row;
         }
         return $a_li_values;
-        // return $this->render('WerGuideBundle:Snippets:alphaListUl.html.twig', array('li_rows' => $a_li_values));
     }
     /**
      *  creates the values to be used in the category select
      *  @param int $section_id defaults to 1
-     *  @return array $a_sections
+     *  @return array $a_categories
     **/
-    public function categoryList($section_id = 1)
+    public function categoryList($section_id = 1, $selected_category = '')
     {
-        return array();
+        $a_return_this = array(
+            'name'        => '',
+            'class'       => '',
+            'other_stuph' => '',
+            'options'     => '',
+            'label_for'   => '',
+            'label_text'  => '',
+            'label_class' => ''
+        );
+        $a_categories = $this->o_cat->readCatBySec($section_id);
+        if (count($a_categories) > 1) {
+            foreach ($a_categories as $a_category) {
+                if ($selected_category == '') {
+                    $selected_category = $a_category['cat_id'];
+                }
+                $a_return_this['options'][] = array(
+                    'value'       => $a_category['cat_id'],
+                    'label'       => $a_category['cat_name'],
+                    'other_stuph' => $selected_category == $a_category['sec_id'] ? ' selected' : '';
+                );
+            }
+            $a_return_this['name']        = 'catSelect';
+            $a_return_this['class']       = 'catSelect';
+            $a_return_this['other_stuph'] = ' id="catSelect" onchange="searchByCategory(this)"';
+            $a_return_this['label_for']   = 'catSelect';
+            $a_return_this['label_text']  = 'Search By Category';
+            $a_return_this['label_class'] = 'selectLabel';
+        }
+        return $a_return_this;
     }
     /**
      *
     **/
-    public function formQuickSearch()
+    public function formQuickSearch($a_search_for = 'Search For')
     {
+        if ($a_search_for != 'Search For' && is_array($a_search_for)) {
+            foreach ($a_search_for as $value) {
+                if (strpos($value, ' ') !== false) {
+                    $value = '"' . $value . '"';
+                }
+                $search_str .= $value . ' ';
+            }
+
+        }
         return array(
-            'color' => 'white',
-            'buttonText' => 'Locate'
+            'buttonColor'   => 'white',
+            'buttonText'    => 'Locate',
+            'searchForText' => $search_str
         );
-        // return $this->render('WerGuideBundle:Snippets:quickSearch.html.twig', $a_values);
     }
     /**
      *  creates the values to be used for the item cards
@@ -150,6 +185,25 @@ class MainController extends Controller
         // if there are some, grab the first 10 and return them
         // else grab 10 random items
         return array();
+        $a_items = $this->o_item->readItemFeatured($this->num_to_display);
+        if ($a_items === false || count($a_items) <= 0) {
+            $a_items = $this->o_item->readItemRandom($this->num_to_display);
+        }
+        $a_items = $this->o_arr->removeSlashes($a_items);
+        $this->o_elog->write('' . var_export($a_items, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $a_search_parameters = array(
+            'search_type' => 'AND'
+        );
+        $a_search_for_fields = array(
+            'about',
+            'street',
+            'city',
+            'federal_state',
+            'postcode',
+            'phone'
+        );
+        $a_items = $this->addDataToItem($a_items, $a_search_for_fields, $a_search_parameters);
+        return $a_items;
     }
     /**
      *  creates the values needed for the section list
@@ -160,6 +214,15 @@ class MainController extends Controller
     **/
     public function sectionList($selected_section = '', $a_search_parameters = '')
     {
+        $a_return_this = array(
+            'name'        => '',
+            'class'       => '',
+            'other_stuph' => '',
+            'options'     => '',
+            'label_for'   => '',
+            'label_text'  => '',
+            'label_class' => ''
+        );
         $a_return_this = array();
         $a_sections = $this->o_sec->readSection('', $a_search_parameters);
         if (count($a_sections) > 1) {
@@ -168,21 +231,17 @@ class MainController extends Controller
                     $selected_section = $a_section['sec_id'];
                 }
                 $a_return_this['options'][] = array(
-                    'o_value'     => $a_section['sec_id'],
-                    'o_label'     => $a_section['sec_id'],
+                    'value'     => $a_section['sec_id'],
+                    'label'     => $a_section['sec_name'],
                     'other_stuph' => $selected_section == $a_section['sec_id'] ? ' selected' : '';
                 );
             }
-            $a_return_this['select_values'] = array(
-                'select_name' => 'sectionSelect',
-                'class'       => 'sectionSelect',
-                'other_stuph' => ' id="sectionSelect" onchange="searchBySection(this)"'
-            );
-            $a_return_this['label_values'] = array(
-                'for'        => 'sectionSelect',
-                'label_text' => 'Search By Section',
-                'class'      => 'sectionSelectLabel'
-            );
+            $a_return_this['name']        = 'sectionSelect';
+            $a_return_this['class']       = 'sectionSelect';
+            $a_return_this['other_stuph'] = ' id="sectionSelect" onchange="searchBySection(this)"';
+            $a_return_this['label_for']   = 'sectionSelect';
+            $a_return_this['label_text']  = 'Search By Section';
+            $a_return_this['label_class'] = 'selectLabel';
         }
         $this->o_elog->write("select list array\n" . var_export($a_return_this, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $a_return_this;
@@ -190,6 +249,20 @@ class MainController extends Controller
     ### Utilities ###
 
     ### SETTERS ###
+    /**
+     *  Sets the value of $this->date_format.
+     *  Verifies the date format is valid for php before
+     *  setting it. If it isn't a valie format, doesn't set.
+     *  @param str $value date format desired
+     *  @return null
+    **/
+    public function setDateFormat($value = '')
+    {
+        if ($value == '') { return; }
+        if (Date_Time::isValidDateFormat($value)) {
+            $this->date_format = $value;
+        }
+    }
     /**
      *  Sets the value of $this->default_section.
      *  @param int $section_id
@@ -208,8 +281,40 @@ class MainController extends Controller
     {
         $this->num_to_display = $value;
     }
+    /**
+     *  Sets the value of $phone_format
+     *  Verifies value is valid formate else doesn't set it.
+     *  @param str $value defaults to ''
+     *  @return null
+    **/
+    public function setPhoneFormat($value = '')
+    {
+        switch ($value) {
+            case 'XXX-XXX-XXXX':
+            case '(XXX) XXX-XXXX':
+            case 'XXX XXX XXXX':
+            case 'XXX.XXX.XXXX':
+            case 'AAA-BBB-CCCC':
+            case '(AAA) BBB-CCCC':
+            case 'AAA BBB CCCC':
+            case 'AAA.BBB.CCCC':
+                $this->phone_format = $value;
+                return;
+            default:
+                return;
+        }
+    }
 
     ### GETTERS ###
+    /**
+     *  Gets the value of the date format.
+     *  @param none
+     *  @return str the value set
+    **/
+    public function getDateFormat()
+    {
+        return $this->date_format;
+    }
     /**
      *  Gets the value of $this->default_section.
      *  @param none
@@ -227,5 +332,14 @@ class MainController extends Controller
     public function getNumToDisplay()
     {
         return $this->num_to_display;
+    }
+    /**
+     *  Gets the value of $phone_format.
+     *  @param none
+     *  @return str
+    **/
+    public function getPhoneFormat()
+    {
+        return $this->phone_format;
     }
 }
