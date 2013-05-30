@@ -16,7 +16,6 @@ class MainController extends Controller
     protected $num_to_display  = 10;
     protected $phone_format    = "AAA-BBB-CCCC";
     protected $date_format     = "mm/dd/YYYY";
-    protected $o_item;
     protected $o_arr;
     protected $o_cat;
     protected $o_elog;
@@ -109,7 +108,7 @@ class MainController extends Controller
                 $is_link   = false;
             }
             $a_li_row = array(
-                'the_letter' => $the_letter
+                'the_letter' => $the_letter,
                 'the_class'  => $the_class,
                 'is_link'    => $is_link,
             );
@@ -142,7 +141,7 @@ class MainController extends Controller
                 $a_return_this['options'][] = array(
                     'value'       => $a_category['cat_id'],
                     'label'       => $a_category['cat_name'],
-                    'other_stuph' => $selected_category == $a_category['sec_id'] ? ' selected' : '';
+                    'other_stuph' => $selected_category == $a_category['sec_id'] ? ' selected' : ''
                 );
             }
             $a_return_this['name']        = 'catSelect';
@@ -233,7 +232,7 @@ class MainController extends Controller
                 $a_return_this['options'][] = array(
                     'value'     => $a_section['sec_id'],
                     'label'     => $a_section['sec_name'],
-                    'other_stuph' => $selected_section == $a_section['sec_id'] ? ' selected' : '';
+                    'other_stuph' => $selected_section == $a_section['sec_id'] ? ' selected' : ''
                 );
             }
             $a_return_this['name']        = 'sectionSelect';

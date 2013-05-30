@@ -95,7 +95,7 @@ class ViewHelper
 		}
 		return array(
 		    'message'       => $message,
-		    'message_class' => $class
+		    'message_class' => $class,
 		    'image_src'     => $image_src,
 		    'image_class'   => $image_class,
 		    'alt_text'      => $alt_text,

@@ -15,7 +15,6 @@ class SearchController extends Controller
     protected $num_to_display  = 10;
     protected $phone_format    = "AAA-BBB-CCCC";
     protected $date_format     = "mm/dd/YYYY";
-    protected $o_item;
     protected $o_arr;
     protected $o_cat;
     protected $o_elog;
@@ -42,7 +41,7 @@ class SearchController extends Controller
     **/
     public function indexAction()
     {
-        return ''
+        return '';
     }
     /**
      *  Displays the result of an advanced search.
