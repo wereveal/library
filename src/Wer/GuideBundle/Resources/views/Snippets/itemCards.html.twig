@@ -1,4 +1,5 @@
-<a href="/display/item/{{ item_id }}/" class="item-link">{{ item.item_name }}</a>
+{% for item in items %}
+<a href="/display/item/{{ item.item_id }}/" class="item-link">{{ item.item_name }}</a>
 <br>
 {{ item.street }}
 <br>
@@ -7,3 +8,4 @@
 {{ item.phone }}
 <hr class="item-card">
 {{ item.about }}
+{% endfor %}

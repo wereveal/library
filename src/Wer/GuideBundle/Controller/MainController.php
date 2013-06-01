@@ -166,6 +166,8 @@ class MainController extends Controller
                 $search_str .= $value . ' ';
             }
 
+        } else {
+            $search_str = 'Search For';
         }
         return array(
             'buttonColor'   => 'white',
@@ -222,7 +224,6 @@ class MainController extends Controller
             'label_text'  => '',
             'label_class' => ''
         );
-        $a_return_this = array();
         $a_sections = $this->o_sec->readSection('', $a_search_parameters);
         if (count($a_sections) > 1) {
             foreach ($a_sections as $a_section) {
