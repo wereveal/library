@@ -220,7 +220,7 @@ class Strings extends Base
             return '';
         }
         $this->the_original_string = $string;
-        $string = $this->remove_tags($string);
+        $string = $this->removeTags($string);
         $this_string = '';
         $that_string = '';
         $this->o_elog->write("The string before shortening: $string", LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -233,6 +233,9 @@ class Strings extends Base
             }
         } elseif ((int) $num_of_words > 0 && (int) $num_of_chars === 0) {
             $string_parts = explode(' ', $string);
+            if (count($string_parts) < $num_of_words) {
+                $num_of_words = count($string_parts);
+            }
             for ($i = 0; $i < $num_of_words; $i++) {
                 $this_string .= $this_string == '' ? '' : ' ';
                 $this_string .= $string_parts[$i];

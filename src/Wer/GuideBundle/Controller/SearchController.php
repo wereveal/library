@@ -9,7 +9,7 @@ use Wer\FrameworkBundle\Library\Arrays;
 use Wer\FrameworkBundle\Library\Elog;
 use Wer\FrameworkBundle\Library\Strings;
 
-class SearchController extends Controller
+class SearchController extends BaseController
 {
     protected $default_section = 1;
     protected $num_to_display  = 10;
@@ -31,6 +31,12 @@ class SearchController extends Controller
         $this->o_item = new Item();
         $this->o_sec  = new Section();
         $this->o_str  = new Strings();
+        if (defined(DISPLAY_DATE_FORMAT)) {
+            $this->date_format = DISPLAY_DATE_FORMAT;
+        }
+        if (defined(DISPLAY_PHONE_FORMAT)) {
+            $this->phone_format = DISPLAY_PHONE_FORMAT;
+        }
     }
 
     ### Main Actions called from routing ###
@@ -44,7 +50,7 @@ class SearchController extends Controller
         return '';
     }
     /**
-     *  Displays the result of an advanced search.
+     *  Displays the advanced search form.
      *  @param none
      *  @return str the html to display
     **/
@@ -53,11 +59,20 @@ class SearchController extends Controller
         return '';
     }
     /**
-     *  Displays the result of an alpha search.
+     *  Displays the results of an advanced search.
      *  @param none
      *  @return str the html to display
     **/
-    public function byAlphaAction()
+    public function advancedSearchAction()
+    {
+        return '';
+    }
+    /**
+     *  Displays the result of an alpha search.
+     *  @param str $the_letter
+     *  @return str the html to display
+    **/
+    public function byAlphaAction($the_letter = 'A', $start = 0, $number = 10)
     {
         return '';
     }
@@ -81,4 +96,30 @@ class SearchController extends Controller
     {
         return '';
     }
+    /**
+     *  Displays the quick search form.
+     *  @param none
+     *  @return str the html to display
+    **/
+    public function quickFormAction()
+    {
+        return '';
+    }
+
+    ### SETTERS ###
+    /*
+     *  See BaseController for
+     *      setDateFormat($value = '')
+     *      setDefaultSection($section_id = '')
+     *      setNumToDisplay($value = 10)
+     *      setPhoneFormat($value = '')
+    */
+    ### GETTERS ###
+    /*
+     *  See BaseController for
+     *      getDateFormat()
+     *      getDefaultSection()
+     *      getNumToDisplay()
+     *      getPhoneFormat()
+    */
 }

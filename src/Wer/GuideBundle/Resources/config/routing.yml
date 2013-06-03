@@ -1,27 +1,46 @@
 guide_homepage:
-    pattern:  /
+    path:  /
+    defaults: { _controller: WerGuideBundle:Main:index }
+guide_item:
+    path: /item/{item_id}/
+    defaults: { _controller: WerGuideBundle:Item:index }
+guide_item_wrong:
+    path: /item/
     defaults: { _controller: WerGuideBundle:Main:index }
 guide_manager:
-    pattern: /manager/
+    path: /manager/
     defaults: { _controller: WerGuideBundle:Manager:index }
 guide_manager_field:
-    pattern: /manager/field/
+    path: /manager/field/
     defaults: { _controller: WerGuideBundle:Manager:field }
 guide_search:
-    pattern: /search/
+    path: /search/
+    defaults: { _controller: WerGuideBundle:Search:quickForm }
+    methods: [GET]
+guide_search_process:
+    path: /search/
     defaults: { _controller: WerGuideBundle:Search:index }
+    methods: [POST]
 guide_search_advanced:
-    pattern: /search/advanced/
+    path: /search/advanced/
     defaults: { _controller: WerGuideBundle:Search:advanced }
+    methods: [GET]
+guide_search_advanced_process:
+    path: /search/advanced/
+    defaults: { _controller: WerGuideBundle:Search:advancedSearch }
+    methods: [POST]
 guide_search_alpha:
-    pattern: /search/byAlpha/
+    path: /search/byAlpha/{the_letter}/
+    defaults: { _controller: WerGuideBundle:Search:byAlpha }
+guide_search_alpha_nextprevious:
+    path: /search/byAlpha/{the_letter}/{start}/
+    defaults: { _controller: WerGuideBundle:Search:byAlpha }
+guide_search_alpha_more:
+    path: /search/byAlpha/{the_letter}/{start}/{number}/
     defaults: { _controller: WerGuideBundle:Search:byAlpha }
 guide_search_section:
-    pattern: /search/bySection/
+    path: /search/bySection/{sec_id}/
     defaults: { _controller: WerGuideBundle:Search:bySection }
 guide_search_category:
-    pattern: /search/byCategory/
+    path: /search/byCategory/{cat_id}/
     defaults: { _controller: WerGuideBundle:Search:byCategory }
-guide_display_item:
-    pattern: /display/item/
-    defaults: { _controller: WerGuideBundle:Main:displayItem }

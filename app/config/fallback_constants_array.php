@@ -1,6 +1,7 @@
 <?php
 $a_constants = array(
     array('DISPLAY_DATE_FORMAT', 'm/d/Y'),
+    array('DISPLAY_PHONE_FORMAT', 'XXX-XXX-XXXX');
     array('EMAIL_DOMAIN', 'replaceme.com'),
     array('EMAIL_FORM_TO', 'me@replaceme.com'),
     array('ERROR_EMAIL_ADDRESS', 'webmaster@wereveal.com'),

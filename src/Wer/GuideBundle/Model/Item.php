@@ -217,7 +217,7 @@ class Item
     }
     /**
      *  Generic Read, returns one or more records from the wer_item table
-     *  @param array $a_search_pairs optional, field=>value to seach upon
+     *  @param array $a_search_pairs optional, field=>value to search upon
      *  @param array $a_search_parameters optional allows one to specify various settings
      *      array(
      *          'search_type' => 'AND', // can also be or
@@ -257,7 +257,7 @@ class Item
             AND ci.ci_category_id = :ci_category_id
             {$sql_where}
         ";
-        $this->o_elog->write($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, array(':ci_category_id' => $cat_id));
     }
 

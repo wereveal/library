@@ -1,5 +1,4 @@
 <?php
-
 namespace Wer\GuideBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -10,12 +9,12 @@ use Wer\FrameworkBundle\Library\Arrays;
 use Wer\FrameworkBundle\Library\Elog;
 use Wer\FrameworkBundle\Library\Strings;
 
-class MainController extends BaseController
+class ItemController extends BaseController
 {
     protected $default_section = 1;
     protected $num_to_display  = 10;
-    protected $phone_format    = "(XXX) XXX-XXXX";
-    protected $date_format     = "m/d/Y";
+    protected $phone_format    = "AAA-BBB-CCCC";
+    protected $date_format     = "mm/dd/YYYY";
     protected $o_arr;
     protected $o_cat;
     protected $o_elog;
@@ -40,26 +39,24 @@ class MainController extends BaseController
         }
     }
 
-    ### Main Actions called by routing parameters ###
-    public function indexAction()
+    ### Main Actions called from routing ###
+    /**
+     *  Displays the result of a simple search (from the quick search form).
+     *  @param int $item_id required, redirects to main page if missing
+     *  @return str the html to display
+    **/
+    public function indexAction($item_id = '')
     {
-        /*  What are we doing?
-            display the quick search form
-            display the alphanumeric list a-z0-9
-            display the drop down to select sections if num of sections > 1
-            Search for featured.
-            if records > 0
-                display the records
-            else
-                search for $num_to_display random records
-                display the records
-
-        */
+        if ($item_id == '') {
+            header('Location: ' . SITE_URL);
+        }
         $a_quick_form    = $this->formQuickSearch();
         $a_alpha_list    = $this->alphaList();
         $a_section_list  = $this->sectionList($this->default_section);
         $a_category_list = $this->categoryList($this->default_section);
-        $a_item_cards    = $this->itemCards($this->num_to_display);
+        $a_item = $this->o_item->readItem(array('item_id' => $item_id));
+        $a_item = $this->addDataToItem($a_item[0]);
+        $this->o_elog->write('Item: ' . var_export($a_item, true), LOG_ON, __METHOD__ . '.' . __LINE__);
         $a_twig_values = array(
             'title'         => 'Guide',
             'description'   => 'This is a description',
@@ -69,49 +66,36 @@ class MainController extends BaseController
             'alpha_list'    => $a_alpha_list,
             'section_list'  => $a_section_list,
             'category_list' => $a_category_list,
-            'item_cards'    => $a_item_cards
+            'item_data'     => $a_item[0]
         );
-        return $this->render('WerGuideBundle:Pages:index.html.twig', $a_twig_values);
+        return $this->render('WerGuideBundle:Pages:item.html.twig', $a_twig_values);;
     }
-    ### Methods Used ###
+    ### Other Methods ###
     /**
-     *  creates the values to be used for the item cards
-     *  @param int $num_to_display defaults to 10
-     *  @return array $a_values
+     *  Gets all the data for the item specified.
+     *  This uses the base method addDataToItems which works for multiple items
+     *  @param array $a_item required
+     *  @return array $a_item
     **/
-    public function itemCards($num_to_display = 10)
+    public function addDataToItem($a_item = '')
     {
-        // look for featured items first.
-        // if there are some, grab the first 10 and return them
-        // else grab 10 random items
-        $a_items = $this->o_item->readItemFeatured($this->num_to_display);
-        if ($a_items === false || count($a_items) <= 0) {
-            $a_items = $this->o_item->readItemRandom($this->num_to_display);
-        }
-        $a_items = $this->o_arr->removeSlashes($a_items);
-        $this->o_elog->write('' . var_export($a_items, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $a_search_for_fields = array(
+            'about', 'accepts_checks', 'accept_reservations', 'activities',
+            'address', 'alcohol_options', 'attire', 'averageentreeprice',
+            'bestof', 'capacity', 'catering', 'city', 'cost', 'country',
+            'creditcards', 'delivery', 'email', 'fax', 'federal_state',
+            'friday', 'latitude', 'location', 'longitude', 'monday',
+            'outdoor_seating', 'phone', 'postcode', 'private_parties',
+            'quick_lunch', 'reservation_required', 'saturday',
+            'street', 'sunday', 'take_out', 'thursday', 'tuesday',
+            'vegetarian_entrees', 'website', 'wednesday', 'wifi_available'
+        );
         $a_search_parameters = array(
             'search_type' => 'AND'
         );
-        $a_search_for_fields = array(
-            'about',
-            'street',
-            'city',
-            'federal_state',
-            'postcode',
-            'phone'
-        );
-        $a_items = $this->addDataToItems($a_items, $a_search_for_fields, $a_search_parameters);
-        foreach ($a_items as $key=>$a_item) {
-            if (strlen($a_items[$key]['about']) > 0) {
-                $a_items[$key]['about'] = $this->o_str->makeShortString($a_items[$key]['about'], 12)
-                    . '... <a href="/item/'
-                    . $a_items[$key]['item_id']
-                    . '/">More</a>';
-            }
-        }
-        $this->o_elog->write('a_items: ' . var_export($a_items, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $a_items;
+        $a_items = array();
+        $a_items[] = $a_item;
+        return $this->addDataToItems($a_items, $a_search_for_fields, $a_search_parameters);
     }
     /*
      *  See BaseController for the following methods
@@ -121,7 +105,6 @@ class MainController extends BaseController
      *      sectionList($selected_section = '', $a_search_parameters = '')
      *      addDataToItems($a_items = '', $a_search_for_fields = '', $a_search_parameters = '')
      */
-
 
     ### SETTERS ###
     /*
@@ -139,5 +122,4 @@ class MainController extends BaseController
      *      getNumToDisplay()
      *      getPhoneFormat()
     */
-
 }
