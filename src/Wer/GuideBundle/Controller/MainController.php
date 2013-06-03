@@ -185,7 +185,6 @@ class MainController extends Controller
         // look for featured items first.
         // if there are some, grab the first 10 and return them
         // else grab 10 random items
-        return array();
         $a_items = $this->o_item->readItemFeatured($this->num_to_display);
         if ($a_items === false || count($a_items) <= 0) {
             $a_items = $this->o_item->readItemRandom($this->num_to_display);
@@ -204,6 +203,7 @@ class MainController extends Controller
             'phone'
         );
         $a_items = $this->addDataToItem($a_items, $a_search_for_fields, $a_search_parameters);
+        $this->o_elog->write('a_items: ' . var_export($a_items, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $a_items;
     }
     /**
@@ -247,6 +247,34 @@ class MainController extends Controller
         return $a_return_this;
     }
     ### Utilities ###
+    /**
+     *  Adds item data to the item record
+     *  @param array $a_items required
+     *  $a_search_for_fields required specific fields by name to search for
+     *  $a_search_parameters optional
+     *  @return array $a_items
+    **/
+    public function addDataToItem($a_items = '', $a_search_for_fields = '', $a_search_parameters = '')
+    {
+        if ($a_items == '' || $a_search_for_fields == '') {
+            return $a_items;
+        }
+        foreach ($a_items as $key => $a_item) {
+            foreach ( $a_search_for_fields as $field_name) {
+                $a_search_for = array(
+                    'data_item_id' => $a_item['item_id'],
+                    'field_name' => $field_name
+                );
+                $a_item_data = $this->o_item->readItemData($a_search_for, $a_search_parameters);
+                if (is_array($a_item_data) && count($a_item_data) > 0) {
+                    $a_items[$key][$field_name] = stripslashes($a_item_data[0]['data_text']);
+                } else {
+                    $a_items[$key][$field_name] = '';
+                }
+            }
+        }
+        return $a_items;
+    }
 
     ### SETTERS ###
     /**
