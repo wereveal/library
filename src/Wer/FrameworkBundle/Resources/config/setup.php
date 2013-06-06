@@ -19,9 +19,9 @@
  *        Both do not end with a slash
  *  </pre>
 */
-namespace Wer\Framework\Library;
+namespace Wer\FrameworkBundle\Library;
 
-use Wer\Framework\Library\Config;
+use Wer\FrameworkBundle\Library\Config;
 
 if (!defined('SITE_PATH')) {
     define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);
@@ -32,6 +32,7 @@ if (!defined('BASE_PATH')) {
 if (!defined('APP_PATH')) {
     define('APP_PATH', BASE_PATH . '/app');
 }
+require_once APP_PATH . '/autoload.php';
 require_once APP_PATH . '/config/constants.php';
 if (!Config::start()) {
     error_log("Couldn't create the constants\n\n");

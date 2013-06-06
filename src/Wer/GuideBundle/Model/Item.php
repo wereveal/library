@@ -260,7 +260,6 @@ class Item
         $this->o_elog->write($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, array(':ci_category_id' => $cat_id));
     }
-
     /**
      *  Returns the records from wer_item.
      *  A shortcut which uses the main method readItem()
@@ -277,13 +276,19 @@ class Item
      *  @param int $limit_to optional limit the number of records found
      *  @return array $a_records
     **/
-    public function readItemByNameFirstLetter($the_letter = 'A', $limit_to = '')
+    public function readItemByNameFirstLetter($the_letter = 'A', $start = 0, $limit_to = '')
     {
         $the_letter = substr(trim($the_letter), 0, 1);
         if ($the_letter == '') {
             return false;
         }
-        return $this->readItem(array(':item_name' => $the_letter . '%'), array('comparison_type' => 'LIKE', 'limit_to' => $limit_to));
+        $a_search_pairs = array(':item_name' => $the_letter . '%');
+        $a_search_parameters = array(
+            'comparison_type' => 'LIKE',
+            'starting_from'   => $start,
+            'limit_to'        => $limit_to
+        );
+        return $this->readItem($a_search_pairs, $a_search_parameters);
     }
     /**
      *  Returns the record for the Item specified by item_old_id
@@ -331,6 +336,19 @@ class Item
         ";
         $a_search_pairs = array(":sc_sec_id" => $section_id);
         return $this->o_db->search($sql, $a_search_pairs);
+    }
+    /**
+     *  Gets the number of records in items that match the parameters.
+     *  @param array $a_search_pairs
+     *  @return int record count
+    **/
+    public function readItemCount($a_search_pairs = '', $a_search_parameters = '')
+    {
+        if ($a_search_pairs == '') { return 0; }
+        $sql = "SELECT COUNT(*) as count FROM wer_item ";
+        $sql .= $this->o_db->buildSqlWhere($a_search_pairs, $a_search_parameters);
+        $results = $this->o_db->search($sql, $a_search_pairs);
+        return $results[0]['count'];
     }
     /**
      *  Returns the record for the item data specified

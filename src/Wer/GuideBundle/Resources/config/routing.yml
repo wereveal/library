@@ -29,18 +29,24 @@ guide_search_advanced_process:
     path: /search/advanced/
     defaults: { _controller: WerGuideBundle:Search:advancedSearch }
     methods: [POST]
+guide_search_alpha_oops:
+    path: /search/by_alpha/
+    defaults: { _controller: WerGuideBundle:Search:by_alpha }
 guide_search_alpha:
-    path: /search/byAlpha/{the_letter}/
-    defaults: { _controller: WerGuideBundle:Search:byAlpha }
+    path: /search/by_alpha/{the_letter}/
+    defaults: { _controller: WerGuideBundle:Search:by_alpha }
 guide_search_alpha_nextprevious:
-    path: /search/byAlpha/{the_letter}/{start}/
-    defaults: { _controller: WerGuideBundle:Search:byAlpha }
+    path: /search/by_alpha/{the_letter}/{start}/
+    defaults: { _controller: WerGuideBundle:Search:by_alpha }
 guide_search_alpha_more:
-    path: /search/byAlpha/{the_letter}/{start}/{number}/
-    defaults: { _controller: WerGuideBundle:Search:byAlpha }
+    path: /search/by_alpha/{the_letter}/{start}/{number}/
+    defaults: { _controller: WerGuideBundle:Search:by_alpha }
 guide_search_section:
     path: /search/bySection/{sec_id}/
     defaults: { _controller: WerGuideBundle:Search:bySection }
 guide_search_category:
     path: /search/byCategory/{cat_id}/
     defaults: { _controller: WerGuideBundle:Search:byCategory }
+guide_test_item:
+    path: /test/item/
+    defaults: { _controller: WerGuideBundle:Tests:item }

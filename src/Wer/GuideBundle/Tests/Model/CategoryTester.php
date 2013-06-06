@@ -1,11 +1,11 @@
 <?php
-namespace Wer\Guide\Tests;
+namespace Wer\GuideBundle\Tests;
 
-use Wer\Guide\Model\Category;
-use Wer\Framework\Library\Elog;
-use Wer\Framework\Library\Files;
-use Wer\Framework\Library\Html;
-use Wer\Framework\Library\Tester;
+use Wer\GuideBundle\Model\Category;
+use Wer\FrameworkBundle\Library\Elog;
+use Wer\FrameworkBundle\Library\Files;
+use Wer\FrameworkBundle\Library\Html;
+use Wer\FrameworkBundle\Library\Tester;
 
 class CategoryTester extends Tester
 {

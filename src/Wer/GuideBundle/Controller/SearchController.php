@@ -70,11 +70,33 @@ class SearchController extends BaseController
     /**
      *  Displays the result of an alpha search.
      *  @param str $the_letter
+     *  @param int $start the record number to start with
+     *  @param int $number the number of records to return optional, defaults to ''
+     *      but will get set to the class parameter $num_to_display
      *  @return str the html to display
     **/
-    public function byAlphaAction($the_letter = 'A', $start = 0, $number = 10)
+    public function byAlphaAction($the_letter = 'A', $start = 0, $number = '')
     {
-        return '';
+        if ($number == '') {
+            $number = $this->num_to_display;
+        }
+        $a_quick_form    = $this->formQuickSearch();
+        $a_alpha_list    = $this->alphaList();
+        $a_section_list  = $this->sectionList($this->default_section);
+        $a_category_list = $this->categoryList($this->default_section);
+        $a_item_cards    = $this->alphpItemCards($the_letter, $start, $number);
+        $a_twig_values = array(
+            'title'         => 'Guide',
+            'description'   => 'This is a description',
+            'site_url'      => SITE_URL,
+            'rights_holder' => 'William E. Reveal',
+            'quick_form'    => $a_quick_form,
+            'alpha_list'    => $a_alpha_list,
+            'section_list'  => $a_section_list,
+            'category_list' => $a_category_list,
+            'item_cards'    => $a_item_cards
+        );
+        return $this->render('WerGuideBundle:Pages:index.html.twig', $a_twig_values);
     }
     /**
      *  Displays the records from a category search.
@@ -104,6 +126,44 @@ class SearchController extends BaseController
     public function quickFormAction()
     {
         return '';
+    }
+
+    ### Utilities ####
+    /**
+     *  creates the values to be used for the item cards
+     *  @param str $letter_to_find defaults to A
+     *  @param int $num_to_display defaults to 10
+     *  @return array $a_values
+    **/
+    public function alphaItemCards($letter_to_find = 'A', $start = 0, $num_to_display = '')
+    {
+        if ($num_to_display == '') {
+            $num_to_display == $this->num_to_display;
+        }
+        $a_items = $this->o_item->readItemByNameFirstLetter($letter_to_find, $start, $num_to_display);
+        $a_search_parameters = array(
+            'search_type' => 'AND'
+        );
+        $a_search_for_fields = array(
+            'about',
+            'street',
+            'city',
+            'federal_state',
+            'postcode',
+            'phone'
+        );
+        $a_items = $this->addDataToItems($a_items, $a_search_for_fields, $a_search_parameters);
+        foreach ($a_items as $key=>$a_item) {
+            if (strlen($a_items[$key]['about']) > 0) {
+                $a_items[$key]['about'] = $this->o_str->makeShortString($a_items[$key]['about'], 12)
+                    . '... <a href="/item/'
+                    . $a_items[$key]['item_id']
+                    . '/">More</a>';
+            }
+        }
+        $this->o_elog->write('a_items: ' . var_export($a_items, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $a_item_cards = array('items' => $a_items, 'more' => $a_more);
+        return $a_item_cards;
     }
 
     ### SETTERS ###

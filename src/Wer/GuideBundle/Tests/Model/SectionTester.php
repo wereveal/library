@@ -1,11 +1,11 @@
 <?php
-namespace Wer\Guide\Tests;
+namespace Wer\GuideBundle\Tests;
 
-use Wer\Guide\Model\Section;
-use Wer\Framework\Library\Elog;
-use Wer\Framework\Library\Files;
-use Wer\Framework\Library\Html;
-use Wer\Framework\Library\Tester;
+use Wer\Guide\ModelBundle\Section;
+use Wer\FrameworkBundle\Library\Elog;
+use Wer\FrameworkBundle\Library\Files;
+use Wer\FrameworkBundle\Library\Html;
+use Wer\FrameworkBundle\Library\Tester;
 
 class SectionTester extends Tester
 {

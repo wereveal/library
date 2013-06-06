@@ -1,12 +1,16 @@
 <?php
-namespace Wer\Guide\Tests;
+namespace Wer\GuideBundle\Tests\Model;
 
-include dirname($_SERVER['DOCUMENT_ROOT']) . '/app/setup.php';
+$config_dir = $_SERVER['DOCUMENT_ROOT'] . '/../src/Wer/FrameworkBundle/Resources/config';
+
+include $config_dir . '/autoload.php';
+include $config_dir . '/setup.php';
 
 $o_item = new ItemTester();
 $o_item->setTestOrder(
     array(
         'readItem',
+        'readItemCount',
         'readItemData',
         'readItemIds',
         'readItemByOldItemId',

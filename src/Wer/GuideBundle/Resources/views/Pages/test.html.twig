@@ -1,0 +1,17 @@
+{% extends 'WerGuideBundle:Default:base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block search %}{% endblock %}
+{% block body %}
+            <div class="row-fluid">
+                <div class="span12">
+                    Passed: {{ content.passed_tests }}<br>
+                    Failed: {{ content.failed_tests }}<br>
+                    Total: {{ content.num_o_tests }}<br>
+                    {{ content.passed_test_names|raw }}<br><br>
+                    {% if content.failed_test_names != '' %}
+                    {{ content.failed_test_names|raw }}
+                    {% endif %}
+                </div>
+            </div>
+{% endblock %}

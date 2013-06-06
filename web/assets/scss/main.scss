@@ -68,6 +68,17 @@ hr.item-card {
     margin: .5rem 0;
     width: 50%;
 }
+div.more {
+    /* not sure yet */
+    ul {
+        &.more {
+            list-style: none;
+            li {
+                float: left;
+            }
+        }
+    }
+}
 @import "btn.scss";
 @import "nav.scss";
 @import "niceform.scss";

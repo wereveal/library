@@ -43,18 +43,6 @@ class MainController extends BaseController
     ### Main Actions called by routing parameters ###
     public function indexAction()
     {
-        /*  What are we doing?
-            display the quick search form
-            display the alphanumeric list a-z0-9
-            display the drop down to select sections if num of sections > 1
-            Search for featured.
-            if records > 0
-                display the records
-            else
-                search for $num_to_display random records
-                display the records
-
-        */
         $a_quick_form    = $this->formQuickSearch();
         $a_alpha_list    = $this->alphaList();
         $a_section_list  = $this->sectionList($this->default_section);

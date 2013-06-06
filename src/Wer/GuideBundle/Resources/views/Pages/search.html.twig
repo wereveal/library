@@ -1,0 +1,16 @@
+{% extends 'WerGuideBundle:Default:base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+            <div class="row-fluid">
+                <div class="span12">
+                    {% include "WerGuideBundle:Snippets:itemCards.html.twig" with { 'items': item_cards } %}
+                    <div class="row-fluid">
+                        <div class="span12 more">
+                            {% include "WerGuideBundle:Snippets:more.html.twig" with { 'more': more_stuph } %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock %}

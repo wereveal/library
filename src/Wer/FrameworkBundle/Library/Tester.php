@@ -19,7 +19,7 @@
  *      v1.0.1 - updated to match new framework 2013-04-03
  *  @par WER Framework v4.0.0
 **/
-namespace Wer\Framework\Library;
+namespace Wer\FrameworkBundle\Library;
 
 abstract class Tester
 {
@@ -37,7 +37,7 @@ abstract class Tester
     public function __construct()
     {
         $this->o_html  = new Html;
-        $this->o_files = new Files('test_results.tpl', 'templates', 'default', 'Wer\Framework');
+        $this->o_files = new Files('test_results.tpl', 'templates', 'default', 'Wer\FrameworkBundle');
     }
     public function addMethodToTestOrder($method_name = '')
     {

@@ -1,10 +1,10 @@
 <?php
-namespace Wer\Guide\Tests;
+namespace Wer\GuideBundle\Tests\Model;
 
-use Wer\Guide\Model\Item;
-use Wer\Framework\Library\Files;
-use Wer\Framework\Library\Html;
-use Wer\Framework\Library\Tester;
+use Wer\GuideBundle\Model\Item;
+use Wer\FrameworkBundle\Library\Files;
+use Wer\FrameworkBundle\Library\Html;
+use Wer\FrameworkBundle\Library\Tester;
 
 class ItemTester extends Tester
 {
@@ -33,7 +33,7 @@ class ItemTester extends Tester
             'item_old_id' => $a_item['item_old_id']
         );
         $a_results = $this->o_item->readItem($a_values);
-        if ($a_results === false) {
+        if ($a_results === false || !is_array($a_results) || count($a_results) == 0) {
             $this->setSubfailure('readItem', 'all three');
             return false;
         }
@@ -65,7 +65,7 @@ class ItemTester extends Tester
     {
         $a_item = $this->a_test_values['old_item'];
         $a_results = $this->o_item->readItemByName($a_item['item_name']);
-        if ($a_results === false) {
+        if ($a_results === false || !is_array($a_results) || count($a_results) == 0) {
             return false;
         }
         $a_found_item = $a_results[0];
@@ -113,6 +113,14 @@ class ItemTester extends Tester
             return false;
         }
         return true;
+    }
+    public function readItemCountTester()
+    {
+        $a_item = $this->a_test_values['old_item'];
+        $a_search_pairs = array('item_name' => substr($a_item['item_name'], 0, 1) . '%');
+        $a_search_params = array('comparison_type' => 'LIKE');
+        $results = $this->o_item->readItemCount($a_search_pairs, $a_search_params);
+        return false;
     }
     public function readItemFeaturedTester()
     {
