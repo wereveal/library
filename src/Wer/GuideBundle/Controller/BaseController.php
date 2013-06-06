@@ -169,7 +169,7 @@ class BaseController extends Controller
         if ($a_items == '' || $a_search_for_fields == '') {
             return $a_items;
         }
-        $this->o_elog->write('' . var_export($a_items, TRUE), LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write('' . var_export($a_items, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
         foreach ($a_items as $key => $a_item) {
             foreach ( $a_search_for_fields as $field_name) {
                 $a_search_for = array(

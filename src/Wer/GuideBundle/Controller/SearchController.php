@@ -47,7 +47,45 @@ class SearchController extends BaseController
     **/
     public function indexAction()
     {
-        return '';
+        $a_quick_form    = $this->formQuickSearch();
+        $a_alpha_list    = $this->alphaList();
+        $a_section_list  = $this->sectionList($this->default_section);
+        $a_category_list = $this->categoryList($this->default_section);
+
+        /* HMM WHAT TO DO
+            Generically, need to do a search based on the key terms from the post
+            and send those records to the template.
+
+            More specifically, I need to figure out how many records are in the
+            results. If greater than default number of records to display then
+            we need to initially show just the first x records and give the user
+            the ability to then look at the remaning records.
+
+            This could theoretically be done in one step, get all the records,
+            send them all to the browser but have it only display the first 10
+            hidding the rest. As they click on the previous next buttons it hides
+            the visible records and unhides the hidden ones. This makes certain aspects
+            very easy as you don't have to remember the search terms to go to prev next.
+
+            Maybe just put the values in JSON format and jump around that way?
+
+            The other way is to have the prev next links actually post all that information
+            and get back the next/prev/exact records. That makes the links basically forms, a lot
+            of junk to deal with.
+        */
+
+        $a_twig_values = array(
+            'title'         => 'Guide',
+            'description'   => 'This is a description',
+            'site_url'      => SITE_URL,
+            'rights_holder' => 'William E. Reveal',
+            'quick_form'    => $a_quick_form,
+            'alpha_list'    => $a_alpha_list,
+            'section_list'  => $a_section_list,
+            'category_list' => $a_category_list,
+            'item_cards'    => $a_item_cards
+        );
+        return $this->render('WerGuideBundle:Pages:search.html.twig', $a_twig_values);
     }
     /**
      *  Displays the advanced search form.
@@ -84,7 +122,7 @@ class SearchController extends BaseController
         $a_alpha_list    = $this->alphaList();
         $a_section_list  = $this->sectionList($this->default_section);
         $a_category_list = $this->categoryList($this->default_section);
-        $a_item_cards    = $this->alphpItemCards($the_letter, $start, $number);
+        $a_item_cards    = $this->alphaItemCards($the_letter, $start, $number);
         $a_twig_values = array(
             'title'         => 'Guide',
             'description'   => 'This is a description',
@@ -96,7 +134,7 @@ class SearchController extends BaseController
             'category_list' => $a_category_list,
             'item_cards'    => $a_item_cards
         );
-        return $this->render('WerGuideBundle:Pages:index.html.twig', $a_twig_values);
+        return $this->render('WerGuideBundle:Pages:search.html.twig', $a_twig_values);
     }
     /**
      *  Displays the records from a category search.
@@ -152,6 +190,7 @@ class SearchController extends BaseController
             'postcode',
             'phone'
         );
+        error_log('IMPORTANT!  ' . var_export($a_items, true));
         $a_items = $this->addDataToItems($a_items, $a_search_for_fields, $a_search_parameters);
         foreach ($a_items as $key=>$a_item) {
             if (strlen($a_items[$key]['about']) > 0) {
@@ -162,8 +201,78 @@ class SearchController extends BaseController
             }
         }
         $this->o_elog->write('a_items: ' . var_export($a_items, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $a_item_cards = array('items' => $a_items, 'more' => $a_more);
+        $a_search_pairs = array('item_name' => $letter_to_find . '%');
+        $a_search_params = array('comparison_type' => 'LIKE');
+        $a_params = array(
+            'a_search_pairs' => $a_search_pairs,
+            'a_search_params' => $a_search_params,
+            'start' => $start,
+            'num_to_display' => $num_to_display,
+            'url' => "/search/by_alpha/{$letter_to_find}"
+        );
+        $a_prevnext = $this->makePreviousNext($a_params);
+        $this->o_elog->write('' . var_export($a_prevnext, TRUE), LOG_ON, __METHOD__ . '.' . __LINE__);
+        $a_item_cards = array('items' => $a_items, 'prev_next' => $a_prevnext);
         return $a_item_cards;
+    }
+
+    ### Utilities ###
+
+    /**
+     *  Returns an array of arrays to create the previous next navigation.
+     *  @param array $a_parameters
+     *  @return array $a_values
+    **/
+    public function makePreviousNext($a_parameters = '')
+    {
+        $a_search_pairs  = isset($a_parameters['a_search_pairs'])
+            ? $a_parameters['a_search_pairs']
+            : array();
+        $a_search_params = isset($a_parameters['a_search_params'])
+            ? $a_parameters['a_search_params']
+            : array();
+        $start = isset($a_parameters['start'])
+            ? $a_parameters['start']
+            : 0;
+        $num_to_display = isset($a_parameters['num_to_display'])
+            ? $a_parameters['num_to_display']
+            : 10;
+        if ($a_parameters['url'] == '') {
+            return array();
+        }
+        if ($a_search_pairs == array()) {
+            return array();
+        }
+        $total_records = $this->o_item->readItemCount($a_search_pairs, $a_search_params);
+        $number_of_links = (int) ($total_records / $num_to_display);
+        error_log("number of links: $number_of_links");
+        error_log($total_records % $num_to_display);
+        if ($total_records % $num_to_display > 0) {
+            $number_of_links++;
+        }
+        $x = 0;
+        for ($i = 0; $i < $number_of_links; $i++) {
+            if ($i == 0 && $start != 0 && $start - $num_to_display >= 0) {
+                // make a previous button first
+                $start_here = $start - $num_to_display;
+                $url = '<a href="' . $a_parameters['url'] . "/$start_here/" . $num_to_display . '/">';
+                $a_return_this[] = array('address' => $url, 'text' => 'Previous', 'endaddress' => '</a>');
+            }
+            if ($x == $start) {
+                $a_return_this[] = array('address' => '', 'text' => $i, 'endaddress' => '');
+            } else {
+                $url = '<a href="' . $a_parameters['url'] . '/' . $x . '/' . $num_to_display . '/">';
+                $a_return_this[] = array('address' => $url, 'text' => $i, 'endaddress' => '</a>');
+            }
+            error_log('i: ' . $i . ' num_of_links: ' . $number_of_links . ' start: ' . $start . ' x: ' . $x);
+            if ($i == ($number_of_links - 1) && $start < $x) {
+                // make a next button last but only if $start < than the $x of the last link
+                $url = '<a href="' . $a_parameters['url'] . '/' . ($start + $num_to_display) . '/' . $num_to_display . '/">';
+                $a_return_this[] = array('address' => $url, 'text' => 'Next', 'endaddress' => '</a>');
+            }
+            $x += $num_to_display;
+        }
+        return $a_return_this;
     }
 
     ### SETTERS ###

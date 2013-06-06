@@ -31,16 +31,16 @@ guide_search_advanced_process:
     methods: [POST]
 guide_search_alpha_oops:
     path: /search/by_alpha/
-    defaults: { _controller: WerGuideBundle:Search:by_alpha }
+    defaults: { _controller: WerGuideBundle:Search:byAlpha }
 guide_search_alpha:
     path: /search/by_alpha/{the_letter}/
-    defaults: { _controller: WerGuideBundle:Search:by_alpha }
+    defaults: { _controller: WerGuideBundle:Search:byAlpha }
 guide_search_alpha_nextprevious:
     path: /search/by_alpha/{the_letter}/{start}/
-    defaults: { _controller: WerGuideBundle:Search:by_alpha }
+    defaults: { _controller: WerGuideBundle:Search:byAlpha }
 guide_search_alpha_more:
-    path: /search/by_alpha/{the_letter}/{start}/{number}/
-    defaults: { _controller: WerGuideBundle:Search:by_alpha }
+    path: /search/by_alpha/{the_letter}/{start}/{num_to_display}/
+    defaults: { _controller: WerGuideBundle:Search:byAlpha }
 guide_search_section:
     path: /search/bySection/{sec_id}/
     defaults: { _controller: WerGuideBundle:Search:bySection }

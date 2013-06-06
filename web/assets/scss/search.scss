@@ -53,3 +53,16 @@ label.categorySelectLabel, label.sectionSelectLabel {
 div.quick-form {
     padding-left: 1rem !important;
 }
+div.prevnext {
+    border: 0 !important;
+    padding: 0 !important;
+    ul {
+        list-style-type: none;
+        li {
+            float: left;
+            padding-left: 3px;
+            padding-right: 3px;
+            font-weight: 900;
+        }
+    }
+}

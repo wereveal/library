@@ -233,8 +233,9 @@ class Item
     {
         $sql = "SELECT * FROM wer_item ";
         $sql .= $this->o_db->buildSqlWhere($a_search_pairs, $a_search_parameters);
-        $this->o_elog->write('SQL: ' . $sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $this->o_elog->write('Search Pairs: ' . var_export($a_search_pairs, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write('SQL: ' . $sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write('Search Pairs: ' . var_export($a_search_pairs, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write('' . var_export($a_search_parameters, TRUE), LOG_ON, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_pairs);
     }
     /**
@@ -278,6 +279,7 @@ class Item
     **/
     public function readItemByNameFirstLetter($the_letter = 'A', $start = 0, $limit_to = '')
     {
+        // error_log("In ITEM===> the letter: $the_letter  start: $start  limit_to: $limit_to");
         $the_letter = substr(trim($the_letter), 0, 1);
         if ($the_letter == '') {
             return false;

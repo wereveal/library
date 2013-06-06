@@ -1044,7 +1044,9 @@ class Database extends Base
         }
         if ($limit_to != '') {
             if ($starting_from != '') {
-                --$starting_from; // limit offset starts at 0 so if we want to start at record 6 the LIMIT offset is 5
+                if($starting_from > 0) {
+                    --$starting_from; // limit offset starts at 0 so if we want to start at record 6 the LIMIT offset is 5
+                }
                 $where .= "LIMIT {$starting_from}, {$limit_to}";
             } else {
                 $where .= "LIMIT {$limit_to}";
