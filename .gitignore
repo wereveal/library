@@ -10,3 +10,4 @@ composer.lock
 src/Wer/ImportBundle/Resources/files/guide/guide_files*
 web/assets/files/guide*
 web/assets/files/guide/*
+composer.json
