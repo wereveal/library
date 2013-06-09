@@ -22,6 +22,7 @@ UPGRADE.md
 /app/config/config_test.yml
 /app/config/parameters.yml
 /app/config/parameters.yml.dist
+/app/config/security.yml
 /app/logs/*
 /bin/*
 /nbproject/
