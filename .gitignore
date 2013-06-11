@@ -7,7 +7,6 @@ UPGRADE-2.2.md
 UPGRADE.md
 /web/bundles/
 /app/AppCache.php
-/app/AppKernel.php
 /app/SymfonyRequirements.php
 /app/autoload.php
 /app/check.php
