@@ -56,7 +56,7 @@ class ItemController extends BaseController
         $a_category_list = $this->categoryList($this->default_section);
         $a_item = $this->o_item->readItem(array('item_id' => $item_id));
         $a_item = $this->addDataToItem($a_item[0]);
-        $this->o_elog->write('Item: ' . var_export($a_item, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write('Item: ' . var_export($a_item, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $a_twig_values = array(
             'title'         => 'Guide',
             'description'   => 'This is a description',

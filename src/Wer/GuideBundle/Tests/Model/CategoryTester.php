@@ -58,7 +58,7 @@ class CategoryTester extends Tester
             return false;
         }
         $results2 = $this->o_cat->readCatBySec($this->a_test_values['readCatBySec2']);
-        $this->o_elog->write('results2' . var_export($results2 , TRUE), LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write('results2' . var_export($results2 , TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if($this->compareArrays($this->a_test_values['readCatBySec1results'], $results1[0]) === false) {
             $this->setSubfailure('readCatBySec', 'test2');
             return false;

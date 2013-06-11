@@ -190,7 +190,6 @@ class SearchController extends BaseController
             'postcode',
             'phone'
         );
-        error_log('IMPORTANT!  ' . var_export($a_items, true));
         $a_items = $this->addDataToItems($a_items, $a_search_for_fields, $a_search_parameters);
         foreach ($a_items as $key=>$a_item) {
             if (strlen($a_items[$key]['about']) > 0) {
@@ -211,7 +210,7 @@ class SearchController extends BaseController
             'url' => "/search/by_alpha/{$letter_to_find}"
         );
         $a_prevnext = $this->makePreviousNext($a_params);
-        $this->o_elog->write('' . var_export($a_prevnext, TRUE), LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write('' . var_export($a_prevnext, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $a_item_cards = array('items' => $a_items, 'prev_next' => $a_prevnext);
         return $a_item_cards;
     }
@@ -245,8 +244,6 @@ class SearchController extends BaseController
         }
         $total_records = $this->o_item->readItemCount($a_search_pairs, $a_search_params);
         $number_of_links = (int) ($total_records / $num_to_display);
-        error_log("number of links: $number_of_links");
-        error_log($total_records % $num_to_display);
         if ($total_records % $num_to_display > 0) {
             $number_of_links++;
         }
@@ -264,7 +261,6 @@ class SearchController extends BaseController
                 $url = '<a href="' . $a_parameters['url'] . '/' . $x . '/' . $num_to_display . '/">';
                 $a_return_this[] = array('address' => $url, 'text' => $i, 'endaddress' => '</a>');
             }
-            error_log('i: ' . $i . ' num_of_links: ' . $number_of_links . ' start: ' . $start . ' x: ' . $x);
             if ($i == ($number_of_links - 1) && $start < $x) {
                 // make a next button last but only if $start < than the $x of the last link
                 $url = '<a href="' . $a_parameters['url'] . '/' . ($start + $num_to_display) . '/' . $num_to_display . '/">';
