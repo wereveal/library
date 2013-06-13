@@ -1,4 +1,16 @@
 <?php
+/**
+ *  Controller to do Tests for the GuideBundle.
+ *  @file TestsController.php
+ *  @class TestsController
+ *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @version 0.2
+ *  @par Change Log
+ *      v0.1 - Initial version 2012-06-04
+ *  @par Wer GuideBundle version 1.0
+ *  @date 2013-06-06 13:36:24
+ *  @ingroup guide_bundle
+**/
 namespace Wer\GuideBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

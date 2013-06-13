@@ -1,5 +1,16 @@
 <?php
-
+/**
+ *  Descriptions.
+ *  @file BaseController.php
+ *  @class BaseController
+ *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @version 0.1
+ *  @par Change Log
+ *      v0.1 - Initial version
+ *  @par Wer GuideBundle version 1.0
+ *  @date 2013-06-03 14:38:59
+ *  @ingroup guide_bundle
+**/
 namespace Wer\GuideBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

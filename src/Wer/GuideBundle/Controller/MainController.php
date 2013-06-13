@@ -1,5 +1,17 @@
 <?php
-
+/**
+ *  Main Controller for the GuideBundle.
+ *  @file MainController.php
+ *  @class MainController
+ *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @version 0.2
+ *  @par Change Log
+ *      v0.2 - New repository and name change 2013-03-26
+ *      v0.1 - Initial version 2012-06-04
+ *  @par Wer GuideBundle version 1.0
+ *  @date 2013-03-26 15:49:24
+ *  @ingroup guide_bundle
+**/
 namespace Wer\GuideBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

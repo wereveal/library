@@ -1,4 +1,17 @@
 <?php
+/**
+ *  Search Controller for the GuideBundle.
+ *  @file SearchController.php
+ *  @class SearchController
+ *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @version 0.1
+ *  @par Change Log
+ *      v0.1 - Initial version 2012-05-28
+ *  @par Wer GuideBundle version 1.0
+ *  @date 2013-05-28 17:45:30
+ *  @ingroup guide_bundle
+**/
+
 namespace Wer\GuideBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;

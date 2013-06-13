@@ -13,6 +13,18 @@
  *      @defgroup core The core framework files
  *      @ingroup wer_framework
  *  }
+ *  @defgroup guide_bundle
+ *  @{
+ *      @version 1.0
+ *      @defgroup controllers controller files
+ *      @ingroup guide_bundle
+ *      @defgroup forms files that define and create forms
+ *      @ingroup guide_bundle
+ *      @defgroup model files that do database operations
+ *      @ingroup guide_bundle
+ *      @defgroup tests unitTesting
+ *      @ingroup guide_bundle
+ *  }
  *  @note <pre>
  *  NOTE: _path and _PATH indicates a full server path
  *        _dir and _DIR indicates the path in the site (URI)
