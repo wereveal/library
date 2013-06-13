@@ -15,12 +15,15 @@
 namespace Wer\GuideBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Wer\GuideBundle\Model\Category;
 use Wer\GuideBundle\Model\Item;
 use Wer\GuideBundle\Model\Section;
 use Wer\FrameworkBundle\Library\Arrays;
 use Wer\FrameworkBundle\Library\Elog;
 use Wer\FrameworkBundle\Library\Strings;
+use Wer\GuideBundle\Forms\SearchForms;
+use Wer\GuideBundle\Forms\Entity\QuickSearch;
 
 class MainController extends BaseController
 {
@@ -72,6 +75,19 @@ class MainController extends BaseController
             'item_cards'    => $a_item_cards
         );
         return $this->render('WerGuideBundle:Pages:index.html.twig', $a_twig_values);
+    }
+    public function formTestAction(Request $request)
+    {
+        $o_forms = new SearchForms;
+        $a_twig_values = array(
+            'title'         => 'Guide',
+            'description'   => 'This is a description',
+            'site_url'      => SITE_URL,
+            'rights_holder' => 'William E. Reveal',
+            'form'          => $this->quickSearch($request),
+        );
+
+        return $this->render('WerGuideBundle:Pages:testSearch.html.twig', $a_twig_values);
     }
     ### Methods Used ###
     /**

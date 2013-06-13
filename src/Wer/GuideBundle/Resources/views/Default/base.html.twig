@@ -45,16 +45,22 @@
         {% block search %}
             <div class="row-fluid">
                 <div class="span12 searches">
+                    {% block searchSelections %}
                     <div class="span6 selections">
                         {% include "WerGuideBundle:Elements:select.html.twig" with { 'select': section_list } %}
                         {% include "WerGuideBundle:Elements:select.html.twig" with { 'select': category_list } %}
                     </div>
+                    {% endblock %}
+                    {% block searchQuickForm %}
                     <div class="span6 quick-form">
                         {% include "WerGuideBundle:Snippets:quickSearch.html.twig" with { 'form': quick_form } %}
                     </div>
+                    {% endblock %}
+                    {% block searchAlpha %}
                     <div class="span12 alpha">
                         {% include "WerGuideBundle:Snippets:alphaListUl.html.twig" with { 'li_rows': alpha_list } %}
                     </div>
+                    {% endblock %}
                 </div>
             </div>
         {% endblock %}

@@ -50,3 +50,6 @@ guide_search_category:
 guide_test_item:
     path: /test/item/
     defaults: { _controller: WerGuideBundle:Tests:item }
+guide_search_test:
+    path: /search/test/
+    defaults: { _controller: WerGuideBundle:Main:formTest }

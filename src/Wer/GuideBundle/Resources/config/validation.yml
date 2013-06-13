@@ -1,0 +1,4 @@
+Wer\GuideBundle\Forms\Entity\QuickSearch:
+    properties:
+        searchTerms:
+            - NotBlank: ~

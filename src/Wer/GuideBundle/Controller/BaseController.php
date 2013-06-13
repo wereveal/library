@@ -14,14 +14,17 @@
 namespace Wer\GuideBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Wer\GuideBundle\Model\Category;
 use Wer\GuideBundle\Model\Item;
 use Wer\GuideBundle\Model\Section;
+use Wer\GuideBundle\Forms\QuickSearch;
+use Wer\GuideBundle\Forms\Entity\QuickSearch as QSEntity;
 use Wer\FrameworkBundle\Library\Arrays;
 use Wer\FrameworkBundle\Library\Elog;
 use Wer\FrameworkBundle\Library\Strings;
 
-class BaseController extends Controller
+abstract class BaseController extends Controller
 {
     protected $default_section = 1;
     protected $num_to_display  = 10;
@@ -109,9 +112,9 @@ class BaseController extends Controller
      *  @param array $a_search_for
      *  @return array
     **/
-    public function formQuickSearch($a_search_for = 'Search For')
+    public function formQuickSearch($a_search_for = '')
     {
-        if ($a_search_for != 'Search For' && is_array($a_search_for)) {
+        if ($a_search_for != '' && is_array($a_search_for)) {
             foreach ($a_search_for as $value) {
                 if (strpos($value, ' ') !== false) {
                     $value = '"' . $value . '"';
@@ -120,13 +123,29 @@ class BaseController extends Controller
             }
 
         } else {
-            $search_str = 'Search For';
+            $search_str = '';
         }
         return array(
             'buttonColor'   => 'white',
             'buttonText'    => 'Locate',
             'searchForText' => $search_str
         );
+    }
+    /**
+     *  Returns a SF rendered form.
+     *  @param Request $request
+     *  @return array
+    **/
+    public function quickSearch(Request $request)
+    {
+        $o_qsentity = new QSEntity();
+        $o_qsentity->setSearchTerms('');
+        $o_qsentity->setSearch('Search');
+        $o_form = $this->createFormBuilder($o_qsentity)
+            ->add('searchTerms', 'text')
+            ->add('search', 'button')
+            ->getForm();
+        return $o_form->createView();
     }
     /**
      *  creates the values needed for the section list
