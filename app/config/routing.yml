@@ -1,7 +1,0 @@
-wer_guide:
-    resource: "@WerGuideBundle/Resources/config/routing.yml"
-    prefix:   /
-
-wer_import:
-    resource: "@WerImportBundle/Resources/config/routing.yml"
-    prefix:   /manager/import
