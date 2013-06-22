@@ -1,7 +1,0 @@
-import_homepage:
-    pattern:  /
-    defaults: { _controller: WerImportBundle:Main:index }
-
-import_import_action:
-    pattern: /importAll/
-    defaults: { _controller: WerImportBundle:Main:importAll }

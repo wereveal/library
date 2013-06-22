@@ -1,7 +1,0 @@
-parameters:
-#    wer_import.example.class: Wer\ImportBundle\Example
-
-services:
-#    wer_import.example:
-#        class: %wer_import.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
