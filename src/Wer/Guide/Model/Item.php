@@ -3,7 +3,7 @@
  *  Handles all the database needs (CRUD) for the Items
  *  @file Item.php
  *  @class Item
- *  @ingroup guide_bundle
+ *  @ingroup guide_
  *  @author William E Reveal <wer@revealitconsulting.com>
  *  @version 0.1.0
  *  @date 2013-03-29 09:02:46
@@ -11,10 +11,10 @@
  *      v0.1.0 - initial version
  *  @par Guide v0.1
 **/
-namespace Wer\GuideBundle\Model;
+namespace Wer\Guide\Model;
 
-use Wer\FrameworkBundle\Library\Elog;
-use Wer\FrameworkBundle\Library\Database;
+use Wer\Framework\Library\Elog;
+use Wer\Framework\Library\Database;
 
 class Item
 {

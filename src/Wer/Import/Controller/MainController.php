@@ -1,13 +1,13 @@
 <?php
 
-namespace Wer\ImportBundle\Controller;
+namespace Wer\Import\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Wer\GuideBundle\Model\Category;
-use Wer\GuideBundle\Model\WerField;
-use Wer\GuideBundle\Model\WerItem;
-use Wer\GuideBundle\Model\WerSection;
-use Wer\FrameworkBundle\Library\Database;
+use Symfony\\Framework\Controller\Controller;
+use Wer\Guide\Model\Category;
+use Wer\Guide\Model\WerField;
+use Wer\Guide\Model\WerItem;
+use Wer\Guide\Model\WerSection;
+use Wer\Framework\Library\Database;
 
 class MainController extends Controller
 {
@@ -28,7 +28,7 @@ class MainController extends Controller
     public function indexAction()
     {
         return $this->render(
-            'WerImportBundle:Main:index.html.twig',
+            'WerImport:Main:index.html.twig',
             array(
                 'title'       => 'Import',
                 'description' => '',
@@ -243,7 +243,7 @@ class MainController extends Controller
         } // foreach section file
         $this->o_db->commitTransaction();
         return $this->render(
-            'WerImportBundle:Main:index.html.twig',
+            'WerImport:Main:index.html.twig',
             array(
                 'title'       => 'Import',
                 'description' => '',

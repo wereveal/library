@@ -1,11 +1,11 @@
 <?php
 
-namespace Wer\SobiBundle\Entity;
+namespace Wer\Sobi\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Wer\SobiBundle\Entity\WerObject
+ * Wer\Sobi\Entity\WerObject
 **/
 class WerObject {
     /**

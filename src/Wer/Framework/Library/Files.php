@@ -29,7 +29,7 @@
  *      v4.0.0 - FIG standards (mostly)
  *  @par Wer Framework 4.0.0
 **/
-namespace Wer\FrameworkBundle\Library;
+namespace Wer\Framework\Library;
 
 class Files extends Location
 {

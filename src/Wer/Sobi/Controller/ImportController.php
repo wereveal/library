@@ -1,9 +1,9 @@
 <?php
 
-namespace Wer\SobiBundle\Controller;
+namespace Wer\Sobi\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Wer\SobiBundle\Helper\OutputHelper;
+use Symfony\\Framework\Controller\Controller;
+use Wer\Sobi\Helper\OutputHelper;
 
 class ImportController extends Controller
 {
@@ -28,7 +28,7 @@ class ImportController extends Controller
             'javascripts'=>''
         );
 
-        return $this->render('WerSobiBundle:Default:import.html.twig', $a_twig);
+        return $this->render('WerSobi:Default:import.html.twig', $a_twig);
     }
     public function doitAction()
     {

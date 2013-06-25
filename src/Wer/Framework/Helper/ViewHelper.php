@@ -1,6 +1,6 @@
 <?php
 
-namespace Wer\FrameworkBundle\Helper;
+namespace Wer\Framework\Helper;
 
 class ViewHelper
 {

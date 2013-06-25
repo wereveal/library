@@ -1,7 +1,7 @@
 <?php
-namespace Wer\SobiBundle\Controller;
+namespace Wer\Sobi\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\\Framework\Controller\Controller;
 
 class FieldsController extends Controller
 {
@@ -17,7 +17,7 @@ class FieldsController extends Controller
             'body'=>'Hello Fields',
             'javascripts'=>''
         );
-        return $this->render('WerSobiBundle:Default:fields.html.twig', $a_twig);
+        return $this->render('WerSobi:Default:fields.html.twig', $a_twig);
     }
     /**
      * Import the Fields from Sobi tables into Guide tables
@@ -31,7 +31,7 @@ class FieldsController extends Controller
             'body'=>'Import Fields',
             'javascripts'=>''
         );
-        return $this->render('WerSobiBundle:Default:fields.html.twig', $a_twig);
+        return $this->render('WerSobi:Default:fields.html.twig', $a_twig);
     }
     /**
      * List the Fields imported into the Guide tables
@@ -45,6 +45,6 @@ class FieldsController extends Controller
             'body'=>'List Import Results',
             'javascripts'=>''
         );
-        return $this->render('WerSobiBundle:Default:fields.html.twig', $a_twig);
+        return $this->render('WerSobi:Default:fields.html.twig', $a_twig);
     }
 }

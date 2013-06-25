@@ -9,7 +9,7 @@
  *  @ingroup wer_framework library
  *  @par Wer Framework 4.0
 **/
-namespace Wer\FrameworkBundle\Library;;
+namespace Wer\Framework\Library;;
 
 class Session extends Base
 {

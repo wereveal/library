@@ -1,11 +1,11 @@
 <?php
 
-namespace Wer\SobiBundle\Entity;
+namespace Wer\Sobi\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Wer\SobiBundle\Entity\WerFieldOption
+ * Wer\Sobi\Entity\WerFieldOption
 **/
 class WerFieldOption
 {
@@ -20,7 +20,7 @@ class WerFieldOption
     private $foFieldOption;
 
     /**
-     * @var Wer\SobiBundle\Entity\WerField
+     * @var Wer\Sobi\Entity\WerField
     **/
     private $foField;
 
@@ -54,16 +54,16 @@ class WerFieldOption
 
     /**
      * Set foField
-     * @param Wer\SobiBundle\Entity\WerField $foField
+     * @param Wer\Sobi\Entity\WerField $foField
     **/
-    public function setFoField(\Wer\SobiBundle\Entity\WerField $foField)
+    public function setFoField(\Wer\Sobi\Entity\WerField $foField)
     {
         $this->foField = $foField;
     }
 
     /**
      * Get foField
-     * @return Wer\SobiBundle\Entity\WerField
+     * @return Wer\Sobi\Entity\WerField
     **/
     public function getFoField()
     {

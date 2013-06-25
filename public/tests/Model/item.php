@@ -1,7 +1,7 @@
 <?php
-namespace Wer\GuideBundle\Tests\Model;
+namespace Wer\Guide\Tests\Model;
 
-$config_dir = $_SERVER['DOCUMENT_ROOT'] . '/../src/Wer/FrameworkBundle/Resources/config';
+$config_dir = $_SERVER['DOCUMENT_ROOT'] . '/../src/Wer/Framework/Resources/config';
 
 include $config_dir . '/autoload.php';
 include $config_dir . '/setup.php';

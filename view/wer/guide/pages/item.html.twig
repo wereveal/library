@@ -1,11 +1,11 @@
-{% extends 'WerGuideBundle:Default:base.html.twig' %}
+{% extends 'WerGuide:Default:base.html.twig' %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
             <div class="row-fluid">
                 <div class="span12">
-                    {% include "WerGuideBundle:Snippets:item.html.twig" with { 'item': item_data } %}
+                    {% include "WerGuide:Snippets:item.html.twig" with { 'item': item_data } %}
                 </div>
             </div>
 {% endblock %}

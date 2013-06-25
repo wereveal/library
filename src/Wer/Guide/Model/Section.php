@@ -3,7 +3,7 @@
  *  Handles all the database needs (CRUD) for the Sections
  *  @file Section.php
  *  @class Section
- *  @ingroup guide_bundle
+ *  @ingroup guide_
  *  @author William E Reveal <wer@revealitconsulting.com>
  *  @version 0.2.0
  *  @date 2013-05-09 12:36:02
@@ -12,10 +12,10 @@
  *      v0.1.0 - initial version 03/29/2013
  *  @par Guide v0.1
 **/
-namespace Wer\GuideBundle\Model;
+namespace Wer\Guide\Model;
 
-use Wer\FrameworkBundle\Library\Elog;
-use Wer\FrameworkBundle\Library\Database;
+use Wer\Framework\Library\Elog;
+use Wer\Framework\Library\Database;
 
 class Section
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Wer\SobiBundle\Controller;
+namespace Wer\Sobi\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Wer\SobiBundle\Entity\SobiCategories;
-use Wer\SobiBundle\Entity\SobiCatsRelations;
-use Wer\SobiBundle\Entity\WerCategory;
+use Symfony\\Framework\Controller\Controller;
+use Wer\Sobi\Entity\SobiCategories;
+use Wer\Sobi\Entity\SobiCatsRelations;
+use Wer\Sobi\Entity\WerCategory;
 
 class CategoriesController extends Controller
 {
@@ -23,12 +23,12 @@ class CategoriesController extends Controller
         );
         /*
         $o_repository = $this->getDoctrine()
-            ->getRepository("WerSobiBundle:SobiCategories");
+            ->getRepository("WerSobi:SobiCategories");
         $a_categories = $o_repository->findAll();
         */
         $a_categories = $this->selectSobiCatsWithParents();
         $a_twig['categories'] = $a_categories;
-        return $this->render('WerSobiBundle:Default:categories.html.twig', $a_twig);
+        return $this->render('WerSobi:Default:categories.html.twig', $a_twig);
     }
     /**
      * Import the Categories from Sobi tables into Guide tables
@@ -55,7 +55,7 @@ class CategoriesController extends Controller
             'javascripts'=>''
         );
         $a_twig['categories'] = $this->selectWerCatsWithParents();
-        return $this->render('WerSobiBundle:Default:categories.html.twig', $a_twig);
+        return $this->render('WerSobi:Default:categories.html.twig', $a_twig);
     }
 
     ### Database Operations ###

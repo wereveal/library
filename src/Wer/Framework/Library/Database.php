@@ -22,11 +22,11 @@
  *      v2.2.0 - FIG-standard changes
  *  @par Wer Framework v4.0.0
 **/
-namespace Wer\FrameworkBundle\Library;
+namespace Wer\Framework\Library;
 
-use Wer\FrameworkBundle\Library\Elog;
-use Wer\FrameworkBundle\Library\Files;
-use Wer\FrameworkBundle\Library\Arrays;
+use Wer\Framework\Library\Elog;
+use Wer\Framework\Library\Files;
+use Wer\Framework\Library\Arrays;
 use Symfony\Component\Yaml\Yaml;
 
 class Database extends Base

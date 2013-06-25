@@ -7,11 +7,11 @@
  *  @version 0.1
  *  @par Change Log
  *      v0.1 - Initial version
- *  @par Wer GuideBundle version 1.0
+ *  @par Wer Guide version 1.0
  *  @date 2013-06-13 10:12:02
- *  @ingroup guide_bundle
+ *  @ingroup guide_
 **/
-namespace Wer\GuideBundle\Forms\Entity;
+namespace Wer\Guide\Forms\Entity;
 
 class QuickSearch
 {

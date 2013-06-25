@@ -1,8 +1,8 @@
 <?php
 
-namespace Wer\SobiBundle\Controller;
+namespace Wer\Sobi\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\\Framework\Controller\Controller;
 
 class DefaultController extends Controller
 {
@@ -19,6 +19,6 @@ class DefaultController extends Controller
             'body'=>'Hello Default Controller'
         );
 
-        return $this->render('WerSobiBundle:Default:index.html.twig', $a_twig);
+        return $this->render('WerSobi:Default:index.html.twig', $a_twig);
     }
 }

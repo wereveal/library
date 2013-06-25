@@ -3,7 +3,7 @@ Bitstream Vera Fonts Copyright
 The fonts have a generous copyright, allowing derivative works (as
 long as "Bitstream" or "Vera" are not in the names), and full
 redistribution (so long as they are not *sold* by themselves). They
-can be be bundled, redistributed and sold with any software.
+can be be d, redistributed and sold with any software.
 
 The fonts are distributed under the following copyright:
 
@@ -107,7 +107,7 @@ Copyright FAQ
 
    7. I want to sell a software package that uses these fonts: Can I do so?
 
-      Sure. Bundle the fonts with your software and sell your software
+      Sure.  the fonts with your software and sell your software
       with the fonts. That is the intent of the copyright.
 
    8. If applications have built the names "Bitstream Vera" into them, 

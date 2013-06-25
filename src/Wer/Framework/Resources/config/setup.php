@@ -19,9 +19,9 @@
  *        Both do not end with a slash
  *  </pre>
 */
-namespace Wer\FrameworkBundle\Library;
+namespace Wer\Framework\Library;
 
-use Wer\FrameworkBundle\Library\Config;
+use Wer\Framework\Library\Config;
 
 if (!defined('SITE_PATH')) {
     define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);

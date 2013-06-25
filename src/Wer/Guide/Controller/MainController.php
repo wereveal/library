@@ -1,6 +1,6 @@
 <?php
 /**
- *  Main Controller for the GuideBundle.
+ *  Main Controller for the Guide.
  *  @file MainController.php
  *  @class MainController
  *  @author William Reveal  <bill@revealitconsulting.com>
@@ -8,22 +8,22 @@
  *  @par Change Log
  *      v0.2 - New repository and name change 2013-03-26
  *      v0.1 - Initial version 2012-06-04
- *  @par Wer GuideBundle version 1.0
+ *  @par Wer Guide version 1.0
  *  @date 2013-03-26 15:49:24
- *  @ingroup guide_bundle
+ *  @ingroup guide_
 **/
-namespace Wer\GuideBundle\Controller;
+namespace Wer\Guide\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\\Framework\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Wer\GuideBundle\Model\Category;
-use Wer\GuideBundle\Model\Item;
-use Wer\GuideBundle\Model\Section;
-use Wer\FrameworkBundle\Library\Arrays;
-use Wer\FrameworkBundle\Library\Elog;
-use Wer\FrameworkBundle\Library\Strings;
-use Wer\GuideBundle\Forms\SearchForms;
-use Wer\GuideBundle\Forms\Entity\QuickSearch;
+use Wer\Guide\Model\Category;
+use Wer\Guide\Model\Item;
+use Wer\Guide\Model\Section;
+use Wer\Framework\Library\Arrays;
+use Wer\Framework\Library\Elog;
+use Wer\Framework\Library\Strings;
+use Wer\Guide\Forms\SearchForms;
+use Wer\Guide\Forms\Entity\QuickSearch;
 
 class MainController extends BaseController
 {
@@ -74,7 +74,7 @@ class MainController extends BaseController
             'category_list' => $a_category_list,
             'item_cards'    => $a_item_cards
         );
-        return $this->render('WerGuideBundle:Pages:index.html.twig', $a_twig_values);
+        return $this->render('WerGuide:Pages:index.html.twig', $a_twig_values);
     }
     public function formTestAction(Request $request)
     {
@@ -87,7 +87,7 @@ class MainController extends BaseController
             'form'          => $this->quickSearch($request),
         );
 
-        return $this->render('WerGuideBundle:Pages:testSearch.html.twig', $a_twig_values);
+        return $this->render('WerGuide:Pages:testSearch.html.twig', $a_twig_values);
     }
     ### Methods Used ###
     /**

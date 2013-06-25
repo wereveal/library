@@ -15,7 +15,7 @@
  *  @ingroup wer_framwork library
  *  @par Wer Framework 4.0.0
 **/
-namespace Wer\FrameworkBundle\Library;;
+namespace Wer\Framework\Library;;
 
 class HTML extends Base
 {

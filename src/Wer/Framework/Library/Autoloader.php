@@ -1,5 +1,11 @@
 <?php
-/* For use outside of Symfony */
+/**
+ *  For use when Wer\Framework is used standalone.
+ *  required Composer to have been been installed in vendor 
+ *  directory just outside of the site doc root.
+**/
+namespace Wer\Framework\Library;
+
 class Autoloader
 {
     private static $loader;
@@ -22,7 +28,7 @@ class Autoloader
         spl_autoload_unregister(array('Autoloader', 'loadClassLoader'));
 
         $namespaces = require $_SERVER['DOCUMENT_ROOT']
-            . '/../src/Wer/FrameworkBundle/Resources/config/autoload_namespaces.php';
+            . '/../src/Wer/Framework/Resources/config/autoload_namespaces.php';
         foreach ($namespaces as $namespace => $path) {
             $loader->add($namespace, $path);
         }

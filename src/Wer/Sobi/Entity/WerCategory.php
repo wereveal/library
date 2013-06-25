@@ -1,11 +1,11 @@
 <?php
 
-namespace Wer\SobiBundle\Entity;
+namespace Wer\Sobi\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Wer\SobiBundle\Entity\WerCategory
+ * Wer\Sobi\Entity\WerCategory
 **/
 class WerCategory {
     /**
@@ -34,7 +34,7 @@ class WerCategory {
     private $catActive;
 
     /**
-     * @var Wer\SobiBundle\Entity\WerCategory
+     * @var Wer\Sobi\Entity\WerCategory
     **/
     private $crParent;
 
@@ -134,9 +134,9 @@ class WerCategory {
 
     /**
      * Add crParent
-     * @param Wer\SobiBundle\Entity\WerCategory $crParent
+     * @param Wer\Sobi\Entity\WerCategory $crParent
     **/
-    public function addWerCategory(\Wer\SobiBundle\Entity\WerCategory $crParent)
+    public function addWerCategory(\Wer\Sobi\Entity\WerCategory $crParent)
     {
         $this->crParent[] = $crParent;
     }

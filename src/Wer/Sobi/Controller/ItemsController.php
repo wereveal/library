@@ -1,6 +1,6 @@
 <?php
-namespace Wer\SobiBundle\Controller;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+namespace Wer\Sobi\Controller;
+use Symfony\\Framework\Controller\Controller;
 
 class ItemsController extends Controller
 {
@@ -16,7 +16,7 @@ class ItemsController extends Controller
             'body'=>'Hello Items Controller',
             'javascripts'=>''
         );
-        return $this->render('WerSobiBundle:Default:items.html.twig', $a_twig);
+        return $this->render('WerSobi:Default:items.html.twig', $a_twig);
     }
     /**
      * Import the Items from Sobi tables into Guide tables
@@ -30,7 +30,7 @@ class ItemsController extends Controller
             'body'=>'Import Items',
             'javascripts'=>''
         );
-        return $this->render('WerSobiBundle:Default:items.html.twig', $a_twig);
+        return $this->render('WerSobi:Default:items.html.twig', $a_twig);
     }
     /**
      * List the Items imported into the Guide tables
@@ -43,6 +43,6 @@ class ItemsController extends Controller
             'body'=>'List Items Results',
             'javascripts'=>''
         );
-        return $this->render('WerSobiBundle:Default:items.html.twig', $a_twig);
+        return $this->render('WerSobi:Default:items.html.twig', $a_twig);
     }
 }

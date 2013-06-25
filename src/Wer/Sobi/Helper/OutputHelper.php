@@ -1,6 +1,6 @@
 <?php
 
-namespace Wer\SobiBundle\Helper;
+namespace Wer\Sobi\Helper;
 
 class OutputHelper
 {

@@ -12,7 +12,7 @@
  *      v2.3.0 mostly changes for FIG-standards
  *  @par Wer Framework v4.0.0
 **/
-namespace Wer\FrameworkBundle\Library;
+namespace Wer\Framework\Library;
 
 class Config extends Base
 {

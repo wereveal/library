@@ -7,22 +7,22 @@
  *  @version 0.1
  *  @par Change Log
  *      v0.1 - Initial version
- *  @par Wer GuideBundle version 1.0
+ *  @par Wer Guide version 1.0
  *  @date 2013-06-03 14:38:59
- *  @ingroup guide_bundle
+ *  @ingroup guide_
 **/
-namespace Wer\GuideBundle\Controller;
+namespace Wer\Guide\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\\Framework\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
-use Wer\GuideBundle\Model\Category;
-use Wer\GuideBundle\Model\Item;
-use Wer\GuideBundle\Model\Section;
-use Wer\GuideBundle\Forms\QuickSearch;
-use Wer\GuideBundle\Forms\Entity\QuickSearch as QSEntity;
-use Wer\FrameworkBundle\Library\Arrays;
-use Wer\FrameworkBundle\Library\Elog;
-use Wer\FrameworkBundle\Library\Strings;
+use Wer\Guide\Model\Category;
+use Wer\Guide\Model\Item;
+use Wer\Guide\Model\Section;
+use Wer\Guide\Forms\QuickSearch;
+use Wer\Guide\Forms\Entity\QuickSearch as QSEntity;
+use Wer\Framework\Library\Arrays;
+use Wer\Framework\Library\Elog;
+use Wer\Framework\Library\Strings;
 
 abstract class BaseController extends Controller
 {

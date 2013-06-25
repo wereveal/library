@@ -12,7 +12,7 @@
  *  @par Wer Framework v4.0.0
  *  @ingroup wer_framework library
 **/
-namespace Wer\FrameworkBundle\Library;
+namespace Wer\Framework\Library;
 
 abstract class Base
 {

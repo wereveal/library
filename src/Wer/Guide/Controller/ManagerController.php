@@ -1,6 +1,6 @@
 <?php
 /**
- *  Main Manager Controller for the GuideBundle.
+ *  Main Manager Controller for the Guide.
  *  @file ManagerController.php
  *  @class ManagerController
  *  @author William Reveal  <bill@revealitconsulting.com>
@@ -8,14 +8,14 @@
  *  @par Change Log
  *      v0.2 - New repository 2013-03-26
  *      v0.1 - Initial version 2012-06-04
- *  @par Wer GuideBundle version 1.0
+ *  @par Wer Guide version 1.0
  *  @date 2013-03-26 15:49:24
- *  @ingroup guide_bundle
+ *  @ingroup guide_
 **/
-namespace Wer\GuideBundle\Controller;
+namespace Wer\Guide\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Wer\GuideBundle\Model\Field;
+use Symfony\\Framework\Controller\Controller;
+use Wer\Guide\Model\Field;
 
 class ManagerController extends Controller
 {
@@ -39,7 +39,7 @@ class ManagerController extends Controller
     {
         $a_twig_values = $this->a_base_twig;
         $a_twig_values['description'] = 'Main Manager Page';
-        return $this->render('WerGuideBundle:Manager:index.html.twig', $a_twig_values);
+        return $this->render('WerGuide:Manager:index.html.twig', $a_twig_values);
     }
     /**
      *  Displays a list of the fields
@@ -53,7 +53,7 @@ class ManagerController extends Controller
         $a_fields = $this->o_wer_field->readField();
         $a_twig_values['body_text'] = '';
         $a_twig_values['fields'] = $a_fields;
-        return $this->render('WerGuideBundle:Manager:field.html.twig', $a_twig_values);
+        return $this->render('WerGuide:Manager:field.html.twig', $a_twig_values);
     }
 
 

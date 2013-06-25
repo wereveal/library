@@ -1,20 +1,20 @@
 <?php
 /**
- *  Controller to do Tests for the GuideBundle.
+ *  Controller to do Tests for the Guide.
  *  @file TestsController.php
  *  @class TestsController
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 0.2
  *  @par Change Log
  *      v0.1 - Initial version 2012-06-04
- *  @par Wer GuideBundle version 1.0
+ *  @par Wer Guide version 1.0
  *  @date 2013-06-06 13:36:24
- *  @ingroup guide_bundle
+ *  @ingroup guide_
 **/
-namespace Wer\GuideBundle\Controller;
+namespace Wer\Guide\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Wer\GuideBundle\Tests\Model\ItemTester;
+use Symfony\\Framework\Controller\Controller;
+use Wer\Guide\Tests\Model\ItemTester;
 
 class TestsController extends Controller
 {
@@ -105,7 +105,7 @@ class TestsController extends Controller
                 )
             )
         );
-        $failed_tests = $o_item->runTests('Wer\GuideBundle\Tests\Model\ItemTester');
+        $failed_tests = $o_item->runTests('Wer\Guide\Tests\Model\ItemTester');
         $a_content = $o_item->returnTestResults(true, false);
         $a_content = $this->formatTestNames($a_content, 'BR');
         $a_twig_values = array(
@@ -115,7 +115,7 @@ class TestsController extends Controller
             'rights_holder' => 'William E. Reveal',
             'content'       => $a_content
         );
-        return $this->render('WerGuideBundle:Pages:test.html.twig', $a_twig_values);
+        return $this->render('WerGuide:Pages:test.html.twig', $a_twig_values);
     }
 
     /**

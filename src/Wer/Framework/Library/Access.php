@@ -19,7 +19,7 @@
  *  @date 2013-04-22 11:30:13
  *  @ingroup wer_framework library
 **/
-namespace Wer\FrameworkBundle\Library;
+namespace Wer\Framework\Library;
 
 class Access extends Base
 {

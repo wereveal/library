@@ -7,19 +7,19 @@
  *  @version 0.1
  *  @par Change Log
  *      v0.1 - Initial version
- *  @par Wer GuideBundle version 1.0
+ *  @par Wer Guide version 1.0
  *  @date 2013-06-03 14:38:59
- *  @ingroup guide_bundle
+ *  @ingroup guide_
 **/
-namespace Wer\GuideBundle\Controller;
+namespace Wer\Guide\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Wer\GuideBundle\Model\Category;
-use Wer\GuideBundle\Model\Item;
-use Wer\GuideBundle\Model\Section;
-use Wer\FrameworkBundle\Library\Arrays;
-use Wer\FrameworkBundle\Library\Elog;
-use Wer\FrameworkBundle\Library\Strings;
+use Symfony\\Framework\Controller\Controller;
+use Wer\Guide\Model\Category;
+use Wer\Guide\Model\Item;
+use Wer\Guide\Model\Section;
+use Wer\Framework\Library\Arrays;
+use Wer\Framework\Library\Elog;
+use Wer\Framework\Library\Strings;
 
 class ItemController extends BaseController
 {
@@ -80,7 +80,7 @@ class ItemController extends BaseController
             'category_list' => $a_category_list,
             'item_data'     => $a_item[0]
         );
-        return $this->render('WerGuideBundle:Pages:item.html.twig', $a_twig_values);;
+        return $this->render('WerGuide:Pages:item.html.twig', $a_twig_values);;
     }
     ### Other Methods ###
     /**

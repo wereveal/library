@@ -1,11 +1,11 @@
 <?php
 
-namespace Wer\SobiBundle\Entity;
+namespace Wer\Sobi\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Wer\SobiBundle\Entity\WerObjectData
+ * Wer\Sobi\Entity\WerObjectData
 **/
 class WerObjectData
 {
@@ -30,12 +30,12 @@ class WerObjectData
     private $odUpdatedOn;
 
     /**
-     * @var Wer\SobiBundle\Entity\WerObject
+     * @var Wer\Sobi\Entity\WerObject
     **/
     private $odObject;
 
     /**
-     * @var Wer\SobiBundle\Entity\WerField
+     * @var Wer\Sobi\Entity\WerField
     **/
     private $odField;
 
@@ -105,16 +105,16 @@ class WerObjectData
 
     /**
      * Set odObject
-     * @param Wer\SobiBundle\Entity\WerObject $odObject
+     * @param Wer\Sobi\Entity\WerObject $odObject
     **/
-    public function setOdObject(\Wer\SobiBundle\Entity\WerObject $odObject)
+    public function setOdObject(\Wer\Sobi\Entity\WerObject $odObject)
     {
         $this->odObject = $odObject;
     }
 
     /**
      * Get odObject
-     * @return Wer\SobiBundle\Entity\WerObject
+     * @return Wer\Sobi\Entity\WerObject
     **/
     public function getOdObject()
     {
@@ -123,16 +123,16 @@ class WerObjectData
 
     /**
      * Set odField
-     * @param Wer\SobiBundle\Entity\WerField $odField
+     * @param Wer\Sobi\Entity\WerField $odField
     **/
-    public function setOdField(\Wer\SobiBundle\Entity\WerField $odField)
+    public function setOdField(\Wer\Sobi\Entity\WerField $odField)
     {
         $this->odField = $odField;
     }
 
     /**
      * Get odField
-     * @return Wer\SobiBundle\Entity\WerField
+     * @return Wer\Sobi\Entity\WerField
     **/
     public function getOdField()
     {

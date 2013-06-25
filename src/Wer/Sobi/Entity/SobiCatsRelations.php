@@ -1,12 +1,12 @@
 <?php
 
-namespace Wer\SobiBundle\Entity;
+namespace Wer\Sobi\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Wer\SobiBundle\Entity\SobiCatsRelations
+ * Wer\Sobi\Entity\SobiCatsRelations
 **/
 class SobiCatsRelations {
     /**

@@ -1,11 +1,11 @@
 <?php
 
-namespace Wer\SobiBundle\Entity;
+namespace Wer\Sobi\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Wer\SobiBundle\Entity\WerCategoryObject
+ * Wer\Sobi\Entity\WerCategoryObject
 **/
 class WerCategoryObject
 {
@@ -15,12 +15,12 @@ class WerCategoryObject
     private $coId;
 
     /**
-     * @var Wer\SobiBundle\Entity\WerObject
+     * @var Wer\Sobi\Entity\WerObject
     **/
     private $coObject;
 
     /**
-     * @var Wer\SobiBundle\Entity\WerCategory
+     * @var Wer\Sobi\Entity\WerCategory
     **/
     private $coCategory;
 
@@ -36,16 +36,16 @@ class WerCategoryObject
 
     /**
      * Set coObject
-     * @param Wer\SobiBundle\Entity\WerObject $coObject
+     * @param Wer\Sobi\Entity\WerObject $coObject
     **/
-    public function setCoObject(\Wer\SobiBundle\Entity\WerObject $coObject)
+    public function setCoObject(\Wer\Sobi\Entity\WerObject $coObject)
     {
         $this->coObject = $coObject;
     }
 
     /**
      * Get coObject
-     * @return Wer\SobiBundle\Entity\WerObject
+     * @return Wer\Sobi\Entity\WerObject
     **/
     public function getCoObject()
     {
@@ -54,16 +54,16 @@ class WerCategoryObject
 
     /**
      * Set coCategory
-     * @param Wer\SobiBundle\Entity\WerCategory $coCategory
+     * @param Wer\Sobi\Entity\WerCategory $coCategory
     **/
-    public function setCoCategory(\Wer\SobiBundle\Entity\WerCategory $coCategory)
+    public function setCoCategory(\Wer\Sobi\Entity\WerCategory $coCategory)
     {
         $this->coCategory = $coCategory;
     }
 
     /**
      * Get coCategory
-     * @return Wer\SobiBundle\Entity\WerCategory
+     * @return Wer\Sobi\Entity\WerCategory
     **/
     public function getCoCategory()
     {

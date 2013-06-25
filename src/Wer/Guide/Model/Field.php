@@ -3,7 +3,7 @@
  *  Handles all the database needs (CRUD) for the Fields
  *  @file Field.php
  *  @class Field
- *  @ingroup guide_bundle
+ *  @ingroup guide_
  *  @author William E Reveal <wer@revealitconsulting.com>
  *  @version 0.1.0
  *  @date 2013-03-29 09:02:46
@@ -12,10 +12,10 @@
  *  @par Guide v0.1
 **/
 
-namespace Wer\GuideBundle\Model;
+namespace Wer\Guide\Model;
 
-use Wer\FrameworkBundle\Library\Elog;
-use Wer\FrameworkBundle\Library\Database;
+use Wer\Framework\Library\Elog;
+use Wer\Framework\Library\Database;
 
 class Field
 {

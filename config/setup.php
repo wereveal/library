@@ -13,17 +13,17 @@
  *      @defgroup core The core framework files
  *      @ingroup wer_framework
  *  }
- *  @defgroup guide_bundle
+ *  @defgroup guide_
  *  @{
  *      @version 1.0
  *      @defgroup controllers controller files
- *      @ingroup guide_bundle
+ *      @ingroup guide_
  *      @defgroup forms files that define and create forms
- *      @ingroup guide_bundle
+ *      @ingroup guide_
  *      @defgroup model files that do database operations
- *      @ingroup guide_bundle
+ *      @ingroup guide_
  *      @defgroup tests unitTesting
- *      @ingroup guide_bundle
+ *      @ingroup guide_
  *  }
  *  @note <pre>
  *  NOTE: _path and _PATH indicates a full server path
@@ -31,9 +31,9 @@
  *        Both do not end with a slash
  *  </pre>
 */
-namespace Wer\FrameworkBundle\Library;
+namespace Wer\Framework\Library;
 
-use Wer\FrameworkBundle\Library\Config;
+use Wer\Framework\Library\Config;
 
 if (!defined('SITE_PATH')) {
     define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);

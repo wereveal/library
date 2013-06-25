@@ -16,7 +16,7 @@
  *  @date 2013-03-27 15:30:09
  *  @ingroup wer_framework library
 **/
-namespace Wer\FrameworkBundle\Library;
+namespace Wer\Framework\Library;
 
 class Arrays extends Base
 {

@@ -4,7 +4,7 @@
 {% if select.name != '' %}
 <select name="{{ select.name }}"{% if select.class != '' %} class="{{ select.class }}"{% endif %}{{ select.other_stuph }}>
     {% for option in select.options %}
-        {% include "WerGuideBundle:Elements:select_options.html.twig" %}
+        {% include "WerGuide:Elements:select_options.html.twig" %}
     {% endfor %}
 </select>
 {% endif %}

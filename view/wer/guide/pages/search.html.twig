@@ -1,14 +1,14 @@
-{% extends 'WerGuideBundle:Default:base.html.twig' %}
+{% extends 'WerGuide:Default:base.html.twig' %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
             <div class="row-fluid">
                 <div class="span12">
-                    {% include "WerGuideBundle:Snippets:itemCards.html.twig" with { 'items': item_cards.items } %}
+                    {% include "WerGuide:Snippets:itemCards.html.twig" with { 'items': item_cards.items } %}
                     <div class="row-fluid">
                         <div class="span12 prevnext">
-                            {% include "WerGuideBundle:Snippets:prevnext.html.twig" with { 'prevnext': item_cards.prev_next } %}
+                            {% include "WerGuide:Snippets:prevnext.html.twig" with { 'prevnext': item_cards.prev_next } %}
                         </div>
                     </div>
                 </div>

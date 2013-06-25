@@ -10,7 +10,7 @@
  *  @par Wer Framework v4.0
  *  @ingroup wer_framework library
 **/
-namespace Wer\FrameworkBundle\Library;
+namespace Wer\Framework\Library;
 
 
 class Date_Time

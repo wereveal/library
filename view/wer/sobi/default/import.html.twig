@@ -1,4 +1,4 @@
-{% extends "WerSobiBundle::base.html.twig" %}
+{% extends "WerSobi::base.html.twig" %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -11,7 +11,7 @@
 
 {% block message %}
 {% if a_message.message != '' %}
-{% include 'WerSobiBundle:Fragments:message.html.twig' with {'a_message': a_message} %}
+{% include 'WerSobi:Fragments:message.html.twig' with {'a_message': a_message} %}
 {% endif %}
 {% endblock %}
 

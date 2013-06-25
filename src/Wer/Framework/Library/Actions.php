@@ -18,7 +18,7 @@
  *  @par Wer Framework version 4.0.0
  *  @ingroup wer_framework library
 **/
-namespace Wer\FrameworkBundle\Library;
+namespace Wer\Framework\Library;
 
 class Actions extends Base
 {

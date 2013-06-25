@@ -1,20 +1,20 @@
 <?php
 /**
- *  Creates forms for the GuideBundle.
+ *  Creates forms for the Guide.
  *  @file SearchForms.php
  *  @class SearchForms
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 0.1
  *  @par Change Log
  *      v0.1 - Initial version 2012-06-13
- *  @par Wer GuideBundle version 1.0
+ *  @par Wer Guide version 1.0
  *  @date 2013-06-13 10:48:12
- *  @ingroup guide_bundle
+ *  @ingroup guide_
 **/
 
-namespace Wer\GuideBundle\Forms;
+namespace Wer\Guide\Forms;
 
-use Wer\GuideBundle\Forms\Entity\QuickSearch as QuickSearchEntity;
+use Wer\Guide\Forms\Entity\QuickSearch as QuickSearchEntity;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilder;

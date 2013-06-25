@@ -1,11 +1,11 @@
 <?php
 
-namespace Wer\SobiBundle\Entity;
+namespace Wer\Sobi\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Wer\SobiBundle\Entity\WerField
+ * Wer\Sobi\Entity\WerField
 **/
 class WerField
 {
@@ -25,7 +25,7 @@ class WerField
     private $fieldEnabled;
 
     /**
-     * @var Wer\SobiBundle\Entity\WerFieldTypes
+     * @var Wer\Sobi\Entity\WerFieldTypes
     **/
     private $fieldType;
 
@@ -77,16 +77,16 @@ class WerField
 
     /**
      * Set fieldType
-     * @param Wer\SobiBundle\Entity\WerFieldTypes $fieldType
+     * @param Wer\Sobi\Entity\WerFieldTypes $fieldType
     **/
-    public function setFieldType(\Wer\SobiBundle\Entity\WerFieldTypes $fieldType)
+    public function setFieldType(\Wer\Sobi\Entity\WerFieldTypes $fieldType)
     {
         $this->fieldType = $fieldType;
     }
 
     /**
      * Get fieldType
-     * @return Wer\SobiBundle\Entity\WerFieldTypes
+     * @return Wer\Sobi\Entity\WerFieldTypes
     **/
     public function getFieldType()
     {
