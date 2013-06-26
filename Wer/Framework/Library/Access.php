@@ -17,7 +17,7 @@
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
  *  @par Wer Framework version 4.0
  *  @date 2013-04-22 11:30:13
- *  @ingroup wer_framework library
+ *  @ingroup wer_framework core library
 **/
 namespace Wer\Framework\Library;
 

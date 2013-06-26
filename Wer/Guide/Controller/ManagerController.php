@@ -10,7 +10,7 @@
  *      v0.1 - Initial version 2012-06-04
  *  @par Wer Guide version 1.0
  *  @date 2013-03-26 15:49:24
- *  @ingroup guide_
+ *  @ingroup guide
 **/
 namespace Wer\Guide\Controller;
 

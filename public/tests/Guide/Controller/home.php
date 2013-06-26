@@ -10,21 +10,21 @@ $o_files->setNamespace('Wer\Guide');
 $index_tpl = $o_files->getContents('index.tpl', 'templates');
 $js_tpl = $o_files->getContents('js.tpl', 'templates/elements');
 $css_tpl = $o_files->getContents('css.tpl', 'templates/elements');
-$head_css = $o_html->fillTemplate(
+$head_css = $o_html->render(
     $css_tpl,
     array(
         'css_source' => '/assets/themes/default/css/bootstrap.min.css',
         'css_media' => 'all'
     )
 );
-$head_css .= $o_html->fillTemplate(
+$head_css .= $o_html->render(
     $css_tpl,
     array(
         'css_source' => '/assets/themes/default/css/main.css',
         'css_media' => 'all'
     )
 );
-$body_js = $o_html->fillTemplate(
+$body_js = $o_html->render(
     'js_tpl',
     array('js_source' => '/assets/themes/default/js/bootstrap.min.js')
 );
@@ -33,5 +33,5 @@ $a_values = array(
     'head_css' => $head_css,
     'body_js'  => $body_js
 );
-print $o_html->fillTemplate($index_tpl, $a_values);
+print $o_html->render($index_tpl, $a_values);
 ?>

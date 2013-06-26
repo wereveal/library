@@ -13,17 +13,19 @@
  *      @defgroup core The core framework files
  *      @ingroup wer_framework
  *  }
- *  @defgroup guide_
+ *  @defgroup guide
  *  @{
  *      @version 1.0
  *      @defgroup controllers controller files
- *      @ingroup guide_
+ *      @ingroup guide
+ *      @defgroup views classes that create views
+ *      @ingroup guide
  *      @defgroup forms files that define and create forms
- *      @ingroup guide_
+ *      @ingroup views
  *      @defgroup model files that do database operations
- *      @ingroup guide_
+ *      @ingroup guide
  *      @defgroup tests unitTesting
- *      @ingroup guide_
+ *      @ingroup guide
  *  }
  *  @note <pre>
  *  NOTE: _path and _PATH indicates a full server path
@@ -42,7 +44,7 @@ if (!defined('BASE_PATH')) {
     define('BASE_PATH', dirname(SITE_PATH));
 }
 if (!defined('APP_PATH')) {
-    define('APP_PATH', BASE_PATH . '/app');
+    define('APP_PATH', BASE_PATH . '/Wer');
 }
 require_once APP_PATH . '/config/constants.php';
 if (!Config::start()) {

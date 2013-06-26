@@ -3,7 +3,7 @@
  *  Handles all the database needs (CRUD) for the Items
  *  @file Item.php
  *  @class Item
- *  @ingroup guide_
+ *  @ingroup guide
  *  @author William E Reveal <wer@revealitconsulting.com>
  *  @version 0.1.0
  *  @date 2013-03-29 09:02:46

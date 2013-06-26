@@ -69,7 +69,7 @@ class HTML extends Base
             $a_button_values['button_id'] = $a_button_values['button_value'];
         }
         $a_button_values = array_merge($a_default_values, $a_button_values);
-        return $this->fillTemplate('elements/button.tpl', $a_button_values, true);
+        return $this->render('elements/button.tpl', $a_button_values, true);
     }
     public function cssLink($css_file = '', $css_dir = 'css', $css_media = 'screen')
     {
@@ -81,7 +81,7 @@ class HTML extends Base
         $a_tpl_values = array(
             'css_media'  => ($css_media),
             'css_source' => $this->o_files->getFileWithDir($css_file));
-        return $this->fillTemplate('css.tpl', $a_tpl_values, true);
+        return $this->render('css.tpl', $a_tpl_values, true);
     }
     public function failure($message = 'A Problem Has Occurred. Please Try Again.', $image_file = '')
     {
@@ -95,7 +95,7 @@ class HTML extends Base
         }
         $this->o_elog->write("Image w Dir: {$image}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $a_stuff = array('message' => $message, 'image'=>$image, 'class'=>'msg-failure', 'alt'=>'A Problem Has Occurred');
-        return $this->fillTemplate('message.tpl', $a_stuff, true);
+        return $this->render('message.tpl', $a_stuff, true);
     }
     public function jsLink($js_file = '', $js_dir = 'js')
     {
@@ -105,7 +105,7 @@ class HTML extends Base
         }
         $this->o_files->setFileDirName($js_dir);
         $a_tpl_values = array('js_source'=>$this->o_files->getFileWithDir($js_file));
-        return $this->fillTemplate('js.tpl', $a_tpl_values, true);
+        return $this->render('js.tpl', $a_tpl_values, true);
     }
     public function success($message = 'Success!', $image_file = '')
     {
@@ -118,7 +118,7 @@ class HTML extends Base
             }
         }
         $a_stuff = array('message' => $message, 'image'=>$image, 'class'=>'msg-success', 'alt'=>'Success');
-        return $this->fillTemplate('message.tpl', $a_stuff, true);
+        return $this->render('message.tpl', $a_stuff, true);
     }
     public function warning($message = "Warning!", $image_file = '')
     {
@@ -131,7 +131,7 @@ class HTML extends Base
             }
         }
         $a_stuff = array('message' => $message, 'image'=>$image, 'class'=>'msg-warning', 'alt'=>'Warning');
-        return $this->fillTemplate('message.tpl', $a_stuff, true);
+        return $this->render('message.tpl', $a_stuff, true);
     }
     /**
      *  Fill the template with the values passed in.
@@ -145,7 +145,7 @@ class HTML extends Base
      *  @param $is_file (BOOL) - the template is the path to a file, defaults to false
      *  @return str - the filled in template
     **/
-    public function fillTemplate($template = '', $a_values = '', $is_file = false)
+    public function render($template = '', $a_values = '', $is_file = false)
     {
         $this->o_elog->setFromMethod(__METHOD__ . '.' . __LINE__);
         if ($is_file) {

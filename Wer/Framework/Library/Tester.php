@@ -5,7 +5,7 @@
  *  @namespace Wer\Framework\Library
  *  @class Tester
  *  @author William Reveal  <wer@revealitconsulting.com>
- *  @ingroup wer_framework classes
+ *  @ingroup wer_framework library
  *  @version  1.1.0
  *  @date 2013-05-10 14:24:24
  *  @par Change log
@@ -107,7 +107,7 @@ abstract class Tester
         );
         if ($return_html) {
             $test_results_tpl = $this->o_files->getContents('test_results.tpl', 'templates');
-            return $this->o_html->fillTemplate($test_results_tpl, $a_values);
+            return $this->o_html->render($test_results_tpl, $a_values);
         } else {
             return $a_values;
         }

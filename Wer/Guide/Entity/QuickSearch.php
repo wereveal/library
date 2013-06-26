@@ -9,7 +9,7 @@
  *      v0.1 - Initial version
  *  @par Wer Guide version 1.0
  *  @date 2013-06-13 10:12:02
- *  @ingroup guide_
+ *  @ingroup guide
 **/
 namespace Wer\Guide\Forms\Entity;
 

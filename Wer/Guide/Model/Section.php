@@ -3,7 +3,7 @@
  *  Handles all the database needs (CRUD) for the Sections
  *  @file Section.php
  *  @class Section
- *  @ingroup guide_
+ *  @ingroup guide controller
  *  @author William E Reveal <wer@revealitconsulting.com>
  *  @version 0.2.0
  *  @date 2013-05-09 12:36:02

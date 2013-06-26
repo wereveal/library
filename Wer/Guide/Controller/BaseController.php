@@ -9,11 +9,11 @@
  *      v0.1 - Initial version
  *  @par Wer Guide version 1.0
  *  @date 2013-06-03 14:38:59
- *  @ingroup guide_
+ *  @ingroup guide controller
 **/
 namespace Wer\Guide\Controller;
 
-use Symfony\\Framework\Controller\Controller;
+use Symfony\Framework\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Wer\Guide\Model\Category;
 use Wer\Guide\Model\Item;
