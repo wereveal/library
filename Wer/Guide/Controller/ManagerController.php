@@ -14,10 +14,9 @@
 **/
 namespace Wer\Guide\Controller;
 
-use Symfony\\Framework\Controller\Controller;
 use Wer\Guide\Model\Field;
 
-class ManagerController extends Controller
+class ManagerController
 {
     private $a_base_twig;
     private $o_wer_field;

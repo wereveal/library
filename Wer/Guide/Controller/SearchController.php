@@ -14,7 +14,6 @@
 
 namespace Wer\Guide\Controller;
 
-use Symfony\\Framework\Controller\Controller;
 use Wer\Guide\Model\Category;
 use Wer\Guide\Model\Item;
 use Wer\Guide\Model\Section;

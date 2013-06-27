@@ -15,11 +15,6 @@
 namespace Wer\Guide\Forms;
 
 use Wer\Guide\Forms\Entity\QuickSearch as QuickSearchEntity;
-use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormBuilder;
-use Symfony\Component\Form\FormFactory;
-use Symfony\Component\HttpFoundation\Request;
 
 class SearchForms
 {

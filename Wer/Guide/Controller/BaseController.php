@@ -13,8 +13,6 @@
 **/
 namespace Wer\Guide\Controller;
 
-use Symfony\Framework\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Wer\Guide\Model\Category;
 use Wer\Guide\Model\Item;
 use Wer\Guide\Model\Section;
@@ -24,7 +22,7 @@ use Wer\Framework\Library\Arrays;
 use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
 
-abstract class BaseController extends Controller
+abstract class BaseController
 {
     protected $default_section = 1;
     protected $num_to_display  = 10;
