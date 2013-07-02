@@ -1,14 +1,12 @@
 <?php
 
-$base_dir = $_SERVER['DOCUMENT_ROOT'];
-$src_dir = $base_dir . '/../Wer/';
-
 return array(
-    'Wer\\Framework\\Library'   => $src_dir,
-    'Wer\\Guide\\Controller'    => $src_dir,
-    'Wer\\Guide\\Model'         => $src_dir,
-    'Wer\\Guide\\Tests'         => $src_dir,
-    'Wer\\Guide\\Tests\\Tester' => $src_dir,
-    'Wer\\Import\\Controller'   => $src_dir,
-    ''                          => $src_dir
+    'Wer\\Framework\\Library'   => APP_PATH,
+    'Wer\\Guide\\Controller'    => APP_PATH,
+    'Wer\\Guide\\Model'         => APP_PATH,
+    'Wer\\Guide\\Model\\Entity' => APP_PATH,
+    'Wer\\Guide\\Tests'         => APP_PATH,
+    'Wer\\Guide\\Tests\\Tester' => APP_PATH,
+    'Wer\\Guide\\View'          => APP_PATH,
+    'Wer\\Import\\Controller'   => APP_PATH,
 );

@@ -46,6 +46,10 @@ if (!defined('BASE_PATH')) {
 if (!defined('APP_PATH')) {
     define('APP_PATH', BASE_PATH . '/Wer');
 }
+if (!defined('VENDOR_PATH')) {
+    define('VENDOR_PATH', BASE_PATH . '/vendor');
+}
+require_once APP_PATH . '/autoload.php';
 require_once APP_PATH . '/config/constants.php';
 if (!Config::start()) {
     error_log("Couldn't create the constants\n\n");
