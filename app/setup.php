@@ -44,7 +44,7 @@ if (!defined('BASE_PATH')) {
     define('BASE_PATH', dirname(SITE_PATH));
 }
 if (!defined('APP_PATH')) {
-    define('APP_PATH', BASE_PATH . '/Wer');
+    define('APP_PATH', BASE_PATH . '/app');
 }
 if (!defined('VENDOR_PATH')) {
     define('VENDOR_PATH', BASE_PATH . '/vendor');

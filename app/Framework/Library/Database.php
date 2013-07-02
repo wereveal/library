@@ -5,7 +5,7 @@
  *  @file Database.php
  *  @class Database
  *  @ingroup wer_framework library
- *  @author William Reveal <wer@wereveal.com>
+ *  @author William Reveal <wer@revealitconsulting.com>
  *  @version 2.4.2
  *  @date 2013-05-09 12:27:58
  *  @par Change Log

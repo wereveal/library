@@ -7,7 +7,7 @@
  *  @requires Composer\Autoload\ClassLoader
  *      which is installed on level out from the web site root
  *      in the vendor directory.
- *  @author William Reveal  <wer@wereveal.com>
+ *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version 1.0.0
  *  @par Change Log
  *      v1.0.0 - officially added to Framework

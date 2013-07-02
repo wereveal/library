@@ -19,7 +19,7 @@
  *  @note <pre>The constants with _DIR_NAME should correspond to dir names in
  *      the site theme or namespace (e.g. templates are in namespace)
  *      </pre>
- *  @author William Reveal <wer@wereveal.com>
+ *  @author William Reveal <wer@revealitconsulting.com>
  *  @version 4.1.1
  *  @date 2013-04-30 12:23:37
  *  @par Change Log

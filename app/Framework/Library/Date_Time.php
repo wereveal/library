@@ -2,7 +2,7 @@
 /**
  *  Adds some standard use formatting methods for date and time.
  *  @class Date_Time
- *  @author William Reveal  <wer@wereveal.com>
+ *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version 3.0.0
  *  @date 2013-03-27 16:47:09
  *  @par Change Log

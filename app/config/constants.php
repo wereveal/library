@@ -18,6 +18,8 @@ if (!isset($allow_get) || $allow_get === false) {
 $_REQUEST = array();
 $HTTP_GET_VARS = array();
 
+define('ADMIN_DIR_NAME',     'admin');
+define('ASSETS_DIR_NAME',    'assets');
 define('CONFIG_DIR_NAME',    'config');
 define('CSS_DIR_NAME',       'css');
 define('HTML_DIR_NAME',      'html');
@@ -27,7 +29,6 @@ define('LIBS_DIR_NAME',      'Library');
 define('TEMPLATES_DIR_NAME', 'templates');
 define('STD_CONTENT_TPL',    'content.tpl');
 
-/* CONSTANTS referring to entire web site */
 define('PRIVATE_DIR_NAME',   'private');
 define('TMP_DIR_NAME',       'tmp');
 define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST']);
@@ -44,16 +45,14 @@ if (file_exists($private_w_path)) {
     define('PRIVATE_PATH', '');
 }
 
-/** CONSTANTS referring to places Outside the Manager but which the
-    manager accesses for one reason or another.
-**/
-define('FILES_DIR',            '/assets/files');
-define('MEDIA_DIR',            '/assets/media');
-define('THEMES_DIR',           '/assets/themes');
-define('ADMIN_DIR',            '/admin');
-define('IMAGES_DIR',           MEDIA_DIR . '/' . IMAGE_DIR_NAME);
+define('ADMIN_DIR',            '/' . ADMIN_DIR_NAME);
+define('APP_CONFIG_PATH',      APP_PATH  . '/config');
+define('ASSETS_DIR',           '/' . ASSETS_DIR_NAME);
+define('FILES_DIR',            ASSETS_DIR . '/files');
+define('MEDIA_DIR',            ASSETS_DIR . '/media');
+define('THEMES_DIR',           ASSETS_DIR . '/themes');
+define('IMAGES_DIR',           ASSETS_DIR . '/' . IMAGE_DIR_NAME);
 define('IMAGES_THUMBS_DIR',    IMAGES_DIR . '/thumbs');
-define('BUTTONS_DIR',          IMAGES_DIR . '/layout/buttons');
 define('EVENTS_IMAGES_DIR',    IMAGES_DIR . '/events');
 define('STAFF_IMAGES_DIR',     IMAGES_DIR . '/staff');
 define('EVENTS_IMAGES_PATH',   SITE_PATH . EVENTS_IMAGES_DIR);
@@ -62,7 +61,6 @@ define('IMAGES_PATH',          SITE_PATH . IMAGES_DIR);
 define('STAFF_IMAGES_PATH',    SITE_PATH . STAFF_IMAGES_DIR);
 define('THEMES_PATH',          SITE_PATH . THEMES_DIR);
 define('ADMIN_PATH',           SITE_PATH . ADMIN_DIR);
-define('APP_CONFIG_PATH',      APP_PATH  . '/config');
 
 /** Variables used by the classes Elog and Show_Global_Vars.
     For Production Sites, only USE_PHP_LOG could be true

@@ -4,7 +4,7 @@
  *  A singleton pattern.
  *  @file Elog.php
  *  @class Elog
- *  @author William Reveal  <wer@wereveal.com>
+ *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version:  2.5.2
  *  @date 2013-04-23 11:24:26
  *  @par Change Log

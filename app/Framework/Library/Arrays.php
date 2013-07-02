@@ -6,7 +6,7 @@
  *  class where they can be used more globally.
  *  @file Arrays.php
  *  @class Arrays
- *  @author William Reveal  <wer@wereveal.com>
+ *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version 1.0.2
  *  @par ChangeLog
  *      v1.0.3 - moved array methods from class Strings to here

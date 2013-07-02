@@ -4,7 +4,7 @@
  *  Primarily this is used to fix the visibility issue that PHP ignores
  *  @file Base.php
  *  @class Base
- *  @author William Reveal  <wer@wereveal.com>
+ *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version  1.0.3
  *  @date 2013-03-28 11:00:17
  *  @par ChangeLog

@@ -7,7 +7,7 @@
  *
  *  @file Actions.php
  *  @class Actions
- *  @author William Reveal  <wer@wereveal.com>
+ *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version 2.2.2
  *  @date 2013-03-27 15:26:13
  *  @par Change Log

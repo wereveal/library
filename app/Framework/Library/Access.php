@@ -3,7 +3,7 @@
  *  Manages User Access to sections of the site.
  *  @file Access.php
  *  @class Access
- *  @author William Reveal  <wer@wereveal.com>
+ *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version 3.5.3
  *  @par Change Log
  *      v3.5.3 - changed namespace to match my framework namespace,

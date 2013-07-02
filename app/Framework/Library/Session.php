@@ -3,7 +3,7 @@
  *  For managing sessions.
  *  @file Session.php
  *  @class Session
- *  @author William Reveal <wer@wereveal.com>
+ *  @author William Reveal <wer@revealitconsulting.com>
  *  @version 1.1.0
  *  @date 06/14/2011 15:13:24
  *  @ingroup wer_framework library

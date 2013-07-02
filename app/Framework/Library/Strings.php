@@ -7,7 +7,7 @@
  *  Renamed and modified version of old class Output
  *  @file Strings.php
  *  @class Strings
- *  @author William Reveal  <wer@wereveal.com>
+ *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version 5.1.0
  *  @date 2013-05-14 12:42:32
  *  @ingroup wer_framework library

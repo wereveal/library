@@ -3,7 +3,7 @@
  *  Class used to set up classes that look to establish the location of a file.
  *  @class Location
  *  @file Location.php
- *  @author William Reveal <wer@wereveal.com>
+ *  @author William Reveal <wer@revealitconsulting.com>
  *  @version 1.1.0
  *  @date 2011-06-14 15:11:26
  *  @ingroup wer_framework library

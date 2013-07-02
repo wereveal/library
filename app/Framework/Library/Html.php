@@ -7,7 +7,7 @@
  *  Derived from the old Depreciated Output class
  *  @file Html.php
  *  @class Html
- *  @author William Reveal  <wer@wereveal.com>
+ *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version 1.0.1
  *  @par Change Log
  *      v1.0.1 - some refactoring changes based on changes in other files

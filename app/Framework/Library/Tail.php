@@ -4,7 +4,7 @@
  *  When on a webpage, use the meta refresh to keep tailing a file
  *  @file Tail.php
  *  @class Tail
- *  @author William Reveal  <wer@wereveal.com>
+ *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version 2.1.0
  *  @date 2013-04-22 11:46:56
  *  @par Change Log

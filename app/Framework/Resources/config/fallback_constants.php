@@ -13,7 +13,7 @@ namespace Wer;
 define('DISPLAY_DATE_FORMAT', 'm/d/Y');
 define('EMAIL_DOMAIN', 'replaceme.com');
 define('EMAIL_FORM_TO', 'me@replaceme.com');
-define('ERROR_EMAIL_ADDRESS', 'webmaster@wereveal.com');
+define('ERROR_EMAIL_ADDRESS', 'webmaster@revealitconsulting.com');
 define('PAGE_META_DESCRIPTION', 'My Company');
 define('PAGE_META_KEYWORDS', 'My Company');
 define('PAGE_TEMPLATE', 'index.tpl');
