@@ -20,7 +20,7 @@ use Wer\Framework\Library\Arrays;
 use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
 
-class ItemController extends BaseController
+class ItemController extends CommonController
 {
     protected $default_section = 1;
     protected $num_to_display  = 10;
@@ -56,7 +56,7 @@ class ItemController extends BaseController
      *  @param int $item_id required, redirects to main page if missing
      *  @return str the html to display
     **/
-    public function indexAction($item_id = '')
+    public function defaultAction($item_id = '')
     {
         if ($item_id == '') {
             header('Location: ' . SITE_URL);

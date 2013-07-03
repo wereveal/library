@@ -1,8 +1,8 @@
 <?php
 /**
- *  Main Controller for the Guide.
- *  @file MainController.php
- *  @class MainController
+ *  Controller for the home page of the Guide.
+ *  @file HomeController.php
+ *  @class HomeController
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 0.2
  *  @par Change Log
@@ -23,7 +23,7 @@ use Wer\Framework\Library\Strings;
 use Wer\Guide\Forms\SearchForms;
 use Wer\Guide\Forms\Entity\QuickSearch;
 
-class MainController extends BaseController
+class HomeController extends CommonController
 {
     protected $default_section = 1;
     protected $num_to_display  = 10;
@@ -54,7 +54,7 @@ class MainController extends BaseController
     }
 
     ### Main Actions called by routing parameters ###
-    public function indexAction()
+    public function defaultAction()
     {
         $a_quick_form    = $this->formQuickSearch();
         $a_alpha_list    = $this->alphaList();

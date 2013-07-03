@@ -22,7 +22,7 @@ use Wer\Framework\Library\Arrays;
 use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
 
-abstract class BaseController
+abstract class CommonController
 {
     protected $default_section = 1;
     protected $num_to_display  = 10;

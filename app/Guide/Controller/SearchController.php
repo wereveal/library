@@ -21,7 +21,7 @@ use Wer\Framework\Library\Arrays;
 use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
 
-class SearchController extends BaseController
+class SearchController extends CommonController
 {
     protected $default_section = 1;
     protected $num_to_display  = 10;
@@ -57,7 +57,7 @@ class SearchController extends BaseController
      *  @param none
      *  @return str the html to display
     **/
-    public function indexAction()
+    public function defaultAction()
     {
         $a_quick_form    = $this->formQuickSearch();
         $a_alpha_list    = $this->alphaList();

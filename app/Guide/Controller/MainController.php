@@ -1,8 +1,8 @@
 <?php
 /**
  *  The main Controller for the whole site.
- *  @file IndexController.php
- *  @class IndexController
+ *  @file MainController.php
+ *  @class MainController
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 0.1
  *  @par Change Log
@@ -13,7 +13,7 @@
 **/
 namespace Wer\Guide\Controller;
 
-class IndexController
+class MainController
 {
     protected $action1;
     protected $action2;
@@ -45,7 +45,7 @@ class IndexController
             case 'item':
                 return $this->o_item_controller->indexAction($this->action2);
             default:
-                return $this->o_main_controller->indexAction();
+                return $this->o_index_controller->defaultAction();
         }
     }
     /**
