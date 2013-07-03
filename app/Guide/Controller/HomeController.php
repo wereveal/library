@@ -52,7 +52,10 @@ class HomeController extends CommonController
         $this->o_twig = new Twig_Environment(
             $loader,
             array(
-                'cache' => APP_PATH . '/twig_cache'
+                'cache'       => APP_PATH . '/twig_cache',
+                'debug'       => false,
+                'auto_reload' => true,
+                'autoescape'  => true
             )
         );
         if (defined(DISPLAY_DATE_FORMAT)) {
@@ -152,12 +155,12 @@ class HomeController extends CommonController
             $guide_path . '/elements' => 'elements',
             $guide_path . '/snippets' => 'snippets',
             $guide_path . '/manager'  => 'manager',
-            $frame_path . '/main'     => 'main',
-            $frame_path . '/tests'    => 'tests'
+            $frame_path . '/default'  => 'fwmain',
+            $frame_path . '/tests'    => 'fwtests'
         );
-        $loader = new Twig_Loader_Filesystem($twig_path);
+        $loader = new Twig_Loader_Filesystem($guide_path);
         foreach ($a_template_paths as $path => $namespace ) {
-            $loader->addPath($path, $namespace);
+            $loader->prependPath($path, $namespace);
         }
         return $loader;
     }

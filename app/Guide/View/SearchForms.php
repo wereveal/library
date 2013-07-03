@@ -12,16 +12,15 @@
  *  @ingroup guide
 **/
 
-namespace Wer\Guide\Forms;
+namespace Wer\Guide\View;
 
-use Wer\Guide\Forms\Entity\QuickSearch as QuickSearchEntity;
+use Wer\Guide\Model\Entity\QuickSearchEntity;
 
 class SearchForms
 {
     protected $o_factory;
     public function __construct()
     {
-        $this->o_factory = new FormFactory;
     }
     /**
      *  Returns a SF rendered form.
@@ -34,10 +33,5 @@ class SearchForms
         $o_qsentity->setSearchTerms('');
         $o_qsentity->setSearch('Search');
         $a_options = array();
-        $o_form = $this->o_factory->createBuilder('form', $o_qsentity, $a_options)
-            ->add('searchTerms', 'text')
-            ->add('search', 'button')
-            ->getForm();
-        return $o_form->createView();
     }
 }

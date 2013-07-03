@@ -11,9 +11,9 @@
  *  @date 2013-06-13 10:12:02
  *  @ingroup guide
 **/
-namespace Wer\Guide\Forms\Entity;
+namespace Wer\Guide\Model\Entity;
 
-class QuickSearch
+class QuickSearchEntity
 {
     protected $search;
     protected $searchTerms;

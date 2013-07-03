@@ -17,7 +17,7 @@
  *      v5.0.0 - renamed new version for Wer Framework v4
  *  @par Wer Framework 4.0
 **/
-namespace Wer\Framework\Library;;
+namespace Wer\Framework\Library;
 
 class Strings extends Base
 {
