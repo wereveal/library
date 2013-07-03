@@ -19,6 +19,7 @@ class MainController
     protected $action2;
     protected $action3;
     protected $form_action;
+    protected $a_get;
     protected $a_post;
     protected $o_actions;
     protected $o_elog;
@@ -32,6 +33,7 @@ class MainController
     }
     /**
      *  Main Router and Puker outer.
+     *  Turns over the hard work to the specific controllers.
      *  @param none
      *  @return str $html
     **/
@@ -39,13 +41,17 @@ class MainController
     {
         switch ($this->action1) {
             case 'search':
-                return $this->o_search_controller->indexAction($this->action2, $this->action3, $this->a_post);
+                $o_search = new SearchController();
+                return $o_search->defaultAction($this->action2, $this->action3, $this->a_get);
             case 'list':
-                return $this->o_search_controller->listAction($this->action2, $this->action3);
+                $o_search = new SearchController();
+                return $o_search->listAction($this->action2, $this->action3);
             case 'item':
-                return $this->o_item_controller->indexAction($this->action2);
+                $o_item = new ItemController();
+                return $o_item->defaultAction($this->action2);
             default:
-                return $this->o_index_controller->defaultAction();
+                $o_home = new HomeController();
+                return $o_home->defaultAction();
         }
     }
     /**
@@ -56,12 +62,13 @@ class MainController
     protected function initializeValues()
     {
         $this->o_actions->setUriActions();
-        $a_actions          = $this->o_actions->getUriActoins();
+        $a_actions          = $this->o_actions->getUriActions();
         $this->action1     = isset($a_actions['action1']) ? $a_actions['action1'] : '' ;
         $this->action2     = isset($a_actions['action2']) ? $a_actions['action2'] : '' ;
         $this->action3     = isset($a_actions['action3']) ? $a_actions['action3'] : '' ;
         $this->form_action = $this->o_actions->getFormAction();
-        $this->a_post      = $this->o_array->cleanArrayValues($_POST);
+        $this->a_post      = $this->o_actions->getCleanPost();
+        $this->a_get       = $this->o_actions->getCleanGet();
     }
     ### GETTERS and SETTERS ###
     public function getAction1()

@@ -22,6 +22,8 @@ use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
 use Wer\Guide\Forms\SearchForms;
 use Wer\Guide\Forms\Entity\QuickSearch;
+use Twig\Loader\Twig_Loader_Filesystem;
+use Twit\Twig_Environment;
 
 class HomeController extends CommonController
 {
@@ -35,16 +37,24 @@ class HomeController extends CommonController
     protected $o_item;
     protected $o_sec;
     protected $o_str;
+    protected $o_twig;
     protected $o_view;
 
     public function __construct()
     {
-        $this->o_arr  = new Arrays();
-        $this->o_cat  = new Category();
+        $this->o_arr  = new Arrays;
+        $this->o_cat  = new Category;
         $this->o_elog = Elog::start();
-        $this->o_item = new Item();
-        $this->o_sec  = new Section();
-        $this->o_str  = new Strings();
+        $this->o_item = new Item;
+        $this->o_sec  = new Section;
+        $this->o_str  = new Strings;
+        $loader       = $this->twigLoader();
+        $this->o_twig = new Twig_Environment(
+            $loader,
+            array(
+                'cache' => APP_PATH . '/twig_cache'
+            )
+        );
         if (defined(DISPLAY_DATE_FORMAT)) {
             $this->date_format = DISPLAY_DATE_FORMAT;
         }
@@ -72,7 +82,7 @@ class HomeController extends CommonController
             'category_list' => $a_category_list,
             'item_cards'    => $a_item_cards
         );
-        return $this->render('WerGuide:Pages:index.html.twig', $a_twig_values);
+        return $this->render('@pages/index.html.twig', $a_twig_values);
     }
     public function formTestAction(Request $request)
     {
@@ -85,7 +95,7 @@ class HomeController extends CommonController
             'form'          => $this->quickSearch($request),
         );
 
-        return $this->render('WerGuide:Pages:testSearch.html.twig', $a_twig_values);
+        return $this->o_twig->render('@pages/testSearch.html.twig', $a_twig_values);
     }
     ### Methods Used ###
     /**
@@ -127,8 +137,32 @@ class HomeController extends CommonController
         $this->o_elog->write('a_items: ' . var_export($a_items, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $a_items;
     }
+    /**
+     *  Creates a Twig Loader object.
+     *  @param none
+     *  @return object
+    **/
+    public function twigLoader()
+    {
+        $guide_path = APP_PATH . '/Guide/resources/templates/twig';
+        $frame_path = APP_PATH . '/Framework/resources/templates/twig';
+        $a_template_paths = array(
+            $guide_path . '/default'  => 'default',
+            $guide_path . '/pages'    => 'pages',
+            $guide_path . '/elements' => 'elements',
+            $guide_path . '/snippets' => 'snippets',
+            $guide_path . '/manager'  => 'manager',
+            $frame_path . '/main'     => 'main',
+            $frame_path . '/tests'    => 'tests'
+        );
+        $loader = new Twig_Loader_Filesystem($twig_path);
+        foreach ($a_template_paths as $path => $namespace ) {
+            $loader->addPath($path, $namespace);
+        }
+        return $loader;
+    }
     /*
-     *  See BaseController for the following methods
+     *  See CommonController for the following methods
      *      alphaList($current_letter = '')
      *      categoryList($section_id = 1, $selected_category = '')
      *      formQuickSearch($a_search_for = 'Search For')
