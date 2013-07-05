@@ -26,9 +26,9 @@ class MainController
     protected $o_sess;
     public function __construct()
     {
-        $this->o_elog     = Elog::start();
-        $this->o_sess     = Session::start();
-        $this->o_actions  = new Actions;
+        $this->o_elog    = Elog::start();
+        $this->o_sess    = Session::start();
+        $this->o_actions = new Actions;
         $this->initializeValues();
     }
     /**
@@ -49,6 +49,7 @@ class MainController
             case 'item':
                 $o_item = new ItemController();
                 return $o_item->defaultAction($this->action2);
+            case 'home':
             default:
                 $o_home = new HomeController();
                 return $o_home->defaultAction();
@@ -70,6 +71,7 @@ class MainController
         $this->a_post      = $this->o_actions->getCleanPost();
         $this->a_get       = $this->o_actions->getCleanGet();
     }
+    
     ### GETTERS and SETTERS ###
     public function getAction1()
     {

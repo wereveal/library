@@ -23,7 +23,7 @@ use Wer\Framework\Library\Strings;
 use Wer\Guide\Forms\SearchForms;
 use Wer\Guide\Forms\Entity\QuickSearch;
 use Twig\Loader\Twig_Loader_Filesystem;
-use Twit\Twig_Environment;
+use Twig\Twig_Environment;
 
 class HomeController extends CommonController
 {
@@ -85,7 +85,7 @@ class HomeController extends CommonController
             'category_list' => $a_category_list,
             'item_cards'    => $a_item_cards
         );
-        return $this->render('@pages/index.html.twig', $a_twig_values);
+        return $this->o_twig->render('@pages/index.html.twig', $a_twig_values);
     }
     public function formTestAction(Request $request)
     {
@@ -139,30 +139,6 @@ class HomeController extends CommonController
         }
         $this->o_elog->write('a_items: ' . var_export($a_items, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $a_items;
-    }
-    /**
-     *  Creates a Twig Loader object.
-     *  @param none
-     *  @return object
-    **/
-    public function twigLoader()
-    {
-        $guide_path = APP_PATH . '/Guide/resources/templates/twig';
-        $frame_path = APP_PATH . '/Framework/resources/templates/twig';
-        $a_template_paths = array(
-            $guide_path . '/default'  => 'default',
-            $guide_path . '/pages'    => 'pages',
-            $guide_path . '/elements' => 'elements',
-            $guide_path . '/snippets' => 'snippets',
-            $guide_path . '/manager'  => 'manager',
-            $frame_path . '/default'  => 'fwmain',
-            $frame_path . '/tests'    => 'fwtests'
-        );
-        $loader = new Twig_Loader_Filesystem($guide_path);
-        foreach ($a_template_paths as $path => $namespace ) {
-            $loader->prependPath($path, $namespace);
-        }
-        return $loader;
     }
     /*
      *  See CommonController for the following methods

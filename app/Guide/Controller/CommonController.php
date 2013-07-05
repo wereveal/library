@@ -16,11 +16,13 @@ namespace Wer\Guide\Controller;
 use Wer\Guide\Model\Category;
 use Wer\Guide\Model\Item;
 use Wer\Guide\Model\Section;
-use Wer\Guide\Forms\QuickSearch;
-use Wer\Guide\Forms\Entity\QuickSearch as QSEntity;
+use Wer\Guide\Model\Entity\QuickSearchEntity as QSEntity;
+use Wer\Guide\View\QuickSearch;
 use Wer\Framework\Library\Arrays;
 use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
+use Twig\Loader\Twig_Loader_Filesystem;
+use Twig\Twig_Environment;
 
 abstract class CommonController
 {
@@ -130,22 +132,6 @@ abstract class CommonController
         );
     }
     /**
-     *  Returns a SF rendered form.
-     *  @param Request $request
-     *  @return array
-    **/
-    public function quickSearch(Request $request)
-    {
-        $o_qsentity = new QSEntity();
-        $o_qsentity->setSearchTerms('');
-        $o_qsentity->setSearch('Search');
-        $o_form = $this->createFormBuilder($o_qsentity)
-            ->add('searchTerms', 'text')
-            ->add('search', 'button')
-            ->getForm();
-        return $o_form->createView();
-    }
-    /**
      *  creates the values needed for the section list
      *  @param mixed $selected_section can be an id or a name
      *  @param array $a_search_parameters
@@ -219,6 +205,30 @@ abstract class CommonController
             }
         }
         return $a_items;
+    }
+    /**
+     *  Creates a Twig Loader object.
+     *  @param none
+     *  @return object
+    **/
+    public function twigLoader()
+    {
+        $guide_path = APP_PATH . '/Guide/resources/templates/twig';
+        $frame_path = APP_PATH . '/Framework/resources/templates/twig';
+        $a_template_paths = array(
+            $guide_path . '/default'  => 'default',
+            $guide_path . '/pages'    => 'pages',
+            $guide_path . '/elements' => 'elements',
+            $guide_path . '/snippets' => 'snippets',
+            $guide_path . '/manager'  => 'manager',
+            $frame_path . '/default'  => 'fwmain',
+            $frame_path . '/tests'    => 'fwtests'
+        );
+        $loader = new Twig_Loader_Filesystem($guide_path);
+        foreach ($a_template_paths as $path => $namespace ) {
+            $loader->prependPath($path, $namespace);
+        }
+        return $loader;
     }
 
     ### SETTERS ###

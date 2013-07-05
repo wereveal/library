@@ -13,8 +13,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         {% block stylesheets %}
-        <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
-        <link href="{{ asset('assets/css/main.css') }}" rel="stylesheet" media="screen">
+        <link href="/assets/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="/assets/css/main.css" rel="stylesheet" media="screen">
         {% endblock %}
 
         <!-- For IE6-8 support of HTML5 elements -->
@@ -23,7 +23,7 @@
         <![endif]-->
 
         {% block headjavascripts %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     </head>
     <body>
         <div class="container">
@@ -37,7 +37,7 @@
         {% block header %}
             <div class="row-fluid">
                 <div class="span12 header">
-                    <img src="{{ asset('assets/images/logo.png') }}">
+                    <img src="/assets/images/logo.png">
                 </div>
             </div>
         {% endblock %}
@@ -47,18 +47,18 @@
                 <div class="span12 searches">
                     {% block searchSelections %}
                     <div class="span6 selections">
-                        {% include "WerGuide:Elements:select.html.twig" with { 'select': section_list } %}
-                        {% include "WerGuide:Elements:select.html.twig" with { 'select': category_list } %}
+                        {% include "@elements/select.html.twig" with { 'select': section_list } %}
+                        {% include "@elements/select.html.twig" with { 'select': category_list } %}
                     </div>
                     {% endblock %}
                     {% block searchQuickForm %}
                     <div class="span6 quick-form">
-                        {% include "WerGuide:Snippets:quickSearch.html.twig" with { 'form': quick_form } %}
+                        {% include "@snippets/quickSearch.html.twig" with { 'form': quick_form } %}
                     </div>
                     {% endblock %}
                     {% block searchAlpha %}
                     <div class="span12 alpha">
-                        {% include "WerGuide:Snippets:alphaListUl.html.twig" with { 'li_rows': alpha_list } %}
+                        {% include "@snippets/alphaListUl.html.twig" with { 'li_rows': alpha_list } %}
                     </div>
                     {% endblock %}
                 </div>
@@ -80,7 +80,7 @@
 
         {% block javascripts %}
         <script src="http://code.jquery.com/jquery.js"></script>
-        <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+        <script src="/assets/js/bootstrap.min.js"></script>
         {% endblock %}
     </body>
 </html>

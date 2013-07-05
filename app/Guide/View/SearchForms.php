@@ -18,7 +18,6 @@ use Wer\Guide\Model\Entity\QuickSearchEntity;
 
 class SearchForms
 {
-    protected $o_factory;
     public function __construct()
     {
     }

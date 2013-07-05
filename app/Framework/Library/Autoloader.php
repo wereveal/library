@@ -20,11 +20,12 @@ namespace Wer\Framework\Library;
 class Autoloader
 {
     private static $loader;
-    private $config_path   = $_SERVER['DOCUMENT_ROOT'] . '/../Wer/config';
-    private $composer_path = $_SERVER['DOCUMENT_ROOT'] . '/../vendor/composer';
+    private $config_path;
+    private $composer_path;
     public static function loadClassLoader($class)
     {
         if ('Composer\Autoload\ClassLoader' === $class) {
+            $this->setComposerPath();
             require $this->composer_path . '/ClassLoader.php';
         }
     }
@@ -34,7 +35,8 @@ class Autoloader
         if (null !== self::$loader) {
             return self::$loader;
         }
-
+        $this->setConfigPath();
+        $this->setComposerPath();
         spl_autoload_register(array('Autoloader', 'loadClassLoader'), true, true);
         self::$loader = $loader = new \Composer\Autoload\ClassLoader();
         spl_autoload_unregister(array('Autoloader', 'loadClassLoader'));
@@ -69,5 +71,14 @@ class Autoloader
 
         $loader->register(true);
         return $loader;
+    }
+
+    private function setConfigPath()
+    {
+        $this->config_path = $_SERVER['DOCUMENT_ROOT'] . '/../Wer/config';
+    }
+    private function setComposerPath()
+    {
+        $this->composer_path = $_SERVER['DOCUMENT_ROOT'] . '/../vendor/composer';
     }
 }

@@ -20,6 +20,8 @@ use Wer\Guide\Model\Section;
 use Wer\Framework\Library\Arrays;
 use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
+use Twig\Loader\Twig_Loader_Filesystem;
+use Twig\Twig_Environment;
 
 class SearchController extends CommonController
 {
@@ -49,6 +51,16 @@ class SearchController extends CommonController
         if (defined(DISPLAY_PHONE_FORMAT)) {
             $this->phone_format = DISPLAY_PHONE_FORMAT;
         }
+        $loader       = $this->twigLoader();
+        $this->o_twig = new Twig_Environment(
+            $loader,
+            array(
+                'cache'       => APP_PATH . '/twig_cache',
+                'debug'       => false,
+                'auto_reload' => true,
+                'autoescape'  => true
+            )
+        );
     }
 
     ### Main Actions called from routing ###
