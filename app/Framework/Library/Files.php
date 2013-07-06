@@ -20,10 +20,14 @@
  *      the site theme or namespace (e.g. templates are in namespace)
  *      </pre>
  *  @author William Reveal <wer@revealitconsulting.com>
- *  @version 4.1.1
- *  @date 2013-04-30 12:23:37
+ *  @version 4.1.2
+ *  @date 2013-07-06 15:40:23
  *  @par Change Log
- *      v4.1.1 - bug fixes and clean up
+ *      v4.1.2 - some layout changes require changes in code. 07/06/2013
+ *          NOTE: the fact that layout changes require this class to be changed
+ *              is not good. I need to change it so that the parameters.php file
+ *              can specify the layout. But that won't be trivial.
+ *      v4.1.1 - bug fixes and clean up 4/30/2013
  *      v4.1.0 - New Wer Framework Layout serious changes
  *               BUT method results and names were not changed
  *      v4.0.0 - FIG standards (mostly)
@@ -38,14 +42,14 @@ class Files extends Location
     const HTML_DIR_NAME      = 'html';
     const IMAGE_DIR_NAME     = 'images';
     const JS_DIR_NAME        = 'js';
-    const LIBS_DIR_NAME      = 'Library';
+    const LIBS_DIR_NAME      = 'library';
     const PRIVATE_DIR_NAME   = 'private';
     const TEMPLATES_DIR_NAME = 'templates';
     const TMP_DIR_NAME       = 'tmp';
     protected $current_page;
     protected $file_name     = 'no_file.tpl';
-    protected $file_dir_name = 'templates';
-    protected $namespace     = 'Wer';
+    protected $file_dir_name = 'assets';
+    protected $namespace;
     protected $o_db;
     protected $o_elog;
     protected $private_properties;
@@ -68,6 +72,8 @@ class Files extends Location
         }
         if ($namespace != '') {
             $this->namespace = $namespace;
+        } else {
+            $this->namespace = __NAMESPACE__;
         }
         $this->setFileLocations();
     }
@@ -283,14 +289,21 @@ class Files extends Location
     /**
      *  Finds the location of the file
      *  the possible places a file could exist.
-     *    <pre>One of several places:
-     *      /$this->file_dir_name
-     *      /assets/themes/$this->theme_name/$this->file_dir_name
-     *      APP_DIR/$this->file_dir_name
-     *      APP_DIR/config
-     *      APP_DIR/namespaces/$this->namespace
-     *      APP_DIR/namespaces/$this->namespace(.*)
-     *      APP_DIR/namespaces/$this->namespace/$this->file_dir_name</pre>
+     *    <pre>One of many places:
+     *      NOTE: $file_dir_name can be pathlike, e.g. '/assets/css'
+     *            $file_name can also be pathlike, e.g. '/assets/css/main.css'
+     *      SITE_PATH/$file_name
+     *      SITE_PATH/$file_dir_name/$file_name
+     *      SITE_PATH/assets/$file_name
+     *      SITE_PATH/assets/$file_dir_name/$file_name
+     *      SITE_PATH/assets/themes/$this->theme_name/$file_dir_name/$file_name
+     *      BASE_PATH/$file_name
+     *      BASE_PATH/$file_dir_name/$file_name
+     *      APP_DIR/$file_name
+     *      APP_DIR/config/$file_name
+     *      APP_DIR/$file_dir_name/$file_name
+     *      APP_DIR/str_replace('Wer\', '', $namespace)/$file_name
+     *  </pre>
      *  @param str $file_name required
      *  @param str $namespace optional defaults to $this->namespace
      *  @param str $file_dir_name optional default to none
@@ -308,8 +321,10 @@ class Files extends Location
             $file_dir_name = $this->file_dir_name;
         }
         $namespace    = str_replace('\\', '/', $namespace);
-        $base_ns_path = APP_PATH . '/namespaces';
-        $ns_path      = $base_ns_path . '/' . $namespace;
+        if (!file_exists(APP_PATH . '/Wer')) {
+            $namespace    = str_replace('Wer/', '', $namespace);
+        }
+        $ns_path      = APP_PATH . '/' . $namespace;
         $a_possible_locations = array(
             'site_path'      => SITE_PATH,
             'base_path'      => BASE_PATH,
@@ -317,9 +332,8 @@ class Files extends Location
             'config_path'    => APP_PATH . '/config',
             'private_path'   => PRIVATE_PATH,
             'ns_path'        => $ns_path,
-            'ns_res_path'    => $ns_path . '/Resources',
-            'ns_config_path' => $ns_path . '/Resources/config',
-            'ns_tpl_path'    => $ns_path . '/Resources/templates',
+            'ns_res_path'    => $ns_path . '/resources',
+            'ns_tpl_path'    => $ns_path . '/resources/templates',
             'assets_path'    => SITE_PATH . '/assets',
             'themes_path'    => SITE_PATH . '/assets/themes/' . $this->theme_name,
             'default_theme'  => SITE_PATH . '/assets/themes/default',
@@ -356,7 +370,7 @@ class Files extends Location
         $this->setFileLocations();
         return true;
     }
-    public function setNamespace($value = 'Wer')
+    public function setNamespace($value = '')
     {
         $this->namespace = $value;
         $this->setFileLocations();
@@ -367,7 +381,7 @@ class Files extends Location
      *  @param str $theme_name
      *  @return null
     **/
-    public function setThemeName($theme_name)
+    public function setThemeName($theme_name = 'default')
     {
         $this->theme_name = $theme_name;
         $this->setFileLocations();

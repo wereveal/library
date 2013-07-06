@@ -6,9 +6,10 @@
  *  @class Database
  *  @ingroup wer_framework library
  *  @author William Reveal <wer@revealitconsulting.com>
- *  @version 2.4.2
- *  @date 2013-05-09 12:27:58
+ *  @version 2.4.3
+ *  @date 2013-07-06 14:46:28
  *  @par Change Log
+ *      v2.4.3 - reverted back to Wer Framework only (removed Symfony specific stuff) 07/06/2013
  *      v2.4.2 - added method to build sql where 05/09/2013
  *      v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
  *      v2.4.0 - Change to match new Wer Framework layout 04/23/2013
@@ -27,7 +28,6 @@ namespace Wer\Framework\Library;
 use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Files;
 use Wer\Framework\Library\Arrays;
-use Symfony\Component\Yaml\Yaml;
 
 class Database extends Base
 {
@@ -57,7 +57,7 @@ class Database extends Base
     private $root_path;
     private $sql_error_message;
     private $success;
-    private function __construct($read_type = 'ro', $config_file = 'parameters.yml')
+    private function __construct($read_type = 'ro', $config_file = 'db_config.php')
     {
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setPrivateProperties();
@@ -74,7 +74,7 @@ class Database extends Base
      *      if not specified, the Files class should be use to locate the config file
      *  @return obj - reference the the database object created
     **/
-    public static function start($read_type = 'rw', $config_file = 'parameters.yml')
+    public static function start($read_type = 'rw', $config_file = 'db_config.php')
     {
         if ($read_type == 'ro') {
             if (!isset(self::$instance_ro)) {
@@ -249,23 +249,21 @@ class Database extends Base
     {
         return $this->sql_error_message;
     }
-    private function setDatabaseParameters($config_file = 'parameters.yml')
+    private function setDatabaseParameters($config_file = 'db_config.php')
     {
-        $config_w_path = $this->root_path . '/../app/config/' . $config_file;
+        $config_w_path = APP_PATH . '/config/' . $config_file;
         if (!file_exists($config_w_path)) {
             $config_w_path = 'app/config/' . $config_file;
         }
-        $file_contents = file_get_contents($config_w_path);
-        $a_results = Yaml::parse($file_contents);
-        $a_parameters = $a_results['parameters'];
-        $this->db_type   = str_replace('pdo_', '', $a_parameters['database_driver']);
-        $this->db_host   = $a_parameters['database_host'];
-        $this->db_port   = $a_parameters['database_port'];
-        $this->db_name   = $a_parameters['database_name'];
-        $this->db_userro = $a_parameters['database_userro'];
-        $this->db_passro = $a_parameters['database_passro'];
-        $this->db_user   = $a_parameters['database_user'];
-        $this->db_pass   = $a_parameters['database_password'];
+        $a_database = require $config_w_path;
+        $this->db_type   = $a_database['database_driver'];
+        $this->db_host   = $a_database['database_host'];
+        $this->db_port   = $a_database['database_port'];
+        $this->db_name   = $a_database['database_name'];
+        $this->db_userro = $a_database['database_userro'];
+        $this->db_passro = $a_database['database_passro'];
+        $this->db_user   = $a_database['database_user'];
+        $this->db_pass   = $a_database['database_password'];
     }
     public function setDbName($value = '')
     {
@@ -316,12 +314,16 @@ class Database extends Base
             $this->db_userro = $value;
         }
     }
-    public function setDsn()
+    public function setDsn($value = '')
     {
-        if ($this->db_port != '' && $this->db_port !== null) {
-            $this->dsn = $this->db_type . ':host=' . $this->db_host . ';port=' . $this->db_port . ';dbname=' . $this->db_name;
+        if ($value != '') {
+            $this->dsn = $value;
         } else {
-            $this->dsn = $this->db_type . ':host=' . $this->db_host . ';dbname=' . $this->db_name;
+            if ($this->db_port != '' && $this->db_port !== null) {
+                $this->dsn = $this->db_type . ':host=' . $this->db_host . ';port=' . $this->db_port . ';dbname=' . $this->db_name;
+            } else {
+                $this->dsn = $this->db_type . ':host=' . $this->db_host . ';dbname=' . $this->db_name;
+            }
         }
     }
     public function setNewId($value = '')

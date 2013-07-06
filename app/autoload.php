@@ -2,4 +2,4 @@
 
 require_once APP_PATH . '/Framework/Library/Autoloader.php';
 
-return Autoloader::getLoader();
+return Wer\Framework\Library\Autoloader::getLoader();

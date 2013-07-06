@@ -7,6 +7,8 @@
  *  @requires Composer\Autoload\ClassLoader
  *      which is installed on level out from the web site root
  *      in the vendor directory.
+ *  @requires APP_PATH defined
+ *  @requires VENDOR_PATH defined
  *  @author William Reveal  <wer@revealitconsulting.com>
  *  @version 1.0.0
  *  @par Change Log
@@ -20,13 +22,10 @@ namespace Wer\Framework\Library;
 class Autoloader
 {
     private static $loader;
-    private $config_path;
-    private $composer_path;
     public static function loadClassLoader($class)
     {
         if ('Composer\Autoload\ClassLoader' === $class) {
-            $this->setComposerPath();
-            require $this->composer_path . '/ClassLoader.php';
+            require VENDOR_PATH . '/composer/ClassLoader.php';
         }
     }
 
@@ -35,35 +34,33 @@ class Autoloader
         if (null !== self::$loader) {
             return self::$loader;
         }
-        $this->setConfigPath();
-        $this->setComposerPath();
-        spl_autoload_register(array('Autoloader', 'loadClassLoader'), true, true);
+        spl_autoload_register(array('Wer\Framework\Library\Autoloader', 'loadClassLoader'), true, true);
         self::$loader = $loader = new \Composer\Autoload\ClassLoader();
-        spl_autoload_unregister(array('Autoloader', 'loadClassLoader'));
+        spl_autoload_unregister(array('Wer\Framework\Library\Autoloader', 'loadClassLoader'));
 
-        if (file_exists($this->config_path . '/autoload_namespaces.php')) {
-            $namespaces = require $this->config_path . '/autoload_namespaces.php';
+        if (file_exists(APP_PATH . '/config/autoload_namespaces.php')) {
+            $namespaces = require APP_PATH . '/config/autoload_namespaces.php';
             foreach ($namespaces as $namespace => $path) {
                 $loader->add($namespace, $path);
             }
         }
 
-        if (file_exists($this->config_path . '/autoload_classmap.php')) {
-            $classMap = require $this->config_path . '/autoload_classmap.php';
+        if (file_exists(APP_PATH . '/config/autoload_classmap.php')) {
+            $classMap = require APP_PATH . '/config/autoload_classmap.php';
             if ($classMap) {
                 $loader->addClassMap($classMap);
             }
         }
 
-        if (file_exists($this->composer_path . '/autoload_namespaces.php')) {
-            $namespaces = require $this->composer_path . '/autoload_namespaces.php';
+        if (file_exists(VENDOR_PATH . '/composer/autoload_namespaces.php')) {
+            $namespaces = require VENDOR_PATH . '/composer/autoload_namespaces.php';
             foreach ($namespaces as $namespace => $path) {
                 $loader->add($namespace, $path);
             }
         }
 
-        if (file_exists($this->composer_path . '/autoload_classmap.php')) {
-            $classMap = require $this->composer_path . '/autoload_classmap.php';
+        if (file_exists(VENDOR_PATH . '/composer/autoload_classmap.php')) {
+            $classMap = require VENDOR_PATH . '/composer/autoload_classmap.php';
             if ($classMap) {
                 $loader->addClassMap($classMap);
             }
@@ -71,14 +68,5 @@ class Autoloader
 
         $loader->register(true);
         return $loader;
-    }
-
-    private function setConfigPath()
-    {
-        $this->config_path = $_SERVER['DOCUMENT_ROOT'] . '/../Wer/config';
-    }
-    private function setComposerPath()
-    {
-        $this->composer_path = $_SERVER['DOCUMENT_ROOT'] . '/../vendor/composer';
     }
 }
