@@ -21,8 +21,8 @@ use Wer\Guide\View\QuickSearch;
 use Wer\Framework\Library\Arrays;
 use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
-use Twig\Loader\Twig_Loader_Filesystem;
-use Twig\Twig_Environment;
+use Twig_Loader_Filesystem;
+use Twig_Environment;
 
 abstract class CommonController
 {

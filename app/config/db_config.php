@@ -5,7 +5,7 @@ return array(
     'port'     => '3306',
     'name'     => 'qcdg_wer',
     'user'     => 'qcdg',
-    'password' => 'letfoodin',
+    'password' => 'letFoodIn',
     'userro'   => 'qcdg',
-    'passro'   => 'letfoodin'
+    'passro'   => 'letFoodIn'
 );

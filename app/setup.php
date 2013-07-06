@@ -33,7 +33,7 @@
  *        Both do not end with a slash
  *  </pre>
 */
-namespace Wer\Framework\Library;
+namespace Wer;
 
 use Wer\Framework\Library\Config;
 
@@ -49,7 +49,11 @@ if (!defined('APP_PATH')) {
 if (!defined('VENDOR_PATH')) {
     define('VENDOR_PATH', BASE_PATH . '/vendor');
 }
-require_once APP_PATH . '/autoload.php';
+
+$loader = require_once VENDOR_PATH . '/autoload.php';
+$my_classmap = require_once APP_PATH . '/config/autoload_classmap.php';
+$loader->addClassMap($my_classmap);
+
 require_once APP_PATH . '/config/constants.php';
 if (!Config::start()) {
     error_log("Couldn't create the constants\n\n");

@@ -13,6 +13,10 @@
 **/
 namespace Wer\Guide\Controller;
 
+use Wer\Framework\Library\Elog;
+use Wer\Framework\Library\Session;
+use Wer\Framework\Library\Actions;
+
 class MainController
 {
     protected $action1;
@@ -41,17 +45,17 @@ class MainController
     {
         switch ($this->action1) {
             case 'search':
-                $o_search = new SearchController();
+                $o_search = new namespace\SearchController();
                 return $o_search->defaultAction($this->action2, $this->action3, $this->a_get);
             case 'list':
-                $o_search = new SearchController();
+                $o_search = new namespace\SearchController();
                 return $o_search->listAction($this->action2, $this->action3);
             case 'item':
-                $o_item = new ItemController();
+                $o_item = new namespace\ItemController();
                 return $o_item->defaultAction($this->action2);
             case 'home':
             default:
-                $o_home = new HomeController();
+                $o_home = new namespace\HomeController();
                 return $o_home->defaultAction();
         }
     }
@@ -71,7 +75,7 @@ class MainController
         $this->a_post      = $this->o_actions->getCleanPost();
         $this->a_get       = $this->o_actions->getCleanGet();
     }
-    
+
     ### GETTERS and SETTERS ###
     public function getAction1()
     {

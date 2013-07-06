@@ -256,14 +256,14 @@ class Database extends Base
             $config_w_path = 'app/config/' . $config_file;
         }
         $a_database = require $config_w_path;
-        $this->db_type   = $a_database['database_driver'];
-        $this->db_host   = $a_database['database_host'];
-        $this->db_port   = $a_database['database_port'];
-        $this->db_name   = $a_database['database_name'];
-        $this->db_userro = $a_database['database_userro'];
-        $this->db_passro = $a_database['database_passro'];
-        $this->db_user   = $a_database['database_user'];
-        $this->db_pass   = $a_database['database_password'];
+        $this->db_type   = $a_database['driver'];
+        $this->db_host   = $a_database['host'];
+        $this->db_port   = $a_database['port'];
+        $this->db_name   = $a_database['name'];
+        $this->db_userro = $a_database['userro'];
+        $this->db_passro = $a_database['passro'];
+        $this->db_user   = $a_database['user'];
+        $this->db_pass   = $a_database['password'];
     }
     public function setDbName($value = '')
     {

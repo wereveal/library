@@ -22,8 +22,8 @@ use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
 use Wer\Guide\Forms\SearchForms;
 use Wer\Guide\Forms\Entity\QuickSearch;
-use Twig\Loader\Twig_Loader_Filesystem;
-use Twig\Twig_Environment;
+use Twig_Loader_Filesystem;
+use Twig_Environment;
 
 class HomeController extends CommonController
 {
