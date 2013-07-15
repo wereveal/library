@@ -1,6 +1,7 @@
 codekit-config.json
 composer.json
 composer.lock
+/app/twig_cache*
 /nbproject/
 /vendor/
 /web/assets/files/guide*

@@ -20,8 +20,8 @@ use Wer\Guide\Model\Section;
 use Wer\Framework\Library\Arrays;
 use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
-use Twig\Loader\Twig_Loader_Filesystem;
-use Twig\Twig_Environment;
+use Twig_Loader_Filesystem;
+use Twig_Environment;
 
 class SearchController extends CommonController
 {
@@ -66,15 +66,16 @@ class SearchController extends CommonController
     ### Main Actions called from routing ###
     /**
      *  Displays the result of a simple search (from the quick search form).
-     *  @param none
+     *  @param @
      *  @return str the html to display
     **/
-    public function defaultAction()
+    public function router($action2 = '', $action3 = '', array $a_get = array())
     {
         $a_quick_form    = $this->formQuickSearch();
         $a_alpha_list    = $this->alphaList();
         $a_section_list  = $this->sectionList($this->default_section);
         $a_category_list = $this->categoryList($this->default_section);
+        $a_item_cards = array();
 
         /* HMM WHAT TO DO
             Generically, need to do a search based on the key terms from the post
@@ -97,35 +98,35 @@ class SearchController extends CommonController
             and get back the next/prev/exact records. That makes the links basically forms, a lot
             of junk to deal with.
         */
-
-        $a_twig_values = array(
-            'title'         => 'Guide',
-            'description'   => 'This is a description',
-            'site_url'      => SITE_URL,
-            'rights_holder' => 'William E. Reveal',
-            'quick_form'    => $a_quick_form,
-            'alpha_list'    => $a_alpha_list,
-            'section_list'  => $a_section_list,
-            'category_list' => $a_category_list,
-            'item_cards'    => $a_item_cards
-        );
-        return $this->render('WerGuide:Pages:search.html.twig', $a_twig_values);
+        switch ($action2) {
+            case 'by_alpha':
+                return $this->byAlphaResults($action3);
+            case 'by_category':
+                return $this->byCategoryResults($a_get);
+            case 'by_section':
+                return $this->bySectionResults($a_get);
+            case 'advanced':
+                return $this->advancedSearchForm();
+            case 'by_form':
+            default:
+                return $this->byFormResults($a_get);
+        }
     }
     /**
      *  Displays the advanced search form.
      *  @param none
      *  @return str the html to display
     **/
-    public function advancedAction()
+    public function advancedSearchForm()
     {
         return '';
     }
     /**
-     *  Displays the results of an advanced search.
+     *  Displays the results of a search.
      *  @param none
      *  @return str the html to display
     **/
-    public function advancedSearchAction()
+    public function byFormResults()
     {
         return '';
     }
@@ -158,7 +159,7 @@ class SearchController extends CommonController
             'category_list' => $a_category_list,
             'item_cards'    => $a_item_cards
         );
-        return $this->render('WerGuide:Pages:search.html.twig', $a_twig_values);
+        return $this->o_twig->render('@pages/search.twig', $a_twig_values);
     }
     /**
      *  Displays the records from a category search.
@@ -166,7 +167,7 @@ class SearchController extends CommonController
      *  @param none
      *  @return str the html to display
     **/
-    public function byCategoryAction()
+    public function byCategoryResults()
     {
         return '';
     }
@@ -176,16 +177,7 @@ class SearchController extends CommonController
      *  @param none
      *  @return str the html to display
     **/
-    public function bySectionAction()
-    {
-        return '';
-    }
-    /**
-     *  Displays the quick search form.
-     *  @param none
-     *  @return str the html to display
-    **/
-    public function quickFormAction()
+    public function bySectionResults()
     {
         return '';
     }

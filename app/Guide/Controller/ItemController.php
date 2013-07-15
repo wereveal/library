@@ -19,6 +19,8 @@ use Wer\Guide\Model\Section;
 use Wer\Framework\Library\Arrays;
 use Wer\Framework\Library\Elog;
 use Wer\Framework\Library\Strings;
+use Twig_Loader_Filesystem;
+use Twig_Environment;
 
 class ItemController extends CommonController
 {
@@ -79,7 +81,7 @@ class ItemController extends CommonController
             'category_list' => $a_category_list,
             'item_data'     => $a_item[0]
         );
-        return $this->render('WerGuide:Pages:item.html.twig', $a_twig_values);;
+        return $this->render('WerGuide:Pages:item.twig', $a_twig_values);;
     }
     ### Other Methods ###
     /**

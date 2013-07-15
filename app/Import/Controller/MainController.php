@@ -28,7 +28,7 @@ class MainController extends Controller
     public function indexAction()
     {
         return $this->render(
-            'WerImport:Main:index.html.twig',
+            'WerImport:Main:index.twig',
             array(
                 'title'       => 'Import',
                 'description' => '',
@@ -243,7 +243,7 @@ class MainController extends Controller
         } // foreach section file
         $this->o_db->commitTransaction();
         return $this->render(
-            'WerImport:Main:index.html.twig',
+            'WerImport:Main:index.twig',
             array(
                 'title'       => 'Import',
                 'description' => '',

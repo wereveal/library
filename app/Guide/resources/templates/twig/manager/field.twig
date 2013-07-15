@@ -1,4 +1,4 @@
-{% extends 'WerFramework:Main:base.html.twig' %}
+{% extends 'WerFramework:Main:base.twig' %}
 
 {% block title %}{{ title }}{% endblock %}
 
@@ -7,7 +7,7 @@
                 <div class="span12">
                     <ul>
                         {% for field in fields %}
-                            {{ include('WerGuide:Manager:field-block.html.twig', {'field': field}) }}
+                            {{ include('WerGuide:Manager:field-block.twig', {'field': field}) }}
                         {% endfor %}
                     </ul>
                 </div>

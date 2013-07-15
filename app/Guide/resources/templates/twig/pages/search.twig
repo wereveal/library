@@ -1,14 +1,14 @@
-{% extends '@default/base.html.twig' %}
+{% extends '@default/base.twig' %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
             <div class="row-fluid">
                 <div class="span12">
-                    {% include "@snippets/itemCards.html.twig" with { 'items': item_cards.items } %}
+                    {% include "@snippets/itemCards.twig" with { 'items': item_cards.items } %}
                     <div class="row-fluid">
                         <div class="span12 prevnext">
-                            {% include "@snippets/prevnext.html.twig" with { 'prevnext': item_cards.prev_next } %}
+                            {% include "@snippets/prevnext.twig" with { 'prevnext': item_cards.prev_next } %}
                         </div>
                     </div>
                 </div>

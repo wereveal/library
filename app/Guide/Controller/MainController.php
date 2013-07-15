@@ -46,7 +46,7 @@ class MainController
         switch ($this->action1) {
             case 'search':
                 $o_search = new namespace\SearchController();
-                return $o_search->defaultAction($this->action2, $this->action3, $this->a_get);
+                return $o_search->router($this->action2, $this->action3, $this->a_get);
             case 'list':
                 $o_search = new namespace\SearchController();
                 return $o_search->listAction($this->action2, $this->action3);

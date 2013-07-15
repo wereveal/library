@@ -47,18 +47,18 @@
                 <div class="span12 searches">
                     {% block searchSelections %}
                     <div class="span6 selections">
-                        {% include "@elements/select.html.twig" with { 'select': section_list } %}
-                        {% include "@elements/select.html.twig" with { 'select': category_list } %}
+                        {% include "@elements/select.twig" with { 'select': section_list } %}
+                        {% include "@elements/select.twig" with { 'select': category_list } %}
                     </div>
                     {% endblock %}
                     {% block searchQuickForm %}
                     <div class="span6 quick-form">
-                        {% include "@snippets/quickSearch.html.twig" with { 'form': quick_form } %}
+                        {% include "@snippets/quickSearch.twig" with { 'form': quick_form } %}
                     </div>
                     {% endblock %}
                     {% block searchAlpha %}
                     <div class="span12 alpha">
-                        {% include "@snippets/alphaListUl.html.twig" with { 'li_rows': alpha_list } %}
+                        {% include "@snippets/alphaListUl.twig" with { 'li_rows': alpha_list } %}
                     </div>
                     {% endblock %}
                 </div>

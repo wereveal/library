@@ -85,7 +85,7 @@ class HomeController extends CommonController
             'category_list' => $a_category_list,
             'item_cards'    => $a_item_cards
         );
-        return $this->o_twig->render('@pages/index.html.twig', $a_twig_values);
+        return $this->o_twig->render('@pages/index.twig', $a_twig_values);
     }
     public function formTestAction(Request $request)
     {
@@ -98,7 +98,7 @@ class HomeController extends CommonController
             'form'          => $this->quickSearch($request),
         );
 
-        return $this->o_twig->render('@pages/testSearch.html.twig', $a_twig_values);
+        return $this->o_twig->render('@pages/testSearch.twig', $a_twig_values);
     }
     ### Methods Used ###
     /**

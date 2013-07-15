@@ -221,7 +221,7 @@ abstract class CommonController
             $guide_path . '/elements' => 'elements',
             $guide_path . '/snippets' => 'snippets',
             $guide_path . '/manager'  => 'manager',
-            $frame_path . '/default'  => 'fwmain',
+            $frame_path . '/main'     => 'fwmain',
             $frame_path . '/tests'    => 'fwtests'
         );
         $loader = new Twig_Loader_Filesystem($guide_path);

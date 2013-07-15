@@ -1,11 +1,11 @@
-{% extends 'WerFramework:Main:base.html.twig' %}
+{% extends 'WerGuide:Main:base.twig' %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
             <div class="row-fluid">
                 <div class="span12">
-                    <p>{{ body_text }}</p>
+                    {{ body_text|raw }}
                 </div>
             </div>
 {% endblock %}
