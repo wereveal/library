@@ -6,6 +6,7 @@
             <div class="row-fluid">
                 <div class="span12">
                     {% include "@snippets/itemCards.twig" with { 'items': item_cards } %}
+                    {% block prevnext %}{% endblock %}
                 </div>
             </div>
 {% endblock %}

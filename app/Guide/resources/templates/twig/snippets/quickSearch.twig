@@ -2,7 +2,7 @@
     <fieldset class="search-set">
         <legend>Quick Search</legend>
         <input type="text" name="searchTerms" value="{{ form.searchForText }}" /> {{ form.helpicon }}
-        <button name="search" class="btn medium {{ form.buttonColor }}" value="quick-search">{{ form.buttonText }}</button>
+        <button type="submit" name="submit" class="btn medium {{ form.buttonColor }}" value="quick-search">{{ form.buttonText }}</button>
     </fieldset>
     <fieldset class="help">
         <p>

@@ -69,11 +69,15 @@ class HomeController extends CommonController
     public function router(array $a_actions = array())
     {
         if (isset($a_actions['action1']) && $a_actions['action1'] == 'home') {
-            switch ($a_actions['action2']) {
-                case 'test':
-                    return $this->testAction;
-                default:
-                    return $this->defaultAction;
+            if (isset($a_actions['action2'])) {
+                switch ($a_actions['action2']) {
+                    case 'test':
+                        return $this->testAction;
+                    default:
+                        return $this->defaultAction;
+                }
+            } else {
+                return $this->defaultAction();
             }
         } else {
             return $this->defaultAction();

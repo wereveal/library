@@ -29,6 +29,7 @@ class SearchController extends CommonController
     protected $num_to_display  = 10;
     protected $phone_format    = "AAA-BBB-CCCC";
     protected $date_format     = "mm/dd/YYYY";
+    protected $a_twig_values;
     protected $o_arr;
     protected $o_cat;
     protected $o_elog;
@@ -61,6 +62,7 @@ class SearchController extends CommonController
                 'autoescape'  => true
             )
         );
+        $this->a_twig_values = $this->initializeTwigValues();
     }
 
     ### Actions called from main routing ###
@@ -137,7 +139,20 @@ class SearchController extends CommonController
     **/
     public function byFormResults(array $a_search_values = array())
     {
-        return '';
+        switch ($a_search_values['form_action']) {
+            case 'quick-search':
+                $a_item_cards = $this->quickSearchCards($a_search_values['searchTerms']);
+                break;
+            case 'advanced-search':
+                $a_item_cards = $this->advancedSearchCards($a_search_values);
+                break;
+            default:
+                return $this->advancedSearchForm(array('error_message'=>'A problem has occurred, please try searching again.'));
+        }
+                $a_twig_values = $this->a_twig_values;
+                $a_twig_values['item_cards'] = $a_item_cards['items'];
+                $a_twig_values['prevnext'] = $a_item_cards['prevnext'];
+                return $this->o_twig->render('@pages/search_results.twig', $a_twig_values);
     }
     /**
      *  Displays the result of an alpha search.
@@ -152,23 +167,11 @@ class SearchController extends CommonController
         if ($num_to_display == '') {
             $num_to_display = $this->num_to_display;
         }
-        $a_quick_form    = $this->formQuickSearch();
-        $a_alpha_list    = $this->alphaList();
-        $a_section_list  = $this->sectionList($this->default_section);
-        $a_category_list = $this->categoryList($this->default_section);
-        $a_item_cards    = $this->alphaItemCards($the_letter, $start, $num_to_display);
-        $a_twig_values = array(
-            'title'         => 'Guide',
-            'description'   => 'This is a description',
-            'site_url'      => SITE_URL,
-            'rights_holder' => 'William E. Reveal',
-            'quick_form'    => $a_quick_form,
-            'alpha_list'    => $a_alpha_list,
-            'section_list'  => $a_section_list,
-            'category_list' => $a_category_list,
-            'item_cards'    => $a_item_cards
-        );
-        return $this->o_twig->render('@pages/search.twig', $a_twig_values);
+        $a_item_cards = $this->alphaItemCards($the_letter, $start, $num_to_display);
+        $a_twig_values = $this->a_twig_values;
+        $a_twig_values['item_cards'] = $a_item_cards['items'];
+        $a_twig_values['prevnext'] = $a_item_cards['prevnext'];
+        return $this->o_twig->render('@pages/search_results.twig', $a_twig_values);
     }
     /**
      *  Displays the records from a category search.
@@ -191,7 +194,17 @@ class SearchController extends CommonController
         return '';
     }
 
-    ### Utilities ####
+    ### Searches ####
+    /**
+     *  Returns the values from an advanced search.
+     *  @param array $a_search_values
+     *  @return array $a_search_results
+    **/
+    public function advancedSearchCards(array $a_search_values = array())
+    {
+        // build an AND query from search value fields
+        return array('items' => '', 'prevnext' => '');
+    }
     /**
      *  creates the values to be used for the item cards
      *  @param str $letter_to_find defaults to A
@@ -237,10 +250,21 @@ class SearchController extends CommonController
         );
         $a_prevnext = $this->makePreviousNext($a_params);
         $this->o_elog->write('' . var_export($a_prevnext, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $a_item_cards = array('items' => $a_items, 'prev_next' => $a_prevnext);
+        $a_item_cards = array('items' => $a_items, 'prevnext' => $a_prevnext);
         return $a_item_cards;
     }
-
+    /**
+     *  Returns the values from a quick search.
+     *  @param str $search_values space delimited values
+     *  @return array $a_item_cards
+    **/
+    public function quickSearchCards($search_values = '')
+    {
+        // extract phrases
+        // explode other words
+        // build an OR query on item name, item description, item location
+        return array('items' => '', 'prevnext' => '');
+    }
     ### Utilities ###
 
     /**

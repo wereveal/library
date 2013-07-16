@@ -30,6 +30,7 @@ abstract class CommonController
     protected $num_to_display  = 10;
     protected $phone_format    = "(XXX) XXX-XXXX";
     protected $date_format     = "m/d/Y";
+    protected $a_twig_values;
 
     /**
      *  Creates the values to be used in the twig tpl.
@@ -133,7 +134,7 @@ abstract class CommonController
         );
     }
     /**
-     *  creates the values needed for the section list
+     *  Creates the values needed for the section list
      *  @param mixed $selected_section can be an id or a name
      *  @param array $a_search_parameters
      *      (see o_sec->readSection comments for more info)
@@ -207,6 +208,25 @@ abstract class CommonController
         }
         return $a_items;
     }
+    public function initializeTwigValues()
+    {
+        $a_quick_form    = $this->formQuickSearch();
+        $a_alpha_list    = $this->alphaList();
+        $a_section_list  = $this->sectionList($this->default_section);
+        $a_category_list = $this->categoryList($this->default_section);
+        $this->a_twig_values = array(
+            'title'         => 'Guide',
+            'description'   => 'This is a description',
+            'site_url'      => SITE_URL,
+            'rights_holder' => 'William E. Reveal',
+            'quick_form'    => $a_quick_form,
+            'alpha_list'    => $a_alpha_list,
+            'section_list'  => $a_section_list,
+            'category_list' => $a_category_list,
+            'item_cards'    => ''
+        );
+    }
+
     /**
      *  Creates a Twig Loader object.
      *  @param none
