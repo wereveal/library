@@ -81,7 +81,7 @@ class ItemController extends CommonController
             'category_list' => $a_category_list,
             'item_data'     => $a_item[0]
         );
-        return $this->render('WerGuide:Pages:item.twig', $a_twig_values);;
+        return $this->render('@pages/item.twig', $a_twig_values);;
     }
     ### Other Methods ###
     /**

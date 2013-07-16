@@ -66,6 +66,19 @@ class HomeController extends CommonController
         }
     }
 
+    public function router(array $a_actions = array())
+    {
+        if (isset($a_actions['action1']) && $a_actions['action1'] == 'home') {
+            switch ($a_actions['action2']) {
+                case 'test':
+                    return $this->testAction;
+                default:
+                    return $this->defaultAction;
+            }
+        } else {
+            return $this->defaultAction();
+        }
+    }
     ### Main Actions called by routing parameters ###
     public function defaultAction()
     {
@@ -87,15 +100,14 @@ class HomeController extends CommonController
         );
         return $this->o_twig->render('@pages/index.twig', $a_twig_values);
     }
-    public function formTestAction(Request $request)
+    public function testAction()
     {
-        $o_forms = new SearchForms;
         $a_twig_values = array(
             'title'         => 'Guide',
             'description'   => 'This is a description',
             'site_url'      => SITE_URL,
             'rights_holder' => 'William E. Reveal',
-            'form'          => $this->quickSearch($request),
+            'form'          => $this->formQuickSearch(),
         );
 
         return $this->o_twig->render('@pages/testSearch.twig', $a_twig_values);

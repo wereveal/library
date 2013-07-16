@@ -23,8 +23,10 @@ class MainController
     protected $action2;
     protected $action3;
     protected $form_action;
+    protected $a_actions;
     protected $a_get;
     protected $a_post;
+    protected $a_values;
     protected $o_actions;
     protected $o_elog;
     protected $o_sess;
@@ -43,20 +45,23 @@ class MainController
     **/
     public function renderPage()
     {
-        switch ($this->action1) {
-            case 'search':
-                $o_search = new namespace\SearchController();
-                return $o_search->router($this->action2, $this->action3, $this->a_get);
-            case 'list':
-                $o_search = new namespace\SearchController();
-                return $o_search->listAction($this->action2, $this->action3);
-            case 'item':
-                $o_item = new namespace\ItemController();
-                return $o_item->defaultAction($this->action2);
-            case 'home':
-            default:
-                $o_home = new namespace\HomeController();
-                return $o_home->defaultAction();
+        if (isset($this->a_actions['action1'])) {
+            switch ($this->a_actions['action1']) {
+                case 'list':
+                case 'search':
+                    $o_search = new namespace\SearchController();
+                    return $o_search->router($this->a_actions, $this->a_values);
+                case 'item':
+                    $o_item = new namespace\ItemController();
+                    return $o_item->router($this->a_actions);
+                case 'home':
+                default:
+                    $o_home = new namespace\HomeController();
+                    return $o_home->router($this->a_actions);
+            }
+        } else {
+            $o_home = new namespace\HomeController();
+            return $o_home->router();
         }
     }
     /**
@@ -67,13 +72,12 @@ class MainController
     protected function initializeValues()
     {
         $this->o_actions->setUriActions();
-        $a_actions          = $this->o_actions->getUriActions();
-        $this->action1     = isset($a_actions['action1']) ? $a_actions['action1'] : '' ;
-        $this->action2     = isset($a_actions['action2']) ? $a_actions['action2'] : '' ;
-        $this->action3     = isset($a_actions['action3']) ? $a_actions['action3'] : '' ;
+        $this->a_actions   = $this->o_actions->getUriActions();
         $this->form_action = $this->o_actions->getFormAction();
         $this->a_post      = $this->o_actions->getCleanPost();
         $this->a_get       = $this->o_actions->getCleanGet();
+        $a_values          = array('form_action'=>$this->form_action);
+        $this->a_values    = array_merge($a_values, $this->a_get, $this->a_post);
     }
 
     ### GETTERS and SETTERS ###
@@ -89,33 +93,49 @@ class MainController
     {
         return $this->action3;
     }
+    public function getActions()
+    {
+        return $this->a_actions;
+    }
     public function getFormAction()
     {
         return $this->form_action;
+    }
+    public function getGet()
+    {
+        return $this->a_get;
     }
     public function getPost()
     {
         return $this->a_post;
     }
-    public function setAction1($value = '')
+    public function setAction1()
     {
-        return; // not gonna do it
+        return; // not gonna allow it
     }
-    public function setAction2($value = '')
+    public function setAction2()
     {
-        return; // not gonna do it
+        return; // not gonna allow it
     }
-    public function setAction3($value = '')
+    public function setAction3()
     {
-        return; // not gonna do it
+        return; // not gonna allow it
     }
-    public function setFormAction($value = '')
+    public function setActions()
     {
-        return; // not gonna do it
+        return; // not gonna allow it
     }
-    public function setPost($value = '')
+    public function setFormAction()
     {
-        return; // not gonna do it
+        return; // not gonna allow it
+    }
+    public function setGet()
+    {
+        return; // not gonna allow it
+    }
+    public function setPost()
+    {
+        return; // not gonna allow it
     }
 
 }

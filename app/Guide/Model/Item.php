@@ -279,7 +279,6 @@ class Item
     **/
     public function readItemByNameFirstLetter($the_letter = 'A', $start = 0, $limit_to = '')
     {
-        // error_log("In ITEM===> the letter: $the_letter  start: $start  limit_to: $limit_to");
         $the_letter = substr(trim($the_letter), 0, 1);
         if ($the_letter == '') {
             return false;
@@ -288,7 +287,8 @@ class Item
         $a_search_parameters = array(
             'comparison_type' => 'LIKE',
             'starting_from'   => $start,
-            'limit_to'        => $limit_to
+            'limit_to'        => $limit_to,
+            'order_by'        => 'item_name'
         );
         return $this->readItem($a_search_pairs, $a_search_parameters);
     }

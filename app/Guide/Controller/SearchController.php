@@ -39,9 +39,9 @@ class SearchController extends CommonController
 
     public function __construct()
     {
+        $this->o_elog = Elog::start();
         $this->o_arr  = new Arrays();
         $this->o_cat  = new Category();
-        $this->o_elog = Elog::start();
         $this->o_item = new Item();
         $this->o_sec  = new Section();
         $this->o_str  = new Strings();
@@ -63,14 +63,19 @@ class SearchController extends CommonController
         );
     }
 
-    ### Main Actions called from routing ###
+    ### Actions called from main routing ###
     /**
      *  Displays the result of a simple search (from the quick search form).
-     *  @param @
+     *  @param array $a_actions URI actions
+     *  @param array $a_values values to use for the search
      *  @return str the html to display
     **/
-    public function router($action2 = '', $action3 = '', array $a_get = array())
+    public function router(array $a_actions, array $a_values = array())
     {
+        $primary_action  = isset($a_actions['action2']) ? $a_actions['action2'] : '';
+        $subaction       = isset($a_actions['action3']) ? $a_actions['action3'] : '';
+        $start           = isset($a_actions['action4']) ? $a_actions['action4'] : 0;
+        $num_to_display  = isset($a_actions['action5']) ? $a_actions['action5'] : $this->num_to_display;
         $a_quick_form    = $this->formQuickSearch();
         $a_alpha_list    = $this->alphaList();
         $a_section_list  = $this->sectionList($this->default_section);
@@ -98,35 +103,39 @@ class SearchController extends CommonController
             and get back the next/prev/exact records. That makes the links basically forms, a lot
             of junk to deal with.
         */
-        switch ($action2) {
+        switch ($primary_action) {
             case 'by_alpha':
-                return $this->byAlphaResults($action3);
+                return $this->byAlphaResults($subaction, $start, $num_to_display);
             case 'by_category':
-                return $this->byCategoryResults($a_get);
+                return $this->byCategoryResults($a_values);
             case 'by_section':
-                return $this->bySectionResults($a_get);
+                return $this->bySectionResults($a_values);
             case 'advanced':
                 return $this->advancedSearchForm();
             case 'by_form':
             default:
-                return $this->byFormResults($a_get);
+                if (isset($a_values['form_action'])) {
+                    return $this->byFormResults($a_values);
+                } else {
+                    return $this->advancedSearchForm(array('error_message'=>'A problem has occurred, please try again'));
+                }
         }
     }
     /**
      *  Displays the advanced search form.
-     *  @param none
+     *  @param array $a_form_values optional, values to display in the form elements
      *  @return str the html to display
     **/
-    public function advancedSearchForm()
+    public function advancedSearchForm(array $a_form_values = array())
     {
         return '';
     }
     /**
      *  Displays the results of a search.
-     *  @param none
+     *  @param array $a_search_values values to search by
      *  @return str the html to display
     **/
-    public function byFormResults()
+    public function byFormResults(array $a_search_values = array())
     {
         return '';
     }
@@ -134,20 +143,20 @@ class SearchController extends CommonController
      *  Displays the result of an alpha search.
      *  @param str $the_letter
      *  @param int $start the record number to start with
-     *  @param int $number the number of records to return optional, defaults to ''
+     *  @param int $num_to_display the number of records to return optional, defaults to ''
      *      but will get set to the class parameter $num_to_display
      *  @return str the html to display
     **/
-    public function byAlphaAction($the_letter = 'A', $start = 0, $number = '')
+    public function byAlphaResults($the_letter = 'A', $start = 0, $num_to_display = '')
     {
-        if ($number == '') {
-            $number = $this->num_to_display;
+        if ($num_to_display == '') {
+            $num_to_display = $this->num_to_display;
         }
         $a_quick_form    = $this->formQuickSearch();
         $a_alpha_list    = $this->alphaList();
         $a_section_list  = $this->sectionList($this->default_section);
         $a_category_list = $this->categoryList($this->default_section);
-        $a_item_cards    = $this->alphaItemCards($the_letter, $start, $number);
+        $a_item_cards    = $this->alphaItemCards($the_letter, $start, $num_to_display);
         $a_twig_values = array(
             'title'         => 'Guide',
             'description'   => 'This is a description',
@@ -206,6 +215,7 @@ class SearchController extends CommonController
             'postcode',
             'phone'
         );
+        $a_items = $this->o_arr->removeSlashes($a_items);
         $a_items = $this->addDataToItems($a_items, $a_search_for_fields, $a_search_parameters);
         foreach ($a_items as $key=>$a_item) {
             if (strlen($a_items[$key]['about']) > 0) {

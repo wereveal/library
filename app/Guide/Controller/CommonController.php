@@ -128,7 +128,8 @@ abstract class CommonController
         return array(
             'buttonColor'   => 'white',
             'buttonText'    => 'Locate',
-            'searchForText' => $search_str
+            'searchForText' => $search_str,
+            'helpicon'      => ''
         );
     }
     /**
