@@ -1,0 +1,11 @@
+{
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zendframework": "dev-master",
+        "zendframework/zftool": "dev-master",
+        "zendframework/zend-developer-tools": "dev-master",
+        "zendframework/zendservice-recaptcha": "dev-master",
+        "mustache/mustache": "dev-master",
+		"twig/twig": "dev-master"
+    }
+}
