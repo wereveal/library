@@ -514,6 +514,8 @@ class Item
         return false;
     }
 
+    ### DB Admin methods ###
+
     ### Utilities ###
     /**
      *  Sets the required keys for the wer_item table

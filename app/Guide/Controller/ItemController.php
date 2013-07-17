@@ -52,13 +52,23 @@ class ItemController extends CommonController
         }
     }
 
+    public function router(array $a_values = array())
+    {
+        if (isset($a_values['action2'])) {
+            $item_id = $a_values['action2'];
+            return $this->defaultAction($item_id);
+        } else {
+            header('Location: ' . SITE_URL);
+        }
+    }
+
     ### Main Actions called from routing ###
     /**
      *  Displays the result of a simple search (from the quick search form).
      *  @param int $item_id required, redirects to main page if missing
      *  @return str the html to display
     **/
-    public function defaultAction($item_id = '')
+    protected function defaultAction($item_id = '')
     {
         if ($item_id == '') {
             header('Location: ' . SITE_URL);
