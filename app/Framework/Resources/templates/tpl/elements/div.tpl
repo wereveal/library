@@ -1,1 +1,0 @@
-<div class="{$class}"{$extras}>{$content}</div>
