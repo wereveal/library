@@ -17,7 +17,7 @@
 **/
 namespace Wer\Framework\Library;
 
-class HTML extends Base
+class Html extends Base
 {
     protected $current_page;
     protected $o_arrays;
