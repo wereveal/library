@@ -6,9 +6,10 @@
  *  @class Database
  *  @ingroup wer_framework library
  *  @author William Reveal <wer@revealitconsulting.com>
- *  @version 2.4.3
- *  @date 2013-07-06 14:46:28
+ *  @version 2.4.4
+ *  @date 2013-07-23 17:24:10
  *  @par Change Log
+ *      v2.4.4 - bug fix in buildSqlWhere
  *      v2.4.3 - reverted back to Wer Framework only (removed Symfony specific stuff) 07/06/2013
  *      v2.4.2 - added method to build sql where 05/09/2013
  *      v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
@@ -994,7 +995,8 @@ class Database extends Base
     /**
      *  Builds the WHERE section of a SELECT stmt.
      *  Also optionally builds the ORDER BY and LIMIT section of a SELECT stmt.
-     *  @param array $a_search_for required assoc array field_name=>field_value
+     *  It might be noted that if both arguments are missing, it returns a blank string.
+     *  @param array $a_search_for optional assoc array field_name=>field_value
      *  @param array $a_search_parameters optional allows one to specify various settings
      *      array(
      *          'search_type' => 'AND', // can also be or
@@ -1002,24 +1004,28 @@ class Database extends Base
      *          'starting_from' => '' // which record to start a limited return
      *          'comparison_type' => '=' // what kind of comparison to use for ALL WHEREs
      *          'order_by' => '' // column name(s) to sort by eg column_name [ASC,DESC][, column_name]
+     *          'where_exists' => false //
      *      )
      *      Not all parameters need to be in the array, if doesn't exist, the default setting will be used.
      *  @return str $where
     **/
-    public function buildSqlWhere($a_search_for = '', $a_search_parameters = '')
+    public function buildSqlWhere(array $a_search_for = array(), array $a_search_parameters = array())
     {
         $search_type = 'AND';
         $comparison_type = '=';
         $starting_from = '';
         $limit_to = '';
         $order_by = '';
-        if (is_array($a_search_parameters) && count($a_search_parameters) > 0) {
+        $where_exists = false;
+        $where = '';
+        if (count($a_search_parameters) > 0) {
             $a_allowed_keys = array(
                 'search_type',
                 'comparison_type',
                 'starting_from',
                 'limit_to',
-                'order_by'
+                'order_by',
+                'where_exists'
             );
             foreach ($a_search_parameters as $key => $value) {
                 if (array_search($key, $a_allowed_keys) !== false) {
@@ -1027,15 +1033,17 @@ class Database extends Base
                 }
             }
         }
-        $where = '';
-        if ($a_search_for != '' && is_array($a_search_for)) {
+        if (count($a_search_for) > 0) {
             $a_search_pairs = $this->prepareKeys($a_search_for);
             $this->o_elog->write('search pairs prepared: ' . var_export($a_search_pairs, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             foreach ($a_search_pairs as $key => $value) {
                 $field_name = preg_replace('/^:/', '', $key);
-                $key = preg_replace('/^:(.*)\.(.*)/', ':$2', $key);
-                if ($where == '') {
-                    $where .= "WHERE {$field_name} {$comparison_type} {$key} \n";
+                if (strpos($key, '.') !== false) {
+                    $key = preg_replace('/^:(.*)\.(.*)/', ':$2', $key);
+                }
+                if ($where_exists === false) {
+                    $where = "WHERE {$field_name} {$comparison_type} {$key} \n";
+                    $where_exists = true;
                 } else {
                     $where .= "{$search_type} {$field_name} {$comparison_type} {$key} \n";
                 }
