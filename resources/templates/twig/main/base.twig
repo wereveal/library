@@ -5,7 +5,7 @@
 <!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
     <head>
         <meta charset="utf-8" />
-        <title>{% block title %}Welcome!{% endblock %} - Guide</title>
+        <title>{% block title %}Welcome!{% endblock %}</title>
         {% block description %}
         <meta name="description" content="{{ description }}">
         {% endblock %}
@@ -13,7 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         {% block stylesheets %}
-        <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+        <link href="/assets/css/bootstrap.min.css" rel="stylesheet" media="screen">
         {% endblock %}
 
         <!-- For IE6-8 support of HTML5 elements -->
@@ -21,8 +21,10 @@
             <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
 
-        {% block headjavascripts %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        {% block head_js %}{% endblock %}
+        {% block icons %}
+        <link rel="icon" type="image/x-icon" href="/assets/images/ico/favicon.ico" />
+        {% endblock %}
     </head>
     <body>
         <div class="container">
@@ -36,7 +38,7 @@
         {% block header %}
             <div class="row-fluid">
                 <div class="span12 header">
-                    <img src="{{ asset('assets/images/logo.png') }}">
+                    <img src="/assets/images/logo.png">
                 </div>
             </div>
         {% endblock %}
@@ -54,9 +56,9 @@
         {% endblock %}
         </div>
 
-        {% block javascripts %}
+        {% block bottom_js %}
         <script src="http://code.jquery.com/jquery.js"></script>
-        <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+        <script src="/assets/js/bootstrap.min.js"></script>
         {% endblock %}
     </body>
 </html>
