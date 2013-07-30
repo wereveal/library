@@ -3,16 +3,17 @@
  *  A Base Class that all other classes use.
  *  Primarily this is used to fix the visibility issue that PHP ignores
  *  @file Base.php
+ *  @namespace Ritc\Library\Abstract
  *  @class Base
- *  @author William Reveal  <wer@revealitconsulting.com>
+ *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version  1.0.3
  *  @date 2013-03-28 11:00:17
  *  @par ChangeLog
  *      v1.0.3 - namespace change, changed to an abstract class
- *  @par Wer Framework v4.0.0
- *  @ingroup wer_framework library
+ *  @par RITC Library v4.0.0
+ *  @ingroup ritc_library library abstract
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Abstract;
 
 abstract class Base
 {

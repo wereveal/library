@@ -1,5 +1,5 @@
 <?php
-namespace Wer\Framework\Interfaces;
+namespace Ritc\Library\Interface;
 
 interface DbAdminInterface
 {

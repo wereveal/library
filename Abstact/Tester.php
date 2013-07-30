@@ -2,10 +2,10 @@
 /**
  *  A abstract class for testing that all other testing classes use.
  *  @file Tester.php
- *  @namespace Wer\Framework\Library
+ *  @namespace Ritc\Library\Abstract
  *  @class Tester
- *  @author William Reveal  <wer@revealitconsulting.com>
- *  @ingroup wer_framework library
+ *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @ingroup ritc_library library abstract
  *  @version  1.1.0
  *  @date 2013-05-10 14:24:24
  *  @par Change log
@@ -17,9 +17,13 @@
  *              allows the test results to display individual subtests
  *              within the method tester
  *      v1.0.1 - updated to match new framework 2013-04-03
- *  @par WER Framework v4.0.0
+ *  @par RITC Framework v4.0.0
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Abstract;
+
+use Ritc\Library\Core\Files;
+use Ritc\Library\Core\Html;
+
 
 abstract class Tester
 {

@@ -3,15 +3,16 @@
  *  Similar to the Unix tail command e.g. tail -n 40 file.php
  *  When on a webpage, use the meta refresh to keep tailing a file
  *  @file Tail.php
+ *  @namespace Ritc\Library\Core
  *  @class Tail
- *  @author William Reveal  <wer@revealitconsulting.com>
+ *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 2.1.0
  *  @date 2013-04-22 11:46:56
  *  @par Change Log
- *      v2.1 Changed to work in the wer framework
- *  @ingroup wer_framework library
+ *      v2.1 Changed to work in the ritc framework
+ *  @ingroup ritc_library library
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
 
 class Tail {
     private $timestamp           = 0;

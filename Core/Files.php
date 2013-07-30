@@ -2,7 +2,7 @@
 /**
  *  Determines the path to the file.
  *  @file Files.php
- *  @ingroup wer_framework library
+ *  @namespace Ritc\Library\Core
  *  @class Files
  *  <pre>Determines the path to the file, primarily used for themes but
  *      can be used for anything.
@@ -19,7 +19,7 @@
  *  @note <pre>The constants with _DIR_NAME should correspond to dir names in
  *      the site theme or namespace (e.g. templates are in namespace)
  *      </pre>
- *  @author William Reveal <wer@revealitconsulting.com>
+ *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 4.1.2
  *  @date 2013-07-06 15:40:23
  *  @par Change Log
@@ -28,12 +28,17 @@
  *              is not good. I need to change it so that the parameters.php file
  *              can specify the layout. But that won't be trivial.
  *      v4.1.1 - bug fixes and clean up 4/30/2013
- *      v4.1.0 - New Wer Framework Layout serious changes
+ *      v4.1.0 - New RITC Library Layout serious changes
  *               BUT method results and names were not changed
  *      v4.0.0 - FIG standards (mostly)
- *  @par Wer Framework 4.0.0
+ *  @par RITC Library 4.0.0
+ *  @ingroup ritc_library library
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
+
+use Ritc\Library\Abstract\Base;
+use Ritc\Library\Core\Database;
+use Ritc\Library\Core\Elog;
 
 class Files extends Location
 {

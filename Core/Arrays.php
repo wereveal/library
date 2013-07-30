@@ -5,18 +5,22 @@
  *  other classes where they don't belong or would server better in this
  *  class where they can be used more globally.
  *  @file Arrays.php
+ *  @namespace Ritc\Library\Core
  *  @class Arrays
- *  @author William Reveal  <wer@revealitconsulting.com>
- *  @version 1.0.2
+ *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @version 1.1.0
+ *  @date 2013-07-30 10:56:22
  *  @par ChangeLog
- *      v1.0.3 - moved array methods from class Strings to here
+ *      v1.1.0 - namespace changes - 07/30/2013 10:56:32
+ *      v1.0.3 - moved array methods from class Strings to here - 03/27/2013
  *      v1.0.2 - added new method
  *      v1.0.1 - new namespace, FIG standards (mostly)
- *  @par Wer Framework version 4.0.0
- *  @date 2013-03-27 15:30:09
- *  @ingroup wer_framework library
+ *  @par RITC Library version 4.0.0
+ *  @ingroup ritc_library library core
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
+
+use Ritc\Library\Abstract\Base;
 
 class Arrays extends Base
 {

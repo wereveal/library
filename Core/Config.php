@@ -2,17 +2,22 @@
 /**
  *  Create Constants from the configuration database
  *  @file Config.php
+ *  @namespace Ritc\Library\Core
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @ingroup wer_framework library
+ *  @ingroup ritc_library library
  *  @version  3.0.0
  *  @date 2013-04-30 11:47:24
  *  @par Change Log
  *      v3.0.0 Modified for new framework file hierarchy
  *      v2.3.0 mostly changes for FIG-standards
- *  @par Wer Framework v4.0.0
+ *  @par RITC Library v4.0.0
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
+
+use Ritc\Library\Abstract\Base;
+use Ritc\Library\Core\Database;
+use Ritc\Library\Core\Elog;
 
 class Config extends Base
 {

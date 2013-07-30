@@ -1,15 +1,18 @@
 <?php
 /**
  *  Class used to set up classes that look to establish the location of a file.
- *  @class Location
  *  @file Location.php
- *  @author William Reveal <wer@revealitconsulting.com>
+ *  @namespace Ritc\Library\Core
+ *  @class Location
+ *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 1.1.0
  *  @date 2011-06-14 15:11:26
- *  @ingroup wer_framework library
- *  @par Wer Framework 4.0
+ *  @ingroup ritc_library library
+ *  @par RITC Library 4.0
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
+
+use Ritc\Library\Abstract\Base;
 
 class Location extends Base
 {

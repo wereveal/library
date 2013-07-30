@@ -6,19 +6,26 @@
  *  or from a form element with a few select id names
  *
  *  @file Actions.php
+ *  @namespace Ritc\Library\Core
  *  @class Actions
- *  @author William Reveal  <wer@revealitconsulting.com>
- *  @version 2.2.2
- *  @date 2013-03-27 15:26:13
+ *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @version 2.2.3
+ *  @date 2013-07-30 10:53:21
  *  @par Change Log
- *      v2.2.2 - changed to new namespace
+ *      v2.2.3 - Changed to namespace reorge
+ *      v2.2.2 - changed to new namespace - 03/27/2013
  *      v2.2.1 - added a bit more sanitation to uri actions,
  *               renamed action to form_action to be clearer what it was
  *      v2.2.0 - refactored to be closer to FIG standards
- *  @par Wer Framework version 4.0.0
- *  @ingroup wer_framework library
+ *  @par RITC Library version 4.0.0
+ *  @ingroup ritc_library library
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
+
+use Ritc\Library\Abstract\Base;
+use Ritc\Library\Core\Arrays;
+use Ritc\Library\Core\Elog;
+use Ritc\Library\Core\Strings;
 
 class Actions extends Base
 {

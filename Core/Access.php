@@ -2,11 +2,13 @@
 /**
  *  Manages User Access to sections of the site.
  *  @file Access.php
+ *  @namespace Ritc\Library\Core
  *  @class Access
- *  @author William Reveal  <wer@revealitconsulting.com>
- *  @version 3.5.3
+ *  @author William E Reveal  <bill@revealitconsulting.com>
+ *  @version 3.5.4
  *  @par Change Log
- *      v3.5.3 - changed namespace to match my framework namespace,
+ *      v3.5.4 - changed namespace and library reorg - 07/30/2013
+ *      v3.5.3 - changed namespace to match my framework namespace, - 04/22/2013
  *               refactored to match Elog method name change
  *      v3.5.2 - database methods were renamed, changed to match
  *      v3.5.1 - changed namespace to match Symfony structure
@@ -15,11 +17,15 @@
  *      v3.4.0 - added short_name to Access, changing Real Name back to a real name
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
- *  @par Wer Framework version 4.0
- *  @date 2013-04-22 11:30:13
- *  @ingroup wer_framework core library
+ *  @par RITC Library version 4.0
+ *  @date 2013-07-30 10:52:44
+ *  @ingroup ritc_library core library
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
+
+use Ritc\Library\Abstract\Base;
+use Ritc\Library\Core\Database;
+use Ritc\Library\Core\Elog;
 
 class Access extends Base
 {

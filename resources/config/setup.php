@@ -1,17 +1,17 @@
 <?php
 /**
- *  This file sets up the WER Framework.
+ *  This file sets up the RITC Framework.
  *  Required to get the entire framework to work.
  *  @file setup.php
- *  @namespace Wer
- *  @defgroup wer_framework
+ *  @namespace Ritc
+ *  @defgroup ritc_library
  *  @{
  *      Previously named sitemanager. Was cut down to be just a basic framework
  *      @version 4.0
  *      @defgroup configs Configuration files
- *      @ingroup wer_framework
+ *      @ingroup ritc_library
  *      @defgroup core The core framework files
- *      @ingroup wer_framework
+ *      @ingroup ritc_library
  *  }
  *  @note <pre>
  *  NOTE: _path and _PATH indicates a full server path
@@ -19,9 +19,9 @@
  *        Both do not end with a slash
  *  </pre>
 */
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
 
-use Wer\Framework\Library\Config;
+use Ritc\Library\Core\Config;
 
 if (!defined('SITE_PATH')) {
     define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);

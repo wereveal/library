@@ -3,17 +3,18 @@
  *  Does all the database stuff.
  *  For read/write access to the database based on PDO.
  *  @file Database.php
+ *  @namespace Ritc\Library\Core
  *  @class Database
- *  @ingroup wer_framework library
- *  @author William Reveal <wer@revealitconsulting.com>
+ *  @ingroup ritc_library library
+ *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 2.4.4
  *  @date 2013-07-23 17:24:10
  *  @par Change Log
  *      v2.4.4 - bug fix in buildSqlWhere
- *      v2.4.3 - reverted back to Wer Framework only (removed Symfony specific stuff) 07/06/2013
+ *      v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff) 07/06/2013
  *      v2.4.2 - added method to build sql where 05/09/2013
  *      v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
- *      v2.4.0 - Change to match new Wer Framework layout 04/23/2013
+ *      v2.4.0 - Change to match new RITC Library layout 04/23/2013
  *      v2.3.2 - new method to remove bad keys
  *               removed some redundant code
  *               reorganized putting main four commands at top for easy reference
@@ -22,13 +23,13 @@
  *               made a couple changes to clarify what was going on.
  *      v2.3.0 - Modified to work within Symfony
  *      v2.2.0 - FIG-standard changes
- *  @par Wer Framework v4.0.0
+ *  @par RITC Library v4.0.0
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
 
-use Wer\Framework\Library\Elog;
-use Wer\Framework\Library\Files;
-use Wer\Framework\Library\Arrays;
+use Ritc\Library\Core\Elog;
+use Ritc\Library\Core\Files;
+use Ritc\Library\Core\Arrays;
 
 class Database extends Base
 {

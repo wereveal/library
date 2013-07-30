@@ -3,18 +3,22 @@
  *  Something simple to help me debug my websites.
  *  A singleton pattern.
  *  @file Elog.php
+ *  @namespace Ritc\Library\Core
  *  @class Elog
- *  @author William Reveal  <wer@revealitconsulting.com>
- *  @version:  2.5.2
- *  @date 2013-04-23 11:24:26
+ *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @version:  2.6.0
+ *  @date 2013-07-30 11:09:45
  *  @par Change Log
- *      v2.5.2 - added some sanity code to setElogConstants to prevent errors
+ *      v2.6.0 - Namespace changes
+ *      v2.5.2 - added some sanity code to setElogConstants to prevent errors - 04/23/2013
  *      v2.5.1 - renamed main method from do_it to write (not so silly)
  *      v2.5.0 - FIG standars (mostly)
- *  @par Wer Framework v4.0.0
- *  @ingroup wer_framework library
+ *  @par RITC Library v4.0.0
+ *  @ingroup ritc_library library
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
+
+use Ritc\Library\Abstract\Base;
 
 class Elog extends Base
 {

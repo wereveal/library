@@ -6,16 +6,23 @@
  *  the name of the method
  *  Derived from the old Depreciated Output class
  *  @file Html.php
+ *  @namespace Ritc\Library\Core
  *  @class Html
- *  @author William Reveal  <wer@revealitconsulting.com>
+ *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.1
  *  @par Change Log
  *      v1.0.1 - some refactoring changes based on changes in other files
  *  @date 2013-03-27 17:28:19
  *  @ingroup wer_framwork library
- *  @par Wer Framework 4.0.0
+ *  @par RITC Library 4.0.0
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
+
+use Ritc\Library\Abstract\Base;
+use Ritc\Library\Core\Arrays;
+use Ritc\Library\Core\Elog;
+use Ritc\Library\Core\Files;
+use Ritc\Library\Core\Strings;
 
 class Html extends Base
 {

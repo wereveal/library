@@ -6,18 +6,22 @@
  *  the name of the method
  *  Renamed and modified version of old class Output
  *  @file Strings.php
+ *  @namespace Ritc\Library\Core
  *  @class Strings
- *  @author William Reveal  <wer@revealitconsulting.com>
+ *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 5.1.0
  *  @date 2013-05-14 12:42:32
- *  @ingroup wer_framework library
+ *  @ingroup ritc_library library
  *  @par Change Log
  *      v5.1.0 - added formatPhoneNumber method. 2013-05-14
  *      v5.0.1 - bug fixes and removed unused code left over from old class Output 2013-05-01
- *      v5.0.0 - renamed new version for Wer Framework v4
- *  @par Wer Framework 4.0
+ *      v5.0.0 - renamed new version for RITC Library v4
+ *  @par RITC Library 4.0
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
+
+use Ritc\Library\Abstract\Base;
+use Ritc\Library\Core\Elog;
 
 class Strings extends Base
 {

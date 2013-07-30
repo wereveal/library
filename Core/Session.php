@@ -2,14 +2,18 @@
 /**
  *  For managing sessions.
  *  @file Session.php
+ *  @namespace Ritc\Library\Core
  *  @class Session
- *  @author William Reveal <wer@revealitconsulting.com>
+ *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 1.1.0
  *  @date 06/14/2011 15:13:24
- *  @ingroup wer_framework library
- *  @par Wer Framework 4.0
+ *  @ingroup ritc_library library
+ *  @par RITC Library 4.0
 **/
-namespace Wer\Framework\Library;
+namespace Ritc\Library\Core;
+
+use Ritc\Library\Abstract\Base;
+use Ritc\Library\Core\Elog;
 
 class Session extends Base
 {
