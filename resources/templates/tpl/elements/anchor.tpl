@@ -1,0 +1,1 @@
+<a href="{$url}" class="{$class}"{$extras}>{$link_text}</a>
