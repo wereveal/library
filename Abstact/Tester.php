@@ -41,7 +41,7 @@ abstract class Tester
     public function __construct()
     {
         $this->o_html  = new Html;
-        $this->o_files = new Files('test_results.tpl', 'templates', 'default', 'Wer\Framework');
+        $this->o_files = new Files('test_results.tpl', 'templates', 'default', 'Ritc\Framework');
     }
     public function addMethodToTestOrder($method_name = '')
     {

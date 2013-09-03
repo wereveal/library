@@ -13,7 +13,7 @@
  *  @par Change Log
  *      v1.0.1 - some refactoring changes based on changes in other files
  *  @date 2013-03-27 17:28:19
- *  @ingroup wer_framwork library
+ *  @ingroup ritc_framwork library
  *  @par RITC Library 4.0.0
 **/
 namespace Ritc\Library\Core;
@@ -35,13 +35,13 @@ class Html extends Base
     protected $the_modified_string = '';
     protected $template_name     = STD_CONTENT_TPL;
     protected $private_properties;
-    protected $namespace = 'Wer';
+    protected $namespace = 'Ritc';
     public function __construct()
     {
         $this->o_str = new Strings;
         $this->o_elog = Elog::start();
         $this->o_arrays = new Arrays();
-        $this->o_files = new Files('main.tpl', 'templates',  'default', 'Wer');
+        $this->o_files = new Files('main.tpl', 'templates',  'default', 'Ritc');
         $this->setPrivateProperties();
         $this->o_elog->setFromFile(__FILE__);
     }
@@ -198,13 +198,13 @@ class Html extends Base
     }
 
     ### UTILITIES ###
-    public function updateFilesNamespace($value = 'Wer')
+    public function updateFilesNamespace($value = 'Ritc')
     {
         $this->o_files->setNamespace($value);
     }
 
     ### SETTERS ###
-    public function setNamespace($value = 'Wer')
+    public function setNamespace($value = 'Ritc')
     {
         $this->namespace = $value;
         $this->updateFilesNamespace($value);
