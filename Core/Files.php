@@ -307,7 +307,7 @@ class Files extends Location
      *      APP_DIR/$file_name
      *      APP_DIR/config/$file_name
      *      APP_DIR/$file_dir_name/$file_name
-     *      APP_DIR/str_replace('Wer\', '', $namespace)/$file_name
+     *      APP_DIR/str_replace('Ritc\', '', $namespace)/$file_name
      *  </pre>
      *  @param str $file_name required
      *  @param str $namespace optional defaults to $this->namespace
@@ -326,8 +326,8 @@ class Files extends Location
             $file_dir_name = $this->file_dir_name;
         }
         $namespace    = str_replace('\\', '/', $namespace);
-        if (!file_exists(APP_PATH . '/Wer')) {
-            $namespace    = str_replace('Wer/', '', $namespace);
+        if (!file_exists(APP_PATH . '/Ritc')) {
+            $namespace    = str_replace('Ritc/', '', $namespace);
         }
         $ns_path      = APP_PATH . '/' . $namespace;
         $a_possible_locations = array(

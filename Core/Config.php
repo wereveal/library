@@ -115,7 +115,7 @@ class Config extends Base
     }
     private function selectConfigList()
     {
-        $select_query = 'SELECT config_name, config_value FROM wer_config ORDER BY config_name';
+        $select_query = 'SELECT config_name, config_value FROM ritc_config ORDER BY config_name';
         return $this->o_db->search($select_query);
     }
     private function createNewConfigs()
@@ -123,7 +123,7 @@ class Config extends Base
         include_once APP_CONFIG_PATH . '/fallback_constants_array.php';
         if ($this->o_db->startTransaction()) {
             $query = "
-                INSERT INTO wer_config (config_name, config_value)
+                INSERT INTO ritc_config (config_name, config_value)
                 VALUES (?, ?)";
             if ($this->o_db->insert($query, $a_constants, 'sm_config')) {
                 if ($this->o_db->commitTransaction() === false) {
