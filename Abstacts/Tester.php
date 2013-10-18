@@ -19,7 +19,7 @@
  *      v1.0.1 - updated to match new framework 2013-04-03
  *  @par RITC Framework v4.0.0
 **/
-namespace Ritc\Library\Abstract;
+namespace Ritc\Library\Abstracts;
 
 use Ritc\Library\Core\Files;
 use Ritc\Library\Core\Html;

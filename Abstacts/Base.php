@@ -13,7 +13,7 @@
  *  @par RITC Library v4.0.0
  *  @ingroup ritc_library library abstract
 **/
-namespace Ritc\Library\Abstract;
+namespace Ritc\Library\Abstracts;
 
 abstract class Base
 {
