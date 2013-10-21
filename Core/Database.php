@@ -71,6 +71,9 @@ class Database extends Base
     }
     /**
      *  Starts the Singleton.
+     *  This needs to be changed to a factory or something. At this point, this
+     *  Class can only access one database. It needs to be able to access multiple databases.
+     *  Temporarily, one can change the __construct method to be public to by-pass this problem when needed.
      *  @param str $read_type Default rw
      *  @param bool $config_file default '' specifies exact location of config file
      *      if not specified, the Files class should be use to locate the config file
