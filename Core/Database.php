@@ -1,16 +1,17 @@
 <?php
 /**
- *  Does all the database stuff.
+ *  Does all the database crud stuff.
  *  For read/write access to the database based on PDO.
  *  @file Database.php
  *  @namespace Ritc\Library\Core
  *  @class Database
  *  @ingroup ritc_library library
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 2.4.4
- *  @date 2013-07-23 17:24:10
+ *  @version 3.0.0
+ *  @date 2013-11-06 11:15:17
  *  @par Change Log
- *      v2.4.4 - bug fix in buildSqlWhere
+ *      v3.0.0 - split the connect from the crud
+ *      v2.4.4 - bug fix in buildSqlWhere - 2013-07-23 17:24:10
  *      v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff) 07/06/2013
  *      v2.4.2 - added method to build sql where 05/09/2013
  *      v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
@@ -27,9 +28,11 @@
 **/
 namespace Ritc\Library\Core;
 
+use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\Elog;
 use Ritc\Library\Core\Files;
 use Ritc\Library\Core\Arrays;
+use Ritc\Library\Core\DbFactory;
 
 class Database extends Base
 {
@@ -51,7 +54,6 @@ class Database extends Base
     private $o_arr;
     private $o_db;
     protected $o_elog;
-    private $o_files;
     private $o_pdo_statement = '';
     private $pgsql_sequence_name = '';
     protected $private_properties;
@@ -59,39 +61,13 @@ class Database extends Base
     private $root_path;
     private $sql_error_message;
     private $success;
-    private function __construct($read_type = 'ro', $config_file = 'db_config.php')
+    public function __construct(PDO $o_db)
     {
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setPrivateProperties();
-        $this->o_elog = Elog::start();
-        $this->o_arr = new Arrays;
-        $this->o_files = new Files;
-        $this->setDatabaseParameters($config_file);
-        $this->read_type = $read_type;
-    }
-    /**
-     *  Starts the Singleton.
-     *  This needs to be changed to a factory or something. At this point, this
-     *  Class can only access one database. It needs to be able to access multiple databases.
-     *  Temporarily, one can change the __construct method to be public to by-pass this problem when needed.
-     *  @param str $read_type Default rw
-     *  @param bool $config_file default '' specifies exact location of config file
-     *      if not specified, the Files class should be use to locate the config file
-     *  @return obj - reference the the database object created
-    **/
-    public static function start($read_type = 'rw', $config_file = 'db_config.php')
-    {
-        if ($read_type == 'ro') {
-            if (!isset(self::$instance_ro)) {
-                self::$instance_ro = new Database('ro', $config_file);
-            }
-            return self::$instance_ro;
-        } else {
-            if (!isset(self::$instance_rw)) {
-                self::$instance_rw = new Database('rw', $config_file);
-            }
-            return self::$instance_rw;
-        }
+        $this->o_elog    = Elog::start();
+        $this->o_arr     = new Arrays;
+        $this->o_db      = $o_db;
     }
 
     ### Main Four Commands (CRUD) ###
@@ -254,83 +230,6 @@ class Database extends Base
     {
         return $this->sql_error_message;
     }
-    private function setDatabaseParameters($config_file = 'db_config.php')
-    {
-        $config_w_path = APP_PATH . '/config/' . $config_file;
-        if (!file_exists($config_w_path)) {
-            $config_w_path = 'app/config/' . $config_file;
-        }
-        $a_database = require $config_w_path;
-        $this->db_type   = $a_database['driver'];
-        $this->db_host   = $a_database['host'];
-        $this->db_port   = $a_database['port'];
-        $this->db_name   = $a_database['name'];
-        $this->db_userro = $a_database['userro'];
-        $this->db_passro = $a_database['passro'];
-        $this->db_user   = $a_database['user'];
-        $this->db_pass   = $a_database['password'];
-    }
-    public function setDbName($value = '')
-    {
-        if ($value !== '') {
-            $this->db_name = $value;
-        }
-    }
-    public function setDbHost($value = '')
-    {
-        if ($value !== '') {
-            $this->db_host = $value;
-        }
-    }
-    public function setDbPass($value = '')
-    {
-        if ($value !== '') {
-            $this->db_pass = $value;
-        }
-    }
-    public function setDbPassro($value = '')
-    {
-        if ($value !== '') {
-            $this->db_passro = $value;
-        }
-    }
-    public function setDbPersist($value = '')
-    {
-        if (($value !== '') && (is_bool($value) !== false)) {
-            $this->db_type = $value;
-        }
-    }
-    public function setDbType($value = '')
-    {
-        $a_allowed_types = array('mysql', 'sqlite', 'pgsql');
-        if (($value !== '') && (array_search($value, $a_allowed_types) !== false)) {
-            $this->db_type = $value;
-        }
-    }
-    public function setDbUser($value = '')
-    {
-        if ($value !== '') {
-            $this->db_user = $value;
-        }
-    }
-    public function setDbUserro($value = '')
-    {
-        if ($value !== '') {
-            $this->db_userro = $value;
-        }
-    }
-    public function setDsn($value = '')
-    {
-        if ($value != '') {
-            $this->dsn = $value;
-        } else {
-            if ($this->db_port != '' && $this->db_port !== null) {
-                $this->dsn = $this->db_type . ':host=' . $this->db_host . ';port=' . $this->db_port . ';dbname=' . $this->db_name;
-            } else {
-                $this->dsn = $this->db_type . ':host=' . $this->db_host . ';dbname=' . $this->db_name;
-            }
-        }
-    }
     public function setNewId($value = '')
     {
         if ($value !== '') {
@@ -428,37 +327,6 @@ class Database extends Base
     public function commitTransaction()
     {
         return $this->o_db->commit();
-    }
-    public function connect()
-    {
-        $this->o_elog->setFromMethod(__METHOD__);
-        if (is_object($this->o_db)) {
-            $this->o_elog->write('The database is already connected.', LOG_OFF);
-            return true;
-        }
-        $this->setDsn();
-        try {
-            if ($this->read_type == 'ro') {
-                $this->o_db = new \PDO(
-                    $this->dsn,
-                    $this->db_userro,
-                    $this->db_passro,
-                    array(\PDO::ATTR_PERSISTENT=>$this->db_persist));
-            } else {
-                $this->o_db = new \PDO(
-                    $this->dsn,
-                    $this->db_user,
-                    $this->db_pass,
-                    array(\PDO::ATTR_PERSISTENT=>$this->db_persist));
-            }
-            $this->o_elog->write("The dsn is: $this->dsn", LOG_OFF);
-            $this->o_elog->write('Connect to db success.', LOG_OFF);
-            return true;
-        }
-        catch(\PDOException $e) {
-            $this->o_elog->write('Error! Could not connect to database: ' . $e->getMessage(), LOG_ALWAYS);
-            return false;
-        }
     }
     /**
      *  Executes a prepared query

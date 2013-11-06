@@ -6,16 +6,17 @@
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @ingroup ritc_library library
- *  @version  3.0.0
- *  @date 2013-04-30 11:47:24
+ *  @version  3.0.1
+ *  @date 2013-11-06 11:29:04
  *  @par Change Log
- *      v3.0.0 Modified for new framework file hierarchy
+ *      v3.0.1 refactoring for database class change
+ *      v3.0.0 Modified for new framework file hierarchy - 2013-04-30
  *      v2.3.0 mostly changes for FIG-standards
  *  @par RITC Library v4.0.0
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstract\Base;
+use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\Database;
 use Ritc\Library\Core\Elog;
 
@@ -31,8 +32,6 @@ class Config extends Base
     {
         $this->o_elog = Elog::start();
         $this->setPrivateProperties();
-        $this->o_db = Database::start();
-        $this->o_db->connect();
         $this->created = $this->createConstants();
         if ($this->created === false) {
             $this->o_elog->write("Could not create constants from db.", LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -47,13 +46,16 @@ class Config extends Base
     }
     /**
      *  Config class is a singleton and this gets it started
+     *  This is in my mind a legit use of a singleton as
+     *  Never should more than one instance of the config ever be allowed to be created
      *  @return obj - instance of Config
     **/
-    public static function start()
+    public static function start(Database $o_db)
     {
         if (!isset(self::$instance)) {
             $c = __CLASS__;
             self::$instance = new $c;
+            $this->o_db = $o_db;
         }
         return self::$instance;
     }

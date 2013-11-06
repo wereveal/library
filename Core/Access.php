@@ -5,8 +5,10 @@
  *  @namespace Ritc\Library\Core
  *  @class Access
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 3.5.4
+ *  @version 3.5.5
+ *  @date 2013-11-06 11:27:03
  *  @par Change Log
+ *      v3.5.5 - refactor for change in the database class
  *      v3.5.4 - changed namespace and library reorg - 07/30/2013
  *      v3.5.3 - changed namespace to match my framework namespace, - 04/22/2013
  *               refactored to match Elog method name change
@@ -18,12 +20,11 @@
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
  *  @par RITC Library version 4.0
- *  @date 2013-07-30 10:52:44
  *  @ingroup ritc_library core library
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstract\Base;
+use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\Database;
 use Ritc\Library\Core\Elog;
 
@@ -38,19 +39,19 @@ class Access extends Base
     {
         $this->o_elog = Elog::start();
         $this->setPrivateProperties();
-        $this->o_db = Database::start();
         $this->o_elog->setFromFile(__FILE__);
     }
     /** Access class is a singleton and this gets it started.
         @return obj - instance of Access
     **/
-    public static function start()
+    public static function start(Database $o_db)
     {
-            if (!isset(self::$instance)) {
-                    $c = __CLASS__;
-                    self::$instance = new $c;
-            }
-            return self::$instance;
+        if (!isset(self::$instance)) {
+            $c = __CLASS__;
+            self::$instance = new $c;
+            $this->o_db = $o_db;
+        }
+        return self::$instance;
     }
 
     #### Actions ####

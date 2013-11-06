@@ -6,11 +6,11 @@
  *  @namespace Ritc
  *  @defgroup ritc_library
  *  @{
- *      Previously named sitemanager. Was cut down to be just a basic framework
+ *      Previously named sitemanager. Was cut down to be just a basic library
  *      @version 4.0
  *      @defgroup configs Configuration files
  *      @ingroup ritc_library
- *      @defgroup core The core framework files
+ *      @defgroup core The core library files
  *      @ingroup ritc_library
  *  }
  *  @note <pre>
@@ -22,6 +22,7 @@
 namespace Ritc\Library\Core;
 
 use Ritc\Library\Core\Config;
+use Ritc\Library\Core\DbFactory;
 
 if (!defined('SITE_PATH')) {
     define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);
@@ -34,7 +35,15 @@ if (!defined('APP_PATH')) {
 }
 require_once APP_PATH . '/autoload.php';
 require_once APP_PATH . '/config/constants.php';
-if (!Config::start()) {
-    error_log("Couldn't create the constants\n\n");
+
+$o_default_dbf = DbFactory::start('db_config.php', 'rw');
+$o_default_pdo = $o_default_dbf->connect();
+if ($o_default_pdo !== false) {
+    $o_default_db = new Database($o_default_pdo);
+    if (!Config::start($o_default_db)) {
+        error_log("Couldn't create the constants\n\n");
+    }
+}
+else {
     require_once APP_PATH . '/config/fallback_constants.php';
 }
