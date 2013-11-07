@@ -33,15 +33,23 @@ if (!defined('BASE_PATH')) {
 if (!defined('APP_PATH')) {
     define('APP_PATH', BASE_PATH . '/app');
 }
-require_once APP_PATH . '/autoload.php';
-require_once APP_PATH . '/config/constants.php';
+if (!defined('VENDOR_PATH')) {
+    define('VENDOR_PATH', BASE_PATH . '/vendor');
+}
+
+$loader = require_once VENDOR_PATH . '/autoload.php';
+$my_classmap = require_once APP_PATH . '/config/autoload_classmap.php';
+$loader->addClassMap($my_classmap);
 
 $o_default_dbf = DbFactory::start('db_config.php', 'rw');
 $o_default_pdo = $o_default_dbf->connect();
+
+require_once APP_PATH . '/config/constants.php';
 if ($o_default_pdo !== false) {
     $o_default_db = new Database($o_default_pdo);
     if (!Config::start($o_default_db)) {
         error_log("Couldn't create the constants\n\n");
+        require_once APP_PATH . '/config/fallback_constants.php';
     }
 }
 else {
