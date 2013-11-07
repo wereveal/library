@@ -92,7 +92,7 @@ class DbFactory extends Base
             }
             $this->o_elog->write("The dsn is: $this->dsn", LOG_OFF);
             $this->o_elog->write('Connect to db success.', LOG_OFF);
-            return this->o_db;
+            return $this->o_db;
         }
         catch(\PDOException $e) {
             $this->o_elog->write('Error! Could not connect to database: ' . $e->getMessage(), LOG_ALWAYS);
