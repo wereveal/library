@@ -7,9 +7,10 @@
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @ingroup ritc_library library
  *  @version  3.0.1
- *  @date 2013-11-06 11:29:04
+ *  @date 2013-11-08 07:41:43
  *  @par Change Log
- *      v3.0.1 refactoring for database class change
+ *      v3.0.2 bug fixes, minor changes - 2013-11-08
+ *      v3.0.1 refactoring for database class change - 2013-11-06
  *      v3.0.0 Modified for new framework file hierarchy - 2013-04-30
  *      v2.3.0 mostly changes for FIG-standards
  *  @par RITC Library v4.0.0
@@ -28,8 +29,9 @@ class Config extends Base
     private $o_db;
     protected $o_elog;
     protected $private_properties;
-    private function __construct()
+    private function __construct(Database $o_db)
     {
+        $this->o_db = $o_db;
         $this->o_elog = Elog::start();
         $this->setPrivateProperties();
         $this->created = $this->createConstants();
@@ -53,9 +55,7 @@ class Config extends Base
     public static function start(Database $o_db)
     {
         if (!isset(self::$instance)) {
-            $c = __CLASS__;
-            self::$instance = new $c;
-            $this->o_db = $o_db;
+            self::$instance = new Config($o_db);
         }
         return self::$instance;
     }
@@ -122,12 +122,12 @@ class Config extends Base
     }
     private function createNewConfigs()
     {
-        include_once APP_CONFIG_PATH . '/fallback_constants_array.php';
+        $a_constants = require_once APP_CONFIG_PATH . '/fallback_constants_array.php';
         if ($this->o_db->startTransaction()) {
             $query = "
                 INSERT INTO ritc_config (config_name, config_value)
                 VALUES (?, ?)";
-            if ($this->o_db->insert($query, $a_constants, 'sm_config')) {
+            if ($this->o_db->insert($query, $a_constants, 'ritc_config')) {
                 if ($this->o_db->commitTransaction() === false) {
                     $this->o_elog->write("Could not commit new configs", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 }
