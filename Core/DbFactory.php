@@ -7,10 +7,11 @@
  *  @class DbFactory
  *  @ingroup ritc_library library
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2013-11-06 11:37:50
+ *  @version 0.1.1
+ *  @date 2013-11-08 09:26:28
  *  @par Change Log
- *      v1.0.0 - initial file creation
+ *      v0.1.1 - added two additional places the config files can exist - 2013-11-08
+ *      v0.1.0 - initial file creation - 2013-11-06
  *  @par RITC Library v4.0.0
 **/
 namespace Ritc\Library\Core;
@@ -123,7 +124,10 @@ class DbFactory extends Base
     {
         $config_w_path = APP_PATH . '/config/' . $config_file;
         if (!file_exists($config_w_path)) {
-            $config_w_path = 'app/config/' . $config_file;
+            $config_w_path = PRIVATE_PATH . '/' . $config_file;
+            if (!file_exists($config_w_path)) {
+                $config_w_path = SITE_PATH . '/config/' . $config_file;
+            }
         }
         if (!file_exists($config_w_path)) {
             return false;

@@ -10,7 +10,7 @@
  *  @version 3.0.0
  *  @date 2013-11-06 11:15:17
  *  @par Change Log
- *      v3.0.0 - split the connect from the crud
+ *      v3.0.0 - split the pdo creation (database connection) from the crud - 2013-11-06
  *      v2.4.4 - bug fix in buildSqlWhere - 2013-07-23 17:24:10
  *      v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff) 07/06/2013
  *      v2.4.2 - added method to build sql where 05/09/2013
@@ -61,7 +61,7 @@ class Database extends Base
     private $root_path;
     private $sql_error_message;
     private $success;
-    public function __construct(PDO $o_db)
+    public function __construct(\PDO $o_db)
     {
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setPrivateProperties();
