@@ -44,6 +44,7 @@ class Strings extends Base
      *  @param str $phone_number required defaults to empty str
      *  @parama str $phone_format optional format to change to
      *      options are 'AAA-BBB-CCCC', '(AAA) BBB-CCCC', 'AAA BBB CCCC', 'AAA.BBB.CCC.DDDD'
+     *      or the generic 'XXX-XXX-XXXX', '(XXX) XXX-XXXX', 'XXX XXX XXXX', 'XXX.XXX.XXXX'
     **/
     public function formatPhoneNumber($phone_number = '', $phone_format = 'AAA-BBB-CCCC')
     {

@@ -44,10 +44,10 @@ class DbFactory extends Base
         $this->read_type = $read_type;
     }
     /**
-     *  Starts a Singleton.
-     *  This needs to be changed to a factory or something. At this point, this
-     *  Class can only access one database. It needs to be able to access multiple databases.
-     *  Temporarily, one can change the __construct method to be public to by-pass this problem when needed.
+     *  Starts a Singleton object for the specific database config file
+     *  or returns the existing object if it is already started.
+     *  It can be noted then that two objects can be created for each
+     *  config file, read/write and read only
      *  @param str $read_type Default rw
      *  @param bool $config_file default '' specifies exact location of config file
      *      if not specified, the Files class should be use to locate the config file
