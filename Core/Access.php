@@ -1,14 +1,19 @@
 <?php
 /**
- *  Manages User Access to sections of the site.
+ *  Manages User Access to the site.
+ *  It is expected that this will be used within a controller and
+ *  more finely grained access with be handled there or in a sub-controller.
  *  @file Access.php
  *  @namespace Ritc\Library\Core
  *  @class Access
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 3.5.5
- *  @date 2013-11-06 11:27:03
+ *  @version 3.6.0
+ *  @date 2013-11-12 12:57:24
  *  @par Change Log
- *      v3.5.5 - refactor for change in the database class
+ *      v3.6.0 - Database changes, added new user role connector table - 11/12/2013
+ *               New and revised methods to match database changes.
+ *               General Clean up of the code.
+ *      v3.5.5 - refactor for change in the database class - 2013-11-06
  *      v3.5.4 - changed namespace and library reorg - 07/30/2013
  *      v3.5.3 - changed namespace to match my framework namespace, - 04/22/2013
  *               refactored to match Elog method name change
@@ -34,37 +39,26 @@ class Access extends Base
     protected $o_elog;
     protected $o_db;
     protected $private_properties;
-    private static $instance;
-    private function __construct()
+
+    public function __construct(Database $o_db)
     {
-        $this->o_elog = Elog::start();
         $this->setPrivateProperties();
-        $this->o_elog->setFromFile(__FILE__);
-    }
-    /** Access class is a singleton and this gets it started.
-        @return obj - instance of Access
-    **/
-    public static function start(Database $o_db)
-    {
-        if (!isset(self::$instance)) {
-            $c = __CLASS__;
-            self::$instance = new $c;
-            $this->o_db = $o_db;
-        }
-        return self::$instance;
+        $this->o_elog = Elog::start();
+        $this->o_db = $o_db;
     }
 
     #### Actions ####
-    /** Does the actual login, verifies valid user.
-        @pre a form has been submitted from the site with all the needed
-            variables which have been put through a data cleaner.
-        @param $a_login (array), required with the following keys
-            array(
-                'username'=>'something',
-                'password'=>'something',
-                'token'=>'something',
-                'form_ts').
-        @return mixed, (int) user_id or (bool) false
+    /**
+     *  Does the actual login, verifies valid user.
+     *  @pre a form has been submitted from the site with all the needed
+     *      variables which have been put through a data cleaner.
+     *  @param $a_login (array), required with the following keys
+     *      array(
+     *          'username'=>'something',
+     *          'password'=>'something',
+     *          'token'=>'something',
+     *          'form_ts').
+     *  @return mixed, (int) user_id or (bool) false
     **/
     public function login($a_login = '')
     {
@@ -118,21 +112,22 @@ class Access extends Base
         return false;
     }
     /**
-     * Saves the user
-     * @param array $a_user values to save
-     * @param str $new optional defaults to update existing user, if set, unless = 'update' treat as a new user
-     * @return mixed, user_id or false
+     *  Saves the user.
+     *  If the values contain a value of user_id, user is updated
+     *  Else it is a new user.
+     *  @param array $a_user values to save
+     *  @return mixed, user_id or false
     **/
-    public function saveUser($a_user = array(), $new = '')
+    public function saveUser($a_user = array())
     {
+        $method = __METHOD__ . '.';
         if (is_array($a_user) === false || count($a_user) == 0) {
             return false;
         }
-        $this->o_elog->write("a_user before changes: " . var_export($a_user, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write("a_user before changes: " . var_export($a_user, true), LOG_OFF, $method  . __LINE__);
 
-        if ($new != '' && $new != 'update') { // New User
+        if (!isset($a_user['user_id']) || $a_user['user_id'] == '') { // New User
             $a_required_keys = array(
-                'role_id',
                 'username',
                 'real_name',
                 'short_name',
@@ -143,16 +138,17 @@ class Access extends Base
             foreach($a_required_keys as $key_name) {
                 $a_user_values[$key_name] = isset($a_user[$key_name]) ? $a_user[$key_name] : '' ;
             }
-            $this->o_elog->write("" . var_export($a_user_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write("" . var_export($a_user_values , true), LOG_OFF, $method  . __LINE__);
             if ($a_user_values['password'] == '') {
                 return false;
             }
             if ($this->o_db->startTransaction()) {
                 $a_prepared_user = $this->o_db->prepareKeys($a_user_values);
-                $this->o_elog->write("prepared user: " . var_export($a_prepared_user, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->o_elog->write("prepared user: " . var_export($a_prepared_user, true), LOG_OFF, $method  . __LINE__);
                 $new_user_id = $this->insertUser($a_prepared_user);
                 if ($new_user_id !== false) {
                     $group_id = '';
+                    $role_id  = '';
                     if (isset($a_user['group_id']) && $a_user['group_id'] != '') {
                         $group_id = $this->isValidGroupId($a_user['group_id']) ? $a_user['group_id'] : '';
                     }
@@ -162,40 +158,55 @@ class Access extends Base
                             $group_id = $a_group['group_id'];
                         }
                     }
-                    if ($group_id != '') {
-                        $a_prepared_values = array(':user_id'=>$new_user_id, ':group_id'=>$group_id);
-                        $results = $this->insertUserGroup($a_prepared_values);
-                        if ($results) {
-                            if ($this->o_db->commitTransaction()) {
-                                $a_new_user = $this->selectUser($new_user_id);
-                                $this->o_elog->write("Inserted user before password hash: " . var_export($a_new_user, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                                $hashed_password = $this->hashPassword($a_new_user);
-                                $a_values = array(
-                                    ':user_id'  => $new_user_id,
-                                    ':password' => $hashed_password
-                                );
-                                $this->o_elog->write("hashed password: " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                                $results = $this->updateUserPassword($a_values);
-                                if ($results) {
-                                    return $new_user_id;
-                                } else {
-                                    $this->deleteUserGroup($new_user_id, $group_id);
-                                    $this->deleteUser($new_user_id);
-                                    return false;
-                                }
-                            }
+                    if (isset($a_user['role_id']) && $a_user['role_id'] != '') {
+                        $role_id = $this->isValidRoleId($a_user['role_id']) ? $a_user['role_id'] : '';
+                    }
+                    if ($role_id == '' && isset($a_user['role_name']) && $a_user['role_name'] != '') {
+                        $a_role = $this->selectRoleByName($a_user['role_name']);
+                        if ($a_role !== false) {
+                            $role_id = $a_role['id'];
                         }
                     }
-                }
+                    if ($group_id != '') {
+                        $a_ug_values = array(':user_id'=>$new_user_id, ':group_id'=>$group_id);
+                        $ug_results = $this->insertUserGroup($a_ug_values);
+                        if ($ug_results) {
+                            $a_ur_values = array(':user_id' => $new_user_id, ':role_id' => $role_id);
+                            $ur_results = $this->insertUserRole($a_ur_values);
+                            if($ur_results) {
+                                if ($this->o_db->commitTransaction()) {
+                                    $a_new_user = $this->selectUser($new_user_id);
+                                    $this->o_elog->write("Inserted user before password hash: " . var_export($a_new_user, true), LOG_OFF, $method  . __LINE__);
+                                    $hashed_password = $this->hashPassword($a_new_user);
+                                    $a_values = array(
+                                        ':user_id'  => $new_user_id,
+                                        ':password' => $hashed_password
+                                    );
+                                    $this->o_elog->write("hashed password: " . var_export($a_values, true), LOG_OFF, $method  . __LINE__);
+                                    $results = $this->updateUserPassword($a_values);
+                                    if ($results) {
+                                        return $new_user_id;
+                                    } else {
+                                        $this->deleteUserGroup($new_user_id, $group_id);
+                                        $this->deleteUser($new_user_id);
+                                        return false;
+                                    }
+                                } // commit transaction
+                            } // insertUserRole != false
+                        } // insertUserGroup != false
+                    } // group_id != ''
+                } // new_user_id !== false
                 $this->o_db->rollbackTransaction();
                 return false;
             } else {
                 return false;
-            }
+            } // this->o_db->startTransaction
         } else { // Existing User
+            if ($this->isValidUser($a_user) === false) {
+                return false;
+            }
             $a_required_keys = array(
                 'user_id',
-                'role_id',
                 'username',
                 'real_name',
                 'short_name',
@@ -212,7 +223,7 @@ class Access extends Base
                 $a_user_values['password'] = $this->hashPassword($a_pre_update);
             }
             $a_prepared_user = $this->o_db->prepareKeys($a_user_values);
-            $this->o_elog->write("Prepared Array: " . var_export($a_prepared_user , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write("Prepared Array: " . var_export($a_prepared_user , true), LOG_OFF, $method  . __LINE__);
             $results = $this->updateUser($a_prepared_user);
             if ($results !== false) {
                 return $a_user_values['user_id'];
@@ -222,11 +233,12 @@ class Access extends Base
     }
 
     #### Verifiers ####
-    /** Checks to see if the param is an id or a name.
-        A name can not start with a numeric character so if the param starts
-        with a number, it is assumed to be an id (I know, assume = ...)
-        @param $value (mixed), required
-        @return bool
+    /**
+     *  Checks to see if the param is an id or a name.
+     *  A name can not start with a numeric character so if the param starts
+     *  with a number, it is assumed to be an id (I know, assume = ...)
+     *  @param $value (mixed), required
+     *  @return bool
     **/
     public function isID($value = '')
     {
@@ -236,9 +248,10 @@ class Access extends Base
             }
             return false;
     }
-    /** Verifies user has the role of super administrator
-        @param none
-        @return bool - true = is a super admin, false = not a super admin
+    /**
+     *  Verifies user has the role of super administrator.
+     *  @param none
+     *  @return bool - true = is a super admin, false = not a super admin
     **/
     public function isSuperAdmin($user_id = '')
     {
@@ -250,10 +263,10 @@ class Access extends Base
         return false;
     }
     /**
-     * Checks to see if the id is a valid group id
-     * @param int $group_id
-     * @return bool true or false
-     */
+     *  Checks to see if the id is a valid group id.
+     *  @param int $group_id
+     *  @return bool true or false
+    **/
     private function isValidGroupId($group_id = '')
     {
         if ($group_id == '') { return false; }
@@ -262,9 +275,23 @@ class Access extends Base
         }
         return false;
     }
-    /** Checks to see if user exists.
-        @param $a_user (array), values which should include the user id and real name
-        @return bool, True or False
+    /**
+     *  Checks to see if the id is a valid role id.
+     *  @param int $role_id
+     *  @return bool true or false
+    **/
+    private function isValidRoleId($role_id = '')
+    {
+        if ($role_id == '') { return false; }
+        if (is_array($this->selectRoleById($role_id))) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     *  Checks to see if user exists.
+     *  @param $a_user (array), values which should include the user id and real name
+     *  @return bool, True or False
     **/
     public function isValidUser($a_user = array())
     {
@@ -277,10 +304,10 @@ class Access extends Base
         return false;
     }
     /**
-     * Figures out if the user is specified as a default user
-     * @param $user_id required
-     * @return bool true false
-     */
+     *  Figures out if the user is specified as a default user.
+     *  @param $user_id required
+     *  @return bool true false
+    **/
     public function isDefaultUser($user_id = '')
     {
         if ($a_user == '') { return false; }
@@ -291,10 +318,10 @@ class Access extends Base
         return false;
     }
     /**
-     * Checks to see if the user id exists
-     * @param int $user_id
-     * @return bool true false
-     */
+     *  Checks to see if the user id exists.
+     *  @param int $user_id
+     *  @return bool true false
+    **/
     public function userIdExists($user_id = '')
     {
         if ($user_id == '') { return false; }
@@ -305,10 +332,10 @@ class Access extends Base
         return false;
     }
     /**
-     * Checks to see if the username exists
-     * @param str $username
-     * @return bool true false
-     */
+     *  Checks to see if the username exists.
+     *  @param str $username
+     *  @return bool true false
+    **/
     public function usernameExists($username = '')
     {
         if ($username == '') { return false; }
@@ -320,40 +347,54 @@ class Access extends Base
     }
 
     #### Database Operations ####
-    /** Deletes Specified User by id
-        @param $user_id (int), required, id of user
-        @return bool, success or failure
+    /**
+     *  Deletes Specified User by id
+     *  @param $user_id (int), required, id of user
+     *  @return bool, success or failure
     **/
     public function deleteUser($user_id = '')
     {
         if ($user_id == '') { return false; }
-        $sql = "DELETE FROM sm_users WHERE id = :user_id";
+        $sql = "DELETE FROM ritc_users WHERE id = :user_id";
         $a_user = array(':user_id'=>$user_id);
-        return $this->o_db->deleteTransaction($sql, $a_user, true);
+        return $this->o_db->delete($sql, $a_user, true);
     }
     /**
-     * Deletes the user group record for the user
-     * @param int $user_id required
-     * @param int $group_id required
-     * @return bool
-     */
+     *  Deletes the user group record for the user
+     *  @param int $user_id required
+     *  @param int $group_id required
+     *  @return bool
+    **/
     public function deleteUserGroup($user_id = '', $group_id = '')
     {
         if ($user_id == '' || $group_id == '') { return false; }
-        $sql = "DELETE FROM sm_user_groups WHERE user_id = :user_id AND group_id = :group_id";
+        $sql = "DELETE FROM ritc_user_groups WHERE user_id = :user_id AND group_id = :group_id";
         $a_values = array(':user_id' => $user_id, ':group_id' => $group_id);
-        return $this->o_db->deleteTransaction($sql, $a_values, true);
+        return $this->o_db->delete($sql, $a_values, true);
     }
     /**
-     * Updates the bad_login_count field for the user by one
-     * @param int $user_id
-     * @return bool
+     *  Deletes the user role record for the user
+     *  @param int $user_id required
+     *  @param int $role_id required
+     *  @return bool
+    **/
+    public function deleteUserGroup($user_id = '', $role_id = '')
+    {
+        if ($user_id == '' || $role_id == '') { return false; }
+        $sql = "DELETE FROM ritc_user_roles WHERE user_id = :user_id AND role_id = :role_id";
+        $a_values = array(':user_id' => $user_id, ':role_id' => $role_id);
+        return $this->o_db->delete($sql, $a_values, true);
+    }
+    /**
+     *  Updates the bad_login_count field for the user by one
+     *  @param int $user_id
+     *  @return bool
     **/
     private function incrementBadLoginCount($user_id = '')
     {
         if ($user_id == '') { return false; }
         $sql = "
-            UPDATE sm_users
+            UPDATE ritc_users
             SET bad_login_count = bad_login_count + 1
             WHERE id = :user_id
         ";
@@ -361,32 +402,33 @@ class Access extends Base
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     * Increments the bad_login_ts record by one minute
-     * @param int $user_id required
-     * @return bool
+     *  Increments the bad_login_ts record by one minute
+     *  @param int $user_id required
+     *  @return bool
     */
     private function incrementBadLoginTimestamp($user_id = '')
     {
         $sql = "
-            UPDATE sm_users
+            UPDATE ritc_users
             SET bad_login_ts = bad_login_ts + 60
             WHERE id = :user_id
         ";
         $a_values = array(':user_id' => $user_id);
         return $this->o_db->update($sql, $a_values, true);
     }
-    /** Creates a new user record.
-        @param $a_values (array), required, values for user record, needs to
-            be in format for prepared queries.
-        @return mixed, user_id or false if failure.
+    /**
+     *  Creates a new user record.
+     *  @param $a_values (array), required, values for user record, needs to
+     *      be in format for prepared queries.
+     *  @return mixed, user_id or false if failure.
     **/
     public function insertUser($a_values = '')
     {
         if ($a_values == '') { return false; }
         $sql = "
-            INSERT INTO sm_users (role_id, username, real_name, short_name, password, is_default)
-            VALUES (:role_id, :username, :real_name, :short_name, :password, :is_default)";
-        if ($this->o_db->insert($sql, $a_values, 'sm_users')) {
+            INSERT INTO ritc_users (username, real_name, short_name, password, is_default)
+            VALUES (:username, :real_name, :short_name, :password, :is_default)";
+        if ($this->o_db->insert($sql, $a_values, 'ritc_users')) {
             $ids = $this->o_db->getNewIds();
             $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
@@ -395,15 +437,15 @@ class Access extends Base
         }
     }
     /**
-     * Inserts a new record connecting the user to the group
-     * @param array $a_prepared_values array that uses valid prepared sql format
-     * @return bool success or failure
-     */
-    public function insertUserGroup($a_prepared_values = '')
+     *  Inserts a new record connecting the user to the group
+     *  @param array $a_values array that uses valid prepared sql format
+     *  @return bool success or failure
+    **/
+    public function insertUserGroup($a_values = '')
     {
-        if ($a_prepared_values == '') { return false; }
-        $sql = "INSERT INTO sm_user_groups (user_id, group_id) VALUES (:user_id, :group_id)";
-        if ($this->o_db->insert($sql, $a_prepared_values, 'sm_user_groups')) {
+        if ($a_values == '') { return false; }
+        $sql = "INSERT INTO ritc_user_groups (user_id, group_id) VALUES (:user_id, :group_id)";
+        if ($this->o_db->insert($sql, $a_values, 'ritc_user_groups')) {
             $ids = $this->o_db->getNewIds();
             return $ids[0];
         } else {
@@ -411,15 +453,31 @@ class Access extends Base
         }
     }
     /**
-     * Resets the bad_login_count to 0
-     * @param int $user_id required
-     * return bool
+     *  Inserts a new record connecting the user to the role
+     *  @param array $a_values array that uses valid prepared sql format
+     *  @return bool success or failure
+    **/
+    public function insertUserRole($a_values = '')
+    {
+        if ($a_values == '') { return false; }
+        $sql = "INSERT INTO ritc_user_roles (user_id, role_id) VALUES (:user_id, :role_id)";
+        if ($this->o_db->insert($sql, $a_values, 'ritc_user_roles')) {
+            $ids = $this->o_db->getNewIds();
+            return $ids[0];
+        } else {
+            return false;
+        }
+    }
+    /**
+     *  Resets the bad_login_count to 0
+     *  @param int $user_id required
+     *  return bool
     **/
     private function resetBadLoginCount($user_id)
     {
         if ($user_id == '') { return false; }
         $sql = "
-            UPDATE sm_users
+            UPDATE ritc_users
             SET bad_login_count = 0
             WHERE id = :user_id
         ";
@@ -427,15 +485,15 @@ class Access extends Base
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     * Resets the timestamp to 0
-     * @param int $user_id required
-     * return bool
+     *  Resets the timestamp to 0
+     *  @param int $user_id required
+     *  return bool
     **/
     private function resetBadLoginTimestamp($user_id)
     {
         if ($user_id == '') { return false; }
         $sql = "
-            UPDATE sm_users
+            UPDATE ritc_users
             SET bad_login_ts = 0
             WHERE id = :user_id
         ";
@@ -443,14 +501,14 @@ class Access extends Base
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     * selects a group by the id
-     * @param int $group_id
-     * @return array
-     */
+     *  Selects a group by the id.
+     *  @param int $group_id
+     *  @return array
+    **/
     public function selectGroupById($group_id = '')
     {
         if ($group_id == '') { return false; }
-        $sql = "SELECT group_id, group_name, group_description FROM sm_groups WHERE group_id = {$group_id}";
+        $sql = "SELECT group_id, group_name, group_description FROM ritc_groups WHERE group_id = {$group_id}";
         $results = $this->o_db->search($sql);
         if (is_array($results[0])) {
             return $results[0];
@@ -459,13 +517,13 @@ class Access extends Base
         }
     }
     /**
-     * Returns values for a group by group name
-     * @param str $group_name
-     * @return array values for group
-     */
+     *  Returns values for a group by group name.
+     *  @param str $group_name
+     *  @return array values for group
+    **/
     public function selectGroupByName($group_name = '')
     {
-        $sql = "SELECT group_id, group_name, group_description FROM sm_groups WHERE group_name LIKE '{$group_name}'";
+        $sql = "SELECT group_id, group_name, group_description FROM ritc_groups WHERE group_name LIKE '{$group_name}'";
         $results = $this->o_db->search($sql);
         if (is_array($results[0])) {
             return $results[0];
@@ -473,23 +531,56 @@ class Access extends Base
             return false;
         }
     }
-    /** Selects the role information from db.
-        @param none
-        @return array, role data
+    /**
+     *  Selects a role by the id.
+     *  @param int $role_id
+     *  @return array
+    **/
+    public function selectRoleById($role_id = '')
+    {
+        if ($role_id == '') { return false; }
+        $sql = "SELECT id, name, description, access_level FROM ritc_roles WHERE id = {$role_id}";
+        $results = $this->o_db->search($sql);
+        if (is_array($results[0])) {
+            return $results[0];
+        } else {
+            return false;
+        }
+    }
+    /**
+     *  Returns values for a role by role name.
+     *  @param str $role_name
+     *  @return array values for role
+    **/
+    public function selectRoleByName($role_name = '')
+    {
+        $sql = "SELECT id, name, description, access_level FROM ritc_roles WHERE name LIKE '{$role_name}'";
+        $results = $this->o_db->search($sql);
+        if (is_array($results[0])) {
+            return $results[0];
+        } else {
+            return false;
+        }
+    }
+    /**
+     *  Selects the role information from db.
+     *  @param none
+     *  @return array, role data
     **/
     public function selectRoles($access_level = 3)
     {
         $sql = "
-            SELECT id, name, access_level
-            FROM sm_roles
+            SELECT id, name, description, access_level
+            FROM ritc_roles
             WHERe access_level >= {$access_level}
             ORDER BY access_level ASC";
         $this->o_elog->write("sql: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql);
     }
-    /** Gets the user values based on username.
-        @param $username (str), the username (as defined in the db)
-        @return array, the values for the user
+    /**
+     *  Gets the user values based on username.
+     *  @param $username (str), the username (as defined in the db)
+     *  @return array, the values for the user
     **/
     public function selectUser($user_id = '')
     {
@@ -501,10 +592,17 @@ class Access extends Base
         }
         $sql = "
             SELECT r.id as role_id, r.access_level, r.name as role_name,
-                u.id as user_id, u.username, u.real_name, u.short_name, u.password, u.is_default, u.created_on, u.bad_login_count, u.bad_login_ts, u.is_active,
+                u.id as user_id, u.username, u.real_name, u.short_name,
+                u.password, u.is_default, u.created_on, u.bad_login_count,
+                u.bad_login_ts, u.is_active,
                 g.group_id, g.group_name
-            FROM sm_roles as r, sm_users as u, sm_groups as g, sm_user_groups as ug
-            WHERE r.id = u.role_id
+            FROM ritc_roles as r,
+                 ritc_users as u,
+                 ritc_groups as g,
+                 ritc_user_groups as ug,
+                 ritc_user_roles as ur
+            WHERE ur.user_id = u.id
+            AND ur.role_id = r.id
             AND ug.user_id = u.id
             AND ug.group_id = g.group_id
             AND {$where}
@@ -517,22 +615,28 @@ class Access extends Base
             return false;
         }
     }
-    /** Selects the users and returns the data.
-        Can return all the users or just the users for the specified role.
-        @param str $group_name optional Returns uses only in this group
-        @param str $role optional. Returns users only in this role if provided.
-        @param bool $only_active optional. By default only returns active users. False returns all users.
-        @return array, array of users
+    /**
+     *  Selects the users and returns the data.
+     *  Can return all the users or just the users for the specified role.
+     *  @param str $group_name optional Returns uses only in this group
+     *  @param str $role optional. Returns users only in this role if provided.
+     *  @param bool $only_active optional. By default only returns active users. False returns all users.
+     *  @return array, array of users
     **/
     public function selectUsers($group_name = '', $role = '', $only_active = true )
     {
 
         $sql = "
-            SELECT u.id, u.role_id, u.username, u.real_name, u.short_name, u.password, u.is_default,
-                r.name as role,
+            SELECT u.id, u.username, u.real_name, u.short_name, u.password, u.is_default,
+                r.id as role_id, r.name as role,
                 g.group_id, g.group_name
-            FROM sm_users as u, sm_roles as r, sm_groups as g, sm_user_groups as ug
-            WHERE u.role_id = r.id
+            FROM ritc_users as u,
+                ritc_roles as r,
+                ritc_groups as g,
+                ritc_user_groups as ug,
+                ritc_user_roles as ur
+            WHERE ur.role_id = r.id
+            AND ur.user_id = u.id
             AND ug.user_id = u.id
             AND ug.group_id = g.group_id
         ";
@@ -559,15 +663,15 @@ class Access extends Base
         return $this->o_db->search($sql);
     }
     /**
-     * Sets the bad login timestamp for the user.
-     * @param int $user_id required
-     * @return bool
+     *  Sets the bad login timestamp for the user.
+     *  @param int $user_id required
+     *  @return bool
     **/
     private function setBadLoginTimestamp($user_id = '')
     {
         if ($user_id == '') { return false; }
         $sql = "
-            UPDATE sm_users
+            UPDATE ritc_users
             SET bad_login_ts = :timestamp
             WHERE id = :user_id
         ";
@@ -575,9 +679,10 @@ class Access extends Base
         $results = $this->o_db->update($sql, $a_values, true);
         return $results;
     }
-    /** Updates an existing user.
-        @param $a_values (array), required, values for user record
-        @return mixed, user_id or false if failure
+    /**
+     *  Updates an existing user.
+     *  @param $a_values (array), required, values for user record
+     *  @return mixed, user_id or false if failure
     **/
     public function updateUser($a_values = '')
     {
@@ -586,9 +691,8 @@ class Access extends Base
         }
         if ($a_values[':password'] == '') {
             $sql = "
-                UPDATE sm_users
-                SET role_id    = :role_id,
-                    username   = :username,
+                UPDATE ritc_users
+                SET username   = :username,
                     real_name  = :real_name,
                     short_name = :short_name,
                     is_default = :is_default
@@ -596,59 +700,42 @@ class Access extends Base
             unset($a_values[':password']);
         } else {
             $sql = "
-                UPDATE sm_users
-                SET role_id    = :role_id,
-                    username   = :username,
+                UPDATE ritc_users
+                SET username   = :username,
                     real_name  = :real_name,
                     short_name = :short_name,
                     password   = :password,
                     is_default = :is_default
                 WHERE id = :user_id";
         }
-        return $this->o_db->updateTransaction($sql, $a_values, true);
+        return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     * Updates the user record with a new password
-     * @param array $a_values in prepared format
+     *  Updates the user record with a new password
+     *  @param array $a_values in prepared format
      *   e.g., array(':password'=>'password', ':user_id'=>'userID')
-     * @return bool success or failure
-     */
+     *  @return bool success or failure
+    **/
     private function updateUserPassword($a_values = '')
     {
         if ($a_values == '') { return false; }
         $sql = "
-            UPDATE sm_users
-            SET password = :password
-            WHERE id = :user_id
-        ";
-        return $this->o_db->updateTransaction($sql, $a_values, true);
-    }
-    /**
-     * Updates the user record with a new password but not in a transaction
-     * @param array $a_values in prepared format
-     *   e.g., array(':password'=>'password', ':user_id'=>'userID')
-     * @return bool success or failure
-     */
-    private function updateUserPasswordNT($a_values = '')
-    {
-        if ($a_values == '') { return false; }
-        $sql = "
-            UPDATE sm_users
+            UPDATE ritc_users
             SET password = :password
             WHERE id = :user_id
         ";
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     * Updates the user record to be make the user active or inactive
+     *  Updates the user record to be make the user active or inactive
      *   normally inactive.
-     * @param user_id required id of a user
-     * @param bool $is_active, optional defaults to inactive (0)
-     * @return bool success or failure
+     *  @param user_id required id of a user
+     *  @param bool $is_active, optional defaults to inactive (0)
+     *  @return bool success or failure
     **/
     public function updateUserToInactive($user_id = '', $is_active = 0) {
         $sql = "
-            UDPATE sm_users
+            UDPATE ritc_users
             SET is_active = :is_active
             WHERE id = :user_id
         ";
@@ -658,11 +745,11 @@ class Access extends Base
 
     ### Utility Private/Protected methods ###
     /**
-     * hashes a password using the $salter as a bases for the hash salt
-     * @param str $password required
-     * @param str $salter required
-     * @return str the hashed password
-     */
+     *  hashes a password using the $salter as a bases for the hash salt
+     *  @param str $password required
+     *  @param str $salter required
+     *  @return str the hashed password
+    **/
     private function hashPassword($a_user = '')
     {
         if ($a_user == '') { return false; }
