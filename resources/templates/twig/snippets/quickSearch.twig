@@ -1,0 +1,12 @@
+<form action="/search/" method="post" id="quick-search">
+    <fieldset class="search-set">
+        <legend>Quick Search</legend>
+        <input type="text" name="searchTerms" value="{{ form.searchForText }}" /> {{ form.helpicon }}
+        <button type="submit" name="submit" class="btn medium {{ form.buttonColor }}" value="quick-search">{{ form.buttonText }}</button>
+    </fieldset>
+    <fieldset class="help">
+        <p>
+            Enter search terms separated by a space. Use quote marks (") to search on a phrase.
+        </p>
+    </fieldset>
+</form>

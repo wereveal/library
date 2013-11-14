@@ -1,0 +1,5 @@
+                            <ul>
+                            {% for link in prevnext %}
+                                <li>{{ link.address|raw }}{{ link.text }}{{ link.endaddress|raw }}</li>
+                            {% endfor %}
+                            </ul>
