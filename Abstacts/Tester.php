@@ -6,9 +6,10 @@
  *  @class Tester
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @ingroup ritc_library library abstract
- *  @version  1.1.0
- *  @date 2013-05-10 14:24:24
+ *  @version  2.0.0
+ *  @date 2013-12-13 15:03:19
  *  @par Change log
+ *      v2.0.0 - modified to use Twig template system
  *      v1.1.0 - added new a couple new methods  2013-05-10
  *          compare_arrays
  *              checks to see if the values in the first array
@@ -17,13 +18,12 @@
  *              allows the test results to display individual subtests
  *              within the method tester
  *      v1.0.1 - updated to match new framework 2013-04-03
+ *  @par Last Modified: wer
  *  @par RITC Framework v4.0.0
 **/
 namespace Ritc\Library\Abstracts;
 
-use Ritc\Library\Core\Files;
-use Ritc\Library\Core\Html;
-
+use Ritc\Library\Core\TwigFactory;
 
 abstract class Tester
 {
@@ -35,13 +35,13 @@ abstract class Tester
     protected $num_o_tests;
     protected $o_files;
     protected $o_html;
+    protected $o_twig;
     protected $passed_subtests;
     protected $passed_test_names  = array();
     protected $passed_tests;
     public function __construct()
     {
-        $this->o_html  = new Html;
-        $this->o_files = new Files('test_results.tpl', 'templates', 'default', 'Ritc\Framework');
+        $this->o_twig = TwigFactory::start('twig_config.php');
     }
     public function addMethodToTestOrder($method_name = '')
     {
@@ -110,8 +110,7 @@ abstract class Tester
             'passed_test_names' => $passed_test_names
         );
         if ($return_html) {
-            $test_results_tpl = $this->o_files->getContents('test_results.tpl', 'templates');
-            return $this->o_html->render($test_results_tpl, $a_values);
+            return $this->o_twig->render($test_results_tpl, $a_values);
         } else {
             return $a_values;
         }
