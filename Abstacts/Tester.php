@@ -4,12 +4,12 @@
  *  @file Tester.php
  *  @namespace Ritc\Library\Abstract
  *  @class Tester
- *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @author William E Reveal  <bill@revealitconsulting.com>
  *  @ingroup ritc_library library abstract
  *  @version  2.0.0
- *  @date 2013-12-13 15:03:19
+ *  @date 2013-12-13 15:35:11
  *  @par Change log
- *      v2.0.0 - modified to use Twig template system
+ *      v2.0.0 - modified to not do any view stuff 2013-12-13
  *      v1.1.0 - added new a couple new methods  2013-05-10
  *          compare_arrays
  *              checks to see if the values in the first array
@@ -19,11 +19,9 @@
  *              within the method tester
  *      v1.0.1 - updated to match new framework 2013-04-03
  *  @par Last Modified: wer
- *  @par RITC Framework v4.0.0
+ *  @par RITC Library v4.0.0
 **/
 namespace Ritc\Library\Abstracts;
-
-use Ritc\Library\Core\TwigFactory;
 
 abstract class Tester
 {
@@ -33,15 +31,11 @@ abstract class Tester
     protected $failed_test_names = array();
     protected $failed_tests;
     protected $num_o_tests;
-    protected $o_files;
-    protected $o_html;
-    protected $o_twig;
     protected $passed_subtests;
     protected $passed_test_names  = array();
     protected $passed_tests;
     public function __construct()
     {
-        $this->o_twig = TwigFactory::start('twig_config.php');
     }
     public function addMethodToTestOrder($method_name = '')
     {
@@ -79,7 +73,12 @@ abstract class Tester
     {
         return $this->a_test_order;
     }
-    public function returnTestResults($show_test_names = true, $return_html = false)
+    /**
+     *  Returns an array showing the number and optionally names of tests success and failure
+     *  @param bool $show_test_names optional defaults to showing names
+     *  @return array
+    **/
+    public function returnTestResults($show_test_names = true)
     {
         $failed_test_names = '';
         $passed_test_names = '';
@@ -102,32 +101,26 @@ abstract class Tester
                 }
             }
         }
-        $a_values = array(
+        return array(
             'failed_tests'      => $this->failed_tests,
             'passed_tests'      => $this->passed_tests,
             'num_o_tests'       => $this->num_o_tests,
             'failed_test_names' => $failed_test_names,
             'passed_test_names' => $passed_test_names
         );
-        if ($return_html) {
-            return $this->o_twig->render($test_results_tpl, $a_values);
-        } else {
-            return $a_values;
-        }
     }
     /**
      * Runs tests where method ends in Test.
+     * @param str $class_name name of the class to be tested
      * @param bool $use_test_order optional, uses the array $a_test_order to
      *    specify the order of the tests, if false uses the methods in the
      *    order in test class.
-     * @param str $class_name name of the class to be tested
      * @return
     **/
-    public function runTests($class_name = '', $use_test_order = true)
+    public function runTests($class_name = '', array $a_test_order = array())
     {
         if ($class_name == '' ) { return false; }
-        $a_test_order = $this->a_test_order;
-        if ($use_test_order === false || count($a_test_order) === 0) {
+        if (count($a_test_order) === 0) {
             $o_ref = new \ReflectionClass($class_name);
             $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
             foreach ($a_methods as $a_method) {

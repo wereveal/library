@@ -1,9 +1,13 @@
 {% extends '@ritc_default/base.twig' %}
 
 {% block body %}
-<p>Failed: {{ failed_tests }}</p>
-<p>Passed: {{ passed_tests }}</p>
-<p>Number of Tests: {{ num_o_tests}}</p>
-<p>Failed Test Names:<br />{{ failed_test_names }}</p>
-<p>Passed Test Names:<br />{{ passed_test_names }}</p>
+<pre>
+Failed: {{ failed_tests }}
+Passed: {{ passed_tests }}
+Number of Tests: {{ num_o_tests}}
+Failed Test Names:
+{{ failed_test_names }}
+Passed Test Names:
+{{ passed_test_names }}
+</pre>
 {% endblock %}
