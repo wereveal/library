@@ -1,7 +1,7 @@
-{% if message != '' %}
-<p class="{{ message_class }}">
-    <img src="{{ image_src }}"{% if alt_text != '' %} alt="{{ alt_text }}"{% endif %}{% if image_class != '' %} class="{{ image_class }}"{% endif %}{{ other_stuph }} />
-    {{ message }}
+{% if a_message.message != '' %}
+<p class="{{ a_message.message_class }}">
+    <img src="{{ a_message.image_src }}"{% if a_message.alt_text != '' %} alt="{{ a_message.alt_text }}"{% endif %}{% if a_message.image_class != '' %} class="{{ a_message.image_class }}"{% endif %}{{ a_message.extras }} />
+    {{ a_message.message }}
 </p>
 <div class="clearfix"></div>
 {% endif %}
