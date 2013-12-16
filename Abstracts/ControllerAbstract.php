@@ -25,7 +25,7 @@ abstract class ControllerAbstract implements ControllerInterface
      *  Sets the value of $this->date_format.
      *  Verifies the date format is valid for php before
      *  setting it. If it isn't a valid format, doesn't set.
-     *  @param str $value date format desired
+     *  @param string $value date format desired
      *  @return null
     **/
     public function setDateFormat($value = '')
@@ -38,7 +38,7 @@ abstract class ControllerAbstract implements ControllerInterface
     /**
      *  Sets the value of $phone_format
      *  Verifies value is valid formate else doesn't set it.
-     *  @param str $value defaults to ''
+     *  @param string $value defaults to ''
      *  @return null
     **/
     public function setPhoneFormat($value = '')

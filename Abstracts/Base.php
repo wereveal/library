@@ -42,8 +42,8 @@ abstract class Base
     }
     /**
      *  Prevent direct access to protected and private properties.
-     *  @param str $var name of property being set
-     *  @param str $val value of the property to be set
+     *  @param string $var name of property being set
+     *  @param string $val value of the property to be set
      *  @return NULL
     **/
     public function __set($var, $val)
@@ -60,7 +60,7 @@ abstract class Base
     }
     /**
      *  Prevent direct access to protected and private properties.
-     *  @param str $var name of property being get
+     *  @param string $var name of property being get
      *  @return mixed - value of the property being get
     **/
     public function __get($var)
@@ -78,7 +78,7 @@ abstract class Base
     }
     /**
      *  Prevent direct access to protected and private properties.
-     *  @param str $var name of property being evaluated
+     *  @param string $var name of property being evaluated
      *  @return bool
     **/
     public function __isset($var)
@@ -97,7 +97,7 @@ abstract class Base
     }
     /**
      *  Prevent direct access to protected and private properties.
-     *  @param str $var name of property being unset
+     *  @param string $var name of property being unset
      *  @return nothing
     **/
     public function __unset($var)

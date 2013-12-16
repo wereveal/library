@@ -309,9 +309,9 @@ class Files extends Location
      *      APP_DIR/$file_dir_name/$file_name
      *      APP_DIR/str_replace('Ritc\', '', $namespace)/$file_name
      *  </pre>
-     *  @param str $file_name required
-     *  @param str $namespace optional defaults to $this->namespace
-     *  @param str $file_dir_name optional default to none
+     *  @param string $file_name required
+     *  @param string $namespace optional defaults to $this->namespace
+     *  @param string $file_dir_name optional default to none
      *  @return mixed str $path_of_file or false
     **/
     public function locateFile($file_name = '', $namespace = '', $file_dir_name = '')
@@ -383,7 +383,7 @@ class Files extends Location
     }
     /**
      *  Sets the themename variable
-     *  @param str $theme_name
+     *  @param string $theme_name
      *  @return null
     **/
     public function setThemeName($theme_name = 'default')

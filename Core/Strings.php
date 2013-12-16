@@ -41,8 +41,8 @@ class Strings extends Base
     /**
      *  Changes the phone number to the specified phone format (or default format)
      *  This works only for US numbers and is not international (yet).
-     *  @param str $phone_number required defaults to empty str
-     *  @parama str $phone_format optional format to change to
+     *  @param string $phone_number required defaults to empty str
+     *  @param string $phone_format optional format to change to
      *      options are 'AAA-BBB-CCCC', '(AAA) BBB-CCCC', 'AAA BBB CCCC', 'AAA.BBB.CCC.DDDD'
      *      or the generic 'XXX-XXX-XXXX', '(XXX) XXX-XXXX', 'XXX XXX XXXX', 'XXX.XXX.XXXX'
     **/
@@ -132,7 +132,7 @@ class Strings extends Base
     }
     /**
      *  Turns a string into pure alpha string stripping out everything else
-     *  @param str $the_string
+     *  @param string $the_string
      *  @return str
     **/
     public function makeAlpha($the_string = '')

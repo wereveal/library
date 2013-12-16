@@ -101,11 +101,11 @@ class Elog extends Base
     /**
      *  A combo setter for 5 properties.
      *  Setter for properties from_class, from_function, from_method, from_file, from_line
-     *  @param str $file file name
-     *  @param str $method method name
-     *  @param str $line line number
-     *  @param str $class class name
-     *  @param str $function function name
+     *  @param string $file file name
+     *  @param string $method method name
+     *  @param string $line line number
+     *  @param string $class class name
+     *  @param string $function function name
      *  @return NULL
     **/
     public function setFrom($file = '', $method = '', $line = '', $class = '', $function = '')
