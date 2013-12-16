@@ -71,7 +71,7 @@ class Elog extends Base
     }
     /**
      *  Getter for property debug_text.
-     *  @return str - the value of $debug_text
+     *  @return string - the value of $debug_text
     **/
     public function getText()
     {
@@ -79,7 +79,7 @@ class Elog extends Base
     }
     /**
      *  Getter for property last_message.
-     *  @return str - the value of $last_message
+     *  @return string - the value of $last_message
     **/
     public function getLastMessage()
     {
@@ -101,11 +101,11 @@ class Elog extends Base
     /**
      *  A combo setter for 5 properties.
      *  Setter for properties from_class, from_function, from_method, from_file, from_line
-     *  @param str $file file name
-     *  @param str $method method name
-     *  @param str $line line number
-     *  @param str $class class name
-     *  @param str $function function name
+     *  @param string $file file name
+     *  @param string $method method name
+     *  @param string $line line number
+     *  @param string $class class name
+     *  @param string $function function name
      *  @return NULL
     **/
     public function setFrom($file = '', $method = '', $line = '', $class = '', $function = '')
@@ -239,7 +239,7 @@ class Elog extends Base
      *  Can be either an html comment or a string that starts with COMMENT:
      *  @param $the_string (str) - the string to be formated
      *  @param $not_visible (bool) - should it formated as an HTML comment
-     *  @return str - the formated string
+     *  @return string - the formated string
     **/
     public function makeComment($the_string, $not_visible = true)
     {

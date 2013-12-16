@@ -333,7 +333,7 @@ class Access extends Base
     }
     /**
      *  Checks to see if the username exists.
-     *  @param str $username
+     *  @param string $username
      *  @return bool true false
     **/
     public function usernameExists($username = '')
@@ -518,7 +518,7 @@ class Access extends Base
     }
     /**
      *  Returns values for a group by group name.
-     *  @param str $group_name
+     *  @param string $group_name
      *  @return array values for group
     **/
     public function selectGroupByName($group_name = '')
@@ -549,7 +549,7 @@ class Access extends Base
     }
     /**
      *  Returns values for a role by role name.
-     *  @param str $role_name
+     *  @param string $role_name
      *  @return array values for role
     **/
     public function selectRoleByName($role_name = '')
@@ -618,8 +618,8 @@ class Access extends Base
     /**
      *  Selects the users and returns the data.
      *  Can return all the users or just the users for the specified role.
-     *  @param str $group_name optional Returns uses only in this group
-     *  @param str $role optional. Returns users only in this role if provided.
+     *  @param string $group_name optional Returns uses only in this group
+     *  @param string $role optional. Returns users only in this role if provided.
      *  @param bool $only_active optional. By default only returns active users. False returns all users.
      *  @return array, array of users
     **/
@@ -746,9 +746,9 @@ class Access extends Base
     ### Utility Private/Protected methods ###
     /**
      *  hashes a password using the $salter as a bases for the hash salt
-     *  @param str $password required
-     *  @param str $salter required
-     *  @return str the hashed password
+     *  @param string $password required
+     *  @param string $salter required
+     *  @return string the hashed password
     **/
     private function hashPassword($a_user = '')
     {

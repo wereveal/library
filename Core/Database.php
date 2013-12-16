@@ -845,7 +845,7 @@ class Database extends Base
      *      pairs are those to be used in the statement fragment
      *      keys should be in the form for a prepeared sql statement e.g. :this_key
      *  @param array $a_skip_keys optional list of keys to skip in the set statement
-     *  @return str $set_sql
+     *  @return string $set_sql
     **/
     public function buildSqlSet($a_values = '', $a_skip_keys = array('nothing_to_skip'))
     {
@@ -879,7 +879,7 @@ class Database extends Base
      *          'where_exists' => false //
      *      )
      *      Not all parameters need to be in the array, if doesn't exist, the default setting will be used.
-     *  @return str $where
+     *  @return string $where
     **/
     public function buildSqlWhere(array $a_search_for = array(), array $a_search_parameters = array())
     {

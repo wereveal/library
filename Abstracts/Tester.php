@@ -44,7 +44,7 @@ abstract class Tester
     }
     /**
      * Adds a single key=>value pair to the a_test_values array
-     * @param str $key the key name
+     * @param string $key the key name
      * @param mixed $value  the value assigned to the key
      * @return null
      */
@@ -111,7 +111,7 @@ abstract class Tester
     }
     /**
      * Runs tests where method ends in Test.
-     * @param str $class_name name of the class to be tested
+     * @param string $class_name name of the class to be tested
      * @param bool $use_test_order optional, uses the array $a_test_order to
      *    specify the order of the tests, if false uses the methods in the
      *    order in test class.
@@ -246,8 +246,8 @@ abstract class Tester
     /**
      * Checks to see if a method is public.
      * Fixes method names that end in Tester.
-     * @param str $class_name required defaults to ''
-     * @param str $method_name required defaults to ''
+     * @param string $class_name required defaults to ''
+     * @param string $method_name required defaults to ''
      * @return bool true or false
      */
     public function isPublicMethod($class_name = '', $method_name = '')

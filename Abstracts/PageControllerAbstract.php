@@ -20,7 +20,7 @@ abstract class PageControllerAbstract implements namespace\PageControllerInterfa
      *  Main Router and Puker outer (more descriptive method name).
      *  Turns over the hard work to the specific controllers through the router.
      *  @param none
-     *  @return str $html
+     *  @return string $html
     **/
     public function renderPage()
     {
@@ -37,7 +37,7 @@ abstract class PageControllerAbstract implements namespace\PageControllerInterfa
      *  Routes the code to the appropriate sub controllers and returns a string.
      *  @param array $a_actions optional, the actions derived from the URL/Form
      *  @param array $a_values optional, the values from a form
-     *  @return str normally html to be displayed.
+     *  @return string normally html to be displayed.
     **/
     public function router(array $a_actions = array(), array $a_values = array())
     {

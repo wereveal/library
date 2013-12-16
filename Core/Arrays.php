@@ -119,7 +119,7 @@ class Arrays extends Base
      *  Strip HTML and PHP tags from the values in an array
      *  @param array $array - the array with the values to modify
      *  @param array $a_allowed_keys - an array with a list of keys allowed (optional)
-     *  @param str $allowable_tags - a string with allowed tags (see php strip_tags())
+     *  @param string $allowable_tags - a string with allowed tags (see php strip_tags())
      *  @return array $a_clean
     **/
     public function stripTags($array = '', $a_allowed_keys = array(), $allowable_tags = '')

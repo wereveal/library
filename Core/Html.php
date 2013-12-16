@@ -150,7 +150,7 @@ class Html extends Base
      *  @param $a_values (array) - the values to insert into the template in
      *      an assoc array. $key is the string to find $value is the replacement.
      *  @param $is_file (BOOL) - the template is the path to a file, defaults to false
-     *  @return str - the filled in template
+     *  @return string - the filled in template
     **/
     public function render($template = '', $a_values = '', $is_file = false)
     {

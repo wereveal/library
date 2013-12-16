@@ -20,7 +20,7 @@ interface PageControllerInterface
      *  Main Router and Puker outer (more descriptive method name).
      *  Turns over the hard work to the specific controllers through the router.
      *  @param none
-     *  @return str $html
+     *  @return string $html
     **/
     public function renderPage();
     /**
@@ -30,7 +30,7 @@ interface PageControllerInterface
      *  be in the controller.
      *  @param array $a_actions optional, the actions derived from the URL/Form
      *  @param array $a_values optional, the values from a form
-     *  @return str normally html to be displayed.
+     *  @return string normally html to be displayed.
     **/
     public function router(array $a_actions, array $a_values = array());
 }
