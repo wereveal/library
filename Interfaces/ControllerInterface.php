@@ -1,5 +1,5 @@
 <?php
-namespace Ritc\Guide\Controller;
+namespace Ritc\Library\Interfaces;
 
 interface ControllerInterface
 {
