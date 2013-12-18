@@ -19,7 +19,7 @@ use Ritc\Library\Core\Elog;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 
-class TwigFactory extends Base;
+class TwigFactory extends Base
 {
     private static $instance = array();
     private $o_elog;

@@ -14,7 +14,8 @@
 **/
 namespace Ritc\Library\Core;
 
-class Tail {
+class Tail
+{
     private $timestamp           = 0;
     private $file_size           = 0;
     private $file_name           = ""; // requires full path

@@ -378,7 +378,7 @@ class Access extends Base
      *  @param int $role_id required
      *  @return bool
     **/
-    public function deleteUserGroup($user_id = '', $role_id = '')
+    public function deleteUserRole($user_id = '', $role_id = '')
     {
         if ($user_id == '' || $role_id == '') { return false; }
         $sql = "DELETE FROM ritc_user_roles WHERE user_id = :user_id AND role_id = :role_id";
