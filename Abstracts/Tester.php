@@ -41,13 +41,14 @@ abstract class Tester
     {
         if ($method_name == '') { return false; }
         $this->a_test_order[] = $method_name;
+        return true;
     }
     /**
-     * Adds a single key=>value pair to the a_test_values array
-     * @param string $key the key name
-     * @param mixed $value  the value assigned to the key
-     * @return null
-     */
+     *  Adds a single key=>value pair to the a_test_values array
+     *  @param string $key the key name
+     *  @param mixed $value  the value assigned to the key
+     *  @return null
+    **/
     public function addTestValue($key = '', $value = '')
     {
         if ($key == '') { return; }
@@ -110,33 +111,38 @@ abstract class Tester
         );
     }
     /**
-     * Runs tests where method ends in Test.
-     * @param string $class_name name of the class to be tested
-     * @param bool $use_test_order optional, uses the array $a_test_order to
-     *    specify the order of the tests, if false uses the methods in the
-     *    order in test class.
-     * @return
+     *  Runs tests where method ends in Test.
+     *  @param string $class_name name of the class to be tested
+     *  @param array $a_test_order optional, if provided it ignores
+     *      the class property $a_test_order and won't try to build one
+     *      from the class methods.
+     *  @return int $failed_tests
     **/
     public function runTests($class_name = '', array $a_test_order = array())
     {
         if ($class_name == '' ) { return false; }
         if (count($a_test_order) === 0) {
-            $o_ref = new \ReflectionClass($class_name);
-            $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
-            foreach ($a_methods as $a_method) {
-                switch($a_method->name) {
-                    case '__construct':
-                    case '__set':
-                    case '__get':
-                    case '__isset':
-                    case '__unset':
-                    case '__clone':
-                        break;
-                    default:
-                        if (substr($a_method->name, -6) == 'Tester') {
-                            $a_test_order[] = $a_method->name;
-                        }
+            if (count($this->a_test_order) === 0) {
+                $o_ref = new \ReflectionClass($class_name);
+                $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
+                foreach ($a_methods as $a_method) {
+                    switch($a_method->name) {
+                        case '__construct':
+                        case '__set':
+                        case '__get':
+                        case '__isset':
+                        case '__unset':
+                        case '__clone':
+                            break;
+                        default:
+                            if (substr($a_method->name, -6) == 'Tester') {
+                                $a_test_order[] = $a_method->name;
+                            }
+                    }
                 }
+            }
+            else {
+                $a_test_order = $this->a_test_order;
             }
         }
         // error_log(var_export($a_test_order, true));
@@ -203,18 +209,12 @@ abstract class Tester
         $this->a_test_order = $a_test_order;
     }
     /**
-     * Sets the array a_test_value to the array passed in
-     * @param array $a_test_values optional, defaults to an empty array
-     * @return null
-     */
-    public function setTestValues($a_test_values = '')
+     *  Sets the array a_test_value to the array passed in
+     *  @param array $a_test_values optional, defaults to an empty array
+     *  @return null
+    **/
+    public function setTestValues(array $a_test_values = array())
     {
-        if ($a_test_values == '') {
-            $this->a_test_values = array();
-        }
-        if (is_array($a_test_values) === false) {
-            $this->a_test_values = array();
-        }
         $this->a_test_values = $a_test_values;
     }
     /**
@@ -234,7 +234,7 @@ abstract class Tester
      *  @param array $a_check_values required
      *  @return bool true or false
     **/
-    public function compareArrays($a_good_values = '', $a_check_values = '')
+    public function compareArrays(array $a_good_values = array(), array $a_check_values = array())
     {
         foreach ($a_good_values as $key => $value) {
             if ($a_good_values[$key] != $a_check_values[$key]) {
@@ -244,12 +244,12 @@ abstract class Tester
         return true;
     }
     /**
-     * Checks to see if a method is public.
-     * Fixes method names that end in Tester.
-     * @param string $class_name required defaults to ''
-     * @param string $method_name required defaults to ''
-     * @return bool true or false
-     */
+     *  Checks to see if a method is public.
+     *  Fixes method names that end in Tester.
+     *  @param string $class_name required defaults to ''
+     *  @param string $method_name required defaults to ''
+     *  @return bool true or false
+    **/
     public function isPublicMethod($class_name = '', $method_name = '')
     {
         if ($class_name == '' || $method_name == '') { return false; }

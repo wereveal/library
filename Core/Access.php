@@ -30,8 +30,8 @@
 namespace Ritc\Library\Core;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\Database;
-use Ritc\Library\Core\Elog;
+use Ritc\Library\Core\Database as DbModel;
+use Ritc\Library\Core\Elog as Elog;
 
 class Access extends Base
 {
@@ -40,7 +40,7 @@ class Access extends Base
     protected $o_db;
     protected $private_properties;
 
-    public function __construct(Database $o_db)
+    public function __construct(DbModel $o_db)
     {
         $this->setPrivateProperties();
         $this->o_elog = Elog::start();
@@ -250,11 +250,12 @@ class Access extends Base
     }
     /**
      *  Verifies user has the role of super administrator.
-     *  @param none
+     *  @param string $user_id required
      *  @return bool - true = is a super admin, false = not a super admin
     **/
     public function isSuperAdmin($user_id = '')
     {
+        if ($user_id == '') { return false; }
         $a_user = $this->selectUser($user_id);
         if ($a_user === false) { return false; }
         if ($a_user['access_level'] === 1) {
@@ -267,9 +268,10 @@ class Access extends Base
      *  @param int $group_id
      *  @return bool true or false
     **/
-    private function isValidGroupId($group_id = '')
+    private function isValidGroupId($group_id = 0)
     {
-        if ($group_id == '') { return false; }
+        if ($group_id == 0) { return false; }
+        $group_id = (int) $group_id;
         if (is_array($this->selectGroupById($group_id))) {
             return true;
         }
@@ -280,9 +282,10 @@ class Access extends Base
      *  @param int $role_id
      *  @return bool true or false
     **/
-    private function isValidRoleId($role_id = '')
+    private function isValidRoleId($role_id = 0)
     {
-        if ($role_id == '') { return false; }
+        if ($role_id == 0) { return false; }
+        $role_id = (int) $role_id;
         if (is_array($this->selectRoleById($role_id))) {
             return true;
         }
@@ -290,10 +293,10 @@ class Access extends Base
     }
     /**
      *  Checks to see if user exists.
-     *  @param $a_user (array), values which should include the user id and real name
-     *  @return bool, True or False
+     *  @param array $a_user values which should include the user id and real name
+     *  @return bool, true or false
     **/
-    public function isValidUser($a_user = array())
+    public function isValidUser(array $a_user = array())
     {
         if (isset($a_user['user_id']) && isset($a_user['username'])) {
             $a_user_info = $this->selectUser($a_user['user_id']);
@@ -305,12 +308,13 @@ class Access extends Base
     }
     /**
      *  Figures out if the user is specified as a default user.
-     *  @param $user_id required
+     *  @param int $user_id required
      *  @return bool true false
     **/
-    public function isDefaultUser($user_id = '')
+    public function isDefaultUser($user_id = 0)
     {
-        if ($a_user == '') { return false; }
+        if ($user_id == 0) { return false; }
+        $user_id = (int) $user_id;
         $a_results = $this->selectUser($user_id);
         if ($a_results['is_default'] == 1) {
             return true;
@@ -322,9 +326,10 @@ class Access extends Base
      *  @param int $user_id
      *  @return bool true false
     **/
-    public function userIdExists($user_id = '')
+    public function userIdExists($user_id = 0)
     {
-        if ($user_id == '') { return false; }
+        if ($user_id == 0) { return false; }
+        $user_id = (int) $user_id;
         $results = $this->selectUser($user_id);
         if ($results !== false) {
             return true;
@@ -349,14 +354,14 @@ class Access extends Base
     #### Database Operations ####
     /**
      *  Deletes Specified User by id
-     *  @param $user_id (int), required, id of user
+     *  @param int $user_id required, id of user
      *  @return bool, success or failure
     **/
-    public function deleteUser($user_id = '')
+    public function deleteUser($user_id = 0)
     {
-        if ($user_id == '') { return false; }
+        if ($user_id == 0) { return false; }
         $sql = "DELETE FROM ritc_users WHERE id = :user_id";
-        $a_user = array(':user_id'=>$user_id);
+        $a_user = array(':user_id' => $user_id);
         return $this->o_db->delete($sql, $a_user, true);
     }
     /**
@@ -378,7 +383,7 @@ class Access extends Base
      *  @param int $role_id required
      *  @return bool
     **/
-    public function deleteUserGroup($user_id = '', $role_id = '')
+    public function deleteUserRole($user_id = '', $role_id = '')
     {
         if ($user_id == '' || $role_id == '') { return false; }
         $sql = "DELETE FROM ritc_user_roles WHERE user_id = :user_id AND role_id = :role_id";
