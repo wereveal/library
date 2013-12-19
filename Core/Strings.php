@@ -20,10 +20,9 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\Elog;
 
-class Strings extends Base
+class Strings extends namespace\Base
 {
     protected $current_page;
     protected $o_elog;

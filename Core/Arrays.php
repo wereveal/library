@@ -8,10 +8,11 @@
  *  @namespace Ritc\Library\Core
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 2013-07-30 10:56:22
+ *  @version 1.1.1
+ *  @date 2013-12-19 07:57:34
  *  @par ChangeLog
- *      v1.1.0 - namespace changes - 07/30/2013 10:56:32
+ *      v1.1.1 - match package change - 12/19/2013 wer
+ *      v1.1.0 - namespace changes - 07/30/2013 wer
  *      v1.0.3 - moved array methods from class Strings to here - 03/27/2013
  *      v1.0.2 - added new method
  *      v1.0.1 - new namespace, FIG standards (mostly)
@@ -20,9 +21,7 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
-
-class Arrays extends Base
+class Arrays extends namespace\Base
 {
     /**
      *  Modifies array values with htmlentities.

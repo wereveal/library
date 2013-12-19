@@ -4,9 +4,11 @@
  *  @file Files.php
  *  @namespace Ritc\Library\Core
  *  @class Files
- *  <pre>Determines the path to the file, primarily used for themes but
- *      can be used for anything.
- *      @see setFileLocations()</pre>
+ *  @note <pre>
+ *      Notes:
+ *      Determines the path to the file
+ *      @see setFileLocations()
+ *  </pre>
  *  @property CONFIG_DIR_NAME - the default directory name for configs
  *  @property CSS_DIR_NAME - the default directory name for css files
  *  @property HTML_DIR_NAME - the default directory name for html files
@@ -20,27 +22,31 @@
  *      the site theme or namespace (e.g. templates are in namespace)
  *      </pre>
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 4.1.2
- *  @date 2013-07-06 15:40:23
+ *  @version 4.2.0
+ *  @date 2013-12-19 07:46:56
  *  @par Change Log
- *      v4.1.2 - some layout changes require changes in code. 07/06/2013
+ *      v4.2.0 - Several changes. - 12/19/2013 wer
+ *              Base was changed from abstract to normal class
+ *              Location was modified to be an interface
+ *              Two methods needed added to match the Location interface.
+ *              Unused stuff removed.
+ *      v4.1.2 - some layout changes require changes in code. 07/06/2013 wer
  *          NOTE: the fact that layout changes require this class to be changed
  *              is not good. I need to change it so that the parameters.php file
  *              can specify the layout. But that won't be trivial.
- *      v4.1.1 - bug fixes and clean up 4/30/2013
- *      v4.1.0 - New RITC Library Layout serious changes
+ *      v4.1.1 - bug fixes and clean up 4/30/2013 wer
+ *      v4.1.0 - New RITC Library Layout serious changes wer
  *               BUT method results and names were not changed
- *      v4.0.0 - FIG standards (mostly)
+ *      v4.0.0 - FIG standards (mostly) wer
  *  @par RITC Library 4.0.0
  *  @ingroup ritc_library library
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\Database;
+use Ritc\Library\Interfaces\Location;
 use Ritc\Library\Core\Elog;
 
-class Files extends Location
+class Files implements Location extends namespace\Base
 {
     const CONFIG_DIR_NAME    = 'config';
     const CSS_DIR_NAME       = 'css';
@@ -55,7 +61,6 @@ class Files extends Location
     protected $file_name     = 'no_file.tpl';
     protected $file_dir_name = 'assets';
     protected $namespace;
-    protected $o_db;
     protected $o_elog;
     protected $private_properties;
     protected $file_w_dir;
@@ -157,6 +162,14 @@ class Files extends Location
             ? CSS_DIR_NAME
             : self::CSS_DIR_NAME;
         return $this->getFileWithPath($file_name);
+    }
+    public function getFileName()
+    {
+        return $this->file_name;
+    }
+    public fuction getFileDirName()
+    {
+        return $this->file_dir_name;
     }
     public function getFileWithDir($file_name = '')
     {
@@ -326,10 +339,7 @@ class Files extends Location
             $file_dir_name = $this->file_dir_name;
         }
         $namespace    = str_replace('\\', '/', $namespace);
-        if (!file_exists(APP_PATH . '/Ritc')) {
-            $namespace    = str_replace('Ritc/', '', $namespace);
-        }
-        $ns_path      = APP_PATH . '/' . $namespace;
+        $ns_path      = SRC_PATH . '/' . $namespace;
         $a_possible_locations = array(
             'site_path'      => SITE_PATH,
             'base_path'      => BASE_PATH,
@@ -413,9 +423,4 @@ class Files extends Location
         }
         $this->file_w_path = $found_file;
     }
-    /*
-     *  Inherited from Location without change
-     *  getFileName()
-     *  getFileDirName()
-     */
 }

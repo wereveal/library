@@ -6,22 +6,22 @@
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @ingroup ritc_library library
- *  @version  3.0.1
- *  @date 2013-11-08 07:41:43
+ *  @version  3.0.3
+ *  @date 2013-12-19 07:58:56
  *  @par Change Log
- *      v3.0.2 bug fixes, minor changes - 2013-11-08
- *      v3.0.1 refactoring for database class change - 2013-11-06
- *      v3.0.0 Modified for new framework file hierarchy - 2013-04-30
- *      v2.3.0 mostly changes for FIG-standards
+ *      v3.0.3 - package change
+ *      v3.0.2 - bug fixes, minor changes - 2013-11-08
+ *      v3.0.1 - refactoring for database class change - 2013-11-06
+ *      v3.0.0 - Modified for new framework file hierarchy - 2013-04-30
+ *      v2.3.0 - mostly changes for FIG-standards
  *  @par RITC Library v4.0.0
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\Database;
+use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Elog;
 
-class Config extends Base
+class Config extends namespace\Base
 {
     private $created = false;
     protected $current_page;
@@ -29,7 +29,7 @@ class Config extends Base
     private $o_db;
     protected $o_elog;
     protected $private_properties;
-    private function __construct(Database $o_db)
+    private function __construct(DbModel $o_db)
     {
         $this->o_db = $o_db;
         $this->o_elog = Elog::start();
@@ -52,7 +52,7 @@ class Config extends Base
      *  Never should more than one instance of the config ever be allowed to be created
      *  @return obj - instance of Config
     **/
-    public static function start(Database $o_db)
+    public static function start(DbModel $o_db)
     {
         if (!isset(self::$instance)) {
             self::$instance = new Config($o_db);

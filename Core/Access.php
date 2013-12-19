@@ -29,11 +29,10 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\Database as DbModel;
-use Ritc\Library\Core\Elog as Elog;
+use Ritc\Library\Core\DbModel;
+use Ritc\Library\Core\Elog;
 
-class Access extends Base
+class Access extends namespace\Base
 {
     protected $current_page;
     protected $o_elog;
@@ -750,14 +749,13 @@ class Access extends Base
 
     ### Utility Private/Protected methods ###
     /**
-     *  hashes a password using the $salter as a bases for the hash salt
-     *  @param string $password required
-     *  @param string $salter required
+     *  Hashes a password using variables in a user's record to create the hash salt.
+     *  @param array $a_user required array('created_on', 'user_id', 'password')
      *  @return string the hashed password
     **/
-    private function hashPassword($a_user = '')
+    private function hashPassword(array $a_user = array())
     {
-        if ($a_user == '') { return false; }
+        if ($a_user == array()) { return false; }
         $this->o_elog->write("a_user: " . var_export($a_user, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $salt = substr(hash('sha512', $a_user['created_on'] . ' ' . $a_user['user_id']), 0, 32);
         $hashed_password = hash('sha512', $salt . $a_user['password'], false);
@@ -768,7 +766,7 @@ class Access extends Base
     ### Magic Method fix to keep this class a singleton ####
     public function __clone()
     {
-            trigger_error('Clone is not allowed.', E_USER_ERROR);
+        trigger_error('Clone is not allowed.', E_USER_ERROR);
     }
 
 }

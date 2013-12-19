@@ -9,22 +9,19 @@
  *  @namespace Ritc\Library\Core
  *  @class Html
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1
- *  @par Change Log
- *      v1.0.1 - some refactoring changes based on changes in other files
- *  @date 2013-03-27 17:28:19
+ *  @version 1.0.2
+ *  @date 2013-12-19 08:29:54
+ *  @note <pre>
+ *  Change Log
+ *      v1.0.2 - some refactoring changes based on changes in package - 12/19/2013 wer
+ *      v1.0.1 - some refactoring changes based on changes in other files - 03/17/2013 wer
+ *  </pre>
  *  @ingroup ritc_framwork library
  *  @par RITC Library 4.0.0
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\Elog;
-use Ritc\Library\Core\Files;
-use Ritc\Library\Core\Strings;
-
-class Html extends Base
+class Html extends namespace\Base
 {
     protected $current_page;
     protected $o_arrays;
@@ -38,10 +35,10 @@ class Html extends Base
     protected $namespace = 'Ritc';
     public function __construct()
     {
-        $this->o_str = new Strings;
-        $this->o_elog = Elog::start();
-        $this->o_arrays = new Arrays();
-        $this->o_files = new Files('main.tpl', 'templates',  'default', 'Ritc');
+        $this->o_str = new namespace\Strings;
+        $this->o_elog = namespace\Elog::start();
+        $this->o_arrays = new namespace\Arrays();
+        $this->o_files = new namespace\Files('main.tpl', 'templates',  'default', 'Ritc');
         $this->setPrivateProperties();
         $this->o_elog->setFromFile(__FILE__);
     }

@@ -12,10 +12,9 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\Elog;
 
-class Session extends Base
+class Session extends namespace\Base
 {
     protected $current_page;
     private static $instance;

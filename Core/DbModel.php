@@ -2,14 +2,14 @@
 /**
  *  Does all the database crud stuff.
  *  For read/write access to the database based on PDO.
- *  @file Database.php
+ *  @file DbModel.php
  *  @namespace Ritc\Library\Core
- *  @class Database
- *  @ingroup ritc_library library
+ *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.0.0
- *  @date 2013-11-06 11:15:17
+ *  @version 3.0.1
+ *  @date 2013-12-19 08:07:50
  *  @par Change Log
+ *      v3.0.1 - renamed file to match function, eliminated the unnecessary - 12/19/2013 wer
  *      v3.0.0 - split the pdo creation (database connection) from the crud - 2013-11-06
  *      v2.4.4 - bug fix in buildSqlWhere - 2013-07-23 17:24:10
  *      v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff) 07/06/2013
@@ -24,17 +24,14 @@
  *               made a couple changes to clarify what was going on.
  *      v2.3.0 - Modified to work within Symfony
  *      v2.2.0 - FIG-standard changes
+ *  @ingroup ritc_library library
  *  @par RITC Library v4.0.0
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\Elog;
-use Ritc\Library\Core\Files;
-use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\DbFactory;
 
-class Database extends Base
+class DbModel extends namespace\Base
 {
     private static $instance_rw;
     private static $instance_ro;
@@ -66,7 +63,7 @@ class Database extends Base
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setPrivateProperties();
         $this->o_elog    = Elog::start();
-        $this->o_arr     = new Arrays;
+        $this->o_arr     = new namespace\Arrays;
         $this->o_db      = $o_db;
     }
 

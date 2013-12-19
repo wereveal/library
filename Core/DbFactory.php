@@ -7,19 +7,19 @@
  *  @class DbFactory
  *  @ingroup ritc_library library
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 0.1.1
- *  @date 2013-11-08 09:26:28
+ *  @version 0.1.2
+ *  @date 2013-12-19 08:10:44
  *  @par Change Log
+ *      v0.1.2 - minor package change required minor modification - 12/19/2013 wer
  *      v0.1.1 - added two additional places the config files can exist - 2013-11-08
  *      v0.1.0 - initial file creation - 2013-11-06
  *  @par RITC Library v4.0.0
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\Elog;
 
-class DbFactory extends Base
+class DbFactory extends namespace\Base
 {
     private static $instance_rw = array();
     private static $instance_ro = array();
@@ -40,7 +40,7 @@ class DbFactory extends Base
     {
         $this->setPrivateProperties();
         $this->o_elog = Elog::start();
-        $this->setDatabaseParameters($config_file);
+        $this->setDbParameters($config_file);
         $this->read_type = $read_type;
     }
     /**
@@ -120,7 +120,7 @@ class DbFactory extends Base
     {
         return $this->sql_error_message;
     }
-    private function setDatabaseParameters($config_file = 'db_config.php')
+    private function setDbParameters($config_file = 'db_config.php')
     {
         $config_w_path = APP_PATH . '/config/' . $config_file;
         if (!file_exists($config_w_path)) {

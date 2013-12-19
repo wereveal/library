@@ -14,12 +14,11 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\Elog;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 
-class TwigFactory extends Base
+class TwigFactory extends namespace\Base
 {
     private static $instance = array();
     private $o_elog;

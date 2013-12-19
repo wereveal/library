@@ -6,10 +6,11 @@
  *  @namespace Ritc\Library\Core
  *  @class Elog
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version:  2.6.0
- *  @date 2013-07-30 11:09:45
+ *  @version:  2.6.1
+ *  @date 2013-12-19 08:11:49
  *  @par Change Log
- *      v2.6.0 - Namespace changes
+ *      v2.6.1 - package change required minor update - 12/19/2013 wer
+ *      v2.6.0 - Namespace changes - 07/30/2013 wer
  *      v2.5.2 - added some sanity code to setElogConstants to prevent errors - 04/23/2013
  *      v2.5.1 - renamed main method from do_it to write (not so silly)
  *      v2.5.0 - FIG standars (mostly)
@@ -18,9 +19,7 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
-
-class Elog extends Base
+class Elog extends namespace\Base
 {
     protected $current_page;
     private $debug_text;

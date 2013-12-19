@@ -1,0 +1,29 @@
+<?php
+/**
+ *  Class used to set up classes that look to establish the location of a file.
+ *  @file Location.php
+ *  @namespace Ritc\Library\Interfaces
+ *  @class Location
+ *  @author William Reveal <bill@revealitconsulting.com>
+ *  @version 2.0.0
+ *  @date 2011-06-14 15:11:26
+ *  @par Change Log
+ *      v2.0.0 Changed to an interface 12/19/2013 wer
+ *      v1.1.0 06/14/2011 wer
+ *  @ingroup ritc_library library
+ *  @par RITC Library 4.0
+**/
+namespace Ritc\Library\Interfaces;
+
+interface Location
+{
+    /**
+     *  Getters and Setters
+     *  Looking to set two class properties
+     *  $file_name and $file_dir_name
+    **/
+    public function getFileDirName();
+    public function getFileName();
+    public function setFileDirName($value);
+    public function setFileName($value);
+}

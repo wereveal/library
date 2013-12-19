@@ -10,8 +10,9 @@
  *  @class Actions
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 2.2.3
- *  @date 2013-07-30 10:53:21
+ *  @date 2013-12-19 07:51:50
  *  @par Change Log
+ *      v2.2.4 - changed to match namespace change 12/19/2013 wer
  *      v2.2.3 - Changed to namespace reorge
  *      v2.2.2 - changed to new namespace - 03/27/2013
  *      v2.2.1 - added a bit more sanitation to uri actions,
@@ -22,12 +23,9 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\Arrays;
 use Ritc\Library\Core\Elog;
-use Ritc\Library\Core\Strings;
 
-class Actions extends Base
+class Actions extends namespace\Base
 {
     protected $a_clean_post;
     protected $a_clean_get;
@@ -45,8 +43,8 @@ class Actions extends Base
         $this->o_elog = Elog::start();
         $this->o_elog->setFromFile(__FILE__);
         $this->o_elog->write("Starting __construct", LOG_OFF);
-        $this->o_arrays = new Arrays();
-        $this->o_str = new Strings();
+        $this->o_arrays = new namespace\Arrays();
+        $this->o_str = new namespace\Strings();
         $this->setPrivateProperties();
         $this->setCleanPost($_POST);
         $this->setCleanGet($_GET);

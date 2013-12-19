@@ -3,19 +3,21 @@
  *  A Base Class that all other classes use.
  *  Primarily this is used to fix the visibility issue that PHP ignores
  *  @file Base.php
- *  @namespace Ritc\Library\Abstract
+ *  @namespace Ritc\Library\Core
  *  @class Base
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  1.0.3
- *  @date 2013-03-28 11:00:17
+ *  @version  1.0.4
+ *  @date 2013-12-19 07:22:30
  *  @par ChangeLog
+ *      v1.0.4 - changed back to a class. Couldn't figure out why
+ *          it should be abstract. Made an interface for it just because. 12/19/2013
  *      v1.0.3 - namespace change, changed to an abstract class
  *  @par RITC Library v4.0.0
  *  @ingroup ritc_library library abstract
 **/
-namespace Ritc\Library\Abstracts;
+namespace Ritc\Library\Core;
 
-abstract class Base
+class Base
 {
     protected $current_page;
     protected $private_properties;
@@ -98,7 +100,7 @@ abstract class Base
     /**
      *  Prevent direct access to protected and private properties.
      *  @param string $var name of property being unset
-     *  @return nothing
+     *  @return null
     **/
     public function __unset($var)
     {
