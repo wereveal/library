@@ -2,15 +2,16 @@
 /**
  *  Interface for page controllers
  *  @file PageControllerInterface.php
- *  @namespace Ritc\Library\Interfaces
+ *  @ingroup ritc_library interfaces
+ *  @namespace Ritc/Library/Interfaces
  *  @class PageControllerInterface
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.0
  *  @date 2013-12-12 12:34:12
- *  @par Change Log
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v1.0 - Initial version 12/12/2013
- *  @par Ritc Library version 4.0
- *  @ingroup library controller
+ *  </pre>
 **/
 namespace Ritc\Library\Interfaces;
 

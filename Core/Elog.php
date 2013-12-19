@@ -1,21 +1,22 @@
 <?php
 /**
- *  Something simple to help me debug my websites.
- *  A singleton pattern.
+ *  @brief Something simple to help me debug my websites.
+ *  @details A singleton pattern because that is what I want. pfffttttt!
  *  @file Elog.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class Elog
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version:  2.6.1
  *  @date 2013-12-19 08:11:49
- *  @par Change Log
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v2.6.1 - package change required minor update - 12/19/2013 wer
  *      v2.6.0 - Namespace changes - 07/30/2013 wer
  *      v2.5.2 - added some sanity code to setElogConstants to prevent errors - 04/23/2013
  *      v2.5.1 - renamed main method from do_it to write (not so silly)
  *      v2.5.0 - FIG standars (mostly)
- *  @par RITC Library v4.0.0
- *  @ingroup ritc_library library
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 

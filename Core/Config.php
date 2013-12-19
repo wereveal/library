@@ -1,20 +1,21 @@
 <?php
 /**
- *  Create Constants from the configuration database
+ *  @brief Create Constants from the configuration database
  *  @file Config.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @ingroup ritc_library library
  *  @version  3.0.3
  *  @date 2013-12-19 07:58:56
- *  @par Change Log
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v3.0.3 - package change
  *      v3.0.2 - bug fixes, minor changes - 2013-11-08
  *      v3.0.1 - refactoring for database class change - 2013-11-06
  *      v3.0.0 - Modified for new framework file hierarchy - 2013-04-30
  *      v2.3.0 - mostly changes for FIG-standards
- *  @par RITC Library v4.0.0
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 

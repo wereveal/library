@@ -2,15 +2,17 @@
 /**
  *  Abstract class that provides common methods used for page controllers in the app.
  *  @file PageControllerAbstract.php
- *  @namespace Ritc\Library\Abstracts
+ *  @namespace Ritc/Library/Abstracts
  *  @class PageControllerAbstract
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.0
  *  @date 2013-12-12 12:36:21
- *  @par Change Log
+ *  @note <pre>
+ *  <b>Change Log</b>
  *      v1.0.0 - Initial version 2013-12-12
- *  @par Ritc Library version 4.0
- *  @ingroup library controller
+ *  </pre>
+ *  @note Ritc Library version 4.0
+ *  @ingroup ritc_library abstracts
 **/
 namespace Ritc\Library\Abstracts;
 

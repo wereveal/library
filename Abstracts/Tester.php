@@ -2,24 +2,24 @@
 /**
  *  A abstract class for testing that all other testing classes use.
  *  @file Tester.php
- *  @namespace Ritc\Library\Abstract
+ *  @namespace Ritc/Library/Abstract
  *  @class Tester
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @ingroup ritc_library library abstract
  *  @version  2.0.0
  *  @date 2013-12-13 15:35:11
- *  @par Change log
- *      v2.0.0 - modified to not do any view stuff 2013-12-13
- *      v1.1.0 - added new a couple new methods  2013-05-10
+ *  @note <pre><b>Change log</b>
+ *      v2.0.0 - modified to not do any view stuff 2013-12-13 wer
+ *      v1.1.0 - added new a couple new methods  2013-05-10 wer
  *          compare_arrays
  *              checks to see if the values in the first array
  *              exist in the second array
  *          setSubfailure
  *              allows the test results to display individual subtests
  *              within the method tester
- *      v1.0.1 - updated to match new framework 2013-04-03
- *  @par Last Modified: wer
- *  @par RITC Library v4.0.0
+ *      v1.0.1 - updated to match new framework 2013-04-03 wer
+ *  </pre>
+ *  @note RITC Library v4.0.0
+ *  @ingroup ritc_library abstracts
 **/
 namespace Ritc\Library\Abstracts;
 

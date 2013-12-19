@@ -1,15 +1,17 @@
 <?php
 /**
- *  Manages User Access to the site.
- *  It is expected that this will be used within a controller and
+ *  @brief Manages User Access to the site.
+ *  @details It is expected that this will be used within a controller and
  *  more finely grained access with be handled there or in a sub-controller.
  *  @file Access.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core library
+ *  @namespace Ritc/Library/Core
  *  @class Access
  *  @author William E Reveal  <bill@revealitconsulting.com>
  *  @version 3.6.0
  *  @date 2013-11-12 12:57:24
- *  @par Change Log
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v3.6.0 - Database changes, added new user role connector table - 11/12/2013
  *               New and revised methods to match database changes.
  *               General Clean up of the code.
@@ -24,8 +26,7 @@
  *      v3.4.0 - added short_name to Access, changing Real Name back to a real name
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
- *  @par RITC Library version 4.0
- *  @ingroup ritc_library core library
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 

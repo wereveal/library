@@ -9,22 +9,14 @@
  *      @version 4.0
  *      @defgroup configs Configuration files
  *      @ingroup ritc_library
- *      @defgroup core
+ *      @defgroup core Core files of the library
  *      @ingroup ritc_library
- *  }
- *  @defgroup ftpadmin
- *  @{
- *      @version 1.0
- *      @defgroup controllers controller files
- *      @ingroup ftpadmin
- *      @defgroup views classes that create views
- *      @ingroup ftpadmin
- *      @defgroup forms files that define and create forms
- *      @ingroup views
- *      @defgroup model files that do database operations
- *      @ingroup ftpadmin
- *      @defgroup tests unitTesting
- *      @ingroup ftpadmin
+ *      @defgroup abstracts abstract definition of classes
+ *      @ingroup ritc_library
+ *      @defgroup interfaces interface definition of classes
+ *      @ingroup ritc_library
+ *      @defgroup helper classes that do helper things
+ *      @ingroup ritc_library
  *  }
  *  @note <pre>
  *  NOTE: _path and _PATH indicates a full server path

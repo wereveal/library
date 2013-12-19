@@ -1,14 +1,16 @@
 <?php
 /**
- *  Does all the database crud stuff.
- *  For read/write access to the database based on PDO.
+ *  @brief Does all the database CRUD stuff.
+ *  @details For read/write access to the database based on PDO.
  *  @file DbModel.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 3.0.1
  *  @date 2013-12-19 08:07:50
- *  @par Change Log
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v3.0.1 - renamed file to match function, eliminated the unnecessary - 12/19/2013 wer
  *      v3.0.0 - split the pdo creation (database connection) from the crud - 2013-11-06
  *      v2.4.4 - bug fix in buildSqlWhere - 2013-07-23 17:24:10
@@ -24,8 +26,7 @@
  *               made a couple changes to clarify what was going on.
  *      v2.3.0 - Modified to work within Symfony
  *      v2.2.0 - FIG-standard changes
- *  @ingroup ritc_library library
- *  @par RITC Library v4.0.0
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 

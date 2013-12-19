@@ -1,16 +1,18 @@
 <?php
 /**
- *  Similar to the Unix tail command e.g. tail -n 40 file.php
- *  When on a webpage, use the meta refresh to keep tailing a file
+ *  @brief Similar to the Unix tail command e.g. tail -n 40 file.php.
+ *  @detail When on a webpage, use the meta refresh to keep tailing a file.
  *  @file Tail.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class Tail
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 2.1.0
  *  @date 2013-04-22 11:46:56
- *  @par Change Log
- *      v2.1 Changed to work in the ritc framework
- *  @ingroup ritc_library library
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
+ *      v2.1 Changed to work in the ritc_library
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 

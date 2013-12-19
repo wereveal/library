@@ -6,7 +6,7 @@
  *      _PATH = Full server path
  *      _DIR  = Path in web site (URI)
  *      _NAME = Name of item without any path information
- *  @ingroup ritc_framework configs
+ *  @ingroup ritc_library configs
 **/
 namespace Ritc;
 

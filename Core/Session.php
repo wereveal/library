@@ -1,14 +1,17 @@
 <?php
 /**
- *  For managing sessions.
+ *  @brief For managing sessions.
  *  @file Session.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class Session
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 1.1.0
  *  @date 06/14/2011 15:13:24
- *  @ingroup ritc_library library
- *  @par RITC Library 4.0
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
+ *      v1.1.0 - 06/14/2011 wer
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 

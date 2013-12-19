@@ -1,25 +1,24 @@
 <?php
 /**
- *  Extracts the action to use for the page.
- *
- *  Can get the action from the URL - htaccess required
+ *  @brief Extracts the action to use for the page.
+ *  @details Can get the action from the URL - htaccess required
  *  or from a form element with a few select id names
  *
  *  @file Actions.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class Actions
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 2.2.3
  *  @date 2013-12-19 07:51:50
- *  @par Change Log
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v2.2.4 - changed to match namespace change 12/19/2013 wer
  *      v2.2.3 - Changed to namespace reorge
  *      v2.2.2 - changed to new namespace - 03/27/2013
  *      v2.2.1 - added a bit more sanitation to uri actions,
  *               renamed action to form_action to be clearer what it was
  *      v2.2.0 - refactored to be closer to FIG standards
- *  @par RITC Library version 4.0.0
- *  @ingroup ritc_library library
 **/
 namespace Ritc\Library\Core;
 

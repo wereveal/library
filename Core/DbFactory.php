@@ -1,19 +1,23 @@
 <?php
 /**
- *  A Database Factory.
- *  For read/write access to the database based on PDO.
+ *  @brief A Database Factory.
+ *  @details This ends up being a two step process always. The first step is to start the factory.
+ *  The factory reads in the configuration specified (defaults to a default config) so that it knows
+ *  what to connect to. After that you connect to the databse using the factory object.
+ *  Connecting to the database returns a \PDO object.
  *  @file DbFactory.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class DbFactory
- *  @ingroup ritc_library library
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 0.1.2
  *  @date 2013-12-19 08:10:44
- *  @par Change Log
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v0.1.2 - minor package change required minor modification - 12/19/2013 wer
  *      v0.1.1 - added two additional places the config files can exist - 2013-11-08
  *      v0.1.0 - initial file creation - 2013-11-06
- *  @par RITC Library v4.0.0
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 

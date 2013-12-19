@@ -1,16 +1,17 @@
 <?php
 /**
- *  A Twig Factory.
+ *  @brief A Twig Factory.
  *  @file TwigFactory.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class TwigFactory
- *  @ingroup ritc_library library
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 0.1.0
  *  @date 2013-11-11 12:49:59
- *  @par Change Log
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v0.1.0 - initial file creation - 2013-11-11
- *  @par RITC Library v4.0.0
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 

@@ -1,22 +1,23 @@
 <?php
 /**
- *  Modifies strings and strings in arrays.
- *  Methods which start with make_ return a modified version
+ *  @brief Modifies strings and strings in arrays.
+ *  @details Methods which start with make_ return a modified version
  *  of the value passed into the method, usually indicated by
- *  the name of the method
- *  Renamed and modified version of old class Output
+ *  the name of the method.
+ *  Renamed and modified version of old class Output.
  *  @file Strings.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class Strings
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 5.1.0
  *  @date 2013-05-14 12:42:32
- *  @ingroup ritc_library library
- *  @par Change Log
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v5.1.0 - added formatPhoneNumber method. 2013-05-14
  *      v5.0.1 - bug fixes and removed unused code left over from old class Output 2013-05-01
  *      v5.0.0 - renamed new version for RITC Library v4
- *  @par RITC Library 4.0
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 

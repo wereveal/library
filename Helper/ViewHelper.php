@@ -1,16 +1,16 @@
 <?php
 /**
- *  Various helper functions for views.
+ *  @brief Various helper functions for views.
  *  @file ViewHelper.php
- *  @namespace Ritc\Library\Helper
+ *  @namespace Ritc/Library/Helper
  *  @class ViewHelper
  *  @author William E Reveal <bill@revealitconsulting.com>
  *  @version 1.0.0
  *  @data 2013-07-30 11:24:31
- *  @par Change Log
+ *  @note Change Log
  *      v1.0.0 - intial file - 07/30/2013
- *  @par RITC Library version 4.0
- *  @ingroup ritc_library library helper
+ *  @note RITC Library version 4.0
+ *  @ingroup ritc_library helper
 **/
 namespace Ritc\Library\Helper;
 

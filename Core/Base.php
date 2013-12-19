@@ -1,19 +1,20 @@
 <?php
 /**
- *  A Base Class that all other classes use.
- *  Primarily this is used to fix the visibility issue that PHP ignores
+ *  @brief A Base Class that all other classes use.
+ *  @details Primarily this is used to fix the visibility issue that PHP ignores
  *  @file Base.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class Base
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version  1.0.4
  *  @date 2013-12-19 07:22:30
- *  @par ChangeLog
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v1.0.4 - changed back to a class. Couldn't figure out why
  *          it should be abstract. Made an interface for it just because. 12/19/2013
  *      v1.0.3 - namespace change, changed to an abstract class
- *  @par RITC Library v4.0.0
- *  @ingroup ritc_library library abstract
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 

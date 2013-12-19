@@ -1,11 +1,11 @@
 <?php
 /**
- *  Determines the path to the file.
+ *  @brief Determines the path to the file.
  *  @file Files.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class Files
  *  @note <pre>
- *      Notes:
  *      Determines the path to the file
  *      @see setFileLocations()
  *  </pre>
@@ -24,7 +24,8 @@
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 4.2.0
  *  @date 2013-12-19 07:46:56
- *  @par Change Log
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v4.2.0 - Several changes. - 12/19/2013 wer
  *              Base was changed from abstract to normal class
  *              Location was modified to be an interface
@@ -38,8 +39,7 @@
  *      v4.1.0 - New RITC Library Layout serious changes wer
  *               BUT method results and names were not changed
  *      v4.0.0 - FIG standards (mostly) wer
- *  @par RITC Library 4.0.0
- *  @ingroup ritc_library library
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 
@@ -110,7 +110,7 @@ class Files implements Location extends namespace\Base
      *  Does more than the php function of file_get_contents in that
      *  file_get_contents requires a full path where as this only requires
      *  a file name. The path can be specified either directly or indirectly.
-     *  @par Examples:
+     *  @note Examples:
      *      getContents('test.tpl');\n
      *      getContents('test.css', 'css');\n
      *      getContents('test/test.tpl', 'templates');\n

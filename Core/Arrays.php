@@ -1,23 +1,24 @@
 <?php
 /**
- *  Class that does stuff with arrays.
- *  This is basically a start. I expect others to show up here from
+ *  @brief Class that does stuff with arrays.
+ *  @details This is basically a start. I expect others to show up here from
  *  other classes where they don't belong or would server better in this
  *  class where they can be used more globally.
  *  @file Arrays.php
- *  @namespace Ritc\Library\Core
+ *  @ingroup ritc_library core
+ *  @namespace Ritc/Library/Core
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.1.1
  *  @date 2013-12-19 07:57:34
- *  @par ChangeLog
+ *  @note A part of the RITC Library v4
+ *  @note <pre><b>Change Log</b>
  *      v1.1.1 - match package change - 12/19/2013 wer
  *      v1.1.0 - namespace changes - 07/30/2013 wer
  *      v1.0.3 - moved array methods from class Strings to here - 03/27/2013
  *      v1.0.2 - added new method
  *      v1.0.1 - new namespace, FIG standards (mostly)
- *  @par RITC Library version 4.0.0
- *  @ingroup ritc_library library core
+ *  </pre>
 **/
 namespace Ritc\Library\Core;
 
