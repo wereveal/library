@@ -74,7 +74,7 @@ class Access extends namespace\Base
         $this->o_elog->write("User Values: " . var_export($a_user_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($a_user_values !== false && $a_user_values !== null) {
             if ($a_user_values['is_active'] < 1) {
-                $this->incrementBadLoginTimestame($a_user_values['user_id']);
+                $this->incrementBadLoginTimestamp($a_user_values['user_id']);
                 $this->incrementBadLoginCount($a_user_values['user_id']);
                 $a_login['password'] = '';
                 $a_login['is_active'] = false;
@@ -237,7 +237,7 @@ class Access extends namespace\Base
      *  Checks to see if the param is an id or a name.
      *  A name can not start with a numeric character so if the param starts
      *  with a number, it is assumed to be an id (I know, assume = ...)
-     *  @param $value (mixed), required
+     *  @param mixed $value required
      *  @return bool
     **/
     public function isID($value = '')
@@ -250,12 +250,12 @@ class Access extends namespace\Base
     }
     /**
      *  Verifies user has the role of super administrator.
-     *  @param string $user_id required
+     *  @param int $user_id required
      *  @return bool - true = is a super admin, false = not a super admin
     **/
-    public function isSuperAdmin($user_id = '')
+    public function isSuperAdmin($user_id = -1)
     {
-        if ($user_id == '') { return false; }
+        if ($user_id == -1) { return false; }
         $a_user = $this->selectUser($user_id);
         if ($a_user === false) { return false; }
         if ($a_user['access_level'] === 1) {
@@ -268,9 +268,9 @@ class Access extends namespace\Base
      *  @param int $group_id
      *  @return bool true or false
     **/
-    private function isValidGroupId($group_id = 0)
+    private function isValidGroupId($group_id = -1)
     {
-        if ($group_id == 0) { return false; }
+        if ($group_id == -1) { return false; }
         $group_id = (int) $group_id;
         if (is_array($this->selectGroupById($group_id))) {
             return true;
@@ -282,9 +282,9 @@ class Access extends namespace\Base
      *  @param int $role_id
      *  @return bool true or false
     **/
-    private function isValidRoleId($role_id = 0)
+    private function isValidRoleId($role_id = -1)
     {
-        if ($role_id == 0) { return false; }
+        if ($role_id == -1) { return false; }
         $role_id = (int) $role_id;
         if (is_array($this->selectRoleById($role_id))) {
             return true;
@@ -311,9 +311,9 @@ class Access extends namespace\Base
      *  @param int $user_id required
      *  @return bool true false
     **/
-    public function isDefaultUser($user_id = 0)
+    public function isDefaultUser($user_id = -1)
     {
-        if ($user_id == 0) { return false; }
+        if ($user_id == -1) { return false; }
         $user_id = (int) $user_id;
         $a_results = $this->selectUser($user_id);
         if ($a_results['is_default'] == 1) {
@@ -326,9 +326,9 @@ class Access extends namespace\Base
      *  @param int $user_id
      *  @return bool true false
     **/
-    public function userIdExists($user_id = 0)
+    public function userIdExists($user_id = -1)
     {
-        if ($user_id == 0) { return false; }
+        if ($user_id == -1) { return false; }
         $user_id = (int) $user_id;
         $results = $this->selectUser($user_id);
         if ($results !== false) {
@@ -357,9 +357,9 @@ class Access extends namespace\Base
      *  @param int $user_id required, id of user
      *  @return bool, success or failure
     **/
-    public function deleteUser($user_id = 0)
+    public function deleteUser($user_id = -1)
     {
-        if ($user_id == 0) { return false; }
+        if ($user_id == -1) { return false; }
         $sql = "DELETE FROM ritc_users WHERE id = :user_id";
         $a_user = array(':user_id' => $user_id);
         return $this->o_db->delete($sql, $a_user, true);
@@ -370,9 +370,9 @@ class Access extends namespace\Base
      *  @param int $group_id required
      *  @return bool
     **/
-    public function deleteUserGroup($user_id = '', $group_id = '')
+    public function deleteUserGroup($user_id = -1, $group_id = -1)
     {
-        if ($user_id == '' || $group_id == '') { return false; }
+        if ($user_id == -1 || $group_id == -1) { return false; }
         $sql = "DELETE FROM ritc_user_groups WHERE user_id = :user_id AND group_id = :group_id";
         $a_values = array(':user_id' => $user_id, ':group_id' => $group_id);
         return $this->o_db->delete($sql, $a_values, true);
@@ -383,9 +383,9 @@ class Access extends namespace\Base
      *  @param int $role_id required
      *  @return bool
     **/
-    public function deleteUserRole($user_id = '', $role_id = '')
+    public function deleteUserRole($user_id = -1, $role_id = -1)
     {
-        if ($user_id == '' || $role_id == '') { return false; }
+        if ($user_id == -1 || $role_id == -1) { return false; }
         $sql = "DELETE FROM ritc_user_roles WHERE user_id = :user_id AND role_id = :role_id";
         $a_values = array(':user_id' => $user_id, ':role_id' => $role_id);
         return $this->o_db->delete($sql, $a_values, true);
@@ -395,9 +395,9 @@ class Access extends namespace\Base
      *  @param int $user_id
      *  @return bool
     **/
-    private function incrementBadLoginCount($user_id = '')
+    private function incrementBadLoginCount($user_id = -1)
     {
-        if ($user_id == '') { return false; }
+        if ($user_id == -1) { return false; }
         $sql = "
             UPDATE ritc_users
             SET bad_login_count = bad_login_count + 1
@@ -411,8 +411,9 @@ class Access extends namespace\Base
      *  @param int $user_id required
      *  @return bool
     */
-    private function incrementBadLoginTimestamp($user_id = '')
+    private function incrementBadLoginTimestamp($user_id = -1)
     {
+        if ($user_id == -1) { return false; }
         $sql = "
             UPDATE ritc_users
             SET bad_login_ts = bad_login_ts + 60
@@ -423,13 +424,13 @@ class Access extends namespace\Base
     }
     /**
      *  Creates a new user record.
-     *  @param $a_values (array), required, values for user record, needs to
+     *  @param array $a_values, required, values for user record, needs to
      *      be in format for prepared queries.
      *  @return mixed, user_id or false if failure.
     **/
-    public function insertUser($a_values = '')
+    public function insertUser(array $a_values = array())
     {
-        if ($a_values == '') { return false; }
+        if ($a_values == array()) { return false; }
         $sql = "
             INSERT INTO ritc_users (username, real_name, short_name, password, is_default)
             VALUES (:username, :real_name, :short_name, :password, :is_default)";
@@ -446,9 +447,9 @@ class Access extends namespace\Base
      *  @param array $a_values array that uses valid prepared sql format
      *  @return bool success or failure
     **/
-    public function insertUserGroup($a_values = '')
+    public function insertUserGroup(array $a_values = array())
     {
-        if ($a_values == '') { return false; }
+        if ($a_values == array()) { return false; }
         $sql = "INSERT INTO ritc_user_groups (user_id, group_id) VALUES (:user_id, :group_id)";
         if ($this->o_db->insert($sql, $a_values, 'ritc_user_groups')) {
             $ids = $this->o_db->getNewIds();
@@ -462,9 +463,9 @@ class Access extends namespace\Base
      *  @param array $a_values array that uses valid prepared sql format
      *  @return bool success or failure
     **/
-    public function insertUserRole($a_values = '')
+    public function insertUserRole(array $a_values = array())
     {
-        if ($a_values == '') { return false; }
+        if ($a_values == array()) { return false; }
         $sql = "INSERT INTO ritc_user_roles (user_id, role_id) VALUES (:user_id, :role_id)";
         if ($this->o_db->insert($sql, $a_values, 'ritc_user_roles')) {
             $ids = $this->o_db->getNewIds();
@@ -476,11 +477,11 @@ class Access extends namespace\Base
     /**
      *  Resets the bad_login_count to 0
      *  @param int $user_id required
-     *  return bool
+     *  @return bool
     **/
-    private function resetBadLoginCount($user_id)
+    private function resetBadLoginCount($user_id = -1)
     {
-        if ($user_id == '') { return false; }
+        if ($user_id == -1) { return false; }
         $sql = "
             UPDATE ritc_users
             SET bad_login_count = 0
@@ -492,11 +493,11 @@ class Access extends namespace\Base
     /**
      *  Resets the timestamp to 0
      *  @param int $user_id required
-     *  return bool
+     *  @return bool
     **/
-    private function resetBadLoginTimestamp($user_id)
+    private function resetBadLoginTimestamp($user_id = -1)
     {
-        if ($user_id == '') { return false; }
+        if ($user_id == -1) { return false; }
         $sql = "
             UPDATE ritc_users
             SET bad_login_ts = 0
@@ -510,9 +511,9 @@ class Access extends namespace\Base
      *  @param int $group_id
      *  @return array
     **/
-    public function selectGroupById($group_id = '')
+    public function selectGroupById($group_id = -1)
     {
-        if ($group_id == '') { return false; }
+        if ($group_id == -1) { return false; }
         $sql = "SELECT group_id, group_name, group_description FROM ritc_groups WHERE group_id = {$group_id}";
         $results = $this->o_db->search($sql);
         if (is_array($results[0])) {
@@ -541,7 +542,7 @@ class Access extends namespace\Base
      *  @param int $role_id
      *  @return array
     **/
-    public function selectRoleById($role_id = '')
+    public function selectRoleById($role_id = -1)
     {
         if ($role_id == '') { return false; }
         $sql = "SELECT id, name, description, access_level FROM ritc_roles WHERE id = {$role_id}";
@@ -569,7 +570,7 @@ class Access extends namespace\Base
     }
     /**
      *  Selects the role information from db.
-     *  @param none
+     *  @param int $access_level
      *  @return array, role data
     **/
     public function selectRoles($access_level = 3)
@@ -584,7 +585,7 @@ class Access extends namespace\Base
     }
     /**
      *  Gets the user values based on username.
-     *  @param $username (str), the username (as defined in the db)
+     *  @param mixed $user_id the user id or username (as defined in the db)
      *  @return array, the values for the user
     **/
     public function selectUser($user_id = '')
@@ -672,9 +673,9 @@ class Access extends namespace\Base
      *  @param int $user_id required
      *  @return bool
     **/
-    private function setBadLoginTimestamp($user_id = '')
+    private function setBadLoginTimestamp($user_id = -1)
     {
-        if ($user_id == '') { return false; }
+        if ($user_id == -1) { return false; }
         $sql = "
             UPDATE ritc_users
             SET bad_login_ts = :timestamp
@@ -686,12 +687,12 @@ class Access extends namespace\Base
     }
     /**
      *  Updates an existing user.
-     *  @param $a_values (array), required, values for user record
+     *  @param array $a_values required, values for user record in prepared format
      *  @return mixed, user_id or false if failure
     **/
-    public function updateUser($a_values = '')
+    public function updateUser(array $a_values = array())
     {
-        if ($a_values == '' || $a_values[':user_id'] == '') {
+        if ($a_values == array() || $a_values[':user_id'] == '') {
             return false;
         }
         if ($a_values[':password'] == '') {

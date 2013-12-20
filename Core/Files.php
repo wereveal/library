@@ -5,26 +5,14 @@
  *  @ingroup ritc_library core
  *  @namespace Ritc/Library/Core
  *  @class Files
- *  @note <pre>
- *      Determines the path to the file
- *      @see setFileLocations()
- *  </pre>
- *  @property CONFIG_DIR_NAME - the default directory name for configs
- *  @property CSS_DIR_NAME - the default directory name for css files
- *  @property HTML_DIR_NAME - the default directory name for html files
- *  @property IMAGE_DIR_NAME - the default directory name for the image files in a theme
- *  @property JS_DIR_NAME - the default directory name for js files
- *  @property LIBS_DIR_NAME - the default directory name for libraries
- *  @property PRIVATE_DIR_NAME - the default directory name for private files such as .htaccess
- *  @property TEMPLATES_DIR_NAME - the default directory name for templates
- *  @property TMP_DIR_NAME - the default directory name for temporary files
- *  @note <pre>The constants with _DIR_NAME should correspond to dir names in
- *      the site theme or namespace (e.g. templates are in namespace)
- *      </pre>
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 4.2.0
  *  @date 2013-12-19 07:46:56
  *  @note A part of the RITC Library v4
+ *  @note <pre>The constants with _DIR_NAME should correspond to dir names in
+ *      the site theme or namespace (e.g. templates are in namespace). If a directory
+ *      is missing, this could cause a fatal error.
+ *      </pre>
  *  @note <pre><b>Change Log</b>
  *      v4.2.0 - Several changes. - 12/19/2013 wer
  *              Base was changed from abstract to normal class
@@ -44,9 +32,8 @@
 namespace Ritc\Library\Core;
 
 use Ritc\Library\Interfaces\Location;
-use Ritc\Library\Core\Elog;
 
-class Files implements Location extends namespace\Base
+class Files extends namespace\Base implements Location
 {
     const CONFIG_DIR_NAME    = 'config';
     const CSS_DIR_NAME       = 'css';
@@ -69,7 +56,7 @@ class Files implements Location extends namespace\Base
 
     public function __construct($file_name = '', $the_directory = '', $theme_name = '', $namespace = '')
     {
-        $this->o_elog = Elog::start();
+        $this->o_elog = namespace\Elog::start();
         $this->setPrivateProperties();
         if ($file_name != '') {
             $this->file_name = $file_name;
@@ -167,7 +154,7 @@ class Files implements Location extends namespace\Base
     {
         return $this->file_name;
     }
-    public fuction getFileDirName()
+    public function getFileDirName()
     {
         return $this->file_dir_name;
     }
@@ -357,7 +344,7 @@ class Files implements Location extends namespace\Base
         $file_w_dir = '/';
         $file_w_dir .= $file_dir_name != '' ? $file_dir_name . '/' : '';
         $file_w_dir .= $file_name;
-        foreach ($a_possible_locations as $key => $location) {
+        foreach ($a_possible_locations as $location) {
             $full_path = $location . $file_w_dir;
             $full_path = str_replace('//', '/', $full_path);
             if (file_exists($full_path)) {

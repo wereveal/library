@@ -616,34 +616,38 @@ class DbModel extends namespace\Base
     }
     /**
      *  Used for both modifying and deleting record(s)
-     *  @param $the_query (str) - the sql statement, required, default is ''
-     *  @param $a_values (array) - formated values for a prepared sql statement - optional, default is ''
+     *  @param string $the_query - the sql statement, required, default is ''
+     *  @param array $a_values - formated values for a prepared sql statement - optional, default is ''
      *  @param $single_record - if only a single record should be changed/deleted - optional, default is true
      *  @return bool - success or failure
     **/
-    public function mdQuery($the_query = '', $a_values = '', $single_record = true)
+    public function mdQuery($the_query = '', array $a_values = array(), $single_record = true)
     {
         $this->o_elog->setFromMethod(__METHOD__);
         if ($the_query == '') {
             $this->o_elog->write('The query must not be blank.', LOG_OFF);
             return false;
         }
-        if ($a_values == '') {
+        if ($a_values == array()) {
             $this->affected_rows = $this->o_db->exec($the_query);
             if ($this->affected_rows === false) {
                 $this->setSqlErrorMessage();
                 $this->o_elog->write($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
-            } elseif ($single_record && $this->affected_rows > 1) {
+            }
+            elseif ($single_record && $this->affected_rows > 1) {
                 $this->o_elog->write('The query affected multiple records instead of a single one.', LOG_OFF);
                 return false;
-            } elseif ($this->affected_rows == 0) {
+            }
+            elseif ($this->affected_rows == 0) {
                 $this->o_elog->write('The query affected no records.', LOG_OFF);
                 return true;
-            } else {
+            }
+            else {
                 return true;
             }
-        } elseif (is_array($a_values) && count($a_values) > 0) {
+        }
+        elseif (count($a_values) > 0) {
             $o_pdo_stmt = $this->prepare($the_query);
             if ($o_pdo_stmt === false) {
                 $this->setSqlErrorMessage('pdo');
@@ -651,10 +655,12 @@ class DbModel extends namespace\Base
                 $this->o_elog->setFromLine(__LINE__);
                 $this->o_elog->write('Could not prepare the query: ' . $this->getSqlErrorMessage(), LOG_OFF);
                 return false;
-            } else {
+            }
+            else {
                 return $this->mdQueryPrepared($a_values, $single_record, $o_pdo_stmt);
             }
-        } else {
+        }
+        else {
             $this->o_elog->write('The array of values for a prepared query was empty.', LOG_OFF);
             return false;
         }
@@ -1016,7 +1022,7 @@ class DbModel extends namespace\Base
      *  @param array $array associative array, named keys, required
      *  @return array - fixed key names
     **/
-    public function prepareKeys($array = '')
+    public function prepareKeys(array $array = array())
     {
         $a_new = array();
         if ($this->o_arr->isAssocArray($array)) {
@@ -1025,7 +1031,8 @@ class DbModel extends namespace\Base
                 $a_new[$new_key] = $value;
             }
             return $a_new;
-        } elseif ($this->o_arr->isAssocArray($array[0])) {
+        }
+        elseif ($this->o_arr->isAssocArray($array[0])) {
             foreach ($array as $a_keys) {
                 $results = $this->prepareKeys($a_keys);
                 if ($results === false) {
@@ -1034,29 +1041,31 @@ class DbModel extends namespace\Base
                 $a_new[] = $results;
             }
             return $a_new;
-        } else {
+        }
+        else {
             $this->o_elog->setFrom(basename(__FILE__), __METHOD__);
             $this->o_elog->write('The array must be an associative array to fix.');
             return false;
         }
     }
     /**
-     *  Changes array values to help build a prepared statement
-     *  primarily the WHERE
-     *  @param $array (array) - key/value pairs to fix
-     *  @return array - fixed where needed
+     *  Changes array values to help build a prepared statement primarily the WHERE.
+     *  @param array $array key/value pairs to fix
+     *  @return array fixed where needed
     **/
     public function prepareValues($array){
         $a_new = array();
         if ($this->o_arr->isAssocArray($array)) {
-            foreach ($array as $key=>$value) {
+            foreach ($array as $key => $value) {
                 $new_key = strpos($key, ':') === 0 ? $key : ':' . $key;
                 $a_new[$key] = $new_key;
             }
             return $a_new;
-        } elseif ($this->o_arr->isAssocArray($array[0])) {
+        }
+        elseif ($this->o_arr->isAssocArray($array[0])) {
             return $this->prepareValues($array[0]);
-        } else {
+        }
+        else {
             $this->o_elog->setFrom(basename(__FILE__), __METHOD__);
             $this->o_elog->write('The array must be an associative array to fix.');
             return false;

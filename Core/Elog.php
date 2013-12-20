@@ -210,12 +210,12 @@ class Elog extends namespace\Base
                 }
                 return error_log($the_string, 0);
             case 3:
-                return error_log($the_string, 1, $error_email_address,
-                                  "From: error_" . $error_email_address
+                return error_log($the_string, 1, $this->error_email_address,
+                                  "From: error_" . $this->error_email_address
                                   . "\r\nX-Mailer: PHP/" . phpversion());
             case 2:
-                if (!error_log($the_string, 1, $error_email_address,
-                                 "From: error_" . $error_email_address
+                if (!error_log($the_string, 1, $this->error_email_address,
+                                 "From: error_" . $this->error_email_address
                                  . "\r\nX-Mailer: PHP/" . phpversion())) {
                     return false;
                 }

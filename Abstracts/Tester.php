@@ -81,34 +81,41 @@ abstract class Tester
     **/
     public function returnTestResults($show_test_names = true)
     {
-        $failed_test_names = '';
-        $passed_test_names = '';
+        $a_failed_test_names = array();
+        $a_passed_test_names = array();
         if ($show_test_names === true) {
-            $passed_test_names = "Passed Test Names\n";
             if (count($this->passed_test_names) > 0) {
-                foreach ($this->passed_test_names as $name) {
-                    $passed_test_names .= "&nbsp;&nbsp;&nbsp;&nbsp;{$name}\n";
-                }
+                $a_passed_test_names = $this->passed_test_names;
             }
-        }
-        if ($show_test_names === true || $show_test_names == 'failed') {
-            $failed_test_names = "Failed Test Names\n";
             foreach ($this->failed_test_names as $name) {
-                $failed_test_names .= "&nbsp;&nbsp;&nbsp;&nbsp;{$name}\n";
                 if (is_array($this->failed_subtests) && isset($this->failed_subtests[$name])) {
-                    foreach ($this->failed_subtests[$name] as $individual_test) {
-                        $failed_test_names .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$individual_test}\n";
-                    }
+                    $a_subnames = $this->failed_subtests[$name];
                 }
+                else {
+                    $a_subnames = array();
+                }
+                $a_failed_test_names[] = array(
+                    'name' => $name,
+                    'subtest_names' => $a_subnames
+                );
             }
+            return array(
+                'failed_tests'      => $this->failed_tests,
+                'passed_tests'      => $this->passed_tests,
+                'num_o_tests'       => $this->num_o_tests,
+                'failed_test_names' => $a_failed_test_names,
+                'passed_test_names' => $a_passed_test_names
+            );
         }
-        return array(
-            'failed_tests'      => $this->failed_tests,
-            'passed_tests'      => $this->passed_tests,
-            'num_o_tests'       => $this->num_o_tests,
-            'failed_test_names' => $failed_test_names,
-            'passed_test_names' => $passed_test_names
-        );
+        else {
+            return array(
+                'failed_tests'      => $this->failed_tests,
+                'passed_tests'      => $this->passed_tests,
+                'num_o_tests'       => $this->num_o_tests,
+                'failed_test_names' => '',
+                'passed_test_names' => ''
+            );
+        }
     }
     /**
      *  Runs tests where method ends in Test.
