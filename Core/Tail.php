@@ -23,7 +23,6 @@ class Tail
     private $file_name           = ""; // requires full path
     private $a_lines             = array();
     private $lines               = 0;
-    private $last_line           = 0;
     private $show_lines          = 10;
     private $search_string       = "";
     private $search_string_regex = "";
@@ -47,6 +46,8 @@ class Tail
     public function output()
     {
         if ($this->changed) {
+            $pre_output = '';
+            $post_output = '';
             $pre_line = "";
             $post_line = "\n";
             switch ($this->output_format) {
@@ -87,29 +88,36 @@ class Tail
                         $output .= $pre_line;
                         if (($this->search_string == "") && ($this->search_string_regex == "")) {
                             $output .= $this->a_lines[$i];
-                        } elseif ($this->search_string_regex != "") {
+                        }
+                        elseif ($this->search_string_regex != "") {
                             $replacement = "$1" . $this->pre_highlight . "$2" . $this->post_highlight . "$3";
                             $output .= preg_replace($this->search_string_regex, $replacement, $this->a_lines[$i]);
-                        } elseif ($this->search_string != "") {
+                        }
+                        elseif ($this->search_string != "") {
                             $output .= str_replace($this->search_string, $this->pre_highlight . $this->search_string . $this->post_highlight, $this->a_lines[$i]);
-                        } else {
+                        }
+                        else {
                             $output .= $this->a_lines[$i];
                         }
                         $output .= $post_line;
                     }
                 }
-            } else {
+            }
+            else {
                 for ($i = $this->lines - $this->show_lines; $i<$this->lines; $i++){
                     if (isset($this->a_lines[$i])) {
                         $output .= $pre_line;
                         if (($this->search_string == "") && ($this->search_string_regex == "")) {
                             $output .= $this->a_lines[$i];
-                        } elseif ($this->search_string_regex != "") {
+                        }
+                        elseif ($this->search_string_regex != "") {
                             $replacement = "$1" . $this->pre_highlight . "$2" . $this->post_highlight . "$3";
                             $output .= preg_replace($this->search_string_regex, $replacement, $this->a_lines[$i]);
-                        } elseif ($this->search_string != "") {
+                        }
+                        elseif ($this->search_string != "") {
                             $output .= str_replace($this->search_string, $this->pre_highlight . $this->search_string . $this->post_highlight, $this->a_lines[$i]);
-                        } else {
+                        }
+                        else {
                             $output .= $this->a_lines[$i];
                         }
                         $output .= $post_line;
@@ -118,7 +126,8 @@ class Tail
             }
             $output .= $post_output;
             return $output;
-        } else {
+        }
+        else {
             return FALSE;
         }
     }
@@ -175,7 +184,8 @@ class Tail
             $this->open_file();
             $this->timestamp = $new_timestamp;
             $this->changed = TRUE;
-        } else {
+        }
+        else {
             $this->changed = FALSE;
         }
     }

@@ -15,9 +15,8 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Core\Elog;
 
-class Session extends namespace\Base
+class Session extends Base
 {
     protected $current_page;
     private static $instance;
@@ -130,27 +129,30 @@ class Session extends namespace\Base
         $_SESSION[$var_name] = $var_value;
         return true;
     }
+
     /**
      *  Sets $_SESSION vars specified in the array.
      *  Any number session vars can be set/created with this function.
-     *  @pre If the $a_vars array is from a POST or GET it is assumed in this
-     *      method that the values have been put through some sort of data
-     *      cleaner. In other words, you should put a raw $_POST or $_GET
-     *      through this.
-     *  @param $a_var_names (array), variable names to be set
-     *  @return VOID
-    **/
-    public function setVarsFromArray($a_vars = '', $a_allowed_keys = '')
+     *
+     * @pre      If the $a_vars array is from a POST or GET it is assumed in this
+     *           method that the values have been put through some sort of data
+     *           cleaner. In other words, you should not put a raw $_POST or $_GET
+     *           through this.
+     *
+     * @param array $a_vars
+     * @param array $a_allowed_keys
+     *
+     * @return void
+     */
+    public function setVarsFromArray(array $a_vars = array(), array $a_allowed_keys = array())
     {
-        if (is_array($a_vars) === false) {
-            $a_vars = array('huh'=>'true');
-        }
         foreach ($a_vars as $name=>$value) {
-            if (is_array($a_allowed_keys) && count($a_allowed_keys) > 0) {
+            if (count($a_allowed_keys) > 0) {
                 if (in_array($name, $a_allowed_keys)) {
                     $_SESSION[$name] = $value;
                 }
-            } else {
+            }
+            else {
                 $_SESSION[$name] = $value;
             }
         }
@@ -175,7 +177,6 @@ class Session extends namespace\Base
         switch ($use_cookies) {
             case false:
                 return ini_set("session.use.cookies", 0);
-                break;
             case true:
             case "":
                 if (ini_get('session.use_cookies') == '1') {
@@ -184,7 +185,6 @@ class Session extends namespace\Base
             default:
                 return ini_set("session.use.cookies", 1);
         }
-        return false;
     }
     public function useTransSid($use_trans = false)
     {

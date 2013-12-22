@@ -37,6 +37,7 @@ class Elog extends namespace\Base
     protected $private_properties = array();
     private $use_php_log = true;
     private $use_text_log = false;
+
     private function __construct()
     {
         $this->setPrivateProperties();
@@ -91,12 +92,12 @@ class Elog extends namespace\Base
     **/
     private function setElogConstants()
     {
-        $results = defined('LOG_OFF')    ? true : define('LOG_OFF',    0);
-        $results = defined('LOG_ON')     ? true : define('LOG_ON',     1);
-        $results = defined('LOG_PHP')    ? true : define('LOG_PHP',    1);
-        $results = defined('LOG_BOTH')   ? true : define('LOG_BOTH',   2);
-        $results = defined('LOG_EMAIL')  ? true : define('LOG_EMAIL',  3);
-        $results = defined('LOG_ALWAYS') ? true : define('LOG_ALWAYS', 4);
+        if (!defined('LOG_OFF'))    { define('LOG_OFF',    0); }
+        if (!defined('LOG_ON'))     { define('LOG_ON',     1); }
+        if (!defined('LOG_PHP'))    { define('LOG_PHP',    1); }
+        if (!defined('LOG_BOTH'))   { define('LOG_BOTH',   2); }
+        if (!defined('LOG_EMAIL'))  { define('LOG_EMAIL',  3); }
+        if (!defined('LOG_ALWAYS')) { define('LOG_ALWAYS', 4); }
     }
     /**
      *  A combo setter for 5 properties.
@@ -159,26 +160,29 @@ class Elog extends namespace\Base
     {
         $this->use_text_log = $boolean;
     }
+
     /**
-     *  Logs a message somewhere.
-     *  Provides several methods to log a message.
-     *  @param $the_string (str) - the message to be logged
-     *  @param $log_method (int) - the method to log message - Defaults to 1<pre>
-     *      log_methods:
-     *          0 = only set last_message - no other logging done
-     *          1 = logs based on the two properties use_text_log and
-     *              use_php_log
-     *          2 = email the error and fall through to log_method 1/Default
-     *          3 = email the error only
-     *          4 = logs the message always
-     *          default = log_method 1</pre>
-     *  @param $extra (str) - additional information to be logged
-     *  @return bool - success or failure of logging
-    **/
+     * Logs a message somewhere.
+     * Provides several methods to log a message.
+     *
+     * @param string $the_string the message to be logged
+     * @param int    $log_method the method to log message - Defaults to 1<pre>
+     *                           log_methods:
+     *                           0 = only set last_message - no other logging done
+     *                           1 = logs based on the two properties use_text_log and
+     *                           use_php_log
+     *                           2 = email the error and fall through to log_method 1/Default
+     *                           3 = email the error only
+     *                           4 = logs the message always
+     *                           default = log_method 1</pre>
+     * @param string $manual_from
+     *
+     * @return bool - success or failure of logging
+     */
     public function write($the_string = '', $log_method = 1, $manual_from = '')
     {
         if ($the_string == '') {
-            return;
+            return true;
         }
         $this->last_message    = $the_string;
         if ($manual_from != '') {
@@ -213,6 +217,7 @@ class Elog extends namespace\Base
                 return error_log($the_string, 1, $this->error_email_address,
                                   "From: error_" . $this->error_email_address
                                   . "\r\nX-Mailer: PHP/" . phpversion());
+            /** @noinspection PhpMissingBreakStatementInspection */
             case 2:
                 if (!error_log($the_string, 1, $this->error_email_address,
                                  "From: error_" . $this->error_email_address

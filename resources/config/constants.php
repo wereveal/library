@@ -30,7 +30,6 @@ if (!isset($allow_get) || $allow_get === false) {
 }
 // Empty some global vars we don't use and don't want to have values in
 $_REQUEST = array();
-$HTTP_GET_VARS = array();
 
 define('ADMIN_DIR_NAME',     'admin');
 define('ASSETS_DIR_NAME',    'assets');

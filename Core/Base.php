@@ -22,7 +22,6 @@ class Base
 {
     protected $current_page;
     protected $private_properties;
-    protected $o_elog;
 
     ### Fixing Visibility
     /**
@@ -53,13 +52,19 @@ class Base
     {
         $a_backtrace = debug_backtrace();
         if (is_null($this->private_properties)) {
-            return;
+            return null;
         }
         if (($a_backtrace[0]['file'] != $this->current_page) && (array_key_exists($var, $this->private_properties))) {
-            $this->o_elog->write("Cannot access {$this->private_properties[$var]} property of " . __CLASS__ . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}", 4);
-        } else {
+            error_log(
+                "Cannot access {$this->private_properties[$var]} property of "
+                . __CLASS__
+                . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}"
+            );
+        }
+        else {
             $this->$var = $val;
         }
+        return null;
     }
     /**
      *  Prevent direct access to protected and private properties.
@@ -71,12 +76,18 @@ class Base
         $a_backtrace = debug_backtrace();
         if (isset($this->$var)) {
             if (($a_backtrace[0]['file'] != $this->current_page) && (array_key_exists($var, $this->private_properties))) {
-                $this->o_elog->write("Cannot access {$this->private_properties[$var]} property " . __CLASS__ . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}", 4);
-                return;
+                error_log(
+                    "Cannot access {$this->private_properties[$var]} property "
+                    . __CLASS__
+                    . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}"
+                );
+                return '';
             }
             return $this->$var;
-        } else {
-            $this->o_elog->write("Required property [{$var}] has not been set!", 4);
+        }
+        else {
+            error_log("Required property [{$var}] has not been set!" . __METHOD__ . '.' . __LINE__);
+            return '';
         }
     }
     /**
@@ -89,12 +100,17 @@ class Base
         $a_backtrace = debug_backtrace();
         if (isset($this->$var)) {
             if (($a_backtrace[0]['file'] != $this->current_page) && (array_key_exists($var, $this->private_properties))) {
-                $this->o_elog->write("Cannot access {$this->private_properties[$var]} property " . __CLASS__ . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}", 4);
+                error_log(
+                    "Cannot access {$this->private_properties[$var]} property "
+                    . __CLASS__
+                    . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}"
+                );
                 return false;
             }
             return true;
-        } else {
-            $this->o_elog->write("Required property [{$var}] has not been set!", 4);
+        }
+        else {
+            // error_log("Required property [{$var}] has not been set!", 4);
             return false;
         }
     }
@@ -108,12 +124,18 @@ class Base
         $a_backtrace = debug_backtrace();
         if (isset($this->$var)) {
             if (($a_backtrace[0]['file'] != $this->current_page) && (array_key_exists($var, $this->private_properties))) {
-                $this->o_elog->write("Cannot access {$this->private_properties[$var]} property " . __CLASS__ . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}", 4);
-            } else {
+                error_log(
+                    "Cannot access {$this->private_properties[$var]} property "
+                    . __CLASS__
+                    . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}"
+                );
+            }
+            else {
                 unset($this->$var);
             }
-        } else {
-            $this->o_elog->write("Required property [{$var}] has not been set!", 4);
+        }
+        else {
+            error_log("Required property [{$var}] has not been set! (From __unset)");
         }
     }
 }

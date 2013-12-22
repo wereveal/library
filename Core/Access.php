@@ -30,9 +30,6 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Elog;
-
 class Access extends namespace\Base
 {
     protected $current_page;
@@ -40,10 +37,10 @@ class Access extends namespace\Base
     protected $o_db;
     protected $private_properties;
 
-    public function __construct(DbModel $o_db)
+    public function __construct(\Ritc\Library\Core\DbModel $o_db)
     {
         $this->setPrivateProperties();
-        $this->o_elog = Elog::start();
+        $this->o_elog = \Ritc\Library\Core\Elog::start();
         $this->o_db = $o_db;
     }
 
@@ -722,9 +719,9 @@ class Access extends namespace\Base
      *   e.g., array(':password'=>'password', ':user_id'=>'userID')
      *  @return bool success or failure
     **/
-    private function updateUserPassword($a_values = '')
+    private function updateUserPassword(array $a_values = array())
     {
-        if ($a_values == '') { return false; }
+        if ($a_values == array()) { return false; }
         $sql = "
             UPDATE ritc_users
             SET password = :password
@@ -732,13 +729,15 @@ class Access extends namespace\Base
         ";
         return $this->o_db->update($sql, $a_values, true);
     }
+
     /**
-     *  Updates the user record to be make the user active or inactive
-     *   normally inactive.
-     *  @param user_id required id of a user
-     *  @param bool $is_active, optional defaults to inactive (0)
-     *  @return bool success or failure
-    **/
+     *  Updates the user record to be make the user active or inactive, normally inactive.
+     *
+     * @param string   $user_id   required id of a user
+     * @param bool|int $is_active optional defaults to inactive (0)
+     *
+     * @return bool success or failure
+     */
     public function updateUserToInactive($user_id = '', $is_active = 0) {
         $sql = "
             UDPATE ritc_users

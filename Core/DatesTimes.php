@@ -34,7 +34,8 @@ class DatesTimes
     {
         if ($interval = DatesTimes::getInterval($start_date, $end_date)) {
             return $interval->format("%R%a");
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -42,7 +43,8 @@ class DatesTimes
     {
         if ($interval = DatesTimes::getInterval($start_date, $end_date)) {
             return $interval->format("%r%m");
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -50,7 +52,8 @@ class DatesTimes
     {
         if ($interval = DatesTimes::getInterval($start_date, $end_date)) {
             return $interval->format("%R%y");
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -58,7 +61,8 @@ class DatesTimes
     {
         if ($interval = DatesTimes::getInterval($start_time, $end_time)) {
             return $interval->format("%R%h");
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -66,7 +70,8 @@ class DatesTimes
     {
         if ($interval = DatesTimes::getInterval($start_time, $end_time)) {
             return $interval->format("%R%i");
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -74,7 +79,8 @@ class DatesTimes
     {
         if ($interval = DatesTimes::getInterval($start_time, $end_time)) {
             return $interval->format("%R%s");
-        } else {
+        }
+        else {
             return false;
         }
     }
@@ -82,7 +88,8 @@ class DatesTimes
     {
         if ($include_seconds) {
             $time_format = $include_meridiem ? 'g:i:s a' : 'g:i:s' ;
-        } else {
+        }
+        else {
             $time_format = $include_meridiem ? 'g:i a' : 'g:i' ;
         }
         if (DatesTimes::isUnixTimestamp($time_string)) {
@@ -93,13 +100,14 @@ class DatesTimes
             $o_time = new \DateTime($time_string, new \DateTimeZone(date('e')));
             if ($o_time !== false) {
                 return $o_time->format($time_format);
-            } else {
-                return;
+            }
+            else {
+                return null;
             }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             error_log('Caught exception: ' . $e->getMessage() . " from: " . __METHOD__ . '.' . __LINE__);
-            return;
+            return null;
         }
     }
     public static function convertDateWith($date_format = '', $timestamp = '', $timezone = '')
@@ -113,30 +121,32 @@ class DatesTimes
         $date_format = DatesTimes::isValidDateFormat($date_format) ? $date_format : \DateTime::ATOM;
         if ($timestamp == '') {
             $date = date($date_format);
-        } elseif (DatesTimes::isUnixTimestamp($timestamp)) {
+        }
+        elseif (DatesTimes::isUnixTimestamp($timestamp)) {
             $date = date($date_format, (int) $timestamp);
-        } else {
+        }
+        else {
             $date = $timestamp;
         }
         $timezone = $timezone == '' ? date('e') : $timezone;
         try {
             $o_time = new \DateTime($date);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             error_log('Caught Exception: ' . $e->getMessage() . " from: " . __METHOD__ . '.' . __LINE__);
-            return;
+            return null;
         }
         $o_time->setTimeZone(new \DateTimeZone($timezone));
         return $o_time->format($date_format);
     }
     public static function getDayName($timestamp = '', $format = 'short')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return ($format == 'short' ? date('D', (int) $timestamp) : date('l', (int) $timestamp));
     }
     public static function getDayNumber($timestamp = '', $format = 'default')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         switch($format) {
             case 'j':
             case 'short':
@@ -174,19 +184,19 @@ class DatesTimes
             // error_log($end_date . '=' . $o_end->format('m/d/Y H:i:s'));
             return $o_start->diff($o_end);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             error_log('Caught exception: ',  $e->getMessage());
             return false;
         }
     }
     public static function convertToLongDateTime($timestamp = '')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("l, F dS, Y g:i a", (int) $timestamp);
     }
     public static function convertToLongDate($timestamp = '')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("l, F dS, Y", (int) $timestamp);
     }
     public static function getMeridiem($timestamp = '', $upper_case = false)
@@ -201,7 +211,7 @@ class DatesTimes
     }
     public static function convertToMonth($timestamp = '', $format = 'default')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         switch ($format) {
             case 'F':
             case 'full':
@@ -272,7 +282,7 @@ class DatesTimes
                 return DatesTimes::changeTimestampToMidnight($date->getTimestamp());
         }
     }
-    public static function convertToNextWeek($timestamp = '', $format = '')
+    public static function convertToNextWeek($timestamp = '')
     {
         $timestamp = DatesTimes::convertDateTimeWith(\DateTime::ATOM, $timestamp);
         $date = new \DateTime($timestamp);
@@ -354,7 +364,7 @@ class DatesTimes
                 return DatesTimes::changeTimestampToMidnight($date->getTimestamp());
         }
     }
-    public static function convertToPreviousWeek($timestamp = '', $format = '')
+    public static function convertToPreviousWeek($timestamp = '')
     {
         $timestamp = DatesTimes::convertDateTimeWith(\DateTime::ATOM, $timestamp);
         $date = new \DateTime($timestamp);
@@ -390,22 +400,22 @@ class DatesTimes
     }
     public static function convertToShortDate($timestamp = '')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("m/d/Y", (int) $timestamp);
     }
     public static function convertToShortDateTime($timestamp = '')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("m/d/Y g:i a", (int) $timestamp);
     }
     public static function convertToSqlTimestamp($timestamp = '')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("Y-m-d H:i:s", (int) $timestamp);
     }
     public static function convertToTime($timestamp = '')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date ("H:i:s",  $timestamp);
     }
     public static function convertToTimeFromString($timestring = '')
@@ -446,12 +456,12 @@ class DatesTimes
     }
     public static function convertToWeek($timestamp = '')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date('W', (int) $timestamp);
     }
     public static function convertToYear($timestamp = '')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date('Y', (int) $timestamp);
     }
     public static function getYesterday()
@@ -460,7 +470,7 @@ class DatesTimes
     }
     public static function convertToYmd($timestamp = '')
     {
-        $timestamp = DatesTimes::getUnixTimestamp($timestamp);
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("Ymd", (int) $timestamp);
     }
     public static function isUnixTimestamp($value = '')
@@ -503,10 +513,13 @@ class DatesTimes
         }
         try {
             $valid = new \DateTimeZone($timezone);
+            if ($valid) {
+                return true;
+            }
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             return false;
         }
-        return true;
+        return false;
     }
 }

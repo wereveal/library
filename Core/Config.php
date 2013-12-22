@@ -19,8 +19,6 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Elog;
 
 class Config extends namespace\Base
 {
@@ -47,12 +45,16 @@ class Config extends namespace\Base
         }
         $this->createThemeConstants();
     }
+
     /**
-     *  Config class is a singleton and this gets it started
-     *  This is in my mind a legit use of a singleton as
-     *  Never should more than one instance of the config ever be allowed to be created
-     *  @return obj - instance of Config
-    **/
+     * Config class is a singleton and this gets it started.
+     * This is in my mind a legit use of a singleton as
+     * Never should more than one instance of the config ever be allowed to be created
+     *
+     * @param DbModel $o_db
+     *
+     * @return object - instance of Config
+     */
     public static function start(DbModel $o_db)
     {
         if (!isset(self::$instance)) {

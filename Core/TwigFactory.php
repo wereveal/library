@@ -15,11 +15,10 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Core\Elog;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 
-class TwigFactory extends namespace\Base
+class TwigFactory extends Base
 {
     private static $instance = array();
     private $o_elog;
@@ -39,9 +38,18 @@ class TwigFactory extends namespace\Base
     public static function start($config_file = 'twig_config.php')
     {
         list($name, $extension) = explode('.', $config_file);
+        unset($extension);
         if (!isset(self::$instance[$name])) {
-            $config_w_path = $this->returnConfigWithPath($config_file);
-            $a_twig_config = require $config_w_path;
+            $config_w_path = APP_PATH . '/config/' . $config_file;
+            if (!file_exists($config_w_path)) {
+                $config_w_path = SITE_PATH . '/config/' . $config_file;
+            }
+            if (!file_exists($config_w_path)) {
+                $a_twig_config = array('default_path' => $_SERVER['DOCUMENT_ROOT'] . '/themes/default');
+            }
+            else {
+                $a_twig_config = require $config_w_path;
+            }
             $o_twig_f = new TwigFactory($a_twig_config);
             $o_loader = $o_twig_f->getLoader();
             self::$instance[$name] = new Twig_Environment($o_loader, $a_twig_config['environment_options']);
@@ -51,17 +59,5 @@ class TwigFactory extends namespace\Base
     private function getLoader()
     {
         return $this->o_loader;
-    }
-    private function returnConfigWithPath($config_file = '')
-    {
-        if ($config_file == '') { return false; }
-        $config_w_path = APP_PATH . '/config/' . $config_file;
-        if (!file_exists($config_w_path)) {
-            $config_w_path = SITE_PATH . '/config/' . $config_file;
-        }
-        if (!file_exists($config_w_path)) {
-            return false;
-        }
-        return $config_w_path;
     }
 }

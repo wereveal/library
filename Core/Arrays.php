@@ -32,23 +32,24 @@ class Arrays extends namespace\Base
      *  @param array $a_allowed_keys allows only specified keys to be returned
      *  @return array the cleaned array
     **/
-    public function cleanArrayValues($array = '', $a_allowed_keys = array())
+    public function cleanArrayValues(array $array = array(), $a_allowed_keys = array())
     {
         $a_clean = array();
-        if (is_array($array) === false || count($array) === 0) {
-            $this->o_elog->write("Array was empty", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        if (count($array) === 0) {
             return $a_clean;
         }
         foreach ($array as $key=>$value) {
             if (is_array($value)) {
                 $a_clean[$key] = $this->cleanArrayValues($value);
-            } else {
+            }
+            else {
                 $value = trim($value);
                 if (count($a_allowed_keys) >= 1) {
                     if (in_array($key, $a_allowed_keys)) {
                         $a_clean[$key] = htmlentities($value, ENT_QUOTES);
                     }
-                } else {
+                }
+                else {
                     $a_clean[$key] = htmlentities($value, ENT_QUOTES);
                 }
             }
@@ -60,16 +61,17 @@ class Arrays extends namespace\Base
      *  @param array $array
      *  @return array
     **/
-    public function decodeEntities($array = '')
+    public function decodeEntities(array $array = array())
     {
         $a_clean = array();
-        if (is_array($array) === false || count($array) === 0) {
+        if (count($array) === 0) {
             return $a_clean;
         }
-        foreach ($array as $key=>$value) {
+        foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $a_clean[$key] = $this->decode_htmlentities_in_array($value);
-            } else {
+                $a_clean[$key] = $this->decodeEntities($value);
+            }
+            else {
                 $a_clean[$key] = html_entity_decode($value, ENT_QUOTES);
             }
         }
@@ -83,7 +85,6 @@ class Arrays extends namespace\Base
     **/
     public function isAssocArray($array = array())
     {
-        $this->input_value = $array;
         return (
             is_array($array)
             &&
@@ -95,20 +96,20 @@ class Arrays extends namespace\Base
     /**
      *  Removes the slashes from values in an array.
      *  Used primarily for returned values from a database search.
-     *  @param $array (array)
+     *  @param array $array
      *  @return array
     **/
-    public function removeSlashes($array = '')
+    public function removeSlashes(array $array = array())
     {
         $a_stripped = array();
-        if (is_array($array) === false || count($array) === 0) {
-            $this->o_elog->write("Array was empty", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        if (count($array) === 0) {
             return $a_stripped;
         }
-        foreach ($array as $key=>$value) {
+        foreach ($array as $key => $value) {
             if (is_array($value)) {
                 $a_stripped[$key] = $this->removeSlashes($value);
-            } else {
+            }
+            else {
                 $value = trim($value);
                 $a_stripped[$key] = stripslashes($value);
             }
@@ -117,46 +118,48 @@ class Arrays extends namespace\Base
     }
     /**
      *  Strip HTML and PHP tags from the values in an array
-     *  @param array $array - the array with the values to modify
-     *  @param array $a_allowed_keys - an array with a list of keys allowed (optional)
-     *  @param string $allowable_tags - a string with allowed tags (see php strip_tags())
+     *  @param array $array the array with the values to modify
+     *  @param array $a_allowed_keys an array with a list of keys allowed (optional)
+     *  @param string $allowable_tags a string with allowed tags (see php strip_tags())
      *  @return array $a_clean
     **/
-    public function stripTags($array = '', $a_allowed_keys = array(), $allowable_tags = '')
+    public function stripTags(array $array = array(), array $a_allowed_keys = array(), $allowable_tags = '')
     {
         $a_clean = array();
-        if (is_array($a_allowed_keys) === false) {
-            $a_allowed_keys = array();
-        }
-        if (is_array($array) === false || count($array) === 0) {
+        if (count($array) === 0) {
             return $a_clean;
         }
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $a_clean[$key] = $this->strip_tags_array($value);
-            } else {
+                $a_clean[$key] = $this->stripTags($value);
+            }
+            else {
                 $value = trim($value);
                 if (count($a_allowed_keys) >= 1) {
                     if (in_array($key, $a_allowed_keys)) {
                         $a_clean[$key] = strip_tags($value, $allowable_tags);
                     }
-                } else {
+                }
+                else {
                     $a_clean[$key] = strip_tags($value, $allowable_tags);
                 }
             }
         }
         return $a_clean;
     }
+
     /**
      *  Strips unwanted key=>value pairs.
      *  Only really valuable for assoc arrays.
-     *  @param array $a_pairs
-     *  @param array $a_good_keys
-     *  @return array $a_pairs
-    **/
-    public function stripUnspecifiedValues($a_pairs = '', $a_allowed_keys = '')
+     *
+     * @param array $a_pairs
+     * @param array $a_allowed_keys
+     *
+     * @return array $a_pairs
+     */
+    public function stripUnspecifiedValues(array $a_pairs = array(), array $a_allowed_keys = array())
     {
-        if ($a_pairs == '' || $a_allowed_keys == '') { return array(); }
+        if ($a_pairs == array() || $a_allowed_keys == array()) { return array(); }
         foreach ($a_pairs as $key => $value) {
             if (!in_array($key, $a_allowed_keys)) {
                 unset($a_pairs[$key]);

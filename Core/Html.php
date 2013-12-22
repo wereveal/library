@@ -29,7 +29,7 @@ class Html extends namespace\Base
     private   $o_str;
     protected $the_original_string = 'Start';
     protected $the_modified_string = '';
-    protected $template_name     = STD_CONTENT_TPL;
+    protected $template_name     = 'default.twig';
     protected $private_properties;
     protected $namespace = 'Ritc';
     public function __construct()
@@ -37,7 +37,7 @@ class Html extends namespace\Base
         $this->o_str = new namespace\Strings;
         $this->o_elog = namespace\Elog::start();
         $this->o_arrays = new namespace\Arrays();
-        $this->o_files = new namespace\Files('main.tpl', 'templates',  'default', 'Ritc');
+        $this->o_files = new namespace\Files('main.twig', 'templates',  'default', 'Ritc');
         $this->setPrivateProperties();
         $this->o_elog->setFromFile(__FILE__);
     }
@@ -138,17 +138,17 @@ class Html extends namespace\Base
     }
     /**
      *  Fill the template with the values passed in.
-     *  @param $template (mixed) may be the name of a file or a string. If
+     *  @param mixed $template may be the name of a file or a string. If
      *      a name of a file, the file must be in the templates directory
      *      of the in use theme. Suggestion is simple, if the same template
      *      is being used multiple time consecutively, put the template in
      *      a string once and pass it into the fill template method.
-     *  @param $a_values (array) - the values to insert into the template in
+     *  @param array $a_values the values to insert into the template in
      *      an assoc array. $key is the string to find $value is the replacement.
-     *  @param $is_file (BOOL) - the template is the path to a file, defaults to false
+     *  @param bool $is_file the template is the path to a file, defaults to false
      *  @return string - the filled in template
     **/
-    public function render($template = '', $a_values = '', $is_file = false)
+    public function render($template = '', array $a_values = array(), $is_file = false)
     {
         $this->o_elog->setFromMethod(__METHOD__ . '.' . __LINE__);
         if ($is_file) {
@@ -158,14 +158,11 @@ class Html extends namespace\Base
             }
         }
         $this->o_elog->write("array of values: " . var_export($a_values, true), LOG_OFF);
-        if ($template == '' || $a_values == '') {
+        if ($template == '' || $a_values == array()) {
             $this->o_elog->write("The Template or the array of values was empty", LOG_OFF);
             return false;
         }
-        if (is_array($a_values) === false) {
-            $this->o_elog->write('The var $a_values isn\'t an array: ' . var_export($a_values, true), LOG_OFF);
-            return false;
-        } elseif (count($a_values) == 0) {
+        if (count($a_values) == 0) {
             $this->o_elog->write("a_values was an empty array.", LOG_OFF);
             return false;
         }
@@ -176,7 +173,8 @@ class Html extends namespace\Base
             } elseif ($tpl_content === false) {
                 $this->o_elog->write('file_get_contents failed', LOG_OFF);
             }
-        } else {
+        }
+        else {
             $tpl_content = $template;
         }
         if (($tpl_content !== false) && ($tpl_content != '')) {

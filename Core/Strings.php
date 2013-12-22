@@ -21,9 +21,8 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Core\Elog;
 
-class Strings extends namespace\Base
+class Strings extends Base
 {
     protected $current_page;
     protected $o_elog;
@@ -39,13 +38,16 @@ class Strings extends namespace\Base
 
     ### String Methods ###
     /**
-     *  Changes the phone number to the specified phone format (or default format)
-     *  This works only for US numbers and is not international (yet).
-     *  @param string $phone_number required defaults to empty str
-     *  @param string $phone_format optional format to change to
-     *      options are 'AAA-BBB-CCCC', '(AAA) BBB-CCCC', 'AAA BBB CCCC', 'AAA.BBB.CCC.DDDD'
-     *      or the generic 'XXX-XXX-XXXX', '(XXX) XXX-XXXX', 'XXX XXX XXXX', 'XXX.XXX.XXXX'
-    **/
+     * Changes the phone number to the specified phone format (or default format)
+     * This works only for US numbers and is not international (yet).
+     *
+     * @param string $phone_number required defaults to empty str
+     * @param string $phone_format optional format to change to
+     *                             options are 'AAA-BBB-CCCC', '(AAA) BBB-CCCC', 'AAA BBB CCCC', 'AAA.BBB.CCC.DDDD'
+     *                             or the generic 'XXX-XXX-XXXX', '(XXX) XXX-XXXX', 'XXX XXX XXXX', 'XXX.XXX.XXXX'
+     *
+     * @return mixed|string
+     */
     public function formatPhoneNumber($phone_number = '', $phone_format = 'AAA-BBB-CCCC')
     {
         if ($phone_number == '') { return ''; }
@@ -133,7 +135,7 @@ class Strings extends namespace\Base
     /**
      *  Turns a string into pure alpha string stripping out everything else
      *  @param string $the_string
-     *  @return str
+     *  @return string
     **/
     public function makeAlpha($the_string = '')
     {
@@ -153,7 +155,7 @@ class Strings extends namespace\Base
         } else {
             $this->the_original_string = $the_string;
         }
-        $the_string = $this->remove_tags($the_string);
+        $the_string = $this->removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
         $new_string = preg_replace("/[^a-zA-Z0-9_\-]/", '', $the_string);
         $this->the_modified_string = $new_string;
@@ -173,7 +175,7 @@ class Strings extends namespace\Base
         } else {
             $this->the_original_string = $the_string;
         }
-        $the_string = $this->remove_tags($the_string);
+        $the_string = $this->removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
         $the_string = preg_replace("/[^a-zA-Z0-9_*.+!\-]/", '', $the_string);
         $new_string = strtolower($the_string);

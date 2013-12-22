@@ -22,7 +22,6 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Core\Elog;
 
 class Actions extends namespace\Base
 {
@@ -39,7 +38,7 @@ class Actions extends namespace\Base
     protected $url_path;
     public function __construct()
     {
-        $this->o_elog = Elog::start();
+        $this->o_elog = \Ritc\Library\Core\Elog::start();
         $this->o_elog->setFromFile(__FILE__);
         $this->o_elog->write("Starting __construct", LOG_OFF);
         $this->o_arrays = new namespace\Arrays();
@@ -108,7 +107,9 @@ class Actions extends namespace\Base
                     return substr($key, 0, $x);
                 }
             }
-        } else {
+            return '';
+        }
+        else {
             return '';
         }
     }

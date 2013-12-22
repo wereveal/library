@@ -21,9 +21,8 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Core\Elog;
 
-class DbFactory extends namespace\Base
+class DbFactory extends Base
 {
     private static $instance_rw = array();
     private static $instance_ro = array();
@@ -40,6 +39,8 @@ class DbFactory extends namespace\Base
     private $o_db;
     protected $o_elog;
     protected $private_properties;
+    protected $sql_error_message;
+
     private function __construct($config_file = 'db_config.php', $read_type = 'rw')
     {
         $this->setPrivateProperties();
@@ -51,21 +52,24 @@ class DbFactory extends namespace\Base
      *  Starts a Singleton object for the specific database config file
      *  or returns the existing object if it is already started.
      *  It can be noted then that two objects can be created for each
-     *  config file, read/write and read only
+     *  config file, read/write and read only and multiple configs can
+     *  be used to create all kinds of database connections - even if
+     *  to the same database simply by using different config file name.
+     *  @param string $config_file default 'db_config.php'
      *  @param string $read_type Default rw
-     *  @param bool $config_file default '' specifies exact location of config file
-     *      if not specified, the Files class should be use to locate the config file
-     *  @return obj - reference the the database object created
+     *  @return object - reference the the database object created
     **/
     public static function start($config_file = 'db_config.php', $read_type = 'rw')
     {
         list($name, $extension) = explode('.', $config_file);
+        if ($extension != 'php' && $extension != 'cfg') { return false; }
         if ($read_type == 'ro') {
             if (!isset(self::$instance_ro[$name])) {
                 self::$instance_ro[$name] = new DbFactory($config_file, 'ro');
             }
             return self::$instance_ro[$name];
-        } else {
+        }
+        else {
             if (!isset(self::$instance_rw[$name])) {
                 self::$instance_rw[$name] = new DbFactory($config_file, 'rw');
             }
@@ -88,7 +92,8 @@ class DbFactory extends namespace\Base
                     $this->db_userro,
                     $this->db_passro,
                     array(\PDO::ATTR_PERSISTENT=>$this->db_persist));
-            } else {
+            }
+            else {
                 $this->o_db = new \PDO(
                     $this->dsn,
                     $this->db_user,
@@ -120,10 +125,23 @@ class DbFactory extends namespace\Base
     {
         return $this->o_db;
     }
+    public function getDbType()
+    {
+        return $this->db_type;
+    }
     public function getSqlErrorMessage()
     {
         return $this->sql_error_message;
     }
+
+    /**
+     *  Sets the class properties used for connecting to the database.
+     *  @param string $config_file - must be in one of three places
+     *      The default place is in /app/config/
+     *      The next place is in the /private directory
+     *      Finally, it can be found in the config directory inside the web site itself (worse place).
+     *  @return bool
+     */
     private function setDbParameters($config_file = 'db_config.php')
     {
         $config_w_path = APP_PATH . '/config/' . $config_file;
@@ -136,7 +154,7 @@ class DbFactory extends namespace\Base
         if (!file_exists($config_w_path)) {
             return false;
         }
-        $a_database = require $config_w_path;
+        $a_database = require_once $config_w_path;
         $this->db_type    = $a_database['driver'];
         $this->db_host    = $a_database['host'];
         $this->db_port    = $a_database['port'];
@@ -209,10 +227,9 @@ class DbFactory extends namespace\Base
             }
         }
     }
-    public function setSqlErrorMessage($type = 'pdo')
+    public function setSqlErrorMessage($value = '')
     {
-        $a_error_stuff = $type == 'pdos' ? $this->o_pdo_statement->errorInfo() : $this->o_db->errorInfo() ;
-        $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] . ' Driver Error Code: ' . $a_error_stuff[1] . ' Driver Error Message: ' . $a_error_stuff[2];
+        $this->sql_error_message = $value;
     }
 
     ### Magic Method fix
