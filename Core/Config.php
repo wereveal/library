@@ -120,7 +120,7 @@ class Config extends namespace\Base
     }
     private function selectConfigList()
     {
-        $select_query = 'SELECT config_name, config_value FROM ritc_config ORDER BY config_name';
+        $select_query = 'SELECT config_name, config_value FROM app_config ORDER BY config_name';
         return $this->o_db->search($select_query);
     }
     private function createNewConfigs()
@@ -128,7 +128,7 @@ class Config extends namespace\Base
         $a_constants = require_once APP_CONFIG_PATH . '/fallback_constants_array.php';
         if ($this->o_db->startTransaction()) {
             $query = "
-                INSERT INTO ritc_config (config_name, config_value)
+                INSERT INTO app_config (config_name, config_value)
                 VALUES (?, ?)";
             if ($this->o_db->insert($query, $a_constants, 'ritc_config')) {
                 if ($this->o_db->commitTransaction() === false) {
