@@ -21,14 +21,12 @@ use Twig_Environment;
 class TwigFactory extends Base
 {
     private static $instance = array();
-    private $o_elog;
     private $o_loader;
     protected $private_properties;
 
     private function __construct($a_twig_paths)
     {
         $this->setPrivateProperties();
-        $this->o_elog = Elog::start();
         $o_loader = new Twig_Loader_Filesystem($a_twig_paths['default_path']);
         foreach ($a_twig_paths['additional_paths'] as $path => $namespace ) {
             $o_loader->prependPath($path, $namespace);
