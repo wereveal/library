@@ -1,15 +1,17 @@
 <?php
-$twig_library = APP_PATH . '/Library/resources/templates';
+$library_twig = APP_PATH . '/Library/resources/templates';
 return array(
-    'default_path'        => $twig_library,
+    'default_path'        => $library_twig,
     'additional_paths'    => array(
-        'default'  => $twig_library . '/default',
-        'elements' => $twig_library . '/elements',
-        'forms'    => $twig_library . '/forms',
-        'main'     => $twig_library . '/main',
-        'pages'    => $twig_library . '/pages',
-        'snippets' => $twig_library . '/snippets',
-        'tests'    => $twig_library . '/test',
+        $library_twig . '/default'  => 'library_default',
+        $library_twig . '/elements' => 'library_elements',
+        $library_twig . '/forms'    => 'library_forms',
+        $library_twig . '/main'     => 'library_main',
+        $library_twig . '/pages'    => 'library_pages',
+        $library_twig . '/snippets' => 'library_snippets',
+        $library_twig . '/tests'    => 'library_tests',
+        $example_twig . '/default'  => 'default',
+        $example_twig . '/elements' => 'elements',
     ),
     'environment_options' => array(
         'cache' => APP_PATH . '/twig_cache',
