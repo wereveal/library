@@ -3,9 +3,18 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-            <div class="row-fluid">
+            <div class="row">
                 <div class="span12">
                     <p>{{ body_text }}</p>
                 </div>
             </div>
+{% endblock %}
+{% block footer %}
+<!-- Footer -->
+<div class="row">
+    <div class="span12 footer">
+        <p>Copyright &copy;&nbsp;2011-2013 <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved &reg;</p>
+    </div>
+</div>
+<!-- /footer -->
 {% endblock %}

@@ -34,48 +34,10 @@
                 </div>
             </div>
 <![endif]-->
-        {% block header %}
-            <div class="row-fluid">
-                <div class="span12 header">
-                    <img src="/assets/images/logo.png">
-                </div>
-            </div>
-        {% endblock %}
-
-        {% block search %}
-            <div class="row-fluid">
-                <div class="span12 searches">
-                    {% block searchSelections %}
-                    <div class="span6 selections">
-                        {% include "@elements/select.twig" with { 'select': section_list } %}
-                        {% include "@elements/select.twig" with { 'select': category_list } %}
-                    </div>
-                    {% endblock %}
-                    {% block searchQuickForm %}
-                    <div class="span6 quick-form">
-                        {% include "@snippets/quickSearch.twig" with { 'form': quick_form } %}
-                    </div>
-                    {% endblock %}
-                    {% block searchAlpha %}
-                    <div class="span12 alpha">
-                        {% include "@snippets/alphaListUl.twig" with { 'li_rows': alpha_list } %}
-                    </div>
-                    {% endblock %}
-                </div>
-            </div>
-        {% endblock %}
-
+        {% block header %}{% endblock %}
+        {% block search %}{% endblock %}
         {% block body %}{% endblock %}
-
-        {% block footer %}
-            <!-- Footer -->
-            <div class="row-fluid">
-                <div class="span12 footer">
-                    <p>Copyright &copy;&nbsp;2011-2013 <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved &reg;</p>
-                </div>
-            </div>
-            <!-- /footer -->
-        {% endblock %}
+        {% block footer %}{% endblock %}
         </div>
 
         {% block javascripts %}
