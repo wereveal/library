@@ -481,6 +481,7 @@ class DbModel extends Base
             }
             if ($o_pdo_stmt !== false) {
                 $this->o_elog->write('Success for prepare.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->o_elog->write('o pdo stmt: ' . var_export($o_pdo_stmt, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return $o_pdo_stmt;
             }
             else {
@@ -589,11 +590,10 @@ class DbModel extends Base
     **/
     public function insertPrepared($a_values = '', \PDOStatement $o_pdo_stmt, $table_name = '')
     {
-        $this->o_elog->setFromMethod(__METHOD__);
         if (is_array($a_values) && count($a_values) > 0) {
             $this->o_elog->write("" . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             $this->resetNewIds();
-            $results = $this->executeInsert($a_values, $table_name);
+            $results = $this->executeInsert($a_values, $o_pdo_stmt, $table_name);
             if ($results === false) {
                 $this->o_elog->write('Execute Failure', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 $this->setSqlErrorMessage($this->o_db);
@@ -615,24 +615,25 @@ class DbModel extends Base
     /**
      *  Specialized version of execute which retains ids of each insert.
      *
-     * @param array  $a_values    see $this->execute for details
-     * @param string $table_name
+     *  @param array $a_values see $this->execute for details
+     *  @param \PDOStatement $o_pdo_stmt
+     *  @param string $table_name
      *
-     * @return bool
+     *  @return bool
      */
-    public function executeInsert(array $a_values = array(), $table_name = '')
+    public function executeInsert(array $a_values = array(), \PDOStatement $o_pdo_stmt, $table_name = '')
     {
         if (count($a_values) > 0) {
             $sequence_name = $this->db_type == 'pgsql' ? $this->getPgsqlSequenceName($table_name) : '' ;
             if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays, can not be mixed
                 foreach ($a_values as $a_stuph) {
-                    if ($this->executeInsert($a_stuph, $table_name) === false) {
+                    if ($this->executeInsert($a_stuph, $o_pdo_stmt, $table_name) === false) {
                         return false;
                     }
                 }
             }
             else { // should be a single record insert
-                if ($this->execute($a_values, true) === false) {
+                if ($this->execute($a_values, $o_pdo_stmt) === false) {
                     return false;
                 }
                 $this->a_new_ids[] = $this->o_db->lastInsertId($sequence_name);

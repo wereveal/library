@@ -79,7 +79,6 @@ class DbFactory extends Base
 
     public function connect()
     {
-        $this->o_elog->setFromMethod(__METHOD__);
         if (is_object($this->o_db)) {
             $this->o_elog->write('The database is already connected.', LOG_OFF);
             return $this->o_db;
@@ -100,8 +99,8 @@ class DbFactory extends Base
                     $this->db_pass,
                     array(\PDO::ATTR_PERSISTENT=>$this->db_persist));
             }
-            $this->o_elog->write("The dsn is: $this->dsn", LOG_OFF);
-            $this->o_elog->write('Connect to db success.', LOG_OFF);
+            $this->o_elog->write("The dsn is: $this->dsn", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write('Connect to db success.', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $this->o_db;
         }
         catch(\PDOException $e) {
