@@ -9,10 +9,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.1.1
- *  @date 2013-12-19 07:57:34
+ *  @version 1.2.0
+ *  @date 2013-12-30 13:16:46
  *  @note A part of the RITC Library v4
  *  @note <pre><b>Change Log</b>
+ *      v1.2.0 - new method added - 12/30/2013 wer
  *      v1.1.1 - match package change - 12/19/2013 wer
  *      v1.1.0 - namespace changes - 07/30/2013 wer
  *      v1.0.3 - moved array methods from class Strings to here - 03/27/2013
@@ -76,6 +77,27 @@ class Arrays extends namespace\Base
             }
         }
         return $a_clean;
+    }
+    /**
+     *  Verifies an associate array has the necessary keys.
+     *  @param array $a_required_keys required to have at least one value
+     *  @param array $a_values required, must be associative array.
+     *  @return bool
+    **/
+    public function hasRequiredKeys(array $a_required_keys = array(), array $a_values = array())
+    {
+        if (count($a_required_keys) === 0 || count($a_values) === 0) {
+            return false;
+        }
+        if (!$this->isAssocArray($a_values)) {
+            return false;
+        }
+        foreach ($a_required_keys as $key) {
+            if (!array_key_exists($key, $a_check_values)) {
+                return false;
+            }
+        }
+        return true;
     }
     /**
      *  Determines that the value passed in is an associative array with all non-numeric keys.
@@ -147,7 +169,6 @@ class Arrays extends namespace\Base
         }
         return $a_clean;
     }
-
     /**
      *  Strips unwanted key=>value pairs.
      *  Only really valuable for assoc arrays.
