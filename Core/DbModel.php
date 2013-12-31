@@ -595,11 +595,11 @@ class DbModel extends Base
             $this->resetNewIds();
             $results = $this->executeInsert($a_values, $o_pdo_stmt, $table_name);
             if ($results === false) {
-                $this->o_elog->write('Execute Failure', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->o_elog->write('Execute Failure', LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $this->setSqlErrorMessage($this->o_db);
-                $this->o_elog->write('PDO: ' . $this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->o_elog->write('PDO: ' . $this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $this->setSqlErrorMessage($o_pdo_stmt);
-                $this->o_elog->write('PDO_Statement: ' . $this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->o_elog->write('PDO_Statement: ' . $this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $this->resetNewIds();
                 return false;
             }
@@ -878,7 +878,6 @@ class DbModel extends Base
      *  Builds the SET part of an UPDATE sql statement
      *  @param array $a_values required key=>value pairs
      *      pairs are those to be used in the statement fragment
-     *      keys should be in the form for a prepeared sql statement e.g. :this_key
      *  @param array $a_skip_keys optional list of keys to skip in the set statement
      *  @return string $set_sql
     **/
@@ -886,11 +885,13 @@ class DbModel extends Base
     {
         if ($a_values == array()) { return ''; }
         $set_sql = '';
+        $a_values = $this->prepareKeys($a_values);
+        foreach ($a_skip_keys as $skip_key => $skip_value) {
+            $a_skip_keys[$skip_key] = strpos($skip_value, ':') === 0 ? $skip_value : ':' . $skip_value;
+        }
+        $this->o_elog->write('skip keys: ' . var_export($a_skip_keys, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
         foreach ($a_values as $key => $value) {
-            if (array_key_exists($key, $a_skip_keys)) {
-                /* skip it */
-            }
-            else {
+            if (!in_array($key, $a_skip_keys)) {
                 if ($set_sql == '' ) {
                     $set_sql = "SET " . str_replace(':', '', $key) . " = {$key} ";
                 }

@@ -239,11 +239,11 @@ class Access extends namespace\Base
     **/
     public function isID($value = '')
     {
-            $first_char = substr($value, 0, 1);
-            if (preg_match('/[0-9]/', $first_char) === 1) {
-                    return true;
-            }
-            return false;
+        $first_char = substr($value, 0, 1);
+        if (preg_match('/[0-9]/', $first_char) === 1) {
+            return true;
+        }
+        return false;
     }
     /**
      *  Verifies user has the role of super administrator.

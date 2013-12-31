@@ -6,8 +6,12 @@ Failed: {{ failed_tests }}
 Passed: {{ passed_tests }}
 Number of Tests: {{ num_o_tests}}
 Failed Test Names:
-{{ failed_test_names }}
+{% for fail_name in failed_test_names %}
+{{ fail_name }}
+{% endfor %}
 Passed Test Names:
-{{ passed_test_names }}
+{% for pass_name in passed_test_names %}
+{{ pass_name }}
+{% endfor %}
 </pre>
 {% endblock %}
