@@ -93,7 +93,7 @@ class Arrays extends namespace\Base
             return false;
         }
         foreach ($a_required_keys as $key) {
-            if (!array_key_exists($key, $a_check_values)) {
+            if (!array_key_exists($key, $a_values)) {
                 return false;
             }
         }
