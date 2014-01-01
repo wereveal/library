@@ -6,15 +6,15 @@
  *  @namespace Ritc/Library/Core
  *  @class Session
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 06/14/2011 15:13:24
+ *  @version 1.1.1
+ *  @date 2013-12-31 22:39:20
  *  @note A part of the RITC Library v4
  *  @note <pre><b>Change Log</b>
+ *      v1.1.1 - Bug fixes 12/31/2013 wer
  *      v1.1.0 - 06/14/2011 wer
  *  </pre>
 **/
 namespace Ritc\Library\Core;
-
 
 class Session extends Base
 {
@@ -34,8 +34,9 @@ class Session extends Base
         }
         if ($session_name != '') {
             session_name($session_name);
-        } else {
-            session_name('FCRSESSID');
+        }
+        else {
+            session_name('RITCSESSID');
         }
         $this->session_started = session_start();
         if ($this->session_started) {
@@ -43,7 +44,8 @@ class Session extends Base
             $this->session_id   = session_id();
             $this->session_name = session_name();
             $this->o_elog->write("Session Name in construct: " . session_name(), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        } else {
+        }
+        else {
             $this->o_elog->write("Session Not Started", LOG_OFF, __METHOD__ . '.' . __LINE__);
         }
 
@@ -134,16 +136,16 @@ class Session extends Base
      *  Sets $_SESSION vars specified in the array.
      *  Any number session vars can be set/created with this function.
      *
-     * @pre      If the $a_vars array is from a POST or GET it is assumed in this
+     *  @pre     If the $a_vars array is from a POST or GET it is assumed in this
      *           method that the values have been put through some sort of data
      *           cleaner. In other words, you should not put a raw $_POST or $_GET
      *           through this.
      *
-     * @param array $a_vars
-     * @param array $a_allowed_keys
+     *  @param array $a_vars
+     *  @param array $a_allowed_keys
      *
-     * @return void
-     */
+     *  @return void
+    **/
     public function setVarsFromArray(array $a_vars = array(), array $a_allowed_keys = array())
     {
         foreach ($a_vars as $name=>$value) {
@@ -157,28 +159,34 @@ class Session extends Base
             }
         }
     }
-    public function getProperty($property_name)
-    {
-        return $this->$property_name;
-    }
+
+    /**
+     * @param int $time
+     * @param bool $add
+     */
     public function setIdleTime($time = 1800, $add = false)
     {
         if ($add && isset($_SESSION["idle_time"])) {
             $_SESSION["idle_time"] += $time;
-        } else {
+        }
+        else {
             $_SESSION["idle_time"] = $time;
         }
         if (!isset($_SESSION["idle_timestamp"])) {
             $_SESSION["idle_timestamp"] = time();
         }
     }
-    public function useCookies($use_cookies = "")
+
+    /**
+     * @param bool $use_cookies
+     * @return bool|string
+     */
+    public function useCookies($use_cookies = true)
     {
         switch ($use_cookies) {
             case false:
                 return ini_set("session.use.cookies", 0);
             case true:
-            case "":
                 if (ini_get('session.use_cookies') == '1') {
                     return true;
                 }
@@ -186,6 +194,11 @@ class Session extends Base
                 return ini_set("session.use.cookies", 1);
         }
     }
+
+    /**
+     * @param bool $use_trans
+     * @return bool|string
+     */
     public function useTransSid($use_trans = false)
     {
         $old_use_trans = ini_get('session.use_trans_sid') ? true : false;
@@ -194,9 +207,17 @@ class Session extends Base
         }
         return true;
     }
+
+    /**
+     *  Sets the session variable 'token' which is used in a bunch of places.
+     */
     public function setToken()
     {
         $_SESSION['token'] = md5(uniqid(mt_rand(), true));
+    }
+    public function getToken()
+    {
+        return $_SESSION['token'];
     }
     /**
      *  Verifies the session is valid.
@@ -212,28 +233,33 @@ class Session extends Base
     **/
     public function isValidSession($a_values = array(), $cookie_only = false)
     {
-        if (  isset($_SESSION['token']) === false
+        if (isset($_SESSION['token']) === false
             || isset($_SESSION['idle_timestamp']) === false
-            || isset($_SESSION['idle_time']) === false
-        ) {
+            || isset($_SESSION['idle_time']) === false)
+        {
             return false;
         }
         if ($cookie_only === false && $a_values == array()) {
             return false;
-        } elseif ($cookie_only !== false) {
+        }
+        elseif ($cookie_only !== false) {
             if (($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-                && $_COOKIE['FCRSESSID'] == session_id()) {
+                && $_COOKIE['RITCSESSID'] == session_id())
+            {
                 return true;
-            } else {
+            }
+            else {
                 return false;
             }
-        } elseif (($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-                && $a_values['token']    == $_SESSION['token']
-                && $a_values['form_ts']  == $_SESSION['idle_timestamp']
-                && $_COOKIE['FCRSESSID'] == session_id())
+        }
+        elseif (($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
+                && $a_values['token']     == $_SESSION['token']
+                && $a_values['form_ts']   == $_SESSION['idle_timestamp']
+                && $_COOKIE['RITCSESSID'] == session_id())
         {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }

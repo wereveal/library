@@ -6,8 +6,9 @@
  *  @class ViewHelper
  *  @author William E Reveal <bill@revealitconsulting.com>
  *  @version 1.0.0
- *  @data 2013-07-30 11:24:31
+ *  @date 2013-12-31 23:24:31
  *  @note Change Log
+ *      v1.0.1 - minor key name change - 12/31/2013
  *      v1.0.0 - intial file - 07/30/2013
  *  @note RITC Library version 4.0
  *  @ingroup ritc_library helper
@@ -25,7 +26,7 @@ class ViewHelper
 	 *	    'image_src'     => '',         // is the web path including image file name
 	 *	    'image_class'   => 'msg-icon', // usually used to float image/manage where it goes
 	 *	    'alt_text'      => '',         // for the image
-	 *	    'other_stuph'   => ''          // a just in case thing.
+	 *	    'extras'        => ''          // a just in case thing.
 	 *	)
 	 *  @return array values for the template.
 	**/
@@ -37,7 +38,7 @@ class ViewHelper
 		$image_src   = '';
 		$message     = '';
 		$msg_class   = '';
-		$other_stuph = '';
+		$extras      = '';
 		$type        = 'info';
 	    foreach ($a_message_params as $key => $value) {
 	        switch ($key) {
@@ -62,8 +63,8 @@ class ViewHelper
 	            case 'image_src':
 	                $image_src = $value;
 	                break;
-	            case 'other_stuph':
-	                $other_stuph = $value;
+	            case 'extras':
+	                $extras = $value;
 	            default:
 	                // do nothing
 	        }
@@ -103,7 +104,7 @@ class ViewHelper
 			    $image_class = '';
 			    $message     = '';
 			    $alt_text    = '';
-			    $other_stuph = '';
+			    $extras      = '';
 		}
 		return array(
 		    'message'       => $message,
@@ -111,7 +112,7 @@ class ViewHelper
 		    'image_src'     => $image_src,
 		    'image_class'   => $image_class,
 		    'alt_text'      => $alt_text,
-		    'other_stuph'   => $other_stuph
+		    'extras'        => $extras
 		);
 	}
 }
