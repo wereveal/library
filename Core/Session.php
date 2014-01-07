@@ -225,9 +225,12 @@ class Session extends Base
      *  to fool many XSS things.
      *  @pre session variables token and idle_timestamp
      *      as well as the session id matches cookie name
-     *  @param $a_values (array), array(
-     *      'token'=>_SESSION['token'],
-     *      'form_ts'=>_SESSION['idle_timestamp'])
+     *  @param array $a_values  array(
+     *      'token'   => SESSION['token'],
+     *      'tolken'  => SESSION['token'], // optional, if set and token isn't, token = tolken
+     *      'form_ts' => SESSION['idle_timestamp'],
+     *      'hobbit   => '' // optional anti-spam measure, if not blank, invalidate session
+     *      )
      *  @param bool $cookie_only specifies if to use cookie data only for validation
      *  @return bool, true or false if valid
     **/
@@ -237,6 +240,12 @@ class Session extends Base
             || isset($_SESSION['idle_timestamp']) === false
             || isset($_SESSION['idle_time']) === false)
         {
+            return false;
+        }
+        if (isset($a_values['tolken']) && !isset($a_values['token'])) {
+            $a_values['token'] = $a_values['tolken'];
+        }
+        if (isset($a_values['hobbit']) && $a_values['hobbit'] != '') {
             return false;
         }
         if ($cookie_only === false && $a_values == array()) {
