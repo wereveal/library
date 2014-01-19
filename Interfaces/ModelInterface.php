@@ -2,7 +2,7 @@
 /**
  *  Interface for database CRUD.
 **/
-namespace Ritc\Blog\Models;
+namespace Ritc\Library\Interfaces;
 
 interface ModelInterface {
     /**
