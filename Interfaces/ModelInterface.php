@@ -21,11 +21,10 @@ interface ModelInterface {
 
     /**
      * Generic update for a record using the values provided.
-     * @param string $id
      * @param array $a_values
      * @return bool
      */
-    public function update($id = '', array $a_values);
+    public function update(array $a_values);
 
     /**
      * Generic deletes a record based on the id provided.
