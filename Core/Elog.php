@@ -9,7 +9,7 @@
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version:  2.6.1
  *  @date 2013-12-19 08:11:49
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v2.6.1 - package change required minor update - 12/19/2013 wer
  *      v2.6.0 - Namespace changes - 07/30/2013 wer

@@ -11,7 +11,7 @@
  *  <b>Change Log</b>
  *      v1.0.0 - Initial version 2013-12-12
  *  </pre>
- *  @note Ritc Library version 4.0
+ *  @note Ritc Library version 5.0
  *  @ingroup ritc_library abstracts
 **/
 namespace Ritc\Library\Abstracts;

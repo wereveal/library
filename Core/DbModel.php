@@ -9,7 +9,7 @@
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 3.0.1
  *  @date 2013-12-19 08:07:50
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v3.0.1 - renamed file to match function, eliminated the unnecessary - 12/19/2013 wer
  *      v3.0.0 - split the pdo creation (database connection) from the crud - 2013-11-06

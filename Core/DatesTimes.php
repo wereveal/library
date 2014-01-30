@@ -8,7 +8,7 @@
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 3.0.0
  *  @date 2013-03-27 16:47:09
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v3.0.0 - FIG standards (mostly)
  *  </pre>

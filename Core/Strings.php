@@ -12,11 +12,11 @@
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 5.1.0
  *  @date 2013-05-14 12:42:32
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v5.1.0 - added formatPhoneNumber method. 2013-05-14
  *      v5.0.1 - bug fixes and removed unused code left over from old class Output 2013-05-01
- *      v5.0.0 - renamed new version for RITC Library v4
+ *      v5.0.0 - renamed new version for RITC Library v5
  *  </pre>
 **/
 namespace Ritc\Library\Core;

@@ -12,7 +12,7 @@
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 0.1.2
  *  @date 2013-12-19 08:10:44
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v0.1.2 - minor package change required minor modification - 12/19/2013 wer
  *      v0.1.1 - added two additional places the config files can exist - 2013-11-08

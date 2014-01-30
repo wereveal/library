@@ -11,7 +11,7 @@
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 2.2.3
  *  @date 2013-12-19 07:51:50
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v2.2.4 - changed to match namespace change 12/19/2013 wer
  *      v2.2.3 - Changed to namespace reorge

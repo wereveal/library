@@ -12,7 +12,7 @@
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.2
  *  @date 2013-12-19 08:29:54
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v1.0.2 - some refactoring changes based on changes in package - 12/19/2013 wer
  *      v1.0.1 - some refactoring changes based on changes in other files - 03/17/2013 wer

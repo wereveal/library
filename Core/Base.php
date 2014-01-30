@@ -9,7 +9,7 @@
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version  1.0.4
  *  @date 2013-12-19 07:22:30
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v1.0.4 - changed back to a class. Couldn't figure out why
  *          it should be abstract. Made an interface for it just because. 12/19/2013

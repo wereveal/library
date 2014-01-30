@@ -1,12 +1,12 @@
 <?php
 /**
- *  This file sets up the Ritc Framework.
- *  Required to get the entire framework to work.
+ *  @brief This file sets up a website.
+ *  @details Required to get the entire website to work. Needs the Ritc Library.
  *  @file setup.php
  *  @namespace Ritc
  *  @defgroup ritc_library
  *  @{
- *      @version 4.0
+ *      @version 5.0.0
  *      @defgroup configs Configuration files
  *      @ingroup ritc_library
  *      @defgroup core Core files of the library

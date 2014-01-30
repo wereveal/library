@@ -8,7 +8,7 @@
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 0.1.0
  *  @date 2013-11-11 12:49:59
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v0.1.0 - initial file creation - 2013-11-11
  *  </pre>

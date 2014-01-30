@@ -9,7 +9,7 @@
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 2.1.0
  *  @date 2013-04-22 11:46:56
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v2.1 Changed to work in the ritc_library
  *  </pre>

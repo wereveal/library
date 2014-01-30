@@ -8,7 +8,7 @@
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 4.2.0
  *  @date 2013-12-19 07:46:56
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre>The constants with _DIR_NAME should correspond to dir names in
  *      the site theme or namespace (e.g. templates are in namespace). If a directory
  *      is missing, this could cause a fatal error.

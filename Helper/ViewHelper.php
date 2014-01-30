@@ -10,7 +10,7 @@
  *  @note Change Log
  *      v1.0.1 - minor key name change - 12/31/2013
  *      v1.0.0 - intial file - 07/30/2013
- *  @note RITC Library version 4.0
+ *  @note RITC Library version 5.0
  *  @ingroup ritc_library helper
 **/
 namespace Ritc\Library\Helper;

@@ -11,7 +11,7 @@
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.2.0
  *  @date 2013-12-30 13:16:46
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v1.2.0 - new method added - 12/30/2013 wer
  *      v1.1.1 - match package change - 12/19/2013 wer

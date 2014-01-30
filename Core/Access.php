@@ -10,7 +10,7 @@
  *  @author William E Reveal  <bill@revealitconsulting.com>
  *  @version 3.6.0
  *  @date 2013-11-12 12:57:24
- *  @note A part of the RITC Library v4
+ *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
  *      v3.6.0 - Database changes, added new user role connector table - 11/12/2013
  *               New and revised methods to match database changes.

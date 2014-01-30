@@ -18,7 +18,7 @@
  *              within the method tester
  *      v1.0.1 - updated to match new framework 2013-04-03 wer
  *  </pre>
- *  @note RITC Library v4.0.0
+ *  @note RITC Library v5.0.0
  *  @ingroup ritc_library abstracts
 **/
 namespace Ritc\Library\Abstracts;
