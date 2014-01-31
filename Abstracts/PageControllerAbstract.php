@@ -1,7 +1,8 @@
 <?php
 /**
- *  Abstract class that provides common methods used for page controllers in the app.
+ *  @brief Abstract class that provides common methods used for page controllers in the app.
  *  @file PageControllerAbstract.php
+ *  @ingroup ritc_library abstracts
  *  @namespace Ritc/Library/Abstracts
  *  @class PageControllerAbstract
  *  @author William Reveal  <bill@revealitconsulting.com>
@@ -12,11 +13,12 @@
  *      v1.0.0 - Initial version 2013-12-12
  *  </pre>
  *  @note Ritc Library version 5.0
- *  @ingroup ritc_library abstracts
 **/
 namespace Ritc\Library\Abstracts;
 
-abstract class PageControllerAbstract implements namespace\PageControllerInterface
+use Ritc\Library\Interfaces\PageControllerInterface;
+
+abstract class PageControllerAbstract implements PageControllerInterface
 {
     /**
      *  Main Router and Puker outer (more descriptive method name).

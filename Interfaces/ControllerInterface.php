@@ -1,6 +1,7 @@
 <?php
 /**
  *  @brief Class used to set up controller classes.
+ *  @details has one required method, renderPage
  *  @file ControllerInterface.php
  *  @ingroup ritc_library core
  *  @namespace Ritc/Library/Interfaces
@@ -17,11 +18,5 @@ namespace Ritc\Library\Interfaces;
 
 interface ControllerInterface
 {
-    public function router(array $a_actions, array $a_values);
-
-    ### Getters and Setters ###
-    public function setDateFormat($value);
-    public function setPhoneFormat($value);
-    public function getDateFormat();
-    public function getPhoneFormat();
+    public function renderPage(array $a_actions = array(), array $a_values = array());
 }
