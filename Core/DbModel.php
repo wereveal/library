@@ -7,10 +7,11 @@
  *  @namespace Ritc/Library/Core
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.0.1
- *  @date 2013-12-19 08:07:50
+ *  @version 3.1.0
+ *  @date 2014-01-31 14:02:01
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
+ *      v3.1.0 - added method to return db tables - 01/31/2014 wer
  *      v3.0.1 - renamed file to match function, eliminated the unnecessary - 12/19/2013 wer
  *      v3.0.0 - split the pdo creation (database connection) from the crud - 2013-11-06
  *      v2.4.4 - bug fix in buildSqlWhere - 2013-07-23 17:24:10
@@ -1141,7 +1142,7 @@ class DbModel extends Base
                     return $a_column_names;
                     break;
                 case 'sqlite':
-                    $sql = "PRAGMA table({$table_name})";
+                    $sql = "PRAGMA table_info({$table_name})";
                     $results = $this->search($sql);
                     foreach ($results as $row) {
                         $a_column_names[] = $row['Field'];
@@ -1162,6 +1163,33 @@ class DbModel extends Base
             $this->o_elog->setFrom(basename(__FILE__), __METHOD__);
             $this->o_elog->write('You must specify a table name for this to work.');
             return false;
+        }
+    }
+    /**
+     *  Selects the table names from the database.
+     *  @return array $a_table_names
+     */
+    public function selectDbTables()
+    {
+        switch ($this->db_type) {
+            case 'pgsql':
+                $sql = "
+                    SELECT table_name
+                    FROM information_schema.tables
+                ";
+                return $this->search($sql, array(), 'num');
+            case 'sqlite':
+                $sql = "
+                    SELECT name
+                    FROM sqlite_master
+                    WHERE type='table'
+                    ORDER BY name
+                ";
+                return $this->search($sql, array(), 'num');
+            case 'mysql':
+            default:
+                $sql = "SHOW TABLES";
+                return $this->search($sql, array(), 'num');
         }
     }
     /**
