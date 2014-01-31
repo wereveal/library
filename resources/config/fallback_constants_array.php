@@ -9,7 +9,8 @@ return array(
     array('PAGE_META_KEYWORDS', 'My Company'),
     array('PAGE_TEMPLATE', 'index.twig'),
     array('PAGE_TITLE', 'My Company'),
-    array('THEME_NAME', 'default'),
-    array('ADMIN_THEME_NAME', 'default')
-)
-?>
+    array('THEMES_DIR', ''),
+    array('THEME_NAME', ''),
+    array('ADMIN_THEME_NAME', ''),
+    array('TABLE_PREFIX', 'ritc')
+);
