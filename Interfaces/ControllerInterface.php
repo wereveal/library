@@ -19,4 +19,8 @@ namespace Ritc\Library\Interfaces;
 interface ControllerInterface
 {
     public function renderPage(array $a_actions = array(), array $a_values = array());
+    public function getActions();
+    public function getValues();
+    public function setActions(array $a_actions = array());
+    public function setValues(array $a_values = array());
 }
