@@ -1,6 +1,8 @@
 <?php
 /**
  *  @brief Abstract class that provides common methods used for page controllers in the app.
+ *  @details quite frankly, expect this to be an example more than anything of how
+ *          to implement the PageControllerInterface.
  *  @file PageControllerAbstract.php
  *  @ingroup ritc_library abstracts
  *  @namespace Ritc/Library/Abstracts
