@@ -1,9 +1,9 @@
-{% extends '@plibrary_main/index.twig' %}
+{% extends '@main/index.twig' %}
 
 {% block prevnext %}
                     <div class="row-fluid">
                         <div class="span12 prevnext">
-                            {% include "@library_snippets/prevnext.twig" with { 'prevnext': prevnext } %}
+                            {% include "@snippets/prevnext.twig" with { 'prevnext': prevnext } %}
                         </div>
                     </div>
 {% endblock %}
