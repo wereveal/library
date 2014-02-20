@@ -25,7 +25,7 @@ class Session extends Base
     private $session_id;
     private $session_name;
     private $session_started = false;
-    private function __construct($session_id, $session_name)
+    private function __construct($session_id = '', $session_name = '')
     {
         $this->setPrivateProperties();
         $this->o_elog = Elog::start();
@@ -133,6 +133,41 @@ class Session extends Base
     }
 
     /**
+     *  Sets basic session vars for form validation.
+     *
+     *  @param array $a_values valid array()
+     *  @return bool
+    **/
+    public function setSessionVars(array $a_values = array())
+    {
+        if (count($a_values) === 0) {
+            $this->setToken();
+            $this->setIdleTime();
+        }
+        else {
+            $token   = '';
+            $form_ts = '';
+            if (isset($a_values['tolken']) && $a_values['tolken'] != '') {
+                $token = $a_values['tolken'];
+            }
+            if (isset($a_values['form_ts']) && $a_values['form_ts'] != '') {
+                $form_ts = $a_values['form_ts'];
+            }
+            if (!isset($_SESSION['token']) || $_SESSION['token'] != $token) {
+                $this->setToken();
+            }
+            if (!isset($_SESSION['idle_timestamp']) || $_SESSION['idle_timestamp'] != $form_ts) {
+                if (!isset($_SESSION['idle_time'])) {
+                    $this->setIdleTime();
+                }
+                else {
+                    $this->updateIdleTimestamp();
+                }
+            }
+        }
+    }
+
+    /**
      *  Sets $_SESSION vars specified in the array.
      *  Any number session vars can be set/created with this function.
      *
@@ -185,13 +220,10 @@ class Session extends Base
     {
         switch ($use_cookies) {
             case false:
-                return ini_set("session.use.cookies", 0);
+                return ini_set("session.use_cookies", 0) && ini_set('session.use_only_cookies', 0);
             case true:
-                if (ini_get('session.use_cookies') == '1') {
-                    return true;
-                }
             default:
-                return ini_set("session.use.cookies", 1);
+                return ini_set('session.use_cookies', 1) && ini_set("session.use_only_cookies", 1);
         }
     }
 
@@ -253,24 +285,27 @@ class Session extends Base
         }
         elseif ($cookie_only !== false) {
             if (($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-                && $_COOKIE['RITCSESSID'] == session_id())
+                && $_COOKIE[$this->session_name] == session_id())
             {
                 return true;
             }
-            else {
-                return false;
+        }
+        elseif (ini_get('session.use_cookies') === 0 && ini_get('session.use_only_cookies') === 0) {
+            if (($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
+                && $a_values['token']   == $_SESSION['token']
+                && $a_values['form_ts'] == $_SESSION['idle_timestamp']
+            ) {
+                return true;
             }
         }
         elseif (($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-                && $a_values['token']     == $_SESSION['token']
-                && $a_values['form_ts']   == $_SESSION['idle_timestamp']
-                && $_COOKIE['RITCSESSID'] == session_id())
+                && $a_values['token']   == $_SESSION['token']
+                && $a_values['form_ts'] == $_SESSION['idle_timestamp']
+                && $_COOKIE[$this->session_name] == session_id())
         {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
     /**
      *  tells you if it is not a valid session.
