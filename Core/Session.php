@@ -263,10 +263,10 @@ class Session extends Base
      *      'form_ts' => SESSION['idle_timestamp'],
      *      'hobbit   => '' // optional anti-spam measure, if not blank, invalidate session
      *      )
-     *  @param bool $cookie_only specifies if to use cookie data only for validation
+     *  @param bool $use_form_values specifies if to use form data for validation
      *  @return bool, true or false if valid
     **/
-    public function isValidSession($a_values = array(), $cookie_only = false)
+    public function isValidSession($a_values = array(), $use_form_values = true)
     {
         if (isset($_SESSION['token']) === false
             || isset($_SESSION['idle_timestamp']) === false
@@ -280,45 +280,55 @@ class Session extends Base
         if (isset($a_values['hobbit']) && $a_values['hobbit'] != '') {
             return false;
         }
-        if ($cookie_only === false && $a_values == array()) {
+        if ($use_form_values === true && $a_values == array()) {
             return false;
         }
-        elseif ($cookie_only !== false) {
-            if (($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-                && $_COOKIE[$this->session_name] == session_id())
-            {
+        elseif ($use_form_values === false) {
+            if (
+                (ini_get('session.use_cookies') == 0)
+                && (ini_get('session.use_only_cookies') == 0)
+                && ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
+            ) {
+                return true;
+            }
+            elseif (
+                ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
+                && $_COOKIE[$this->session_name] == session_id()
+            ) {
                 return true;
             }
         }
-        elseif (ini_get('session.use_cookies') === 0 && ini_get('session.use_only_cookies') === 0) {
-            if (($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
+        elseif ((ini_get('session.use_cookies') == 0) && (ini_get('session.use_only_cookies') == 0)) {
+            if (
+                ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
                 && $a_values['token']   == $_SESSION['token']
                 && $a_values['form_ts'] == $_SESSION['idle_timestamp']
             ) {
                 return true;
             }
         }
-        elseif (($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-                && $a_values['token']   == $_SESSION['token']
-                && $a_values['form_ts'] == $_SESSION['idle_timestamp']
-                && $_COOKIE[$this->session_name] == session_id())
-        {
+        elseif (
+            ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
+            && $a_values['token']   == $_SESSION['token']
+            && $a_values['form_ts'] == $_SESSION['idle_timestamp']
+            && $_COOKIE[$this->session_name] == session_id()
+        ) {
             return true;
         }
         return false;
     }
     /**
-     *  tells you if it is not a valid session.
+     *  Tells you if it is not a valid session.
      *  returns the opposite of isValidSession method. See its comments for more info
      *  @param $a_values (array), array(
      *      'token'=>_SESSION['token'],
             'form_ts'=>_SESSION['idle_timestamp'])
-     *  @param bool $cookie_only specifies if to use cookie data only for validation
+     *  @param bool $use_form_values specifies if to use form data for validation
      *  @return bool true or false
     **/
-    public function isNotValidSession($a_values = array(), $cookie_only = false)
+    public function isNotValidSession($a_values = array(), $use_form_values = true)
     {
-        if ($this->isValidSession($a_values, $cookie_only)) {
+        if ($this->isValidSession($a_values, $use_form_values)) {
             return false;
         }
         return true;

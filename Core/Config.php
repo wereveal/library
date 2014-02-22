@@ -21,8 +21,7 @@
 **/
 namespace Ritc\Library\Core;
 
-
-class Config extends namespace\Base
+class Config extends Base
 {
     private $created = false;
     protected $current_page;
@@ -77,16 +76,18 @@ class Config extends namespace\Base
                 $this->o_elog->write("List of Configs: " . var_export($a_config, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 foreach ($a_config as $row) {
                     $key   = strtoupper($row['config_name']);
-                    switch ($row['config_value']) {
-                        case 'true':
-                            define("{$key}", true);
-                            break;
-                        case 'false':
-                            define("{$key}", false);
-                            break;
-                        default:
-                            $value = $row['config_value'];
-                            define("{$key}", "{$value}");
+                    if (!defined("{$key}")) {
+                        switch ($row['config_value']) {
+                            case 'true':
+                                define("{$key}", true);
+                                break;
+                            case 'false':
+                                define("{$key}", false);
+                                break;
+                            default:
+                                $value = $row['config_value'];
+                                define("{$key}", "{$value}");
+                        }
                     }
                 }
                 return true;
@@ -99,39 +100,93 @@ class Config extends namespace\Base
             return true;
         }
     }
+
+    /**
+     *  Creates constants referring to the main assets for the primary (single) theme.
+     *  A theme may be unnamed, i.e. there is no theme. It uses the basic
+     *      assets directory for everything. If there is a defined THEMES_DIR,
+     *      that overrides the assets directory e.g. /themes
+    **/
     private function createThemeConstants()
     {
+        if (!defined('ASSETS_DIR_NAME')) {
+            define('ASSETS_DIR_NAME', 'assets');
+        }
+        if (!defined('ASSETS_DIR')) {
+            define('ASSETS_DIR', '/' . ASSETS_DIR_NAME);
+        }
+        if (!defined('THEMES_DIR')) {
+            define('THEMES_DIR', ASSETS_DIR);
+        }
         if (defined('THEME_NAME')) {
             if (THEME_NAME == '') {
-                define('THEME_DIR', '/assets');
-            }
-            elseif (defined('THEMES_DIR')) {
-                if (THEMES_DIR != '') {
-                    define('THEME_DIR', THEMES_DIR . '/' . THEME_NAME);
+                if (THEMES_DIR == '') {
+                    define('THEME_DIR', ASSETS_DIR);
                 }
                 else {
-                    define('THEME_DIR', '/assets/themes/' . THEME_NAME);
+                    define('THEME_DIR', THEMES_DIR);
                 }
             }
             else {
-                define('THEME_DIR', '/assets/themes/' . THEME_NAME);
+                if (THEMES_DIR == '') {
+                    define('THEME_DIR', ASSETS_DIR . '/themes/' . THEME_NAME);
+                }
+                else {
+                    define('THEME_DIR', THEMES_DIR . '/' . THEME_NAME);
+                }
             }
         }
-        elseif (defined('THEMES_DIR')) {
-            define('THEME_DIR', THEMES_DIR . '/default');
-        }
         else {
-            define('THEME_DIR', '/assets/themes/default');
+            define('THEME_NAME', '');
+            if (THEMES_DIR == '') {
+                define('THEME_DIR', ASSETS_DIR);
+            }
+            else {
+                define('THEME_DIR', THEMES_DIR);
+            }
         }
-        define('CSS_DIR',          THEME_DIR . '/' . CSS_DIR_NAME);
-        define('HTML_DIR',         THEME_DIR . '/' . HTML_DIR_NAME);
-        define('JS_DIR',           THEME_DIR . '/' . JS_DIR_NAME);
-        define('THEME_IMAGE_DIR',  THEME_DIR . '/' . IMAGE_DIR_NAME);
-        define('THEME_PATH',       SITE_PATH . THEME_DIR);
-        define('CSS_PATH',         SITE_PATH . CSS_DIR);
-        define('HTML_PATH',        SITE_PATH . HTML_DIR);
-        define('JS_PATH',          SITE_PATH . JS_DIR);
-        define('THEME_IMAGE_PATH', SITE_PATH . THEME_IMAGE_DIR);
+        if (!defined('CSS_DIR_NAME')) {
+            define('CSS_DIR_NAME', 'css');
+        }
+        if (!defined('HTML_DIR_NAME')) {
+            define('HTML_DIR_NAME', 'html');
+        }
+        if (!defined('JS_DIR_NAME')) {
+            define('JS_DIR_NAME', 'js');
+        }
+        if (!defined('IMAGE_DIR_NAME')) {
+            define('IMAGE_DIR_NAME', 'images');
+        }
+        if (!defined('FILES_DIR_NAME')) {
+            define('FILES_DIR_NAME', 'files');
+        }
+        if (!defined('ADMIN_DIR_NAME')) {
+            define('ADMIN_DIR_NAME', 'admin');
+        }
+        define('CSS_DIR',    THEME_DIR . '/' . CSS_DIR_NAME);
+        define('HTML_DIR',   THEME_DIR . '/' . HTML_DIR_NAME);
+        define('JS_DIR',     THEME_DIR . '/' . JS_DIR_NAME);
+        define('IMAGE_DIR',  THEME_DIR . '/' . IMAGE_DIR_NAME);
+        define('FILES_DIR',  THEME_DIR . '/' . FILES_DIR_NAME);
+        define('ADMIN_DIR',  '/' . ADMIN_DIR_NAME);
+        define('THEME_PATH', SITE_PATH . THEME_DIR);
+        define('CSS_PATH',   SITE_PATH . CSS_DIR);
+        define('HTML_PATH',  SITE_PATH . HTML_DIR);
+        define('JS_PATH',    SITE_PATH . JS_DIR);
+        define('IMAGE_PATH', SITE_PATH . IMAGE_DIR);
+        define('ADMIN_PATH', SITE_PATH . ADMIN_DIR);
+        if (defined('THUMBS_DIR_NAME')) {
+            define('THUMBS_DIR', IMAGES_DIR . '/' . THUMBS_DIR_NAME);
+            define('THUMBS_PATH', SITE_PATH . THUMBS_DIR);
+        }
+        if (defined('STAFF_DIR_NAME')) {
+            define('STAFF_DIR', IMAGES_DIR . '/' . STAFF_DIR_NAME);
+            define('STAFF_PATH', SITE_PATH . STAFF_DIR);
+        }
+        if (defined('LIBRARY_DIR_NAME')) {
+            define('LIBRARY_DIR', THEME_DIR . '/' . LIBRARY_DIR_NAME);
+            define('LIBRARY_PATH', SITE_PATH . LIBRARY_DIR);
+        }
     }
     private function selectConfigList()
     {
@@ -204,7 +259,6 @@ class Config extends namespace\Base
                         }
                     // end default
                 }
-
             }
             $query = "
                 INSERT INTO app_config (config_name, config_value)
