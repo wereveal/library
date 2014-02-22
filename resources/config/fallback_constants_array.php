@@ -9,8 +9,15 @@ return array(
     array('PAGE_META_KEYWORDS', 'My Company'),
     array('PAGE_TEMPLATE', 'index.twig'),
     array('PAGE_TITLE', 'My Company'),
-    array('THEMES_DIR', ''),
     array('THEME_NAME', ''),
     array('ADMIN_THEME_NAME', ''),
-    array('TABLE_PREFIX', 'ritc')
+    array('THEMES_DIR', ''),
+    array('TABLE_PREFIX', 'blog'),
+    array('CSS_DIR_NAME', 'css'),
+    array('HTML_DIR_NAME', 'html'),
+    array('JS_DIR_NAME', 'js'),
+    array('IMAGE_DIR_NAME', 'images'),
+    array('ADMIN_DIR_NAME', 'manager'),
+    array('ASSETS_DIR_NAME', 'assets'),
+    array('FILES_DIR_NAME', 'files')
 );

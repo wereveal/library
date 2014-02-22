@@ -21,9 +21,6 @@ if (!defined('APP_PATH')) {
 if (!defined('VENDOR_PATH')) {
     define('VENDOR_PATH', BASE_PATH . '/vendor');
 }
-if (!defined('SRC_PATH')) {
-    define('SRC_PATH', APP_PATH . '/src');
-}
 
 if (!isset($allow_get) || $allow_get === false) {
     $_GET = array();
@@ -31,17 +28,9 @@ if (!isset($allow_get) || $allow_get === false) {
 // Empty some global vars we don't use and don't want to have values in
 $_REQUEST = array();
 
-define('ADMIN_DIR_NAME',     'admin');
-define('ASSETS_DIR_NAME',    'assets');
 define('CONFIG_DIR_NAME',    'config');
-define('CSS_DIR_NAME',       'css');
-define('FILES_DIR_NAME',     'files');
-define('HTML_DIR_NAME',      'html');
-define('IMAGE_DIR_NAME',     'images');
-define('JS_DIR_NAME',        'js');
-define('LIBS_DIR_NAME',      'Library');
+define('APP_CONFIG_PATH', APP_PATH . '/' . CONFIG_DIR_NAME);
 define('PRIVATE_DIR_NAME',   'private');
-define('TEMPLATES_DIR_NAME', 'templates');
 define('TMP_DIR_NAME',       'tmp');
 if (isset($_SERVER['HTTP_HOST'])) {
     define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST']);
@@ -63,15 +52,6 @@ if (file_exists($private_w_path)) {
 else {
     define('PRIVATE_PATH', '');
 }
-
-define('ADMIN_DIR',       '/' . ADMIN_DIR_NAME);
-define('APP_CONFIG_PATH', APP_PATH  . '/' . CONFIG_DIR_NAME);
-define('ASSETS_DIR',      '/' . ASSETS_DIR_NAME);
-define('FILES_DIR',       ASSETS_DIR . '/' . FILES_DIR_NAME);
-define('IMAGES_DIR',      ASSETS_DIR . '/' . IMAGE_DIR_NAME);
-define('FILES_PATH',      SITE_PATH . FILES_DIR);
-define('IMAGES_PATH',     SITE_PATH . IMAGES_DIR);
-define('ADMIN_PATH',      SITE_PATH . ADMIN_DIR);
 
 /**
  *  Variables used by the classes Elog and Show_Global_Vars.
