@@ -9,9 +9,12 @@
  *  @class Access
  *  @author William E Reveal  <bill@revealitconsulting.com>
  *  @version 3.6.0
- *  @date 2013-11-12 12:57:24
+ *  @date 2014-02-24 14:38:45
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
+ *      v3.6.1 - Changed to use DbModel defined table prefix, - 02/24/2014 wer
+ *               bug fix, added anti-spambot code to login
+ *               and some code clean up
  *      v3.6.0 - Database changes, added new user role connector table - 11/12/2013
  *               New and revised methods to match database changes.
  *               General Clean up of the code.
@@ -30,37 +33,44 @@
 **/
 namespace Ritc\Library\Core;
 
-class Access extends namespace\Base
+class Access extends Base
 {
     protected $current_page;
+    protected $db_prefix;
     protected $o_elog;
     protected $o_db;
     protected $private_properties;
 
-    public function __construct(\Ritc\Library\Core\DbModel $o_db)
+    public function __construct(DbModel $o_db)
     {
         $this->setPrivateProperties();
-        $this->o_elog = \Ritc\Library\Core\Elog::start();
+        $this->o_elog = Elog::start();
         $this->o_db = $o_db;
+        $this->db_prefix = $o_db->getDbPrefix();
     }
 
     #### Actions ####
     /**
      *  Does the actual login, verifies valid user.
+     *
      *  @pre a form has been submitted from the site with all the needed
      *      variables which have been put through a data cleaner.
+     *
      *  @param $a_login (array), required with the following keys
      *      array(
      *          'username'=>'something',
      *          'password'=>'something',
-     *          'token'=>'something',
-     *          'form_ts').
+     *          'tolken'=>'something',
+     *          'form_ts'=>'000000',
+     *          'hobbit'=>'' <-- hobbit should always be blank for valid submission (optional element)
+     *      ).
+     *
      *  @return mixed, (int) user_id or (bool) false
     **/
     public function login($a_login = '')
     {
         if ($a_login == '') { return false; }
-        $a_required = array('username', 'password', 'token', 'form_ts');
+        $a_required = array('username', 'password', 'tolken', 'form_ts');
         foreach ($a_required as $required) {
             if (isset($a_login[$required]) === false) {
                 return false;
@@ -82,9 +92,12 @@ class Access extends namespace\Base
                 $a_login['password'] = '';
                 $a_login['locked'] = 'yes';
                 return $a_login;
-            } elseif ($a_user_values['bad_login_count'] > 0 && $a_user_values['bad_login_ts'] < (time() - (60*5))) {
-                $this->resetBadLoginCount($a_user_values['user_id']);
-                $this->resetBadLoginTimestamp($a_user_values['user_id']);
+            }
+            // simple anti-spambot thing... if the form has it.
+            if (isset($a_login['hobbit']) && $a_login['hobbit'] != '') {
+                $this->setBadLoginTimestamp($a_user_values['user_id']);
+                $this->incrementBadLoginCount($a_user_values['user_id']);
+                return false;
             }
             $a_login['created_on'] = $a_user_values['created_on'];
             $a_login['user_id'] = $a_user_values['user_id'];
@@ -92,7 +105,7 @@ class Access extends namespace\Base
             if ($a_user_values['password'] == $hashed_password) {
                 $this->resetBadLoginCount($a_user_values['user_id']);
                 $this->resetBadLoginTimestamp($a_user_values['user_id']);
-                $a_user_values['token'] = $a_login['token'];
+                $a_user_values['tolken'] = $a_login['tolken'];
                 $a_user_values['form_ts'] = $a_login['form_ts'];
                 $a_user_values['locked'] = 'no';
                 unset($a_user_values['password']);
@@ -357,7 +370,7 @@ class Access extends namespace\Base
     public function deleteUser($user_id = -1)
     {
         if ($user_id == -1) { return false; }
-        $sql = "DELETE FROM ritc_users WHERE id = :user_id";
+        $sql = "DELETE FROM {$this->db_prefix}users WHERE id = :user_id";
         $a_user = array(':user_id' => $user_id);
         return $this->o_db->delete($sql, $a_user, true);
     }
@@ -370,7 +383,7 @@ class Access extends namespace\Base
     public function deleteUserGroup($user_id = -1, $group_id = -1)
     {
         if ($user_id == -1 || $group_id == -1) { return false; }
-        $sql = "DELETE FROM ritc_user_groups WHERE user_id = :user_id AND group_id = :group_id";
+        $sql = "DELETE FROM {$this->db_prefix}user_groups WHERE user_id = :user_id AND group_id = :group_id";
         $a_values = array(':user_id' => $user_id, ':group_id' => $group_id);
         return $this->o_db->delete($sql, $a_values, true);
     }
@@ -383,7 +396,7 @@ class Access extends namespace\Base
     public function deleteUserRole($user_id = -1, $role_id = -1)
     {
         if ($user_id == -1 || $role_id == -1) { return false; }
-        $sql = "DELETE FROM ritc_user_roles WHERE user_id = :user_id AND role_id = :role_id";
+        $sql = "DELETE FROM {$this->db_prefix}user_roles WHERE user_id = :user_id AND role_id = :role_id";
         $a_values = array(':user_id' => $user_id, ':role_id' => $role_id);
         return $this->o_db->delete($sql, $a_values, true);
     }
@@ -396,7 +409,7 @@ class Access extends namespace\Base
     {
         if ($user_id == -1) { return false; }
         $sql = "
-            UPDATE ritc_users
+            UPDATE {$this->db_prefix}users
             SET bad_login_count = bad_login_count + 1
             WHERE id = :user_id
         ";
@@ -412,7 +425,7 @@ class Access extends namespace\Base
     {
         if ($user_id == -1) { return false; }
         $sql = "
-            UPDATE ritc_users
+            UPDATE {$this->db_prefix}users
             SET bad_login_ts = bad_login_ts + 60
             WHERE id = :user_id
         ";
@@ -429,9 +442,9 @@ class Access extends namespace\Base
     {
         if ($a_values == array()) { return false; }
         $sql = "
-            INSERT INTO ritc_users (username, real_name, short_name, password, is_default)
+            INSERT INTO {$this->db_prefix}users (username, real_name, short_name, password, is_default)
             VALUES (:username, :real_name, :short_name, :password, :is_default)";
-        if ($this->o_db->insert($sql, $a_values, 'ritc_users')) {
+        if ($this->o_db->insert($sql, $a_values, '{$this->db_prefix}users')) {
             $ids = $this->o_db->getNewIds();
             $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
@@ -447,8 +460,8 @@ class Access extends namespace\Base
     public function insertUserGroup(array $a_values = array())
     {
         if ($a_values == array()) { return false; }
-        $sql = "INSERT INTO ritc_user_groups (user_id, group_id) VALUES (:user_id, :group_id)";
-        if ($this->o_db->insert($sql, $a_values, 'ritc_user_groups')) {
+        $sql = "INSERT INTO {$this->db_prefix}user_groups (user_id, group_id) VALUES (:user_id, :group_id)";
+        if ($this->o_db->insert($sql, $a_values, '{$this->db_prefix}user_groups')) {
             $ids = $this->o_db->getNewIds();
             return $ids[0];
         } else {
@@ -463,8 +476,8 @@ class Access extends namespace\Base
     public function insertUserRole(array $a_values = array())
     {
         if ($a_values == array()) { return false; }
-        $sql = "INSERT INTO ritc_user_roles (user_id, role_id) VALUES (:user_id, :role_id)";
-        if ($this->o_db->insert($sql, $a_values, 'ritc_user_roles')) {
+        $sql = "INSERT INTO {$this->db_prefix}user_roles (user_id, role_id) VALUES (:user_id, :role_id)";
+        if ($this->o_db->insert($sql, $a_values, '{$this->db_prefix}user_roles')) {
             $ids = $this->o_db->getNewIds();
             return $ids[0];
         } else {
@@ -480,7 +493,7 @@ class Access extends namespace\Base
     {
         if ($user_id == -1) { return false; }
         $sql = "
-            UPDATE ritc_users
+            UPDATE {$this->db_prefix}users
             SET bad_login_count = 0
             WHERE id = :user_id
         ";
@@ -496,7 +509,7 @@ class Access extends namespace\Base
     {
         if ($user_id == -1) { return false; }
         $sql = "
-            UPDATE ritc_users
+            UPDATE {$this->db_prefix}users
             SET bad_login_ts = 0
             WHERE id = :user_id
         ";
@@ -511,7 +524,11 @@ class Access extends namespace\Base
     public function selectGroupById($group_id = -1)
     {
         if ($group_id == -1) { return false; }
-        $sql = "SELECT group_id, group_name, group_description FROM ritc_groups WHERE group_id = {$group_id}";
+        $sql = "
+            SELECT group_id, group_name, group_description
+            FROM {$this->db_prefix}groups
+            WHERE group_id = {$group_id}
+        ";
         $results = $this->o_db->search($sql);
         if (is_array($results[0])) {
             return $results[0];
@@ -526,7 +543,11 @@ class Access extends namespace\Base
     **/
     public function selectGroupByName($group_name = '')
     {
-        $sql = "SELECT group_id, group_name, group_description FROM ritc_groups WHERE group_name LIKE '{$group_name}'";
+        $sql = "
+            SELECT group_id, group_name, group_description
+            FROM {$this->db_prefix}groups
+            WHERE group_name LIKE '{$group_name}'
+        ";
         $results = $this->o_db->search($sql);
         if (is_array($results[0])) {
             return $results[0];
@@ -542,7 +563,11 @@ class Access extends namespace\Base
     public function selectRoleById($role_id = -1)
     {
         if ($role_id == '') { return false; }
-        $sql = "SELECT id, name, description, access_level FROM ritc_roles WHERE id = {$role_id}";
+        $sql = "
+            SELECT id, name, description, access_level
+            FROM {$this->db_prefix}roles
+            WHERE id = {$role_id}
+        ";
         $results = $this->o_db->search($sql);
         if (is_array($results[0])) {
             return $results[0];
@@ -557,7 +582,11 @@ class Access extends namespace\Base
     **/
     public function selectRoleByName($role_name = '')
     {
-        $sql = "SELECT id, name, description, access_level FROM ritc_roles WHERE name LIKE '{$role_name}'";
+        $sql = "
+            SELECT id, name, description, access_level
+            FROM {$this->db_prefix}roles
+            WHERE name LIKE '{$role_name}'
+        ";
         $results = $this->o_db->search($sql);
         if (is_array($results[0])) {
             return $results[0];
@@ -574,7 +603,7 @@ class Access extends namespace\Base
     {
         $sql = "
             SELECT id, name, description, access_level
-            FROM ritc_roles
+            FROM {$this->db_prefix}roles
             WHERe access_level >= {$access_level}
             ORDER BY access_level ASC";
         $this->o_elog->write("sql: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -599,11 +628,11 @@ class Access extends namespace\Base
                 u.password, u.is_default, u.created_on, u.bad_login_count,
                 u.bad_login_ts, u.is_active,
                 g.group_id, g.group_name
-            FROM ritc_roles as r,
-                 ritc_users as u,
-                 ritc_groups as g,
-                 ritc_user_groups as ug,
-                 ritc_user_roles as ur
+            FROM {$this->db_prefix}roles as r,
+                 {$this->db_prefix}users as u,
+                 {$this->db_prefix}groups as g,
+                 {$this->db_prefix}user_groups as ug,
+                 {$this->db_prefix}user_roles as ur
             WHERE ur.user_id = u.id
             AND ur.role_id = r.id
             AND ug.user_id = u.id
@@ -633,11 +662,11 @@ class Access extends namespace\Base
             SELECT u.id, u.username, u.real_name, u.short_name, u.password, u.is_default,
                 r.id as role_id, r.name as role,
                 g.group_id, g.group_name
-            FROM ritc_users as u,
-                ritc_roles as r,
-                ritc_groups as g,
-                ritc_user_groups as ug,
-                ritc_user_roles as ur
+            FROM {$this->db_prefix}users as u,
+                {$this->db_prefix}roles as r,
+                {$this->db_prefix}groups as g,
+                {$this->db_prefix}user_groups as ug,
+                {$this->db_prefix}user_roles as ur
             WHERE ur.role_id = r.id
             AND ur.user_id = u.id
             AND ug.user_id = u.id
@@ -674,7 +703,7 @@ class Access extends namespace\Base
     {
         if ($user_id == -1) { return false; }
         $sql = "
-            UPDATE ritc_users
+            UPDATE {$this->db_prefix}users
             SET bad_login_ts = :timestamp
             WHERE id = :user_id
         ";
@@ -694,7 +723,7 @@ class Access extends namespace\Base
         }
         if ($a_values[':password'] == '') {
             $sql = "
-                UPDATE ritc_users
+                UPDATE {$this->db_prefix}users
                 SET username   = :username,
                     real_name  = :real_name,
                     short_name = :short_name,
@@ -703,7 +732,7 @@ class Access extends namespace\Base
             unset($a_values[':password']);
         } else {
             $sql = "
-                UPDATE ritc_users
+                UPDATE {$this->db_prefix}users
                 SET username   = :username,
                     real_name  = :real_name,
                     short_name = :short_name,
@@ -723,7 +752,7 @@ class Access extends namespace\Base
     {
         if ($a_values == array()) { return false; }
         $sql = "
-            UPDATE ritc_users
+            UPDATE {$this->db_prefix}users
             SET password = :password
             WHERE id = :user_id
         ";
@@ -733,14 +762,14 @@ class Access extends namespace\Base
     /**
      *  Updates the user record to be make the user active or inactive, normally inactive.
      *
-     * @param string   $user_id   required id of a user
-     * @param bool|int $is_active optional defaults to inactive (0)
+     *  @param string   $user_id   required id of a user
+     *  @param bool|int $is_active optional defaults to inactive (0)
      *
-     * @return bool success or failure
+     *  @return bool success or failure
      */
     public function updateUserToInactive($user_id = '', $is_active = 0) {
         $sql = "
-            UDPATE ritc_users
+            UPDATE {$this->db_prefix}users
             SET is_active = :is_active
             WHERE id = :user_id
         ";

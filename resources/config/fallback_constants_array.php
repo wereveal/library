@@ -12,7 +12,6 @@ return array(
     array('THEME_NAME', ''),
     array('ADMIN_THEME_NAME', ''),
     array('THEMES_DIR', ''),
-    array('TABLE_PREFIX', 'blog'),
     array('CSS_DIR_NAME', 'css'),
     array('HTML_DIR_NAME', 'html'),
     array('JS_DIR_NAME', 'js'),

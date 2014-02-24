@@ -6,12 +6,15 @@
  *  @namespace Ritc/Library/Core
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  3.1.0
- *  @date 2014-01-31 10:19:36
+ *  @version  3.1.1
+ *  @date 2014-02-24 16:39:56
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
- *      v3.1.0 - made it so it will create the app_config table if it does not exist.
- *          Other changes to adjust to not having a theme based app. - 01/31/2014 wer
+ *      v3.1.1 - made it so the config table name will be assigned from the - 02/24/2014 wer
+ *               the db_prefix variable set from the db confuration
+ *               (created in DbFactory, passed on to DbModel).
+ *      v3.1.0 - made it so it will create the config table if it does not exist.
+ *               Other changes to adjust to not having a theme based app. - 01/31/2014 wer
  *      v3.0.3 - package change - 12/19/2013 wer
  *      v3.0.2 - bug fixes, minor changes - 2013-11-08 wer
  *      v3.0.1 - refactoring for database class change - 2013-11-06 wer
@@ -25,15 +28,18 @@ class Config extends Base
 {
     private $created = false;
     protected $current_page;
+    private $db_prefix;
     private static $instance;
     private $o_db;
     protected $o_elog;
     protected $private_properties;
+
     private function __construct(DbModel $o_db)
     {
         $this->o_db = $o_db;
         $this->o_elog = Elog::start();
         $this->setPrivateProperties();
+        $this->db_prefix = $o_db->getDbPrefix;
         $this->created = $this->createConstants();
         if ($this->created === false) {
             $this->o_elog->write("Could not create constants from db.", LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -190,11 +196,11 @@ class Config extends Base
     }
     private function selectConfigList()
     {
-        $select_query = '
+        $select_query = "
             SELECT config_name, config_value
-            FROM app_config
+            FROM {$this->db_prefix}config
             ORDER BY config_name
-        ';
+        ";
         return $this->o_db->search($select_query);
     }
     private function createNewConfigs()
@@ -202,19 +208,19 @@ class Config extends Base
         $a_constants = require_once APP_CONFIG_PATH . '/fallback_constants_array.php';
         $a_tables = $this->o_db->selectDbTables();
         if ($this->o_db->startTransaction()) {
-            if (array_search('app_config', $a_tables) === false) {
+            if (array_search("{$this->db_prefix}config", $a_tables) === false) {
                 $db_type = $this->o_db->getDbType();
                 switch ($db_type) {
                     case 'pgsql':
                         $sql = "
-                            CREATE TABLE IF NOT EXISTS app_config (
+                            CREATE TABLE IF NOT EXISTS {$this->db_prefix}config (
                                 config_id integer NOT NULL,
                                 config_name character varying(64),
                                 config_value character varying(64)
                             )
                         ";
                         $sql_sequence = "
-                            CREATE SEQUENCE app_config_config_id_seq
+                            CREATE SEQUENCE {$this->db_prefix}config_config_id_seq
                                 START WITH 1
                                 INCREMENT BY 1
                                 NO MINVALUE
@@ -231,7 +237,7 @@ class Config extends Base
                         break;
                     case 'sqlite':
                         $sql = "
-                            CREATE TABLE IF NOT EXISTS app_config (
+                            CREATE TABLE IF NOT EXISTS {$this->db_prefix}config (
                                 config_id INTEGER PRIMARY KEY ASC,
                                 config_name TEXT,
                                 config_value TEXT
@@ -245,7 +251,7 @@ class Config extends Base
                     case 'mysql':
                     default:
                         $sql = "
-                            CREATE TABLE IF NOT EXISTS `app_config` (
+                            CREATE TABLE IF NOT EXISTS `{$this->db_prefix}config` (
                                 `config_id` int(11) NOT NULL AUTO_INCREMENT,
                                 `config_name` varchar(64) NOT NULL,
                                 `config_value` varchar(64) NOT NULL,
@@ -261,9 +267,9 @@ class Config extends Base
                 }
             }
             $query = "
-                INSERT INTO app_config (config_name, config_value)
+                INSERT INTO {$this->db_prefix}config (config_name, config_value)
                 VALUES (?, ?)";
-            if ($this->o_db->insert($query, $a_constants, 'app_config')) {
+            if ($this->o_db->insert($query, $a_constants, "{$this->db_prefix}config")) {
                 if ($this->o_db->commitTransaction() === false) {
                     $this->o_elog->write("Could not commit new configs", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 }

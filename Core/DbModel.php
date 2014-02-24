@@ -7,10 +7,12 @@
  *  @namespace Ritc/Library/Core
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.1.0
- *  @date 2014-01-31 14:02:01
+ *  @version 3.1.1
+ *  @date 2014-02-24 16:30:04
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
+ *      v3.1.1 - added methods to set and return db prefix - 02/24/2014 wer
+ *               It should be noted, this assumes a db prefix has been set. see DbFactory
  *      v3.1.0 - added method to return db tables - 01/31/2014 wer
  *      v3.0.1 - renamed file to match function, eliminated the unnecessary - 12/19/2013 wer
  *      v3.0.0 - split the pdo creation (database connection) from the crud - 2013-11-06
@@ -36,6 +38,7 @@ class DbModel extends Base
 {
     private $affected_rows;
     protected $current_page;
+    private $db_prefix;
     private $db_type;
     private $a_new_ids = array();
     private $o_arr;
@@ -51,9 +54,10 @@ class DbModel extends Base
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setPrivateProperties();
         $this->o_elog    = Elog::start();
-        $this->o_arr     = new namespace\Arrays;
+        $this->o_arr     = new Arrays;
         $this->o_db      = $o_db;
-        $this->setDbType($o_db);
+        $this->db_prefix = $o_db->getDbPrefix();
+        $this->db_type   = $o_db->getDbType()
     }
 
     ### Main Four Commands (CRUD) ###
@@ -205,6 +209,10 @@ class DbModel extends Base
     {
         return $this->affected_rows;
     }
+    public function getDbPrefix()
+    {
+        return $this->db_prefix;
+    }
     public function getDbType()
     {
         return $this->db_type;
@@ -228,9 +236,14 @@ class DbModel extends Base
     {
         return $this->sql_error_message;
     }
-    protected function setDbType(\PDO $o_db)
+    public function setDbPrefix()
     {
-        $this->db_type = $o_db->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        $this->db_prefix = $this->o_db->getDbPrefix();
+        return true;
+    }
+    public function setDbType()
+    {
+        $this->db_type = $this->o_db->getDbType();
         return true;
     }
     public function setNewId($value = '')
@@ -238,6 +251,7 @@ class DbModel extends Base
         if ($value !== '') {
             $this->a_new_ids[] = $value;
         }
+        return true
     }
     /**
      *  Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
@@ -260,6 +274,10 @@ class DbModel extends Base
             $column_default = $results[0]['column_default'];
             $this->pgsql_sequence_name = preg_replace("/nextval\('(.*)'(.*)\)/i", '$1', $column_default);
             $this->o_elog->write("pgsql_sequence_name: " . $this->pgsql_sequence_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
+            return true;
+        }
+        else {
+            return false;
         }
     }
     /**
@@ -279,6 +297,7 @@ class DbModel extends Base
     public function resetNewIds()
     {
         $this->a_new_ids = array();
+        return true;
     }
 
     ### Basic Commands - The basic building blocks for doing db work

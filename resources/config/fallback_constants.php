@@ -22,7 +22,6 @@ define('PAGE_TITLE', 'My Company');
 define('THEME_NAME', '');
 define('ADMIN_THEME_NAME', '');
 define('THEMES_DIR', '');
-define('TABLE_PREFIX', 'blog');
 define('CSS_DIR_NAME', 'css');
 define('HTML_DIR_NAME', 'html');
 define('JS_DIR_NAME', 'js');

@@ -10,10 +10,11 @@
  *  @namespace Ritc/Library/Core
  *  @class DbFactory
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 0.1.2
- *  @date 2013-12-19 08:10:44
+ *  @version 1.0.0
+ *  @date 2014-02-24 16:17:31
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0 - figured it was time to take this out of beta, with one addition. - 02/24/2014 wer
  *      v0.1.2 - minor package change required minor modification - 12/19/2013 wer
  *      v0.1.1 - added two additional places the config files can exist - 2013-11-08
  *      v0.1.0 - initial file creation - 2013-11-06
@@ -35,6 +36,7 @@ class DbFactory extends Base
     private $db_type;
     private $db_user;
     private $db_userro;
+    private $db_prefix;
     private $dsn;
     private $o_db;
     protected $o_elog;
@@ -128,6 +130,10 @@ class DbFactory extends Base
     {
         return $this->db_type;
     }
+    public function getDbPrefix()
+    {
+        return $this->db_prefix;
+    }
     public function getSqlErrorMessage()
     {
         return $this->sql_error_message;
@@ -163,6 +169,7 @@ class DbFactory extends Base
         $this->db_userro  = isset($a_database['userro'])  ? $a_database['userro']  : '';
         $this->db_passro  = isset($a_database['passro'])  ? $a_database['passro']  : '';
         $this->db_persist = isset($a_database['persist']) ? $a_database['persist'] : false;
+        $this->db_prefix  = isset($a_database['prefix'])  ? $a_database['prefix']  : '';
         return true;
     }
     public function setDbName($value = '')
@@ -194,6 +201,10 @@ class DbFactory extends Base
         if (($value !== '') && (is_bool($value) !== false)) {
             $this->db_type = $value;
         }
+    }
+    public function setDbPrefix($value = '')
+    {
+        $this->db_prefix = $value;
     }
     public function setDbType($value = '')
     {
