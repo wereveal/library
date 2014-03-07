@@ -2,10 +2,11 @@
 namespace Ritc\Library\Abstracts;
 
 use Ritc\Library\Interfaces\ControllerInterface;
+use Ritc\Library\Core\DatesTimes;
 
 abstract class ControllerAbstract implements ControllerInterface
 {
-    protected $phone_format = "(XXX) XXX-XXXX";
+    protected $phone_format = "XXX-XXX-XXXX";
     protected $date_format  = "m/d/Y";
 
     /**
@@ -15,7 +16,7 @@ abstract class ControllerAbstract implements ControllerInterface
      *  @param array $a_values
      *  @return string $html normally html
     **/
-    public function router(array $a_actions = array(), array $a_values = array())
+    public function routePage(array $a_actions = array(), array $a_values = array())
     {
         return '';
     }
@@ -37,14 +38,13 @@ abstract class ControllerAbstract implements ControllerInterface
     }
     /**
      *  Sets the value of $phone_format
-     *  Verifies value is valid formate else doesn't set it.
+     *  Verifies value is valid format else does not set it.
      *  @param string $value defaults to ''
      *  @return null
     **/
     public function setPhoneFormat($value = '')
     {
         switch ($value) {
-            case 'XXX-XXX-XXXX':
             case '(XXX) XXX-XXXX':
             case 'XXX XXX XXXX':
             case 'XXX.XXX.XXXX':

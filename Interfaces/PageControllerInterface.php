@@ -36,5 +36,7 @@ interface PageControllerInterface
      *  @param array $a_values optional, the values from a form
      *  @return string normally html to be displayed.
     **/
-    public function router(array $a_actions = array(), array $a_values = array());
+    /** Hmm, don't want router to be a public method so I can't actually define it here
+     *  public function router(array $a_actions = array(), array $a_values = array());
+    **/
 }
