@@ -51,6 +51,7 @@ class ViewHelper
                 case 'msg_class':
 	            case 'message_class':
 	                $msg_class = $value;
+                    break;
 	            case 'alt_text':
 	                $alt_text = $value;
 	                break;

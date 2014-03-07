@@ -3,6 +3,7 @@ namespace Ritc\Library\Abstracts;
 
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Core\DatesTimes;
+use Ritc\Library\Core\Session;
 
 abstract class ControllerAbstract implements ControllerInterface
 {
@@ -16,7 +17,7 @@ abstract class ControllerAbstract implements ControllerInterface
      *  @param array $a_values
      *  @return string $html normally html
     **/
-    public function routePage(array $a_actions = array(), array $a_values = array())
+    public function route(array $a_actions = array(), array $a_values = array())
     {
         return '';
     }
@@ -66,5 +67,12 @@ abstract class ControllerAbstract implements ControllerInterface
     {
         return $this->phone_format;
     }
-
+    public function setSession(Session $o_session)
+    {
+        $this->o_session = $o_session;
+    }
+    public function getSession()
+    {
+        return $this->o_session;
+    }
 }

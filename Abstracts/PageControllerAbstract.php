@@ -19,6 +19,7 @@
 namespace Ritc\Library\Abstracts;
 
 use Ritc\Library\Interfaces\PageControllerInterface;
+use Ritc\Library\Core\Actions;
 
 abstract class PageControllerAbstract implements PageControllerInterface
 {
@@ -45,7 +46,7 @@ abstract class PageControllerAbstract implements PageControllerInterface
      *  @param array $a_values optional, the values from a form
      *  @return string normally html to be displayed.
     **/
-    public function router(array $a_actions = array(), array $a_values = array())
+    protected function router(array $a_actions = array(), array $a_values = array())
     {
         return '';
     }
