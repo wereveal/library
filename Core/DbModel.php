@@ -7,10 +7,11 @@
  *  @namespace Ritc/Library/Core
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.1.1
- *  @date 2014-02-24 16:30:04
+ *  @version 3.1.2
+ *  @date 2014-03-20 13:53:18
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
+ *      v3.1.2 - bug fixes, needed to pass the factory into the class - 03/20/2014 wer
  *      v3.1.1 - added methods to set and return db prefix - 02/24/2014 wer
  *               It should be noted, this assumes a db prefix has been set. see DbFactory
  *      v3.1.0 - added method to return db tables - 01/31/2014 wer
@@ -36,28 +37,30 @@ namespace Ritc\Library\Core;
 
 class DbModel extends Base
 {
+    private $a_new_ids = array();
     private $affected_rows;
     protected $current_page;
     private $db_prefix;
     private $db_type;
-    private $a_new_ids = array();
     private $o_arr;
     private $o_db;
+    private $o_dbf;
     protected $o_elog;
     private $pgsql_sequence_name = '';
     protected $private_properties;
     private $root_path;
     private $sql_error_message;
     private $success;
-    public function __construct(\PDO $o_db)
+    public function __construct(\PDO $o_db, DbFactory $o_dbf)
     {
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setPrivateProperties();
         $this->o_elog    = Elog::start();
         $this->o_arr     = new Arrays;
         $this->o_db      = $o_db;
-        $this->db_prefix = $o_db->getDbPrefix();
-        $this->db_type   = $o_db->getDbType()
+        $this->o_dbf     = $o_dbf;
+        $this->db_prefix = $o_dbf->getDbPrefix();
+        $this->db_type   = $o_dbf->getDbType();
     }
 
     ### Main Four Commands (CRUD) ###
@@ -238,12 +241,12 @@ class DbModel extends Base
     }
     public function setDbPrefix()
     {
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_prefix = $this->o_dbf->getDbPrefix();
         return true;
     }
     public function setDbType()
     {
-        $this->db_type = $this->o_db->getDbType();
+        $this->db_type = $this->o_dbf->getDbType();
         return true;
     }
     public function setNewId($value = '')
@@ -251,7 +254,7 @@ class DbModel extends Base
         if ($value !== '') {
             $this->a_new_ids[] = $value;
         }
-        return true
+        return true;
     }
     /**
      *  Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
@@ -297,7 +300,6 @@ class DbModel extends Base
     public function resetNewIds()
     {
         $this->a_new_ids = array();
-        return true;
     }
 
     ### Basic Commands - The basic building blocks for doing db work
@@ -988,7 +990,8 @@ class DbModel extends Base
                     --$starting_from; // limit offset starts at 0 so if we want to start at record 6 the LIMIT offset is 5
                 }
                 $where .= "LIMIT {$starting_from}, {$limit_to}";
-            } else {
+            }
+            else {
                 $where .= "LIMIT {$limit_to}";
             }
         }

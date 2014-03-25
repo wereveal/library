@@ -112,16 +112,6 @@ class DbFactory extends Base
     }
 
     ### Getters and Setters
-    /**
-     *  Get the value of the property specified.
-     *  @param $var_name (str)
-     *  @return mixed - value of the property
-     *  @note - this is normally set to private so not to be used
-    **/
-    public function getVar($var_name)
-    {
-        return $this->$var_name;
-    }
     public function getDb()
     {
         return $this->o_db;
