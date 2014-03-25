@@ -5,15 +5,17 @@
  *  The factory reads in the configuration specified (defaults to a default config) so that it knows
  *  what to connect to. After that you connect to the databse using the factory object.
  *  Connecting to the database returns a \PDO object.
+ *  Nothing else should be needed from the factory. As such, version 1.5 was born.
  *  @file DbFactory.php
  *  @ingroup ritc_library core
  *  @namespace Ritc/Library/Core
  *  @class DbFactory
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2014-02-24 16:17:31
+ *  @version 1.5.0
+ *  @date 2014-03-25 16:26:03
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
+ *      v1.5.0 - massive change to the factory, cutting out the fat
  *      v1.0.0 - figured it was time to take this out of beta, with one addition. - 02/24/2014 wer
  *      v0.1.2 - minor package change required minor modification - 12/19/2013 wer
  *      v0.1.1 - added two additional places the config files can exist - 2013-11-08
@@ -27,27 +29,16 @@ class DbFactory extends Base
 {
     private static $instance_rw = array();
     private static $instance_ro = array();
-    private $db_name;
-    private $db_host;
-    private $db_pass;
-    private $db_passro;
-    private $db_persist;
-    private $db_port;
-    private $db_type;
-    private $db_user;
-    private $db_userro;
-    private $db_prefix;
-    private $dsn;
+    private $config_file;
     private $o_db;
     protected $o_elog;
     protected $private_properties;
-    protected $sql_error_message;
 
     private function __construct($config_file = 'db_config.php', $read_type = 'rw')
     {
         $this->setPrivateProperties();
         $this->o_elog = Elog::start();
-        $this->setDbParameters($config_file);
+        $this->config_file = $config_file;
         $this->read_type = $read_type;
     }
     /**
@@ -85,23 +76,23 @@ class DbFactory extends Base
             $this->o_elog->write('The database is already connected.', LOG_OFF);
             return $this->o_db;
         }
-        $this->setDsn();
+        $a_db = $this->retrieveDbParameters();
         try {
             if ($this->read_type == 'ro') {
                 $this->o_db = new \PDO(
-                    $this->dsn,
-                    $this->db_userro,
-                    $this->db_passro,
-                    array(\PDO::ATTR_PERSISTENT=>$this->db_persist));
+                    $a_db['dsn'],
+                    $a_db['userro'],
+                    $a_db['passro'],
+                    array(\PDO::ATTR_PERSISTENT=>$a_db['persist']));
             }
             else {
                 $this->o_db = new \PDO(
-                    $this->dsn,
-                    $this->db_user,
-                    $this->db_pass,
-                    array(\PDO::ATTR_PERSISTENT=>$this->db_persist));
+                    $a_db['dsn'],
+                    $a_db['user'],
+                    $a_db['password'],
+                    array(\PDO::ATTR_PERSISTENT=>$a_db['persist']));
             }
-            $this->o_elog->write("The dsn is: $this->dsn", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write("The dsn is: {$a_db['dsn']}", LOG_OFF, __METHOD__ . '.' . __LINE__);
             $this->o_elog->write('Connect to db success.', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $this->o_db;
         }
@@ -111,34 +102,17 @@ class DbFactory extends Base
         }
     }
 
-    ### Getters and Setters
-    public function getDb()
-    {
-        return $this->o_db;
-    }
-    public function getDbType()
-    {
-        return $this->db_type;
-    }
-    public function getDbPrefix()
-    {
-        return $this->db_prefix;
-    }
-    public function getSqlErrorMessage()
-    {
-        return $this->sql_error_message;
-    }
-
     /**
-     *  Sets the class properties used for connecting to the database.
-     *  @param string $config_file - must be in one of three places
+     *  Turns the config file into an array that is used to connect to the database.
+     *  @internal $config_file - must be in one of three places
      *      The default place is in /app/config/
      *      The next place is in the /private directory
      *      Finally, it can be found in the config directory inside the web site itself (worse place).
-     *  @return bool
-     */
-    private function setDbParameters($config_file = 'db_config.php')
+     *  @return mixed array|false
+    **/
+    private function retrieveDbParameters()
     {
+        $config_file = $this->config_file;
         $config_w_path = APP_PATH . '/config/' . $config_file;
         if (!file_exists($config_w_path)) {
             $config_w_path = PRIVATE_PATH . '/' . $config_file;
@@ -149,87 +123,28 @@ class DbFactory extends Base
         if (!file_exists($config_w_path)) {
             return false;
         }
-        $a_database = require_once $config_w_path;
-        $this->db_type    = $a_database['driver'];
-        $this->db_host    = $a_database['host'];
-        $this->db_port    = $a_database['port'];
-        $this->db_name    = $a_database['name'];
-        $this->db_user    = $a_database['user'];
-        $this->db_pass    = $a_database['password'];
-        $this->db_userro  = isset($a_database['userro'])  ? $a_database['userro']  : '';
-        $this->db_passro  = isset($a_database['passro'])  ? $a_database['passro']  : '';
-        $this->db_persist = isset($a_database['persist']) ? $a_database['persist'] : false;
-        $this->db_prefix  = isset($a_database['prefix'])  ? $a_database['prefix']  : '';
-        return true;
+        $a_db = require_once $config_w_path;
+        $a_db['dsn'] = $this->createDsn($a_db);
+        return $a_db;
     }
-    public function setDbName($value = '')
+    private function createDsn(array $a_db = array())
     {
-        if ($value !== '') {
-            $this->db_name = $value;
+        if ($a_db == array()) {
+            return '';
         }
-    }
-    public function setDbHost($value = '')
-    {
-        if ($value !== '') {
-            $this->db_host = $value;
-        }
-    }
-    public function setDbPass($value = '')
-    {
-        if ($value !== '') {
-            $this->db_pass = $value;
-        }
-    }
-    public function setDbPassro($value = '')
-    {
-        if ($value !== '') {
-            $this->db_passro = $value;
-        }
-    }
-    public function setDbPersist($value = '')
-    {
-        if (($value !== '') && (is_bool($value) !== false)) {
-            $this->db_type = $value;
-        }
-    }
-    public function setDbPrefix($value = '')
-    {
-        $this->db_prefix = $value;
-    }
-    public function setDbType($value = '')
-    {
-        $a_allowed_types = array('mysql', 'sqlite', 'pgsql');
-        if (($value !== '') && (array_search($value, $a_allowed_types) !== false)) {
-            $this->db_type = $value;
-        }
-    }
-    public function setDbUser($value = '')
-    {
-        if ($value !== '') {
-            $this->db_user = $value;
-        }
-    }
-    public function setDbUserro($value = '')
-    {
-        if ($value !== '') {
-            $this->db_userro = $value;
-        }
-    }
-    public function setDsn($value = '')
-    {
-        if ($value != '') {
-            $this->dsn = $value;
-        } else {
-            if ($this->db_port != '' && $this->db_port !== null) {
-                $this->dsn = $this->db_type . ':host=' . $this->db_host . ';port=' . $this->db_port . ';dbname=' . $this->db_name;
-            } else {
-                $this->dsn = $this->db_type . ':host=' . $this->db_host . ';dbname=' . $this->db_name;
+        else {
+            if ($a_db['port'] != '' && $a_db['port'] !== null) {
+                return $a_db['driver']
+                    . ':host='   . $a_db['host']
+                    . ';port='   . $a_db['port']
+                    . ';dbname=' . $a_db['name'];
+            }
+            else {
+                return $a_db['driver']
+                    . ':host='   . $a_db['host']
+                    . ';dbname=' . $a_db['name'];
             }
         }
-    }
-    public function setSqlErrorMessage($value = '')
-    {
-        $this->sql_error_message = $value;
     }
 
     ### Magic Method fix

@@ -44,23 +44,20 @@ class DbModel extends Base
     private $db_type;
     private $o_arr;
     private $o_db;
-    private $o_dbf;
     protected $o_elog;
     private $pgsql_sequence_name = '';
     protected $private_properties;
     private $root_path;
     private $sql_error_message;
     private $success;
-    public function __construct(\PDO $o_db, DbFactory $o_dbf)
+    public function __construct(\PDO $o_db, $config_file = 'db_config.php')
     {
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setPrivateProperties();
-        $this->o_elog    = Elog::start();
-        $this->o_arr     = new Arrays;
-        $this->o_db      = $o_db;
-        $this->o_dbf     = $o_dbf;
-        $this->db_prefix = $o_dbf->getDbPrefix();
-        $this->db_type   = $o_dbf->getDbType();
+        $this->createDbParms($config_file);
+        $this->o_elog = Elog::start();
+        $this->o_arr  = new Arrays;
+        $this->o_db   = $o_db;
     }
 
     ### Main Four Commands (CRUD) ###
@@ -239,15 +236,13 @@ class DbModel extends Base
     {
         return $this->sql_error_message;
     }
-    public function setDbPrefix()
+    public function setDbPrefix($value = '')
     {
-        $this->db_prefix = $this->o_dbf->getDbPrefix();
-        return true;
+        return null; // db prefix can only be set privately
     }
-    public function setDbType()
+    public function setDbType($value = '')
     {
-        $this->db_type = $this->o_dbf->getDbType();
-        return true;
+        return null; // db type can only be set privately
     }
     public function setNewId($value = '')
     {
@@ -301,15 +296,33 @@ class DbModel extends Base
     {
         $this->a_new_ids = array();
     }
-
+    /**
+     *  Creates the class properties of db_type and db_prefix from config file
+     *  @param string $config_file
+     *  @return bool
+    **/
+    private function createDbParms($config_file = 'db_config.php')
+    {
+        $config_w_path = APP_PATH . '/config/' . $config_file;
+        if (!file_exists($config_w_path)) {
+            $config_w_path = PRIVATE_PATH . '/' . $config_file;
+            if (!file_exists($config_w_path)) {
+                $config_w_path = SITE_PATH . '/config/' . $config_file;
+            }
+        }
+        if (!file_exists($config_w_path)) {
+            return false;
+        }
+        $a_db = require_once $config_w_path;
+        $this->db_prefix = $a_db['prefix'];
+        $this->db_type   = $a_db['driver'];
+        return true;
+    }
     ### Basic Commands - The basic building blocks for doing db work
     /**
      *  Bind values from an assoc array to a prepared query.
-     *
-     *  @param array                $a_values
+     *  @param array                $a_values    Keys must match the prepared query
      *  @param object|\PDOStatement $o_pdo_stmt
-     *
-     *  @internal param array $array Keys must match the prepared query
      *  @return bool - success or failure
     **/
     public function bindValues(array $a_values = array(), \PDOStatement $o_pdo_stmt)
