@@ -1,6 +1,8 @@
 <?php
 /**
  *  @brief A Twig Factory.
+ *  @description Lets us create a twig object, specific to a configuration
+ *      allowing multiple twig objects to render the html
  *  @file TwigFactory.php
  *  @ingroup ritc_library core
  *  @namespace Ritc/Library/Core
@@ -21,7 +23,8 @@ use Twig_Environment;
 class TwigFactory extends Base
 {
     private static $instance = array();
-    private $o_loader;
+    private static $a_twig_config;
+    private static $o_twig_environment;
     protected $private_properties;
 
     private function __construct($a_twig_paths)
@@ -31,7 +34,7 @@ class TwigFactory extends Base
         foreach ($a_twig_paths['additional_paths'] as $path => $namespace ) {
             $o_loader->prependPath($path, $namespace);
         }
-        $this->o_loader = $o_loader;
+        self::$o_twig_environment = new Twig_Environment($o_loader, self::$a_twig_config['environment_options']);
     }
     public static function start($config_file = 'twig_config.php')
     {
@@ -48,14 +51,34 @@ class TwigFactory extends Base
             else {
                 $a_twig_config = require $config_w_path;
             }
-            $o_twig_f = new TwigFactory($a_twig_config);
-            $o_loader = $o_twig_f->getLoader();
-            self::$instance[$name] = new Twig_Environment($o_loader, $a_twig_config['environment_options']);
+            self::$a_twig_config = $a_twig_config;
+            self::$instance[$name] = new TwigFactory($a_twig_config);
         }
         return self::$instance[$name];
     }
-    private function getLoader()
+
+    /**
+     * Returns the twig environment object which we use to do all the
+     * template rendering.
+     * @return Twig_Environment
+     */
+    public function getTwig()
     {
-        return $this->o_loader;
+        return self::$o_twig_environment;
+    }
+
+    /**
+     * the properly named method for returning the class property
+     * but I expect the getTwig method to be used mostly.
+     * @return Twig_Environment
+     */
+    public function getTwigEnvironment()
+    {
+        return self::$o_twig_environment;
+    }
+    public function setTwigEnvironment()
+    {
+        // not allowed to set, just have the method here as placeholder
+        return null;
     }
 }
