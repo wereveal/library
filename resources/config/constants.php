@@ -6,21 +6,9 @@
  *      _PATH = Full server path
  *      _DIR  = Path in web site (URI)
  *      _NAME = Name of item without any path information
- *  @ingroup ritc_library configs
-**/
+ *  @ingroup ritc_framework configs
+ **/
 namespace Ritc;
-
-if (!defined('SITE_PATH')) exit('This file cannot be called directly');
-
-if (!defined('BASE_PATH')) {
-    define('BASE_PATH', dirname(SITE_PATH));
-}
-if (!defined('APP_PATH')) {
-    define('APP_PATH', BASE_PATH . '/app');
-}
-if (!defined('VENDOR_PATH')) {
-    define('VENDOR_PATH', BASE_PATH . '/vendor');
-}
 
 if (!isset($allow_get) || $allow_get === false) {
     $_GET = array();
@@ -28,16 +16,45 @@ if (!isset($allow_get) || $allow_get === false) {
 // Empty some global vars we don't use and don't want to have values in
 $_REQUEST = array();
 
-define('CONFIG_DIR_NAME',    'config');
-define('APP_CONFIG_PATH', APP_PATH . '/' . CONFIG_DIR_NAME);
-define('PRIVATE_DIR_NAME',   'private');
-define('TMP_DIR_NAME',       'tmp');
-if (isset($_SERVER['HTTP_HOST'])) {
-    define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST']);
+if (!defined('SITE_PATH')) {
+    exit('This file cannot be called directly'); // should be defined in the setup.php file
 }
-else {
-    define('SITE_URL', 'localhost');
+if (!defined('BASE_PATH')) {
+    exit('This file cannot be called directly'); // should be defined in the setup.php file
 }
+if (!defined('APP_PATH')) {
+    define('APP_PATH', BASE_PATH . '/app');
+}
+if (!defined('SRC_PATH')) {
+    define('SRC_PATH', APP_PATH . '/src');
+}
+if (!defined('APP_CONFIG_PATH')) {
+    define('APP_CONFIG_PATH', APP_PATH . '/config');
+}
+if (!defined('VENDOR_PATH')) {
+    define('VENDOR_PATH', BASE_PATH . '/vendor');
+}
+if (!defined('ADMIN_DIR_NAME')) {
+    define('ADMIN_DIR_NAME',     'admin');
+}
+if (!defined('ASSETS_DIR_NAME')) {
+    define('ASSETS_DIR_NAME',    'assets');
+}
+if (!defined('PRIVATE_DIR_NAME')) {
+    define('PRIVATE_DIR_NAME', 'private');
+}
+if (!defined('TMP_DIR_NAME')) {
+    define('TMP_DIR_NAME', 'tmp');
+}
+if (!defined('SITE_URL')) {
+    if (isset($_SERVER['HTTP_HOST'])) {
+        define('SITE_URL', 'http://' . $_SERVER['HTTP_HOST']);
+    }
+    else {
+        define('SITE_URL', 'localhost');
+    }
+}
+
 $private_w_path = BASE_PATH . '/' . PRIVATE_DIR_NAME;
 $tmp_w_path = BASE_PATH . '/' . TMP_DIR_NAME;
 if (file_exists($tmp_w_path)) {
@@ -53,13 +70,14 @@ else {
     define('PRIVATE_PATH', '');
 }
 
+
 /**
- *  Variables used by the classes Elog and Show_Global_Vars.
- *  For Production Sites, only USE_PHP_LOG could be true
- *  but it can slow things a bit. The class Elog has a
- *  method that allows temporary overrides of these global
- *  settings in the class (not the constants themselves of course).
-**/
+ * Variables used by the classes Elog and Show_Global_Vars.
+ * For Production Sites, only USE_PHP_LOG could be true
+ * but it can slow things a bit. The class Elog has a
+ * method that allows temporary overrides of these global
+ * settings in the class (not the constants themselves of course).
+ **/
 define('USE_PHP_LOG',  true);
 define('USE_TEXT_LOG', false);
 define('LOG_OFF', 0);
