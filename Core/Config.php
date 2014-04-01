@@ -43,8 +43,13 @@ class Config extends Base
         $this->created = $this->createConstants();
         if ($this->created === false) {
             $this->o_elog->write("Could not create constants from db.", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            if(file_exists(APP_CONFIG_PATH . '/fallback_constants.php')) {
-                include_once APP_CONFIG_PATH . '/fallback_constants.php';
+            if (defined('APP_CONFIG_PATH')) {
+                if(file_exists(APP_CONFIG_PATH . '/fallback_constants.php')) {
+                    include_once APP_CONFIG_PATH . '/fallback_constants.php';
+                }
+                else {
+                    die ('A fatal error has occured. Please contact your web site administrator.');
+                }
             }
             else {
                 die ('A fatal error has occured. Please contact your web site administrator.');
@@ -166,21 +171,17 @@ class Config extends Base
         if (!defined('FILES_DIR_NAME')) {
             define('FILES_DIR_NAME', 'files');
         }
-        if (!defined('ADMIN_DIR_NAME')) {
-            define('ADMIN_DIR_NAME', 'admin');
-        }
         define('CSS_DIR',    THEME_DIR . '/' . CSS_DIR_NAME);
-        define('HTML_DIR',   THEME_DIR . '/' . HTML_DIR_NAME);
-        define('JS_DIR',     THEME_DIR . '/' . JS_DIR_NAME);
-        define('IMAGE_DIR',  THEME_DIR . '/' . IMAGE_DIR_NAME);
         define('FILES_DIR',  THEME_DIR . '/' . FILES_DIR_NAME);
-        define('ADMIN_DIR',  '/' . ADMIN_DIR_NAME);
+        define('HTML_DIR',   THEME_DIR . '/' . HTML_DIR_NAME);
+        define('IMAGE_DIR',  THEME_DIR . '/' . IMAGE_DIR_NAME);
+        define('JS_DIR',     THEME_DIR . '/' . JS_DIR_NAME);
         define('THEME_PATH', SITE_PATH . THEME_DIR);
         define('CSS_PATH',   SITE_PATH . CSS_DIR);
+        define('FILES_PATH', SITE_PATH . FILES_DIR);
         define('HTML_PATH',  SITE_PATH . HTML_DIR);
-        define('JS_PATH',    SITE_PATH . JS_DIR);
         define('IMAGE_PATH', SITE_PATH . IMAGE_DIR);
-        define('ADMIN_PATH', SITE_PATH . ADMIN_DIR);
+        define('JS_PATH',    SITE_PATH . JS_DIR);
         if (defined('THUMBS_DIR_NAME')) {
             define('THUMBS_DIR', IMAGES_DIR . '/' . THUMBS_DIR_NAME);
             define('THUMBS_PATH', SITE_PATH . THUMBS_DIR);
@@ -189,9 +190,9 @@ class Config extends Base
             define('STAFF_DIR', IMAGES_DIR . '/' . STAFF_DIR_NAME);
             define('STAFF_PATH', SITE_PATH . STAFF_DIR);
         }
-        if (defined('LIBRARY_DIR_NAME')) {
-            define('LIBRARY_DIR', THEME_DIR . '/' . LIBRARY_DIR_NAME);
-            define('LIBRARY_PATH', SITE_PATH . LIBRARY_DIR);
+        if (defined('LIBS_DIR_NAME')) {
+            define('LIBS_DIR', THEME_DIR . '/' . LIBRARY_DIR_NAME);
+            define('LIBS_PATH', SITE_PATH . LIBRARY_DIR);
         }
     }
     private function selectConfigList()
