@@ -60,9 +60,9 @@ use Ritc\Library\Interfaces\EntityInterface;
 
 class ConfigEntity implements EntityInterface
 {
-    private $config_id;
-    private $config_name;
-    private $config_value;
+    protected $config_id;
+    protected $config_name;
+    protected $config_value;
 
     public function setId($value = '')
     {
