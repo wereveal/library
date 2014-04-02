@@ -39,7 +39,7 @@ class Config extends Base
         $this->o_db = $o_db;
         $this->o_elog = Elog::start();
         $this->setPrivateProperties();
-        $this->db_prefix = $o_db->getDbPrefix;
+        $this->db_prefix = $o_db->getDbPrefix();
         $this->created = $this->createConstants();
         if ($this->created === false) {
             $this->o_elog->write("Could not create constants from db.", LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -191,8 +191,8 @@ class Config extends Base
             define('STAFF_PATH', SITE_PATH . STAFF_DIR);
         }
         if (defined('LIBS_DIR_NAME')) {
-            define('LIBS_DIR', THEME_DIR . '/' . LIBRARY_DIR_NAME);
-            define('LIBS_PATH', SITE_PATH . LIBRARY_DIR);
+            define('LIBS_DIR', THEME_DIR . '/' . LIBS_DIR_NAME);
+            define('LIBS_PATH', SITE_PATH . LIBS_DIR);
         }
     }
     private function selectConfigList()
