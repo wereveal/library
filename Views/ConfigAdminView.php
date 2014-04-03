@@ -13,7 +13,7 @@
  *      v1.0.0 - Initial version 04/02/2014 wer
  *  </pre>
 **/
-namespace Ritc\Blog\Views;
+namespace Ritc\Library\Views;
 
 use Ritc\Library\Models\ConfigAdminModel;
 use Ritc\Library\Core\Elog;
@@ -31,7 +31,7 @@ class ConfigAdminView
     {
         $this->o_elog   = Elog::start();
         $o_tpl          = new Tpl('twig_config.php');
-        $this->twig     = $o_tpl->getTwig();
+        $this->o_twig   = $o_tpl->getTwig();
         $this->o_vhelp  = new ViewHelper();
         $this->o_config = new ConfigAdminModel;
     }
@@ -70,13 +70,13 @@ class ConfigAdminView
         if ($a_configs !== false && count($a_configs) > 0) {
             $a_values['a_configs'] = $a_configs;
         }
-        return $this->o_twig->render('@blog_pages/app_config.twig', $a_values);
+        return $this->o_twig->render('@pages/app_config.twig', $a_values);
     }
     public function renderVerify(array $a_values = array())
     {
         if ($a_values === array()) {
             return $this->renderConfigs(array('message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure'));
         }
-        return $this->o_twig->render('@blog_pages/verify_delete_config.twig', $a_values);
+        return $this->o_twig->render('@pages/verify_delete_config.twig', $a_values);
     }
 }

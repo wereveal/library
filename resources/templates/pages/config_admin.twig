@@ -1,0 +1,60 @@
+{% extends '@default/base.twig' %}
+{% block body %}
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+            <h1>Welcome! This is a simplified manager to add/modify/delete configuration values.</h1>
+        </div>
+    </div>
+    {% if a_message.message != '' %}
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+            {% include '@snippets/message.twig' %}
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+        {% set x = -1 %}
+        {% for row in a_configs %}
+            {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+            <div class="row {{ class }}">
+            <form action="/app-config/modify/" method="post">
+                <div class="col-lg-5 col-md-5"><b>Config Name:</b> {{ row.config_name }}</div>
+                <div class="col-lg-5 col-md-5"><label>Config Value: <input type="text" name="config[config_value]" value="{{ row.config_value }}" size="30" maxlength="32" class="colorful"/></label></div>
+                <div class="col-lg-2 col-md-2">
+                    <button type="submit" name="submit" value="update" class="btn medium white">Save</button>
+                    <button type="submit" name="submit" value="verify" class="btn medium white">Delete</button>
+                    <input type="hidden" name="tolken" value="{{ tolken }}" />
+                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                    <input type="hidden" name="config[config_id]" value="{{ row.config_id }}" />
+                    <input type="hidden" name="config[config_name]" value="{{ row.config_name }}" />
+                </div>
+            </form>
+            </div>
+            {% set x = x * -1 %}
+        {% endfor %}
+        {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+            <div class="row {{ class }}">
+                <form action="/app-config/save/" method= "post">
+                <div class="col-lg-5 col-md-5"><label>Config Name: <input type="text" name="config[config_name]" value="" size="30" maxlength="32" class="colorful" /></label></div>
+                <div class="col-lg-5 col-md-5"><label>Config Value: <input type="text" name="config[config_value]" value="" size="30" maxlength="32" class="colorful"/></label></div>
+                <div class="col-lg-2 col-md-2">
+                    <button type="submit" name="submit" value="save_new" class="btn medium white">Save New</button>
+                    <input type="hidden" name="tolken" value="{{ tolken }}" />
+                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+            <h3>Instructions</h3>
+            <p>Config Name must be letters only. The config name will be converted to all caps, spaces to underscores, and all other characters removed, e.g., 'my 2nd config!' will become 'MY_ND_CONFIG'.</p>
+            <p>Config values will be sanitized (hacker prevention) but otherwise remain as typed. Values are limited to 32 characters.</p>
+        </div>
+    </div>
+{% endblock %}

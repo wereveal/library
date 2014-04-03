@@ -38,7 +38,7 @@ class Actions extends namespace\Base
     protected $url_path;
     public function __construct()
     {
-        $this->o_elog = \Ritc\Library\Core\Elog::start();
+        $this->o_elog = Elog::start();
         $this->o_elog->setFromFile(__FILE__);
         $this->o_elog->write("Starting __construct", LOG_OFF);
         $this->o_arrays = new namespace\Arrays();
@@ -58,15 +58,16 @@ class Actions extends namespace\Base
     }
     public function getCleanPost($value = '')
     {
-        $this->o_elog->setFromMethod(__METHOD__ . '.' . __LINE__);
         if ($value == '') {
             return $this->a_clean_post;
-        } else {
-            $this->o_elog->write("Value is: {$value}", LOG_OFF);
+        }
+        else {
+            $this->o_elog->write("Value is: {$value}", LOG_OFF, __METHOD__ . '.' . __LINE__);
             if (isset($this->a_clean_post[$value])) {
                 return $this->a_clean_post[$value];
-            } else {
-                $this->o_elog->write("The Value Doesn't Exist. " . var_export($this->a_clean_post, true), LOG_OFF);
+            }
+            else {
+                $this->o_elog->write("The Value Doesn't Exist. " . var_export($this->a_clean_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return false;
             }
         }
@@ -129,28 +130,33 @@ class Actions extends namespace\Base
         foreach ($a_clean_post as $key=>$value) {
             if (substr($key, strlen($key) - 2) == "_x") {
                 $x_action = substr($key, 0, strpos($key, "_x"));
-            } elseif (substr($key, strlen($key) - 2) == "_y") {
+            }
+            elseif (substr($key, strlen($key) - 2) == "_y") {
                 $y_action = substr($key, 0, strpos($key, "_y"));
             }
         }
         if (isset($a_clean_post["action"]) && ($a_clean_post["action"] != '')) {
             $action = $this->o_str->makeInternetUsable($a_clean_post["action"]);
-        } elseif (isset($a_clean_post["step"]) && ($a_clean_post["step"] != '')) {
+        }
+        elseif (isset($a_clean_post["step"]) && ($a_clean_post["step"] != '')) {
             $action = $this->o_str->makeInternetUsable($a_clean_post["step"]);
-        } elseif (isset($a_clean_post["submit"]) && ($a_clean_post["submit"] != '')) {
+        }
+        elseif (isset($a_clean_post["submit"]) && ($a_clean_post["submit"] != '')) {
             $action = $this->o_str->makeInternetUsable($a_clean_post["submit"]);
-        } elseif (($x_action != '') && ($x_action == $y_action)) {
+        }
+        elseif (($x_action != '') && ($x_action == $y_action)) {
             $action = $this->o_str->makeInternetUsable($x_action);
-        } else {
+        }
+        else {
             $action = '';
         }
         $this->o_elog->write("Action is: {$action}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $this->form_action = $action;
         return true;
     }
-    public function setCleanPost($array, $a_allowed_keys = array())
+    public function setCleanPost(array $array = array(), array $a_allowed_keys = array())
     {
-        if ($array == array() || $array == '') {
+        if (count($array) == 0) {
             $this->a_clean_post = array();
             return true;
         }
@@ -174,7 +180,8 @@ class Actions extends namespace\Base
         $this->o_elog->write("The pre-clean uri is: " . $request_uri, LOG_OFF, __METHOD__ . '.' . __LINE__);
         if (strpos($request_uri, "?") !== false) {
             $this->uri_no_get = substr($request_uri, 0, strpos($request_uri, "?"));
-        } else {
+        }
+        else {
             $this->uri_no_get = $request_uri;
         }
         $this->o_elog->write("The clean uri is: " . $this->uri_no_get, LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -201,7 +208,8 @@ class Actions extends namespace\Base
                 $a_actions["action".$x] = $uri_parts[$array_part];
                 $array_part++;
             }
-        } else {
+        }
+        else {
             $this->a_uri_actions = array();
             return false;
         }
@@ -219,9 +227,11 @@ class Actions extends namespace\Base
         for ($i=0; $i<$the_count-1; $i++) {
             if ($a_file_path[$i] == '')  {
                 // skip
-            } elseif (strpos($a_file_path[$i], ".php") !== false) {
+            }
+            elseif (strpos($a_file_path[$i], ".php") !== false) {
                 // skip
-            } else {
+            }
+            else {
                 $the_output .= $a_file_path[$i] . "/";
             }
         }
