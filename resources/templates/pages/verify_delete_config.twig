@@ -5,7 +5,7 @@
             <h1 class="red">Please Verify</h1>
 
             <p>Please verify you wish to delete the config '{{ config.config_name }}'.</p>
-            <form action="/app-config/delete/" method="post">
+            <form action="{{ public_dir }}/config-admin/delete/" method="post">
                 <button type="submit" name="submit" value="delete" class="btn medium white">Delete Config</button>
                 <input type="hidden" name="config_id" value="{{ config.config_id }}" />
                 <input type="hidden" name="tolken" value="{{ tolken }}" />

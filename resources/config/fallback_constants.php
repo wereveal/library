@@ -17,7 +17,7 @@ define('EMAIL_FORM_TO', 'me@replaceme.com');
 define('ERROR_EMAIL_ADDRESS', 'webmaster@revealitconsulting.com');
 define('PAGE_META_DESCRIPTION', 'My Company');
 define('PAGE_META_KEYWORDS', 'My Company');
-define('PAGE_TEMPLATE', 'index.twig');
+define('PAGE_TEMPLATE', 'index.tpl');
 define('PAGE_TITLE', 'My Company');
 define('THEME_NAME', '');
 define('ADMIN_THEME_NAME', '');

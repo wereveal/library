@@ -22,6 +22,9 @@ if (!defined('SITE_PATH')) {
 if (!defined('BASE_PATH')) {
     exit('This file cannot be called directly'); // should be defined in the setup.php file
 }
+if (!defined('PUBLIC_DIR')) {
+    define('PUBLIC_DIR', '');
+}
 if (!defined('APP_PATH')) {
     define('APP_PATH', BASE_PATH . '/app');
 }
@@ -70,6 +73,10 @@ else {
     define('PRIVATE_PATH', '');
 }
 
+define('ADMIN_DIR',   PUBIC_DIR . '/' . ADMIN_DIR_NAME);
+define('ASSETS_DIR',  PUBIC_DIR . '/' . ASSETS_DIR_NAME);
+define('ASSETS_PATH', SITE_PATH . ASSETS_DIR);
+define('ADMIN_PATH',  SITE_PATH . ADMIN_DIR);
 
 /**
  * Variables used by the classes Elog and Show_Global_Vars.

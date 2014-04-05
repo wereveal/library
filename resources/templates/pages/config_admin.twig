@@ -18,7 +18,7 @@
         {% for row in a_configs %}
             {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
-            <form action="/app-config/modify/" method="post">
+            <form action="{{ public_dir }}/config-admin/modify/" method="post">
                 <div class="col-lg-5 col-md-5"><b>Config Name:</b> {{ row.config_name }}</div>
                 <div class="col-lg-5 col-md-5"><label>Config Value: <input type="text" name="config[config_value]" value="{{ row.config_value }}" size="30" maxlength="32" class="colorful"/></label></div>
                 <div class="col-lg-2 col-md-2">
@@ -36,7 +36,7 @@
         {% endfor %}
         {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
-                <form action="/app-config/save/" method= "post">
+                <form action="{{ public_dir }}/config-admin/save/" method= "post">
                 <div class="col-lg-5 col-md-5"><label>Config Name: <input type="text" name="config[config_name]" value="" size="30" maxlength="32" class="colorful" /></label></div>
                 <div class="col-lg-5 col-md-5"><label>Config Value: <input type="text" name="config[config_value]" value="" size="30" maxlength="32" class="colorful"/></label></div>
                 <div class="col-lg-2 col-md-2">

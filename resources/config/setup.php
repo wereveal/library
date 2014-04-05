@@ -1,7 +1,8 @@
 <?php
 /**
- *  This file sets up the App.
- *  Required to get the entire framework to work.
+ *  @brief This file sets up the App.
+ *  @description Required to get the entire framework to work. The only thing
+ *  that changes primarily is the defgroup in this comment for Doxygen.
  *  @file setup.php
  *  @namespace Ritc
  *  @defgroup ritc_library
@@ -35,15 +36,7 @@ if (!defined('SITE_PATH')) {
     define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);
 }
 if (!defined('BASE_PATH')) {
-    if (!isset($app_in)) {
-        $app_in = 'site';
-    }
-    if ($app_in == 'site' || $app_in == 'htdocs' || $app_in == 'html') {
-        define('BASE_PATH', dirname(SITE_PATH));
-    }
-    else {
-        define('BASE_PATH', dirname(dirname(__FILE__)));
-    }
+    define('BASE_PATH', dirname(dirname(__FILE__)));
 }
 require_once BASE_PATH . '/app/config/constants.php';
 
