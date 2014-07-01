@@ -5,9 +5,10 @@
  *  @namespace Ritc/Library/Abstract
  *  @class Tester
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version  2.0.0
- *  @date 2013-12-13 15:35:11
+ *  @version  2.0.1
+ *  @date 2014-07-01 13:43:36
  *  @note <pre><b>Change log</b>
+ *      v2.0.1 - added missing method 07/01/2014 wer
  *      v2.0.0 - modified to not do any view stuff 2013-12-13 wer
  *      v1.1.0 - added new a couple new methods  2013-05-10 wer
  *          compare_arrays
@@ -69,6 +70,10 @@ abstract class Tester
     public function getPassedTests()
     {
         return $this->passed_tests;
+    }
+    public function getPassedTestNames()
+    {
+        return $this->passed_test_names;
     }
     public function getTestOrder()
     {
