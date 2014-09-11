@@ -33,12 +33,15 @@
 **/
 namespace Ritc\Library\Core;
 
+user Ritc\Library\Models\UsersModel;
+
 class Access extends Base
 {
     protected $current_page;
     protected $db_prefix;
     protected $o_elog;
     protected $o_db;
+    private   $o_users;
     protected $private_properties;
 
     public function __construct(DbModel $o_db)
@@ -46,6 +49,7 @@ class Access extends Base
         $this->setPrivateProperties();
         $this->o_elog = Elog::start();
         $this->o_db = $o_db;
+        $this->o_users = new UsersModel($o_db);
         $this->db_prefix = $o_db->getDbPrefix();
     }
 
@@ -69,6 +73,7 @@ class Access extends Base
     **/
     public function login($a_login = '')
     {
+        $o_user = new UsersModel($this->o_db);
         if ($a_login == '') { return false; }
         $a_required = array('username', 'password', 'tolken', 'form_ts');
         foreach ($a_required as $required) {
@@ -777,9 +782,127 @@ class Access extends Base
         return $this->o_db->update($sql, $a_values, true);
     }
 
-    ### Utility Private/Protected methods ###
+    ### Validators ###
+    /**
+     *  Figures out if the user is specified as a default user.
+     *  @param int $user_id required
+     *  @return bool true false
+    **/
+    public function isDefaultUser($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $user_id = (int) $user_id;
+        $a_results = $this->o_users->read(array('user_id' => $user_id));
+        if (isset($a_results[0]) && is_array($a_results[0])) {
+            if ($a_results[0]['is_default'] == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     *  Checks to see if the param is an id or a name.
+     *  A name can not start with a numeric character so if the param starts
+     *  with a number, it is assumed to be an id (I know, assume = ...)
+     *  @param mixed $value required
+     *  @return bool
+    **/
+    public function isID($value = '')
+    {
+        $first_char = substr($value, 0, 1);
+        if (preg_match('/[0-9]/', $first_char) === 1) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     *  Verifies user has the role of super administrator.
+     *  @param int $user_id required
+     *  @return bool - true = is a super admin, false = not a super admin
+    **/
+    public function isSuperAdmin($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $a_user = $this->selectUser($user_id);
+        if ($a_user === false) { return false; }
+        if ($a_user['access_level'] === 1) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     *  Checks to see if user exists.
+     *  @param array $a_user values which should include the user id and username
+     *  @return bool, true or false
+     **/
+    public function isValidUser(array $a_user = array())
+    {
+        if (isset($a_user['user_id']) && isset($a_user['user_name'])) {
+            $a_user_info = $this->o_users->read(array('user_id' => $a_user['user_id']));
+            if ($a_user_info['user_name'] == $a_user['user_name']) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     *  Checks to see if the user id exists.
+     *  @param int $user_id
+     *  @return bool true false
+    **/
+    public function userIdExists($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $user_id = (int) $user_id;
+        $results = $this->o_users->read(array('user_id' => $user_id));
+        if (isset($results['user_id']) && $results['user_id'] == $user_id) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     *  Checks to see if the username exists.
+     *  @param string $username
+     *  @return bool true false
+    **/
+    public function usernameExists($user_name = '')
+    {
+        if ($user_name == '') { return false; }
+        $results = $this->o_users->read(array('user_name' => $user_name));
+        if (isset($results['user_name']) && $results['user_name'] == $user_name) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     *  Checks to see if the password provided is valid for user.
+     *  @param array $a_user required $a_user['password'] and either $a_user['user_id'] or $a_user['user_name']
+     *  @return bool
+     */
+    public function validPassword(array $a_user = array())
+    {
+        if (isset($a_user['user_id']) === false && isset($a_user['user_name']) === false ) {
+            return false;
+        }
+        if ($a_user['user_id'] == '' && $a_user['user_name'] == '') {
+            return false;
+        }
+        if (isset($a_user['password']) === false || $a_user['password'] == '') {
+            return false;
+        }
+        $hashed_password = password_hash($a_user['password']);
+        $a_results = $this->o_users->read(array('user_id' => $a_user['user_id']));
+        if ($hashed_password == $a_results['password']) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      *  Hashes a password using variables in a user's record to create the hash salt.
+     *  After a lot of thought, this method isn't any more secure really than
+     *  using php5.5 password_hash() function (or equivalent crypt() based code) and is a lot more work.
      *  @param array $a_user required array('created_on', 'user_id', 'password')
      *  @return string the hashed password
     **/

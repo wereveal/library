@@ -6,9 +6,9 @@
  *  @namespace Ritc/Library/Entities
  *  @class ConfigEntity
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2014-04-01 14:20:11
- *  @note A file in the Ritc Library version 1.0
+ *  @version 1.0.1
+ *  @date 2014-09-11 12:53:16
+ *  @note A file in the Ritc Library
  *  @note <b>SQL for table<b>
  *  <pre>
  *  CREATE TABLE `config` (
@@ -50,8 +50,10 @@
  *  ('ADMIN_DIR_NAME', 'manager'),
  *  ('ASSETS_DIR_NAME', 'assets'),
  *  ('FILES_DIR_NAME', 'files'),
+ *  ('DISPLAY_PHONE_FORMAT', 'XXX-XXX-XXXX')
  *  </pre>
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1 - minor change to the comments 09/11/2014 wer
  *      v1.0.0 - Initial version 04/01/2014 wer</pre>
 **/
 namespace Ritc\Library\Entities;
