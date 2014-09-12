@@ -274,7 +274,7 @@ class UsersModel implements ModelInterface
                 return false;
             }
             else {
-                $a_user_values['password'] = password_hash($a_user_values['password']);
+                $a_user_values['password'] = password_hash($a_user_values['password'], PASSWORD_DEFAULT);
             }
             if ($this->o_db->startTransaction()) {
                 $new_user_id = $this->create($a_user_values);
@@ -387,18 +387,18 @@ class UsersModel implements ModelInterface
     /**
      *  Gets the user id for a specific user_name.
      *  @param string $user_name required
-     *  @return int $user_id
+     *  @return int|bool $user_id
      */
     public function getUserId($user_name = '')
     {
-        if ($user_name == '') { return -1; }
-        $a_results = $this->read(array('user_name' = $user_name));
+        if ($user_name == '') { return false; }
+        $a_results = $this->read(array('user_name' => $user_name));
         if ($a_results !== false) {
             if (isset($a_results[0]) && $a_results[0] != array()) {
                 return $a_results[0]['user_id'];
             }
         }
-        return -1;
+        return false;
     }
     /**
      *  Updates the bad_login_count field for the user by one

@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Access
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 3.6.0
- *  @date 2014-02-24 14:38:45
- *  @note A part of the RITC Library v5
+ *  @version 4.0.0
+ *  @date 2014-09-12 14:46:46
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.0.0 - Changed to use the user/group/role model classes - 09/12/2014 wer
  *      v3.6.1 - Changed to use DbModel defined table prefix, - 02/24/2014 wer
  *               bug fix, added anti-spambot code to login
  *               and some code clean up
@@ -33,7 +34,11 @@
 **/
 namespace Ritc\Library\Core;
 
-user Ritc\Library\Models\UsersModel;
+use Ritc\Library\Models\GroupsModel;
+use Ritc\Library\Models\RolesModel;
+use Ritc\Library\Models\UserGroupMapModel;
+use Ritc\Library\Models\UserRoleMapModel;
+use Ritc\Library\Models\UsersModel;
 
 class Access extends Base
 {
@@ -73,7 +78,6 @@ class Access extends Base
     **/
     public function login($a_login = '')
     {
-        $o_user = new UsersModel($this->o_db);
         if ($a_login == '') { return false; }
         $a_required = array('username', 'password', 'tolken', 'form_ts');
         foreach ($a_required as $required) {
@@ -81,35 +85,35 @@ class Access extends Base
                 return false;
             }
         }
-        $a_user_values = $this->selectUser($a_login['username']);
+        $a_user_values = $this->o_users->selectUser($a_login['username']);
         $this->o_elog->write("Posted Values: " . var_export($a_login, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $this->o_elog->write("User Values: " . var_export($a_user_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($a_user_values !== false && $a_user_values !== null) {
             if ($a_user_values['is_active'] < 1) {
-                $this->incrementBadLoginTimestamp($a_user_values['user_id']);
-                $this->incrementBadLoginCount($a_user_values['user_id']);
+                $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
+                $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
                 $a_login['password'] = '';
                 $a_login['is_active'] = false;
                 return $a_login;
             }
             if ($a_user_values['bad_login_count'] > 5 && $a_user_values['bad_login_ts'] >= (time() - (60*5))) {
-                $this->incrementBadLoginTimestamp($a_user_values['user_id']);
+                $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
                 $a_login['password'] = '';
                 $a_login['locked'] = 'yes';
                 return $a_login;
             }
             // simple anti-spambot thing... if the form has it.
             if (isset($a_login['hobbit']) && $a_login['hobbit'] != '') {
-                $this->setBadLoginTimestamp($a_user_values['user_id']);
-                $this->incrementBadLoginCount($a_user_values['user_id']);
+                $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
+                $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
                 return false;
             }
             $a_login['created_on'] = $a_user_values['created_on'];
             $a_login['user_id'] = $a_user_values['user_id'];
-            $hashed_password = $this->hashPassword($a_login);
+            $hashed_password = password_hash($a_login['password'],PASSWORD_DEFAULT);
             if ($a_user_values['password'] == $hashed_password) {
-                $this->resetBadLoginCount($a_user_values['user_id']);
-                $this->resetBadLoginTimestamp($a_user_values['user_id']);
+                $this->o_users->resetBadLoginCount($a_user_values['user_id']);
+                $this->o_users->resetBadLoginTimestamp($a_user_values['user_id']);
                 $a_user_values['tolken'] = $a_login['tolken'];
                 $a_user_values['form_ts'] = $a_login['form_ts'];
                 $a_user_values['locked'] = 'no';
@@ -119,133 +123,14 @@ class Access extends Base
                 $this->o_elog->write("After password check: " . var_export($a_user_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return $a_user_values;
             } else {
-                $this->setBadLoginTimestamp($a_user_values['user_id']);
-                $this->incrementBadLoginCount($a_user_values['user_id']);
+                $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
+                $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
                 return false;
             }
         }
         return false;
     }
-    /**
-     *  Saves the user.
-     *  If the values contain a value of user_id, user is updated
-     *  Else it is a new user.
-     *  @param array $a_user values to save
-     *  @return mixed, user_id or false
-    **/
-    public function saveUser($a_user = array())
-    {
-        $method = __METHOD__ . '.';
-        if (is_array($a_user) === false || count($a_user) == 0) {
-            return false;
-        }
-        $this->o_elog->write("a_user before changes: " . var_export($a_user, true), LOG_OFF, $method  . __LINE__);
 
-        if (!isset($a_user['user_id']) || $a_user['user_id'] == '') { // New User
-            $a_required_keys = array(
-                'username',
-                'real_name',
-                'short_name',
-                'password',
-                'is_default'
-            );
-            $a_user_values = array();
-            foreach($a_required_keys as $key_name) {
-                $a_user_values[$key_name] = isset($a_user[$key_name]) ? $a_user[$key_name] : '' ;
-            }
-            $this->o_elog->write("" . var_export($a_user_values , true), LOG_OFF, $method  . __LINE__);
-            if ($a_user_values['password'] == '') {
-                return false;
-            }
-            if ($this->o_db->startTransaction()) {
-                $a_prepared_user = $this->o_db->prepareKeys($a_user_values);
-                $this->o_elog->write("prepared user: " . var_export($a_prepared_user, true), LOG_OFF, $method  . __LINE__);
-                $new_user_id = $this->insertUser($a_prepared_user);
-                if ($new_user_id !== false) {
-                    $group_id = '';
-                    $role_id  = '';
-                    if (isset($a_user['group_id']) && $a_user['group_id'] != '') {
-                        $group_id = $this->isValidGroupId($a_user['group_id']) ? $a_user['group_id'] : '';
-                    }
-                    if ($group_id == '' && isset($a_user['group_name']) && $a_user['group_name'] != '') {
-                        $a_group = $this->selectGroupByName($a_user['group_name']);
-                        if ($a_group !== false) {
-                            $group_id = $a_group['group_id'];
-                        }
-                    }
-                    if (isset($a_user['role_id']) && $a_user['role_id'] != '') {
-                        $role_id = $this->isValidRoleId($a_user['role_id']) ? $a_user['role_id'] : '';
-                    }
-                    if ($role_id == '' && isset($a_user['role_name']) && $a_user['role_name'] != '') {
-                        $a_role = $this->selectRoleByName($a_user['role_name']);
-                        if ($a_role !== false) {
-                            $role_id = $a_role['id'];
-                        }
-                    }
-                    if ($group_id != '') {
-                        $a_ug_values = array(':user_id'=>$new_user_id, ':group_id'=>$group_id);
-                        $ug_results = $this->insertUserGroup($a_ug_values);
-                        if ($ug_results) {
-                            $a_ur_values = array(':user_id' => $new_user_id, ':role_id' => $role_id);
-                            $ur_results = $this->insertUserRole($a_ur_values);
-                            if($ur_results) {
-                                if ($this->o_db->commitTransaction()) {
-                                    $a_new_user = $this->selectUser($new_user_id);
-                                    $this->o_elog->write("Inserted user before password hash: " . var_export($a_new_user, true), LOG_OFF, $method  . __LINE__);
-                                    $hashed_password = $this->hashPassword($a_new_user);
-                                    $a_values = array(
-                                        ':user_id'  => $new_user_id,
-                                        ':password' => $hashed_password
-                                    );
-                                    $this->o_elog->write("hashed password: " . var_export($a_values, true), LOG_OFF, $method  . __LINE__);
-                                    $results = $this->updateUserPassword($a_values);
-                                    if ($results) {
-                                        return $new_user_id;
-                                    } else {
-                                        $this->deleteUserGroup($new_user_id, $group_id);
-                                        $this->deleteUser($new_user_id);
-                                        return false;
-                                    }
-                                } // commit transaction
-                            } // insertUserRole != false
-                        } // insertUserGroup != false
-                    } // group_id != ''
-                } // new_user_id !== false
-                $this->o_db->rollbackTransaction();
-                return false;
-            } else {
-                return false;
-            } // this->o_db->startTransaction
-        } else { // Existing User
-            if ($this->isValidUser($a_user) === false) {
-                return false;
-            }
-            $a_required_keys = array(
-                'user_id',
-                'username',
-                'real_name',
-                'short_name',
-                'password',
-                'is_default'
-            );
-            $a_user_values = array();
-            foreach($a_required_keys as $key_name) {
-                $a_user_values[$key_name] = isset($a_user[$key_name]) ? $a_user[$key_name] : '' ;
-            }
-            if ($a_user_values['password'] != '') {
-                $a_pre_update = $this->selectUser($a_user_values['user_id']);
-                $a_pre_update['password'] = $a_user_values['password'];
-                $a_user_values['password'] = $this->hashPassword($a_pre_update);
-            }
-            $a_prepared_user = $this->o_db->prepareKeys($a_user_values);
-            $this->o_elog->write("Prepared Array: " . var_export($a_prepared_user , true), LOG_OFF, $method  . __LINE__);
-            $results = $this->updateUser($a_prepared_user);
-            if ($results !== false) {
-                return $a_user_values['user_id'];
-            }
-        }
-        return false;
-    }
 
     #### Verifiers ####
     /**
@@ -271,7 +156,7 @@ class Access extends Base
     public function isSuperAdmin($user_id = -1)
     {
         if ($user_id == -1) { return false; }
-        $a_user = $this->selectUser($user_id);
+        $a_user = $this->o_users->selectUser($user_id);
         if ($a_user === false) { return false; }
         if ($a_user['access_level'] === 1) {
             return true;
@@ -279,45 +164,100 @@ class Access extends Base
         return false;
     }
     /**
-     *  Checks to see if the id is a valid group id.
-     *  @param int $group_id
+     *  Checks to see if the value is a valid group id or name.
+     *  @param int|string $group
      *  @return bool true or false
-    **/
-    private function isValidGroupId($group_id = -1)
+     **/
+    public function isValidGroup($group = -1)
     {
-        if ($group_id == -1) { return false; }
-        $group_id = (int) $group_id;
-        if (is_array($this->selectGroupById($group_id))) {
+        if ($group == -1) { return false; }
+        $o_group = new GroupsModel($this->o_db);
+        if ($this->isID($group)) {
+            $a_search_by = ['group_id' => $group];
+        }
+        else {
+            $a_search_by = ['group_name' => $group];
+        }
+        if (is_array($o_group->read($a_search_by))) {
             return true;
         }
         return false;
     }
     /**
-     *  Checks to see if the id is a valid role id.
-     *  @param int $role_id
+     * Verifies the group id provided is a valid id
+     * @param int $group
+     * @return bool
+     */
+    public function isValidGroupId($group = -1)
+    {
+        if ($group == -1) { return false; }
+        if ($this->isID($group)) {
+            return $this->isValidGroup($group);
+        }
+        return false;
+    }
+    /**
+     *  Checks to see if the value is a valid role id or name.
+     *  @param int|string $role
      *  @return bool true or false
-    **/
-    private function isValidRoleId($role_id = -1)
+     **/
+    public function isValidRole($role = -1)
+    {
+        if ($role == -1) { return false; }
+        $o_roles = new RolesModel($this->o_db);
+        if ($this->isID($role)) {
+            $a_search_by = ['role_id' => $role];
+        }
+        else {
+            $a_search_by = ['role_name' => $role];
+        }
+        if (is_array($o_roles->read($a_search_by))) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Verifies the role id provided is a valid id
+     * @param int $role_id
+     * @return bool
+     */
+    public function isValidRoleId($role_id = -1)
     {
         if ($role_id == -1) { return false; }
-        $role_id = (int) $role_id;
-        if (is_array($this->selectRoleById($role_id))) {
-            return true;
+        if ($this->isID($role_id)) {
+            return $this->isValidRole($role_id);
         }
         return false;
     }
     /**
      *  Checks to see if user exists.
-     *  @param array $a_user values which should include the user id and real name
-     *  @return bool, true or false
+     *  @param int|string $user user id or user name
+     *  @return bool
     **/
-    public function isValidUser(array $a_user = array())
+    public function isValidUser($user = '')
     {
-        if (isset($a_user['user_id']) && isset($a_user['username'])) {
-            $a_user_info = $this->selectUser($a_user['user_id']);
-            if ($a_user_info['username'] == $a_user['username']) {
-                return true;
-            }
+        if ($user == '') { return false; }
+        if ($this->isID($user)) {
+            $a_search_by = ['$user_id' => $user];
+        }
+        else {
+            $a_search_by = ['user_name' => $user];
+        }
+        if (is_array($this->o_users->read($a_search_by))) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     *  Checks to see if the user by id exists.
+     *  @param int $user_id required
+     *  @return bool
+     */
+    public function isValidUserId($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        if ($this->isID($user_id)) {
+            return $this->isValidUser($user_id);
         }
         return false;
     }
@@ -330,7 +270,7 @@ class Access extends Base
     {
         if ($user_id == -1) { return false; }
         $user_id = (int) $user_id;
-        $a_results = $this->selectUser($user_id);
+        $a_results = $this->o_users->selectUser($user_id);
         if ($a_results['is_default'] == 1) {
             return true;
         }
@@ -891,9 +831,12 @@ class Access extends Base
         if (isset($a_user['password']) === false || $a_user['password'] == '') {
             return false;
         }
-        $hashed_password = password_hash($a_user['password']);
+        $hashed_password = password_hash($a_user['password'], PASSWORD_DEFAULT);
         $a_results = $this->o_users->read(array('user_id' => $a_user['user_id']));
-        if ($hashed_password == $a_results['password']) {
+        if (isset($a_results[0])) {
+            $this_user = $a_results[0];
+        }
+        if ($hashed_password == $this_user['password']) {
             return true;
         }
         return false;
@@ -903,10 +846,11 @@ class Access extends Base
      *  Hashes a password using variables in a user's record to create the hash salt.
      *  After a lot of thought, this method isn't any more secure really than
      *  using php5.5 password_hash() function (or equivalent crypt() based code) and is a lot more work.
+     *  Leaving this here just in case.
      *  @param array $a_user required array('created_on', 'user_id', 'password')
      *  @return string the hashed password
     **/
-    private function hashPassword(array $a_user = array())
+    protected function hashPassword(array $a_user = array())
     {
         if ($a_user == array()) { return false; }
         $this->o_elog->write("a_user: " . var_export($a_user, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
