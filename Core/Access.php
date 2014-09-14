@@ -31,6 +31,11 @@
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
  *  </pre>
+ *  @TODO Decide if the selectUser method needs renamed to something else to indicate
+ *        it is selecting more than the data from the user table and create a new method
+ *        that selects a single user data from the user table only. Leaning this way.
+ *  @TODO Move all the model methods to the model classes.
+ *  @TODO Determine how the selectUser (or selectSingleUser - readSingle?) method works for use in verifiers
 **/
 namespace Ritc\Library\Core;
 
@@ -46,6 +51,7 @@ class Access extends Base
     protected $db_prefix;
     protected $o_elog;
     protected $o_db;
+    private   $o_groups;
     private   $o_users;
     protected $private_properties;
 
@@ -54,7 +60,9 @@ class Access extends Base
         $this->setPrivateProperties();
         $this->o_elog = Elog::start();
         $this->o_db = $o_db;
-        $this->o_users = new UsersModel($o_db);
+        $this->o_users  = new UsersModel($o_db);
+        $this->o_groups = new GroupsModel($o_db);
+        $this->o_roles  = new RolesModel($o_db);
         $this->db_prefix = $o_db->getDbPrefix();
     }
 
@@ -171,14 +179,13 @@ class Access extends Base
     public function isValidGroup($group = -1)
     {
         if ($group == -1) { return false; }
-        $o_group = new GroupsModel($this->o_db);
         if ($this->isID($group)) {
             $a_search_by = ['group_id' => $group];
         }
         else {
             $a_search_by = ['group_name' => $group];
         }
-        if (is_array($o_group->read($a_search_by))) {
+        if (is_array($this->o_groups->read($a_search_by))) {
             return true;
         }
         return false;
@@ -204,20 +211,20 @@ class Access extends Base
     public function isValidRole($role = -1)
     {
         if ($role == -1) { return false; }
-        $o_roles = new RolesModel($this->o_db);
         if ($this->isID($role)) {
             $a_search_by = ['role_id' => $role];
         }
         else {
             $a_search_by = ['role_name' => $role];
         }
-        if (is_array($o_roles->read($a_search_by))) {
+        if (is_array($this->o_roles->read($a_search_by))) {
             return true;
         }
         return false;
     }
     /**
-     * Verifies the role id provided is a valid id
+     * Verifies the role id provided is a valid id.
+     * Uses the isValidRole method
      * @param int $role_id
      * @return bool
      */
@@ -250,6 +257,7 @@ class Access extends Base
     }
     /**
      *  Checks to see if the user by id exists.
+     *  Uses the isValidUser method.
      *  @param int $user_id required
      *  @return bool
      */
@@ -263,16 +271,23 @@ class Access extends Base
     }
     /**
      *  Figures out if the user is specified as a default user.
-     *  @param int $user_id required
+     *  @param int|string $user_id required
      *  @return bool true false
     **/
-    public function isDefaultUser($user_id = -1)
+    public function isDefaultUser($user = '')
     {
-        if ($user_id == -1) { return false; }
-        $user_id = (int) $user_id;
-        $a_results = $this->o_users->selectUser($user_id);
-        if ($a_results['is_default'] == 1) {
-            return true;
+        if ($user == '') { return false; }
+        if ($this->isID($user)) {
+            $a_search_by = ['$user' => $user];
+        }
+        else {
+            $a_search_by = ['user_name' => $user];
+        }
+        $a_results = $this->o_users->read($a_search_by);
+        if (isset($a_results[0]) && isset($a_results[0]['is_default'])) {
+            if ($a_results[0]['is_default'] == 1) {
+                return true;
+            }
         }
         return false;
     }
