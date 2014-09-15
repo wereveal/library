@@ -1,11 +1,11 @@
 <?php
-namespace Ritc\FtpAdmin\Tests;
+namespace Ritc\Library\Tests;
 
 use Ritc\Library\Abstracts\Tester;
 use Ritc\Library\Core\Elog;
-use Ritc\FtpAdmin\Models\AppConfig;
+use Ritc\Library\Models\ConfigAdminModel;
 
-class AppConfigTests extends Tester
+class ConfigAdminModelTests extends Tester
 {
     protected $a_test_order;
     protected $a_test_values = array();
@@ -24,7 +24,7 @@ class AppConfigTests extends Tester
     {
         $this->a_test_order = $a_test_order;
         $this->o_elog = Elog::start();
-        $this->o_config = new AppConfig;
+        $this->o_config = new ConfigAdminModel('db_config_guide.php');
     }
 
     /**
@@ -36,7 +36,7 @@ class AppConfigTests extends Tester
      *      from the class methods.
      *  @return int $failed_tests
      **/
-    public function runTests($class_name = 'AppConfig', array $a_test_order = array())
+    public function runTests($class_name = 'ConfigAdminModel', array $a_test_order = array())
     {
         if (count($a_test_order) === 0) {
             if (count($this->a_test_order) === 0) {
@@ -98,16 +98,16 @@ class AppConfigTests extends Tester
     }
 
     ### TESTS ###
-    public function createConfigTester()
+    public function createTester()
     {
         $bad_results = false;
-        $results1 = $this->o_config->createConfig($this->a_test_values['new_config']);
-        $results2 = $this->o_config->createConfig();
-        $results3 = $this->o_config->createConfig(array('bad_stuff' => 'bad_stuff'));
-        $results4 = $this->o_config->createConfig($this->a_test_values['new_config']);
+        $results1 = $this->o_config->create($this->a_test_values['new_config']);
+        $results2 = $this->o_config->create();
+        $results3 = $this->o_config->create(array('bad_stuff' => 'bad_stuff'));
+        $results4 = $this->o_config->create($this->a_test_values['new_config']);
         if ($results1 === false) {
             $bad_results = true;
-            $this->setSubfailure('createConfig', 'valid config');
+            $this->setSubfailure('create', 'valid config');
         }
         else {
             $this->new_id = $results1;
@@ -115,104 +115,124 @@ class AppConfigTests extends Tester
         }
         if ($results2 !== false) {
             $bad_results = true;
-            $this->setSubfailure('createConfig', 'no config');
+            $this->setSubfailure('create', 'no config');
         }
         if ($results3 !== false) {
             $bad_results = true;
-            $this->setSubfailure('createConfig', 'bad config');
+            $this->setSubfailure('create', 'bad config');
         }
         if ($results4 !== false) {
             $bad_results = true;
-            $this->setSubfailure('createConfig', 'duplicate config');
+            $this->setSubfailure('create', 'duplicate config');
         }
         if ($bad_results) {
             return false;
         }
         return true;
     }
-    public function readConfigTester()
+    public function readTester()
     {
         $bad_results = false;
-        $results1 = $this->o_config->readConfig();
-        $results2 = $this->o_config->readConfig("USER_ID");
-        $results3 = $this->o_config->readConfig("badValue");
-        $results4 = $this->o_config->readConfig(1);
+        $results1 = $this->o_config->read();
+        $results2 = $this->o_config->read("USER_ID");
+        $results3 = $this->o_config->read("badValue");
+        $results4 = $this->o_config->read(1);
         if ($results1 === false || $this->compareArrays($this->a_test_values['all_configs'], $results1) === false) {
             $bad_results = true;
-            $this->setSubfailure('findConfig', 'find all configs');
+            $this->setSubfailure('read', 'find all configs');
         }
         if ($results2 === false || $this->compareArrays($this->a_test_values['single_config'], $results2) === false) {
             $bad_results = true;
-            $this->setSubfailure('findConfig', 'find single by name');
+            $this->setSubfailure('read', 'find single by name');
         }
         if ($results3 !== false) {
             $bad_results = true;
-            $this->setSubfailure('findConfig', 'bad config name');
+            $this->setSubfailure('read', 'bad config name');
         }
         if ($results4 === false || $this->compareArrays($this->a_test_values['single_config'], $results4) === false) {
             $bad_results = true;
-            $this->setSubfailure('findConfig', 'find single by id');
+            $this->setSubfailure('read', 'find single by id');
         }
         if ($bad_results) {
             return false;
         }
         return true;
     }
-    public function updateConfigTester()
+    public function updateTester()
     {
         $bad_results = false;
         $a_config = $this->a_test_values['modified_config'];
         $a_config['config_id'] = $this->new_id;
-        $results1 = $this->o_config->updateConfig($a_config);
+        $results1 = $this->o_config->update($a_config);
         if ($results1 === false) {
             $bad_results = true;
-            $this->setSubfailure('updateConfig', 'modify config false');
+            $this->setSubfailure('update', 'modify config false');
         }
         else {
-            $return1 = $this->o_config->readConfig($a_config['config_name']);
+            $return1 = $this->o_config->read($a_config['config_name']);
             if ($return1['config_value'] !== $a_config['config_value']) {
                 $bad_results = true;
-                $this->setSubfailure('updateConfig', 'modify config not modified');
+                $this->setSubfailure('update', 'modify config not modified');
             }
         }
-        $results2 = $this->o_config->updateConfig();
+        $results2 = $this->o_config->update();
         if ($results2 !== false) {
             $bad_results = true;
-            $this->setSubfailure('updateConfig', 'no config returned true');
+            $this->setSubfailure('update', 'no config returned true');
         }
-        $results3 = $this->o_config->updateConfig(array('bad_config_stuff' => 'bad_config_stuff'));
+        $results3 = $this->o_config->update(array('bad_config_stuff' => 'bad_config_stuff'));
         if ($results3 !== false) {
             $bad_results = true;
-            $this->setSubfailure('updateConfig', 'bad config info returned true');
+            $this->setSubfailure('update', 'bad config info returned true');
         }
         if ($bad_results) {
             return false;
         }
         return true;
     }
-    public function deleteConfigTester()
+    public function deleteTester()
     {
         $config_id = $this->new_id;
-        $results1 = $this->o_config->deleteConfig($config_id);
-        $results2 = $this->o_config->deleteConfig();
-        $results3 = $this->o_config->deleteConfig(100);
+        $results1 = $this->o_config->delete($config_id);
+        $results2 = $this->o_config->delete();
+        $results3 = $this->o_config->delete(100);
         $bad_results = false;
         if ($results1 !== true) {
-            $this->setSubfailure('deleteConfig', 'valid config returned false');
+            $this->setSubfailure('delete', 'valid config returned false');
             $bad_results = true;
         }
         if ($results2 === true) {
             $bad_results = true;
-            $this->setSubfailure('deleteConfig', 'blank config returned true');
+            $this->setSubfailure('delete', 'blank config returned true');
         }
         if ($results3 === true) {
             $bad_results = true;
-            $this->setSubfailure('deleteConfig', 'invalid config returned true');
+            $this->setSubfailure('delete', 'invalid config returned true');
         }
         if ($bad_results) {
             return false;
         }
         return true;
+    }
+    public function makeValidNameTester()
+    {
+        $results1 = $this->o_config->makeValidName('<a href="http://go.to.bad.place/">my name</a>');
+        $results2 = $this->o_config->makeValidName('My Name 123');
+        $results3 = $this->o_config->makeValidName('My&Name#--23');
+        $good_results = true;
+        if ($results1 != 'MY_NAME') {
+            $this->setSubfailure('makeValidName', "Test 1 Returned {$results1}");
+            $good_results = false;
+        }
+        if ($results2 != 'MY_NAME') {
+            $this->setSubfailure('makeValidName', "Test 2 Returned {$results2}");
+            $good_results = false;
+        }
+        if ($results3 != 'MY_NAME') {
+            $this->setSubfailure('makeValidName', "Test 3 Returned {$results3}");
+            $good_results = false;
+        }
+        return $good_results;
     }
     ### Utility ###
     /**
