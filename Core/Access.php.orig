@@ -244,7 +244,13 @@ class Access extends Base
     public function isValidUser($user = '')
     {
         if ($user == '') { return false; }
-        if (is_array($this->o_users->readUserRecord($user))) {
+        if ($this->isID($user)) {
+            $a_search_by = ['$user_id' => $user];
+        }
+        else {
+            $a_search_by = ['user_name' => $user];
+        }
+        if (is_array($this->o_users->read($a_search_by))) {
             return true;
         }
         return false;
@@ -270,12 +276,26 @@ class Access extends Base
     **/
     public function isDefaultUser($user = '')
     {
+<<<<<<< HEAD
         if ($user == '') { return false; }
-        $a_results = $this->o_users->readUserRecord($user);
-        if (isset($a_results['is_default'])) {
-            if ($a_results['is_default'] == 1) {
+        if ($this->isID($user)) {
+            $a_search_by = ['$user' => $user];
+        }
+        else {
+            $a_search_by = ['user_name' => $user];
+        }
+        $a_results = $this->o_users->read($a_search_by);
+        if (isset($a_results[0]) && isset($a_results[0]['is_default'])) {
+            if ($a_results[0]['is_default'] == 1) {
                 return true;
             }
+=======
+        if ($user_id == -1) { return false; }
+        $user_id = (int) $user_id;
+        $a_results = $this->o_users->readUserInfo($user_id);
+        if ($a_results['is_default'] == 1) {
+            return true;
+>>>>>>> master
         }
         return false;
     }
@@ -519,6 +539,91 @@ class Access extends Base
         return $this->o_db->search($sql);
     }
     /**
+     *  Gets the user values based on username.
+     *  @param mixed $user_id the user id or username (as defined in the db)
+     *  @return array, the values for the user
+    **/
+    public function readUserInfo($user_id = '')
+    {
+        if ($user_id == '') { return false; }
+        if ($this->isID($user_id)) {
+            $where = "u.id = {$user_id} ";
+        } else {
+            $where = "u.username = '{$user_id}' ";
+        }
+        $sql = "
+            SELECT r.id as role_id, r.access_level, r.name as role_name,
+                u.id as user_id, u.username, u.real_name, u.short_name,
+                u.password, u.is_default, u.created_on, u.bad_login_count,
+                u.bad_login_ts, u.is_active,
+                g.group_id, g.group_name
+            FROM {$this->db_prefix}roles as r,
+                 {$this->db_prefix}users as u,
+                 {$this->db_prefix}groups as g,
+                 {$this->db_prefix}user_groups as ug,
+                 {$this->db_prefix}user_roles as ur
+            WHERE ur.user_id = u.id
+            AND ur.role_id = r.id
+            AND ug.user_id = u.id
+            AND ug.group_id = g.group_id
+            AND {$where}
+        ";
+        $this->o_elog->write("Select User: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $results = $this->o_db->search($sql);
+        if (isset($results[0]) && is_array($results[0])) {
+            return $results[0];
+        } else {
+            return false;
+        }
+    }
+    /**
+     *  Selects the users and returns the data.
+     *  Can return all the users or just the users for the specified role.
+     *  @param string $group_name optional Returns uses only in this group
+     *  @param string $role optional. Returns users only in this role if provided.
+     *  @param bool $only_active optional. By default only returns active users. False returns all users.
+     *  @return array, array of users
+    **/
+    public function readUserInfos($group_name = '', $role = '', $only_active = true )
+    {
+
+        $sql = "
+            SELECT u.id, u.username, u.real_name, u.short_name, u.password, u.is_default,
+                r.id as role_id, r.name as role,
+                g.group_id, g.group_name
+            FROM {$this->db_prefix}users as u,
+                {$this->db_prefix}roles as r,
+                {$this->db_prefix}groups as g,
+                {$this->db_prefix}user_groups as ug,
+                {$this->db_prefix}user_roles as ur
+            WHERE ur.role_id = r.id
+            AND ur.user_id = u.id
+            AND ug.user_id = u.id
+            AND ug.group_id = g.group_id
+        ";
+        if ($group_name != '') {
+            $sql .= "
+                AND g.group_name LIKE '{$group_name}'
+            ";
+        }
+        if ($role != '') {
+            if ($this->isID($role)) {
+                $sql .= "
+                    AND r.id = {$role} ";
+            } else {
+                $sql .= "
+                    AND r.name = {$role} ";
+            }
+        }
+        if ($only_active !== false) {
+            $sql .= "
+                AND u.is_active >= 1";
+        }
+        $sql .= " ORDER BY g.group_name ASC, u.real_name ASC";
+        $this->o_elog->write("SQL: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        return $this->o_db->search($sql);
+    }
+    /**
      *  Sets the bad login timestamp for the user.
      *  @param int $user_id required
      *  @return bool
@@ -602,6 +707,68 @@ class Access extends Base
     }
 
     ### Validators ###
+    /**
+     *  Figures out if the user is specified as a default user.
+     *  @param int $user_id required
+     *  @return bool true false
+    **/
+    public function isDefaultUser($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $user_id = (int) $user_id;
+        $a_results = $this->o_users->read(array('user_id' => $user_id));
+        if (isset($a_results[0]) && is_array($a_results[0])) {
+            if ($a_results[0]['is_default'] == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     *  Checks to see if the param is an id or a name.
+     *  A name can not start with a numeric character so if the param starts
+     *  with a number, it is assumed to be an id (I know, assume = ...)
+     *  @param mixed $value required
+     *  @return bool
+    **/
+    public function isID($value = '')
+    {
+        $first_char = substr($value, 0, 1);
+        if (preg_match('/[0-9]/', $first_char) === 1) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     *  Verifies user has the role of super administrator.
+     *  @param int $user_id required
+     *  @return bool - true = is a super admin, false = not a super admin
+    **/
+    public function isSuperAdmin($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $a_user = $this->readUserInfo($user_id);
+        if ($a_user === false) { return false; }
+        if ($a_user['access_level'] === 1) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     *  Checks to see if user exists.
+     *  @param array $a_user values which should include the user id and username
+     *  @return bool, true or false
+     **/
+    public function isValidUser(array $a_user = array())
+    {
+        if (isset($a_user['user_id']) && isset($a_user['user_name'])) {
+            $a_user_info = $this->o_users->read(array('user_id' => $a_user['user_id']));
+            if ($a_user_info['user_name'] == $a_user['user_name']) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      *  Checks to see if the user id exists.

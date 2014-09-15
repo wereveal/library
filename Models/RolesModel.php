@@ -41,9 +41,14 @@ class RolesModel implements ModelInterface
     {
         return false;
     }
-    public function read(array $a_search_values = array())
+    public function read(array $a_search_values = array(), array $a_search_params = array())
     {
         return array();
+        $sql = "
+            SELECT role_id, role_name, role_description, access_level
+            FROM {$this->db_prefix}roles
+            {$where}
+            ORDER BY access_level ASC";
     }
     public function update(array $a_values = array())
     {
