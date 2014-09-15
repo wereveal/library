@@ -29,10 +29,10 @@ class ConfigAdminModel implements ModelInterface
     protected $o_elog;
     protected $o_strings;
 
-    public function __construct()
+    public function __construct($db_config = 'db_config.php')
     {
         $this->o_elog = Elog::start();
-        $o_dbf = DbFactory::start('db_config.php', 'rw');
+        $o_dbf = DbFactory::start($db_config, 'rw');
         $o_pdo = $o_dbf->connect();
         if ($o_pdo !== false) {
             $this->o_db = new DbModel($o_pdo);
@@ -71,7 +71,6 @@ class ConfigAdminModel implements ModelInterface
             return false;
         }
     }
-
     /**
      *  Returns array of config key=>value pairs or value of a key
      *  @param array $a_values

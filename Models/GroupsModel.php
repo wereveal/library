@@ -17,6 +17,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Core\Arrays;
+use Ritc\Library\Core\DbFactory;
 use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Elog;
 use Ritc\Library\Interfaces\ModelInterface;
@@ -29,12 +30,19 @@ class GroupsModel implements ModelInterface
     private $o_db;
     private $o_elog;
 
-    public function __construct(DbModel $o_db)
+    public function __construct($db_config = 'db_config.php')
     {
-        $this->o_elog    = Elog::start();
-        $this->o_db      = $o_db;
-        $this->o_arrays  = new Arrays();
-        $this->db_type   = $this->o_db->getDbType();
+        $this->o_elog = Elog::start();
+        $o_dbf = DbFactory::start($db_config, 'rw');
+        $o_pdo = $o_dbf->connect();
+        if ($o_pdo !== false) {
+            $this->o_db = new DbModel($o_pdo);
+        }
+        else {
+            $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+        }
+        $this->o_arrays = new Arrays;
+        $this->db_type = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
     }
     public function create(array $a_values = array())
