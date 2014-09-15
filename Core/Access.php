@@ -85,7 +85,7 @@ class Access extends Base
                 return false;
             }
         }
-        $a_user_values = $this->o_users->selectUser($a_login['username']);
+        $a_user_values = $this->o_users->readUserInfo($a_login['username']);
         $this->o_elog->write("Posted Values: " . var_export($a_login, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $this->o_elog->write("User Values: " . var_export($a_user_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($a_user_values !== false && $a_user_values !== null) {
@@ -156,7 +156,7 @@ class Access extends Base
     public function isSuperAdmin($user_id = -1)
     {
         if ($user_id == -1) { return false; }
-        $a_user = $this->o_users->selectUser($user_id);
+        $a_user = $this->o_users->readUserInfo($user_id);
         if ($a_user === false) { return false; }
         if ($a_user['access_level'] === 1) {
             return true;
@@ -270,7 +270,7 @@ class Access extends Base
     {
         if ($user_id == -1) { return false; }
         $user_id = (int) $user_id;
-        $a_results = $this->o_users->selectUser($user_id);
+        $a_results = $this->o_users->readUserInfo($user_id);
         if ($a_results['is_default'] == 1) {
             return true;
         }
@@ -285,7 +285,7 @@ class Access extends Base
     {
         if ($user_id == -1) { return false; }
         $user_id = (int) $user_id;
-        $results = $this->selectUser($user_id);
+        $results = $this->readUserInfo($user_id);
         if ($results !== false) {
             return true;
         }
@@ -299,7 +299,7 @@ class Access extends Base
     public function usernameExists($username = '')
     {
         if ($username == '') { return false; }
-        $results = $this->selectUser($username);
+        $results = $this->readUserInfo($username);
         if ($results !== false) {
             return true;
         }
@@ -462,45 +462,6 @@ class Access extends Base
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     *  Selects a group by the id.
-     *  @param int $group_id
-     *  @return array
-    **/
-    public function selectGroupById($group_id = -1)
-    {
-        if ($group_id == -1) { return false; }
-        $sql = "
-            SELECT group_id, group_name, group_description
-            FROM {$this->db_prefix}groups
-            WHERE group_id = {$group_id}
-        ";
-        $results = $this->o_db->search($sql);
-        if (is_array($results[0])) {
-            return $results[0];
-        } else {
-            return false;
-        }
-    }
-    /**
-     *  Returns values for a group by group name.
-     *  @param string $group_name
-     *  @return array values for group
-    **/
-    public function selectGroupByName($group_name = '')
-    {
-        $sql = "
-            SELECT group_id, group_name, group_description
-            FROM {$this->db_prefix}groups
-            WHERE group_name LIKE '{$group_name}'
-        ";
-        $results = $this->o_db->search($sql);
-        if (is_array($results[0])) {
-            return $results[0];
-        } else {
-            return false;
-        }
-    }
-    /**
      *  Selects a role by the id.
      *  @param int $role_id
      *  @return array
@@ -559,7 +520,7 @@ class Access extends Base
      *  @param mixed $user_id the user id or username (as defined in the db)
      *  @return array, the values for the user
     **/
-    public function selectUser($user_id = '')
+    public function readUserInfo($user_id = '')
     {
         if ($user_id == '') { return false; }
         if ($this->isID($user_id)) {
@@ -600,7 +561,7 @@ class Access extends Base
      *  @param bool $only_active optional. By default only returns active users. False returns all users.
      *  @return array, array of users
     **/
-    public function selectUsers($group_name = '', $role = '', $only_active = true )
+    public function readUserInfos($group_name = '', $role = '', $only_active = true )
     {
 
         $sql = "
@@ -763,7 +724,7 @@ class Access extends Base
     public function isSuperAdmin($user_id = -1)
     {
         if ($user_id == -1) { return false; }
-        $a_user = $this->selectUser($user_id);
+        $a_user = $this->readUserInfo($user_id);
         if ($a_user === false) { return false; }
         if ($a_user['access_level'] === 1) {
             return true;

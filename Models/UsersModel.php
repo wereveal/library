@@ -199,11 +199,32 @@ class UsersModel implements ModelInterface
 
     ### More complex methods using multiple tables ###
     /**
+     *  Returns the user record.
+     *  @param int|string $user either user id or user name
+     *  @return array|bool
+     */
+    public function readUserRecord($user = '')
+    {
+        if ($user == '') { return false; }
+        if ($this->isID($user)) {
+            $a_search_by = ['$user_id' => $user];
+        }
+        else {
+            $a_search_by = ['user_name' => $user];
+        }
+        $a_records = this->o_users->read($a_search_by);
+        if (is_array($a_records[0])) {
+            return $a_records[0];
+        } else {
+            return false;
+        }
+    }
+    /**
      *  Gets the user values based on user_name or user_id.
      *  @param mixed $user_id the user id or user_name (as defined in the db)
      *  @return array, the values for the user
     **/
-    public function selectUser($user_id = '')
+    public function readUserInfo($user_id = '')
     {
         if ($user_id == '') { return false; }
         if ($this->isID($user_id)) {
@@ -213,11 +234,11 @@ class UsersModel implements ModelInterface
             $where = "u.user_name = '{$user_id}' ";
         }
         $sql = "
-            SELECT r.role_id, r.role_level, r.role_name,
+            SELECT r.role_id, r.role_level, r.role_name
                 u.user_id, u.user_name, u.real_name, u.short_name,
                 u.password, u.is_default, u.created_on, u.bad_login_count,
                 u.bad_login_ts, u.is_active, u.is_default,
-                g.group_id, g.group_name
+                g.group_id, g.group_name, g.group_description
             FROM {$this->db_prefix}roles as r,
                  {$this->db_prefix}users as u,
                  {$this->db_prefix}groups as g,
@@ -237,6 +258,54 @@ class UsersModel implements ModelInterface
         else {
             return false;
         }
+    }
+    /**
+     *  Selects the users and returns the data.
+     *  Can return all the users or just the users for the specified role.
+     *  @param string $group_name optional Returns uses only in this group
+     *  @param string $role optional. Returns users only in this role if provided.
+     *  @param bool $only_active optional. By default only returns active users. False returns all users.
+     *  @return array, array of users
+     **/
+    public function readUsersInfo($group_name = '', $role = '', $only_active = true )
+    {
+
+        $sql = "
+            SELECT u.user_id, u.user_name, u.real_name, u.short_name, u.password, u.is_default, u.is_active
+                r.role_id, r.role_name,
+                g.group_id, g.group_name
+            FROM {$this->db_prefix}users as u,
+                {$this->db_prefix}roles as r,
+                {$this->db_prefix}groups as g,
+                {$this->db_prefix}user_groups as ug,
+                {$this->db_prefix}user_roles as ur
+            WHERE ur.role_id = r.role_id
+            AND ur.user_id = u.user_id
+            AND ug.user_id = u.user_id
+            AND ug.group_id = g.group_id
+        ";
+        if ($group_name != '') {
+            $sql .= "
+                AND g.group_name LIKE '{$group_name}'
+            ";
+        }
+        if ($role != '') {
+            if ($this->isID($role)) {
+                $sql .= "
+                    AND r.role_id = {$role} ";
+            }
+            else {
+                $sql .= "
+                    AND r.role_name = {$role} ";
+            }
+        }
+        if ($only_active) {
+            $sql .= "
+                AND u.is_active >= 1";
+        }
+        $sql .= " ORDER BY g.group_name ASC, u.real_name ASC";
+        $this->o_elog->write("SQL: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        return $this->o_db->search($sql);
     }
     /**
      *  Saves the user.
@@ -333,54 +402,6 @@ class UsersModel implements ModelInterface
             }
         }
         return false;
-    }
-    /**
-     *  Selects the users and returns the data.
-     *  Can return all the users or just the users for the specified role.
-     *  @param string $group_name optional Returns uses only in this group
-     *  @param string $role optional. Returns users only in this role if provided.
-     *  @param bool $only_active optional. By default only returns active users. False returns all users.
-     *  @return array, array of users
-     **/
-    public function selectUsers($group_name = '', $role = '', $only_active = true )
-    {
-
-        $sql = "
-            SELECT u.user_id, u.user_name, u.real_name, u.short_name, u.password, u.is_default, u.is_active
-                r.role_id, r.role_name,
-                g.group_id, g.group_name
-            FROM {$this->db_prefix}users as u,
-                {$this->db_prefix}roles as r,
-                {$this->db_prefix}groups as g,
-                {$this->db_prefix}user_groups as ug,
-                {$this->db_prefix}user_roles as ur
-            WHERE ur.role_id = r.role_id
-            AND ur.user_id = u.user_id
-            AND ug.user_id = u.user_id
-            AND ug.group_id = g.group_id
-        ";
-        if ($group_name != '') {
-            $sql .= "
-                AND g.group_name LIKE '{$group_name}'
-            ";
-        }
-        if ($role != '') {
-            if ($this->isID($role)) {
-                $sql .= "
-                    AND r.role_id = {$role} ";
-            }
-            else {
-                $sql .= "
-                    AND r.role_name = {$role} ";
-            }
-        }
-        if ($only_active) {
-            $sql .= "
-                AND u.is_active >= 1";
-        }
-        $sql .= " ORDER BY g.group_name ASC, u.real_name ASC";
-        $this->o_elog->write("SQL: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->search($sql);
     }
 
     ### Specialty Methods for User ###
@@ -482,4 +503,22 @@ class UsersModel implements ModelInterface
         $results = $this->o_db->update($sql, $a_values, true);
         return $results;
     }
+
+    ### Utility Methods ###
+    /**
+     *  Checks to see if the param is an id or a name.
+     *  A name can not start with a numeric character so if the param starts
+     *  with a number, it is assumed to be an id (I know, assume = ...)
+     *  @param mixed $value required
+     *  @return bool
+    **/
+    public function isID($value = '')
+    {
+        $first_char = substr($value, 0, 1);
+        if (preg_match('/[0-9]/', $first_char) === 1) {
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -41,9 +41,25 @@ class GroupsModel implements ModelInterface
     {
         return false;
     }
-    public function read(array $a_search_values = array())
+    public function read(array $a_search_values = array(), array $a_search_params = array())
     {
-        return array();
+        if (count($a_search_values) > 0) {
+            $a_search_params = $a_search_params == array()
+                ? array('order_by' => 'group_name')
+                : $a_search_params;
+            $a_allowed_keys = array(
+                'group_id',
+                'group_name'
+            );
+            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+        }
+        $sql = "
+            SELECT group_id, group_name, group_description
+            FROM {$this->db_prefix}groups
+            {$where}
+        ";
+        return $this->o_db->search($sql, $a_search_values);
     }
     public function update(array $a_values = array())
     {
@@ -54,6 +70,35 @@ class GroupsModel implements ModelInterface
         return false;
     }
 
+    ### Shortcuts ###
+    /**
+     *  Returns a record of the group specified by id.
+     *  @param int $group_id
+     *  @return array|bool
+     */
+    public function readById($group_id = -1)
+    {
+        if ($group_id == -1) { return false; }
+        $results = $this->read(array('group_id' => $group_id));
+        if (count($results[0]) > 0) {
+            return $results[0];
+        }
+        return false;
+    }
+    /**
+     *  Returns a record of the group specified by name.
+     *  @param string $group_name
+     *  @return array()
+     */
+    public function readyByName($group_name = '')
+    {
+        if ($group_name == '') { return false; }
+        $results = $this->read(array('group_name' => $group_name));
+        if (count($results[0]) > 0) {
+            return $results[0];
+        }
+        return false;
+    }
     /**
      *  Checks to see if the id is a valid group id.
      *  @param int $group_id
