@@ -6,11 +6,12 @@
  *  @namespace Ritc/Library/Models
  *  @class UsersModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 0.1.0
- *  @date 2014-09-11 15:04:20
+ *  @version 1.0.0
+ *  @date 2014-09-15 14:54:11
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v0.1.0 - Initial version 09/11/2014 wer
+ *      v1.0.0 - First Live version - 09/15/2014 wer
+ *      v0.1.0 - Initial version    - 09/11/2014 wer
  *  </pre>
  *  @todo add the methods needed to crud a user with all the correct group and role information
 **/
@@ -20,10 +21,6 @@ use Ritc\Library\Core\Arrays;
 use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Elog;
 use Ritc\Library\Interfaces\ModelInterface;
-use Ritc\Library\Models\GroupsModel;
-use Ritc\Library\Models\RolesModel;
-use Ritc\Library\Models\UserGroupMapModel;
-use Ritc\Library\Models\UserRoleMapModel;
 
 class UsersModel implements ModelInterface
 {
@@ -72,7 +69,7 @@ class UsersModel implements ModelInterface
             VALUES
                 (:user_name, :real_name, :short_name, :password, :is_active, :is_default)
         ";
-        if ($this->o_db->insert($sql, $a_values, '{$this->db_prefix}users')) {
+        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}users")) {
             $ids = $this->o_db->getNewIds();
             $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
@@ -84,13 +81,13 @@ class UsersModel implements ModelInterface
     /**
      * Returns the record for
      * @param array $a_search_values
-     * @return mixed
+     * @param array $a_search_params
+     * @return array|bool
      */
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
-        $where = '';
-        if ($a_search_values != array()) {
-            $a_search_params = $a_search_params == array()
+        if (count($a_search_values) > 0) {
+            $a_search_params = count($a_search_params) == 0
                 ? array('order_by' => 'user_name')
                 : $a_search_params;
             $a_allowed_keys = array(
@@ -103,6 +100,12 @@ class UsersModel implements ModelInterface
             );
             $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
             $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+        }
+        elseif (count($a_search_params) > 0) {
+            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+        }
+        else {
+            $where = " ORDER BY 'user_name'";
         }
         $sql = "
             SELECT user_id,
@@ -184,20 +187,68 @@ class UsersModel implements ModelInterface
     }
     /**
      *  Deletes a {$this->db_prefix}users record based on id.
-     *  @param string $user_id required
+     *  @param int $user_id required
      *  @return bool
     **/
     public function delete($user_id = -1)
     {
-        if ($user_id == -1) { return false; }
-        $sql = '
+        if ($user_id == -1 || !ctype_digit($user_id)) { return false; }
+        $sql = "
             DELETE FROM {$this->db_prefix}users
             WHERE user_id = :user_id
-        ';
+        ";
         return $this->o_db->delete($sql, array(':user_id' => $user_id), true);
     }
 
-    ### More complex methods using multiple tables ###
+    ### Single User Methods ###
+    /**
+     *  Gets the user id for a specific user_name.
+     *  @param string $user_name required
+     *  @return int|bool $user_id
+     */
+    public function getId($user_name = '')
+    {
+        if ($user_name == '') { return false; }
+        $a_results = $this->read(array('user_name' => $user_name));
+        if ($a_results !== false) {
+            if (isset($a_results[0]) && $a_results[0] != array()) {
+                return $a_results[0]['user_id'];
+            }
+        }
+        return false;
+    }
+    /**
+     *  Updates the bad_login_count field for the user by one
+     *  @param int $user_id
+     *  @return bool
+     **/
+    public function incrementBadLoginCount($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $sql = "
+            UPDATE {$this->db_prefix}users
+            SET bad_login_count = bad_login_count + 1
+            WHERE user_id = :user_id
+        ";
+        $a_values = array(':user_id' => $user_id);
+        return $this->o_db->update($sql, $a_values, true);
+    }
+    /**
+     *  Increments the bad_login_ts record by one minute
+     *  @param int $user_id required
+     *  @return bool
+     */
+    public function incrementBadLoginTimestamp($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $sql = "
+            UPDATE {$this->db_prefix}users
+            SET bad_login_ts = bad_login_ts + 60
+            WHERE user_id = :user_id
+        ";
+        $a_values = array(':user_id' => $user_id);
+        return $this->o_db->update($sql, $a_values, true);
+    }
     /**
      *  Returns the user record.
      *  @param int|string $user either user id or user name
@@ -206,13 +257,13 @@ class UsersModel implements ModelInterface
     public function readUserRecord($user = '')
     {
         if ($user == '') { return false; }
-        if ($this->isID($user)) {
+        if (ctype_digit($user)) {
             $a_search_by = ['$user_id' => $user];
         }
         else {
             $a_search_by = ['user_name' => $user];
         }
-        $a_records = this->o_users->read($a_search_by);
+        $a_records = $this->read($a_search_by);
         if (is_array($a_records[0])) {
             return $a_records[0];
         } else {
@@ -220,14 +271,107 @@ class UsersModel implements ModelInterface
         }
     }
     /**
+     *  Resets the bad_login_count to 0
+     *  @param int $user_id required
+     *  @return bool
+     **/
+    public function resetBadLoginCount($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $sql = "
+            UPDATE {$this->db_prefix}users
+            SET bad_login_count = 0
+            WHERE user_id = :user_id
+        ";
+        $a_values = array(':user_id' => $user_id);
+        return $this->o_db->update($sql, $a_values, true);
+    }
+    /**
+     *  Resets the timestamp to 0
+     *  @param int $user_id required
+     *  @return bool
+    **/
+    public function resetBadLoginTimestamp($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $update_sql = "
+            UPDATE {$this->db_prefix}users
+            SET bad_login_ts = 0
+            WHERE user_id = :user_id
+        ";
+        $a_values = array(':user_id' => $user_id);
+        $results = $this->o_db->update($update_sql, $a_values, true);
+        return $results;
+    }
+    /**
+     *  Sets the bad login timestamp for the user.
+     *  @param int $user_id required
+     *  @return bool
+    **/
+    public function setBadLoginTimestamp($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $sql = "
+            UPDATE {$this->db_prefix}users
+            SET bad_login_ts = :timestamp
+            WHERE user_id = :user_id
+        ";
+        $a_values = array(':user_id' => $user_id, ':timestamp' => time());
+        $results = $this->o_db->update($sql, $a_values, true);
+        return $results;
+    }
+    /**
+     *  Updates the user record with a new password
+     *  @param int    $user_id required
+     *  @param string $password required
+     *  @return bool success or failure
+     */
+    public function updatePassword($user_id = -1, $password = '')
+    {
+        if ($user_id == -1 || $password == '') { return false; }
+        $sql = "
+            UPDATE {$this->db_prefix}users
+            SET password = :password
+            WHERE id = :user_id
+        ";
+        $a_values = [':user_id' => $user_id, ':password' => $password];
+        return $this->o_db->update($sql, $a_values, true);
+    }
+    /**
+     *  Updates the user record to be make the user active or inactive, normally inactive.
+     *  @param int $user_id   required id of a user
+     *  @param int $is_active optional defaults to inactive (0)
+     *  @return bool success or failure
+     */
+    public function updateActive($user_id = -1, $is_active = 0)
+    {
+        if ($user_id == -1) { return false; }
+        $is_active = (int) $is_active;
+        if ($is_active > 1) {
+            $is_active = 1;
+        }
+        if ($is_active == '') {
+            $is_active = 0;
+        }
+        $sql = "
+            UPDATE {$this->db_prefix}users
+            SET is_active = :is_active
+            WHERE user_id = :user_id
+        ";
+        $a_values = [':user_id' => $user_id, ':is_active' => $is_active];
+        return $this->o_db->update($sql, $a_values, true);
+    }
+
+    ### More complex methods using multiple tables ###
+    /**
      *  Gets the user values based on user_name or user_id.
      *  @param mixed $user_id the user id or user_name (as defined in the db)
      *  @return array, the values for the user
     **/
-    public function readUserInfo($user_id = '')
+    public function readInfo($user_id = '')
     {
         if ($user_id == '') { return false; }
-        if ($this->isID($user_id)) {
+        if (ctype_digit($user_id)) {
             $where = "u.user_id = {$user_id} ";
         }
         else {
@@ -290,13 +434,13 @@ class UsersModel implements ModelInterface
             ";
         }
         if ($role != '') {
-            if ($this->isID($role)) {
+            if (ctype_digit($role)) {
                 $sql .= "
                     AND r.role_id = {$role} ";
             }
             else {
                 $sql .= "
-                    AND r.role_name = {$role} ";
+                    AND r.role_name = '{$role}' ";
             }
         }
         if ($only_active) {
@@ -314,10 +458,10 @@ class UsersModel implements ModelInterface
      *  @param array $a_user values to save
      *  @return mixed, user_id or false
      **/
-    public function saveUser($a_user = array())
+    public function saveUser(array $a_user = array())
     {
         $method = __METHOD__ . '.';
-        if (is_array($a_user) === false || count($a_user) == 0) {
+        if (count($a_user) == 0) {
             return false;
         }
         $this->o_elog->write("a_user before changes: " . var_export($a_user, true), LOG_OFF, $method  . __LINE__);
@@ -360,7 +504,7 @@ class UsersModel implements ModelInterface
                         }
                     }
                     if (isset($a_user['role_id']) && $a_user['role_id'] != '') {
-                        $role_id = $o_role->isValidRoleId($a_user['role_id']) ? $a_user['role_id'] : '';
+                        $role_id = $o_role->isValidId($a_user['role_id']) ? $a_user['role_id'] : '';
                     }
                     if ($role_id == '' && isset($a_user['role_name']) && $a_user['role_name'] != '') {
                         $a_role = $o_role->read(array('role_name' => $a_user['role_name']));
@@ -394,129 +538,15 @@ class UsersModel implements ModelInterface
                 $user_id = $a_user['user_id'];
             }
             elseif (isset($a_user['user_name']) && $a_user['user_name'] != '') {
-                $user_id = $this->getUserId($a_user['user_name']);
+                $user_id = $this->getId($a_user['user_name']);
+            }
+            else {
+                $user_id = false;
             }
             $results = $this->update($a_user);
             if ($results !== false) {
                 return $user_id;
             }
-        }
-        return false;
-    }
-
-    ### Specialty Methods for User ###
-    /**
-     *  Gets the user id for a specific user_name.
-     *  @param string $user_name required
-     *  @return int|bool $user_id
-     */
-    public function getUserId($user_name = '')
-    {
-        if ($user_name == '') { return false; }
-        $a_results = $this->read(array('user_name' => $user_name));
-        if ($a_results !== false) {
-            if (isset($a_results[0]) && $a_results[0] != array()) {
-                return $a_results[0]['user_id'];
-            }
-        }
-        return false;
-    }
-    /**
-     *  Updates the bad_login_count field for the user by one
-     *  @param int $user_id
-     *  @return bool
-     **/
-    public function incrementBadLoginCount($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $sql = '
-            UPDATE {$this->db_prefix}users
-            SET bad_login_count = bad_login_count + 1
-            WHERE user_id = :user_id
-        ';
-        $a_values = array(':user_id' => $user_id);
-        return $this->o_db->update($sql, $a_values, true);
-    }
-    /**
-     *  Increments the bad_login_ts record by one minute
-     *  @param int $user_id required
-     *  @return bool
-     */
-    public function incrementBadLoginTimestamp($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $sql = '
-            UPDATE {$this->db_prefix}users
-            SET bad_login_ts = bad_login_ts + 60
-            WHERE user_id = :user_id
-        ';
-        $a_values = array(':user_id' => $user_id);
-        return $this->o_db->update($sql, $a_values, true);
-    }
-    /**
-     *  Resets the bad_login_count to 0
-     *  @param int $user_id required
-     *  @return bool
-     **/
-    public function resetBadLoginCount($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $sql = '
-            UPDATE {$this->db_prefix}users
-            SET bad_login_count = 0
-            WHERE user_id = :user_id
-        ';
-        $a_values = array(':user_id' => $user_id);
-        return $this->o_db->update($sql, $a_values, true);
-    }
-    /**
-     *  Resets the timestamp to 0
-     *  @param int $user_id required
-     *  @return bool
-    **/
-    public function resetBadLoginTimestamp($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $update_sql = '
-            UPDATE {$this->db_prefix}users
-            SET bad_login_ts = 0
-            WHERE user_id = :user_id
-        ';
-        $a_values = array(':user_id' => $user_id);
-        $results = $this->o_db->update($update_sql, $a_values, true);
-        return $results;
-    }
-    /**
-     *  Sets the bad login timestamp for the user.
-     *  @param int $user_id required
-     *  @return bool
-    **/
-    public function setBadLoginTimestamp($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $sql = '
-            UPDATE {$this->db_prefix}users
-            SET bad_login_ts = :timestamp
-            WHERE user_id = :user_id
-        ';
-        $a_values = array(':user_id' => $user_id, ':timestamp' => time());
-        $results = $this->o_db->update($sql, $a_values, true);
-        return $results;
-    }
-
-    ### Utility Methods ###
-    /**
-     *  Checks to see if the param is an id or a name.
-     *  A name can not start with a numeric character so if the param starts
-     *  with a number, it is assumed to be an id (I know, assume = ...)
-     *  @param mixed $value required
-     *  @return bool
-    **/
-    public function isID($value = '')
-    {
-        $first_char = substr($value, 0, 1);
-        if (preg_match('/[0-9]/', $first_char) === 1) {
-            return true;
         }
         return false;
     }

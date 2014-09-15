@@ -6,13 +6,13 @@
  *  @namespace Ritc/Library/Models
  *  @class GroupsModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 0.1.0
- *  @date 2014-01-18 15:08:49
+ *  @version 1.0.0
+ *  @date 2014-09-15 14:53:19
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0 - First live version 09/15/2014 wer
  *      v0.1.0 - Initial version 01/18/2014 wer
  *  </pre>
- *  @todo Everything
 **/
 namespace Ritc\Library\Models;
 
@@ -39,7 +39,28 @@ class GroupsModel implements ModelInterface
     }
     public function create(array $a_values = array())
     {
-        return false;
+        if ($a_values == array()) { return false; }
+        $a_required_keys = array(
+            'group_name',
+            'group_description'
+        );
+        if (!$this->o_arrays->hasRequiredKeys($a_required_keys, $a_values)) {
+            return false;
+        }
+        $sql = "
+            INSERT INTO {$this->db_prefix}groups
+                (group_name, group_description)
+            VALUES
+                (:group_name, :group_description)
+        ";
+        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}groups")) {
+            $ids = $this->o_db->getNewIds();
+            $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            return $ids[0];
+        }
+        else {
+            return false;
+        }
     }
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
@@ -54,6 +75,12 @@ class GroupsModel implements ModelInterface
             $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
             $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
         }
+        elseif (count($a_search_params) > 0) {
+            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+        }
+        else {
+            $where = " ORDER BY 'group_name'";
+        }
         $sql = "
             SELECT group_id, group_name, group_description
             FROM {$this->db_prefix}groups
@@ -63,11 +90,32 @@ class GroupsModel implements ModelInterface
     }
     public function update(array $a_values = array())
     {
-        return false;
+        if (   !isset($a_values['group_id'])
+            || $a_values['group_id'] == ''
+            || !ctype_digit($a_values['group_id'])
+        ) {
+            return false;
+        }
+        $a_allowed_keys = ['group_id', 'group_name', 'group_description'];
+        $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);
+
+        $set_sql = $this->o_db->buildSqlSet($a_values, ['group_id']);
+        $sql = "
+            UPDATE {$this->db_prefix}groups
+            {$set_sql}
+            WHERE group_id = :group_id
+        ";
+        $this->o_elog->write($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        return $this->o_db->update($sql, $a_values, true);
     }
-    public function delete($id = '')
+    public function delete($group_id = '')
     {
-        return false;
+        if ($group_id == -1) { return false; }
+        $sql = "
+            DELETE FROM {$this->db_prefix}groups
+            WHERE group_id = :group_id
+        ";
+        return $this->o_db->delete($sql, array(':group_id' => $group_id), true);
     }
 
     ### Shortcuts ###
@@ -79,6 +127,7 @@ class GroupsModel implements ModelInterface
     public function readById($group_id = -1)
     {
         if ($group_id == -1) { return false; }
+        if (!ctype_digit($group_id)) { return false; }
         $results = $this->read(array('group_id' => $group_id));
         if (count($results[0]) > 0) {
             return $results[0];
@@ -107,7 +156,7 @@ class GroupsModel implements ModelInterface
     public function isValidGroupId($group_id = -1)
     {
         if ($group_id == -1) { return false; }
-        $group_id = (int) $group_id;
+        if (!ctype_digit($group_id)) { return false; }
         if (is_array($this->read(array('group_id' => $group_id)))) {
             return true;
         }

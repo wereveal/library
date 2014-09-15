@@ -9,10 +9,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.2.0
- *  @date 2013-12-30 13:16:46
- *  @note A part of the RITC Library v5
+ *  @version 1.2.1
+ *  @date 2014-09-15 14:00:06
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.2.1 - fix namespace potential fail - 09/15/2014 wer
  *      v1.2.0 - new method added - 12/30/2013 wer
  *      v1.1.1 - match package change - 12/19/2013 wer
  *      v1.1.0 - namespace changes - 07/30/2013 wer
@@ -23,7 +24,9 @@
 **/
 namespace Ritc\Library\Core;
 
-class Arrays extends namespace\Base
+use Ritc\Library\Core\Base;
+
+class Arrays extends Base
 {
     /**
      *  Modifies array values with htmlentities.

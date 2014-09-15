@@ -2,15 +2,16 @@
 /**
  *  @brief Does all the database CRUD stuff.
  *  @file RolesModel.php
- *  @ingroup library models
+ *  @inrole library models
  *  @namespace Ritc/Library/Models
  *  @class RolesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 0.1.0
- *  @date 2014-01-18 15:08:49
+ *  @version 1.0.0
+ *  @date 2014-09-15 14:56:33
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v0.1.0 - Initial version 01/18/2014 wer
+ *      v1.0.0 - First live version - 09/15/2014 wer
+ *      v0.1.0 - Initial version    - 01/18/2014 wer
  *  </pre>
  *  @todo Everything
 **/
@@ -37,33 +38,130 @@ class RolesModel implements ModelInterface
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
     }
+
+    ### BASE CRUD ###
     public function create(array $a_values = array())
     {
-        return false;
+        if ($a_values == array()) { return false; }
+        $a_required_keys = array(
+            'role_name',
+            'role_description',
+            'role_level'
+        );
+        if (!$this->o_arrays->hasRequiredKeys($a_required_keys, $a_values)) {
+            return false;
+        }
+        $sql = "
+            INSERT INTO {$this->db_prefix}roles
+                (role_name, role_description, role_level)
+            VALUES
+                (:role_name, :role_description, :role_level)
+        ";
+        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}roles")) {
+            $ids = $this->o_db->getNewIds();
+            $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            return $ids[0];
+        }
+        else {
+            return false;
+        }
     }
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
-        return array();
+        if (count($a_search_values) > 0) {
+            $a_search_params = $a_search_params == array()
+                ? array('order_by' => 'role_name')
+                : $a_search_params;
+            $a_allowed_keys = array(
+                'role_id',
+                'role_name',
+                'role_level'
+            );
+            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+        }
+        elseif (count($a_search_params) > 0) {
+            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+        }
+        else {
+            $where = " ORDER BY 'role_name'";
+        }
         $sql = "
-            SELECT role_id, role_name, role_description, access_level
+            SELECT role_id, role_name, role_description, role_level
             FROM {$this->db_prefix}roles
             {$where}
-            ORDER BY access_level ASC";
+        ";
+        return $this->o_db->search($sql, $a_search_values);
     }
     public function update(array $a_values = array())
     {
-        return false;
+        if (   !isset($a_values['role_id'])
+            || $a_values['role_id'] == ''
+            || !ctype_digit($a_values['role_id'])
+        ) {
+            return false;
+        }
+        $a_allowed_keys = ['role_id', 'role_name', 'role_description', 'role_level'];
+        $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);
+        $set_sql = $this->o_db->buildSqlSet($a_values, ['role_id']);
+        $sql = "
+            UPDATE {$this->db_prefix}roles
+            {$set_sql}
+            WHERE role_id = :role_id
+        ";
+        $this->o_elog->write($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        return $this->o_db->update($sql, $a_values, true);
     }
-    public function delete($id = '')
+    public function delete($role_id = '')
     {
+        if ($role_id == -1) { return false; }
+        $sql = '
+            DELETE FROM {$this->db_prefix}roles
+            WHERE role_id = :role_id
+        ';
+        return $this->o_db->delete($sql, array(':role_id' => $role_id), true);
+    }
+
+    ### Specialized CRUD ###
+    /**
+     *  Selects a role record by the id.
+     *  @param int $role_id
+     *  @return array
+    **/
+    public function readById($role_id = -1)
+    {
+        if ($role_id == -1) { return false; }
+        if (!ctype_digit($role_id)) { return false; }
+        $results = $this->read(array('role_id' => $role_id));
+        if (count($results[0]) > 0) {
+            return $results[0];
+        }
         return false;
     }
+    /**
+     *  Returns a record of the role specified by name.
+     *  @param string $role_name
+     *  @return array()
+     */
+    public function readyByName($role_name = '')
+    {
+        if ($role_name == '') { return false; }
+        $results = $this->read(array('role_name' => $role_name));
+        if (count($results[0]) > 0) {
+            return $results[0];
+        }
+        return false;
+    }
+
+
+
+    ### Validators ###
     /**
      *  Checks to see if the id is a valid role id.
      *  @param int $role_id
      *  @return bool true or false
      **/
-    public function isValidRoleId($role_id = -1)
+    public function isValidId($role_id = -1)
     {
         if ($role_id == -1) { return false; }
         $role_id = (int) $role_id;

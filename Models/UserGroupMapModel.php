@@ -6,11 +6,12 @@
  *  @namespace Ritc/Library/Models
  *  @class UserGroupMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 0.1.0
- *  @date 2014-01-18 15:08:49
+ *  @version 1.0.0
+ *  @date 2014-09-15 14:55:45
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v0.1.0 - Initial version 01/18/2014 wer
+ *      v1.0.0 - First Live version - 09/15/2014 wer
+ *      v0.1.0 - Initial version    - 01/18/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
@@ -54,10 +55,10 @@ class UserGroupMapModel implements ModelInterface
             return false;
         }
         $sql = "
-            INSERT INTO library_user_group_map (user_id, group_id)
+            INSERT INTO {$this->db_prefix}user_group_map (user_id, group_id)
             VALUES (:user_id, :group_id)
         ";
-        if ($this->o_db->insert($sql, $a_values, 'library_user_group_map')) {
+        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}user_group_map")) {
             $ids = $this->o_db->getNewIds();
             $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
@@ -75,18 +76,18 @@ class UserGroupMapModel implements ModelInterface
     {
         $where = '';
         if ($a_search_values != array()) {
-            $a_search_params = array('order_by' => 'id');
+            $a_search_params = array('order_by' => 'user_id');
             $a_allowed_keys = array(
                 'group_id',
                 'user_id',
-                'id'
+                'ugm_id'
             );
             $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
             $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
         }
         $sql = "
             SELECT *
-            FROM library_user_group_map
+            FROM {$this->db_prefix}user_group_map
             {$where}
         ";
         $this->o_elog->write($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
@@ -95,11 +96,11 @@ class UserGroupMapModel implements ModelInterface
 
     /**
      *  Updates the record, NOT!
-     *  This should never happen! Always return false.
-     *      Reasoning. The group_id and user_id form a unique index. As such
+     *  Method is required by interface.
+     *  Update is not allowed! Always return false.
+     *      Reasoning. The group_id and user_id form a unique index. As such,
      *      they should not be modified. The record should always be deleted and
      *      a new one added.
-     *      Method is required by interface.
      *  @param array $a_values
      *  @return bool
      */
@@ -113,13 +114,14 @@ class UserGroupMapModel implements ModelInterface
      * @param string $id required
      * @return bool
      */
-    public function delete($id = '')
+    public function delete($ugm_id = '')
     {
-        if ($id == '') { return false; }
+        if ($ugm_id == '') { return false; }
+        if (!ctype_digit($ugm_id)) { return false; }
         $sql = "
-            DELETE FROM library_user_group_map
-            WHERE id = :id
+            DELETE FROM {$this->db_prefix}user_group_map
+            WHERE ugm_id = :ugm_id
         ";
-        return $this->o_db->delete($sql, array(':id' => $id), true);
+        return $this->o_db->delete($sql, array(':ugm_id' => $ugm_id), true);
     }
 }

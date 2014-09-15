@@ -1125,7 +1125,8 @@ class DbModel extends Base
      *  @param array $array key/value pairs to fix
      *  @return array fixed where needed
     **/
-    public function prepareValues($array){
+    public function prepareValues(array $array)
+    {
         $a_new = array();
         if ($this->o_arr->isAssocArray($array)) {
             foreach ($array as $key => $value) {

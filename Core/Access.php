@@ -41,8 +41,6 @@ namespace Ritc\Library\Core;
 
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RolesModel;
-use Ritc\Library\Models\UserGroupMapModel;
-use Ritc\Library\Models\UserRoleMapModel;
 use Ritc\Library\Models\UsersModel;
 
 class Access extends Base
@@ -93,7 +91,7 @@ class Access extends Base
                 return false;
             }
         }
-        $a_user_values = $this->o_users->readUserInfo($a_login['username']);
+        $a_user_values = $this->o_users->readInfo($a_login['username']);
         $this->o_elog->write("Posted Values: " . var_export($a_login, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $this->o_elog->write("User Values: " . var_export($a_user_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($a_user_values !== false && $a_user_values !== null) {
@@ -139,23 +137,7 @@ class Access extends Base
         return false;
     }
 
-
     #### Verifiers ####
-    /**
-     *  Checks to see if the param is an id or a name.
-     *  A name can not start with a numeric character so if the param starts
-     *  with a number, it is assumed to be an id (I know, assume = ...)
-     *  @param mixed $value required
-     *  @return bool
-    **/
-    public function isID($value = '')
-    {
-        $first_char = substr($value, 0, 1);
-        if (preg_match('/[0-9]/', $first_char) === 1) {
-            return true;
-        }
-        return false;
-    }
     /**
      *  Verifies user has the role of super administrator.
      *  @param int $user_id required
@@ -164,7 +146,7 @@ class Access extends Base
     public function isSuperAdmin($user_id = -1)
     {
         if ($user_id == -1) { return false; }
-        $a_user = $this->o_users->readUserInfo($user_id);
+        $a_user = $this->o_users->readInfo($user_id);
         if ($a_user === false) { return false; }
         if ($a_user['access_level'] === 1) {
             return true;
@@ -179,7 +161,7 @@ class Access extends Base
     public function isValidGroup($group = -1)
     {
         if ($group == -1) { return false; }
-        if ($this->isID($group)) {
+        if (ctype_digit($group)) {
             $a_search_by = ['group_id' => $group];
         }
         else {
@@ -198,7 +180,7 @@ class Access extends Base
     public function isValidGroupId($group = -1)
     {
         if ($group == -1) { return false; }
-        if ($this->isID($group)) {
+        if (ctype_digit($group)) {
             return $this->isValidGroup($group);
         }
         return false;
@@ -211,7 +193,7 @@ class Access extends Base
     public function isValidRole($role = -1)
     {
         if ($role == -1) { return false; }
-        if ($this->isID($role)) {
+        if (ctype_digit($role)) {
             $a_search_by = ['role_id' => $role];
         }
         else {
@@ -231,7 +213,7 @@ class Access extends Base
     public function isValidRoleId($role_id = -1)
     {
         if ($role_id == -1) { return false; }
-        if ($this->isID($role_id)) {
+        if (ctype_digit($role_id)) {
             return $this->isValidRole($role_id);
         }
         return false;
@@ -258,20 +240,19 @@ class Access extends Base
     public function isValidUserId($user_id = -1)
     {
         if ($user_id == -1) { return false; }
-        if ($this->isID($user_id)) {
+        if (ctype_digit($user_id)) {
             return $this->isValidUser($user_id);
         }
         return false;
     }
     /**
      *  Figures out if the user is specified as a default user.
-     *  @param int|string $user_id required
+     *  @param string|int $user
      *  @return bool true false
-    **/
-    public function isDefaultUser($user = '')
+     */
+    public function isDefaultUser($user)
     {
-        if ($user == '') { return false; }
-        $a_results = $this->o_users->readUserRecord($user);
+        $a_results = $this->o_users->readInfo($user);
         if (isset($a_results['is_default'])) {
             if ($a_results['is_default'] == 1) {
                 return true;
@@ -288,7 +269,7 @@ class Access extends Base
     {
         if ($user_id == -1) { return false; }
         $user_id = (int) $user_id;
-        $results = $this->readUserInfo($user_id);
+        $results = $this->o_users->readInfo($user_id);
         if ($results !== false) {
             return true;
         }
@@ -302,332 +283,8 @@ class Access extends Base
     public function usernameExists($username = '')
     {
         if ($username == '') { return false; }
-        $results = $this->readUserInfo($username);
+        $results = $this->o_users->readInfo($username);
         if ($results !== false) {
-            return true;
-        }
-        return false;
-    }
-
-    #### Database Operations ####
-    /**
-     *  Deletes Specified User by id
-     *  @param int $user_id required, id of user
-     *  @return bool, success or failure
-    **/
-    public function deleteUser($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $sql = "DELETE FROM {$this->db_prefix}users WHERE id = :user_id";
-        $a_user = array(':user_id' => $user_id);
-        return $this->o_db->delete($sql, $a_user, true);
-    }
-    /**
-     *  Deletes the user group record for the user
-     *  @param int $user_id required
-     *  @param int $group_id required
-     *  @return bool
-    **/
-    public function deleteUserGroup($user_id = -1, $group_id = -1)
-    {
-        if ($user_id == -1 || $group_id == -1) { return false; }
-        $sql = "DELETE FROM {$this->db_prefix}user_groups WHERE user_id = :user_id AND group_id = :group_id";
-        $a_values = array(':user_id' => $user_id, ':group_id' => $group_id);
-        return $this->o_db->delete($sql, $a_values, true);
-    }
-    /**
-     *  Deletes the user role record for the user
-     *  @param int $user_id required
-     *  @param int $role_id required
-     *  @return bool
-    **/
-    public function deleteUserRole($user_id = -1, $role_id = -1)
-    {
-        if ($user_id == -1 || $role_id == -1) { return false; }
-        $sql = "DELETE FROM {$this->db_prefix}user_roles WHERE user_id = :user_id AND role_id = :role_id";
-        $a_values = array(':user_id' => $user_id, ':role_id' => $role_id);
-        return $this->o_db->delete($sql, $a_values, true);
-    }
-    /**
-     *  Updates the bad_login_count field for the user by one
-     *  @param int $user_id
-     *  @return bool
-    **/
-    private function incrementBadLoginCount($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $sql = "
-            UPDATE {$this->db_prefix}users
-            SET bad_login_count = bad_login_count + 1
-            WHERE id = :user_id
-        ";
-        $a_values = array(':user_id' => $user_id);
-        return $this->o_db->update($sql, $a_values, true);
-    }
-    /**
-     *  Increments the bad_login_ts record by one minute
-     *  @param int $user_id required
-     *  @return bool
-    */
-    private function incrementBadLoginTimestamp($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $sql = "
-            UPDATE {$this->db_prefix}users
-            SET bad_login_ts = bad_login_ts + 60
-            WHERE id = :user_id
-        ";
-        $a_values = array(':user_id' => $user_id);
-        return $this->o_db->update($sql, $a_values, true);
-    }
-    /**
-     *  Creates a new user record.
-     *  @param array $a_values, required, values for user record, needs to
-     *      be in format for prepared queries.
-     *  @return mixed, user_id or false if failure.
-    **/
-    public function insertUser(array $a_values = array())
-    {
-        if ($a_values == array()) { return false; }
-        $sql = "
-            INSERT INTO {$this->db_prefix}users (username, real_name, short_name, password, is_default)
-            VALUES (:username, :real_name, :short_name, :password, :is_default)";
-        if ($this->o_db->insert($sql, $a_values, '{$this->db_prefix}users')) {
-            $ids = $this->o_db->getNewIds();
-            $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return $ids[0];
-        } else {
-            return false;
-        }
-    }
-    /**
-     *  Inserts a new record connecting the user to the group
-     *  @param array $a_values array that uses valid prepared sql format
-     *  @return bool success or failure
-    **/
-    public function insertUserGroup(array $a_values = array())
-    {
-        if ($a_values == array()) { return false; }
-        $sql = "INSERT INTO {$this->db_prefix}user_groups (user_id, group_id) VALUES (:user_id, :group_id)";
-        if ($this->o_db->insert($sql, $a_values, '{$this->db_prefix}user_groups')) {
-            $ids = $this->o_db->getNewIds();
-            return $ids[0];
-        } else {
-            return false;
-        }
-    }
-    /**
-     *  Inserts a new record connecting the user to the role
-     *  @param array $a_values array that uses valid prepared sql format
-     *  @return bool success or failure
-    **/
-    public function insertUserRole(array $a_values = array())
-    {
-        if ($a_values == array()) { return false; }
-        $sql = "INSERT INTO {$this->db_prefix}user_roles (user_id, role_id) VALUES (:user_id, :role_id)";
-        if ($this->o_db->insert($sql, $a_values, '{$this->db_prefix}user_roles')) {
-            $ids = $this->o_db->getNewIds();
-            return $ids[0];
-        } else {
-            return false;
-        }
-    }
-    /**
-     *  Resets the bad_login_count to 0
-     *  @param int $user_id required
-     *  @return bool
-    **/
-    private function resetBadLoginCount($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $sql = "
-            UPDATE {$this->db_prefix}users
-            SET bad_login_count = 0
-            WHERE id = :user_id
-        ";
-        $a_values = array(':user_id' => $user_id);
-        return $this->o_db->update($sql, $a_values, true);
-    }
-    /**
-     *  Resets the timestamp to 0
-     *  @param int $user_id required
-     *  @return bool
-    **/
-    private function resetBadLoginTimestamp($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $sql = "
-            UPDATE {$this->db_prefix}users
-            SET bad_login_ts = 0
-            WHERE id = :user_id
-        ";
-        $a_values = array(':user_id' => $user_id);
-        return $this->o_db->update($sql, $a_values, true);
-    }
-    /**
-     *  Selects a role by the id.
-     *  @param int $role_id
-     *  @return array
-    **/
-    public function selectRoleById($role_id = -1)
-    {
-        if ($role_id == '') { return false; }
-        $sql = "
-            SELECT id, name, description, access_level
-            FROM {$this->db_prefix}roles
-            WHERE id = {$role_id}
-        ";
-        $results = $this->o_db->search($sql);
-        if (is_array($results[0])) {
-            return $results[0];
-        } else {
-            return false;
-        }
-    }
-    /**
-     *  Returns values for a role by role name.
-     *  @param string $role_name
-     *  @return array values for role
-    **/
-    public function selectRoleByName($role_name = '')
-    {
-        $sql = "
-            SELECT id, name, description, access_level
-            FROM {$this->db_prefix}roles
-            WHERE name LIKE '{$role_name}'
-        ";
-        $results = $this->o_db->search($sql);
-        if (is_array($results[0])) {
-            return $results[0];
-        } else {
-            return false;
-        }
-    }
-    /**
-     *  Selects the role information from db.
-     *  @param int $access_level
-     *  @return array, role data
-    **/
-    public function selectRoles($access_level = 3)
-    {
-        $sql = "
-            SELECT id, name, description, access_level
-            FROM {$this->db_prefix}roles
-            WHERe access_level >= {$access_level}
-            ORDER BY access_level ASC";
-        $this->o_elog->write("sql: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->search($sql);
-    }
-    /**
-     *  Sets the bad login timestamp for the user.
-     *  @param int $user_id required
-     *  @return bool
-    **/
-    private function setBadLoginTimestamp($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $sql = "
-            UPDATE {$this->db_prefix}users
-            SET bad_login_ts = :timestamp
-            WHERE id = :user_id
-        ";
-        $a_values = array(':user_id' => $user_id, ':timestamp' => time());
-        $results = $this->o_db->update($sql, $a_values, true);
-        return $results;
-    }
-    /**
-     *  Updates an existing user.
-     *  @param array $a_values required, values for user record in prepared format
-     *  @return mixed, user_id or false if failure
-    **/
-    public function updateUser(array $a_values = array())
-    {
-        if ($a_values == array() || $a_values[':user_id'] == '') {
-            return false;
-        }
-        if ($a_values[':password'] == '') {
-            $sql = "
-                UPDATE {$this->db_prefix}users
-                SET username   = :username,
-                    real_name  = :real_name,
-                    short_name = :short_name,
-                    is_default = :is_default
-                WHERE id = :user_id";
-            unset($a_values[':password']);
-        } else {
-            $sql = "
-                UPDATE {$this->db_prefix}users
-                SET username   = :username,
-                    real_name  = :real_name,
-                    short_name = :short_name,
-                    password   = :password,
-                    is_default = :is_default
-                WHERE id = :user_id";
-        }
-        return $this->o_db->update($sql, $a_values, true);
-    }
-    /**
-     *  Updates the user record with a new password
-     *  @param array $a_values in prepared format
-     *   e.g., array(':password'=>'password', ':user_id'=>'userID')
-     *  @return bool success or failure
-    **/
-    private function updateUserPassword(array $a_values = array())
-    {
-        if ($a_values == array()) { return false; }
-        $sql = "
-            UPDATE {$this->db_prefix}users
-            SET password = :password
-            WHERE id = :user_id
-        ";
-        return $this->o_db->update($sql, $a_values, true);
-    }
-
-    /**
-     *  Updates the user record to be make the user active or inactive, normally inactive.
-     *
-     *  @param string   $user_id   required id of a user
-     *  @param bool|int $is_active optional defaults to inactive (0)
-     *
-     *  @return bool success or failure
-     */
-    public function updateUserToInactive($user_id = '', $is_active = 0) {
-        $sql = "
-            UPDATE {$this->db_prefix}users
-            SET is_active = :is_active
-            WHERE id = :user_id
-        ";
-        $a_values = array(':user_id' => $user_id, ':is_active' => $is_active);
-        return $this->o_db->update($sql, $a_values, true);
-    }
-
-    ### Validators ###
-
-    /**
-     *  Checks to see if the user id exists.
-     *  @param int $user_id
-     *  @return bool true false
-    **/
-    public function userIdExists($user_id = -1)
-    {
-        if ($user_id == -1) { return false; }
-        $user_id = (int) $user_id;
-        $results = $this->o_users->read(array('user_id' => $user_id));
-        if (isset($results['user_id']) && $results['user_id'] == $user_id) {
-            return true;
-        }
-        return false;
-    }
-    /**
-     *  Checks to see if the username exists.
-     *  @param string $username
-     *  @return bool true false
-    **/
-    public function usernameExists($user_name = '')
-    {
-        if ($user_name == '') { return false; }
-        $results = $this->o_users->read(array('user_name' => $user_name));
-        if (isset($results['user_name']) && $results['user_name'] == $user_name) {
             return true;
         }
         return false;
@@ -649,12 +306,12 @@ class Access extends Base
             return false;
         }
         $hashed_password = password_hash($a_user['password'], PASSWORD_DEFAULT);
-        $a_results = $this->o_users->read(array('user_id' => $a_user['user_id']));
+        $a_results = $this->o_users->readInfo($a_user['user_id']);
         if (isset($a_results[0])) {
             $this_user = $a_results[0];
-        }
-        if ($hashed_password == $this_user['password']) {
-            return true;
+            if ($hashed_password == $this_user['password']) {
+                return true;
+            }
         }
         return false;
     }

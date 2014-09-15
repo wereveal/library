@@ -105,9 +105,11 @@ class Strings extends Base
     {
         if (is_bool($input)) {
             return $input;
-        } elseif ($input === NULL || $input === 'NULL' || $input === 'null') {
-         return false;
-        } elseif (is_string($input)) {
+        }
+        elseif ($input === NULL || $input === 'NULL' || $input === 'null') {
+            return false;
+        }
+        elseif (is_string($input)) {
             $input = strtoupper(trim($input));
             if (ctype_digit($input)) {
                 $input = ((int) $input === 0 ? 'false' : 'true');
@@ -122,13 +124,17 @@ class Strings extends Base
                 default:
                     return true;
             }
-        } elseif (ctype_digit((string) $input)) {
+        }
+        elseif (ctype_digit((string) $input)) {
             return ((int) $input === 0 ? false : true);
-        } elseif (is_array($input)) {
+        }
+        elseif (is_array($input)) {
             return false;
-        } elseif (is_object($input)){
+        }
+        elseif (is_object($input)){
             return false;
-        } else {
+        }
+        else {
             return true; // true just for default
         }
     }

@@ -6,11 +6,12 @@
  *  @namespace Ritc/Library/Models
  *  @class UserRoleMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 0.1.0
- *  @date 2014-01-18 15:08:49
+ *  @version 1.0.0
+ *  @date 2014-09-15 14:55:03
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v0.1.0 - Initial version 01/18/2014 wer
+ *      v1.0.0 - First live version - 09/15/2014 wer
+ *      v0.1.0 - Initial version    - 01/18/2014 wer
  *  </pre>
  *  @todo change all methods to be for the proper database table
 **/
@@ -40,7 +41,7 @@ class UserRoleMapModel implements ModelInterface
 
     ### Basic CRUD commands, required by interface ###
     /**
-     *  Creates a new user record in the user table.
+     *  Creates a new user_role map record in the user_role_map table.
      *  @param array $a_values required
      *  @return int|bool
     **/
@@ -48,43 +49,41 @@ class UserRoleMapModel implements ModelInterface
     {
         if ($a_values == array()) { return false; }
         $a_required_keys = array(
-            'username',
-            'real_name',
-            'short_name',
-            'password',
-            'is_default'
+            'user_id',
+            'role_id'
         );
         if (!$this->o_arrays->hasRequiredKeys($a_required_keys, $a_values)) {
             return false;
         }
         $sql = "
-            INSERT INTO library_users (username, real_name, short_name, password, is_default)
-            VALUES (:username, :real_name, :short_name, :password, :is_default)
+            INSERT INTO {$this->db_prefix}user_role_map (user_id, role_id)
+            VALUES (:user_id, :role_id)
         ";
-        if ($this->o_db->insert($sql, $a_values, 'library_users')) {
+        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}user_role_map")) {
             $ids = $this->o_db->getNewIds();
             $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
         } else {
             return false;
         }
+
     }
     public function read(array $a_search_values = array())
     {
         $where = '';
         if ($a_search_values != array()) {
-            $a_search_params = array('order_by', 'username');
+            $a_search_params = array('order_by' => 'user_id');
             $a_allowed_keys = array(
-                'username',
-                'real_name',
-                'short_name'
+                'role_id',
+                'user_id',
+                'urm_id'
             );
             $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
             $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
         }
         $sql = "
             SELECT *
-            FROM library_users
+            FROM {$this->db_prefix}user_role_map
             {$where}
         ";
         $this->o_elog->write($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
@@ -92,11 +91,11 @@ class UserRoleMapModel implements ModelInterface
     }
     /**
      *  Updates the record, NOT!
-     *  This should never happen! Always return false.
-     *      Reasoning. The group_id and user_id form a unique index. As such
+     *  Method is required by interface.
+     *      Update should never happen! Always return false.
+     *      Reasoning. The role_id and user_id form a unique index. As such
      *      they should not be modified. The record should always be deleted and
      *      a new one added.
-     *      Method is required by interface.
      *  @param array $a_values
      *  @return bool
      */
@@ -104,13 +103,13 @@ class UserRoleMapModel implements ModelInterface
     {
         return false;
     }
-    public function delete($id = '')
+    public function delete($urm_id = '')
     {
-        if ($id == '') { return false; }
+        if ($urm_id == '') { return false; }
         $sql = "
-            DELETE FROM library_users
-            WHERE id = :id
+            DELETE FROM {$this->db_prefix}user_role_map
+            WHERE urm_id = :urm_id
         ";
-        return $this->o_db->delete($sql, array(':id' => $id), true);
+        return $this->o_db->delete($sql, array(':urm_id' => $urm_id), true);
     }
 }
