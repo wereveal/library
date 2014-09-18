@@ -14,6 +14,7 @@
  *  </pre>
  *  @note Create the _groups table. Replace dbPrefix with db_prefix
  *  <pre>
+ *  MySQL
  *  CREATE TABLE `dbPrefix_groups` (
  *    `group_id` int(11) NOT NULL AUTO_INCREMENT,
  *    `group_name` varchar(40) NOT NULL,
@@ -22,8 +23,20 @@
  *    UNIQUE KEY `group_name` (`group_name`)
  *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
  *
- *  INSERT INTO `dbPrefix_groups` (`group_id`, `group_name`, `group_description`)
- *  VALUES (1, 'SuperAdmin', 'The group for super administrators');
+ *  PostgreSQL
+ *  CREATE SEQUENCE group_id_seq;
+ *  CREATE TABLE {dbPrefix}groups (
+ *      group_id integer DEFAULT nextval('group_id_seq'::regclass) NOT NULL,
+ *      group_name character varying(80) NOT NULL,
+ *      group_description text NOT NULL
+ *  );
+ *  ALTER TABLE ONLY {dbPrefix}groups
+ *      ADD CONSTRAINT {dbPrefix}groups_group_name_key UNIQUE (group_name);
+ *  ALTER TABLE ONLY {dbPrefix}groups
+ *      ADD CONSTRAINT {dbPrefix}groups_pkey PRIMARY KEY (group_id);
+ *
+ *  INSERT INTO {dbPrefix}groups (group_name, group_description)
+ *  VALUES ('SuperAdmin', 'The group for super administrators');
  *  </pre>
  *  @todo Everything
 **/

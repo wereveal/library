@@ -12,8 +12,8 @@
  *  @note <pre><b>Change Log</b>
  *      v0.1.0 - Initial version 09/11/2014 wer
  *  </pre>
- *  @note Be sure to replace 'dbPrefix' with the db prefix<pre>
- *  CREATE TABLE `dbPrefix_user_role_map` (
+ *  @note Be sure to replace '{dbPrefix}' with the db prefix<pre>
+ *  CREATE TABLE `{dbPrefix}user_role_map` (
  *    `urm_id` int(11) NOT NULL AUTO_INCREMENT,
  *    `user_id` int(11) NOT NULL,
  *    `role_id` int(11) NOT NULL,
@@ -22,11 +22,28 @@
  *    KEY `role_id` (`role_id`),
  *    KEY `user_id` (`user_id`)
  *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
- *  INSERT INTO `dbPrefix_user_role_map` (`urm_id`, `user_id`, `role_id`)
- *  VALUES (1, 1, 1);
- *  ALTER TABLE `dbPrefix_user_role_map`
- *    ADD CONSTRAINT `dbPrefix_user_role_map_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `dbPrefix_users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
- *    ADD CONSTRAINT `dbPrefix_user_role_map_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `dbPrefix_roles` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ *  ALTER TABLE `{dbPrefix}user_role_map`
+ *    ADD CONSTRAINT `{dbPrefix}user_role_map_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `{dbPrefix}users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+ *    ADD CONSTRAINT `{dbPrefix}user_role_map_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `{dbPrefix}roles` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ *
+ *  PostgreSQL
+ *  CREATE SEQUENCE urm_id_seq;
+ *  CREATE TABLE {dbPrefix}user_role_map (
+ *      urm_id integer DEFAULT nextval('urm_id_seq'::regclass) NOT NULL,
+ *      user_id integer NOT NULL,
+ *      role_id integer NOT NULL
+ *  );
+ *  ALTER TABLE ONLY {dbPrefix}user_role_map
+ *      ADD CONSTRAINT {dbPrefix}user_role_map_pkey PRIMARY KEY (urm_id);
+ *  CREATE INDEX {dbPrefix}user_role_map_role_id_idx ON {dbPrefix}user_role_map USING btree (role_id);
+ *  CREATE INDEX {dbPrefix}user_role_map_user_id_idx ON {dbPrefix}user_role_map USING btree (user_id);
+ *  ALTER TABLE ONLY {dbPrefix}user_role_map
+ *      ADD CONSTRAINT {dbPrefix}user_role_map_ibfk_1 FOREIGN KEY (user_id) REFERENCES {dbPrefix}users(user_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+ *  ALTER TABLE ONLY {dbPrefix}user_role_map
+ *      ADD CONSTRAINT {dbPrefix}user_role_map_ibfk_2 FOREIGN KEY (role_id) REFERENCES {dbPrefix}roles(role_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+ *
+ *  INSERT INTO {dbPrefix}user_role_map (user_id, role_id)
+ *  VALUES (1, 1);
  *  </pre>
  *  @todo Most Everything
 **/

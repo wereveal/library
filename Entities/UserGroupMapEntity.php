@@ -12,8 +12,9 @@
  *  @note <pre><b>Change Log</b>
  *      v0.1.0 - Initial version 09/11/2014 wer
  *  </pre>
- *  @note Be sure to replace 'dbPrefix' with the db prefix<pre>
- *  CREATE TABLE `dbPrefix_user_group_map` (
+ *  @note Be sure to replace '{dbPrefix}' with the db prefix<pre>
+ *  MySQL
+ *  CREATE TABLE `{dbPrefix}user_group_map` (
  *    `ugm_id` int(11) NOT NULL AUTO_INCREMENT,
  *    `user_id` int(11) NOT NULL,
  *    `group_id` int(11) NOT NULL,
@@ -23,8 +24,18 @@
  *    KEY `user_id` (`user_id`)
  *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
  *
- *  INSERT INTO `dbPrefix_user_group_map` (`ugm_id`, `user_id`, `group_id`)
- *  VALUES (1, 1, 1);
+ *  PostgreSQL
+ *  CREATE SEQUENCE ugm_id_seq;
+ *  CREATE TABLE {dbPrefix}user_group_map (
+ *      ugm_id integer DEFAULT nextval('ugm_id_seq'::regclass) NOT NULL,
+ *      user_id integer NOT NULL,
+ *      group_id integer NOT NULL
+ *  );
+ *  ALTER TABLE ONLY {dbPrefix}user_group_map
+ *      ADD CONSTRAINT {dbPrefix}user_group_map_pkey PRIMARY KEY (ugm_id);
+ *
+ *  INSERT INTO {dbPrefix}user_group_map (user_id, group_id)
+ *  VALUES (1, 1);
  *
  *  ALTER TABLE `dbPrefix_user_group_map`
  *    ADD CONSTRAINT `dbPrefix_user_group_map_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `dbPrefix_users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,

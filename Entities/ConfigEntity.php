@@ -11,27 +11,32 @@
  *  @note A file in the Ritc Library
  *  @note <b>SQL for table<b>
  *  <pre>
- *  CREATE TABLE `config` (
+ *  MySQL
+ *  CREATE TABLE `{dbPrefix}config` (
  *    `config_id` int(11) NOT NULL AUTO_INCREMENT,
  *    `config_name` varchar(64) NOT NULL,
  *    `config_value` varchar(64) NOT NULL,
  *    PRIMARY KEY (`config_id`),
  *    UNIQUE KEY `config_name` (`config_name`)
  *  ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4
- *  </pre>
- *  <pre>
+ *
+ *  PostgreSQL
+ *  CREATE SEQUENCE config_id_seq;
+ *  ALTER TABLE public.config_id_seq OWNER TO dbOwner;
  *  CREATE TABLE config (
- *      config_id integer DEFAULT nextval('app_config_id_seq'::regclass) NOT NULL,
+ *      config_id integer DEFAULT nextval('config_id_seq'::regclass) NOT NULL,
  *      config_name character varying(64) NOT NULL,
  *      config_value character varying(64) NOT NULL
- *  )
- *  </pre>
- *  <pre>
- *  ALTER TABLE ONLY config
- *      ADD CONSTRAINT config_pkey PRIMARY KEY (config_id);
- *  </pre>
- *  <pre>Expected config key=>value pairs
- *  INSERT INTO config VALUES
+ *  );
+ *  ALTER TABLE public.{dbPrefix}config OWNER TO dbOwner;
+ *  ALTER TABLE ONLY {dbPrefix}config
+ *      ADD CONSTRAINT {dbPrefix}config_pkey PRIMARY KEY (config_id);
+ *  ALTER TABLE ONLY {dbPrefix}config
+ *      ADD CONSTRAINT {dbPrefix}config_config_name_key UNIQUE (config_name);
+ *
+ *  Expected config key=>value pairs
+ *
+ *  INSERT INTO config (config_name, config_value) VALUES
  *  ('DISPLAY_DATE_FORMAT', 'm/d/Y'),
  *  ('EMAIL_DOMAIN', 'revealitconsulting.com'),
  *  ('EMAIL_FORM_TO', 'bill@revealitconsulting.com'),

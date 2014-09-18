@@ -30,6 +30,25 @@
  *    UNIQUE KEY `user_name` (`user_name`)
  *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
  *
+ *  PostgreSQL
+ *  CREATE SEQUENCE user_id_seq;
+ *  CREATE TABLE {dbPrefix}users (
+ *      user_id integer DEFAULT nextval('user_id_seq'::regclass) NOT NULL,
+ *      user_name character varying(120) NOT NULL,
+ *      real_name character varying(100) NOT NULL,
+ *      short_name character varying(16) DEFAULT NULL::character varying,
+ *      password character varying(510) NOT NULL,
+ *      is_active boolean NOT NULL,
+ *      is_default boolean NOT NULL,
+ *      created_on timestamp without time zone DEFAULT now() NOT NULL,
+ *      bad_login_count integer DEFAULT 0 NOT NULL,
+ *      bad_login_ts integer DEFAULT 0 NOT NULL
+ *  );
+ *  ALTER TABLE ONLY {dbPrefix}users
+ *      ADD CONSTRAINT {dbPrefix}users_pkey PRIMARY KEY (user_id);
+ *  ALTER TABLE ONLY {dbPrefix}users
+ *      ADD CONSTRAINT {dbPrefix}users_user_name_key UNIQUE (user_name);
+ *
  *  INSERT INTO `dbPrefix_users` (`user_id`, `user_name`, `real_name`, `short_name`, `password`, `is_active`, `is_default`, `created_on`, `bad_login_count`, `bad_login_ts`) VALUES
  *  (1, 'SuperAdmin', 'Super Admin', 'GSA', '9715ab56587dd7b748c71644d014250a26b479f28dfdea9927398e3ec1f221ac83da247d016052bb8ee8334320d74c70e1ce48afcc9114d7d837bfc88abb0bc4', 1, 1, '2012-08-11 21:55:28', 0, 0);
 **/
