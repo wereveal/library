@@ -194,6 +194,10 @@ class DbModel extends Base
         return $this->mdQuery($the_query, $a_values, $single_record);
     }
 
+    public function rawQuery($the_query)
+    {
+        return $this->db->exec($the_query);
+    }
     ### Getters and Setters
     /**
      *  Get the value of the property specified.

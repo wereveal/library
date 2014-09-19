@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  3.1.1
- *  @date 2014-02-24 16:39:56
- *  @note A part of the RITC Library v5
+ *  @version  3.1.2
+ *  @date 2014-09-18 17:15:39
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.1.2 - bug fixes - 09/18/2014 wer
  *      v3.1.1 - made it so the config table name will be assigned from the - 02/24/2014 wer
  *               the db_prefix variable set from the db confuration
  *               (created in DbFactory, passed on to DbModel).
@@ -48,10 +49,12 @@ class Config extends Base
                     include_once APP_CONFIG_PATH . '/fallback_constants.php';
                 }
                 else {
+                    $this->o_elog->write("File: " . APP_CONFIG_PATH . '/fallback_constants.php does not exist.');
                     die ('A fatal error has occured. Please contact your web site administrator.');
                 }
             }
             else {
+                $this->o_elog->write("APP_CONFIG_PATH is not defined.");
                 die ('A fatal error has occured. Please contact your web site administrator.');
             }
             $this->createNewConfigs();
@@ -213,26 +216,26 @@ class Config extends Base
                 $db_type = $this->o_db->getDbType();
                 switch ($db_type) {
                     case 'pgsql':
-                        $sql = "
+                        $sql_table = "
                             CREATE TABLE IF NOT EXISTS {$this->db_prefix}config (
-                                config_id integer NOT NULL,
+                                config_id integer NOT NULL DEFAULT nextval('config_id_seq'::regclass),
                                 config_name character varying(64),
                                 config_value character varying(64)
                             )
                         ";
                         $sql_sequence = "
-                            CREATE SEQUENCE {$this->db_prefix}config_config_id_seq
+                            CREATE SEQUENCE config_id_seq
                                 START WITH 1
                                 INCREMENT BY 1
                                 NO MINVALUE
                                 NO MAXVALUE
                                 CACHE 1
                             ";
-                        $results = $this->o_db->query($sql);
+                        $results = $this->o_db->rawQuery($sql_sequence);
                         if ($results !== false) {
-                            $results2 = $this->o_db->query($sql_sequence);
+                            $results2 = $this->o_db->rawQuery($sql_table);
                             if ($results2 === false) {
-                                return;
+                                return false;
                             }
                         }
                         break;
@@ -244,9 +247,9 @@ class Config extends Base
                                 config_value TEXT
                             )
                         ";
-                        $results = $this->o_db->query($sql);
+                        $results = $this->o_db->rawQuery($sql);
                         if ($results === false) {
-                            return;
+                            return false;
                         }
                         break;
                     case 'mysql':
@@ -260,9 +263,9 @@ class Config extends Base
                                 UNIQUE KEY `config_key` (`config_name`)
                             ) ENGINE=InnoDB  DEFAULT CHARSET=utf8
                         ";
-                        $results = $this->o_db->query($sql);
+                        $results = $this->o_db->rawQuery($sql);
                         if ($results === false) {
-                            return;
+                            return false;
                         }
                     // end default
                 }
@@ -274,6 +277,7 @@ class Config extends Base
                 if ($this->o_db->commitTransaction() === false) {
                     $this->o_elog->write("Could not commit new configs", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 }
+                return true;
             }
             else {
                 $this->o_db->rollbackTransaction();
@@ -283,6 +287,7 @@ class Config extends Base
         else {
             $this->o_elog->write("Could not start transaction.", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
         }
+        return false;
     }
 
     ### Magic Method fix
