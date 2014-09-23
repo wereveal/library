@@ -1,0 +1,19 @@
+<?php
+return [
+    'read',
+    'create',
+    'update',
+    'delete',
+    'getId',
+    'incrementBadLoginCount',
+    'incrementBadLoginTimestamp',
+    'readUserRecord',
+    'resetBadLoginCount',
+    'resetBadLoginTimestamp',
+    'setBadLoginTimestamp',
+    'updatePassword',
+    'updateActive',
+    'readInfo',
+    'readUsersInfo',
+    'saveUser'
+];
