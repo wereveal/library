@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Session
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.1.1
- *  @date 2013-12-31 22:39:20
+ *  @version 1.1.2
+ *  @date 2014-09-23 12:02:53
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
+ *      v1.1.2 - changed to implment the changes in Base class - 09/23/2014 wer
  *      v1.1.1 - Bug fixes 12/31/2013 wer
  *      v1.1.0 - 06/14/2011 wer
  *  </pre>
@@ -28,7 +29,6 @@ class Session extends Base
     private function __construct($session_id = '', $session_name = '')
     {
         $this->setPrivateProperties();
-        $this->o_elog = Elog::start();
         if ($session_id != '') {
             session_id($session_id);
         }
@@ -40,13 +40,13 @@ class Session extends Base
         }
         $this->session_started = session_start();
         if ($this->session_started) {
-            $this->o_elog->write("Session ID in construct: " . session_id(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Session ID in construct: " . session_id(), LOG_OFF, __METHOD__ . '.' . __LINE__);
             $this->session_id   = session_id();
             $this->session_name = session_name();
-            $this->o_elog->write("Session Name in construct: " . session_name(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Session Name in construct: " . session_name(), LOG_OFF, __METHOD__ . '.' . __LINE__);
         }
         else {
-            $this->o_elog->write("Session Not Started", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Session Not Started", LOG_OFF, __METHOD__ . '.' . __LINE__);
         }
 
     }
@@ -121,8 +121,8 @@ class Session extends Base
     }
     public function getVar($var_name = "")
     {
-        $this->o_elog->write("Var Name: " . $var_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $this->o_elog->write("Session Var Value: " . $_SESSION[$var_name], LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("Var Name: " . $var_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("Session Var Value: " . $_SESSION[$var_name], LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $var_name == "" ? NULL : isset($_SESSION[$var_name]) ? $_SESSION[$var_name] : "" ;
     }
     public function setVar($var_name = "", $var_value = "")

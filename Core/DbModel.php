@@ -7,11 +7,15 @@
  *  @namespace Ritc/Library/Core
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.1.2
- *  @date 2014-03-20 13:53:18
+ *  @version 3.2.0
+ *  @date 2014-09-23 09:50:13
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
- *      v3.1.2 - bug fixes, needed to pass the factory into the class - 03/20/2014 wer
+ *      v3.2.0 - Made this class more stand alone except extending Base class.
+ *               Added function to allow raw query.
+ *               Changed it to use the new Base class elog inject method.
+ *               Hammering down a couple bugs.
+ *      v3.1.2 - bug fixes, needed to pass the pdo object into the class - 03/20/2014 wer
  *      v3.1.1 - added methods to set and return db prefix - 02/24/2014 wer
  *               It should be noted, this assumes a db prefix has been set. see DbFactory
  *      v3.1.0 - added method to return db tables - 01/31/2014 wer
@@ -50,12 +54,17 @@ class DbModel extends Base
     private $root_path;
     private $sql_error_message;
     private $success;
+    /**
+     * On creating a new object, certain things happen.
+     * @param  \PDO   $o_db        can be from DbFactory or from a direct new PDO
+     *                             This means it can be independent of the DbFactory.
+     * @param  string $config_file name of the config file which is a returned array
+     */
     public function __construct(\PDO $o_db, $config_file = 'db_config.php')
     {
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setPrivateProperties();
         $this->createDbParms($config_file);
-        $this->o_elog = Elog::start();
         $this->o_arr  = new Arrays;
         $this->o_db   = $o_db;
     }
@@ -73,7 +82,7 @@ class DbModel extends Base
     public function insert($the_query = '', array $a_values = array(), $table_name = '')
     {
         if ($the_query == '') {
-            $this->o_elog->write('The query must not be blank.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            $this->logIt('The query must not be blank.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
             return false;
         }
         $sequence_name = '';
@@ -84,11 +93,11 @@ class DbModel extends Base
             $this->affected_rows = $this->o_db->exec($the_query);
             if ($this->affected_rows === false) {
                 $this->setSqlErrorMessage($this->o_db);
-                $this->o_elog->write($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
             }
             elseif ($this->affected_rows == 0) {
-                $this->o_elog->write('The INSERT affected no records.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt('The INSERT affected no records.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
             }
             else { // note: kind of assumes there was a single record inserted
@@ -99,7 +108,7 @@ class DbModel extends Base
         elseif (count($a_values) > 0) {
             $o_pdo_stmt = $this->prepare($the_query);
             if ($o_pdo_stmt === false) {
-                $this->o_elog->write('Could not prepare the statement', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt('Could not prepare the statement', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
             }
             else {
@@ -107,7 +116,7 @@ class DbModel extends Base
             }
         }
         else {
-            $this->o_elog->write('The array of values for a prepared insert was empty.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            $this->logIt('The array of values for a prepared insert was empty.', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return false;
         }
     }
@@ -135,14 +144,14 @@ class DbModel extends Base
                 $fetch_style = \PDO::FETCH_ASSOC;
         }
         if ($the_query == '') {
-            $this->o_elog->write('The query must not be blank.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            $this->logIt('The query must not be blank.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
             return false;
         }
         if (count($a_values) == 0) {
             $o_pdo_stmt = $this->o_db->prepare($the_query);
             if ($o_pdo_stmt === false) {
                 $this->setSqlErrorMessage($this->o_db);
-                $this->o_elog->write($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
             }
             $o_pdo_stmt->execute();
@@ -150,21 +159,21 @@ class DbModel extends Base
             $o_pdo_stmt->closeCursor();
         }
         elseif (is_array($a_values) && count($a_values) > 0) {
-            $this->o_elog->write("Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->o_elog->write("The array is " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("The array is " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
 
             $o_pdo_stmt = $this->prepare($the_query);
             if ($o_pdo_stmt) {
                 $a_results = $this->searchPrepared($a_values, $o_pdo_stmt, $type);
             }
             else {
-                $this->o_elog->write("Could not prepare the query " . $the_query, LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Could not prepare the query " . $the_query, LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return false;
             }
         }
         else {
-            $this->o_elog->write("There was a problem with the array", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->o_elog->write("a_values is: " . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("There was a problem with the array", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("a_values is: " . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return false;
         }
         return $a_results;
@@ -193,6 +202,15 @@ class DbModel extends Base
     {
         return $this->mdQuery($the_query, $a_values, $single_record);
     }
+    /**
+     *  Allows a raw query to be made.
+     *  @param string $the_query
+     *  @return int
+     */
+    public function rawQuery($the_query)
+    {
+        return $this->o_db->exec($the_query);
+    }
 
     public function rawQuery($the_query)
     {
@@ -209,22 +227,38 @@ class DbModel extends Base
     {
         return $this->$var_name;
     }
+    /**
+     * @return mixed
+     */
     public function getAffectedRows()
     {
         return $this->affected_rows;
     }
+    /**
+     * @return mixed
+     */
     public function getDbPrefix()
     {
         return $this->db_prefix;
     }
+    /**
+     * @return mixed
+     */
     public function getDbType()
     {
         return $this->db_type;
     }
+    /**
+     * @return array
+     */
     public function getNewIds()
     {
         return $this->a_new_ids;
     }
+    /**
+     * @param string $table_name
+     * @return string
+     */
     public function getPgsqlSequenceName($table_name = '')
     {
         if ($table_name != '') {
@@ -232,22 +266,42 @@ class DbModel extends Base
         }
         return $this->pgsql_sequence_name;
     }
+    /**
+     * @return mixed
+     */
     public function getSuccess()
     {
         return $this->success;
     }
+    /**
+     * @return mixed
+     */
     public function getSqlErrorMessage()
     {
         return $this->sql_error_message;
     }
-    public function setDbPrefix($value = '')
+    /**
+     * @param string $value
+     * @return null
+     */
+    public function setDbPrefix($value)
     {
+        unset($value);
         return null; // db prefix can only be set privately
     }
+    /**
+     * @param string $value
+     * @return null
+     */
     public function setDbType($value = '')
     {
+        unset($value);
         return null; // db type can only be set privately
     }
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function setNewId($value = '')
     {
         if ($value !== '') {
@@ -272,10 +326,10 @@ class DbModel extends Base
             AND column_name = :column_name";
         $results = $this->search($query, array('schema'=>$schema_name, 'table_name'=>$table_name, 'column_name'=>$column_name));
         if ($results) {
-            $this->o_elog->write("Results: " . var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Results: " . var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             $column_default = $results[0]['column_default'];
             $this->pgsql_sequence_name = preg_replace("/nextval\('(.*)'(.*)\)/i", '$1', $column_default);
-            $this->o_elog->write("pgsql_sequence_name: " . $this->pgsql_sequence_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("pgsql_sequence_name: " . $this->pgsql_sequence_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
             return true;
         }
         else {
@@ -300,28 +354,7 @@ class DbModel extends Base
     {
         $this->a_new_ids = array();
     }
-    /**
-     *  Creates the class properties of db_type and db_prefix from config file
-     *  @param string $config_file
-     *  @return bool
-    **/
-    private function createDbParms($config_file = 'db_config.php')
-    {
-        $config_w_path = APP_PATH . '/config/' . $config_file;
-        if (!file_exists($config_w_path)) {
-            $config_w_path = PRIVATE_PATH . '/' . $config_file;
-            if (!file_exists($config_w_path)) {
-                $config_w_path = SITE_PATH . '/config/' . $config_file;
-            }
-        }
-        if (!file_exists($config_w_path)) {
-            return false;
-        }
-        $a_db = require_once $config_w_path;
-        $this->db_prefix = $a_db['prefix'];
-        $this->db_type   = $a_db['driver'];
-        return true;
-    }
+
     ### Basic Commands - The basic building blocks for doing db work
     /**
      *  Bind values from an assoc array to a prepared query.
@@ -331,47 +364,55 @@ class DbModel extends Base
     **/
     public function bindValues(array $a_values = array(), \PDOStatement $o_pdo_stmt)
     {
-        $this->o_elog->write("bind array: " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $from_method = __METHOD__ . '.';
+        $this->logIt("bind array: " . var_export($a_values, true), LOG_OFF, $from_method . __LINE__);
         if ($this->o_arr->isAssocArray($a_values)) {
             $a_values = $this->prepareKeys($a_values);
-            $this->o_elog->write("prepared array: " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("prepared array: " . var_export($a_values, true), LOG_OFF, $from_method . __LINE__);
             foreach ($a_values as $key => $value) {
-                $this->o_elog->write("Value: " . var_export($value, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Value: " . var_export($value, true), LOG_OFF, $from_method . __LINE__);
                 if ($o_pdo_stmt->bindValue($key, $value) === false) {
                     $a_error = $o_pdo_stmt->errorInfo();
-                    $this->o_elog->write($a_error[2], LOG_ALWAYS);
+                    $this->logIt($a_error[2], LOG_OFF, $from_method . __LINE__);
                     return false;
                 }
             }
             return true;
         }
-        elseif (is_array($a_values)) {
-            $this->o_elog->write('binding a basic array', LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->o_elog->write($a_values[0], LOG_OFF, __METHOD__ . '.' . __LINE__);
+        elseif (count($a_values) > 0) {
+            $this->logIt('binding a basic array', LOG_OFF, $from_method . __LINE__);
+            $this->logIt($a_values[0], LOG_OFF, $from_method . __LINE__);
             $x = 1;
             foreach ($a_values as $value) {
                 if ($o_pdo_stmt->bindValue($x++, $value) === false) {
                     $a_error = $o_pdo_stmt->errorInfo();
-                    $this->o_elog->write($a_error[2], LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                    $this->logIt($a_error[2], LOG_OFF, $from_method . __LINE__);
                     return false;
                 }
-                $this->o_elog->write("Successful Binding of {$value}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Successful Binding of {$value}", LOG_OFF, $from_method . __LINE__);
             }
             return true;
-       } else {
-            $this->o_elog->write('The value passed into bindValues must be an array.');
+       }
+        else {
+            $this->logIt('The value passed into bindValues must be an array.', LOG_OFF, $from_method . __LINE__);
             return false;
         }
     }
+    /**
+     * @param \PDOStatement $o_pdo_stmt
+     * @return bool
+     */
     public function closeCursor(\PDOStatement $o_pdo_stmt)
     {
         return $o_pdo_stmt->closeCursor();
     }
+    /**
+     * @return bool
+     */
     public function commitTransaction()
     {
         return $this->o_db->commit();
     }
-
     /**
      * Executes a prepared query
      *
@@ -386,11 +427,11 @@ class DbModel extends Base
      */
     public function execute(array $a_values = array(), \PDOStatement $o_pdo_stmt)
     {
-        $this->o_elog->write('Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt('Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if (count($a_values) > 0) {
             if ($this->o_arr->isAssocArray($a_values)) { // for a query with bind values
                 $a_values = $this->prepareKeys($a_values);
-                $this->o_elog->write('Fixed Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('Fixed Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
 
                 if ($this->bindValues($a_values, $o_pdo_stmt) === false) {
                     return false;
@@ -398,11 +439,11 @@ class DbModel extends Base
                 return $o_pdo_stmt->execute();
             }
             elseif (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays
-                $this->o_elog->write('The array cannot be an array of array.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('The array cannot be an array of array.', LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return false;
             }
             else { // $array is for question mark place holders prepared statement
-                $this->o_elog->write("Attempting to execute a question mark place prepared statement", LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Attempting to execute a question mark place prepared statement", LOG_OFF, __METHOD__ . '.' . __LINE__);
                 if ($this->bindValues($a_values, $o_pdo_stmt) === false) {
                     return false;
                 }
@@ -410,11 +451,10 @@ class DbModel extends Base
             }
         }
         else {
-            $this->o_elog->write('Executing a query with pre-bound values', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('Executing a query with pre-bound values', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $o_pdo_stmt->execute(); // values have been bound elsewhere
         }
     }
-
     /**
      *  Executes the pdo fetch method
      *
@@ -468,7 +508,6 @@ class DbModel extends Base
                 return $o_pdo_stmt->fetch(\PDO::FETCH_ASSOC, $cursor_orientation, $cursor_offset);
         }
     }
-
     /**
      *  Prepares a sql statement for execution
      *
@@ -506,9 +545,14 @@ class DbModel extends Base
                 return $o_pdo_stmt->fetchAll(\PDO::FETCH_ASSOC);
         }
     }
+    /**
+     * @param string $the_query
+     * @param string $cursor
+     * @return bool|\PDOStatement
+     */
     public function prepare($the_query = '', $cursor = '')
     {
-        $this->o_elog->write("Query passed in: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("Query passed in: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($the_query != '') {
             switch ($cursor) {
                 case 'SCROLL':
@@ -519,38 +563,54 @@ class DbModel extends Base
                     $o_pdo_stmt = $this->o_db->prepare($the_query, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
             }
             if ($o_pdo_stmt !== false) {
-                $this->o_elog->write('Success for prepare.', LOG_OFF, __METHOD__ . '.' . __LINE__);
-                $this->o_elog->write('o pdo stmt: ' . var_export($o_pdo_stmt, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('Success for prepare.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('o pdo stmt: ' . var_export($o_pdo_stmt, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return $o_pdo_stmt;
             }
             else {
-                $this->o_elog->write('Failure for prepare.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('Failure for prepare.', LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return false;
             }
         }
         else {
-            $this->o_elog->write('The query must not be blank.', LOG_ALWAYS);
+            $this->logIt('The query must not be blank.', LOG_OFF);
             return false;
         }
     }
+    /**
+     * @return bool
+     */
     public function rollbackTransaction()
     {
         return $this->o_db->rollback();
     }
+    /**
+     * @param \PDOStatement $o_pdo_stmt
+     * @return int
+     */
     public function rowCount(\PDOStatement $o_pdo_stmt)
     {
         return $o_pdo_stmt->rowCount();
     }
+    /**
+     * @return bool
+     */
     public function startTransaction()
     {
         return $this->o_db->beginTransaction();
     }
 
     ### Complete Transaction in a single command
-    public function insertTransaction($the_query = '', $a_values = '', $table_name = '')
+    /**
+     * @param string $the_query
+     * @param array  $a_values
+     * @param string $table_name
+     * @return bool
+     */
+    public function insertTransaction($the_query = '', array $a_values = array(), $table_name = '')
     {
         if ($the_query == '') {
-            $this->o_elog->write('The Query was blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('The Query was blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return false;
         }
         if ($this->o_db->beginTransaction()) {
@@ -571,14 +631,20 @@ class DbModel extends Base
             $message = 'Could not start transaction so we could not execute the insert, Please Try Again.';
         }
         $this->setSqlErrorMessage($this->o_db);
-        $this->o_elog->write($this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt($this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $this->o_db->rollback();
-        $this->o_elog->write($message);
+        $this->logIt($message);
         return false;
     }
-    public function queryTransaction($the_query = '', $the_array = '', $single_record = true)
+    /**
+     * @param string $the_query
+     * @param array  $the_array
+     * @param bool   $single_record
+     * @return bool
+     */
+    public function queryTransaction($the_query = '', array $the_array = array(), $single_record = true)
     {
-        $this->o_elog->write("The Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("The Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($this->o_db->beginTransaction()) {
             $results = $this->mdQuery($the_query, $the_array, $single_record);
             if ($results) {
@@ -597,24 +663,36 @@ class DbModel extends Base
             $message = 'Could not start transaction so we could not execute the query, Please Try Again.';
         }
         $this->setSqlErrorMessage($this->o_db);
-        $this->o_elog->write($message . ' ==> ' . $this->getSqlErrorMessage(), LOG_OFF);
+        $this->logIt($message . ' ==> ' . $this->getSqlErrorMessage(), LOG_OFF);
         $this->rollbackTransaction();
         return false;
     }
-    public function updateTransaction($the_query = '', $the_array = '', $single_record = true)
+    /**
+     * @param string $the_query
+     * @param array  $the_array
+     * @param bool   $single_record
+     * @return bool
+     */
+    public function updateTransaction($the_query = '', array $the_array = array(), $single_record = true)
     {
-        $this->o_elog->write("The query coming in is: $the_query", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("The query coming in is: $the_query", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $results = $this->queryTransaction($the_query, $the_array, $single_record);
         if ($results === false) {
-            $this->o_elog->write("Could not modify the record(s) - query was {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Could not modify the record(s) - query was {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         }
         return $results;
     }
-    public function deleteTransaction($the_query = '', $the_array = '', $single_record = true)
+    /**
+     * @param string $the_query
+     * @param array  $the_array
+     * @param bool   $single_record
+     * @return bool
+     */
+    public function deleteTransaction($the_query = '', array $the_array = array(), $single_record = true)
     {
         $results = $this->queryTransaction($the_query, $the_array, $single_record);
         if ($results === false) {
-            $this->o_elog->write("Could not delete the record(s)", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Could not delete the record(s)", LOG_OFF, __METHOD__ . '.' . __LINE__);
         }
         return $results;
     }
@@ -630,27 +708,26 @@ class DbModel extends Base
     public function insertPrepared($a_values = '', \PDOStatement $o_pdo_stmt, $table_name = '')
     {
         if (is_array($a_values) && count($a_values) > 0) {
-            $this->o_elog->write("" . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("" . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             $this->resetNewIds();
             $results = $this->executeInsert($a_values, $o_pdo_stmt, $table_name);
             if ($results === false) {
-                $this->o_elog->write('Execute Failure', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('Execute Failure', LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $this->setSqlErrorMessage($this->o_db);
-                $this->o_elog->write('PDO: ' . $this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('PDO: ' . $this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $this->setSqlErrorMessage($o_pdo_stmt);
-                $this->o_elog->write('PDO_Statement: ' . $this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('PDO_Statement: ' . $this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $this->resetNewIds();
                 return false;
             }
             return true;
         }
         else {
-            $this->o_elog->write('The array of values for a prepared insert was empty.', 4);
+            $this->logIt('The array of values for a prepared insert was empty.', 4);
             $this->resetNewIds();
             return false;
         }
     }
-
     /**
      *  Specialized version of execute which retains ids of each insert.
      *
@@ -680,7 +757,7 @@ class DbModel extends Base
             return true;
         }
         else {
-            $this->o_elog->write('The function executeInsert requires a an array for its first parameter.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            $this->logIt('The function executeInsert requires a an array for its first parameter.', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return false;
         }
     }
@@ -693,24 +770,24 @@ class DbModel extends Base
     **/
     public function mdQuery($the_query = '', array $a_values = array(), $single_record = true)
     {
-        $this->o_elog->setFromMethod(__METHOD__);
+        $from_method = __METHOD__ . '.';
         if ($the_query == '') {
-            $this->o_elog->write('The query must not be blank.', LOG_OFF);
+            $this->logIt('The query must not be blank.', LOG_OFF, $from_method);
             return false;
         }
         if ($a_values == array()) {
             $this->affected_rows = $this->o_db->exec($the_query);
             if ($this->affected_rows === false) {
                 $this->setSqlErrorMessage($this->o_db);
-                $this->o_elog->write($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt($this->getSqlErrorMessage(), LOG_OFF, $from_method . __LINE__);
                 return false;
             }
             elseif ($single_record && $this->affected_rows > 1) {
-                $this->o_elog->write('The query affected multiple records instead of a single one.', LOG_OFF);
+                $this->logIt('The query affected multiple records instead of a single one.', LOG_OFF, $from_method);
                 return false;
             }
             elseif ($this->affected_rows == 0) {
-                $this->o_elog->write('The query affected no records.', LOG_OFF);
+                $this->logIt('The query affected no records.', LOG_OFF, $from_method);
                 return true;
             }
             else {
@@ -721,9 +798,7 @@ class DbModel extends Base
             $o_pdo_stmt = $this->prepare($the_query);
             if (is_object($o_pdo_stmt) === false) {
                 $this->setSqlErrorMessage($o_pdo_stmt);
-                $this->o_elog->setFromMethod(__METHOD__);
-                $this->o_elog->setFromLine(__LINE__);
-                $this->o_elog->write('Could not prepare the query: ' . $this->getSqlErrorMessage(), LOG_OFF);
+                $this->logIt('Could not prepare the query: ' . $this->getSqlErrorMessage(), LOG_OFF, $from_method . __LINE__);
                 return false;
             }
             else {
@@ -731,10 +806,16 @@ class DbModel extends Base
             }
         }
         else {
-            $this->o_elog->write('The array of values for a prepared query was empty.', LOG_OFF);
+            $this->logIt('The array of values for a prepared query was empty.', LOG_OFF, $from_method);
             return false;
         }
     }
+    /**
+     * @param array         $a_values
+     * @param bool          $single_record
+     * @param \PDOStatement $o_pdo_stmt
+     * @return bool
+     */
     public function mdQueryPrepared(array $a_values = array(), $single_record = true, \PDOStatement $o_pdo_stmt)
     {
         if ($a_values == array()) {
@@ -746,8 +827,8 @@ class DbModel extends Base
                     $results = $this->mdQueryPrepared($row, $single_record, $o_pdo_stmt);
                     if ($results === false) {
                         $this->setSqlErrorMessage($o_pdo_stmt);
-                        $this->o_elog->write("Could not execute the query: {$this->getSqlErrorMessage()}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-                        $this->o_elog->write('The array was: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                        $this->logIt("Could not execute the query: {$this->getSqlErrorMessage()}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+                        $this->logIt('The array was: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                         return false;
                     }
                 }
@@ -757,15 +838,15 @@ class DbModel extends Base
                 $results = $this->execute($a_values, $o_pdo_stmt);
                 if ($results === false) {
                     $this->setSqlErrorMessage($o_pdo_stmt);
-                    $this->o_elog->write("Could not execute the query: {$this->getSqlErrorMessage()}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-                    $this->o_elog->write('The array was: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                    $this->logIt("Could not execute the query: {$this->getSqlErrorMessage()}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+                    $this->logIt('The array was: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                     return false;
                 }
                 return true;
             }
         }
         else {
-            $this->o_elog->write('The array of values for a prepared query was empty.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('The array of values for a prepared query was empty.', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return false;
         }
     }
@@ -802,7 +883,7 @@ class DbModel extends Base
                 $query = "
                     SELECT {$data} FROM {$query_params['table_name']}
                     WHERE ";
-                $this->o_elog->write("Where Params in method: " . var_export($where_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Where Params in method: " . var_export($where_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $where = '';
                 $a_where = array();
                 foreach ($where_values as $values) {
@@ -811,8 +892,8 @@ class DbModel extends Base
                     $a_where = array_merge($a_where, array($values['field_name'] =>$values['field_value']));
                 }
                 $query .= $where;
-                $this->o_elog->write("a where is: " . var_export($a_where, true),  LOG_OFF, __METHOD__ . '.' . __LINE__);
-                $this->o_elog->write("Query is: $query", LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("a where is: " . var_export($a_where, true),  LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Query is: $query", LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return $this->search($query, $a_where);
             case 'add':
                 if ($query_params['sql'] != '') {
@@ -868,7 +949,13 @@ class DbModel extends Base
                 return false;
         }
     }
-    public function searchPrepared($a_values = '', \PDOStatement $o_pdo_stmt, $type = 'assoc')
+    /**
+     * @param array         $a_values
+     * @param \PDOStatement $o_pdo_stmt
+     * @param string        $type
+     * @return array|bool
+     */
+    public function searchPrepared(array $a_values = array(), \PDOStatement $o_pdo_stmt, $type = 'assoc')
     {
         switch ($type) {
             case 'num':
@@ -881,8 +968,8 @@ class DbModel extends Base
             default:
                 $fetch_style = \PDO::FETCH_ASSOC;
         }
-        if (is_array($a_values) && count($a_values) > 0) {
-            $this->o_elog->write("Array: " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        if (count($a_values) > 0) {
+            $this->logIt("Array: " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             if (isset($a_values[0]) && is_array($a_values[0])) {
                 $a_results = array();
                 foreach ($a_values as $row) {
@@ -899,15 +986,15 @@ class DbModel extends Base
                     $a_results = $o_pdo_stmt->fetchAll($fetch_style);
                 }
                 else {
-                    $this->o_elog->write("Could not execute the query", LOG_OFF, __METHOD__ . '.' . __LINE__);
+                    $this->logIt("Could not execute the query", LOG_OFF, __METHOD__ . '.' . __LINE__);
                     return false;
                 }
             }
             return $a_results;
         }
         else {
-            $this->o_elog->write('There was a problem with the array');
-            $this->o_elog->write("a_values: " . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('There was a problem with the array');
+            $this->logIt("a_values: " . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return false;
         }
     }
@@ -928,7 +1015,7 @@ class DbModel extends Base
         foreach ($a_skip_keys as $skip_key => $skip_value) {
             $a_skip_keys[$skip_key] = strpos($skip_value, ':') === 0 ? $skip_value : ':' . $skip_value;
         }
-        $this->o_elog->write('skip keys: ' . var_export($a_skip_keys, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt('skip keys: ' . var_export($a_skip_keys, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
         foreach ($a_values as $key => $value) {
             if (!in_array($key, $a_skip_keys)) {
                 if ($set_sql == '' ) {
@@ -984,7 +1071,7 @@ class DbModel extends Base
         }
         if (count($a_search_for) > 0) {
             $a_search_pairs = $this->prepareKeys($a_search_for);
-            $this->o_elog->write('search pairs prepared: ' . var_export($a_search_pairs, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('search pairs prepared: ' . var_export($a_search_pairs, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             foreach ($a_search_pairs as $key => $value) {
                 $field_name = preg_replace('/^:/', '', $key);
                 if (strpos($key, '.') !== false) {
@@ -1014,6 +1101,55 @@ class DbModel extends Base
         }
         return $where;
     }
+    /**
+     *  Creates the class properties of db_type and db_prefix from config file
+     *  @param string $config_file
+     *  @return bool
+    **/
+    private function createDbParms($config_file = 'db_config.php')
+    {
+        $config_w_apppath  = '';
+        $config_w_privpath = '';
+        $config_w_sitepath = '';
+        $default_path     = $_SERVER['DOCUMENT_ROOT'] . '/config/' . $config_file;
+        if (defined('APP_PATH')) {
+            $config_w_apppath = APP_PATH . '/config/' . $config_file;
+        }
+        if (defined('PRIVATE_PATH')) {
+            $config_w_privpath = PRIVATE_PATH . '/' . $config_file;
+        }
+        if (defined('SITE_PATH')) {
+            $config_w_sitepath = SITE_PATH . '/config/' . $config_file;
+        }
+        if ($config_w_apppath != '' && !file_exists($config_w_apppath)) {
+            if ($config_w_privpath != '' && !file_exists($config_w_privpath)) {
+                if ($config_w_sitepath != '' && !file_exists($config_w_sitepath)) {
+                    $config_w_path = $default_path;
+                }
+                else {
+                    $config_w_path = $config_w_sitepath;
+                }
+            }
+            else {
+                $config_w_path = $config_w_privpath;
+            }
+        }
+        else {
+            $config_w_path = $config_w_apppath;
+        }
+        if (!file_exists($config_w_path)) {
+            return false;
+        }
+        $a_db = require_once $config_w_path;
+        $this->db_prefix = $a_db['prefix'];
+        $this->db_type   = $a_db['driver'];
+        return true;
+    }
+    /**
+     *  Gets the variable for the fetch style
+     *  @param string $type
+     *  @return int
+     */
     public function determineFetchStyle($type = 'assoc')
     {
         switch ($type) {
@@ -1079,7 +1215,6 @@ class DbModel extends Base
         }
         return $a_keys;
     }
-
     /**
      *  Verifies that the php mysqli extension is installed
      *  Left over, not sure it is needed now
@@ -1119,8 +1254,7 @@ class DbModel extends Base
             return $a_new;
         }
         else {
-            $this->o_elog->setFrom(basename(__FILE__), __METHOD__);
-            $this->o_elog->write('The array must be an associative array to fix.');
+            $this->logIt('The array must be an associative array to fix.', LOG_OFF, __METHOD__);
             return false;
         }
     }
@@ -1143,8 +1277,7 @@ class DbModel extends Base
             return $this->prepareValues($array[0]);
         }
         else {
-            $this->o_elog->setFrom(basename(__FILE__), __METHOD__);
-            $this->o_elog->write('The array must be an associative array to fix.');
+            $this->logIt('The array must be an associative array to fix.', LOG_OFF, __METHOD__);
             return false;
         }
     }
@@ -1158,6 +1291,27 @@ class DbModel extends Base
     public function quoteString($value)
     {
         return $this->o_db->quote($value);
+    }
+    /**
+     *  Removes unwanted key=>values for a prepared query
+     *  @param array $a_required_keys
+     *  @param array $a_values the array which needs cleaned up
+     *  @return array $a_fixed_values
+    **/
+    public function removeBadKeys(array $a_required_keys = array(), array $a_values = array())
+    {
+        foreach ($a_values as $key => $value) {
+            if (
+                array_search($key, $a_required_keys) === false
+                &&
+                array_search(str_replace(':', '', $key), $a_required_keys) === false
+                &&
+                array_search(':' . $key, $a_required_keys) === false
+            ) {
+                unset($a_values[$key]);
+            }
+        }
+        return $a_values;
     }
     /**
      *  Returns a list of the columns from a database table.
@@ -1200,8 +1354,7 @@ class DbModel extends Base
             return $a_column_names;
 
         } else {
-            $this->o_elog->setFrom(basename(__FILE__), __METHOD__);
-            $this->o_elog->write('You must specify a table name for this to work.');
+            $this->logIt('You must specify a table name for this to work.', LOG_OFF, __METHOD__);
             return false;
         }
     }
@@ -1232,31 +1385,16 @@ class DbModel extends Base
                 return $this->search($sql, array(), 'num');
         }
     }
-    /**
-     *  Removes unwanted key=>values for a prepared query
-     *  @param array $a_required_keys
-     *  @param array $a_values the array which needs cleaned up
-     *  @return array $a_fixed_values
-    **/
-    public function removeBadKeys(array $a_required_keys = array(), array $a_values = array())
-    {
-        foreach ($a_values as $key => $value) {
-            if (
-                array_search($key, $a_required_keys) === false
-                &&
-                array_search(str_replace(':', '', $key), $a_required_keys) === false
-                &&
-                array_search(':' . $key, $a_required_keys) === false
-            ) {
-                unset($a_values[$key]);
-            }
-        }
-        return $a_values;
-    }
 
     ### Magic Method fix ###
     public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);
     }
+    // and other magic methods in Base class
+
+    ### Base Class Inherited Methods ###
+    // logIt($message, $log_type, $location)
+    // setElog(Elog $o_elog)
+    // setPrivateProperties()
 }

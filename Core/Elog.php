@@ -7,10 +7,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Elog
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version:  2.6.1
- *  @date 2013-12-19 08:11:49
- *  @note A part of the RITC Library v5
+ *  @version:  2.6.2
+ *  @date 2014-09-23 11:53:02
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.6.2 - clean up, removed extend to Base class, not needed/wanted - 09/23/2014 wer
  *      v2.6.1 - package change required minor update - 12/19/2013 wer
  *      v2.6.0 - Namespace changes - 07/30/2013 wer
  *      v2.5.2 - added some sanity code to setElogConstants to prevent errors - 04/23/2013
@@ -20,7 +21,7 @@
 **/
 namespace Ritc\Library\Core;
 
-class Elog extends namespace\Base
+class Elog
 {
     protected $current_page;
     private $debug_text;
@@ -34,13 +35,11 @@ class Elog extends namespace\Base
     private static $instance;
     private $last_message = '';
     private $php_log_used = false;
-    protected $private_properties = array();
     private $use_php_log = true;
     private $use_text_log = false;
 
     private function __construct()
     {
-        $this->setPrivateProperties();
         $this->setElogConstants();
         $this->debug_text = "<!-- Start of Debug Text -->\n";
     }

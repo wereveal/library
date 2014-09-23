@@ -10,17 +10,17 @@
  *  @namespace Ritc/Library/Core
  *  @class Strings
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 5.1.0
- *  @date 2013-05-14 12:42:32
- *  @note A part of the RITC Library v5
+ *  @version 5.1.1
+ *  @date 2014-09-23 12:04:32
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v5.1.1 - changed to implment the changes in Base class - 09/23/2014 wer
  *      v5.1.0 - added formatPhoneNumber method. 2013-05-14
  *      v5.0.1 - bug fixes and removed unused code left over from old class Output 2013-05-01
  *      v5.0.0 - renamed new version for RITC Library v5
  *  </pre>
 **/
 namespace Ritc\Library\Core;
-
 
 class Strings extends Base
 {
@@ -31,9 +31,7 @@ class Strings extends Base
     protected $private_properties;
     public function __construct()
     {
-        $this->o_elog = Elog::start();
         $this->setPrivateProperties();
-        $this->o_elog->setFromFile(__FILE__);
     }
 
     ### String Methods ###
@@ -197,7 +195,7 @@ class Strings extends Base
         }
         $return_this = '';
         $a_sentences = preg_split('/([.?!]+)/', $the_string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-        $this->o_elog->write("PREG_SPLIT: " . var_export($a_sentences, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("PREG_SPLIT: " . var_export($a_sentences, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         foreach($a_sentences as $sentence) {
             $return_this .= $sentence == '.' ? '. ' : ucfirst(strtolower(trim($sentence)));
         }
@@ -236,11 +234,11 @@ class Strings extends Base
         $string = $this->removeTags($string);
         $this_string = '';
         $that_string = '';
-        $this->o_elog->write("The string before shortening: $string", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("The string before shortening: $string", LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ((int) $num_of_words === 0 && (int) $num_of_chars === 0) {
             $this_string = $this->makeShortString($string, 5, 0);
         } elseif ((int) $num_of_words === 0 && (int) $num_of_chars > 0) {
-            $this->o_elog->write("In num of chars", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("In num of chars", LOG_OFF, __METHOD__ . '.' . __LINE__);
             for ($i=0;$i < $num_of_chars; $i++) {
                 $this_string .= $string{$i};
             }

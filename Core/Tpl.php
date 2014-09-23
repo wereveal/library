@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Tpl
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 0.1.0
- *  @date 2013-11-11 12:49:59
+ *  @version 0.1.1
+ *  @date 2014-09-23 12:06:08
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
+ *      v0.1.1 - changed to implment the changes in Base class - 09/23/2014 wer
  *      v0.1.0 - initial file creation - 2013-11-11
  *  </pre>
 **/
@@ -23,6 +24,7 @@ use Twig_Environment;
 class Tpl extends Base
 {
     protected $private_properties;
+    protected $o_elog;
     private $a_twig_config;
 
     public function __construct($config_file = 'twig_config.php')

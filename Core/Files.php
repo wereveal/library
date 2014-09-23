@@ -6,14 +6,15 @@
  *  @namespace Ritc/Library/Core
  *  @class Files
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 4.2.0
- *  @date 2013-12-19 07:46:56
+ *  @version 4.2.1
+ *  @date 2014-09-23 11:58:18
  *  @note A part of the RITC Library v5
  *  @note <pre>The constants with _DIR_NAME should correspond to dir names in
  *      the site theme or namespace (e.g. templates are in namespace). If a directory
  *      is missing, this could cause a fatal error.
  *      </pre>
  *  @note <pre><b>Change Log</b>
+ *      v4.2.1 - implements changes to Base class for logging
  *      v4.2.0 - Several changes. - 12/19/2013 wer
  *              Base was changed from abstract to normal class
  *              Location was modified to be an interface
@@ -31,9 +32,10 @@
 **/
 namespace Ritc\Library\Core;
 
+use Ritc\Library\Core\Base;
 use Ritc\Library\Interfaces\Location;
 
-class Files extends namespace\Base implements Location
+class Files extends Base implements Location
 {
     const CONFIG_DIR_NAME    = 'config';
     const CSS_DIR_NAME       = 'css';
@@ -56,7 +58,6 @@ class Files extends namespace\Base implements Location
 
     public function __construct($file_name = '', $the_directory = '', $theme_name = '', $namespace = '')
     {
-        $this->o_elog = namespace\Elog::start();
         $this->setPrivateProperties();
         if ($file_name != '') {
             $this->file_name = $file_name;
@@ -111,9 +112,8 @@ class Files extends namespace\Base implements Location
     **/
     public function getContents($file_name = '', $file_dir_name = '')
     {
-        $this->o_elog->setFromMethod(__METHOD__);
         if($file_name == '' && $this->file_name == "no_file.tpl") {
-            $this->o_elog->write("File name was blank.", LOG_OFF);
+            $this->logIt("File name was blank.", LOG_OFF, __METHOD__);
             return false;
         }
         if ($file_dir_name != '') {
@@ -132,7 +132,7 @@ class Files extends namespace\Base implements Location
         if($file_contents !== false) {
             return $file_contents;
         } else {
-            $this->o_elog->write("Could not get File Contents. File Path: " . $file_path, LOG_OFF);
+            $this->logIt("Could not get File Contents. File Path: " . $file_path, LOG_OFF, __METHOD__);
             return false;
         }
     }
@@ -166,8 +166,8 @@ class Files extends namespace\Base implements Location
         if (file_exists($this->file_w_path) && !is_dir($this->file_w_path)) {
             return $this->file_w_dir;
         } else {
-            $this->o_elog->setFromMethod(__METHOD__ . '.' . __LINE__);
-            $this->o_elog->write("Couldn't get file on the following paths: $this->file_w_path", LOG_OFF);
+            $log_from = __METHOD__ . '.' . __LINE__;
+            $this->logIt("Couldn't get file on the following paths: $this->file_w_path", LOG_OFF, $log_from);
             return false;
         }
     }
@@ -179,8 +179,8 @@ class Files extends namespace\Base implements Location
         if (file_exists($this->file_w_path) && !is_dir($this->file_w_path)) {
             return $this->file_w_path;
         } else {
-            $this->o_elog->setFromMethod(__METHOD__ . '.' . __LINE__);
-            $this->o_elog->write("The file doesn't exist on the following paths: {$this->file_w_path}", LOG_OFF);
+            $log_from = __METHOD__ . '.' . __LINE__;
+            $this->logIt("The file doesn't exist on the following paths: {$this->file_w_path}", LOG_OFF, $log_from);
             return false;
         }
     }
@@ -249,7 +249,7 @@ class Files extends namespace\Base implements Location
         if (file_exists($file_w_path)) {
             return $file_w_path;
         }
-        $this->o_elog->write("The File w/ Path didn't exist: '$file_w_path'. It is possible the Constant PRIVATE_PATH isn't set.", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("The File w/ Path didn't exist: '$file_w_path'. It is possible the Constant PRIVATE_PATH isn't set.", LOG_OFF, __METHOD__ . '.' . __LINE__);
         return false;
     }
     public function getTmpFile($file_name = '')
@@ -394,7 +394,7 @@ class Files extends namespace\Base implements Location
     **/
     protected function setFileLocations()
     {
-        $this->o_elog->write(
+        $this->logIt(
             'File name: '  . $this->file_name .
             ' Namespace: ' . $this->namespace .
             ' file dir '   . $this->file_dir_name,
