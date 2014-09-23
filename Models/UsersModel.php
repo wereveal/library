@@ -6,44 +6,39 @@
  *  @namespace Ritc/Library/Models
  *  @class UsersModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2014-09-15 14:54:11
+ *  @version 1.0.1ß
+ *  @date 2014-09-23 13:04:14
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0 - First Live version - 09/15/2014 wer
- *      v0.1.0 - Initial version    - 09/11/2014 wer
+ *      v1.0.1ß - extends the Base class, injects the DbModel, clean up - 09/23/2014 wer
+ *      v1.0.0ß - First Live version - 09/15/2014 wer
+ *      v0.1.0ß - Initial version    - 09/11/2014 wer
  *  </pre>
  *  @todo add the methods needed to crud a user with all the correct group and role information
 **/
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\DbFactory;
+use Ritc\Library\Core\Base;
 use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Elog;
 use Ritc\Library\Interfaces\ModelInterface;
 
-class UsersModel implements ModelInterface
+class UsersModel extends Base implements ModelInterface
 {
     private $db_prefix;
     private $db_type;
     private $o_arrays;
     private $o_db;
-    private $o_elog;
+    protected $o_elog;
 
-    public function __construct($db_config = 'db_config.php')
+    /**
+     * @param DbModel $o_db
+     */
+    public function __construct(DbModel $o_db)
     {
-        $this->o_elog = Elog::start();
-        $o_dbf = DbFactory::start($db_config, 'rw');
-        $o_pdo = $o_dbf->connect();
-        if ($o_pdo !== false) {
-            $this->o_db = new DbModel($o_pdo);
-        }
-        else {
-            $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-        }
-        $this->o_arrays = new Arrays;
-        $this->db_type = $this->o_db->getDbType();
+        $this->o_db      = $o_db;
+        $this->o_arrays  = new Arrays;
+        $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
     }
 
@@ -79,7 +74,7 @@ class UsersModel implements ModelInterface
         ";
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}users")) {
             $ids = $this->o_db->getNewIds();
-            $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
         }
         else {
@@ -129,7 +124,7 @@ class UsersModel implements ModelInterface
             FROM {$this->db_prefix}users
             {$where}
         ";
-        $this->o_elog->write($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_values);
     }
     /**
@@ -190,7 +185,7 @@ class UsersModel implements ModelInterface
             {$sql_set}
             {$sql_where}
         ";
-        $this->o_elog->write($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
@@ -402,7 +397,7 @@ class UsersModel implements ModelInterface
             AND ug.group_id = g.group_id
             AND {$where}
         ";
-        $this->o_elog->write("Select User: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("Select User: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $results = $this->o_db->search($sql);
         if (isset($results[0]) && is_array($results[0])) {
             return $results[0];
@@ -456,7 +451,7 @@ class UsersModel implements ModelInterface
                 AND u.is_active >= 1";
         }
         $sql .= " ORDER BY g.group_name ASC, u.real_name ASC";
-        $this->o_elog->write("SQL: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("SQL: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql);
     }
     /**
@@ -472,7 +467,7 @@ class UsersModel implements ModelInterface
         if (count($a_user) == 0) {
             return false;
         }
-        $this->o_elog->write("a_user before changes: " . var_export($a_user, true), LOG_OFF, $method  . __LINE__);
+        $this->logIt("a_user before changes: " . var_export($a_user, true), LOG_OFF, $method  . __LINE__);
 
         if (!isset($a_user['user_id']) || $a_user['user_id'] == '') { // New User
             $o_group = new GroupsModel($this->o_db);
@@ -490,7 +485,7 @@ class UsersModel implements ModelInterface
             foreach($a_required_keys as $key_name) {
                 $a_user_values[$key_name] = isset($a_user[$key_name]) ? $a_user[$key_name] : '' ;
             }
-            $this->o_elog->write("" . var_export($a_user_values , true), LOG_OFF, $method  . __LINE__);
+            $this->logIt("" . var_export($a_user_values , true), LOG_OFF, $method  . __LINE__);
             if ($a_user_values['password'] == '') {
                 return false;
             }

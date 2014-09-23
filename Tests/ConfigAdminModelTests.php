@@ -2,6 +2,8 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Abstracts\Tester;
+use Ritc\Library\Core\DbFactory;
+use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Elog;
 use Ritc\Library\Models\ConfigAdminModel;
 
@@ -18,13 +20,22 @@ class ConfigAdminModelTests extends Tester
     protected $passed_test_names  = array();
     protected $passed_tests = 0;
     private $o_config;
+    private $o_db;
     private $o_elog;
 
-    public function __construct(array $a_test_order = array())
+    public function __construct(array $a_test_order = array(), $db_config = 'db_config.php')
     {
         $this->a_test_order = $a_test_order;
         $this->o_elog = Elog::start();
-        $this->o_config = new ConfigAdminModel('db_config_guide.php');
+        $o_dbf = DbFactory::start($db_config, 'rw');
+        $o_pdo = $o_dbf->connect();
+        if ($o_pdo !== false) {
+            $this->o_db = new DbModel($o_pdo);
+        }
+        else {
+            $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+        }
+        $this->o_config = new ConfigAdminModel($this->o_db);
     }
 
     /**

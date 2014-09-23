@@ -6,43 +6,35 @@
  *  @namespace Ritc/Library/Models
  *  @class RolesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2014-09-15 14:56:33
+ *  @version 1.0.1β
+ *  @date 2014-09-23 13:10:31
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0 - First live version - 09/15/2014 wer
- *      v0.1.0 - Initial version    - 01/18/2014 wer
+ *      v1.0.1β - extends the Base class, injects the DbModel, clean up - 09/23/2014 wer
+ *      v1.0.0β - First live version - 09/15/2014 wer
+ *      v0.1.0β - Initial version    - 01/18/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\DbFactory;
+use Ritc\Library\Core\Base;
 use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Elog;
 use Ritc\Library\Interfaces\ModelInterface;
 
-class RolesModel implements ModelInterface
+class RolesModel extends Base implements ModelInterface
 {
     private $db_prefix;
     private $db_type;
     private $o_arrays;
     private $o_db;
-    private $o_elog;
+    protected $o_elog;
 
-    public function __construct($db_config = 'db_config.php')
+    public function __construct(DbModel $o_db)
     {
-        $this->o_elog = Elog::start();
-        $o_dbf = DbFactory::start($db_config, 'rw');
-        $o_pdo = $o_dbf->connect();
-        if ($o_pdo !== false) {
-            $this->o_db = new DbModel($o_pdo);
-        }
-        else {
-            $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-        }
-        $this->o_arrays = new Arrays;
-        $this->db_type = $this->o_db->getDbType();
+        $this->o_db      = $o_db;
+        $this->o_arrays  = new Arrays;
+        $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
     }
 
@@ -66,7 +58,7 @@ class RolesModel implements ModelInterface
         ";
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}roles")) {
             $ids = $this->o_db->getNewIds();
-            $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
         }
         else {
@@ -116,7 +108,7 @@ class RolesModel implements ModelInterface
             {$set_sql}
             WHERE role_id = :role_id
         ";
-        $this->o_elog->write($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->update($sql, $a_values, true);
     }
     public function delete($role_id = '')

@@ -6,40 +6,32 @@
  *  @namespace Ritc/Library/Models
  *  @class ConfigAdminModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2014-04-02 13:21:16
- *  @note A file in Ritc Library version 5.0
+ *  @version 1.0.1ß
+ *  @date 2014-09-23 13:02:39
+ *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0 - Initial version 04/02/2014 wer
+ *      v1.0.1ß - extends the Base class, injects the DbModel, clean up - 09/23/2014 wer
+ *      v1.0.0ß - Initial version 04/02/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\DbFactory;
+use Ritc\Library\Core\Base;
 use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Elog;
 use Ritc\Library\Core\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
 
-class ConfigAdminModel implements ModelInterface
+class ConfigAdminModel extends Base implements ModelInterface
 {
     protected $o_arrays;
     protected $o_db;
     protected $o_elog;
     protected $o_strings;
 
-    public function __construct($db_config = 'db_config.php')
+    public function __construct(DbModel $o_db)
     {
-        $this->o_elog = Elog::start();
-        $o_dbf = DbFactory::start($db_config, 'rw');
-        $o_pdo = $o_dbf->connect();
-        if ($o_pdo !== false) {
-            $this->o_db = new DbModel($o_pdo);
-        }
-        else {
-            $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-        }
+        $this->o_db = $o_db;
         $this->o_arrays = new Arrays;
         $this->o_strings = new Strings;
         $this->db_type = $this->o_db->getDbType();
@@ -54,7 +46,7 @@ class ConfigAdminModel implements ModelInterface
     **/
     public function create(array $a_config = array()) {
         $required_keys = array('config_name', 'config_value');
-        $this->o_elog->write('a config' . var_export($a_config, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt('a config' . var_export($a_config, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($this->o_arrays->hasRequiredKeys($required_keys, $a_config) === false) {
             return false;
         }
