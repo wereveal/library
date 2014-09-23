@@ -9,11 +9,12 @@
  *  @namespace Ritc/Library/Core
  *  @class Actions
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.2.3
- *  @date 2013-12-19 07:51:50
- *  @note A part of the RITC Library v5
+ *  @version 2.2.5
+ *  @date 2014-09-23 11:44:55
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v2.2.4 - changed to match namespace change 12/19/2013 wer
+ *      v2.2.5 - changed to implment the changes in Base class - 09/23/2014 wer
+ *      v2.2.4 - changed to match namespace change - 12/19/2013 wer
  *      v2.2.3 - Changed to namespace reorge
  *      v2.2.2 - changed to new namespace - 03/27/2013
  *      v2.2.1 - added a bit more sanitation to uri actions,
@@ -23,7 +24,7 @@
 namespace Ritc\Library\Core;
 
 
-class Actions extends namespace\Base
+class Actions extends Base
 {
     protected $a_clean_post;
     protected $a_clean_get;
@@ -38,9 +39,7 @@ class Actions extends namespace\Base
     protected $url_path;
     public function __construct()
     {
-        $this->o_elog = Elog::start();
-        $this->o_elog->setFromFile(__FILE__);
-        $this->o_elog->write("Starting __construct", LOG_OFF);
+        $this->logIt("Starting __construct", LOG_OFF, __FILE__);
         $this->o_arrays = new namespace\Arrays();
         $this->o_str = new namespace\Strings();
         $this->setPrivateProperties();
@@ -50,7 +49,7 @@ class Actions extends namespace\Base
         $this->setUriActions();
         $this->setFormAction(array_merge($this->a_clean_get, $this->a_clean_post));
         $this->setUrlPath($this->uri_no_get);
-        $this->o_elog->write("ending __construct", LOG_OFF);
+        $this->logIt("ending __construct", LOG_OFF, __FILE__);
     }
     public function getFormAction()
     {
@@ -62,12 +61,12 @@ class Actions extends namespace\Base
             return $this->a_clean_post;
         }
         else {
-            $this->o_elog->write("Value is: {$value}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Value is: {$value}", LOG_OFF, __METHOD__ . '.' . __LINE__);
             if (isset($this->a_clean_post[$value])) {
                 return $this->a_clean_post[$value];
             }
             else {
-                $this->o_elog->write("The Value Doesn't Exist. " . var_export($this->a_clean_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("The Value Doesn't Exist. " . var_export($this->a_clean_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return false;
             }
         }
@@ -80,8 +79,7 @@ class Actions extends namespace\Base
             if (isset($this->a_clean_get[$value])) {
                 return $this->a_clean_get[$value];
             } else {
-                $this->o_elog->setFromMethod(__METHOD__ . '.' . __LINE__);
-                $this->o_elog->write(var_export($this->a_clean_post, true), LOG_OFF);
+                $this->logIt(var_export($this->a_clean_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return '';
             }
         }
@@ -124,7 +122,7 @@ class Actions extends namespace\Base
     }
     public function setFormAction($a_clean_post)
     {     // used $a_clean_post as a not so subtle hint to use a safe array and not raw $_POST/$_GET/$_REQUEST etc
-        $this->o_elog->write("Starting with: " . var_export($a_clean_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("Starting with: " . var_export($a_clean_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $x_action = '';
         $y_action = '';
         foreach ($a_clean_post as $key=>$value) {
@@ -150,7 +148,7 @@ class Actions extends namespace\Base
         else {
             $action = '';
         }
-        $this->o_elog->write("Action is: {$action}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("Action is: {$action}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $this->form_action = $action;
         return true;
     }
@@ -177,21 +175,22 @@ class Actions extends namespace\Base
         if ($request_uri == '') {
             $request_uri = $_SERVER["REQUEST_URI"];
         }
-        $this->o_elog->write("The pre-clean uri is: " . $request_uri, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("The pre-clean uri is: " . $request_uri, LOG_OFF, __METHOD__);
         if (strpos($request_uri, "?") !== false) {
             $this->uri_no_get = substr($request_uri, 0, strpos($request_uri, "?"));
         }
         else {
             $this->uri_no_get = $request_uri;
         }
-        $this->o_elog->write("The clean uri is: " . $this->uri_no_get, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("The clean uri is: " . $this->uri_no_get, LOG_OFF, __METHOD__);
         return true;
     }
     public function setUriActions($root_dir = '')
     {
         /* $root_dir defines what isn't an action in the URI**/
-        $this->o_elog->write("Root Dir is: " . $root_dir, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $this->o_elog->write("Request URI is: " . $this->uri_no_get, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $log_from = __METHOD__ . '.' . __LINE__;
+        $this->logIt("Root Dir is: " . $root_dir, LOG_OFF, $log_from);
+        $this->logIt("Request URI is: " . $this->uri_no_get, LOG_OFF, $log_from);
         $a_actions   = array();
         $uri_actions = str_replace($root_dir, '', $this->uri_no_get);
         $uri_parts   = explode("/", $uri_actions);
@@ -213,8 +212,9 @@ class Actions extends namespace\Base
             $this->a_uri_actions = array();
             return false;
         }
-        $this->o_elog->write("URI parts is: " . var_export($uri_parts, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $this->o_elog->write("a_actions is: " . var_export($a_actions, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $log_from = __METHOD__ . '.' . __LINE__;
+        $this->logIt("URI parts is: " . var_export($uri_parts, true), LOG_OFF, $log_from);
+        $this->logIt("a_actions is: " . var_export($a_actions, true), LOG_OFF, $log_from);
         $this->a_uri_actions = $this->filterUriActions($a_actions);
         return true;
     }

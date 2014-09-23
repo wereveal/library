@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  3.1.2
- *  @date 2014-09-18 17:15:39
+ *  @version  3.1.3
+ *  @date 2014-09-23 11:47:23
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.1.3 - changed to implment the changes in Base class - 09/23/2014 wer
  *      v3.1.2 - bug fixes - 09/18/2014 wer
  *      v3.1.1 - made it so the config table name will be assigned from the - 02/24/2014 wer
  *               the db_prefix variable set from the db confuration
@@ -38,23 +39,22 @@ class Config extends Base
     private function __construct(DbModel $o_db)
     {
         $this->o_db = $o_db;
-        $this->o_elog = Elog::start();
         $this->setPrivateProperties();
         $this->db_prefix = $o_db->getDbPrefix();
         $this->created = $this->createConstants();
         if ($this->created === false) {
-            $this->o_elog->write("Could not create constants from db.", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Could not create constants from db.", LOG_OFF, __METHOD__ . '.' . __LINE__);
             if (defined('APP_CONFIG_PATH')) {
                 if(file_exists(APP_CONFIG_PATH . '/fallback_constants.php')) {
                     include_once APP_CONFIG_PATH . '/fallback_constants.php';
                 }
                 else {
-                    $this->o_elog->write("File: " . APP_CONFIG_PATH . '/fallback_constants.php does not exist.');
+                    $this->logIt("File: " . APP_CONFIG_PATH . '/fallback_constants.php does not exist.', LOG_OFF);
                     die ('A fatal error has occured. Please contact your web site administrator.');
                 }
             }
             else {
-                $this->o_elog->write("APP_CONFIG_PATH is not defined.");
+                $this->logIt("APP_CONFIG_PATH is not defined.", LOG_OFF);
                 die ('A fatal error has occured. Please contact your web site administrator.');
             }
             $this->createNewConfigs();
@@ -87,7 +87,7 @@ class Config extends Base
         if ($this->created === false) {
             $a_config = $this->selectConfigList();
             if (is_array($a_config) && count($a_config) > 0) {
-                $this->o_elog->write("List of Configs: " . var_export($a_config, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("List of Configs: " . var_export($a_config, true), LOG_OFF, __METHOD__);
                 foreach ($a_config as $row) {
                     $key   = strtoupper($row['config_name']);
                     if (!defined("{$key}")) {
@@ -107,7 +107,7 @@ class Config extends Base
                 return true;
             }
             else {
-                $this->o_elog->write($this->o_db->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt($this->o_db->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return false;
             }
         } else {
@@ -275,17 +275,17 @@ class Config extends Base
                 VALUES (?, ?)";
             if ($this->o_db->insert($query, $a_constants, "{$this->db_prefix}config")) {
                 if ($this->o_db->commitTransaction() === false) {
-                    $this->o_elog->write("Could not commit new configs", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                    $this->logIt("Could not commit new configs", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 }
                 return true;
             }
             else {
                 $this->o_db->rollbackTransaction();
-                $this->o_elog->write("Could not Insert new configs", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Could not Insert new configs", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
             }
         }
         else {
-            $this->o_elog->write("Could not start transaction.", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Could not start transaction.", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
         }
         return false;
     }

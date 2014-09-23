@@ -7,10 +7,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Base
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  1.0.4
- *  @date 2013-12-19 07:22:30
+ *  @version  1.1.0
+ *  @date 2014-09-23 10:29:06
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
+ *      v1.1.0 - allow elog to be injected into a class else ignores logging. 09/23/2014 wer
  *      v1.0.4 - changed back to a class. Couldn't figure out why
  *          it should be abstract. Made an interface for it just because. 12/19/2013
  *      v1.0.3 - namespace change, changed to an abstract class
@@ -22,6 +23,37 @@ class Base
 {
     protected $current_page;
     protected $private_properties;
+    protected $o_elog;
+
+    /**
+     * @return mixed
+     */
+    protected function getElog()
+    {
+        if (is_object($this->o_elog)) {
+            return $this->o_elog;
+        }
+    }
+    /**
+     * @param string $message
+     * @param int    $log_type
+     * @param string $location
+     */
+    protected function logIt($message = '', $log_type = LOG_OFF, $location = '')
+    {
+        if (is_object($o_elog)) {
+            $this->o_elog->write($message, $log_type, $location);
+        }
+    }
+    /**
+     *  Injectes the Elog object into the class.
+     *  @param Elog $o_elog
+     *  @return null
+     */
+    protected function setElog(Elog $o_elog)
+    {
+        $this->o_elog = $o_elog;
+    }
 
     ### Fixing Visibility
     /**

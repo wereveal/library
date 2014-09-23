@@ -11,11 +11,12 @@
  *  @namespace Ritc/Library/Core
  *  @class DbFactory
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.5.0
- *  @date 2014-03-25 16:26:03
- *  @note A part of the RITC Library v5
+ *  @version 1.5.1
+ *  @date 2014-09-23 11:28:00
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.5.0 - massive change to the factory, cutting out the fat
+ *      v1.5.1 - changed to implement the changes to the Base class - 09/23/2014 wer
+ *      v1.5.0 - massive change to the factory, cutting out the fat - 03/25/2014 wer
  *      v1.0.0 - figured it was time to take this out of beta, with one addition. - 02/24/2014 wer
  *      v0.1.2 - minor package change required minor modification - 12/19/2013 wer
  *      v0.1.1 - added two additional places the config files can exist - 2013-11-08
@@ -23,7 +24,6 @@
  *  </pre>
 **/
 namespace Ritc\Library\Core;
-
 
 class DbFactory extends Base
 {
@@ -37,7 +37,6 @@ class DbFactory extends Base
     private function __construct($config_file = 'db_config.php', $read_type = 'rw')
     {
         $this->setPrivateProperties();
-        $this->o_elog = Elog::start();
         $this->config_file = $config_file;
         $this->read_type = $read_type;
     }
@@ -73,7 +72,7 @@ class DbFactory extends Base
     public function connect()
     {
         if (is_object($this->o_db)) {
-            $this->o_elog->write('The database is already connected.', LOG_OFF);
+            $this->logIt('The database is already connected.', LOG_OFF);
             return $this->o_db;
         }
         $a_db = $this->retrieveDbParameters();
@@ -92,12 +91,12 @@ class DbFactory extends Base
                     $a_db['password'],
                     array(\PDO::ATTR_PERSISTENT=>$a_db['persist']));
             }
-            $this->o_elog->write("The dsn is: {$a_db['dsn']}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->o_elog->write('Connect to db success.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("The dsn is: {$a_db['dsn']}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('Connect to db success.', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $this->o_db;
         }
         catch(\PDOException $e) {
-            $this->o_elog->write('Error! Could not connect to database: ' . $e->getMessage(), LOG_ALWAYS);
+            $this->logIt('Error! Could not connect to database: ' . $e->getMessage(), LOG_ALWAYS);
             return false;
         }
     }

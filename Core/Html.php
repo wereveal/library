@@ -10,17 +10,18 @@
  *  @namespace Ritc/Library/Core
  *  @class Html
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.2
- *  @date 2013-12-19 08:29:54
- *  @note A part of the RITC Library v5
+ *  @version 1.0.3
+ *  @date 2014-09-23 12:01:26
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.3 - changed to implment the changes in Base class - 09/23/2014 wer
  *      v1.0.2 - some refactoring changes based on changes in package - 12/19/2013 wer
  *      v1.0.1 - some refactoring changes based on changes in other files - 03/17/2013 wer
  *  </pre>
 **/
 namespace Ritc\Library\Core;
 
-class Html extends namespace\Base
+class Html extends Base
 {
     protected $current_page;
     protected $o_arrays;
@@ -34,12 +35,10 @@ class Html extends namespace\Base
     protected $namespace = 'Ritc';
     public function __construct()
     {
-        $this->o_str = new namespace\Strings;
-        $this->o_elog = namespace\Elog::start();
-        $this->o_arrays = new namespace\Arrays();
-        $this->o_files = new namespace\Files('main.twig', 'templates',  'default', 'Ritc');
+        $this->o_str    = new Strings;
+        $this->o_arrays = new Arrays();
+        $this->o_files  = new Files('main.twig', 'templates',  'default', 'Ritc');
         $this->setPrivateProperties();
-        $this->o_elog->setFromFile(__FILE__);
     }
 
     public function button($a_button_values = array())
@@ -77,7 +76,7 @@ class Html extends namespace\Base
     public function cssLink($css_file = '', $css_dir = 'css', $css_media = 'screen')
     {
         if($css_file == '') {
-            $this->o_elog->write('A Problem Has Occurred. The css file must be specified', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('A Problem Has Occurred. The css file must be specified', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return '';
         }
         $this->o_files->setFileDirName($css_dir);
@@ -96,14 +95,14 @@ class Html extends namespace\Base
                 $image = $this->o_files->getImageWithDir('icons/failure.png');
             }
         }
-        $this->o_elog->write("Image w Dir: {$image}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("Image w Dir: {$image}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $a_stuff = array('message' => $message, 'image'=>$image, 'class'=>'msg-failure', 'alt'=>'A Problem Has Occurred');
         return $this->render('message.tpl', $a_stuff, true);
     }
     public function jsLink($js_file = '', $js_dir = 'js')
     {
         if($js_file == '') {
-            $this->o_elog->write('A Problem Has Occurred. The JavaScript File must be specified', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('A Problem Has Occurred. The JavaScript File must be specified', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return '';
         }
         $this->o_files->setFileDirName($js_dir);
@@ -150,28 +149,27 @@ class Html extends namespace\Base
     **/
     public function render($template = '', array $a_values = array(), $is_file = false)
     {
-        $this->o_elog->setFromMethod(__METHOD__ . '.' . __LINE__);
         if ($is_file) {
             $file_with_path = $this->o_files->getFileWithPath($template);
             if (file_exists($file_with_path)) {
-                $this->o_elog->write("Template: " . $template . ' == file_with_path ' . $file_with_path, LOG_OFF);
+                $this->logIt("Template: " . $template . ' == file_with_path ' . $file_with_path, LOG_OFF, __METHOD__ . '.' . __LINE__);
             }
         }
-        $this->o_elog->write("array of values: " . var_export($a_values, true), LOG_OFF);
+        $this->logIt("array of values: " . var_export($a_values, true), LOG_OFF);
         if ($template == '' || $a_values == array()) {
-            $this->o_elog->write("The Template or the array of values was empty", LOG_OFF);
+            $this->logIt("The Template or the array of values was empty", LOG_OFF);
             return false;
         }
         if (count($a_values) == 0) {
-            $this->o_elog->write("a_values was an empty array.", LOG_OFF);
+            $this->logIt("a_values was an empty array.", LOG_OFF);
             return false;
         }
         if ($is_file) {
             $tpl_content = $this->o_files->getContents($template, 'templates');
             if ($tpl_content == '') {
-                $this->o_elog->write("The template is empty: '{$template}'", LOG_OFF);
+                $this->logIt("The template is empty: '{$template}'", LOG_OFF);
             } elseif ($tpl_content === false) {
-                $this->o_elog->write('file_get_contents failed', LOG_OFF);
+                $this->logIt('file_get_contents failed', LOG_OFF);
             }
         }
         else {
@@ -186,7 +184,7 @@ class Html extends namespace\Base
             // now cleanup any vars without values
             $tpl_content = preg_replace('/{\$(.*)}/', '', $tpl_content);
         } else {
-            $this->o_elog->write('The template was empty.', LOG_OFF);
+            $this->logIt('The template was empty.', LOG_OFF);
         }
         return $tpl_content;
     }
