@@ -6,34 +6,35 @@
  *  @namespace Ritc/Library/Views
  *  @class ConfigAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2014-04-02 13:04:04
- *  @note A file in Library v5
+ *  @version 1.0.1ß
+ *  @date 2014-09-24 12:48:16
+ *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0 - Initial version 04/02/2014 wer
+ *      v1.0.1ß - changed to use Base class and inject database object - 09/24/2014 wer
+ *      v1.0.0ß - Initial version 04/02/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Models\ConfigAdminModel;
-use Ritc\Library\Core\Elog;
+use Ritc\Library\Core\Base;
+use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Tpl;
 use Ritc\Library\Helper\ViewHelper;
 
-class ConfigAdminView
+class ConfigAdminView extends Base
 {
     private $o_config;
-    private $o_elog;
+    protected $o_elog;
     private $o_twig;
     private $o_vhelp;
 
-    public function __construct()
+    public function __construct(DbModel $o_db)
     {
-        $this->o_elog   = Elog::start();
         $o_tpl          = new Tpl('twig_config.php');
         $this->o_twig   = $o_tpl->getTwig();
         $this->o_vhelp  = new ViewHelper();
-        $this->o_config = new ConfigAdminModel;
+        $this->o_config = new ConfigAdminModel($o_db);
     }
     /**
      *  Returns the list of configs in html.
@@ -66,7 +67,7 @@ class ConfigAdminView
             );
         }
         $a_configs = $this->o_config->read();
-        $this->o_elog->write('a_configs: ' . var_export($a_configs, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt('a_configs: ' . var_export($a_configs, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($a_configs !== false && count($a_configs) > 0) {
             $a_values['a_configs'] = $a_configs;
         }

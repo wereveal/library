@@ -1,13 +1,12 @@
 <?php
 namespace Ritc\Library\Tests;
 
-use Ritc\Library\Abstracts\Tester;
-use Ritc\Library\Core\DbFactory;
 use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Elog;
+use Ritc\Library\Core\Tester;
+use Ritc\Library\Core\Tpl;
 use Ritc\Library\Models\ConfigAdminModel;
 
-class ConfigAdminModelTests extends Tester
+class ConfigAdminModelTester extends Tester
 {
     protected $a_test_order;
     protected $a_test_values = array();
@@ -16,28 +15,29 @@ class ConfigAdminModelTests extends Tester
     protected $failed_tests = 0;
     protected $new_id;
     protected $num_o_tests = 0;
+    protected $o_elog;
     protected $passed_subtests;
     protected $passed_test_names  = array();
     protected $passed_tests = 0;
+    protected $private_properties;
     private $o_config;
     private $o_db;
-    private $o_elog;
+    private $o_twig;
 
-    public function __construct(array $a_test_order = array(), $db_config = 'db_config.php')
+    public function __construct(DbModel $o_db)
     {
-        $this->a_test_order = $a_test_order;
-        $this->o_elog = Elog::start();
-        $o_dbf = DbFactory::start($db_config, 'rw');
-        $o_pdo = $o_dbf->connect();
-        if ($o_pdo !== false) {
-            $this->o_db = new DbModel($o_pdo);
-        }
-        else {
-            $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-        }
+        $this->setPrivateProperties();
+        $this->o_db     = $o_db;
         $this->o_config = new ConfigAdminModel($this->o_db);
+        $o_tpl          = new Tpl('twig_config.php');
+        $this->o_twig   = $o_tpl->getTwig();
     }
-
+    public function renderResults(array $a_result_values = array())
+    {
+        if (count($a_result_values) == 0) {
+            return $this->o_twig->render('@')
+        }
+    }
     /**
      *  Runs tests where method ends in Tester.
      *  Extends the runTests method in abstract Tester.
@@ -49,9 +49,21 @@ class ConfigAdminModelTests extends Tester
      **/
     public function runTests($class_name = 'ConfigAdminModel', array $a_test_order = array())
     {
+        if ($class_name == '') {
+            if (substr(__CLASS__, -5) == 'Tests') {
+                $class_name = str_replace('Tests', '', __CLASS__);
+            }
+            elseif (substr(__CLASS__, -6) == 'Tester') {
+                $class_name = str_replace('Tester', '', __CLASS__);
+            }
+            else {
+                return 999;
+            }
+
+        }
         if (count($a_test_order) === 0) {
             if (count($this->a_test_order) === 0) {
-                $this->o_elog->write('Didnt have a test order.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('Didnt have a test order.', LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $o_ref = new \ReflectionClass($class_name);
                 $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
                 foreach ($a_methods as $a_method) {
@@ -74,7 +86,7 @@ class ConfigAdminModelTests extends Tester
                 $a_test_order = $this->a_test_order;
             }
         }
-        $this->o_elog->write(
+        $this->logIt(
             "Before -- num_o_tests: '{$this->num_o_tests}' passed tests: '{$this->passed_tests}' failed tests: '{$this->failed_tests}' test names: "
             . var_export($this->failed_test_names, TRUE),
             LOG_OFF,
@@ -100,7 +112,7 @@ class ConfigAdminModelTests extends Tester
                 $this->num_o_tests++;
             }
         }
-        $this->o_elog->write("num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: "
+        $this->logIt("num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: "
             . var_export($this->failed_test_names, true),
             LOG_OFF,
             __METHOD__ . '.' . __LINE__
@@ -122,7 +134,7 @@ class ConfigAdminModelTests extends Tester
         }
         else {
             $this->new_id = $results1;
-            $this->o_elog->write('New ID' . var_export($this->new_id, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('New ID' . var_export($this->new_id, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
         }
         if ($results2 !== false) {
             $bad_results = true;
@@ -245,6 +257,7 @@ class ConfigAdminModelTests extends Tester
         }
         return $good_results;
     }
+
     ### Utility ###
     /**
      *  Checks to see if a method is public.

@@ -1,13 +1,16 @@
 <?php
 /**
- *  A abstract class for testing that all other testing classes use.
+ *  @brief A class for testing that all other testing classes should extend.
+ *  @details Class that extends this class should end with the word Tests or
+ *           Tester, e.g. MyClassTester or MyClassTests.
  *  @file Tester.php
- *  @namespace Ritc/Library/Abstract
+ *  @namespace Ritc/Library/Core
  *  @class Tester
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version  2.0.1
- *  @date 2014-07-01 13:43:36
+ *  @version  3.0.0
+ *  @date 2014-09-24 13:02:53
  *  @note <pre><b>Change log</b>
+ *      v3.0.0 - changed to be a class so it could extend Base class and modified for such - 09/24/2014 wer
  *      v2.0.1 - added missing method 07/01/2014 wer
  *      v2.0.0 - modified to not do any view stuff 2013-12-13 wer
  *      v1.1.0 - added new a couple new methods  2013-05-10 wer
@@ -22,9 +25,9 @@
  *  @note RITC Library v5.0.0
  *  @ingroup ritc_library abstracts
 **/
-namespace Ritc\Library\Abstracts;
+namespace Ritc\Library\Core;
 
-abstract class Tester
+class Tester extends Base
 {
     protected $a_test_order;
     protected $a_test_values = array();
@@ -32,11 +35,15 @@ abstract class Tester
     protected $failed_test_names = array();
     protected $failed_tests;
     protected $num_o_tests;
+    protected $o_elog;
     protected $passed_subtests;
     protected $passed_test_names  = array();
     protected $passed_tests;
+    protected $private_properties;
+
     public function __construct()
     {
+        $this->setPrivateProperties();
     }
     public function addMethodToTestOrder($method_name = '')
     {
@@ -124,7 +131,11 @@ abstract class Tester
     }
     /**
      *  Runs tests where method ends in Test.
-     *  @param string $class_name name of the class to be tested
+     *  @param string $class_name optional, name of the class to be tested - only really needed if
+     *                            the class name doesn't match this class name minus Tester or Tests
+     *                            e.g. MyClass and MyClassTester doesn't require $class_name
+     *                            but MyClass and ThisClassTest requires a valid value for $class_name,
+     *                            i.e., $class_name = MyClass
      *  @param array $a_test_order optional, if provided it ignores
      *      the class property $a_test_order and won't try to build one
      *      from the class methods.
@@ -132,7 +143,17 @@ abstract class Tester
     **/
     public function runTests($class_name = '', array $a_test_order = array())
     {
-        if ($class_name == '' ) { return false; }
+        if ($class_name == '') {
+            if (substr(__CLASS__, -5) == 'Tests') {
+                $class_name = str_replace('Tests','',__CLASS__);
+            }
+            elseif (substr(__CLASS__, -6) == 'Tester') {
+                $class_name = str_replace('Tester','',__CLASS__);
+            }
+            else {
+                return 999;
+            }
+        }
         if (count($a_test_order) === 0) {
             if (count($this->a_test_order) === 0) {
                 $o_ref = new \ReflectionClass($class_name);
@@ -157,18 +178,18 @@ abstract class Tester
                 $a_test_order = $this->a_test_order;
             }
         }
-        // error_log(var_export($a_test_order, true));
-        // error_log("Before -- num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: " . var_export($this->failed_test_names, true));
+        $this->logIt(var_export($a_test_order, true), LOG_OFF, __METHOD__);
+        $this->logIt("Before -- num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: " . var_export($this->failed_test_names, true), LOG_OFF, __METHOD__);
         $failed_tests = 0;
         foreach ($a_test_order as $method_name) {
-            // error_log($method_name);
+            $this->logIt($method_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
             if (substr($method_name, -6) == 'Tester') {
                 $tester_name = $method_name;
                 $method_name = $this->shortenName($method_name);
             } else {
                 $tester_name = $method_name . 'Tester';
             }
-            // error_log("method name: {$method_name} - tester name: {$tester_name}");
+            $this->logIt("method name: {$method_name} - tester name: {$tester_name}", LOG_OFF, __METHOD__ . '.' . __LINE__);
             if ($this->isPublicMethod($class_name, $tester_name)) {
                 if ($this->$tester_name()) {
                     $this->passed_tests++;
@@ -181,7 +202,7 @@ abstract class Tester
                 $this->num_o_tests++;
             }
         }
-        // error_log("num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: " . var_export($this->failed_test_names, true));
+        $this->logIt("num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: " . var_export($this->failed_test_names, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $failed_tests;
     }
     public function shortenName($method_name = 'Tester')

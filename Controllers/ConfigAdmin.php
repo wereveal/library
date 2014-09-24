@@ -16,23 +16,23 @@
 **/
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Core\Elog;
+use Ritc\Library\Core\Base;
+use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Session;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Models\ConfigAdminModel;
 use Ritc\Library\Views\ConfigAdminView;
 
-class ConfigAdmin implements ControllerInterface
+class ConfigAdmin extends Base implements ControllerInterface
 {
-    private $o_elog;
+    protected $o_elog;
     private $o_config;
     private $o_view;
     private $o_session;
 
-    public function __construct(Session $o_session = '')
+    public function __construct(Session $o_session = '', DbModel $o_db)
     {
-        $this->o_elog    = Elog::start();
-        $this->o_config  = new ConfigAdminModel();
+        $this->o_config  = new ConfigAdminModel($o_db);
         $this->o_view    = new ConfigAdminView();
         $this->o_session = is_object($o_session) ? $o_session : Session::start();
 
@@ -92,7 +92,7 @@ class ConfigAdmin implements ControllerInterface
             case 'save_new':
                 // save the record
                 $a_config = $a_values['config'];
-                $this->o_elog->write('config values before create config' . var_export($a_config, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logit('config values before create config' . var_export($a_config, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $results = $this->o_config->create($a_config);
                 if ($results === false) {
                     $a_message = array('type' => 'failure', 'message' => 'Could not save the configuration values.');
