@@ -1,1 +1,0 @@
-<img src="{$image}" width="{$im_w}" height="{$im_h}" alt="{$alt}" class="{$class}" />
