@@ -1,0 +1,34 @@
+{% extends '@default/base.twig' %}
+{% block title %}{{ parent() }}: Error{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            {% include '@snippets/message.twig' %}
+        </div>
+    </div>
+{% endblock %}
+{% block footer %}
+    <!-- Footer -->
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 footer">
+            <p>Copyright &copy;&nbsp;2011-2014 <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved &reg;</p>
+        </div>
+    </div>
+    <!-- /footer -->
+{% endblock %}
+{#
+    Expected array [
+        'description' => '',
+        'public_dir'  => '',
+        'a_message' => [
+            'message'       => '',
+            'message_class' => '',
+            'image_src'     => '',
+            'alt_text'      => '',
+            'image_class'   => '',
+            'extras'        => ''
+        ]
+        'site_url' => '',
+        'rights_holder' => ''
+    ]
+#}
