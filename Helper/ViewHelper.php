@@ -25,7 +25,7 @@ class ViewHelper
 	 *      'type'          => 'info',     // info is the generic message type
 	 *	    'message_class' => '',         // defaults to a class based on type
 	 *	    'image_src'     => '',         // is the web path including image file name
-	 *	    'image_class'   => 'msg-icon', // usually used to float image/manage where it goes
+	 *	    'image_class'   => 'message icon', // usually used to float image/manage where it goes
 	 *	    'alt_text'      => '',         // for the image
 	 *	    'extras'        => ''          // a just in case thing.
 	 *	)
@@ -35,7 +35,7 @@ class ViewHelper
 	{
 	    $alt_text    = '';
 		$image_dir   = '/assets/images/icons';
-		$image_class = 'msg-icon';
+		$image_class = 'icon';
 		$image_src   = '';
 		$message     = '';
 		$msg_class   = '';
@@ -78,32 +78,32 @@ class ViewHelper
 			case 'success':
 				$alt_text  = $alt_text  != '' ? $alt_text  : 'Success!';
 				$image_src = $image_src != '' ? $image_src : $image_dir . '/success.png';
-				$msg_class = $msg_class != '' ? $msg_class : 'msg-success';
+				$msg_class = $msg_class != '' ? $msg_class : 'message success';
 				break;
 			case 'info':
 				$alt_text  = $alt_text  != '' ? $alt_text  : 'Information';
 				$image_src = $image_src != '' ? $image_src : $image_dir . '/info.png';
-                $msg_class = $msg_class != '' ? $msg_class : 'msg-info';
+                $msg_class = $msg_class != '' ? $msg_class : 'message info';
 				break;
 			case 'warning':
 				$alt_text  = $alt_text  != '' ? $alt_text  : 'Warning!';
 				$image_src = $image_src != '' ? $image_src : $image_dir . '/warning.png';
-                $msg_class = $msg_class != '' ? $msg_class : 'msg-warning';
+                $msg_class = $msg_class != '' ? $msg_class : 'message warning';
 				break;
 			case 'error':
 				$alt_text  = $alt_text  != '' ? $alt_text  : 'Error!';
-				$image_src = $image_src != '' ? $image_src : $image_dir . '/failure.png';
-                $msg_class = $msg_class != '' ? $msg_class : 'msg-failure';
+				$image_src = $image_src != '' ? $image_src : $image_dir . '/error.png';
+                $msg_class = $msg_class != '' ? $msg_class : 'message error';
 				break;
 			case 'failure':
 				$alt_text  = $alt_text  != '' ? $alt_text  : 'Failure!';
 				$image_src = $image_src != '' ? $image_src : $image_dir . '/failure.png';
-                $msg_class = $msg_class != '' ? $msg_class : 'msg-failure';
+                $msg_class = $msg_class != '' ? $msg_class : 'message failure';
 				break;
 			case 'code':
 				$alt_text  = $alt_text  != '' ? $alt_text  : 'Code';
 				$image_src = $image_src != '' ? $image_src : $image_dir . '/info.png';
-                $msg_class = $msg_class != '' ? $msg_class : 'msg-code';
+                $msg_class = $msg_class != '' ? $msg_class : 'message code';
 				break;
 			default:
                 $msg_class   = '';

@@ -25,9 +25,8 @@ use Ritc\Library\Helper\ViewHelper;
 class ConfigAdminView extends Base
 {
     private $o_config;
-    protected $o_elog;
     private $o_twig;
-    private $o_vhelp;
+    protected $o_elog;
 
     public function __construct(DbModel $o_db)
     {
@@ -39,8 +38,9 @@ class ConfigAdminView extends Base
      *  Returns the list of configs in html.
      *  @param array $a_message
      *  @return string
-     **/
-    public function renderConfigs(array $a_message = array()){
+     */
+    public function renderConfigs(array $a_message = array())
+    {
         $a_values = array(
             'a_message' => array(),
             'a_configs' => array(
@@ -72,6 +72,11 @@ class ConfigAdminView extends Base
         }
         return $this->o_twig->render('@pages/app_config.twig', $a_values);
     }
+    /**
+     *  Returns HTML verify form to delete.
+     *  @param array $a_values
+     *  @return string
+     */
     public function renderVerify(array $a_values = array())
     {
         if ($a_values === array()) {
