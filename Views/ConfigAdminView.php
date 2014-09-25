@@ -33,7 +33,6 @@ class ConfigAdminView extends Base
     {
         $o_tpl          = new Tpl('twig_config.php');
         $this->o_twig   = $o_tpl->getTwig();
-        $this->o_vhelp  = new ViewHelper();
         $this->o_config = new ConfigAdminModel($o_db);
     }
     /**
@@ -56,10 +55,10 @@ class ConfigAdminView extends Base
             'hobbit'  => ''
         );
         if ($a_message != array()) {
-            $a_values['a_message'] = $this->o_vhelp->messageProperties($a_message);
+            $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
         else {
-            $a_values['a_message'] = $this->o_vhelp->messageProperties(
+            $a_values['a_message'] = ViewHelper::messageProperties(
                 array(
                     'message'       => 'Changing configuration values can result in unexpected results. If you are not sure, do not do it.',
                     'type'          => 'warning'

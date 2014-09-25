@@ -90,6 +90,11 @@ class ViewHelper
 				$image_src = $image_src != '' ? $image_src : $image_dir . '/warning.png';
                 $msg_class = $msg_class != '' ? $msg_class : 'msg-warning';
 				break;
+			case 'error':
+				$alt_text  = $alt_text  != '' ? $alt_text  : 'Error!';
+				$image_src = $image_src != '' ? $image_src : $image_dir . '/failure.png';
+                $msg_class = $msg_class != '' ? $msg_class : 'msg-failure';
+				break;
 			case 'failure':
 				$alt_text  = $alt_text  != '' ? $alt_text  : 'Failure!';
 				$image_src = $image_src != '' ? $image_src : $image_dir . '/failure.png';
