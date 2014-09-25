@@ -26,6 +26,8 @@
 **/
 namespace Ritc\Library\Core;
 
+use Ritc\Library\Abstracts\Base;
+
 class Config extends Base
 {
     private $created = false;

@@ -22,6 +22,8 @@
 **/
 namespace Ritc\Library\Core;
 
+use Ritc\Library\Abstracts\Base;
+
 class Strings extends Base
 {
     protected $current_page;

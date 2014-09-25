@@ -20,7 +20,9 @@
  *      v1.0.3 - namespace change, changed to an abstract class
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Abstracts;
+
+use Ritc\Library\Core\Elog;
 
 abstract class Base
 {
@@ -36,6 +38,7 @@ abstract class Base
         if (is_object($this->o_elog)) {
             return $this->o_elog;
         }
+        return null;
     }
     /**
      * @param string $message
@@ -44,7 +47,7 @@ abstract class Base
      */
     protected function logIt($message = '', $log_type = LOG_OFF, $location = '')
     {
-        if (is_object($o_elog)) {
+        if (is_object($this->o_elog)) {
             $this->o_elog->write($message, $log_type, $location);
         }
     }

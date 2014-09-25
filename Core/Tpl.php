@@ -20,7 +20,7 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Core\TwigFactory;
+use Ritc\Library\Abstracts\Base;
 
 class Tpl extends Base
 {

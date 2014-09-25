@@ -38,6 +38,7 @@
 **/
 namespace Ritc\Library\Core;
 
+use Ritc\Library\Abstracts\Base;
 
 class DbModel extends Base
 {
@@ -212,10 +213,6 @@ class DbModel extends Base
         return $this->o_db->exec($the_query);
     }
 
-    public function rawQuery($the_query)
-    {
-        return $this->db->exec($the_query);
-    }
     ### Getters and Setters
     /**
      *  Get the value of the property specified.

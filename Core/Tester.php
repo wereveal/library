@@ -27,6 +27,8 @@
 **/
 namespace Ritc\Library\Core;
 
+use Ritc\Library\Abstracts\Base;
+
 class Tester extends Base
 {
     protected $a_test_order;

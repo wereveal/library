@@ -33,9 +33,9 @@
 namespace Ritc\Library\Core;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Interfaces\Location;
+use Ritc\Library\Interfaces\LocationInterface;
 
-class Files extends Base implements Location
+class Files extends Base implements LocationInterface
 {
     const CONFIG_DIR_NAME    = 'config';
     const CSS_DIR_NAME       = 'css';

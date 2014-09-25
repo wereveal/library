@@ -25,6 +25,8 @@
 **/
 namespace Ritc\Library\Core;
 
+use Ritc\Library\Abstracts\Base;
+
 class DbFactory extends Base
 {
     private static $instance_rw = array();

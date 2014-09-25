@@ -22,6 +22,7 @@ namespace Ritc\Library\Core;
 
 use Twig_Loader_Filesystem;
 use Twig_Environment;
+use Ritc\Library\Abstracts\Base;
 
 class TwigFactory extends Base
 {
@@ -44,7 +45,7 @@ class TwigFactory extends Base
         list($name, $extension) = explode('.', $config_file);
         unset($extension);
         if (!isset(self::$instance[$name])) {
-            $a_twig_config = $this->retrieveTwigConfigArray($config_file);
+            $a_twig_config = self::retrieveTwigConfigArray($config_file);
             self::$instance[$name] = new TwigFactory($a_twig_config);
         }
         return self::$instance[$name];
@@ -58,7 +59,7 @@ class TwigFactory extends Base
     {
         return $this->o_twig;
     }
-    private function retrieveTwigConfigArray($config_file)
+    private static function retrieveTwigConfigArray($config_file)
     {
         $config_w_path = APP_PATH . '/config/' . $config_file;
         if (!file_exists($config_w_path)) {

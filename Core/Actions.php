@@ -23,6 +23,7 @@
 **/
 namespace Ritc\Library\Core;
 
+use Ritc\Library\Abstracts\Base;
 
 class Actions extends Base
 {

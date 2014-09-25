@@ -21,6 +21,8 @@
 **/
 namespace Ritc\Library\Core;
 
+use Ritc\Library\Abstracts\Base;
+
 class Html extends Base
 {
     protected $current_page;
