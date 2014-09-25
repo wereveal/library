@@ -4,6 +4,7 @@ namespace Ritc\Library\Tests;
 use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Tester;
 use Ritc\Library\Core\Tpl;
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\ConfigAdminModel;
 
 class ConfigAdminModelTester extends Tester
@@ -34,8 +35,25 @@ class ConfigAdminModelTester extends Tester
     }
     public function renderResults(array $a_result_values = array())
     {
+        $o_vh = new ViewHelper();
         if (count($a_result_values) == 0) {
-            return $this->o_twig->render('@')
+            return $this->o_twig->render(
+                '@pages/error.twig',
+                [
+                    'description' => 'An error has occurred.',
+                    'public_dir'  => '',
+                    'a_message' => [
+                        'message'       => 'No results were available.',
+                        'message_class' => '',
+                        'image_src'     => '',
+                        'alt_text'      => '',
+                        'image_class'   => '',
+                        'extras'        => ''
+                    ],
+                    'site_url' => '',
+                    'rights_holder' => ''
+                ]
+            );
         }
     }
     /**

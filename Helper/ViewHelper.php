@@ -5,12 +5,13 @@
  *  @namespace Ritc/Library/Helper
  *  @class ViewHelper
  *  @author William E Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2013-12-31 23:24:31
+ *  @version 1.0.2
+ *  @date 2014-09-25 10:30:54
  *  @note Change Log
- *      v1.0.1 - minor key name change - 12/31/2013
- *      v1.0.0 - intial file - 07/30/2013
- *  @note RITC Library version 5.0
+ *      v1.0.1 - changed function to static - 09/25/2014 wer
+ *      v1.0.1 - minor key name change - 12/31/2013 wer
+ *      v1.0.0 - intial file - 07/30/2013 wer
+ *  @note RITC Library
  *  @ingroup ritc_library helper
 **/
 namespace Ritc\Library\Helper;
@@ -30,7 +31,7 @@ class ViewHelper
 	 *	)
 	 *  @return array values for the template.
 	**/
-	public function messageProperties($a_message_params = array())
+	public static function messageProperties($a_message_params = array())
 	{
 	    $alt_text    = '';
 		$image_dir   = '/assets/images/icons';
