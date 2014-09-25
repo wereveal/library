@@ -24,7 +24,7 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Core\Base;
+use Ritc\Library\Abstracts\Base;
 
 class Arrays extends Base
 {

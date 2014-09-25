@@ -16,23 +16,23 @@
 **/
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\ConfigAdminModel;
-use Ritc\Library\Core\Base;
 use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Tpl;
 use Ritc\Library\Helper\ViewHelper;
 
 class ConfigAdminView extends Base
 {
-    private $o_config;
+    private $o_config_model;
     private $o_twig;
     protected $o_elog;
 
     public function __construct(DbModel $o_db)
     {
-        $o_tpl          = new Tpl('twig_config.php');
-        $this->o_twig   = $o_tpl->getTwig();
-        $this->o_config = new ConfigAdminModel($o_db);
+        $o_tpl                = new Tpl('twig_config.php');
+        $this->o_twig         = $o_tpl->getTwig();
+        $this->o_config_model = new ConfigAdminModel($o_db);
     }
     /**
      *  Returns the list of configs in html.
@@ -42,6 +42,8 @@ class ConfigAdminView extends Base
     public function renderConfigs(array $a_message = array())
     {
         $a_values = array(
+            'public_dir' => '',
+            'description' => 'Admin page for the app configuration.',
             'a_message' => array(),
             'a_configs' => array(
                 array(
@@ -54,7 +56,7 @@ class ConfigAdminView extends Base
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => ''
         );
-        if ($a_message != array()) {
+        if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
         else {
@@ -65,12 +67,16 @@ class ConfigAdminView extends Base
                 )
             );
         }
-        $a_configs = $this->o_config->read();
-        $this->logIt('a_configs: ' . var_export($a_configs, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $a_configs = $this->o_config_model->read();
+        $this->logIt(
+            'a_configs: ' . var_export($a_configs, TRUE),
+            LOG_OFF,
+            __METHOD__ . '.' . __LINE__
+        );
         if ($a_configs !== false && count($a_configs) > 0) {
             $a_values['a_configs'] = $a_configs;
         }
-        return $this->o_twig->render('@pages/app_config.twig', $a_values);
+        return $this->o_twig->render('@pages/config_admin.twig', $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -81,6 +87,12 @@ class ConfigAdminView extends Base
     {
         if ($a_values === array()) {
             return $this->renderConfigs(array('message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure'));
+        }
+        if (!isset($a_values['public_dir'])) {
+            $a_values['public_dir'] = '';
+        }
+        if (!isset($a_values['description'])) {
+            $a_values['description'] = 'Form to verify the action to delete the configuration.';
         }
         return $this->o_twig->render('@pages/verify_delete_config.twig', $a_values);
     }

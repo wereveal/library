@@ -7,10 +7,13 @@
  *  @namespace Ritc/Library/Core
  *  @class Base
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  1.1.0
- *  @date 2014-09-23 10:29:06
+ *  @version  1.2.0
+ *  @date 2014-09-25 15:18:00
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
+ *      v1.2.0 - changed back to abstract making it easer for other abstracts to extend it - 09/25/2014 wer
+ *               Note that there may have been an interface for it but it no longer exists, not sure when.
+ *               Also, it should be an abstract since it should never be instantiated by itself.
  *      v1.1.0 - allow elog to be injected into a class else ignores logging. 09/23/2014 wer
  *      v1.0.4 - changed back to a class. Couldn't figure out why
  *          it should be abstract. Made an interface for it just because. 12/19/2013
@@ -19,7 +22,7 @@
 **/
 namespace Ritc\Library\Core;
 
-class Base
+abstract class Base
 {
     protected $current_page;
     protected $private_properties;

@@ -1,10 +1,10 @@
 <?php
 /**
  *  @brief Controller for the Configuration page.
- *  @file ConfigAdmin.php
+ *  @file ConfigAdminController.php
  *  @ingroup library core
  *  @namespace Ritc/Library/Controllers
- *  @class ConfigAdmin
+ *  @class ConfigAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.0
  *  @date 2014-04-02 13:04:04
@@ -16,23 +16,23 @@
 **/
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Core\Base;
+use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Session;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Models\ConfigAdminModel;
 use Ritc\Library\Views\ConfigAdminView;
 
-class ConfigAdmin extends Base implements ControllerInterface
+class ConfigAdminController extends Base implements ControllerInterface
 {
     protected $o_elog;
-    private $o_config;
+    private $o_model;
     private $o_view;
     private $o_session;
 
     public function __construct(Session $o_session = '', DbModel $o_db)
     {
-        $this->o_config  = new ConfigAdminModel($o_db);
+        $this->o_model   = new ConfigAdminModel($o_db);
         $this->o_view    = new ConfigAdminView();
         $this->o_session = is_object($o_session) ? $o_session : Session::start();
 
@@ -43,7 +43,7 @@ class ConfigAdmin extends Base implements ControllerInterface
      *  @param array $a_values optional, the values from a form
      *  @return string html to be displayed.
     **/
-    public function route(array $a_actions = array(), array $a_values = array())
+    public function router(array $a_actions = array(), array $a_values = array())
     {
         $main_action = isset($a_actions['action3']) ? $a_actions['action3'] : '';
         $form_action = isset($a_values['form_action']) ? $a_values['form_action'] : '';
@@ -92,8 +92,12 @@ class ConfigAdmin extends Base implements ControllerInterface
             case 'save_new':
                 // save the record
                 $a_config = $a_values['config'];
-                $this->logit('config values before create config' . var_export($a_config, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                $results = $this->o_config->create($a_config);
+                $this->logit(
+                    'config values before create config' . var_export($a_config, TRUE),
+                    LOG_OFF,
+                    __METHOD__ . '.' . __LINE__
+                );
+                $results = $this->o_model->create($a_config);
                 if ($results === false) {
                     $a_message = array('type' => 'failure', 'message' => 'Could not save the configuration values.');
                 }
@@ -104,7 +108,7 @@ class ConfigAdmin extends Base implements ControllerInterface
             case 'update':
                 // save the record
                 $a_config = $a_values['config'];
-                $results = $this->o_config->update($a_config);
+                $results = $this->o_model->update($a_config);
                 if ($results === false) {
                     $a_message = array('type' => 'failure', 'message' => 'Could not update the configuration.');
                 }
@@ -116,7 +120,7 @@ class ConfigAdmin extends Base implements ControllerInterface
                 return $this->o_view->renderVerify($a_values);
             case 'delete':
                 // delete the record
-                $results = $this->o_config->delete($a_values['config_id']);
+                $results = $this->o_model->delete($a_values['config_id']);
                 // $results = false;
                 if ($results === false) {
                     $a_message = array('type' => 'failure', 'message' => 'Could not delete the configuration.');

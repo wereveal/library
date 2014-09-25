@@ -20,7 +20,7 @@ use Ritc\Library\Core\Session;
 
 interface ControllerInterface
 {
-    public function route(array $a_actions = array(), array $a_values = array());
+    public function router(array $a_actions = array(), array $a_values = array());
     public function setSession(Session $o_session);
     public function getSession();
 }

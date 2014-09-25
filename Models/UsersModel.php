@@ -18,8 +18,8 @@
 **/
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\Base;
 use Ritc\Library\Core\DbModel;
 use Ritc\Library\Interfaces\ModelInterface;
 

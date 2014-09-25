@@ -1,12 +1,12 @@
 <?php
 
 return array(
+  'Ritc\Library\Abstracts\Base'                => APP_PATH . '/Library/Abstracts/Base.php',
   'Ritc\Library\Abstracts\Tester'              => APP_PATH . '/Library/Abstracts/Tester.php',
   'Ritc\Library\Core\Access'                   => APP_PATH . '/Library/Core/Access.php',
   'Ritc\Library\Core\Actions'                  => APP_PATH . '/Library/Core/Actions.php',
   'Ritc\Library\Core\Arrays'                   => APP_PATH . '/Library/Core/Arrays.php',
   'Ritc\Library\Core\Autoload'                 => APP_PATH . '/Library/Core/Autoload.php',
-  'Ritc\Library\Core\Base'                     => APP_PATH . '/Library/Core/Base.php',
   'Ritc\Library\Core\Config'                   => APP_PATH . '/Library/Core/Config.php',
   'Ritc\Library\Core\DbModel'                  => APP_PATH . '/Library/Core/DbModel.php',
   'Ritc\Library\Core\DbFactory'                => APP_PATH . '/Library/Core/DbFractory.php',

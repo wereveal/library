@@ -32,7 +32,7 @@
 **/
 namespace Ritc\Library\Core;
 
-use Ritc\Library\Core\Base;
+use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\Location;
 
 class Files extends Base implements Location

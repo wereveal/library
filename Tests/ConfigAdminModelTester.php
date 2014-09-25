@@ -35,20 +35,20 @@ class ConfigAdminModelTester extends Tester
     }
     public function renderResults(array $a_result_values = array())
     {
-        $a_params = [
-            'message' => 'No results were available.',
-            'type'    => 'error'
-        ];
-        $a_message = ViewHelper::messageProperties(
         if (count($a_result_values) == 0) {
+            $a_params = [
+                'message' => 'No results were available.',
+                'type'    => 'error'
+            ];
+            $a_message = ViewHelper::messageProperties($a_params);
             return $this->o_twig->render(
                 '@pages/error.twig',
                 [
                     'description'   => 'An error has occurred.',
                     'public_dir'    => '',
                     'a_message'     => $a_message,
-                    'site_url'      => '',
-                    'rights_holder' => ''
+                    'site_url'      => SITE_URL,
+                    'rights_holder' => RIGHTS_HOLDER
                 ]
             );
         }

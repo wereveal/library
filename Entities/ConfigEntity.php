@@ -55,7 +55,8 @@
  *  ('ADMIN_DIR_NAME', 'manager'),
  *  ('ASSETS_DIR_NAME', 'assets'),
  *  ('FILES_DIR_NAME', 'files'),
- *  ('DISPLAY_PHONE_FORMAT', 'XXX-XXX-XXXX')
+ *  ('DISPLAY_PHONE_FORMAT', 'XXX-XXX-XXXX'),
+ *  ('RIGHTS_HOLDER', 'Reveal IT Consulting')
  *  </pre>
  *  @note <pre><b>Change Log</b>
  *      v1.0.1 - minor change to the comments 09/11/2014 wer
