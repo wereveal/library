@@ -30,11 +30,11 @@ class ConfigAdminController extends Base implements ControllerInterface
     private $o_view;
     private $o_session;
 
-    public function __construct(Session $o_session = '', DbModel $o_db)
+    public function __construct(Session $o_session, DbModel $o_db)
     {
         $this->o_model   = new ConfigAdminModel($o_db);
         $this->o_view    = new ConfigAdminView($o_db);
-        $this->o_session = is_object($o_session) ? $o_session : Session::start();
+        $this->o_session = $o_session;
 
     }
     /**
