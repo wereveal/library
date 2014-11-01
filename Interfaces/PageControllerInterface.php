@@ -27,16 +27,4 @@ interface PageControllerInterface
      *  @return string $html
     **/
     public function renderPage();
-    /**
-     *  Routes the code to the appropriate sub-controllers or methods and returns a string.
-     *  As much as I have been looking at putting the actual route pairs somewhere else
-     *  it feels like the routes are so specific to the specific controller, they might as well
-     *  be in the controller.
-     *  @param array $a_actions optional, the actions derived from the URL/Form
-     *  @param array $a_values optional, the values from a form
-     *  @return string normally html to be displayed.
-    **/
-    /** Hmm, don't want router to be a public method so I can't actually define it here
-     *  public function router(array $a_actions = array(), array $a_values = array());
-    **/
 }

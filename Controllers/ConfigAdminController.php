@@ -43,7 +43,7 @@ class ConfigAdminController extends Base implements ControllerInterface
      *  @param array $a_values optional, the values from a form
      *  @return string html to be displayed.
     **/
-    public function router(array $a_actions = array(), array $a_values = array())
+    public function render(array $a_actions = array(), array $a_values = array())
     {
         $main_action = isset($a_actions['action3']) ? $a_actions['action3'] : '';
         $form_action = isset($a_values['form_action']) ? $a_values['form_action'] : '';

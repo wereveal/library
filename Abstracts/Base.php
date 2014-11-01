@@ -1,7 +1,8 @@
 <?php
 /**
  *  @brief A Base Class that all other classes use.
- *  @details Primarily this is used to fix the visibility issue that PHP ignores
+ *  @details Primarily this is used to fix the visibility issue that PHP ignores.
+ *      Also establishes the way the error logging can be injected when needed.
  *  @file Base.php
  *  @ingroup ritc_library core
  *  @namespace Ritc/Library/Core
