@@ -34,7 +34,7 @@ abstract class Base
     /**
      * @return mixed
      */
-    protected function getElog()
+    public function getElog()
     {
         if (is_object($this->o_elog)) {
             return $this->o_elog;
@@ -46,7 +46,7 @@ abstract class Base
      * @param int    $log_type
      * @param string $location
      */
-    protected function logIt($message = '', $log_type = LOG_OFF, $location = '')
+    public function logIt($message = '', $log_type = LOG_OFF, $location = '')
     {
         if (is_object($this->o_elog)) {
             $this->o_elog->write($message, $log_type, $location);
@@ -57,7 +57,7 @@ abstract class Base
      *  @param Elog $o_elog
      *  @return null
      */
-    protected function setElog(Elog $o_elog)
+    public function setElog(Elog $o_elog)
     {
         $this->o_elog = $o_elog;
     }

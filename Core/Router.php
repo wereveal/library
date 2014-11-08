@@ -34,9 +34,9 @@ class Router extends Base
     }
 
     /**
-     *  Returns the action parts from the database.
-     *  @param atring $uri_path optional, defaults to class property $uri
-     *  @return array
+     * Returns the action parts from the database.
+     * @param string $uri_path
+     * @return array
      */
     public function action($uri_path = '')
     {
