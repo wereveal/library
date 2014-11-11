@@ -27,6 +27,7 @@
 namespace Ritc\Library\Core;
 
 use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Entities\ConfigEntity;
 
 class Config extends Base
 {
@@ -34,15 +35,17 @@ class Config extends Base
     protected $current_page;
     private $db_prefix;
     private static $instance;
+    protected $o_config_entity;
     private $o_db;
     protected $o_elog;
     protected $private_properties;
 
     private function __construct(DbModel $o_db)
     {
-        $this->o_db = $o_db;
         $this->setPrivateProperties();
+        $this->o_db = $o_db;
         $this->db_prefix = $o_db->getDbPrefix();
+        $this->o_config_entity = new ConfigEntity($o_db);
         $this->created = $this->createConstants();
         if ($this->created === false) {
             $this->logIt("Could not create constants from db.", LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -59,7 +62,7 @@ class Config extends Base
                 $this->logIt("APP_CONFIG_PATH is not defined.", LOG_OFF);
                 die ('A fatal error has occured. Please contact your web site administrator.');
             }
-            $this->createNewConfigs();
+            $this->o_config_entity->createNewConfigs();
         }
         $this->createThemeConstants();
     }
@@ -87,18 +90,24 @@ class Config extends Base
     private function createConstants()
     {
         if ($this->created === false) {
-            $a_config = $this->selectConfigList();
+            $a_config = $this->o_config_entity->selectConfigList();
             if (is_array($a_config) && count($a_config) > 0) {
                 $this->logIt("List of Configs: " . var_export($a_config, true), LOG_OFF, __METHOD__);
                 foreach ($a_config as $row) {
                     $key   = strtoupper($row['config_name']);
                     if (!defined("{$key}")) {
                         switch ($row['config_value']) {
+                            case true:
                             case 'true':
                                 define("{$key}", true);
                                 break;
+                            case false:
                             case 'false':
                                 define("{$key}", false);
+                                break;
+                            case 'null':
+                            case null:
+                                define("{$key}", null);
                                 break;
                             default:
                                 $value = $row['config_value'];
@@ -109,7 +118,6 @@ class Config extends Base
                 return true;
             }
             else {
-                $this->logIt($this->o_db->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return false;
             }
         } else {
@@ -199,97 +207,6 @@ class Config extends Base
             define('LIBS_DIR', THEME_DIR . '/' . LIBS_DIR_NAME);
             define('LIBS_PATH', SITE_PATH . LIBS_DIR);
         }
-    }
-    private function selectConfigList()
-    {
-        $select_query = "
-            SELECT config_name, config_value
-            FROM {$this->db_prefix}config
-            ORDER BY config_name
-        ";
-        return $this->o_db->search($select_query);
-    }
-    private function createNewConfigs()
-    {
-        $a_constants = require_once APP_CONFIG_PATH . '/fallback_constants_array.php';
-        $a_tables = $this->o_db->selectDbTables();
-        if ($this->o_db->startTransaction()) {
-            if (array_search("{$this->db_prefix}config", $a_tables) === false) {
-                $db_type = $this->o_db->getDbType();
-                switch ($db_type) {
-                    case 'pgsql':
-                        $sql_table = "
-                            CREATE TABLE IF NOT EXISTS {$this->db_prefix}config (
-                                config_id integer NOT NULL DEFAULT nextval('config_id_seq'::regclass),
-                                config_name character varying(64),
-                                config_value character varying(64)
-                            )
-                        ";
-                        $sql_sequence = "
-                            CREATE SEQUENCE config_id_seq
-                                START WITH 1
-                                INCREMENT BY 1
-                                NO MINVALUE
-                                NO MAXVALUE
-                                CACHE 1
-                            ";
-                        $results = $this->o_db->rawQuery($sql_sequence);
-                        if ($results !== false) {
-                            $results2 = $this->o_db->rawQuery($sql_table);
-                            if ($results2 === false) {
-                                return false;
-                            }
-                        }
-                        break;
-                    case 'sqlite':
-                        $sql = "
-                            CREATE TABLE IF NOT EXISTS {$this->db_prefix}config (
-                                config_id INTEGER PRIMARY KEY ASC,
-                                config_name TEXT,
-                                config_value TEXT
-                            )
-                        ";
-                        $results = $this->o_db->rawQuery($sql);
-                        if ($results === false) {
-                            return false;
-                        }
-                        break;
-                    case 'mysql':
-                    default:
-                        $sql = "
-                            CREATE TABLE IF NOT EXISTS `{$this->db_prefix}config` (
-                                `config_id` int(11) NOT NULL AUTO_INCREMENT,
-                                `config_name` varchar(64) NOT NULL,
-                                `config_value` varchar(64) NOT NULL,
-                                PRIMARY KEY (`config_id`),
-                                UNIQUE KEY `config_key` (`config_name`)
-                            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8
-                        ";
-                        $results = $this->o_db->rawQuery($sql);
-                        if ($results === false) {
-                            return false;
-                        }
-                    // end default
-                }
-            }
-            $query = "
-                INSERT INTO {$this->db_prefix}config (config_name, config_value)
-                VALUES (?, ?)";
-            if ($this->o_db->insert($query, $a_constants, "{$this->db_prefix}config")) {
-                if ($this->o_db->commitTransaction() === false) {
-                    $this->logIt("Could not commit new configs", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-                }
-                return true;
-            }
-            else {
-                $this->o_db->rollbackTransaction();
-                $this->logIt("Could not Insert new configs", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-            }
-        }
-        else {
-            $this->logIt("Could not start transaction.", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-        }
-        return false;
     }
 
     ### Magic Method fix
