@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Access
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.0.1
- *  @date 2014-09-23 11:37:46
+ *  @version 4.0.2
+ *  @date 2014-11-11 14:12:25
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.0.2 - part of the refactoring of the user model - 11/11/2014 wer
  *      v4.0.1 - updated to implement the changes to the Base class - 09/23/2014 wer
  *               Bug fixes.
  *      v4.0.0 - Changed to use the user/group/role model classes - 09/12/2014 wer
@@ -72,7 +73,7 @@ class Access extends Base
      *
      *  @param $a_login (array), required with the following keys
      *      array(
-     *          'username'=>'something',
+     *          'login_id'=>'something',
      *          'password'=>'something',
      *          'tolken'=>'something',
      *          'form_ts'=>'000000',
@@ -85,13 +86,13 @@ class Access extends Base
     {
         $meth = __METHOD__ . '.';
         if ($a_login == '') { return false; }
-        $a_required = array('username', 'password', 'tolken', 'form_ts');
+        $a_required = array('login_id', 'password', 'tolken', 'form_ts');
         foreach ($a_required as $required) {
             if (isset($a_login[$required]) === false) {
                 return false;
             }
         }
-        $a_user_values = $this->o_users->readUserInfo($a_login['username']);
+        $a_user_values = $this->o_users->readUserInfo($a_login['login_id']);
         $this->logIt("Posted Values: " . var_export($a_login, true), LOG_OFF, $meth . __LINE__);
         $this->logIt("User Values: " . var_export($a_user_values, true), LOG_OFF, $meth . __LINE__);
         if ($a_user_values !== false && $a_user_values !== null) {
@@ -284,41 +285,47 @@ class Access extends Base
     public function userInGroup($user = -1)
     {
         if ($user == -1) { return false; }
-        
+
         return false;
     }
     /**
-     *  Checks to see if the username exists.
-     *  @param string $username
+     *  Checks to see if the login_id exists.
+     *  @param string $login_id
      *  @return bool
      **/
-    public function usernameExists($user_name = '')
+    public function loginIdExists($login_id = '')
     {
-        if ($user_name == '') { return false; }
-        $results = $this->o_users->read(array('user_name' => $user_name));
-        if (isset($results['user_name']) && $results['user_name'] == $user_name) {
+        if ($login_id == '') { return false; }
+        $results = $this->o_users->read(array('login_id' => $login_id));
+        if (isset($results['login_id']) && $results['login_id'] == $login_id) {
             return true;
         }
         return false;
     }
     /**
      *  Checks to see if the password provided is valid for user.
-     *  @param array $a_user required $a_user['password'] and either $a_user['user_id'] or $a_user['user_name']
+     *  @param array $a_user required $a_user['password'] and either $a_user['user_id'] or $a_user['login_id']
      *  @return bool
      */
     public function validPassword(array $a_user = array())
     {
-        if (isset($a_user['user_id']) === false && isset($a_user['user_name']) === false ) {
+        if (isset($a_user['user_id']) === false && isset($a_user['login_id']) === false ) {
             return false;
         }
-        if ($a_user['user_id'] == '' && $a_user['user_name'] == '') {
+        if ($a_user['user_id'] == '' && $a_user['login_id'] == '') {
             return false;
         }
         if (isset($a_user['password']) === false || $a_user['password'] == '') {
             return false;
         }
         $hashed_password = password_hash($a_user['password'], PASSWORD_DEFAULT);
-        $a_results = $this->o_users->read(array('user_id' => $a_user['user_id']));
+        if (isset($a_user['user_id']) && $a_user['user_id'] != '') {
+            $a_find_this = ['user_id' => $a_user['user_id']];
+        }
+        else {
+            $a_find_this = ['login_id' => $a_user['login_id']];
+        }
+        $a_results = $this->o_users->read($a_find_this);
         if (isset($a_results[0])) {
             $this_user = $a_results[0];
             if ($hashed_password == $this_user['password']) {
@@ -409,8 +416,8 @@ class Access extends Base
     {
         if ($a_values == array()) { return false; }
         $sql = "
-            INSERT INTO {$this->db_prefix}users (username, real_name, short_name, password, is_default)
-            VALUES (:username, :real_name, :short_name, :password, :is_default)";
+            INSERT INTO {$this->db_prefix}users (login_id, real_name, short_name, password, is_default)
+            VALUES (:login_id, :real_name, :short_name, :password, :is_default)";
         if ($this->o_db->insert($sql, $a_values, '{$this->db_prefix}users')) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -567,7 +574,7 @@ class Access extends Base
         if ($a_values[':password'] == '') {
             $sql = "
                 UPDATE {$this->db_prefix}users
-                SET username   = :username,
+                SET login_id   = :login_id,
                     real_name  = :real_name,
                     short_name = :short_name,
                     is_default = :is_default
@@ -576,7 +583,7 @@ class Access extends Base
         } else {
             $sql = "
                 UPDATE {$this->db_prefix}users
-                SET username   = :username,
+                SET login_id   = :login_id,
                     real_name  = :real_name,
                     short_name = :short_name,
                     password   = :password,
