@@ -16,6 +16,7 @@ namespace Ritc\Library\Core;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\DbModel;
+use Ritc\Library\Models\RouterModel;
 
 class Router extends Base
 {
@@ -23,44 +24,36 @@ class Router extends Base
     protected $private_properties;
     private $a_args;
     private $o_db;
-    private $uri_path;
+    private $route_path;
 
-    public function __construct(DbModel $o_db)
+    public function __construct(DbModel $o_dbm)
     {
         $this->setPrivateProperties();
-        $this->setUriPath();
+        $this->setRoutePath();
         $this->setArgs();
-        $this->o_db = $o_db;
+        $this->o_db = new RouterModel($o_dbm);
     }
 
     /**
-     * Returns the action parts from the database.
-     * @param string $uri_path
-     * @return array
+     *  Returns the action parts from the database.
+     *  @param string $route_path
+     *  @return array
      */
-    public function action($uri_path = '')
+    public function action($route_path = '')
     {
-        $db_prefix = $this->o_db->getDbPrefix();
-        if ($uri_path == '') {
-            $uri_path = $this->uriPath;
-        }
-        $a_uri = [':uri_path' => $uri_path];
-        $sql = "
-            SELECT controller, method, action
-            FROM {$db_prefix}routes
-            WHERE uri_path LIKE :uri_path";
-        $a_results = $this->o_db->search($sql, $a_uri);
-        if ($a_results !== false && count($a_results) > 0) {
+        $a_values = ['route_path' => $route_path];
+        $a_results = $this->o_db->read($a_values);
+        if ($a_results !== false && count($a_results) === 1) {
             $a_return_this = $a_results[0];
             $a_return_this['args'] = $this->a_args;
             return $a_return_this;
         }
         else {
             return [
-                'controller' => 'Main',
-                'method'     => '',
-                'action'     => '',
-                'args'       => array()
+                'route_class'  => 'Main',
+                'route_method' => '',
+                'route_action' => '',
+                'args'         => array()
             ];
         }
     }
@@ -70,9 +63,9 @@ class Router extends Base
     {
         return $this->a_args;
     }
-    public function getUriPath()
+    public function getRoutePath()
     {
-        return $this->uri_path;
+        return $this->route_path;
     }
     /**
      *  Sets the property $a_args.
@@ -99,11 +92,11 @@ class Router extends Base
         }
     }
     /**
-     *  Sets the property $uri_path.
+     *  Sets the property $route_path.
      *  @param string $request_uri optional, defaults to $_SERVER['REQUEST_URI']
      *  @return null
      */
-    public function setUriPath($request_uri = '')
+    public function setRoutePath($request_uri = '')
     {
         if ($request_uri == '') {
             $request_uri = $_SERVER["REQUEST_URI"];
@@ -112,7 +105,7 @@ class Router extends Base
             $this->uri = substr($request_uri, 0, strpos($request_uri, "?"));
         }
         else {
-            $this->uri_path = $request_uri;
+            $this->route_path = $request_uri;
         }
     }
 

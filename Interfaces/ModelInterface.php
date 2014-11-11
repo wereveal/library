@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Interfaces
  *  @class ModelInterface
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2014-01-30 14:18:05
- *  @note A part of the RITC Library v5
+ *  @version 1.0.1
+ *  @date 2014-11-11 11:14:58
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1 fixed default arg for delete
  *      v1.0.0 initial versioning 01/30/2014 wer
  *  </pre>
 **/
@@ -39,8 +40,8 @@ interface ModelInterface {
 
     /**
      * Generic deletes a record based on the id provided.
-     * @param string $id
+     * @param int $id
      * @return bool
      */
-    public function delete($id = '');
+    public function delete($id = -1);
 }
