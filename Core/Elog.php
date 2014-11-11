@@ -215,7 +215,7 @@ class Elog
             $from = '';
         }
         $the_string    = $the_string . $from;
-        if ($this->ignore_log_off) {
+        if ($this->ignore_log_off && $log_method === 0) {
             $log_method = 1;
         }
         switch ($log_method) {
