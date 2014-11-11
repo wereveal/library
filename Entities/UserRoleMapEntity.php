@@ -14,14 +14,20 @@
  *  </pre>
  *  @note Be sure to replace '{dbPrefix}' with the db prefix<pre>
  *  CREATE TABLE `{dbPrefix}user_role_map` (
- *    `urm_id` int(11) NOT NULL AUTO_INCREMENT,
+ *    `urm_id` int(11) NOT NULL,
  *    `user_id` int(11) NOT NULL,
  *    `role_id` int(11) NOT NULL,
- *    PRIMARY KEY (`urm_id`),
- *    UNIQUE KEY `user_role` (`user_id`,`role_id`),
- *    KEY `role_id` (`role_id`),
- *    KEY `user_id` (`user_id`)
  *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+ *
+ *  ALTER TABLE `{dbPrefix}user_role_map`
+ *    ADD PRIMARY KEY (`urm_id`),
+ *    ADD UNIQUE KEY `user_role` (`user_id`,`role_id`),
+ *    ADD KEY `role_id` (`role_id`),
+ *    ADD KEY `user_id` (`user_id`);
+ *
+ *  ALTER TABLE `{dbPrefix}user_group_map`
+ *  MODIFY `ugm_id` int(11) NOT NULL AUTO_INCREMENT;
+ *
  *  ALTER TABLE `{dbPrefix}user_role_map`
  *    ADD CONSTRAINT `{dbPrefix}user_role_map_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `{dbPrefix}users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
  *    ADD CONSTRAINT `{dbPrefix}user_role_map_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `{dbPrefix}roles` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE;

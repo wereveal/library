@@ -19,9 +19,11 @@
  *    `role_name` varchar(20) NOT NULL,
  *    `role_description` text NOT NULL,
  *    `role_level` int(11) NOT NULL DEFAULT '4',
- *    PRIMARY KEY (`role_id`),
- *    KEY `name` (`role_name`)
  *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+ *  ALTER TABLE `dbPrefix_roles`
+ *    ADD PRIMARY KEY (`role_id`),
+ *    ADD UNIQUE KEY `rolename` (`role_name`)
+ *
  *
  *  PostgreSQL
  *  CREATE SEQUENCE role_id_seq;
