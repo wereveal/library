@@ -45,14 +45,14 @@ class UsersModel extends Base implements ModelInterface
     ### Basic CRUD commands, required by interface, deals only with the {$this->db_prefix}user table ###
     /**
      *  Creates a new user record in the user table.
-     *  @param array $a_values required array('user_name', 'real_name', 'short_name', 'password'), optional key=>values 'is_active' and 'is_default'
+     *  @param array $a_values required array('login_id', 'real_name', 'short_name', 'password'), optional key=>values 'is_active' and 'is_default'
      *  @return int|bool
     **/
     public function create(array $a_values = array())
     {
         if ($a_values == array()) { return false; }
         $a_required_keys = array(
-            'user_name',
+            'login_id',
             'real_name',
             'short_name',
             'password'
@@ -68,9 +68,9 @@ class UsersModel extends Base implements ModelInterface
         }
         $sql = "
             INSERT INTO {$this->db_prefix}users
-                (user_name, real_name, short_name, password, is_active, is_default)
+                (login_id, real_name, short_name, password, is_active, is_default)
             VALUES
-                (:user_name, :real_name, :short_name, :password, :is_active, :is_default)
+                (:login_id, :real_name, :short_name, :password, :is_active, :is_default)
         ";
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}users")) {
             $ids = $this->o_db->getNewIds();
@@ -91,11 +91,11 @@ class UsersModel extends Base implements ModelInterface
     {
         if (count($a_search_values) > 0) {
             $a_search_params = count($a_search_params) == 0
-                ? array('order_by' => 'user_name')
+                ? array('order_by' => 'login_id')
                 : $a_search_params;
             $a_allowed_keys = array(
                 'user_id',
-                'user_name',
+                'login_id',
                 'real_name',
                 'short_name',
                 'is_default',
@@ -108,11 +108,11 @@ class UsersModel extends Base implements ModelInterface
             $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
         }
         else {
-            $where = " ORDER BY 'user_name'";
+            $where = " ORDER BY 'login_id'";
         }
         $sql = "
             SELECT user_id,
-                user_name,
+                login_id,
                 real_name,
                 short_name,
                 password,
@@ -129,26 +129,26 @@ class UsersModel extends Base implements ModelInterface
     }
     /**
      * Updates a {$this->db_prefix}users record.
-     * @param array $a_values required $a_values['user_id'] || $a_values['user_name']
+     * @param array $a_values required $a_values['user_id'] || $a_values['login_id']
      * @return bool
      */
     public function update(array $a_values = array())
     {
         $user_id = '';
-        $user_name = '';
+        $login_id = '';
         if (isset($a_values['user_id'])) {
             if ($a_values['user_id'] != '') {
                 $user_id = $a_values['user_id'];
             }
             unset($a_values['user_id']);
         }
-        if (isset($a_values['user_name'])) {
-            if ($a_values['user_name'] != '') {
-                $user_name = $a_values['user_name'];
+        if (isset($a_values['login_id'])) {
+            if ($a_values['login_id'] != '') {
+                $login_id = $a_values['login_id'];
             }
-            unset($a_values['user_name']);
+            unset($a_values['login_id']);
         }
-        if ($user_id == '' && $user_name == '') { return false; }
+        if ($user_id == '' && $login_id == '') { return false; }
         /* the following keys in $a_values must have a value other than ''.
          * As such, they get removed from the sql
          * if they are trying to update the values to ''
@@ -173,9 +173,9 @@ class UsersModel extends Base implements ModelInterface
         if ($a_values == array()) {
             return false;
         }
-        $sql_set = $this->o_db->buildSqlSet($a_values, array('user_id', 'user_name'));
-        $sql_where = isset($a_values['user_name'])
-            ? 'WHERE user_name = :user_name'
+        $sql_set = $this->o_db->buildSqlSet($a_values, array('user_id', 'login_id'));
+        $sql_where = isset($a_values['login_id'])
+            ? 'WHERE login_id = :login_id'
             : isset($a_values['user_id'])
                 ? 'WHERE user_id = :user_id'
                 : '';
@@ -205,14 +205,14 @@ class UsersModel extends Base implements ModelInterface
 
     ### Single User Methods ###
     /**
-     *  Gets the user id for a specific user_name.
-     *  @param string $user_name required
+     *  Gets the user id for a specific login_id.
+     *  @param string $login_id required
      *  @return int|bool $user_id
      */
-    public function getId($user_name = '')
+    public function getId($login_id = '')
     {
-        if ($user_name == '') { return false; }
-        $a_results = $this->read(array('user_name' => $user_name));
+        if ($login_id == '') { return false; }
+        $a_results = $this->read(array('login_id' => $login_id));
         if ($a_results !== false) {
             if (isset($a_results[0]) && $a_results[0] != array()) {
                 return $a_results[0]['user_id'];
@@ -264,7 +264,7 @@ class UsersModel extends Base implements ModelInterface
             $a_search_by = ['$user_id' => $user];
         }
         else {
-            $a_search_by = ['user_name' => $user];
+            $a_search_by = ['login_id' => $user];
         }
         $a_records = $this->read($a_search_by);
         if (is_array($a_records[0])) {
@@ -367,8 +367,8 @@ class UsersModel extends Base implements ModelInterface
 
     ### More complex methods using multiple tables ###
     /**
-     *  Gets the user values based on user_name or user_id.
-     *  @param mixed $user_id the user id or user_name (as defined in the db)
+     *  Gets the user values based on login_id or user_id.
+     *  @param mixed $user_id the user id or login_id (as defined in the db)
      *  @return array, the values for the user
     **/
     public function readInfo($user_id = '')
@@ -378,11 +378,11 @@ class UsersModel extends Base implements ModelInterface
             $where = "u.user_id = {$user_id} ";
         }
         else {
-            $where = "u.user_name = '{$user_id}' ";
+            $where = "u.login_id = '{$user_id}' ";
         }
         $sql = "
             SELECT r.role_id, r.role_level, r.role_name
-                u.user_id, u.user_name, u.real_name, u.short_name,
+                u.user_id, u.login_id, u.real_name, u.short_name,
                 u.password, u.is_default, u.created_on, u.bad_login_count,
                 u.bad_login_ts, u.is_active, u.is_default,
                 g.group_id, g.group_name, g.group_description
@@ -418,7 +418,7 @@ class UsersModel extends Base implements ModelInterface
     {
 
         $sql = "
-            SELECT u.user_id, u.user_name, u.real_name, u.short_name, u.password, u.is_default, u.is_active
+            SELECT u.user_id, u.login_id, u.real_name, u.short_name, u.password, u.is_default, u.is_active
                 r.role_id, r.role_name,
                 g.group_id, g.group_name
             FROM {$this->db_prefix}users as u,
@@ -475,7 +475,7 @@ class UsersModel extends Base implements ModelInterface
             $o_ugm   = new UserGroupMapModel($this->o_db);
             $o_urm   = new UserRoleMapModel($this->o_db);
             $a_required_keys = array(
-                'user_name',
+                'login_id',
                 'real_name',
                 'short_name',
                 'password',
@@ -540,8 +540,8 @@ class UsersModel extends Base implements ModelInterface
             if (isset($a_user['user_id']) && $a_user['user_id'] != '') {
                 $user_id = $a_user['user_id'];
             }
-            elseif (isset($a_user['user_name']) && $a_user['user_name'] != '') {
-                $user_id = $this->getId($a_user['user_name']);
+            elseif (isset($a_user['login_id']) && $a_user['login_id'] != '') {
+                $user_id = $this->getId($a_user['login_id']);
             }
             else {
                 $user_id = false;
