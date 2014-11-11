@@ -41,8 +41,13 @@ class Router extends Base
      */
     public function action($route_path = '')
     {
+        if (isset($this->o_elog) && is_object($this->o_elog)) { $this->o_db->setElog($this->o_elog); }
+        if ($route_path == '') {
+            $route_path = $this->route_path;
+        }
         $a_values = ['route_path' => $route_path];
         $a_results = $this->o_db->read($a_values);
+        $this->logIt("Actions from DB: " . var_export($a_results, true), LOG_OFF, __METHOD__);
         if ($a_results !== false && count($a_results) === 1) {
             $a_return_this = $a_results[0];
             $a_return_this['args'] = $this->a_args;
@@ -50,7 +55,7 @@ class Router extends Base
         }
         else {
             return [
-                'route_class'  => 'Main',
+                'route_class'  => 'MainController',
                 'route_method' => '',
                 'route_action' => '',
                 'args'         => array()
@@ -86,6 +91,7 @@ class Router extends Base
             foreach ($a_arg_pairs as $arg_pair) {
                 $a_final_args[] = explode("=", $arg_pair);
             }
+            $this->args = $a_final_args;
         }
         else {
             $this->args = array();

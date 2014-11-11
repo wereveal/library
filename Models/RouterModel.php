@@ -44,12 +44,12 @@ class RouterModel extends Base implements ModelInterface
     public function create(array $a_values)
     {
         if ($a_values == array()) { return false; }
-        $a_required_keys = array(
+        $a_required_keys = [
             'route_path',
             'route_class',
             'route_method',
             'route_action'
-        );
+        ];
         if (!$this->o_arrays->hasRequiredKeys($a_required_keys, $a_values)) {
             return false;
         }
@@ -100,6 +100,7 @@ class RouterModel extends Base implements ModelInterface
             FROM {$this->db_prefix}routes
             {$where}
         ";
+        $this->logIt($sql, LOG_OFF, __METHOD__);
         return $this->o_db->search($sql, $a_search_values);
     }
 
@@ -117,9 +118,9 @@ class RouterModel extends Base implements ModelInterface
             return false;
         }
         $a_allowed_keys = [
-            'route_id', 
-            'route_name', 
-            'route_description', 
+            'route_id',
+            'route_name',
+            'route_description',
             'route_level'
         ];
         $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);

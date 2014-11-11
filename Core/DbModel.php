@@ -7,10 +7,11 @@
  *  @namespace Ritc/Library/Core
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.2.0
- *  @date 2014-09-23 09:50:13
- *  @note A part of the RITC Library v5
+ *  @version 3.2.1
+ *  @date 2014-11-11 13:05:26
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.2.1 - bug fix
  *      v3.2.0 - Made this class more stand alone except extending Base class.
  *               Added function to allow raw query.
  *               Changed it to use the new Base class elog inject method.
@@ -1137,7 +1138,7 @@ class DbModel extends Base
         if (!file_exists($config_w_path)) {
             return false;
         }
-        $a_db = require_once $config_w_path;
+        $a_db = include $config_w_path;
         $this->db_prefix = $a_db['prefix'];
         $this->db_type   = $a_db['driver'];
         return true;
