@@ -71,12 +71,36 @@ class RouterModel extends Base implements ModelInterface
 
     /**
      * Returns an array of records based on the search params provided.
-     * @param array $a_search_values
+     * @param array $a_search_values optional, defaults to returning all records
+     * @param array $a_search_params optional, defaults to ['order_by' => 'route_path']
      * @return array
      */
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
-
+        if (count($a_search_values) > 0) {
+            $a_search_params = $a_search_params == array()
+                ? array('order_by' => 'route_path')
+                : $a_search_params;
+            $a_allowed_keys = [
+                'route_id',
+                'route_path',
+                'route_class'
+            ];
+            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+        }
+        elseif (count($a_search_params) > 0) {
+            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+        }
+        else {
+            $where = " ORDER BY 'route_path'";
+        }
+        $sql = "
+            SELECT route_id, route_path, route_class, route_method, route_action
+            FROM {$this->db_prefix}routes
+            {$where}
+        ";
+        return $this->o_db->search($sql, $a_search_values);
     }
 
     /**
@@ -86,7 +110,27 @@ class RouterModel extends Base implements ModelInterface
      */
     public function update(array $a_values)
     {
-
+        if (   !isset($a_values['route_id'])
+            || $a_values['route_id'] == ''
+            || !ctype_digit($a_values['route_id'])
+        ) {
+            return false;
+        }
+        $a_allowed_keys = [
+            'route_id', 
+            'route_name', 
+            'route_description', 
+            'route_level'
+        ];
+        $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);
+        $set_sql = $this->o_db->buildSqlSet($a_values, ['route_id']);
+        $sql = "
+            UPDATE {$this->db_prefix}routes
+            {$set_sql}
+            WHERE route_id = :route_id
+        ";
+        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        return $this->o_db->update($sql, $a_values, true);
     }
 
     /**
@@ -94,9 +138,14 @@ class RouterModel extends Base implements ModelInterface
      * @param string $id
      * @return bool
      */
-    public function delete($id = '')
+    public function delete($id = -1)
     {
-
+        if ($route_id == -1) { return false; }
+        $sql = "
+            DELETE FROM {$this->db_prefix}routes
+            WHERE route_id = :route_id
+        ";
+        return $this->o_db->delete($sql, array(':route_id' => $route_id), true);
     }
 
 }
