@@ -7,10 +7,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Elog
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version:  2.6.2
- *  @date 2014-09-23 11:53:02
+ *  @version:  2.7.0
+ *  @date 2014-11-11 12:00:40
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.7.0 - added method to ignore LOG_OFF settings to allow global logging - 11/11/2014 wer
  *      v2.6.2 - clean up, removed extend to Base class, not needed/wanted - 09/23/2014 wer
  *      v2.6.1 - package change required minor update - 12/19/2013 wer
  *      v2.6.0 - Namespace changes - 07/30/2013 wer
@@ -27,6 +28,7 @@ class Elog
     private $debug_text;
     private $display_last_message = false;
     private $error_email_address = 'wer@qca.net';
+    private $ignore_log_off = false;
     private $from_class = '';
     private $from_function = '';
     private $from_method = '';
@@ -137,6 +139,16 @@ class Elog
             $this->from_file = basename($file);
     }
     /**
+     *  Setter for the private property ignore_log_off.
+     *  Basically turns logging on globally.
+     *  @param bool $boolean
+     *  @return null
+     */
+    public function setIgnoreLogOff($boolean = false)
+    {
+        $this->ignore_log_off = $boolean;
+    }
+    /**
      *  Setter for the private property use_php_log.
      *  Purpose of use_php_log is to specify if logging
      *  can be done to the php log via do_it
@@ -203,12 +215,15 @@ class Elog
             $from = '';
         }
         $the_string    = $the_string . $from;
+        if ($this->ignore_log_off) {
+            $log_method = 1;
+        }
         switch ($log_method) {
             case 0:
                 return true;
             case 4:
                 if ($this->php_log_used === false) {
-                    $the_string = "\n\n=== Start Elog ===\n\n" . $the_string;
+                    $the_string = "\n\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
                     $this->php_log_used    = true;
                 }
                 return error_log($the_string, 0);
@@ -230,7 +245,7 @@ class Elog
                 }
                 if ($this->use_php_log) {
                     if ($this->php_log_used === false) {
-                        $the_string = "\n\n=== Start Elog ===\n\n" . $the_string;
+                        $the_string = "\n\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
                         $this->php_log_used    = true;
                     }
                     return error_log($the_string, 0);
