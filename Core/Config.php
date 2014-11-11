@@ -33,18 +33,14 @@ class Config extends Base
 {
     private $created = false;
     protected $current_page;
-    private $db_prefix;
     private static $instance;
     protected $o_config_entity;
-    private $o_db;
     protected $o_elog;
     protected $private_properties;
 
     private function __construct(DbModel $o_db)
     {
         $this->setPrivateProperties();
-        $this->o_db = $o_db;
-        $this->db_prefix = $o_db->getDbPrefix();
         $this->o_config_entity = new ConfigEntity($o_db);
         $this->created = $this->createConstants();
         if ($this->created === false) {
