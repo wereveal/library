@@ -99,6 +99,7 @@ class DbFactory extends Base
         }
         catch(\PDOException $e) {
             $this->logIt('Error! Could not connect to database: ' . $e->getMessage(), LOG_ALWAYS);
+            $this->logIt(var_export($a_db, true), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
             return false;
         }
     }
@@ -115,12 +116,14 @@ class DbFactory extends Base
     {
         $config_file = $this->config_file;
         $config_w_path = APP_PATH . '/config/' . $config_file;
+        $this->logIt($config_w_path, LOG_OFF, __METHOD__ . '.' . __LINE__);
         if (!file_exists($config_w_path)) {
             $config_w_path = PRIVATE_PATH . '/' . $config_file;
             if (!file_exists($config_w_path)) {
                 $config_w_path = SITE_PATH . '/config/' . $config_file;
             }
         }
+        $this->logIt($config_w_path, LOG_OFF, __METHOD__ . '.' . __LINE__);
         if (!file_exists($config_w_path)) {
             return false;
         }
