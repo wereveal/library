@@ -17,22 +17,24 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Models\ConfigAdminModel;
+use Ritc\Library\Models\ConfigModel;
 use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Tpl;
 use Ritc\Library\Helper\ViewHelper;
 
 class ConfigAdminView extends Base
 {
-    private $o_config_model;
+    private $o_model;
     private $o_twig;
     protected $o_elog;
+    protected $private_properties;
 
     public function __construct(DbModel $o_db)
     {
-        $o_tpl                = new Tpl('twig_config.php');
-        $this->o_twig         = $o_tpl->getTwig();
-        $this->o_config_model = new ConfigAdminModel($o_db);
+        $this->setPrivateProperties();
+        $o_tpl         = new Tpl('twig_config.php');
+        $this->o_twig  = $o_tpl->getTwig();
+        $this->o_model = new ConfigModel($o_db);
     }
     /**
      *  Returns the list of configs in html.
@@ -67,7 +69,7 @@ class ConfigAdminView extends Base
                 )
             );
         }
-        $a_configs = $this->o_config_model->read();
+        $a_configs = $this->o_model->read();
         $this->logIt(
             'a_configs: ' . var_export($a_configs, TRUE),
             LOG_OFF,

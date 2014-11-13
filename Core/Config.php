@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  3.1.3
- *  @date 2014-09-23 11:47:23
+ *  @version  3.1.4
+ *  @date 2014-11-13 12:15:49
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.1.4 - changed to match changes in ConfigModel - 11/13/2014 wer
  *      v3.1.3 - changed to implment the changes in Base class - 09/23/2014 wer
  *      v3.1.2 - bug fixes - 09/18/2014 wer
  *      v3.1.1 - made it so the config table name will be assigned from the - 02/24/2014 wer
@@ -27,21 +28,21 @@
 namespace Ritc\Library\Core;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Entities\ConfigEntity;
+use Ritc\Library\Models\ConfigModel;
 
 class Config extends Base
 {
     private $created = false;
     protected $current_page;
     private static $instance;
-    protected $o_config_entity;
+    protected $o_config_model;
     protected $o_elog;
     protected $private_properties;
 
     private function __construct(DbModel $o_db)
     {
         $this->setPrivateProperties();
-        $this->o_config_entity = new ConfigEntity($o_db);
+        $this->o_config_model = new ConfigModel($o_db);
         $this->created = $this->createConstants();
         if ($this->created === false) {
             $this->logIt("Could not create constants from db.", LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -58,7 +59,7 @@ class Config extends Base
                 $this->logIt("APP_CONFIG_PATH is not defined.", LOG_OFF);
                 die ('A fatal error has occured. Please contact your web site administrator.');
             }
-            $this->o_config_entity->createNewConfigs();
+            $this->o_config_model->createNewConfigs();
         }
         $this->createThemeConstants();
     }
@@ -86,7 +87,7 @@ class Config extends Base
     private function createConstants()
     {
         if ($this->created === false) {
-            $a_config = $this->o_config_entity->selectConfigList();
+            $a_config = $this->o_config_model->selectConfigList();
             if (is_array($a_config) && count($a_config) > 0) {
                 $this->logIt("List of Configs: " . var_export($a_config, true), LOG_OFF, __METHOD__);
                 foreach ($a_config as $row) {

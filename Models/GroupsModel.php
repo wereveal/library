@@ -29,14 +29,21 @@ class GroupsModel extends Base implements ModelInterface
     private $o_arrays;
     private $o_db;
     protected $o_elog;
+    protected $private_properties;
 
     public function __construct(DbModel $o_db)
     {
+        $this->setPrivateProperties();
         $this->o_db      = $o_db;
         $this->o_arrays  = new Arrays;
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
     }
+    /**
+     * Generic create function to create a single record
+     * @param array $a_values required
+     * @return bool
+     */
     public function create(array $a_values = array())
     {
         if ($a_values == array()) { return false; }
@@ -62,6 +69,11 @@ class GroupsModel extends Base implements ModelInterface
             return false;
         }
     }
+    /**
+     * @param array $a_search_values
+     * @param array $a_search_params
+     * @return mixed
+     */
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
         if (count($a_search_values) > 0) {

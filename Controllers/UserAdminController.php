@@ -1,10 +1,10 @@
 <?php
 /**
  *  @brief Controller for the Configuration page.
- *  @file ConfigAdminController.php
+ *  @file UserAdminController.php
  *  @ingroup library core
  *  @namespace Ritc/Library/Controllers
- *  @class ConfigAdminController
+ *  @class UserAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.1
  *  @date 2014-11-13 12:56:24
@@ -21,10 +21,9 @@ use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Session;
 use Ritc\Library\Interfaces\ControllerInterface;
-use Ritc\Library\Models\ConfigModel;
-use Ritc\Library\Views\ConfigAdminView;
+use Ritc\Library\Views\UserAdminView;
 
-class ConfigAdminController extends Base implements ControllerInterface
+class UserAdminController extends Base implements ControllerInterface
 {
     protected $o_elog;
     private $o_model;
@@ -33,8 +32,7 @@ class ConfigAdminController extends Base implements ControllerInterface
 
     public function __construct(Session $o_session, DbModel $o_db)
     {
-        $this->o_model   = new ConfigModel($o_db);
-        $this->o_view    = new ConfigAdminView($o_db);
+        $this->o_view    = new UserAdminView($o_db);
         $this->o_session = $o_session;
 
     }
