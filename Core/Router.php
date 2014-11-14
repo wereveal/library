@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Core
  *  @class Router
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0ß
- *  @date 2014-09-25 18:12:44
+ *  @version 1.0.1ß
+ *  @date 2014-11-14 07:29:27
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1ß - bug fixes - 11/14/2014 wer
  *      v1.0.0ß - initial attempt to make this - 09/25/2014 wer
 **/
 namespace Ritc\Library\Core;
@@ -50,15 +51,17 @@ class Router extends Base
         $this->logIt("Actions from DB: " . var_export($a_results, true), LOG_OFF, __METHOD__);
         if ($a_results !== false && count($a_results) === 1) {
             $a_return_this = $a_results[0];
-            $a_return_this['args'] = $this->a_args;
+            $a_return_this['route_args'] = $this->a_args;
             return $a_return_this;
         }
         else {
             return [
+                'route_id'     => 0,
+                'route_path'   => $route_path,
                 'route_class'  => 'MainController',
                 'route_method' => '',
                 'route_action' => '',
-                'args'         => array()
+                'route_args'   => array(),
             ];
         }
     }
