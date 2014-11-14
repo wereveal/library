@@ -21,10 +21,7 @@ use Ritc\Library\Abstracts\Base;
 
 class Session extends Base
 {
-    protected $current_page;
     private static $instance;
-    protected $o_elog;
-    protected $private_properties;
     private $session_id;
     private $session_name;
     private $session_started = false;
@@ -168,7 +165,6 @@ class Session extends Base
             }
         }
     }
-
     /**
      *  Sets $_SESSION vars specified in the array.
      *  Any number session vars can be set/created with this function.
@@ -196,7 +192,6 @@ class Session extends Base
             }
         }
     }
-
     /**
      * @param int $time
      * @param bool $add
@@ -213,7 +208,6 @@ class Session extends Base
             $_SESSION["idle_timestamp"] = time();
         }
     }
-
     /**
      * @param bool $use_cookies
      * @return bool|string
@@ -228,7 +222,6 @@ class Session extends Base
                 return ini_set('session.use_cookies', 1) && ini_set("session.use_only_cookies", 1);
         }
     }
-
     /**
      * @param bool $use_trans
      * @return bool|string
@@ -241,7 +234,6 @@ class Session extends Base
         }
         return true;
     }
-
     /**
      *  Sets the session variable 'token' which is used in a bunch of places.
      */
@@ -249,6 +241,10 @@ class Session extends Base
     {
         $_SESSION['token'] = md5(uniqid(mt_rand(), true));
     }
+    /**
+     * Gets the token.
+     * @return mixed
+     */
     public function getToken()
     {
         return $_SESSION['token'];

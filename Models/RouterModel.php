@@ -27,10 +27,10 @@ class RouterModel extends Base implements ModelInterface
     private $db_type;
     private $o_arrays;
     private $o_db;
-    protected $o_elog;
 
     public function __construct(DbModel $o_db)
     {
+        $this->setPrivateProperties();
         $this->o_db      = $o_db;
         $this->o_arrays  = new Arrays;
         $this->db_type   = $this->o_db->getDbType();

@@ -8,7 +8,7 @@
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.1
  *  @date 2014-11-13 12:56:24
- *  @note A file in Library v5
+ *  @note A file in Library
  *  @note <pre><b>Change Log</b>
  *      v1.0.1 - Adjusted to match file name change - 11/13/2014 wer
  *      v1.0.0 - Initial version - 04/02/2014 wer
@@ -26,13 +26,13 @@ use Ritc\Library\Views\ConfigAdminView;
 
 class ConfigAdminController extends Base implements ControllerInterface
 {
-    protected $o_elog;
     private $o_model;
     private $o_view;
     private $o_session;
 
     public function __construct(Session $o_session, DbModel $o_db)
     {
+        $this->setPrivateProperties();
         $this->o_model   = new ConfigModel($o_db);
         $this->o_view    = new ConfigAdminView($o_db);
         $this->o_session = $o_session;

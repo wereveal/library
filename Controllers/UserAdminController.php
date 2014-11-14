@@ -25,13 +25,13 @@ use Ritc\Library\Views\UserAdminView;
 
 class UserAdminController extends Base implements ControllerInterface
 {
-    protected $o_elog;
     private $o_model;
     private $o_view;
     private $o_session;
 
     public function __construct(Session $o_session, DbModel $o_db)
     {
+        $this->setPrivateProperties();
         $this->o_view    = new UserAdminView($o_db);
         $this->o_session = $o_session;
 
