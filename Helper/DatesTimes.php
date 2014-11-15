@@ -2,18 +2,19 @@
 /**
  *  @brief Adds some standard use formatting methods for date and time.
  *  @file DatesTimes.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library helper
+ *  @namespace Ritc/Library/Helper
  *  @class DatesTimes
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 3.0.0
- *  @date 2013-03-27 16:47:09
- *  @note A part of the RITC Library v5
+ *  @version 3.0.1
+ *  @date 2014-11-15 12:33:33
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.0.1 - moved to Ritc\Library\Helper namespace - 11/15/2014 wer
  *      v3.0.0 - FIG standards (mostly)
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Helper;
 
 class DatesTimes
 {

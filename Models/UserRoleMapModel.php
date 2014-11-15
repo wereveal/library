@@ -6,21 +6,22 @@
  *  @namespace Ritc/Library/Models
  *  @class UserRoleMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1ß
- *  @date 2014-09-23 13:13:40
+ *  @version 1.0.2ß
+ *  @date 2014-11-15 13:18:24
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.1ß - extends the Base class, injects the DbModel, clean up - 09/23/2014 wer
- *      v1.0.0ß - First live version - 09/15/2014 wer
- *      v0.1.0ß - Initial version    - 01/18/2014 wer
+ *      v1.0.2ß - changed to use DI/IOC                                                                 - 11/15/2014 wer
+ *      v1.0.1ß - extends the Base class, injects the DbModel, clean up                                 - 09/23/2014 wer
+ *      v1.0.0ß - First live version                                                                    - 09/15/2014 wer
+ *      v0.1.0ß - Initial version                                                                       - 01/18/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\DbModel;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
+use Zend\ServiceManager\ServiceManager;
 
 class UserRoleMapModel extends Base implements ModelInterface
 {
@@ -28,11 +29,10 @@ class UserRoleMapModel extends Base implements ModelInterface
     private $db_type;
     private $o_arrays;
     private $o_db;
-    private $o_elog;
 
-    public function __construct(DbModel $o_db)
+    public function __construct(ServiceManager $o_di)
     {
-        $this->o_db      = $o_db;
+        $this->o_db      = $o_di->get('db');
         $this->o_arrays  = new Arrays;
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();

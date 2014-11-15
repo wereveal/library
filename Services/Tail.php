@@ -3,18 +3,19 @@
  *  @brief Similar to the Unix tail command e.g. tail -n 40 file.php.
  *  @detail When on a webpage, use the meta refresh to keep tailing a file.
  *  @file Tail.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library Services
+ *  @namespace Ritc/Library/Services
  *  @class Tail
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.1.0
- *  @date 2013-04-22 11:46:56
- *  @note A part of the RITC Library v5
+ *  @version 2.1.1
+ *  @date 2014-11-15 13:33:15
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v2.1 Changed to work in the ritc_library
+ *      v2.1.1 - Moved to Services namespace         - 11/15/2014 wer
+ *      v2.1.0 - Changed to work in the ritc_library - 04/22/2013 wer
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Services;
 
 class Tail
 {

@@ -18,11 +18,10 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Session;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Models\ConfigModel;
 use Ritc\Library\Views\ConfigAdminView;
+use Zend\ServiceManager\ServiceManager;
 
 class ConfigAdminController extends Base implements ControllerInterface
 {
@@ -30,21 +29,21 @@ class ConfigAdminController extends Base implements ControllerInterface
     private $o_view;
     private $o_session;
 
-    public function __construct(Session $o_session, DbModel $o_db)
+    public function __construct(ServiceManager $o_di)
     {
         $this->setPrivateProperties();
+        $o_db            = $o_di->get('db');
         $this->o_model   = new ConfigModel($o_db);
-        $this->o_view    = new ConfigAdminView($o_db);
-        $this->o_session = $o_session;
+        $this->o_view    = new ConfigAdminView($o_di);
+        $this->o_session = $o_di->get('session');
+        $this->o_router  = $o_di->get('router');
 
     }
     /**
-     *  Routes the code to the appropriate methods and classes. Returns a string.
-     *  @param array $a_actions optional, the actions derived from the URL/Form
-     *  @param array $a_values optional, the values from a form
+     *  Renders the html based on the route requested.
      *  @return string html to be displayed.
     **/
-    public function render(array $a_actions = array(), array $a_values = array())
+    public function render()
     {
         $main_action = isset($a_actions['action3']) ? $a_actions['action3'] : '';
         $form_action = isset($a_values['form_action']) ? $a_values['form_action'] : '';

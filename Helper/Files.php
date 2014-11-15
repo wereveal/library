@@ -2,18 +2,19 @@
 /**
  *  @brief Determines the path to the file.
  *  @file Files.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library Helper
+ *  @namespace Ritc/Library/Helper
  *  @class Files
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 4.2.1
- *  @date 2014-09-23 11:58:18
+ *  @version 4.2.2
+ *  @date 2014-11-15 12:34:56
  *  @note A part of the RITC Library v5
  *  @note <pre>The constants with _DIR_NAME should correspond to dir names in
  *      the site theme or namespace (e.g. templates are in namespace). If a directory
  *      is missing, this could cause a fatal error.
  *      </pre>
  *  @note <pre><b>Change Log</b>
+ *      v4.2.1 - moved to the namespace Ritc\Library\Helper - 11/15/2014 wer
  *      v4.2.1 - implements changes to Base class for logging
  *      v4.2.0 - Several changes. - 12/19/2013 wer
  *              Base was changed from abstract to normal class
@@ -30,7 +31,7 @@
  *      v4.0.0 - FIG standards (mostly) wer
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Helper;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\LocationInterface;

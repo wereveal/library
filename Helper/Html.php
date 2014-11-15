@@ -4,36 +4,34 @@
  *  @details Methods which start with make_ return a modified version
  *  of the value passed into the method, usually indicated by
  *  the name of the method
- *  Derived from the old Depreciated Output class
  *  @file Html.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library Helper
+ *  @namespace Ritc/Library/Helper
  *  @class Html
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.3
- *  @date 2014-09-23 12:01:26
+ *  @version 1.0.4
+ *  @date 2014-11-15 12:37:15
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.3 - changed to implment the changes in Base class - 09/23/2014 wer
- *      v1.0.2 - some refactoring changes based on changes in package - 12/19/2013 wer
+ *      v1.0.4 - moved to the Ritc\Library\Helper namespace               - 11/15/2014 wer
+ *      v1.0.3 - changed to implment the changes in Base class            - 09/23/2014 wer
+ *      v1.0.2 - some refactoring changes based on changes in package     - 12/19/2013 wer
  *      v1.0.1 - some refactoring changes based on changes in other files - 03/17/2013 wer
  *  </pre>
+ * @TODO fix the methods which create message boxes to utilize the ViewHelper maybe
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Helper;
 
 use Ritc\Library\Abstracts\Base;
 
 class Html extends Base
 {
-    protected $current_page;
     protected $o_arrays;
-    protected $o_elog;
     protected $o_files;
     private   $o_str;
     protected $the_original_string = 'Start';
     protected $the_modified_string = '';
     protected $template_name     = 'default.twig';
-    protected $private_properties;
     protected $namespace = 'Ritc';
     public function __construct()
     {

@@ -6,21 +6,22 @@
  *  @namespace Ritc/Library/Models
  *  @class GroupsModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1β
- *  @date 2014-09-23 13:07:09
+ *  @version 1.0.2β
+ *  @date 2014-11-15 13:10:18
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.1β - extends the Base class, injects the DbModel, clean up - 09/23/2014 wer
- *      v1.0.0β - First live version 09/15/2014 wer
- *      v0.1.0β - Initial version 01/18/2014 wer
+ *      v1.0.2ß - changed to use IOC (Inversion of Control)                              - 11/15/2014 wer
+ *      v1.0.1β - extends the Base class, injects the DbModel, clean up                  - 09/23/2014 wer
+ *      v1.0.0β - First live version                                                     - 09/15/2014 wer
+ *      v0.1.0β - Initial version                                                        - 01/18/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\DbModel;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
+use Zend\ServiceManager\ServiceManager;
 
 class GroupsModel extends Base implements ModelInterface
 {
@@ -28,13 +29,12 @@ class GroupsModel extends Base implements ModelInterface
     private $db_type;
     private $o_arrays;
     private $o_db;
-    protected $o_elog;
-    protected $private_properties;
+    private $o_di;
 
-    public function __construct(DbModel $o_db)
+    public function __construct(ServiceManager $o_di)
     {
         $this->setPrivateProperties();
-        $this->o_db      = $o_db;
+        $this->o_db      = $o_di->get('db');
         $this->o_arrays  = new Arrays;
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();

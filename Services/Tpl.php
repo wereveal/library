@@ -4,23 +4,25 @@
  *  @description Lets us create a twig object, specific to a configuration
  *      allowing multiple twig objects to render the html
  *  @file Tpl.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library Services
+ *  @namespace Ritc/Library/Services
  *  @class Tpl
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 0.2.0ß
+ *  @version 1.0.0ß
  *  @date 2014-09-25 16:00:14
  *  @note A part of the RITC Library v5
  *  @note <pre><b>Change Log</b>
- *      v0.2.0ß - changed to use the TwigFactory - 09/25/2014 wer
+ *      v1.0.0ß - moved to Services namespace                                                           - 11/15/2014 wer
+ *      v0.2.0ß - changed to use the TwigFactory                                                        - 09/25/2014 wer
  *                Hides the TwigFactory aspect, sort of, snicker. This is really a stupid class
- *      v0.1.1  - changed to implment the changes in Base class - 09/23/2014 wer
- *      v0.1.0  - initial file creation - 2013-11-11
+ *      v0.1.1  - changed to implment the changes in Base class                                         - 09/23/2014 wer
+ *      v0.1.0  - initial file creation                                                                 - 2013-11-11 wer
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Services;
 
 use Ritc\Library\Abstracts\Base;
+use Twig_Environment;
 
 class Tpl extends Base
 {

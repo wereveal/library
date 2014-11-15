@@ -6,31 +6,31 @@
  *  @namespace Ritc/Library/Views
  *  @class RouterAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0ß
- *  @date 2014-11-14 16:43:21
+ *  @version 1.0.1ß
+ *  @date 2014-11-15 15:15:12
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0ß - Initial version 11/14/2014 wer
+ *      v1.0.1∂ - changed to use DI/IOC - 11/15/2014 wer
+ *      v1.0.0ß - Initial version       - 11/14/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\RouterModel;
-use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Tpl;
 use Ritc\Library\Helper\ViewHelper;
+use Zend\ServiceManager\ServiceManager;
 
 class RouterAdminView extends Base
 {
     private $o_model;
-    private $o_twig;
+    private $o_tpl;
 
-    public function __construct(DbModel $o_db)
+    public function __construct(ServiceManager $o_di)
     {
         $this->setPrivateProperties();
-        $o_tpl         = new Tpl('twig_config.php');
-        $this->o_twig  = $o_tpl->getTwig();
+        $this->o_tpl   = $o_di->get('tpl');
+        $o_db          = $o_di->get('db');
         $this->o_model = new RouterModel($o_db);
     }
     /**
@@ -78,7 +78,7 @@ class RouterAdminView extends Base
         if ($a_routes !== false && count($a_routes) > 0) {
             $a_values['a_routes'] = $a_routes;
         }
-        return $this->o_twig->render('@pages/routes_admin.twig', $a_values);
+        return $this->o_tpl->render('@pages/routes_admin.twig', $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -88,7 +88,7 @@ class RouterAdminView extends Base
     public function renderVerify(array $a_values = array())
     {
         if ($a_values === array()) {
-            return $this->renderConfigs(array('message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure'));
+            return $this->renderList(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
         }
         if (!isset($a_values['public_dir'])) {
             $a_values['public_dir'] = '';
@@ -96,6 +96,6 @@ class RouterAdminView extends Base
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the route.';
         }
-        return $this->o_twig->render('@pages/verify_delete_config.twig', $a_values);
+        return $this->o_tpl->render('@pages/verify_delete_config.twig', $a_values);
     }
 }

@@ -3,14 +3,15 @@
  *  @brief Does all the database CRUD stuff.
  *  @details For read/write access to the database based on PDO.
  *  @file DbModel.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library Services
+ *  @namespace Ritc/Library/Services
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 3.2.1
  *  @date 2014-11-11 13:05:26
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.2.3 - moved to Services namespace - 11/15/2014 wer
  *      v3.2.1 - bug fix
  *      v3.2.0 - Made this class more stand alone except extending Base class.
  *               Added function to allow raw query.
@@ -37,9 +38,10 @@
  *      v2.2.0 - FIG-standard changes
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Services;
 
 use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Helper\Arrays;
 
 class DbModel extends Base
 {

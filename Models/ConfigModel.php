@@ -6,8 +6,8 @@
  *  @namespace Ritc/Library/Models
  *  @class ConfigModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.2.0
- *  @date 2014-11-13 12:01:11
+ *  @version 1.2.1
+ *  @date 2014-11-15 14:24:43
  *  @note A file in the Ritc Library
  *  @note <b>SQL for table<b>
  *  <pre>
@@ -59,31 +59,32 @@
  *  ('RIGHTS_HOLDER', 'Reveal IT Consulting')
  *  </pre>
  *  @note <pre><b>Change Log</b>
- *      v1.1.0 - Changed from Entity to Model - 11/13/2014 wer
- *      v1.0.1 - minor change to the comments - 09/11/2014 wer
- *      v1.0.0 - Initial version - 04/01/2014 wer</pre>
+ *      v1.1.1 - Namespace changes elsewhere required changes here - 11/15/2014 wer
+ *               Doesn't use DI/IOC because of where it is initialized
+ *      v1.1.0 - Changed from Entity to Model                      - 11/13/2014 wer
+ *      v1.0.1 - minor change to the comments                      - 09/11/2014 wer
+ *      v1.0.0 - Initial version                                   - 04/01/2014 wer
+ *  </pre>
 **/
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Strings;
+use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
+use Ritc\Library\Services\DbModel;
 
 class ConfigModel extends Base implements ModelInterface
 {
+    private $a_configs;
     private $db_prefix;
     private $o_arrays;
-    protected $a_configs;
-    protected $o_db;
-    protected $o_elog;
-    protected $private_properties;
+    private $o_db;
 
     public function __construct(DbModel $o_db)
     {
         $this->setPrivateProperties();
-        $this->o_db = $o_db;
+        $this->o_db      = $o_db;
         $this->a_configs = $this->selectConfigList();
         $this->o_arrays  = new Arrays();
         $this->o_strings = new Strings();

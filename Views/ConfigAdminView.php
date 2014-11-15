@@ -18,23 +18,21 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\ConfigModel;
-use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Tpl;
 use Ritc\Library\Helper\ViewHelper;
+use Zend\ServiceManager\ServiceManager;
 
 class ConfigAdminView extends Base
 {
+    private $o_di;
     private $o_model;
-    private $o_twig;
-    protected $o_elog;
-    protected $private_properties;
+    private $o_tpl;
 
-    public function __construct(DbModel $o_db)
+    public function __construct(ServiceManager $o_di)
     {
         $this->setPrivateProperties();
-        $o_tpl         = new Tpl('twig_config.php');
-        $this->o_twig  = $o_tpl->getTwig();
-        $this->o_model = new ConfigModel($o_db);
+        $this->o_di    = $o_di;
+        $this->o_tpl   = $o_di->get('tpl');
+        $this->o_model = new ConfigModel($o_di->get('db'));
     }
     /**
      *  Returns the list of configs in html.
@@ -78,7 +76,7 @@ class ConfigAdminView extends Base
         if ($a_configs !== false && count($a_configs) > 0) {
             $a_values['a_configs'] = $a_configs;
         }
-        return $this->o_twig->render('@pages/config_admin.twig', $a_values);
+        return $this->o_tpl->render('@pages/config_admin.twig', $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -96,6 +94,6 @@ class ConfigAdminView extends Base
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the configuration.';
         }
-        return $this->o_twig->render('@pages/verify_delete_config.twig', $a_values);
+        return $this->o_tpl->render('@pages/verify_delete_config.twig', $a_values);
     }
 }

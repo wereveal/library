@@ -23,7 +23,7 @@ class ConfigAdminModelTester extends Tester
     protected $private_properties;
     private $o_config;
     private $o_db;
-    private $o_twig;
+    private $o_tpl;
 
     public function __construct(DbModel $o_db)
     {
@@ -31,7 +31,7 @@ class ConfigAdminModelTester extends Tester
         $this->o_db     = $o_db;
         $this->o_config = new ConfigAdminModel($this->o_db);
         $o_tpl          = new Tpl('twig_config.php');
-        $this->o_twig   = $o_tpl->getTwig();
+        $this->o_tpl    = $o_tpl->getTwig();
     }
     public function renderResults(array $a_result_values = array())
     {
@@ -41,7 +41,7 @@ class ConfigAdminModelTester extends Tester
                 'type'    => 'error'
             ];
             $a_message = ViewHelper::messageProperties($a_params);
-            return $this->o_twig->render(
+            return $this->o_tpl->render(
                 '@pages/error.twig',
                 [
                     'description'   => 'An error has occurred.',

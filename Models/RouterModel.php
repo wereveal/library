@@ -6,20 +6,21 @@
  *  @namespace Ritc/Library/Models
  *  @class RouterModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β
- *  @date 2014-11-11 10:40:50
+ *  @version 1.0.1β
+ *  @date 2014-11-15 14:00:10
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0β - First live version - 11/11/2014 wer
+ *      v1.0.1ß - Changed to match some namespace changes, and bug fix                                 - 11/15/2014 wer
+ *      v1.0.0β - First live version                                                                   - 11/11/2014 wer
  *  </pre>
 **/
 
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\DbModel;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
+use Ritc\Library\Services\DbModel;
 
 class RouterModel extends Base implements ModelInterface
 {
@@ -136,10 +137,10 @@ class RouterModel extends Base implements ModelInterface
 
     /**
      * Generic deletes a record based on the id provided.
-     * @param string $id
+     * @param int $route_id
      * @return bool
      */
-    public function delete($id = -1)
+    public function delete($route_id = -1)
     {
         if ($route_id == -1) { return false; }
         $sql = "

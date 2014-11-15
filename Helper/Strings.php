@@ -6,31 +6,29 @@
  *  the name of the method.
  *  Renamed and modified version of old class Output.
  *  @file Strings.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library helper
+ *  @namespace Ritc/Library/Helper
  *  @class Strings
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 5.1.1
- *  @date 2014-09-23 12:04:32
+ *  @version 5.1.2
+ *  @date 2014-11-15 12:30:05
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v5.1.2 - moved to the Helper namespace - 11/15/2014 wer
  *      v5.1.1 - changed to implment the changes in Base class - 09/23/2014 wer
  *      v5.1.0 - added formatPhoneNumber method. 2013-05-14
  *      v5.0.1 - bug fixes and removed unused code left over from old class Output 2013-05-01
  *      v5.0.0 - renamed new version for RITC Library v5
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Helper;
 
 use Ritc\Library\Abstracts\Base;
 
 class Strings extends Base
 {
-    protected $current_page;
-    protected $o_elog;
     protected $the_original_string = 'Start';
     protected $the_modified_string = '';
-    protected $private_properties;
     public function __construct()
     {
         $this->setPrivateProperties();
@@ -149,7 +147,7 @@ class Strings extends Base
     }
     /**
      *  Removes everything except letters, numbers, -, and _.
-     *  Removes html and php tags first, replaces spaces with underscores,
+     *  Removes html and php tags first, replaces spaces with undersHelpers,
      *  then finally removes all other characters
      *  @param $the_string (str)
      *  @return string - the modified string
@@ -169,7 +167,7 @@ class Strings extends Base
     }
     /**
      *  Makes the string alphanumeric plus _*.+!- in all lower case.
-     *  Removes html and php tags first, replaces spaces with underscores,
+     *  Removes html and php tags first, replaces spaces with undersHelpers,
      *  removes all other characters, then finally make lowercase
      *  @param $the_string (str)
      *  @return string - the modified string

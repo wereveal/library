@@ -2,20 +2,21 @@
 /**
  *  @brief For managing sessions.
  *  @file Session.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library Services
+ *  @namespace Ritc/Library/Services
  *  @class Session
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.1.2
- *  @date 2014-09-23 12:02:53
- *  @note A part of the RITC Library v5
+ *  @version 1.1.3
+ *  @date 2014-11-15 13:53:22
+ *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.1.2 - changed to implment the changes in Base class - 09/23/2014 wer
- *      v1.1.1 - Bug fixes 12/31/2013 wer
- *      v1.1.0 - 06/14/2011 wer
+ *      v1.1.3 - moved to Services namespace                           - 11/15/2014 wer
+ *      v1.1.2 - changed to implement the changes in Base class        - 09/23/2014 wer
+ *      v1.1.1 - Bug fixes                                             - 12/31/2013 wer
+ *      v1.1.0 - Unknown Changes                                       - 06/14/2011 wer
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Services;
 
 use Ritc\Library\Abstracts\Base;
 

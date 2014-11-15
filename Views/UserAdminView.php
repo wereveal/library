@@ -6,24 +6,25 @@
  *  @namespace Ritc/Library/Views
  *  @class UserAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0ß
- *  @date 2014-11-13 13:42:43
+ *  @version 1.0.1ß
+ *  @date 2014-11-15 15:20:52
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0ß - Initial version - 11/13/2014 wer
+ *      v1.0.1ß - Changed to use DI/IOC                           - 11/15/2014 wer
+ *      v1.0.0ß - Initial version                                 - 11/13/2014 wer
  *  </pre>
+ *  @TODO write the code to display users to allow for CRUD actions
  **/
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Tpl;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\UsersModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\UserGroupMapModel;
 use Ritc\Library\Models\UserRoleMapModel;
+use Zend\ServiceManager\ServiceManager;
 
 class UserAdminView extends Base
 {
@@ -32,25 +33,23 @@ class UserAdminView extends Base
     private $o_role_model;
     private $o_ugm_model;
     private $o_urm_model;
-    private $o_twig;
-    protected $o_elog;
-    protected $private_properties;
+    private $o_tpl;
 
-    public function __construct(DbModel $o_db)
+    public function __construct(ServiceManager $o_di)
     {
         $this->setPrivateProperties();
+        $o_db                = $o_di->get('db');
         $this->o_user_model  = new UsersModel($o_db);
         $this->o_group_model = new GroupsModel($o_db);
         $this->o_role_model  = new RolesModel($o_db);
         $this->o_ugm_model   = new UserGroupMapModel($o_db);
         $this->o_urm_model   = new UserRoleMapModel($o_db);
-        $o_tpl               = new Tpl('twig_config.php');
-        $this->o_twig        = $o_tpl->getTwig();
+        $this->o_tpl         = $o_di->get('tpl');
     }
 
     public function renderPage($a_values)
     {
-        $this->o_twig->render('@default/index.tpl', $a_values);
+        $this->o_tpl->render('@default/index.tpl', $a_values);
         return '';
     }
     /**

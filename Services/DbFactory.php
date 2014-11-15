@@ -7,14 +7,15 @@
  *  Connecting to the database returns a \PDO object.
  *  Nothing else should be needed from the factory. As such, version 1.5 was born.
  *  @file DbFactory.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library Services
+ *  @namespace Ritc/Library/Services
  *  @class DbFactory
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.5.1
- *  @date 2014-09-23 11:28:00
+ *  @version 1.5.2
+ *  @date 2014-11-15 13:21:19
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.5.2 - moved to Services namespace - 11/15/2014 wer
  *      v1.5.1 - changed to implement the changes to the Base class - 09/23/2014 wer
  *      v1.5.0 - massive change to the factory, cutting out the fat - 03/25/2014 wer
  *      v1.0.0 - figured it was time to take this out of beta, with one addition. - 02/24/2014 wer
@@ -23,7 +24,7 @@
  *      v0.1.0 - initial file creation - 2013-11-06
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Services;
 
 use Ritc\Library\Abstracts\Base;
 

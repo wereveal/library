@@ -3,24 +3,25 @@
  *  @brief Something simple to help me debug my websites.
  *  @details A singleton pattern because that is what I want. pfffttttt!
  *  @file Elog.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library services
+ *  @namespace Ritc/Library/Services
  *  @class Elog
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version:  2.7.0
- *  @date 2014-11-11 12:00:40
+ *  @version:  2.7.1
+ *  @date 2014-11-15 13:25:56
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.7.1 - moved to Services namespace                                     - 11/15/2014 wer
  *      v2.7.0 - added method to ignore LOG_OFF settings to allow global logging - 11/11/2014 wer
- *      v2.6.2 - clean up, removed extend to Base class, not needed/wanted - 09/23/2014 wer
- *      v2.6.1 - package change required minor update - 12/19/2013 wer
- *      v2.6.0 - Namespace changes - 07/30/2013 wer
- *      v2.5.2 - added some sanity code to setElogConstants to prevent errors - 04/23/2013
+ *      v2.6.2 - clean up, removed extend to Base class, not needed/wanted       - 09/23/2014 wer
+ *      v2.6.1 - package change required minor update                            - 12/19/2013 wer
+ *      v2.6.0 - Namespace changes                                               - 07/30/2013 wer
+ *      v2.5.2 - added some sanity code to setElogConstants to prevent errors    - 04/23/2013 wer
  *      v2.5.1 - renamed main method from do_it to write (not so silly)
  *      v2.5.0 - FIG standars (mostly)
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Services;
 
 class Elog
 {

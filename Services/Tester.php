@@ -4,28 +4,29 @@
  *  @details Class that extends this class should end with the word Tests or
  *           Tester, e.g. MyClassTester or MyClassTests.
  *  @file Tester.php
- *  @namespace Ritc/Library/Core
+ *  @namespace Ritc/Library/Services
+ *  @ingroup ritc_library services
  *  @class Tester
  *  @author William E Reveal  <bill@revealitconsulting.com>
  *  @version  3.0.0
  *  @date 2014-09-24 13:02:53
  *  @note <pre><b>Change log</b>
+ *      v3.0.1 - moved to the Services namespace                                           - 11/15/2014 wer
  *      v3.0.0 - changed to be a class so it could extend Base class and modified for such - 09/24/2014 wer
- *      v2.0.1 - added missing method 07/01/2014 wer
- *      v2.0.0 - modified to not do any view stuff 2013-12-13 wer
- *      v1.1.0 - added new a couple new methods  2013-05-10 wer
+ *      v2.0.1 - added missing method                                                      - 07/01/2014 wer
+ *      v2.0.0 - modified to not do any view stuff                                         - 2013-12-13 wer
+ *      v1.1.0 - added new a couple new methods                                            - 2013-05-10 wer
  *          compare_arrays
  *              checks to see if the values in the first array
  *              exist in the second array
  *          setSubfailure
  *              allows the test results to display individual subtests
  *              within the method tester
- *      v1.0.1 - updated to match new framework 2013-04-03 wer
+ *      v1.0.1 - updated to match new framework                                            - 2013-04-03 wer
  *  </pre>
- *  @note RITC Library v5.0.0
- *  @ingroup ritc_library abstracts
+ *  @note RITC Library
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Services;
 
 use Ritc\Library\Abstracts\Base;
 

@@ -4,27 +4,28 @@
  *  @details It is expected that this will be used within a controller and
  *  more finely grained access with be handled there or in a sub-controller.
  *  @file Access.php
- *  @ingroup ritc_library core library
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library services library
+ *  @namespace Ritc/Library/Services
  *  @class Access
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.0.2
- *  @date 2014-11-11 14:12:25
+ *  @version 4.0.3
+ *  @date 2014-11-15 12:48:02
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v4.0.2 - part of the refactoring of the user model - 11/11/2014 wer
- *      v4.0.1 - updated to implement the changes to the Base class - 09/23/2014 wer
+ *      v4.0.3 - moved to the Services namespace                       - 11/15/2014 wer
+ *      v4.0.2 - part of the refactoring of the user model             - 11/11/2014 wer
+ *      v4.0.1 - updated to implement the changes to the Base class    - 09/23/2014 wer
  *               Bug fixes.
- *      v4.0.0 - Changed to use the user/group/role model classes - 09/12/2014 wer
- *      v3.6.1 - Changed to use DbModel defined table prefix, - 02/24/2014 wer
+ *      v4.0.0 - Changed to use the user/group/role model classes      - 09/12/2014 wer
+ *      v3.6.1 - Changed to use DbModel defined table prefix,          - 02/24/2014 wer
  *               bug fix, added anti-spambot code to login
  *               and some code clean up
- *      v3.6.0 - Database changes, added new user role connector table - 11/12/2013
+ *      v3.6.0 - Database changes, added new user role connector table - 11/12/2013 wer
  *               New and revised methods to match database changes.
  *               General Clean up of the code.
- *      v3.5.5 - refactor for change in the database class - 2013-11-06
- *      v3.5.4 - changed namespace and library reorg - 07/30/2013
- *      v3.5.3 - changed namespace to match my framework namespace, - 04/22/2013
+ *      v3.5.5 - refactor for change in the database class             - 2013-11-06 wer
+ *      v3.5.4 - changed namespace and library reorg                   - 07/30/2013 wer
+ *      v3.5.3 - changed namespace to match my framework namespace,    - 04/22/2013 wer
  *               refactored to match Elog method name change
  *      v3.5.2 - database methods were renamed, changed to match
  *      v3.5.1 - changed namespace to match Symfony structure
@@ -34,34 +35,34 @@
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
  *  </pre>
- * @TODO UserGroupMap implementation
- * @TODO UserRoleMap implementation
+ * @TODO move all database calls to the individual Model classes.
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Services;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\UsersModel;
+use Zend\ServiceManager\ServiceManager;
 
 class Access extends Base
 {
-    protected $current_page;
     protected $db_prefix;
-    protected $o_elog;
     protected $o_db;
+    private   $o_di;
     private   $o_groups;
     private   $o_users;
     protected $private_properties;
 
-    public function __construct(DbModel $o_db)
+    public function __construct(ServiceManager $o_di)
     {
         $this->setPrivateProperties();
-        $this->o_db = $o_db;
-        $this->o_users  = new UsersModel($o_db);
-        $this->o_groups = new GroupsModel($o_db);
-        $this->o_roles  = new RolesModel($o_db);
-        $this->db_prefix = $o_db->getDbPrefix();
+        $this->o_di = $o_di;
+        $this->o_db = $o_di->get('db');
+        $this->o_users  = new UsersModel($o_di);
+        $this->o_groups = new GroupsModel($o_di);
+        $this->o_roles  = new RolesModel($o_di);
+        $this->db_prefix = $this->o_db->getDbPrefix();
     }
 
     #### Actions ####

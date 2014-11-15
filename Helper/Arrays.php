@@ -5,14 +5,15 @@
  *  other classes where they don't belong or would server better in this
  *  class where they can be used more globally.
  *  @file Arrays.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library helper
+ *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.2.1
- *  @date 2014-09-23 11:46:44
+ *  @version 1.2.2
+ *  @date 2014-11-15 12:28:29
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.2.1 - moved to the Helper namespace - 11/15/2014 wer
  *      v1.2.1 - clean up - 09/23/2014 wer
  *      v1.2.0 - new method added - 12/30/2013 wer
  *      v1.1.1 - match package change - 12/19/2013 wer
@@ -22,7 +23,7 @@
  *      v1.0.1 - new namespace, FIG standards (mostly)
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Helper;
 
 use Ritc\Library\Abstracts\Base;
 

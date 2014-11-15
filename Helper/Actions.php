@@ -5,14 +5,15 @@
  *  or from a form element with a few select id names
  *
  *  @file Actions.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library helper
+ *  @namespace Ritc/Library/Helper
  *  @class Actions
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.2.5
- *  @date 2014-09-23 11:44:55
+ *  @version 2.2.6
+ *  @date 2014-11-15 12:25:59
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.2.6 - moved file into Helper area - 11/15/2014 wer
  *      v2.2.5 - changed to implment the changes in Base class - 09/23/2014 wer
  *      v2.2.4 - changed to match namespace change - 12/19/2013 wer
  *      v2.2.3 - Changed to namespace reorge
@@ -20,8 +21,10 @@
  *      v2.2.1 - added a bit more sanitation to uri actions,
  *               renamed action to form_action to be clearer what it was
  *      v2.2.0 - refactored to be closer to FIG standards
+ * @TODO Need to change to match the Base Abstract
+ * @TODO Need to decide if this needs to be repurposed with the event of the Router class
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Helper;
 
 use Ritc\Library\Abstracts\Base;
 
@@ -41,8 +44,8 @@ class Actions extends Base
     public function __construct()
     {
         $this->logIt("Starting __construct", LOG_OFF, __FILE__);
-        $this->o_arrays = new namespace\Arrays();
-        $this->o_str = new namespace\Strings();
+        $this->o_arrays = new Arrays();
+        $this->o_str = new Strings();
         $this->setPrivateProperties();
         $this->setCleanPost($_POST);
         $this->setCleanGet($_GET);

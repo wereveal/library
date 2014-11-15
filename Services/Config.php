@@ -2,30 +2,31 @@
 /**
  *  @brief Create Constants from the configuration database
  *  @file Config.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Core
+ *  @ingroup ritc_library Services
+ *  @namespace Ritc/Library/Services
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version  3.1.4
- *  @date 2014-11-13 12:15:49
+ *  @date 2014-11-15 12:50:41
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v3.1.4 - changed to match changes in ConfigModel - 11/13/2014 wer
- *      v3.1.3 - changed to implment the changes in Base class - 09/23/2014 wer
- *      v3.1.2 - bug fixes - 09/18/2014 wer
+ *      v3.1.5 - moved to the Services Namespace in the Library             - 11/15/2014 wer
+ *      v3.1.4 - changed to match changes in ConfigModel                    - 11/13/2014 wer
+ *      v3.1.3 - changed to implment the changes in Base class              - 09/23/2014 wer
+ *      v3.1.2 - bug fixes                                                  - 09/18/2014 wer
  *      v3.1.1 - made it so the config table name will be assigned from the - 02/24/2014 wer
  *               the db_prefix variable set from the db confuration
  *               (created in DbFactory, passed on to DbModel).
  *      v3.1.0 - made it so it will create the config table if it does not exist.
- *               Other changes to adjust to not having a theme based app. - 01/31/2014 wer
- *      v3.0.3 - package change - 12/19/2013 wer
- *      v3.0.2 - bug fixes, minor changes - 2013-11-08 wer
- *      v3.0.1 - refactoring for database class change - 2013-11-06 wer
- *      v3.0.0 - Modified for new framework file hierarchy - 2013-04-30 wer
+ *               Other changes to adjust to not having a theme based app.   - 01/31/2014 wer
+ *      v3.0.3 - package change                                             - 12/19/2013 wer
+ *      v3.0.2 - bug fixes, minor changes                                   - 2013-11-08 wer
+ *      v3.0.1 - refactoring for database class change                      - 2013-11-06 wer
+ *      v3.0.0 - Modified for new framework file hierarchy                  - 2013-04-30 wer
  *      v2.3.0 - mostly changes for FIG-standards
  *  </pre>
 **/
-namespace Ritc\Library\Core;
+namespace Ritc\Library\Services;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\ConfigModel;
@@ -33,11 +34,8 @@ use Ritc\Library\Models\ConfigModel;
 class Config extends Base
 {
     private $created = false;
-    protected $current_page;
     private static $instance;
-    protected $o_config_model;
-    protected $o_elog;
-    protected $private_properties;
+    private $o_config_model;
 
     private function __construct(DbModel $o_db)
     {
