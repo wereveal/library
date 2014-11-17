@@ -94,7 +94,7 @@ class Router extends Base
     {
         return $this->route_path;
     }
-    public function getParts()
+    public function getRouteParts()
     {
         return $this->a_route_parts;
     }
