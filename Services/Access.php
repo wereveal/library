@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Services
  *  @class Access
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.0.3
- *  @date 2014-11-15 12:48:02
+ *  @version 4.0.4
+ *  @date 2014-11-17 14:35:29
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.0.4 - switched to using IOC/DI                              - 11/17/2014 wer
  *      v4.0.3 - moved to the Services namespace                       - 11/15/2014 wer
  *      v4.0.2 - part of the refactoring of the user model             - 11/11/2014 wer
  *      v4.0.1 - updated to implement the changes to the Base class    - 09/23/2014 wer
@@ -43,25 +44,23 @@ use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\UsersModel;
-use Zend\ServiceManager\ServiceManager;
+use Ritc\Library\Services\Di;
 
 class Access extends Base
 {
-    protected $db_prefix;
-    protected $o_db;
-    private   $o_di;
-    private   $o_groups;
-    private   $o_users;
-    protected $private_properties;
+    private $db_prefix;
+    private $o_db;
+    private $o_groups;
+    private $o_roles;
+    private $o_users;
 
-    public function __construct(ServiceManager $o_di)
+    public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        $this->o_di = $o_di;
-        $this->o_db = $o_di->get('db');
-        $this->o_users  = new UsersModel($o_di);
-        $this->o_groups = new GroupsModel($o_di);
-        $this->o_roles  = new RolesModel($o_di);
+        $this->o_db      = $o_di->get('db');
+        $this->o_users   = new UsersModel($this->o_db);
+        $this->o_groups  = new GroupsModel($this->o_db);
+        $this->o_roles   = new RolesModel($this->o_db);
         $this->db_prefix = $this->o_db->getDbPrefix();
     }
 

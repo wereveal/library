@@ -6,14 +6,15 @@
  *  @namespace Ritc/Library/Models
  *  @class RolesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.2β
- *  @date 2014-11-15 13:13:51
+ *  @version 1.0.3β
+ *  @date 2014-11-17 14:27:18
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.2ß - changed to use DI/IOC                                      - 11/15/2014 wer
- *      v1.0.1β - extends the Base class, injects the DbModel, clean up      - 09/23/2014 wer
- *      v1.0.0β - First live version                                         - 09/15/2014 wer
- *      v0.1.0β - Initial version                                            - 01/18/2014 wer
+ *      v1.0.3ß - reverted to injecting the DbModel           - 11/17/2014 wer
+ *      v1.0.2ß - changed to use DI/IOC                       - 11/15/2014 wer
+ *      v1.0.1β - extends the Base class, injects the DbModel - 09/23/2014 wer
+ *      v1.0.0β - First live version                          - 09/15/2014 wer
+ *      v0.1.0β - Initial version                             - 01/18/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
@@ -21,7 +22,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
-use Zend\ServiceManager\ServiceManager;
+use Ritc\Library\Services\DbModel;
 
 class RolesModel extends Base implements ModelInterface
 {
@@ -29,15 +30,13 @@ class RolesModel extends Base implements ModelInterface
     private $db_type;
     private $o_arrays;
     private $o_db;
-    private $o_di;
 
-    public function __construct(ServiceManager $o_di)
+    public function __construct(Db $o_db)
     {
-        $this->o_di      = $o_di;
-        $this->o_db      = $o_di->get('db');
+        $this->o_db      = $o_db;
         $this->o_arrays  = new Arrays;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_type   = $o_db->getDbType();
+        $this->db_prefix = $o_db->getDbPrefix();
     }
 
     ### BASE CRUD ###

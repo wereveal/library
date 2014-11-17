@@ -20,7 +20,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
-use Zend\ServiceManager\ServiceManager;
+use Ritc\Library\Services\DbModel;
 
 class UserGroupMapModel extends Base implements ModelInterface
 {
@@ -29,12 +29,12 @@ class UserGroupMapModel extends Base implements ModelInterface
     private $o_arrays;
     private $o_db;
 
-    public function __construct(ServiceManager $o_di)
+    public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_di->get('db');
+        $this->o_db      = $o_db;
         $this->o_arrays  = new Arrays;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_type   = $o_db->getDbType();
+        $this->db_prefix = $o_db->getDbPrefix();
     }
 
     ### Basic CRUD commands, required by interface ###

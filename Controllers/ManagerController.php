@@ -8,11 +8,12 @@
  *  @namespace Ritc/Library/Controllers
  *  @class ManagerController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0ß
- *  @date 2014-11-14 06:54:53
+ *  @version 1.0.1ß
+ *  @date 2014-11-17 14:08:21
  *  @note A file in RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0ß - Initial version - 11/14/2014 wer
+ *      v1.0.1ß - changed to use IOC                    - 11/17/2014 wer
+ *      v1.0.0ß - Initial version                       - 11/14/2014 wer
  *  </pre>
  * @TODO Session Control
  **/
@@ -21,7 +22,7 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Views\ManagerView;
-use Zend\ServiceManager\ServiceManager;
+use Ritc\Library\Services\Di;
 
 class ManagerController extends Base implements ControllerInterface
 {
@@ -29,7 +30,7 @@ class ManagerController extends Base implements ControllerInterface
     protected $o_db;
     protected $o_session;
 
-    public function __construct(ServiceManager $o_di)
+    public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $this->o_session = $o_di->get('session');

@@ -24,7 +24,7 @@ use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\UserGroupMapModel;
 use Ritc\Library\Models\UserRoleMapModel;
-use Zend\ServiceManager\ServiceManager;
+use Ritc\Library\Services\Di;
 
 class UserAdminView extends Base
 {
@@ -35,7 +35,7 @@ class UserAdminView extends Base
     private $o_urm_model;
     private $o_tpl;
 
-    public function __construct(ServiceManager $o_di)
+    public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $o_db                = $o_di->get('db');

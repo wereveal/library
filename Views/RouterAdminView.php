@@ -19,14 +19,14 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\RouterModel;
 use Ritc\Library\Helper\ViewHelper;
-use Zend\ServiceManager\ServiceManager;
+use Ritc\Library\Services\Di;
 
 class RouterAdminView extends Base
 {
     private $o_model;
     private $o_tpl;
 
-    public function __construct(ServiceManager $o_di)
+    public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $this->o_tpl   = $o_di->get('tpl');

@@ -23,6 +23,7 @@ use Ritc\Library\Core\DbModel;
 use Ritc\Library\Core\Session;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Models\RouterModel;
+use Ritc\Library\Services\Di;
 use Ritc\Library\Views\RouterAdminView;
 
 class RouterAdminController extends Base implements ControllerInterface
@@ -32,13 +33,14 @@ class RouterAdminController extends Base implements ControllerInterface
     private $o_view;
     private $o_session;
 
-    public function __construct(Session $o_session, DbModel $o_db, array $a_router)
+    public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
+        $o_db            = $o_di->get('db');
         $this->o_model   = new RouterModel($o_db);
-        $this->o_view    = new RouterAdminView($o_db);
-        $this->o_session = $o_session;
-        $this->a_router  = $a_router;
+        $this->o_view    = new RouterAdminView($o_di);
+        $this->o_session = $o_di->get('session');
+        $this->a_router  = $o_di->get('router');
     }
     public function render()
     {
@@ -84,17 +86,5 @@ class RouterAdminController extends Base implements ControllerInterface
             $a_message = ['message' => 'A Problem Has Occured. The route could not be deleted.', 'type' => 'error'];
             return $this->o_view->renderList($a_message);
         }
-    }
-    ### Setters and Getters ###
-    /**
-     * @param Session $o_session
-     */
-    public function setSession(Session $o_session)
-    {
-        $this->o_session = $o_session;
-    }
-    public function getSession()
-    {
-        return $this->o_session;
     }
 }

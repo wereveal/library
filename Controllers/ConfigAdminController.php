@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Controllers
  *  @class ConfigAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1
- *  @date 2014-11-13 12:56:24
+ *  @version 1.0.2
+ *  @date 2014-11-17 14:01:13
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.2 - changed to use the new Di class - 11/17/2014 wer
  *      v1.0.1 - Adjusted to match file name change - 11/13/2014 wer
  *      v1.0.0 - Initial version - 04/02/2014 wer
  *  </pre>
@@ -21,7 +22,7 @@ use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Models\ConfigModel;
 use Ritc\Library\Views\ConfigAdminView;
-use Zend\ServiceManager\ServiceManager;
+use Ritc\Library\Services\Di;
 
 class ConfigAdminController extends Base implements ControllerInterface
 {
@@ -29,7 +30,7 @@ class ConfigAdminController extends Base implements ControllerInterface
     private $o_view;
     private $o_session;
 
-    public function __construct(ServiceManager $o_di)
+    public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $o_db            = $o_di->get('db');

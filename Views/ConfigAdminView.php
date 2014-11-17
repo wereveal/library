@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Views
  *  @class ConfigAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1ß
- *  @date 2014-09-24 12:48:16
+ *  @version 1.0.2ß
+ *  @date 2014-11-17 14:02:35
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.2ß - changed to use the new Di class - 11/17/2014 wer
  *      v1.0.1ß - changed to use Base class and inject database object - 09/24/2014 wer
  *      v1.0.0ß - Initial version 04/02/2014 wer
  *  </pre>
@@ -19,18 +20,16 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\ConfigModel;
 use Ritc\Library\Helper\ViewHelper;
-use Zend\ServiceManager\ServiceManager;
+use Ritc\Library\Services\Di;
 
 class ConfigAdminView extends Base
 {
-    private $o_di;
     private $o_model;
     private $o_tpl;
 
-    public function __construct(ServiceManager $o_di)
+    public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        $this->o_di    = $o_di;
         $this->o_tpl   = $o_di->get('tpl');
         $this->o_model = new ConfigModel($o_di->get('db'));
     }

@@ -18,7 +18,7 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\ViewHelper;
-use Zend\ServiceManager\ServiceManager;
+use Ritc\Library\Services\Di;
 
 class ManagerView extends Base
 {
@@ -26,7 +26,7 @@ class ManagerView extends Base
     private $o_db;
     private $o_tpl;
 
-    public function __construct(ServiceManager $o_di)
+    public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $this->o_di  = $o_di;
