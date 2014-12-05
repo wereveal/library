@@ -1,18 +1,16 @@
 <?php
 /**
  *  @brief Class that does stuff with arrays.
- *  @details This is basically a start. I expect others to show up here from
- *  other classes where they don't belong or would server better in this
- *  class where they can be used more globally.
  *  @file Arrays.php
  *  @ingroup ritc_library helper
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.2.2
- *  @date 2014-11-15 12:28:29
+ *  @version 1.3.0
+ *  @date 2014-12-05 10:11:19
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it - 12/05/2014 wer
  *      v1.2.1 - moved to the Helper namespace - 11/15/2014 wer
  *      v1.2.1 - clean up - 09/23/2014 wer
  *      v1.2.0 - new method added - 12/30/2013 wer
@@ -30,20 +28,24 @@ use Ritc\Library\Abstracts\Base;
 class Arrays extends Base
 {
     /**
-     *  Modifies array values with htmlentities.
+     *  Modifies array values with htmlentities and strips unsafe php commands.
      *  Initially designed to do some basic filtering of $_POST, $_GET, etc
      *  but will work with any array.
-     *  @param array $array the array to clean
-     *  @param array $a_allowed_keys allows only specified keys to be returned
-     *  @return array the cleaned array
-    **/
-    public function cleanArrayValues(array $array = array(), $a_allowed_keys = array())
+     *  @param array $array               the array to clean
+     *  @param array $a_allowed_keys      allows only specified keys to be returned
+     *  @param bool  $unsafe_php_commands defaults to true strips 'unsafe' php commands, rare should it be false
+     *  @return array                     the cleaned array
+     */
+    public function cleanArrayValues(array $array = array(), $a_allowed_keys = array(), $unsafe_php_commands = true)
     {
         $a_clean = array();
         if (count($array) === 0) {
             return $a_clean;
         }
-        foreach ($array as $key=>$value) {
+        if ($unsafe_php_commands === true) {
+            $array = $this->stripUnsafePhp($array);
+        }
+        foreach ($array as $key => $value) {
             if (is_array($value)) {
                 $a_clean[$key] = $this->cleanArrayValues($value);
             }
@@ -172,6 +174,34 @@ class Arrays extends Base
             }
         }
         return $a_clean;
+    }
+    /**
+     *  Removes unsafe php function names from array values.
+     *  @param array $a_pairs
+     *  @return array
+     */
+    public function stripUnsafePhp(array $a_pairs)
+    {
+        $a_functions = [
+            '/exec\((.*)\)/i',
+            '/passthru\((.*)\)/i',
+            '/shell_exec\((.*)\)/i',
+            '/system\((.*)\)/i',
+            '/proc_open\((.*)\)/i',
+            '/popen\((.*)\)/i',
+            '/curl_exec\((.*)\)/i',
+            '/curl_multi_exec\((.*)\)/i',
+            '/parse_ini_file\((.*)\)/i',
+            '/show_source\((.*)\)/i'
+        ];
+        $a_return_this = array();
+        foreach ($a_pairs as $key => $value) {
+            if (is_array($value)) {
+                $a_return_this[$key] = $this->stripUnsafePhp($value);
+            }
+            $a_return_this[$key] = preg_replace($a_functions, '', $value);
+        }
+        return $a_return_this;
     }
     /**
      *  Strips unwanted key=>value pairs.

@@ -6,20 +6,21 @@
  *  @namespace Ritc/Library/Controllers
  *  @class UserAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1
- *  @date 2014-11-13 12:56:24
+ *  @version 1.0.2
+ *  @date 2014-12-05 11:06:59
  *  @note A file in Library v5
  *  @note <pre><b>Change Log</b>
+ *      v1.0.2 - refactoring of namespaces          - 12/05/2014 wer
  *      v1.0.1 - Adjusted to match file name change - 11/13/2014 wer
- *      v1.0.0 - Initial version - 04/02/2014 wer
+ *      v1.0.0 - Initial version                    - 04/02/2014 wer
  *  </pre>
  *  @todo Add the session validation setup
 **/
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Session;
+use Ritc\Library\Services\DbModel;
+use Ritc\Library\Services\Session;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Views\UserAdminView;
 

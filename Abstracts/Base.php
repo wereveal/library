@@ -23,7 +23,7 @@
 **/
 namespace Ritc\Library\Abstracts;
 
-use Ritc\Library\Core\Elog;
+use Ritc\Library\Services\Elog;
 
 abstract class Base
 {

@@ -1,10 +1,10 @@
 <?php
 namespace Ritc\Library\Tests;
 
-use Ritc\Library\Abstracts\Tester;
-use Ritc\Library\Core\DbFactory;
-use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Elog;
+use Ritc\Library\Basic\Tester;
+use Ritc\Library\Services\DbFactory;
+use Ritc\Library\Services\DbModel;
+use Ritc\Library\Services\Elog;
 use Ritc\Library\Models\UserRoleMapModel;
 
 class UserRoleMapModelTests extends Tester

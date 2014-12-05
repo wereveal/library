@@ -8,9 +8,10 @@
  *  @ingroup ritc_library services
  *  @class Tester
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version  3.0.0
- *  @date 2014-09-24 13:02:53
+ *  @version  3.0.2
+ *  @date 2014-12-05 11:30:33
  *  @note <pre><b>Change log</b>
+ *      v3.0.2 - moved to the Basic namespace where it was more appropriate                - 12/05/2014 wer
  *      v3.0.1 - moved to the Services namespace                                           - 11/15/2014 wer
  *      v3.0.0 - changed to be a class so it could extend Base class and modified for such - 09/24/2014 wer
  *      v2.0.1 - added missing method                                                      - 07/01/2014 wer
@@ -26,7 +27,7 @@
  *  </pre>
  *  @note RITC Library
 **/
-namespace Ritc\Library\Services;
+namespace Ritc\Library\Basic;
 
 use Ritc\Library\Abstracts\Base;
 

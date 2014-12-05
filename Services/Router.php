@@ -36,7 +36,7 @@ class Router extends Base
         $this->setGet();
         $this->setPost();
         $this->setRouteParts();
-        $this->o_model  = new RouterModel($o_db);
+        $this->o_model = new RouterModel($o_db);
     }
 
     /**
@@ -116,7 +116,7 @@ class Router extends Base
     }
     public function setGet(array $a_allowed_keys = array())
     {
-        $this->a_get = $this->o_arrays->cleanArrayValues($_GET, $a_allowed_keys);
+        $this->a_get = $this->o_arrays->cleanArrayValues($_GET, $a_allowed_keys, true);
     }
     /**
      *  Sets the property $route_path.
@@ -137,7 +137,7 @@ class Router extends Base
     }
     public function setPost(array $a_allowed_keys = array())
     {
-        $this->a_post = $this->o_arrays->cleanArrayValues($_POST, $a_allowed_keys);
+        $this->a_post = $this->o_arrays->cleanArrayValues($_POST, $a_allowed_keys, true);
     }
     /* From Base Abstract
         protected function getElog

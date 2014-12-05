@@ -61,9 +61,10 @@ class TwigFactory extends Base
      * template rendering.
      * @return Twig_Environment
      */
-    public function getTwig()
+    public static function getTwig($config_file = 'twig_config.php')
     {
-        return $this->o_twig;
+        $o_tf = self::create($config_file);
+        return $o_tf->$o_twig;
     }
     private static function retrieveTwigConfigArray($config_file)
     {

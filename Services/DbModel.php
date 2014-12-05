@@ -7,27 +7,27 @@
  *  @namespace Ritc/Library/Services
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.2.1
+ *  @version 3.2.3
  *  @date 2014-11-11 13:05:26
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v3.2.3 - moved to Services namespace - 11/15/2014 wer
+ *      v3.2.3 - moved to Services namespace                                              - 11/15/2014 wer
  *      v3.2.1 - bug fix
  *      v3.2.0 - Made this class more stand alone except extending Base class.
  *               Added function to allow raw query.
  *               Changed it to use the new Base class elog inject method.
  *               Hammering down a couple bugs.
- *      v3.1.2 - bug fixes, needed to pass the pdo object into the class - 03/20/2014 wer
- *      v3.1.1 - added methods to set and return db prefix - 02/24/2014 wer
+ *      v3.1.2 - bug fixes, needed to pass the pdo object into the class                  - 03/20/2014 wer
+ *      v3.1.1 - added methods to set and return db prefix                                - 02/24/2014 wer
  *               It should be noted, this assumes a db prefix has been set. see DbFactory
- *      v3.1.0 - added method to return db tables - 01/31/2014 wer
- *      v3.0.1 - renamed file to match function, eliminated the unnecessary - 12/19/2013 wer
- *      v3.0.0 - split the pdo creation (database connection) from the crud - 2013-11-06
- *      v2.4.4 - bug fix in buildSqlWhere - 2013-07-23 17:24:10
- *      v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff) 07/06/2013
- *      v2.4.2 - added method to build sql where 05/09/2013
+ *      v3.1.0 - added method to return db tables                                         - 01/31/2014 wer
+ *      v3.0.1 - renamed file to match function, eliminated the unnecessary               - 12/19/2013 wer
+ *      v3.0.0 - split the pdo creation (database connection) from the crud               - 2013-11-06 wer
+ *      v2.4.4 - bug fix in buildSqlWhere                                                 - 2013-07-23 wer
+ *      v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff)      - 07/06/2013 wer
+ *      v2.4.2 - added method to build sql where                                          - 05/09/2013 wer
  *      v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
- *      v2.4.0 - Change to match new RITC Library layout 04/23/2013
+ *      v2.4.0 - Change to match new RITC Library layout                                  - 04/23/2013 wer
  *      v2.3.2 - new method to remove bad keys
  *               removed some redundant code
  *               reorganized putting main four commands at top for easy reference
