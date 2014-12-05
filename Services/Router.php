@@ -2,14 +2,16 @@
 /**
  *  @brief Determines the controller and method to use based on URI.
  *  @file Router.php
- *  @ingroup ritc_library Services
+ *  @ingroup ritc_library services
  *  @namespace Ritc/Library/Services
  *  @class Router
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1ß
- *  @date 2014-11-14 07:29:27
+ *  @version 1.0.3ß
+ *  @date 2014-12-05 16:13:34
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.3ß - added form_action class property.                                         - 12/05/2014 wer
+ *                Added setter and getters for form_action class property.
  *      v1.0.2ß - moved to Services namespace                                               - 11/15/2014 wer
  *      v1.0.1ß - bug fixes                                                                 - 11/14/2014 wer
  *      v1.0.0ß - initial attempt to make this                                              - 09/25/2014 wer
@@ -25,6 +27,7 @@ class Router extends Base
     private $a_get;
     private $a_post;
     private $a_route_parts;
+    private $form_action;
     private $o_model;
     private $route_path;
 
@@ -32,11 +35,12 @@ class Router extends Base
     {
         $this->setPrivateProperties();
         $this->o_arrays = new Arrays();
+        $this->o_model  = new RouterModel($o_db);
         $this->setRoutePath();
         $this->setGet();
         $this->setPost();
         $this->setRouteParts();
-        $this->o_model = new RouterModel($o_db);
+        $this->setFormAction();
     }
 
     /**
@@ -58,10 +62,11 @@ class Router extends Base
         $a_results = $this->o_model->read($a_values);
         $this->logIt("Actions from DB: " . var_export($a_results, true), LOG_OFF, __METHOD__);
         if ($a_results !== false && count($a_results) === 1) {
-            $a_route_parts         = $a_results[0];
-            $a_route_parts['get']  = $this->a_get;
-            $a_route_parts['post'] = $this->a_post;
-            $this->a_route_parts   = $a_route_parts;
+            $a_route_parts                = $a_results[0];
+            $a_route_parts['get']         = $this->a_get;
+            $a_route_parts['post']        = $this->a_post;
+            $a_route_parts['form_action'] = $this->form_action;
+            $this->a_route_parts          = $a_route_parts;
         }
         else {
             $this->a_route_parts = [
@@ -71,12 +76,17 @@ class Router extends Base
                 'route_method' => '',
                 'route_action' => '',
                 'get'          => $this->a_get,
-                'post'         => $this->a_post
+                'post'         => $this->a_post,
+                'form_action'  => $this->form_action
             ];
         }
     }
 
     ### GETters and SETters ###
+    public function getFormAction()
+    {
+        return $this->form_action;
+    }
     public function getGet($value = '')
     {
         if ($value == '') {
@@ -114,6 +124,48 @@ class Router extends Base
             }
         }
     }
+    /**
+     *  Sets the class property $form_action.
+     *  Assumes the array passed in is from a form posted after it was sanitized.
+     *  @param array $a_post an associate array put through filter_var($var, FILTER_SANITIZE_ENCODED)
+     *  @return bool
+     */
+    public function setFormAction(array $a_post = array())
+    {   
+        if ($a_post == array()) {
+            $a_post = $this->a_post;
+        }
+        $this->logIt("Starting with: " . var_export($a_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $x_action = '';
+        $y_action = '';
+        foreach ($a_post as $key=>$value) {
+            if (substr($key, strlen($key) - 2) == "_x") {
+                $x_action = substr($key, 0, strpos($key, "_x"));
+            }
+            elseif (substr($key, strlen($key) - 2) == "_y") {
+                $y_action = substr($key, 0, strpos($key, "_y"));
+            }
+        }
+        if (isset($a_post["action"]) && ($a_post["action"] != '')) {
+            $action = $a_post["action"];
+        }
+        elseif (isset($a_post["step"]) && ($a_post["step"] != '')) {
+            $action = $a_post["step"];
+        }
+        elseif (isset($a_post["submit"]) && ($a_post["submit"] != '')) {
+            $action = $a_post["submit"];
+        }
+        elseif (($x_action != '') && ($x_action == $y_action)) {
+            $action = $x_action;
+        }
+        else {
+            $action = '';
+        }
+        $this->logIt("Action is: {$action}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->form_action = $action;
+        return true;
+    }
+    
     public function setGet(array $a_allowed_keys = array())
     {
         $this->a_get = $this->o_arrays->cleanArrayValues($_GET, $a_allowed_keys, true);
