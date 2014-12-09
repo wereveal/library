@@ -273,8 +273,8 @@ class Session extends Base
         {
             return false;
         }
-        if (isset($a_values['tolken']) && !isset($a_values['token'])) {
-            $a_values['token'] = $a_values['tolken'];
+        if (isset($a_values['token']) && !isset($a_values['tolken'])) {
+            $a_values['tolken'] = $a_values['token'];
         }
         if (isset($a_values['hobbit']) && $a_values['hobbit'] != '') {
             return false;
@@ -300,7 +300,7 @@ class Session extends Base
         elseif ((ini_get('session.use_cookies') == 0) && (ini_get('session.use_only_cookies') == 0)) {
             if (
                 ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-                && $a_values['token']   == $_SESSION['token']
+                && $a_values['tolken']  == $_SESSION['token']
                 && $a_values['form_ts'] == $_SESSION['idle_timestamp']
             ) {
                 return true;
@@ -308,7 +308,7 @@ class Session extends Base
         }
         elseif (
             ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-            && $a_values['token']   == $_SESSION['token']
+            && $a_values['tolken']  == $_SESSION['token']
             && $a_values['form_ts'] == $_SESSION['idle_timestamp']
             && $_COOKIE[$this->session_name] == session_id()
         ) {

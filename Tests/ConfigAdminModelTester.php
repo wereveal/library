@@ -170,7 +170,7 @@ class ConfigAdminModelTester extends Tester
     {
         $bad_results = false;
         $results1 = $this->o_config->read();
-        $results2 = $this->o_config->read("USER_ID");
+        $results2 = $this->o_config->read("SYSTEM_USER_ID");
         $results3 = $this->o_config->read("badValue");
         $results4 = $this->o_config->read(1);
         if ($results1 === false || $this->compareArrays($this->a_test_values['all_configs'], $results1) === false) {

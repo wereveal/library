@@ -44,7 +44,6 @@ use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\UsersModel;
-use Ritc\Library\Services\Di;
 
 class Access extends Base
 {
@@ -52,12 +51,14 @@ class Access extends Base
     private $o_db;
     private $o_groups;
     private $o_roles;
+    private $o_session;
     private $o_users;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $this->o_db      = $o_di->get('db');
+        $this->o_session = $o_di->get('session');
         $this->o_users   = new UsersModel($this->o_db);
         $this->o_groups  = new GroupsModel($this->o_db);
         $this->o_roles   = new RolesModel($this->o_db);
@@ -82,47 +83,48 @@ class Access extends Base
      *
      *  @return mixed, (int) user_id or (bool) false
     **/
-    public function login($a_login = '')
+    public function login(array $a_user_post = array())
     {
         $meth = __METHOD__ . '.';
-        if ($a_login == '') { return false; }
+        if ($a_user_post == array()) { return false; }
         $a_required = array('login_id', 'password', 'tolken', 'form_ts');
         foreach ($a_required as $required) {
-            if (isset($a_login[$required]) === false) {
+            if (isset($a_user_post[$required]) === false) {
                 return false;
             }
         }
-        $a_user_values = $this->o_users->readUserInfo($a_login['login_id']);
-        $this->logIt("Posted Values: " . var_export($a_login, true), LOG_OFF, $meth . __LINE__);
+        if ($this->o_session->isValidSession)
+        $a_user_values = $this->o_users->readUserInfo($a_user_post['login_id']);
+        $this->logIt("Posted Values: " . var_export($a_user_post, true), LOG_OFF, $meth . __LINE__);
         $this->logIt("User Values: " . var_export($a_user_values, true), LOG_OFF, $meth . __LINE__);
         if ($a_user_values !== false && $a_user_values !== null) {
             if ($a_user_values['is_active'] < 1) {
                 $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
                 $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
-                $a_login['password'] = '';
-                $a_login['is_active'] = false;
-                return $a_login;
+                $a_user_post['password'] = '';
+                $a_user_post['is_active'] = false;
+                return $a_user_post;
             }
             if ($a_user_values['bad_login_count'] > 5 && $a_user_values['bad_login_ts'] >= (time() - (60*5))) {
                 $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
-                $a_login['password'] = '';
-                $a_login['locked'] = 'yes';
-                return $a_login;
+                $a_user_post['password'] = '';
+                $a_user_post['locked'] = 'yes';
+                return $a_user_post;
             }
             // simple anti-spambot thing... if the form has it.
-            if (isset($a_login['hobbit']) && $a_login['hobbit'] != '') {
+            if (isset($a_user_post['hobbit']) && $a_user_post['hobbit'] != '') {
                 $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
                 $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
                 return false;
             }
-            $a_login['created_on'] = $a_user_values['created_on'];
-            $a_login['user_id'] = $a_user_values['user_id'];
-            $hashed_password = password_hash($a_login['password'],PASSWORD_DEFAULT);
+            $a_user_post['created_on'] = $a_user_values['created_on'];
+            $a_user_post['user_id'] = $a_user_values['user_id'];
+            $hashed_password = password_hash($a_user_post['password'],PASSWORD_DEFAULT);
             if ($a_user_values['password'] == $hashed_password) {
                 $this->o_users->resetBadLoginCount($a_user_values['user_id']);
                 $this->o_users->resetBadLoginTimestamp($a_user_values['user_id']);
-                $a_user_values['tolken'] = $a_login['tolken'];
-                $a_user_values['form_ts'] = $a_login['form_ts'];
+                $a_user_values['tolken'] = $a_user_post['tolken'];
+                $a_user_values['form_ts'] = $a_user_post['form_ts'];
                 $a_user_values['locked'] = 'no';
                 unset($a_user_values['password']);
                 unset($a_user_values['bad_login_count']);
@@ -379,7 +381,7 @@ class Access extends Base
      *  @param int $user_id
      *  @return bool
     **/
-    private function incrementBadLoginCount($user_id = -1)
+    public function incrementBadLoginCount($user_id = -1)
     {
         if ($user_id == -1) { return false; }
         $sql = "
@@ -395,7 +397,7 @@ class Access extends Base
      *  @param int $user_id required
      *  @return bool
     */
-    private function incrementBadLoginTimestamp($user_id = -1)
+    public function incrementBadLoginTimestamp($user_id = -1)
     {
         if ($user_id == -1) { return false; }
         $sql = "
@@ -463,7 +465,7 @@ class Access extends Base
      *  @param int $user_id required
      *  @return bool
     **/
-    private function resetBadLoginCount($user_id = -1)
+    public function resetBadLoginCount($user_id = -1)
     {
         if ($user_id == -1) { return false; }
         $sql = "
@@ -479,7 +481,7 @@ class Access extends Base
      *  @param int $user_id required
      *  @return bool
     **/
-    private function resetBadLoginTimestamp($user_id = -1)
+    public function resetBadLoginTimestamp($user_id = -1)
     {
         if ($user_id == -1) { return false; }
         $sql = "
@@ -549,7 +551,7 @@ class Access extends Base
      *  @param int $user_id required
      *  @return bool
     **/
-    private function setBadLoginTimestamp($user_id = -1)
+    public function setBadLoginTimestamp($user_id = -1)
     {
         if ($user_id == -1) { return false; }
         $sql = "
@@ -598,7 +600,7 @@ class Access extends Base
      *   e.g., array(':password'=>'password', ':user_id'=>'userID')
      *  @return bool success or failure
     **/
-    private function updateUserPassword(array $a_values = array())
+    public function updateUserPassword(array $a_values = array())
     {
         if ($a_values == array()) { return false; }
         $sql = "

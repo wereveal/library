@@ -7,7 +7,7 @@ return array(
     array('ERROR_EMAIL_ADDRESS', 'webmaster@revealitconsulting.com'),
     array('PAGE_META_DESCRIPTION', 'My Company'),
     array('PAGE_META_KEYWORDS', 'My Company'),
-    array('PAGE_TEMPLATE', 'index.twig'),
+    array('PAGE_TEMPLATE', 'list_logins.twig'),
     array('PAGE_TITLE', 'My Company'),
     array('THEME_NAME', ''),
     array('ADMIN_THEME_NAME', ''),

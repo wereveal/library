@@ -45,7 +45,7 @@ class ManagerView extends Base
             'site_url'      => SITE_URL,
             'rights_holder' => RIGHTS_HOLDER
         ];
-        return $this->o_tpl->render('@main/index.twig', $a_values);
+        return $this->o_tpl->render('@main/list_logins.twig', $a_values);
     }
     /**
      * Temp method to test stuff
@@ -71,6 +71,6 @@ class ManagerView extends Base
             'site_url'      => SITE_URL,
             'rights_holder' => RIGHTS_HOLDER
         ];
-        return $this->o_tpl->render('@main/index.twig', $a_values);
+        return $this->o_tpl->render('@main/list_logins.twig', $a_values);
     }
 }
