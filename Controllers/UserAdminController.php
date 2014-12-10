@@ -19,79 +19,51 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Services\DbModel;
-use Ritc\Library\Services\Session;
 use Ritc\Library\Interfaces\ControllerInterface;
+use Ritc\Library\Services\Di;
 use Ritc\Library\Views\UserAdminView;
 
 class UserAdminController extends Base implements ControllerInterface
 {
-    private $o_model;
+    private $a_route_parts;
+    private $a_post_values;
+    private $form_action;
+    private $main_action;
+    private $o_db;
+    private $o_di;
+    private $o_router;
     private $o_view;
     private $o_session;
+    private $route_action;
 
-    public function __construct(Session $o_session, DbModel $o_db)
+    public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        $this->o_view    = new UserAdminView($o_db);
-        $this->o_session = $o_session;
-
+        $this->o_di          = $o_di;
+        $this->o_db          = $o_di->get('db');
+        $this->o_view        = new UserAdminView($this->o_db);
+        $this->o_session     = $o_di->get('session');
+        $this->o_router      = $o_di->get('router');
+        $this->a_route_parts = $this->o_router->getRouteParts;
+        $this->route_action  = $this->a_route_parts['route_action'];
+        $this->form_action   = $this->a_route_parts['form_action'];
+        $this->a_post_values = $this->o_router->getPost();
+        $this->isSessionOk();
+        $this->setMainAction();
     }
     /**
      *  Routes the code to the appropriate methods and classes. Returns a string.
-     *  @param array $a_actions optional, the actions derived from the URL/Form
-     *  @param array $a_values optional, the values from a form
      *  @return string html to be displayed.
     **/
-    public function render(array $a_actions = array(), array $a_values = array())
+    public function render()
     {
-        $main_action = isset($a_actions['action3']) ? $a_actions['action3'] : '';
-        $form_action = isset($a_values['form_action']) ? $a_values['form_action'] : '';
-        // Make sure this is a good session
-        if ($main_action == 'modify' || $main_action == 'save' || $main_action == 'delete') {
-            if ($this->o_session->isNotValidSession($a_values, true)) {
-                $main_action = '';
-                $this->o_session->setSessionVars();
-            }
-        }
-        // Make sure only valid routes are followed
-        switch ($main_action) {
-            case 'modify':
-                switch ($form_action) {
-                    case 'verify':
-                        $main_action = 'verify';
-                        break;
-                    case 'update':
-                        $main_action = 'update';
-                        break;
-                    default:
-                        $main_action = '';
-                }
+        switch ($this->main_action) {
+            case 'login':
+                header("Location: " . SITE_URL);
                 break;
-            case 'save':
-                if ($form_action == 'save_new') {
-                    $main_action = 'save_new';
-                }
-                else {
-                    $main_action = '';
-                }
-                break;
-            case 'delete':
-                if ($form_action == 'delete') {
-                    $main_action = 'delete';
-                }
-                else {
-                    $main_action = '';
-                }
-                break;
-            default:
-                $main_action = '';
-        }
-
-        switch ($main_action) {
-            case 'save_new':
+            case 'create':
                 // save the record
-                $a_config = $a_values['config'];
+                $a_config = $this->a_post_values['config'];
                 $this->logit(
                     'config values before create config' . var_export($a_config, TRUE),
                     LOG_OFF,
@@ -107,7 +79,7 @@ class UserAdminController extends Base implements ControllerInterface
                 return $this->o_view->renderConfigs($a_message);
             case 'update':
                 // save the record
-                $a_config = $a_values['config'];
+                $a_config = $this->a_post_values['config'];
                 $results = $this->o_model->update($a_config);
                 if ($results === false) {
                     $a_message = array('type' => 'failure', 'message' => 'Could not update the configuration.');
@@ -117,10 +89,10 @@ class UserAdminController extends Base implements ControllerInterface
                 }
                 return $this->o_view->renderConfigs($a_message);
             case 'verify':
-                return $this->o_view->renderVerify($a_values);
+                return $this->o_view->renderVerify($this->a_post_values);
             case 'delete':
                 // delete the record
-                $results = $this->o_model->delete($a_values['config_id']);
+                $results = $this->o_model->delete($this->a_post_values['config_id']);
                 // $results = false;
                 if ($results === false) {
                     $a_message = array('type' => 'failure', 'message' => 'Could not delete the configuration.');
@@ -133,15 +105,91 @@ class UserAdminController extends Base implements ControllerInterface
                 return $this->o_view->renderConfigs();
         }
     }
-    /**
-     * @param Session $o_session
-     */
-    public function setSession(Session $o_session)
+    public function renderGroups()
     {
-        $this->o_session = $o_session;
+        return '';
     }
-    public function getSession()
+    public function renderRoles()
     {
-        return $this->o_session;
+        return '';
+    }
+
+    /**
+     * Sets the class property $main_action based on the route action and the form action.
+     * Kind of of kludge but it seems to do what I want.
+     * @return null
+     */
+    private function setMainAction()
+    {
+        switch ($this->route_action) {
+            case 'modify':
+                switch ($this->form_action) {
+                    case 'verify':
+                        $this->main_action = 'verify';
+                        break;
+                    case 'update':
+                        $this->main_action = 'update';
+                        break;
+                    default:
+                        $this->main_action = '';
+                }
+                break;
+            case 'save':
+                if ($this->form_action == 'save_new') {
+                    $this->main_action = 'create';
+                }
+                else {
+                    $this->main_action = '';
+                }
+                break;
+            case 'delete':
+                if ($this->form_action == 'delete') {
+                    $this->main_action = 'delete';
+                }
+                else {
+                    $this->main_action = '';
+                }
+                break;
+            case 'login':
+                $this->main_action = 'login';
+                break;
+            default:
+                $this->main_action = '';
+        }
+    }
+
+    /**
+     * Checks to make sure we have a valid session going and the user is logged in.
+     * @return bool
+     */
+    private function isSessionOk()
+    {
+        if ($this->route_action    == 'modify'
+            || $this->route_action == 'save'
+            || $this->route_action == 'delete'
+        ) {
+            if ($this->o_session->isNotValidSession($this->a_post_values, true)) {
+                $bail = true;
+            }
+            else {
+                $bail = false;
+            }
+        }
+        elseif ($this->o_session->isNotValidSession(array(), false)) {
+            $bail = true;
+        }
+        elseif ($this->o_session->getVar('user') == '') {
+            $bail = true;
+        }
+        else {
+            $bail = false;
+        }
+        if ($bail) {
+            $this->route_action = 'login';
+            $this->o_session->clear();
+            $this->o_session->setSessionVars();
+            return false;
+        }
+        return true;
     }
 }

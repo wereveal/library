@@ -323,6 +323,38 @@ class UsersModel extends Base implements ModelInterface
         return $results;
     }
     /**
+     * Sets the user record to be logged in.
+     * @param int $user_id
+     * @return bool
+     */
+    public function setLoggedIn($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $sql = "
+            UPDATE {$this->db_prefix}users
+            SET is_logged_in = 1
+            WHERE user_id = :user_id
+        ";
+        $a_values = array(':user_id' => $user_id);
+        return $this->o_db->update($sql, $a_values, true);
+    }
+    /**
+     * Sets the user record to be logged out.
+     * @param int $user_id
+     * @return bool
+     */
+    public function setLoggedOut($user_id = -1)
+    {
+        if ($user_id == -1) { return false; }
+        $sql = "
+            UPDATE {$this->db_prefix}users
+            SET is_logged_in = 0
+            WHERE user_id = :user_id
+        ";
+        $a_values = array(':user_id' => $user_id);
+        return $this->o_db->update($sql, $a_values, true);
+    }
+    /**
      *  Updates the user record with a new password
      *  @param int    $user_id required
      *  @param string $password required
@@ -380,9 +412,9 @@ class UsersModel extends Base implements ModelInterface
             $where = "u.login_id = '{$user_id}' ";
         }
         $sql = "
-            SELECT r.role_id, r.role_level, r.role_name
+            SELECT r.role_id, r.role_level, r.role_name,
                 u.user_id, u.login_id, u.real_name, u.short_name,
-                u.password, u.is_default, u.created_on, u.bad_login_count,
+                u.password, u.is_logged_in, u.is_default, u.created_on, u.bad_login_count,
                 u.bad_login_ts, u.is_active, u.is_default,
                 g.group_id, g.group_name, g.group_description
             FROM {$this->db_prefix}roles as r,
@@ -415,9 +447,8 @@ class UsersModel extends Base implements ModelInterface
      **/
     public function readUsersInfo($group_name = '', $role = '', $only_active = true )
     {
-
         $sql = "
-            SELECT u.user_id, u.login_id, u.real_name, u.short_name, u.password, u.is_default, u.is_active
+            SELECT u.user_id, u.login_id, u.real_name, u.short_name, u.password, u.is_logged_in, u.is_default, u.is_active
                 r.role_id, r.role_name,
                 g.group_id, g.group_name
             FROM {$this->db_prefix}users as u,
@@ -469,16 +500,15 @@ class UsersModel extends Base implements ModelInterface
         $this->logIt("a_user before changes: " . var_export($a_user, true), LOG_OFF, $method  . __LINE__);
 
         if (!isset($a_user['user_id']) || $a_user['user_id'] == '') { // New User
-            $o_group = new GroupsModel($this->o_di);
-            $o_role  = new RolesModel($this->o_di);
-            $o_ugm   = new UserGroupMapModel($this->o_di);
-            $o_urm   = new UserRoleMapModel($this->o_di);
+            $o_group = new GroupsModel($this->o_db);
+            $o_role  = new RolesModel($this->o_db);
+            $o_ugm   = new UserGroupMapModel($this->o_db);
+            $o_urm   = new UserRoleMapModel($this->o_db);
             $a_required_keys = array(
                 'login_id',
                 'real_name',
                 'short_name',
-                'password',
-                'is_default'
+                'password'
             );
             $a_user_values = array();
             foreach($a_required_keys as $key_name) {
@@ -494,8 +524,8 @@ class UsersModel extends Base implements ModelInterface
             if ($this->o_db->startTransaction()) {
                 $new_user_id = $this->create($a_user_values);
                 if ($new_user_id !== false) {
-                    $group_id = '';
-                    $role_id  = '';
+                    $group_id = 3;
+                    $role_id  = 4;
                     if (isset($a_user['group_id']) && $a_user['group_id'] != '') {
                         $group_id = $o_group->isValidGroupId($a_user['group_id']) ? $a_user['group_id'] : '';
                     }

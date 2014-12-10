@@ -54,7 +54,7 @@ class ManagerView extends Base
      */
     public function renderTempPage(array $a_args)
     {
-        $message = '';
+        $a_message = array();
         if (is_array($a_args)) {
             $body_text = "it of course was an array";
         }
@@ -66,11 +66,34 @@ class ManagerView extends Base
             'description'   => 'This is the Tester Page',
             'public_dir'    => '',
             'title'         => 'This is the Main Tester Page',
-            'message'       => $message,
+            'a_message'     => $a_message,
             'body_text'     => $body_text,
             'site_url'      => SITE_URL,
             'rights_holder' => RIGHTS_HOLDER
         ];
         return $this->o_tpl->render('@main/list_logins.twig', $a_values);
+    }
+    /**
+     * Creates the html that displays the login form to access the app.
+     * @param string $previous_login_id optional, allows the user_login_id to be used over.
+     * @return string
+     */
+    public function renderLoginForm($previous_login_id = '', $message = '')
+    {
+        if ($message != '') {
+            $a_message = ViewHelper::messageProperties(['message' => $message, 'type' => 'failure']);
+        }
+        else {
+            $a_message = array();
+        }
+        $a_values = [
+            'tolken'    => $_SESSION['token'],
+            'form_ts'   => $_SESSION['idle_timestamp'],
+            'hobbit'    => '',
+            'login_id'  => $previous_login_id,
+            'password'  => '',
+            'a_message' => $a_message
+        ];
+        return $this->o_tpl->render('@pages/login_form.twig', $a_values);
     }
 }

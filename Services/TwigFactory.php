@@ -64,7 +64,7 @@ class TwigFactory extends Base
     public static function getTwig($config_file = 'twig_config.php')
     {
         $o_tf = self::create($config_file);
-        return $o_tf->$o_twig;
+        return $o_tf->o_twig;
     }
     private static function retrieveTwigConfigArray($config_file)
     {

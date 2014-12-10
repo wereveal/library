@@ -27,8 +27,9 @@ use Ritc\Library\Services\Di;
 class ConfigAdminController extends Base implements ControllerInterface
 {
     private $o_model;
-    private $o_view;
+    private $o_router;
     private $o_session;
+    private $o_view;
 
     public function __construct(Di $o_di)
     {

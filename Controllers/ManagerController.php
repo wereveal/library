@@ -26,25 +26,27 @@ use Ritc\Library\Services\Di;
 
 class ManagerController extends Base implements ControllerInterface
 {
-    private   $a_actions;
-    protected $o_db;
-    protected $o_session;
+    private $o_db;
+    private $o_session;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $this->o_session = $o_di->get('session');
         $this->o_db      = $o_di->get('db');
-        $this->o_route   = $o_di->get('route');
-        $this->a_actions = $a_actions;
+        $this->o_router  = $o_di->get('router');
+        if (DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+        }
     }
 
     public function render()
     {
         $o_view = new ManagerView($this->o_db);
-        $route_method = $this->a_actions['route_method'];
-        $route_action = $this->a_actions['route_action'];
-        $a_route_args = $this->a_actions['args'];
+        $a_route_parts = $this->o_router->getRouteParts();
+        $route_action  = $a_route_parts['route_action'];
+        $form_action   = $a_route_parts['form_action'];
+        $a_post        = $this->o_router->getPost();
         switch ($route_method)
         {
             case 'temp':

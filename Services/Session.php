@@ -121,9 +121,11 @@ class Session extends Base
     }
     public function getVar($var_name = "")
     {
-        $this->logIt("Var Name: " . $var_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $this->logIt("Session Var Value: " . $_SESSION[$var_name], LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $var_name == "" ? NULL : isset($_SESSION[$var_name]) ? $_SESSION[$var_name] : "" ;
+        return $var_name == ""
+            ? NULL
+            : isset($_SESSION[$var_name])
+                ? $_SESSION[$var_name]
+                : "";
     }
     public function setVar($var_name = "", $var_value = "")
     {

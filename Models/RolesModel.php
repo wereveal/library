@@ -31,7 +31,7 @@ class RolesModel extends Base implements ModelInterface
     private $o_arrays;
     private $o_db;
 
-    public function __construct(Db $o_db)
+    public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
         $this->o_arrays  = new Arrays;

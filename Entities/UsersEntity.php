@@ -37,7 +37,7 @@
     MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;
 
     INSERT INTO `dbPrefix_users` (`user_id`, `login_id`, `real_name`, `short_name`, `password`, `is_default`, `created_on`, `bad_login_count`, `bad_login_ts`, `is_active`) VALUES
-    (1, 'SuperAdmin', 'Super Admin', 'GSA', '9715ab56587dd7b748c71644d014250a26b479f28dfdea9927398e3ec1f221ac83da247d016052bb8ee8334320d74c70e1ce48afcc9114d7d837bfc88abb0bc4', 1, '2012-08-12 02:55:28', 0, 0, 1);
+    (1, 'SuperAdmin', 'Super Admin', 'GSA', '$2y$10$Fj3/Wt2m8WB6qXFHHpCc2u6Nz4o5pxzNE8pZLlWcYQOEqR0yUE6Fi', 1, '2012-08-12 02:55:28', 0, 0, 1);
  *
  *  PostgreSQL
     CREATE SEQUENCE user_id_seq;
