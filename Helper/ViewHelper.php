@@ -34,7 +34,7 @@ class ViewHelper
 	public static function messageProperties($a_message_params = array())
 	{
 	    $alt_text    = '';
-		$image_dir   = '/assets/images/icons';
+		$image_dir   = IMAGE_DIR . '/icons';
 		$image_class = 'icon';
 		$image_src   = '';
 		$message     = '';

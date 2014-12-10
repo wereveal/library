@@ -85,10 +85,10 @@ class ConfigModel extends Base implements ModelInterface
     {
         $this->setPrivateProperties();
         $this->o_db      = $o_db;
+        $this->db_prefix = $o_db->getDbPrefix();
         $this->a_configs = $this->selectConfigList();
         $this->o_arrays  = new Arrays();
         $this->o_strings = new Strings();
-        $this->db_prefix = $this->o_db->getDbPrefix();
 
     }
 
@@ -324,6 +324,7 @@ class ConfigModel extends Base implements ModelInterface
             FROM {$this->db_prefix}config
             ORDER BY config_name
         ";
+        error_log($select_query);
         return $this->o_db->search($select_query);
     }
     /**

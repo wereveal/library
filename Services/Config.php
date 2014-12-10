@@ -6,10 +6,14 @@
  *  @namespace Ritc/Library/Services
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  3.2.0
- *  @date 2014-12-10 10:08:20
+ *  @version  3.3.0
+ *  @date 2014-12-10 16:58:35
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.3.0 - moved some contant definitions into this class             - 12/10/2014 wer
+ *               the constants.php file was doing these definitions but
+ *               it seemed that this should be done here. Also, moved a
+ *               couple config names into the database.
  *      v3.2.0 - changed to use DI/IOC                                      - 12/10/2014 wer
  *      v3.1.5 - moved to the Services Namespace in the Library             - 11/15/2014 wer
  *      v3.1.4 - changed to match changes in ConfigModel                    - 11/13/2014 wer
@@ -42,12 +46,13 @@ class Config extends Base
     {
         $this->setPrivateProperties();
         $o_db = $o_di->get('db');
+        $this->o_config_model = new ConfigModel($o_db);
         if (defined('DEVELOPER_MODE')) {
             if (DEVELOPER_MODE) {
                 $this->o_elog = $o_di->get('elog');
+                $this->o_config_model->setElog($this->o_elog);
             }
         }
-        $this->o_config_model = new ConfigModel($o_db);
         $this->created = $this->createConstants();
         if ($this->created === false) {
             $this->logIt("Could not create constants from db.", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
@@ -74,8 +79,7 @@ class Config extends Base
      * This is in my mind a legit use of a singleton as
      * Never should more than one instance of the config ever be allowed to be created
      *
-     * @param DbModel $o_db
-     *
+     * @param Di $o_di
      * @return object - instance of Config
      */
     public static function start(Di $o_di)
@@ -93,6 +97,7 @@ class Config extends Base
     {
         if ($this->created === false) {
             $a_config = $this->o_config_model->selectConfigList();
+            $this->logIt('Config List -- ' . var_export($a_config, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
             if (is_array($a_config) && count($a_config) > 0) {
                 $this->logIt("List of Configs: " . var_export($a_config, true), LOG_OFF, __METHOD__);
                 foreach ($a_config as $row) {
@@ -115,6 +120,53 @@ class Config extends Base
                         }
                     }
                 }
+                if (!defined('PRIVATE_DIR_NAME')) {
+                    define('PRIVATE_DIR_NAME', 'private');
+                }
+                if (!defined('TMP_DIR_NAME')) {
+                    define('TMP_DIR_NAME', 'tmp');
+                }
+                if (!defined('TMP_PATH')) {
+                    if (file_exists(BASE_PATH . '/' . TMP_DIR_NAME)) {
+                        define('TMP_PATH', BASE_PATH . '/' . TMP_DIR_NAME);
+                    }
+                    elseif (file_exists(SITE_PATH . '/' . TMP_DIR_NAME)) {
+                        define('TMP_PATH', SITE_PATH . '/' . TMP_DIR_NAME);
+                    }
+                    else {
+                        define('TMP_PATH', '/tmp');
+                    }
+                }
+                if (!defined('PRIVATE_PATH')) {
+                    if (file_exists(BASE_PATH . '/' . PRIVATE_DIR_NAME)) {
+                        define('PRIVATE_PATH', BASE_PATH . '/' . PRIVATE_DIR_NAME);
+                    }
+                    elseif (file_exists(SITE_PATH . '/' . PRIVATE_DIR_NAME)) {
+                        define('PRIVATE_PATH', SITE_PATH . '/' . PRIVATE_DIR_NAME);
+                    }
+                    else {
+                        define('PRIVATE_PATH', '');
+                    }
+                }
+
+                if (!defined('PUBLIC_DIR')) { // not sure why this would be true but here just in case
+                    define('PUBLIC_DIR', '');
+                }
+                if (!defined('SITE_PATH')) { // not sure why this would be true but here just in case
+                    define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);
+                }
+                if (!defined('ADMIN_DIR') && defined('ADMIN_DIR_NAME')) {
+                    define('ADMIN_DIR',   PUBLIC_DIR . '/' . ADMIN_DIR_NAME);
+                }
+                if (!defined('ADMIN_PATH') && defined('ADMIN_DIR')) {
+                    define('ADMIN_PATH',  SITE_PATH . ADMIN_DIR);
+                }
+                if (!defined('ASSETS_DIR') && defined('ASSETS_DIR_NAME')) {
+                    define('ASSETS_DIR',  PUBLIC_DIR . '/' . ASSETS_DIR_NAME);
+                }
+                if (!defined('ASSETS_PATH') && defined('ASSETS_DIR')) {
+                    define('ASSETS_PATH', SITE_PATH . ASSETS_DIR);
+                }
                 return true;
             }
             else {
@@ -133,12 +185,6 @@ class Config extends Base
     **/
     private function createThemeConstants()
     {
-        if (!defined('ASSETS_DIR_NAME')) {
-            define('ASSETS_DIR_NAME', 'assets');
-        }
-        if (!defined('ASSETS_DIR')) {
-            define('ASSETS_DIR', '/' . ASSETS_DIR_NAME);
-        }
         if (!defined('THEMES_DIR')) {
             define('THEMES_DIR', ASSETS_DIR);
         }
