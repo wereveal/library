@@ -19,9 +19,13 @@
  *    `group_id` int(11) NOT NULL AUTO_INCREMENT,
  *    `group_name` varchar(40) NOT NULL,
  *    `group_description` text NOT NULL,
- *    PRIMARY KEY (`group_id`),
- *    UNIQUE KEY `group_name` (`group_name`)
  *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ *
+ *  ALTER TABLE `dbPrefix_groups`
+ *   ADD PRIMARY KEY (`group_id`), ADD UNIQUE KEY `group_name` (`group_name`);
+ *
+ *  ALTER TABLE `dbPrefix_groups`
+ *  MODIFY `group_id` int(11) NOT NULL AUTO_INCREMENT;
  *
  *  PostgreSQL
  *  CREATE SEQUENCE group_id_seq;

@@ -15,42 +15,51 @@
  *      v0.1.0 - Initial version 09/11/2014 wer
  *  </pre>
  *  @note <pre>
- *  CREATE TABLE `dbPrefix_users` (
- *    `user_id` int(11) NOT NULL AUTO_INCREMENT,
- *    `user_name` varchar(60) NOT NULL,
- *    `real_name` varchar(50) NOT NULL,
- *    `short_name` varchar(8) DEFAULT NULL,
- *    `password` varchar(255) NOT NULL,
- *    `is_active` tinyint(1) NOT NULL DEFAULT '1',
- *    `is_default` tinyint(1) NOT NULL DEFAULT '0',
- *    `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
- *    `bad_login_count` int(11) NOT NULL DEFAULT '0',
- *    `bad_login_ts` int(11) NOT NULL DEFAULT '0'
- *    PRIMARY KEY (`user_id`),
- *    UNIQUE KEY `user_name` (`user_name`)
- *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ *
+ *  MySQL sql
+    CREATE TABLE `dbPrefix_users` (
+    `user_id` int(11) NOT NULL,
+      `login_id` varchar(60) NOT NULL,
+      `real_name` varchar(50) NOT NULL,
+      `short_name` varchar(8) DEFAULT NULL,
+      `password` varchar(128) NOT NULL,
+      `is_default` tinyint(1) NOT NULL DEFAULT '0',
+      `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      `bad_login_count` int(11) NOT NULL DEFAULT '0',
+      `bad_login_ts` int(11) NOT NULL DEFAULT '0',
+      `is_active` tinyint(4) NOT NULL DEFAULT '1'
+    ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+    ALTER TABLE `dbPrefix_users`
+     ADD PRIMARY KEY (`user_id`), ADD UNIQUE KEY `loginid` (`login_id`);
+
+    ALTER TABLE `dbPrefix_users`
+    MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;
+
+    INSERT INTO `dbPrefix_users` (`user_id`, `login_id`, `real_name`, `short_name`, `password`, `is_default`, `created_on`, `bad_login_count`, `bad_login_ts`, `is_active`) VALUES
+    (1, 'SuperAdmin', 'Super Admin', 'GSA', '$2y$10$Fj3/Wt2m8WB6qXFHHpCc2u6Nz4o5pxzNE8pZLlWcYQOEqR0yUE6Fi', 1, '2012-08-12 02:55:28', 0, 0, 1);
  *
  *  PostgreSQL
- *  CREATE SEQUENCE user_id_seq;
- *  CREATE TABLE {dbPrefix}users (
- *      user_id integer DEFAULT nextval('user_id_seq'::regclass) NOT NULL,
- *      user_name character varying(120) NOT NULL,
- *      real_name character varying(100) NOT NULL,
- *      short_name character varying(16) DEFAULT NULL::character varying,
- *      password character varying(510) NOT NULL,
- *      is_active boolean NOT NULL,
- *      is_default boolean NOT NULL,
- *      created_on timestamp without time zone DEFAULT now() NOT NULL,
- *      bad_login_count integer DEFAULT 0 NOT NULL,
- *      bad_login_ts integer DEFAULT 0 NOT NULL
- *  );
- *  ALTER TABLE ONLY {dbPrefix}users
- *      ADD CONSTRAINT {dbPrefix}users_pkey PRIMARY KEY (user_id);
- *  ALTER TABLE ONLY {dbPrefix}users
- *      ADD CONSTRAINT {dbPrefix}users_user_name_key UNIQUE (user_name);
- *
- *  INSERT INTO `dbPrefix_users` (`user_id`, `user_name`, `real_name`, `short_name`, `password`, `is_active`, `is_default`, `created_on`, `bad_login_count`, `bad_login_ts`) VALUES
- *  (1, 'SuperAdmin', 'Super Admin', 'GSA', '9715ab56587dd7b748c71644d014250a26b479f28dfdea9927398e3ec1f221ac83da247d016052bb8ee8334320d74c70e1ce48afcc9114d7d837bfc88abb0bc4', 1, 1, '2012-08-11 21:55:28', 0, 0);
+    CREATE SEQUENCE user_id_seq;
+    CREATE TABLE {dbPrefix}users (
+        user_id integer DEFAULT nextval('user_id_seq'::regclass) NOT NULL,
+        login_id character varying(120) NOT NULL,
+        real_name character varying(100) NOT NULL,
+        short_name character varying(16) DEFAULT NULL::character varying,
+        password character varying(510) NOT NULL,
+        is_active boolean NOT NULL,
+        is_default boolean NOT NULL,
+        created_on timestamp without time zone DEFAULT now() NOT NULL,
+        bad_login_count integer DEFAULT 0 NOT NULL,
+        bad_login_ts integer DEFAULT 0 NOT NULL
+    );
+    ALTER TABLE ONLY {dbPrefix}users
+        ADD CONSTRAINT {dbPrefix}users_pkey PRIMARY KEY (user_id);
+    ALTER TABLE ONLY {dbPrefix}users
+        ADD CONSTRAINT {dbPrefix}users_login_id_key UNIQUE (login_id);
+
+    INSERT INTO dbPrefix_users (user_id, login_id, real_name, short_name, password, is_active, is_default, created_on, bad_login_count, bad_login_ts) VALUES
+    (1, 'SuperAdmin', 'Super Admin', 'GSA', '9715ab56587dd7b748c71644d014250a26b479f28dfdea9927398e3ec1f221ac83da247d016052bb8ee8334320d74c70e1ce48afcc9114d7d837bfc88abb0bc4', 1, 1, '2012-08-11 21:55:28', 0, 0);
 **/
 namespace Ritc\Library\Entities;
 
@@ -60,7 +69,7 @@ class UsersEntity implements EntityInterface
 {
     private $user_id = '';
     private $role_id = '';
-    private $username = '';
+    private $login_id = '';
     private $real_name = '';
     private $short_name = '';
     private $password = '';
@@ -82,7 +91,7 @@ class UsersEntity implements EntityInterface
     {
         return array(
             'user_id'         => $this->user_id,
-            'username'        => $this->username,
+            'login_id'        => $this->login_id,
             'real_name'       => $this->real_name,
             'short_name'      => $this->short_name,
             'password'        => $this->password,
@@ -108,7 +117,7 @@ class UsersEntity implements EntityInterface
     {
         $a_needed_keys = array(
             'user_id'         => -1,
-            'username'        => '',
+            'login_id'        => '',
             'real_name'       => '',
             'short_name'      => '',
             'password'        => '',
@@ -294,18 +303,18 @@ class UsersEntity implements EntityInterface
     }
 
     /**
-     * @param string $username
+     * @param string $login_id
      */
-    public function setUsername($username)
+    public function setLoginId($login_id)
     {
-        $this->username = $username;
+        $this->login_id = $login_id;
     }
 
     /**
      * @return string
      */
-    public function getUsername()
+    public function getLoginId()
     {
-        return $this->username;
+        return $this->login_id;
     }
 }

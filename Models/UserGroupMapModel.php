@@ -6,44 +6,35 @@
  *  @namespace Ritc/Library/Models
  *  @class UserGroupMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2014-09-15 14:55:45
+ *  @version 1.0.1β
+ *  @date 2014-09-23 13:10:53
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0 - First Live version - 09/15/2014 wer
- *      v0.1.0 - Initial version    - 01/18/2014 wer
+ *      v1.0.1β - extends the Base class, injects the DbModel, clean up - 09/23/2014 wer
+ *      v1.0.0β - First Live version - 09/15/2014 wer
+ *      v0.1.0β - Initial version    - 01/18/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Core\Arrays;
-use Ritc\Library\Core\DbFactory;
-use Ritc\Library\Core\DbModel;
-use Ritc\Library\Core\Elog;
+use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
+use Ritc\Library\Services\DbModel;
 
-class UserGroupMapModel implements ModelInterface
+class UserGroupMapModel extends Base implements ModelInterface
 {
     private $db_prefix;
     private $db_type;
     private $o_arrays;
     private $o_db;
-    private $o_elog;
 
-    public function __construct($db_config = 'db_config.php')
+    public function __construct(DbModel $o_db)
     {
-        $this->o_elog = Elog::start();
-        $o_dbf = DbFactory::start($db_config, 'rw');
-        $o_pdo = $o_dbf->connect();
-        if ($o_pdo !== false) {
-            $this->o_db = new DbModel($o_pdo);
-        }
-        else {
-            $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-        }
-        $this->o_arrays = new Arrays;
-        $this->db_type = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->o_db      = $o_db;
+        $this->o_arrays  = new Arrays;
+        $this->db_type   = $o_db->getDbType();
+        $this->db_prefix = $o_db->getDbPrefix();
     }
 
     ### Basic CRUD commands, required by interface ###
@@ -68,7 +59,7 @@ class UserGroupMapModel implements ModelInterface
         ";
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}user_group_map")) {
             $ids = $this->o_db->getNewIds();
-            $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
         } else {
             return false;
@@ -98,7 +89,7 @@ class UserGroupMapModel implements ModelInterface
             FROM {$this->db_prefix}user_group_map
             {$where}
         ";
-        $this->o_elog->write($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_values);
     }
 
