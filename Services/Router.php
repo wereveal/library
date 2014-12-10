@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Services
  *  @class Router
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.3ß
- *  @date 2014-12-05 16:13:34
+ *  @version 1.0.4ß
+ *  @date 2014-12-10 10:26:05
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.4ß - changed to use Di class for DI/IOC.                                       - 12/10/2014 wer
  *      v1.0.3ß - added form_action class property.                                         - 12/05/2014 wer
  *                Added setter and getters for form_action class property.
  *      v1.0.2ß - moved to Services namespace                                               - 11/15/2014 wer
@@ -31,16 +32,22 @@ class Router extends Base
     private $o_model;
     private $route_path;
 
-    public function __construct(DbModel $o_db)
+    public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
+        $o_db = $o_di->get('db');
+        if (defined('DEVELOPER_MODE')) {
+            if (DEVELOPER_MODE) {
+                $this->o_elog = $o_di->get('elog');
+            }
+        }
         $this->o_arrays = new Arrays();
         $this->o_model  = new RouterModel($o_db);
         $this->setRoutePath();
         $this->setGet();
         $this->setPost();
-        $this->setRouteParts();
         $this->setFormAction();
+        $this->setRouteParts();
     }
 
     /**
@@ -161,7 +168,7 @@ class Router extends Base
         else {
             $action = '';
         }
-        $this->logIt("Action is: {$action}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt("Form Action is: {$action}", LOG_ON, __METHOD__ . '.' . __LINE__);
         $this->form_action = $action;
         return true;
     }

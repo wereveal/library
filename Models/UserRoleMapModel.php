@@ -90,7 +90,7 @@ class UserRoleMapModel extends Base implements ModelInterface
             FROM {$this->db_prefix}user_role_map
             {$where}
         ";
-        $this->o_elog->write($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->o_elog->write($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_values);
     }
     /**

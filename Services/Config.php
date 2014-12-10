@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Services
  *  @class Config
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  3.1.4
- *  @date 2014-11-15 12:50:41
+ *  @version  3.2.0
+ *  @date 2014-12-10 10:08:20
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.2.0 - changed to use DI/IOC                                      - 12/10/2014 wer
  *      v3.1.5 - moved to the Services Namespace in the Library             - 11/15/2014 wer
  *      v3.1.4 - changed to match changes in ConfigModel                    - 11/13/2014 wer
  *      v3.1.3 - changed to implment the changes in Base class              - 09/23/2014 wer
@@ -37,24 +38,30 @@ class Config extends Base
     private static $instance;
     private $o_config_model;
 
-    private function __construct(DbModel $o_db)
+    private function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
+        $o_db = $o_di->get('db');
+        if (defined('DEVELOPER_MODE')) {
+            if (DEVELOPER_MODE) {
+                $this->o_elog = $o_di->get('elog');
+            }
+        }
         $this->o_config_model = new ConfigModel($o_db);
         $this->created = $this->createConstants();
         if ($this->created === false) {
-            $this->logIt("Could not create constants from db.", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Could not create constants from db.", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
             if (defined('APP_CONFIG_PATH')) {
                 if(file_exists(APP_CONFIG_PATH . '/fallback_constants.php')) {
                     include_once APP_CONFIG_PATH . '/fallback_constants.php';
                 }
                 else {
-                    $this->logIt("File: " . APP_CONFIG_PATH . '/fallback_constants.php does not exist.', LOG_OFF);
+                    $this->logIt("File: " . APP_CONFIG_PATH . '/fallback_constants.php does not exist.', LOG_ALWAYS);
                     die ('A fatal error has occured. Please contact your web site administrator.');
                 }
             }
             else {
-                $this->logIt("APP_CONFIG_PATH is not defined.", LOG_OFF);
+                $this->logIt("APP_CONFIG_PATH is not defined.", LOG_ALWAYS);
                 die ('A fatal error has occured. Please contact your web site administrator.');
             }
             $this->o_config_model->createNewConfigs();
@@ -71,10 +78,10 @@ class Config extends Base
      *
      * @return object - instance of Config
      */
-    public static function start(DbModel $o_db)
+    public static function start(Di $o_di)
     {
         if (!isset(self::$instance)) {
-            self::$instance = new Config($o_db);
+            self::$instance = new Config($o_di);
         }
         return self::$instance;
     }
@@ -89,14 +96,12 @@ class Config extends Base
             if (is_array($a_config) && count($a_config) > 0) {
                 $this->logIt("List of Configs: " . var_export($a_config, true), LOG_OFF, __METHOD__);
                 foreach ($a_config as $row) {
-                    $key   = strtoupper($row['config_name']);
+                    $key = strtoupper($row['config_name']);
                     if (!defined("{$key}")) {
                         switch ($row['config_value']) {
-                            case true:
                             case 'true':
                                 define("{$key}", true);
                                 break;
-                            case false:
                             case 'false':
                                 define("{$key}", false);
                                 break;

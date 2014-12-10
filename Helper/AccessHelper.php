@@ -104,8 +104,8 @@ class AccessHelper extends Base
         }
         if ($this->o_session->isValidSession($a_user_post)) {
             $a_user_values = $this->o_users->readInfo($a_user_post['login_id']);
-            $this->logIt("Posted Values: " . var_export($a_user_post, true), LOG_ON, $meth . __LINE__);
-            $this->logIt("User Values: " . var_export($a_user_values, true), LOG_ON, $meth . __LINE__);
+            $this->logIt("Posted Values: " . var_export($a_user_post, true), LOG_OFF, $meth . __LINE__);
+            $this->logIt("User Values: " . var_export($a_user_values, true), LOG_OFF, $meth . __LINE__);
             if ($a_user_values !== false && $a_user_values !== null) {
                 if ($a_user_values['is_active'] < 1) {
                     $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
@@ -131,8 +131,9 @@ class AccessHelper extends Base
                 }
                 $a_user_post['created_on'] = $a_user_values['created_on'];
                 $a_user_post['user_id']    = $a_user_values['user_id'];
-                error_log("Password Needed: " . $a_user_values['password']);
-                error_log("Password Given (hashed): " . password_hash($a_user_post['password'], PASSWORD_DEFAULT));
+
+                $this->logIt("Password Needed: " . $a_user_values['password'], LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Password Given (hashed): " . password_hash($a_user_post['password'], PASSWORD_DEFAULT), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 if (password_verify($a_user_post['password'], $a_user_values['password'])) {
                     $this->o_users->resetBadLoginCount($a_user_values['user_id']);
                     $this->o_users->resetBadLoginTimestamp($a_user_values['user_id']);

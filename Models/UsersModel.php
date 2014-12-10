@@ -123,7 +123,7 @@ class UsersModel extends Base implements ModelInterface
             FROM {$this->db_prefix}users
             {$where}
         ";
-        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_values);
     }
     /**
@@ -184,7 +184,7 @@ class UsersModel extends Base implements ModelInterface
             {$sql_set}
             {$sql_where}
         ";
-        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->update($sql, $a_values, true);
     }
     /**

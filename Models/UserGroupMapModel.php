@@ -89,7 +89,7 @@ class UserGroupMapModel extends Base implements ModelInterface
             FROM {$this->db_prefix}user_group_map
             {$where}
         ";
-        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_values);
     }
 
