@@ -6,12 +6,12 @@
  *  @namespace Ritc/Library/Views
  *  @class ManagerView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1ß
+ *  @version 1.0.1β
  *  @date 2014-11-15 15:00:40
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.1ß - changed to match DI/IOC - 11/15/2014 wer
- *      v1.0.0ß - Initial version         - 11/08/2014 wer
+ *      v1.0.1β - changed to match DI/IOC - 11/15/2014 wer
+ *      v1.0.0β - Initial version         - 11/08/2014 wer
  *  </pre>
  **/
 namespace Ritc\Library\Views;
@@ -35,17 +35,41 @@ class ManagerView extends Base
     }
     public function renderLandingPage()
     {
-        $message = ViewHelper::messageProperties(array());
+        $a_links = [
+            [
+                'text' => 'Home',
+                'url'  => '/manager/',
+            ],
+            [
+                'text' => 'Configuration Manger',
+                'url'  => '/manager/configs/',
+            ],
+            [
+                'text' => 'Router Manager',
+                'url'  => '/manager/router/'
+            ],
+            [
+                'text' => 'People Manager',
+                'url'  => '/manager/people/',
+            ],
+            [
+                'text' => 'Groups Manager',
+                'url'  => '/manager/groups/',
+            ],
+            [
+                'text' => 'Roles Manager',
+                'url'  => '/manager/roles/',
+            ]
+        ];
         $a_values = [
-            'description'   => 'This is the Tester Manager Page',
+            'description'   => 'This is the Manager Page',
             'public_dir'    => '',
-            'title'         => 'This is the Main Manager Test Page',
-            'message'       => $message,
-            'body_text'     => 'Hello',
+            'title'         => 'This is the Main Manager Page',
+            'links'         => $a_links,
             'site_url'      => SITE_URL,
             'rights_holder' => RIGHTS_HOLDER
         ];
-        return $this->o_tpl->render('@main/list_logins.twig', $a_values);
+        return $this->o_tpl->render('@main/index.twig', $a_values);
     }
     /**
      * Temp method to test stuff
@@ -75,6 +99,7 @@ class ManagerView extends Base
     }
     /**
      * Creates the html that displays the login form to access the app.
+     * Sometimes this will have been handled already elsewhere.
      * @param string $previous_login_id optional, allows the user_login_id to be used over.
      * @return string
      */

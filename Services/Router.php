@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Services
  *  @class Router
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.4ß
- *  @date 2014-12-10 10:26:05
+ *  @version 1.0.5ß
+ *  @date 2015-01-06 09:43:49
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.5ß - changed several properties to be static (just in case)                    - 01/06/2015 wer
  *      v1.0.4ß - changed to use Di class for DI/IOC.                                       - 12/10/2014 wer
  *      v1.0.3ß - added form_action class property.                                         - 12/05/2014 wer
  *                Added setter and getters for form_action class property.
@@ -28,9 +29,11 @@ class Router extends Base
     private $a_get;
     private $a_post;
     private $a_route_parts;
-    private $form_action;
     private $o_model;
-    private $route_path;
+    public static $form_action;
+    public static $route_action;
+    public static $route_method;
+    public static $route_path;
 
     public function __construct(Di $o_di)
     {
@@ -58,11 +61,12 @@ class Router extends Base
     public function setRouteParts($route_path = '')
     {
         if ($route_path == '') {
-            if ($this->route_path != '') {
-                $route_path = $this->route_path;
+            if (self::$route_path != '') {
+                $route_path = self::$route_path;
             }
             else {
-                $route_path = $_SERVER["REQUEST_URI"];
+                self::$route_path = $_SERVER["REQUEST_URI"];
+                $route_path = self::$route_path;
             }
         }
         $a_values = ['route_path' => $route_path];
@@ -72,7 +76,7 @@ class Router extends Base
             $a_route_parts                = $a_results[0];
             $a_route_parts['get']         = $this->a_get;
             $a_route_parts['post']        = $this->a_post;
-            $a_route_parts['form_action'] = $this->form_action;
+            $a_route_parts['form_action'] = self::$form_action;
             $this->a_route_parts          = $a_route_parts;
         }
         else {
@@ -84,15 +88,17 @@ class Router extends Base
                 'route_action' => '',
                 'get'          => $this->a_get,
                 'post'         => $this->a_post,
-                'form_action'  => $this->form_action
+                'form_action'  => self::$form_action
             ];
         }
+        self::$route_action = $this->a_route_parts['route_action'];
+        self::$route_method = $this->a_route_parts['route_method'];
     }
 
     ### GETters and SETters ###
     public function getFormAction()
     {
-        return $this->form_action;
+        return self::$form_action;
     }
     public function getGet($value = '')
     {
@@ -109,7 +115,7 @@ class Router extends Base
     }
     public function getRoutePath()
     {
-        return $this->route_path;
+        return self::$route_path;
     }
     public function getRouteParts()
     {
@@ -169,7 +175,7 @@ class Router extends Base
             $action = '';
         }
         $this->logIt("Form Action is: {$action}", LOG_ON, __METHOD__ . '.' . __LINE__);
-        $this->form_action = $action;
+        self::$form_action = $action;
         return true;
     }
     
@@ -188,10 +194,10 @@ class Router extends Base
             $request_uri = $_SERVER["REQUEST_URI"];
         }
         if (strpos($request_uri, "?") !== false) {
-            $this->route_path = substr($request_uri, 0, strpos($request_uri, "?"));
+            self::$route_path = substr($request_uri, 0, strpos($request_uri, "?"));
         }
         else {
-            $this->route_path = $request_uri;
+            self::$route_path = $request_uri;
         }
     }
     public function setPost(array $a_allowed_keys = array())

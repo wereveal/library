@@ -5,19 +5,19 @@
 {% endblock %}
 {% block body %}
 <div class="row">
-    <div class="col-lg-12 col-md-12">
+    <div class="col-md-12">
         <h1>Welcome! Please Login.</h1>
     </div>
 </div>
 {% if a_message.message != '' %}
     <div class="row">
-        <div class="col-lg-12 col-md-12">
+        <div class="col-md-12">
             {% include '@snippets/message.twig' %}
         </div>
     </div>
 {% endif %}
 <div class="row">
-    <div class="col-lg-12 col-md-12">
+    <div class="col-md-12">
         <form action="/manager/login/" method="post">
             <label for="login_id">You Login ID: <input type="text" id="login_id" name="login_id" maxlength="64" width="32" value="{{ login_id }}"></label><br>
             <label>Your Password: <input type="text" id="password" name="password" maxlength="64" width="32" value=""></label><br>

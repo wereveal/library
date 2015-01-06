@@ -5,7 +5,13 @@
 {% block body %}
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12">
-                    <p>{{ body_text }}</p>
+                    <ul class="manager-links">
+                        {% for link in links %}
+                            <li>
+                                <a href="{{ link.url }}">{{ link.text }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
 {% endblock %}
@@ -24,7 +30,7 @@
             'description',
             'public_dir',
             'title',
-            'body_text',
+            'links',
             'site_url',
             'rights_holder'
         ]

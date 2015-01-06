@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class UsersModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.3ß
- *  @date 2014-11-17 14:32:26
+ *  @version 1.0.4ß
+ *  @date 2015-01-06 10:40:12
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.4ß - refactoring method name to reflect what is happening better   - 01/06/2015 wer
  *      v1.0.3ß - reverted to injecting DbModel                                 - 11/17/2014 wer
  *      v1.0.2ß - changed to use DI/IOC                                         - 11/15/2014 wer
  *      v1.0.1ß - extends the Base class, injects the DbModel, clean up         - 09/23/2014 wer
@@ -204,11 +205,11 @@ class UsersModel extends Base implements ModelInterface
 
     ### Single User Methods ###
     /**
-     *  Gets the user id for a specific login_id.
+     *  Gets the user_id (primary record key) for a specific login_id.
      *  @param string $login_id required
      *  @return int|bool $user_id
      */
-    public function getId($login_id = '')
+    public function getUserId($login_id = '')
     {
         if ($login_id == '') { return false; }
         $a_results = $this->read(array('login_id' => $login_id));
@@ -570,7 +571,7 @@ class UsersModel extends Base implements ModelInterface
                 $user_id = $a_user['user_id'];
             }
             elseif (isset($a_user['login_id']) && $a_user['login_id'] != '') {
-                $user_id = $this->getId($a_user['login_id']);
+                $user_id = $this->getUserId($a_user['login_id']);
             }
             else {
                 $user_id = false;

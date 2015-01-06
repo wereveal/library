@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Services
  *  @class Session
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.1.3
- *  @date 2014-11-15 13:53:22
+ *  @version 1.1.4
+ *  @date 2015-01-06 10:04:22
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.1.4 - changed session validation defaults                   - 01/06/2015 wer
  *      v1.1.3 - moved to Services namespace                           - 11/15/2014 wer
  *      v1.1.2 - changed to implement the changes in Base class        - 09/23/2014 wer
  *      v1.1.1 - Bug fixes                                             - 12/31/2013 wer
@@ -122,10 +123,10 @@ class Session extends Base
     public function getVar($var_name = "")
     {
         return $var_name == ""
-            ? NULL
+            ? null
             : isset($_SESSION[$var_name])
                 ? $_SESSION[$var_name]
-                : "";
+                : null;
     }
     public function setVar($var_name = "", $var_value = "")
     {
@@ -267,7 +268,7 @@ class Session extends Base
      *  @param bool $use_form_values specifies if to use form data for validation
      *  @return bool, true or false if valid
     **/
-    public function isValidSession($a_values = array(), $use_form_values = true)
+    public function isValidSession($a_values = array(), $use_form_values = false)
     {
         if (isset($_SESSION['token']) === false
             || isset($_SESSION['idle_timestamp']) === false
@@ -327,7 +328,7 @@ class Session extends Base
      *  @param bool $use_form_values specifies if to use form data for validation
      *  @return bool true or false
     **/
-    public function isNotValidSession($a_values = array(), $use_form_values = true)
+    public function isNotValidSession($a_values = array(), $use_form_values = false)
     {
         if ($this->isValidSession($a_values, $use_form_values)) {
             return false;

@@ -70,7 +70,12 @@ class Elog
     }
     public function getVar($var_name)
     {
-        return $this->$var_name;
+        if (isset($this->$var_name)) {
+            return $this->$var_name;
+        }
+        else {
+            return '';
+        }
     }
     /**
      *  Getter for property debug_text.

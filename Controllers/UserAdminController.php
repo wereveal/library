@@ -6,19 +6,23 @@
  *  @namespace Ritc/Library/Controllers
  *  @class UserAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.2
- *  @date 2014-12-05 11:06:59
+ *  @version 1.0.3β
+ *  @date 2015-01-06 12:14:23
  *  @note A file in Library v5
  *  @note <pre><b>Change Log</b>
- *      v1.0.2 - refactoring of namespaces          - 12/05/2014 wer
- *      v1.0.1 - Adjusted to match file name change - 11/13/2014 wer
- *      v1.0.0 - Initial version                    - 04/02/2014 wer
+ *      v1.0.3β - Realized this is nowhere near done            - 01/06/2015 wer
+ *               This code was copied from somewhere else and
+ *               not modified to fit the need.
+ *      v1.0.2β - refactoring of namespaces                     - 12/05/2014 wer
+ *      v1.0.1β - Adjusted to match file name change            - 11/13/2014 wer
+ *      v1.0.0β - Initial version                               - 04/02/2014 wer
  *  </pre>
- *  @todo Add the session validation setup
+ *  @todo everything - too many things have changed to not go over every method
 **/
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Helper\AccessHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Views\UserAdminView;
@@ -29,7 +33,6 @@ class UserAdminController extends Base implements ControllerInterface
     private $a_post_values;
     private $form_action;
     private $main_action;
-    private $o_db;
     private $o_di;
     private $o_router;
     private $o_view;
@@ -40,11 +43,10 @@ class UserAdminController extends Base implements ControllerInterface
     {
         $this->setPrivateProperties();
         $this->o_di          = $o_di;
-        $this->o_db          = $o_di->get('db');
-        $this->o_view        = new UserAdminView($this->o_db);
+        $this->o_view        = new UserAdminView($o_di);
         $this->o_session     = $o_di->get('session');
         $this->o_router      = $o_di->get('router');
-        $this->a_route_parts = $this->o_router->getRouteParts;
+        $this->a_route_parts = $this->o_router->getRouteParts();
         $this->route_action  = $this->a_route_parts['route_action'];
         $this->form_action   = $this->a_route_parts['form_action'];
         $this->a_post_values = $this->o_router->getPost();
@@ -164,6 +166,7 @@ class UserAdminController extends Base implements ControllerInterface
      */
     private function isSessionOk()
     {
+        $o_access = new AccessHelper($this->o_di);
         if ($this->route_action    == 'modify'
             || $this->route_action == 'save'
             || $this->route_action == 'delete'
@@ -175,10 +178,7 @@ class UserAdminController extends Base implements ControllerInterface
                 $bail = false;
             }
         }
-        elseif ($this->o_session->isNotValidSession(array(), false)) {
-            $bail = true;
-        }
-        elseif ($this->o_session->getVar('user') == '') {
+        elseif (!$o_access->isLoggedIn()) {
             $bail = true;
         }
         else {

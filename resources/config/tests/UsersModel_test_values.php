@@ -56,7 +56,7 @@ return [
             'expected_results' => []
         ]
     ],
-    'getId' => [
+    'getUserId' => [
         'test1' => [
             'test_values' => [],
             'expected_results' => []

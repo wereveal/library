@@ -4,7 +4,7 @@ return [
     'create',
     'update',
     'delete',
-    'getId',
+    'getUserId',
     'incrementBadLoginCount',
     'incrementBadLoginTimestamp',
     'readUserRecord',

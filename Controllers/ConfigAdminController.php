@@ -53,6 +53,7 @@ class ConfigAdminController extends Base implements ControllerInterface
         if ($main_action == 'modify' || $main_action == 'save' || $main_action == 'delete') {
             if ($this->o_session->isNotValidSession($a_values, true)) {
                 $main_action = '';
+                $this->o_session->clear();
                 $this->o_session->setSessionVars();
             }
         }

@@ -102,7 +102,7 @@ class AccessHelper extends Base
                 return false;
             }
         }
-        if ($this->o_session->isValidSession($a_user_post)) {
+        if ($this->o_session->isValidSession($a_user_post, true)) {
             $a_user_values = $this->o_users->readInfo($a_user_post['login_id']);
             $this->logIt("Posted Values: " . var_export($a_user_post, true), LOG_OFF, $meth . __LINE__);
             $this->logIt("User Values: " . var_export($a_user_values, true), LOG_OFF, $meth . __LINE__);
@@ -158,6 +158,45 @@ class AccessHelper extends Base
     }
 
     #### Verifiers ####
+    /**
+     *  Figures out if the user is specified as a default user.
+     *  @param string|int $user can be the user id or the user name.
+     *  @return bool true false
+     */
+    public function isDefaultUser($user = -1)
+    {
+        if ($user == -1) {
+            return false;
+        }
+        $a_results = $this->o_users->readInfo($user);
+        if (isset($a_results['is_default'])) {
+            if ($a_results['is_default'] == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     *  Verifies a user is logged in and session is valid for user.
+     *  @return bool
+     */
+    public function isLoggedIn()
+    {
+        if ($this->o_session->isNotValidSession()) {
+            return false;
+        }
+        $login_id = $this->o_session->getVar('login_id');
+        if (is_null($login_id)) {
+            return false;
+        }
+        $a_user_info = $this->o_users->readInfo($login_id);
+        if ($a_user_info !== false) {
+            if ($a_user_info['is_logged_in'] == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      *  Verifies user has the role of super administrator.
      *  @param int $user_id required
@@ -240,13 +279,13 @@ class AccessHelper extends Base
     }
     /**
      *  Checks to see if user exists.
-     *  @param int|string $user user id or user name
+     *  @param int|string $user user id or login name
      *  @return bool
     **/
     public function isValidUser($user = '')
     {
         if ($user == '') { return false; }
-        if (is_array($this->o_users->readUserRecord($user))) {
+        if (is_array($this->o_users->readInfo($user))) {
             return true;
         }
         return false;
@@ -262,21 +301,6 @@ class AccessHelper extends Base
         if ($user_id == -1) { return false; }
         if (ctype_digit($user_id)) {
             return $this->isValidUser($user_id);
-        }
-        return false;
-    }
-    /**
-     *  Figures out if the user is specified as a default user.
-     *  @param string|int $user
-     *  @return bool true false
-     */
-    public function isDefaultUser($user)
-    {
-        $a_results = $this->o_users->readInfo($user);
-        if (isset($a_results['is_default'])) {
-            if ($a_results['is_default'] == 1) {
-                return true;
-            }
         }
         return false;
     }
