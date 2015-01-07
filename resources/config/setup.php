@@ -94,7 +94,7 @@ $o_session = Session::start();
 $o_di      = new Di();
 $o_di->set('elog',    $o_elog);
 $o_di->set('session', $o_session);
-error_log('SERVER_NAME: ' . $_SERVER['SERVER_NAME']);
+$o_elog->write('SERVER_NAME: ' . $_SERVER['SERVER_NAME'], LOG_OFF, __METHOD__ . '.' . __LINE__);
 if ($_SERVER['SERVER_NAME'] == 'w3.qca.net') {
     $db_config_file = 'db_config.php';
 }
@@ -120,7 +120,7 @@ if ($o_pdo !== false) {
             require_once APP_CONFIG_PATH . '/fallback_constants.php';
         }
         $a_constants = get_defined_constants(true);
-        $o_elog->write(var_export($a_constants['user'], true), LOG_ON);
+        $o_elog->write(var_export($a_constants['user'], true), LOG_OFF);
         $o_router = new Router($o_di);
         $o_tpl    = TwigFactory::getTwig('twig_config.php');
         if ($rodb) {

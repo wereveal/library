@@ -132,8 +132,8 @@ class AccessHelper extends Base
                 $a_user_post['created_on'] = $a_user_values['created_on'];
                 $a_user_post['user_id']    = $a_user_values['user_id'];
 
-                $this->logIt("Password Needed: " . $a_user_values['password'], LOG_ON, __METHOD__ . '.' . __LINE__);
-                $this->logIt("Password Given (hashed): " . password_hash($a_user_post['password'], PASSWORD_DEFAULT), LOG_ON, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Password Needed: " . $a_user_values['password'], LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Password Given (hashed): " . password_hash($a_user_post['password'], PASSWORD_DEFAULT), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 if (password_verify($a_user_post['password'], $a_user_values['password'])) {
                     $this->o_users->resetBadLoginCount($a_user_values['user_id']);
                     $this->o_users->resetBadLoginTimestamp($a_user_values['user_id']);

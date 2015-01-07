@@ -324,7 +324,6 @@ class ConfigModel extends Base implements ModelInterface
             FROM {$this->db_prefix}config
             ORDER BY config_name
         ";
-        error_log($select_query);
         return $this->o_db->search($select_query);
     }
     /**

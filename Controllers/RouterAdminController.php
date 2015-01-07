@@ -29,22 +29,21 @@ use Ritc\Library\Views\RouterAdminView;
 
 class RouterAdminController extends Base implements ControllerInterface
 {
-    private $a_router;
     private $o_di;
     private $o_model;
     private $o_router;
-    private $o_view;
     private $o_session;
+    private $o_view;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $this->o_di      = $o_di;
         $o_db            = $o_di->get('db');
-        $this->o_model   = new RouterModel($o_db);
-        $this->o_view    = new RouterAdminView($o_di);
         $this->o_session = $o_di->get('session');
         $this->o_router  = $o_di->get('router');
+        $this->o_model   = new RouterModel($o_db);
+        $this->o_view    = new RouterAdminView($o_di);
     }
     public function render()
     {

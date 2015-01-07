@@ -174,7 +174,7 @@ class Router extends Base
         else {
             $action = '';
         }
-        $this->logIt("Form Action is: {$action}", LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt("Form Action is: {$action}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         self::$form_action = $action;
         return true;
     }

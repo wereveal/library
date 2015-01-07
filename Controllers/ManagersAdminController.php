@@ -1,10 +1,10 @@
 <?php
 /**
  *  @brief Controller for the Configuration page.
- *  @file UserAdminController.php
+ *  @file ManagersAdminController.php
  *  @ingroup library core
  *  @namespace Ritc/Library/Controllers
- *  @class UserAdminController
+ *  @class ManagersAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.3β
  *  @date 2015-01-06 12:14:23
@@ -27,7 +27,7 @@ use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Views\UserAdminView;
 
-class UserAdminController extends Base implements ControllerInterface
+class ManagersAdminController extends Base implements ControllerInterface
 {
     private $a_route_parts;
     private $a_post_values;

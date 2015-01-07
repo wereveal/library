@@ -6,7 +6,7 @@ return array(
     'Ritc\Library\Controllers\ConfigAdminController'   => __DIR__ . '/../src/Ritc/Library/Controllers/ConfigAdminController.php',
     'Ritc\Library\Controllers\ManagerController'       => __DIR__ . '/../src/Ritc/Library/Controllers/ManagerController.php',
     'Ritc\Library\Controllers\RouterAdminController'   => __DIR__ . '/../src/Ritc/Library/Controllers/RouterAdminController.php',
-    'Ritc\Library\Controllers\UserAdminController'     => __DIR__ . '/../src/Ritc/Library/Controllers/UserAdminController.php',
+    'Ritc\Library\Controllers\UserAdminController'     => __DIR__ . '/../src/Ritc/Library/Controllers/ManagersAdminController.php',
     'Ritc\Library\Entities\GroupsEntity'               => __DIR__ . '/../src/Ritc/Library/Entities/GroupsEntity.php',
     'Ritc\Library\Entities\RolesEntity'                => __DIR__ . '/../src/Ritc/Library/Entities/RolesEntity.php',
     'Ritc\Library\Entities\RouterEntity'               => __DIR__ . '/../src/Ritc/Library/Entities/RouterEntity.php',

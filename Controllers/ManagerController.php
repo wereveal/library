@@ -21,9 +21,6 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Controllers\ConfigAdminController;
-use Ritc\Library\Controllers\RouterAdminController;
-use Ritc\Library\Controllers\UserAdminController;
 use Ritc\Library\Helper\AccessHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Views\ManagerView;
@@ -34,7 +31,6 @@ class ManagerController extends Base implements ControllerInterface
     private $a_route_parts;
     private $a_post_values;
     private $form_action;
-    private $main_action;
     private $o_access;
     private $o_di;
     private $o_manager_view;
@@ -73,16 +69,19 @@ class ManagerController extends Base implements ControllerInterface
         switch ($this->route_method) {
             case 'renderConfigAdmin':
                 $html = $this->renderConfigAdmin();
+                break;
             case 'renderRouterAdmin':
                 $html = $this->renderRouterAdmin();
+                break;
             case 'renderUserAdmin':
                 $html = $this->renderUserAdmin();
+                break;
             case 'render':
             case '':
             default:
                 switch ($this->route_action) {
                     case 'verifyLogin':
-                        if ($this->o_access->login($a_post) !== false) {
+                        if ($this->o_access->login($this->a_post_values) !== false) {
                             $html = $this->o_manager_view->renderLandingPage();
                         }
                         else {
@@ -123,8 +122,18 @@ class ManagerController extends Base implements ControllerInterface
         if ($this->isLoggedIn() === false) {
             return $this->o_manager_view->renderLoginForm();
         }
-        $o_user_admin = new UserAdminController($this->o_di);
+        $o_user_admin = new ManagersAdminController($this->o_di);
         return $o_user_admin->render();
+    }
+    public function renderRolesAdmin()
+    {
+        // TODO write renderRolesAdmin method
+        return '';
+    }
+    public function renderGroupsAdmin()
+    {
+        // TODO write renderGroupsAdmin method
+        return '';
     }
     private function isLoggedIn()
     {
