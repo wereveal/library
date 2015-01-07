@@ -21,6 +21,9 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Controllers\ConfigAdminController;
+use Ritc\Library\Controllers\RouterAdminController;
+use Ritc\Library\Controllers\UserAdminController;
 use Ritc\Library\Helper\AccessHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Views\ManagerView;
@@ -28,7 +31,16 @@ use Ritc\Library\Services\Di;
 
 class ManagerController extends Base implements ControllerInterface
 {
+    private $a_route_parts;
+    private $a_post_values;
+    private $form_action;
+    private $main_action;
+    private $o_access;
     private $o_di;
+    private $o_manager_view;
+    private $o_router;
+    private $route_method;
+    private $route_action;
 
     public function __construct(Di $o_di)
     {
@@ -37,42 +49,88 @@ class ManagerController extends Base implements ControllerInterface
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
         }
+        $this->setPrivateProperties();
+        $this->o_di           = $o_di;
+        $this->o_router       = $o_di->get('router');
+        $this->a_route_parts  = $this->o_router->getRouteParts();
+        $this->route_action   = $this->a_route_parts['route_action'];
+        $this->route_method   = $this->a_route_parts['route_method'];
+        $this->form_action    = $this->a_route_parts['form_action'];
+        $this->a_post_values  = $this->o_router->getPost();
+        $this->o_access       = new AccessHelper($this->o_di);
+        $this->o_manager_view = new ManagerView($this->o_di);
     }
 
     /**
-     * Main router and puker outer.
+     * Default page for the manager and login.
      * @return string
      */
     public function render()
     {
-        $o_router      = $this->o_di->get('router');
-        $o_view        = new ManagerView($this->o_di);
-        $o_access      = new AccessHelper($this->o_di);
-        $a_route_parts = $o_router->getRouteParts();
-        $route_action  = $a_route_parts['route_action'];
-        $a_post        = $o_router->getPost();
-        if ($o_access->isLoggedIn() === false && $route_action != 'verifyLogin') {
-            $route_action = 'login';
+        if ($this->isLoggedIn() === false) {
+            $this->route_action = 'login';
         }
-        switch ($route_action)
-        {
-            case 'verifyLogin':
-                if ($o_access->login($a_post) !== false) {
-                    $html = $o_view->renderLandingPage();
-                }
-                else {
-                    $login_id = isset($a_post['login_id']) ? $a_post['login_id'] : '';
-                    $html = $o_view->renderLoginForm($login_id, 'Please Try Again');
-                }
-                break;
-            case 'landing':
-                $html = $o_view->renderLandingPage();
-                break;
+        switch ($this->route_method) {
+            case 'renderConfigAdmin':
+                $html = $this->renderConfigAdmin();
+            case 'renderRouterAdmin':
+                $html = $this->renderRouterAdmin();
+            case 'renderUserAdmin':
+                $html = $this->renderUserAdmin();
+            case 'render':
             case '':
-            case 'login':
             default:
-                $html = $o_view->renderLoginForm();
+                switch ($this->route_action) {
+                    case 'verifyLogin':
+                        if ($this->o_access->login($a_post) !== false) {
+                            $html = $this->o_manager_view->renderLandingPage();
+                        }
+                        else {
+                            $login_id = isset($a_post['login_id']) ? $a_post['login_id'] : '';
+                            $html = $this->o_manager_view->renderLoginForm($login_id, 'Please Try Again');
+                        }
+                        break;
+                    case 'landing':
+                        $html = $this->o_manager_view->renderLandingPage();
+                        break;
+                    case '':
+                    case 'login':
+                    default:
+                        $html = $this->o_manager_view->renderLoginForm();
+                }
+            // end default
         }
         return $html;
+    }
+    public function renderConfigAdmin()
+    {
+        if ($this->isLoggedIn() === false) {
+            return $this->o_manager_view->renderLoginForm();
+        }
+        $o_config_admin = new ConfigAdminController($this->o_di);
+        return $o_config_admin->render();
+    }
+    public function renderRouterAdmin()
+    {
+        if ($this->isLoggedIn() === false) {
+            return $this->o_manager_view->renderLoginForm();
+        }
+        $o_router_admin = new RouterAdminController($this->o_di);
+        return $o_router_admin->render();
+    }
+    public function renderUserAdmin()
+    {
+        if ($this->isLoggedIn() === false) {
+            return $this->o_manager_view->renderLoginForm();
+        }
+        $o_user_admin = new UserAdminController($this->o_di);
+        return $o_user_admin->render();
+    }
+    private function isLoggedIn()
+    {
+        if ($this->o_access->isLoggedIn() === false && $this->route_action != 'verifyLogin') {
+            return false;
+        }
+        return true;
     }
 }

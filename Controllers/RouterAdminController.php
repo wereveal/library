@@ -30,22 +30,42 @@ use Ritc\Library\Views\RouterAdminView;
 class RouterAdminController extends Base implements ControllerInterface
 {
     private $a_router;
+    private $o_di;
     private $o_model;
+    private $o_router;
     private $o_view;
     private $o_session;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
+        $this->o_di      = $o_di;
         $o_db            = $o_di->get('db');
         $this->o_model   = new RouterModel($o_db);
         $this->o_view    = new RouterAdminView($o_di);
         $this->o_session = $o_di->get('session');
-        $this->a_router  = $o_di->get('router');
+        $this->o_router  = $o_di->get('router');
     }
     public function render()
     {
-        return $this->o_view->renderList();
+        $a_route_parts = $this->o_router->getRouteParts();
+        $main_action = $a_route_parts['route_action'];
+        switch ($main_action) {
+            case 'save':
+                return $this->o_view->renderList();
+                break;
+            case 'update':
+                return $this->o_view->renderList();
+                break;
+            case 'verifyDelete':
+                break;
+            case 'delete':
+                return $this->o_view->renderList();
+                break;
+            case '':
+            default:
+                return $this->o_view->renderList();
+        }
     }
     public function save(array $a_values)
     {

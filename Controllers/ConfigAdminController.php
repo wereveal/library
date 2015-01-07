@@ -26,6 +26,7 @@ use Ritc\Library\Services\Di;
 
 class ConfigAdminController extends Base implements ControllerInterface
 {
+    private $o_di;
     private $o_model;
     private $o_router;
     private $o_session;
@@ -34,11 +35,7 @@ class ConfigAdminController extends Base implements ControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        $o_db            = $o_di->get('db');
-        $this->o_model   = new ConfigModel($o_db);
-        $this->o_view    = new ConfigAdminView($o_di);
-        $this->o_session = $o_di->get('session');
-        $this->o_router  = $o_di->get('router');
+        $this->o_di = $o_di;
 
     }
     /**
@@ -47,8 +44,15 @@ class ConfigAdminController extends Base implements ControllerInterface
     **/
     public function render()
     {
-        $main_action = isset($a_actions['action3']) ? $a_actions['action3'] : '';
-        $form_action = isset($a_values['form_action']) ? $a_values['form_action'] : '';
+        $o_db          = $this->o_di->get('db');
+        $o_db          = $o_di->get('db');
+        $o_model       = new ConfigModel($o_db);
+        $o_view        = new ConfigAdminView($o_di);
+        $o_session     = $o_di->get('session');
+        $o_router      = $o_di->get('router');
+        $a_route_parts = $o_router->getRouteParts();
+        $main_action   = $a_route_parts['route_action'];
+        $form_action   = $a_route_parts['form_action'];
         // Make sure this is a good session
         if ($main_action == 'modify' || $main_action == 'save' || $main_action == 'delete') {
             if ($this->o_session->isNotValidSession($a_values, true)) {
@@ -135,16 +139,5 @@ class ConfigAdminController extends Base implements ControllerInterface
             default:
                 return $this->o_view->renderConfigs();
         }
-    }
-    /**
-     * @param Session $o_session
-     */
-    public function setSession(Session $o_session)
-    {
-        $this->o_session = $o_session;
-    }
-    public function getSession()
-    {
-        return $this->o_session;
     }
 }
