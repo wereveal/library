@@ -69,10 +69,10 @@ class RouterAdminView extends Base
                 )
             );
         }
-        $a_routes = $this->o_model->read();
+        $a_routes = $this->o_model->read(array(), ['order_by' => 'route_default, route_path']);
         $this->logIt(
             'a_configs: ' . var_export($a_routes, TRUE),
-            LOG_OFF,
+            LOG_ON,
             __METHOD__ . '.' . __LINE__
         );
         if ($a_routes !== false && count($a_routes) > 0) {

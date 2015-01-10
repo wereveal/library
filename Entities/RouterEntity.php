@@ -7,7 +7,8 @@
       `route_path` varchar(255) NOT NULL,
       `route_class` varchar(128) NOT NULL,
       `route_method` varchar(64) DEFAULT NULL,
-      `route_action` varchar(255) NOT NULL
+      `route_action` varchar(255) NOT NULL,
+      `route_default` tinyint(1) DEFAULT 1
       PRIMARY KEY (`router_id`),
       UNIQUE KEY `uri_path` (`uri_path``)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

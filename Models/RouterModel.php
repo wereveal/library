@@ -80,7 +80,7 @@ class RouterModel extends Base implements ModelInterface
     {
         if (count($a_search_values) > 0) {
             $a_search_params = $a_search_params == array()
-                ? array('order_by' => 'route_path')
+                ? ['order_by' => 'route_path']
                 : $a_search_params;
             $a_allowed_keys = [
                 'route_id',
@@ -97,7 +97,7 @@ class RouterModel extends Base implements ModelInterface
             $where = " ORDER BY 'route_path'";
         }
         $sql = "
-            SELECT route_id, route_path, route_class, route_method, route_action
+            SELECT route_id, route_path, route_class, route_method, route_action, route_default
             FROM {$this->db_prefix}routes
             {$where}
         ";

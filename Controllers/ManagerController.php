@@ -66,6 +66,9 @@ class ManagerController extends Base implements ControllerInterface
         if ($this->isLoggedIn() === false) {
             $this->route_action = 'login';
         }
+        elseif ($this->route_method == 'render' && $this->route_action == '') {
+            $this->route_action = 'landing';
+        }
         switch ($this->route_method) {
             case 'renderConfigAdmin':
                 $html = $this->renderConfigAdmin();

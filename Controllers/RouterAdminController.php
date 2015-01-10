@@ -44,6 +44,11 @@ class RouterAdminController extends Base implements ControllerInterface
         $this->o_router  = $o_di->get('router');
         $this->o_model   = new RouterModel($o_db);
         $this->o_view    = new RouterAdminView($o_di);
+        if (DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+            $this->o_model->setElog($this->o_elog);
+            $this->o_view->setElog($this->o_elog);
+        }
     }
     public function render()
     {
