@@ -2,7 +2,7 @@
 /**
  *  @brief A basic entity class for the User Role table.
  *  @file UserRoleMapEntity.php
- *  @ingroup library entities
+ *  @ingroup ritc_library entities
  *  @namespace Ritc/Library/Entities
  *  @class UserRoleMapEntity
  *  @author William Reveal  <bill@revealitconsulting.com>

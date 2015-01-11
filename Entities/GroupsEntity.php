@@ -2,7 +2,7 @@
 /**
  *  @brief A basic entity class Groups table.
  *  @file GroupsEntity.php
- *  @ingroup library entities
+ *  @ingroup ritc_library entities
  *  @namespace Ritc/Library/Entities
  *  @class GroupsEntity
  *  @author William Reveal  <bill@revealitconsulting.com>

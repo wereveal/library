@@ -2,7 +2,7 @@
 /**
  *  @brief Does all the database CRUD stuff.
  *  @file UserGroupMapModel.php
- *  @ingroup library models
+ *  @ingroup ritc_library models
  *  @namespace Ritc/Library/Models
  *  @class UserGroupMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>

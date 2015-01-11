@@ -4,7 +4,7 @@
  *  @details It needs to be noted that this reflects the fact that
  *      a user entity consists of data that comes from more than one database table.
  *  @file UsersEntity.php
- *  @ingroup library entities
+ *  @ingroup ritc_library entities
  *  @namespace Ritc/Library/Entities
  *  @class UsersEntity
  *  @author William Reveal  <bill@revealitconsulting.com>

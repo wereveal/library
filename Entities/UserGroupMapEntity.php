@@ -2,7 +2,7 @@
 /**
  *  @brief A basic entity class for the Article table.
  *  @file UserGroupMapEntity.php
- *  @ingroup library entities
+ *  @ingroup ritc_library entities
  *  @namespace Ritc/Library/Entities
  *  @class UserGroupMapEntity
  *  @author William Reveal  <bill@revealitconsulting.com>

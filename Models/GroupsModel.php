@@ -2,7 +2,7 @@
 /**
  *  @brief Does all the database CRUD stuff.
  *  @file GroupsModel.php
- *  @ingroup library models
+ *  @ingroup ritc_library models
  *  @namespace Ritc/Library/Models
  *  @class GroupsModel
  *  @author William Reveal  <bill@revealitconsulting.com>

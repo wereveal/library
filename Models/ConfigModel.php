@@ -2,7 +2,7 @@
 /**
  *  @brief Creates a Model object.
  *  @file ConfigModel.php
- *  @ingroup library models
+ *  @ingroup ritc_library models
  *  @namespace Ritc/Library/Models
  *  @class ConfigModel
  *  @author William Reveal  <bill@revealitconsulting.com>
