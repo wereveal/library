@@ -46,7 +46,7 @@ class ManagerView extends Base
             ],
             [
                 'text' => 'Router Manager',
-                'url'  => '/manager/router/'
+                'url'  => '/manager/routes/'
             ],
             [
                 'text' => 'People Manager',

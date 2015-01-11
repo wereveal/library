@@ -16,14 +16,29 @@
     {% endif %}
     <div class="row">
         <div class="col-md-12">
-            <div class="row hidden-sm router-header">
-                <div class="col-md-4">Route Path</div>
-                <div class="col-md-2">Route Class</div>
-                <div class="col-md-2">Route Method</div>
-                <div class="col-md-2">Route Action</div>
-                <div class="col-md-2">&nbsp;</div>
+            <div class="row hidden-sm list-header">
+                <div class="col-md-4 list-header">Route Path</div>
+                <div class="col-md-2 list-header">Route Class</div>
+                <div class="col-md-2 list-header">Route Method</div>
+                <div class="col-md-2 list-header">Route Action</div>
+                <div class="col-md-2 list-header">&nbsp;</div>
             </div>
         {% set x = -1 %}
+            {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+            <div class="row {{ class }}">
+                <form action="{{ public_dir }}/manager/routes/save/" method= "post">
+                    <div class="col-md-4"><label class="visible-sm-inline-block" for="route[route_path]">Route Path: </label><input type="text" name="route[route_path]" value="" size="40" maxlength="64" class="colorful"/></div>
+                    <div class="col-md-2"><label class="visible-sm-inline-block" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="" size="20" maxlength="32" class="colorful"/></div>
+                    <div class="col-md-2"><label class="visible-sm-inline-block" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="" size="20" maxlength="32" class="colorful"/></div>
+                    <div class="col-md-2"><label class="visible-sm-inline-block" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="" size="20" maxlength="32" class="colorful"/></div>
+                    <div class="col-md-2">
+                        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Route</button>
+                        <input type="hidden" name="tolken" value="{{ tolken }}" />
+                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                    </div>
+                </form>
+            </div>
         {% for row in a_routes %}
             {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
@@ -33,13 +48,15 @@
                 <div class="col-md-2"><label class="visible-sm-inline-block" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="{{ row.route_class }}" size="20" maxlength="32" class="colorful"/></div>
                 <div class="col-md-2"><label class="visible-sm-inline-block" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="{{ row.route_method }}" size="20" maxlength="32" class="colorful"/></div>
                 <div class="col-md-2"><label class="visible-sm-inline-block" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="{{ row.route_action }}" size="20" maxlength="32" class="colorful"/></div>
-                <div class="col-md-2">
-                    <button type="submit" name="submit" value="update" class="btn medium white">Save</button>
-                    <button type="submit" name="submit" value="verify" class="btn medium white">Delete</button>
+                <div class="col-md-1">
+                    <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
                     <input type="hidden" name="tolken" value="{{ tolken }}" />
                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                     <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                    <input type="hidden" name="routes[route_id]" value="{{ row.route_id }}" />
+                    <input type="hidden" name="route[route_id]" value="{{ row.route_id }}" />
                 </div>
             </form>
             {% else %}
@@ -60,7 +77,7 @@
                     <div class="col-md-2"><label class="visible-sm-inline-block" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="" size="20" maxlength="32" class="colorful"/></div>
                     <div class="col-md-2"><label class="visible-sm-inline-block" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="" size="20" maxlength="32" class="colorful"/></div>
                     <div class="col-md-2">
-                        <button type="submit" name="submit" value="save_new" class="btn medium white">Save New</button>
+                        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Route</button>
                         <input type="hidden" name="tolken" value="{{ tolken }}" />
                         <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                         <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />

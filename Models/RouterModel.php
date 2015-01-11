@@ -45,6 +45,7 @@ class RouterModel extends Base implements ModelInterface
     public function create(array $a_values)
     {
         if ($a_values == array()) { return false; }
+        $this->logIt(var_export($a_values, true), LOG_ON, __METHOD__ . '.' . __LINE__);
         $a_required_keys = [
             'route_path',
             'route_class',
