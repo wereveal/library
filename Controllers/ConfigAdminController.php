@@ -2,7 +2,7 @@
 /**
  *  @brief Controller for the Configuration page.
  *  @file ConfigAdminController.php
- *  @ingroup library core
+ *  @ingroup ritc_library controllers
  *  @namespace Ritc/Library/Controllers
  *  @class ConfigAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
@@ -19,12 +19,12 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Interfaces\ControllerInterface;
+use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\ConfigModel;
 use Ritc\Library\Views\ConfigAdminView;
 use Ritc\Library\Services\Di;
 
-class ConfigAdminController extends Base implements ControllerInterface
+class ConfigAdminController extends Base implements MangerControllerInterface
 {
     private $o_di;
     private $o_model;

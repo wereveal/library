@@ -4,7 +4,7 @@
  *  @details It is expected that this class will be extended by the manager controller of the app
  *      in which it resides. However, it is written to work as is.
  *  @file ManagerController.php
- *  @ingroup library controllers
+ *  @ingroup ritc_library controllers
  *  @namespace Ritc/Library/Controllers
  *  @class ManagerController
  *  @author William Reveal  <bill@revealitconsulting.com>

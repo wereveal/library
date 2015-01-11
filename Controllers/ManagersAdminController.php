@@ -2,7 +2,7 @@
 /**
  *  @brief Controller for the Configuration page.
  *  @file ManagersAdminController.php
- *  @ingroup library core
+ *  @ingroup ritc_library controllers
  *  @namespace Ritc/Library/Controllers
  *  @class ManagersAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
@@ -23,11 +23,11 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\AccessHelper;
-use Ritc\Library\Interfaces\ControllerInterface;
+use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Views\UserAdminView;
 
-class ManagersAdminController extends Base implements ControllerInterface
+class ManagersAdminController extends Base implements MangerControllerInterface
 {
     private $a_route_parts;
     private $a_post_values;
@@ -59,6 +59,16 @@ class ManagersAdminController extends Base implements ControllerInterface
     **/
     public function render()
     {
+        switch ($this->main_action) {
+            case 'save':
+            case 'update':
+            case 'verifyDelete':
+            case 'delete':
+                return $this->$main_action();
+            case '':
+            default:
+                return $this->o_view->renderList();
+        }
         switch ($this->main_action) {
             case 'login':
                 header("Location: " . SITE_URL);
@@ -116,6 +126,22 @@ class ManagersAdminController extends Base implements ControllerInterface
         return '';
     }
 
+    public function save()
+    {
+        return '';
+    }
+    public function update()
+    {
+        return '';
+    }
+    public function verifyDelete()
+    {
+        return '';
+    }
+    public function delete()
+    {
+
+    }
     /**
      * Sets the class property $main_action based on the route action and the form action.
      * Kind of of kludge but it seems to do what I want.
