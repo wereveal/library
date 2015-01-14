@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Services
  *  @class Session
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.1.4
- *  @date 2015-01-06 10:04:22
+ *  @version 1.1.5
+ *  @date 2015-01-13 14:23:22
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.1.5 - added phpDoc comments                                 - 01/13/2015 wer
  *      v1.1.4 - changed session validation defaults                   - 01/06/2015 wer
  *      v1.1.3 - moved to Services namespace                           - 11/15/2014 wer
  *      v1.1.2 - changed to implement the changes in Base class        - 09/23/2014 wer
@@ -27,6 +28,7 @@ class Session extends Base
     private $session_id;
     private $session_name;
     private $session_started = false;
+
     private function __construct($session_id = '', $session_name = '')
     {
         $this->setPrivateProperties();
@@ -51,6 +53,13 @@ class Session extends Base
         }
 
     }
+
+    /**
+     * Returns the instance of the Session class.
+     * @param string $session_id
+     * @param string $session_name
+     * @return Session
+     */
     public static function start($session_id = "", $session_name = "")
     {
         if (!isset(self::$instance)) {
@@ -58,17 +67,22 @@ class Session extends Base
         }
         return self::$instance;
     }
-    public function clear($a_not_these = '')
+    /**
+     * Clears the session values.
+     * Allows certain ones not to be cleared based on the array $a_not_these.
+     * @param array $a_not_these optional.
+     */
+    public function clear(array $a_not_these = array())
     {
-        if (is_array($a_not_these) === false) {
-            $a_not_these = array();
-        }
         foreach ($_SESSION as $key=>$value) {
             if (in_array($key, $a_not_these) === false) {
                 unset($_SESSION[$key]);
             }
         }
     }
+    /**
+     * Destroy's the Session.
+     */
     public function destroy()
     {
         $_SESSION = array();
@@ -80,10 +94,18 @@ class Session extends Base
         }
         session_destroy();
     }
+    /**
+     * Returns the values from session_get_cookie_params().
+     * @return array the session's cookies values
+     */
     public function getCookieParams()
     {
         return session_get_cookie_params();
     }
+    /**
+     * Checks to see if the session has sat there unused for $_SESSION['idle_time'] amount of time.
+     * @return bool
+     */
     public function isIdle()
     {
         if (isset($_SESSION["idle_time"])
@@ -94,14 +116,108 @@ class Session extends Base
         }
         return false;
     }
+    /**
+     * Returns if the Session has not been idle.
+     * @return bool
+     */
     public function isNotIdle()
     {
         return $this->isIdle() ? false : true;
     }
+    /**
+     *  Verifies the session is valid.
+     *  This is a simple and probably easily spoofed validation but it seems
+     *  to fool many XSS things.
+     *  @pre session variables token and idle_timestamp
+     *      as well as the session id matches cookie name
+     *  @param array $a_values  array(
+     *      'token'   => SESSION['token'],
+     *      'tolken'  => SESSION['token'], // optional, if set and token isn't, token = tolken
+     *      'form_ts' => SESSION['idle_timestamp'],
+     *      'hobbit   => '' // optional anti-spam measure, if not blank, invalidate session
+     *      )
+     *  @param bool $use_form_values specifies if to use form data for validation
+     *  @return bool, true or false if valid
+     **/
+    public function isValidSession($a_values = array(), $use_form_values = false)
+    {
+        if (isset($_SESSION['token']) === false
+            || isset($_SESSION['idle_timestamp']) === false
+            || isset($_SESSION['idle_time']) === false)
+        {
+            return false;
+        }
+        if (isset($a_values['token']) && !isset($a_values['tolken'])) {
+            $a_values['tolken'] = $a_values['token'];
+        }
+        if (isset($a_values['hobbit']) && $a_values['hobbit'] != '') {
+            return false;
+        }
+        if ($use_form_values === true && $a_values == array()) {
+            return false;
+        }
+        elseif ($use_form_values === false) {
+            if (
+                (ini_get('session.use_cookies') == 0)
+                && (ini_get('session.use_only_cookies') == 0)
+                && ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
+            ) {
+                return true;
+            }
+            elseif (
+                ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
+                && $_COOKIE[$this->session_name] == session_id()
+            ) {
+                return true;
+            }
+        }
+        elseif ((ini_get('session.use_cookies') == 0) && (ini_get('session.use_only_cookies') == 0)) {
+            if (
+                ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
+                && $a_values['tolken']  == $_SESSION['token']
+                && $a_values['form_ts'] == $_SESSION['idle_timestamp']
+            ) {
+                return true;
+            }
+        }
+        elseif (
+            ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
+            && $a_values['tolken']  == $_SESSION['token']
+            && $a_values['form_ts'] == $_SESSION['idle_timestamp']
+            && $_COOKIE[$this->session_name] == session_id()
+        ) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     *  Tells you if it is not a valid session.
+     *  returns the opposite of isValidSession method. See its comments for more info
+     *  @param $a_values (array), array(
+     *      'token'=>_SESSION['token'],
+    'form_ts'=>_SESSION['idle_timestamp'])
+     *  @param bool $use_form_values specifies if to use form data for validation
+     *  @return bool true or false
+     **/
+    public function isNotValidSession($a_values = array(), $use_form_values = false)
+    {
+        if ($this->isValidSession($a_values, $use_form_values)) {
+            return false;
+        }
+        return true;
+    }
+    /**
+     *  Updates the Idle timestamp.
+     */
     public function updateIdleTimestamp()
     {
         $_SESSION["idle_timestamp"] = time();
     }
+    /**
+     * Returns the Session ID.
+     * @param string $id
+     * @return string
+     */
     public function id($id = "")
     {
         if ($id != "") {
@@ -109,6 +225,11 @@ class Session extends Base
         }
         return session_id();
     }
+    /**
+     * Returns the session name.
+     * @param string $name
+     * @return string
+     */
     public function name($name = "")
     {
         if ($name != "") {
@@ -116,10 +237,20 @@ class Session extends Base
         }
         return session_name();
     }
+    /**
+     * Regenerates the session id.
+     * @param bool $delete_old
+     * @return bool
+     */
     public function regenerateId($delete_old = false)
     {
         return session_regenerate_id($delete_old);
     }
+    /**
+     * Returns the Session variable value for the session variable name.
+     * @param string $var_name
+     * @return null
+     */
     public function getVar($var_name = "")
     {
         return $var_name == ""
@@ -128,13 +259,18 @@ class Session extends Base
                 ? $_SESSION[$var_name]
                 : null;
     }
+    /**
+     * Sets a session variable.
+     * @param string $var_name
+     * @param string $var_value
+     * @return bool
+     */
     public function setVar($var_name = "", $var_value = "")
     {
         if ($var_name == "") { return false; }
         $_SESSION[$var_name] = $var_value;
         return true;
     }
-
     /**
      *  Sets basic session vars for form validation.
      *
@@ -254,87 +390,8 @@ class Session extends Base
         return $_SESSION['token'];
     }
     /**
-     *  Verifies the session is valid.
-     *  This is a simple and probably easily spoofed validation but it seems
-     *  to fool many XSS things.
-     *  @pre session variables token and idle_timestamp
-     *      as well as the session id matches cookie name
-     *  @param array $a_values  array(
-     *      'token'   => SESSION['token'],
-     *      'tolken'  => SESSION['token'], // optional, if set and token isn't, token = tolken
-     *      'form_ts' => SESSION['idle_timestamp'],
-     *      'hobbit   => '' // optional anti-spam measure, if not blank, invalidate session
-     *      )
-     *  @param bool $use_form_values specifies if to use form data for validation
-     *  @return bool, true or false if valid
-    **/
-    public function isValidSession($a_values = array(), $use_form_values = false)
-    {
-        if (isset($_SESSION['token']) === false
-            || isset($_SESSION['idle_timestamp']) === false
-            || isset($_SESSION['idle_time']) === false)
-        {
-            return false;
-        }
-        if (isset($a_values['token']) && !isset($a_values['tolken'])) {
-            $a_values['tolken'] = $a_values['token'];
-        }
-        if (isset($a_values['hobbit']) && $a_values['hobbit'] != '') {
-            return false;
-        }
-        if ($use_form_values === true && $a_values == array()) {
-            return false;
-        }
-        elseif ($use_form_values === false) {
-            if (
-                (ini_get('session.use_cookies') == 0)
-                && (ini_get('session.use_only_cookies') == 0)
-                && ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-            ) {
-                return true;
-            }
-            elseif (
-                ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-                && $_COOKIE[$this->session_name] == session_id()
-            ) {
-                return true;
-            }
-        }
-        elseif ((ini_get('session.use_cookies') == 0) && (ini_get('session.use_only_cookies') == 0)) {
-            if (
-                ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-                && $a_values['tolken']  == $_SESSION['token']
-                && $a_values['form_ts'] == $_SESSION['idle_timestamp']
-            ) {
-                return true;
-            }
-        }
-        elseif (
-            ($_SESSION["idle_timestamp"] + $_SESSION["idle_time"]) >= time()
-            && $a_values['tolken']  == $_SESSION['token']
-            && $a_values['form_ts'] == $_SESSION['idle_timestamp']
-            && $_COOKIE[$this->session_name] == session_id()
-        ) {
-            return true;
-        }
-        return false;
-    }
-    /**
-     *  Tells you if it is not a valid session.
-     *  returns the opposite of isValidSession method. See its comments for more info
-     *  @param $a_values (array), array(
-     *      'token'=>_SESSION['token'],
-            'form_ts'=>_SESSION['idle_timestamp'])
-     *  @param bool $use_form_values specifies if to use form data for validation
-     *  @return bool true or false
-    **/
-    public function isNotValidSession($a_values = array(), $use_form_values = false)
-    {
-        if ($this->isValidSession($a_values, $use_form_values)) {
-            return false;
-        }
-        return true;
-    }
+     * Cloning is not allowed.
+     */
     public function __clone()
     {
         trigger_error("Clone is not allowed.", E_USER_ERROR);
