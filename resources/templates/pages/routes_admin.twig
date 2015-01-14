@@ -24,7 +24,7 @@
                 <div class="col-md-2 list-header">&nbsp;</div>
             </div>
         {% set x = -1 %}
-            {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+        {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <form action="{{ public_dir }}/manager/routes/save/" method= "post">
                     <div class="col-md-4"><label class="visible-sm-inline-block" for="route[route_path]">Route Path: </label><input type="text" name="route[route_path]" value="" size="40" maxlength="64" class="colorful"/></div>
@@ -39,11 +39,12 @@
                     </div>
                 </form>
             </div>
+        {% set x = x * -1 %}
         {% for row in a_routes %}
             {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
             {% if row.route_default == 0 %}
-            <form action="{{ public_dir }}/manager/routes/modify/" method="post">
+            <form action="{{ public_dir }}/manager/routes/update/" method="post">
                 <div class="col-md-4"><label class="visible-sm-inline-block" for="route[route_path]">Route Path: </label><input type="text" name="route[route_path]" value="{{ row.route_path }}" size="40" maxlength="64" class="colorful"/></div>
                 <div class="col-md-2"><label class="visible-sm-inline-block" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="{{ row.route_class }}" size="20" maxlength="32" class="colorful"/></div>
                 <div class="col-md-2"><label class="visible-sm-inline-block" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="{{ row.route_method }}" size="20" maxlength="32" class="colorful"/></div>
@@ -60,11 +61,13 @@
                 </div>
             </form>
             {% else %}
+                {# Disabled so the list is shorter and easier to use
                 <div class="col-md-4"><span class="visible-sm-inline-block">Route Path: </span>{{ row.route_path }}</div>
                 <div class="col-md-2"><span class="visible-sm-inline-block">Route Class: </span>{{ row.route_class }}</div>
                 <div class="col-md-2"><span class="visible-sm-inline-block">Route Method: </span>{{ row.route_method }}</div>
                 <div class="col-md-2"><span class="visible-sm-inline-block">Route Action: </span>{{ row.route_action }}</div>
                 <div class="col-md-2">&nbsp;</div>
+                #}
             {% endif %}
             </div>
             {% set x = x * -1 %}

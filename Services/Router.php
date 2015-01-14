@@ -32,6 +32,7 @@ class Router extends Base
     private $o_model;
     public static $form_action;
     public static $route_action;
+    public static $route_class;
     public static $route_method;
     public static $route_path;
 
@@ -92,14 +93,22 @@ class Router extends Base
             ];
         }
         self::$route_action = $this->a_route_parts['route_action'];
+        self::$route_class  = $this->a_route_parts['route_class'];
         self::$route_method = $this->a_route_parts['route_method'];
     }
 
     ### GETters and SETters ###
+    /**
+     * @return mixed
+     */
     public function getFormAction()
     {
         return self::$form_action;
     }
+    /**
+     * @param string $value
+     * @return string
+     */
     public function getGet($value = '')
     {
         if ($value == '') {
@@ -113,14 +122,38 @@ class Router extends Base
             }
         }
     }
+    /**
+     * @return mixed
+     */
+    public function getRouteAction()
+    {
+        return self::$route_action;
+    }
+    /**
+     * @return mixed
+     */
+    public function getRouteClass()
+    {
+        return self::$route_class;
+    }
+    /**
+     * @return mixed
+     */
     public function getRoutePath()
     {
         return self::$route_path;
     }
+    /**
+     * @return mixed
+     */
     public function getRouteParts()
     {
         return $this->a_route_parts;
     }
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function getPost($value = '')
     {
         if ($value == '') {
@@ -178,7 +211,9 @@ class Router extends Base
         self::$form_action = $action;
         return true;
     }
-    
+    /**
+     * @param array $a_allowed_keys
+     */
     public function setGet(array $a_allowed_keys = array())
     {
         $this->a_get = $this->o_arrays->cleanArrayValues($_GET, $a_allowed_keys, true);
@@ -200,6 +235,9 @@ class Router extends Base
             self::$route_path = $request_uri;
         }
     }
+    /**
+     * @param array $a_allowed_keys
+     */
     public function setPost(array $a_allowed_keys = array())
     {
         $this->a_post = $this->o_arrays->cleanArrayValues($_POST, $a_allowed_keys, true);

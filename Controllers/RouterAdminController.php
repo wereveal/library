@@ -54,18 +54,31 @@ class RouterAdminController extends Base implements MangerControllerInterface
     {
         $a_route_parts = $this->o_router->getRouteParts();
         $main_action = $a_route_parts['route_action'];
+        $form_action = $a_route_parts['form_action'];
+        if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
+            if ($this->o_session->isNotValidSession($this->a_post, true)) {
+                header("Location: " . SITE_URL . '/manager/login/');
+            }
+        }
         switch ($main_action) {
             case 'save':
-            case 'update':
+                return $this->save();
             case 'delete':
-                if ($this->o_session->isValidSession($this->a_post, true)) {
-                    return $this->$main_action();
+                return $this->delete();
+            case 'update':
+                if ($form_action == 'verify') {
+                    return $this->verifyDelete($a_route_parts);
+                }
+                elseif ($form_action == 'update') {
+                    return $this->update();
                 }
                 else {
-                    header("Location: " . SITE_URL);
+                    $a_message = [
+                        'message' => 'A Problem Has Occured. Please Try Again.',
+                        'type' => 'failure'
+                    ];
+                    return $this->o_view->renderList($a_message);
                 }
-            case 'verifyDelete':
-                return $this->verifyDelete();
             case '':
             default:
                 return $this->o_view->renderList();
@@ -76,22 +89,30 @@ class RouterAdminController extends Base implements MangerControllerInterface
         $a_route = $this->a_post['route'];
         $results = $this->o_model->create($a_route);
         if ($results) {
-            return $this->o_view->renderList();
+            $a_message = ['message' => 'Success!', 'type' => 'success'];
+            return $this->o_view->renderList($a_message);
         }
         else {
-            $a_message = ['message' => 'A Problem Has Occured. The new route could not be saved.', 'type' => 'failure'];
+            $a_message = [
+                'message' => 'A Problem Has Occured. The new route could not be saved.',
+                'type' => 'failure'
+            ];
             return $this->o_view->renderList($a_message);
         }
     }
     public function update()
     {
         $a_route = $this->a_post['route'];
-        $results = $this->o_model->update($a_values);
+        $results = $this->o_model->update($a_route);
         if ($results) {
-            return $this->o_view->renderList();
+            $a_message = ['message' => 'Success!', 'type' => 'success'];
+            return $this->o_view->renderList($a_message);
         }
         else {
-            $a_message = ['message' => 'A Problem Has Occured. The route could not be modified.', 'type' => 'failure'];
+            $a_message = [
+                'message' => 'A Problem Has Occured. The route could not be updated.',
+                'type' => 'failure'
+            ];
             return $this->o_view->renderList($a_message);
         }
     }
@@ -102,14 +123,15 @@ class RouterAdminController extends Base implements MangerControllerInterface
     public function delete()
     {
         $a_route = $this->a_post['route'];
-        $route_id = $a_values['route_id'];
+        $route_id = $a_route['route_id'];
         if ($route_id == -1) {
             $a_message = ['message' => 'A Problem Has Occured. The route id was not provided.', 'type' => 'error'];
             return $this->o_view->renderList($a_message);
         }
         $results = $this->o_model->delete($route_id);
         if ($results) {
-            return $this->o_view->renderList();
+            $a_message = ['message' => 'Success!', 'type' => 'success'];
+            return $this->o_view->renderList($a_message);
         }
         else {
             $a_message = ['message' => 'A Problem Has Occured. The route could not be deleted.', 'type' => 'failure'];

@@ -4,9 +4,9 @@
     {% include '@snippets/base_css.twig' %}
 {% endblock %}
 {% block body %}
-<div class="row">
+<div class="row border-radius-top-right">
     <div class="col-md-12">
-        <h1>Welcome! Please Login.</h1>
+        <h1>Welcome! Please Login. <small>This is for site managers.</small></h1>
     </div>
 </div>
 {% if a_message.message != '' %}
@@ -16,15 +16,25 @@
         </div>
     </div>
 {% endif %}
-<div class="row">
+<div class="row border-radius-bottom-right">
     <div class="col-md-12">
-        <form action="/manager/login/" method="post">
-            <label for="login_id">You Login ID: <input type="text" id="login_id" name="login_id" maxlength="64" width="32" value="{{ login_id }}"></label><br>
-            <label>Your Password: <input type="text" id="password" name="password" maxlength="64" width="32" value=""></label><br>
+        <form action="{{ public_dir }}/manager/login/" method="post" id="login-form">
+            <div class="row">
+                <div class="col-md-3 aright"><label for="login_id">Your Login ID: </label></div>
+                <div class="col-md-9 aleft"><input type="text" id="login_id" name="login_id" class="colorful" maxlength="64" width="32" value="{{ login_id }}"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 aright"><label for="password">Your Password: </label></div>
+                <div class="col-md-9 aleft"><input type="text" id="password" name="password" class="colorful" maxlength="64" width="32" value=""></div>
+            </div>
             <input type="hidden" id="tolken" name="tolken" value="{{ tolken }}">
             <input type="hidden" id="form_ts" name="form_ts" value="{{ form_ts }}">
             <input type="text" id="hobbit" name="hobbit" value="" class="hobbit">
-            <button type="submit" value="submit" class="btn white medium">LogIn</button>
+            <div class="row">
+                <div class="col-md-6 aright"><button type="submit" value="submit" class="btn btn-primary">LogIn</button></div>
+                <div class="col-md-6">&nbsp;</div>
+            </div>
+
         </form>
     </div>
 </div>

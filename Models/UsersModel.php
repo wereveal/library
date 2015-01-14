@@ -116,6 +116,7 @@ class UsersModel extends Base implements ModelInterface
                 real_name,
                 short_name,
                 password,
+                is_logged_in,
                 is_active,
                 is_default,
                 created_on,
@@ -157,6 +158,7 @@ class UsersModel extends Base implements ModelInterface
             'real_name',
             'short_name',
             'password',
+            'is_logged_in',
             'is_active',
             'is_default'
         );

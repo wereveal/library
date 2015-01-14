@@ -113,17 +113,18 @@ class RouterModel extends Base implements ModelInterface
      */
     public function update(array $a_values)
     {
-        if (   !isset($a_values['route_id'])
+        if (!isset($a_values['route_id'])
             || $a_values['route_id'] == ''
-            || !ctype_digit($a_values['route_id'])
+            || (is_string($a_values['route_id']) && !ctype_digit($a_values['route_id']))
         ) {
             return false;
         }
         $a_allowed_keys = [
             'route_id',
-            'route_name',
-            'route_description',
-            'route_level'
+            'route_path',
+            'route_class',
+            'route_method',
+            'route_action'
         ];
         $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);
         $set_sql = $this->o_db->buildSqlSet($a_values, ['route_id']);
@@ -132,7 +133,7 @@ class RouterModel extends Base implements ModelInterface
             {$set_sql}
             WHERE route_id = :route_id
         ";
-        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
         return $this->o_db->update($sql, $a_values, true);
     }
 
