@@ -22,7 +22,7 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Helper\AccessHelper;
+use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Views\UserAdminView;
@@ -192,7 +192,7 @@ class ManagersAdminController extends Base implements MangerControllerInterface
      */
     private function isSessionOk()
     {
-        $o_access = new AccessHelper($this->o_di);
+        $o_auth = new AuthHelper($this->o_di);
         if ($this->route_action    == 'modify'
             || $this->route_action == 'save'
             || $this->route_action == 'delete'
@@ -204,7 +204,7 @@ class ManagersAdminController extends Base implements MangerControllerInterface
                 $bail = false;
             }
         }
-        elseif (!$o_access->isLoggedIn()) {
+        elseif (!$o_auth->isLoggedIn()) {
             $bail = true;
         }
         else {

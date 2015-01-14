@@ -21,7 +21,7 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Helper\AccessHelper;
+use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Views\ManagerView;
 use Ritc\Library\Services\Di;
@@ -31,7 +31,7 @@ class ManagerController extends Base implements ControllerInterface
     private $a_route_parts;
     private $a_post_values;
     private $form_action;
-    private $o_access;
+    private $o_auth;
     private $o_di;
     private $o_manager_view;
     private $o_router;
@@ -53,7 +53,7 @@ class ManagerController extends Base implements ControllerInterface
         $this->route_method   = $this->a_route_parts['route_method'];
         $this->form_action    = $this->a_route_parts['form_action'];
         $this->a_post_values  = $this->o_router->getPost();
-        $this->o_access       = new AccessHelper($this->o_di);
+        $this->o_auth         = new AuthHelper($this->o_di);
         $this->o_manager_view = new ManagerView($this->o_di);
     }
 
@@ -84,12 +84,13 @@ class ManagerController extends Base implements ControllerInterface
             default:
                 switch ($this->route_action) {
                     case 'verifyLogin':
-                        if ($this->o_access->login($this->a_post_values) !== false) {
+                        $a_results = $this->o_auth->login($this->a_post_values);
+                        if ($a_results['is_logged_in'] == 1) {
                             $html = $this->o_manager_view->renderLandingPage();
                         }
                         else {
                             $login_id = isset($a_post['login_id']) ? $a_post['login_id'] : '';
-                            $html = $this->o_manager_view->renderLoginForm($login_id, 'Please Try Again');
+                            $html = $this->o_manager_view->renderLoginForm($login_id, 'Login Id or Password was incorrect. Please Try Again');
                         }
                         break;
                     case 'landing':
@@ -140,7 +141,7 @@ class ManagerController extends Base implements ControllerInterface
     }
     private function isLoggedIn()
     {
-        if ($this->o_access->isLoggedIn() === false && $this->route_action != 'verifyLogin') {
+        if ($this->o_auth->isLoggedIn() === false && $this->route_action != 'verifyLogin') {
             return false;
         }
         return true;

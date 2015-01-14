@@ -3,16 +3,19 @@
  *  @brief Manages User Access to the site.
  *  @details It is expected that this will be used within a controller and
  *  more finely grained access with be handled there or in a sub-controller.
- *  @file AccessHelper.php
+ *  @file AuthHelper.php
  *  @ingroup ritc_library helper library
  *  @namespace Ritc/Library/Helper
- *  @class AccessHelper
+ *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.0.6
- *  @date 2014-12-09 11:56:16
+ *  @version 4.2.0
+ *  @date 2015-01-14 10:03:39
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v4.0.6 - moved to the Helper namespace, changed name           - 12/09/2014 wer
+ *      v4.2.0 - change the name of the file. It wasn't doing access   - 01/14/2015 wer
+ *               it was doing authorization.
+ *      v4.1.1 - changed the login method to return an array always    - 01/14/2015 wer
+ *      v4.1.0 - moved to the Helper namespace, changed name           - 12/09/2014 wer
  *      v4.0.5 - removed remaining db code, fixed bugs                 - 12/09/2014 wer
  *      v4.0.4 - switched to using IOC/DI                              - 11/17/2014 wer
  *      v4.0.3 - moved to the Services namespace                       - 11/15/2014 wer
@@ -48,7 +51,7 @@ use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\UsersModel;
 use Ritc\Library\Services\Di;
 
-class AccessHelper extends Base
+class AuthHelper extends Base
 {
     private $db_prefix;
     private $o_db;
@@ -81,7 +84,7 @@ class AccessHelper extends Base
      *  @pre a form has been submitted from the site with all the needed
      *      variables which have been put through a data cleaner.
      *
-     *  @param $a_login (array), required with the following keys
+     *  @param array $a_user_post required with the following keys
      *      array(
      *          'login_id'=>'something',
      *          'password'=>'something',
@@ -90,7 +93,7 @@ class AccessHelper extends Base
      *          'hobbit'=>'' <-- hobbit should always be blank for valid submission (optional element)
      *      ).
      *
-     *  @return mixed, (int) user_id or (bool) false
+     *  @return array user_values or login values with message.
     **/
     public function login(array $a_user_post = array())
     {
@@ -99,7 +102,13 @@ class AccessHelper extends Base
         $a_required = array('login_id', 'password', 'tolken', 'form_ts');
         foreach ($a_required as $required) {
             if (isset($a_user_post[$required]) === false) {
-                return false;
+                return [
+                    'login_id' => isset($a_user_post['login_id'])
+                        ? $a_user_post['login_id']
+                        : '',
+                    'is_logged_in' => 0,
+                    'message' => 'Please try again.'
+                ];
             }
         }
         if ($this->o_session->isValidSession($a_user_post, true)) {
@@ -111,15 +120,18 @@ class AccessHelper extends Base
                     $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
                     $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
                     $this->o_users->setLoggedOut($a_user_values['user_id']);
-                    $a_user_post['password']  = '';
-                    $a_user_post['is_active'] = false;
+                    $a_user_post['password']     = '';
+                    $a_user_post['is_logged_in'] = 0;
+                    $a_user_post['message']      = 'The login id is inactive.';
                     return $a_user_post;
                 }
                 if ($a_user_values['bad_login_count'] > 5 && $a_user_values['bad_login_ts'] >= (time() - (60 * 5))) {
                     $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
                     $this->o_users->setLoggedOut($a_user_values['user_id']);
-                    $a_user_post['password'] = '';
-                    $a_user_post['locked']   = 'yes';
+                    $a_user_post['password']     = '';
+                    $a_user_post['is_logged_in'] = 0;
+                    $a_user_post['login_id']     = '';
+                    $a_user_post['message']      = 'The login id is locked out. Please wait 5 minutes and try again.';
                     return $a_user_post;
                 }
                 // simple anti-spambot thing... if the form has it.
@@ -127,7 +139,11 @@ class AccessHelper extends Base
                     $this->o_users->setLoggedOut($a_user_values['user_id']);
                     $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
                     $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
-                    return false;
+                    return [
+                        'login_id'     => '',
+                        'is_logged_in' => 0,
+                        'message'      => 'A problem has occured. Please try again.'
+                    ];
                 }
                 $a_user_post['created_on'] = $a_user_values['created_on'];
                 $a_user_post['user_id']    = $a_user_values['user_id'];
@@ -138,23 +154,27 @@ class AccessHelper extends Base
                     $this->o_users->resetBadLoginCount($a_user_values['user_id']);
                     $this->o_users->resetBadLoginTimestamp($a_user_values['user_id']);
                     $this->o_users->setLoggedIn($a_user_values['user_id']);
-                    $a_user_values['tolken']  = $a_user_post['tolken'];
-                    $a_user_values['form_ts'] = $a_user_post['form_ts'];
-                    $a_user_values['locked']  = 'no';
-                    unset($a_user_values['password']);
-                    unset($a_user_values['bad_login_count']);
-                    unset($a_user_values['bad_login_ts']);
+                    $a_user_values['is_logged_in']    = 1;
+                    $a_user_values['message']         = 'Success!';
+                    $a_user_values['password']        = '';
+                    $a_user_values['bad_login_count'] = 0;
+                    $a_user_values['bad_login_ts']    = 0;
                     $this->logIt("After password check: " . var_export($a_user_values, true), LOG_OFF, $meth . __LINE__);
                     return $a_user_values;
                 } else {
                     $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
                     $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
                     $this->o_users->setLoggedOut($a_user_values['user_id']);
-                    return false;
+                    return [
+                        'login_id'     => $a_user_post['login_id'],
+                        'is_logged_in' => 0,
+                        'password'     => '',
+                        'message'      => 'The password was incorrect. Please try again.'
+                    ];
                 }
             }
         }
-        return false;
+        return ['login_id' => '', 'is_logged_in' => 0, 'message' => 'Please try again.'];
     }
 
     #### Verifiers ####
