@@ -6,10 +6,12 @@
  *  @namespace Ritc/Library/Services
  *  @class Session
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.1.5
- *  @date 2015-01-13 14:23:22
+ *  @version 1.1.6
+ *  @date 2015-01-16 11:39:20
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.2.0 - added a couple new method to unset a session var      - 01/16/2015 wer
+ *               and a shortcut to reset the session.
  *      v1.1.5 - added phpDoc comments                                 - 01/13/2015 wer
  *      v1.1.4 - changed session validation defaults                   - 01/06/2015 wer
  *      v1.1.3 - moved to Services namespace                           - 11/15/2014 wer
@@ -247,17 +249,25 @@ class Session extends Base
         return session_regenerate_id($delete_old);
     }
     /**
+     *  Resets the session to default values.
+     */
+    public function resetSession()
+    {
+        $this->clear();
+        $this->setSessionVars();
+    }
+    /**
      * Returns the Session variable value for the session variable name.
      * @param string $var_name
-     * @return null
+     * @return mixed whatever the value is of the session variable.
      */
     public function getVar($var_name = "")
     {
         return $var_name == ""
-            ? null
+            ? ''
             : isset($_SESSION[$var_name])
                 ? $_SESSION[$var_name]
-                : null;
+                : '';
     }
     /**
      * Sets a session variable.
@@ -346,6 +356,18 @@ class Session extends Base
         }
         if (!isset($_SESSION["idle_timestamp"])) {
             $_SESSION["idle_timestamp"] = time();
+        }
+    }
+    /**
+     *  Unsets a session var.
+     *  @param string $var_name name of the var to unset
+     */
+    public function unsetVar($var_name = '')
+    {
+        if ($var_name != '') {
+            if (isset($_SESSION[$var_name])) {
+                unset($_SESSION[$var_name]);
+            }
         }
     }
     /**
