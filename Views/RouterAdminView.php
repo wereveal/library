@@ -87,7 +87,6 @@ class RouterAdminView extends Base
      */
     public function renderVerify(array $a_values = array())
     {
-        error_log(var_export($a_values, true));
         if ($a_values === array()) {
             return $this->renderList(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
         }

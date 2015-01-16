@@ -45,7 +45,7 @@ class RouterModel extends Base implements ModelInterface
     public function create(array $a_values)
     {
         if ($a_values == array()) { return false; }
-        $this->logIt(var_export($a_values, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt(var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $a_required_keys = [
             'route_path',
             'route_class',
@@ -133,7 +133,7 @@ class RouterModel extends Base implements ModelInterface
             {$set_sql}
             WHERE route_id = :route_id
         ";
-        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->update($sql, $a_values, true);
     }
 
