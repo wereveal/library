@@ -182,7 +182,7 @@ class AuthHelper extends Base
             }
         }
         else {
-            $this->logIt(var_export($a_user_post, true), LOG_ON, $meth . __LINE__);
+            $this->logIt(var_export($a_user_post, true), LOG_OFF, $meth . __LINE__);
             $this->o_session->resetSession();
             return [
                 'login_id'     => '',

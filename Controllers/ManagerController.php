@@ -71,7 +71,7 @@ class ManagerController extends Base implements ControllerInterface
         switch ($this->route_action) {
             case 'verifyLogin':
                 $a_results = $this->o_auth->login($this->a_post_values);
-                $this->logIt("Login Results: " . var_export($a_results, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Login Results: " . var_export($a_results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 if ($a_results['is_logged_in'] == 1) {
                     $this->o_session->setVar('login_id', $this->a_post_values['login_id']);
                     $html = $this->o_manager_view->renderLandingPage();
