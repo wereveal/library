@@ -84,6 +84,18 @@ class RouterAdminController extends Base implements MangerControllerInterface
                 return $this->o_view->renderList();
         }
     }
+
+    ### Required by Interface ###
+    public function delete()
+    {
+        $route_id = $this->a_post['route_id'];
+        if ($route_id == -1) {
+            $a_message = ['message' => 'A Problem Has Occured. The route id was not provided.', 'type' => 'error'];
+            return $this->o_view->renderList($a_message);
+        }
+        $a_results = $this->o_model->delete($route_id);
+        return $this->o_view->renderList($a_results);
+    }
     public function save()
     {
         $a_route = $this->a_post['route'];
@@ -119,23 +131,5 @@ class RouterAdminController extends Base implements MangerControllerInterface
     public function verifyDelete()
     {
         return $this->o_view->renderVerify($this->a_post);
-    }
-    public function delete()
-    {
-        $a_route = $this->a_post['route'];
-        $route_id = $a_route['route_id'];
-        if ($route_id == -1) {
-            $a_message = ['message' => 'A Problem Has Occured. The route id was not provided.', 'type' => 'error'];
-            return $this->o_view->renderList($a_message);
-        }
-        $results = $this->o_model->delete($route_id);
-        if ($results) {
-            $a_message = ['message' => 'Success!', 'type' => 'success'];
-            return $this->o_view->renderList($a_message);
-        }
-        else {
-            $a_message = ['message' => 'A Problem Has Occured. The route could not be deleted.', 'type' => 'failure'];
-            return $this->o_view->renderList($a_message);
-        }
     }
 }

@@ -140,7 +140,7 @@ class RouterModel extends Base implements ModelInterface
     /**
      * Generic deletes a record based on the id provided.
      * @param int $route_id
-     * @return bool
+     * @return array
      */
     public function delete($route_id = -1)
     {
@@ -149,7 +149,27 @@ class RouterModel extends Base implements ModelInterface
             DELETE FROM {$this->db_prefix}routes
             WHERE route_id = :route_id
         ";
-        return $this->o_db->delete($sql, array(':route_id' => $route_id), true);
+        $results = $this->o_db->delete($sql, array(':route_id' => $route_id), true);
+        if ($results) {
+            if ($this->o_db->getAffectedRows() == 0) {
+                $a_results = [
+                    'message' => 'The route was not deleted because it was not found.',
+                    'type'    => 'failure'
+                ];
+            }
+            else {
+                $a_results = [
+                    'message' => 'Success!',
+                    'type'    => 'success'
+                ];
+            }
+        }
+        else {
+            $a_results = [
+                'message' => 'A problem occurred and the route was not deleted.',
+                'type'    => 'failure'
+            ];
+        }
+        return $a_results;
     }
-
 }
