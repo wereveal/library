@@ -212,8 +212,7 @@ class ManagersAdminController extends Base implements MangerControllerInterface
         }
         if ($bail) {
             $this->route_action = 'login';
-            $this->o_session->clear();
-            $this->o_session->setSessionVars();
+            $this->o_session->resetSession();
             return false;
         }
         return true;

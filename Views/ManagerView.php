@@ -6,12 +6,13 @@
  *  @namespace Ritc/Library/Views
  *  @class ManagerView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1β
- *  @date 2014-11-15 15:00:40
+ *  @version 1.0.0
+ *  @date 2015-01-16 12:07:49
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.1β - changed to match DI/IOC - 11/15/2014 wer
- *      v1.0.0β - Initial version         - 11/08/2014 wer
+ *      v1.0.0   - First stable version    - 01/16/2015 wer
+ *      v1.0.0β2 - changed to match DI/IOC - 11/15/2014 wer
+ *      v1.0.0β1 - Initial version         - 11/08/2014 wer
  *  </pre>
  **/
 namespace Ritc\Library\Views;
@@ -19,6 +20,7 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Session;
 
 class ManagerView extends Base
 {
@@ -29,9 +31,9 @@ class ManagerView extends Base
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        $this->o_di  = $o_di;
-        $this->o_tpl = $o_di->get('tpl');
-        $this->o_db  = $o_di->get('db');
+        $this->o_di   = $o_di;
+        $this->o_tpl  = $o_di->get('tpl');
+        $this->o_db   = $o_di->get('db');
     }
     public function renderLandingPage()
     {
@@ -45,7 +47,7 @@ class ManagerView extends Base
                 'url'  => '/manager/configs/',
             ],
             [
-                'text' => 'Router Manager',
+                'text' => 'Routes Manager',
                 'url'  => '/manager/routes/'
             ],
             [
@@ -105,6 +107,14 @@ class ManagerView extends Base
      */
     public function renderLoginForm($previous_login_id = '', $message = '')
     {
+        $o_sess  = $this->o_di->get('session');
+        $tolken  = $o_sess->getVar('token');
+        $idle_ts = $o_sess->getVar('idle_timestamp');
+        if ($tolken == '' || $idle_ts == '') {
+            $o_sess->resetSession();
+            $tolken  = $o_sess->getVar('token');
+            $idle_ts = $o_sess->getVar('idle_timestamp');
+        }
         if ($message != '') {
             $a_message = ViewHelper::messageProperties(['message' => $message, 'type' => 'failure']);
         }
@@ -112,13 +122,14 @@ class ManagerView extends Base
             $a_message = array();
         }
         $a_values = [
-            'tolken'    => $_SESSION['token'],
-            'form_ts'   => $_SESSION['idle_timestamp'],
+            'tolken'    => $tolken,
+            'form_ts'   => $idle_ts,
             'hobbit'    => '',
             'login_id'  => $previous_login_id,
             'password'  => '',
             'a_message' => $a_message
         ];
+        $o_sess->unsetVar('login_id');
         return $this->o_tpl->render('@pages/login_form.twig', $a_values);
     }
 }

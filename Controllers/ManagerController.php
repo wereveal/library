@@ -8,13 +8,14 @@
  *  @namespace Ritc/Library/Controllers
  *  @class ManagerController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1β
- *  @date 2014-11-17 14:08:21
+ *  @version 1.0.0β3
+ *  @date 2015-01-16 12:12:43
  *  @note A file in RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.1β - Set up to render a basic landing page - 01/06/2015 wer
- *      v1.0.0β - changed to use IOC                    - 11/17/2014 wer
- *      v1.0.0α - Initial version                       - 11/14/2014 wer
+ *      v1.0.0β3 - working for router and config         - 01/16/2015 wer
+ *      v1.0.0β2 - Set up to render a basic landing page - 01/06/2015 wer
+ *      v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
+ *      v1.0.0α1 - Initial version                       - 11/14/2014 wer
  *  </pre>
  * @TODO Test
  **/
@@ -35,24 +36,24 @@ class ManagerController extends Base implements ControllerInterface
     private $o_di;
     private $o_manager_view;
     private $o_router;
+    private $o_session;
     private $route_method;
     private $route_action;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        $this->o_di = $o_di;
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
         }
-        $this->setPrivateProperties();
         $this->o_di           = $o_di;
         $this->o_router       = $o_di->get('router');
+        $this->o_session      = $o_di->get('session');
         $this->a_route_parts  = $this->o_router->getRouteParts();
         $this->route_action   = $this->a_route_parts['route_action'];
         $this->route_method   = $this->a_route_parts['route_method'];
         $this->form_action    = $this->a_route_parts['form_action'];
-        $this->a_post_values  = $this->o_router->getPost();
+        $this->a_post_values  = $this->a_route_parts['post'];
         $this->o_auth         = new AuthHelper($this->o_di);
         $this->o_manager_view = new ManagerView($this->o_di);
     }
@@ -63,51 +64,39 @@ class ManagerController extends Base implements ControllerInterface
      */
     public function render()
     {
-        if ($this->isLoggedIn() === false) {
+        if ($this->o_auth->isLoggedIn() === false && $this->route_action != 'verifyLogin') {
+            $this->o_session->resetSession();
             $this->route_action = 'login';
         }
-        elseif ($this->route_method == 'render' && $this->route_action == '') {
-            $this->route_action = 'landing';
-        }
-        switch ($this->route_method) {
-            case 'renderConfigAdmin':
-                $html = $this->renderConfigAdmin();
-                break;
-            case 'renderRouterAdmin':
-                $html = $this->renderRouterAdmin();
-                break;
-            case 'renderUserAdmin':
-                $html = $this->renderUserAdmin();
-                break;
-            case 'render':
-            case '':
-            default:
-                switch ($this->route_action) {
-                    case 'verifyLogin':
-                        $a_results = $this->o_auth->login($this->a_post_values);
-                        if ($a_results['is_logged_in'] == 1) {
-                            $html = $this->o_manager_view->renderLandingPage();
-                        }
-                        else {
-                            $login_id = isset($a_post['login_id']) ? $a_post['login_id'] : '';
-                            $html = $this->o_manager_view->renderLoginForm($login_id, 'Login Id or Password was incorrect. Please Try Again');
-                        }
-                        break;
-                    case 'landing':
-                        $html = $this->o_manager_view->renderLandingPage();
-                        break;
-                    case '':
-                    case 'login':
-                    default:
-                        $html = $this->o_manager_view->renderLoginForm();
+        switch ($this->route_action) {
+            case 'verifyLogin':
+                $a_results = $this->o_auth->login($this->a_post_values);
+                $this->logIt("Login Results: " . var_export($a_results, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+                if ($a_results['is_logged_in'] == 1) {
+                    $this->o_session->setVar('login_id', $this->a_post_values['login_id']);
+                    $html = $this->o_manager_view->renderLandingPage();
                 }
-            // end default
+                else {
+                    $login_id = isset($this->a_post_values['login_id']) ? $this->a_post_values['login_id'] : '';
+                    $message  = isset($a_results['message'])
+                        ? $a_results['message']
+                        : 'Login Id or Password was incorrect. Please Try Again';
+                    $html = $this->o_manager_view->renderLoginForm($login_id, $message);
+                }
+                break;
+            case '':
+            case 'landing':
+                $html = $this->o_manager_view->renderLandingPage();
+                break;
+            case 'login':
+            default:
+                $html = $this->o_manager_view->renderLoginForm();
         }
         return $html;
     }
     public function renderConfigAdmin()
     {
-        if ($this->isLoggedIn() === false) {
+        if ($this->o_auth->isLoggedIn() === false) {
             return $this->o_manager_view->renderLoginForm();
         }
         $o_config_admin = new ConfigAdminController($this->o_di);
@@ -115,7 +104,7 @@ class ManagerController extends Base implements ControllerInterface
     }
     public function renderRouterAdmin()
     {
-        if ($this->isLoggedIn() === false) {
+        if ($this->o_auth->isLoggedIn() === false) {
             return $this->o_manager_view->renderLoginForm();
         }
         $o_router_admin = new RouterAdminController($this->o_di);
@@ -123,7 +112,7 @@ class ManagerController extends Base implements ControllerInterface
     }
     public function renderUserAdmin()
     {
-        if ($this->isLoggedIn() === false) {
+        if ($this->o_auth->isLoggedIn() === false) {
             return $this->o_manager_view->renderLoginForm();
         }
         $o_user_admin = new ManagersAdminController($this->o_di);
