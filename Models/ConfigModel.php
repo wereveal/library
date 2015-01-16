@@ -185,21 +185,42 @@ class ConfigModel extends Base implements ModelInterface
     /**
      * Generic deletes a record based on the id provided.
      * @param int $config_id
-     * @return bool
+     * @return array
      */
     public function delete($config_id = -1)
     {
-        if ($config_id == '') {
-            return false;
+        if ($config_id == -1) {
+            return ['message' => 'The config id is required', 'type' => 'failure'];
         }
         if ($this->read(['config_id' => $config_id]) === false) {
-            return false; // config doesn't exist
+            return ['message' => 'The config does not exist', 'type' => 'failure'];
         }
         $sql = "
             DELETE FROM {$this->db_prefix}config
             WHERE config_id = :config_id
         ";
-        return $this->o_db->delete($sql, array('config_id' => $config_id), true);
+        $results = $this->o_db->delete($sql, array('config_id' => $config_id), true);
+        if ($results) {
+            if ($this->o_db->getAffectedRows() === 0) {
+                $a_results = [
+                    'message' => 'The config was not deleted.',
+                    'type'    => 'failure'
+                ];
+            }
+            else {
+                $a_results = [
+                    'message' => 'Success!',
+                    'type'    => 'success'
+                ];
+            }
+        }
+        else {
+            $a_results = [
+                'message' => 'A problem occurred and the config was not deleted.',
+                'type'    => 'failure'
+            ];
+        }
+        return $a_results;
     }
 
     # Specialized CRUD methods #

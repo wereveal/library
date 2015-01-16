@@ -6,13 +6,13 @@
  *  @namespace Ritc/Library/Views
  *  @class ConfigAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.2ß
+ *  @version 1.0.0β3
  *  @date 2014-11-17 14:02:35
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.2ß - changed to use the new Di class - 11/17/2014 wer
- *      v1.0.1ß - changed to use Base class and inject database object - 09/24/2014 wer
- *      v1.0.0ß - Initial version 04/02/2014 wer
+ *      v1.0.0β3 - changed to use the new Di class                      - 11/17/2014 wer
+ *      v1.0.0β2 - changed to use Base class and inject database object - 09/24/2014 wer
+ *      v1.0.0β1 - Initial version                                      - 04/02/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Views;
