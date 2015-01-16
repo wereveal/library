@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.2.0
- *  @date 2015-01-14 10:03:39
+ *  @version 4.2.1
+ *  @date 2015-01-16 13:51:56
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.2.1 - bug fixes                                             - 01/16/2015 wer
  *      v4.2.0 - change the name of the file. It wasn't doing access   - 01/14/2015 wer
  *               it was doing authorization.
  *      v4.1.1 - changed the login method to return an array always    - 01/14/2015 wer
@@ -98,8 +99,14 @@ class AuthHelper extends Base
     public function login(array $a_user_post = array())
     {
         $meth = __METHOD__ . '.';
-        if ($a_user_post == array()) { return false; }
-        $a_required = array('login_id', 'password', 'tolken', 'form_ts');
+        if ($a_user_post == array()) {
+            return [
+                'login_id'     => '',
+                'is_logged_in' => 0,
+                'message'      => 'Please try again. No information provided.'
+            ];
+        }
+        $a_required = ['login_id', 'password', 'tolken', 'form_ts'];
         foreach ($a_required as $required) {
             if (isset($a_user_post[$required]) === false) {
                 return [
@@ -107,7 +114,7 @@ class AuthHelper extends Base
                         ? $a_user_post['login_id']
                         : '',
                     'is_logged_in' => 0,
-                    'message' => 'Please try again.'
+                    'message' => 'Please try again. Missing info.'
                 ];
             }
         }
@@ -148,8 +155,8 @@ class AuthHelper extends Base
                 $a_user_post['created_on'] = $a_user_values['created_on'];
                 $a_user_post['user_id']    = $a_user_values['user_id'];
 
-                $this->logIt("Password Needed: " . $a_user_values['password'], LOG_OFF, __METHOD__ . '.' . __LINE__);
-                $this->logIt("Password Given (hashed): " . password_hash($a_user_post['password'], PASSWORD_DEFAULT), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Password Needed: " . $a_user_values['password'], LOG_OFF, $meth . __LINE__);
+                $this->logIt("Password Given (hashed): " . password_hash($a_user_post['password'], PASSWORD_DEFAULT), LOG_OFF, $meth . __LINE__);
                 if (password_verify($a_user_post['password'], $a_user_values['password'])) {
                     $this->o_users->resetBadLoginCount($a_user_values['user_id']);
                     $this->o_users->resetBadLoginTimestamp($a_user_values['user_id']);
@@ -174,7 +181,15 @@ class AuthHelper extends Base
                 }
             }
         }
-        return ['login_id' => '', 'is_logged_in' => 0, 'message' => 'Please try again.'];
+        else {
+            $this->logIt(var_export($a_user_post, true), LOG_ON, $meth . __LINE__);
+            $this->o_session->resetSession();
+            return [
+                'login_id'     => '',
+                'is_logged_in' => 0,
+                'message'      => 'Please try again. Your session has timed out.'
+            ];
+        }
     }
 
     #### Verifiers ####
@@ -206,7 +221,7 @@ class AuthHelper extends Base
             return false;
         }
         $login_id = $this->o_session->getVar('login_id');
-        if (is_null($login_id)) {
+        if ($login_id == '') {
             return false;
         }
         $a_user_info = $this->o_users->readInfo($login_id);
