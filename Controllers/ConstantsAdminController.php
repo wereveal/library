@@ -1,10 +1,10 @@
 <?php
 /**
  *  @brief Controller for the Configuration page.
- *  @file ConfigAdminController.php
+ *  @file ConstantsAdminController.php
  *  @ingroup ritc_library controllers
  *  @namespace Ritc/Library/Controllers
- *  @class ConfigAdminController
+ *  @class ConstantsAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.1.0
  *  @date 2015-01-16 11:48:35
@@ -23,11 +23,11 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\MangerControllerInterface;
-use Ritc\Library\Models\ConfigModel;
-use Ritc\Library\Views\ConfigAdminView;
+use Ritc\Library\Models\ConstantsModel;
+use Ritc\Library\Views\ConstantsAdminView;
 use Ritc\Library\Services\Di;
 
-class ConfigAdminController extends Base implements MangerControllerInterface
+class ConstantsAdminController extends Base implements MangerControllerInterface
 {
     private $a_post;
     private $o_di;
@@ -42,20 +42,21 @@ class ConfigAdminController extends Base implements MangerControllerInterface
             $this->o_elog = $o_di->get('elog');
         }
     }
+
     /**
      *  Renders the html based on the route requested.
      *  @return string html to be displayed.
     **/
     public function render()
     {
-        $o_db            = $this->o_di->get('db');
-        $this->o_model   = new ConfigModel($o_db);
-        $this->o_view    = new ConfigAdminView($this->o_di);
-        $o_router        = $this->o_di->get('router');
-        $a_config_parts  = $o_router->getRouteParts();
-        $main_action     = $a_config_parts['route_action'];
-        $form_action     = $a_config_parts['form_action'];
-        $this->a_post    = $a_config_parts['post'];
+        $o_db          = $this->o_di->get('db');
+        $this->o_model = new ConstantsModel($o_db);
+        $this->o_view  = new ConstantsAdminView($this->o_di);
+        $o_router      = $this->o_di->get('router');
+        $a_router_parts = $o_router->getRouteParts();
+        $main_action   = $a_router_parts['route_action'];
+        $form_action   = $a_router_parts['form_action'];
+        $this->a_post  = $a_router_parts['post'];
         // Make sure only valid routes are followed
         switch ($main_action) {
             case 'modify':
@@ -69,7 +70,7 @@ class ConfigAdminController extends Base implements MangerControllerInterface
                             'message' => 'A problem occured. Please try again.',
                             'type'    => 'failure'
                         ];
-                        return $this->o_view->renderConfigs($a_message);
+                        return $this->o_view->renderList($a_message);
                 }
             case 'save':
                 if ($form_action == 'save_new') {
@@ -80,7 +81,7 @@ class ConfigAdminController extends Base implements MangerControllerInterface
                         'message' => 'A problem occurred so the record could not be saved.',
                         'type'    => 'failure'
                     ];
-                    return $this->o_view->renderConfigs($a_message);
+                    return $this->o_view->renderList($a_message);
                 }
                 break;
             case 'delete':
@@ -92,19 +93,23 @@ class ConfigAdminController extends Base implements MangerControllerInterface
                         'message' => 'A problem occurred so the record could not be deleted.',
                         'type'    => 'failure'
                     ];
-                    return $this->o_view->renderConfigs($a_message);
+                    return $this->o_view->renderList($a_message);
                 }
             default:
-                return $this->o_view->renderConfigs();
+                return $this->o_view->renderList();
         }
     }
 
     ### Required by Interface ###
+    /**
+     * Saves the constants record and returns the list of constants with a message.
+     * @return mixed
+     */
     public function save()
     {
 
-        $a_config = $this->a_post['config'];
-        $results = $this->o_model->create($a_config);
+        $a_constants = $this->a_post['constant'];
+        $results = $this->o_model->create($a_constants);
         if ($results !== false) {
             $a_message = ['message' => 'Success!', 'type' => 'success'];
         }
@@ -114,12 +119,16 @@ class ConfigAdminController extends Base implements MangerControllerInterface
                 'type' => 'failure'
             ];
         }
-        return $this->o_view->renderConfigs($a_message);
+        return $this->o_view->renderList($a_message);
     }
+    /**
+     * Updates the constants record and returns the list of constants with a message.
+     * @return mixed
+     */
     public function update()
     {
-        $a_config = $this->a_post['config'];
-        $results = $this->o_model->update($a_config);
+        $a_constants = $this->a_post['constant'];
+        $results = $this->o_model->update($a_constants);
         if ($results !== false) {
             $a_message = ['message' => 'Success!', 'type' => 'success'];
         }
@@ -129,7 +138,7 @@ class ConfigAdminController extends Base implements MangerControllerInterface
                 'type' => 'failure'
             ];
         }
-        return $this->o_view->renderConfigs($a_message);
+        return $this->o_view->renderList($a_message);
     }
     /**
      *  Returns the html to display a form to verify the delete.
@@ -140,17 +149,21 @@ class ConfigAdminController extends Base implements MangerControllerInterface
     {
         return $this->o_view->renderVerify($this->a_post);
     }
+    /**
+     * Deletes the constants record and returns the list of constants with a message.
+     * @return mixed
+     */
     public function delete()
     {
-        $config_id = $this->a_post['config_id'];
-        if ($config_id == -1 || $config_id == '') {
+        $const_id = $this->a_post['const_id'];
+        if ($const_id == -1 || $const_id == '') {
             $a_message = [
                 'message' => 'A Problem Has Occured. The config record id was not provided.',
                 'type' => 'error'
             ];
-            return $this->o_view->renderConfigs($a_message);
+            return $this->o_view->renderList($a_message);
         }
-        $a_results = $this->o_model->delete($config_id);
-        return $this->o_view->renderConfigs($a_results);
+        $a_results = $this->o_model->delete($const_id);
+        return $this->o_view->renderList($a_results);
     }
 }

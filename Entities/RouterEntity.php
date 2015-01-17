@@ -2,8 +2,8 @@
 /**
  *  SQL
  *  MySQL sql
-    CREATE TABLE `dbPrefix_router` (
-      `router_id` int(11) NOT NULL AUTO_INCREMENT,
+    CREATE TABLE `dbPrefix_routes` (
+      `route_id` int(11) NOT NULL AUTO_INCREMENT,
       `route_path` varchar(255) NOT NULL,
       `route_class` varchar(128) NOT NULL,
       `route_method` varchar(64) DEFAULT NULL,

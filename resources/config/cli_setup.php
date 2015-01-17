@@ -1,9 +1,8 @@
 <?php
 /**
- *  @brief This file sets up the App.
- *  @description Required to get the entire framework to work. The only thing
- *  that changes primarily is the defgroup in this comment for Doxygen.
- *  @file setup.php
+ *  This file sets up the app when doing things at the command line
+ *  Required to get the entire app to work.
+ *  @file cli_setup.php
  *  @namespace Ritc
  *  @defgroup ritc_library
  *  @{
@@ -31,19 +30,19 @@
  *      @defgroup views
  *      @ingroup ritc_library
  *  }
- *  @defgroup ftpadmin
+ *  @defgroup main_app_name
  *  @{
  *      @version 1.0
- *      @defgroup ftp_configs
- *      @ingroup ftpadmin
- *      @defgroup ftp_controllers controller files
- *      @ingroup ftpadmin
- *      @defgroup ftp_views classes that create views
- *      @ingroup ftpadmin
- *      @defgroup ftp_models files that do database operations
- *      @ingroup ftpadmin
- *      @defgroup ftp_tests unit Testing
- *      @ingroup ftpadmin
+ *      @defgroup controllers controller files
+ *      @ingroup main_app_name
+ *      @defgroup views classes that create views
+ *      @ingroup main_app_name
+ *      @defgroup forms files that define and create forms
+ *      @ingroup views
+ *      @defgroup model files that do database operations
+ *      @ingroup main_app_name
+ *      @defgroup tests unitTesting
+ *      @ingroup main_app_name
  *  }
  *  @note <pre>
  *  NOTE: _path and _PATH indicates a full server path
@@ -63,7 +62,7 @@ use Ritc\Library\Services\Session;
 use Ritc\Library\Services\TwigFactory;
 
 if (!defined('SITE_PATH')) {
-    define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);
+    define('SITE_PATH', __DIR__);
 }
 if (!defined('BASE_PATH')) {
     if (!isset($app_in)) {
@@ -82,22 +81,23 @@ if (!isset($rodb)) {
 
 require_once BASE_PATH . '/app/config/constants.php';
 
-$o_loader = require_once VENDOR_PATH . '/autoload.php';
-$my_classmap = require_once APP_CONFIG_PATH . '/autoload_classmap.php';
-$o_loader->addClassMap($my_classmap);
+$loader = require_once VENDOR_PATH . '/autoload.php';
+$my_classmap = require_once APP_PATH . '/config/autoload_classmap.php';
+$loader->addClassMap($my_classmap);
 
-$o_elog    = Elog::start();
+$o_elog = Elog::start();
 $o_session = Session::start();
 $o_di      = new Di();
 $o_di->set('elog',    $o_elog);
 $o_di->set('session', $o_session);
-// error_log('SERVER_NAME: ' . $_SERVER['SERVER_NAME']);
+
 if ($_SERVER['SERVER_NAME'] == 'w3.qca.net') {
     $db_config_file = 'db_config.php';
 }
 else {
     $db_config_file = 'db_local_config.php';
 }
+
 $o_dbf = DbFactory::start($db_config_file, 'rw');
 $o_dbf->setElog($o_elog);
 $o_elog->setIgnoreLogOff(false); // turns on logging globally ignoring LOG_OFF when set to true

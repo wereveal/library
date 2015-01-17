@@ -1,28 +1,30 @@
 <?php
 /**
- *  @brief Create Constants from the configuration database
- *  @file Config.php
- *  @ingroup ritc_library Services
- *  @namespace Ritc/Library/Services
- *  @class Config
+ *  @brief Create Constants from the constants database
+ *  @file ConstantsHelper.php
+ *  @ingroup ritc_library helper
+ *  @namespace Ritc/Library/Helper
+ *  @class ConstantsHelper
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  3.3.0
- *  @date 2014-12-10 16:58:35
+ *  @version  4.0.0
+ *  @date 2015-01-17 11:41:56
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.0.0 - renamed to reflect what it was doing. Since it isn't       - 01/17/2015 wer
+ *               a service, moved it Ritc\Library\Helper namespace.
  *      v3.3.0 - moved some contant definitions into this class             - 12/10/2014 wer
  *               the constants.php file was doing these definitions but
  *               it seemed that this should be done here. Also, moved a
- *               couple config names into the database.
+ *               couple constant names into the database.
  *      v3.2.0 - changed to use DI/IOC                                      - 12/10/2014 wer
  *      v3.1.5 - moved to the Services Namespace in the Library             - 11/15/2014 wer
- *      v3.1.4 - changed to match changes in ConfigModel                    - 11/13/2014 wer
+ *      v3.1.4 - changed to match changes in ConstantsModel                    - 11/13/2014 wer
  *      v3.1.3 - changed to implment the changes in Base class              - 09/23/2014 wer
  *      v3.1.2 - bug fixes                                                  - 09/18/2014 wer
- *      v3.1.1 - made it so the config table name will be assigned from the - 02/24/2014 wer
+ *      v3.1.1 - made it so the constants table name will be assigned from the - 02/24/2014 wer
  *               the db_prefix variable set from the db confuration
  *               (created in DbFactory, passed on to DbModel).
- *      v3.1.0 - made it so it will create the config table if it does not exist.
+ *      v3.1.0 - made it so it will create the constants table if it does not exist.
  *               Other changes to adjust to not having a theme based app.   - 01/31/2014 wer
  *      v3.0.3 - package change                                             - 12/19/2013 wer
  *      v3.0.2 - bug fixes, minor changes                                   - 2013-11-08 wer
@@ -31,26 +33,27 @@
  *      v2.3.0 - mostly changes for FIG-standards
  *  </pre>
 **/
-namespace Ritc\Library\Services;
+namespace Ritc\Library\Helper;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Models\ConfigModel;
+use Ritc\Library\Models\ConstantsModel;
+use Ritc\Library\Services\Di;
 
-class Config extends Base
+class ConstantsHelper extends Base
 {
     private $created = false;
     private static $instance;
-    private $o_config_model;
+    private $o_constants_model;
 
     private function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $o_db = $o_di->get('db');
-        $this->o_config_model = new ConfigModel($o_db);
+        $this->o_constants_model = new ConstantsModel($o_db);
         if (defined('DEVELOPER_MODE')) {
             if (DEVELOPER_MODE) {
                 $this->o_elog = $o_di->get('elog');
-                $this->o_config_model->setElog($this->o_elog);
+                $this->o_constants_model->setElog($this->o_elog);
             }
         }
         $this->created = $this->createConstants();
@@ -69,23 +72,23 @@ class Config extends Base
                 $this->logIt("APP_CONFIG_PATH is not defined.", LOG_ALWAYS);
                 die ('A fatal error has occured. Please contact your web site administrator.');
             }
-            $this->o_config_model->createNewConfigs();
+            $this->o_constants_model->createNewConstants();
         }
         $this->createThemeConstants();
     }
 
     /**
-     * Config class is a singleton and this gets it started.
+     * Constants class is a singleton and this gets it started.
      * This is in my mind a legit use of a singleton as
-     * Never should more than one instance of the config ever be allowed to be created
+     * Never should more than one instance of the constants ever be allowed to be created
      *
      * @param Di $o_di
-     * @return object - instance of Config
+     * @return object - instance of Constants
      */
     public static function start(Di $o_di)
     {
         if (!isset(self::$instance)) {
-            self::$instance = new Config($o_di);
+            self::$instance = new ConstantsHelper($o_di);
         }
         return self::$instance;
     }
@@ -96,14 +99,14 @@ class Config extends Base
     private function createConstants()
     {
         if ($this->created === false) {
-            $a_config = $this->o_config_model->selectConfigList();
-            $this->logIt('Config List -- ' . var_export($a_config, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            if (is_array($a_config) && count($a_config) > 0) {
-                $this->logIt("List of Configs: " . var_export($a_config, true), LOG_OFF, __METHOD__);
-                foreach ($a_config as $row) {
-                    $key = strtoupper($row['config_name']);
+            $a_constants = $this->o_constants_model->selectConstantsList();
+            $this->logIt('Constants List -- ' . var_export($a_constants, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            if (is_array($a_constants) && count($a_constants) > 0) {
+                $this->logIt("List of Configs: " . var_export($a_constants, true), LOG_OFF, __METHOD__);
+                foreach ($a_constants as $row) {
+                    $key = strtoupper($row['const_name']);
                     if (!defined("{$key}")) {
-                        switch ($row['config_value']) {
+                        switch ($row['const_value']) {
                             case 'true':
                                 define("{$key}", true);
                                 break;
@@ -115,7 +118,7 @@ class Config extends Base
                                 define("{$key}", null);
                                 break;
                             default:
-                                $value = $row['config_value'];
+                                $value = $row['const_value'];
                                 define("{$key}", "{$value}");
                         }
                     }

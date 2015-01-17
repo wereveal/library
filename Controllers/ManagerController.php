@@ -94,13 +94,13 @@ class ManagerController extends Base implements ControllerInterface
         }
         return $html;
     }
-    public function renderConfigAdmin()
+    public function renderConstantsAdmin()
     {
         if ($this->o_auth->isLoggedIn() === false) {
             return $this->o_manager_view->renderLoginForm();
         }
-        $o_config_admin = new ConfigAdminController($this->o_di);
-        return $o_config_admin->render();
+        $o_constants_admin = new ConstantsAdminController($this->o_di);
+        return $o_constants_admin->render();
     }
     public function renderRouterAdmin()
     {

@@ -3,7 +3,7 @@ namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Models\ConfigModel;
+use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 
 class ConfigAdminModelTester extends Tester
@@ -29,7 +29,7 @@ class ConfigAdminModelTester extends Tester
         $this->setPrivateProperties();
         $this->o_db     = $o_di->get('db');
         $this->o_tpl    = $o_di->get('tpl');
-        $this->o_config = new ConfigModel($this->o_db);
+        $this->o_config = new ConstantsModel($this->o_db);
     }
     public function renderResults(array $a_result_values = array())
     {
@@ -60,7 +60,7 @@ class ConfigAdminModelTester extends Tester
      *      from the class methods.
      *  @return int $failed_tests
      **/
-    public function runTests($class_name = 'ConfigModel', array $a_test_order = array())
+    public function runTests($class_name = 'ConstantsModel', array $a_test_order = array())
     {
         if ($class_name == '') {
             if (substr(__CLASS__, -5) == 'Tests') {

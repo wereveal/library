@@ -1,10 +1,10 @@
 <?php
 /**
  *  @brief View for the Configuration page.
- *  @file ConfigAdminView.php
+ *  @file ConstantsAdminView.php
  *  @ingroup blog views
  *  @namespace Ritc/Library/Views
- *  @class ConfigAdminView
+ *  @class ConstantsAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.0β3
  *  @date 2014-11-17 14:02:35
@@ -18,11 +18,11 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Models\ConfigModel;
+use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 
-class ConfigAdminView extends Base
+class ConstantsAdminView extends Base
 {
     private $o_model;
     private $o_tpl;
@@ -31,24 +31,27 @@ class ConfigAdminView extends Base
     {
         $this->setPrivateProperties();
         $this->o_tpl   = $o_di->get('tpl');
-        $this->o_model = new ConfigModel($o_di->get('db'));
+        $this->o_model = new ConstantsModel($o_di->get('db'));
+        if (DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+        }
     }
     /**
      *  Returns the list of configs in html.
      *  @param array $a_message
      *  @return string
      */
-    public function renderConfigs(array $a_message = array())
+    public function renderList(array $a_message = array())
     {
         $a_values = array(
-            'public_dir' => '',
-            'description' => 'Admin page for the app configuration.',
-            'a_message' => array(),
-            'a_configs' => array(
+            'public_dir'  => PUBLIC_DIR,
+            'description' => 'Admin page for the app constants.',
+            'a_message'   => array(),
+            'a_constants' => array(
                 array(
-                    'config_id'    => '',
-                    'config_name'  => '',
-                    'config_value' => ''
+                    'const_id'    => '',
+                    'const_name'  => '',
+                    'const_value' => ''
                 )
             ),
             'tolken'  => $_SESSION['token'],
@@ -61,21 +64,21 @@ class ConfigAdminView extends Base
         else {
             $a_values['a_message'] = ViewHelper::messageProperties(
                 array(
-                    'message'       => 'Changing configuration values can result in unexpected results. If you are not sure, do not do it.',
-                    'type'          => 'warning'
+                    'message' => 'Changing configuration values can result in unexpected results. If you are not sure, do not do it.',
+                    'type'    => 'warning'
                 )
             );
         }
-        $a_configs = $this->o_model->read();
+        $a_constants = $this->o_model->read();
         $this->logIt(
-            'a_configs: ' . var_export($a_configs, TRUE),
-            LOG_OFF,
+            'constants: ' . var_export($a_constants, TRUE),
+            LOG_ON,
             __METHOD__ . '.' . __LINE__
         );
-        if ($a_configs !== false && count($a_configs) > 0) {
-            $a_values['a_configs'] = $a_configs;
+        if ($a_constants !== false && count($a_constants) > 0) {
+            $a_values['a_constants'] = $a_constants;
         }
-        return $this->o_tpl->render('@pages/config_admin.twig', $a_values);
+        return $this->o_tpl->render('@pages/constants_admin.twig', $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -85,7 +88,7 @@ class ConfigAdminView extends Base
     public function renderVerify(array $a_values = array())
     {
         if ($a_values === array()) {
-            return $this->renderConfigs(array('message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure'));
+            return $this->renderList(array('message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure'));
         }
         if (!isset($a_values['public_dir'])) {
             $a_values['public_dir'] = '';

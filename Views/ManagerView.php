@@ -43,8 +43,8 @@ class ManagerView extends Base
                 'url'  => '/manager/',
             ],
             [
-                'text' => 'Configuration Manger',
-                'url'  => '/manager/configs/',
+                'text' => 'Constants Manger',
+                'url'  => '/manager/constants/',
             ],
             [
                 'text' => 'Routes Manager',
