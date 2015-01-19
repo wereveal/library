@@ -41,26 +41,32 @@ class ManagerView extends Base
             [
                 'text' => 'Home',
                 'url'  => '/manager/',
+                'description' => 'Manager Home Page'
             ],
             [
                 'text' => 'Constants Manger',
                 'url'  => '/manager/constants/',
+                'description' => 'Constant values changed and new constants added.'
             ],
             [
                 'text' => 'Routes Manager',
-                'url'  => '/manager/routes/'
+                'url'  => '/manager/routes/',
+                'description' => 'Create and manage routes for the app.'
             ],
             [
                 'text' => 'People Manager',
                 'url'  => '/manager/people/',
+                'description' => 'Create and manage people which get assigned to groups.'
             ],
             [
                 'text' => 'Groups Manager',
                 'url'  => '/manager/groups/',
+                'description' => 'Create and manage groups to which people are assigned.'
             ],
             [
                 'text' => 'Roles Manager',
                 'url'  => '/manager/roles/',
+                'description' => 'Create and manage roles to which groups are assigned.'
             ]
         ];
         $a_values = [

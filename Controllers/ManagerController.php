@@ -68,11 +68,14 @@ class ManagerController extends Base implements ControllerInterface
             $this->o_session->resetSession();
             $this->route_action = 'login';
         }
+        elseif ($this->o_auth->userInGroup($this->o_session->getVar('login_id'), 'Managers') === false) {
+
+        }
         switch ($this->route_action) {
             case 'verifyLogin':
                 $a_results = $this->o_auth->login($this->a_post_values);
                 $this->logIt("Login Results: " . var_export($a_results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                if ($a_results['is_logged_in'] == 1) {
+                if ($a_results['is_logged_in'] == 1 && $this->o_auth->hasMinRoleLevel('admin')) {
                     $this->o_session->setVar('login_id', $this->a_post_values['login_id']);
                     $html = $this->o_manager_view->renderLandingPage();
                 }
@@ -115,8 +118,8 @@ class ManagerController extends Base implements ControllerInterface
         if ($this->o_auth->isLoggedIn() === false) {
             return $this->o_manager_view->renderLoginForm();
         }
-        $o_user_admin = new ManagersAdminController($this->o_di);
-        return $o_user_admin->render();
+        $o_people_admin = new PeopleAdminController($this->o_di);
+        return $o_people_admin->render();
     }
     public function renderRolesAdmin()
     {
@@ -127,12 +130,5 @@ class ManagerController extends Base implements ControllerInterface
     {
         // TODO write renderGroupsAdmin method
         return '';
-    }
-    private function isLoggedIn()
-    {
-        if ($this->o_auth->isLoggedIn() === false && $this->route_action != 'verifyLogin') {
-            return false;
-        }
-        return true;
     }
 }

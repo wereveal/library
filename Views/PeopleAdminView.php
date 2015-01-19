@@ -1,10 +1,10 @@
 <?php
 /**
  *  @brief View for the User Admin page.
- *  @file UserAdminView.php
+ *  @file PeopleAdminView.php
  *  @ingroup blog views
  *  @namespace Ritc/Library/Views
- *  @class UserAdminView
+ *  @class PeopleAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.1ß
  *  @date 2014-11-15 15:20:52
@@ -23,10 +23,10 @@ use Ritc\Library\Models\UsersModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\UserGroupMapModel;
-use Ritc\Library\Models\UserRoleMapModel;
+use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Services\Di;
 
-class UserAdminView extends Base
+class PeopleAdminView extends Base
 {
     private $o_user_model;
     private $o_group_model;
@@ -43,7 +43,7 @@ class UserAdminView extends Base
         $this->o_group_model = new GroupsModel($o_db);
         $this->o_role_model  = new RolesModel($o_db);
         $this->o_ugm_model   = new UserGroupMapModel($o_db);
-        $this->o_urm_model   = new UserRoleMapModel($o_db);
+        $this->o_urm_model   = new GroupRoleMapModel($o_db);
         $this->o_tpl         = $o_di->get('tpl');
     }
 

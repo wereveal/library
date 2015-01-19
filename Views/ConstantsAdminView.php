@@ -96,6 +96,6 @@ class ConstantsAdminView extends Base
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the configuration.';
         }
-        return $this->o_tpl->render('@pages/verify_delete_config.twig', $a_values);
+        return $this->o_tpl->render('@pages/verify_delete_constant.twig', $a_values);
     }
 }

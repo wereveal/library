@@ -113,14 +113,31 @@ class UserGroupMapModel extends Base implements ModelInterface
      * @param string $ugm_id required
      * @return bool
      */
-    public function delete($ugm_id = '')
+    public function delete($ugm_id = -1)
     {
-        if ($ugm_id == '') { return false; }
+        if ($ugm_id == -1) { return false; }
         if (!ctype_digit($ugm_id)) { return false; }
         $sql = "
             DELETE FROM {$this->db_prefix}user_group_map
             WHERE ugm_id = :ugm_id
         ";
         return $this->o_db->delete($sql, array(':ugm_id' => $ugm_id), true);
+    }
+
+    public function deleteByGroupId($group_id = -1)
+    {
+        $sql = "
+            DELETE FROM {$this->db_prefix}user_group_map
+            WHERE group_id = :group_id
+        ";
+        return $this->o_db->delete($sql, array(':group_id' => $group_id), true);
+    }
+    public function deleteByUserId($user_id = -1)
+    {
+        $sql = "
+            DELETE FROM {$this->db_prefix}user_group_map
+            WHERE user_id = :user_id
+        ";
+        return $this->o_db->delete($sql, array(':user_id' => $user_id), true);
     }
 }

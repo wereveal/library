@@ -130,13 +130,13 @@ class RolesModel extends Base implements ModelInterface
     **/
     public function readById($role_id = -1)
     {
-        if ($role_id == -1) { return false; }
+        if ($role_id == -1) { return array(); }
         if (!ctype_digit($role_id)) { return false; }
         $results = $this->read(array('role_id' => $role_id));
         if (count($results[0]) > 0) {
             return $results[0];
         }
-        return false;
+        return array();
     }
     /**
      *  Returns a record of the role specified by name.
@@ -145,15 +145,13 @@ class RolesModel extends Base implements ModelInterface
      */
     public function readyByName($role_name = '')
     {
-        if ($role_name == '') { return false; }
+        if ($role_name == '') { return array(); }
         $results = $this->read(array('role_name' => $role_name));
         if (count($results[0]) > 0) {
             return $results[0];
         }
-        return false;
+        return array();
     }
-
-
 
     ### Validators ###
     /**

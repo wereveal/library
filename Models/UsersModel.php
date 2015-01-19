@@ -257,11 +257,11 @@ class UsersModel extends Base implements ModelInterface
     /**
      *  Returns the user record.
      *  @param int|string $user either user id or user name
-     *  @return array|bool
+     *  @return array
      */
     public function readUserRecord($user = '')
     {
-        if ($user == '') { return false; }
+        if ($user == '') { return array(); }
         if (ctype_digit($user)) {
             $a_search_by = ['$user_id' => $user];
         }
@@ -272,7 +272,7 @@ class UsersModel extends Base implements ModelInterface
         if (is_array($a_records[0])) {
             return $a_records[0];
         } else {
-            return false;
+            return array();
         }
     }
     /**
@@ -403,11 +403,11 @@ class UsersModel extends Base implements ModelInterface
     /**
      *  Gets the user values based on login_id or user_id.
      *  @param mixed $user_id the user id or login_id (as defined in the db)
-     *  @return array, the values for the user
+     *  @return array, the records for the user
     **/
     public function readInfo($user_id = '')
     {
-        if ($user_id == '') { return false; }
+        if ($user_id == '') { return array(); }
         if (ctype_digit($user_id)) {
             $where = "u.user_id = {$user_id} ";
         }
@@ -415,77 +415,29 @@ class UsersModel extends Base implements ModelInterface
             $where = "u.login_id = '{$user_id}' ";
         }
         $sql = "
-            SELECT r.role_id, r.role_level, r.role_name,
-                u.user_id, u.login_id, u.real_name, u.short_name,
-                u.password, u.is_logged_in, u.is_default, u.created_on, u.bad_login_count,
-                u.bad_login_ts, u.is_active, u.is_default,
-                g.group_id, g.group_name, g.group_description
+            SELECT DISTINCT u.user_id, u.login_id, u.real_name, u.short_name, u.password, u.is_logged_in,
+                u.bad_login_count, u.bad_login_ts, u.is_active, u.is_default, u.created_on,
+                g.group_id, g.group_name, g.group_description,
+                r.role_id, r.role_level, r.role_name
             FROM {$this->db_prefix}roles as r,
                  {$this->db_prefix}users as u,
                  {$this->db_prefix}groups as g,
-                 {$this->db_prefix}user_group_map as ug,
-                 {$this->db_prefix}user_role_map as ur
-            WHERE ur.user_id = u.user_id
-            AND ur.role_id = r.role_id
-            AND ug.user_id = u.user_id
-            AND ug.group_id = g.group_id
-            AND {$where}
+                 {$this->db_prefix}user_group_map as ugm,
+                 {$this->db_prefix}group_role_map as grm
+            WHERE {$where}
+            AND ugm.user_id = u.user_id
+            AND g.group_id  = ugm.group_id
+            AND r.role_id   = grm.role_id
+            ORDER BY r.role_level
         ";
         $this->logIt("Select User: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $results = $this->o_db->search($sql);
         if (isset($results[0]) && is_array($results[0])) {
-            return $results[0];
+            return $results;
         }
         else {
-            return false;
+            return array();
         }
-    }
-    /**
-     *  Selects the users and returns the data.
-     *  Can return all the users or just the users for the specified role.
-     *  @param string $group_name optional Returns uses only in this group
-     *  @param string $role optional. Returns users only in this role if provided.
-     *  @param bool $only_active optional. By default only returns active users. False returns all users.
-     *  @return array, array of users
-     **/
-    public function readUsersInfo($group_name = '', $role = '', $only_active = true )
-    {
-        $sql = "
-            SELECT u.user_id, u.login_id, u.real_name, u.short_name, u.password, u.is_logged_in, u.is_default, u.is_active
-                r.role_id, r.role_name,
-                g.group_id, g.group_name
-            FROM {$this->db_prefix}users as u,
-                {$this->db_prefix}roles as r,
-                {$this->db_prefix}groups as g,
-                {$this->db_prefix}user_groups as ug,
-                {$this->db_prefix}user_roles as ur
-            WHERE ur.role_id = r.role_id
-            AND ur.user_id = u.user_id
-            AND ug.user_id = u.user_id
-            AND ug.group_id = g.group_id
-        ";
-        if ($group_name != '') {
-            $sql .= "
-                AND g.group_name LIKE '{$group_name}'
-            ";
-        }
-        if ($role != '') {
-            if (ctype_digit($role)) {
-                $sql .= "
-                    AND r.role_id = {$role} ";
-            }
-            else {
-                $sql .= "
-                    AND r.role_name = '{$role}' ";
-            }
-        }
-        if ($only_active) {
-            $sql .= "
-                AND u.is_active >= 1";
-        }
-        $sql .= " ORDER BY g.group_name ASC, u.real_name ASC";
-        $this->logIt("SQL: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->search($sql);
     }
     /**
      *  Saves the user.
@@ -504,9 +456,7 @@ class UsersModel extends Base implements ModelInterface
 
         if (!isset($a_user['user_id']) || $a_user['user_id'] == '') { // New User
             $o_group = new GroupsModel($this->o_db);
-            $o_role  = new RolesModel($this->o_db);
             $o_ugm   = new UserGroupMapModel($this->o_db);
-            $o_urm   = new UserRoleMapModel($this->o_db);
             $a_required_keys = array(
                 'login_id',
                 'real_name',
@@ -527,42 +477,44 @@ class UsersModel extends Base implements ModelInterface
             if ($this->o_db->startTransaction()) {
                 $new_user_id = $this->create($a_user_values);
                 if ($new_user_id !== false) {
-                    $group_id = 3;
-                    $role_id  = 4;
-                    if (isset($a_user['group_id']) && $a_user['group_id'] != '') {
-                        $group_id = $o_group->isValidGroupId($a_user['group_id']) ? $a_user['group_id'] : '';
+                    $a_group_id = array();
+                    if (isset($a_user['group_id']) && is_array($a_user['group_id'])) {
+                        $a_group_id = $a_user['group_id'];
                     }
-                    if ($group_id == '' && isset($a_user['group_name']) && $a_user['group_name'] != '') {
-                        $a_group = $o_group->read(array('group_name' => $a_user['group_name']));
+                    elseif (isset($a_user['group_id']) && $a_user['group_id'] != '') {
+                        $a_group_id = $o_group->isValidGroupId($a_user['group_id'])
+                            ? array($a_user['group_id'])
+                            : array();
+                    }
+                    if ($a_group_id == array() && isset($a_user['group_name']) && $a_user['group_name'] != '') {
+                        $a_group = $o_group->read(['group_name' => $a_user['group_name']]);
                         if ($a_group !== false) {
-                            $group_id = $a_group['group_id'];
+                            $a_group_id = array($a_group['group_id']);
                         }
                     }
-                    if (isset($a_user['role_id']) && $a_user['role_id'] != '') {
-                        $role_id = $o_role->isValidId($a_user['role_id']) ? $a_user['role_id'] : '';
+                    if ($a_group_id == array()) {
+                        $a_group_id = array('3');
                     }
-                    if ($role_id == '' && isset($a_user['role_name']) && $a_user['role_name'] != '') {
-                        $a_role = $o_role->read(array('role_name' => $a_user['role_name']));
-                        if ($a_role !== false) {
-                            $role_id = $a_role['id'];
-                        }
-                    }
-                    if ($group_id != '') {
+                    foreach ($a_group_id as $group_id) {
                         $a_ug_values = array('user_id' => $new_user_id, 'group_id' => $group_id);
                         $ug_results = $o_ugm->create($a_ug_values);
-                        if ($ug_results) {
-                            $a_ur_values = array('user_id' => $new_user_id, 'role_id' => $role_id);
-                            $ur_results = $o_urm->create($a_ur_values);
-                            if($ur_results) {
-                                if ($this->o_db->commitTransaction()) {
-                                    return $new_user_id;
-                                } // commit transaction
-                            } // insertUserRole != false
-                        } // insertUserGroup != false
-                    } // group_id != ''
-                } // new_user_id !== false
-                $this->o_db->rollbackTransaction();
-                return false;
+                        if ($ug_results === false) {
+                            $this->o_db->rollbackTransaction();
+                            return false;
+                        }
+                    }
+                    if ($this->o_db->commitTransaction()) {
+                        return $new_user_id;
+                    }
+                    else {
+                        $this->o_db->rollbackTransaction();
+                        return false;
+                    }
+                } // new user created
+                else {
+                    $this->o_db->rollbackTransaction();
+                    return false;
+                }
             }
             else {
                 return false;

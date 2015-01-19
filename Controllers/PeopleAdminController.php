@@ -23,7 +23,7 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\MangerControllerInterface;
-use Ritc\Library\Models\PersonModel;
+use Ritc\Library\Models\UsersModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Views\PeopleAdminView;
 
@@ -45,7 +45,7 @@ class PeopleAdminController extends Base implements MangerControllerInterface
         $this->o_view        = new PeopleAdminView($o_di);
         $this->o_session     = $o_di->get('session');
         $this->o_router      = $o_di->get('router');
-        $this->o_model       = new PersonModel($o_db);
+        $this->o_model       = new UsersModel($o_db);
         $this->a_route_parts = $this->o_router->getRouteParts();
         $this->a_post_values = $this->a_route_parts['post'];
         if (DEVELOPER_MODE) {
@@ -82,7 +82,7 @@ class PeopleAdminController extends Base implements MangerControllerInterface
                 else {
                     $a_message = [
                         'message' => 'A Problem Has Occured. Please Try Again.',
-                        'type' => 'failure'
+                        'type'    => 'failure'
                     ];
                     return $this->o_view->renderList($a_message);
                 }
@@ -92,69 +92,37 @@ class PeopleAdminController extends Base implements MangerControllerInterface
             default:
                 return $this->o_view->renderList();
         }
-        switch ($this->main_action) {
-            case 'login':
-                header("Location: " . SITE_URL);
-                break;
-            case 'create':
-                // save the record
-                $a_config = $this->a_post_values['config'];
-                $this->logit(
-                    'config values before create config' . var_export($a_config, TRUE),
-                    LOG_OFF,
-                    __METHOD__ . '.' . __LINE__
-                );
-                $results = $this->o_model->create($a_config);
-                if ($results === false) {
-                    $a_message = array('type' => 'failure', 'message' => 'Could not save the configuration values.');
-                }
-                else {
-                    $a_message = array('type' => 'success', 'message' => 'Success!');
-                }
-                return $this->o_view->renderConfigs($a_message);
-            case 'update':
-                // save the record
-                $a_config = $this->a_post_values['config'];
-                $results = $this->o_model->update($a_config);
-                if ($results === false) {
-                    $a_message = array('type' => 'failure', 'message' => 'Could not update the configuration.');
-                }
-                else {
-                    $a_message = array('type' => 'success', 'message' => 'Success!');
-                }
-                return $this->o_view->renderConfigs($a_message);
-            case 'verify':
-                return $this->o_view->renderVerify($this->a_post_values);
-            case 'delete':
-                // delete the record
-                $results = $this->o_model->delete($this->a_post_values['config_id']);
-                // $results = false;
-                if ($results === false) {
-                    $a_message = array('type' => 'failure', 'message' => 'Could not delete the configuration.');
-                }
-                else {
-                    $a_message = array('type' => 'success', 'message' => 'Success!');
-                }
-                return $this->o_view->renderConfigs($a_message);
-            default:
-                return $this->o_view->renderConfigs();
-        }
     }
 
     public function save()
     {
-        // save people record
-        // save
+        // save user record
+        // save user group map record
         return '';
     }
+
+    /**
+     * Updates the user record and then displays the list of people.
+     * @return string
+     */
     public function update()
     {
+        // update user record
         return '';
     }
+    /**
+     * Display the form to verify delete.
+     * @return string
+     */
     public function verifyDelete()
     {
         return '';
     }
+
+    /**
+     * Deletes the user record and displays the list of people.
+     * @return string
+     */
     public function delete()
     {
         return '';

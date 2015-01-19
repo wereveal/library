@@ -5,7 +5,7 @@ use Ritc\Library\Basic\Tester;
 use Ritc\Library\Services\DbFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Elog;
-use Ritc\Library\Models\UserRoleMapModel;
+use Ritc\Library\Models\GroupRoleMapModel;
 
 class UserRoleMapModelTests extends Tester
 {
@@ -35,7 +35,7 @@ class UserRoleMapModelTests extends Tester
         else {
             $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
         }
-        $this->o_urm = new UserRoleMapModel($this->o_db);
+        $this->o_urm = new GroupRoleMapModel($this->o_db);
     }
 
     ### Tests ###

@@ -40,7 +40,7 @@ class GroupsModel extends Base implements ModelInterface
         $this->db_prefix = $this->o_db->getDbPrefix();
     }
     /**
-     * Generic create function to create a single record
+     * Generic create function to create a single record.
      * @param array $a_values required
      * @return bool
      */
@@ -120,7 +120,16 @@ class GroupsModel extends Base implements ModelInterface
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->update($sql, $a_values, true);
     }
-    public function delete($group_id = '')
+
+    /**
+     * Deletes the specific record.
+     * NOTE: this could leave orphaned records in the user_group_map table and group_role_map table
+     * if the database isn't set up for relations. If not sure, or want more control, use the
+     * deleteWithRelated method.
+     * @param int $group_id
+     * @return bool
+     */
+    public function delete($group_id = -1)
     {
         if ($group_id == -1) { return false; }
         $sql = "
@@ -128,6 +137,36 @@ class GroupsModel extends Base implements ModelInterface
             WHERE group_id = :group_id
         ";
         return $this->o_db->delete($sql, array(':group_id' => $group_id), true);
+    }
+    /**
+     * Deletes related records as well as main group record.
+     * @param int $group_id
+     * @return bool
+     */
+    public function deleteWithRelated($group_id = -1)
+    {
+        if ($group_id == -1) { return false; }
+        $o_grm = new GroupRoleMapModel($this->o_db);
+        $o_ugm = new UserGroupMapModel($this->o_db);
+        if ($this->o_db->startTransaction()) {
+            if ($o_grm->deleteByGroupId($group_id)) {
+                if ($o_ugm->deleteByGroupId($group_id)) {
+                   if ($this->delete($group_id)) {
+                        if ($this->o_db->commitTransaction() === false) {
+                            $this->o_db->rollbackTransaction();
+                            return false;
+                        }
+                        else {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            $this->o_db->rollbackTransaction();
+            return false;
+        }
     }
 
     ### Shortcuts ###

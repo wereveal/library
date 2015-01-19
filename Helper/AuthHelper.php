@@ -194,6 +194,15 @@ class AuthHelper extends Base
 
     #### Verifiers ####
     /**
+     * Figure out if the user has a role level at or higher than param.
+     * @param init $role_level
+     * @return bool
+     */
+    public function hasMinimumRoleLevel($login_id, $role_level = 9999)
+    {
+
+    }
+    /**
      *  Figures out if the user is specified as a default user.
      *  @param string|int $user can be the user id or the user name.
      *  @return bool true false

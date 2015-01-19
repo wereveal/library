@@ -1,0 +1,19 @@
+{% extends '@default/base.twig' %}
+{% block stylesheets %}{% include '@snippets/base_css.twig' %}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="red">Please Verify</h1>
+
+            <p>Please verify you wish to delete the constant '{{ constant.const_name }}'.</p>
+            <form action="{{ public_dir }}/manager/constants/delete/" method="post">
+                <button type="submit" name="submit" value="delete" class="btn btn-primary btn-xs">Delete Constant</button>
+                <input type="hidden" name="const_id" value="{{ constant.const_id }}" />
+                <input type="hidden" name="tolken" value="{{ tolken }}" />
+                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                <input type="text" name="hobbit" value="" class="hobbit" size="2" maxlength="2" />
+            </form>
+        </div>
+    </div>
+{% endblock %}
