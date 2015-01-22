@@ -1,17 +1,19 @@
 <?php
 /**
- *  @brief Manages User Access to the site.
+ *  @brief Manages User Authorization to the site.
  *  @details It is expected that this will be used within a controller and
  *  more finely grained access with be handled there or in a sub-controller.
  *  @file AuthHelper.php
- *  @ingroup ritc_library helper library
+ *  @ingroup ritc_library helper
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.2.1
- *  @date 2015-01-16 13:51:56
+ *  @version 4.2.2
+ *  @date 2015-01-22 12:59:08
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.2.2 - modified to work with user model changes              - 01/22/2015 wer
+ *               TODO - there are a couple access methods in here, make new class?
  *      v4.2.1 - bug fixes                                             - 01/16/2015 wer
  *      v4.2.0 - change the name of the file. It wasn't doing access   - 01/14/2015 wer
  *               it was doing authorization.
@@ -42,7 +44,7 @@
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
  *  </pre>
- * @TODO move all database calls to the individual Model classes.
+ * @TODO should an access class be added and a couple of the methods here moved there?
 **/
 namespace Ritc\Library\Helper;
 
@@ -119,66 +121,76 @@ class AuthHelper extends Base
             }
         }
         if ($this->o_session->isValidSession($a_user_post, true)) {
-            $a_user_values = $this->o_users->readInfo($a_user_post['login_id']);
-            $this->logIt("Posted Values: " . var_export($a_user_post, true), LOG_OFF, $meth . __LINE__);
-            $this->logIt("User Values: " . var_export($a_user_values, true), LOG_OFF, $meth . __LINE__);
-            if ($a_user_values !== false && $a_user_values !== null) {
-                if ($a_user_values['is_active'] < 1) {
-                    $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
-                    $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
-                    $this->o_users->setLoggedOut($a_user_values['user_id']);
-                    $a_user_post['password']     = '';
-                    $a_user_post['is_logged_in'] = 0;
-                    $a_user_post['message']      = 'The login id is inactive.';
-                    return $a_user_post;
-                }
-                if ($a_user_values['bad_login_count'] > 5 && $a_user_values['bad_login_ts'] >= (time() - (60 * 5))) {
-                    $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
-                    $this->o_users->setLoggedOut($a_user_values['user_id']);
-                    $a_user_post['password']     = '';
-                    $a_user_post['is_logged_in'] = 0;
-                    $a_user_post['login_id']     = '';
-                    $a_user_post['message']      = 'The login id is locked out. Please wait 5 minutes and try again.';
-                    return $a_user_post;
-                }
-                // simple anti-spambot thing... if the form has it.
-                if (isset($a_user_post['hobbit']) && $a_user_post['hobbit'] != '') {
-                    $this->o_users->setLoggedOut($a_user_values['user_id']);
-                    $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
-                    $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
-                    return [
-                        'login_id'     => '',
-                        'is_logged_in' => 0,
-                        'message'      => 'A problem has occured. Please try again.'
-                    ];
-                }
-                $a_user_post['created_on'] = $a_user_values['created_on'];
-                $a_user_post['user_id']    = $a_user_values['user_id'];
+            $a_user_records = $this->o_users->readInfo($a_user_post['login_id']);
+            $this->logIt("Posted Values: " . var_export($a_user_post, true), LOG_ON, $meth . __LINE__);
+            $this->logIt("User Values: " . var_export($a_user_records, true), LOG_ON, $meth . __LINE__);
+            if ($a_user_records !== false && !is_null($a_user_records) && isset($a_user_records[0])) {
+                $a_user_values = $a_user_records[0]; // the first record should have the highest access level.
+            }
+            else {
+                $this->logIt(var_export($a_user_post, true), LOG_OFF, $meth . __LINE__);
+                $this->o_session->resetSession();
+                return [
+                    'login_id'     => '',
+                    'is_logged_in' => 0,
+                    'message'      => 'Please try again. The login id was not found.'
+                ];
+            }
+            if ($a_user_values['is_active'] < 1) {
+                $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
+                $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
+                $this->o_users->setLoggedOut($a_user_values['user_id']);
+                $a_user_post['password']     = '';
+                $a_user_post['is_logged_in'] = 0;
+                $a_user_post['message']      = 'The login id is inactive.';
+                return $a_user_post;
+            }
+            if ($a_user_values['bad_login_count'] > 5 && $a_user_values['bad_login_ts'] >= (time() - (60 * 5))) {
+                $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
+                $this->o_users->setLoggedOut($a_user_values['user_id']);
+                $a_user_post['password']     = '';
+                $a_user_post['is_logged_in'] = 0;
+                $a_user_post['login_id']     = '';
+                $a_user_post['message']      = 'The login id is locked out. Please wait 5 minutes and try again.';
+                return $a_user_post;
+            }
+            // simple anti-spambot thing... if the form has it.
+            if (isset($a_user_post['hobbit']) && $a_user_post['hobbit'] != '') {
+                $this->o_users->setLoggedOut($a_user_values['user_id']);
+                $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
+                $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
+                return [
+                    'login_id'     => '',
+                    'is_logged_in' => 0,
+                    'message'      => 'A problem has occured. Please try again.'
+                ];
+            }
+            $a_user_post['created_on'] = $a_user_values['created_on'];
+            $a_user_post['user_id']    = $a_user_values['user_id'];
 
-                $this->logIt("Password Needed: " . $a_user_values['password'], LOG_OFF, $meth . __LINE__);
-                $this->logIt("Password Given (hashed): " . password_hash($a_user_post['password'], PASSWORD_DEFAULT), LOG_OFF, $meth . __LINE__);
-                if (password_verify($a_user_post['password'], $a_user_values['password'])) {
-                    $this->o_users->resetBadLoginCount($a_user_values['user_id']);
-                    $this->o_users->resetBadLoginTimestamp($a_user_values['user_id']);
-                    $this->o_users->setLoggedIn($a_user_values['user_id']);
-                    $a_user_values['is_logged_in']    = 1;
-                    $a_user_values['message']         = 'Success!';
-                    $a_user_values['password']        = '';
-                    $a_user_values['bad_login_count'] = 0;
-                    $a_user_values['bad_login_ts']    = 0;
-                    $this->logIt("After password check: " . var_export($a_user_values, true), LOG_OFF, $meth . __LINE__);
-                    return $a_user_values;
-                } else {
-                    $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
-                    $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
-                    $this->o_users->setLoggedOut($a_user_values['user_id']);
-                    return [
-                        'login_id'     => $a_user_post['login_id'],
-                        'is_logged_in' => 0,
-                        'password'     => '',
-                        'message'      => 'The password was incorrect. Please try again.'
-                    ];
-                }
+            $this->logIt("Password Needed: " . $a_user_values['password'], LOG_OFF, $meth . __LINE__);
+            $this->logIt("Password Given (hashed): " . password_hash($a_user_post['password'], PASSWORD_DEFAULT), LOG_OFF, $meth . __LINE__);
+            if (password_verify($a_user_post['password'], $a_user_values['password'])) {
+                $this->o_users->resetBadLoginCount($a_user_values['user_id']);
+                $this->o_users->resetBadLoginTimestamp($a_user_values['user_id']);
+                $this->o_users->setLoggedIn($a_user_values['user_id']);
+                $a_user_values['is_logged_in']    = 1;
+                $a_user_values['message']         = 'Success!';
+                $a_user_values['password']        = '';
+                $a_user_values['bad_login_count'] = 0;
+                $a_user_values['bad_login_ts']    = 0;
+                $this->logIt("After password check: " . var_export($a_user_values, true), LOG_OFF, $meth . __LINE__);
+                return $a_user_values;
+            } else {
+                $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
+                $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
+                $this->o_users->setLoggedOut($a_user_values['user_id']);
+                return [
+                    'login_id'     => $a_user_post['login_id'],
+                    'is_logged_in' => 0,
+                    'password'     => '',
+                    'message'      => 'The password was incorrect. Please try again.'
+                ];
             }
         }
         else {
@@ -195,12 +207,28 @@ class AuthHelper extends Base
     #### Verifiers ####
     /**
      * Figure out if the user has a role level at or higher than param.
-     * @param init $role_level
+     * @param int $role_level
      * @return bool
      */
     public function hasMinimumRoleLevel($login_id, $role_level = 9999)
     {
-
+        $a_user_records = $this->o_users->readInfo($login_id);
+        $this->logIt("User Values: " . var_export($a_user_records, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+        if ($a_user_records !== false && !is_null($a_user_records) && isset($a_user_records[0])) {
+            $a_user_values = $a_user_records[0]; // the first record should have the highest access level.
+            if (is_numeric($role_level)) {
+                if ($a_user_values['role_level'] <= $role_level) {
+                    return true;
+                }
+            }
+            else {
+                $a_roles_results = $this->o_roles->read(['role_name' => $role_level]);
+                if ($a_user_values['role_level'] <= $a_roles_results[0]['role_level']) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     /**
      *  Figures out if the user is specified as a default user.
@@ -213,8 +241,8 @@ class AuthHelper extends Base
             return false;
         }
         $a_results = $this->o_users->readInfo($user);
-        if (isset($a_results['is_default'])) {
-            if ($a_results['is_default'] == 1) {
+        if (isset($a_results[0]['is_default'])) {
+            if ($a_results[0]['is_default'] == 1) {
                 return true;
             }
         }
@@ -234,8 +262,8 @@ class AuthHelper extends Base
             return false;
         }
         $a_user_info = $this->o_users->readInfo($login_id);
-        if ($a_user_info !== false) {
-            if ($a_user_info['is_logged_in'] == 1) {
+        if (isset($a_user_info[0])) {
+            if ($a_user_info[0]['is_logged_in'] == 1) {
                 return true;
             }
         }
@@ -250,8 +278,8 @@ class AuthHelper extends Base
     {
         if ($user_id == -1) { return false; }
         $a_user = $this->o_users->readInfo($user_id);
-        if ($a_user === false) { return false; }
-        if ($a_user['access_level'] === 1) {
+        if (!isset($a_user[0])) { return false; }
+        if ($a_user[0]['access_level'] === 1) {
             return true;
         }
         return false;
@@ -329,7 +357,8 @@ class AuthHelper extends Base
     public function isValidUser($user = '')
     {
         if ($user == '') { return false; }
-        if (is_array($this->o_users->readInfo($user))) {
+        $a_results = $this->o_users->readInfo($user);
+        if (isset($a_results[0])) {
             return true;
         }
         return false;

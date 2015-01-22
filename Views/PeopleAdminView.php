@@ -47,7 +47,7 @@ class PeopleAdminView extends Base
         $this->o_tpl         = $o_di->get('tpl');
     }
 
-    public function renderPage($a_values)
+    public function renderList($a_values)
     {
         $this->o_tpl->render('@default/index.tpl', $a_values);
         return '';

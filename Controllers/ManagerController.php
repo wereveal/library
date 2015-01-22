@@ -75,7 +75,7 @@ class ManagerController extends Base implements ControllerInterface
             case 'verifyLogin':
                 $a_results = $this->o_auth->login($this->a_post_values);
                 $this->logIt("Login Results: " . var_export($a_results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                if ($a_results['is_logged_in'] == 1 && $this->o_auth->hasMinRoleLevel('admin')) {
+                if ($a_results['is_logged_in'] == 1 && $this->o_auth->hasMinimumRoleLevel($a_results['user_id'], 'admin')) {
                     $this->o_session->setVar('login_id', $this->a_post_values['login_id']);
                     $html = $this->o_manager_view->renderLandingPage();
                 }
@@ -113,7 +113,7 @@ class ManagerController extends Base implements ControllerInterface
         $o_router_admin = new RouterAdminController($this->o_di);
         return $o_router_admin->render();
     }
-    public function renderUserAdmin()
+    public function renderPeopleAdmin()
     {
         if ($this->o_auth->isLoggedIn() === false) {
             return $this->o_manager_view->renderLoginForm();

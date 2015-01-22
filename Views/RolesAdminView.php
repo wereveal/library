@@ -1,27 +1,26 @@
 <?php
 /**
  *  @brief View for the Router Admin page.
- *  @file RouterAdminView.php
+ *  @file RolesAdminView.php
  *  @ingroup ritc_library views
  *  @namespace Ritc/Library/Views
- *  @class RouterAdminView
+ *  @class RolesAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β2
- *  @date 2014-11-15 15:15:12
+ *  @version 1.0.0β1
+ *  @date 2015-01-20 05:04:10
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0β2 - changed to use DI/IOC - 11/15/2014 wer
- *      v1.0.0β1 - Initial version       - 11/14/2014 wer
+ *      v1.0.0β1 - Initial version       - 01/20/2015 wer
  *  </pre>
-**/
+ **/
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Abstracts\Base;
-use Ritc\Library\Models\RouterModel;
 use Ritc\Library\Helper\ViewHelper;
+use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
 
-class RouterAdminView extends Base
+class RolesAdminView extends Base
 {
     private $o_model;
     private $o_tpl;
@@ -31,7 +30,7 @@ class RouterAdminView extends Base
         $this->setPrivateProperties();
         $this->o_tpl   = $o_di->get('tpl');
         $o_db          = $o_di->get('db');
-        $this->o_model = new RouterModel($o_db);
+        $this->o_model = new RolesModel($o_db);
     }
     /**
      *  Returns the list of routes in html.
@@ -40,45 +39,38 @@ class RouterAdminView extends Base
      */
     public function renderList(array $a_message = array())
     {
-        $a_values = array(
+        $a_values = [
             'public_dir' => '',
-            'description' => 'Admin page for the router configuration.',
+            'description' => 'Admin page for the roles.',
             'a_message' => array(),
-            'a_routes' => array(
+            'a_roles' => array(
                 [
-                    'route_id',
-                    'route_path',
-                    'route_class',
-                    'route_method',
-                    'route_action',
-                    'route_args'
+                    'role_id',
+                    'role_name',
+                    'role_description',
+                    'role_level'
                 ]
             ),
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => ''
-        );
+        ];
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
         else {
-            $a_values['a_message'] = ViewHelper::messageProperties(
-                array(
-                    'message'       => 'Changing router values can result in unexpected results. If you are not sure, do not do it.',
-                    'type'          => 'warning'
-                )
-            );
+            $a_values['a_message'] = '';
         }
-        $a_routes = $this->o_model->read(array(), ['order_by' => 'route_default, route_path']);
+        $a_roles = $this->o_model->read(array(), ['order_by' => 'role_level, role_name']);
         $this->logIt(
-            'a_configs: ' . var_export($a_routes, TRUE),
+            'a_configs: ' . var_export($a_roles, TRUE),
             LOG_OFF,
             __METHOD__ . '.' . __LINE__
         );
-        if ($a_routes !== false && count($a_routes) > 0) {
-            $a_values['a_routes'] = $a_routes;
+        if ($a_roles !== false && count($a_roles) > 0) {
+            $a_values['a_roles'] = $a_roles;
         }
-        return $this->o_tpl->render('@pages/routes_admin.twig', $a_values);
+        return $this->o_tpl->render('@pages/roles_admin.twig', $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -94,8 +86,9 @@ class RouterAdminView extends Base
             $a_values['public_dir'] = '';
         }
         if (!isset($a_values['description'])) {
-            $a_values['description'] = 'Form to verify the action to delete the route.';
+            $a_values['description'] = 'Form to verify the action to delete the role.';
         }
         return $this->o_tpl->render('@pages/verify_delete_route.twig', $a_values);
     }
+
 }
