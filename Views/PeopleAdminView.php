@@ -19,10 +19,10 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Models\UsersModel;
+use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RolesModel;
-use Ritc\Library\Models\UserGroupMapModel;
+use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Services\Di;
 
@@ -39,10 +39,10 @@ class PeopleAdminView extends Base
     {
         $this->setPrivateProperties();
         $o_db                = $o_di->get('db');
-        $this->o_user_model  = new UsersModel($o_db);
+        $this->o_user_model  = new PeopleModel($o_db);
         $this->o_group_model = new GroupsModel($o_db);
         $this->o_role_model  = new RolesModel($o_db);
-        $this->o_ugm_model   = new UserGroupMapModel($o_db);
+        $this->o_ugm_model   = new PeopleGroupMapModel($o_db);
         $this->o_urm_model   = new GroupRoleMapModel($o_db);
         $this->o_tpl         = $o_di->get('tpl');
     }

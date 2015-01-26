@@ -51,7 +51,7 @@ namespace Ritc\Library\Helper;
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RolesModel;
-use Ritc\Library\Models\UsersModel;
+use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 
 class AuthHelper extends Base
@@ -68,7 +68,7 @@ class AuthHelper extends Base
         $this->setPrivateProperties();
         $this->o_db      = $o_di->get('db');
         $this->o_session = $o_di->get('session');
-        $this->o_users   = new UsersModel($this->o_db);
+        $this->o_users   = new PeopleModel($this->o_db);
         $this->o_groups  = new GroupsModel($this->o_db);
         $this->o_roles   = new RolesModel($this->o_db);
         $this->db_prefix = $this->o_db->getDbPrefix();

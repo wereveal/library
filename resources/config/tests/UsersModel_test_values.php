@@ -56,7 +56,7 @@ return [
             'expected_results' => []
         ]
     ],
-    'getUserId' => [
+    'getPeopleId' => [
         'test1' => [
             'test_values' => [],
             'expected_results' => []
@@ -98,7 +98,7 @@ return [
             'expected_results' => []
         ]
     ],
-    'readUserRecord' => [
+    'readPeopleRecord' => [
         'test1' => [
             'test_values' => [],
             'expected_results' => []

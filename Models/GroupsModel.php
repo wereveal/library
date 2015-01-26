@@ -147,7 +147,7 @@ class GroupsModel extends Base implements ModelInterface
     {
         if ($group_id == -1) { return false; }
         $o_grm = new GroupRoleMapModel($this->o_db);
-        $o_ugm = new UserGroupMapModel($this->o_db);
+        $o_ugm = new PeopleGroupMapModel($this->o_db);
         if ($this->o_db->startTransaction()) {
             if ($o_grm->deleteByGroupId($group_id)) {
                 if ($o_ugm->deleteByGroupId($group_id)) {

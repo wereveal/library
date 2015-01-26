@@ -5,7 +5,7 @@ use Ritc\Library\Basic\Tester;
 use Ritc\Library\Services\DbFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Elog;
-use Ritc\Library\Models\UserGroupMapModel;
+use Ritc\Library\Models\PeopleGroupMapModel;
 
 class UserGroupMapModelTests extends Tester
 {
@@ -35,7 +35,7 @@ class UserGroupMapModelTests extends Tester
         else {
             $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
         }
-        $this->o_ugm = new UserGroupMapModel($this->o_db);
+        $this->o_ugm = new PeopleGroupMapModel($this->o_db);
     }
 
     ### Tests ###

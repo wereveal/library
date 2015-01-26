@@ -1,18 +1,19 @@
 <?php
 /**
  *  @brief Does all the database CRUD stuff.
- *  @file UserGroupMapModel.php
+ *  @file PeopleGroupMapModel.php
  *  @ingroup ritc_library models
  *  @namespace Ritc/Library/Models
- *  @class UserGroupMapModel
+ *  @class PeopleGroupMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1β
- *  @date 2014-09-23 13:10:53
+ *  @version 1.0.0β4
+ *  @date 2015-01-26 10:14:05
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.1β - extends the Base class, injects the DbModel, clean up - 09/23/2014 wer
- *      v1.0.0β - First Live version - 09/15/2014 wer
- *      v0.1.0β - Initial version    - 01/18/2014 wer
+ *      v1.0.0β4 - refactored user to people                             - 01/26/2015 wer
+ *      v1.0.0β3 - extends the Base class, injects the DbModel, clean up - 09/23/2014 wer
+ *      v1.0.0β2 - First Live version                                    - 09/15/2014 wer
+ *      v1.0.0β1 - Initial version                                       - 01/18/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
@@ -22,7 +23,7 @@ use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 
-class UserGroupMapModel extends Base implements ModelInterface
+class PeopleGroupMapModel extends Base implements ModelInterface
 {
     private $db_prefix;
     private $db_type;
@@ -39,7 +40,7 @@ class UserGroupMapModel extends Base implements ModelInterface
 
     ### Basic CRUD commands, required by interface ###
     /**
-     *  Creates a new user group map record in the user_group_map table.
+     *  Creates a new user group map record in the people_group_map table.
      *  @param array $a_values required
      *  @return int|bool
     **/
@@ -47,17 +48,17 @@ class UserGroupMapModel extends Base implements ModelInterface
     {
         if ($a_values == array()) { return false; }
         $a_required_keys = array(
-            'user_id',
+            'people_id',
             'group_id'
         );
         if (!$this->o_arrays->hasRequiredKeys($a_required_keys, $a_values)) {
             return false;
         }
         $sql = "
-            INSERT INTO {$this->db_prefix}user_group_map (user_id, group_id)
-            VALUES (:user_id, :group_id)
+            INSERT INTO {$this->db_prefix}people_group_map (people_id, group_id)
+            VALUES (:people_id, :group_id)
         ";
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}user_group_map")) {
+        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}people_group_map")) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
@@ -67,7 +68,7 @@ class UserGroupMapModel extends Base implements ModelInterface
     }
 
     /**
-     * Returns record(s) from the library_user_group_map table
+     * Returns record(s) from the library_people_group_map table
      * @param array $a_search_values
      * @return mixed
      */
@@ -75,18 +76,18 @@ class UserGroupMapModel extends Base implements ModelInterface
     {
         $where = '';
         if ($a_search_values != array()) {
-            $a_search_params = array('order_by' => 'user_id');
+            $a_search_params = array('order_by' => 'people_id');
             $a_allowed_keys = array(
                 'group_id',
-                'user_id',
-                'ugm_id'
+                'people_id',
+                'pgm_id'
             );
             $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
             $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
         }
         $sql = "
             SELECT *
-            FROM {$this->db_prefix}user_group_map
+            FROM {$this->db_prefix}people_group_map
             {$where}
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -97,7 +98,7 @@ class UserGroupMapModel extends Base implements ModelInterface
      *  Updates the record, NOT!
      *  Method is required by interface.
      *  Update is not allowed! Always return false.
-     *      Reasoning. The group_id and user_id form a unique index. As such,
+     *      Reasoning. The group_id and people_id form a unique index. As such,
      *      they should not be modified. The record should always be deleted and
      *      a new one added.
      *  @param array $a_values
@@ -110,34 +111,34 @@ class UserGroupMapModel extends Base implements ModelInterface
 
     /**
      * Deletes the record.
-     * @param string $ugm_id required
+     * @param string $pgm_id required
      * @return bool
      */
-    public function delete($ugm_id = -1)
+    public function delete($pgm_id = -1)
     {
-        if ($ugm_id == -1) { return false; }
-        if (!ctype_digit($ugm_id)) { return false; }
+        if ($pgm_id == -1) { return false; }
+        if (!ctype_digit($pgm_id)) { return false; }
         $sql = "
-            DELETE FROM {$this->db_prefix}user_group_map
-            WHERE ugm_id = :ugm_id
+            DELETE FROM {$this->db_prefix}people_group_map
+            WHERE pgm_id = :pgm_id
         ";
-        return $this->o_db->delete($sql, array(':ugm_id' => $ugm_id), true);
+        return $this->o_db->delete($sql, array(':pgm_id' => $pgm_id), true);
     }
 
     public function deleteByGroupId($group_id = -1)
     {
         $sql = "
-            DELETE FROM {$this->db_prefix}user_group_map
+            DELETE FROM {$this->db_prefix}people_group_map
             WHERE group_id = :group_id
         ";
         return $this->o_db->delete($sql, array(':group_id' => $group_id), true);
     }
-    public function deleteByUserId($user_id = -1)
+    public function deleteByUserId($people_id = -1)
     {
         $sql = "
-            DELETE FROM {$this->db_prefix}user_group_map
-            WHERE user_id = :user_id
+            DELETE FROM {$this->db_prefix}people_group_map
+            WHERE people_id = :people_id
         ";
-        return $this->o_db->delete($sql, array(':user_id' => $user_id), true);
+        return $this->o_db->delete($sql, array(':people_id' => $people_id), true);
     }
 }

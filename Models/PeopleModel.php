@@ -1,10 +1,10 @@
 <?php
 /**
  *  @brief Does all the database CRUD stuff.
- *  @file UsersModel.php
+ *  @file PeopleModel.php
  *  @ingroup ritc_library models
  *  @namespace Ritc/Library/Models
- *  @class UsersModel
+ *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.4ß
  *  @date 2015-01-06 10:40:12
@@ -26,7 +26,7 @@ use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 
-class UsersModel extends Base implements ModelInterface
+class PeopleModel extends Base implements ModelInterface
 {
     private $db_prefix;
     private $db_type;
@@ -67,12 +67,12 @@ class UsersModel extends Base implements ModelInterface
             $a_values['is_default'] = 0;
         }
         $sql = "
-            INSERT INTO {$this->db_prefix}users
+            INSERT INTO {$this->db_prefix}people
                 (login_id, real_name, short_name, password, is_active, is_default)
             VALUES
                 (:login_id, :real_name, :short_name, :password, :is_active, :is_default)
         ";
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}users")) {
+        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}people")) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
@@ -94,7 +94,7 @@ class UsersModel extends Base implements ModelInterface
                 ? array('order_by' => 'login_id')
                 : $a_search_params;
             $a_allowed_keys = array(
-                'user_id',
+                'people_id',
                 'login_id',
                 'real_name',
                 'short_name',
@@ -111,7 +111,7 @@ class UsersModel extends Base implements ModelInterface
             $where = " ORDER BY 'login_id'";
         }
         $sql = "
-            SELECT user_id,
+            SELECT people_id,
                 login_id,
                 real_name,
                 short_name,
@@ -122,26 +122,26 @@ class UsersModel extends Base implements ModelInterface
                 created_on,
                 bad_login_count,
                 bad_login_ts
-            FROM {$this->db_prefix}users
+            FROM {$this->db_prefix}people
             {$where}
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_values);
     }
     /**
-     * Updates a {$this->db_prefix}users record.
-     * @param array $a_values required $a_values['user_id'] || $a_values['login_id']
+     * Updates a {$this->db_prefix}people record.
+     * @param array $a_values required $a_values['people_id'] || $a_values['login_id']
      * @return bool
      */
     public function update(array $a_values = array())
     {
-        $user_id = '';
+        $people_id = '';
         $login_id = '';
-        if (isset($a_values['user_id'])) {
-            if ($a_values['user_id'] != '') {
-                $user_id = $a_values['user_id'];
+        if (isset($a_values['people_id'])) {
+            if ($a_values['people_id'] != '') {
+                $people_id = $a_values['people_id'];
             }
-            unset($a_values['user_id']);
+            unset($a_values['people_id']);
         }
         if (isset($a_values['login_id'])) {
             if ($a_values['login_id'] != '') {
@@ -149,7 +149,7 @@ class UsersModel extends Base implements ModelInterface
             }
             unset($a_values['login_id']);
         }
-        if ($user_id == '' && $login_id == '') { return false; }
+        if ($people_id == '' && $login_id == '') { return false; }
         /* the following keys in $a_values must have a value other than ''.
          * As such, they get removed from the sql
          * if they are trying to update the values to ''
@@ -175,15 +175,15 @@ class UsersModel extends Base implements ModelInterface
         if ($a_values == array()) {
             return false;
         }
-        $sql_set = $this->o_db->buildSqlSet($a_values, array('user_id', 'login_id'));
+        $sql_set = $this->o_db->buildSqlSet($a_values, array('people_id', 'login_id'));
         $sql_where = isset($a_values['login_id'])
             ? 'WHERE login_id = :login_id'
-            : isset($a_values['user_id'])
-                ? 'WHERE user_id = :user_id'
+            : isset($a_values['people_id'])
+                ? 'WHERE people_id = :people_id'
                 : '';
         if ($sql_where == '' || $sql_set == '') { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}users
+            UPDATE {$this->db_prefix}people
             {$sql_set}
             {$sql_where}
         ";
@@ -191,67 +191,67 @@ class UsersModel extends Base implements ModelInterface
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     *  Deletes a {$this->db_prefix}users record based on id.
-     *  @param int $user_id required
+     *  Deletes a {$this->db_prefix}people record based on id.
+     *  @param int $people_id required
      *  @return bool
     **/
-    public function delete($user_id = -1)
+    public function delete($people_id = -1)
     {
-        if ($user_id == -1 || !ctype_digit($user_id)) { return false; }
+        if ($people_id == -1 || !ctype_digit($people_id)) { return false; }
         $sql = "
-            DELETE FROM {$this->db_prefix}users
-            WHERE user_id = :user_id
+            DELETE FROM {$this->db_prefix}people
+            WHERE people_id = :people_id
         ";
-        return $this->o_db->delete($sql, array(':user_id' => $user_id), true);
+        return $this->o_db->delete($sql, array(':people_id' => $people_id), true);
     }
 
     ### Single User Methods ###
     /**
-     *  Gets the user_id (primary record key) for a specific login_id.
+     *  Gets the people_id (primary record key) for a specific login_id.
      *  @param string $login_id required
-     *  @return int|bool $user_id
+     *  @return int|bool $people_id
      */
-    public function getUserId($login_id = '')
+    public function getPeopleId($login_id = '')
     {
         if ($login_id == '') { return false; }
         $a_results = $this->read(array('login_id' => $login_id));
         if ($a_results !== false) {
             if (isset($a_results[0]) && $a_results[0] != array()) {
-                return $a_results[0]['user_id'];
+                return $a_results[0]['people_id'];
             }
         }
         return false;
     }
     /**
      *  Updates the bad_login_count field for the user by one
-     *  @param int $user_id
+     *  @param int $people_id
      *  @return bool
      **/
-    public function incrementBadLoginCount($user_id = -1)
+    public function incrementBadLoginCount($people_id = -1)
     {
-        if ($user_id == -1) { return false; }
+        if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}users
+            UPDATE {$this->db_prefix}people
             SET bad_login_count = bad_login_count + 1
-            WHERE user_id = :user_id
+            WHERE people_id = :people_id
         ";
-        $a_values = array(':user_id' => $user_id);
+        $a_values = array(':people_id' => $people_id);
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
      *  Increments the bad_login_ts record by one minute
-     *  @param int $user_id required
+     *  @param int $people_id required
      *  @return bool
      */
-    public function incrementBadLoginTimestamp($user_id = -1)
+    public function incrementBadLoginTimestamp($people_id = -1)
     {
-        if ($user_id == -1) { return false; }
+        if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}users
+            UPDATE {$this->db_prefix}people
             SET bad_login_ts = bad_login_ts + 60
-            WHERE user_id = :user_id
+            WHERE people_id = :people_id
         ";
-        $a_values = array(':user_id' => $user_id);
+        $a_values = array(':people_id' => $people_id);
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
@@ -259,11 +259,11 @@ class UsersModel extends Base implements ModelInterface
      *  @param int|string $user either user id or user name
      *  @return array
      */
-    public function readUserRecord($user = '')
+    public function readPeopleRecord($user = '')
     {
         if ($user == '') { return array(); }
         if (ctype_digit($user)) {
-            $a_search_by = ['$user_id' => $user];
+            $a_search_by = ['$people_id' => $user];
         }
         else {
             $a_search_by = ['login_id' => $user];
@@ -277,112 +277,112 @@ class UsersModel extends Base implements ModelInterface
     }
     /**
      *  Resets the bad_login_count to 0
-     *  @param int $user_id required
+     *  @param int $people_id required
      *  @return bool
      **/
-    public function resetBadLoginCount($user_id = -1)
+    public function resetBadLoginCount($people_id = -1)
     {
-        if ($user_id == -1) { return false; }
+        if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}users
+            UPDATE {$this->db_prefix}people
             SET bad_login_count = 0
-            WHERE user_id = :user_id
+            WHERE people_id = :people_id
         ";
-        $a_values = array(':user_id' => $user_id);
+        $a_values = array(':people_id' => $people_id);
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
      *  Resets the timestamp to 0
-     *  @param int $user_id required
+     *  @param int $people_id required
      *  @return bool
     **/
-    public function resetBadLoginTimestamp($user_id = -1)
+    public function resetBadLoginTimestamp($people_id = -1)
     {
-        if ($user_id == -1) { return false; }
+        if ($people_id == -1) { return false; }
         $update_sql = "
-            UPDATE {$this->db_prefix}users
+            UPDATE {$this->db_prefix}people
             SET bad_login_ts = 0
-            WHERE user_id = :user_id
+            WHERE people_id = :people_id
         ";
-        $a_values = array(':user_id' => $user_id);
+        $a_values = array(':people_id' => $people_id);
         $results = $this->o_db->update($update_sql, $a_values, true);
         return $results;
     }
     /**
      *  Sets the bad login timestamp for the user.
-     *  @param int $user_id required
+     *  @param int $people_id required
      *  @return bool
     **/
-    public function setBadLoginTimestamp($user_id = -1)
+    public function setBadLoginTimestamp($people_id = -1)
     {
-        if ($user_id == -1) { return false; }
+        if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}users
+            UPDATE {$this->db_prefix}people
             SET bad_login_ts = :timestamp
-            WHERE user_id = :user_id
+            WHERE people_id = :people_id
         ";
-        $a_values = array(':user_id' => $user_id, ':timestamp' => time());
+        $a_values = array(':people_id' => $people_id, ':timestamp' => time());
         $results = $this->o_db->update($sql, $a_values, true);
         return $results;
     }
     /**
      * Sets the user record to be logged in.
-     * @param int $user_id
+     * @param int $people_id
      * @return bool
      */
-    public function setLoggedIn($user_id = -1)
+    public function setLoggedIn($people_id = -1)
     {
-        if ($user_id == -1) { return false; }
+        if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}users
+            UPDATE {$this->db_prefix}people
             SET is_logged_in = 1
-            WHERE user_id = :user_id
+            WHERE people_id = :people_id
         ";
-        $a_values = array(':user_id' => $user_id);
+        $a_values = array(':people_id' => $people_id);
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
      * Sets the user record to be logged out.
-     * @param int $user_id
+     * @param int $people_id
      * @return bool
      */
-    public function setLoggedOut($user_id = -1)
+    public function setLoggedOut($people_id = -1)
     {
-        if ($user_id == -1) { return false; }
+        if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}users
+            UPDATE {$this->db_prefix}people
             SET is_logged_in = 0
-            WHERE user_id = :user_id
+            WHERE people_id = :people_id
         ";
-        $a_values = array(':user_id' => $user_id);
+        $a_values = array(':people_id' => $people_id);
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
      *  Updates the user record with a new password
-     *  @param int    $user_id required
+     *  @param int    $people_id required
      *  @param string $password required
      *  @return bool success or failure
      */
-    public function updatePassword($user_id = -1, $password = '')
+    public function updatePassword($people_id = -1, $password = '')
     {
-        if ($user_id == -1 || $password == '') { return false; }
+        if ($people_id == -1 || $password == '') { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}users
+            UPDATE {$this->db_prefix}people
             SET password = :password
-            WHERE id = :user_id
+            WHERE id = :people_id
         ";
-        $a_values = [':user_id' => $user_id, ':password' => $password];
+        $a_values = [':people_id' => $people_id, ':password' => $password];
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
      *  Updates the user record to be make the user active or inactive, normally inactive.
-     *  @param int $user_id   required id of a user
+     *  @param int $people_id   required id of a user
      *  @param int $is_active optional defaults to inactive (0)
      *  @return bool success or failure
      */
-    public function updateActive($user_id = -1, $is_active = 0)
+    public function updateActive($people_id = -1, $is_active = 0)
     {
-        if ($user_id == -1) { return false; }
+        if ($people_id == -1) { return false; }
         $is_active = (int) $is_active;
         if ($is_active > 1) {
             $is_active = 1;
@@ -391,41 +391,41 @@ class UsersModel extends Base implements ModelInterface
             $is_active = 0;
         }
         $sql = "
-            UPDATE {$this->db_prefix}users
+            UPDATE {$this->db_prefix}people
             SET is_active = :is_active
-            WHERE user_id = :user_id
+            WHERE people_id = :people_id
         ";
-        $a_values = [':user_id' => $user_id, ':is_active' => $is_active];
+        $a_values = [':people_id' => $people_id, ':is_active' => $is_active];
         return $this->o_db->update($sql, $a_values, true);
     }
 
     ### More complex methods using multiple tables ###
     /**
-     *  Gets the user values based on login_id or user_id.
-     *  @param mixed $user_id the user id or login_id (as defined in the db)
+     *  Gets the user values based on login_id or people_id.
+     *  @param mixed $people_id the user id or login_id (as defined in the db)
      *  @return array, the records for the user
     **/
-    public function readInfo($user_id = '')
+    public function readInfo($people_id = '')
     {
-        if ($user_id == '') { return array(); }
-        if (ctype_digit($user_id)) {
-            $where = "u.user_id = {$user_id} ";
+        if ($people_id == '') { return array(); }
+        if (ctype_digit($people_id)) {
+            $where = "u.people_id = {$people_id} ";
         }
         else {
-            $where = "u.login_id = '{$user_id}' ";
+            $where = "u.login_id = '{$people_id}' ";
         }
         $sql = "
-            SELECT DISTINCT u.user_id, u.login_id, u.real_name, u.short_name, u.password, u.is_logged_in,
+            SELECT DISTINCT u.people_id, u.login_id, u.real_name, u.short_name, u.password, u.is_logged_in,
                 u.bad_login_count, u.bad_login_ts, u.is_active, u.is_default, u.created_on,
                 g.group_id, g.group_name, g.group_description,
                 r.role_id, r.role_level, r.role_name
             FROM {$this->db_prefix}roles as r,
-                 {$this->db_prefix}users as u,
+                 {$this->db_prefix}people as u,
                  {$this->db_prefix}groups as g,
-                 {$this->db_prefix}user_group_map as ugm,
+                 {$this->db_prefix}people_group_map as ugm,
                  {$this->db_prefix}group_role_map as grm
             WHERE {$where}
-            AND ugm.user_id = u.user_id
+            AND ugm.people_id = u.people_id
             AND g.group_id  = ugm.group_id
             AND r.role_id   = grm.role_id
             ORDER BY r.role_level
@@ -441,10 +441,10 @@ class UsersModel extends Base implements ModelInterface
     }
     /**
      *  Saves the user.
-     *  If the values contain a value of user_id, user is updated
+     *  If the values contain a value of people_id, user is updated
      *  Else it is a new user.
      *  @param array $a_user values to save
-     *  @return mixed, user_id or false
+     *  @return mixed, people_id or false
      **/
     public function saveUser(array $a_user = array())
     {
@@ -454,9 +454,9 @@ class UsersModel extends Base implements ModelInterface
         }
         $this->logIt("a_user before changes: " . var_export($a_user, true), LOG_OFF, $method  . __LINE__);
 
-        if (!isset($a_user['user_id']) || $a_user['user_id'] == '') { // New User
+        if (!isset($a_user['people_id']) || $a_user['people_id'] == '') { // New User
             $o_group = new GroupsModel($this->o_db);
-            $o_ugm   = new UserGroupMapModel($this->o_db);
+            $o_ugm   = new PeopleGroupMapModel($this->o_db);
             $a_required_keys = array(
                 'login_id',
                 'real_name',
@@ -475,8 +475,8 @@ class UsersModel extends Base implements ModelInterface
                 $a_user_values['password'] = password_hash($a_user_values['password'], PASSWORD_DEFAULT);
             }
             if ($this->o_db->startTransaction()) {
-                $new_user_id = $this->create($a_user_values);
-                if ($new_user_id !== false) {
+                $new_people_id = $this->create($a_user_values);
+                if ($new_people_id !== false) {
                     $a_group_id = array();
                     if (isset($a_user['group_id']) && is_array($a_user['group_id'])) {
                         $a_group_id = $a_user['group_id'];
@@ -496,7 +496,7 @@ class UsersModel extends Base implements ModelInterface
                         $a_group_id = array('3');
                     }
                     foreach ($a_group_id as $group_id) {
-                        $a_ug_values = array('user_id' => $new_user_id, 'group_id' => $group_id);
+                        $a_ug_values = array('people_id' => $new_people_id, 'group_id' => $group_id);
                         $ug_results = $o_ugm->create($a_ug_values);
                         if ($ug_results === false) {
                             $this->o_db->rollbackTransaction();
@@ -504,7 +504,7 @@ class UsersModel extends Base implements ModelInterface
                         }
                     }
                     if ($this->o_db->commitTransaction()) {
-                        return $new_user_id;
+                        return $new_people_id;
                     }
                     else {
                         $this->o_db->rollbackTransaction();
@@ -521,18 +521,18 @@ class UsersModel extends Base implements ModelInterface
             } // this->o_db->startTransaction
         }
         else { // Existing User
-            if (isset($a_user['user_id']) && $a_user['user_id'] != '') {
-                $user_id = $a_user['user_id'];
+            if (isset($a_user['people_id']) && $a_user['people_id'] != '') {
+                $people_id = $a_user['people_id'];
             }
             elseif (isset($a_user['login_id']) && $a_user['login_id'] != '') {
-                $user_id = $this->getUserId($a_user['login_id']);
+                $people_id = $this->getPeopleId($a_user['login_id']);
             }
             else {
-                $user_id = false;
+                $people_id = false;
             }
             $results = $this->update($a_user);
             if ($results !== false) {
-                return $user_id;
+                return $people_id;
             }
         }
         return false;

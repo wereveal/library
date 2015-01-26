@@ -1,12 +1,12 @@
 <?php
 /**
- *  @brief An entity class for Users.
+ *  @brief An entity class for People.
  *  @details It needs to be noted that this reflects the fact that
  *      a user entity consists of data that comes from more than one database table.
- *  @file UsersEntity.php
+ *  @file PeopleEntity.php
  *  @ingroup ritc_library entities
  *  @namespace Ritc/Library/Entities
- *  @class UsersEntity
+ *  @class PeopleEntity
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 0.1.0
  *  @date 2014-09-11 13:39:34
@@ -17,8 +17,8 @@
  *  @note <pre>
  *
  *  MySQL sql
-    CREATE TABLE `dbPrefix_users` (
-    `user_id` int(11) NOT NULL,
+    CREATE TABLE `dbPrefix_people` (
+      `people_id` int(11) NOT NULL,
       `login_id` varchar(60) NOT NULL,
       `real_name` varchar(50) NOT NULL,
       `short_name` varchar(8) DEFAULT NULL,
@@ -30,19 +30,19 @@
       `is_active` tinyint(4) NOT NULL DEFAULT '1'
     ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-    ALTER TABLE `dbPrefix_users`
-     ADD PRIMARY KEY (`user_id`), ADD UNIQUE KEY `loginid` (`login_id`);
+    ALTER TABLE `dbPrefix_people`
+     ADD PRIMARY KEY (`people_id`), ADD UNIQUE KEY `loginid` (`login_id`);
 
-    ALTER TABLE `dbPrefix_users`
-    MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;
+    ALTER TABLE `dbPrefix_people`
+    MODIFY `people_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;
 
-    INSERT INTO `dbPrefix_users` (`user_id`, `login_id`, `real_name`, `short_name`, `password`, `is_default`, `created_on`, `bad_login_count`, `bad_login_ts`, `is_active`) VALUES
+    INSERT INTO `dbPrefix_people` (`people_id`, `login_id`, `real_name`, `short_name`, `password`, `is_default`, `created_on`, `bad_login_count`, `bad_login_ts`, `is_active`) VALUES
     (1, 'SuperAdmin', 'Super Admin', 'GSA', '$2y$10$Fj3/Wt2m8WB6qXFHHpCc2u6Nz4o5pxzNE8pZLlWcYQOEqR0yUE6Fi', 1, '2012-08-12 02:55:28', 0, 0, 1);
  *
  *  PostgreSQL
-    CREATE SEQUENCE user_id_seq;
-    CREATE TABLE {dbPrefix}users (
-        user_id integer DEFAULT nextval('user_id_seq'::regclass) NOT NULL,
+    CREATE SEQUENCE people_id_seq;
+    CREATE TABLE {dbPrefix}people (
+        people_id integer DEFAULT nextval('people_id_seq'::regclass) NOT NULL,
         login_id character varying(120) NOT NULL,
         real_name character varying(100) NOT NULL,
         short_name character varying(16) DEFAULT NULL::character varying,
@@ -53,21 +53,21 @@
         bad_login_count integer DEFAULT 0 NOT NULL,
         bad_login_ts integer DEFAULT 0 NOT NULL
     );
-    ALTER TABLE ONLY {dbPrefix}users
-        ADD CONSTRAINT {dbPrefix}users_pkey PRIMARY KEY (user_id);
-    ALTER TABLE ONLY {dbPrefix}users
-        ADD CONSTRAINT {dbPrefix}users_login_id_key UNIQUE (login_id);
+    ALTER TABLE ONLY {dbPrefix}people
+        ADD CONSTRAINT {dbPrefix}people_pkey PRIMARY KEY (people_id);
+    ALTER TABLE ONLY {dbPrefix}people
+        ADD CONSTRAINT {dbPrefix}people_login_id_key UNIQUE (login_id);
 
-    INSERT INTO dbPrefix_users (user_id, login_id, real_name, short_name, password, is_active, is_default, created_on, bad_login_count, bad_login_ts) VALUES
+    INSERT INTO dbPrefix_people (people_id, login_id, real_name, short_name, password, is_active, is_default, created_on, bad_login_count, bad_login_ts) VALUES
     (1, 'SuperAdmin', 'Super Admin', 'GSA', '9715ab56587dd7b748c71644d014250a26b479f28dfdea9927398e3ec1f221ac83da247d016052bb8ee8334320d74c70e1ce48afcc9114d7d837bfc88abb0bc4', 1, 1, '2012-08-11 21:55:28', 0, 0);
 **/
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
-class UsersEntity implements EntityInterface
+class PeopleEntity implements EntityInterface
 {
-    private $user_id = '';
+    private $people_id = '';
     private $role_id = '';
     private $login_id = '';
     private $real_name = '';
@@ -90,7 +90,7 @@ class UsersEntity implements EntityInterface
     public function getAllProperties()
     {
         return array(
-            'user_id'         => $this->user_id,
+            'people_id'         => $this->people_id,
             'login_id'        => $this->login_id,
             'real_name'       => $this->real_name,
             'short_name'      => $this->short_name,
@@ -107,7 +107,6 @@ class UsersEntity implements EntityInterface
             'group_name'      => $this->group_name
         );
     }
-
     /**
      * Sets all the properties for the entity in one step.
      * @param array $a_entity
@@ -116,7 +115,7 @@ class UsersEntity implements EntityInterface
     public function setAllProperties(array $a_entity = array())
     {
         $a_needed_keys = array(
-            'user_id'         => -1,
+            'people_id'         => -1,
             'login_id'        => '',
             'real_name'       => '',
             'short_name'      => '',
@@ -149,7 +148,6 @@ class UsersEntity implements EntityInterface
     {
         $this->bad_login_count = $bad_login_count;
     }
-
     /**
      * @return int
      */
@@ -157,7 +155,6 @@ class UsersEntity implements EntityInterface
     {
         return $this->bad_login_count;
     }
-
     /**
      * @param int $bad_login_ts
      */
@@ -165,7 +162,6 @@ class UsersEntity implements EntityInterface
     {
         $this->bad_login_ts = $bad_login_ts;
     }
-
     /**
      * @return int
      */
@@ -173,7 +169,6 @@ class UsersEntity implements EntityInterface
     {
         return $this->bad_login_ts;
     }
-
     /**
      * @param int $created_on
      */
@@ -181,7 +176,6 @@ class UsersEntity implements EntityInterface
     {
         $this->created_on = $created_on;
     }
-
     /**
      * @return int
      */
@@ -189,7 +183,6 @@ class UsersEntity implements EntityInterface
     {
         return $this->created_on;
     }
-
     /**
      * @param int $is_active
      */
@@ -197,7 +190,6 @@ class UsersEntity implements EntityInterface
     {
         $this->is_active = $is_active;
     }
-
     /**
      * @return int
      */
@@ -205,7 +197,6 @@ class UsersEntity implements EntityInterface
     {
         return $this->is_active;
     }
-
     /**
      * @param int $is_default
      */
@@ -213,7 +204,6 @@ class UsersEntity implements EntityInterface
     {
         $this->is_default = $is_default;
     }
-
     /**
      * @return int
      */
@@ -221,7 +211,6 @@ class UsersEntity implements EntityInterface
     {
         return $this->is_default;
     }
-
     /**
      * @param string $password
      */
@@ -229,7 +218,6 @@ class UsersEntity implements EntityInterface
     {
         $this->password = $password;
     }
-
     /**
      * @return string
      */
@@ -237,7 +225,6 @@ class UsersEntity implements EntityInterface
     {
         return $this->password;
     }
-
     /**
      * @param string $real_name
      */
@@ -245,7 +232,6 @@ class UsersEntity implements EntityInterface
     {
         $this->real_name = $real_name;
     }
-
     /**
      * @return string
      */
@@ -253,7 +239,6 @@ class UsersEntity implements EntityInterface
     {
         return $this->real_name;
     }
-
     /**
      * @param string $role_id
      */
@@ -261,7 +246,6 @@ class UsersEntity implements EntityInterface
     {
         $this->role_id = $role_id;
     }
-
     /**
      * @return string
      */
@@ -269,7 +253,6 @@ class UsersEntity implements EntityInterface
     {
         return $this->role_id;
     }
-
     /**
      * @param string $short_name
      */
@@ -277,7 +260,6 @@ class UsersEntity implements EntityInterface
     {
         $this->short_name = $short_name;
     }
-
     /**
      * @return string
      */
@@ -285,23 +267,20 @@ class UsersEntity implements EntityInterface
     {
         return $this->short_name;
     }
-
     /**
-     * @param string $user_id
+     * @param string $people_id
      */
-    public function setUserId($user_id)
+    public function setPeopleId($people_id)
     {
-        $this->user_id = $user_id;
+        $this->people_id = $people_id;
     }
-
     /**
      * @return string
      */
-    public function getUserId()
+    public function getPeopleId()
     {
-        return $this->user_id;
+        return $this->people_id;
     }
-
     /**
      * @param string $login_id
      */
@@ -309,7 +288,6 @@ class UsersEntity implements EntityInterface
     {
         $this->login_id = $login_id;
     }
-
     /**
      * @return string
      */

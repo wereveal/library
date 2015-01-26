@@ -23,7 +23,7 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\MangerControllerInterface;
-use Ritc\Library\Models\UsersModel;
+use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Views\PeopleAdminView;
 
@@ -45,7 +45,7 @@ class PeopleAdminController extends Base implements MangerControllerInterface
         $this->o_view        = new PeopleAdminView($o_di);
         $this->o_session     = $o_di->get('session');
         $this->o_router      = $o_di->get('router');
-        $this->o_model       = new UsersModel($o_db);
+        $this->o_model       = new PeopleModel($o_db);
         $this->a_route_parts = $this->o_router->getRouteParts();
         $this->a_post_values = $this->a_route_parts['post'];
         if (DEVELOPER_MODE) {

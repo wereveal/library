@@ -5,7 +5,7 @@ use Ritc\Library\Basic\Tester;
 use Ritc\Library\Services\DbFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Elog;
-use Ritc\Library\Models\UsersModel;
+use Ritc\Library\Models\PeopleModel;
 
 class UsersModelTests extends Tester
 {
@@ -35,7 +35,7 @@ class UsersModelTests extends Tester
         else {
             $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
         }
-        $this->o_user = new UsersModel($this->o_db);
+        $this->o_user = new PeopleModel($this->o_db);
     }
 
     ### Tests ###
