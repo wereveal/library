@@ -1,6 +1,6 @@
 <?php
 /**
- *  @brief Manages User Authorization to the site.
+ *  @brief Manages User Authentication and Authorization to the site.
  *  @details It is expected that this will be used within a controller and
  *  more finely grained access with be handled there or in a sub-controller.
  *  @file AuthHelper.php
@@ -8,12 +8,12 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.2.2
- *  @date 2015-01-22 12:59:08
+ *  @version 4.2.3
+ *  @date 2015-01-26 12:25:33
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.2.3 - refactored out references to user into person         - 01/26/2015 wer
  *      v4.2.2 - modified to work with user model changes              - 01/22/2015 wer
- *               TODO - there are a couple access methods in here, make new class?
  *      v4.2.1 - bug fixes                                             - 01/16/2015 wer
  *      v4.2.0 - change the name of the file. It wasn't doing access   - 01/14/2015 wer
  *               it was doing authorization.
@@ -44,7 +44,6 @@
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
  *  </pre>
- * @TODO should an access class be added and a couple of the methods here moved there?
 **/
 namespace Ritc\Library\Helper;
 
@@ -61,20 +60,20 @@ class AuthHelper extends Base
     private $o_groups;
     private $o_roles;
     private $o_session;
-    private $o_users;
+    private $o_people;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $this->o_db      = $o_di->get('db');
         $this->o_session = $o_di->get('session');
-        $this->o_users   = new PeopleModel($this->o_db);
+        $this->o_people  = new PeopleModel($this->o_db);
         $this->o_groups  = new GroupsModel($this->o_db);
         $this->o_roles   = new RolesModel($this->o_db);
         $this->db_prefix = $this->o_db->getDbPrefix();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
-            $this->o_users->setElog($this->o_elog);
+            $this->o_people->setElog($this->o_elog);
             $this->o_groups->setElog($this->o_elog);
             $this->o_roles->setElog($this->o_elog);
         }
@@ -82,12 +81,12 @@ class AuthHelper extends Base
 
     #### Actions ####
     /**
-     *  Does the actual login, verifies valid user.
+     *  Does the actual login, verifies valid person.
      *
      *  @pre a form has been submitted from the site with all the needed
      *      variables which have been put through a data cleaner.
      *
-     *  @param array $a_user_post required with the following keys
+     *  @param array $a_person_post required with the following keys
      *      array(
      *          'login_id'=>'something',
      *          'password'=>'something',
@@ -96,12 +95,12 @@ class AuthHelper extends Base
      *          'hobbit'=>'' <-- hobbit should always be blank for valid submission (optional element)
      *      ).
      *
-     *  @return array user_values or login values with message.
+     *  @return array person_values or login values with message.
     **/
-    public function login(array $a_user_post = array())
+    public function login(array $a_person_post = array())
     {
         $meth = __METHOD__ . '.';
-        if ($a_user_post == array()) {
+        if ($a_person_post == array()) {
             return [
                 'login_id'     => '',
                 'is_logged_in' => 0,
@@ -110,25 +109,25 @@ class AuthHelper extends Base
         }
         $a_required = ['login_id', 'password', 'tolken', 'form_ts'];
         foreach ($a_required as $required) {
-            if (isset($a_user_post[$required]) === false) {
+            if (isset($a_person_post[$required]) === false) {
                 return [
-                    'login_id' => isset($a_user_post['login_id'])
-                        ? $a_user_post['login_id']
+                    'login_id' => isset($a_person_post['login_id'])
+                        ? $a_person_post['login_id']
                         : '',
                     'is_logged_in' => 0,
                     'message' => 'Please try again. Missing info.'
                 ];
             }
         }
-        if ($this->o_session->isValidSession($a_user_post, true)) {
-            $a_user_records = $this->o_users->readInfo($a_user_post['login_id']);
-            $this->logIt("Posted Values: " . var_export($a_user_post, true), LOG_ON, $meth . __LINE__);
-            $this->logIt("User Values: " . var_export($a_user_records, true), LOG_ON, $meth . __LINE__);
-            if ($a_user_records !== false && !is_null($a_user_records) && isset($a_user_records[0])) {
-                $a_user_values = $a_user_records[0]; // the first record should have the highest access level.
+        if ($this->o_session->isValidSession($a_person_post, true)) {
+            $a_people_records = $this->o_people->readInfo($a_person_post['login_id']);
+            $this->logIt("Posted Values: " . var_export($a_person_post, true), LOG_ON, $meth . __LINE__);
+            $this->logIt("User Values: " . var_export($a_people_records, true), LOG_ON, $meth . __LINE__);
+            if ($a_people_records !== false && !is_null($a_people_records) && isset($a_people_records[0])) {
+                $a_person = $a_people_records[0]; // the first record should have the highest access level.
             }
             else {
-                $this->logIt(var_export($a_user_post, true), LOG_OFF, $meth . __LINE__);
+                $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
                 $this->o_session->resetSession();
                 return [
                     'login_id'     => '',
@@ -136,57 +135,57 @@ class AuthHelper extends Base
                     'message'      => 'Please try again. The login id was not found.'
                 ];
             }
-            if ($a_user_values['is_active'] < 1) {
-                $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
-                $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
-                $this->o_users->setLoggedOut($a_user_values['user_id']);
-                $a_user_post['password']     = '';
-                $a_user_post['is_logged_in'] = 0;
-                $a_user_post['message']      = 'The login id is inactive.';
-                return $a_user_post;
+            if ($a_person['is_active'] < 1) {
+                $this->o_people->incrementBadLoginTimestamp($a_person['people_id']);
+                $this->o_people->incrementBadLoginCount($a_person['people_id']);
+                $this->o_people->setLoggedOut($a_person['people_id']);
+                $a_person_post['password']     = '';
+                $a_person_post['is_logged_in'] = 0;
+                $a_person_post['message']      = 'The login id is inactive.';
+                return $a_person_post;
             }
-            if ($a_user_values['bad_login_count'] > 5 && $a_user_values['bad_login_ts'] >= (time() - (60 * 5))) {
-                $this->o_users->incrementBadLoginTimestamp($a_user_values['user_id']);
-                $this->o_users->setLoggedOut($a_user_values['user_id']);
-                $a_user_post['password']     = '';
-                $a_user_post['is_logged_in'] = 0;
-                $a_user_post['login_id']     = '';
-                $a_user_post['message']      = 'The login id is locked out. Please wait 5 minutes and try again.';
-                return $a_user_post;
+            if ($a_person['bad_login_count'] > 5 && $a_person['bad_login_ts'] >= (time() - (60 * 5))) {
+                $this->o_people->incrementBadLoginTimestamp($a_person['people_id']);
+                $this->o_people->setLoggedOut($a_person['people_id']);
+                $a_person_post['password']     = '';
+                $a_person_post['is_logged_in'] = 0;
+                $a_person_post['login_id']     = '';
+                $a_person_post['message']      = 'The login id is locked out. Please wait 5 minutes and try again.';
+                return $a_person_post;
             }
             // simple anti-spambot thing... if the form has it.
-            if (isset($a_user_post['hobbit']) && $a_user_post['hobbit'] != '') {
-                $this->o_users->setLoggedOut($a_user_values['user_id']);
-                $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
-                $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
+            if (isset($a_person_post['hobbit']) && $a_person_post['hobbit'] != '') {
+                $this->o_people->setLoggedOut($a_person['people_id']);
+                $this->o_people->setBadLoginTimestamp($a_person['people_id']);
+                $this->o_people->incrementBadLoginCount($a_person['people_id']);
                 return [
                     'login_id'     => '',
                     'is_logged_in' => 0,
                     'message'      => 'A problem has occured. Please try again.'
                 ];
             }
-            $a_user_post['created_on'] = $a_user_values['created_on'];
-            $a_user_post['user_id']    = $a_user_values['user_id'];
+            $a_person_post['created_on'] = $a_person['created_on'];
+            $a_person_post['people_id']    = $a_person['people_id'];
 
-            $this->logIt("Password Needed: " . $a_user_values['password'], LOG_OFF, $meth . __LINE__);
-            $this->logIt("Password Given (hashed): " . password_hash($a_user_post['password'], PASSWORD_DEFAULT), LOG_OFF, $meth . __LINE__);
-            if (password_verify($a_user_post['password'], $a_user_values['password'])) {
-                $this->o_users->resetBadLoginCount($a_user_values['user_id']);
-                $this->o_users->resetBadLoginTimestamp($a_user_values['user_id']);
-                $this->o_users->setLoggedIn($a_user_values['user_id']);
-                $a_user_values['is_logged_in']    = 1;
-                $a_user_values['message']         = 'Success!';
-                $a_user_values['password']        = '';
-                $a_user_values['bad_login_count'] = 0;
-                $a_user_values['bad_login_ts']    = 0;
-                $this->logIt("After password check: " . var_export($a_user_values, true), LOG_OFF, $meth . __LINE__);
-                return $a_user_values;
+            $this->logIt("Password Needed: " . $a_person['password'], LOG_OFF, $meth . __LINE__);
+            $this->logIt("Password Given (hashed): " . password_hash($a_person_post['password'], PASSWORD_DEFAULT), LOG_OFF, $meth . __LINE__);
+            if (password_verify($a_person_post['password'], $a_person['password'])) {
+                $this->o_people->resetBadLoginCount($a_person['people_id']);
+                $this->o_people->resetBadLoginTimestamp($a_person['people_id']);
+                $this->o_people->setLoggedIn($a_person['people_id']);
+                $a_person['is_logged_in']    = 1;
+                $a_person['message']         = 'Success!';
+                $a_person['password']        = '';
+                $a_person['bad_login_count'] = 0;
+                $a_person['bad_login_ts']    = 0;
+                $this->logIt("After password check: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
+                return $a_person;
             } else {
-                $this->o_users->setBadLoginTimestamp($a_user_values['user_id']);
-                $this->o_users->incrementBadLoginCount($a_user_values['user_id']);
-                $this->o_users->setLoggedOut($a_user_values['user_id']);
+                $this->o_people->setBadLoginTimestamp($a_person['people_id']);
+                $this->o_people->incrementBadLoginCount($a_person['people_id']);
+                $this->o_people->setLoggedOut($a_person['people_id']);
                 return [
-                    'login_id'     => $a_user_post['login_id'],
+                    'login_id'     => $a_person_post['login_id'],
                     'is_logged_in' => 0,
                     'password'     => '',
                     'message'      => 'The password was incorrect. Please try again.'
@@ -194,7 +193,7 @@ class AuthHelper extends Base
             }
         }
         else {
-            $this->logIt(var_export($a_user_post, true), LOG_OFF, $meth . __LINE__);
+            $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
             $this->o_session->resetSession();
             return [
                 'login_id'     => '',
@@ -206,24 +205,24 @@ class AuthHelper extends Base
 
     #### Verifiers ####
     /**
-     * Figure out if the user has a role level at or higher than param.
+     * Figure out if the person has a role level at or higher than param.
      * @param int $role_level
      * @return bool
      */
     public function hasMinimumRoleLevel($login_id, $role_level = 9999)
     {
-        $a_user_records = $this->o_users->readInfo($login_id);
-        $this->logIt("User Values: " . var_export($a_user_records, true), LOG_ON, __METHOD__ . '.' . __LINE__);
-        if ($a_user_records !== false && !is_null($a_user_records) && isset($a_user_records[0])) {
-            $a_user_values = $a_user_records[0]; // the first record should have the highest access level.
+        $a_people_records = $this->o_people->readInfo($login_id);
+        $this->logIt("User Values: " . var_export($a_people_records, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+        if ($a_people_records !== false && !is_null($a_people_records) && isset($a_people_records[0])) {
+            $a_person = $a_people_records[0]; // the first record should have the highest access level.
             if (is_numeric($role_level)) {
-                if ($a_user_values['role_level'] <= $role_level) {
+                if ($a_person['role_level'] <= $role_level) {
                     return true;
                 }
             }
             else {
                 $a_roles_results = $this->o_roles->read(['role_name' => $role_level]);
-                if ($a_user_values['role_level'] <= $a_roles_results[0]['role_level']) {
+                if ($a_person['role_level'] <= $a_roles_results[0]['role_level']) {
                     return true;
                 }
             }
@@ -231,16 +230,16 @@ class AuthHelper extends Base
         return false;
     }
     /**
-     *  Figures out if the user is specified as a default user.
-     *  @param string|int $user can be the user id or the user name.
+     *  Figures out if the person is specified as a default person.
+     *  @param string|int $person can be the person id or the person name.
      *  @return bool true false
      */
-    public function isDefaultUser($user = -1)
+    public function isDefaultPerson($person = -1)
     {
-        if ($user == -1) {
+        if ($person == -1) {
             return false;
         }
-        $a_results = $this->o_users->readInfo($user);
+        $a_results = $this->o_people->readInfo($person);
         if (isset($a_results[0]['is_default'])) {
             if ($a_results[0]['is_default'] == 1) {
                 return true;
@@ -249,7 +248,7 @@ class AuthHelper extends Base
         return false;
     }
     /**
-     *  Verifies a user is logged in and session is valid for user.
+     *  Verifies a person is logged in and session is valid for person.
      *  @return bool
      */
     public function isLoggedIn()
@@ -261,25 +260,25 @@ class AuthHelper extends Base
         if ($login_id == '') {
             return false;
         }
-        $a_user_info = $this->o_users->readInfo($login_id);
-        if (isset($a_user_info[0])) {
-            if ($a_user_info[0]['is_logged_in'] == 1) {
+        $a_people = $this->o_people->readInfo($login_id);
+        if (isset($a_people[0])) {
+            if ($a_people[0]['is_logged_in'] == 1) {
                 return true;
             }
         }
         return false;
     }
     /**
-     *  Verifies user has the role of super administrator.
-     *  @param int $user_id required
+     *  Verifies person has the role of super administrator.
+     *  @param int $people_id required
      *  @return bool - true = is a super admin, false = not a super admin
     **/
-    public function isSuperAdmin($user_id = -1)
+    public function isSuperAdmin($people_id = -1)
     {
-        if ($user_id == -1) { return false; }
-        $a_user = $this->o_users->readInfo($user_id);
-        if (!isset($a_user[0])) { return false; }
-        if ($a_user[0]['access_level'] === 1) {
+        if ($people_id == -1) { return false; }
+        $a_people = $this->o_people->readInfo($people_id);
+        if (!isset($a_people[0])) { return false; }
+        if ($a_people[0]['access_level'] === 1) {
             return true;
         }
         return false;
@@ -350,57 +349,57 @@ class AuthHelper extends Base
         return false;
     }
     /**
-     *  Checks to see if user exists.
-     *  @param int|string $user user id or login name
+     *  Checks to see if person exists.
+     *  @param int|string $person person id or login name
      *  @return bool
     **/
-    public function isValidUser($user = '')
+    public function isValidPerson($person = '')
     {
-        if ($user == '') { return false; }
-        $a_results = $this->o_users->readInfo($user);
-        if (isset($a_results[0])) {
+        if ($person == '') { return false; }
+        $a_people = $this->o_people->readInfo($person);
+        if (isset($a_people[0])) {
             return true;
         }
         return false;
     }
     /**
-     *  Checks to see if the user by id exists.
-     *  Uses the isValidUser method.
-     *  @param int $user_id required
+     *  Checks to see if the person by id exists.
+     *  Uses the isValidPerson method.
+     *  @param int $people_id required
      *  @return bool
      */
-    public function isValidUserId($user_id = -1)
+    public function isValidPeopleId($people_id = -1)
     {
-        if ($user_id == -1) { return false; }
-        if (ctype_digit($user_id)) {
-            return $this->isValidUser($user_id);
+        if ($people_id == -1) { return false; }
+        if (ctype_digit($people_id)) {
+            return $this->isValidPerson($people_id);
         }
         return false;
     }
     /**
-     *  Checks to see if the user id exists.
-     *  @param int $user_id
+     *  Checks to see if the person id exists.
+     *  @param int $people_id
      *  @return bool true false
      **/
-    public function userIdExists($user_id = -1)
+    public function peopleIdExists($people_id = -1)
     {
-        if ($user_id == -1) { return false; }
-        if ($this->o_users->isID($user_id)) {
-            $results = $this->o_users->read(array('user_id' => $user_id));
-            if (isset($results['user_id']) && $results['user_id'] == $user_id) {
+        if ($people_id == -1) { return false; }
+        if ($this->o_people->isID($people_id)) {
+            $results = $this->o_people->read(array('people_id' => $people_id));
+            if (isset($results['people_id']) && $results['people_id'] == $people_id) {
                 return true;
             }
         }
         return false;
     }
     /**
-     * Checks to see if the user is in the group.
-     * @param int|string $user
+     * Checks to see if the person is in the group.
+     * @param int|string $person
      * @return bool
      */
-    public function userInGroup($user = -1)
+    public function personInGroup($person = -1)
     {
-        if ($user == -1) { return false; }
+        if ($person == -1) { return false; }
 
         return false;
     }
@@ -412,37 +411,37 @@ class AuthHelper extends Base
     public function loginIdExists($login_id = '')
     {
         if ($login_id == '') { return false; }
-        $results = $this->o_users->read(array('login_id' => $login_id));
+        $results = $this->o_people->read(array('login_id' => $login_id));
         if (isset($results['login_id']) && $results['login_id'] == $login_id) {
             return true;
         }
         return false;
     }
     /**
-     *  Checks to see if the password provided is valid for user.
-     *  @param array $a_user required $a_user['password'] and either $a_user['user_id'] or $a_user['login_id']
+     *  Checks to see if the password provided is valid for person.
+     *  @param array $a_person required $a_person['password'] and either $a_person['people_id'] or $a_person['login_id']
      *  @return bool
      */
-    public function validPassword(array $a_user = array())
+    public function validPassword(array $a_person = array())
     {
-        if (isset($a_user['user_id']) === false && isset($a_user['login_id']) === false ) {
+        if (isset($a_person['people_id']) === false && isset($a_person['login_id']) === false ) {
             return false;
         }
-        if ($a_user['user_id'] == '' && $a_user['login_id'] == '') {
+        if ($a_person['people_id'] == '' && $a_person['login_id'] == '') {
             return false;
         }
-        if (isset($a_user['password']) === false || $a_user['password'] == '') {
+        if (isset($a_person['password']) === false || $a_person['password'] == '') {
             return false;
         }
-        if (isset($a_user['user_id']) && $a_user['user_id'] != '') {
-            $a_find_this = ['user_id' => $a_user['user_id']];
+        if (isset($a_person['people_id']) && $a_person['people_id'] != '') {
+            $a_find_this = ['people_id' => $a_person['people_id']];
         }
         else {
-            $a_find_this = ['login_id' => $a_user['login_id']];
+            $a_find_this = ['login_id' => $a_person['login_id']];
         }
-        $a_results = $this->o_users->read($a_find_this);
+        $a_results = $this->o_people->read($a_find_this);
         if (isset($a_results[0])) {
-            return password_verify($a_user['password'], $a_results[0]['password']);
+            return password_verify($a_person['password'], $a_results[0]['password']);
         }
         return false;
     }

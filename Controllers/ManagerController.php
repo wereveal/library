@@ -68,7 +68,7 @@ class ManagerController extends Base implements ControllerInterface
             $this->o_session->resetSession();
             $this->route_action = 'login';
         }
-        elseif ($this->o_auth->userInGroup($this->o_session->getVar('login_id'), 'Managers') === false) {
+        elseif ($this->o_auth->personInGroup($this->o_session->getVar('login_id'), 'Managers') === false) {
 
         }
         switch ($this->route_action) {
