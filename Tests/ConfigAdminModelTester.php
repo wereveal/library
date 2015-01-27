@@ -22,13 +22,13 @@ class ConfigAdminModelTester extends Tester
     protected $private_properties;
     private $o_config;
     private $o_db;
-    private $o_tpl;
+    private $o_twig;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $this->o_db     = $o_di->get('db');
-        $this->o_tpl    = $o_di->get('tpl');
+        $this->o_twig   = $o_di->get('twig');
         $this->o_config = new ConstantsModel($this->o_db);
     }
     public function renderResults(array $a_result_values = array())
@@ -39,7 +39,7 @@ class ConfigAdminModelTester extends Tester
                 'type'    => 'error'
             ];
             $a_message = ViewHelper::messageProperties($a_params);
-            return $this->o_tpl->render(
+            return $this->o_twig->render(
                 '@pages/error.twig',
                 [
                     'description'   => 'An error has occurred.',

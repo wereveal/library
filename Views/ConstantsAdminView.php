@@ -25,12 +25,12 @@ use Ritc\Library\Services\Di;
 class ConstantsAdminView extends Base
 {
     private $o_model;
-    private $o_tpl;
+    private $o_twig;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        $this->o_tpl   = $o_di->get('tpl');
+        $this->o_twig  = $o_di->get('twig');
         $this->o_model = new ConstantsModel($o_di->get('db'));
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
@@ -78,7 +78,7 @@ class ConstantsAdminView extends Base
         if ($a_constants !== false && count($a_constants) > 0) {
             $a_values['a_constants'] = $a_constants;
         }
-        return $this->o_tpl->render('@pages/constants_admin.twig', $a_values);
+        return $this->o_twig->render('@pages/constants_admin.twig', $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -96,6 +96,6 @@ class ConstantsAdminView extends Base
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the configuration.';
         }
-        return $this->o_tpl->render('@pages/verify_delete_constant.twig', $a_values);
+        return $this->o_twig->render('@pages/verify_delete_constant.twig', $a_values);
     }
 }

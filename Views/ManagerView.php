@@ -26,13 +26,13 @@ class ManagerView extends Base
 {
     private $o_di;
     private $o_db;
-    private $o_tpl;
+    private $o_twig;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $this->o_di   = $o_di;
-        $this->o_tpl  = $o_di->get('tpl');
+        $this->o_twig = $o_di->get('twig');
         $this->o_db   = $o_di->get('db');
     }
     public function renderLandingPage()
@@ -77,7 +77,7 @@ class ManagerView extends Base
             'site_url'      => SITE_URL,
             'rights_holder' => RIGHTS_HOLDER
         ];
-        return $this->o_tpl->render('@main/index.twig', $a_values);
+        return $this->o_twig->render('@main/index.twig', $a_values);
     }
     /**
      * Temp method to test stuff
@@ -103,7 +103,7 @@ class ManagerView extends Base
             'site_url'      => SITE_URL,
             'rights_holder' => RIGHTS_HOLDER
         ];
-        return $this->o_tpl->render('@main/list_logins.twig', $a_values);
+        return $this->o_twig->render('@main/list_logins.twig', $a_values);
     }
     /**
      * Creates the html that displays the login form to access the app.
@@ -136,6 +136,6 @@ class ManagerView extends Base
             'a_message' => $a_message
         ];
         $o_sess->unsetVar('login_id');
-        return $this->o_tpl->render('@pages/login_form.twig', $a_values);
+        return $this->o_twig->render('@pages/login_form.twig', $a_values);
     }
 }

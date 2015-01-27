@@ -33,7 +33,7 @@ class PeopleAdminView extends Base
     private $o_role_model;
     private $o_ugm_model;
     private $o_urm_model;
-    private $o_tpl;
+    private $o_twig;
 
     public function __construct(Di $o_di)
     {
@@ -44,12 +44,12 @@ class PeopleAdminView extends Base
         $this->o_role_model  = new RolesModel($o_db);
         $this->o_ugm_model   = new PeopleGroupMapModel($o_db);
         $this->o_urm_model   = new GroupRoleMapModel($o_db);
-        $this->o_tpl         = $o_di->get('tpl');
+        $this->o_twig        = $o_di->get('twig');
     }
 
     public function renderList($a_values)
     {
-        $this->o_tpl->render('@default/index.tpl', $a_values);
+        $this->o_twig->render('@default/index.tpl', $a_values);
         return '';
     }
     /**

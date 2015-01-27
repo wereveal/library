@@ -119,9 +119,9 @@ if ($o_pdo !== false) {
         $a_constants = get_defined_constants(true);
         $o_elog->write(var_export($a_constants['user'], true), LOG_OFF);
         $o_router = new Router($o_di);
-        $o_tpl    = TwigFactory::getTwig('twig_config.php');
+        $o_twig   = TwigFactory::getTwig('twig_config.php');
         $o_di->set('router',  $o_router);
-        $o_di->set('tpl',     $o_tpl);
+        $o_di->set('tpl',     $o_twig);
         if ($rodb) {
             $o_dbf_ro = DbFactory::start($db_config_file, 'ro');
             $o_pdo_ro = $o_dbf_ro->connect();

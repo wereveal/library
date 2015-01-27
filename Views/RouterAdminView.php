@@ -24,12 +24,12 @@ use Ritc\Library\Services\Di;
 class RouterAdminView extends Base
 {
     private $o_model;
-    private $o_tpl;
+    private $o_twig;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        $this->o_tpl   = $o_di->get('tpl');
+        $this->o_twig  = $o_di->get('twig');
         $o_db          = $o_di->get('db');
         $this->o_model = new RouterModel($o_db);
     }
@@ -78,7 +78,7 @@ class RouterAdminView extends Base
         if ($a_routes !== false && count($a_routes) > 0) {
             $a_values['a_routes'] = $a_routes;
         }
-        return $this->o_tpl->render('@pages/routes_admin.twig', $a_values);
+        return $this->o_twig->render('@pages/routes_admin.twig', $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -96,6 +96,6 @@ class RouterAdminView extends Base
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the route.';
         }
-        return $this->o_tpl->render('@pages/verify_delete_route.twig', $a_values);
+        return $this->o_twig->render('@pages/verify_delete_route.twig', $a_values);
     }
 }

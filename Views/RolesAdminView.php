@@ -23,12 +23,12 @@ use Ritc\Library\Services\Di;
 class RolesAdminView extends Base
 {
     private $o_model;
-    private $o_tpl;
+    private $o_twig;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        $this->o_tpl   = $o_di->get('tpl');
+        $this->o_twig  = $o_di->get('twig');
         $o_db          = $o_di->get('db');
         $this->o_model = new RolesModel($o_db);
     }
@@ -68,7 +68,7 @@ class RolesAdminView extends Base
             }
             $a_values['a_roles'] = $a_roles;
         }
-        return $this->o_tpl->render('@pages/roles_admin.twig', $a_values);
+        return $this->o_twig->render('@pages/roles_admin.twig', $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -86,7 +86,7 @@ class RolesAdminView extends Base
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the role.';
         }
-        return $this->o_tpl->render('@pages/verify_delete_role.twig', $a_values);
+        return $this->o_twig->render('@pages/verify_delete_role.twig', $a_values);
     }
 
 }
