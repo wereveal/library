@@ -164,15 +164,22 @@ class Strings
         $the_string = preg_replace("/[^a-zA-Z0-9_*.+!\-]/", '', $the_string);
         return strtolower($the_string);
     }
-    public static function makeSentenceCase($the_string = '', $a_capped_words = array())
+    /**
+     * Turns the string into sentence case.
+     * Allows one to specify specific words to be cased as desired.
+     * @param string $the_string
+     * @param array  $a_special_words array ['replace_this' => '', 'with_this' => '']
+     * @return string
+     */
+    public static function makeSentenceCase($the_string = '', array $a_special_words = array())
     {
         $return_this = '';
         $a_sentences = preg_split('/([.?!]+)/', $the_string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
         foreach($a_sentences as $sentence) {
             $return_this .= $sentence == '.' ? '. ' : ucfirst(strtolower(trim($sentence)));
         }
-        if ($a_capped_words != array()) {
-            $return_this = str_replace($a_capped_words['replace_this'], $a_capped_words['with_this'], $return_this);
+        if ($a_special_words != array()) {
+            $return_this = str_replace($a_special_words['replace_this'], $a_special_words['with_this'], $return_this);
         }
         return trim($return_this);
     }
