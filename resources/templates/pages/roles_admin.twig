@@ -16,7 +16,7 @@
     {% endif %}
     <div class="row">
         <div class="col-md-12">
-            <div class="row hidden-sm list-header">
+            <div class="row hidden-sm hidden-xs list-header">
                 <div class="col-md-2 list-header">Role Name</div>
                 <div class="col-md-6 list-header">Role Description</div>
                 <div class="col-md-2 list-header">Role Level</div>
@@ -26,9 +26,9 @@
         {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <form action="{{ public_dir }}/manager/roles/save/" method= "post">
-                    <div class="col-md-2"><label class="visible-sm-inline-block" for="roles[role_name]">Role Name: </label><input type="text" name="roles[role_name]" value="" size="20" maxlength="40" class="colorful"/></div>
-                    <div class="col-md-6"><label class="visible-sm-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="" size="40" maxlength="64" class="colorful"/></div>
-                    <div class="col-md-2"><label class="visible-sm-inline-block" for="roles[role_level]">Role Level: </label><input type="text" name="roles[role_level]" value="" size="10" maxlength="5" class="colorful"/></div>
+                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_name]">Role Name: </label><input type="text" name="roles[role_name]" value="" size="20" maxlength="40" class="colorful"/></div>
+                    <div class="col-md-6"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="" size="40" maxlength="64" class="colorful"/></div>
+                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_level]">Role Level: </label><input type="text" name="roles[role_level]" value="" size="10" maxlength="5" class="colorful"/></div>
                     <div class="col-md-2">
                         <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Role</button>
                         <input type="hidden" name="tolken" value="{{ tolken }}" />
@@ -43,13 +43,11 @@
             <div class="row {{ class }}">
             {% if row.role_level > 2 %}
             <form action="{{ public_dir }}/manager/roles/update/" method="post">
-                <div class="col-md-2"><label class="visible-sm-inline-block" for="roles[role_name]">Role Name: </label><input type="text" name="roles[role_name]" value="{{ row.role_name }}" size="20" maxlength="40" class="colorful"/></div>
-                <div class="col-md-6"><label class="visible-sm-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="{{ row.role_description }}" size="40" maxlength="64" class="colorful"/></div>
-                <div class="col-md-2"><label class="visible-sm-inline-block" for="roles[role_level]">Role Level: </label><input type="text" name="roles[role_level]" value="{{ row.role_level }}" size="10" maxlength="5" class="colorful"/></div>
-                <div class="col-md-1">
+                <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_name]">Role Name: </label><input type="text" name="roles[role_name]" value="{{ row.role_name }}" size="20" maxlength="40" class="colorful"/></div>
+                <div class="col-md-6"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="{{ row.role_description }}" size="40" maxlength="64" class="colorful"/></div>
+                <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_level]">Role Level: </label><input type="text" name="roles[role_level]" value="{{ row.role_level }}" size="10" maxlength="5" class="colorful"/></div>
+                <div class="col-md-2">
                     <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
-                </div>
-                <div class="col-md-1">
                     <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
                     <input type="hidden" name="tolken" value="{{ tolken }}" />
                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
@@ -64,9 +62,9 @@
         {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <form action="{{ public_dir }}/manager/roles/save/" method= "post">
-                    <div class="col-md-2"><label class="visible-sm-inline-block" for="roles[role_name]">Role Name: </label><input type="text" name="roles[role_name]" value="" size="40" maxlength="64" class="colorful"/></div>
-                    <div class="col-md-6"><label class="visible-sm-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="" size="20" maxlength="32" class="colorful"/></div>
-                    <div class="col-md-2"><label class="visible-sm-inline-block" for="roles[role_level]">Role Level: </label><input type="text" name="roles[role_level]" value="" size="20" maxlength="32" class="colorful"/></div>
+                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_name]">Role Name: </label><input type="text" name="roles[role_name]" value="" size="40" maxlength="64" class="colorful"/></div>
+                    <div class="col-md-6"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="" size="20" maxlength="32" class="colorful"/></div>
+                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_level]">Role Level: </label><input type="text" name="roles[role_level]" value="" size="20" maxlength="32" class="colorful"/></div>
                     <div class="col-md-2">
                         <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Role</button>
                         <input type="hidden" name="tolken" value="{{ tolken }}" />
