@@ -6,17 +6,18 @@
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.3.0
- *  @date 2014-12-05 10:11:19
+ *  @version 2.0.0
+ *  @date 2015-01-27 15:19:17
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.0.0 - changed methods to be static                                        - 01/27/2015 wer
  *      v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it - 12/05/2014 wer
- *      v1.2.1 - moved to the Helper namespace - 11/15/2014 wer
- *      v1.2.1 - clean up - 09/23/2014 wer
- *      v1.2.0 - new method added - 12/30/2013 wer
- *      v1.1.1 - match package change - 12/19/2013 wer
- *      v1.1.0 - namespace changes - 07/30/2013 wer
- *      v1.0.3 - moved array methods from class Strings to here - 03/27/2013
+ *      v1.2.1 - moved to the Helper namespace                                       - 11/15/2014 wer
+ *      v1.2.1 - clean up                                                            - 09/23/2014 wer
+ *      v1.2.0 - new method added                                                    - 12/30/2013 wer
+ *      v1.1.1 - match package change                                                - 12/19/2013 wer
+ *      v1.1.0 - namespace changes                                                   - 07/30/2013 wer
+ *      v1.0.3 - moved array methods from class Strings to here                      - 03/27/2013 wer
  *      v1.0.2 - added new method
  *      v1.0.1 - new namespace, FIG standards (mostly)
  *  </pre>
@@ -36,18 +37,18 @@ class Arrays extends Base
      *  @param bool  $unsafe_php_commands defaults to true strips 'unsafe' php commands, rare should it be false
      *  @return array                     the cleaned array
      */
-    public function cleanArrayValues(array $array = array(), $a_allowed_keys = array(), $unsafe_php_commands = true)
+    public static function cleanArrayValues(array $array = array(), $a_allowed_keys = array(), $unsafe_php_commands = true)
     {
         $a_clean = array();
         if (count($array) === 0) {
             return $a_clean;
         }
         if ($unsafe_php_commands === true) {
-            $array = $this->stripUnsafePhp($array);
+            $array = self::stripUnsafePhp($array);
         }
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $a_clean[$key] = $this->cleanArrayValues($value);
+                $a_clean[$key] = self::cleanArrayValues($value);
             }
             else {
                 $value = trim($value);
@@ -68,7 +69,7 @@ class Arrays extends Base
      *  @param array $array
      *  @return array
     **/
-    public function decodeEntities(array $array = array())
+    public static function decodeEntities(array $array = array())
     {
         $a_clean = array();
         if (count($array) === 0) {
@@ -76,7 +77,7 @@ class Arrays extends Base
         }
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $a_clean[$key] = $this->decodeEntities($value);
+                $a_clean[$key] = self::decodeEntities($value);
             }
             else {
                 $a_clean[$key] = html_entity_decode($value, ENT_QUOTES);
@@ -90,12 +91,12 @@ class Arrays extends Base
      *  @param array $a_values required, must be associative array.
      *  @return bool
     **/
-    public function hasRequiredKeys(array $a_required_keys = array(), array $a_values = array())
+    public static function hasRequiredKeys(array $a_required_keys = array(), array $a_values = array())
     {
         if (count($a_required_keys) === 0 || count($a_values) === 0) {
             return false;
         }
-        if (!$this->isAssocArray($a_values)) {
+        if (!self::isAssocArray($a_values)) {
             return false;
         }
         foreach ($a_required_keys as $key) {
@@ -111,7 +112,7 @@ class Arrays extends Base
      *  @param $array (array)
      *  @return bool
     **/
-    public function isAssocArray($array = array())
+    public static function isAssocArray($array = array())
     {
         return (
             is_array($array)
@@ -127,7 +128,7 @@ class Arrays extends Base
      *  @param array $array
      *  @return array
     **/
-    public function removeSlashes(array $array = array())
+    public static function removeSlashes(array $array = array())
     {
         $a_stripped = array();
         if (count($array) === 0) {
@@ -135,7 +136,7 @@ class Arrays extends Base
         }
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $a_stripped[$key] = $this->removeSlashes($value);
+                $a_stripped[$key] = self::removeSlashes($value);
             }
             else {
                 $value = trim($value);
@@ -151,7 +152,7 @@ class Arrays extends Base
      *  @param string $allowable_tags a string with allowed tags (see php strip_tags())
      *  @return array $a_clean
     **/
-    public function stripTags(array $array = array(), array $a_allowed_keys = array(), $allowable_tags = '')
+    public static function stripTags(array $array = array(), array $a_allowed_keys = array(), $allowable_tags = '')
     {
         $a_clean = array();
         if (count($array) === 0) {
@@ -159,7 +160,7 @@ class Arrays extends Base
         }
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $a_clean[$key] = $this->stripTags($value);
+                $a_clean[$key] = self::stripTags($value);
             }
             else {
                 $value = trim($value);
@@ -180,7 +181,7 @@ class Arrays extends Base
      *  @param array $a_pairs
      *  @return array
      */
-    public function stripUnsafePhp(array $a_pairs)
+    public static function stripUnsafePhp(array $a_pairs)
     {
         $a_functions = [
             '/exec\((.*)\)/i',
@@ -197,7 +198,7 @@ class Arrays extends Base
         $a_return_this = array();
         foreach ($a_pairs as $key => $value) {
             if (is_array($value)) {
-                $a_return_this[$key] = $this->stripUnsafePhp($value);
+                $a_return_this[$key] = self::stripUnsafePhp($value);
             }
             $a_return_this[$key] = preg_replace($a_functions, '', $value);
         }

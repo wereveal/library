@@ -29,13 +29,11 @@ class GroupRoleMapModel extends Base implements ModelInterface
 {
     private $db_prefix;
     private $db_type;
-    private $o_arrays;
     private $o_db;
 
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->o_arrays  = new Arrays;
         $this->db_type   = $o_db->getDbType();
         $this->db_prefix = $o_db->getDbPrefix();
     }
@@ -53,7 +51,7 @@ class GroupRoleMapModel extends Base implements ModelInterface
             'group_id',
             'role_id'
         );
-        if (!$this->o_arrays->hasRequiredKeys($a_required_keys, $a_values)) {
+        if (!Arrays::hasRequiredKeys($a_required_keys, $a_values)) {
             return false;
         }
         $sql = "

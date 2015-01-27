@@ -21,6 +21,7 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 
@@ -28,29 +29,41 @@ class RolesModel extends Base implements ModelInterface
 {
     private $db_prefix;
     private $db_type;
-    private $o_arrays;
     private $o_db;
 
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->o_arrays  = new Arrays;
         $this->db_type   = $o_db->getDbType();
         $this->db_prefix = $o_db->getDbPrefix();
     }
 
     ### BASE CRUD ###
+    /**
+     * Creates a new record
+     * @param array $a_values
+     * @return int positive numbers are the ids, negative numbers are error codes.
+     *             -1 = array was empty
+     *             -2 = array does not have required keys
+     *             -3 = role level is not allowed
+     *             -4 = database operation was not successful
+     */
     public function create(array $a_values = array())
     {
-        if ($a_values == array()) { return false; }
+        if ($a_values == array()) { return -1; }
         $a_required_keys = array(
             'role_name',
             'role_description',
             'role_level'
         );
-        if (!$this->o_arrays->hasRequiredKeys($a_required_keys, $a_values)) {
-            return false;
+        if (!Arrays::hasRequiredKeys($a_required_keys, $a_values)) {
+            return -2;
         }
+        if ($a_values['role_level'] <= 2) {
+            return -3;
+        }
+        $a_values['role_name'] = strtolower(Strings::makeAlpha($a_values['role_name']));
+
         $sql = "
             INSERT INTO {$this->db_prefix}roles
                 (role_name, role_description, role_level)
@@ -63,9 +76,15 @@ class RolesModel extends Base implements ModelInterface
             return $ids[0];
         }
         else {
-            return false;
+            return -4;
         }
     }
+    /**
+     * Returns the records for the search values.
+     * @param array $a_search_values
+     * @param array $a_search_params
+     * @return mixed results of the datase operation.
+     */
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
         if (count($a_search_values) > 0) {
@@ -93,16 +112,28 @@ class RolesModel extends Base implements ModelInterface
         ";
         return $this->o_db->search($sql, $a_search_values);
     }
+    /**
+     * Update the role record.
+     * @param array $a_values
+     * @return int  1 = successful database operation
+     *             -1 = unsuccessful database operation
+     *             -2 = role_id was not set
+     */
     public function update(array $a_values = array())
     {
         if (   !isset($a_values['role_id'])
             || $a_values['role_id'] == ''
             || !ctype_digit($a_values['role_id'])
         ) {
-            return false;
+            return -2;
         }
         $a_allowed_keys = ['role_id', 'role_name', 'role_description', 'role_level'];
         $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);
+
+        if (isset($a_values['role_name']) && $a_values['role_name'] != '') {
+            $a_values['role_name'] = strtolower(Strings::makeAlpha($a_values['role_name']));
+        }
+
         $set_sql = $this->o_db->buildSqlSet($a_values, ['role_id']);
         $sql = "
             UPDATE {$this->db_prefix}roles
@@ -110,8 +141,19 @@ class RolesModel extends Base implements ModelInterface
             WHERE role_id = :role_id
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->update($sql, $a_values, true);
+        $results = $this->o_db->update($sql, $a_values, true);
+        if ($results) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
     }
+    /**
+     * Deletes a role record.
+     * @param string $role_id
+     * @return bool
+     */
     public function delete($role_id = '')
     {
         if ($role_id == -1) { return false; }

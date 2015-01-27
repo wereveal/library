@@ -27,15 +27,12 @@ class GroupsModel extends Base implements ModelInterface
 {
     private $db_prefix;
     private $db_type;
-    private $o_arrays;
     private $o_db;
-    private $o_di;
 
     public function __construct(DbModel $o_db)
     {
         $this->setPrivateProperties();
         $this->o_db      = $o_db;
-        $this->o_arrays  = new Arrays;
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
     }
@@ -51,7 +48,7 @@ class GroupsModel extends Base implements ModelInterface
             'group_name',
             'group_description'
         );
-        if (!$this->o_arrays->hasRequiredKeys($a_required_keys, $a_values)) {
+        if (!Arrays::hasRequiredKeys($a_required_keys, $a_values)) {
             return false;
         }
         $sql = "

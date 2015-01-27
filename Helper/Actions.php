@@ -9,19 +9,20 @@
  *  @namespace Ritc/Library/Helper
  *  @class Actions
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.2.6
- *  @date 2014-11-15 12:25:59
+ *  @version 2.2.7
+ *  @date 2015-01-27 15:15:06
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v2.2.6 - moved file into Helper area - 11/15/2014 wer
- *      v2.2.5 - changed to implment the changes in Base class - 09/23/2014 wer
- *      v2.2.4 - changed to match namespace change - 12/19/2013 wer
+ *      v2.2.7 - match refactoring of Strings and Arrays to     - 01/27/2015 wer
+ *               static methods
+ *      v2.2.6 - moved file into Helper area                    - 11/15/2014 wer
+ *      v2.2.5 - changed to implment the changes in Base class  - 09/23/2014 wer
+ *      v2.2.4 - changed to match namespace change              - 12/19/2013 wer
  *      v2.2.3 - Changed to namespace reorge
- *      v2.2.2 - changed to new namespace - 03/27/2013
+ *      v2.2.2 - changed to new namespace                       - 03/27/2013 wer
  *      v2.2.1 - added a bit more sanitation to uri actions,
  *               renamed action to form_action to be clearer what it was
  *      v2.2.0 - refactored to be closer to FIG standards
- * @TODO Need to change to match the Base Abstract
  * @TODO Need to decide if this needs to be repurposed with the event of the Router class
 **/
 namespace Ritc\Library\Helper;
@@ -33,19 +34,12 @@ class Actions extends Base
     protected $a_clean_post;
     protected $a_clean_get;
     protected $a_uri_actions;
-    protected $current_page;
     protected $form_action;
-    protected $o_arrays;
-    protected $o_elog;
-    protected $o_str;
-    protected $private_properties;
     protected $uri_no_get;
     protected $url_path;
     public function __construct()
     {
         $this->logIt("Starting __construct", LOG_OFF, __FILE__);
-        $this->o_arrays = new Arrays();
-        $this->o_str = new Strings();
         $this->setPrivateProperties();
         $this->setCleanPost($_POST);
         $this->setCleanGet($_GET);
@@ -138,16 +132,16 @@ class Actions extends Base
             }
         }
         if (isset($a_clean_post["action"]) && ($a_clean_post["action"] != '')) {
-            $action = $this->o_str->makeInternetUsable($a_clean_post["action"]);
+            $action = Strings::makeInternetUsable($a_clean_post["action"]);
         }
         elseif (isset($a_clean_post["step"]) && ($a_clean_post["step"] != '')) {
-            $action = $this->o_str->makeInternetUsable($a_clean_post["step"]);
+            $action = Strings::makeInternetUsable($a_clean_post["step"]);
         }
         elseif (isset($a_clean_post["submit"]) && ($a_clean_post["submit"] != '')) {
-            $action = $this->o_str->makeInternetUsable($a_clean_post["submit"]);
+            $action = Strings::makeInternetUsable($a_clean_post["submit"]);
         }
         elseif (($x_action != '') && ($x_action == $y_action)) {
-            $action = $this->o_str->makeInternetUsable($x_action);
+            $action = Strings::makeInternetUsable($x_action);
         }
         else {
             $action = '';
@@ -162,7 +156,7 @@ class Actions extends Base
             $this->a_clean_post = array();
             return true;
         }
-        $this->a_clean_post = $this->o_arrays->cleanArrayValues($array, $a_allowed_keys);
+        $this->a_clean_post = Arrays::cleanArrayValues($array, $a_allowed_keys);
         return true;
     }
     public function setCleanGet($array, $a_allowed_keys = array())
@@ -171,7 +165,7 @@ class Actions extends Base
             $this->a_clean_get = array();
             return true;
         }
-        $this->a_clean_get = $this->o_arrays->cleanArrayValues($array, $a_allowed_keys);
+        $this->a_clean_get = Arrays::cleanArrayValues($array, $a_allowed_keys);
         return true;
     }
     public function setUriNoGet($request_uri = '')

@@ -31,7 +31,6 @@ class ConstantsModel extends Base implements ModelInterface
 {
     private $a_constants;
     private $db_prefix;
-    private $o_arrays;
     private $o_db;
 
     public function __construct(DbModel $o_db)
@@ -40,9 +39,6 @@ class ConstantsModel extends Base implements ModelInterface
         $this->o_db        = $o_db;
         $this->db_prefix   = $o_db->getDbPrefix();
         $this->a_constants = $this->selectConstantsList();
-        $this->o_arrays    = new Arrays();
-        $this->o_strings   = new Strings();
-
     }
 
     ### Database Functions ###
@@ -60,13 +56,13 @@ class ConstantsModel extends Base implements ModelInterface
         );
         if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays
             foreach ($a_values as $a_record) {
-                if (!$this->o_arrays->hasRequiredKeys($a_required_keys, $a_record)) {
+                if (!Arrays::hasRequiredKeys($a_required_keys, $a_record)) {
                     return false;
                 }
             }
         }
         else {
-            if (!$this->o_arrays->hasRequiredKeys($a_required_keys, $a_values)) {
+            if (!Arrays::hasRequiredKeys($a_required_keys, $a_values)) {
                 return false;
             }
         }
@@ -124,7 +120,7 @@ class ConstantsModel extends Base implements ModelInterface
      */
     public function update(array $a_values)
     {
-        if ($this->o_arrays->hasRequiredKeys(array('const_id', 'const_value'), $a_values) === false) {
+        if (Arrays::hasRequiredKeys(array('const_id', 'const_value'), $a_values) === false) {
             return false;
         }
         $sql_set = $this->o_db->buildSqlSet($a_values, array('const_id'));
@@ -322,7 +318,7 @@ class ConstantsModel extends Base implements ModelInterface
      **/
     public function makeValidName($const_name = '')
     {
-        $const_name = $this->o_strings->removeTags($const_name);
+        $const_name = Strings::removeTags($const_name);
         $const_name = preg_replace("/[^a-zA-Z_ ]/", '', $const_name);
         $const_name = preg_replace('/(\s+)/i', '_', $const_name);
         return strtoupper($const_name);

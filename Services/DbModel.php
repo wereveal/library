@@ -50,7 +50,6 @@ class DbModel extends Base
     protected $current_page;
     private $db_prefix;
     private $db_type;
-    private $o_arr;
     private $o_db;
     protected $o_elog;
     private $pgsql_sequence_name = '';
@@ -69,7 +68,6 @@ class DbModel extends Base
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setPrivateProperties();
         $this->createDbParms($config_file);
-        $this->o_arr  = new Arrays;
         $this->o_db   = $o_db;
     }
 
@@ -366,7 +364,7 @@ class DbModel extends Base
     {
         $from_method = __METHOD__ . '.';
         $this->logIt("bind array: " . var_export($a_values, true), LOG_OFF, $from_method . __LINE__);
-        if ($this->o_arr->isAssocArray($a_values)) {
+        if (Arrays::isAssocArray($a_values)) {
             $a_values = $this->prepareKeys($a_values);
             $this->logIt("prepared array: " . var_export($a_values, true), LOG_OFF, $from_method . __LINE__);
             foreach ($a_values as $key => $value) {
@@ -429,7 +427,7 @@ class DbModel extends Base
     {
         $this->logIt('Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if (count($a_values) > 0) {
-            if ($this->o_arr->isAssocArray($a_values)) { // for a query with bind values
+            if (Arrays::isAssocArray($a_values)) { // for a query with bind values
                 $a_values = $this->prepareKeys($a_values);
                 $this->logIt('Fixed Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
 
@@ -1236,14 +1234,14 @@ class DbModel extends Base
     public function prepareKeys(array $array = array())
     {
         $a_new = array();
-        if ($this->o_arr->isAssocArray($array)) {
+        if (Arrays::isAssocArray($array)) {
             foreach ($array as $key=>$value) {
                 $new_key = strpos($key, ':') === 0 ? $key : ':' . $key;
                 $a_new[$new_key] = $value;
             }
             return $a_new;
         }
-        elseif ($this->o_arr->isAssocArray($array[0])) {
+        elseif (Arrays::isAssocArray($array[0])) {
             foreach ($array as $a_keys) {
                 $results = $this->prepareKeys($a_keys);
                 if ($results === false) {
@@ -1266,14 +1264,14 @@ class DbModel extends Base
     public function prepareValues(array $array)
     {
         $a_new = array();
-        if ($this->o_arr->isAssocArray($array)) {
+        if (Arrays::isAssocArray($array)) {
             foreach ($array as $key => $value) {
                 $new_key = strpos($key, ':') === 0 ? $key : ':' . $key;
                 $a_new[$key] = $new_key;
             }
             return $a_new;
         }
-        elseif ($this->o_arr->isAssocArray($array[0])) {
+        elseif (Arrays::isAssocArray($array[0])) {
             return $this->prepareValues($array[0]);
         }
         else {

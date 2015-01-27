@@ -72,7 +72,7 @@ class ConstantsAdminView extends Base
         $a_constants = $this->o_model->read();
         $this->logIt(
             'constants: ' . var_export($a_constants, TRUE),
-            LOG_ON,
+            LOG_OFF,
             __METHOD__ . '.' . __LINE__
         );
         if ($a_constants !== false && count($a_constants) > 0) {

@@ -10,30 +10,22 @@
  *  @namespace Ritc/Library/Helper
  *  @class Strings
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 5.1.2
- *  @date 2014-11-15 12:30:05
+ *  @version 6.0.0
+ *  @date 2015-01-27 15:08:41
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v5.1.2 - moved to the Helper namespace - 11/15/2014 wer
- *      v5.1.1 - changed to implment the changes in Base class - 09/23/2014 wer
- *      v5.1.0 - added formatPhoneNumber method. 2013-05-14
- *      v5.0.1 - bug fixes and removed unused code left over from old class Output 2013-05-01
+ *      v6.0.0 - changed all methods to static                                     - 01/27/2015 wer
+ *      v5.1.2 - moved to the Helper namespace                                     - 11/15/2014 wer
+ *      v5.1.1 - changed to implment the changes in Base class                     - 09/23/2014 wer
+ *      v5.1.0 - added formatPhoneNumber method.                                   - 2013-05-14 wer
+ *      v5.0.1 - bug fixes and removed unused code left over from old class Output - 2013-05-01 wer
  *      v5.0.0 - renamed new version for RITC Library v5
  *  </pre>
 **/
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Abstracts\Base;
-
-class Strings extends Base
+class Strings
 {
-    protected $the_original_string = 'Start';
-    protected $the_modified_string = '';
-    public function __construct()
-    {
-        $this->setPrivateProperties();
-    }
-
     ### String Methods ###
     /**
      * Changes the phone number to the specified phone format (or default format)
@@ -46,7 +38,7 @@ class Strings extends Base
      *
      * @return mixed|string
      */
-    public function formatPhoneNumber($phone_number = '', $phone_format = 'AAA-BBB-CCCC')
+    public static function formatPhoneNumber($phone_number = '', $phone_format = 'AAA-BBB-CCCC')
     {
         if ($phone_number == '') { return ''; }
         $phone_number = preg_replace("/[^0-9]/", "", $phone_number);
@@ -99,7 +91,7 @@ class Strings extends Base
      *  @param $input (mixed) - the value to turn to a boolean
      *  @return bool - the changed value
     **/
-    public function isTrue($input = '')
+    public static function isTrue($input = '')
     {
         if (is_bool($input)) {
             return $input;
@@ -141,7 +133,7 @@ class Strings extends Base
      *  @param string $the_string
      *  @return string
     **/
-    public function makeAlpha($the_string = '')
+    public static function makeAlpha($the_string = '')
     {
         return preg_replace("/[^a-zA-Z]/", '', $the_string);
     }
@@ -152,18 +144,11 @@ class Strings extends Base
      *  @param $the_string (str)
      *  @return string - the modified string
     **/
-    public function makeAlphanumeric($the_string = '')
+    public static function makeAlphanumeric($the_string = '')
     {
-        if ($the_string == '') {
-            $the_string = $this->the_original_string;
-        } else {
-            $this->the_original_string = $the_string;
-        }
-        $the_string = $this->removeTags($the_string);
+        $the_string = self::removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
-        $new_string = preg_replace("/[^a-zA-Z0-9_\-]/", '', $the_string);
-        $this->the_modified_string = $new_string;
-        return $new_string;
+        return preg_replace("/[^a-zA-Z0-9_\-]/", '', $the_string);
     }
     /**
      *  Makes the string alphanumeric plus _*.+!- in all lower case.
@@ -172,39 +157,24 @@ class Strings extends Base
      *  @param $the_string (str)
      *  @return string - the modified string
     **/
-    public function makeInternetUsable($the_string = '')
+    public static function makeInternetUsable($the_string = '')
     {
-        if ($the_string == '') {
-            $the_string = $this->the_original_string;
-        } else {
-            $this->the_original_string = $the_string;
-        }
-        $the_string = $this->removeTags($the_string);
+        $the_string = self::removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
         $the_string = preg_replace("/[^a-zA-Z0-9_*.+!\-]/", '', $the_string);
-        $new_string = strtolower($the_string);
-        $this->the_modified_string = $new_string;
-        return $new_string;
+        return strtolower($the_string);
     }
-    public function makeSentenceCase($the_string = '', $a_capped_words = array())
+    public static function makeSentenceCase($the_string = '', $a_capped_words = array())
     {
-        if ($the_string == '') {
-            $the_string = $this->the_original_string;
-        } else {
-            $this->the_original_string = $the_string;
-        }
         $return_this = '';
         $a_sentences = preg_split('/([.?!]+)/', $the_string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
-        $this->logIt("PREG_SPLIT: " . var_export($a_sentences, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         foreach($a_sentences as $sentence) {
             $return_this .= $sentence == '.' ? '. ' : ucfirst(strtolower(trim($sentence)));
         }
         if ($a_capped_words != array()) {
             $return_this = str_replace($a_capped_words['replace_this'], $a_capped_words['with_this'], $return_this);
         }
-        $return_this = trim($return_this);
-        $this->the_modified_string = $return_this;
-        return $return_this;
+        return trim($return_this);
     }
     /**
      *  Shortens a string.
@@ -225,24 +195,23 @@ class Strings extends Base
      *      method uses this param to shorten the string
      *  @return string - short string.
     **/
-    public function makeShortString($string = '', $num_of_words = 0, $num_of_chars = 0)
+    public static function makeShortString($string = '', $num_of_words = 0, $num_of_chars = 0)
     {
         if ($string == '') {
             return '';
         }
-        $this->the_original_string = $string;
-        $string = $this->removeTags($string);
+        $string = self::removeTags($string);
         $this_string = '';
         $that_string = '';
-        $this->logIt("The string before shortening: $string", LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ((int) $num_of_words === 0 && (int) $num_of_chars === 0) {
-            $this_string = $this->makeShortString($string, 5, 0);
-        } elseif ((int) $num_of_words === 0 && (int) $num_of_chars > 0) {
-            $this->logIt("In num of chars", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this_string = self::makeShortString($string, 5, 0);
+        }
+        elseif ((int) $num_of_words === 0 && (int) $num_of_chars > 0) {
             for ($i=0;$i < $num_of_chars; $i++) {
                 $this_string .= $string{$i};
             }
-        } elseif ((int) $num_of_words > 0 && (int) $num_of_chars === 0) {
+        }
+        elseif ((int) $num_of_words > 0 && (int) $num_of_chars === 0) {
             $string_parts = explode(' ', $string);
             if (count($string_parts) < $num_of_words) {
                 $num_of_words = count($string_parts);
@@ -251,7 +220,8 @@ class Strings extends Base
                 $this_string .= $this_string == '' ? '' : ' ';
                 $this_string .= $string_parts[$i];
             }
-        } else {
+        }
+        else {
             $string_parts = explode(' ', $string);
             for ($i=0; $i < $num_of_words; $i++) {
                 $that_string .= $that_string == '' ? '' : ' ';
@@ -265,27 +235,22 @@ class Strings extends Base
             }
             $this_string = $that_string;
         }
-        $this_string = trim($this_string);
-        $this->the_modified_string = $this_string;
-        return $this_string;
+        return trim($this_string);
     }
     /**
      *  Removes the image tag from the string.
      *  @param string $string optional, defaults to empty
      *  @return string
     **/
-    public function removeImages($string = '')
+    public static function removeImages($string = '')
     {
-        if ($string == '') {
-            $string = $this->the_original_string;
-        } else {
-            $this->the_original_string = $string;
-        }
-        $search = array('@<img[^>]*?>@si', '@<img[^>]*? />@si', '@<img[^>]*?/>@si');
-        $replace = array('', '');
-        $text = preg_replace($search, $replace, $string);
-        $this->the_modified_string = $text;
-        return $text;
+        $search = [
+            '@<img[^>]*?>@si',
+            '@<img[^>]*? />@si',
+            '@<img[^>]*?/>@si'
+        ];
+        $replace = ['', ''];
+        return preg_replace($search, $replace, $string);
     }
     /**
      *  Remove HTML tags, javascript sections and white space.
@@ -293,35 +258,14 @@ class Strings extends Base
      *  @param string $html
      *  @return string
     **/
-    public function removeTags($html = '')
+    public static function removeTags($html = '')
     {
-        $search = array ('@<script[^>]*?>.*?</script>@si', // Strip out javascript
-                          '@<[\/\!]*?[^<>]*?>@si',          // Strip out HTML tags
-                          '@([\r\n])[\s]+@');              // evaluate as php
-        $replace = array ('', '', '\1');
-        $text = preg_replace($search, $replace, $html);
-        return $text;
+        $search = [
+            '@<script[^>]*?>.*?</script>@si', // Strip out javascript
+            '@<[\/\!]*?[^<>]*?>@si',          // Strip out HTML tags
+            '@([\r\n])[\s]+@'                 // evaluate as php
+        ];
+        $replace = ['', '', '\1'];
+        return preg_replace($search, $replace, $html);
     }
-
-    ### Getters and Setters ###
-    public function getVar($var_name = '')
-    {
-        if (isset($this->$var_name)) {
-            return $this->$var_name;
-        }
-        return false;
-    }
-    public function getTheModifiedString()
-    {
-        return $this->the_modified_string;
-    }
-    public function getTheOriginalString()
-    {
-        return $this->the_original_string;
-    }
-    public function setTheOriginalString($the_string = '')
-    {
-        $this->the_original_string = $the_string;
-    }
-
 }
