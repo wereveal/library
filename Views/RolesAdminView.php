@@ -62,12 +62,10 @@ class RolesAdminView extends Base
             $a_values['a_message'] = '';
         }
         $a_roles = $this->o_model->read(array(), ['order_by' => 'role_level, role_name']);
-        $this->logIt(
-            'a_configs: ' . var_export($a_roles, TRUE),
-            LOG_OFF,
-            __METHOD__ . '.' . __LINE__
-        );
         if ($a_roles !== false && count($a_roles) > 0) {
+            foreach ($a_roles as $key => $a_row) {
+                $a_roles[$key]['role_description'] = html_entity_decode($a_row['role_description']);
+            }
             $a_values['a_roles'] = $a_roles;
         }
         return $this->o_tpl->render('@pages/roles_admin.twig', $a_values);
@@ -88,7 +86,7 @@ class RolesAdminView extends Base
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the role.';
         }
-        return $this->o_tpl->render('@pages/verify_delete_route.twig', $a_values);
+        return $this->o_tpl->render('@pages/verify_delete_role.twig', $a_values);
     }
 
 }

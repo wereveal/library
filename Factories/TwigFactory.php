@@ -12,14 +12,15 @@
  *  @date 2014-09-25 16:17:08
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0ß - moved to the Services namespace                                                       - 11/15/2014 wer
- *      v0.2.0  - changed the name of the method which is used to create/return the object              - 09/25/2014 wer
+ *      v1.0.0ß2 - moved to the Factories namespace
+ *      v1.0.0ß1 - moved to the Services namespace                                                       - 11/15/2014 wer
+ *      v0.2.0   - changed the name of the method which is used to create/return the object              - 09/25/2014 wer
  *                and cleaned up some code.
- *      v0.1.1  - changed to implment the changes in Base class                                         - 09/23/2014 wer
- *      v0.1.0  - initial file creation                                                                 - 2013-11-11 wer
+ *      v0.1.1   - changed to implment the changes in Base class                                         - 09/23/2014 wer
+ *      v0.1.0   - initial file creation                                                                 - 2013-11-11 wer
  *  </pre>
 **/
-namespace Ritc\Library\Services;
+namespace Ritc\Library\Factories;
 
 use Twig_Loader_Filesystem;
 use Twig_Environment;
@@ -29,8 +30,6 @@ class TwigFactory extends Base
 {
     private $o_twig;
     private static $instance = array();
-    protected $o_elog;
-    protected $private_properties;
 
     private function __construct($a_twig_config)
     {

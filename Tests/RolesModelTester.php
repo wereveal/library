@@ -2,7 +2,7 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
-use Ritc\Library\Services\DbFactory;
+use Ritc\Library\Factories\DbFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Elog;
 use Ritc\Library\Models\RolesModel;

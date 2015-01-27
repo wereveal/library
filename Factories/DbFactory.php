@@ -11,20 +11,21 @@
  *  @namespace Ritc/Library/Services
  *  @class DbFactory
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.5.2
- *  @date 2014-11-15 13:21:19
+ *  @version 1.5.3
+ *  @date 2015-01-27 16:25:28
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.5.2 - moved to Services namespace - 11/15/2014 wer
- *      v1.5.1 - changed to implement the changes to the Base class - 09/23/2014 wer
- *      v1.5.0 - massive change to the factory, cutting out the fat - 03/25/2014 wer
+ *      v1.5.3 - moved to the Factories namespace                                 - 01/27/2015 wer
+ *      v1.5.2 - moved to Services namespace                                      - 11/15/2014 wer
+ *      v1.5.1 - changed to implement the changes to the Base class               - 09/23/2014 wer
+ *      v1.5.0 - massive change to the factory, cutting out the fat               - 03/25/2014 wer
  *      v1.0.0 - figured it was time to take this out of beta, with one addition. - 02/24/2014 wer
- *      v0.1.2 - minor package change required minor modification - 12/19/2013 wer
- *      v0.1.1 - added two additional places the config files can exist - 2013-11-08
+ *      v0.1.2 - minor package change required minor modification                 - 12/19/2013 wer
+ *      v0.1.1 - added two additional places the config files can exist           - 2013-11-08
  *      v0.1.0 - initial file creation - 2013-11-06
  *  </pre>
 **/
-namespace Ritc\Library\Services;
+namespace Ritc\Library\Factories;
 
 use Ritc\Library\Abstracts\Base;
 
@@ -34,8 +35,6 @@ class DbFactory extends Base
     private static $instance_ro = array();
     private $config_file;
     private $o_db;
-    protected $o_elog;
-    protected $private_properties;
 
     private function __construct($config_file = 'db_config.php', $read_type = 'rw')
     {

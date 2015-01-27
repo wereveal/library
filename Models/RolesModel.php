@@ -161,7 +161,27 @@ class RolesModel extends Base implements ModelInterface
             DELETE FROM {$this->db_prefix}roles
             WHERE role_id = :role_id
         ";
-        return $this->o_db->delete($sql, array(':role_id' => $role_id), true);
+        if ($this->o_db->delete($sql, array(':role_id' => $role_id), true)) {
+            if ($this->o_db->getAffectedRows() === 0) {
+                $a_results = [
+                    'message' => 'The role was not deleted.',
+                    'type'    => 'failure'
+                ];
+            }
+            else {
+                $a_results = [
+                    'message' => 'Success!',
+                    'type'    => 'success'
+                ];
+            }
+        }
+        else {
+            $a_results = [
+                'message' => 'A problem occurred and the role was not deleted.',
+                'type'    => 'failure'
+            ];
+        }
+        return $a_results;
     }
 
     ### Specialized CRUD ###

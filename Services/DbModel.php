@@ -68,7 +68,7 @@ class DbModel extends Base
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->setPrivateProperties();
         $this->createDbParms($config_file);
-        $this->o_db   = $o_db;
+        $this->o_db = $o_db;
     }
 
     ### Main Four Commands (CRUD) ###

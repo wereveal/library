@@ -1,6 +1,6 @@
 <?php
 /**
- *  @brief Creates a Twig instance to render templates.
+ *  @brief Returns a Twig instance to render templates.
  *  @description Lets us create a twig object, specific to a configuration
  *      allowing multiple twig objects to render the html
  *  @file Tpl.php
@@ -25,32 +25,18 @@
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Factories\TwigFactory;
 use Twig_Environment;
 
 class Tpl extends Base
 {
-    private $config_file;
-    protected $private_properties;
-    protected $o_elog;
-    private $o_twig_factory;
 
-    public function __construct($config_file = 'twig_config.php')
-    {
-        $this->setPrivateProperties();
-        $this->config_file = $config_file;
-        $this->o_twig_factory = TwigFactory::create($config_file);
-    }
     /**
      * Returns the twig environment object which we use to do all the template rendering.
      * @return Twig_Environment
      */
-    public function getTwig($config_file = '')
+    public function getTwig($config_file = 'twig_config.php')
     {
-        if ($config_file == '') {
-            if ($this->config_file == '') {
-                $config_file = 'twig_config.php';
-            }
-        }
         return TwigFactory::getTwig($config_file);
     }
 }
