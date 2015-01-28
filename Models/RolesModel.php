@@ -2,19 +2,20 @@
 /**
  *  @brief Does all the database CRUD stuff.
  *  @file RolesModel.php
- *  @inrole library models
+ *  @inrole ritc_library models
  *  @namespace Ritc/Library/Models
  *  @class RolesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.3β
- *  @date 2014-11-17 14:27:18
+ *  @version 1.0.0
+ *  @date 2015-01-28 14:42:59
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.3ß - reverted to injecting the DbModel           - 11/17/2014 wer
- *      v1.0.2ß - changed to use DI/IOC                       - 11/15/2014 wer
- *      v1.0.1β - extends the Base class, injects the DbModel - 09/23/2014 wer
- *      v1.0.0β - First live version                          - 09/15/2014 wer
- *      v0.1.0β - Initial version                             - 01/18/2014 wer
+ *      v1.0.0   - First working version                       - 01/28/2015 wer
+ *      v1.0.0ß5 - reverted to injecting the DbModel           - 11/17/2014 wer
+ *      v1.0.0ß4 - changed to use DI/IOC                       - 11/15/2014 wer
+ *      v1.0.0β3 - extends the Base class, injects the DbModel - 09/23/2014 wer
+ *      v1.0.0β2 - First live version                          - 09/15/2014 wer
+ *      v1.0.0β1 - Initial version                             - 01/18/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;

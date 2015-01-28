@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Views
  *  @class RouterAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β2
- *  @date 2014-11-15 15:15:12
+ *  @version 1.0.0
+ *  @date 2015-01-28 14:45:02
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0   - first working version - 01/28/2015 wer
  *      v1.0.0β2 - changed to use DI/IOC - 11/15/2014 wer
  *      v1.0.0β1 - Initial version       - 11/14/2014 wer
  *  </pre>
