@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Controllers
  *  @class ManagerController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β3
- *  @date 2015-01-16 12:12:43
+ *  @version 1.0.0β4
+ *  @date 2015-01-28 14:47:11
  *  @note A file in RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β4 - working for Roles                     - 01/28/2015 wer
  *      v1.0.0β3 - working for router and config         - 01/16/2015 wer
  *      v1.0.0β2 - Set up to render a basic landing page - 01/06/2015 wer
  *      v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer

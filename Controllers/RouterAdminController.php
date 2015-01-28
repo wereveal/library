@@ -6,12 +6,13 @@
  *  @namespace Ritc/Library/Controllers
  *  @class RouterAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1β
- *  @date 2014-12-05 11:06:06
+ *  @version 1.0.0
+ *  @date 2015-01-28 14:50:14
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.1β - refactored for namespaces - 12/05/2014 wer
- *      v1.0.0β - Initial version           - 11/14/2014 wer
+ *      v1.0.0   - first working version     - 01/28/2015 wer
+ *      v1.0.0β2 - refactored for namespaces - 12/05/2014 wer
+ *      v1.0.0β1 - Initial version           - 11/14/2014 wer
  *  </pre>
  *  @pre The route to this controller has to already be in the database and should not be able to be deleted.
  **/

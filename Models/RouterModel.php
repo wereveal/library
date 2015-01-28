@@ -6,15 +6,15 @@
  *  @namespace Ritc/Library/Models
  *  @class RouterModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1β
- *  @date 2014-11-15 14:00:10
+ *  @version 1.0.0
+ *  @date 2015-01-28 14:51:18
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.1ß - Changed to match some namespace changes, and bug fix                                 - 11/15/2014 wer
- *      v1.0.0β - First live version                                                                   - 11/11/2014 wer
+ *      v1.0.0   - first working version                                                                - 01/28/2015 wer
+ *      v1.0.0ß2 - Changed to match some namespace changes, and bug fix                                 - 11/15/2014 wer
+ *      v1.0.0β1 - First live version                                                                   - 11/11/2014 wer
  *  </pre>
 **/
-
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\Base;

@@ -2,14 +2,15 @@
 /**
  *  @brief View for the Configuration page.
  *  @file ConstantsAdminView.php
- *  @ingroup blog views
+ *  @ingroup ritc_library views
  *  @namespace Ritc/Library/Views
  *  @class ConstantsAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β3
- *  @date 2014-11-17 14:02:35
+ *  @version 1.0.0
+ *  @date 2015-01-28 14:49:28
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0   - first fully working version                          - 01/28/2015 wer
  *      v1.0.0β3 - changed to use the new Di class                      - 11/17/2014 wer
  *      v1.0.0β2 - changed to use Base class and inject database object - 09/24/2014 wer
  *      v1.0.0β1 - Initial version                                      - 04/02/2014 wer
