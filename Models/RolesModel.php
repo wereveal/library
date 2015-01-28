@@ -33,6 +33,7 @@ class RolesModel extends Base implements ModelInterface
 
     public function __construct(DbModel $o_db)
     {
+        $this->setPrivateProperties();
         $this->o_db      = $o_db;
         $this->db_type   = $o_db->getDbType();
         $this->db_prefix = $o_db->getDbPrefix();
@@ -43,10 +44,7 @@ class RolesModel extends Base implements ModelInterface
      * Creates a new record
      * @param array $a_values
      * @return int positive numbers are the ids, negative numbers are error codes.
-     *             -1 = array was empty
-     *             -2 = array does not have required keys
-     *             -3 = role level is not allowed
-     *             -4 = database operation was not successful
+     *             see method getErrorMessage for values
      */
     public function create(array $a_values = array())
     {
@@ -64,6 +62,10 @@ class RolesModel extends Base implements ModelInterface
         }
         $a_values['role_name'] = strtolower(Strings::makeAlpha($a_values['role_name']));
 
+        $a_results = $this->readyByName($a_values['role_name']);
+        if ($a_results !== false && isset($a_results['role_id'])) {
+            return -5;
+        }
         $sql = "
             INSERT INTO {$this->db_prefix}roles
                 (role_name, role_description, role_level)
@@ -115,9 +117,8 @@ class RolesModel extends Base implements ModelInterface
     /**
      * Update the role record.
      * @param array $a_values
-     * @return int  1 = successful database operation
-     *             -1 = unsuccessful database operation
-     *             -2 = role_id was not set
+     * @return int  1 = successful database operation, negative for errors
+     *              see method getErrorMessage for error values
      */
     public function update(array $a_values = array())
     {
@@ -130,8 +131,15 @@ class RolesModel extends Base implements ModelInterface
         $a_allowed_keys = ['role_id', 'role_name', 'role_description', 'role_level'];
         $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);
 
+        if (isset($a_values['role_level']) && $a_values['role_level'] <= 2) {
+            return -3;
+        }
         if (isset($a_values['role_name']) && $a_values['role_name'] != '') {
             $a_values['role_name'] = strtolower(Strings::makeAlpha($a_values['role_name']));
+            $a_role = $this->readyByName($a_values['role_name']);
+            if (isset($a_role['role_id']) && $a_role['role_id'] != $a_values['role_id']) {
+                return -5;
+            }
         }
 
         $set_sql = $this->o_db->buildSqlSet($a_values, ['role_id']);
@@ -146,7 +154,7 @@ class RolesModel extends Base implements ModelInterface
             return 1;
         }
         else {
-            return -1;
+            return -4;
         }
     }
     /**
@@ -209,7 +217,7 @@ class RolesModel extends Base implements ModelInterface
     {
         if ($role_name == '') { return array(); }
         $results = $this->read(array('role_name' => $role_name));
-        if (count($results[0]) > 0) {
+        if (isset($results[0])) {
             return $results[0];
         }
         return array();
@@ -229,5 +237,24 @@ class RolesModel extends Base implements ModelInterface
             return true;
         }
         return false;
+    }
+
+    ### Other ###
+    public function getErrorMessage($error_id = 0)
+    {
+        switch ($error_id) {
+            case -1:
+                return "Array was empty";
+            case -2:
+                return "Role ID was not set";
+            case -3:
+                return "Role Level is not allowed";
+            case -4:
+                return "Database operation was not successful";
+            case -5:
+                return "Role name already exists";
+            default:
+                return "Unknown Error";
+        }
     }
 }

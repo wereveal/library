@@ -33,6 +33,9 @@ class RolesAdmimController extends Base implements MangerControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
+        if (DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+        }
         $this->o_di      = $o_di;
         $o_db            = $o_di->get('db');
         $this->o_router  = $o_di->get('router');
@@ -91,14 +94,15 @@ class RolesAdmimController extends Base implements MangerControllerInterface
     {
         $a_role = $this->a_post['roles'];
         $results = $this->o_model->create($a_role);
-        if ($results) {
+        if ($results == 1) {
             $a_message = ['message' => 'Success!', 'type' => 'success'];
             return $this->o_view->renderList($a_message);
         }
         else {
+            $error_msg = $this->o_model->getErrorMessage($results);
             $a_message = [
-                'message' => 'A Problem Has Occured. The new role could not be saved.',
-                'type' => 'failure'
+                'message' => $error_msg,
+                'type'    => 'failure'
             ];
             return $this->o_view->renderList($a_message);
         }
@@ -107,13 +111,14 @@ class RolesAdmimController extends Base implements MangerControllerInterface
     {
         $a_role = $this->a_post['roles'];
         $results = $this->o_model->update($a_role);
-        if ($results) {
+        if ($results === 1) {
             $a_message = ['message' => 'Success!', 'type' => 'success'];
             return $this->o_view->renderList($a_message);
         }
         else {
+            $error_msg = $this->o_model->getErrorMessage($results);
             $a_message = [
-                'message' => 'A Problem Has Occured. The role could not be updated.',
+                'message' => $error_msg,
                 'type'    => 'failure'
             ];
             return $this->o_view->renderList($a_message);
