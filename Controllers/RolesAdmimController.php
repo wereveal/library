@@ -95,7 +95,7 @@ class RolesAdmimController extends Base implements MangerControllerInterface
     {
         $a_role = $this->a_post['roles'];
         $results = $this->o_model->create($a_role);
-        if ($results == 1) {
+        if ($results > 0) {
             $a_message = ['message' => 'Success!', 'type' => 'success'];
             return $this->o_view->renderList($a_message);
         }
