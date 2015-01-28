@@ -1,0 +1,111 @@
+{% extends '@default/base.twig' %}
+{% block stylesheets %}{% include '@snippets/base_css.twig' %}{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Welcome! This is the manager to add/modify/delete groups.</h1>
+        </div>
+    </div>
+    {% if a_message.message != '' %}
+    <div class="row">
+        <div class="col-md-12">
+            {% include '@snippets/message.twig' %}
+        </div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row hidden-sm hidden-xs list-header">
+                <div class="col-md-2 list-header">Group Name</div>
+                <div class="col-md-6 list-header">Group Description</div>
+                <div class="col-md-6 list-header">Role(s) Assignment</div>
+                <div class="col-md-2 list-header">&nbsp;</div>
+            </div>
+        {% set x = -1 %}
+        {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+            <div class="row {{ class }}">
+                <form action="{{ public_dir }}/manager/groups/save/" method= "post">
+                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_name]">Group Name: </label><input type="text" name="groups[group_name]" value="" size="20" maxlength="20" class="colorful"/></div>
+                    <div class="col-md-6"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label><input type="text" name="groups[group_description]" value="" size="50" maxlength="128" class="colorful"/></div>
+                    <div class="col-md-2">
+                        <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Role(s): </label>
+                        <select id="role_id[]" multiple>
+                            {% for row in a_roles %}
+                            <option value="{{ row.role_id }}">{{ row.role_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Group</button>
+                        <input type="hidden" name="tolken" value="{{ tolken }}" />
+                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                    </div>
+                </form>
+            </div>
+        {% set x = x * -1 %}
+        {% for row in a_groups %}
+            {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+            <div class="row {{ class }}">
+            {% if row.group_level > 2 %}
+            <form action="{{ public_dir }}/manager/groups/update/" method="post">
+                <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_name]">Group Name: </label><input type="text" name="groups[group_name]" value="{{ row.group_name }}" size="20" maxlength="20" class="colorful"/></div>
+                <div class="col-md-6"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label><input type="text" name="groups[group_description]" value="{{ row.group_description }}" size="50" maxlength="128" class="colorful"/></div>
+                <div class="col-md-2">
+                    <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Role(s): </label>
+                    <select id="role_id[]" multiple>
+                        {% for row in a_roles %}
+                            <option value="{{ row.role_id }}">{{ row.role_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
+                    <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
+                    <input type="hidden" name="tolken" value="{{ tolken }}" />
+                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                    <input type="hidden" name="groups[group_id]" value="{{ row.group_id }}" />
+                </div>
+            </form>
+            {% endif %}
+            </div>
+            {% set x = x * -1 %}
+        {% endfor %}
+        {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+            <div class="row {{ class }}">
+                <form action="{{ public_dir }}/manager/groups/save/" method= "post">
+                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_name]">Group Name: </label><input type="text" name="groups[group_name]" value="" size="20" maxlength="20" class="colorful"/></div>
+                    <div class="col-md-6"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label><input type="text" name="groups[group_description]" value="" size="50" maxlength="128" class="colorful"/></div>
+                    <div class="col-md-2">
+                        <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Role(s): </label>
+                        <select id="role_id[]" multiple>
+                            {% for row in a_roles %}
+                                <option value="{{ row.role_id }}">{{ row.role_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Group</button>
+                        <input type="hidden" name="tolken" value="{{ tolken }}" />
+                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Instructions</h3>
+            <ul>
+                <li>Groups are related to access levels, the lower the number the higher the access. Role levels of 0, 1, 2 are reserved and not allowed.</li>
+                <li>Certain groups are fixed so that the app will work. They are not visible.</li>
+                <li>Group Name is a single word, alpha characters only. The app will change the group name to camelCase where spaces are, removing any other characters.</li>
+                <li>Group Description can be anything that is meaningful. Text will be sanitized.</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

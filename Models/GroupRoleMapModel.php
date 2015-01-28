@@ -46,6 +46,7 @@ class GroupRoleMapModel extends Base implements ModelInterface
     **/
     public function create(array $a_values = array())
     {
+        ### TODO needs to be modified to accept and create multiple grm records ###
         if ($a_values == array()) { return false; }
         $a_required_keys = array(
             'group_id',
@@ -107,6 +108,7 @@ class GroupRoleMapModel extends Base implements ModelInterface
         return false;
     }
     /**
+     * Deletes a record by grm ID.
      * @param string $grm_id
      * @return bool
      */
@@ -119,7 +121,11 @@ class GroupRoleMapModel extends Base implements ModelInterface
         ";
         return $this->o_db->delete($sql, array(':grm_id' => $grm_id), true);
     }
-
+    /**
+     * Deletes record(s) by Group ID.
+     * @param int $group_id
+     * @return bool
+     */
     public function deleteByGroupId($group_id = -1)
     {
         if ($group_id == -1) { return false; }
@@ -129,6 +135,11 @@ class GroupRoleMapModel extends Base implements ModelInterface
         ";
         return $this->o_db->delete($sql, array(':group_id' => $group_id), true);
     }
+    /**
+     * Deletes record(s) by Role ID.
+     * @param int $role_id
+     * @return bool
+     */
     public function deleteByRoleId($role_id = -1)
     {
         if ($role_id == -1) { return false; }
