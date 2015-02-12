@@ -61,7 +61,7 @@ class GroupRoleMapModel extends Base implements ModelInterface
         ";
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}group_role_map")) {
             $ids = $this->o_db->getNewIds();
-            $this->o_elog->write("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];
         } else {
             return false;
@@ -90,7 +90,7 @@ class GroupRoleMapModel extends Base implements ModelInterface
             FROM {$this->db_prefix}group_role_map
             {$where}
         ";
-        $this->o_elog->write($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_values);
     }
     /**

@@ -18,7 +18,7 @@
  *  CREATE TABLE `dbPrefix_groups` (
  *    `group_id` int(11) NOT NULL AUTO_INCREMENT,
  *    `group_name` varchar(40) NOT NULL,
- *    `group_description` text NOT NULL,
+ *    `group_description` varchar(128) NOT NULL,
  *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
  *
  *  ALTER TABLE `dbPrefix_groups`
@@ -31,8 +31,8 @@
  *  CREATE SEQUENCE group_id_seq;
  *  CREATE TABLE {dbPrefix}groups (
  *      group_id integer DEFAULT nextval('group_id_seq'::regclass) NOT NULL,
- *      group_name character varying(80) NOT NULL,
- *      group_description text NOT NULL
+ *      group_name character varying(40) NOT NULL,
+ *      group_description character varying(128) NOT NULL
  *  );
  *  ALTER TABLE ONLY {dbPrefix}groups
  *      ADD CONSTRAINT {dbPrefix}groups_group_name_key UNIQUE (group_name);

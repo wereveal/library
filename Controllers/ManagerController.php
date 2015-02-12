@@ -18,13 +18,15 @@
  *      v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
  *      v1.0.0α1 - Initial version                       - 11/14/2014 wer
  *  </pre>
- * @TODO Test
+ * @TODO GroupsAdmin
+ * @TODO PeopleAdmin
  **/
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
+use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Views\ManagerView;
 use Ritc\Library\Services\Di;
 
@@ -132,7 +134,10 @@ class ManagerController extends Base implements ControllerInterface
     }
     public function renderGroupsAdmin()
     {
-        // TODO write renderGroupsAdmin method
-        return '';
+        if ($this->o_auth->isLoggedIn() === false) {
+            return $this->o_manager_view->renderLoginForm();
+        }
+        $o_groups_admin = new GroupsAdmimController($this->o_di);
+        return $o_groups_admin->render();
     }
 }

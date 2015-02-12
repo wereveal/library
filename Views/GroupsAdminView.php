@@ -1,6 +1,6 @@
 <?php
 /**
- *  @brief View for the Router Admin page.
+ *  @brief View for the Groups Admin page.
  *  @file GroupsAdminView.php
  *  @ingroup ritc_library views
  *  @namespace Ritc/Library/Views
@@ -18,19 +18,25 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\GroupsModel;
+use Ritc\Library\Models\GroupRoleMapModel;
+use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
 
 class GroupsAdminView extends Base
 {
+    private $o_db;
     private $o_model;
     private $o_twig;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
+        if (DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+        }
         $this->o_twig  = $o_di->get('twig');
-        $o_db          = $o_di->get('db');
-        $this->o_model = new GroupsModel($o_db);
+        $this->o_db    = $o_di->get('db');
+        $this->o_model = new GroupsModel($this->o_db);
     }
     /**
      *  Returns the list of routes in html.
@@ -39,16 +45,21 @@ class GroupsAdminView extends Base
      */
     public function renderList(array $a_message = array())
     {
+        $method   = __METHOD__ . '.';
+        $o_grm    = new GroupRoleMapModel($this->o_db);
+        $o_roles  = new RolesModel($this->o_db);
+        $a_roles  = $o_roles->read();
+        $this->logIt("Roles: " . var_export($a_roles, true), LOG_OFF, $method . __LINE__);
         $a_values = [
-            'public_dir' => '',
-            'description' => 'Admin page for the roles.',
-            'a_message' => array(),
-            'a_roles' => array(
+            'public_dir'  => '',
+            'description' => 'Admin page for the groups.',
+            'a_message'   => array(),
+            'a_groups'    => array(
                 [
-                    'role_id',
-                    'role_name',
-                    'role_description',
-                    'role_level'
+                    'group_id'          => '',
+                    'group_name'        => '',
+                    'group_description' => '',
+                    'a_roles'           => array()
                 ]
             ),
             'tolken'  => $_SESSION['token'],
@@ -61,14 +72,31 @@ class GroupsAdminView extends Base
         else {
             $a_values['a_message'] = '';
         }
-        $a_roles = $this->o_model->read(array(), ['order_by' => 'role_level, role_name']);
-        if ($a_roles !== false && count($a_roles) > 0) {
-            foreach ($a_roles as $key => $a_row) {
-                $a_roles[$key]['role_description'] = html_entity_decode($a_row['role_description']);
+        $a_groups = $this->o_model->read(array(), ['order_by' => 'group_name']);
+        if ($a_groups !== false && count($a_groups) > 0) {
+            $this->logIt("Groups: " . var_export($a_groups, true), LOG_OFF, $method . __LINE__);
+            foreach ($a_groups as $key => $a_row) {
+                $a_groups[$key]['group_description'] = html_entity_decode($a_row['group_description']);
+                $a_grm = $o_grm->read(['group_id' => $a_row['group_id']]);
+                $this->logIt("GRM: " . var_export($a_grm, true), LOG_OFF, $method . __LINE__);
+                $a_group_roles = $a_roles;
+                foreach ($a_group_roles as $roles_key => $a_role) {
+                    foreach($a_grm as $grm_row) {
+                        if (in_array($a_role['role_id'], $grm_row)) {
+                            $a_group_roles[$roles_key]['checked'] = ' checked';
+                        }
+                        else {
+                            $a_group_roles[$roles_key]['checked'] = '';
+                        }
+                    }
+                }
+                $a_groups[$key]['a_roles'] = $a_group_roles;
             }
-            $a_values['a_roles'] = $a_roles;
+            $a_values['a_groups'] = $a_groups;
         }
-        return $this->o_twig->render('@pages/roles_admin.twig', $a_values);
+        $a_values['a_blank_roles'] = $a_roles;
+        $this->logIt(var_export($a_values, true), LOG_ON, $method . __LINE__);
+        return $this->o_twig->render('@pages/groups_admin.twig', $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -84,7 +112,7 @@ class GroupsAdminView extends Base
             $a_values['public_dir'] = '';
         }
         if (!isset($a_values['description'])) {
-            $a_values['description'] = 'Form to verify the action to delete the role.';
+            $a_values['description'] = 'Form to verify the action to delete the group.';
         }
         return $this->o_twig->render('@pages/verify_delete_group.twig', $a_values);
     }

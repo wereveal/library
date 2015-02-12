@@ -10,7 +10,7 @@
  *  @date 2015-01-28 15:17:59
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0β1 - Initial version           - 01/28/2015 wer
+ *      v1.0.0β1 - Initial version                              - 01/28/2015 wer
  *  </pre>
  **/
 namespace Ritc\Library\Controllers;
@@ -34,9 +34,6 @@ class GroupsAdmimController extends Base implements MangerControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-        }
         $this->o_di      = $o_di;
         $o_db            = $o_di->get('db');
         $this->o_router  = $o_di->get('router');
@@ -44,6 +41,11 @@ class GroupsAdmimController extends Base implements MangerControllerInterface
         $this->o_model   = new GroupsModel($o_db);
         $this->o_grm     = new GroupRoleMapModel($o_db);
         $this->o_view    = new GroupsAdminView($o_di);
+        if (DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+            $this->o_model->setElog($this->o_elog);
+            $this->o_grm->setElog($this->o_elog);
+        }
     }
     public function render()
     {
@@ -56,6 +58,7 @@ class GroupsAdmimController extends Base implements MangerControllerInterface
                 header("Location: " . SITE_URL . '/manager/login/');
             }
         }
+        $this->logIt("Main Action: " . $main_action, LOG_OFF, __METHOD__);
         switch ($main_action) {
             case 'save':
                 return $this->save();
