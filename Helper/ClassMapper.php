@@ -62,7 +62,7 @@ class ClassMapper
                     $padding .= ' ';
                 }
             }
-            $value = str_replace($app_dir . '/', '', $value);
+            $value = str_replace($this->app_dir . '/', '', $value);
             $classmap_text .= "    '{$key}'{$padding} => __DIR__ . '/../{$value}',\n";
         }
 
