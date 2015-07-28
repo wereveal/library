@@ -50,6 +50,7 @@ class ClassMapper
         $o_dir = new DirectoryIterator($this->src_dir);
         $a_classmap = $this->createClassMapArray($o_dir, array());
         $classmap_text = "<?php\n/* Generated on " . date('c') . " by ClassMapper */\n\nreturn array(\n";
+        $string_length = 0;
         foreach ($a_classmap as $key => $value) {
             $string_length = strlen($key) > $string_length ? strlen($key) : $string_length;
         }
@@ -126,7 +127,7 @@ class ClassMapper
                 if ($a_token[0] == T_NAMESPACE) {
                     $line_number = $a_token[2];
                     foreach($a_tokens2 as $a_token2) {
-                        if ($a_token2[2] == $line_number) {
+                        if (isset($a_token2[2]) && $a_token2[2] == $line_number) {
                             // print $a_token2[0] . '  ' . token_name($a_token2[0]) . "\n";
                             switch ($a_token2[0]) {
                                 case T_STRING:
