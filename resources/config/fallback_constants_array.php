@@ -19,8 +19,4 @@ return array(
     ['PRIVATE_DIR_NAME', 'private'],
     ['TMP_DIR_NAME', 'tmp'],
     ['DEVELOPER_MODE', false],
-    ['ENCRYPT_TYPE', 'cleartext'],
-    ['FTP_BASE_PATH', '/srv/websites'],
-    ['SYSTEM_USER_ID', 1001],
-    ['SYSTEM_GROUP_ID', 81],
 );

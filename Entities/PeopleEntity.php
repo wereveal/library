@@ -8,11 +8,12 @@
  *  @namespace Ritc/Library/Entities
  *  @class PeopleEntity
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 0.1.0
- *  @date 2014-09-11 13:39:34
+ *  @version 1.0.0
+ *  @date 2015-07-29 11:41:54
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v0.1.0 - Initial version 09/11/2014 wer
+ *      v1.0.0 - finalized       - 07/29/2015 wer
+ *      v0.1.0 - Initial version - 09/11/2014 wer
  *  </pre>
  *  @note <pre>
  *
@@ -23,6 +24,7 @@
       `real_name` varchar(50) NOT NULL,
       `short_name` varchar(8) DEFAULT NULL,
       `password` varchar(128) NOT NULL,
+      `is_logged_in` tinyint(2) NOT NULL DEFAULT '0',
       `is_default` tinyint(1) NOT NULL DEFAULT '0',
       `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       `bad_login_count` int(11) NOT NULL DEFAULT '0',
@@ -49,6 +51,7 @@
         password character varying(510) NOT NULL,
         is_active boolean NOT NULL,
         is_default boolean NOT NULL,
+        is_logged_in boolean DEFAULT 0 NOT NULL, 
         created_on timestamp without time zone DEFAULT now() NOT NULL,
         bad_login_count integer DEFAULT 0 NOT NULL,
         bad_login_ts integer DEFAULT 0 NOT NULL
@@ -68,20 +71,16 @@ use Ritc\Library\Interfaces\EntityInterface;
 class PeopleEntity implements EntityInterface
 {
     private $people_id = '';
-    private $role_id = '';
     private $login_id = '';
     private $real_name = '';
     private $short_name = '';
     private $password = '';
-    private $is_default = 0;
-    private $created_on = 0;
+    private $is_logged_in = 0;
     private $bad_login_count = 0;
     private $bad_login_ts = 0;
     private $is_active = 0;
-    private $role_level = -1;
-    private $role_name = '';
-    private $group_id = -1;
-    private $group_name = '';
+    private $is_default = 0;
+    private $created_on = 0;
 
     /**
      * Gets all the entity properties.
@@ -90,21 +89,17 @@ class PeopleEntity implements EntityInterface
     public function getAllProperties()
     {
         return array(
-            'people_id'         => $this->people_id,
+            'people_id'       => $this->people_id,
             'login_id'        => $this->login_id,
             'real_name'       => $this->real_name,
             'short_name'      => $this->short_name,
             'password'        => $this->password,
-            'is_default'      => $this->is_default,
-            'created_on'      => $this->created_on,
+            'is_logged_in'    => $this->is_logged_in,
             'bad_login_count' => $this->bad_login_count,
             'bad_login_ts'    => $this->bad_login_ts,
             'is_active'       => $this->is_active,
-            'role_id'         => $this->role_id,
-            'role_name'       => $this->role_name,
-            'role_level'      => $this->role_level,
-            'group_id'        => $this->group_id,
-            'group_name'      => $this->group_name
+            'is_default'      => $this->is_default,
+            'created_on'      => $this->created_on,
         );
     }
     /**
@@ -115,21 +110,17 @@ class PeopleEntity implements EntityInterface
     public function setAllProperties(array $a_entity = array())
     {
         $a_needed_keys = array(
-            'people_id'         => -1,
-            'login_id'        => '',
+            'people_id'       => 0,
+            'login_id'        => 0,
             'real_name'       => '',
             'short_name'      => '',
             'password'        => '',
-            'is_default'      => 0,
-            'created_on'      => 0,
-            'bad_login_count' => 0,
+            'is_logged_in'    => 0,
+            'bad_login_count' => -1,
             'bad_login_ts'    => 0,
             'is_active'       => 0,
-            'role_id'         => -1,
-            'role_name'       => '',
-            'role_level'      => -1,
-            'group_id'        => -1,
-            'group_name'      => ''
+            'is_default'      => 0,
+            'created_on'      => 0,
         );
         foreach ($a_needed_keys as $key_name => $default_value) {
             if (array_key_exists($key_name, $a_entity)) {
@@ -240,20 +231,6 @@ class PeopleEntity implements EntityInterface
         return $this->real_name;
     }
     /**
-     * @param string $role_id
-     */
-    public function setRoleId($role_id)
-    {
-        $this->role_id = $role_id;
-    }
-    /**
-     * @return string
-     */
-    public function getRoleId()
-    {
-        return $this->role_id;
-    }
-    /**
      * @param string $short_name
      */
     public function setShortName($short_name)
@@ -280,6 +257,20 @@ class PeopleEntity implements EntityInterface
     public function getPeopleId()
     {
         return $this->people_id;
+    }
+    /**
+     * @return int
+     */
+    public function getIsLoggedIn()
+    {
+        return $this->is_logged_in;
+    }
+    /**
+     * @param int $value
+     */
+    public function setIsLoggedIn($value)
+    {
+        $this->is_logged_in = $value;
     }
     /**
      * @param string $login_id
