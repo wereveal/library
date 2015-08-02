@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.4ß
- *  @date 2015-01-06 10:40:12
+ *  @version 1.0.5ß
+ *  @date 2015-07-31 16:28:57
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.5ß - refactoring elsewhere caused changes here                     - 07/31/2015 wer
  *      v1.0.4ß - refactoring method name to reflect what is happening better   - 01/06/2015 wer
  *      v1.0.3ß - reverted to injecting DbModel                                 - 11/17/2014 wer
  *      v1.0.2ß - changed to use DI/IOC                                         - 11/15/2014 wer
@@ -55,7 +56,7 @@ class PeopleModel extends Base implements ModelInterface
             'short_name',
             'password'
         );
-        if (!Arrays::hasRequiredKeys($a_required_keys, $a_values)) {
+        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             return false;
         }
         if ((isset($a_values['is_active']) && $a_values['is_active'] == '') || !isset($a_values['is_active'])) {
@@ -536,4 +537,9 @@ class PeopleModel extends Base implements ModelInterface
         return false;
     }
 
+    ### Required by Interface ###
+    public function getErrorMessage()
+    {
+        $this->o_db->getSqlErrorMessage();
+    }
 }

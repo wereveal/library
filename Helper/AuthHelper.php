@@ -121,8 +121,8 @@ class AuthHelper extends Base
         }
         if ($this->o_session->isValidSession($a_person_post, true)) {
             $a_people_records = $this->o_people->readInfo($a_person_post['login_id']);
-            $this->logIt("Posted Values: " . var_export($a_person_post, true), LOG_ON, $meth . __LINE__);
-            $this->logIt("User Values: " . var_export($a_people_records, true), LOG_ON, $meth . __LINE__);
+            $this->logIt("Posted Values: " . var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
+            $this->logIt("User Values: " . var_export($a_people_records, true), LOG_OFF, $meth . __LINE__);
             if ($a_people_records !== false && !is_null($a_people_records) && isset($a_people_records[0])) {
                 $a_person = $a_people_records[0]; // the first record should have the highest access level.
             }
@@ -212,7 +212,7 @@ class AuthHelper extends Base
     public function hasMinimumRoleLevel($login_id, $role_level = 9999)
     {
         $a_people_records = $this->o_people->readInfo($login_id);
-        $this->logIt("User Values: " . var_export($a_people_records, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt("User Values: " . var_export($a_people_records, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($a_people_records !== false && !is_null($a_people_records) && isset($a_people_records[0])) {
             $a_person = $a_people_records[0]; // the first record should have the highest access level.
             if (is_numeric($role_level)) {

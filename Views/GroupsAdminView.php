@@ -25,7 +25,7 @@ use Ritc\Library\Services\Di;
 class GroupsAdminView extends Base
 {
     private $o_db;
-    private $o_model;
+    private $o_groups;
     private $o_twig;
 
     public function __construct(Di $o_di)
@@ -36,7 +36,7 @@ class GroupsAdminView extends Base
         }
         $this->o_twig  = $o_di->get('twig');
         $this->o_db    = $o_di->get('db');
-        $this->o_model = new GroupsModel($this->o_db);
+        $this->o_groups = new GroupsModel($this->o_db);
     }
     /**
      *  Returns the list of routes in html.
@@ -64,7 +64,8 @@ class GroupsAdminView extends Base
             ),
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
-            'hobbit'  => ''
+            'hobbit'  => '',
+            'a_blank_roles' => $a_roles,
         ];
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
@@ -72,30 +73,29 @@ class GroupsAdminView extends Base
         else {
             $a_values['a_message'] = '';
         }
-        $a_groups = $this->o_model->read(array(), ['order_by' => 'group_name']);
+        $a_groups = $this->o_groups->read(array(), ['order_by' => 'group_name']);
         if ($a_groups !== false && count($a_groups) > 0) {
             $this->logIt("Groups: " . var_export($a_groups, true), LOG_OFF, $method . __LINE__);
             foreach ($a_groups as $key => $a_row) {
                 $a_groups[$key]['group_description'] = html_entity_decode($a_row['group_description']);
                 $a_grm = $o_grm->read(['group_id' => $a_row['group_id']]);
                 $this->logIt("GRM: " . var_export($a_grm, true), LOG_OFF, $method . __LINE__);
-                $a_group_roles = $a_roles;
-                foreach ($a_group_roles as $roles_key => $a_role) {
-                    foreach($a_grm as $grm_row) {
-                        if (in_array($a_role['role_id'], $grm_row)) {
-                            $a_group_roles[$roles_key]['checked'] = ' checked';
-                        }
-                        else {
-                            $a_group_roles[$roles_key]['checked'] = '';
+                $a_temp_roles = $a_roles;
+                foreach($a_grm as $a_grm_row) {
+                    $this_row_role_id = $a_grm_row['role_id'];
+                    foreach ($a_temp_roles as $roles_key => $roles_row) {
+                        if ($roles_row['role_id'] == $this_row_role_id) {
+                            $a_temp_roles[$roles_key]['checked'] = ' checked';
+                        } else {
+                            $a_temp_roles[$roles_key]['checked'] = '';
                         }
                     }
                 }
-                $a_groups[$key]['a_roles'] = $a_group_roles;
+                $a_groups[$key]['a_roles'] = $a_temp_roles;
             }
             $a_values['a_groups'] = $a_groups;
         }
-        $a_values['a_blank_roles'] = $a_roles;
-        $this->logIt(var_export($a_values, true), LOG_ON, $method . __LINE__);
+        $this->logIt(var_export($a_values, true), LOG_OFF, $method . __LINE__);
         return $this->o_twig->render('@pages/groups_admin.twig', $a_values);
     }
     /**

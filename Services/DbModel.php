@@ -7,10 +7,11 @@
  *  @namespace Ritc/Library/Services
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.2.3
- *  @date 2014-11-11 13:05:26
+ *  @version 3.2.4
+ *  @date 2015-07-31 16:04:18
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.2.4 - refactoring elsewhere made a small name change here                      - 07/31/2015 wer
  *      v3.2.3 - moved to Services namespace                                              - 11/15/2014 wer
  *      v3.2.1 - bug fix
  *      v3.2.0 - Made this class more stand alone except extending Base class.

@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class ConstantsModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.0.0
- *  @date 2015-01-17 12:40:59
+ *  @version 2.0.1
+ *  @date 2015-07-31 16:25:48
  *  @note A file in the Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v2.0.1 - Refactoring of Class Arrays required changes here - 07/31/2015 wer
  *      v2.0.0 - Renamed to match functionality                    - 01/17/2015 wer
  *      v1.1.1 - Namespace changes elsewhere required changes here - 11/15/2014 wer
  *               Doesn't use DI/IOC because of where it is initialized
@@ -56,13 +57,13 @@ class ConstantsModel extends Base implements ModelInterface
         );
         if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays
             foreach ($a_values as $a_record) {
-                if (!Arrays::hasRequiredKeys($a_required_keys, $a_record)) {
+                if (!Arrays::hasRequiredKeys($a_record, $a_required_keys)) {
                     return false;
                 }
             }
         }
         else {
-            if (!Arrays::hasRequiredKeys($a_required_keys, $a_values)) {
+            if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
                 return false;
             }
         }
@@ -120,7 +121,7 @@ class ConstantsModel extends Base implements ModelInterface
      */
     public function update(array $a_values)
     {
-        if (Arrays::hasRequiredKeys(array('const_id', 'const_value'), $a_values) === false) {
+        if (Arrays::hasRequiredKeys($a_values, array('const_id', 'const_value')) === false) {
             return false;
         }
         $sql_set = $this->o_db->buildSqlSet($a_values, array('const_id'));
@@ -328,5 +329,9 @@ class ConstantsModel extends Base implements ModelInterface
     public function setDb(DbModel $o_db)
     {
         $this->o_db = $o_db;
+    }
+    public function getErrorMessage()
+    {
+        $this->o_db->getSqlErrorMessage();
     }
 }

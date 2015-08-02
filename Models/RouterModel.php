@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class RouterModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-01-28 14:51:18
+ *  @version 1.0.1
+ *  @date 2015-07-31 16:26:55
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1   - Refactoring elsewhere necessitated changes here                                      - 07/31/2015 wer
  *      v1.0.0   - first working version                                                                - 01/28/2015 wer
  *      v1.0.0ß2 - Changed to match some namespace changes, and bug fix                                 - 11/15/2014 wer
  *      v1.0.0β1 - First live version                                                                   - 11/11/2014 wer
@@ -50,7 +51,7 @@ class RouterModel extends Base implements ModelInterface
             'route_method',
             'route_action'
         ];
-        if (!Arrays::hasRequiredKeys($a_required_keys, $a_values)) {
+        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             return false;
         }
         $sql = "
@@ -169,5 +170,14 @@ class RouterModel extends Base implements ModelInterface
             ];
         }
         return $a_results;
+    }
+
+    /**
+     * Implements the ModelInterface method, getErrorMessage.
+     * return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->o_db->getSqlErrorMessage();
     }
 }

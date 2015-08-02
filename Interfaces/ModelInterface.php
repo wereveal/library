@@ -44,4 +44,10 @@ interface ModelInterface {
      * @return bool
      */
     public function delete($id = -1);
+
+    /**
+     * Returns the SQL error message
+     * @return string
+     */
+    public function getErrorMessage();
 }

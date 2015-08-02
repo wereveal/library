@@ -1,15 +1,16 @@
 <?php
 /**
- *  @brief Does all the database CRUD stuff.
+ *  @brief Does all the database CRUD stuff for the PeopleGroupMap table.
  *  @file PeopleGroupMapModel.php
  *  @ingroup ritc_library models
  *  @namespace Ritc/Library/Models
  *  @class PeopleGroupMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β4
- *  @date 2015-01-26 10:14:05
+ *  @version 1.0.0β5
+ *  @date 2015-07-31 16:30:00
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β5 - refactoring elsewhere caused changes here             - 07/31/2015 wer
  *      v1.0.0β4 - refactored user to people                             - 01/26/2015 wer
  *      v1.0.0β3 - extends the Base class, injects the DbModel, clean up - 09/23/2014 wer
  *      v1.0.0β2 - First Live version                                    - 09/15/2014 wer
@@ -49,7 +50,7 @@ class PeopleGroupMapModel extends Base implements ModelInterface
             'people_id',
             'group_id'
         );
-        if (!Arrays::hasRequiredKeys($a_required_keys, $a_values)) {
+        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             return false;
         }
         $sql = "
@@ -138,5 +139,9 @@ class PeopleGroupMapModel extends Base implements ModelInterface
             WHERE people_id = :people_id
         ";
         return $this->o_db->delete($sql, array(':people_id' => $people_id), true);
+    }
+    public function getErrorMessage()
+    {
+        $this->o_db->getSqlErrorMessage();
     }
 }

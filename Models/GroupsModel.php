@@ -27,6 +27,7 @@ class GroupsModel extends Base implements ModelInterface
 {
     private $db_prefix;
     private $db_type;
+    private $error_message;
     private $o_db;
 
     public function __construct(DbModel $o_db)
@@ -43,12 +44,12 @@ class GroupsModel extends Base implements ModelInterface
      */
     public function create(array $a_values = array())
     {
-        if ($a_values == array()) { return false; }
         $a_required_keys = array(
             'group_name',
             'group_description'
         );
-        if (!Arrays::hasRequiredKeys($a_required_keys, $a_values)) {
+        $a_values = Arrays::removeUndesiredPairs($a_values, $a_required_keys);
+        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             return false;
         }
         $sql = "
@@ -97,6 +98,11 @@ class GroupsModel extends Base implements ModelInterface
         ";
         return $this->o_db->search($sql, $a_search_values);
     }
+    /**
+     * Updates the group record
+     * @param array $a_values
+     * @return bool
+     */
     public function update(array $a_values = array())
     {
         if (   !isset($a_values['group_id'])
@@ -105,8 +111,11 @@ class GroupsModel extends Base implements ModelInterface
         ) {
             return false;
         }
-        $a_allowed_keys = ['group_id', 'group_name', 'group_description'];
-        $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);
+        $a_required_keys = ['group_id', 'group_name', 'group_description'];
+        $a_values = Arrays::removeUndesiredPairs($a_values, $a_required_keys);
+        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
+            return false;
+        }
 
         $set_sql = $this->o_db->buildSqlSet($a_values, ['group_id']);
         $sql = "
@@ -115,9 +124,7 @@ class GroupsModel extends Base implements ModelInterface
             WHERE group_id = :group_id
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->update($sql, $a_values, true);
-    }
-
+        return $this->o_db->update($sql, $a_values, true);    }
     /**
      * Deletes the specific record.
      * NOTE: this could leave orphaned records in the user_group_map table and group_role_map table
@@ -135,6 +142,106 @@ class GroupsModel extends Base implements ModelInterface
         ";
         return $this->o_db->delete($sql, array(':group_id' => $group_id), true);
     }
+
+    ### Complex with Relations ###
+    /**
+     * Generic create function to create a single record.
+     * @param array $a_values required
+     * @return bool
+     */
+    public function createWithRoles(array $a_values = array())
+    {
+        if ($a_values == array()) { return false; }
+        $a_required_keys = array(
+            'group_name',
+            'group_description',
+            'roles'
+        );
+        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
+            $this->o_elog->write("Didn't have required keys!", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->o_elog->write(var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            return false;
+        }
+        $a_roles = $a_values['roles'];
+        unset($a_values['roles']);
+        if ($this->o_db->startTransaction()) {
+            $new_id = $this->create($a_values);
+            if ($new_id !== false) {
+                if (count($a_roles) > 0) {
+                    $o_grm = new GroupRoleMapModel($this->o_db);
+                    $rollback = false;
+                    foreach($a_roles as $role_id) {
+                        $a_grm = ['group_id' => $new_id, 'role_id' => $role_id];
+                        if (!$o_grm->create($a_grm)) {
+                            $this->error_message = $this->o_db->getSqlErrorMessage();
+                            $rollback = true;
+                            break;
+                        }
+                    }
+                    if ($rollback === false) {
+                        if ($this->o_db->commitTransaction()) {
+                            return $new_id;
+                        }
+                    }
+                }
+            }
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            $this->o_db->rollbackTransaction();
+            return false;
+        }
+        return false;
+    }
+    /**
+     * Updates the group record and group_roles_map records
+     * @param array $a_values
+     * @return bool
+     */
+    public function updateWithRoles(array $a_values = array())
+    {
+        if (   !isset($a_values['group_id'])
+            || $a_values['group_id'] == ''
+            || !ctype_digit($a_values['group_id'])
+        ) {
+            $this->error_message = "Missing valid group id.";
+            return false;
+        }
+        $a_allowed_keys = ['group_id', 'group_name', 'group_description', 'roles'];
+        $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
+        if (!Arrays::hasRequiredKeys($a_values, $a_allowed_keys)) {
+            $this->error_message = "Missing required value pairs";
+            return false;
+        }
+        $a_roles = $a_values['roles'];
+        unset($a_values['roles']);
+        $commit = true;
+        if ($this->o_db->startTransaction()) {
+            if ($this->update($a_values)) {
+                $o_grm = new GroupRoleMapModel($this->o_db);
+                if ($o_grm->deleteByGroupId($a_values['group_id'])) {
+                    foreach($a_roles as $a_role) {
+                        if (!$o_grm->create($a_role)) {
+                            $commit = false;
+                            $this->error_message = $this->o_db->getSqlErrorMessage();
+                            break;
+                        }
+                    }
+                    if ($commit) {
+                        if ($this->o_db->commitTransaction()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            else {
+                $this->error_message = $this->o_db->getSqlErrorMessage();
+            }
+            $this->o_db->rollbackTransaction();
+        }
+        else {
+            $this->error_message = "Could not start transaction.";
+        }
+        return false;
+    }
     /**
      * Deletes related records as well as main group record.
      * @param int $group_id
@@ -151,6 +258,7 @@ class GroupsModel extends Base implements ModelInterface
                    if ($this->delete($group_id)) {
                         if ($this->o_db->commitTransaction() === false) {
                             $this->o_db->rollbackTransaction();
+                            $this->error_message = $this->o_db->getSqlErrorMessage();
                             return false;
                         }
                         else {
@@ -160,10 +268,9 @@ class GroupsModel extends Base implements ModelInterface
                 }
             }
         }
-        else {
-            $this->o_db->rollbackTransaction();
-            return false;
-        }
+        $this->error_message = $this->o_db->getSqlErrorMessage();
+        $this->o_db->rollbackTransaction();
+        return false;
     }
 
     ### Shortcuts ###
@@ -209,5 +316,9 @@ class GroupsModel extends Base implements ModelInterface
             return true;
         }
         return false;
+    }
+    public function getErrorMessage()
+    {
+        return $this->error_message;
     }
 }

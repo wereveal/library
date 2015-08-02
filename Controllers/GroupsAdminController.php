@@ -99,14 +99,18 @@ class GroupsAdmimController extends Base implements MangerControllerInterface
     public function save()
     {
         $a_group = $this->a_post['groups'];
+        $a_group['roles'] = $this->a_post['roles'];
         $results = $this->o_model->create($a_group);
-        if ($results > 0) {
-            // TODO save a group_role_map record
-            $a_message = ['message' => 'Success!', 'type' => 'success'];
+        if ($results !== false) {
+            $a_message = [
+                'message' => 'Success!',
+                'type' => 'success'
+            ];
             return $this->o_view->renderList($a_message);
         }
         else {
-            $error_msg = $this->o_model->getErrorMessage($results);
+            $error_msg = $this->o_model->getErrorMessage();
+            $this->o_elog->write("Error_message: " . var_export($error_msg, true));
             $a_message = [
                 'message' => $error_msg,
                 'type'    => 'failure'
@@ -117,13 +121,15 @@ class GroupsAdmimController extends Base implements MangerControllerInterface
     public function update()
     {
         $a_group = $this->a_post['groups'];
+        $a_group['roles'] = $this->a_post['roles'];
+        $this->o_elog->write(var_export($a_group, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $results = $this->o_model->update($a_group);
         if ($results === 1) {
             $a_message = ['message' => 'Success!', 'type' => 'success'];
             return $this->o_view->renderList($a_message);
         }
         else {
-            $error_msg = $this->o_model->getErrorMessage($results);
+            $error_msg = $this->o_model->getErrorMessage();
             $a_message = [
                 'message' => $error_msg,
                 'type'    => 'failure'

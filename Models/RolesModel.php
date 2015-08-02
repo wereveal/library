@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class RolesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-01-28 14:42:59
+ *  @version 1.0.1
+ *  @date 2015-07-31 16:27:16
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1   - refactoring elsewhere changes here to match - 07/31/2015 wer
  *      v1.0.0   - First working version                       - 01/28/2015 wer
  *      v1.0.0ß5 - reverted to injecting the DbModel           - 11/17/2014 wer
  *      v1.0.0ß4 - changed to use DI/IOC                       - 11/15/2014 wer
@@ -55,7 +56,7 @@ class RolesModel extends Base implements ModelInterface
             'role_description',
             'role_level'
         );
-        if (!Arrays::hasRequiredKeys($a_required_keys, $a_values)) {
+        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             return -2;
         }
         if ($a_values['role_level'] <= 2) {

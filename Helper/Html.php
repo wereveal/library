@@ -13,6 +13,7 @@
  *  @date 2014-11-15 12:37:15
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.5 - Refactored to match the Arrays class                     - 07/31/2015 wer
  *      v1.0.4 - moved to the Ritc\Library\Helper namespace               - 11/15/2014 wer
  *      v1.0.3 - changed to implment the changes in Base class            - 09/23/2014 wer
  *      v1.0.2 - some refactoring changes based on changes in package     - 12/19/2013 wer
@@ -43,7 +44,7 @@ class Html extends Base
 
     public function button($a_button_values = array())
     {
-        $a_button_values = $this->o_arrays->stripUnspecifiedValues(
+        $a_button_values = Arrays::removeUndesiredPairs(
             $a_button_values,
             array(
                 'button_color',
