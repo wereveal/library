@@ -34,15 +34,17 @@ class RolesAdmimController extends Base implements MangerControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-        }
         $this->o_di      = $o_di;
         $o_db            = $o_di->get('db');
         $this->o_router  = $o_di->get('router');
         $this->o_session = $o_di->get('session');
         $this->o_model   = new RolesModel($o_db);
         $this->o_view    = new RolesAdminView($o_di);
+        if (DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+            $this->o_model->setElog($this->o_elog);
+            $this->o_view->setElog($this->o_elog);
+        }
     }
     public function render()
     {

@@ -28,23 +28,31 @@ use Ritc\Library\Services\Di;
 
 class PeopleAdminView extends Base
 {
-    private $o_user_model;
+    private $o_people_model;
     private $o_group_model;
     private $o_role_model;
-    private $o_ugm_model;
-    private $o_urm_model;
+    private $o_pgm_model;
+    private $o_grm_model;
     private $o_twig;
 
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
         $o_db                = $o_di->get('db');
-        $this->o_user_model  = new PeopleModel($o_db);
+        $this->o_people_model  = new PeopleModel($o_db);
         $this->o_group_model = new GroupsModel($o_db);
         $this->o_role_model  = new RolesModel($o_db);
-        $this->o_ugm_model   = new PeopleGroupMapModel($o_db);
-        $this->o_urm_model   = new GroupRoleMapModel($o_db);
+        $this->o_pgm_model   = new PeopleGroupMapModel($o_db);
+        $this->o_grm_model   = new GroupRoleMapModel($o_db);
         $this->o_twig        = $o_di->get('twig');
+        if (DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+            $this->o_people_model->setElog($this->o_elog);
+            $this->o_group_model->setElog($this->o_elog);
+            $this->o_role_model->setElog($this->o_elog);
+            $this->o_pgm_model->setElog($this->o_elog);
+            $this->o_grm_model->setElog($this->o_elog);
+        }
     }
 
     public function renderList($a_values)

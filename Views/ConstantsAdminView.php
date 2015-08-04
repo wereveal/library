@@ -35,6 +35,7 @@ class ConstantsAdminView extends Base
         $this->o_model = new ConstantsModel($o_di->get('db'));
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
+            $this->o_model->setElog($this->o_elog);
         }
     }
     /**

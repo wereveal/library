@@ -158,8 +158,8 @@ class GroupsModel extends Base implements ModelInterface
             'roles'
         );
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            $this->o_elog->write("Didn't have required keys!", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->o_elog->write(var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Didn't have required keys!", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt(var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return false;
         }
         $a_roles = $a_values['roles'];

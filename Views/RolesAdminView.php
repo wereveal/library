@@ -32,6 +32,10 @@ class RolesAdminView extends Base
         $this->o_twig  = $o_di->get('twig');
         $o_db          = $o_di->get('db');
         $this->o_model = new RolesModel($o_db);
+        if (DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+            $this->o_model->setElog($this->o_elog);
+        }
     }
     /**
      *  Returns the list of routes in html.

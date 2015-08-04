@@ -12,6 +12,7 @@
  *  @note <pre><b>Change Log</b>
  *      v1.0.0β1 - Initial version                              - 01/28/2015 wer
  *  </pre>
+ * @TODO verify that this now works with the groups to roles mapping
  **/
 namespace Ritc\Library\Controllers;
 

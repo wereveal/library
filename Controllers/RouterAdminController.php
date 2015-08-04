@@ -46,7 +46,6 @@ class RouterAdminController extends Base implements MangerControllerInterface
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
-            $this->o_view->setElog($this->o_elog);
         }
     }
     public function render()

@@ -40,17 +40,18 @@ class Router extends Base
     {
         $this->setPrivateProperties();
         $o_db = $o_di->get('db');
-        if (defined('DEVELOPER_MODE')) {
-            if (DEVELOPER_MODE) {
-                $this->o_elog = $o_di->get('elog');
-            }
-        }
         $this->o_model  = new RouterModel($o_db);
         $this->setRoutePath();
         $this->setGet();
         $this->setPost();
         $this->setFormAction();
         $this->setRouteParts();
+        if (defined('DEVELOPER_MODE')) {
+            if (DEVELOPER_MODE) {
+                $this->o_elog = $o_di->get('elog');
+                $this->o_model->setElog($this->o_elog);
+            }
+        }
     }
 
     /**

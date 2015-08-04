@@ -31,12 +31,13 @@ class GroupsAdminView extends Base
     public function __construct(Di $o_di)
     {
         $this->setPrivateProperties();
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-        }
         $this->o_twig  = $o_di->get('twig');
         $this->o_db    = $o_di->get('db');
         $this->o_groups = new GroupsModel($this->o_db);
+        if (DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+            $this->o_groups->setElog($this->o_elog);
+        }
     }
     /**
      *  Returns the list of routes in html.

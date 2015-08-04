@@ -44,6 +44,7 @@
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
  *  </pre>
+ * @TODO Add the Router to Roles Map Model capabilities - check to see if the user has the correct role for the route being added.
 **/
 namespace Ritc\Library\Helper;
 
@@ -208,6 +209,7 @@ class AuthHelper extends Base
      * Figure out if the person has a role level at or higher than param.
      * @param int $role_level
      * @return bool
+     * @TODO This may not work now due to changes made to roles/groups/etc.
      */
     public function hasMinimumRoleLevel($login_id, $role_level = 9999)
     {
@@ -272,6 +274,7 @@ class AuthHelper extends Base
      *  Verifies person has the role of super administrator.
      *  @param int $people_id required
      *  @return bool - true = is a super admin, false = not a super admin
+     * @TODO this may not work as intended due to changes to roles/groups etc.
     **/
     public function isSuperAdmin($people_id = -1)
     {
