@@ -8,11 +8,12 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.2.3
- *  @date 2015-01-26 12:25:33
+ *  @version 4.2.4
+ *  @date 2015-08-04 11:52:02
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v4.2.3 - refactored out references to user into person         - 01/26/2015 wer
+ *      v4.2.4 - more references to user to person changes             - 08/04/2015 wer
+ *      v4.2.3 - refactored references to user into person             - 01/26/2015 wer
  *      v4.2.2 - modified to work with user model changes              - 01/22/2015 wer
  *      v4.2.1 - bug fixes                                             - 01/16/2015 wer
  *      v4.2.0 - change the name of the file. It wasn't doing access   - 01/14/2015 wer
@@ -44,7 +45,6 @@
  *      v3.3.0 - Refactored to extend the Base class
  *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
  *  </pre>
- * @TODO Add the Router to Roles Map Model capabilities - check to see if the user has the correct role for the route being added.
 **/
 namespace Ritc\Library\Helper;
 
@@ -207,13 +207,13 @@ class AuthHelper extends Base
     #### Verifiers ####
     /**
      * Figure out if the person has a role level at or higher than param.
-     * @param int $role_level
+     * @param int $people_id the id of the person being checked
+     * @param int $role_level (has a fallback so could be a role name
      * @return bool
-     * @TODO This may not work now due to changes made to roles/groups/etc.
      */
-    public function hasMinimumRoleLevel($login_id, $role_level = 9999)
+    public function hasMinimumRoleLevel($people_id, $role_level = 9999)
     {
-        $a_people_records = $this->o_people->readInfo($login_id);
+        $a_people_records = $this->o_people->readInfo($people_id);
         $this->logIt("User Values: " . var_export($a_people_records, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($a_people_records !== false && !is_null($a_people_records) && isset($a_people_records[0])) {
             $a_person = $a_people_records[0]; // the first record should have the highest access level.

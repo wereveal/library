@@ -6,17 +6,18 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.5ß
- *  @date 2015-07-31 16:28:57
+ *  @version 1.0.0ß7
+ *  @date 2015-08-04 11:31:44
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.5ß - refactoring elsewhere caused changes here                     - 07/31/2015 wer
- *      v1.0.4ß - refactoring method name to reflect what is happening better   - 01/06/2015 wer
- *      v1.0.3ß - reverted to injecting DbModel                                 - 11/17/2014 wer
- *      v1.0.2ß - changed to use DI/IOC                                         - 11/15/2014 wer
- *      v1.0.1ß - extends the Base class, injects the DbModel, clean up         - 09/23/2014 wer
- *      v1.0.0ß - First Live version                                            - 09/15/2014 wer
- *      v0.1.0ß - Initial version                                               - 09/11/2014 wer
+ *      v1.0.0ß7 - had to rewrite the sql for the readInfo method                - 08/04/2015 wer
+ *      v1.0.0ß6 - refactoring elsewhere caused changes here                     - 07/31/2015 wer
+ *      v1.0.0ß5 - refactoring method name to reflect what is happening better   - 01/06/2015 wer
+ *      v1.0.0ß4 - reverted to injecting DbModel                                 - 11/17/2014 wer
+ *      v1.0.0ß3 - changed to use DI/IOC                                         - 11/15/2014 wer
+ *      v1.0.0ß2 - extends the Base class, injects the DbModel, clean up         - 09/23/2014 wer
+ *      v1.0.0ß1 - First Live version                                            - 09/15/2014 wer
+ *      v0.1.0ß1 - Initial version                                               - 09/11/2014 wer
  *  </pre>
  *  @todo add the methods needed to crud a user with all the correct group and role information
 **/
@@ -401,42 +402,57 @@ class PeopleModel extends Base implements ModelInterface
     ### More complex methods using multiple tables ###
     /**
      *  Gets the user values based on login_id or people_id.
-     *  @param mixed $people_id the user id or login_id (as defined in the db)
-     *  @return array, the records for the user
+     *  @param mixed $people_id the people_id or login_id (as defined in the db)
+     *  @return array, the records for the person
     **/
     public function readInfo($people_id = '')
     {
-        if ($people_id == '') { return array(); }
-        if (ctype_digit($people_id)) {
-            $where = "u.people_id = {$people_id} ";
-        }
-        else {
-            $where = "u.login_id = '{$people_id}' ";
-        }
-        $sql = "
-            SELECT DISTINCT u.people_id, u.login_id, u.real_name, u.short_name, u.password, u.is_logged_in,
-                u.bad_login_count, u.bad_login_ts, u.is_active, u.is_default, u.created_on,
-                g.group_id, g.group_name, g.group_description,
-                r.role_id, r.role_level, r.role_name
-            FROM {$this->db_prefix}roles as r,
-                 {$this->db_prefix}people as u,
-                 {$this->db_prefix}groups as g,
-                 {$this->db_prefix}people_group_map as ugm,
-                 {$this->db_prefix}group_role_map as grm
-            WHERE {$where}
-            AND ugm.people_id = u.people_id
-            AND g.group_id  = ugm.group_id
-            AND r.role_id   = grm.role_id
-            ORDER BY r.role_level
-        ";
-        $this->logIt("Select User: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $results = $this->o_db->search($sql);
-        if (isset($results[0]) && is_array($results[0])) {
-            return $results;
-        }
-        else {
+        if ($people_id == '') {
             return array();
         }
+        if (ctype_digit($people_id)) {
+            $where       = "p.people_id = :people_id";
+            $a_where     = [':people_id' => $people_id];
+            $which_where = 'people_id';
+        }
+        else {
+            $where       = "p.login_id = :login_id";
+            $a_where     = [':login_id' => $people_id];
+            $which_where = 'login_id';
+        }
+        $sql = "
+            SELECT DISTINCT p.people_id, p.login_id, p.real_name, p.short_name,
+                p.password, p.is_logged_in, p.bad_login_count, p.bad_login_ts,
+                p.is_active, p.is_default, p.created_on,
+                g.group_id, g.group_name, g.group_description,
+                r.role_id, r.role_level, r.role_name
+            FROM {$this->db_prefix}people as p
+            JOIN {$this->db_prefix}groups as g 
+            JOIN {$this->db_prefix}people_group_map as pgm
+                ON p.people_id = pgm.people_id
+                AND pgm.group_id= g.group_id
+            JOIN {$this->db_prefix}roles as r
+            JOIN {$this->db_prefix}group_role_map as grm
+                ON grm.group_id = g.group_id
+                AND grm.role_id = r.role_id
+            WHERE {$where}
+            ORDER BY r.role_level ASC
+        ";
+        $this->logIt("Select User: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $results = $this->o_db->search($sql, $a_where);
+        if (isset($results[0]) && is_array($results[0])) {
+            if ($which_where == 'people_id') {
+                if ($results[0]['people_id'] == $people_id) {
+                    return $results;
+                }
+            }
+            elseif ($which_where == 'login_id') {
+                if ($results[0]['login_id'] == $people_id) {
+                    return $results;
+                }
+            }
+        }
+        return array();
     }
     /**
      *  Saves the user.
