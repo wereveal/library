@@ -53,9 +53,9 @@
 */
 namespace Ritc;
 
-use Ritc\Library\Helper\ConstantsHelper;
 use Ritc\Library\Factories\DbFactory;
 use Ritc\Library\Factories\TwigFactory;
+use Ritc\Library\Helper\ConstantsHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Elog;
@@ -66,21 +66,14 @@ if (!defined('SITE_PATH')) {
     define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);
 }
 if (!defined('BASE_PATH')) {
-    if (!isset($app_is_in)) {
-        $app_is_in = 'external';
-    }
-    if ($app_is_in == 'site' || $app_is_in == 'htdocs' || $app_is_in == 'html') {
-        define('BASE_PATH', SITE_PATH);
-    }
-    else {
-        define('BASE_PATH', dirname(dirname(__FILE__)));
-    }
-}
-if (!isset($rodb)) {
-    $rodb = false;
+    define('BASE_PATH', dirname(dirname(__FILE__)));
 }
 
 require_once BASE_PATH . '/app/config/constants.php';
+
+if (!isset($db_config_file)) {
+    $db_config_file = 'db_config.php';
+}
 
 $o_loader = require_once VENDOR_PATH . '/autoload.php';
 $my_classmap = require_once APP_CONFIG_PATH . '/autoload_classmap.php';
@@ -91,13 +84,6 @@ $o_session = Session::start();
 $o_di      = new Di();
 $o_di->set('elog',    $o_elog);
 $o_di->set('session', $o_session);
-// error_log('SERVER_NAME: ' . $_SERVER['SERVER_NAME']);
-if ($_SERVER['SERVER_NAME'] == 'w3.qca.net') {
-    $db_config_file = 'db_config.php';
-}
-else {
-    $db_config_file = 'db_local_config.php';
-}
 $o_dbf = DbFactory::start($db_config_file, 'rw');
 $o_dbf->setElog($o_elog);
 $o_elog->setIgnoreLogOff(false); // turns on logging globally ignoring LOG_OFF when set to true
@@ -121,7 +107,7 @@ if ($o_pdo !== false) {
         $o_router = new Router($o_di);
         $o_twig   = TwigFactory::getTwig('twig_config.php');
         $o_di->set('router',  $o_router);
-        $o_di->set('tpl',     $o_twig);
+        $o_di->set('twig',    $o_twig);
         if ($rodb) {
             $o_dbf_ro = DbFactory::start($db_config_file, 'ro');
             $o_pdo_ro = $o_dbf_ro->connect();

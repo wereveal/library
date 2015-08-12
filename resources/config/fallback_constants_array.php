@@ -18,5 +18,4 @@ return array(
     ['FILES_DIR_NAME', 'files'],
     ['PRIVATE_DIR_NAME', 'private'],
     ['TMP_DIR_NAME', 'tmp'],
-    ['DEVELOPER_MODE', false],
 );

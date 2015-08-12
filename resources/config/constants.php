@@ -39,6 +39,12 @@ if (!defined('SITE_URL')) {
         define('SITE_URL', 'localhost');
     }
 }
+if (!defined('DEVELOPER_MODE')) {
+    define('DEVELOPER_MODE', false);
+}
+if (!defined('RODB')) {
+    define('RODB', false);
+}
 
 /**
  * Variables used by the classes Elog.

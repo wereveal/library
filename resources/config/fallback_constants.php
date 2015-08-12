@@ -28,4 +28,3 @@ define('ASSETS_DIR_NAME', 'assets');
 define('FILES_DIR_NAME', 'files');
 define('PRIVATE_DIR_NAME', 'private');
 define('TMP_DIR_NAME', 'tmp');
-define('DEVELOPER_MODE', false);
