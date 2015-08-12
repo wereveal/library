@@ -65,10 +65,10 @@ if (!defined('SITE_PATH')) {
     define('SITE_PATH', __DIR__);
 }
 if (!defined('BASE_PATH')) {
-    if (!isset($app_in)) {
-        $app_in = 'external';
+    if (!isset($app_is_in)) {
+        $app_is_in = 'external';
     }
-    if ($app_in == 'site' || $app_in == 'htdocs' || $app_in == 'html') {
+    if ($app_is_in == 'site' || $app_is_in == 'htdocs' || $app_is_in == 'html') {
         define('BASE_PATH', SITE_PATH);
     }
     else {
