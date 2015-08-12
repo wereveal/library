@@ -23,6 +23,7 @@ namespace Ritc\Library\Services;
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Models\RouterModel;
+use Ritc\Library\Models\RouterRolesMapModel;
 
 class Router extends Base
 {
@@ -30,6 +31,7 @@ class Router extends Base
     private $a_post;
     private $a_route_parts;
     private $o_model;
+    private $o_rrm;
     public static $form_action;
     public static $route_action;
     public static $route_class;
@@ -41,6 +43,7 @@ class Router extends Base
         $this->setPrivateProperties();
         $o_db = $o_di->get('db');
         $this->o_model  = new RouterModel($o_db);
+        $this->o_rrm = new RouterRolesMapModel($o_db);
         $this->setRoutePath();
         $this->setGet();
         $this->setPost();
@@ -75,6 +78,10 @@ class Router extends Base
         $this->logIt("Actions from DB: " . var_export($a_results, true), LOG_OFF, __METHOD__);
         if ($a_results !== false && count($a_results) === 1) {
             $a_route_parts                = $a_results[0];
+            $a_rrm_results                = $this->o_rrm->read(['route_id' => $a_route_parts['route_id']]);
+            if ($a_rrm_results !== false && count($a_results) > 0) {
+                $a_route_parts['roles']   = $a_rrm_results;
+            }
             $a_route_parts['get']         = $this->a_get;
             $a_route_parts['post']        = $this->a_post;
             $a_route_parts['form_action'] = self::$form_action;
@@ -87,6 +94,7 @@ class Router extends Base
                 'route_class'  => 'MainController',
                 'route_method' => '',
                 'route_action' => '',
+                'roles'        => array(),
                 'get'          => $this->a_get,
                 'post'         => $this->a_post,
                 'form_action'  => self::$form_action
@@ -98,6 +106,14 @@ class Router extends Base
     }
 
     ### GETters and SETters ###
+    /**
+     * Gets the roles that are allowed to access this route.
+     * return array $a_allowed_roles
+     */
+    public function getAllowedRoles()
+    {
+        return $this->a_route_parts['roles'];
+    }
     /**
      * @return mixed
      */

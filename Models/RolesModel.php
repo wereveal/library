@@ -204,7 +204,7 @@ class RolesModel extends Base implements ModelInterface
     {
         if ($role_id == -1) { return array(); }
         if (!ctype_digit($role_id)) { return false; }
-        $results = $this->read(array('role_id' => $role_id));
+        $results = $this->read(['role_id' => $role_id]);
         if (count($results[0]) > 0) {
             return $results[0];
         }

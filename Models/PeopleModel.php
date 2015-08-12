@@ -19,7 +19,7 @@
  *      v1.0.0ß1 - First Live version                                            - 09/15/2014 wer
  *      v0.1.0ß1 - Initial version                                               - 09/11/2014 wer
  *  </pre>
- *  @todo add the methods needed to crud a user with all the correct group and role information
+ * @todo add the methods needed to crud a user with all the correct group and role information
 **/
 namespace Ritc\Library\Models;
 
@@ -413,12 +413,10 @@ class PeopleModel extends Base implements ModelInterface
         if (ctype_digit($people_id)) {
             $where       = "p.people_id = :people_id";
             $a_where     = [':people_id' => $people_id];
-            $which_where = 'people_id';
         }
         else {
             $where       = "p.login_id = :login_id";
             $a_where     = [':login_id' => $people_id];
-            $which_where = 'login_id';
         }
         $sql = "
             SELECT DISTINCT p.people_id, p.login_id, p.real_name, p.short_name,
@@ -441,15 +439,24 @@ class PeopleModel extends Base implements ModelInterface
         $this->logIt("Select User: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $results = $this->o_db->search($sql, $a_where);
         if (isset($results[0]) && is_array($results[0])) {
-            if ($which_where == 'people_id') {
-                if ($results[0]['people_id'] == $people_id) {
-                    return $results;
-                }
+            $a_roles = array();
+            foreach ($results as $key => $person) {
+                $a_roles[] = [
+                    'people_id'  => $person['people_id'],
+                    'role_id'    => $person['role_id'],
+                    'role_level' => $person['role_level'],
+                    'role_name'  => $person['role_name']
+                ];
             }
-            elseif ($which_where == 'login_id') {
-                if ($results[0]['login_id'] == $people_id) {
-                    return $results;
-                }
+            if (($results[0]['people_id'] == $people_id)
+             || ($results[0]['login_id'] == $people_id)) {
+                $a_person = $results[0];
+                unset($a_person['role_id']);
+                unset($a_person['role_level']);
+                unset($a_person['role_name']);
+                $a_person['roles'] = $a_roles;
+                $this->logIt("Found Person: " . var_export($a_person, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+                return $a_person;
             }
         }
         return array();

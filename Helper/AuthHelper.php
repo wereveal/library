@@ -50,9 +50,10 @@ namespace Ritc\Library\Helper;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\GroupsModel;
-use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\PeopleModel;
+use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Router;
 
 class AuthHelper extends Base
 {
@@ -60,6 +61,7 @@ class AuthHelper extends Base
     private $o_db;
     private $o_groups;
     private $o_roles;
+    private $o_router;
     private $o_session;
     private $o_people;
 
@@ -68,6 +70,7 @@ class AuthHelper extends Base
         $this->setPrivateProperties();
         $this->o_db      = $o_di->get('db');
         $this->o_session = $o_di->get('session');
+        $this->o_router  = $o_di->get('router');
         $this->o_people  = new PeopleModel($this->o_db);
         $this->o_groups  = new GroupsModel($this->o_db);
         $this->o_roles   = new RolesModel($this->o_db);
@@ -213,19 +216,19 @@ class AuthHelper extends Base
      */
     public function hasMinimumRoleLevel($people_id, $role_level = 9999)
     {
-        $a_people_records = $this->o_people->readInfo($people_id);
-        $this->logIt("User Values: " . var_export($a_people_records, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        if ($a_people_records !== false && !is_null($a_people_records) && isset($a_people_records[0])) {
-            $a_person = $a_people_records[0]; // the first record should have the highest access level.
-            if (is_numeric($role_level)) {
-                if ($a_person['role_level'] <= $role_level) {
-                    return true;
-                }
-            }
-            else {
-                $a_roles_results = $this->o_roles->read(['role_name' => $role_level]);
-                if ($a_person['role_level'] <= $a_roles_results[0]['role_level']) {
-                    return true;
+        $a_person = $this->o_people->readInfo($people_id);
+        $this->logIt("User Values: " . var_export($a_person, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        if ($a_person !== false && !is_null($a_person)) {
+            foreach ($a_person['roles'] as $role) {
+                if (is_numeric($role_level)) {
+                    if ($role['role_level'] <= $role_level) {
+                        return true;
+                    }
+                } else {
+                    $a_roles_results = $this->o_roles->read(['role_name' => $role_level]);
+                    if ($role['role_level'] <= $a_roles_results[0]['role_level']) {
+                        return true;
+                    }
                 }
             }
         }
@@ -266,6 +269,27 @@ class AuthHelper extends Base
         if (isset($a_people[0])) {
             if ($a_people[0]['is_logged_in'] == 1) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks to see if the person has a valid role for the route.
+     * @param int $people_id
+     * @return bool
+     */
+    public function isRouteAllowed($people_id = -1)
+    {
+        $a_allowed_roles = $this->o_router->getAllowedRoles();
+        $a_person = $this->o_people->readInfo(['people_id' => $people_id]);
+        if ($a_person !== false && count($a_person) === 1) {
+            foreach($a_person['roles'] as $a_role) {
+                foreach ($a_allowed_roles as $a_allowed_role) {
+                    if ($a_role['role_id'] == $a_allowed_role['role_id']) {
+                        return true;
+                    }
+                }
             }
         }
         return false;

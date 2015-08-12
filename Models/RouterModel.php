@@ -173,6 +173,28 @@ class RouterModel extends Base implements ModelInterface
     }
 
     /**
+     * Returns the list of roles for a particular route.
+     * @param int $route_id
+     * @return bool|array
+     */
+    public function readRouteRoles($route_id = -1)
+    {
+        if ($route_id == -1) {
+            return false;
+        }
+        $sql = "
+            SELECT rt.route_id, ro.role_id, ro.role_level
+            FROM {$this->db_prefix}routes as rt,
+                 {$this->db_prefix}roles as ro,
+                 {$this->db_prefix}routes_roles_map as rrm
+            WHERE rt.route_id = :route_id
+            AND rrm.route_id  = rt.route_id
+            AND rrm.role_id   = ro.role_id
+        ";
+        $a_search_values = [':route_id' => $route_id];
+        return $this->o_db->search($sql, $a_search_values);
+    }
+    /**
      * Implements the ModelInterface method, getErrorMessage.
      * return string
      */

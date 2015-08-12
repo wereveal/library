@@ -29,6 +29,7 @@ class RouterRolesMapModel extends Base implements ModelInterface
 
     public function __construct(DbModel $o_db)
     {
+        $this->setPrivateProperties();
         $this->o_db      = $o_db;
         $this->db_type   = $o_db->getDbType();
         $this->db_prefix = $o_db->getDbPrefix();
@@ -66,7 +67,7 @@ class RouterRolesMapModel extends Base implements ModelInterface
 
     }
     /**
-     * @param array $a_search_values
+     * @param array $a_search_values ['rrm_id', 'role_id', 'route_id']
      * @return mixed
      */
     public function read(array $a_search_values = array())
