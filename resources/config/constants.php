@@ -10,12 +10,6 @@
 **/
 namespace Ritc;
 
-if (!isset($allow_get) || $allow_get === false) {
-    $_GET = array();
-}
-// Empty some global vars we don't use and don't want to have values in
-$_REQUEST = array();
-
 if (!defined('SITE_PATH')) {
     exit('This file cannot be called directly'); // should be defined in the setup.php file
 }
