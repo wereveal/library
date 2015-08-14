@@ -38,6 +38,7 @@
  *      v2.3.0 - Modified to work within Symfony
  *      v2.2.0 - FIG-standard changes
  *  </pre>
+ * @TODO Big Bug here, line 373 or so.
 **/
 namespace Ritc\Library\Services;
 
@@ -363,37 +364,38 @@ class DbModel extends Base
     **/
     public function bindValues(array $a_values = array(), \PDOStatement $o_pdo_stmt)
     {
-        $from_method = __METHOD__ . '.';
-        $this->logIt("bind array: " . var_export($a_values, true), LOG_OFF, $from_method . __LINE__);
+        $meth = __METHOD__ . '.';
+        $this->logIt("bind array: " . var_export($a_values, true), LOG_ON, $meth . __LINE__);
         if (Arrays::isAssocArray($a_values)) {
             $a_values = $this->prepareKeys($a_values);
-            $this->logIt("prepared array: " . var_export($a_values, true), LOG_OFF, $from_method . __LINE__);
+            $this->logIt("prepared array: " . var_export($a_values, true), LOG_ON, $meth . __LINE__);
             foreach ($a_values as $key => $value) {
-                $this->logIt("Value: " . var_export($value, true), LOG_OFF, $from_method . __LINE__);
+                $this->logIt("Value: " . var_export($value, true), LOG_ON, $meth . __LINE__);
+                if (is_array($key) || is_array($value)) { return false; }
                 if ($o_pdo_stmt->bindValue($key, $value) === false) {
                     $a_error = $o_pdo_stmt->errorInfo();
-                    $this->logIt($a_error[2], LOG_OFF, $from_method . __LINE__);
+                    $this->logIt($a_error[2], LOG_OFF, $meth . __LINE__);
                     return false;
                 }
             }
             return true;
         }
         elseif (count($a_values) > 0) {
-            $this->logIt('binding a basic array', LOG_OFF, $from_method . __LINE__);
-            $this->logIt($a_values[0], LOG_OFF, $from_method . __LINE__);
+            $this->logIt('binding a basic array', LOG_OFF, $meth . __LINE__);
+            $this->logIt($a_values[0], LOG_OFF, $meth . __LINE__);
             $x = 1;
             foreach ($a_values as $value) {
                 if ($o_pdo_stmt->bindValue($x++, $value) === false) {
                     $a_error = $o_pdo_stmt->errorInfo();
-                    $this->logIt($a_error[2], LOG_OFF, $from_method . __LINE__);
+                    $this->logIt($a_error[2], LOG_OFF, $meth . __LINE__);
                     return false;
                 }
-                $this->logIt("Successful Binding of {$value}", LOG_OFF, $from_method . __LINE__);
+                $this->logIt("Successful Binding of {$value}", LOG_OFF, $meth . __LINE__);
             }
             return true;
        }
         else {
-            $this->logIt('The value passed into bindValues must be an array.', LOG_OFF, $from_method . __LINE__);
+            $this->logIt('The value passed into bindValues must be an array.', LOG_OFF, $meth . __LINE__);
             return false;
         }
     }

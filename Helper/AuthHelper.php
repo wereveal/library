@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.2.4
- *  @date 2015-08-04 11:52:02
+ *  @version 4.2.5
+ *  @date 2015-08-14 17:02:33
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.2.5 - bug fixes, a change in PeopleModel->readInfo          - 08/14/2015 wer
  *      v4.2.4 - more references to user to person changes             - 08/04/2015 wer
  *      v4.2.3 - refactored references to user into person             - 01/26/2015 wer
  *      v4.2.2 - modified to work with user model changes              - 01/22/2015 wer
@@ -124,13 +125,10 @@ class AuthHelper extends Base
             }
         }
         if ($this->o_session->isValidSession($a_person_post, true)) {
-            $a_people_records = $this->o_people->readInfo($a_person_post['login_id']);
+            $a_person = $this->o_people->readInfo($a_person_post['login_id']);
             $this->logIt("Posted Values: " . var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
-            $this->logIt("User Values: " . var_export($a_people_records, true), LOG_OFF, $meth . __LINE__);
-            if ($a_people_records !== false && !is_null($a_people_records) && isset($a_people_records[0])) {
-                $a_person = $a_people_records[0]; // the first record should have the highest access level.
-            }
-            else {
+            $this->logIt("User Values: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
+            if ($a_person === false || is_null($a_person) || !is_array($a_person)) {
                 $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
                 $this->o_session->resetSession();
                 return [
@@ -244,9 +242,9 @@ class AuthHelper extends Base
         if ($person == -1) {
             return false;
         }
-        $a_results = $this->o_people->readInfo($person);
-        if (isset($a_results[0]['is_default'])) {
-            if ($a_results[0]['is_default'] == 1) {
+        $a_person = $this->o_people->readInfo($person);
+        if (isset($a_person['is_default'])) {
+            if ($a_results['is_default'] == 1) {
                 return true;
             }
         }
@@ -265,9 +263,9 @@ class AuthHelper extends Base
         if ($login_id == '') {
             return false;
         }
-        $a_people = $this->o_people->readInfo($login_id);
-        if (isset($a_people[0])) {
-            if ($a_people[0]['is_logged_in'] == 1) {
+        $a_person = $this->o_people->readInfo($login_id);
+        if ($a_person !== false && !is_null($a_person)) {
+            if ($a_person['is_logged_in'] == 1) {
                 return true;
             }
         }
@@ -303,9 +301,9 @@ class AuthHelper extends Base
     public function isSuperAdmin($people_id = -1)
     {
         if ($people_id == -1) { return false; }
-        $a_people = $this->o_people->readInfo($people_id);
-        if (!isset($a_people[0])) { return false; }
-        if ($a_people[0]['access_level'] === 1) {
+        $a_person = $this->o_people->readInfo($people_id);
+        if (!isset($a_person['access_level'])) { return false; }
+        if ($a_person['access_level'] === 1) {
             return true;
         }
         return false;
@@ -384,7 +382,7 @@ class AuthHelper extends Base
     {
         if ($person == '') { return false; }
         $a_people = $this->o_people->readInfo($person);
-        if (isset($a_people[0])) {
+        if (isset($a_people['people_id'])) {
             return true;
         }
         return false;

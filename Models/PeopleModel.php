@@ -455,7 +455,7 @@ class PeopleModel extends Base implements ModelInterface
                 unset($a_person['role_level']);
                 unset($a_person['role_name']);
                 $a_person['roles'] = $a_roles;
-                $this->logIt("Found Person: " . var_export($a_person, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Found Person: " . var_export($a_person, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return $a_person;
             }
         }
