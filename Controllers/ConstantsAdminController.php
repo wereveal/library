@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Controllers
  *  @class ConstantsAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 2015-01-16 11:48:35
+ *  @version 1.2.0
+ *  @date 2015-08-19 13:08:59
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
+ *      v1.2.0 - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
  *      v1.1.0 - changed to implement ManagerControllerInterface - 01/16/2015 wer
  *               This class should only be called from the main
  *               manager controller which does session validation.
@@ -20,14 +21,15 @@
 **/
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Views\ConstantsAdminView;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 
-class ConstantsAdminController extends Base implements MangerControllerInterface
+class ConstantsAdminController implements MangerControllerInterface
 {
+    use LogitTraits;
     private $a_post;
     private $o_di;
     private $o_model;
@@ -37,7 +39,7 @@ class ConstantsAdminController extends Base implements MangerControllerInterface
     {
         $this->setPrivateProperties();
         $this->o_di = $o_di;
-        if (DEVELOPER_MODE) {
+        if (DEVELOPER_MODE) { // instead of needing the setElog method
             $this->o_elog = $o_di->get('elog');
         }
     }

@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class ConstantsModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.0.1
- *  @date 2015-07-31 16:25:48
+ *  @version 2.1.0
+ *  @date 2015-08-19 13:04:47
  *  @note A file in the Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v2.1.0 - No longer extends Base class but uses LogitTraits = 08/19/2015 wer
  *      v2.0.1 - Refactoring of Class Arrays required changes here - 07/31/2015 wer
  *      v2.0.0 - Renamed to match functionality                    - 01/17/2015 wer
  *      v1.1.1 - Namespace changes elsewhere required changes here - 11/15/2014 wer
@@ -22,14 +23,15 @@
 **/
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\LogitTraits;
 
-class ConstantsModel extends Base implements ModelInterface
+class ConstantsModel implements ModelInterface
 {
+    use LogitTraits;
     private $a_constants;
     private $db_prefix;
     private $o_db;

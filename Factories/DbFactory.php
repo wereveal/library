@@ -11,10 +11,11 @@
  *  @namespace Ritc/Library/Services
  *  @class DbFactory
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.5.3
- *  @date 2015-01-27 16:25:28
+ *  @version 1.6.0
+ *  @date 2015-08-19 13:13:00
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.6.0 - no longer extends Base class, uses DbTraits and LogitTraits      - 08/19/2015 wer
  *      v1.5.3 - moved to the Factories namespace                                 - 01/27/2015 wer
  *      v1.5.2 - moved to Services namespace                                      - 11/15/2014 wer
  *      v1.5.1 - changed to implement the changes to the Base class               - 09/23/2014 wer
@@ -28,9 +29,12 @@
 namespace Ritc\Library\Factories;
 
 use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Traits\DbTraits;
+use Ritc\Library\Traits\LogitTraits;
 
-class DbFactory extends Base
+class DbFactory
 {
+    use DbTraits, LogitTraits;
     private static $instance_rw = array();
     private static $instance_ro = array();
     private $config_file;
@@ -38,7 +42,6 @@ class DbFactory extends Base
 
     private function __construct($config_file = 'db_config.php', $read_type = 'rw')
     {
-        $this->setPrivateProperties();
         $this->config_file = $config_file;
         $this->read_type = $read_type;
     }
@@ -77,7 +80,11 @@ class DbFactory extends Base
             $this->logIt('The database is already connected.', LOG_OFF);
             return $this->o_db;
         }
-        $a_db = $this->retrieveDbParameters();
+        if ($this->config_file == '') {
+            $this->config_file = 'db_config.php';
+        }
+        $a_db = $this->retrieveDbConfig($this->config_file);
+        $a_db['dsn'] = $this->createDsn($a_db);
         try {
             if ($this->read_type == 'ro') {
                 $this->o_db = new \PDO(
@@ -103,34 +110,12 @@ class DbFactory extends Base
             return false;
         }
     }
-
     /**
-     *  Turns the config file into an array that is used to connect to the database.
-     *  @internal $config_file - must be in one of three places
-     *      The default place is in /app/config/
-     *      The next place is in the /private directory
-     *      Finally, it can be found in the config directory inside the web site itself (worse place).
-     *  @return mixed array|false
-    **/
-    private function retrieveDbParameters()
-    {
-        $config_file = $this->config_file;
-        $config_w_path = APP_PATH . '/config/' . $config_file;
-        $this->logIt($config_w_path, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        if (!file_exists($config_w_path)) {
-            $config_w_path = PRIVATE_PATH . '/' . $config_file;
-            if (!file_exists($config_w_path)) {
-                $config_w_path = SITE_PATH . '/config/' . $config_file;
-            }
-        }
-        $this->logIt($config_w_path, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        if (!file_exists($config_w_path)) {
-            return false;
-        }
-        $a_db = require_once $config_w_path;
-        $a_db['dsn'] = $this->createDsn($a_db);
-        return $a_db;
-    }
+     *  Creates the DSN string from the db config array.
+     *  Needed to connect to the database.
+     *  @param array $a_db ['port', 'driver', 'host', 'name']
+     *  @return string
+     */
     private function createDsn(array $a_db = array())
     {
         if ($a_db == array()) {

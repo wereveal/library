@@ -7,10 +7,11 @@
  *  @namespace Ritc/Library/Services
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.2.4
- *  @date 2015-07-31 16:04:18
+ *  @version 3.3.0
+ *  @date 2015-08-19 13:27:31
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.3.0 - no longer extends Base class, uses DbTraits and LogitTraits              - 08/19/2015 wer
  *      v3.2.4 - refactoring elsewhere made a small name change here                      - 07/31/2015 wer
  *      v3.2.3 - moved to Services namespace                                              - 11/15/2014 wer
  *      v3.2.1 - bug fix
@@ -44,21 +45,23 @@ namespace Ritc\Library\Services;
 
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Traits\DbTraits;
+use Ritc\Library\Traits\LogitTraits;
 
-class DbModel extends Base
+class DbModel
 {
+    use DbTraits, LogitTraits;
+
     private $a_new_ids = array();
     private $affected_rows;
-    protected $current_page;
     private $db_prefix;
     private $db_type;
     private $o_db;
-    protected $o_elog;
     private $pgsql_sequence_name = '';
-    protected $private_properties;
     private $root_path;
     private $sql_error_message;
     private $success;
+
     /**
      * On creating a new object, certain things happen.
      * @param  \PDO   $o_db        can be from DbFactory or from a direct new PDO
@@ -1105,46 +1108,13 @@ class DbModel extends Base
     /**
      *  Creates the class properties of db_type and db_prefix from config file
      *  @param string $config_file
-     *  @return bool
+     *  @return null
     **/
     private function createDbParms($config_file = 'db_config.php')
     {
-        $config_w_apppath  = '';
-        $config_w_privpath = '';
-        $config_w_sitepath = '';
-        $default_path     = $_SERVER['DOCUMENT_ROOT'] . '/config/' . $config_file;
-        if (defined('APP_PATH')) {
-            $config_w_apppath = APP_PATH . '/config/' . $config_file;
-        }
-        if (defined('PRIVATE_PATH')) {
-            $config_w_privpath = PRIVATE_PATH . '/' . $config_file;
-        }
-        if (defined('SITE_PATH')) {
-            $config_w_sitepath = SITE_PATH . '/config/' . $config_file;
-        }
-        if ($config_w_apppath != '' && !file_exists($config_w_apppath)) {
-            if ($config_w_privpath != '' && !file_exists($config_w_privpath)) {
-                if ($config_w_sitepath != '' && !file_exists($config_w_sitepath)) {
-                    $config_w_path = $default_path;
-                }
-                else {
-                    $config_w_path = $config_w_sitepath;
-                }
-            }
-            else {
-                $config_w_path = $config_w_privpath;
-            }
-        }
-        else {
-            $config_w_path = $config_w_apppath;
-        }
-        if (!file_exists($config_w_path)) {
-            return false;
-        }
-        $a_db = include $config_w_path;
+        $a_db = $this->retrieveDbConfig($config_file);
         $this->db_prefix = $a_db['prefix'];
         $this->db_type   = $a_db['driver'];
-        return true;
     }
     /**
      *  Gets the variable for the fetch style
@@ -1392,10 +1362,12 @@ class DbModel extends Base
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);
     }
-    // and other magic methods in Base class
 
-    ### Base Class Inherited Methods ###
+    ### LogitTraits Methods ###
     // logIt($message, $log_type, $location)
     // setElog(Elog $o_elog)
-    // setPrivateProperties()
+    // getElog();
+
+    ### DbTraits Methods ###
+    // retrieveDbConfig($config_file);
 }

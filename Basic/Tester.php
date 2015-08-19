@@ -4,13 +4,14 @@
  *  @details Class that extends this class should end with the word Tests or
  *           Tester, e.g. MyClassTester or MyClassTests.
  *  @file Tester.php
- *  @namespace Ritc/Library/Services
- *  @ingroup ritc_library services
+ *  @namespace Ritc/Library/Basic
+ *  @ingroup ritc_library basic
  *  @class Tester
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version  3.0.2
- *  @date 2014-12-05 11:30:33
+ *  @version  3.1.0
+ *  @date 2015-08-19 12:53:01
  *  @note <pre><b>Change log</b>
+ *      v3.1.0 - no longer extends Base class, uses Logit Trait instead                    - 08/19/2015 wer
  *      v3.0.2 - moved to the Basic namespace where it was more appropriate                - 12/05/2014 wer
  *      v3.0.1 - moved to the Services namespace                                           - 11/15/2014 wer
  *      v3.0.0 - changed to be a class so it could extend Base class and modified for such - 09/24/2014 wer
@@ -29,26 +30,21 @@
 **/
 namespace Ritc\Library\Basic;
 
-use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Traits\LogitTraits;
 
-class Tester extends Base
+class Tester
 {
+    use LogitTraits;
     protected $a_test_order;
     protected $a_test_values = array();
     protected $failed_subtests;
     protected $failed_test_names = array();
     protected $failed_tests;
     protected $num_o_tests;
-    protected $o_elog;
     protected $passed_subtests;
     protected $passed_test_names  = array();
     protected $passed_tests;
-    protected $private_properties;
 
-    public function __construct()
-    {
-        $this->setPrivateProperties();
-    }
     public function addMethodToTestOrder($method_name = '')
     {
         if ($method_name == '') { return false; }
