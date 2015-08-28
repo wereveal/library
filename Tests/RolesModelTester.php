@@ -27,10 +27,9 @@ class RolesModelTests extends Tester
     {
         $this->a_test_order = $a_test_order;
         $this->o_elog = Elog::start();
-        $o_dbf = DbFactory::start($db_config, 'rw');
-        $o_pdo = $o_dbf->connect();
+        $o_pdo = DbFactory::start($db_config, 'rw');
         if ($o_pdo !== false) {
-            $this->o_db = new DbModel($o_pdo);
+            $this->o_db = new DbModel($o_pdo, $db_config);
         }
         else {
             $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);

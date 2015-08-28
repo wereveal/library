@@ -80,15 +80,15 @@ $my_classmap = require_once APP_CONFIG_PATH . '/autoload_classmap.php';
 $o_loader->addClassMap($my_classmap);
 
 $o_elog    = Elog::start();
+$o_elog->setIgnoreLogOff(false); // turns on logging globally ignoring LOG_OFF when set to true
+
 $o_session = Session::start();
+
 $o_di      = new Di();
 $o_di->set('elog',    $o_elog);
 $o_di->set('session', $o_session);
-$o_dbf = DbFactory::start($db_config_file, 'rw');
-$o_dbf->setElog($o_elog);
-$o_elog->setIgnoreLogOff(false); // turns on logging globally ignoring LOG_OFF when set to true
 
-$o_pdo = $o_dbf->connect();
+$o_pdo = DbFactory::start($db_config_file, 'rw', $o_di);
 
 if ($o_pdo !== false) {
     $o_db = new DbModel($o_pdo, $db_config_file);
@@ -98,6 +98,18 @@ if ($o_pdo !== false) {
     }
     else {
         $o_di->set('db', $o_db);
+        if (RODB) {
+            $o_pdo_ro = DbFactory::start($db_config_file, 'ro', $o_di);
+            if ($o_pdo_ro !== false) {
+                $o_db_ro = new DbModel($o_pdo_ro, $db_config_file);
+                if (!is_object($o_db_ro)) {
+                    $o_elog->write("Could not create a new DbModel for read only\n", LOG_ALWAYS);
+                    die("Could not get the database to work");
+                }
+                $o_di->set('rodb', $o_db_ro);
+            }
+        }
+
         if (!ConstantsHelper::start($o_di)) {
             $o_elog->write("Couldn't create the constants\n", LOG_ALWAYS);
             require_once APP_CONFIG_PATH . '/fallback_constants.php';
@@ -108,19 +120,6 @@ if ($o_pdo !== false) {
         $o_twig   = TwigFactory::getTwig('twig_config.php');
         $o_di->set('router',  $o_router);
         $o_di->set('twig',    $o_twig);
-        if ($rodb) {
-            $o_dbf_ro = DbFactory::start($db_config_file, 'ro');
-            $o_pdo_ro = $o_dbf_ro->connect();
-            if ($o_pdo_ro !== false) {
-                $o_db_ro = new DbModel($o_pdo_ro, $db_config_file);
-                if (!is_object($o_db_ro)) {
-                    $o_elog->write("Could not create a new DbModel for read only\n", LOG_ALWAYS);
-                    die("Could not get the database to work");
-                }
-                $o_di->set('db', $o_db_ro);
-                $o_di->set('db_rw', $o_db);
-            }
-        }
     }
 }
 else {

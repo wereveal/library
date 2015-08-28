@@ -1,20 +1,22 @@
 <?php
 /**
  *  @brief A Database Factory.
- *  @details This ends up being a two step process always. The first step is to start the factory.
- *  The factory reads in the configuration specified (defaults to a default config) so that it knows
- *  what to connect to. After that you connect to the databse using the factory object.
- *  Connecting to the database returns a \PDO object.
- *  Nothing else should be needed from the factory. As such, version 1.5 was born.
+ *  @details The factory returns a \PDO object. The old version was a two step
+ *      process where you would create a factory object then connect. But that
+ *      I realized was wrong, the factory should produce a \PDO instance. Thus
+ *      v2 was born.
  *  @file DbFactory.php
  *  @ingroup ritc_library Services
  *  @namespace Ritc/Library/Services
  *  @class DbFactory
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.6.0
- *  @date 2015-08-19 13:13:00
+ *  @version 2.0.0
+ *  @date 2015-08-28 08:01:33
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.0.0 - realized a stupid error in thinking, this should produce         - 08/28/2015 wer
+ *               an instance of the PDO not an instance of the factory itself duh!
+ *               I believe this was a result of not thinking how to do it correctly.
  *      v1.6.0 - no longer extends Base class, uses DbTraits and LogitTraits      - 08/19/2015 wer
  *      v1.5.3 - moved to the Factories namespace                                 - 01/27/2015 wer
  *      v1.5.2 - moved to Services namespace                                      - 11/15/2014 wer
@@ -29,6 +31,7 @@
 namespace Ritc\Library\Factories;
 
 use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbTraits;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -39,11 +42,17 @@ class DbFactory
     private static $instance_ro = array();
     private $config_file;
     private $o_db;
+    private $read_type;
 
-    private function __construct($config_file = 'db_config.php', $read_type = 'rw')
+    private function __construct($config_file, $read_type, $o_di)
     {
         $this->config_file = $config_file;
         $this->read_type = $read_type;
+        /* Need to inject the elog instance here since it is needed before
+           it can be injected via the trait method, setElog() */
+        if (DEVELOPER_MODE && is_object($o_di)) {
+            $this->o_elog = $o_di->get('elog');
+        }
     }
     /**
      *  Starts a Singleton object for the specific database config file
@@ -54,27 +63,41 @@ class DbFactory
      *  to the same database simply by using different config file name.
      *  @param string $config_file default 'db_config.php'
      *  @param string $read_type Default rw
-     *  @return object - reference the the database object created
+     *  @param Di     $o_di
+     *  @return object PDO object
     **/
-    public static function start($config_file = 'db_config.php', $read_type = 'rw')
+    public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di = '')
     {
         list($name, $extension) = explode('.', $config_file);
         if ($extension != 'php' && $extension != 'cfg') { return false; }
         if ($read_type == 'ro') {
             if (!isset(self::$instance_ro[$name])) {
-                self::$instance_ro[$name] = new DbFactory($config_file, 'ro');
+                self::$instance_ro[$name] = new DbFactory($config_file, 'ro', $o_di);
             }
-            return self::$instance_ro[$name];
+            return self::$instance_ro[$name]->createPdo();
         }
         else {
             if (!isset(self::$instance_rw[$name])) {
-                self::$instance_rw[$name] = new DbFactory($config_file, 'rw');
+                self::$instance_rw[$name] = new DbFactory($config_file, 'rw', $o_di);
             }
-            return self::$instance_rw[$name];
+            return self::$instance_rw[$name]->createPdo();
         }
     }
-
-    public function connect()
+    /**
+     *  A stub to provide backwards compatibility. Probably not needed.
+     *  @param string $config_file default 'db_config.php'
+     *  @param string $read_type Default rw
+     *  @return object PDO object
+    **/
+    public function connect($config_file = 'db_config.php', $read_type = 'rw', Di $o_di = '')
+    {
+        return self::start($config_file, $read_type, Di $o_di = '');
+    }
+    /**
+     *  Creates the \PDO instance
+     *  @return \PDO
+     */
+    private function createPdo()
     {
         if (is_object($this->o_db)) {
             $this->logIt('The database is already connected.', LOG_OFF);
@@ -135,7 +158,22 @@ class DbFactory
             }
         }
     }
-
+    /**
+     *  Standard getter for the property $config_file
+     *  @return string
+     */
+    public function getConfigFile()
+    {
+        return $this->config_file;
+    }
+    /**
+     *  Standard getter for the property $read_typ
+     *  @return string
+     */
+    public function getReadType()
+    {
+        return $this->read_type;
+    }
     ### Magic Method fix
     public function __clone()
     {
