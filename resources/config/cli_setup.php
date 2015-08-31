@@ -53,7 +53,7 @@
 namespace Ritc;
 
 use Ritc\Library\Helper\ConstantsHelper;
-use Ritc\Library\Factories\DbFactory;
+use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Factories\TwigFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -101,7 +101,7 @@ else {
     $db_config_file = 'db_local_config.php';
 }
 
-$o_pdo = DbFactory::start($db_config_file, 'rw', $o_di);
+$o_pdo = PdoFactory::start($db_config_file, 'rw', $o_di);
 
 if ($o_pdo !== false) {
     $o_db = new DbModel($o_pdo, $db_config_file);
@@ -112,7 +112,7 @@ if ($o_pdo !== false) {
     else {
         $o_di->set('db', $o_db);
         if (RODB) {
-            $o_pdo_ro = DbFactory::start($db_config_file, 'ro', $o_di);
+            $o_pdo_ro = PdoFactory::start($db_config_file, 'ro', $o_di);
             if ($o_pdo_ro !== false) {
                 $o_db_ro = new DbModel($o_pdo_ro, $db_config_file);
                 if (!is_object($o_db_ro)) {

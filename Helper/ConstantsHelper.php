@@ -23,7 +23,7 @@
  *      v3.1.2 - bug fixes                                                  - 09/18/2014 wer
  *      v3.1.1 - made it so the constants table name will be assigned from the - 02/24/2014 wer
  *               the db_prefix variable set from the db confuration
- *               (created in DbFactory, passed on to DbModel).
+ *               (created in PdoFactory, passed on to DbModel).
  *      v3.1.0 - made it so it will create the constants table if it does not exist.
  *               Other changes to adjust to not having a theme based app.   - 01/31/2014 wer
  *      v3.0.3 - package change                                             - 12/19/2013 wer

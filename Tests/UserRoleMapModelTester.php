@@ -2,7 +2,7 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
-use Ritc\Library\Factories\DbFactory;
+use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Elog;
 use Ritc\Library\Models\GroupRoleMapModel;
@@ -27,7 +27,7 @@ class UserRoleMapModelTests extends Tester
     {
         $this->a_test_order = $a_test_order;
         $this->o_elog = Elog::start();
-        $o_pdo = DbFactory::start($db_config, 'rw');
+        $o_pdo = PdoFactory::start($db_config, 'rw');
         if ($o_pdo !== false) {
             $this->o_db = new DbModel($o_pdo, $db_config);
         }

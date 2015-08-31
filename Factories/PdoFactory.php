@@ -1,14 +1,14 @@
 <?php
 /**
- *  @brief A Database Factory.
+ *  @brief A PDO Factory.
  *  @details The factory returns a \PDO object. The old version was a two step
  *      process where you would create a factory object then connect. But that
  *      I realized was wrong, the factory should produce a \PDO instance. Thus
  *      v2 was born.
- *  @file DbFactory.php
+ *  @file PdoFactory.php
  *  @ingroup ritc_library Services
  *  @namespace Ritc/Library/Services
- *  @class DbFactory
+ *  @class PdoFactory
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 2.0.0
  *  @date 2015-08-28 08:01:33
@@ -17,6 +17,7 @@
  *      v2.0.0 - realized a stupid error in thinking, this should produce         - 08/28/2015 wer
  *               an instance of the PDO not an instance of the factory itself duh!
  *               I believe this was a result of not thinking how to do it correctly.
+ *               Renamed class to match what the factory produces.
  *      v1.6.0 - no longer extends Base class, uses DbTraits and LogitTraits      - 08/19/2015 wer
  *      v1.5.3 - moved to the Factories namespace                                 - 01/27/2015 wer
  *      v1.5.2 - moved to Services namespace                                      - 11/15/2014 wer
@@ -30,16 +31,16 @@
 **/
 namespace Ritc\Library\Factories;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbTraits;
 use Ritc\Library\Traits\LogitTraits;
 
-class DbFactory
+class PdoFactory
 {
     use DbTraits, LogitTraits;
-    private static $instance_rw = array();
-    private static $instance_ro = array();
+
+    private static $factory_rw_instance = array();
+    private static $factory_ro_instance = array();
     private $config_file;
     private $o_db;
     private $read_type;
@@ -71,28 +72,19 @@ class DbFactory
         list($name, $extension) = explode('.', $config_file);
         if ($extension != 'php' && $extension != 'cfg') { return false; }
         if ($read_type == 'ro') {
-            if (!isset(self::$instance_ro[$name])) {
-                self::$instance_ro[$name] = new DbFactory($config_file, 'ro', $o_di);
+            if (!isset(self::$factory_ro_instance[$name])) {
+                self::$factory_ro_instance[$name] = new PdoFactory($config_file, 'ro', $o_di);
             }
-            return self::$instance_ro[$name]->createPdo();
+            return self::$factory_ro_instance[$name]->createPdo();
         }
         else {
-            if (!isset(self::$instance_rw[$name])) {
-                self::$instance_rw[$name] = new DbFactory($config_file, 'rw', $o_di);
+            if (!isset(self::$factory_rw_instance[$name])) {
+                self::$factory_rw_instance[$name] = new PdoFactory($config_file, 'rw', $o_di);
             }
-            return self::$instance_rw[$name]->createPdo();
+            return self::$factory_rw_instance[$name]->createPdo();
         }
     }
-    /**
-     *  A stub to provide backwards compatibility. Probably not needed.
-     *  @param string $config_file default 'db_config.php'
-     *  @param string $read_type Default rw
-     *  @return object PDO object
-    **/
-    public function connect($config_file = 'db_config.php', $read_type = 'rw', Di $o_di = '')
-    {
-        return self::start($config_file, $read_type, Di $o_di = '');
-    }
+
     /**
      *  Creates the \PDO instance
      *  @return \PDO
@@ -125,6 +117,7 @@ class DbFactory
             }
             $this->logIt("The dsn is: {$a_db['dsn']}", LOG_OFF, __METHOD__ . '.' . __LINE__);
             $this->logIt('Connect to db success.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->a_db_config = $a_db;
             return $this->o_db;
         }
         catch(\PDOException $e) {
@@ -158,22 +151,7 @@ class DbFactory
             }
         }
     }
-    /**
-     *  Standard getter for the property $config_file
-     *  @return string
-     */
-    public function getConfigFile()
-    {
-        return $this->config_file;
-    }
-    /**
-     *  Standard getter for the property $read_typ
-     *  @return string
-     */
-    public function getReadType()
-    {
-        return $this->read_type;
-    }
+
     ### Magic Method fix
     public function __clone()
     {

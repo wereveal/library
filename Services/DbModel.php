@@ -7,11 +7,10 @@
  *  @namespace Ritc/Library/Services
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.3.0
- *  @date 2015-08-19 13:27:31
+ *  @version 3.2.4
+ *  @date 2015-07-31 16:04:18
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v3.3.0 - no longer extends Base class, uses DbTraits and LogitTraits              - 08/19/2015 wer
  *      v3.2.4 - refactoring elsewhere made a small name change here                      - 07/31/2015 wer
  *      v3.2.3 - moved to Services namespace                                              - 11/15/2014 wer
  *      v3.2.1 - bug fix
@@ -21,7 +20,7 @@
  *               Hammering down a couple bugs.
  *      v3.1.2 - bug fixes, needed to pass the pdo object into the class                  - 03/20/2014 wer
  *      v3.1.1 - added methods to set and return db prefix                                - 02/24/2014 wer
- *               It should be noted, this assumes a db prefix has been set. see DbFactory
+ *               It should be noted, this assumes a db prefix has been set. see PdoFactory
  *      v3.1.0 - added method to return db tables                                         - 01/31/2014 wer
  *      v3.0.1 - renamed file to match function, eliminated the unnecessary               - 12/19/2013 wer
  *      v3.0.0 - split the pdo creation (database connection) from the crud               - 2013-11-06 wer
@@ -39,7 +38,6 @@
  *      v2.3.0 - Modified to work within Symfony
  *      v2.2.0 - FIG-standard changes
  *  </pre>
- * @TODO Big Bug here, line 373 or so.
 **/
 namespace Ritc\Library\Services;
 
@@ -51,6 +49,7 @@ class DbModel
 {
     use DbTraits, LogitTraits;
 
+    private $a_db_config;
     private $a_new_ids = array();
     private $affected_rows;
     private $db_prefix;
@@ -63,14 +62,13 @@ class DbModel
 
     /**
      * On creating a new object, certain things happen.
-     * @param  \PDO   $o_db        can be from DbFactory or from a direct new PDO
-     *                             This means it can be independent of the DbFactory.
+     * @param  \PDO   $o_db        can be from PdoFactory or from a direct new PDO
+     *                             This means it can be independent of the PdoFactory.
      * @param  string $config_file name of the config file which is a returned array
      */
     public function __construct(\PDO $o_db, $config_file = 'db_config.php')
     {
         $this->root_path = $_SERVER['DOCUMENT_ROOT'];
-        $this->setPrivateProperties();
         $this->createDbParms($config_file);
         $this->o_db = $o_db;
     }
@@ -235,6 +233,14 @@ class DbModel
     public function getAffectedRows()
     {
         return $this->affected_rows;
+    }
+    /**
+     * Gets the array $a_db_config which holds the config for the db.
+     * @return array
+     */
+    public function getDbConfig()
+    {
+        return $this->a_db_config;
     }
     /**
      * @return mixed
@@ -1105,15 +1111,16 @@ class DbModel
         return $where;
     }
     /**
-     *  Creates the class properties of db_type and db_prefix from config file
+     *  Creates the class properties of a_db_config, db_type and db_prefix from config file
      *  @param string $config_file
      *  @return null
     **/
     private function createDbParms($config_file = 'db_config.php')
     {
         $a_db = $this->retrieveDbConfig($config_file);
-        $this->db_prefix = $a_db['prefix'];
-        $this->db_type   = $a_db['driver'];
+        $this->a_db_config = $a_db;
+        $this->db_prefix   = $a_db['prefix'];
+        $this->db_type     = $a_db['driver'];
     }
     /**
      *  Gets the variable for the fetch style

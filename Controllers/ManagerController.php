@@ -26,7 +26,6 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
-use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Views\ManagerView;
 use Ritc\Library\Services\Di;
 
