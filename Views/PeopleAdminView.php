@@ -56,9 +56,16 @@ class PeopleAdminView
         }
     }
 
-    public function renderList($a_values)
+    public function renderList(array $a_message = array())
     {
-        $this->o_twig->render('@default/index.tpl', $a_values);
+        if (count($a_message) != 0) {
+            $a_values['a_message'] = ViewHelper::messageProperties($a_message);
+        }
+        else {
+            $a_values['a_message'] = '';
+        }
+
+        $this->o_twig->render('@pages/people_admin.twig', $a_values);
         return '';
     }
     /**

@@ -17,7 +17,10 @@
  *      v1.0.0β2 - Adjusted to match file name change            - 11/13/2014 wer
  *      v1.0.0β1 - Initial version                               - 04/02/2014 wer
  *  </pre>
- *  @todo everything - too many things have changed to not go over every method
+ *  @todo write the save method
+ *  @todo write the update method
+ *  @todo write the verifyDelete method
+ *  @todo write the delete method
 **/
 namespace Ritc\Library\Controllers;
 
@@ -69,30 +72,52 @@ class PeopleAdminController implements MangerControllerInterface
                 header("Location: " . SITE_URL . '/manager/login/');
             }
         }
-
+        $a_failure_message = [
+            'message' => 'A Problem Has Occured. Please Try Again.',
+            'type'    => 'failure'
+        ];
+        $a_success_message = [
+            'message' => 'Success!',
+            'type'    => 'success'
+        ];
         switch ($main_action) {
             case 'save':
-                return $this->save();
-            case 'update':
-                if ($form_action == 'verify') {
-                    return $this->verifyDelete($a_route_parts);
-                }
-                elseif ($form_action == 'update') {
-                    return $this->update();
+                if (!$this->save()) {
+                    $a_message = $a_failure_message;
                 }
                 else {
-                    $a_message = [
-                        'message' => 'A Problem Has Occured. Please Try Again.',
-                        'type'    => 'failure'
-                    ];
-                    return $this->o_view->renderList($a_message);
+                    $a_message = $a_success_message;
                 }
+                break;
+            case 'update':
+                if ($form_action == 'verify') {
+                    return $this->verifyDelete();
+                }
+                elseif ($form_action == 'update') {
+                    if (!$this->update()) {
+                        $a_message = $a_failure_message;
+                    }
+                    else {
+                        $a_message = $a_success_message;
+                    }
+                }
+                else {
+                    $a_message = $a_failure_message;
+                }
+                break;
             case 'delete':
-                return $this->delete();
+                if (!$this->delete()) {
+                    $a_message = $a_failure_message;
+                }
+                else {
+                    $a_message = $a_success_message;
+                }
+                break;
             case '':
             default:
-                return $this->o_view->renderList();
+                $a_message = array();
         }
+        return $this->o_view->renderList($a_message);
     }
 
     public function save()
