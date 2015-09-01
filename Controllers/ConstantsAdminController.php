@@ -30,6 +30,7 @@ use Ritc\Library\Traits\LogitTraits;
 class ConstantsAdminController implements MangerControllerInterface
 {
     use LogitTraits;
+
     private $a_post;
     private $o_di;
     private $o_model;
@@ -37,7 +38,6 @@ class ConstantsAdminController implements MangerControllerInterface
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $this->o_di = $o_di;
         if (DEVELOPER_MODE) { // instead of needing the setElog method
             $this->o_elog = $o_di->get('elog');

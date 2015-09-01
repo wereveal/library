@@ -6,27 +6,30 @@
  *  @namespace Ritc/Library/Services
  *  @class Router
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.5ß
- *  @date 2015-01-06 09:43:49
+ *  @version 1.0.0 β6
+ *  @date 2015-09-01 07:56:00
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.5ß - changed several properties to be static (just in case)                    - 01/06/2015 wer
- *      v1.0.4ß - changed to use Di class for DI/IOC.                                       - 12/10/2014 wer
- *      v1.0.3ß - added form_action class property.                                         - 12/05/2014 wer
- *                Added setter and getters for form_action class property.
- *      v1.0.2ß - moved to Services namespace                                               - 11/15/2014 wer
- *      v1.0.1ß - bug fixes                                                                 - 11/14/2014 wer
- *      v1.0.0ß - initial attempt to make this                                              - 09/25/2014 wer
+ *      v1.0.0β6 - Removed abstract class Base, added LogitTraits                            - 09/01/2015 wer
+ *      v1.0.0β5 - changed several properties to be static (just in case)                    - 01/06/2015 wer
+ *      v1.0.0β4 - changed to use Di class for DI/IOC.                                       - 12/10/2014 wer
+ *      v1.0.0β3 - added form_action class property.                                         - 12/05/2014 wer
+ *                 Added setter and getters for form_action class property.
+ *      v1.0.0β2 - moved to Services namespace                                               - 11/15/2014 wer
+ *      v1.0.0β1 - bug fixes                                                                 - 11/14/2014 wer
+ *      v1.0.0β0 - initial attempt to make this                                              - 09/25/2014 wer
 **/
 namespace Ritc\Library\Services;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Models\RouterModel;
 use Ritc\Library\Models\RouterRolesMapModel;
+use Ritc\Library\Traits\LogitTraits;
 
-class Router extends Base
+class Router
 {
+    use LogitTraits;
+
     private $a_get;
     private $a_post;
     private $a_route_parts;
@@ -40,7 +43,6 @@ class Router extends Base
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $o_db = $o_di->get('db');
         $this->o_model  = new RouterModel($o_db);
         $this->o_rrm = new RouterRolesMapModel($o_db);

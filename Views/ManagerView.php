@@ -6,31 +6,32 @@
  *  @namespace Ritc/Library/Views
  *  @class ManagerView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-01-16 12:07:49
+ *  @version 1.1.0
+ *  @date 2015-09-01 08:05:20
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0   - First stable version    - 01/16/2015 wer
- *      v1.0.0β2 - changed to match DI/IOC - 11/15/2014 wer
- *      v1.0.0β1 - Initial version         - 11/08/2014 wer
+ *      v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
+ *      v1.0.0   - First stable version                         - 01/16/2015 wer
+ *      v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
+ *      v1.0.0β1 - Initial version                              - 11/08/2014 wer
  *  </pre>
  **/
 namespace Ritc\Library\Views;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Session;
+use Ritc\Library\Traits\LogitTraits;
 
-class ManagerView extends Base
+class ManagerView
 {
+    use LogitTraits;
+
     private $o_di;
     private $o_db;
     private $o_twig;
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $this->o_di   = $o_di;
         $this->o_twig = $o_di->get('twig');
         $this->o_db   = $o_di->get('db');

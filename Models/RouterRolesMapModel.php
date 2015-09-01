@@ -15,13 +15,15 @@
 **/
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\LogitTraits;
 
-class RouterRolesMapModel extends Base implements ModelInterface
+class RouterRolesMapModel implements ModelInterface
 {
+    use LogitTraits;
+
     private $db_prefix;
     private $db_type;
     private $error_message;
@@ -29,7 +31,6 @@ class RouterRolesMapModel extends Base implements ModelInterface
 
     public function __construct(DbModel $o_db)
     {
-        $this->setPrivateProperties();
         $this->o_db      = $o_db;
         $this->db_type   = $o_db->getDbType();
         $this->db_prefix = $o_db->getDbPrefix();

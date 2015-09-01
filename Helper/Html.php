@@ -9,10 +9,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class Html
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.4
- *  @date 2014-11-15 12:37:15
+ *  @version 1.0.6
+ *  @date 2015-09-01 07:38:42
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.6 - removed abstract class Base, used LogitTraits            - 09/01/2015 wer
  *      v1.0.5 - Refactored to match the Arrays class                     - 07/31/2015 wer
  *      v1.0.4 - moved to the Ritc\Library\Helper namespace               - 11/15/2014 wer
  *      v1.0.3 - changed to implment the changes in Base class            - 09/23/2014 wer
@@ -23,10 +24,12 @@
 **/
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Traits\LogitTraits;
 
-class Html extends Base
+class Html
 {
+    use LogitTraits;
+
     protected $o_arrays;
     protected $o_files;
     private   $o_str;
@@ -39,7 +42,6 @@ class Html extends Base
         $this->o_str    = new Strings;
         $this->o_arrays = new Arrays();
         $this->o_files  = new Files('main.twig', 'templates',  'default', 'Ritc');
-        $this->setPrivateProperties();
     }
 
     public function button($a_button_values = array())

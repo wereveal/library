@@ -17,19 +17,20 @@
 **/
 namespace Ritc\Library\Views;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\RouterModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 
-class RouterAdminView extends Base
+class RouterAdminView
 {
+    use LogitTraits;
+
     private $o_model;
     private $o_twig;
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $this->o_twig  = $o_di->get('twig');
         $o_db          = $o_di->get('db');
         $this->o_model = new RouterModel($o_db);

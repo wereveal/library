@@ -6,25 +6,28 @@
  *  @namespace Ritc/Library/Models
  *  @class GroupsModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.2β
- *  @date 2014-11-15 13:10:18
+ *  @version 1.0.0β3
+ *  @date 2015-09-01 07:41:33
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.2ß - changed to use IOC (Inversion of Control)                              - 11/15/2014 wer
- *      v1.0.1β - extends the Base class, injects the DbModel, clean up                  - 09/23/2014 wer
- *      v1.0.0β - First live version                                                     - 09/15/2014 wer
- *      v0.1.0β - Initial version                                                        - 01/18/2014 wer
+ *      v1.0.0ß3 - removed abstract class Base, used LogitTraits                          - 09/01/2015 wer
+ *      v1.0.0ß2 - changed to use IOC (Inversion of Control)                              - 11/15/2014 wer
+ *      v1.0.0β1 - extends the Base class, injects the DbModel, clean up                  - 09/23/2014 wer
+ *      v1.0.0β0 - First live version                                                     - 09/15/2014 wer
+ *      v0.1.0β  - Initial version                                                        - 01/18/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\LogitTraits;
 
-class GroupsModel extends Base implements ModelInterface
+class GroupsModel implements ModelInterface
 {
+    use LogitTraits;
+
     private $db_prefix;
     private $db_type;
     private $error_message;
@@ -32,7 +35,6 @@ class GroupsModel extends Base implements ModelInterface
 
     public function __construct(DbModel $o_db)
     {
-        $this->setPrivateProperties();
         $this->o_db      = $o_db;
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();

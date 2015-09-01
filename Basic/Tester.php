@@ -35,6 +35,7 @@ use Ritc\Library\Traits\LogitTraits;
 class Tester
 {
     use LogitTraits;
+
     protected $a_test_order;
     protected $a_test_values = array();
     protected $failed_subtests;

@@ -35,19 +35,20 @@
 **/
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 
-class ConstantsHelper extends Base
+class ConstantsHelper
 {
+    use LogitTraits;
+
     private $created = false;
     private static $instance;
     private $o_constants_model;
 
     private function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $o_db = $o_di->get('db');
         $this->o_constants_model = new ConstantsModel($o_db);
         if (defined('DEVELOPER_MODE')) {

@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Views
  *  @class ConstantsAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-01-28 14:49:28
+ *  @version 1.1.0
+ *  @date 2015-09-01 08:01:39
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.1.0   - removed abstract class Base, added LogitTraits       - 09/01/2015 wer
  *      v1.0.0   - first fully working version                          - 01/28/2015 wer
  *      v1.0.0β3 - changed to use the new Di class                      - 11/17/2014 wer
  *      v1.0.0β2 - changed to use Base class and inject database object - 09/24/2014 wer
@@ -18,19 +19,20 @@
 **/
 namespace Ritc\Library\Views;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 
-class ConstantsAdminView extends Base
+class ConstantsAdminView
 {
+    use LogitTraits;
+
     private $o_model;
     private $o_twig;
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $this->o_twig  = $o_di->get('twig');
         $this->o_model = new ConstantsModel($o_di->get('db'));
         if (DEVELOPER_MODE) {

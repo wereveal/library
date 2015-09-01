@@ -16,14 +16,16 @@
  **/
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RolesAdminView;
 
-class RolesAdmimController extends Base implements MangerControllerInterface
+class RolesAdmimController implements MangerControllerInterface
 {
+    use LogitTraits;
+
     private $a_post;
     private $o_di;
     private $o_model;
@@ -33,7 +35,6 @@ class RolesAdmimController extends Base implements MangerControllerInterface
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $this->o_di      = $o_di;
         $o_db            = $o_di->get('db');
         $this->o_router  = $o_di->get('router');

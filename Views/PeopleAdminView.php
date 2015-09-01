@@ -17,7 +17,6 @@
  **/
 namespace Ritc\Library\Views;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
@@ -25,9 +24,12 @@ use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 
-class PeopleAdminView extends Base
+class PeopleAdminView
 {
+    use LogitTraits;
+
     private $o_people_model;
     private $o_group_model;
     private $o_role_model;
@@ -37,14 +39,13 @@ class PeopleAdminView extends Base
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
-        $o_db                = $o_di->get('db');
-        $this->o_people_model  = new PeopleModel($o_db);
-        $this->o_group_model = new GroupsModel($o_db);
-        $this->o_role_model  = new RolesModel($o_db);
-        $this->o_pgm_model   = new PeopleGroupMapModel($o_db);
-        $this->o_grm_model   = new GroupRoleMapModel($o_db);
-        $this->o_twig        = $o_di->get('twig');
+        $o_db                 = $o_di->get('db');
+        $this->o_people_model = new PeopleModel($o_db);
+        $this->o_group_model  = new GroupsModel($o_db);
+        $this->o_role_model   = new RolesModel($o_db);
+        $this->o_pgm_model    = new PeopleGroupMapModel($o_db);
+        $this->o_grm_model    = new GroupRoleMapModel($o_db);
+        $this->o_twig         = $o_di->get('twig');
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people_model->setElog($this->o_elog);

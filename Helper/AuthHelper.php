@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.2.5
- *  @date 2015-08-14 17:02:33
+ *  @version 4.2.6
+ *  @date 2015-09-01 07:34:23
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.2.6 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
  *      v4.2.5 - bug fixes, a change in PeopleModel->readInfo          - 08/14/2015 wer
  *      v4.2.4 - more references to user to person changes             - 08/04/2015 wer
  *      v4.2.3 - refactored references to user into person             - 01/26/2015 wer
@@ -49,15 +50,16 @@
 **/
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Router;
+use Ritc\Library\Traits\LogitTraits;
 
-class AuthHelper extends Base
+class AuthHelper
 {
+    use LogitTraits;
+
     private $db_prefix;
     private $o_db;
     private $o_groups;
@@ -68,7 +70,6 @@ class AuthHelper extends Base
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $this->o_db      = $o_di->get('db');
         $this->o_session = $o_di->get('session');
         $this->o_router  = $o_di->get('router');

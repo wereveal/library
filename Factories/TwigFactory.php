@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Services
  *  @class TwigFactory
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0ß
- *  @date 2014-09-25 16:17:08
+ *  @version 1.0.0
+ *  @date 2015-09-01 07:31:00
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0   - not sure why this is beta. Removed Base abstract class                                - 09/01/2015 wer
  *      v1.0.0ß2 - moved to the Factories namespace
  *      v1.0.0ß1 - moved to the Services namespace                                                       - 11/15/2014 wer
  *      v0.2.0   - changed the name of the method which is used to create/return the object              - 09/25/2014 wer
@@ -24,16 +25,14 @@ namespace Ritc\Library\Factories;
 
 use Twig_Loader_Filesystem;
 use Twig_Environment;
-use Ritc\Library\Abstracts\Base;
 
-class TwigFactory extends Base
+class TwigFactory
 {
     private $o_twig;
     private static $instance = array();
 
     private function __construct($a_twig_config)
     {
-        $this->setPrivateProperties();
         $o_loader = new Twig_Loader_Filesystem($a_twig_config['default_path']);
         foreach ($a_twig_config['additional_paths'] as $path => $namespace ) {
             $o_loader->prependPath($path, $namespace);

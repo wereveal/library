@@ -33,11 +33,13 @@
 **/
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\LocationInterface;
+use Ritc\Library\Traits\LogitTraits;
 
-class Files extends Base implements LocationInterface
+class Files implements LocationInterface
 {
+    use LogitTraits;
+
     const CONFIG_DIR_NAME    = 'config';
     const CSS_DIR_NAME       = 'css';
     const HTML_DIR_NAME      = 'html';
@@ -47,19 +49,15 @@ class Files extends Base implements LocationInterface
     const PRIVATE_DIR_NAME   = 'private';
     const TEMPLATES_DIR_NAME = 'templates';
     const TMP_DIR_NAME       = 'tmp';
-    protected $current_page;
     protected $file_name     = 'no_file.tpl';
     protected $file_dir_name = 'assets';
     protected $namespace;
-    protected $o_elog;
-    protected $private_properties;
     protected $file_w_dir;
     protected $file_w_path;
     protected $theme_name = 'default';
 
     public function __construct($file_name = '', $the_directory = '', $theme_name = '', $namespace = '')
     {
-        $this->setPrivateProperties();
         if ($file_name != '') {
             $this->file_name = $file_name;
         }

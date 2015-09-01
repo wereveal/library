@@ -6,11 +6,12 @@
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β1
- *  @date 2015-07-25 13:44:05
+ *  @version 1.1.0
+ *  @date 2015-09-01 06:56:17
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0β1
+ *      v1.1.0 - added traits     - 09/01/2015 wer
+ *      v1.0.0 - initial version
  *  </pre>
 **/
 namespace Ritc\Library\Helper;
@@ -82,6 +83,7 @@ class ClassMapper
                         $file_real_path = $o_file_info->getRealPath();
                         $file_contents = file_get_contents($file_real_path);
                         $a_tokens = token_get_all($file_contents);
+                        // error_log($file_real_path);
                         $namespace = $this->getNamespace($a_tokens);
                         $classname = $this->getClassName($a_tokens);
                         if (trim($namespace) != '' && trim($classname) != '') {
@@ -103,15 +105,16 @@ class ClassMapper
     }
 
     private function getClassName(array $a_tokens = array()) {
-        $a_tokens2 = $a_tokens;
         foreach ($a_tokens as $key => $a_token) {
             if (is_array($a_token)) {
                 switch ($a_token[0]) {
                     case T_ABSTRACT:
-                        break;
+                        return $a_tokens[$key+4][1];
                     case T_CLASS:
                         return $a_tokens[$key+2][1];
                     case T_INTERFACE:
+                        return $a_tokens[$key+2][1];
+                    case T_TRAIT:
                         return $a_tokens[$key+2][1];
                     default:
                         // do nothing

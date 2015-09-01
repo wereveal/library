@@ -18,20 +18,21 @@
 **/
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\LogitTraits;
 
-class RouterModel extends Base implements ModelInterface
+class RouterModel implements ModelInterface
 {
+    use LogitTraits;
+
     private $db_prefix;
     private $db_type;
     private $o_db;
 
     public function __construct(DbModel $o_db)
     {
-        $this->setPrivateProperties();
         $this->o_db      = $o_db;
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();

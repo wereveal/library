@@ -23,14 +23,16 @@
  **/
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
-use Ritc\Library\Views\ManagerView;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Views\ManagerView;
 
-class ManagerController extends Base implements ControllerInterface
+class ManagerController implements ControllerInterface
 {
+    use LogitTraits;
+
     private $a_route_parts;
     private $a_post_values;
     private $form_action;
@@ -44,7 +46,6 @@ class ManagerController extends Base implements ControllerInterface
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $this->o_di           = $o_di;
         $this->o_router       = $o_di->get('router');
         $this->o_session      = $o_di->get('session');

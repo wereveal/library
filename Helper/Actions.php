@@ -27,10 +27,11 @@
 **/
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Traits\LogitTraits;
 
-class Actions extends Base
+class Actions
 {
+    use LogitTraits;
     protected $a_clean_post;
     protected $a_clean_get;
     protected $a_uri_actions;
@@ -39,15 +40,12 @@ class Actions extends Base
     protected $url_path;
     public function __construct()
     {
-        $this->logIt("Starting __construct", LOG_OFF, __FILE__);
-        $this->setPrivateProperties();
         $this->setCleanPost($_POST);
         $this->setCleanGet($_GET);
         $this->setUriNoGet($_SERVER["REQUEST_URI"]);
         $this->setUriActions();
         $this->setFormAction(array_merge($this->a_clean_get, $this->a_clean_post));
         $this->setUrlPath($this->uri_no_get);
-        $this->logIt("ending __construct", LOG_OFF, __FILE__);
     }
     public function getFormAction()
     {

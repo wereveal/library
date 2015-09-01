@@ -15,22 +15,23 @@
  **/
 namespace Ritc\Library\Views;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 
-class GroupsAdminView extends Base
+class GroupsAdminView
 {
+    use LogitTraits;
+
     private $o_db;
     private $o_groups;
     private $o_twig;
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $this->o_twig  = $o_di->get('twig');
         $this->o_db    = $o_di->get('db');
         $this->o_groups = new GroupsModel($this->o_db);

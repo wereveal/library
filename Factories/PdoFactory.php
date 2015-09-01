@@ -67,7 +67,7 @@ class PdoFactory
      *  @param Di     $o_di
      *  @return object PDO object
     **/
-    public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di = '')
+    public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di)
     {
         list($name, $extension) = explode('.', $config_file);
         if ($extension != 'php' && $extension != 'cfg') { return false; }

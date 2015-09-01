@@ -26,7 +26,6 @@ class ConfigAdminModelTester extends Tester
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $this->o_db     = $o_di->get('db');
         $this->o_twig   = $o_di->get('twig');
         $this->o_config = new ConstantsModel($this->o_db);

@@ -21,14 +21,16 @@
 **/
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PeopleAdminView;
 
-class PeopleAdminController extends Base implements MangerControllerInterface
+class PeopleAdminController implements MangerControllerInterface
 {
+    use LogitTraits;
+
     private $a_route_parts;
     private $a_post_values;
     private $o_di;
@@ -39,7 +41,6 @@ class PeopleAdminController extends Base implements MangerControllerInterface
 
     public function __construct(Di $o_di)
     {
-        $this->setPrivateProperties();
         $this->o_di          = $o_di;
         $o_db                = $o_di->get('db');
         $this->o_view        = new PeopleAdminView($o_di);

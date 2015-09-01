@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Services
  *  @class Session
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.1.6
- *  @date 2015-01-16 11:39:20
+ *  @version 1.3.0
+ *  @date 2015-09-01 07:59:07
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.3.0 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
  *      v1.2.0 - added a couple new method to unset a session var      - 01/16/2015 wer
  *               and a shortcut to reset the session.
  *      v1.1.5 - added phpDoc comments                                 - 01/13/2015 wer
@@ -22,10 +23,12 @@
 **/
 namespace Ritc\Library\Services;
 
-use Ritc\Library\Abstracts\Base;
+use Ritc\Library\Traits\LogitTraits;
 
-class Session extends Base
+class Session
 {
+    use LogitTraits;
+
     private static $instance;
     private $session_id;
     private $session_name;
@@ -33,7 +36,6 @@ class Session extends Base
 
     private function __construct($session_id = '', $session_name = '')
     {
-        $this->setPrivateProperties();
         if ($session_id != '') {
             session_id($session_id);
         }

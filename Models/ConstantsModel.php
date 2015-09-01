@@ -32,13 +32,13 @@ use Ritc\Library\Traits\LogitTraits;
 class ConstantsModel implements ModelInterface
 {
     use LogitTraits;
+
     private $a_constants;
     private $db_prefix;
     private $o_db;
 
     public function __construct(DbModel $o_db)
     {
-        $this->setPrivateProperties();
         $this->o_db        = $o_db;
         $this->db_prefix   = $o_db->getDbPrefix();
         $this->a_constants = $this->selectConstantsList();
