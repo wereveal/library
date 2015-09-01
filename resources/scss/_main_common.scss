@@ -1,0 +1,143 @@
+/* Changes from Bootstrap */
+html { font-size: 13px; }
+body {
+    font-family: 'Lato', Helvetica, sans-serif;
+    font-weight: 400;
+    background-color: $default_body;
+    @media only screen and (max-width: 480px) {
+        padding: 0;
+    }
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Merriweather', serif;
+    margin-top: 0;
+    padding-top: 0;
+}
+h1, h2, h3 { font-weight: 900; }
+h4, h5, h6 { font-weight: 700; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5, h6 { font-size: 1rem; }
+h1, h3, h5 { color: $default_dark; }
+h2, h4, h6 { color: $default_complement; }
+p {
+    font-weight: 400;
+    font-size: 1rem;
+}
+.aright {
+    text-align: right;
+}
+.aleft {
+    text-align: left;
+}
+.bold {
+    font-weight: 900;
+}
+.container {
+    border: 1px solid $default_border;
+    border-radius: 0 2rem 2rem 0;
+    box-shadow: 0.6rem 0.6rem 1rem $default_shadow;
+    padding: 1rem 2rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    background-color: $default_container;
+    .row {
+        background-color: $default_span;
+        padding-right: 2rem;
+        padding-left: 1rem;
+        margin: 0;
+        [class*="col"] {
+            background-color: $default_span;
+            border: 0;
+            padding: 0 .25rem;
+            border-radius: 0;
+            margin-top: .25rem;
+            margin-bottom: .25rem;
+        }
+        &.boxed {
+            [class*="col"] {
+                background-color: $default_span;
+                border: 1px solid $default_border;
+                border-radius: 10px;
+                margin-bottom: 1rem;
+                padding: 1rem 2rem;
+            }
+        }
+        &.normal-row {
+            [class*="col"] {
+                border: 0;
+                padding: 0;
+                border-radius: 0;
+                margin-top: .25rem;
+                margin-bottom: .25rem;
+            }
+        }
+        &.alt-row {
+            [class*="col"] {
+                border: 0;
+                padding: 0;
+                margin-top: .25rem;
+                margin-bottom: .25rem;
+                border-radius: 0;
+                background-color: $default_medium;
+            }
+            background-color: $default_medium;
+        }
+        &.upper {
+            border-radius: 0 2rem 0 0;
+            padding-top: 1rem;
+        }
+        &.lower {
+            border-radius: 0 0 2rem 0;
+        }
+        &.row-inside {
+            padding-left: 0;
+        }
+    }
+    input.hobbit {
+        display: none;
+    }
+}
+.red {
+    color: darkred;
+}
+.green {
+    color: $green_color;
+}
+#login-form {
+    .row {
+        margin-right: 0;
+        margin-left: 0;
+        padding-right: .25rem;
+        padding-left: .25rem;
+    }
+    label {
+        vertical-align: baseline;
+        padding-top: .25rem;
+    }
+}
+.border-radius-top-right {
+    border-top-right-radius: 12px;
+}
+.border-radius-bottom-right {
+    border-bottom-right-radius: 12px;
+}
+.border-radius-top-left {
+    border-top-left-radius: 12px;
+}
+.border-radius-bottom-left {
+    border-bottom-left-radius: 12px;
+}
+.border-radius-left {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+.border-radius-right {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+.pad-right-12 {
+    padding-right: 12px !important;
+}

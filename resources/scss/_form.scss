@@ -1,0 +1,21 @@
+input {
+    &.colorful {
+        background: #FFF !important;
+        border-left: 1px solid #666  !important;
+        border-right: 1px solid #000 !important;
+        border-top: 1px solid #666 !important;
+        border-bottom: 1px solid #000 !important;
+        border-radius: 0 !important;
+        padding-left: .5rem !important;
+    }
+    &.colorful:focus {
+        background: #CFC !important;
+        border-left: 1px solid #090 !important;
+        border-right: 1px solid #0A0 !important;
+        border-top: 1px solid #090 !important;
+        border-bottom: 1px solid #0A0 !important;
+        border-radius: 0 !important;
+        padding-left: .5rem !important;
+    }
+}
+

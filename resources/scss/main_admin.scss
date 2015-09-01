@@ -1,0 +1,13 @@
+@import "color";
+@import "main_common";
+
+.list-header {
+    background-color: $gray_dark !important;
+    color: white;
+    div {
+        background-color: $gray_dark !important;
+        color: white;
+    }
+}
+
+@import "form";
