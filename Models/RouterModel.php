@@ -150,23 +150,17 @@ class RouterModel implements ModelInterface
             WHERE route_id = :route_id
         ";
         $results = $this->o_db->delete($sql, array(':route_id' => $route_id), true);
+        $this->logIt(var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($results) {
-            if ($this->o_db->getAffectedRows() == 0) {
-                $a_results = [
-                    'message' => 'The route was not deleted because it was not found.',
-                    'type'    => 'failure'
-                ];
-            }
-            else {
-                $a_results = [
-                    'message' => 'Success!',
-                    'type'    => 'success'
-                ];
-            }
+            $a_results = [
+                'message' => 'Success!',
+                'type'    => 'success'
+            ];
         }
         else {
+            $message = $this->o_db->getSqlErrorMessage();
             $a_results = [
-                'message' => 'A problem occurred and the route was not deleted.',
+                'message' => $message,
                 'type'    => 'failure'
             ];
         }

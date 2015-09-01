@@ -7,10 +7,11 @@
  *  @namespace Ritc/Library/Services
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.2.4
- *  @date 2015-07-31 16:04:18
+ *  @version 3.2.5
+ *  @date 2015-09-01 10:55:03
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.2.5 - added some additional information to be retrieved                        - 09/01/2015 wer
  *      v3.2.4 - refactoring elsewhere made a small name change here                      - 07/31/2015 wer
  *      v3.2.3 - moved to Services namespace                                              - 11/15/2014 wer
  *      v3.2.1 - bug fix
@@ -793,11 +794,13 @@ class DbModel
             }
             elseif ($single_record && $this->affected_rows > 1) {
                 $this->logIt('The query affected multiple records instead of a single one.', LOG_OFF, $from_method);
+                $this->sql_error_message = 'The query affected multiple records instead of a single one.';
                 return false;
             }
             elseif ($this->affected_rows == 0) {
                 $this->logIt('The query affected no records.', LOG_OFF, $from_method);
-                return true;
+                $this->sql_error_message = 'The query affected no records.';
+                return false;
             }
             else {
                 return true;
