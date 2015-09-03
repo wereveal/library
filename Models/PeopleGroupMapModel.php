@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleGroupMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β5
- *  @date 2015-07-31 16:30:00
+ *  @version 1.0.0β6
+ *  @date 2015-09-03 12:25:50
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β6 - removed abstract Base, implemented LogitTraits        - 09/03/2015 wer
  *      v1.0.0β5 - refactoring elsewhere caused changes here             - 07/31/2015 wer
  *      v1.0.0β4 - refactored user to people                             - 01/26/2015 wer
  *      v1.0.0β3 - extends the Base class, injects the DbModel, clean up - 09/23/2014 wer
@@ -19,13 +20,15 @@
 **/
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\LogitTraits;
 
-class PeopleGroupMapModel extends Base implements ModelInterface
+class PeopleGroupMapModel implements ModelInterface
 {
+    use LogitTraits;
+
     private $db_prefix;
     private $db_type;
     private $o_db;

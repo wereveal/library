@@ -20,10 +20,9 @@
 
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 
-class RouterRolesAdminController extends Base implements MangerControllerInterface
+class RouterRolesAdminController implements MangerControllerInterface
 {
 
 }

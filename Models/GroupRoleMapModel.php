@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class GroupRoleMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β5
- *  @date 2015-01-19 13:20:59
+ *  @version 1.0.0β6
+ *  @date 2015-09-03 12:23:20
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β6 - Removed abstract class Base, use LogitTraits                  - 09/03/2015 wer
  *      v1.0.0β5 - Changed name to match DB change                               - 01/19/2015 wer
  *      v1.0.0ß4 - reverted back to injecting DbModel                            - 11/17/2014 wer
  *      v1.0.0ß3 - changed to use DI/IOC                                         - 11/15/2014 wer
@@ -20,13 +21,15 @@
 **/
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\LogitTraits;
 
-class GroupRoleMapModel extends Base implements ModelInterface
+class GroupRoleMapModel implements ModelInterface
 {
+    use LogitTraits;
+
     private $db_prefix;
     private $db_type;
     private $o_db;

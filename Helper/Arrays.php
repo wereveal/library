@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.1.0
- *  @date 2015-07-31 16:14:43
+ *  @version 2.2.0
+ *  @date 2015-09-03 12:20:39
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.2.0 - Removed use of abstract class Base                                  - 09/03/2015 wer
  *      v2.1.0 - After looking at the inconsistency, changed to be more consistent   - 07/31/2015 wer
  *               Also changed variable name to be more descriptive than array.
  *      v2.0.1 - oops, missed one to be static, changed its name                     - 07/31/2015 wer
@@ -27,9 +28,7 @@
 **/
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Abstracts\Base;
-
-class Arrays extends Base
+class Arrays
 {
     /**
      *  Modifies array values with htmlentities and strips unsafe php commands.
