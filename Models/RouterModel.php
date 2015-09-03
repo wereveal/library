@@ -6,14 +6,15 @@
  *  @namespace Ritc/Library/Models
  *  @class RouterModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1
- *  @date 2015-07-31 16:26:55
+ *  @version 1.0.2
+ *  @date 2015-09-03 14:13:31
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.1   - Refactoring elsewhere necessitated changes here                                      - 07/31/2015 wer
- *      v1.0.0   - first working version                                                                - 01/28/2015 wer
- *      v1.0.0ß2 - Changed to match some namespace changes, and bug fix                                 - 11/15/2014 wer
- *      v1.0.0β1 - First live version                                                                   - 11/11/2014 wer
+ *      v1.0.2   - Database structure change reflected here.            - 09/03/2015 wer
+ *      v1.0.1   - Refactoring elsewhere necessitated changes here      - 07/31/2015 wer
+ *      v1.0.0   - first working version                                - 01/28/2015 wer
+ *      v1.0.0β2 - Changed to match some namespace changes, and bug fix - 11/15/2014 wer
+ *      v1.0.0β1 - First live version                                   - 11/11/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
@@ -98,7 +99,7 @@ class RouterModel implements ModelInterface
             $where = " ORDER BY 'route_path'";
         }
         $sql = "
-            SELECT route_id, route_path, route_class, route_method, route_action, route_default
+            SELECT route_id, route_path, route_class, route_method, route_action, route_can_edit
             FROM {$this->db_prefix}routes
             {$where}
         ";
@@ -145,6 +146,11 @@ class RouterModel implements ModelInterface
     public function delete($route_id = -1)
     {
         if ($route_id == -1) { return false; }
+        $search_sql = "SELECT route_can_edit FROM {$this->db_prefix}routes WHERE route_id = :route_id";
+        $search_results = $this->o_db->search($search_sql, array(':route_id' => $route_id));
+        if ($search_results[0]['route_can_edit'] === 0) {
+            return ['message' => 'Sorry, that route can not be deleted.', 'type' => 'failure'];
+        }
         $sql = "
             DELETE FROM {$this->db_prefix}routes
             WHERE route_id = :route_id
@@ -167,28 +173,6 @@ class RouterModel implements ModelInterface
         return $a_results;
     }
 
-    /**
-     * Returns the list of roles for a particular route.
-     * @param int $route_id
-     * @return bool|array
-     */
-    public function readRouteRoles($route_id = -1)
-    {
-        if ($route_id == -1) {
-            return false;
-        }
-        $sql = "
-            SELECT rt.route_id, ro.role_id, ro.role_level
-            FROM {$this->db_prefix}routes as rt,
-                 {$this->db_prefix}roles as ro,
-                 {$this->db_prefix}routes_roles_map as rrm
-            WHERE rt.route_id = :route_id
-            AND rrm.route_id  = rt.route_id
-            AND rrm.role_id   = ro.role_id
-        ";
-        $a_search_values = [':route_id' => $route_id];
-        return $this->o_db->search($sql, $a_search_values);
-    }
     /**
      * Implements the ModelInterface method, getErrorMessage.
      * return string

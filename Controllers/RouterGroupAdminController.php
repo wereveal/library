@@ -1,12 +1,12 @@
 <?php
 /**
- *  @brief Controller for the Router to Roles Admin page.
- *  @detail Allows one to map which routes have specific role access.
- *      If you don't have the role, you can't go there.
- *  @file RouterRolesAdminController.php
+ *  @brief Controller for the Router to Group Admin page.
+ *  @detail Allows one to map which routes have specific group access.
+ *      If you are not in the group, you can't go there.
+ *  @file RouterGroupAdminController.php
  *  @ingroup ritc_library controllers
  *  @namespace Ritc/Library/Controllers
- *  @class RouterRolesAdminController
+ *  @class RouterGroupAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.0ß1
  *  @date 2015-08-04 04:25:11
@@ -20,10 +20,28 @@
 
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Abstracts\Base;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 
-class RouterRolesAdminController extends Base implements MangerControllerInterface
+class RouterGroupAdminController implements MangerControllerInterface
 {
-
+    public function render()
+    {
+        return '';
+    }
+    public function save()
+    {
+        return false;
+    }
+    public function update()
+    {
+        return false;
+    }
+    public function verifyDelete()
+    {
+        return '';
+    }
+    public function delete()
+    {
+        return false;
+    }
 }

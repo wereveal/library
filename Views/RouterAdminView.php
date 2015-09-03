@@ -10,9 +10,10 @@
  *  @date 2015-01-28 14:45:02
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0   - first working version - 01/28/2015 wer
- *      v1.0.0β2 - changed to use DI/IOC - 11/15/2014 wer
- *      v1.0.0β1 - Initial version       - 11/14/2014 wer
+ *      v1.0.1   - change in database structure forced change here  - 09/03/2015 wer
+ *      v1.0.0   - first working version                            - 01/28/2015 wer
+ *      v1.0.0β2 - changed to use DI/IOC                            - 11/15/2014 wer
+ *      v1.0.0β1 - Initial version                                  - 11/14/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Views;
@@ -53,12 +54,12 @@ class RouterAdminView
             'a_message' => array(),
             'a_routes' => array(
                 [
-                    'route_id',
-                    'route_path',
-                    'route_class',
-                    'route_method',
-                    'route_action',
-                    'route_args'
+                    'route_id'       => '',
+                    'route_path'     => '',
+                    'route_class'    => '',
+                    'route_method'   => '',
+                    'route_action'   => '',
+                    'route_can_edit' => 0
                 ]
             ),
             'tolken'  => $_SESSION['token'],
@@ -76,9 +77,9 @@ class RouterAdminView
                 )
             );
         }
-        $a_routes = $this->o_model->read(array(), ['order_by' => 'route_default, route_path']);
+        $a_routes = $this->o_model->read(array(), ['order_by' => 'route_can_edit DESC, route_path']);
         $this->logIt(
-            'a_configs: ' . var_export($a_routes, TRUE),
+            'a_routes: ' . var_export($a_routes, TRUE),
             LOG_OFF,
             __METHOD__ . '.' . __LINE__
         );

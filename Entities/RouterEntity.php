@@ -8,7 +8,7 @@
       `route_class` varchar(128) NOT NULL,
       `route_method` varchar(64) DEFAULT NULL,
       `route_action` varchar(255) NOT NULL,
-      `route_default` tinyint(1) DEFAULT 1
+      `route_can_edit` tinyint(1) DEFAULT 1
       PRIMARY KEY (`router_id`),
       UNIQUE KEY `uri_path` (`uri_path``)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -18,7 +18,7 @@
       `route_class` varchar(128) NOT NULL,
       `route_method` varchar(64) DEFAULT NULL,
       `route_action` varchar(255) NOT NULL,
-      `route_default` tinyint(1) DEFAULT 1
+      `route_can_edit` tinyint(1) DEFAULT 1
       PRIMARY KEY (`router_id`),
       UNIQUE KEY `uri_path` (`uri_path``)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -35,7 +35,7 @@ class RouterEntity implements EntityInterface
     private $route_class;
     private $route_method;
     private $route_action;
-    private $route_default;
+    private $route_can_edit;
 
     /**
      * Gets all the entity properties.
@@ -44,12 +44,12 @@ class RouterEntity implements EntityInterface
     public function getAllProperties()
     {
         return array(
-            'route_id'      => $this->route_id,
-            'route_path'    => $this->route_path,
-            'route_class'   => $this->route_class,
-            'route_method'  => $this->route_method,
-            'route_action'  => $this->route_action,
-            'route_default' => $this->route_default
+            'route_id'       => $this->route_id,
+            'route_path'     => $this->route_path,
+            'route_class'    => $this->route_class,
+            'route_method'   => $this->route_method,
+            'route_action'   => $this->route_action,
+            'route_can_edit' => $this->route_can_edit
         );
     }
     /**
@@ -60,12 +60,12 @@ class RouterEntity implements EntityInterface
     public function setAllProperties(array $a_entity = array())
     {
         $a_default_values = array(
-            'route_id'      => 0,
-            'route_path'    => '',
-            'route_class'   => '',
-            'route_method'  => '',
-            'route_action'  => '',
-            'route_default' => ''
+            'route_id'       => 0,
+            'route_path'     => '',
+            'route_class'    => '',
+            'route_method'   => '',
+            'route_action'   => '',
+            'route_can_edit' => 1
         );
         foreach ($a_default_values as $key_name => $default_value) {
             if (array_key_exists($key_name, $a_entity)) {
@@ -163,15 +163,15 @@ class RouterEntity implements EntityInterface
      */
     public function getRouteDefault()
     {
-        return $this->route_default;
+        return $this->route_can_edit;
     }
 
     /**
-     * @param int $route_default
+     * @param int $route_can_edit
      */
-    public function setRouteDefault($route_default)
+    public function setRouteDefault($route_can_edit)
     {
-        $this->route_default = $route_default;
+        $this->route_can_edit = $route_can_edit;
     }
 
 }

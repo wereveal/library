@@ -43,7 +43,7 @@
         {% for row in a_routes %}
             {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
-            {% if row.route_default == 0 %}
+            {% if row.route_can_edit == 1 %}
             <form action="{{ public_dir }}/manager/routes/update/" method="post">
                 <div class="col-md-4"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_path]">Route Path: </label><input type="text" name="route[route_path]" value="{{ row.route_path }}" size="40" maxlength="64" class="colorful"/></div>
                 <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="{{ row.route_class }}" size="20" maxlength="32" class="colorful"/></div>
@@ -59,7 +59,7 @@
                 </div>
             </form>
             {% else %}
-                {# Disabled so the list is shorter and easier to use
+                {# Disabled so the list is shorter and easier to use, don't want the non-editable records being accidently edited.
                 <div class="col-md-4"><span class="visible-sm-inline-block visible-xs-inline-block">Route Path: </span>{{ row.route_path }}</div>
                 <div class="col-md-2"><span class="visible-sm-inline-block visible-xs-inline-block">Route Class: </span>{{ row.route_class }}</div>
                 <div class="col-md-2"><span class="visible-sm-inline-block visible-xs-inline-block">Route Method: </span>{{ row.route_method }}</div>
