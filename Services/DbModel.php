@@ -374,12 +374,12 @@ class DbModel
     public function bindValues(array $a_values = array(), \PDOStatement $o_pdo_stmt)
     {
         $meth = __METHOD__ . '.';
-        $this->logIt("bind array: " . var_export($a_values, true), LOG_ON, $meth . __LINE__);
+        $this->logIt("bind array: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         if (Arrays::isAssocArray($a_values)) {
             $a_values = $this->prepareKeys($a_values);
-            $this->logIt("prepared array: " . var_export($a_values, true), LOG_ON, $meth . __LINE__);
+            $this->logIt("prepared array: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
             foreach ($a_values as $key => $value) {
-                $this->logIt("Value: " . var_export($value, true), LOG_ON, $meth . __LINE__);
+                $this->logIt("Value: " . var_export($value, true), LOG_OFF, $meth . __LINE__);
                 if (is_array($key) || is_array($value)) { return false; }
                 if ($o_pdo_stmt->bindValue($key, $value) === false) {
                     $a_error = $o_pdo_stmt->errorInfo();

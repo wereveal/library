@@ -8,10 +8,13 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.2.6
- *  @date 2015-09-01 07:34:23
+ *  @version 4.3.0
+ *  @date 2015-09-03 16:57:01
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.3.0 - two changes. isDefaultPerson is now isImmutablePerson - 09/03/2015 wer
+ *               isRouteAllowed now checks for group to route mapping
+ *               as well as role to route mapping, defaults to group.
  *      v4.2.6 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
  *      v4.2.5 - bug fixes, a change in PeopleModel->readInfo          - 08/14/2015 wer
  *      v4.2.4 - more references to user to person changes             - 08/04/2015 wer
@@ -238,14 +241,14 @@ class AuthHelper
      *  @param string|int $person can be the person id or the person name.
      *  @return bool true false
      */
-    public function isDefaultPerson($person = -1)
+    public function isImmutablePerson($person = -1)
     {
         if ($person == -1) {
             return false;
         }
         $a_person = $this->o_people->readInfo($person);
-        if (isset($a_person['is_default'])) {
-            if ($a_results['is_default'] == 1) {
+        if (isset($a_person['is_immutable'])) {
+            if ($a_person['is_immutable'] == 1) {
                 return true;
             }
         }
@@ -272,21 +275,37 @@ class AuthHelper
         }
         return false;
     }
-
     /**
      * Checks to see if the person has a valid role for the route.
      * @param int $people_id
+     * @param bool $is_group defaults to true, otherwise it uses a route
      * @return bool
      */
-    public function isRouteAllowed($people_id = -1)
+    public function isRouteAllowed($people_id = -1, $is_group = true)
     {
-        $a_allowed_roles = $this->o_router->getAllowedRoles();
-        $a_person = $this->o_people->readInfo(['people_id' => $people_id]);
-        if ($a_person !== false && count($a_person) === 1) {
-            foreach($a_person['roles'] as $a_role) {
-                foreach ($a_allowed_roles as $a_allowed_role) {
-                    if ($a_role['role_id'] == $a_allowed_role['role_id']) {
-                        return true;
+        $meth = __METHOD__ . '.';
+        $a_person = $this->o_people->readInfo($people_id);
+        $this->logIt(var_export($a_person, true), LOG_OFF, $meth . __LINE__);
+        if ($a_person !== false) {
+            if ($is_group) {
+                $a_allowed_groups = $this->o_router->getAllowedGroups();
+                $this->logIt(var_export($a_allowed_groups, true), LOG_OFF, $meth . __LINE__);
+                foreach($a_person['groups'] as $a_group) {
+                    foreach ($a_allowed_groups as $a_allowed_group) {
+                        if ($a_group['group_id'] == $a_allowed_group['group_id']) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            else {
+                $a_allowed_roles = $this->o_router->getAllowedRoles();
+                $this->logIt(var_export($a_allowed_roles, true), LOG_OFF, $meth . __LINE__);
+                foreach($a_person['roles'] as $a_role) {
+                    foreach ($a_allowed_roles as $a_allowed_role) {
+                        if ($a_role['role_id'] == $a_allowed_role['role_id']) {
+                            return true;
+                        }
                     }
                 }
             }

@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0ß7
- *  @date 2015-08-04 11:31:44
+ *  @version 1.0.0ß8
+ *  @date 2015-09-03 16:32:48
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0ß8 - more changes to the readInfo method                           - 09/03/2015 wer
  *      v1.0.0ß7 - had to rewrite the sql for the readInfo method                - 08/04/2015 wer
  *      v1.0.0ß6 - refactoring elsewhere caused changes here                     - 07/31/2015 wer
  *      v1.0.0ß5 - refactoring method name to reflect what is happening better   - 01/06/2015 wer
@@ -46,7 +47,7 @@ class PeopleModel implements ModelInterface
     ### Basic CRUD commands, required by interface, deals only with the {$this->db_prefix}user table ###
     /**
      *  Creates a new user record in the user table.
-     *  @param array $a_values required array('login_id', 'real_name', 'short_name', 'password'), optional key=>values 'is_active' and 'is_default'
+     *  @param array $a_values required array('login_id', 'real_name', 'short_name', 'password'), optional key=>values 'is_active' and 'is_immutable'
      *  @return int|bool
     **/
     public function create(array $a_values = array())
@@ -64,14 +65,14 @@ class PeopleModel implements ModelInterface
         if ((isset($a_values['is_active']) && $a_values['is_active'] == '') || !isset($a_values['is_active'])) {
             $a_values['is_active'] = 1;
         }
-        if ((isset($a_values['is_default']) && $a_values['is_default'] == '') || !isset($a_values['is_default'])) {
-            $a_values['is_default'] = 0;
+        if ((isset($a_values['is_immutable']) && $a_values['is_immutable'] == '') || !isset($a_values['is_immutable'])) {
+            $a_values['is_immutable'] = 0;
         }
         $sql = "
             INSERT INTO {$this->db_prefix}people
-                (login_id, real_name, short_name, password, is_active, is_default)
+                (login_id, real_name, short_name, password, is_active, is_immutable)
             VALUES
-                (:login_id, :real_name, :short_name, :password, :is_active, :is_default)
+                (:login_id, :real_name, :short_name, :password, :is_active, :is_immutable)
         ";
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}people")) {
             $ids = $this->o_db->getNewIds();
@@ -99,7 +100,7 @@ class PeopleModel implements ModelInterface
                 'login_id',
                 'real_name',
                 'short_name',
-                'is_default',
+                'is_immutable',
                 'is_active'
             );
             $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
@@ -119,7 +120,7 @@ class PeopleModel implements ModelInterface
                 password,
                 is_logged_in,
                 is_active,
-                is_default,
+                is_immutable,
                 created_on,
                 bad_login_count,
                 bad_login_ts
@@ -161,7 +162,7 @@ class PeopleModel implements ModelInterface
             'password',
             'is_logged_in',
             'is_active',
-            'is_default'
+            'is_immutable'
         );
         foreach ($a_possible_keys as $key_name) {
             if (array_key_exists($key_name, $a_values)) {
@@ -408,57 +409,98 @@ class PeopleModel implements ModelInterface
     **/
     public function readInfo($people_id = '')
     {
+        $meth = __METHOD__ . '.';
         if ($people_id == '') {
             return array();
         }
         if (ctype_digit($people_id)) {
-            $where       = "p.people_id = :people_id";
-            $a_where     = [':people_id' => $people_id];
+            $where          = "p.people_id = :people_id";
+            $a_where_values = [':people_id' => $people_id];
         }
         else {
-            $where       = "p.login_id = :login_id";
-            $a_where     = [':login_id' => $people_id];
+            $where          = "p.login_id = :login_id";
+            $a_where_values = [':login_id' => $people_id];
         }
         $sql = "
             SELECT DISTINCT p.people_id, p.login_id, p.real_name, p.short_name,
                 p.password, p.is_logged_in, p.bad_login_count, p.bad_login_ts,
-                p.is_active, p.is_default, p.created_on,
+                p.is_active, p.is_immutable, p.created_on,
                 g.group_id, g.group_name, g.group_description,
                 r.role_id, r.role_level, r.role_name
             FROM {$this->db_prefix}people as p
-            JOIN {$this->db_prefix}groups as g 
+            JOIN {$this->db_prefix}groups as g
             JOIN {$this->db_prefix}people_group_map as pgm
                 ON p.people_id = pgm.people_id
-                AND pgm.group_id= g.group_id
+                AND pgm.group_id = g.group_id
             JOIN {$this->db_prefix}roles as r
             JOIN {$this->db_prefix}group_role_map as grm
                 ON grm.group_id = g.group_id
                 AND grm.role_id = r.role_id
             WHERE {$where}
-            ORDER BY r.role_level ASC
+            ORDER BY r.role_level ASC, g.group_name ASC
         ";
-        $this->logIt("Select User: {$sql}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $results = $this->o_db->search($sql, $a_where);
-        if (isset($results[0]) && is_array($results[0])) {
-            $a_roles = array();
-            foreach ($results as $key => $person) {
-                $a_roles[] = [
-                    'people_id'  => $person['people_id'],
-                    'role_id'    => $person['role_id'],
-                    'role_level' => $person['role_level'],
-                    'role_name'  => $person['role_name']
-                ];
-            }
-            if (($results[0]['people_id'] == $people_id)
-             || ($results[0]['login_id'] == $people_id)) {
-                $a_person = $results[0];
+        $this->logIt("Select User: {$sql}", LOG_OFF, $meth . __LINE__);
+        $this->logIt("a_where_values: " . var_export($a_where_values, true), LOG_OFF, $meth . __LINE__);
+        $a_people = $this->o_db->search($sql, $a_where_values);
+        $this->logIt("a_people: " . var_export($a_people, true), LOG_OFF, $meth);
+        if (isset($a_people[0]) && is_array($a_people[0])) {
+            if (($a_people[0]['people_id'] == $people_id) || ($a_people[0]['login_id'] == $people_id)) {
+                $a_roles = array();
+                $a_groups = array();
+                foreach ($a_people as $key => $person) {
+                    $a_roles[] = [
+                        'role_id'    => $person['role_id'],
+                        'role_level' => $person['role_level'],
+                        'role_name'  => $person['role_name']
+                    ];
+                    $a_groups[] = [
+                        'group_id'          => $person['group_id'],
+                        'group_name'        => $person['group_name'],
+                        'group_description' => $person['group_description']
+                    ];
+                }
+                foreach ($a_roles as $key => $row) {
+                    $a_role_id[$key] = $row['role_id'];
+                }
+                array_multisort($a_role_id, SORT_ASC, $a_roles);
+                foreach ($a_groups as $key => $row) {
+                    $a_group_id[$key] = $row['group_id'];
+                }
+                array_multisort($a_group_id, SORT_ASC, $a_groups);
+
+                $previous_role = '';
+                foreach ($a_roles as $key => $a_role) {
+                    if ($a_role['role_id'] == $previous_role) {
+                        unset($a_roles[$key]);
+                    }
+                    else {
+                        $previous_role = $a_role['role_id'];
+                    }
+                }
+                $previous_group = '';
+                foreach ($a_groups as $key => $a_group) {
+                    if ($a_group['group_id'] == $previous_group) {
+                        unset($a_groups[$key]);
+                    }
+                    else {
+                        $previous_group = $a_group['group_id'];
+                    }
+                }
+                $a_person = $a_people[0];
                 unset($a_person['role_id']);
                 unset($a_person['role_level']);
                 unset($a_person['role_name']);
+                unset($a_person['group_id']);
+                unset($a_person['group_name']);
+                unset($a_person['group_description']);
                 $a_person['roles'] = $a_roles;
-                $this->logIt("Found Person: " . var_export($a_person, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $a_person['groups'] = $a_groups;
+                $this->logIt("Found Person: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
                 return $a_person;
             }
+        }
+        else {
+            $this->logIt("Did not find person. {$sql}", LOG_OFF, $meth);
         }
         return array();
     }

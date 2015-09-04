@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Entities
  *  @class PeopleEntity
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-07-29 11:41:54
+ *  @version 1.1.0
+ *  @date 2015-09-03 15:31:12
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.1.0 - changed is_default to is_immutable to be more descriptive - 09/03/2015 wer
  *      v1.0.0 - finalized       - 07/29/2015 wer
  *      v0.1.0 - Initial version - 09/11/2014 wer
  *  </pre>
@@ -25,7 +26,7 @@
       `short_name` varchar(8) DEFAULT NULL,
       `password` varchar(128) NOT NULL,
       `is_logged_in` tinyint(2) NOT NULL DEFAULT '0',
-      `is_default` tinyint(1) NOT NULL DEFAULT '0',
+      `is_immutable` tinyint(1) NOT NULL DEFAULT '0',
       `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
       `bad_login_count` int(11) NOT NULL DEFAULT '0',
       `bad_login_ts` int(11) NOT NULL DEFAULT '0',
@@ -38,7 +39,7 @@
     ALTER TABLE `dbPrefix_people`
     MODIFY `people_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=1;
 
-    INSERT INTO `dbPrefix_people` (`people_id`, `login_id`, `real_name`, `short_name`, `password`, `is_default`, `created_on`, `bad_login_count`, `bad_login_ts`, `is_active`) VALUES
+    INSERT INTO `dbPrefix_people` (`people_id`, `login_id`, `real_name`, `short_name`, `password`, `is_immutable`, `created_on`, `bad_login_count`, `bad_login_ts`, `is_active`) VALUES
     (1, 'SuperAdmin', 'Super Admin', 'GSA', '$2y$10$Fj3/Wt2m8WB6qXFHHpCc2u6Nz4o5pxzNE8pZLlWcYQOEqR0yUE6Fi', 1, '2012-08-12 02:55:28', 0, 0, 1);
  *
  *  PostgreSQL
@@ -50,8 +51,8 @@
         short_name character varying(16) DEFAULT NULL::character varying,
         password character varying(510) NOT NULL,
         is_active boolean NOT NULL,
-        is_default boolean NOT NULL,
-        is_logged_in boolean DEFAULT 0 NOT NULL, 
+        is_immutable boolean NOT NULL,
+        is_logged_in boolean DEFAULT 0 NOT NULL,
         created_on timestamp without time zone DEFAULT now() NOT NULL,
         bad_login_count integer DEFAULT 0 NOT NULL,
         bad_login_ts integer DEFAULT 0 NOT NULL
@@ -61,7 +62,7 @@
     ALTER TABLE ONLY {dbPrefix}people
         ADD CONSTRAINT {dbPrefix}people_login_id_key UNIQUE (login_id);
 
-    INSERT INTO dbPrefix_people (people_id, login_id, real_name, short_name, password, is_active, is_default, created_on, bad_login_count, bad_login_ts) VALUES
+    INSERT INTO dbPrefix_people (people_id, login_id, real_name, short_name, password, is_active, is_immutable, created_on, bad_login_count, bad_login_ts) VALUES
     (1, 'SuperAdmin', 'Super Admin', 'GSA', '9715ab56587dd7b748c71644d014250a26b479f28dfdea9927398e3ec1f221ac83da247d016052bb8ee8334320d74c70e1ce48afcc9114d7d837bfc88abb0bc4', 1, 1, '2012-08-11 21:55:28', 0, 0);
 **/
 namespace Ritc\Library\Entities;
@@ -79,7 +80,7 @@ class PeopleEntity implements EntityInterface
     private $bad_login_count = 0;
     private $bad_login_ts = 0;
     private $is_active = 0;
-    private $is_default = 0;
+    private $is_immutable = 0;
     private $created_on = 0;
 
     /**
@@ -98,7 +99,7 @@ class PeopleEntity implements EntityInterface
             'bad_login_count' => $this->bad_login_count,
             'bad_login_ts'    => $this->bad_login_ts,
             'is_active'       => $this->is_active,
-            'is_default'      => $this->is_default,
+            'is_immutable'    => $this->is_immutable,
             'created_on'      => $this->created_on,
         );
     }
@@ -119,7 +120,7 @@ class PeopleEntity implements EntityInterface
             'bad_login_count' => -1,
             'bad_login_ts'    => 0,
             'is_active'       => 0,
-            'is_default'      => 0,
+            'is_immutable'      => 0,
             'created_on'      => 0,
         );
         foreach ($a_needed_keys as $key_name => $default_value) {
@@ -189,18 +190,18 @@ class PeopleEntity implements EntityInterface
         return $this->is_active;
     }
     /**
-     * @param int $is_default
+     * @param int $is_immutable
      */
-    public function setIsDefault($is_default)
+    public function setIsImmutable($is_immutable)
     {
-        $this->is_default = $is_default;
+        $this->$is_immutable = $is_immutable;
     }
     /**
      * @return int
      */
-    public function getIsDefault()
+    public function getIsImmutable()
     {
-        return $this->is_default;
+        return $this->is_immutable;
     }
     /**
      * @param string $password

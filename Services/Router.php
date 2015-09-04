@@ -6,22 +6,25 @@
  *  @namespace Ritc/Library/Services
  *  @class Router
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0 β6
- *  @date 2015-09-01 07:56:00
+ *  @version 1.0.0β6
+ *  @date 2015-09-03 16:49:31
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0β6 - Removed abstract class Base, added LogitTraits                            - 09/01/2015 wer
- *      v1.0.0β5 - changed several properties to be static (just in case)                    - 01/06/2015 wer
- *      v1.0.0β4 - changed to use Di class for DI/IOC.                                       - 12/10/2014 wer
- *      v1.0.0β3 - added form_action class property.                                         - 12/05/2014 wer
+ *      v1.0.0β7 - Added Allowed Groups to the class.                       - 09/03/2015 wer
+ *                 Groups can now be mapped to the route.
+ *      v1.0.0β6 - Removed abstract class Base, added LogitTraits           - 09/01/2015 wer
+ *      v1.0.0β5 - changed several properties to be static (just in case)   - 01/06/2015 wer
+ *      v1.0.0β4 - changed to use Di class for DI/IOC.                      - 12/10/2014 wer
+ *      v1.0.0β3 - added form_action class property.                        - 12/05/2014 wer
  *                 Added setter and getters for form_action class property.
- *      v1.0.0β2 - moved to Services namespace                                               - 11/15/2014 wer
- *      v1.0.0β1 - bug fixes                                                                 - 11/14/2014 wer
- *      v1.0.0β0 - initial attempt to make this                                              - 09/25/2014 wer
+ *      v1.0.0β2 - moved to Services namespace                              - 11/15/2014 wer
+ *      v1.0.0β1 - bug fixes                                                - 11/14/2014 wer
+ *      v1.0.0β0 - initial attempt to make this                             - 09/25/2014 wer
 **/
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Models\RouterGroupMapModel;
 use Ritc\Library\Models\RouterModel;
 use Ritc\Library\Models\RouterRolesMapModel;
 use Ritc\Library\Traits\LogitTraits;
@@ -34,6 +37,7 @@ class Router
     private $a_post;
     private $a_route_parts;
     private $o_model;
+    private $o_rgm;
     private $o_rrm;
     public static $form_action;
     public static $route_action;
@@ -46,6 +50,7 @@ class Router
         $o_db = $o_di->get('db');
         $this->o_model  = new RouterModel($o_db);
         $this->o_rrm = new RouterRolesMapModel($o_db);
+        $this->o_rgm = new RouterGroupMapModel($o_db);
         $this->setRoutePath();
         $this->setGet();
         $this->setPost();
@@ -81,8 +86,12 @@ class Router
         if ($a_results !== false && count($a_results) === 1) {
             $a_route_parts                = $a_results[0];
             $a_rrm_results                = $this->o_rrm->read(['route_id' => $a_route_parts['route_id']]);
-            if ($a_rrm_results !== false && count($a_results) > 0) {
+            if ($a_rrm_results !== false && count($a_rrm_results) > 0) {
                 $a_route_parts['roles']   = $a_rrm_results;
+            }
+            $a_rgm_results                = $this->o_rgm->read(['route_id' => $a_route_parts['route_id']]);
+            if ($a_rgm_results !== false && count($a_rgm_results) > 0) {
+                $a_route_parts['groups']  = $a_rgm_results;
             }
             $a_route_parts['get']         = $this->a_get;
             $a_route_parts['post']        = $this->a_post;
@@ -97,6 +106,7 @@ class Router
                 'route_method' => '',
                 'route_action' => '',
                 'roles'        => array(),
+                'groups'       => array(),
                 'get'          => $this->a_get,
                 'post'         => $this->a_post,
                 'form_action'  => self::$form_action
@@ -108,6 +118,14 @@ class Router
     }
 
     ### GETters and SETters ###
+    /**
+     * Gets the groups that are allowed to access this route.
+     * @return array
+     */
+    public function getAllowedGroups()
+    {
+        return $this->a_route_parts['groups'];
+    }
     /**
      * Gets the roles that are allowed to access this route.
      * return array $a_allowed_roles
@@ -195,7 +213,7 @@ class Router
      *  @return bool
      */
     public function setFormAction(array $a_post = array())
-    {   
+    {
         if ($a_post == array()) {
             $a_post = $this->a_post;
         }
