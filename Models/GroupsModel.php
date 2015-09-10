@@ -160,7 +160,7 @@ class GroupsModel implements ModelInterface
             'roles'
         );
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            $this->logIt("Didn't have required keys!", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Didn't have required keys!", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
             $this->logIt(var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return false;
         }
@@ -175,7 +175,6 @@ class GroupsModel implements ModelInterface
                     foreach($a_roles as $role_id) {
                         $a_grm = ['group_id' => $new_id, 'role_id' => $role_id];
                         if (!$o_grm->create($a_grm)) {
-                            $this->error_message = $this->o_db->getSqlErrorMessage();
                             $rollback = true;
                             break;
                         }
@@ -200,6 +199,7 @@ class GroupsModel implements ModelInterface
      */
     public function updateWithRoles(array $a_values = array())
     {
+        $meth = __METHOD__ . '.';
         if (   !isset($a_values['group_id'])
             || $a_values['group_id'] == ''
             || !ctype_digit($a_values['group_id'])
@@ -215,14 +215,23 @@ class GroupsModel implements ModelInterface
         }
         $a_roles = $a_values['roles'];
         unset($a_values['roles']);
+        $this->logIt('Roles: ' . var_export($a_roles, true), LOG_OFF, $meth . __LINE__);
         $commit = true;
         if ($this->o_db->startTransaction()) {
             if ($this->update($a_values)) {
                 $o_grm = new GroupRoleMapModel($this->o_db);
-                if ($o_grm->deleteByGroupId($a_values['group_id'])) {
-                    foreach($a_roles as $a_role) {
-                        if (!$o_grm->create($a_role)) {
+                $results = $o_grm->deleteByGroupId($a_values['group_id']);
+                $this->logIt("Delete Results: " . $results, LOG_OFF, $meth . __LINE__);
+                if ($results) {
+                    foreach($a_roles as $role_id) {
+                        $a_new_grm_values = [
+                            'group_id' => $a_values['group_id'],
+                            'role_id'  => $role_id
+                        ];
+                        $results = $o_grm->create($a_new_grm_values);
+                        if (!$results) {
                             $commit = false;
+                            $this->logIt("Could not create new group role map!", LOG_OFF, $meth . __LINE__);
                             $this->error_message = $this->o_db->getSqlErrorMessage();
                             break;
                         }

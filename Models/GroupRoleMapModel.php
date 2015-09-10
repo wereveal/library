@@ -49,6 +49,7 @@ class GroupRoleMapModel implements ModelInterface
     **/
     public function create(array $a_values = array())
     {
+        $meth = __METHOD__ . '.';
         if ($a_values == array()) { return false; }
         $a_required_keys = [
             'group_id',
@@ -61,9 +62,10 @@ class GroupRoleMapModel implements ModelInterface
             INSERT INTO {$this->db_prefix}group_role_map (group_id, role_id)
             VALUES (:group_id, :role_id)
         ";
+        $this->logIt("create values: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}group_role_map")) {
             $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
             return $ids[0];
         }
         else {

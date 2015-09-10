@@ -28,7 +28,7 @@
                 <form action="{{ public_dir }}/manager/groups/save/" method= "post">
                     <div class="row row-inside">
                         <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_name]">Group Name: </label><input type="text" name="groups[group_name]" value="" size="20" maxlength="20" class="colorful"/></div>
-                        <div class="col-md-8"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label><input type="text" name="groups[group_description]" value="" size="60" maxlength="128" class="colorful"/></div>
+                        <div class="col-md-8"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label><input type="text" name="groups[group_description]" value="" size="80" maxlength="128" class="colorful"/></div>
                         <div class="col-md-2">
                             <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Group</button>
                             <input type="hidden" name="tolken" value="{{ tolken }}" />
@@ -39,10 +39,10 @@
                     <div class="row row-inside">
                         <div class="col-md-2 pad-right-12 bold aright">Role(s):</div>
                         <div class="col-md-10">
-                            <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Role(s): </label>
+                            <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[]">Role(s): </label>
                             {% for row in a_blank_roles %}
                                 {% if row.role_id > 2 %}
-                                    <input type="checkbox" name="roles[]" value="{{ row.role_id }}"{{ row.checked }}>&nbsp;&nbsp;{{ row.role_name }}&nbsp;&nbsp;
+                                    <input type="checkbox" name="roles[]" value="{{ row.role_id }}"{{ row.checked }}>&nbsp;&nbsp;{{ row.role_name }}&nbsp;&nbsp;&nbsp;&nbsp;
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -59,7 +59,7 @@
                     <form action="{{ public_dir }}/manager/groups/update/" method="post">
                         <div class="row row-inside {{ class }}">
                             <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_name]">Group Name: </label><input type="text" name="groups[group_name]" value="{{ group_row.group_name }}" size="20" maxlength="20" class="colorful"/></div>
-                            <div class="col-md-8"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label><input type="text" name="groups[group_description]" value="{{ group_row.group_description }}" size="50" maxlength="128" class="colorful"/></div>
+                            <div class="col-md-8"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label><input type="text" name="groups[group_description]" value="{{ group_row.group_description }}" size="80" maxlength="128" class="colorful"/></div>
                             <div class="col-md-2">
                                 <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
                                 <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
@@ -72,10 +72,10 @@
                         <div class="row row-inside {{ class }}">
                             <div class="col-md-2 pad-right-12 bold aright">Role(s):</div>
                             <div class="col-md-10">
-                                <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Role(s): </label>
+                                <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[]">Role(s): </label>
                                 {% for role_row in group_row.a_roles %}
                                     {% if role_row.role_id > 2 %}
-                                        <input type="checkbox" name="roles[]" value="{{ role_row.role_id }}"{{ role_row.checked }}>&nbsp;&nbsp;{{ role_row.role_name }}
+                                        <input type="checkbox" name="roles[]" value="{{ role_row.role_id }}"{{ role_row.checked }}>&nbsp;&nbsp;{{ role_row.role_name }}&nbsp;&nbsp;&nbsp;&nbsp;
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -90,9 +90,9 @@
             <div class="row {{ class }}">
                 <div class="col-md-12">
                     <form action="{{ public_dir }}/manager/groups/save/" method= "post">
-                        <div class="row row-inside">
+                        <div class="row row-inside {{ class }}">
                             <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_name]">Group Name: </label><input type="text" name="groups[group_name]" value="" size="20" maxlength="20" class="colorful"/></div>
-                            <div class="col-md-8"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label><input type="text" name="groups[group_description]" value="" size="60" maxlength="128" class="colorful"/></div>
+                            <div class="col-md-8"><label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label><input type="text" name="groups[group_description]" value="" size="80" maxlength="128" class="colorful"/></div>
                             <div class="col-md-2">
                                 <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Group</button>
                                 <input type="hidden" name="tolken" value="{{ tolken }}" />
@@ -100,13 +100,13 @@
                                 <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
                             </div>
                         </div>
-                        <div class="row row-inside">
+                        <div class="row row-inside {{ class }}">
                             <div class="col-md-2 pad-right-12 bold aright">Role(s):</div>
                             <div class="col-md-10">
-                                <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Role(s): </label>
+                                <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[]">Role(s): </label>
                                 {% for row in a_blank_roles %}
                                     {% if row.role_id > 2 %}
-                                        <input type="checkbox" name="roles[]" value="{{ row.role_id }}"{{ row.checked }}>&nbsp;&nbsp;{{ row.role_name }}&nbsp;&nbsp;
+                                        <input type="checkbox" name="roles[]" value="{{ row.role_id }}"{{ row.checked }}>&nbsp;&nbsp;{{ row.role_name }}&nbsp;&nbsp;&nbsp;&nbsp;
                                     {% endif %}
                                 {% endfor %}
                             </div>

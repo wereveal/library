@@ -94,15 +94,18 @@ class GroupsAdmimController implements MangerControllerInterface
             $a_message = ['message' => 'A Problem Has Occured. The group id was not provided.', 'type' => 'error'];
             return $this->o_view->renderList($a_message);
         }
-        $a_results = $this->o_model->deleteWithRelated($group_id);
-
-        return $this->o_view->renderList($a_results);
+        $results = $this->o_model->deleteWithRelated($group_id);
+        $message = $results ? "Success!" : "Oops, something went wrong, please try again.";
+        $a_message = ['message' => $message, 'type' => $message == 'Success!' ? 'success': 'failure'];
+        return $this->o_view->renderList($a_message);
     }
     public function save()
     {
+        $meth = __METHOD__ . '.';
         $a_group = $this->a_post['groups'];
         $a_group['roles'] = $this->a_post['roles'];
-        $results = $this->o_model->create($a_group);
+        $this->logIt(var_export($a_group, true), LOG_OFF, $meth . __LINE__);
+        $results = $this->o_model->createWithRoles($a_group);
         if ($results !== false) {
             $a_message = [
                 'message' => 'Success!',
@@ -122,13 +125,13 @@ class GroupsAdmimController implements MangerControllerInterface
     }
     public function update()
     {
+        $meth = __METHOD__ . '.';
         $a_group = $this->a_post['groups'];
         $a_group['roles'] = $this->a_post['roles'];
-        $this->o_elog->write(var_export($a_group, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $results = $this->o_model->update($a_group);
-        if ($results === 1) {
+        $this->logIt("Update vars: " . var_export($a_group, true), LOG_OFF, $meth . __LINE__);
+        $results = $this->o_model->updateWithRoles($a_group);
+        if ($results !== false) {
             $a_message = ['message' => 'Success!', 'type' => 'success'];
-            return $this->o_view->renderList($a_message);
         }
         else {
             $error_msg = $this->o_model->getErrorMessage();
@@ -136,8 +139,8 @@ class GroupsAdmimController implements MangerControllerInterface
                 'message' => $error_msg,
                 'type'    => 'failure'
             ];
-            return $this->o_view->renderList($a_message);
         }
+        return $this->o_view->renderList($a_message);
     }
     public function verifyDelete()
     {

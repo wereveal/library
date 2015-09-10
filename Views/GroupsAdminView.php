@@ -15,6 +15,7 @@
  **/
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\GroupRoleMapModel;
@@ -47,11 +48,14 @@ class GroupsAdminView
      */
     public function renderList(array $a_message = array())
     {
-        $method   = __METHOD__ . '.';
-        $o_grm    = new GroupRoleMapModel($this->o_db);
-        $o_roles  = new RolesModel($this->o_db);
-        $a_roles  = $o_roles->read();
-        $this->logIt("Roles: " . var_export($a_roles, true), LOG_OFF, $method . __LINE__);
+        $meth    = __METHOD__ . '.';
+        $o_grm   = new GroupRoleMapModel($this->o_db);
+        $o_roles = new RolesModel($this->o_db);
+        $a_roles = $o_roles->read();
+        foreach ($a_roles as $key => $a_role) {
+            $a_roles[$key]['checked'] = '';
+        }
+        $this->logIt("Roles: " . var_export($a_roles, true), LOG_OFF, $meth . __LINE__);
         $a_values = [
             'public_dir'  => '',
             'description' => 'Admin page for the groups.',
@@ -77,27 +81,23 @@ class GroupsAdminView
         }
         $a_groups = $this->o_groups->read(array(), ['order_by' => 'group_name']);
         if ($a_groups !== false && count($a_groups) > 0) {
-            $this->logIt("Groups: " . var_export($a_groups, true), LOG_OFF, $method . __LINE__);
-            foreach ($a_groups as $key => $a_row) {
-                $a_groups[$key]['group_description'] = html_entity_decode($a_row['group_description']);
+            $this->logIt("Groups: " . var_export($a_groups, true), LOG_OFF, $meth . __LINE__);
+            foreach ($a_groups as $a_group_key => $a_row) {
+                $a_groups[$a_group_key]['group_description'] = html_entity_decode($a_row['group_description'], ENT_QUOTES);
                 $a_grm = $o_grm->read(['group_id' => $a_row['group_id']]);
-                $this->logIt("GRM: " . var_export($a_grm, true), LOG_OFF, $method . __LINE__);
                 $a_temp_roles = $a_roles;
                 foreach($a_grm as $a_grm_row) {
                     $this_row_role_id = $a_grm_row['role_id'];
-                    foreach ($a_temp_roles as $roles_key => $roles_row) {
-                        if ($roles_row['role_id'] == $this_row_role_id) {
-                            $a_temp_roles[$roles_key]['checked'] = ' checked';
-                        } else {
-                            $a_temp_roles[$roles_key]['checked'] = '';
-                        }
+                    $role_key = Arrays::inArrayRecursive($this_row_role_id, $a_temp_roles);
+                    if ($role_key) {
+                        $a_temp_roles[$role_key]['checked'] = ' checked';
                     }
                 }
-                $a_groups[$key]['a_roles'] = $a_temp_roles;
+                $a_groups[$a_group_key]['a_roles'] = $a_temp_roles;
             }
             $a_values['a_groups'] = $a_groups;
         }
-        $this->logIt(var_export($a_values, true), LOG_OFF, $method . __LINE__);
+        $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@pages/groups_admin.twig', $a_values);
     }
     /**
