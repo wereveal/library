@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.2.0
- *  @date 2015-09-03 12:20:39
+ *  @version 2.3.0
+ *  @date 2015-09-10 14:42:27
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.3.0 - New method, inArrayRecursive                                        - 09/10/2015 wer
  *      v2.2.0 - Removed use of abstract class Base                                  - 09/03/2015 wer
  *      v2.1.0 - After looking at the inconsistency, changed to be more consistent   - 07/31/2015 wer
  *               Also changed variable name to be more descriptive than array.
@@ -224,5 +225,33 @@ class Arrays
             $a_return_this[$key] = preg_replace($a_functions, '', $value);
         }
         return $a_return_this;
+    }
+    /**
+     * Searches a multidimensional array for a value.
+     * @param string $needle
+     * @param array  $a_haystack
+     * @param bool   $strict
+     * @return mixed|string|int|bool key of the found or false
+     */
+    public static function inArrayRecursive($needle, array $a_haystack, $strict = false)
+    {
+        if ($needle == '' || $a_haystack == array()) {
+            return false;
+        }
+        foreach ($a_haystack as $key => $item) {
+            if (
+                ($strict
+                    ? $item === $needle
+                    : $item == $needle
+                )
+                ||
+                (is_array($item)
+                 && self::inArrayRecursive($needle, $item, $strict)
+                )
+            ) {
+                return $key;
+            }
+        }
+        return false;
     }
 }
