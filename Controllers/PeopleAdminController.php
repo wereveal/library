@@ -25,6 +25,7 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Interfaces\MangerControllerInterface;
+use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -38,6 +39,7 @@ class PeopleAdminController implements MangerControllerInterface
     private $a_post_values;
     private $o_di;
     private $o_model;
+    private $o_pgm;
     private $o_router;
     private $o_session;
     private $o_view;
@@ -50,11 +52,13 @@ class PeopleAdminController implements MangerControllerInterface
         $this->o_session     = $o_di->get('session');
         $this->o_router      = $o_di->get('router');
         $this->o_model       = new PeopleModel($o_db);
+        $this->o_pgm         = new PeopleGroupMapModel($o_db);
         $this->a_route_parts = $this->o_router->getRouteParts();
         $this->a_post_values = $this->a_route_parts['post'];
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
+            $this->o_pgm->setElog($this->o_elog);
             $this->o_view->setElog($this->o_elog);
         }
     }
@@ -82,7 +86,7 @@ class PeopleAdminController implements MangerControllerInterface
         ];
         switch ($main_action) {
             case 'save':
-                if (!$this->save()) {
+                if (!$this->saveWithGroups()) {
                     $a_message = $a_failure_message;
                 }
                 else {
@@ -94,7 +98,7 @@ class PeopleAdminController implements MangerControllerInterface
                     return $this->verifyDelete();
                 }
                 elseif ($form_action == 'update') {
-                    if (!$this->update()) {
+                    if (!$this->updateWithGroups()) {
                         $a_message = $a_failure_message;
                     }
                     else {
@@ -106,7 +110,7 @@ class PeopleAdminController implements MangerControllerInterface
                 }
                 break;
             case 'delete':
-                if (!$this->delete()) {
+                if (!$this->deleteWithRelations()) {
                     $a_message = $a_failure_message;
                 }
                 else {
@@ -119,14 +123,15 @@ class PeopleAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
-
+    /**
+     * @return string
+     */
     public function save()
     {
         // save user record
         // save user group map record
         return '';
     }
-
     /**
      * Updates the user record and then displays the list of people.
      * @return string
@@ -144,12 +149,25 @@ class PeopleAdminController implements MangerControllerInterface
     {
         return '';
     }
-
     /**
      * Deletes the user record and displays the list of people.
      * @return string
      */
     public function delete()
+    {
+        return '';
+    }
+
+    ### Complex commands ###
+    private function saveWithGroups()
+    {
+        return '';
+    }
+    private function updateWithGroups()
+    {
+        return '';
+    }
+    private function deleteWithRelations()
     {
         return '';
     }
