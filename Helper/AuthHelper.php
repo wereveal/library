@@ -283,6 +283,7 @@ class AuthHelper
      */
     public function isRouteAllowed($people_id = -1, $is_group = true)
     {
+        if ($people_id == -1) { return false; }
         $meth = __METHOD__ . '.';
         $a_person = $this->o_people->readInfo($people_id);
         $this->logIt(var_export($a_person, true), LOG_OFF, $meth . __LINE__);
