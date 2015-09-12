@@ -43,8 +43,11 @@ class PeopleGroupMapModel implements ModelInterface
     ### Basic CRUD commands, required by interface ###
     /**
      *  Creates a new user group map record in the people_group_map table.
-     *  @param array $a_values required
-     *  @return int|bool
+     *  @param array $a_values required can be simple assoc array
+     *                         ['people_id' => 1, 'group_id' => 1] or
+     *                         array of assoc arrays
+     *                         [['people_id' => 1, 'group_id' => 1], ['people_id' => 2, 'group_id' => 1]]
+     *  @return array|bool
     **/
     public function create(array $a_values = array())
     {
@@ -53,8 +56,23 @@ class PeopleGroupMapModel implements ModelInterface
             'people_id',
             'group_id'
         );
-        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            return false;
+        if (Arrays::isArrayOfAssocArrays($a_values)) {
+            foreach ($a_values as $key => $a_pgm) {
+                if (!Arrays::hasRequiredKeys($a_pgm, $a_required_keys)) {
+                    return false;
+                }
+                else {
+                    $a_values[$key] = Arrays::removeUndesiredPairs($a_pgm, $a_required_keys);
+                }
+            }
+        }
+        else {
+            if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
+                return false;
+            }
+            else {
+                $a_values = Arrays::removeUndesiredPairs($a_values, $a_required_keys);
+            }
         }
         $sql = "
             INSERT INTO {$this->db_prefix}people_group_map (people_id, group_id)
@@ -63,12 +81,12 @@ class PeopleGroupMapModel implements ModelInterface
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}people_group_map")) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return $ids[0];
-        } else {
+            return $ids;
+        }
+        else {
             return false;
         }
     }
-
     /**
      * Returns record(s) from the library_people_group_map table
      * @param array $a_search_values
@@ -95,7 +113,6 @@ class PeopleGroupMapModel implements ModelInterface
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_values);
     }
-
     /**
      *  Updates the record, NOT!
      *  Method is required by interface.
@@ -110,9 +127,8 @@ class PeopleGroupMapModel implements ModelInterface
     {
         return false;
     }
-
     /**
-     * Deletes the record.
+     * Deletes a single record.
      * @param string $pgm_id required
      * @return bool
      */
@@ -127,15 +143,34 @@ class PeopleGroupMapModel implements ModelInterface
         return $this->o_db->delete($sql, array(':pgm_id' => $pgm_id), true);
     }
 
+    /**
+     * Deletes the record(s) in table based on group id(s).
+     * @param int|array $group_id either '1' or ['1', '2', '3']
+     * @return bool
+     */
     public function deleteByGroupId($group_id = -1)
     {
         $sql = "
             DELETE FROM {$this->db_prefix}people_group_map
             WHERE group_id = :group_id
         ";
-        return $this->o_db->delete($sql, array(':group_id' => $group_id), true);
+        $a_values = array();
+        if (is_array($group_id)) {
+            foreach ($group_id as $id) {
+                $a_values[] = [':group_id' => $id];
+            }
+        }
+        else {
+            $a_values = [':group_id' => $group_id];
+        }
+        return $this->o_db->delete($sql, $a_values, true);
     }
-    public function deleteByUserId($people_id = -1)
+    /**
+     * Deletes the records based on people id.
+     * @param int $people_id
+     * @return bool
+     */
+    public function deleteByPeopleId($people_id = -1)
     {
         $sql = "
             DELETE FROM {$this->db_prefix}people_group_map

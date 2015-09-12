@@ -36,37 +36,53 @@ class PeopleModel implements ModelInterface
     private $db_prefix;
     private $db_type;
     private $o_db;
+    private $o_group;
+    private $o_pgm;
 
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
         $this->db_type   = $o_db->getDbType();
         $this->db_prefix = $o_db->getDbPrefix();
+        $this->o_group   = new GroupsModel($this->o_db);
+        $this->o_pgm     = new PeopleGroupMapModel($this->o_db);
     }
 
     ### Basic CRUD commands, required by interface, deals only with the {$this->db_prefix}user table ###
     /**
-     *  Creates a new user record in the user table.
-     *  @param array $a_values required array('login_id', 'real_name', 'short_name', 'password'), optional key=>values 'is_active' and 'is_immutable'
-     *  @return int|bool
+     *  Creates new people record(s) in the people table.
+     *  @param array $a_values required Can be a simple assoc array or array of assoc arrays
+     *                         e.g. ['login_id' => 'fred', 'password' => 'letmein']
+     *                         or
+     *                         [
+     *                             ['login_id' => 'fred',   'password' => 'letmein'],
+     *                             ['login_id' => 'barney', 'password' => 'lethimin']
+     *                         ].
+     *                         Optional key=>values 'real_name, 'short_name',
+     *                                              'is_active' & 'is_immutable'
+     *  @return array|bool
     **/
     public function create(array $a_values = array())
     {
-        if ($a_values == array()) { return false; }
-        $a_required_keys = array(
-            'login_id',
-            'real_name',
-            'short_name',
-            'password'
-        );
-        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
+        if ($a_values == array()) {
             return false;
         }
-        if ((isset($a_values['is_active']) && $a_values['is_active'] == '') || !isset($a_values['is_active'])) {
-            $a_values['is_active'] = 1;
+        if (isset($a_values[0]) && is_array($a_values[0])) {
+            foreach ($a_values as $key => $a_new_person) {
+                $a_new_person = $this->setPersonValues($a_new_person);
+                if ($a_new_person !== false) {
+                    $a_values[$key] = $a_new_person;
+                }
+                else {
+                    return false;
+                }
+            }
         }
-        if ((isset($a_values['is_immutable']) && $a_values['is_immutable'] == '') || !isset($a_values['is_immutable'])) {
-            $a_values['is_immutable'] = 0;
+        else {
+            $a_values = $this->setPersonValues($a_values);
+            if ($a_values === false) {
+                return false;
+            }
         }
         $sql = "
             INSERT INTO {$this->db_prefix}people
@@ -77,7 +93,7 @@ class PeopleModel implements ModelInterface
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}people")) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return $ids[0];
+            return $ids;
         }
         else {
             return false;
@@ -131,32 +147,19 @@ class PeopleModel implements ModelInterface
         return $this->o_db->search($sql, $a_search_values);
     }
     /**
-     * Updates a {$this->db_prefix}people record.
+     * Updates a single {$this->db_prefix}people record.
      * @param array $a_values required $a_values['people_id'] || $a_values['login_id']
      * @return bool
      */
     public function update(array $a_values = array())
     {
-        $people_id = '';
-        $login_id = '';
-        if (isset($a_values['people_id'])) {
-            if ($a_values['people_id'] != '') {
-                $people_id = $a_values['people_id'];
-            }
-            unset($a_values['people_id']);
-        }
-        if (isset($a_values['login_id'])) {
-            if ($a_values['login_id'] != '') {
-                $login_id = $a_values['login_id'];
-            }
-            unset($a_values['login_id']);
-        }
-        if ($people_id == '' && $login_id == '') { return false; }
         /* the following keys in $a_values must have a value other than ''.
          * As such, they get removed from the sql
          * if they are trying to update the values to ''
          */
         $a_possible_keys = array(
+            'people_id',
+            'login_id',
             'real_name',
             'short_name',
             'password',
@@ -164,26 +167,53 @@ class PeopleModel implements ModelInterface
             'is_active',
             'is_immutable'
         );
-        foreach ($a_possible_keys as $key_name) {
-            if (array_key_exists($key_name, $a_values)) {
-                if ($a_values[$key_name] == '') {
+        if (Arrays::hasBlankValues($a_values, $a_possible_keys)) {
+            foreach ($a_possible_keys as $key_name) {
+                if (array_key_exists($key_name, $a_values)) {
+                    if ($a_values[$key_name] == '') {
+                        unset($a_values[$key_name]);
+                    }
+                }
+                else {
                     unset($a_values[$key_name]);
                 }
             }
-            else {
-                unset($a_values[$key_name]);
-            }
         }
-        if ($a_values == array()) {
+        if ($a_values == array()
+            ||
+            (
+                !isset($a_values['people_id'])
+                &&
+                !isset($a_values['login_id'])
+            )
+            ||
+            (
+                (isset($a_values['people_id']) && $a_values['people_id'] == '')
+                &&
+                (isset($a_values['login_id']) && $a_values['login_id'] == '')
+            )
+        ) {
             return false;
         }
         $sql_set = $this->o_db->buildSqlSet($a_values, array('people_id', 'login_id'));
-        $sql_where = isset($a_values['login_id'])
-            ? 'WHERE login_id = :login_id'
-            : isset($a_values['people_id'])
-                ? 'WHERE people_id = :people_id'
-                : '';
-        if ($sql_where == '' || $sql_set == '') { return false; }
+        if (isset($a_values['people_id'])) {
+            $sql_where = 'WHERE people_id = :people_id';
+            if (isset($a_values['login_id'])) {
+                unset($a_values['login_id']);
+            }
+        }
+        elseif (isset($a_values['login_id'])) {
+            $sql_where = 'WHERE login_id = :login_id';
+            if (isset($a_values['people_id'])) {
+                unset($a_values['people_id']);
+            }
+        }
+        else { // it should never fall into this.
+            $sql_where = '';
+        }
+        if ($sql_where == '' || $sql_set == '') {
+            return false;
+        }
         $sql = "
             UPDATE {$this->db_prefix}people
             {$sql_set}
@@ -403,6 +433,13 @@ class PeopleModel implements ModelInterface
 
     ### More complex methods using multiple tables ###
     /**
+     *  Deletes the person and related records
+     */
+    public function deletePerson(array $a_person = array())
+    {
+
+    }
+    /**
      *  Gets the user values based on login_id or people_id.
      *  @param mixed $people_id the people_id or login_id (as defined in the db)
      *  @return array, the records for the person
@@ -505,104 +542,187 @@ class PeopleModel implements ModelInterface
         return array();
     }
     /**
-     *  Saves the user.
-     *  If the values contain a value of people_id, user is updated
-     *  Else it is a new user.
-     *  @param array $a_user values to save
+     *  Saves the person.
+     *  If the values contain a value of people_id, person is updated
+     *  Else it is a new person.
+     *  @param array $a_person values to save
      *  @return mixed, people_id or false
      **/
-    public function saveUser(array $a_user = array())
+    public function savePerson(array $a_person = array())
     {
-        $method = __METHOD__ . '.';
-        if (count($a_user) == 0) {
+        if (!Arrays::hasRequiredKeys($a_person, ['login_id', 'password'])) {
             return false;
         }
-        $this->logIt("a_user before changes: " . var_export($a_user, true), LOG_OFF, $method  . __LINE__);
 
-        if (!isset($a_user['people_id']) || $a_user['people_id'] == '') { // New User
-            $o_group = new GroupsModel($this->o_db);
-            $o_ugm   = new PeopleGroupMapModel($this->o_db);
+        if (!isset($a_person['people_id']) || $a_person['people_id'] == '') { // New User
             $a_required_keys = array(
                 'login_id',
                 'real_name',
-                'short_name',
-                'password'
+                'password',
+                'short_name'
             );
-            $a_user_values = array();
             foreach($a_required_keys as $key_name) {
-                $a_user_values[$key_name] = isset($a_user[$key_name]) ? $a_user[$key_name] : '' ;
-            }
-            $this->logIt("" . var_export($a_user_values , true), LOG_OFF, $method  . __LINE__);
-            if ($a_user_values['password'] == '') {
-                return false;
-            }
-            else {
-                $a_user_values['password'] = password_hash($a_user_values['password'], PASSWORD_DEFAULT);
-            }
-            if ($this->o_db->startTransaction()) {
-                $new_people_id = $this->create($a_user_values);
-                if ($new_people_id !== false) {
-                    $a_group_id = array();
-                    if (isset($a_user['group_id']) && is_array($a_user['group_id'])) {
-                        $a_group_id = $a_user['group_id'];
-                    }
-                    elseif (isset($a_user['group_id']) && $a_user['group_id'] != '') {
-                        $a_group_id = $o_group->isValidGroupId($a_user['group_id'])
-                            ? array($a_user['group_id'])
-                            : array();
-                    }
-                    if ($a_group_id == array() && isset($a_user['group_name']) && $a_user['group_name'] != '') {
-                        $a_group = $o_group->read(['group_name' => $a_user['group_name']]);
-                        if ($a_group !== false) {
-                            $a_group_id = array($a_group['group_id']);
-                        }
-                    }
-                    if ($a_group_id == array()) {
-                        $a_group_id = array('3');
-                    }
-                    foreach ($a_group_id as $group_id) {
-                        $a_ug_values = array('people_id' => $new_people_id, 'group_id' => $group_id);
-                        $ug_results = $o_ugm->create($a_ug_values);
-                        if ($ug_results === false) {
-                            $this->o_db->rollbackTransaction();
+                if ($a_person[$key_name] == '') {
+                    switch ($key_name) {
+                        case 'login_id':
+                        case 'password':
                             return false;
-                        }
+                        case 'real_name':
+                            $a_person['real_name'] = $a_person['login_id'];
+                            break;
+                        case 'short_name':
+                            $a_person['short_name'] = strtoupper(substr($a_person['real_name'], 0, 3));
+                            break;
+                        default:
+                            break;
                     }
-                    if ($this->o_db->commitTransaction()) {
-                        return $new_people_id;
-                    }
-                    else {
-                        $this->o_db->rollbackTransaction();
-                        return false;
-                    }
-                } // new user created
-                else {
-                    $this->o_db->rollbackTransaction();
-                    return false;
                 }
             }
-            else {
-                return false;
-            } // this->o_db->startTransaction
+            $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
+            $a_groups = $this->makeGroupIdArray($a_person['group_id']);
+            $a_person = $this->setPersonValues($a_person);
+            if ($this->o_db->startTransaction()) {
+                $a_ids = $this->create($a_person);
+                if ($a_ids !== false) {
+                    $new_people_id = $a_ids[0];
+                    $a_pgm_values = $this->createPgmValues($new_people_id, $a_groups);
+                    if ($a_pgm_values != array()) {
+                        if ($this->o_pgm->create($a_ug_values)) {
+                            if ($this->o_db->commitTransaction()) {
+                                return $new_people_id;
+                            }
+                        }
+                    }
+                } // new user created
+                $this->o_db->rollbackTransaction();
+            }
         }
         else { // Existing User
-            if (isset($a_user['people_id']) && $a_user['people_id'] != '') {
-                $people_id = $a_user['people_id'];
+            $a_required_keys = array(
+                'people_id',
+                'login_id',
+                'real_name',
+                'password',
+                'short_name'
+            );
+            foreach($a_required_keys as $key_name) {
+                if ($a_person[$key_name] == '') {
+                    switch ($key_name) {
+                        case 'people_id':
+                        case 'login_id':
+                        case 'password':
+                            return false;
+                        case 'real_name':
+                            $a_person['real_name'] = $a_person['login_id'];
+                            break;
+                        case 'short_name':
+                            $a_person['short_name'] = strtoupper(substr($a_person['real_name'], 0, 3));
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
-            elseif (isset($a_user['login_id']) && $a_user['login_id'] != '') {
-                $people_id = $this->getPeopleId($a_user['login_id']);
-            }
-            else {
-                $people_id = false;
-            }
-            $results = $this->update($a_user);
-            if ($results !== false) {
-                return $people_id;
+            $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
+            $a_groups = $this->makeGroupIdArray($a_person['group_id']);
+            $a_person = $this->setPersonValues($a_person);
+            $a_pg_values = $this->createPgmValues($a_person['people_id'], $a_groups);
+            if ($a_pg_values != array()) {
+                if ($this->o_db->startTransaction()) {
+                    if ($this->update($a_person)) {
+                        if ($this->o_pgm->deleteByPeopleId($a_person['people_id'])) {
+                            if ($this->o_pgm->create($a_pg_values)) {
+                                if ($this->o_db->commitTransaction()) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    $this->o_db->rollbackTransaction();
+                }
             }
         }
         return false;
     }
 
+    ### Utility methods ###
+    private function createPgmValues($people_id = '', array $a_groups = array())
+    {
+        if ($people_id == '' || $a_groups == array()) {
+            return array();
+        }
+        $a_return_map = array();
+        foreach ($a_groups as $group_id) {
+            $a_return_map[] = ['people_id' => $people_id, 'group_id' => $group_id];
+        }
+        return $a_return_map;
+    }
+    /**
+     *  Returns an array to be used to create or update a people record.
+     *  @param array $a_person
+     *  @return array|bool
+     */
+    private function setPersonValues(array $a_person = array()) {
+        if ($a_person == array()) {
+            return false;
+        }
+        $a_required_keys = array(
+            'login_id',
+            'real_name',
+            'short_name',
+            'password'
+        );
+        if (!Arrays::hasRequiredKeys($a_person, $a_required_keys)) {
+            return false;
+        }
+        $a_allowed_keys   = $a_required_keys;
+        $a_allowed_keys[] = 'people_id';
+        $a_allowed_keys[] = 'is_active';
+        $a_allowed_keys[] = 'is_immutable';
+        $a_person = Arrays::removeUndesiredPairs($a_person, $a_allowed_keys);
+        if (!isset($a_person['is_active']) || $a_person['is_active'] == '') {
+            $a_person['is_active'] = 0;
+        }
+        if (!isset($a_person['is_immutable']) || $a_person['is_immutable'] == '') {
+            $a_person['is_immutable'] = 0;
+        }
+        return $a_person;
+    }
+
+    /**
+     *  Returns an array used in the creation of people group map records.
+     *  @param array $group_id
+     *  @param       $group_name
+     *  @return array
+     */
+    private function makeGroupIdArray($group_id = array(), $group_name)
+    {
+        if (is_array($group_id)) {
+            $a_group_ids = $group_id;
+        }
+        elseif ($group_id != '') {
+            $a_group_ids = $this->o_group->isValidGroupId($group_id)
+                ? array($group_id)
+                : array();
+        }
+        else {
+            $a_group_ids = array();
+        }
+        if ($a_group_ids == array() && $group_name != '') {
+            $a_group = $this->o_group->readByName($group_name);
+            if ($a_group !== false && count($a_group) > 0) {
+                $a_group_ids = array($a_group[0]['group_id']);
+            }
+            else {
+                $a_found_groups = $this->o_group->readByName('Registered');
+                $use_id = $a_found_groups !== false && count($a_found_groups) > 0
+                    ? $a_found_groups[0]['group_id']
+                    : 5;
+                $a_group_ids = array($use_id);
+            }
+        }
+        return $a_group_ids;
+    }
     ### Required by Interface ###
     public function getErrorMessage()
     {
