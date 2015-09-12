@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.3.0
- *  @date 2015-09-10 14:42:27
+ *  @version 2.4.0
+ *  @date 2015-09-12 12:11:10
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                - 09/12/2015 wer
  *      v2.3.0 - New method, inArrayRecursive                                        - 09/10/2015 wer
  *      v2.2.0 - Removed use of abstract class Base                                  - 09/03/2015 wer
  *      v2.1.0 - After looking at the inconsistency, changed to be more consistent   - 07/31/2015 wer
@@ -110,6 +111,64 @@ class Arrays
         return true;
     }
     /**
+     * Checks array for blank values.
+     * @param array $a_pairs
+     * @return bool
+     */
+    public static function hasBlankValues(array $a_pairs = array(), array $a_keys_to_check = array())
+    {
+        if ($a_pairs == array()) {
+            return true;
+        }
+        foreach ($a_pairs as $key => $value) {
+            if (is_array($value)) {
+                $results = self::hasBlankValues($value, $a_keys_to_check);
+                if ($results === true) {
+                    return true;
+                }
+            }
+            elseif ($value == '') {
+                if ($a_keys_to_check != array()) {
+                    if (in_array($key, $a_keys_to_check)) {
+                        return true;
+                    }
+                }
+                else {
+                   return true;
+                }
+            }
+        }
+        return false;
+    }
+    /**
+     * Searches a multidimensional array for a value.
+     * @param string $needle
+     * @param array  $a_haystack
+     * @param bool   $strict
+     * @return mixed|string|int|bool key of the found or false
+     */
+    public static function inArrayRecursive($needle, array $a_haystack, $strict = false)
+    {
+        if ($needle == '' || $a_haystack == array()) {
+            return false;
+        }
+        foreach ($a_haystack as $key => $item) {
+            if (
+                ($strict
+                    ? $item === $needle
+                    : $item == $needle
+                )
+                ||
+                (is_array($item)
+                    && self::inArrayRecursive($needle, $item, $strict)
+                )
+            ) {
+                return $key;
+            }
+        }
+        return false;
+    }
+    /**
      *  Determines that the value passed in is an associative array with all non-numeric keys.
      *  Also determines that the array is not empty.
      *  @param $a_pairs (array)
@@ -124,6 +183,20 @@ class Arrays
             &&
             count(array_diff_key($a_pairs, array_keys(array_keys($a_pairs)))) == count($a_pairs)
         );
+    }
+    /**
+     *  Sees if the array passed in is an array of assoc arrays.
+     * @param array
+     * @return bool
+     */
+    public static function isArrayOfAssocArrays(array $a_arrays = array())
+    {
+        foreach ($a_arrays as $a_array) {
+            if (!self::isAssocArray($a_array)) {
+                return false;
+            }
+        }
+        return true;
     }
     /**
      *  Removes the slashes from values in an array.
@@ -225,33 +298,5 @@ class Arrays
             $a_return_this[$key] = preg_replace($a_functions, '', $value);
         }
         return $a_return_this;
-    }
-    /**
-     * Searches a multidimensional array for a value.
-     * @param string $needle
-     * @param array  $a_haystack
-     * @param bool   $strict
-     * @return mixed|string|int|bool key of the found or false
-     */
-    public static function inArrayRecursive($needle, array $a_haystack, $strict = false)
-    {
-        if ($needle == '' || $a_haystack == array()) {
-            return false;
-        }
-        foreach ($a_haystack as $key => $item) {
-            if (
-                ($strict
-                    ? $item === $needle
-                    : $item == $needle
-                )
-                ||
-                (is_array($item)
-                 && self::inArrayRecursive($needle, $item, $strict)
-                )
-            ) {
-                return $key;
-            }
-        }
-        return false;
     }
 }
