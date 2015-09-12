@@ -210,7 +210,7 @@ return [
             'expected_results' => []
         ]
     ],
-    'saveUser' => [
+    'savePerson' => [
         'test1' => [
             'test_values' => [],
             'expected_results' => []

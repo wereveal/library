@@ -15,5 +15,5 @@ return [
     'updateActive',
     'readInfo',
     'readUsersInfo',
-    'saveUser'
+    'savePerson'
 ];
