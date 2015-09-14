@@ -6,10 +6,12 @@
  *  @namespace Ritc/Library/Services
  *  @class Router
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β6
- *  @date 2015-09-03 16:49:31
+ *  @version 1.0.0β8
+ *  @date 2015-09-14 11:52:32
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β8 - Changed to allow route path to include additional        - 09/14/2015 wer
+ *                 actionable data.
  *      v1.0.0β7 - Added Allowed Groups to the class.                       - 09/03/2015 wer
  *                 Groups can now be mapped to the route.
  *      v1.0.0β6 - Removed abstract class Base, added LogitTraits           - 09/01/2015 wer
@@ -65,7 +67,13 @@ class Router
     }
 
     /**
-     *  Sets the route parts from the database plus any GET parts and Post parts.
+     *  Sets the route parts from the database plus other information.
+     *  Sets additional url actionable parts, GET parts and Post parts.
+     *  Addional url actional parts is like /fred/barney/wilma/ which could
+     *      only be found as /fred/barney/ by the routerModel class.
+     *      wilma represents a variable that the controller understands.
+     *      For example wilma could be an blog id or blog name 'blog_id'
+     *      for which a blog controller would search in the blog db by blog_id.
      *  @param string $route_path
      *  @return array
      */
@@ -80,41 +88,88 @@ class Router
                 $route_path = self::$route_path;
             }
         }
+        else {
+            self::$route_path = $route_path;
+        }
         $a_values = ['route_path' => $route_path];
         $a_results = $this->o_model->read($a_values);
         $this->logIt("Actions from DB: " . var_export($a_results, true), LOG_OFF, __METHOD__);
         if ($a_results !== false && count($a_results) === 1) {
             $a_route_parts                = $a_results[0];
-            $a_rrm_results                = $this->o_rrm->read(['route_id' => $a_route_parts['route_id']]);
-            if ($a_rrm_results !== false && count($a_rrm_results) > 0) {
-                $a_route_parts['roles']   = $a_rrm_results;
-            }
-            $a_rgm_results                = $this->o_rgm->read(['route_id' => $a_route_parts['route_id']]);
-            if ($a_rgm_results !== false && count($a_rgm_results) > 0) {
-                $a_route_parts['groups']  = $a_rgm_results;
-            }
-            $a_route_parts['get']         = $this->a_get;
-            $a_route_parts['post']        = $this->a_post;
-            $a_route_parts['form_action'] = self::$form_action;
-            $this->a_route_parts          = $a_route_parts;
+            $a_route_parts['route_path']  = $route_path;
+            $a_route_parts['url_actions'] = [];
+            $this->a_route_parts          = $this->createRouteParts($a_route_parts);
         }
         else {
-            $this->a_route_parts = [
-                'route_id'     => 0,
-                'route_path'   => $route_path,
-                'route_class'  => 'MainController',
-                'route_method' => '',
-                'route_action' => '',
-                'roles'        => array(),
-                'groups'       => array(),
-                'get'          => $this->a_get,
-                'post'         => $this->a_post,
-                'form_action'  => self::$form_action
-            ];
+            $a_route_path_parts = explode('/', $route_path);
+            $a_urls = ['/'];
+            $i = 0;
+            foreach ($a_route_path_parts as $part) {
+                $a_urls[$i + 1] = $a_urls[$i++] . $part . '/';
+            }
+            $last_good_key = -1;
+            $a_last_good_results = array();
+            foreach ($a_urls as $key => $url) {
+                $a_values = ['route_path' => $url];
+                $a_results = $this->o_model->read($a_values);
+                if ($a_results !== false && count($a_results) == 1) {
+                    $last_good_key = $key;
+                    $a_last_good_results = $a_results[0];
+                }
+            }
+            if ($a_last_good_results != array()) {
+                $a_route_parts = $a_last_good_results;
+                $a_route_parts['route_path'] = $route_path;
+                $a_route_parts['url_actions'] = [];
+                $count = count($a_route_path_parts);
+                if ($last_good_key < $count) {
+                    for ($i = $last_good_key + 1; $i <= $count ; $i++) {
+                        $a_route_parts['url_actions'][] = $a_route_path_parts[$i];
+                    }
+                }
+                $this->a_route_parts = $this->createRouteParts($a_route_parts);
+            }
+            else {
+                $this->a_route_parts = $this->createRouteParts(array());
+            }
         }
         self::$route_action = $this->a_route_parts['route_action'];
         self::$route_class  = $this->a_route_parts['route_class'];
         self::$route_method = $this->a_route_parts['route_method'];
+    }
+    /**
+     * Fills array with additional information that doesn't come from the db.
+     * @param array $a_route_parts
+     * @return array
+     */
+    private function createRouteParts(array $a_route_parts = array())
+    {
+        $a_default_route_parts = [
+            'route_id'     => 0,
+            'route_path'   => self::$route_path,
+            'route_class'  => 'MainController',
+            'route_method' => '',
+            'route_action' => '',
+            'url_actions'  => [],
+            'roles'        => [],
+            'groups'       => [],
+            'get'          => $this->a_get,
+            'post'         => $this->a_post,
+            'form_action'  => self::$form_action
+        ];
+        if ($a_route_parts == array()) {
+            return $a_default_route_parts;
+        }
+        $a_route_parts = array_merge($a_default_route_parts, $a_route_parts);
+        $a_rrm_results = $this->o_rrm->read(['route_id' => $a_route_parts['route_id']]);
+        if ($a_rrm_results !== false && count($a_rrm_results) > 0) {
+            $a_route_parts['roles'] = $a_rrm_results;
+        }
+        $a_rgm_results = $this->o_rgm->read(['route_id' => $a_route_parts['route_id']]);
+        if ($a_rgm_results !== false && count($a_rgm_results) > 0) {
+            $a_route_parts['groups'] = $a_rgm_results;
+        }
+        return $a_route_parts;
     }
 
     ### GETters and SETters ###
@@ -278,7 +333,7 @@ class Router
     {
         $this->a_post = Arrays::cleanArrayValues($_POST, $a_allowed_keys, true);
     }
-    /* From Base Abstract
+    /* From LogItTraits
         protected function getElog
         protected function logIt
         protected function setElog
