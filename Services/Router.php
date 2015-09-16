@@ -58,11 +58,9 @@ class Router
         $this->setPost();
         $this->setFormAction();
         $this->setRouteParts();
-        if (defined('DEVELOPER_MODE')) {
-            if (DEVELOPER_MODE) {
-                $this->o_elog = $o_di->get('elog');
-                $this->o_model->setElog($this->o_elog);
-            }
+        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+            $this->o_model->setElog($this->o_elog);
         }
     }
 
