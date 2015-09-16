@@ -38,6 +38,7 @@ class RouterModel implements ModelInterface
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
     }
+    
     /**
      * Generic create a record using the values provided.
      * @param array $a_values
@@ -71,7 +72,6 @@ class RouterModel implements ModelInterface
             return false;
         }
     }
-
     /**
      * Returns an array of records based on the search params provided.
      * @param array $a_search_values optional, defaults to returning all records
@@ -106,7 +106,6 @@ class RouterModel implements ModelInterface
         $this->logIt($sql, LOG_OFF, __METHOD__);
         return $this->o_db->search($sql, $a_search_values);
     }
-
     /**
      * Generic update for a record using the values provided.
      * @param array $a_values
@@ -137,7 +136,6 @@ class RouterModel implements ModelInterface
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->update($sql, $a_values, true);
     }
-
     /**
      * Generic deletes a record based on the id provided.
      * @param int $route_id
