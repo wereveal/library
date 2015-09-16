@@ -439,14 +439,24 @@ class AuthHelper
         return false;
     }
     /**
-     * Checks to see if the person is in the group.
-     * @param int|string $person
-     * @return bool
+     *  Checks to see if the person is in the group.
+     *  @param int|string $person
+     *  @param int|string $group
+     *  @return bool
      */
-    public function personInGroup($person = -1)
+    public function personInGroup($person = -1, $group = '')
     {
-        if ($person == -1) { return false; }
-
+        if ($person == -1 || $group == '') {
+            return false;
+        }
+        $a_people = $this->o_people->readInfo($person);
+        if (isset($a_people['groups']) && count($a_people['groups']) > 0) {
+            foreach ($a_people['groups'] as $a_group) {
+                if ($a_group['group_id'] == $group || $a_group['group_name'] == $group) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
     /**

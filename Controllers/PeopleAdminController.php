@@ -56,7 +56,6 @@ class PeopleAdminController implements MangerControllerInterface
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
-            $this->o_pgm->setElog($this->o_elog);
             $this->o_view->setElog($this->o_elog);
         }
     }
@@ -69,51 +68,34 @@ class PeopleAdminController implements MangerControllerInterface
         $a_route_parts = $this->a_route_parts;
         $main_action = $a_route_parts['route_action'];
         $form_action = $a_route_parts['form_action'];
+        $url_action  = isset($a_route_parts['url_actions'][0])
+            ? $a_route_parts['url_actions'][0]
+            : '';
+        if ($main_action == '' && $url_action != '') {
+            $main_action = $url_action;
+        }
         if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
             if ($this->o_session->isNotValidSession($this->a_post, true)) {
                 header("Location: " . SITE_URL . '/manager/login/');
             }
         }
-        $a_failure_message = [
-            'message' => 'A Problem Has Occured. Please Try Again.',
-            'type'    => 'failure'
-        ];
-        $a_success_message = [
-            'message' => 'Success!',
-            'type'    => 'success'
-        ];
         switch ($main_action) {
             case 'save':
-                if (!$this->o_model->savePerson()) {
-                    $a_message = $a_failure_message;
-                }
-                else {
-                    $a_message = $a_success_message;
-                }
+                $a_message = $this->save();
                 break;
             case 'update':
                 if ($form_action == 'verify') {
                     return $this->verifyDelete();
                 }
                 elseif ($form_action == 'update') {
-                    if (!$this->o_model->savePerson()) {
-                        $a_message = $a_failure_message;
-                    }
-                    else {
-                        $a_message = $a_success_message;
-                    }
+                    $a_message = $this->update();
                 }
                 else {
-                    $a_message = $a_failure_message;
+                    $a_message = $this->failureMessage('A problem has occured. Could not determine action');
                 }
                 break;
             case 'delete':
-                if (!$this->o_model->deletePerson()) {
-                    $a_message = $a_failure_message;
-                }
-                else {
-                    $a_message = $a_success_message;
-                }
+                $a_message = $this->delete();
                 break;
             case '':
             default:
@@ -122,37 +104,66 @@ class PeopleAdminController implements MangerControllerInterface
         return $this->o_view->renderList($a_message);
     }
     /**
-     * @return string
+     *  Saves the person mapped to group(s).
+     *  Returns array that specifies succsss or failure.
+     *  @return array
      */
     public function save()
     {
-        // save user record
-        // save user group map record
-        return '';
+        $a_person = $this->a_post_values['person'];
+        $a_person['groups'] = $this->a_post_values['groups'];
+        if ($this->o_model->savePerson($a_person) !== false) {
+            return $this->successMessage("Success! The person was saved.");
+        }
+        return $this->failureMessage("Opps, the person was not saved.");
     }
     /**
      * Updates the user record and then displays the list of people.
-     * @return string
+     * @return array
      */
     public function update()
     {
-        // update user record
-        return '';
+        $a_person = $this->a_post_values['person'];
+        $a_person['groups'] = $this->a_post_values['groups'];
+        if ($this->o_model->savePerson($a_person) !== false) {
+            return $this->successMessage("Success! The person was updated.");
+        }
+        return $this->failureMessage("Opps, the person was not updated.");
     }
     /**
      * Display the form to verify delete.
-     * @return string
+     * @return array
      */
     public function verifyDelete()
     {
-        return '';
+        return $this->o_view->renderVerifyDelete($this->a_post_values);
     }
     /**
      * Deletes the user record and displays the list of people.
-     * @return string
+     * @return array
      */
     public function delete()
     {
-        return '';
+        return $this->failureMessage();
+    }
+    private function failureMessage($message = '')
+    {
+        if ($message == '') {
+            $message = 'A Problem Has Occured. Please Try Again.';
+        }
+        return [
+            'message' => $message,
+            'type'    => 'failure'
+        ];
+    }
+    private function successMessage($message = '')
+    {
+        if ($message == '') {
+            $message = 'Success!';
+        }
+        return [
+            'message' => $message,
+            'type'    => 'success'
+        ];
     }
 }

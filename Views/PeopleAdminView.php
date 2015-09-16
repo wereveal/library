@@ -64,9 +64,22 @@ class PeopleAdminView
         else {
             $a_values['a_message'] = '';
         }
-
-        $this->o_twig->render('@pages/people_admin.twig', $a_values);
-        return '';
+        if ($_SESSION['login_id'] == 'SuperAdmin') {
+            $a_values['is_sa'] = 'TRUE';
+        }
+        $html = $this->o_twig->render('@pages/people_admin.twig', $a_values);
+        return $html;
+    }
+    public function renderVerifyDelete(array $a_posted_values = array())
+    {
+        if ($a_posted_values == array()) {
+            return $this->renderList(['message' => 'Sorry, a problem has occured, please try again.', 'type' => 'failure']);
+        }
+        $a_person = $this->o_people_model->read(['people_id' => $a_posted_values['people_id']]);
+        if ($a_person[0]['is_immutable'] == 1) {
+            return $this->renderList(['message' => 'Sorry, that user can not be deleted.', 'type' => 'failure']);
+        }
+        return $this->o_twig->render('@pages/verify_delete_person.twig', $a_posted_values);
     }
     /**
      * Something to keep phpStorm from complaining until I use the ViewHelper.

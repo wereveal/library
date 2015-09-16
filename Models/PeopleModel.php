@@ -532,7 +532,7 @@ class PeopleModel implements ModelInterface
                 unset($a_person['group_description']);
                 $a_person['roles'] = $a_roles;
                 $a_person['groups'] = $a_groups;
-                $this->logIt("Found Person: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
+                $this->logIt("Found Person: " . var_export($a_person, true), LOG_ON, $meth . __LINE__);
                 return $a_person;
             }
         }
@@ -553,7 +553,6 @@ class PeopleModel implements ModelInterface
         if (!Arrays::hasRequiredKeys($a_person, ['login_id', 'password'])) {
             return false;
         }
-
         if (!isset($a_person['people_id']) || $a_person['people_id'] == '') { // New User
             $a_required_keys = array(
                 'login_id',
@@ -579,7 +578,7 @@ class PeopleModel implements ModelInterface
                 }
             }
             $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
-            $a_groups = $this->makeGroupIdArray($a_person['group_id']);
+            $a_groups = $this->makeGroupIdArray($a_person['groups']);
             $a_person = $this->setPersonValues($a_person);
             if ($this->o_db->startTransaction()) {
                 $a_ids = $this->create($a_person);
@@ -587,7 +586,7 @@ class PeopleModel implements ModelInterface
                     $new_people_id = $a_ids[0];
                     $a_pgm_values = $this->createPgmValues($new_people_id, $a_groups);
                     if ($a_pgm_values != array()) {
-                        if ($this->o_pgm->create($a_ug_values)) {
+                        if ($this->o_pgm->create($a_pgm_values)) {
                             if ($this->o_db->commitTransaction()) {
                                 return $new_people_id;
                             }
@@ -624,7 +623,7 @@ class PeopleModel implements ModelInterface
                 }
             }
             $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
-            $a_groups = $this->makeGroupIdArray($a_person['group_id']);
+            $a_groups = $this->makeGroupIdArray($a_person['groups']);
             $a_person = $this->setPersonValues($a_person);
             $a_pg_values = $this->createPgmValues($a_person['people_id'], $a_groups);
             if ($a_pg_values != array()) {
@@ -646,6 +645,12 @@ class PeopleModel implements ModelInterface
     }
 
     ### Utility methods ###
+    /**
+     *  Returns an array mapping a person to the group(s) specified.
+     *  @param string $people_id
+     *  @param array  $a_groups
+     *  @return array
+     */
     private function createPgmValues($people_id = '', array $a_groups = array())
     {
         if ($people_id == '' || $a_groups == array()) {
@@ -688,7 +693,6 @@ class PeopleModel implements ModelInterface
         }
         return $a_person;
     }
-
     /**
      *  Returns an array used in the creation of people group map records.
      *  @param array $group_id
@@ -723,6 +727,7 @@ class PeopleModel implements ModelInterface
         }
         return $a_group_ids;
     }
+
     ### Required by Interface ###
     public function getErrorMessage()
     {

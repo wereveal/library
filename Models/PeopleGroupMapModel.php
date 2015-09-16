@@ -142,7 +142,6 @@ class PeopleGroupMapModel implements ModelInterface
         ";
         return $this->o_db->delete($sql, array(':pgm_id' => $pgm_id), true);
     }
-
     /**
      * Deletes the record(s) in table based on group id(s).
      * @param int|array $group_id either '1' or ['1', '2', '3']
@@ -178,6 +177,8 @@ class PeopleGroupMapModel implements ModelInterface
         ";
         return $this->o_db->delete($sql, array(':people_id' => $people_id), true);
     }
+
+    ### Required by Interface ###
     public function getErrorMessage()
     {
         $this->o_db->getSqlErrorMessage();
