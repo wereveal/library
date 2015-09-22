@@ -57,7 +57,7 @@ class GroupsAdminView
         }
         $this->logIt("Roles: " . var_export($a_roles, true), LOG_OFF, $meth . __LINE__);
         $a_values = [
-            'public_dir'  => '',
+            'public_dir'  => PUBLIC_DIR,
             'description' => 'Admin page for the groups.',
             'a_message'   => array(),
             'a_groups'    => array(
