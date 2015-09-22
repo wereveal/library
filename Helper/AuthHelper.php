@@ -132,7 +132,7 @@ class AuthHelper
             $a_person = $this->o_people->readInfo($a_person_post['login_id']);
             $this->logIt("Posted Values: " . var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
             $this->logIt("User Values: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
-            if ($a_person === false || is_null($a_person) || !is_array($a_person)) {
+            if ($a_person == array() || !is_array($a_person)) {
                 $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
                 $this->o_session->resetSession();
                 return [
@@ -283,10 +283,11 @@ class AuthHelper
      */
     public function isRouteAllowed($people_id = -1, $is_group = true)
     {
-        if ($people_id == -1) { return false; }
+        if ($people_id == -1 || $people_id == '') { return false; }
         $meth = __METHOD__ . '.';
+        error_log('People ID: ' . $people_id);
         $a_person = $this->o_people->readInfo($people_id);
-        $this->logIt(var_export($a_person, true), LOG_OFF, $meth . __LINE__);
+        $this->logIt('Person: ' . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
         if ($a_person !== false) {
             if ($is_group) {
                 $a_allowed_groups = $this->o_router->getAllowedGroups();
