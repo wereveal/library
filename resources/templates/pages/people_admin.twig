@@ -32,19 +32,29 @@
             </div>
             <div class="row hidden-sm hidden-xs list-header">
                 <div class="col-md-2 list-header">Person's Login ID</div>
-                <div class="col-md-8 list-header">Person's Name</div>
+                <div class="col-md-4 list-header">Person's Name</div>
+                <div class="col-md-4 list-header">Description</div>
                 <div class="col-md-2 list-header">&nbsp;</div>
             </div>
-        {% set x = x * -1 %}
-        {% for person_row in a_people %}
-            {% if group_row.group_id > 2 %}
+        {% set x = -1 %}
+        {% for person in a_people %}
             {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <div class="col-md-12">
                     <form action="{{ public_dir }}/manager/people/" method="post">
                         <div class="row row-inside {{ class }}">
-                            <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="person[login_id]">LoginID: </label><input type="text" name="person[login_id]" value="{{ person.login_id }}" size="20" maxlength="20" class="colorful"/></div>
-                            <div class="col-md-8"><label class="visible-sm-inline-block visible-xs-inline-block" for="person[real_name]">Name: </label><input type="text" name="person[real_name]" value="{{ person.real_name }}" size="80" maxlength="128" class="colorful"/></div>
+                            <div class="col-md-2">
+                                <div class="visible-sm-inline-block visible-xs-inline-block bold w100">LoginID: </div>
+                                {{ person.login_id }}
+                            </div>
+                            <div class="col-md-4">
+                                <div class="visible-sm-inline-block visible-xs-inline-block bold w100">Name: </div>
+                                {{ person.real_name }}
+                            </div>
+                            <div class="col-md-4">
+                                <div class="visible-sm-inline-block visible-xs-inline-block bold w100"">Description: </div>
+                                {{ person.description }}
+                            </div>
                             <div class="col-md-2">
                                 <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Modify</button>
                                 <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
@@ -58,7 +68,6 @@
                 </div>
             </div>
             {% set x = x * -1 %}
-            {% endif %}
         {% endfor %}
         </div>
     </div>

@@ -6,21 +6,21 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0ß8
- *  @date 2015-09-03 16:32:48
+ *  @version 1.0.0β9
+ *  @date 2015-09-22 10:17:54
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0ß8 - more changes to the readInfo method                           - 09/03/2015 wer
- *      v1.0.0ß7 - had to rewrite the sql for the readInfo method                - 08/04/2015 wer
- *      v1.0.0ß6 - refactoring elsewhere caused changes here                     - 07/31/2015 wer
- *      v1.0.0ß5 - refactoring method name to reflect what is happening better   - 01/06/2015 wer
- *      v1.0.0ß4 - reverted to injecting DbModel                                 - 11/17/2014 wer
- *      v1.0.0ß3 - changed to use DI/IOC                                         - 11/15/2014 wer
- *      v1.0.0ß2 - extends the Base class, injects the DbModel, clean up         - 09/23/2014 wer
- *      v1.0.0ß1 - First Live version                                            - 09/15/2014 wer
- *      v0.1.0ß1 - Initial version                                               - 09/11/2014 wer
+ *      v1.0.0β9 - Added 'description' to database and added it here             - 09/22/2015 wer
+ *      v1.0.0β8 - more changes to the readInfo method                           - 09/03/2015 wer
+ *      v1.0.0β7 - had to rewrite the sql for the readInfo method                - 08/04/2015 wer
+ *      v1.0.0β6 - refactoring elsewhere caused changes here                     - 07/31/2015 wer
+ *      v1.0.0β5 - refactoring method name to reflect what is happening better   - 01/06/2015 wer
+ *      v1.0.0β4 - reverted to injecting DbModel                                 - 11/17/2014 wer
+ *      v1.0.0β3 - changed to use DI/IOC                                         - 11/15/2014 wer
+ *      v1.0.0β2 - extends the Base class, injects the DbModel, clean up         - 09/23/2014 wer
+ *      v1.0.0β1 - First Live version                                            - 09/15/2014 wer
+ *      v0.1.0β1 - Initial version                                               - 09/11/2014 wer
  *  </pre>
- * @todo add the methods needed to crud a user with all the correct group and role information
 **/
 namespace Ritc\Library\Models;
 
@@ -134,6 +134,7 @@ class PeopleModel implements ModelInterface
                 real_name,
                 short_name,
                 password,
+                description,
                 is_logged_in,
                 is_active,
                 is_immutable,
@@ -163,6 +164,7 @@ class PeopleModel implements ModelInterface
             'real_name',
             'short_name',
             'password',
+            'description',
             'is_logged_in',
             'is_active',
             'is_immutable'
@@ -460,8 +462,8 @@ class PeopleModel implements ModelInterface
         }
         $sql = "
             SELECT DISTINCT p.people_id, p.login_id, p.real_name, p.short_name,
-                p.password, p.is_logged_in, p.bad_login_count, p.bad_login_ts,
-                p.is_active, p.is_immutable, p.created_on,
+                p.password, p.description, p.is_logged_in, p.bad_login_count,
+                p.bad_login_ts, p.is_active, p.is_immutable, p.created_on,
                 g.group_id, g.group_name, g.group_description,
                 r.role_id, r.role_level, r.role_name
             FROM {$this->db_prefix}people as p
@@ -532,7 +534,7 @@ class PeopleModel implements ModelInterface
                 unset($a_person['group_description']);
                 $a_person['roles'] = $a_roles;
                 $a_person['groups'] = $a_groups;
-                $this->logIt("Found Person: " . var_export($a_person, true), LOG_ON, $meth . __LINE__);
+                $this->logIt("Found Person: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
                 return $a_person;
             }
         }
@@ -682,6 +684,7 @@ class PeopleModel implements ModelInterface
         }
         $a_allowed_keys   = $a_required_keys;
         $a_allowed_keys[] = 'people_id';
+        $a_allowed_keys[] = 'description';
         $a_allowed_keys[] = 'is_active';
         $a_allowed_keys[] = 'is_immutable';
         $a_person = Arrays::removeUndesiredPairs($a_person, $a_allowed_keys);

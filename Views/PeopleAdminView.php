@@ -58,14 +58,32 @@ class PeopleAdminView
 
     public function renderList(array $a_message = array())
     {
+        $a_values = [
+            'public_dir'  => PUBLIC_DIR,
+            'description' => 'Admin page for people.',
+            'a_message'   => array(),
+            'a_people'    => array(
+                [
+                    'people_id' => '',
+                    'login_id'  => '',
+                    'real_name' => ''
+                ]
+            ),
+            'tolken'  => $_SESSION['token'],
+            'form_ts' => $_SESSION['idle_timestamp'],
+            'hobbit'  => '',
+        ];
+        if ($_SESSION['login_id'] != 'SuperAdmin') {
+            $a_values['a_people'] = $this->o_people_model->read(['is_immutable' => 0]);
+        }
+        else {
+            $a_values['a_people'] = $this->o_people_model->read();
+        }
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
         else {
             $a_values['a_message'] = '';
-        }
-        if ($_SESSION['login_id'] == 'SuperAdmin') {
-            $a_values['is_sa'] = 'TRUE';
         }
         $html = $this->o_twig->render('@pages/people_admin.twig', $a_values);
         return $html;
