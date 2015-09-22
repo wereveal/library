@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Services
  *  @class Router
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β8
- *  @date 2015-09-14 11:52:32
+ *  @version 1.0.0β9
+ *  @date 2015-09-22 13:01:33
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β9 - Bug fixes to fix logic error in actionable data          - 09/22/2015 wer
  *      v1.0.0β8 - Changed to allow route path to include additional        - 09/14/2015 wer
  *                 actionable data.
  *      v1.0.0β7 - Added Allowed Groups to the class.                       - 09/03/2015 wer
@@ -99,32 +100,37 @@ class Router
             $this->a_route_parts          = $this->createRouteParts($a_route_parts);
         }
         else {
-            $a_route_path_parts = explode('/', $route_path);
+            $a_route_path_parts = explode('/', trim($route_path));
             $a_urls = ['/'];
             $i = 0;
-            foreach ($a_route_path_parts as $part) {
-                $a_urls[$i + 1] = $a_urls[$i++] . $part . '/';
+            foreach ($a_route_path_parts as $key => $part) {
+                if ($part != '') {
+                    $a_urls[$i + 1] = $a_urls[$i++] . $part . '/';
+                }
+                else {
+                    unset($a_route_path_parts[$key]);
+                }
             }
-            $last_good_key = -1;
+            $a_route_path_parts = array_merge($a_route_path_parts);
             $a_last_good_results = array();
+            $last_url = '';
             foreach ($a_urls as $key => $url) {
                 $a_values = ['route_path' => $url];
                 $a_results = $this->o_model->read($a_values);
-                if ($a_results !== false && count($a_results) == 1) {
-                    $last_good_key = $key;
+                if ($a_results !== false && isset($a_results[0])) {
                     $a_last_good_results = $a_results[0];
+                    $last_url = $url;
                 }
             }
             if ($a_last_good_results != array()) {
                 $a_route_parts = $a_last_good_results;
                 $a_route_parts['route_path'] = $route_path;
                 $a_route_parts['url_actions'] = [];
-                $count = count($a_route_path_parts);
-                if ($last_good_key < $count) {
-                    for ($i = $last_good_key + 1; $i <= $count ; $i++) {
-                        $a_route_parts['url_actions'][] = $a_route_path_parts[$i];
-                    }
+                $remainder_path = trim(str_replace($last_url,'', $route_path));
+                if (substr($remainder_path, -1) == '/') {
+                    $remainder_path = substr($remainder_path, 0, -1);
                 }
+                $a_route_parts['url_actions'] = explode('/', $remainder_path);
                 $this->a_route_parts = $this->createRouteParts($a_route_parts);
             }
             else {
