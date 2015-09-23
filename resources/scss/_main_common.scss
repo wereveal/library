@@ -96,9 +96,6 @@ p {
             padding-left: 0;
         }
     }
-    input.hobbit {
-        display: none;
-    }
 }
 .red {
     color: darkred;
@@ -140,4 +137,7 @@ p {
 }
 .pad-right-12 {
     padding-right: 12px !important;
+}
+.hobbit {
+    display: none;
 }
