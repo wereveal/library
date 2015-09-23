@@ -6,20 +6,21 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β9
- *  @date 2015-09-22 10:17:54
+ *  @version 1.0.0β10
+ *  @date 2015-09-23 14:18:27
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0β9 - Added 'description' to database and added it here             - 09/22/2015 wer
- *      v1.0.0β8 - more changes to the readInfo method                           - 09/03/2015 wer
- *      v1.0.0β7 - had to rewrite the sql for the readInfo method                - 08/04/2015 wer
- *      v1.0.0β6 - refactoring elsewhere caused changes here                     - 07/31/2015 wer
- *      v1.0.0β5 - refactoring method name to reflect what is happening better   - 01/06/2015 wer
- *      v1.0.0β4 - reverted to injecting DbModel                                 - 11/17/2014 wer
- *      v1.0.0β3 - changed to use DI/IOC                                         - 11/15/2014 wer
- *      v1.0.0β2 - extends the Base class, injects the DbModel, clean up         - 09/23/2014 wer
- *      v1.0.0β1 - First Live version                                            - 09/15/2014 wer
- *      v0.1.0β1 - Initial version                                               - 09/11/2014 wer
+ *      v1.0.0β10 - Added db error message retrieval                            - 09/23/2015 wer
+ *      v1.0.0β9  - Added 'description' to database and added it here           - 09/22/2015 wer
+ *      v1.0.0β8  - more changes to the readInfo method                         - 09/03/2015 wer
+ *      v1.0.0β7  - had to rewrite the sql for the readInfo method              - 08/04/2015 wer
+ *      v1.0.0β6  - refactoring elsewhere caused changes here                   - 07/31/2015 wer
+ *      v1.0.0β5  - refactoring method name to reflect what is happening better - 01/06/2015 wer
+ *      v1.0.0β4  - reverted to injecting DbModel                               - 11/17/2014 wer
+ *      v1.0.0β3  - changed to use DI/IOC                                       - 11/15/2014 wer
+ *      v1.0.0β2  - extends the Base class, injects the DbModel, clean up       - 09/23/2014 wer
+ *      v1.0.0β1  - First Live version                                          - 09/15/2014 wer
+ *      v0.1.0β1  - Initial version                                             - 09/11/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
@@ -35,6 +36,7 @@ class PeopleModel implements ModelInterface
 
     private $db_prefix;
     private $db_type;
+    private $error_message;
     private $o_db;
     private $o_group;
     private $o_pgm;
@@ -96,6 +98,7 @@ class PeopleModel implements ModelInterface
             return $ids;
         }
         else {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
             return false;
         }
     }
@@ -145,7 +148,11 @@ class PeopleModel implements ModelInterface
             {$where}
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->search($sql, $a_search_values);
+        $results = $this->o_db->search($sql, $a_search_values);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+        }
+        return $results;
     }
     /**
      * Updates a single {$this->db_prefix}people record.
@@ -222,7 +229,11 @@ class PeopleModel implements ModelInterface
             {$sql_where}
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->update($sql, $a_values, true);
+        $results = $this->o_db->update($sql, $a_values, true);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+        }
+        return $results;
     }
     /**
      *  Deletes a {$this->db_prefix}people record based on id.
@@ -236,7 +247,11 @@ class PeopleModel implements ModelInterface
             DELETE FROM {$this->db_prefix}people
             WHERE people_id = :people_id
         ";
-        return $this->o_db->delete($sql, array(':people_id' => $people_id), true);
+        $results = $this->o_db->delete($sql, array(':people_id' => $people_id), true);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+        }
+        return $results;
     }
 
     ### Single User Methods ###
@@ -254,6 +269,7 @@ class PeopleModel implements ModelInterface
                 return $a_results[0]['people_id'];
             }
         }
+        $this->error_message = $this->o_db->getSqlErrorMessage();
         return false;
     }
     /**
@@ -430,7 +446,11 @@ class PeopleModel implements ModelInterface
             WHERE people_id = :people_id
         ";
         $a_values = [':people_id' => $people_id, ':is_active' => $is_active];
-        return $this->o_db->update($sql, $a_values, true);
+        $results = $this->o_db->update($sql, $a_values, true);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+        }
+        return $results;
     }
 
     ### More complex methods using multiple tables ###
@@ -478,10 +498,10 @@ class PeopleModel implements ModelInterface
             WHERE {$where}
             ORDER BY r.role_level ASC, g.group_name ASC
         ";
-        $this->logIt("Select User: {$sql}", LOG_OFF, $meth . __LINE__);
-        $this->logIt("a_where_values: " . var_export($a_where_values, true), LOG_OFF, $meth . __LINE__);
+        $this->logIt("Select User: {$sql}", LOG_ON, $meth . __LINE__);
+        $this->logIt("a_where_values: " . var_export($a_where_values, true), LOG_ON, $meth . __LINE__);
         $a_people = $this->o_db->search($sql, $a_where_values);
-        $this->logIt("a_people: " . var_export($a_people, true), LOG_OFF, $meth);
+        $this->logIt("a_people: " . var_export($a_people, true), LOG_ON, $meth);
         if (isset($a_people[0]) && is_array($a_people[0])) {
             if (($a_people[0]['people_id'] == $people_id) || ($a_people[0]['login_id'] == $people_id)) {
                 $a_roles = array();
@@ -595,6 +615,7 @@ class PeopleModel implements ModelInterface
                         }
                     }
                 } // new user created
+                $this->error_message = $this->o_db->getSqlErrorMessage();
                 $this->o_db->rollbackTransaction();
             }
         }
@@ -639,6 +660,7 @@ class PeopleModel implements ModelInterface
                             }
                         }
                     }
+                    $this->error_message = $this->o_db->getSqlErrorMessage();
                     $this->o_db->rollbackTransaction();
                 }
             }
@@ -734,6 +756,6 @@ class PeopleModel implements ModelInterface
     ### Required by Interface ###
     public function getErrorMessage()
     {
-        $this->o_db->getSqlErrorMessage();
+        return $this->error_message;
     }
 }

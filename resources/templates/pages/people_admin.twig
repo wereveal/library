@@ -18,7 +18,7 @@
         <div class="col-md-12">
             <div class="row {{ class }}">
                 <div class="col-md-12">
-                <form action="{{ public_dir }}/manager/people/" method= "post">
+                <form action="{{ public_dir }}/manager/people/new/" method= "post">
                     <div class="row row-inside">
                         <div class="col-md-3 .col-md-offset-9">
                             <button type="submit" name="submit" value="create" class="btn btn-primary btn-xs">Create New Person</button>
@@ -41,7 +41,7 @@
             {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <div class="col-md-12">
-                    <form action="{{ public_dir }}/manager/people/" method="post">
+                    <form action="{{ public_dir }}/manager/people/modify/" method="post">
                         <div class="row row-inside {{ class }}">
                             <div class="col-md-2">
                                 <div class="visible-sm-inline-block visible-xs-inline-block bold w100">LoginID: </div>

@@ -66,33 +66,40 @@ class PeopleAdminController implements MangerControllerInterface
     public function render()
     {
         $a_route_parts = $this->a_route_parts;
-        $main_action = $a_route_parts['route_action'];
-        $form_action = $a_route_parts['form_action'];
-        $url_action  = isset($a_route_parts['url_actions'][0])
+        $a_post        = $this->a_post_values;
+        $main_action   = $a_route_parts['route_action'];
+        $form_action   = $a_route_parts['form_action'];
+        $url_action    = isset($a_route_parts['url_actions'][0])
             ? $a_route_parts['url_actions'][0]
             : '';
         if ($main_action == '' && $url_action != '') {
             $main_action = $url_action;
         }
         if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
-            if ($this->o_session->isNotValidSession($this->a_post, true)) {
+            if ($this->o_session->isNotValidSession($this->a_post_values, true)) {
                 header("Location: " . SITE_URL . '/manager/login/');
             }
         }
         switch ($main_action) {
+            case 'new':
+                return $this->o_view->renderNew();
             case 'save':
                 $a_message = $this->save();
                 break;
-            case 'update':
+            case 'modify':
                 if ($form_action == 'verify') {
                     return $this->verifyDelete();
                 }
-                elseif ($form_action == 'update') {
-                    $a_message = $this->update();
+                elseif ($form_action == 'modify') {
+                    $people_id = $a_post['person']['people_id'];
+                    return $this->o_view->renderModify($people_id);
                 }
                 else {
                     $a_message = $this->failureMessage('A problem has occured. Could not determine action');
                 }
+                break;
+            case 'update':
+                $a_message = $this->update();
                 break;
             case 'delete':
                 $a_message = $this->delete();

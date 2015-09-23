@@ -88,6 +88,47 @@ class PeopleAdminView
         $html = $this->o_twig->render('@pages/people_admin.twig', $a_values);
         return $html;
     }
+    public function renderNew()
+    {
+        return '';
+    }
+    public function renderModify($people_id = -1)
+    {
+        if ($people_id == -1) {
+            return $this->renderList(['message' => 'A Problem Has Occured. Please Try Again.', 'type' => 'error']);
+        }
+        $a_values = [
+            'public_dir'  => PUBLIC_DIR,
+            'description' => 'Modify a Person.',
+            'a_message'   => array(),
+            'person'      => array(
+                [
+                    'people_id'    => '',
+                    'login_id'     => '',
+                    'real_name'    => '',
+                    'short_name'   => '',
+                    'description'  => '',
+                    'password'     => '',
+                    'is_active'    => 0,
+                    'is_immutable' => 0,
+                    'created_on'   => date('Y-m-d H:i:s'),
+                    'groups'       => [],
+                ]
+            ),
+            'action'  => 'update',
+            'tolken'  => $_SESSION['token'],
+            'form_ts' => $_SESSION['idle_timestamp'],
+            'hobbit'  => '',
+            'adm'     => $_SESSION['login_id']
+        ];
+        $a_person = $this->o_people_model->readInfo($people_id);
+        if ($a_person == array()) {
+            return $this->renderList(['message' => 'The person was not found. Please Try Again.', 'type' => 'error']);
+        }
+        $a_person['password'] = '************';
+        $a_values['person'] = $a_person;
+        return $this->o_twig->render('@pages/person_form.twig', $a_values);
+    }
     public function renderVerifyDelete(array $a_posted_values = array())
     {
         if ($a_posted_values == array()) {
