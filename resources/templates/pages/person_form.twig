@@ -138,6 +138,19 @@
         </div>
     {% endif %}
         <div class="row">
+            <div class="col-md-12">
+                <ul id="groups">
+            {% for group in groups %}
+                {% if person.is_immutable == 1 %}
+                    {% if adm == 'SuperAdmin' %}
+                    <li>{{ group_name }} <input type="checkbox" value="{{ group_id }}" name="groups[]" checked="{{ checked }}"></li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-2 col-sm-2 col-xs-2  aright">
                 <button type="submit" value="update" class="btn btn-primary btn-sm">Update</button>
             </div>

@@ -17,6 +17,7 @@
  **/
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
@@ -30,6 +31,7 @@ class PeopleAdminView
 {
     use LogitTraits;
 
+    private $o_auth;
     private $o_people_model;
     private $o_group_model;
     private $o_role_model;
@@ -45,6 +47,7 @@ class PeopleAdminView
         $this->o_role_model   = new RolesModel($o_db);
         $this->o_pgm_model    = new PeopleGroupMapModel($o_db);
         $this->o_grm_model    = new GroupRoleMapModel($o_db);
+        $this->o_auth         = new AuthHelper($o_di);
         $this->o_twig         = $o_di->get('twig');
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
@@ -97,6 +100,11 @@ class PeopleAdminView
         if ($people_id == -1) {
             return $this->renderList(['message' => 'A Problem Has Occured. Please Try Again.', 'type' => 'error']);
         }
+        $admin_id = $this->o_people_model->getPeopleId($_SESSION['login_id']);
+        if ($admin_id === false) {
+            $this->o_auth->logout($_SESSION['login_id']);
+            header("Location: " . SITE_URL . "/manager/login/");
+        }
         $a_values = [
             'public_dir'  => PUBLIC_DIR,
             'description' => 'Modify a Person.',
@@ -113,6 +121,7 @@ class PeopleAdminView
                     'is_immutable' => 0,
                     'created_on'   => date('Y-m-d H:i:s'),
                     'groups'       => [],
+                    'roles'        => []
                 ]
             ),
             'action'  => 'update',
@@ -126,6 +135,15 @@ class PeopleAdminView
             return $this->renderList(['message' => 'The person was not found. Please Try Again.', 'type' => 'error']);
         }
         $a_person['password'] = '************';
+        $this->logIt("Person: " . var_export($a_person, true), LOG_ON, __METHOD__);
+        foreach($a_person['groups'] as $key => $a_group) {
+            $can_change = 'no';
+            if ($this->o_auth->hasMinimumRoleLevel($admin_id, $a_group['group_id'])) {
+                $can_change = 'yes';
+            }
+            $a_person['groups'][$key]['can_change'] = $can_change;
+        }
+        $this->logIt("Person: " . var_export($a_person, true), LOG_ON, __METHOD__);
         $a_values['person'] = $a_person;
         return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }

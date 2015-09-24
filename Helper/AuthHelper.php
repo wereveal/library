@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.3.0
- *  @date 2015-09-03 16:57:01
+ *  @version 4.3.1
+ *  @date 2015-09-24 12:07:23
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.3.1 - added logout method                                   - 09/24/2015 wer
  *      v4.3.0 - two changes. isDefaultPerson is now isImmutablePerson - 09/03/2015 wer
  *               isRouteAllowed now checks for group to route mapping
  *               as well as role to route mapping, defaults to group.
@@ -207,6 +208,26 @@ class AuthHelper
                 'message'      => 'Please try again. Your session has timed out.'
             ];
         }
+    }
+    /**
+     *  Logs the person out and resets session.
+     *  @param string|int $people_id either login_id or people_id
+     *  @return array
+     */
+    public function logout($people_id = '')
+    {
+        if ($people_id != '') {
+            if (!ctype_digit($people_id)) {
+                $people_id = $this->o_people->getPeopleId($people_id);
+            }
+            $this->o_people->setLoggedOut($people_id);
+        }
+        $this->o_session->resetSession();
+        return [
+            'login_id'     => '',
+            'is_logged_in' => 0,
+            'message'      => 'Logged Out.'
+        ];
     }
 
     #### Verifiers ####

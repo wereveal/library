@@ -498,10 +498,10 @@ class PeopleModel implements ModelInterface
             WHERE {$where}
             ORDER BY r.role_level ASC, g.group_name ASC
         ";
-        $this->logIt("Select User: {$sql}", LOG_ON, $meth . __LINE__);
-        $this->logIt("a_where_values: " . var_export($a_where_values, true), LOG_ON, $meth . __LINE__);
+        $this->logIt("Select User: {$sql}", LOG_OFF, $meth . __LINE__);
+        $this->logIt("a_where_values: " . var_export($a_where_values, true), LOG_OFF, $meth . __LINE__);
         $a_people = $this->o_db->search($sql, $a_where_values);
-        $this->logIt("a_people: " . var_export($a_people, true), LOG_ON, $meth);
+        $this->logIt("a_people: " . var_export($a_people, true), LOG_OFF, $meth);
         if (isset($a_people[0]) && is_array($a_people[0])) {
             if (($a_people[0]['people_id'] == $people_id) || ($a_people[0]['login_id'] == $people_id)) {
                 $a_roles = array();
