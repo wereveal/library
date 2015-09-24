@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class RolesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1
- *  @date 2015-07-31 16:27:16
+ *  @version 1.0.2
+ *  @date 2015-09-24 11:26:46
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.2   - bug fixes                                   - 09/24/2015 wer
  *      v1.0.1   - refactoring elsewhere changes here to match - 07/31/2015 wer
  *      v1.0.0   - First working version                       - 01/28/2015 wer
  *      v1.0.0ß5 - reverted to injecting the DbModel           - 11/17/2014 wer
@@ -163,36 +164,29 @@ class RolesModel implements ModelInterface
     /**
      * Deletes a role record.
      * @param string $role_id
-     * @return bool
+     * @return array
      */
-    public function delete($role_id = '')
+    public function delete($role_id = -1)
     {
-        if ($role_id == -1) { return false; }
+        if ($role_id == -1) {
+            return -2;
+        }
         $sql = "
             DELETE FROM {$this->db_prefix}roles
             WHERE role_id = :role_id
         ";
         if ($this->o_db->delete($sql, array(':role_id' => $role_id), true)) {
             if ($this->o_db->getAffectedRows() === 0) {
-                $a_results = [
-                    'message' => 'The role was not deleted.',
-                    'type'    => 'failure'
-                ];
+                $results = -4;
             }
             else {
-                $a_results = [
-                    'message' => 'Success!',
-                    'type'    => 'success'
-                ];
+                $results = 1;
             }
         }
         else {
-            $a_results = [
-                'message' => 'A problem occurred and the role was not deleted.',
-                'type'    => 'failure'
-            ];
+            $results = -4;
         }
-        return $a_results;
+        return $results;
     }
 
     ### Specialized CRUD ###
@@ -203,27 +197,29 @@ class RolesModel implements ModelInterface
     **/
     public function readById($role_id = -1)
     {
-        if ($role_id == -1) { return array(); }
-        if (!ctype_digit($role_id)) { return false; }
+        if ($role_id == -1) { return -2; }
+        if (!ctype_digit($role_id)) { return -2; }
         $results = $this->read(['role_id' => $role_id]);
         if (count($results[0]) > 0) {
             return $results[0];
         }
-        return array();
+        return -4;
     }
     /**
      *  Returns a record of the role specified by name.
      *  @param string $role_name
-     *  @return array()
+     *  @return array|int
      */
     public function readyByName($role_name = '')
     {
-        if ($role_name == '') { return array(); }
+        if ($role_name == '') {
+            return -1;
+        }
         $results = $this->read(array('role_name' => $role_name));
         if (isset($results[0])) {
             return $results[0];
         }
-        return array();
+        return -1;
     }
 
     ### Validators ###

@@ -6,12 +6,13 @@
  *  @namespace Ritc/Library/Controllers
  *  @class RolesAdmimController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-01-28 14:44:10
+ *  @version 1.0.1
+ *  @date 09/24/2015 wer
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0   - First working version     - 01/28/2015 wer
- *      v1.0.0β1 - Initial version           - 01/20/2015 wer
+ *      v1.0.1   - changes to model reflected here - 09/24/2015 wer
+ *      v1.0.0   - First working version           - 01/28/2015 wer
+ *      v1.0.0β1 - Initial version                 - 01/20/2015 wer
  *  </pre>
  **/
 namespace Ritc\Library\Controllers;
@@ -91,8 +92,18 @@ class RolesAdmimController implements MangerControllerInterface
             $a_message = ['message' => 'A Problem Has Occured. The role id was not provided.', 'type' => 'error'];
             return $this->o_view->renderList($a_message);
         }
-        $a_results = $this->o_model->delete($role_id);
-        return $this->o_view->renderList($a_results);
+        $results = $this->o_model->delete($role_id);
+        if ($results === 1) {
+            $a_message = ['message' => 'Success!', 'type' => 'success'];
+        }
+        else {
+            $error_msg = $this->o_model->getErrorMessage($results);
+            $a_message = [
+                'message' => $error_msg,
+                'type'    => 'failure'
+            ];
+        }
+        return $this->o_view->renderList($a_message);
     }
     public function save()
     {
@@ -117,7 +128,6 @@ class RolesAdmimController implements MangerControllerInterface
         $results = $this->o_model->update($a_role);
         if ($results === 1) {
             $a_message = ['message' => 'Success!', 'type' => 'success'];
-            return $this->o_view->renderList($a_message);
         }
         else {
             $error_msg = $this->o_model->getErrorMessage($results);
@@ -125,8 +135,8 @@ class RolesAdmimController implements MangerControllerInterface
                 'message' => $error_msg,
                 'type'    => 'failure'
             ];
-            return $this->o_view->renderList($a_message);
         }
+        return $this->o_view->renderList($a_message);
     }
     public function verifyDelete()
     {
