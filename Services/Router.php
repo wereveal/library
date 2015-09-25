@@ -107,11 +107,7 @@ class Router
                 if ($part != '') {
                     $a_urls[$i + 1] = $a_urls[$i++] . $part . '/';
                 }
-                else {
-                    unset($a_route_path_parts[$key]);
-                }
             }
-            $a_route_path_parts = array_merge($a_route_path_parts);
             $a_last_good_results = array();
             $last_url = '';
             foreach ($a_urls as $key => $url) {
