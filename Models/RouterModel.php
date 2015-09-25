@@ -38,7 +38,7 @@ class RouterModel implements ModelInterface
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
     }
-    
+
     /**
      * Generic create a record using the values provided.
      * @param array $a_values
@@ -99,12 +99,13 @@ class RouterModel implements ModelInterface
             $where = " ORDER BY 'route_path'";
         }
         $sql = "
-            SELECT route_id, route_path, route_class, route_method, route_action, route_can_edit
+            SELECT route_id, route_path, route_class, route_method, route_action, route_immutable
             FROM {$this->db_prefix}routes
             {$where}
         ";
-        $this->logIt($sql, LOG_OFF, __METHOD__);
-        return $this->o_db->search($sql, $a_search_values);
+        $this->logIt($sql, LOG_ON, __METHOD__);
+        $results = $this->o_db->search($sql, $a_search_values);
+        return $results;
     }
     /**
      * Generic update for a record using the values provided.
@@ -144,9 +145,9 @@ class RouterModel implements ModelInterface
     public function delete($route_id = -1)
     {
         if ($route_id == -1) { return false; }
-        $search_sql = "SELECT route_can_edit FROM {$this->db_prefix}routes WHERE route_id = :route_id";
+        $search_sql = "SELECT route_immutable FROM {$this->db_prefix}routes WHERE route_id = :route_id";
         $search_results = $this->o_db->search($search_sql, array(':route_id' => $route_id));
-        if ($search_results[0]['route_can_edit'] === 0) {
+        if ($search_results[0]['route_immutable'] == 1) {
             return ['message' => 'Sorry, that route can not be deleted.', 'type' => 'failure'];
         }
         $sql = "

@@ -51,9 +51,9 @@ class Router
     public function __construct(Di $o_di)
     {
         $o_db = $o_di->get('db');
-        $this->o_model  = new RouterModel($o_db);
-        $this->o_rrm = new RouterRolesMapModel($o_db);
-        $this->o_rgm = new RouterGroupMapModel($o_db);
+        $this->o_model = new RouterModel($o_db);
+        $this->o_rrm   = new RouterRolesMapModel($o_db);
+        $this->o_rgm   = new RouterGroupMapModel($o_db);
         $this->setRoutePath();
         $this->setGet();
         $this->setPost();
@@ -92,7 +92,7 @@ class Router
         }
         $a_values = ['route_path' => $route_path];
         $a_results = $this->o_model->read($a_values);
-        $this->logIt("Actions from DB: " . var_export($a_results, true), LOG_OFF, __METHOD__);
+        $this->logIt("Actions from DB: " . var_export($a_results, true), LOG_ON, __METHOD__);
         if ($a_results !== false && count($a_results) === 1) {
             $a_route_parts                = $a_results[0];
             $a_route_parts['route_path']  = $route_path;
