@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.3.1
- *  @date 2015-09-24 12:07:23
+ *  @version 4.3.2
+ *  @date 2015-09-25 15:03:09
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.3.2 - added getHighestRoleLevel method                      - 09/25/2015 wer
  *      v4.3.1 - added logout method                                   - 09/24/2015 wer
  *      v4.3.0 - two changes. isDefaultPerson is now isImmutablePerson - 09/03/2015 wer
  *               isRouteAllowed now checks for group to route mapping
@@ -229,31 +230,40 @@ class AuthHelper
             'message'      => 'Logged Out.'
         ];
     }
+    /**
+     * Gets the highest role level.
+     * Of course, the weird part, role_level highest level is the lowest
+     * number, i.e. 1 is the highest level, 999 is the lowest level.
+     * @param int|string $people_id
+     * return int
+     */
+    public function getHighestRoleLevel($people_id)
+    {
+        $role_level = 999;
+        $a_person = $this->o_people->readInfo($people_id);
+        if ($a_person !== false && !is_null($a_person)) {
+            foreach ($a_person['roles'] as $a_role) {
+                $role_level = $a_role['role_level'] < $role_level
+                    ? $a_role['role_level'] : $role_level;
+            }
+        }
+        return $role_level;
+    }
 
     #### Verifiers ####
     /**
      * Figure out if the person has a role level at or higher than param.
+     * Of course, the weird part, role_level highest level is the lowest
+     * number, i.e. 1 is the highest level, 999 is the lowest level.
      * @param int $people_id the id of the person being checked
      * @param int $role_level (has a fallback so could be a role name
      * @return bool
      */
-    public function hasMinimumRoleLevel($people_id, $role_level = 9999)
+    public function hasMinimumRoleLevel($people_id, $role_level = 999)
     {
-        $a_person = $this->o_people->readInfo($people_id);
-        $this->logIt("User Values: " . var_export($a_person, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        if ($a_person !== false && !is_null($a_person)) {
-            foreach ($a_person['roles'] as $role) {
-                if (is_numeric($role_level)) {
-                    if ($role['role_level'] <= $role_level) {
-                        return true;
-                    }
-                } else {
-                    $a_roles_results = $this->o_roles->read(['role_name' => $role_level]);
-                    if ($role['role_level'] <= $a_roles_results[0]['role_level']) {
-                        return true;
-                    }
-                }
-            }
+        $highest_role_level = $this->getHighestRoleLevel($people_id);
+        if ($highest_role_level <= $role_level) {
+            return true;
         }
         return false;
     }
@@ -451,10 +461,10 @@ class AuthHelper
      **/
     public function peopleIdExists($people_id = -1)
     {
-        if ($people_id == -1) { return false; }
-        if ($this->o_people->isID($people_id)) {
-            $results = $this->o_people->read(array('people_id' => $people_id));
-            if (isset($results['people_id']) && $results['people_id'] == $people_id) {
+        if (ctype_digit($people_id) && $people_id != -1) {
+            $results = $this->o_people->read(['people_id' => $people_id]);
+            $a_person = $results[0];
+            if (isset($a_person['people_id']) && $a_person['people_id'] == $people_id) {
                 return true;
             }
         }
