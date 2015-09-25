@@ -63,7 +63,7 @@ class ConstantsAdminController implements MangerControllerInterface
     {
         $main_action   = $this->a_router_parts['route_action'];
         $form_action   = $this->a_router_parts['form_action'];
-        $url_action    = isset($this->$a_router_parts['url_actions'][0])
+        $url_action    = isset($this->a_router_parts['url_actions'][0])
             ? $this->a_router_parts['url_actions'][0]
             : '';
         if ($main_action == '' && $url_action != '') {

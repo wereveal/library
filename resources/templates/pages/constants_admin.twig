@@ -19,9 +19,20 @@
         {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <form action="{{ public_dir }}/manager/constants/save/" method= "post">
-                <div class="col-lg-5 col-md-5"><label>Constant Name: <input type="text" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful" /></label></div>
-                <div class="col-lg-5 col-md-5"><label>Constant Value: <input type="text" name="constant[const_value]" value="" size="30" maxlength="32" class="colorful"/></label></div>
-                <div class="col-lg-2 col-md-2">
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                    <label>Constant Name: <input type="text" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful" /></label>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                    <label>Constant Value: <input type="text" name="constant[const_value]" value="" size="30" maxlength="32" class="colorful"/></label>
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-2">
+                    {% if adm_lvl <= 1 %}
+                    <label>Immutable: <input type="checkbox" name="is_immutable" value="1"></label>
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-2">
                     <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
                     <input type="hidden" name="tolken" value="{{ tolken }}" />
                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
@@ -34,16 +45,34 @@
             {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
             <form action="{{ public_dir }}/manager/constants/modify/" method="post">
-                <div class="col-lg-5 col-md-5"><b>Constant Name:</b> {{ row.const_name }}</div>
-                <div class="col-lg-5 col-md-5"><label>Constant Value: <input type="text" name="constant[const_value]" value="{{ row.const_value }}" size="30" maxlength="32" class="colorful"/></label></div>
-                <div class="col-lg-2 col-md-2">
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                    <label for="constant[const_value]">Constant Name: </label>
+                    {% if row.const_immutable == 1 %}
+                        <input type="hidden" name="constant[const_name]" id="constant[const_name]" value="{{ row.const_name }}" />{{ row.const_name }}
+                    {% else %}
+                        <input type="text" name="constant[const_name]" id="constant[const_name]" value="{{ row.const_name }}">
+                    {% endif %}
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-4">
+                    <label>Constant Value:
+                        <input type="text" name="constant[const_value]" value="{{ row.const_value }}" size="30" maxlength="32" class="colorful"/>
+                    </label>
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-2">
+                    <label for="constant[const_immutable]">Immutable: </label>
+                    {% if row.const_immutable == 1 and adm_lvl > 1 %}
+                        Can not change name.
+                    {% else %}
+                        <input type="text" name="constant[const_immutable]" id="constant[const_immutable]" value="{{ row.const_immutable }}">
+                    {% endif %}
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-2">
                     <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
                     <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
                     <input type="hidden" name="tolken" value="{{ tolken }}" />
                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                     <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
                     <input type="hidden" name="constant[const_id]" value="{{ row.const_id }}" />
-                    <input type="hidden" name="constant[const_name]" value="{{ row.const_name }}" />
                 </div>
             </form>
             </div>
@@ -52,14 +81,25 @@
         {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <form action="{{ public_dir }}/manager/constants/save/" method= "post">
-                <div class="col-lg-5 col-md-5"><label>Constants Name: <input type="text" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful" /></label></div>
-                <div class="col-lg-5 col-md-5"><label>Constants Value: <input type="text" name="constant[const_value]" value="" size="30" maxlength="32" class="colorful"/></label></div>
-                <div class="col-lg-2 col-md-2">
-                    <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
-                    <input type="hidden" name="tolken" value="{{ tolken }}" />
-                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                </div>
+                    <div class="col-md-4 col-sm-4 col-xs-4">
+                        <label>Constant Name: <input type="text" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful" /></label>
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-4">
+                        <label>Constant Value: <input type="text" name="constant[const_value]" value="" size="30" maxlength="32" class="colorful"/></label>
+                    </div>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                        {% if adm_lvl <= 1 %}
+                            <label>Immutable: <input type="checkbox" name="is_immutable" value="1"></label>
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </div>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
+                        <input type="hidden" name="tolken" value="{{ tolken }}" />
+                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                    </div>
                 </form>
             </div>
         </div>
