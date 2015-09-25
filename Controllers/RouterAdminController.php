@@ -15,9 +15,11 @@
  *      v1.0.0β1 - Initial version           - 11/14/2014 wer
  *  </pre>
  *  @pre The route to this controller has to already be in the database and should not be able to be deleted.
+ * @todo add "check immutable" code
  **/
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\RouterModel;
 use Ritc\Library\Services\Di;
@@ -53,6 +55,12 @@ class RouterAdminController implements MangerControllerInterface
         $a_route_parts = $this->o_router->getRouteParts();
         $main_action = $a_route_parts['route_action'];
         $form_action = $a_route_parts['form_action'];
+        $url_action    = isset($a_route_parts['url_actions'][0])
+            ? $a_route_parts['url_actions'][0]
+            : '';
+        if ($main_action == '' && $url_action != '') {
+            $main_action = $url_action;
+        }
         if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
             if ($this->o_session->isNotValidSession($this->a_post, true)) {
                 header("Location: " . SITE_URL . '/manager/login/');
@@ -65,16 +73,13 @@ class RouterAdminController implements MangerControllerInterface
                 return $this->delete();
             case 'update':
                 if ($form_action == 'verify') {
-                    return $this->verifyDelete($a_route_parts);
+                    return $this->verifyDelete();
                 }
                 elseif ($form_action == 'update') {
                     return $this->update();
                 }
                 else {
-                    $a_message = [
-                        'message' => 'A Problem Has Occured. Please Try Again.',
-                        'type' => 'failure'
-                    ];
+                    $a_message = ViewHelper::failureMessage();
                     return $this->o_view->renderList($a_message);
                 }
             case '':
@@ -88,7 +93,7 @@ class RouterAdminController implements MangerControllerInterface
     {
         $route_id = $this->a_post['route_id'];
         if ($route_id == -1) {
-            $a_message = ['message' => 'A Problem Has Occured. The route id was not provided.', 'type' => 'error'];
+            $a_message = ViewHelper::errorMessage('A Problem Has Occured. The route id was not provided.');
             return $this->o_view->renderList($a_message);
         }
         $a_results = $this->o_model->delete($route_id);
@@ -99,32 +104,24 @@ class RouterAdminController implements MangerControllerInterface
         $a_route = $this->a_post['route'];
         $results = $this->o_model->create($a_route);
         if ($results) {
-            $a_message = ['message' => 'Success!', 'type' => 'success'];
-            return $this->o_view->renderList($a_message);
+            $a_message = ViewHelper::successMessage();
         }
         else {
-            $a_message = [
-                'message' => 'A Problem Has Occured. The new route could not be saved.',
-                'type' => 'failure'
-            ];
-            return $this->o_view->renderList($a_message);
+            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new route could not be saved.');
         }
+        return $this->o_view->renderList($a_message);
     }
     public function update()
     {
         $a_route = $this->a_post['route'];
         $results = $this->o_model->update($a_route);
         if ($results) {
-            $a_message = ['message' => 'Success!', 'type' => 'success'];
-            return $this->o_view->renderList($a_message);
+            $a_message = ViewHelper::successMessage();
         }
         else {
-            $a_message = [
-                'message' => 'A Problem Has Occured. The route could not be updated.',
-                'type' => 'failure'
-            ];
-            return $this->o_view->renderList($a_message);
+            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The route could not be updated.');
         }
+        return $this->o_view->renderList($a_message);
     }
     public function verifyDelete()
     {

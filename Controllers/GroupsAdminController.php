@@ -13,9 +13,11 @@
  *      v1.0.0β1 - Initial version                              - 01/28/2015 wer
  *  </pre>
  * @TODO verify that this now works with the groups to roles mapping
+ * @TODO create 'check immutable' code
  **/
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Models\GroupsModel;
@@ -43,6 +45,7 @@ class GroupsAdmimController implements MangerControllerInterface
         $this->o_model   = new GroupsModel($o_db);
         $this->o_grm     = new GroupRoleMapModel($o_db);
         $this->o_view    = new GroupsAdminView($o_di);
+        $this->a_post    = $this->o_router->getRouteParts();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
@@ -54,7 +57,12 @@ class GroupsAdmimController implements MangerControllerInterface
         $a_route_parts = $this->o_router->getRouteParts();
         $main_action   = $a_route_parts['route_action'];
         $form_action   = $a_route_parts['form_action'];
-        $this->a_post  = $a_route_parts['post'];
+        $url_action    = isset($a_route_parts['url_actions'][0])
+            ? $a_route_parts['url_actions'][0]
+            : '';
+        if ($main_action == '' && $url_action != '') {
+            $main_action = $url_action;
+        }
         if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
             if ($this->o_session->isNotValidSession($this->a_post, true)) {
                 header("Location: " . SITE_URL . '/manager/login/');
@@ -74,10 +82,7 @@ class GroupsAdmimController implements MangerControllerInterface
                     return $this->update();
                 }
                 else {
-                    $a_message = [
-                        'message' => 'A Problem Has Occured. Please Try Again.',
-                        'type'    => 'failure'
-                    ];
+                    $a_message = ViewHelper::errorMessage();
                     return $this->o_view->renderList($a_message);
                 }
             case '':
@@ -91,12 +96,13 @@ class GroupsAdmimController implements MangerControllerInterface
     {
         $group_id = $this->a_post['group_id'];
         if ($group_id == -1) {
-            $a_message = ['message' => 'A Problem Has Occured. The group id was not provided.', 'type' => 'error'];
+            $a_message = ViewHelper::errorMessage('An Error Has Occured. The group id was not provided.');
             return $this->o_view->renderList($a_message);
         }
         $results = $this->o_model->deleteWithRelated($group_id);
-        $message = $results ? "Success!" : "Oops, something went wrong, please try again.";
-        $a_message = ['message' => $message, 'type' => $message == 'Success!' ? 'success': 'failure'];
+        $a_message = $results
+            ? ViewHelper::successMessage()
+            : ViewHelper::failureMessage();
         return $this->o_view->renderList($a_message);
     }
     public function save()
@@ -107,21 +113,14 @@ class GroupsAdmimController implements MangerControllerInterface
         $this->logIt(var_export($a_group, true), LOG_OFF, $meth . __LINE__);
         $results = $this->o_model->createWithRoles($a_group);
         if ($results !== false) {
-            $a_message = [
-                'message' => 'Success!',
-                'type' => 'success'
-            ];
-            return $this->o_view->renderList($a_message);
+            $a_message = ViewHelper::successMessage();
         }
         else {
             $error_msg = $this->o_model->getErrorMessage();
             $this->o_elog->write("Error_message: " . var_export($error_msg, true));
-            $a_message = [
-                'message' => $error_msg,
-                'type'    => 'failure'
-            ];
-            return $this->o_view->renderList($a_message);
+            $a_message = ViewHelper::failureMessage($error_msg);
         }
+        return $this->o_view->renderList($a_message);
     }
     public function update()
     {
@@ -131,14 +130,11 @@ class GroupsAdmimController implements MangerControllerInterface
         $this->logIt("Update vars: " . var_export($a_group, true), LOG_OFF, $meth . __LINE__);
         $results = $this->o_model->updateWithRoles($a_group);
         if ($results !== false) {
-            $a_message = ['message' => 'Success!', 'type' => 'success'];
+            $a_message = ViewHelper::successMessage();
         }
         else {
             $error_msg = $this->o_model->getErrorMessage();
-            $a_message = [
-                'message' => $error_msg,
-                'type'    => 'failure'
-            ];
+            $a_message = ViewHelper::failureMessage($error_msg);
         }
         return $this->o_view->renderList($a_message);
     }

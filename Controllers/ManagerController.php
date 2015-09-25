@@ -8,17 +8,17 @@
  *  @namespace Ritc/Library/Controllers
  *  @class ManagerController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β4
- *  @date 2015-01-28 14:47:11
+ *  @version 1.0.0β5
+ *  @date 2015-09-25 09:30:02
  *  @note A file in RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β5 - working for groups                    - 09/25/2015 wer
  *      v1.0.0β4 - working for Roles                     - 01/28/2015 wer
  *      v1.0.0β3 - working for router and config         - 01/16/2015 wer
  *      v1.0.0β2 - Set up to render a basic landing page - 01/06/2015 wer
  *      v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
  *      v1.0.0α1 - Initial version                       - 11/14/2014 wer
  *  </pre>
- * @TODO GroupsAdmin
  * @TODO PeopleAdmin
  **/
 namespace Ritc\Library\Controllers;
@@ -83,6 +83,9 @@ class ManagerController implements ControllerInterface
                     $html = $this->o_manager_view->renderLandingPage();
                 }
                 else {
+                    if ($a_results['is_logged_in'] == 1) {
+                        $this->o_auth->logout($a_results['people_id']);
+                    }
                     $login_id = isset($this->a_post_values['login_id']) ? $this->a_post_values['login_id'] : '';
                     $message  = isset($a_results['message'])
                         ? $a_results['message']
@@ -100,6 +103,10 @@ class ManagerController implements ControllerInterface
         }
         return $html;
     }
+    /**
+     * Passes control over to the Constants Admin Controller.
+     * @return string
+     */
     public function renderConstantsAdmin()
     {
         if ($this->o_auth->isLoggedIn() === false) {
@@ -108,6 +115,10 @@ class ManagerController implements ControllerInterface
         $o_constants_admin = new ConstantsAdminController($this->o_di);
         return $o_constants_admin->render();
     }
+    /**
+     * Passes control over to the router admin controller.
+     * @return string
+     */
     public function renderRouterAdmin()
     {
         if ($this->o_auth->isLoggedIn() === false) {
@@ -116,6 +127,10 @@ class ManagerController implements ControllerInterface
         $o_router_admin = new RouterAdminController($this->o_di);
         return $o_router_admin->render();
     }
+    /**
+     * Passes control over to the people admin controller.
+     * @return string
+     */
     public function renderPeopleAdmin()
     {
         if ($this->o_auth->isLoggedIn() === false) {
@@ -124,6 +139,10 @@ class ManagerController implements ControllerInterface
         $o_people_admin = new PeopleAdminController($this->o_di);
         return $o_people_admin->render();
     }
+    /**
+     * Passes control over to the roles admin controller.
+     * @return string
+     */
     public function renderRolesAdmin()
     {
         if ($this->o_auth->isLoggedIn() === false) {
@@ -132,6 +151,10 @@ class ManagerController implements ControllerInterface
         $o_roles_admin = new RolesAdmimController($this->o_di);
         return $o_roles_admin->render();
     }
+    /**
+     * Passes control over to the groups admin controller.
+     * @return string
+     */
     public function renderGroupsAdmin()
     {
         if ($this->o_auth->isLoggedIn() === false) {

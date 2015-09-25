@@ -14,9 +14,11 @@
  *      v1.0.0   - First working version           - 01/28/2015 wer
  *      v1.0.0β1 - Initial version                 - 01/20/2015 wer
  *  </pre>
+ * @todo add "check immutable" code
  **/
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
@@ -51,9 +53,15 @@ class RolesAdmimController implements MangerControllerInterface
     public function render()
     {
         $a_route_parts = $this->o_router->getRouteParts();
+        $this->a_post  = $a_route_parts['post'];
         $main_action   = $a_route_parts['route_action'];
         $form_action   = $a_route_parts['form_action'];
-        $this->a_post  = $a_route_parts['post'];
+        $url_action    = isset($a_route_parts['url_actions'][0])
+            ? $a_route_parts['url_actions'][0]
+            : '';
+        if ($main_action == '' && $url_action != '') {
+            $main_action = $url_action;
+        }
         if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
             if ($this->o_session->isNotValidSession($this->a_post, true)) {
                 header("Location: " . SITE_URL . '/manager/login/');
@@ -72,10 +80,7 @@ class RolesAdmimController implements MangerControllerInterface
                     return $this->update();
                 }
                 else {
-                    $a_message = [
-                        'message' => 'A Problem Has Occured. Please Try Again.',
-                        'type'    => 'failure'
-                    ];
+                    $a_message = ViewHelper::failureMessage('A Problem Has Occured. Please Try Again.');
                     return $this->o_view->renderList($a_message);
                 }
             case '':
@@ -89,19 +94,16 @@ class RolesAdmimController implements MangerControllerInterface
     {
         $role_id = $this->a_post['role_id'];
         if ($role_id == -1) {
-            $a_message = ['message' => 'A Problem Has Occured. The role id was not provided.', 'type' => 'error'];
+            $a_message = ViewHelper::errorMessage('A Problem Has Occured. The role id was not provided.');
             return $this->o_view->renderList($a_message);
         }
         $results = $this->o_model->delete($role_id);
         if ($results === 1) {
-            $a_message = ['message' => 'Success!', 'type' => 'success'];
+            $a_message = ViewHelper::successMessage();
         }
         else {
             $error_msg = $this->o_model->getErrorMessage($results);
-            $a_message = [
-                'message' => $error_msg,
-                'type'    => 'failure'
-            ];
+            $a_message = ViewHelper::failureMessage($error_msg);
         }
         return $this->o_view->renderList($a_message);
     }
@@ -110,31 +112,24 @@ class RolesAdmimController implements MangerControllerInterface
         $a_role = $this->a_post['roles'];
         $results = $this->o_model->create($a_role);
         if ($results > 0) {
-            $a_message = ['message' => 'Success!', 'type' => 'success'];
-            return $this->o_view->renderList($a_message);
+            $a_message = ViewHelper::successMessage();
         }
         else {
             $error_msg = $this->o_model->getErrorMessage($results);
-            $a_message = [
-                'message' => $error_msg,
-                'type'    => 'failure'
-            ];
-            return $this->o_view->renderList($a_message);
+            $a_message = ViewHelper::failureMessage($error_msg);
         }
+        return $this->o_view->renderList($a_message);
     }
     public function update()
     {
         $a_role = $this->a_post['roles'];
         $results = $this->o_model->update($a_role);
         if ($results === 1) {
-            $a_message = ['message' => 'Success!', 'type' => 'success'];
+            $a_message = ViewHelper::successMessage();
         }
         else {
             $error_msg = $this->o_model->getErrorMessage($results);
-            $a_message = [
-                'message' => $error_msg,
-                'type'    => 'failure'
-            ];
+            $a_message = ViewHelper::failureMessage($error_msg);
         }
         return $this->o_view->renderList($a_message);
     }

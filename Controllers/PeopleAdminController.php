@@ -24,6 +24,7 @@
 **/
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Models\PeopleModel;
@@ -120,9 +121,9 @@ class PeopleAdminController implements MangerControllerInterface
         $a_person = $this->a_post_values['person'];
         $a_person['groups'] = $this->a_post_values['groups'];
         if ($this->o_model->savePerson($a_person) !== false) {
-            return $this->successMessage("Success! The person was saved.");
+            return ViewHelper::successMessage("Success! The person was saved.");
         }
-        return $this->failureMessage("Opps, the person was not saved.");
+        return ViewHelper::failureMessage("Opps, the person was not saved.");
     }
     /**
      * Updates the user record and then displays the list of people.
@@ -133,9 +134,9 @@ class PeopleAdminController implements MangerControllerInterface
         $a_person = $this->a_post_values['person'];
         $a_person['groups'] = $this->a_post_values['groups'];
         if ($this->o_model->savePerson($a_person) !== false) {
-            return $this->successMessage("Success! The person was updated.");
+            return ViewHelper::successMessage("Success! The person was updated.");
         }
-        return $this->failureMessage("Opps, the person was not updated.");
+        return ViewHelper::failureMessage("Opps, the person was not updated.");
     }
     /**
      * Display the form to verify delete.
@@ -151,26 +152,7 @@ class PeopleAdminController implements MangerControllerInterface
      */
     public function delete()
     {
-        return $this->failureMessage();
+        return ViewHelper::failureMessage();
     }
-    private function failureMessage($message = '')
-    {
-        if ($message == '') {
-            $message = 'A Problem Has Occured. Please Try Again.';
-        }
-        return [
-            'message' => $message,
-            'type'    => 'failure'
-        ];
-    }
-    private function successMessage($message = '')
-    {
-        if ($message == '') {
-            $message = 'Success!';
-        }
-        return [
-            'message' => $message,
-            'type'    => 'success'
-        ];
-    }
+
 }
