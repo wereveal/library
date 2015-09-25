@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β10
- *  @date 2015-09-23 14:18:27
+ *  @version 1.0.0β11
+ *  @date 2015-09-25 15:34:56
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β11 - Added missing method isId - causing bug elsewhere           - 09/25/2015 wer
  *      v1.0.0β10 - Added db error message retrieval                            - 09/23/2015 wer
  *      v1.0.0β9  - Added 'description' to database and added it here           - 09/22/2015 wer
  *      v1.0.0β8  - more changes to the readInfo method                         - 09/03/2015 wer
@@ -455,11 +456,16 @@ class PeopleModel implements ModelInterface
 
     ### More complex methods using multiple tables ###
     /**
-     *  Deletes the person and related records
+     *  Deletes the person and related records.
+     *  @param array $a_person
+     *  @return bool
      */
     public function deletePerson(array $a_person = array())
     {
-
+        if ($a_person == array()) {
+            return false;
+        }
+        return false;
     }
     /**
      *  Gets the user values based on login_id or people_id.
@@ -669,6 +675,17 @@ class PeopleModel implements ModelInterface
     }
 
     ### Utility methods ###
+    public function isId($people_id = -1)
+    {
+        if (ctype_digit($people_id) && $people_id != -1) {
+            $a_where_values = ['people_id' => $people_id];
+            $results = $this->read($a_where_values);
+            if (isset($results[0]['people_id']) && $results[0]['people_id'] == $people_id) {
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      *  Returns an array mapping a person to the group(s) specified.
      *  @param string $people_id
