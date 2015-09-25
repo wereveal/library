@@ -5,12 +5,13 @@
  *  @namespace Ritc/Library/Helper
  *  @class ViewHelper
  *  @author William E Reveal <bill@revealitconsulting.com>
- *  @version 1.0.2
- *  @date 2014-09-25 10:30:54
+ *  @version 1.1.0
+ *  @date 2015-09-25 10:11:07
  *  @note Change Log
- *      v1.0.1 - changed function to static - 09/25/2014 wer
- *      v1.0.1 - minor key name change - 12/31/2013 wer
- *      v1.0.0 - intial file - 07/30/2013 wer
+ *      v1.1.0 - added lazy man's methods      - 09/25/2015 wer
+ *      v1.0.1 - changed function to static    - 09/25/2014 wer
+ *      v1.0.1 - minor key name change         - 12/31/2013 wer
+ *      v1.0.0 - intial file                   - 07/30/2013 wer
  *  @note RITC Library
  *  @ingroup ritc_library helper
 **/
@@ -122,4 +123,95 @@ class ViewHelper
 		    'extras'        => $extras
 		);
 	}
+    /**
+     * Lazy man's way of creating array used by self::messageProperties method.
+     * @param string $message
+     * @return array
+     */
+    public static function codeMessage($message = '')
+    {
+        if ($message == '') {
+            $message = 'Insert code here.';
+        }
+        return [
+            'message' => $message,
+            'type'    => 'code'
+        ];
+    }
+    /**
+     * Lazy man's way of creating array used by self::messageProperties method.
+     * @param string $message
+     * @return array
+     */
+    public static function errorMessage($message = '')
+    {
+        if ($message == '') {
+            $message = 'An Error Has Occured. Please Try Again.';
+        }
+        return [
+            'message' => $message,
+            'type'    => 'error'
+        ];
+    }
+	/**
+	 * Lazy man's way of creating array used by self::messageProperties method.
+	 * @param string $message
+	 * @return array
+	 */
+	public static function failureMessage($message = '')
+	{
+		if ($message == '') {
+			$message = 'A Problem Has Occured. Please Try Again.';
+		}
+		return [
+			'message' => $message,
+			'type'    => 'failure'
+		];
+	}
+    /**
+     * Lazy man's way of creating array used by self::messageProperties method.
+     * @param string $message
+     * @return array
+     */
+    public static function infoMessage($message = '')
+    {
+        if ($message == '') {
+            $message = 'Insert helpful info here.';
+        }
+        return [
+            'message' => $message,
+            'type'    => 'info'
+        ];
+    }
+	/**
+	 * Lazy man's way of creating array used by self::messageProperties method.
+	 * @param string $message
+	 * @return array
+	 */
+	public static function successMessage($message = '')
+	{
+		if ($message == '') {
+			$message = 'Success!';
+		}
+		return [
+			'message' => $message,
+			'type'    => 'success'
+		];
+	}
+    /**
+     * Lazy man's way of creating array used by self::messageProperties method.
+     * @param string $message
+     * @return array
+     */
+    public static function warningMessage($message = '')
+    {
+        if ($message == '') {
+            $message = 'A Problem Has Occured. Please Try Again.';
+        }
+        return [
+            'message' => $message,
+            'type'    => 'warning'
+        ];
+    }
+
 }
