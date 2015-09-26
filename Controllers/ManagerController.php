@@ -70,49 +70,47 @@ class ManagerController implements ControllerInterface
     public function render()
     {
         if ($this->o_auth->isLoggedIn() === false && $this->route_action != 'verifyLogin') {
-            $this->o_session->resetSession();
-            $this->route_action = 'login';
+            return $this->renderLogin();
         }
-        elseif ($this->isDeniedAccess()) {
+        elseif ($this->isDeniedAccess(3)) {
             $this->o_auth->logout($_SESSION['login_id']);
-            $this->route_action = 'login';
+            $a_message = ViewHelper::warningMessage('Access Prohibited.');
+            return $this->renderLogin($_SESSION['login_id'], $a_message);
         }
         switch ($this->route_action) {
             case 'verifyLogin':
                 $a_results = $this->o_auth->login($this->a_post_values);
                 $this->logIt("Login Results: " . var_export($a_results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                if ($a_results['is_logged_in'] == 1 && $this->o_auth->hasMinimumRoleLevel($a_results['people_id'], 'admin')) {
+                if ($this->o_auth->isAllowedAccess(2)) {
                     $this->o_session->setVar('login_id', $this->a_post_values['login_id']);
-                    $html = $this->o_manager_view->renderLandingPage();
+                    return $this->o_manager_view->renderLandingPage();
                 }
                 else {
                     if ($a_results['is_logged_in'] == 1) {
                         $this->o_auth->logout($a_results['people_id']);
                     }
-                    $login_id = isset($this->a_post_values['login_id']) ? $this->a_post_values['login_id'] : '';
+                    $login_id = isset($this->a_post_values['login_id'])
+                        ? $this->a_post_values['login_id']
+                        : '';
                     $message  = isset($a_results['message'])
                         ? ViewHelper::failureMessage($a_results['message'])
                         : ViewHelper::failureMessage('Login Id or Password was incorrect. Please Try Again');
-                    $html = $this->o_manager_view->renderLoginForm($login_id, $message);
+                    return $this->renderLogin($login_id, $message);
                 }
-                break;
 
             case '':
             case 'landing':
-                $html = $this->o_manager_view->renderLandingPage();
-                break;
+                return $this->o_manager_view->renderLandingPage();
 
             case 'logout':
                 $this->o_auth->logout($_SESSION['login_id']);
                 $a_message = ViewHelper::successMessage("Logout Successful!");
-                $html = $this->o_manager_view->renderLoginForm('', $a_message);
-                break;
+                return $this->renderLogin('', $a_message);
 
             case 'login':
             default:
-                $html = $this->o_manager_view->renderLoginForm();
+                return $this->renderLogin();
         }
-        return $html;
     }
     /**
      * Passes control over to the Constants Admin Controller.
@@ -120,12 +118,12 @@ class ManagerController implements ControllerInterface
      */
     public function renderConstantsAdmin()
     {
-        if ($this->isDeniedAccess()) {
-            $a_message = ViewHelper::warningMessage("Access Denied");
-            return $this->renderLogin($a_message);
+        if ($this->o_auth->isAllowedAccess(2)) {
+            $o_constants_admin = new ConstantsAdminController($this->o_di);
+            return $o_constants_admin->render();
         }
-        $o_constants_admin = new ConstantsAdminController($this->o_di);
-        return $o_constants_admin->render();
+        $a_message = ViewHelper::warningMessage("Access Prohibited");
+        return $this->renderLogin('', $a_message);
     }
     /**
      * Passes control over to the router admin controller.
@@ -133,12 +131,12 @@ class ManagerController implements ControllerInterface
      */
     public function renderRoutesAdmin()
     {
-        if ($this->isDeniedAccess()) {
-            $a_message = ViewHelper::warningMessage("Access Denied");
-            return $this->renderLogin($a_message);
+        if ($this->o_auth->isAllowedAccess(2)) {
+            $o_router_admin = new RoutesAdminController($this->o_di);
+            return $o_router_admin->render();
         }
-        $o_router_admin = new RoutesAdminController($this->o_di);
-        return $o_router_admin->render();
+        $a_message = ViewHelper::warningMessage("Access Prohibited");
+        return $this->renderLogin('', $a_message);
     }
     /**
      * Passes control over to the people admin controller.
@@ -146,12 +144,12 @@ class ManagerController implements ControllerInterface
      */
     public function renderPeopleAdmin()
     {
-        if ($this->isDeniedAccess()) {
-            $a_message = ViewHelper::warningMessage("Access Denied");
-            return $this->renderLogin($a_message);
+        if ($this->o_auth->isAllowedAccess(2)) {
+            $o_people_admin = new PeopleAdminController($this->o_di);
+            return $o_people_admin->render();
         }
-        $o_people_admin = new PeopleAdminController($this->o_di);
-        return $o_people_admin->render();
+        $a_message = ViewHelper::warningMessage("Access Prohibited");
+        return $this->renderLogin('', $a_message);
     }
     /**
      * Passes control over to the roles admin controller.
@@ -159,12 +157,12 @@ class ManagerController implements ControllerInterface
      */
     public function renderRolesAdmin()
     {
-        if ($this->isDeniedAccess()) {
-            $a_message = ViewHelper::warningMessage("Access Denied");
-            return $this->renderLogin($a_message);
+        if ($this->o_auth->isAllowedAccess(2)) {
+            $o_roles_admin = new RolesAdmimController($this->o_di);
+            return $o_roles_admin->render();
         }
-        $o_roles_admin = new RolesAdmimController($this->o_di);
-        return $o_roles_admin->render();
+        $a_message = ViewHelper::warningMessage("Access Prohibited");
+        return $this->renderLogin('', $a_message);
     }
     /**
      * Passes control over to the groups admin controller.
@@ -172,30 +170,22 @@ class ManagerController implements ControllerInterface
      */
     public function renderGroupsAdmin()
     {
-        if ($this->isDeniedAccess()) {
-            $a_message = ViewHelper::warningMessage("Access Denied");
-            return $this->renderLogin($a_message);
+        if ($this->o_auth->isAllowedAccess(2)) {
+            $o_groups_admin = new GroupsAdmimController($this->o_di);
+            return $o_groups_admin->render();
         }
-        $o_groups_admin = new GroupsAdmimController($this->o_di);
-        return $o_groups_admin->render();
+        $a_message = ViewHelper::warningMessage("Access Prohibited");
+        return $this->renderLogin('', $a_message);
     }
-    private function isAllowedAccess()
-    {
-        if ($this->o_auth->isLoggedIn() && $this->o_auth->isRouteAllowed($_SESSION['login_id'])) {
-            return true;
-        }
-        return false;
-    }
-    private function renderLogin(array $a_message = array())
+    /**
+     * Renders login form after resetting session.
+     * @param array $a_message optional e.g. ['message' => '', 'type' => 'info']
+     * @return string
+     */
+    private function renderLogin($login_id = '', array $a_message = array())
     {
         $this->o_session->resetSession();
-        return $this->o_manager_view->renderLoginForm('', $a_message);
+        return $this->o_manager_view->renderLoginForm($login_id, $a_message);
     }
-    private function isDeniedAccess()
-    {
-        if ($this->isAllowedAccess()) {
-            return false;
-        }
-        return true;
-    }
+
 }
