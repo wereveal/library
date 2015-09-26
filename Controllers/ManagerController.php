@@ -20,10 +20,12 @@
  *      v1.0.0α1 - Initial version                       - 11/14/2014 wer
  *  </pre>
  * @TODO PeopleAdmin
+ * @TODO Need to restrict access to sections of the manager based on groups/roles
  **/
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\AuthHelper;
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -49,7 +51,7 @@ class ManagerController implements ControllerInterface
         $this->o_di           = $o_di;
         $this->o_router       = $o_di->get('router');
         $this->o_session      = $o_di->get('session');
-        $this->a_route_parts  = $this->o_router->getRouteParts();
+        $this->a_route_parts  = $this->o_router->getRouterParts();
         $this->route_action   = $this->a_route_parts['route_action'];
         $this->route_method   = $this->a_route_parts['route_method'];
         $this->form_action    = $this->a_route_parts['form_action'];
@@ -71,8 +73,9 @@ class ManagerController implements ControllerInterface
             $this->o_session->resetSession();
             $this->route_action = 'login';
         }
-        elseif ($this->o_auth->isRouteAllowed($this->o_session->getVar('login_id')) === false) {
-
+        elseif ($this->isDeniedAccess()) {
+            $this->o_auth->logout($_SESSION['login_id']);
+            $this->route_action = 'login';
         }
         switch ($this->route_action) {
             case 'verifyLogin':
@@ -88,15 +91,23 @@ class ManagerController implements ControllerInterface
                     }
                     $login_id = isset($this->a_post_values['login_id']) ? $this->a_post_values['login_id'] : '';
                     $message  = isset($a_results['message'])
-                        ? $a_results['message']
-                        : 'Login Id or Password was incorrect. Please Try Again';
+                        ? ViewHelper::failureMessage($a_results['message'])
+                        : ViewHelper::failureMessage('Login Id or Password was incorrect. Please Try Again');
                     $html = $this->o_manager_view->renderLoginForm($login_id, $message);
                 }
                 break;
+
             case '':
             case 'landing':
                 $html = $this->o_manager_view->renderLandingPage();
                 break;
+
+            case 'logout':
+                $this->o_auth->logout($_SESSION['login_id']);
+                $a_message = ViewHelper::successMessage("Logout Successful!");
+                $html = $this->o_manager_view->renderLoginForm('', $a_message);
+                break;
+
             case 'login':
             default:
                 $html = $this->o_manager_view->renderLoginForm();
@@ -109,8 +120,9 @@ class ManagerController implements ControllerInterface
      */
     public function renderConstantsAdmin()
     {
-        if ($this->o_auth->isLoggedIn() === false) {
-            return $this->o_manager_view->renderLoginForm();
+        if ($this->isDeniedAccess()) {
+            $a_message = ViewHelper::warningMessage("Access Denied");
+            return $this->renderLogin($a_message);
         }
         $o_constants_admin = new ConstantsAdminController($this->o_di);
         return $o_constants_admin->render();
@@ -119,12 +131,13 @@ class ManagerController implements ControllerInterface
      * Passes control over to the router admin controller.
      * @return string
      */
-    public function renderRouterAdmin()
+    public function renderRoutesAdmin()
     {
-        if ($this->o_auth->isLoggedIn() === false) {
-            return $this->o_manager_view->renderLoginForm();
+        if ($this->isDeniedAccess()) {
+            $a_message = ViewHelper::warningMessage("Access Denied");
+            return $this->renderLogin($a_message);
         }
-        $o_router_admin = new RouterAdminController($this->o_di);
+        $o_router_admin = new RoutesAdminController($this->o_di);
         return $o_router_admin->render();
     }
     /**
@@ -133,8 +146,9 @@ class ManagerController implements ControllerInterface
      */
     public function renderPeopleAdmin()
     {
-        if ($this->o_auth->isLoggedIn() === false) {
-            return $this->o_manager_view->renderLoginForm();
+        if ($this->isDeniedAccess()) {
+            $a_message = ViewHelper::warningMessage("Access Denied");
+            return $this->renderLogin($a_message);
         }
         $o_people_admin = new PeopleAdminController($this->o_di);
         return $o_people_admin->render();
@@ -145,8 +159,9 @@ class ManagerController implements ControllerInterface
      */
     public function renderRolesAdmin()
     {
-        if ($this->o_auth->isLoggedIn() === false) {
-            return $this->o_manager_view->renderLoginForm();
+        if ($this->isDeniedAccess()) {
+            $a_message = ViewHelper::warningMessage("Access Denied");
+            return $this->renderLogin($a_message);
         }
         $o_roles_admin = new RolesAdmimController($this->o_di);
         return $o_roles_admin->render();
@@ -157,10 +172,30 @@ class ManagerController implements ControllerInterface
      */
     public function renderGroupsAdmin()
     {
-        if ($this->o_auth->isLoggedIn() === false) {
-            return $this->o_manager_view->renderLoginForm();
+        if ($this->isDeniedAccess()) {
+            $a_message = ViewHelper::warningMessage("Access Denied");
+            return $this->renderLogin($a_message);
         }
         $o_groups_admin = new GroupsAdmimController($this->o_di);
         return $o_groups_admin->render();
+    }
+    private function isAllowedAccess()
+    {
+        if ($this->o_auth->isLoggedIn() && $this->o_auth->isRouteAllowed($_SESSION['login_id'])) {
+            return true;
+        }
+        return false;
+    }
+    private function renderLogin(array $a_message = array())
+    {
+        $this->o_session->resetSession();
+        return $this->o_manager_view->renderLoginForm('', $a_message);
+    }
+    private function isDeniedAccess()
+    {
+        if ($this->isAllowedAccess()) {
+            return false;
+        }
+        return true;
     }
 }

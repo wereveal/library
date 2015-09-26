@@ -45,7 +45,7 @@ class GroupsAdmimController implements MangerControllerInterface
         $this->o_model   = new GroupsModel($o_db);
         $this->o_grm     = new GroupRoleMapModel($o_db);
         $this->o_view    = new GroupsAdminView($o_di);
-        $this->a_post    = $this->o_router->getRouteParts();
+        $this->a_post    = $this->o_router->getRouterParts();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
@@ -54,7 +54,7 @@ class GroupsAdmimController implements MangerControllerInterface
     }
     public function render()
     {
-        $a_route_parts = $this->o_router->getRouteParts();
+        $a_route_parts = $this->o_router->getRouterParts();
         $main_action   = $a_route_parts['route_action'];
         $form_action   = $a_route_parts['form_action'];
         $url_action    = isset($a_route_parts['url_actions'][0])

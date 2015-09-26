@@ -52,7 +52,7 @@ class RolesAdmimController implements MangerControllerInterface
     }
     public function render()
     {
-        $a_route_parts = $this->o_router->getRouteParts();
+        $a_route_parts = $this->o_router->getRouterParts();
         $this->a_post  = $a_route_parts['post'];
         $main_action   = $a_route_parts['route_action'];
         $form_action   = $a_route_parts['form_action'];

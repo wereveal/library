@@ -31,16 +31,18 @@ class ConstantsAdminView
     use LogitTraits;
 
     private $o_auth;
+    private $o_manager;
     private $o_model;
     private $o_people;
     private $o_twig;
 
     public function __construct(Di $o_di)
     {
-        $this->o_twig   = $o_di->get('twig');
-        $this->o_model  = new ConstantsModel($o_di->get('db'));
-        $this->o_people = new PeopleModel($o_di->get('db'));
-        $this->o_auth   = new AuthHelper($o_di);
+        $this->o_twig    = $o_di->get('twig');
+        $this->o_manager = new ManagerView($o_di);
+        $this->o_model   = new ConstantsModel($o_di->get('db'));
+        $this->o_people  = new PeopleModel($o_di->get('db'));
+        $this->o_auth    = new AuthHelper($o_di);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);

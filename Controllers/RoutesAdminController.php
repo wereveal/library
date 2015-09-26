@@ -1,15 +1,16 @@
 <?php
 /**
- *  @brief Controller for the Router Admin page.
- *  @file RouterAdminController.php
+ *  @brief Controller for the Routes Admin page.
+ *  @file RoutesAdminController.php
  *  @ingroup ritc_library controllers
  *  @namespace Ritc/Library/Controllers
- *  @class RouterAdminController
+ *  @class RoutesAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-01-28 14:50:14
+ *  @version 2.0.0
+ *  @date 2015-09-26 03:08:16
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
+ *      v2.0.0   - renamed                   - 09/26/2015 wer
  *      v1.0.0   - first working version     - 01/28/2015 wer
  *      v1.0.0β2 - refactored for namespaces - 12/05/2014 wer
  *      v1.0.0β1 - Initial version           - 11/14/2014 wer
@@ -26,7 +27,7 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RouterAdminView;
 
-class RouterAdminController implements MangerControllerInterface
+class RoutesAdminController implements MangerControllerInterface
 {
     use LogitTraits;
     private $a_post;
@@ -52,7 +53,7 @@ class RouterAdminController implements MangerControllerInterface
     }
     public function render()
     {
-        $a_route_parts = $this->o_router->getRouteParts();
+        $a_route_parts = $this->o_router->getRouterParts();
         $main_action = $a_route_parts['route_action'];
         $form_action = $a_route_parts['form_action'];
         $url_action    = isset($a_route_parts['url_actions'][0])

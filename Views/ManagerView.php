@@ -15,6 +15,8 @@
  *      v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
  *      v1.0.0β1 - Initial version                              - 11/08/2014 wer
  *  </pre>
+ * @TODO LoginForm needs to be accessible by all, but all other parts of the manager must have strict access controls.
+ * @todo Menu needs to have access controls on it.
  **/
 namespace Ritc\Library\Views;
 
@@ -26,8 +28,10 @@ class ManagerView
 {
     use LogitTraits;
 
+    private $a_links;
     private $o_di;
     private $o_db;
+    private $o_router;
     private $o_twig;
 
     public function __construct(Di $o_di)
@@ -35,46 +39,16 @@ class ManagerView
         $this->o_di   = $o_di;
         $this->o_twig = $o_di->get('twig');
         $this->o_db   = $o_di->get('db');
+        $this->o_router = $o_di->get('router');
+        $this->setLinks();
     }
     public function renderLandingPage()
     {
-        $a_links = [
-            [
-                'text' => 'Home',
-                'url'  => '/manager/',
-                'description' => 'Manager Home Page'
-            ],
-            [
-                'text' => 'Constants Manger',
-                'url'  => '/manager/constants/',
-                'description' => 'Constant values changed and new constants added.'
-            ],
-            [
-                'text' => 'Routes Manager',
-                'url'  => '/manager/routes/',
-                'description' => 'Create and manage routes for the app.'
-            ],
-            [
-                'text' => 'People Manager',
-                'url'  => '/manager/people/',
-                'description' => 'Create and manage people which get assigned to groups.'
-            ],
-            [
-                'text' => 'Groups Manager',
-                'url'  => '/manager/groups/',
-                'description' => 'Create and manage groups to which people are assigned.'
-            ],
-            [
-                'text' => 'Roles Manager',
-                'url'  => '/manager/roles/',
-                'description' => 'Create and manage roles to which groups are assigned.'
-            ]
-        ];
         $a_values = [
             'description'   => 'This is the Manager Page',
             'public_dir'    => '',
             'title'         => 'This is the Main Manager Page',
-            'links'         => $a_links,
+            'links'         => $this->a_links,
             'site_url'      => SITE_URL,
             'rights_holder' => RIGHTS_HOLDER
         ];
@@ -110,9 +84,10 @@ class ManagerView
      * Creates the html that displays the login form to access the app.
      * Sometimes this will have been handled already elsewhere.
      * @param string $previous_login_id optional, allows the user_login_id to be used over.
+     * @param array $a_message array with message and type of message.
      * @return string
      */
-    public function renderLoginForm($previous_login_id = '', $message = '')
+    public function renderLoginForm($previous_login_id = '', array $a_message = array())
     {
         $o_sess  = $this->o_di->get('session');
         $tolken  = $o_sess->getVar('token');
@@ -122,8 +97,8 @@ class ManagerView
             $tolken  = $o_sess->getVar('token');
             $idle_ts = $o_sess->getVar('idle_timestamp');
         }
-        if ($message != '') {
-            $a_message = ViewHelper::messageProperties(['message' => $message, 'type' => 'failure']);
+        if ($a_message != array()) {
+            $a_message = ViewHelper::messageProperties($a_message);
         }
         else {
             $a_message = array();
@@ -138,5 +113,56 @@ class ManagerView
         ];
         $o_sess->unsetVar('login_id');
         return $this->o_twig->render('@pages/login_form.twig', $a_values);
+    }
+
+    public function setLinks()
+    {
+        $a_links = [
+            [
+                'text' => 'Home',
+                'url'  => '/manager/',
+                'description' => 'Manager Home Page',
+                'menu_name' => 'Home'
+            ],
+            [
+                'text' => 'Constants Manger',
+                'url'  => '/manager/constants/',
+                'description' => 'Constant values changed and new constants added.',
+                'menu_name' => 'Constants'
+            ],
+            [
+                'text' => 'Routes Manager',
+                'url'  => '/manager/routes/',
+                'description' => 'Create and manage routes for the app.',
+                'menu_name' => 'Routes'
+            ],
+            [
+                'text' => 'People Manager',
+                'url'  => '/manager/people/',
+                'description' => 'Create and manage people which get assigned to groups.',
+                'menu_name' => 'People'
+            ],
+            [
+                'text' => 'Groups Manager',
+                'url'  => '/manager/groups/',
+                'description' => 'Create and manage groups to which people are assigned.',
+                'menu_name' => 'Groups'
+            ],
+            [
+                'text' => 'Roles Manager',
+                'url'  => '/manager/roles/',
+                'description' => 'Create and manage roles to which groups are assigned.',
+                'menu_name' => 'Roles'
+            ],
+            [
+                'text' => 'Logout',
+                'url'  => '/manager/logout/',
+                'description' => 'Logout.',
+                'menu_name' => 'Logout'
+            ]
+        ];
+        foreach ($a_links as $a_link) {
+
+        }
     }
 }
