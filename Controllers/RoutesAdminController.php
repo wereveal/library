@@ -22,7 +22,7 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
-use Ritc\Library\Models\RouterModel;
+use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RouterAdminView;
@@ -43,7 +43,7 @@ class RoutesAdminController implements MangerControllerInterface
         $o_db            = $o_di->get('db');
         $this->o_session = $o_di->get('session');
         $this->o_router  = $o_di->get('router');
-        $this->o_model   = new RouterModel($o_db);
+        $this->o_model   = new RoutesModel($o_db);
         $this->o_view    = new RouterAdminView($o_di);
         $this->a_post    = $this->o_router->getPost();
         if (DEVELOPER_MODE) {

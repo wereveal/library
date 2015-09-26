@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief View for the Router Admin page.
- *  @file RouterAdminView.php
+ *  @file RoutesAdminView.php
  *  @ingroup ritc_library views
  *  @namespace Ritc/Library/Views
  *  @class RouterAdminView
@@ -18,7 +18,7 @@
 **/
 namespace Ritc\Library\Views;
 
-use Ritc\Library\Models\RouterModel;
+use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -34,7 +34,7 @@ class RouterAdminView
     {
         $this->o_twig  = $o_di->get('twig');
         $o_db          = $o_di->get('db');
-        $this->o_model = new RouterModel($o_db);
+        $this->o_model = new RoutesModel($o_db);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);

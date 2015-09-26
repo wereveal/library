@@ -1,10 +1,10 @@
 <?php
 /**
  *  @brief Does all the database CRUD stuff.
- *  @file RouterModel.php
+ *  @file RoutesModel.php
  *  @ingroup ritc_library models
  *  @namespace Ritc/Library/Models
- *  @class RouterModel
+ *  @class RoutesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.2
  *  @date 2015-09-03 14:13:31
@@ -24,7 +24,7 @@ use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
-class RouterModel implements ModelInterface
+class RoutesModel implements ModelInterface
 {
     use LogitTraits;
 

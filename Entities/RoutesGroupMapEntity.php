@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief Entity to map the Router to the Roles.
- * @file RouterGroupMapEntity.php
+ * @file RoutesGroupMapEntity.php
  * @ingroup ritc_library entities
  * @namespace Ritc\Library\Entities
  * @class RouterGroupMapEntity
