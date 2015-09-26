@@ -309,18 +309,17 @@ class AuthHelper
     /**
      * Checks to see if the person has a valid role for the route.
      * @param int $people_id
-     * @param bool $is_group defaults to true, otherwise it uses a route
+     * @param bool $use_group_access defaults to true, otherwise it uses roles
      * @return bool
      */
-    public function isRouteAllowed($people_id = -1, $is_group = true)
+    public function isRouteAllowed($people_id = -1, $use_group_access = true)
     {
         if ($people_id == -1 || $people_id == '') { return false; }
         $meth = __METHOD__ . '.';
-        error_log('People ID: ' . $people_id);
         $a_person = $this->o_people->readInfo($people_id);
         $this->logIt('Person: ' . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
         if ($a_person !== false) {
-            if ($is_group) {
+            if ($use_group_access) {
                 $a_allowed_groups = $this->o_router->getAllowedGroups();
                 $this->logIt(var_export($a_allowed_groups, true), LOG_OFF, $meth . __LINE__);
                 foreach($a_person['groups'] as $a_group) {
