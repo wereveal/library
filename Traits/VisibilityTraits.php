@@ -18,6 +18,8 @@
  *  @note This was a part of the Base abstract class. Spun it out so it could
  *      be used independently, only in classes where it is important.
  */
+namespace Ritc\Library\Traits;
+
 trait VisibilityTraits {
     protected $current_page;
     protected $private_properties = array();

@@ -13,14 +13,16 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="manager-nav">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="{{ public_dir }}/manager/">Home <span class="sr-only">(current)</span></a></li>
-                <li><a href="{{ public_dir }}/manager/constants/">Constants</a></li>
-                <li><a href="{{ public_dir }}/manager/routes/">Routes</a></li>
-                <li><a href="{{ public_dir }}/manager/people/">People</a></li>
-                <li><a href="{{ public_dir }}/manager/groups/">Groups</a></li>
-                <li><a href="{{ public_dir }}/manager/roles/">Roles</a></li>
-                <li><a href="{{ public_dir }}/manager/logout/">Logout</a></li>
+            {% for menu in menus %}
+                {% if menu.class == 'active' %}
+                    {% set spanstuff = ' <span class="sr-only">(current)</span>' %}
+                {% else %}
+                    {% set spanstuff = '' %}
+                {% endif %}
+                <li class="{{ menu.class }}"><a href="{{ public_dir }}{{ menu.url }}">{{ menu.name }}{{ spanstuff }}</a></li>
+            {% endfor %}
             </ul>
         </div><!-- /.navbar-collapse -->
+
     </div><!-- /.container-fluid -->
 </nav>

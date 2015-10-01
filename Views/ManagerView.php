@@ -15,42 +15,36 @@
  *      v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
  *      v1.0.0β1 - Initial version                              - 11/08/2014 wer
  *  </pre>
- * @TODO LoginForm needs to be accessible by all, but all other parts of the manager must have strict access controls.
- * @todo Menu needs to have access controls on it.
  **/
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Traits\ManagerTraits;
 
 class ManagerView
 {
-    use LogitTraits;
+    use LogitTraits, ManagerTraits;
 
-    private $a_links;
-    private $o_di;
     private $o_db;
-    private $o_router;
-    private $o_twig;
 
     public function __construct(Di $o_di)
     {
-        $this->o_di   = $o_di;
-        $this->o_twig = $o_di->get('twig');
-        $this->o_db   = $o_di->get('db');
-        $this->o_router = $o_di->get('router');
-        $this->setLinks();
+        $this->o_db     = $o_di->get('db');
+        $this->setObjects($o_di);
     }
     public function renderLandingPage()
     {
+        $this->setLinks();
         $a_values = [
             'description'   => 'This is the Manager Page',
             'public_dir'    => '',
             'title'         => 'This is the Main Manager Page',
             'links'         => $this->a_links,
             'site_url'      => SITE_URL,
-            'rights_holder' => RIGHTS_HOLDER
+            'rights_holder' => RIGHTS_HOLDER,
+            'menus'         => $this->a_links
         ];
         return $this->o_twig->render('@main/index.twig', $a_values);
     }
@@ -89,6 +83,7 @@ class ManagerView
      */
     public function renderLoginForm($previous_login_id = '', array $a_message = array())
     {
+        $this->setLinks();
         $o_sess  = $this->o_di->get('session');
         $tolken  = $o_sess->getVar('token');
         $idle_ts = $o_sess->getVar('idle_timestamp');
@@ -109,60 +104,10 @@ class ManagerView
             'hobbit'    => '',
             'login_id'  => $previous_login_id,
             'password'  => '',
-            'a_message' => $a_message
+            'a_message' => $a_message,
+            'menus'     => $this->a_links
         ];
         $o_sess->unsetVar('login_id');
         return $this->o_twig->render('@pages/login_form.twig', $a_values);
-    }
-
-    public function setLinks()
-    {
-        $a_links = [
-            [
-                'text' => 'Home',
-                'url'  => '/manager/',
-                'description' => 'Manager Home Page',
-                'menu_name' => 'Home'
-            ],
-            [
-                'text' => 'Constants Manger',
-                'url'  => '/manager/constants/',
-                'description' => 'Constant values changed and new constants added.',
-                'menu_name' => 'Constants'
-            ],
-            [
-                'text' => 'Routes Manager',
-                'url'  => '/manager/routes/',
-                'description' => 'Create and manage routes for the app.',
-                'menu_name' => 'Routes'
-            ],
-            [
-                'text' => 'People Manager',
-                'url'  => '/manager/people/',
-                'description' => 'Create and manage people which get assigned to groups.',
-                'menu_name' => 'People'
-            ],
-            [
-                'text' => 'Groups Manager',
-                'url'  => '/manager/groups/',
-                'description' => 'Create and manage groups to which people are assigned.',
-                'menu_name' => 'Groups'
-            ],
-            [
-                'text' => 'Roles Manager',
-                'url'  => '/manager/roles/',
-                'description' => 'Create and manage roles to which groups are assigned.',
-                'menu_name' => 'Roles'
-            ],
-            [
-                'text' => 'Logout',
-                'url'  => '/manager/logout/',
-                'description' => 'Logout.',
-                'menu_name' => 'Logout'
-            ]
-        ];
-        foreach ($a_links as $a_link) {
-
-        }
     }
 }

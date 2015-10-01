@@ -20,7 +20,8 @@ namespace Ritc\Library\Traits;
 
 use Ritc\Library\Services\Elog;
 
-trait LogitTraits {
+trait LogitTraits
+{
     protected $o_elog;
 
     /**

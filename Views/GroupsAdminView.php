@@ -22,20 +22,21 @@ use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Traits\ManagerTraits;
 
 class GroupsAdminView
 {
-    use LogitTraits;
+    use LogitTraits, ManagerTraits;
 
     private $o_db;
     private $o_groups;
-    private $o_twig;
 
     public function __construct(Di $o_di)
     {
-        $this->o_twig  = $o_di->get('twig');
         $this->o_db    = $o_di->get('db');
         $this->o_groups = new GroupsModel($this->o_db);
+        $this->setObjects($o_di);
+        $this->setLinks();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_groups->setElog($this->o_elog);
@@ -72,6 +73,7 @@ class GroupsAdminView
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
             'a_blank_roles' => $a_roles,
+            'menus'   => $this->a_links
         ];
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
@@ -116,6 +118,7 @@ class GroupsAdminView
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the group.';
         }
+        $a_values['menus'] = $this->a_links;
         return $this->o_twig->render('@pages/verify_delete_group.twig', $a_values);
     }
 

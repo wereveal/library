@@ -18,7 +18,6 @@
  **/
 namespace Ritc\Library\Views;
 
-use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
@@ -27,18 +26,17 @@ use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Traits\ManagerTraits;
 
 class PeopleAdminView
 {
-    use LogitTraits;
+    use LogitTraits, ManagerTraits;
 
-    private $o_auth;
     private $o_people_model;
     private $o_group_model;
     private $o_role_model;
     private $o_pgm_model;
     private $o_grm_model;
-    private $o_twig;
 
     public function __construct(Di $o_di)
     {
@@ -48,8 +46,8 @@ class PeopleAdminView
         $this->o_role_model   = new RolesModel($o_db);
         $this->o_pgm_model    = new PeopleGroupMapModel($o_db);
         $this->o_grm_model    = new GroupRoleMapModel($o_db);
-        $this->o_auth         = new AuthHelper($o_di);
-        $this->o_twig         = $o_di->get('twig');
+        $this->setObjects($o_di);
+        $this->setLinks();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people_model->setElog($this->o_elog);
@@ -73,9 +71,10 @@ class PeopleAdminView
                     'real_name' => ''
                 ]
             ),
-            'tolken'  => $_SESSION['token'],
-            'form_ts' => $_SESSION['idle_timestamp'],
-            'hobbit'  => '',
+            'tolken'      => $_SESSION['token'],
+            'form_ts'     => $_SESSION['idle_timestamp'],
+            'hobbit'      => '',
+            'menus'       => $this->a_links
         ];
         if ($_SESSION['login_id'] != 'SuperAdmin') {
             $a_values['a_people'] = $this->o_people_model->read(['is_immutable' => 0]);
@@ -129,14 +128,15 @@ class PeopleAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'adm'     => $_SESSION['login_id']
+            'adm'     => $_SESSION['login_id'],
+            'menus'   => $this->a_links
         ];
         $a_person = $this->o_people_model->readInfo($people_id);
         if ($a_person == array()) {
             return $this->renderList(['message' => 'The person was not found. Please Try Again.', 'type' => 'error']);
         }
         $a_person['password'] = '************';
-        $this->logIt("Person: " . var_export($a_person, true), LOG_ON, __METHOD__);
+        $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, __METHOD__);
         foreach($a_person['groups'] as $key => $a_group) {
             $can_change = 'no';
             if ($this->o_auth->hasMinimumRoleLevel($admin_id, $a_group['group_id'])) {
@@ -144,7 +144,7 @@ class PeopleAdminView
             }
             $a_person['groups'][$key]['can_change'] = $can_change;
         }
-        $this->logIt("Person: " . var_export($a_person, true), LOG_ON, __METHOD__);
+        $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, __METHOD__);
         $a_values['person'] = $a_person;
         return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }
@@ -157,6 +157,7 @@ class PeopleAdminView
         if ($a_person[0]['is_immutable'] == 1) {
             return $this->renderList(['message' => 'Sorry, that user can not be deleted.', 'type' => 'failure']);
         }
+        $a_posted_values['menus'] = $this->a_links;
         return $this->o_twig->render('@pages/verify_delete_person.twig', $a_posted_values);
     }
     /**

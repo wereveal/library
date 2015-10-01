@@ -14,8 +14,9 @@
  **/
 namespace Ritc\Library\Helper;
 
+use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\RouterGroupMapModel;
-use Ritc\Library\Models\RouterModel;
+use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Models\RouterRolesMapModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -26,16 +27,18 @@ class RoutesHelper
 
     private $a_route_parts;
     private $o_model;
-    private $o_rrm;
     private $o_rgm;
+    private $o_role;
+    private $o_rrm;
     private $route_path;
 
     public function __construct(Di $o_di, $route_path = '')
     {
         $o_db = $o_di->get('db');
-        $this->o_model = new RouterModel($o_db);
-        $this->o_rrm   = new RouterRolesMapModel($o_db);
+        $this->o_model = new RoutesModel($o_db);
+        $this->o_role  = new RolesModel($o_db);
         $this->o_rgm   = new RouterGroupMapModel($o_db);
+        $this->o_rrm   = new RouterRolesMapModel($o_db);
         $this->route_path = $route_path;
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
@@ -59,14 +62,15 @@ class RoutesHelper
         }
         $a_values = ['route_path' => $route_path];
         $a_results = $this->o_model->read($a_values);
-        $this->logIt("Actions from DB: " . var_export($a_results, true), LOG_ON, __METHOD__);
+        $this->logIt("Actions from DB: " . var_export($a_results, true), LOG_OFF, __METHOD__);
         if ($a_results !== false && count($a_results) === 1) {
-            $a_route_parts                = $a_results[0];
-            $a_route_parts['route_path']  = $route_path;
-            $a_route_parts['url_actions'] = [];
-            $a_route_parts['roles']       = $this->getRoles($a_route_parts['route_id']);
-            $a_route_parts['groups']      = $this->getGroups($a_route_parts['route_id']);
-            $this->a_route_parts          = $a_route_parts;
+            $a_route_parts                   = $a_results[0];
+            $a_route_parts['route_path']     = $route_path;
+            $a_route_parts['url_actions']    = [];
+            $a_route_parts['roles']          = $this->getRoles($a_route_parts['route_id']);
+            $a_route_parts['groups']         = $this->getGroups($a_route_parts['route_id']);
+            $a_route_parts['min_role_level'] = $this->getMinRoleLevel($a_route_parts['roles'], $a_route_parts['route_id']);
+            $this->a_route_parts             = $a_route_parts;
         }
         else {
             $a_route_path_parts = explode('/', trim($route_path));
@@ -88,28 +92,30 @@ class RoutesHelper
                 }
             }
             if ($a_last_good_results != array()) {
-                $a_route_parts = $a_last_good_results;
-                $a_route_parts['route_path'] = $route_path;
-                $a_route_parts['url_actions'] = [];
                 $remainder_path = trim(str_replace($last_url,'', $route_path));
                 if (substr($remainder_path, -1) == '/') {
                     $remainder_path = substr($remainder_path, 0, -1);
                 }
-                $a_route_parts['url_actions'] = explode('/', $remainder_path);
-                $a_route_parts['roles'] = $this->getRoles($a_route_parts['route_id']);
-                $a_route_parts['groups'] = $this->getGroups($a_route_parts['route_id']);
+                $a_route_parts                   = $a_last_good_results;
+                $a_route_parts['route_path']     = $route_path;
+                $a_route_parts['url_actions']    = [];
+                $a_route_parts['url_actions']    = explode('/', $remainder_path);
+                $a_route_parts['roles']          = $this->getRoles($a_route_parts['route_id']);
+                $a_route_parts['groups']         = $this->getGroups($a_route_parts['route_id']);
+                $a_route_parts['min_role_level'] = $this->getMinRoleLevel($a_route_parts['roles']);
                 $this->a_route_parts = $a_route_parts;
             }
             else {
                 $this->a_route_parts = [
-                    'route_id'     => 0,
-                    'route_path'   => $this->route_path,
-                    'route_class'  => 'MainController',
-                    'route_method' => '',
-                    'route_action' => '',
-                    'url_actions'  => [],
-                    'roles'        => [],
-                    'groups'       => []
+                    'route_id'       => 0,
+                    'route_path'     => $this->route_path,
+                    'route_class'    => 'MainController',
+                    'route_method'   => '',
+                    'route_action'   => '',
+                    'url_actions'    => [],
+                    'roles'          => [],
+                    'groups'         => [],
+                    'min_role_level' => 999
                 ];
             }
         }
@@ -124,33 +130,54 @@ class RoutesHelper
         $this->setRouteParts($route_path);
         return $this->getRouteParts();
     }
-
     /**
      * @param $route_id
      * @return array|mixed
      */
     public function getRoles($route_id)
     {
+        $a_roles = array();
         $a_rrm_results = $this->o_rrm->read(['route_id' => $route_id]);
         if ($a_rrm_results !== false && count($a_rrm_results) > 0) {
-            return $a_rrm_results;
+            foreach($a_rrm_results as $a_rrm) {
+                $a_roles[] = $a_rrm['role_id'];
+            }
         }
-        return array();
+        return $a_roles;
     }
-
     /**
      * @param $route_id
      * @return array|mixed
      */
     public function getGroups($route_id)
     {
+        $a_groups = array();
         $a_rgm_results = $this->o_rgm->read(['route_id' => $route_id]);
         if ($a_rgm_results !== false && count($a_rgm_results) > 0) {
-            return $a_rgm_results;
+            foreach ($a_rgm_results as $a_rgm) {
+                $a_groups[] = $a_rgm['group_id'];
+            }
         }
-        return array();
+        return $a_groups;
     }
-
+    /**
+     * Gets the min role level needed for the route.
+     * The roles allowed are passed in and iterated to determine the role level.
+     * Searches the role db for the role level.
+     * @param array $a_roles
+     * @return int
+     */
+    public function getMinRoleLevel(array $a_roles = array())
+    {
+        $min_role_level = 0;
+        foreach ($a_roles as $role_id) {
+            $results = $this->o_role->readById($role_id);
+            if ($results['role_level'] >= $min_role_level) {
+                $min_role_level = $results['role_level'];
+            }
+        }
+        return $min_role_level;
+    }
     /**
      * @param string $route_path
      */
@@ -158,7 +185,6 @@ class RoutesHelper
     {
         $this->route_path = $route_path;
     }
-
     /**
      * @return string
      */
@@ -166,7 +192,6 @@ class RoutesHelper
     {
         return $this->route_path;
     }
-
     /**
      * @return array
      */

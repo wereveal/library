@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.3.2
- *  @date 2015-09-25 15:03:09
+ *  @version 4.4.0
+ *  @date 2015-09-26 11:23:31
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.4.0 - bunch of changes primarily in access control          - 09/26/2015 wer
  *      v4.3.2 - added getHighestRoleLevel method                      - 09/25/2015 wer
  *      v4.3.1 - added logout method                                   - 09/24/2015 wer
  *      v4.3.0 - two changes. isDefaultPerson is now isImmutablePerson - 09/03/2015 wer
@@ -136,7 +137,6 @@ class AuthHelper
             $this->logIt("User Values: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
             if ($a_person == array() || !is_array($a_person)) {
                 $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
-                $this->o_session->resetSession();
                 return [
                     'login_id'     => '',
                     'is_logged_in' => 0,
@@ -202,7 +202,6 @@ class AuthHelper
         }
         else {
             $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
-            $this->o_session->resetSession();
             return [
                 'login_id'     => '',
                 'is_logged_in' => 0,
@@ -237,11 +236,12 @@ class AuthHelper
      * @param int|string $people_id
      * return int
      */
-    public function getHighestRoleLevel($people_id)
+    public function getHighestRoleLevel($people_id = '')
     {
+        if ($people_id == '') { return 999; }
         $role_level = 999;
         $a_person = $this->o_people->readInfo($people_id);
-        if ($a_person !== false && !is_null($a_person)) {
+        if ($a_person !== false && !is_null($a_person) && $a_person != array()) {
             foreach ($a_person['roles'] as $a_role) {
                 $role_level = $a_role['role_level'] < $role_level
                     ? $a_role['role_level'] : $role_level;
@@ -259,13 +259,47 @@ class AuthHelper
      * @param int $role_level (has a fallback so could be a role name
      * @return bool
      */
-    public function hasMinimumRoleLevel($people_id, $role_level = 999)
+    public function hasMinimumRoleLevel($people_id = '', $role_level = 999)
     {
         $highest_role_level = $this->getHighestRoleLevel($people_id);
         if ($highest_role_level <= $role_level) {
             return true;
         }
         return false;
+    }
+    /**
+     * Determines if a person is allowed access to something.
+     * Checks to see if the person is logged in and either has the minimum
+     * role level allowed or the route is allowed to the group the person is in.
+     * @return bool
+     */
+    public function isAllowedAccess($people_id = '', $role_level = 999)
+    {
+        if ($this->isLoggedIn()
+            &&
+            (
+                $this->hasMinimumRoleLevel($people_id, $role_level)
+                ||
+                $this->isRouteAllowed($people_id)
+            )
+        ) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Checks to see if the person is denied access to something.
+     * Uses the isAllowedAccess method, subtracting 1 from denied role level
+     * to see if that level has access.
+     * @param int $role_level level at which access is denied.
+     * @return bool
+     */
+    public function isDeniedAccess($people_id = '', $role_level = 999)
+    {
+        if ($this->isAllowedAccess($people_id, $role_level - 1)) {
+            return false;
+        }
+        return true;
     }
     /**
      *  Figures out if the person is specified as a default person.
@@ -308,7 +342,7 @@ class AuthHelper
     }
     /**
      * Checks to see if the person has a valid role for the route.
-     * @param int $people_id
+     * @param int|string $people_id
      * @param bool $use_group_access defaults to true, otherwise it uses roles
      * @return bool
      */
@@ -346,7 +380,7 @@ class AuthHelper
     }
     /**
      *  Verifies person has the role of super administrator.
-     *  @param int $people_id required
+     *  @param int|string $people_id required
      *  @return bool - true = is a super admin, false = not a super admin
      * @TODO this may not work as intended due to changes to roles/groups etc.
     **/

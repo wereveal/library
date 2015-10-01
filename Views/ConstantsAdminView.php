@@ -25,24 +25,24 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Traits\ManagerTraits;
 
 class ConstantsAdminView
 {
-    use LogitTraits;
+    use LogitTraits, ManagerTraits;
 
-    private $o_auth;
     private $o_manager;
     private $o_model;
     private $o_people;
-    private $o_twig;
 
     public function __construct(Di $o_di)
     {
-        $this->o_twig    = $o_di->get('twig');
         $this->o_manager = new ManagerView($o_di);
         $this->o_model   = new ConstantsModel($o_di->get('db'));
         $this->o_people  = new PeopleModel($o_di->get('db'));
         $this->o_auth    = new AuthHelper($o_di);
+        $this->setObjects($o_di);
+        $this->setLinks();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
@@ -69,7 +69,8 @@ class ConstantsAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'adm_lvl' => $this->o_auth->getHighestRoleLevel($_SESSION['login_id'])
+            'adm_lvl' => $this->o_auth->getHighestRoleLevel($_SESSION['login_id']),
+            'menus'   => $this->a_links
         );
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
@@ -109,6 +110,7 @@ class ConstantsAdminView
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the configuration.';
         }
+        $a_values['menus'] = $this->a_links;
         return $this->o_twig->render('@pages/verify_delete_constant.twig', $a_values);
     }
 }

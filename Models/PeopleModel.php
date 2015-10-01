@@ -469,7 +469,7 @@ class PeopleModel implements ModelInterface
     }
     /**
      *  Gets the user values based on login_id or people_id.
-     *  @param mixed $people_id the people_id or login_id (as defined in the db)
+     *  @param int|string $people_id the people_id or login_id (as defined in the db)
      *  @return array, the records for the person
     **/
     public function readInfo($people_id = '')

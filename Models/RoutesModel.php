@@ -103,7 +103,7 @@ class RoutesModel implements ModelInterface
             FROM {$this->db_prefix}routes
             {$where}
         ";
-        $this->logIt($sql, LOG_ON, __METHOD__);
+        $this->logIt($sql, LOG_OFF, __METHOD__);
         $results = $this->o_db->search($sql, $a_search_values);
         return $results;
     }

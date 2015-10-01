@@ -22,19 +22,22 @@ use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Traits\ManagerTraits;
 
 class RouterAdminView
 {
-    use LogitTraits;
+    use LogitTraits, ManagerTraits;
 
     private $o_model;
-    private $o_twig;
 
     public function __construct(Di $o_di)
     {
+        $this->o_di    = $o_di;
         $this->o_twig  = $o_di->get('twig');
         $o_db          = $o_di->get('db');
         $this->o_model = new RoutesModel($o_db);
+        $this->setObjects($o_di);
+        $this->setLinks();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
@@ -54,17 +57,18 @@ class RouterAdminView
             'a_message' => array(),
             'a_routes' => array(
                 [
-                    'route_id'       => '',
-                    'route_path'     => '',
-                    'route_class'    => '',
-                    'route_method'   => '',
-                    'route_action'   => '',
-                    'route_can_edit' => 0
+                    'route_id'        => '',
+                    'route_path'      => '',
+                    'route_class'     => '',
+                    'route_method'    => '',
+                    'route_action'    => '',
+                    'route_immutable' => 1
                 ]
             ),
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
-            'hobbit'  => ''
+            'hobbit'  => '',
+            'menus'   => $this->a_links
         );
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
@@ -77,7 +81,7 @@ class RouterAdminView
                 )
             );
         }
-        $a_routes = $this->o_model->read(array(), ['order_by' => 'route_can_edit DESC, route_path']);
+        $a_routes = $this->o_model->read(array(), ['order_by' => 'route_immutable DESC, route_path']);
         $this->logIt(
             'a_routes: ' . var_export($a_routes, TRUE),
             LOG_OFF,
@@ -104,6 +108,7 @@ class RouterAdminView
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the route.';
         }
+        $a_values['menus'] = $this->a_links;
         return $this->o_twig->render('@pages/verify_delete_route.twig', $a_values);
     }
 }
