@@ -1,16 +1,17 @@
 <?php
 /**
  *  @brief Common functions for the manager views.
- *  @file ManagerTraits.php
+ *  @file ManagerViewTraits.php
  *  @ingroup ritc_library Services
  *  @namespace Ritc/Library/Traits
- *  @class ManagerTraits
+ *  @class ManagerViewTraits
  *  @author William Reveal <bill@revealitconsulting.com>
  *  @version 1.0.0
- *  @date 2015-10-01 14:11:44
+ *  @date 2015-10-05 15:52:31
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0 - initial version - 10/01/2015 wer
+ *      v1.0.0 - think it is working now - 10/05/2015 wer
+ *      v0.1.0 - initial version         - 10/01/2015 wer
  *  </pre>
  */
 namespace Ritc\Library\Traits;
@@ -18,21 +19,55 @@ namespace Ritc\Library\Traits;
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
 
-trait ManagerTraits
+trait ManagerViewTraits
 {
     protected $a_links;
+    protected $auth_level;
     protected $o_auth;
     protected $o_di;
     protected $o_router;
     protected $o_twig;
 
-    private function setObjects($o_di)
+    /**
+     *  The default setup for a view in the manager.
+     *  @param Di $o_di
+     */
+    private function setupView(Di $o_di)
+    {
+        $this->setObjects($o_di);
+        $this->setAuthLevel();
+        $this->setLinks();
+    }
+    /**
+     * Sets the standard used objects from the object injector.
+     * @param Di $o_di
+     */
+    private function setObjects(Di $o_di)
     {
         $this->o_di     = $o_di;
         $this->o_auth   = new AuthHelper($o_di);
         $this->o_router = $o_di->get('router');
         $this->o_twig   = $o_di->get('twig');
     }
+    /**
+     *  Sets the class property $login_id to a value of the highest role level found or 999 if not found.
+     *  @param string $login_id
+     */
+    private function setAuthLevel($login_id = '')
+    {
+        if ($login_id != '') {
+            $this->auth_level = $this->o_auth->getHighestRoleLevel($login_id);
+        }
+        elseif (isset($_SESSION['login_id'])) {
+            $this->auth_level = $this->o_auth->getHighestRoleLevel($_SESSION['login_id']);
+        }
+        else {
+            $this->auth_level = 999;
+        }
+    }
+    /**
+     *  Sets an array of links used for the manager home page and for the menus.
+     */
     private function setLinks()
     {
         $a_links = [
@@ -86,12 +121,10 @@ trait ManagerTraits
                 'class'       => ''
             ]
         ];
-        if (isset($_SESSION['login_id'])) {
-            $person_role_level = $this->o_auth->getHighestRoleLevel($_SESSION['login_id']);
+        if ($this->auth_level == '') {
+            $this->setAuthLevel();
         }
-        else {
-            $person_role_level = 999;
-        }
+        $person_role_level = $this->auth_level;
         $current_route_path = $this->o_router->getRoutePath();
         $o_routes = new RoutesHelper($this->o_di, '');
         foreach ($a_links as $key => $a_link) {

@@ -17,6 +17,7 @@
  *  </pre>
  *  @pre The route to this controller has to already be in the database and should not be able to be deleted.
  * @todo add "check immutable" code
+ * @todo fix it so that all Route Paths begin with a / and if doesn't end with an extension, end it with a slash
  **/
 namespace Ritc\Library\Controllers;
 

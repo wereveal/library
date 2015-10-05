@@ -26,11 +26,11 @@ use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerTraits;
+use Ritc\Library\Traits\ManagerViewTraits;
 
 class PeopleAdminView
 {
-    use LogitTraits, ManagerTraits;
+    use LogitTraits, ManagerViewTraits;
 
     private $o_people_model;
     private $o_group_model;
@@ -46,8 +46,7 @@ class PeopleAdminView
         $this->o_role_model   = new RolesModel($o_db);
         $this->o_pgm_model    = new PeopleGroupMapModel($o_db);
         $this->o_grm_model    = new GroupRoleMapModel($o_db);
-        $this->setObjects($o_di);
-        $this->setLinks();
+        $this->setupView($o_di);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people_model->setElog($this->o_elog);

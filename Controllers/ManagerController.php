@@ -20,7 +20,6 @@
  *      v1.0.0α1 - Initial version                       - 11/14/2014 wer
  *  </pre>
  * @TODO PeopleAdmin
- * @TODO Need to restrict access to sections of the manager based on groups/roles
  **/
 namespace Ritc\Library\Controllers;
 

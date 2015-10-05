@@ -22,11 +22,11 @@ use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerTraits;
+use Ritc\Library\Traits\ManagerViewTraits;
 
 class RouterAdminView
 {
-    use LogitTraits, ManagerTraits;
+    use LogitTraits, ManagerViewTraits;
 
     private $o_model;
 
@@ -36,8 +36,7 @@ class RouterAdminView
         $this->o_twig  = $o_di->get('twig');
         $o_db          = $o_di->get('db');
         $this->o_model = new RoutesModel($o_db);
-        $this->setObjects($o_di);
-        $this->setLinks();
+        $this->setupView($o_di);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
@@ -68,7 +67,8 @@ class RouterAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'menus'   => $this->a_links
+            'menus'   => $this->a_links,
+            'adm_lvl' => $this->auth_level
         );
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);

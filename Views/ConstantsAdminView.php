@@ -16,6 +16,7 @@
  *      v1.0.0β2 - changed to use Base class and inject database object - 09/24/2014 wer
  *      v1.0.0β1 - Initial version                                      - 04/02/2014 wer
  *  </pre>
+ * @TODO Immutable checkbox for existing constants is a text field, needs to be a checkbox.
 **/
 namespace Ritc\Library\Views;
 
@@ -25,11 +26,11 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerTraits;
+use Ritc\Library\Traits\ManagerViewTraits;
 
 class ConstantsAdminView
 {
-    use LogitTraits, ManagerTraits;
+    use LogitTraits, ManagerViewTraits;
 
     private $o_manager;
     private $o_model;
@@ -41,8 +42,7 @@ class ConstantsAdminView
         $this->o_model   = new ConstantsModel($o_di->get('db'));
         $this->o_people  = new PeopleModel($o_di->get('db'));
         $this->o_auth    = new AuthHelper($o_di);
-        $this->setObjects($o_di);
-        $this->setLinks();
+        $this->setupView($o_di);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
@@ -69,7 +69,7 @@ class ConstantsAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'adm_lvl' => $this->o_auth->getHighestRoleLevel($_SESSION['login_id']),
+            'adm_lvl' => $this->auth_level,
             'menus'   => $this->a_links
         );
         if (count($a_message) != 0) {

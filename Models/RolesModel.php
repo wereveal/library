@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class RolesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.2
- *  @date 2015-09-24 11:26:46
+ *  @version 1.0.3
+ *  @date 2015-10-05 14:45:43
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.3   - new method, bug fix, db table update        - 10/05/2015 wer
  *      v1.0.2   - bug fixes                                   - 09/24/2015 wer
  *      v1.0.1   - refactoring elsewhere changes here to match - 07/31/2015 wer
  *      v1.0.0   - First working version                       - 01/28/2015 wer
@@ -56,7 +57,8 @@ class RolesModel implements ModelInterface
         $a_required_keys = array(
             'role_name',
             'role_description',
-            'role_level'
+            'role_level',
+            'role_immutable'
         );
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             return -2;
@@ -72,9 +74,9 @@ class RolesModel implements ModelInterface
         }
         $sql = "
             INSERT INTO {$this->db_prefix}roles
-                (role_name, role_description, role_level)
+                (role_name, role_description, role_level, role_immutable)
             VALUES
-                (:role_name, :role_description, :role_level)
+                (:role_name, :role_description, :role_level, :role_immutable)
         ";
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}roles")) {
             $ids = $this->o_db->getNewIds();
@@ -100,7 +102,8 @@ class RolesModel implements ModelInterface
             $a_allowed_keys = array(
                 'role_id',
                 'role_name',
-                'role_level'
+                'role_level',
+                'role_immutable'
             );
             $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
             $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
@@ -112,7 +115,7 @@ class RolesModel implements ModelInterface
             $where = " ORDER BY 'role_name'";
         }
         $sql = "
-            SELECT role_id, role_name, role_description, role_level
+            SELECT role_id, role_name, role_description, role_level, role_immutable
             FROM {$this->db_prefix}roles
             {$where}
         ";
@@ -132,7 +135,7 @@ class RolesModel implements ModelInterface
         ) {
             return -2;
         }
-        $a_allowed_keys = ['role_id', 'role_name', 'role_description', 'role_level'];
+        $a_allowed_keys = ['role_id', 'role_name', 'role_description', 'role_level', 'role_immutable'];
         $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);
 
         if (isset($a_values['role_level']) && $a_values['role_level'] <= 2) {
@@ -221,6 +224,27 @@ class RolesModel implements ModelInterface
         }
         return -1;
     }
+    /**
+     *  Selects the roles that are mapped to a group.
+     *  @param int $group_id
+     *  return array
+     */
+    public function readRolesForGroup($group_id = -1)
+    {
+        $sql = "
+            SELECT r.role_id, r.role_name, r.role_description, r.role_level, r.role_immutable
+            FROM {$this->db_prefix}roles as r
+            JOIN {$this->db_prefix}group_role_map as grm
+                WHERE grm.role_id = r.role_id
+                AND grm.group_id = :group_id
+        ";
+        $a_search_values = [':group_id' => $group_id];
+        $results = $this->o_db->search($sql, $a_search_values);
+        if ($results === false) {
+            return -4;
+        }
+        return $results;
+    }
 
     ### Validators ###
     /**
@@ -239,6 +263,11 @@ class RolesModel implements ModelInterface
     }
 
     ### Other ###
+    /**
+     *  Returns text for an error message.
+     *  @param  int    $error_id
+     *  @return string
+     */
     public function getErrorMessage($error_id = 0)
     {
         switch ($error_id) {

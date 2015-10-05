@@ -21,22 +21,21 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerTraits;
+use Ritc\Library\Traits\ManagerViewTraits;
 
 class ManagerView
 {
-    use LogitTraits, ManagerTraits;
+    use LogitTraits, ManagerViewTraits;
 
     private $o_db;
 
     public function __construct(Di $o_di)
     {
-        $this->o_db     = $o_di->get('db');
-        $this->setObjects($o_di);
+        $this->o_db = $o_di->get('db');
+        $this->setupView($o_di);
     }
     public function renderLandingPage()
     {
-        $this->setLinks();
         $a_values = [
             'description'   => 'This is the Manager Page',
             'public_dir'    => '',
@@ -83,7 +82,6 @@ class ManagerView
      */
     public function renderLoginForm($previous_login_id = '', array $a_message = array())
     {
-        $this->setLinks();
         $o_sess  = $this->o_di->get('session');
         $tolken  = $o_sess->getVar('token');
         $idle_ts = $o_sess->getVar('idle_timestamp');

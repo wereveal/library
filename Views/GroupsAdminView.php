@@ -22,21 +22,20 @@ use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerTraits;
+use Ritc\Library\Traits\ManagerViewTraits;
 
 class GroupsAdminView
 {
-    use LogitTraits, ManagerTraits;
+    use LogitTraits, ManagerViewTraits;
 
     private $o_db;
     private $o_groups;
 
     public function __construct(Di $o_di)
     {
-        $this->o_db    = $o_di->get('db');
+        $this->o_db     = $o_di->get('db');
         $this->o_groups = new GroupsModel($this->o_db);
-        $this->setObjects($o_di);
-        $this->setLinks();
+        $this->setupView($o_di);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_groups->setElog($this->o_elog);
@@ -73,7 +72,8 @@ class GroupsAdminView
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
             'a_blank_roles' => $a_roles,
-            'menus'   => $this->a_links
+            'menus'   => $this->a_links,
+            'adm_lvl' => $this->auth_level
         ];
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
@@ -86,6 +86,7 @@ class GroupsAdminView
             $this->logIt("Groups: " . var_export($a_groups, true), LOG_OFF, $meth . __LINE__);
             foreach ($a_groups as $a_group_key => $a_row) {
                 $a_groups[$a_group_key]['group_description'] = html_entity_decode($a_row['group_description'], ENT_QUOTES);
+
                 $a_grm = $o_grm->read(['group_id' => $a_row['group_id']]);
                 $a_temp_roles = $a_roles;
                 foreach($a_grm as $a_grm_row) {
@@ -95,11 +96,12 @@ class GroupsAdminView
                         $a_temp_roles[$role_key]['checked'] = ' checked';
                     }
                 }
+
                 $a_groups[$a_group_key]['a_roles'] = $a_temp_roles;
             }
             $a_values['a_groups'] = $a_groups;
         }
-        $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
+        $this->logIt(var_export($a_values, true), LOG_ON, $meth . __LINE__);
         return $this->o_twig->render('@pages/groups_admin.twig', $a_values);
     }
     /**

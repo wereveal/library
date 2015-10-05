@@ -12,8 +12,7 @@
  *  @note <pre><b>Change Log</b>
  *      v1.0.0β1 - Initial version                              - 01/28/2015 wer
  *  </pre>
- * @TODO verify that this now works with the groups to roles mapping
- * @TODO create 'check immutable' code
+ * @todo create 'check immutable' code
  **/
 namespace Ritc\Library\Controllers;
 
@@ -45,7 +44,7 @@ class GroupsAdmimController implements MangerControllerInterface
         $this->o_model   = new GroupsModel($o_db);
         $this->o_grm     = new GroupRoleMapModel($o_db);
         $this->o_view    = new GroupsAdminView($o_di);
-        $this->a_post    = $this->o_router->getRouterParts();
+        $this->a_post    = $this->o_router->getPost();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
