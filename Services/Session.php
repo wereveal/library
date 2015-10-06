@@ -6,10 +6,12 @@
  *  @namespace Ritc/Library/Services
  *  @class Session
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.3.0
- *  @date 2015-09-01 07:59:07
+ *  @version 1.3.1
+ *  @date 2015-10-06 14:42:18
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.3.1 - added the ability to use the global constant          - 10/06/2015 wer
+ *               SESSION_IDLE_TIME if it is set.
  *      v1.3.0 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
  *      v1.2.0 - added a couple new method to unset a session var      - 01/16/2015 wer
  *               and a shortcut to reset the session.
@@ -345,11 +347,22 @@ class Session
         }
     }
     /**
+     * Sets the amount of time for a page to be allowed idle.
+     * Can either be passed in or defaults to the constant SESSION_IDLE_TIME
+     * if set or 1800 if not.
      * @param int $time
      * @param bool $add
      */
-    public function setIdleTime($time = 1800, $add = false)
+    public function setIdleTime($time = -1, $add = false)
     {
+        if ($time == -1) {
+            if (defined('SESSION_IDLE_TIME')) {
+                $time = SESSION_IDLE_TIME;
+            }
+            else {
+                $time = 1800;
+            }
+        }
         if ($add && isset($_SESSION["idle_time"])) {
             $_SESSION["idle_time"] += $time;
         }
