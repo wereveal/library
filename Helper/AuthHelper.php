@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.4.0
- *  @date 2015-09-26 11:23:31
+ *  @version 4.4.1
+ *  @date 2015-10-06 15:23:20
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v4.4.1 - bug fix                                               - 10/06/2015 wer
  *      v4.4.0 - bunch of changes primarily in access control          - 09/26/2015 wer
  *      v4.3.2 - added getHighestRoleLevel method                      - 09/25/2015 wer
  *      v4.3.1 - added logout method                                   - 09/24/2015 wer
@@ -382,14 +383,11 @@ class AuthHelper
      *  Verifies person has the role of super administrator.
      *  @param int|string $people_id required
      *  @return bool - true = is a super admin, false = not a super admin
-     * @TODO this may not work as intended due to changes to roles/groups etc.
     **/
-    public function isSuperAdmin($people_id = -1)
+    public function isSuperAdmin($people_id = '')
     {
-        if ($people_id == -1) { return false; }
-        $a_person = $this->o_people->readInfo($people_id);
-        if (!isset($a_person['access_level'])) { return false; }
-        if ($a_person['access_level'] === 1) {
+        $role_level = $this->getHighestRoleLevel($people_id);
+        if ($role_level == 1) {
             return true;
         }
         return false;
