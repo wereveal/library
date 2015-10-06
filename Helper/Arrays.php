@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.4.0
- *  @date 2015-09-12 12:11:10
+ *  @version 2.5.0
+ *  @date 2015-10-06 14:54:49
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.5.0 - new method, createRequiredPairs                                     - 10/06/2015 wer
  *      v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                - 09/12/2015 wer
  *      v2.3.0 - New method, inArrayRecursive                                        - 09/10/2015 wer
  *      v2.2.0 - Removed use of abstract class Base                                  - 09/03/2015 wer
@@ -67,6 +68,28 @@ class Arrays
             }
         }
         return $a_clean;
+    }
+    /**
+     * Returns an array which has only the required keys and has all of them.
+     * @param array $a_pairs
+     * @param array $a_required_keys
+     * @param mixed $delete_undesired
+     * @return array
+     */
+    public static function createRequiredPairs(array $a_pairs = array(), $a_required_keys = array(), $delete_undesired = false)
+    {
+        if ($delete_undesired) {
+            $a_pairs = self::removeUndesiredPairs($a_pairs, $a_required_keys);
+        }
+        if (self::hasRequiredKeys($a_pairs, $a_required_keys)) {
+            return $a_pairs;
+        }
+        foreach ($a_required_keys as $key) {
+            if (!array_key_exists($key, $a_pairs)) {
+                $a_pairs[$key] = '';
+            }
+        }
+        return $a_pairs;
     }
     /**
      *  Decodes htmlentities in array values
