@@ -2,7 +2,7 @@
 /**
  *  @brief View for the Manager page.
  *  @file ManagerView.php
- *  @ingroup Library views
+ *  @ingroup ritc_library views
  *  @namespace Ritc/Library/Views
  *  @class ManagerView
  *  @author William Reveal  <bill@revealitconsulting.com>

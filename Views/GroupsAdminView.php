@@ -12,6 +12,7 @@
  *  @note <pre><b>Change Log</b>
  *      v1.0.0β1 - Initial version       - 01/28/2015 wer
  *  </pre>
+ * @BUG Doesn't display roles correctly for SA and Adm
  **/
 namespace Ritc\Library\Views;
 

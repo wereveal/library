@@ -6,18 +6,19 @@
  *  @namespace Ritc/Library/Controllers
  *  @class RoutesAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.0.0
- *  @date 2015-09-26 03:08:16
+ *  @version 2.1.0
+ *  @date 2015-10-06 13:55:38
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
- *      v2.0.0   - renamed                   - 09/26/2015 wer
- *      v1.0.0   - first working version     - 01/28/2015 wer
- *      v1.0.0β2 - refactored for namespaces - 12/05/2014 wer
- *      v1.0.0β1 - Initial version           - 11/14/2014 wer
+ *      v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
+ *                 If the route doesn't end with a file ext
+ *                 add a slash to the end as well.
+ *      v2.0.0   - renamed                                      - 09/26/2015 wer
+ *      v1.0.0   - first working version                        - 01/28/2015 wer
+ *      v1.0.0β2 - refactored for namespaces                    - 12/05/2014 wer
+ *      v1.0.0β1 - Initial version                              - 11/14/2014 wer
  *  </pre>
  *  @pre The route to this controller has to already be in the database and should not be able to be deleted.
- * @todo add "check immutable" code
- * @todo fix it so that all Route Paths begin with a / and if doesn't end with an extension, end it with a slash
  **/
 namespace Ritc\Library\Controllers;
 
@@ -103,7 +104,7 @@ class RoutesAdminController implements MangerControllerInterface
     }
     public function save()
     {
-        $a_route = $this->a_post['route'];
+        $a_route = $this->fixRoutePath($this->a_post['route']);
         $results = $this->o_model->create($a_route);
         if ($results) {
             $a_message = ViewHelper::successMessage();
@@ -115,7 +116,7 @@ class RoutesAdminController implements MangerControllerInterface
     }
     public function update()
     {
-        $a_route = $this->a_post['route'];
+        $a_route = $this->fixRoutePath($this->a_post['route']);
         $results = $this->o_model->update($a_route);
         if ($results) {
             $a_message = ViewHelper::successMessage();
@@ -128,5 +129,32 @@ class RoutesAdminController implements MangerControllerInterface
     public function verifyDelete()
     {
         return $this->o_view->renderVerify($this->a_post);
+    }
+
+    /**
+     * Adds slashes to route path if needed.
+     * @param array $a_route
+     * @return array
+     */
+    private function fixRoutePath(array $a_route = array())
+    {
+        if ($a_route == array()) {
+            return [
+                'route_path'      => '',
+                'route_class'     => '',
+                'route_method'    => '',
+                'route_action'    => '',
+                'route_immutable' => 0
+            ];
+        }
+        if (substr($a_route['route_path'], 0, 1) != '/') {
+            $a_route['route_path'] = '/' . $a_route['route_path'];
+        }
+        if (strrpos($a_route['route_path'], '.') === false) {
+            if (substr($a_route['route_path'], -1, 1) != '/') {
+                $a_route['route_path'] .= '/';
+            }
+        }
+        return $a_route;
     }
 }

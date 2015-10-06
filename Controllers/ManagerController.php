@@ -19,7 +19,6 @@
  *      v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
  *      v1.0.0α1 - Initial version                       - 11/14/2014 wer
  *  </pre>
- * @TODO PeopleAdmin
  **/
 namespace Ritc\Library\Controllers;
 

@@ -19,7 +19,6 @@
  *      v1.0.1 - Adjusted to match file name change              - 11/13/2014 wer
  *      v1.0.0 - Initial version                                 - 04/02/2014 wer
  *  </pre>
- * @todo add "check immutable" code
 **/
 namespace Ritc\Library\Controllers;
 

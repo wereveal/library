@@ -18,6 +18,7 @@ namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
+use Ritc\Library\Services\Di;
 
 trait ManagerViewTraits
 {

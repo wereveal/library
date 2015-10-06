@@ -15,7 +15,7 @@
  *  </pre>
  *  @TODO base access to crud people on role access levels
  *  @TODO write the code to display users to allow for CRUD actions
- **/
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\ViewHelper;

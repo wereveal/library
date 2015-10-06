@@ -17,10 +17,10 @@
  *      v1.0.0β2 - Adjusted to match file name change            - 11/13/2014 wer
  *      v1.0.0β1 - Initial version                               - 04/02/2014 wer
  *  </pre>
- *  @todo write the save method
- *  @todo write the update method
- *  @todo write the verifyDelete method
- *  @todo write the delete method
+ *  @TODO write the save method
+ *  @TODO write the update method
+ *  @TODO write the verifyDelete method
+ *  @TODO write the delete method
 **/
 namespace Ritc\Library\Controllers;
 

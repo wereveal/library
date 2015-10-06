@@ -3,8 +3,6 @@
  *  @brief Controller for the Router to Roles Admin page.
  *  @detail Allows one to map which routes have specific role access.
  *      If you don't have the role, you can't go there.
- *  @note This has been superceded by the RoutesGroupAdminController and
- *        should not be used.
  *  @file RoutesRolesAdminController.php
  *  @ingroup ritc_library controllers
  *  @namespace Ritc/Library/Controllers
@@ -18,8 +16,8 @@
  *  </pre>
  *  @pre The route to this controller has to already be in the database
  *       and should not be able to be deleted.
- *  @todo everything
- **/
+ *  @TODO everything
+ */
 
 namespace Ritc\Library\Controllers;
 

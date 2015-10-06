@@ -20,8 +20,8 @@
  *      v1.0.2 - some refactoring changes based on changes in package     - 12/19/2013 wer
  *      v1.0.1 - some refactoring changes based on changes in other files - 03/17/2013 wer
  *  </pre>
- * @TODO fix the methods which create message boxes to utilize the ViewHelper maybe
-**/
+ *  @note Probably a dead class.
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Traits\LogitTraits;

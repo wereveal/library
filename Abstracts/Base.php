@@ -5,7 +5,7 @@
  *      Also establishes the way the error logging can be injected when needed.
  *  @file Base.php
  *  @ingroup ritc_library abstracts
- * @namespace Ritc\Library\Abstracts
+ *  @namespace Ritc\Library\Abstracts
  *  @class Base
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version  1.2.0
