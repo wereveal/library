@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Controllers
  *  @class RolesAdmimController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1
- *  @date 09/24/2015 wer
+ *  @version 1.1.0
+ *  @date 2015-10-07 14:31:15
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
+ *      v1.1.0   - added immutable code            - 10/07/2015 wer
  *      v1.0.1   - changes to model reflected here - 09/24/2015 wer
  *      v1.0.0   - First working version           - 01/28/2015 wer
  *      v1.0.0β1 - Initial version                 - 01/20/2015 wer
@@ -109,6 +110,10 @@ class RolesAdmimController implements MangerControllerInterface
     public function save()
     {
         $a_role = $this->a_post['roles'];
+        error_log(var_export($a_role, true));
+        if (!isset($a_role['role_immutable'])) {
+            $a_role['role_immutable'] = 0;
+        }
         $results = $this->o_model->create($a_role);
         if ($results > 0) {
             $a_message = ViewHelper::successMessage();
@@ -122,6 +127,9 @@ class RolesAdmimController implements MangerControllerInterface
     public function update()
     {
         $a_role = $this->a_post['roles'];
+        if (!isset($a_role['role_immutable'])) {
+            $a_role['role_immutable'] = 0;
+        }
         $results = $this->o_model->update($a_role);
         if ($results === 1) {
             $a_message = ViewHelper::successMessage();

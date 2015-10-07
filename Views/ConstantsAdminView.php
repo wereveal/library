@@ -6,17 +6,17 @@
  *  @namespace Ritc/Library/Views
  *  @class ConstantsAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 2015-09-01 08:01:39
+ *  @version 1.2.0
+ *  @date 2015-10-07 14:33:44
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.2.0   - Immutable code added                                 - 10/07/2015 wer
  *      v1.1.0   - removed abstract class Base, added LogitTraits       - 09/01/2015 wer
  *      v1.0.0   - first fully working version                          - 01/28/2015 wer
  *      v1.0.0β3 - changed to use the new Di class                      - 11/17/2014 wer
  *      v1.0.0β2 - changed to use Base class and inject database object - 09/24/2014 wer
  *      v1.0.0β1 - Initial version                                      - 04/02/2014 wer
  *  </pre>
- * @TODO Immutable checkbox for existing constants is a text field, needs to be a checkbox.
 **/
 namespace Ritc\Library\Views;
 

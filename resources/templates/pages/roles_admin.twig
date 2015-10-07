@@ -4,7 +4,7 @@
 {% block body %}
     <div class="row">
         <div class="col-md-12">
-            <h1>Welcome! This is the manager to add/modify/delete the roles used for access levels.</h1>
+            <h1>Welcome! This is the manager for roles used to set access levels.</h1>
         </div>
     </div>
     {% if a_message.message != '' %}
@@ -18,8 +18,9 @@
         <div class="col-md-12">
             <div class="row hidden-sm hidden-xs list-header">
                 <div class="col-md-2 list-header">Role Name</div>
-                <div class="col-md-7 list-header">Role Description</div>
-                <div class="col-md-1 list-header">Role Level</div>
+                <div class="col-md-6 list-header">Role Description</div>
+                <div class="col-md-1 list-header">Level</div>
+                <div class="col-md-1 list-header">Immutable</div>
                 <div class="col-md-2 list-header">&nbsp;</div>
             </div>
         {% set x = -1 %}
@@ -27,8 +28,9 @@
             <div class="row {{ class }}">
                 <form action="{{ public_dir }}/manager/roles/save/" method= "post">
                     <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_name]">Role Name: </label><input type="text" name="roles[role_name]" value="" size="20" maxlength="20" class="colorful"/></div>
-                    <div class="col-md-7"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="" size="50" maxlength="128" class="colorful"/></div>
+                    <div class="col-md-6"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="" size="50" maxlength="128" class="colorful"/></div>
                     <div class="col-md-1"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_level]">Role Level: </label><input type="text" name="roles[role_level]" value="" size="3" maxlength="5" class="colorful"/></div>
+                    <div class="col-md-1"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_immutable]">Immutable: </label><input type="checkbox" name="roles[role_immutable]" value="1"/></div>
                     <div class="col-md-2">
                         <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Role</button>
                         <input type="hidden" name="tolken" value="{{ tolken }}" />
@@ -40,22 +42,55 @@
         {% set x = x * -1 %}
         {% for row in a_roles %}
             {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+            {% set checked = row.role_immutable == 1 ? ' checked' : '' %}
             <div class="row {{ class }}">
-            {% if row.role_level > 2 %}
-            <form action="{{ public_dir }}/manager/roles/update/" method="post">
-                <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_name]">Role Name: </label><input type="text" name="roles[role_name]" value="{{ row.role_name }}" size="20" maxlength="20" class="colorful"/></div>
-                <div class="col-md-7"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="{{ row.role_description }}" size="50" maxlength="128" class="colorful"/></div>
-                <div class="col-md-1"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_level]">Role Level: </label><input type="text" name="roles[role_level]" value="{{ row.role_level }}" size="3" maxlength="5" class="colorful"/></div>
-                <div class="col-md-2">
-                    <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
-                    <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
-                    <input type="hidden" name="tolken" value="{{ tolken }}" />
-                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                    <input type="hidden" name="roles[role_id]" value="{{ row.role_id }}" />
-                </div>
-            </form>
-            {% endif %}
+                <form action="{{ public_dir }}/manager/roles/update/" method="post">
+                {% if adm_lvl > 1 and row.role_immutable == 1 %}
+                    <div class="col-md-2">
+                        <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_name]">Role Name: </label>{{ row.role_name }}
+                        <input type="hidden" name="roles[role_name]" value="{{ row.role_name }}" size="20" maxlength="20" class="colorful"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_description]">Role Description: </label>
+                        <input type="text" name="roles[role_description]" value="{{ row.role_description }}" size="50" maxlength="128" class="colorful"/>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_level]">Role Level: </label>{{ row.role_level }}
+                        <input type="hidden" name="roles[role_level]" value="{{ row.role_level }}" size="3" maxlength="5" class="colorful"/>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_immutable]">Immutable: Can't change Name or Level</label>
+                        <input type="hidden" name="roles[role_immutable]" value="{{ row.role_immutable }}"/>
+                    </div>
+                {% else %}
+                    <div class="col-md-2">
+                        <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_name]">Role Name: </label>
+                        <input type="text" name="roles[role_name]" value="{{ row.role_name }}" size="20" maxlength="20" class="colorful"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_description]">Role Description: </label>
+                        <input type="text" name="roles[role_description]" value="{{ row.role_description }}" size="50" maxlength="128" class="colorful"/>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_level]">Role Level: </label>
+                        <input type="text" name="roles[role_level]" value="{{ row.role_level }}" size="3" maxlength="5" class="colorful"/>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_immutable]">Immutable: </label>
+                        <input type="checkbox" name="roles[role_immutable]" value="1"{{ checked }}/>
+                    </div>
+                {% endif %}
+                    <div class="col-md-2">
+                        <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
+                        {% if row.role_immutable != 1 %}
+                        <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
+                        {% endif %}
+                        <input type="hidden" name="tolken" value="{{ tolken }}" />
+                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                        <input type="hidden" name="roles[role_id]" value="{{ row.role_id }}" />
+                    </div>
+                </form>
             </div>
             {% set x = x * -1 %}
         {% endfor %}
@@ -63,8 +98,9 @@
             <div class="row {{ class }}">
                 <form action="{{ public_dir }}/manager/roles/save/" method= "post">
                     <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_name]">Role Name: </label><input type="text" name="roles[role_name]" value="" size="20" maxlength="20" class="colorful"/></div>
-                    <div class="col-md-7"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="" size="50" maxlength="128" class="colorful"/></div>
+                    <div class="col-md-6"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_description]">Role Description: </label><input type="text" name="roles[role_description]" value="" size="50" maxlength="128" class="colorful"/></div>
                     <div class="col-md-1"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_level]">Role Level: </label><input type="text" name="roles[role_level]" value="" size="3" maxlength="5" class="colorful"/></div>
+                    <div class="col-md-1"><label class="visible-sm-inline-block visible-xs-inline-block" for="roles[role_immutable]">Immutable: </label><input type="checkbox" name="roles[role_immutable]" value="1"/></div>
                     <div class="col-md-2">
                         <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Role</button>
                         <input type="hidden" name="tolken" value="{{ tolken }}" />
@@ -85,6 +121,7 @@
                 <li>Role Name is a single word, all lower case. The app will change it to all lowercase alpha, removing any other characters.</li>
                 <li>Role Description can be anything that is meaningful. Text will be sanitized.</li>
                 <li>Role Level specifies access levels. 3 and above are permitted. If the values 0, 1, 2 are entered, the value will be changed to 100. Empty value will also default to 100.</li>
+                <li>Immutable means that you can't delete the record or change the name and level. <br><b class="red bold">BE CAREFUL!</b> If you set it to immutable, you won't be able to modify or delete it.</li>
             </ul>
         </div>
     </div>

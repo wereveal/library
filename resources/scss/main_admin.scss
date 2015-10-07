@@ -28,6 +28,11 @@
         }
     }
 }
+.constants-form {
+    input {
+        width: 200px;
+    }
+}
 
 @import "form";
 @import "media_queries";

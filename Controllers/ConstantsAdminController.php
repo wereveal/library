@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Controllers
  *  @class ConstantsAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.2.1
- *  @date 2015-09-25 10:48:45
+ *  @version 1.3.0
+ *  @date 2015-10-07 14:31:59
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
+ *      v1.3.0 - added immutable code                            - 10/07/2015 wer
  *      v1.2.1 - code clean up                                   - 09/25/2015 wer
  *      v1.2.0 - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
  *      v1.1.0 - changed to implement ManagerControllerInterface - 01/16/2015 wer
@@ -51,6 +52,7 @@ class ConstantsAdminController implements MangerControllerInterface
         $this->a_router_parts = $a_router_parts;
         if (DEVELOPER_MODE) { // instead of needing the setElog method
             $this->o_elog = $o_di->get('elog');
+            $this->o_model->setElog($this->o_elog);
         }
     }
 
@@ -100,6 +102,9 @@ class ConstantsAdminController implements MangerControllerInterface
             return $this->o_view->renderList($a_message);
         }
         $a_constants = $this->a_post['constant'];
+        if (!isset($a_constants['const_immutable'])) {
+            $a_constants['const_immutable'] = 0;
+        }
         $results = $this->o_model->create($a_constants);
         if ($results !== false) {
             $a_message = ViewHelper::successMessage();
@@ -116,6 +121,10 @@ class ConstantsAdminController implements MangerControllerInterface
     public function update()
     {
         $a_constants = $this->a_post['constant'];
+        if (!isset($a_constants['const_immutable'])) {
+            $a_constants['const_immutable'] = 0;
+        }
+        $this->logIt('' . var_export($a_constants, TRUE), LOG_OFF, $meth . __LINE__);
         $results = $this->o_model->update($a_constants);
         if ($results !== false) {
             $a_message = ViewHelper::successMessage();

@@ -53,7 +53,9 @@ class RolesModel implements ModelInterface
      */
     public function create(array $a_values = array())
     {
-        if ($a_values == array()) { return -1; }
+        if ($a_values == array()) {
+            return -1;
+        }
         $a_required_keys = array(
             'role_name',
             'role_description',
@@ -61,7 +63,7 @@ class RolesModel implements ModelInterface
             'role_immutable'
         );
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            return -2;
+            return -6;
         }
         if ($a_values['role_level'] <= 2) {
             return -3;
@@ -281,6 +283,8 @@ class RolesModel implements ModelInterface
                 return "Database operation was not successful";
             case -5:
                 return "Role name already exists";
+            case -6:
+                return "A Value was missing";
             default:
                 return "Unknown Error";
         }

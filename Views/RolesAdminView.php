@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Views
  *  @class RolesAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-01-28 14:47:58
+ *  @version 1.1.0
+ *  @date 2015-10-07 14:34:30
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.1.0   - Immutable code added  - 10/07/2015 wer
  *      v1.0.0   - First working version - 01/28/2015 wer
  *      v1.0.0β1 - Initial version       - 01/20/2015 wer
  *  </pre>

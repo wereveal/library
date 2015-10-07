@@ -53,33 +53,40 @@ class ConstantsModel implements ModelInterface
      */
     public function create(array $a_values)
     {
+        $meth = __METHOD__ . '.';
+        $this->logIt(var_export($a_values, true), LOG_ON, $meth);
         $a_required_keys = array(
             'const_name',
             'const_value'
         );
         if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays
-            foreach ($a_values as $a_record) {
+            foreach ($a_values as $key => $a_record) {
                 if (!Arrays::hasRequiredKeys($a_record, $a_required_keys)) {
                     return false;
                 }
+                $a_values[$key]['const_name'] = $this->makeValidName($a_values[$key]['const_name']);
+                $a_values[$key] = Arrays::createRequiredPairs($a_values[$key], ['const_name', 'const_value', 'const_immutable'], true);
             }
         }
         else {
             if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
                 return false;
             }
+            $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
+            $a_values = Arrays::createRequiredPairs($a_values, ['const_name', 'const_value', 'const_immutable'], true);
         }
-        $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
         $sql = "
-            INSERT INTO {$this->db_prefix}constants (const_name, const_value)
-            VALUES (:const_name, :const_value)
+            INSERT INTO {$this->db_prefix}constants (const_name, const_value, const_immutable)
+            VALUES (:const_name, :const_value, :const_immutable)
         ";
+        $this->logIt(var_export($a_values, true), LOG_ON, $meth . __LINE__);
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}constants")) {
             $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
             return $ids[0];
         }
         else {
+            $this->logIt("Error Message: " . $this->o_db->getSqlErrorMessage(), LOG_ON, $meth . __LINE__);
             return false;
         }
     }
@@ -98,7 +105,8 @@ class ConstantsModel implements ModelInterface
             $a_allowed_keys = array(
                 'const_id',
                 'const_name',
-                'const_value'
+                'const_value',
+                'const_immutable'
             );
             $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
             $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
@@ -110,7 +118,7 @@ class ConstantsModel implements ModelInterface
             $where = " ORDER BY const_name";
         }
         $sql = "
-            SELECT const_id, const_name, const_value
+            SELECT const_id, const_name, const_value, const_immutable
             FROM {$this->db_prefix}constants
             {$where}
         ";
@@ -123,10 +131,16 @@ class ConstantsModel implements ModelInterface
      */
     public function update(array $a_values)
     {
-        if (Arrays::hasRequiredKeys($a_values, array('const_id', 'const_value')) === false) {
+        if (Arrays::hasRequiredKeys($a_values, ['const_id']) === false) {
             return false;
         }
-        $sql_set = $this->o_db->buildSqlSet($a_values, array('const_id'));
+        if (count($a_values) < 2) {
+            return false;
+        }
+        if (isset($a_values['const_name'])) {
+            $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
+        }
+        $sql_set = $this->o_db->buildSqlSet($a_values, ['const_id']);
         $sql = "
             UPDATE {$this->db_prefix}constants
             {$sql_set}
@@ -220,8 +234,9 @@ class ConstantsModel implements ModelInterface
                 $sql_table = "
                     CREATE TABLE IF NOT EXISTS {$this->db_prefix}constants (
                         const_id integer NOT NULL DEFAULT nextval('const_id_seq'::regclass),
-                        const_name character varying(64),
-                        const_value character varying(64)
+                        const_name character varying(64) NOT NULL,
+                        const_value character varying(64) NOT NULL,
+                        const_immutable integer NOT NULL DEFAULT 0
                     )
                 ";
                 $sql_sequence = "
@@ -245,7 +260,8 @@ class ConstantsModel implements ModelInterface
                     CREATE TABLE IF NOT EXISTS {$this->db_prefix}constants (
                         const_id INTEGER PRIMARY KEY ASC,
                         const_name TEXT,
-                        const_value TEXT
+                        const_value TEXT,
+                        const_immutable INTEGER
                     )
                 ";
                 $results = $this->o_db->rawQuery($sql);
@@ -260,6 +276,7 @@ class ConstantsModel implements ModelInterface
                         `const_id` int(11) NOT NULL AUTO_INCREMENT,
                         `const_name` varchar(64) NOT NULL,
                         `const_value` varchar(64) NOT NULL,
+                        `const_immutable` int(1) NOT NULL DEFAULT 0
                         PRIMARY KEY (`const_id`),
                         UNIQUE KEY `const_key` (`const_name`)
                     ) ENGINE=InnoDB  AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
@@ -275,29 +292,36 @@ class ConstantsModel implements ModelInterface
     /**
      *  Create the records in the constants table.
      *  @param array $a_constants must have at least one record.
-     *      array is in the form of [['key' => 'value'],['key' => 'value']]
+     *  array is in the form of
+     *  [
+     *      [
+     *          'const_name_value,
+     *          'const_value_value',
+     *          'const_immutable_value'
+     *      ],
+     *      [
+     *          'const_name_value,
+     *          'const_value_value',
+     *          'const_immutable_value'
+     *      ]
+     * ]
      *  @return bool
      */
     public function createConstantRecords(array $a_constants = array())
     {
         if ($a_constants == array()) { return false; }
         $query = "
-            INSERT INTO {$this->db_prefix}constants (const_name, const_value)
-            VALUES (?, ?)";
+            INSERT INTO {$this->db_prefix}constants (const_name, const_value, const_immutable)
+            VALUES (?, ?, ?)";
         return $this->o_db->insert($query, $a_constants, "{$this->db_prefix}constants");
     }
     /**
-     * Selects the constantsuration records.
+     * Selects the constants records.
      * @return array|bool
      */
     public function selectConstantsList()
     {
-        $select_query = "
-            SELECT const_name, const_value
-            FROM {$this->db_prefix}constants
-            ORDER BY const_name
-        ";
-        return $this->o_db->search($select_query);
+        return $this->read();
     }
     /**
      * Checks to see if the table exists.
