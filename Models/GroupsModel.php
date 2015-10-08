@@ -6,15 +6,16 @@
  *  @namespace Ritc/Library/Models
  *  @class GroupsModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β3
- *  @date 2015-09-01 07:41:33
+ *  @version 1.0.0β4
+ *  @date 2015-10-08 11:20:32
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0ß3 - removed abstract class Base, used LogitTraits                          - 09/01/2015 wer
- *      v1.0.0ß2 - changed to use IOC (Inversion of Control)                              - 11/15/2014 wer
- *      v1.0.0β1 - extends the Base class, injects the DbModel, clean up                  - 09/23/2014 wer
- *      v1.0.0β0 - First live version                                                     - 09/15/2014 wer
- *      v0.1.0β  - Initial version                                                        - 01/18/2014 wer
+ *      v1.0.0β4 - added group_immutable field in db and changed code to match  - 10/08/2015 wer
+ *      v1.0.0ß3 - removed abstract class Base, used LogitTraits                - 09/01/2015 wer
+ *      v1.0.0ß2 - changed to use IOC (Inversion of Control)                    - 11/15/2014 wer
+ *      v1.0.0β1 - extends the Base class, injects the DbModel, clean up        - 09/23/2014 wer
+ *      v1.0.0β0 - First live version                                           - 09/15/2014 wer
+ *      v0.1.0β  - Initial version                                              - 01/18/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
@@ -48,17 +49,15 @@ class GroupsModel implements ModelInterface
     {
         $a_required_keys = array(
             'group_name',
-            'group_description'
+            'group_description',
+            'group_immutable'
         );
-        $a_values = Arrays::removeUndesiredPairs($a_values, $a_required_keys);
-        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            return false;
-        }
+        $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, true);
         $sql = "
             INSERT INTO {$this->db_prefix}groups
-                (group_name, group_description)
+                (group_name, group_description, group_immutable)
             VALUES
-                (:group_name, :group_description)
+                (:group_name, :group_description, :group_immutable)
         ";
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}groups")) {
             $ids = $this->o_db->getNewIds();
@@ -82,7 +81,8 @@ class GroupsModel implements ModelInterface
                 : $a_search_params;
             $a_allowed_keys = array(
                 'group_id',
-                'group_name'
+                'group_name',
+                'group_immutable'
             );
             $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
             $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
@@ -94,7 +94,7 @@ class GroupsModel implements ModelInterface
             $where = " ORDER BY 'group_name'";
         }
         $sql = "
-            SELECT group_id, group_name, group_description
+            SELECT group_id, group_name, group_description, group_immutable
             FROM {$this->db_prefix}groups
             {$where}
         ";
@@ -113,20 +113,21 @@ class GroupsModel implements ModelInterface
         ) {
             return false;
         }
-        $a_required_keys = ['group_id', 'group_name', 'group_description'];
-        $a_values = Arrays::removeUndesiredPairs($a_values, $a_required_keys);
-        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            return false;
-        }
+        $a_permitted_keys = ['group_id', 'group_name', 'group_description', 'group_immutable'];
+        $a_values = Arrays::removeUndesiredPairs($a_values, $a_permitted_keys);
 
         $set_sql = $this->o_db->buildSqlSet($a_values, ['group_id']);
+        if ($set_sql == '') {
+            return true;
+        }
         $sql = "
             UPDATE {$this->db_prefix}groups
             {$set_sql}
             WHERE group_id = :group_id
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->update($sql, $a_values, true);    }
+        return $this->o_db->update($sql, $a_values, true);
+    }
     /**
      * Deletes the specific record.
      * NOTE: this could leave orphaned records in the user_group_map table and group_role_map table
@@ -157,13 +158,10 @@ class GroupsModel implements ModelInterface
         $a_required_keys = array(
             'group_name',
             'group_description',
+            'group_immutable',
             'roles'
         );
-        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            $this->logIt("Didn't have required keys!", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-            $this->logIt(var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return false;
-        }
+        $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, true);
         $a_roles = $a_values['roles'];
         unset($a_values['roles']);
         if ($this->o_db->startTransaction()) {
@@ -207,9 +205,10 @@ class GroupsModel implements ModelInterface
             $this->error_message = "Missing valid group id.";
             return false;
         }
-        $a_allowed_keys = ['group_id', 'group_name', 'group_description', 'roles'];
+        $a_allowed_keys = ['group_id', 'group_name', 'group_description', 'group_immutable', 'roles'];
         $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
-        if (!Arrays::hasRequiredKeys($a_values, $a_allowed_keys)) {
+
+        if (!Arrays::hasRequiredKeys($a_values, ['group_id', 'roles'])) {
             $this->error_message = "Missing required value pairs";
             return false;
         }
@@ -220,26 +219,28 @@ class GroupsModel implements ModelInterface
         if ($this->o_db->startTransaction()) {
             if ($this->update($a_values)) {
                 $o_grm = new GroupRoleMapModel($this->o_db);
-                $results = $o_grm->deleteByGroupId($a_values['group_id']);
-                $this->logIt("Delete Results: " . $results, LOG_OFF, $meth . __LINE__);
-                if ($results) {
-                    foreach($a_roles as $role_id) {
-                        $a_new_grm_values = [
-                            'group_id' => $a_values['group_id'],
-                            'role_id'  => $role_id
-                        ];
+                foreach($a_roles as $role_id) {
+                    $a_new_grm_values = [
+                        'group_id' => $a_values['group_id'],
+                        'role_id'  => $role_id
+                    ];
+                    $a_exists = $o_grm->read($a_new_grm_values);
+                    if (!isset($a_exists[0]) || $a_exists[0]['role_id'] != $role_id) {
                         $results = $o_grm->create($a_new_grm_values);
-                        if (!$results) {
-                            $commit = false;
-                            $this->logIt("Could not create new group role map!", LOG_OFF, $meth . __LINE__);
-                            $this->error_message = $this->o_db->getSqlErrorMessage();
-                            break;
-                        }
                     }
-                    if ($commit) {
-                        if ($this->o_db->commitTransaction()) {
-                            return true;
-                        }
+                    else {
+                        $results = true;
+                    }
+                    if (!$results) {
+                        $commit = false;
+                        $this->logIt("Could not create new group role map!", LOG_OFF, $meth . __LINE__);
+                        $this->error_message = $this->o_db->getSqlErrorMessage();
+                        break;
+                    }
+                }
+                if ($commit) {
+                    if ($this->o_db->commitTransaction()) {
+                        return true;
                     }
                 }
             }

@@ -67,62 +67,34 @@ class ManagerController implements ControllerInterface
      */
     public function render()
     {
-        $is_allowed_access = $this->o_auth->isAllowedAccess(2);
-        $is_logged_in = $this->o_auth->isLoggedIn();
-        $route_action = $this->route_action;
-
-        /** Check to see if they are allowed access */
-        if (!$is_logged_in &&  $route_action != 'verifyLogin') {
-            return $this->renderLogin();
-        }
-        elseif ($is_logged_in && !$is_allowed_access) {
-            // if they came from another section of the site that is permitted access
-            if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER'] != '') {
-                header("Location: " . $_SERVER['HTTP_REFERER']);
-            }
-            // otherwise
-            if (isset($_SESSION['login_id'])) {
-                $this->o_auth->logout($_SESSION['login_id']);
-            }
-            $a_message = ViewHelper::warningMessage('Access Prohibited.');
-            return $this->renderLogin($_SESSION['login_id'], $a_message);
-        }
-
-        switch ($route_action) {
-            case 'verifyLogin':
-                $a_results = $this->o_auth->login($this->a_post_values); // authentication part
-                $this->logIt("Login Results: " . var_export($a_results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                if ($a_results['is_logged_in'] == 1) {
-                    $this->o_session->setVar('login_id', $a_results['login_id']);
-                    if ($this->o_auth->isAllowedAccess($a_results['people_id'], 2)) { // authorization part
+        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
+            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], 2)) {
+                switch ($this->route_action) {
+                    case 'logout':
+                        $this->o_auth->logout($_SESSION['login_id']);
+                        $a_message = ViewHelper::successMessage("Logout Successful!");
+                        return $this->renderLogin('', $a_message);
+                    default:
                         return $this->o_manager_view->renderLandingPage();
-                    }
                 }
-                /* well, apparently they weren't allowed access so kick em to the curb */
-                if ($a_results['is_logged_in'] == 1) {
-                    $this->o_auth->logout($a_results['people_id']);
-                }
+            }
+        }
+        if ($this->form_action == 'verifyLogin' || $this->route_action == 'verifyLogin') {
+            $a_message = $this->verifyLogin();
+            if ($a_message['type'] == 'success') {
+                return $this->o_manager_view->renderLandingPage();
+            }
+            else {
                 $login_id = isset($this->a_post_values['login_id'])
                     ? $this->a_post_values['login_id']
                     : '';
-                $message  = isset($a_results['message'])
-                    ? ViewHelper::failureMessage($a_results['message'])
-                    : ViewHelper::failureMessage('Login Id or Password was incorrect. Please Try Again');
-                return $this->renderLogin($login_id, $message);
-
-            case '':
-            case 'landing':
-                return $this->o_manager_view->renderLandingPage();
-
-            case 'logout':
-                $this->o_auth->logout($_SESSION['login_id']);
-                $a_message = ViewHelper::successMessage("Logout Successful!");
-                return $this->renderLogin('', $a_message);
-
-            case 'login':
-            default:
-                return $this->renderLogin();
+                return $this->renderLogin($login_id, $a_message);
+            }
         }
+        else {
+            return $this->renderLogin();
+        }
+
     }
     /**
      * Passes control over to the Constants Admin Controller.
@@ -199,5 +171,29 @@ class ManagerController implements ControllerInterface
         $this->o_session->resetSession();
         return $this->o_manager_view->renderLoginForm($login_id, $a_message);
     }
-
+    /**
+     *  Authorizes the person and allows access or kicks them.
+     *  @return bool
+     */
+    private function verifyLogin()
+    {
+        $a_results = $this->o_auth->login($this->a_post_values); // authentication part
+        $this->logIt("Login Results: " . var_export($a_results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        if ($a_results['is_logged_in'] == 1) {
+            $this->o_session->setVar('login_id', $a_results['login_id']);
+            if ($this->o_auth->isAllowedAccess($a_results['people_id'], 2)) { // authorization part
+                return ViewHelper::successMessage();
+            }
+        }
+        /* well, apparently they weren't allowed access so kick em to the curb */
+        if ($a_results['is_logged_in'] == 1) {
+            $this->o_auth->logout($a_results['people_id']);
+        }
+        $login_id = isset($this->a_post_values['login_id'])
+            ? $this->a_post_values['login_id']
+            : '';
+        return isset($a_results['message'])
+            ? ViewHelper::failureMessage($a_results['message'])
+            : ViewHelper::failureMessage('Login Id or Password was incorrect. Please Try Again');
+    }
 }

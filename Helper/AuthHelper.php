@@ -359,7 +359,7 @@ class AuthHelper
                 $this->logIt(var_export($a_allowed_groups, true), LOG_OFF, $meth . __LINE__);
                 foreach($a_person['groups'] as $a_group) {
                     foreach ($a_allowed_groups as $a_allowed_group) {
-                        if ($a_group['group_id'] == $a_allowed_group['group_id']) {
+                        if ($a_group['group_id'] == $a_allowed_group) {
                             return true;
                         }
                     }

@@ -61,7 +61,7 @@
                 <div class="col-md-2 col-sm-2 col-xs-2">
                     <label for="constant[const_immutable]">Immutable: </label>
                     {% if row.const_immutable == 1 and adm_lvl > 1 %}
-                        Can not change name.
+                        True
                     {% else %}
                         {% if row.const_immutable == 1 %}
                             {% set checked = ' checked' %}
@@ -73,7 +73,9 @@
                 </div>
                 <div class="col-md-2 col-sm-2 col-xs-2">
                     <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
+                    {% if row.const_immutable != 1 %}
                     <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
+                    {% endif %}
                     <input type="hidden" name="tolken" value="{{ tolken }}" />
                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                     <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
@@ -113,8 +115,17 @@
     <div class="row">
         <div class="col-lg-12 col-md-12">
             <h3>Instructions</h3>
-            <p>Constant Name must be letters only. The constant name will be converted to all caps, spaces to underscores, and all other characters removed, e.g., 'my 2nd config!' will become 'MY_ND_CONFIG'.</p>
-            <p>Constant values will be sanitized (hacker prevention) but otherwise remain as typed. Values are limited to 64 characters.</p>
+            <ul>
+            <li>Constant Name must be letters only. The constant name will be
+            converted to all caps, spaces to underscores, and all other
+            characters removed, e.g., 'my 2nd config!' will become
+            'MY_ND_CONFIG'.</li>
+            <li>Constant values will be sanitized (hacker prevention) but
+            otherwise remain as typed. Values are limited to 64 characters.</li>
+            <li>Immutable means you can't change the Constant Name or delete it.
+            <b class="red bold">So be careful!</b>
+            If you set something immutable, it can't go back.</li>
+            </ul>
         </div>
     </div>
 {% endblock %}

@@ -67,6 +67,7 @@ class GroupsAdminView
                     'group_id'          => '',
                     'group_name'        => '',
                     'group_description' => '',
+                    'group_immutable'   => 0,
                     'a_roles'           => array()
                 ]
             ),
@@ -85,25 +86,28 @@ class GroupsAdminView
         }
         $a_groups = $this->o_groups->read(array(), ['order_by' => 'group_name']);
         if ($a_groups !== false && count($a_groups) > 0) {
-            $this->logIt("Groups: " . var_export($a_groups, true), LOG_OFF, $meth . __LINE__);
+            $this->logIt("Groups: " . var_export($a_groups, true), LOG_ON, $meth . __LINE__);
             foreach ($a_groups as $a_group_key => $a_row) {
                 $a_groups[$a_group_key]['group_description'] = html_entity_decode($a_row['group_description'], ENT_QUOTES);
 
                 $a_grm = $o_grm->read(['group_id' => $a_row['group_id']]);
+                $this->logIt('GRM for ' . $a_row['group_name'] . "\n" . var_export($a_grm, TRUE), LOG_OFF, $meth . __LINE__);
                 $a_temp_roles = $a_roles;
                 foreach($a_grm as $a_grm_row) {
                     $this_row_role_id = $a_grm_row['role_id'];
-                    $role_key = Arrays::inArrayRecursive($this_row_role_id, $a_temp_roles);
-                    if ($role_key) {
-                        $a_temp_roles[$role_key]['checked'] = ' checked';
+                    $role_key = false;
+                    foreach ($a_temp_roles as $key => $a_temp_role) {
+                        if ($a_temp_role['role_id'] == $this_row_role_id) {
+                            $a_temp_roles[$key]['checked'] = ' checked';
+                        }
                     }
                 }
-
+                $this->logIt("Temp Roles for Group {$a_row['group_name']}:\n" . var_export($a_temp_roles, TRUE), LOG_OFF, $meth . __LINE__);
                 $a_groups[$a_group_key]['a_roles'] = $a_temp_roles;
             }
             $a_values['a_groups'] = $a_groups;
         }
-        $this->logIt(var_export($a_values, true), LOG_ON, $meth . __LINE__);
+        $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@pages/groups_admin.twig', $a_values);
     }
     /**
@@ -125,5 +129,4 @@ class GroupsAdminView
         $a_values['menus'] = $this->a_links;
         return $this->o_twig->render('@pages/verify_delete_group.twig', $a_values);
     }
-
 }

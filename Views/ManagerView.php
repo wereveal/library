@@ -36,6 +36,8 @@ class ManagerView
     }
     public function renderLandingPage()
     {
+        $this->setAuthLevel();
+        $this->setLinks();
         $a_values = [
             'description'   => 'This is the Manager Page',
             'public_dir'    => '',
@@ -103,7 +105,7 @@ class ManagerView
             'login_id'  => $previous_login_id,
             'password'  => '',
             'a_message' => $a_message,
-            'menus'     => $this->a_links
+            'menus'     => array()
         ];
         $o_sess->unsetVar('login_id');
         return $this->o_twig->render('@pages/login_form.twig', $a_values);
