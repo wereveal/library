@@ -107,19 +107,19 @@ class GroupsModel implements ModelInterface
      */
     public function update(array $a_values = array())
     {
-        if (   !isset($a_values['group_id'])
-            || $a_values['group_id'] == ''
-            || !ctype_digit($a_values['group_id'])
-        ) {
+        $a_permitted_keys = ['group_id', 'group_name', 'group_description', 'group_immutable'];
+        $a_values = Arrays::createRequiredPairs($a_values, $a_permitted_keys, true);
+        if ($a_values['group_id'] == ''
+         || $a_values['group_name'] == ''
+         || $a_values['group_description'] == ''
+           ) {
+            $this->error_message = 'Missing required information (name or description)';
             return false;
         }
-        $a_permitted_keys = ['group_id', 'group_name', 'group_description', 'group_immutable'];
-        $a_values = Arrays::removeUndesiredPairs($a_values, $a_permitted_keys);
-
-        $set_sql = $this->o_db->buildSqlSet($a_values, ['group_id']);
-        if ($set_sql == '') {
-            return true;
+        if ($a_values['group_immutable'] == '') {
+            $a_values['group_immutable'] = 0;
         }
+        $set_sql = $this->o_db->buildSqlSet($a_values, ['group_id']);
         $sql = "
             UPDATE {$this->db_prefix}groups
             {$set_sql}
@@ -198,6 +198,7 @@ class GroupsModel implements ModelInterface
     public function updateWithRoles(array $a_values = array())
     {
         $meth = __METHOD__ . '.';
+        $this->logIt('a values' . var_export($a_values, TRUE), LOG_ON, $meth . __LINE__);
         if (   !isset($a_values['group_id'])
             || $a_values['group_id'] == ''
             || !ctype_digit($a_values['group_id'])
@@ -205,7 +206,13 @@ class GroupsModel implements ModelInterface
             $this->error_message = "Missing valid group id.";
             return false;
         }
-        $a_allowed_keys = ['group_id', 'group_name', 'group_description', 'group_immutable', 'roles'];
+        $a_allowed_keys = [
+            'group_id',
+            'group_name',
+            'group_description',
+            'group_immutable',
+            'roles'
+        ];
         $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
 
         if (!Arrays::hasRequiredKeys($a_values, ['group_id', 'roles'])) {
@@ -218,24 +225,29 @@ class GroupsModel implements ModelInterface
         $commit = true;
         if ($this->o_db->startTransaction()) {
             if ($this->update($a_values)) {
+                $o_roles = new RolesModel($this->o_db);
                 $o_grm = new GroupRoleMapModel($this->o_db);
-                foreach($a_roles as $role_id) {
-                    $a_new_grm_values = [
+                $a_all_roles = $o_roles->read();
+                foreach ($a_all_roles as $a_role) {
+                    $role_id_check = $a_role['role_id'];
+                    $a_grm_values = [
                         'group_id' => $a_values['group_id'],
-                        'role_id'  => $role_id
+                        'role_id'  => $role_id_check
                     ];
-                    $a_exists = $o_grm->read($a_new_grm_values);
-                    if (!isset($a_exists[0]) || $a_exists[0]['role_id'] != $role_id) {
-                        $results = $o_grm->create($a_new_grm_values);
+                    $a_exists = $o_grm->read($a_grm_values);
+                    if (array_search($role_id_check, $a_roles) !== false) {
+                        if (!isset($a_exists[0]['grm_id'])) {
+                            $commit = $o_grm->create($a_grm_values) && $commit;
+                            if (!$commit) {
+                                $this->logIt('Could not create GRM record.', LOG_OFF, $meth);
+                            }
+                        }
                     }
-                    else {
-                        $results = true;
-                    }
-                    if (!$results) {
-                        $commit = false;
-                        $this->logIt("Could not create new group role map!", LOG_OFF, $meth . __LINE__);
-                        $this->error_message = $this->o_db->getSqlErrorMessage();
-                        break;
+                    elseif (isset($a_exists[0]['grm_id'])) {
+                        $commit = $o_grm->delete($a_exists[0]['grm_id']) && $commit;
+                        if (!$commit) {
+                            $this->logIt('Could not delete GRM record.', LOG_OFF, $meth);
+                        }
                     }
                 }
                 if ($commit) {

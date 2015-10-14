@@ -26,31 +26,30 @@
         {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <div class="col-md-12">
-                <form action="{{ public_dir }}/manager/groups/save/" method= "post">
+                <form action="{{ public_dir }}/manager/groups/save/" method= "post" class="form-group">
                     <div class="row row-inside">
                         <div class="col-md-2">
-                            <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_name]">Group Name: </label>
+                            <label class="visible-sm-inline-block visible-xs-inline-block w100" for="groups[group_name]">Name: </label>
                             <input type="text" name="groups[group_name]" value="" maxlength="20" class="colorful"/>
                         </div>
                         <div class="col-md-6">
-                            <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label>
+                            <label class="visible-sm-inline-block visible-xs-inline-block w100" for="groups[group_description]">Description: </label>
                             <input type="text" name="groups[group_description]" value="" maxlength="128" class="colorful w450"/>
                         </div>
                         <div class="col-md-2">
-                            <label for="groups[group_immutable]">Immutable: </label>
+                            <label class="w100" for="groups[group_immutable]">Immutable: </label>
                             <input type="checkbox" name="groups[group_immutable]" value="1"/>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Group</button>
+                            <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs hidden-sm hidden-xs">Save New Group</button>
                             <input type="hidden" name="tolken" value="{{ tolken }}" />
                             <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                             <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
                         </div>
                     </div>
                     <div class="row row-inside">
-                        <div class="col-md-2 pad-right-12 bold aright">Role(s):</div>
-                        <div class="col-md-10">
-                            <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[]">Role(s): </label>
+                        <div class="col-md-2 col-sm-2 col-xs-2 pad-right-12 bold aright">Role(s):</div>
+                        <div class="col-md-10 col-sm-10 col-xs-10">
                     {% for row in a_blank_roles %}
                         {% if adm_lvl == 1 %}
                             <input type="checkbox" name="roles[]" value="{{ row.role_id }}">&nbsp;&nbsp;{{ row.role_name }}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -58,6 +57,11 @@
                             <input type="checkbox" name="roles[]" value="{{ row.role_id }}">&nbsp;&nbsp;{{ row.role_name }}&nbsp;&nbsp;&nbsp;&nbsp;
                         {% endif %}
                     {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row row-inside visible-sm-block visible-xs-block">
+                        <div class="col-sm-2 col-xs-2 col-sm-offset-10 col-xs-offset-10">
+                            <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Group</button>
                         </div>
                     </div>
                 </form>
@@ -71,19 +75,20 @@
                     <form action="{{ public_dir }}/manager/groups/update/" method="post">
                         <div class="row row-inside {{ class }}">
                             <div class="col-md-2">
-                                <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_name]">Group Name: </label>
+                                <label class="visible-sm-inline-block visible-xs-inline-block w100 aright" for="groups[group_name]">Name: </label>
                             {% if group.group_immutable == 1 %}
                                 {{ group.group_name }}
+                                <input type="hidden" name="groups[group_name]" value="{{ group.group_name }}"/>
                             {% else %}
                                 <input type="text" name="groups[group_name]" value="{{ group.group_name }}" maxlength="20" class="colorful"/>
                             {% endif %}
                             </div>
                             <div class="col-md-6">
-                                <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label>
+                                <label class="visible-sm-inline-block visible-xs-inline-block w100 aright" for="groups[group_description]">Description: </label>
                                 <input type="text" name="groups[group_description]" value="{{ group.group_description }}" maxlength="128" class="colorful w450"/>
                             </div>
                             <div class="col-md-2">
-                                <label for="groups[group_immutable]">Immutable: </label>
+                                <label class="w100 aright" for="groups[group_immutable]">Immutable: </label>
                             {% if group.group_immutable == 1 and adm_lvl > 1 %}
                                 True
                             {% elseif group.group_immutable == 1 %}
@@ -93,9 +98,9 @@
                             {% endif %}
                             </div>
                             <div class="col-md-2">
-                                <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
+                                <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs hidden-sm hidden-xs">Save</button>
                             {% if group.group_immutable != 1 %}
-                                <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
+                                <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs hidden-sm hidden-xs">Delete</button>
                             {% endif %}
                                 <input type="hidden" name="tolken" value="{{ tolken }}" />
                                 <input type="hidden" name="form_ts" value="{{ form_ts }}" />
@@ -104,9 +109,8 @@
                             </div>
                         </div>
                         <div class="row row-inside {{ class }}">
-                            <div class="col-md-2 pad-right-12 bold aright">Role(s):</div>
-                            <div class="col-md-10">
-                                <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[]">Role(s): </label>
+                            <div class="col-md-1 col-sm-1 col-xs-1 pad-right-12 bold aright">Role(s):</div>
+                            <div class="col-md-11 col-sm-11 col-xs-11">
                         {% for role in group.a_roles %}
                             {% if adm_lvl == 1 %}
                                 <input type="checkbox" name="roles[]" value="{{ role.role_id }}"{{ role.checked }}>&nbsp;&nbsp;{{ role.role_name }}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -120,6 +124,14 @@
                         {% endfor %}
                             </div>
                         </div>
+                        <div class="row row-inside visible-sm-block visible-xs-block {{ class }}">
+                            <div class="col-sm-2 col-xs-2 col-sm-offset-10 col-xs-offset-10">
+                                <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
+                            {% if group.group_immutable != 1 %}
+                                <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
+                            {% endif %}
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -127,32 +139,31 @@
         {% endfor %}
         {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
-                <div class="col-md-12">
+                <div class="col-md-12 {{ class }}">
                 <form action="{{ public_dir }}/manager/groups/save/" method= "post">
                     <div class="row row-inside">
-                        <div class="col-md-2">
-                            <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_name]">Group Name: </label>
+                        <div class="col-md-2 {{ class }}">
+                            <label class="visible-sm-inline-block visible-xs-inline-block w100" for="groups[group_name]">Name: </label>
                             <input type="text" name="groups[group_name]" value="" maxlength="20" class="colorful"/>
                         </div>
-                        <div class="col-md-6">
-                            <label class="visible-sm-inline-block visible-xs-inline-block" for="groups[group_description]">Group Description: </label>
+                        <div class="col-md-6 {{ class }}">
+                            <label class="visible-sm-inline-block visible-xs-inline-block w100" for="groups[group_description]">Description: </label>
                             <input type="text" name="groups[group_description]" value="" maxlength="128" class="colorful w450"/>
                         </div>
-                        <div class="col-md-2">
-                            <label for="groups[group_immutable]">Immutable: </label>
+                        <div class="col-md-2 {{ class }}">
+                            <label for="groups[group_immutable]" class="w100">Immutable: </label>
                             <input type="checkbox" name="groups[group_immutable]" value="1"/>
                         </div>
-                        <div class="col-md-2">
-                            <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Group</button>
+                        <div class="col-md-2 {{ class }}">
+                            <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs hidden-sm hidden-xs">Save New Group</button>
                             <input type="hidden" name="tolken" value="{{ tolken }}" />
                             <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                             <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
                         </div>
                     </div>
-                    <div class="row row-inside">
-                        <div class="col-md-2 pad-right-12 bold aright">Role(s):</div>
-                        <div class="col-md-10">
-                            <label class="visible-sm-inline-block visible-xs-inline-block" for="roles[]">Role(s): </label>
+                    <div class="row row-inside {{ class }}">
+                        <div class="col-md-2 col-sm-2 col-xs-2 pad-right-12 bold aright">Role(s):</div>
+                        <div class="col-md-10 col-sm-10 col-xs-10">
                     {% for row in a_blank_roles %}
                         {% if adm_lvl == 1 %}
                             <input type="checkbox" name="roles[]" value="{{ row.role_id }}">&nbsp;&nbsp;{{ row.role_name }}&nbsp;&nbsp;&nbsp;&nbsp;
@@ -160,6 +171,11 @@
                             <input type="checkbox" name="roles[]" value="{{ row.role_id }}">&nbsp;&nbsp;{{ row.role_name }}&nbsp;&nbsp;&nbsp;&nbsp;
                         {% endif %}
                     {% endfor %}
+                        </div>
+                    </div>
+                    <div class="row row-inside {{ class }} visible-sm-block visible-xs-block">
+                        <div class="col-sm-2 col-xs-2 col-sm-offset-10 col-xs-offset-10">
+                            <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Group</button>
                         </div>
                     </div>
                 </form>

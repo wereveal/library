@@ -86,7 +86,7 @@ class GroupsAdminView
         }
         $a_groups = $this->o_groups->read(array(), ['order_by' => 'group_name']);
         if ($a_groups !== false && count($a_groups) > 0) {
-            $this->logIt("Groups: " . var_export($a_groups, true), LOG_ON, $meth . __LINE__);
+            $this->logIt("Groups: " . var_export($a_groups, true), LOG_OFF, $meth . __LINE__);
             foreach ($a_groups as $a_group_key => $a_row) {
                 $a_groups[$a_group_key]['group_description'] = html_entity_decode($a_row['group_description'], ENT_QUOTES);
 
