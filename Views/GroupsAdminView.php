@@ -76,7 +76,7 @@ class GroupsAdminView
             'hobbit'  => '',
             'a_blank_roles' => $a_roles,
             'menus'   => $this->a_links,
-            'adm_lvl' => $this->auth_level
+            'adm_lvl' => $this->adm_level
         ];
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);

@@ -68,7 +68,7 @@ class RouterAdminView
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
             'menus'   => $this->a_links,
-            'adm_lvl' => $this->auth_level
+            'adm_lvl' => $this->adm_level
         );
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);

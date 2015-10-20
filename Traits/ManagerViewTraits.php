@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Traits
  *  @class ManagerViewTraits
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-10-05 15:52:31
+ *  @version 1.0.1
+ *  @date 2015-10-16 14:22:23
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1 - changed property name   - 10/16/2015 wer
  *      v1.0.0 - think it is working now - 10/05/2015 wer
  *      v0.1.0 - initial version         - 10/01/2015 wer
  *  </pre>
@@ -23,7 +24,7 @@ use Ritc\Library\Services\Di;
 trait ManagerViewTraits
 {
     protected $a_links;
-    protected $auth_level;
+    protected $adm_level;
     protected $o_auth;
     protected $o_di;
     protected $o_router;
@@ -57,13 +58,13 @@ trait ManagerViewTraits
     private function setAuthLevel($login_id = '')
     {
         if ($login_id != '') {
-            $this->auth_level = $this->o_auth->getHighestRoleLevel($login_id);
+            $this->adm_level = $this->o_auth->getHighestRoleLevel($login_id);
         }
         elseif (isset($_SESSION['login_id'])) {
-            $this->auth_level = $this->o_auth->getHighestRoleLevel($_SESSION['login_id']);
+            $this->adm_level = $this->o_auth->getHighestRoleLevel($_SESSION['login_id']);
         }
         else {
-            $this->auth_level = 999;
+            $this->adm_level = 999;
         }
     }
     /**
@@ -122,19 +123,16 @@ trait ManagerViewTraits
                 'class'       => ''
             ]
         ];
-        if ($this->auth_level == '') {
+        if ($this->adm_level == '') {
             $this->setAuthLevel();
         }
-        $person_role_level = $this->auth_level;
+        $person_role_level = $this->adm_level;
         $current_route_path = $this->o_router->getRoutePath();
         $o_routes = new RoutesHelper($this->o_di, '');
         foreach ($a_links as $key => $a_link) {
             $o_routes->setRouteParts($a_link['url']);
             $a_route_parts = $o_routes->getRouteParts();
-            $unset = $person_role_level <= $a_route_parts['min_role_level']
-                ? false
-                : true;
-            if ($unset) {
+            if ($person_role_level > $a_route_parts['min_role_level']) {
                 unset($a_links[$key]);
             }
             if ($a_link['url'] == $current_route_path) {

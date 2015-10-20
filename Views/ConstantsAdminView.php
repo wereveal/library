@@ -69,7 +69,7 @@ class ConstantsAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'adm_lvl' => $this->auth_level,
+            'adm_lvl' => $this->adm_level,
             'menus'   => $this->a_links
         );
         if (count($a_message) != 0) {
