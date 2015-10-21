@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.5.0
- *  @date 2015-10-06 14:54:49
+ *  @version 2.5.1
+ *  @date 2015-10-20 19:11:26
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.5.1 - bug fix, inArrayRecursive                                           - 10/20/2015 wer
  *      v2.5.0 - new method, createRequiredPairs                                     - 10/06/2015 wer
  *      v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                - 09/12/2015 wer
  *      v2.3.0 - New method, inArrayRecursive                                        - 09/10/2015 wer
@@ -164,11 +165,13 @@ class Arrays
         return false;
     }
     /**
-     * Searches a multidimensional array for a value.
-     * @param string $needle
-     * @param array  $a_haystack
-     * @param bool   $strict
-     * @return mixed|string|int|bool key of the found or false
+     *  Searches a multidimensional array for a value.
+     *  If found, returns the key of the array, if multidimenstional array
+     *  it returns the keys of each array dot separated, e.g., 1.3.2 or 'fred'.'wife'.'wilma'.
+     *  @param string $needle
+     *  @param array  $a_haystack
+     *  @param bool   $strict
+     *  @return mixed|string|int|bool key of the found or false
      */
     public static function inArrayRecursive($needle, array $a_haystack, $strict = false)
     {
@@ -176,17 +179,18 @@ class Arrays
             return false;
         }
         foreach ($a_haystack as $key => $item) {
-            if (
-                ($strict
-                    ? $item === $needle
-                    : $item == $needle
-                )
-                ||
-                (is_array($item)
-                    && self::inArrayRecursive($needle, $item, $strict)
-                )
-            ) {
-                return $key;
+            if (is_array($item)) {
+                $inner_key = self::inArrayRecursive($needle, $item, $strict);
+                if ($inner_key !== false) {
+                    return $key . '.' . $inner_key;
+                }
+            }
+            else {
+                if (($strict && $item === $needle)
+                || ($strict === false && $item == $needle)) {
+                    print $key . "\n";
+                    return $key;
+                }
             }
         }
         return false;
