@@ -30,12 +30,6 @@
                 </form>
                 </div>
             </div>
-            <div class="row hidden-sm hidden-xs list-header">
-                <div class="col-md-2 list-header">Person's Login ID</div>
-                <div class="col-md-4 list-header">Person's Name</div>
-                <div class="col-md-4 list-header">Description</div>
-                <div class="col-md-2 list-header">&nbsp;</div>
-            </div>
         {% set x = -1 %}
         {% for person in a_people %}
             {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
@@ -44,24 +38,30 @@
                     <form action="{{ public_dir }}/manager/people/modify/" method="post">
                         <div class="row row-inside {{ class }}">
                             <div class="col-md-2">
-                                <div class="visible-sm-inline-block visible-xs-inline-block bold w100">LoginID: </div>
+                                <span class="inline-block bold w75 aright pad-right-12">LoginID:</span>
                                 {{ person.login_id }}
                             </div>
-                            <div class="col-md-4">
-                                <div class="visible-sm-inline-block visible-xs-inline-block bold w100">Name: </div>
+                            <div class="col-md-3">
+                                <span class="inline-block bold w75 aright pad-right-12">Name:</span>
                                 {{ person.real_name }}
                             </div>
-                            <div class="col-md-4">
-                                <div class="visible-sm-inline-block visible-xs-inline-block bold w100"">Description: </div>
+                            <div class="col-md-5">
+                                <span class="inline-block bold w100 aright pad-right-12">Description:</span>
+                            {% if person.description|length > 45 %}
+                                {{ person.description|slice(0, 45) }}....
+                            {% else %}
                                 {{ person.description }}
+                            {% endif %}
                             </div>
                             <div class="col-md-2">
                                 <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Modify</button>
+                                {% if person.immutable != 1 %}
                                 <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
+                                {% endif %}
                                 <input type="hidden" name="tolken" value="{{ tolken }}" />
                                 <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                                 <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                                <input type="hidden" name="person[people_id]" value="{{ person.people_id }}" />
+                                <input type="hidden" name="people_id" value="{{ person.people_id }}" />
                             </div>
                         </div>
                     </form>

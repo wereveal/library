@@ -92,7 +92,7 @@ class PeopleAdminController implements MangerControllerInterface
                     return $this->verifyDelete();
                 }
                 elseif ($form_action == 'modify') {
-                    $people_id = $a_post['person']['people_id'];
+                    $people_id = $a_post['people_id'];
                     return $this->o_view->renderModify($people_id);
                 }
                 else {

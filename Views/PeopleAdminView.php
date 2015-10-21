@@ -18,10 +18,10 @@
  */
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
-use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Services\Di;
@@ -34,26 +34,20 @@ class PeopleAdminView
 
     private $o_people_model;
     private $o_group_model;
-    private $o_role_model;
     private $o_pgm_model;
-    private $o_grm_model;
 
     public function __construct(Di $o_di)
     {
         $o_db                 = $o_di->get('db');
         $this->o_people_model = new PeopleModel($o_db);
         $this->o_group_model  = new GroupsModel($o_db);
-        $this->o_role_model   = new RolesModel($o_db);
         $this->o_pgm_model    = new PeopleGroupMapModel($o_db);
-        $this->o_grm_model    = new GroupRoleMapModel($o_db);
         $this->setupView($o_di);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people_model->setElog($this->o_elog);
             $this->o_group_model->setElog($this->o_elog);
-            $this->o_role_model->setElog($this->o_elog);
             $this->o_pgm_model->setElog($this->o_elog);
-            $this->o_grm_model->setElog($this->o_elog);
         }
     }
 
@@ -65,21 +59,26 @@ class PeopleAdminView
             'a_message'   => array(),
             'a_people'    => array(
                 [
-                    'people_id' => '',
-                    'login_id'  => '',
-                    'real_name' => ''
+                    'people_id'  => '',
+                    'login_id'   => '',
+                    'real_name'  => '',
+                    'auth_level' => 999
                 ]
             ),
             'tolken'      => $_SESSION['token'],
             'form_ts'     => $_SESSION['idle_timestamp'],
             'hobbit'      => '',
-            'menus'       => $this->a_links
+            'menus'       => $this->a_links,
+            'adm_level'   => $this->adm_level
         ];
-        if ($_SESSION['login_id'] != 'SuperAdmin') {
-            $a_values['a_people'] = $this->o_people_model->read(['is_immutable' => 0]);
-        }
-        else {
-            $a_values['a_people'] = $this->o_people_model->read();
+
+        $a_people = $this->o_people_model->read();
+        if ($a_people !== false) {
+            foreach($a_people as $key => $a_person) {
+                $highest_role_level = $this->o_auth->getHighestRoleLevel($a_person['people_id']);
+                $a_people[$key]['auth_level'] = $highest_role_level;
+            }
+            $a_values['a_people'] = $a_people;
         }
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
@@ -92,17 +91,43 @@ class PeopleAdminView
     }
     public function renderNew()
     {
-        return '';
+        $a_values = [
+            'public_dir'  => PUBLIC_DIR,
+            'description' => 'Add a Person.',
+            'a_message'   => array(),
+            'person'      => array(
+                [
+                    'people_id'    => '',
+                    'login_id'     => '',
+                    'real_name'    => '',
+                    'short_name'   => '',
+                    'description'  => '',
+                    'password'     => '',
+                    'is_active'    => 0,
+                    'is_immutable' => 0,
+                    'created_on'   => date('Y-m-d H:i:s'),
+                    'groups'       => [],
+                    'highest_role' => 999
+                ]
+            ),
+            'action'  => 'save',
+            'tolken'  => $_SESSION['token'],
+            'form_ts' => $_SESSION['idle_timestamp'],
+            'hobbit'  => '',
+            'adm_lvl' => $this->adm_level,
+            'menus'   => $this->a_links
+        ];
+        $a_groups = $this->o_group_model->read();
+        foreach ($a_groups as $key => $a_group) {
+
+        }
+        $a_values['person']['groups'] = $a_group;
+        return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }
     public function renderModify($people_id = -1)
     {
         if ($people_id == -1) {
             return $this->renderList(['message' => 'A Problem Has Occured. Please Try Again.', 'type' => 'error']);
-        }
-        $admin_id = $this->o_people_model->getPeopleId($_SESSION['login_id']);
-        if ($admin_id === false) {
-            $this->o_auth->logout($_SESSION['login_id']);
-            header("Location: " . SITE_URL . "/manager/login/");
         }
         $a_values = [
             'public_dir'  => PUBLIC_DIR,
@@ -120,30 +145,36 @@ class PeopleAdminView
                     'is_immutable' => 0,
                     'created_on'   => date('Y-m-d H:i:s'),
                     'groups'       => [],
-                    'roles'        => []
+                    'highest_role' => 999
                 ]
             ),
             'action'  => 'update',
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'adm'     => $_SESSION['login_id'],
+            'adm_lvl' => $this->adm_level,
             'menus'   => $this->a_links
         ];
         $a_person = $this->o_people_model->readInfo($people_id);
         if ($a_person == array()) {
             return $this->renderList(['message' => 'The person was not found. Please Try Again.', 'type' => 'error']);
         }
-        $a_person['password'] = '************';
-        $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, __METHOD__);
-        foreach($a_person['groups'] as $key => $a_group) {
-            $can_change = 'no';
-            if ($this->o_auth->hasMinimumRoleLevel($admin_id, $a_group['group_id'])) {
-                $can_change = 'yes';
-            }
-            $a_person['groups'][$key]['can_change'] = $can_change;
+        $a_default_groups = $this->o_group_model->read();
+        foreach ($a_default_groups as $key => $a_group) {
+            $a_default_groups[$key]['checked'] = '';
         }
-        $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, __METHOD__);
+        $a_person_groups = $a_person['groups'];
+
+        foreach ($a_person_groups as $a_group) {
+            $found_location = Arrays::inArrayRecursive($a_group['group_id'], $a_default_groups);
+            if ($found_location) {
+                list($main_key, $secondary_key) = explode('.', $found_location);
+                $a_default_groups[$main_key]['checked'] = ' checked';
+            }
+        }
+        $a_person['groups'] = $a_default_groups;
+        $a_person['password'] = '************';
+        $this->logIt("Person: " . var_export($a_person, true), LOG_ON, __METHOD__);
         $a_values['person'] = $a_person;
         return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }

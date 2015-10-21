@@ -44,7 +44,7 @@
         </div>
         <div class="row">
             <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="short_name">Initials: </label>
+                <label for="short_name">Alias: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
                 <input type="text" id="short_name" name="person[short_name]" class="colorful" maxlength="64" value="{{ person.short_name }}">
@@ -55,15 +55,7 @@
                 <label for="password">Password: </label>
             </div>
     {% if person.is_immutable == 1 %} {# password can only be changed a select few #}
-        {% if adm == 'SuperAdmin' %} {# SuperAdmin can change anything #}
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="password" name="person[password]" class="colorful" maxlength="64" value="{{ person.password }}">
-            </div>
-        {% elseif adm == 'Admin' and person.login_id != 'SuperAdmin' %} {# Admin can change everyone but SuperAdmin #}
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="password" name="person[password]" class="colorful" maxlength="64" value="{{ person.password }}">
-            </div>
-        {% elseif adm == person.login_id %} {# if the person changing the person is the person being modified its ok #}
+        {% if adm_level <= person.highest_role %} {# the admin's auth level can only change people of same or lower auth (lower meaning higher number) #}
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
                 <input type="text" id="password" name="person[password]" class="colorful" maxlength="64" value="{{ person.password }}">
             </div>
@@ -91,15 +83,24 @@
                 <label for="is_active">Active: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                {% if person.is_active == 1 %}
-                    {% set checked = 'true' %}
-                {% else %}
-                    {% set checked = 'false' %}
-                {% endif %}
+            {% if person.is_active == 1 %}
+                {% set checked = 'true' %}
+            {% else %}
+                {% set checked = 'false' %}
+            {% endif %}
+
+        {% if person.immutable != 1 or adm_level <= person.highest_role %}
                 <input type="checkbox" name="person[is_active]" checked="{{ checked }}" id="is_active" class="colorful" />
+        {% else %}
+            {% if checked == 'true' %}
+                True
+            {% else %}
+                False
+            {% endif %}
+        {% endif %}
             </div>
         </div>
-    {% if adm == 'Admin' or adm == 'SuperAdmin' %}
+    {% if adm_lvl <= 1 %}
         <div class="row">
             <div class="col-md-2 col-sm-2 col-xs-2  aright">
                 <label>Created On:</label>
@@ -114,42 +115,53 @@
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
                 {% if person.is_logged_in == 1 %}
-                    {% set checked = 'true' %}
+                    {% set is_checked = " checked" %}
                 {% else %}
-                    {% set checked = 'false' %}
+                    {% set is_checked = "" %}
                 {% endif %}
-                <input type="checkbox" name="person[is_logged_in]" checked="{{ checked }}" id="is_logged_in" class="colorful" />
+                <input type="checkbox" name="person[is_logged_in]" id="is_logged_in" class="colorful"{{ is_checked }}/>
             </div>
         </div>
     {% endif %}
-    {% if  adm == 'SuperAdmin' %}
         <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
+            <div class="col-md-2 col-sm-2 col-xs-2 aright">
                 <label for="is_immutable">Is Immutable: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                {% if person.is_immutable == 1 %}
-                    {% set checked = 'true' %}
-                {% else %}
-                    {% set checked = 'false' %}
-                {% endif %}
-                <input type="checkbox" name="person[is_immutable]" checked="{{ checked }}" id="is_immutable" class="colorful" />
+            {% if person.is_immutable == 1 and adm_level <= person.highest_role %}
+                <input type="checkbox" name="person[is_immutable]" checked="checked" id="is_immutable" class="colorful" value="true" />
+            {% elseif person.is_immutable == 1 %}
+                True
+            {% elseif adm_level <= person.highest_role %}
+                <input type="checkbox" name="person[is_immutable]" id="is_immutable" class="colorful" value="true" />
+            {% else %}
+                False
+            {% endif %}
             </div>
         </div>
-    {% endif %}
-        <div class="row">
+        <div class="row alt-row bold">
             <div class="col-md-12">
-                <ul id="groups">
-            {% for group in groups %}
-                {% if person.is_immutable == 1 %}
-                    {% if adm == 'SuperAdmin' %}
-                    <li>{{ group_name }} <input type="checkbox" value="{{ group_id }}" name="groups[]" checked="{{ checked }}"></li>
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-                </ul>
+                Groups:
             </div>
         </div>
+    {% for group in person.groups %}
+        <div class="row">
+            <div class="col-md-2 col-sm-2 col-xs-2 aright pad-right-12">
+                <label for="groups{{ group.group_id }}">{{ group.group_name }} </label>
+            </div>
+            <div class="col-md-10 col-sm-10 col-xs-10">
+        {% if person.is_immutable == 1 %}
+            {% if adm_level <= person.highest_role %}
+                <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />
+            {% else %}
+                <i class="fa fa-check-square-o"></i>
+            {% endif %}
+        {% else %}
+                <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />
+        {% endif %}
+            </div>
+        </div>
+    {% endfor %}
         <div class="row">
             <div class="col-md-2 col-sm-2 col-xs-2  aright">
                 <button type="submit" value="update" class="btn btn-primary btn-sm">Update</button>
@@ -174,8 +186,10 @@
                         <ul>
                             <li>Is Encrypted and cannot be recovered, only replaced.</li>
                             <li>Must be at least 8 characters long.</li>
-                            <li>Recommend it be 12 random or psuedo-random characters, upper and lower alpha, numeric and characters such as @% etc.</li>
-                            <li>Recommend that it not be a dictionary word, name, or personal information.</li>
+                            <li>Recommendation: It be at least 12 random or psuedo-random characters, upper and lower alpha, numeric and characters such as @% etc.</li>
+                            <li>Recommendation: It not be a single dictionary word, name, or personal information.</li>
+                            <li>Optionally a good practice would be to use 3 or 4 non-associated words of at least 4 characters long, e.g., 'Television river Banana' which allows one to remember the password while being difficult for a malicious attacker guess.</li>
+                            <li>password and 12345678 are not good passwords. Come on! You don't want to be responsible for someone maliciously accessing this site and deface it.</li>
                         </ul>
                     </li>
                     <li>Description can be anything and is not required.</li>
@@ -189,7 +203,7 @@
 {# expected array
     [
         'public_dir'  => '',
-        'description' => 'description',
+        'description' => '.',
         'a_message'   => array(),
         'person'      => array(
             [
@@ -201,14 +215,16 @@
                 'password'     => '',
                 'is_active'    => 0,
                 'is_immutable' => 0,
-                'created_on'   => '',
+                'created_on'   => date('Y-m-d H:i:s'),
                 'groups'       => [],
+                'highest_role' => 999
             ]
         ),
         'action'  => 'update',
         'tolken'  => 'token',
-        'form_ts' => 'timestamp',
+        'form_ts' => 'idle_timestamp',
         'hobbit'  => '',
-        'is_sa'   => 'no'
+        'adm_lvl' => 999,
+        'menus'   => array()
     ]
 #}
