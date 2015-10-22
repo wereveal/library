@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.5.1
- *  @date 2015-10-20 19:11:26
+ *  @version 2.5.2
+ *  @date 2015-10-22 15:16:29
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs        - 10/22/2015 wer
  *      v2.5.1 - bug fix, inArrayRecursive                                           - 10/20/2015 wer
  *      v2.5.0 - new method, createRequiredPairs                                     - 10/06/2015 wer
  *      v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                - 09/12/2015 wer
@@ -135,13 +136,16 @@ class Arrays
         return true;
     }
     /**
-     * Checks array for blank values.
+     * Checks array for blank values and missing key=>value pairs.
      * @param array $a_pairs
      * @return bool
      */
     public static function hasBlankValues(array $a_pairs = array(), array $a_keys_to_check = array())
     {
         if ($a_pairs == array()) {
+            return true;
+        }
+        if (!self::hasRequiredKeys($a_pairs, $a_keys_to_check)) {
             return true;
         }
         foreach ($a_pairs as $key => $value) {
