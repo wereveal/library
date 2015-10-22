@@ -55,9 +55,6 @@
                             </div>
                             <div class="col-md-2">
                                 <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Modify</button>
-                                {% if person.immutable != 1 %}
-                                <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
-                                {% endif %}
                                 <input type="hidden" name="tolken" value="{{ tolken }}" />
                                 <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                                 <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />

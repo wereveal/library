@@ -55,43 +55,38 @@ class PeopleModel implements ModelInterface
     /**
      *  Creates new people record(s) in the people table.
      *  @param array $a_values required Can be a simple assoc array or array of assoc arrays
-     *                         e.g. ['login_id' => 'fred', 'password' => 'letmein']
+     *                         e.g. ['login_id' => 'fred', 'real_name' => 'Fred', 'password' => 'letmein']
      *                         or
      *                         [
-     *                             ['login_id' => 'fred',   'password' => 'letmein'],
-     *                             ['login_id' => 'barney', 'password' => 'lethimin']
+     *                             ['login_id' => 'fred',   'real_name' => 'Fred',   'password' => 'letmein'],
+     *                             ['login_id' => 'barney', 'real_name' => 'Barney', 'password' => 'lethimin']
      *                         ].
-     *                         Optional key=>values 'real_name, 'short_name',
+     *                         Optional key=>values 'short_name',
+     *                                              'description', 'is_logged_in',
      *                                              'is_active' & 'is_immutable'
      *  @return array|bool
     **/
     public function create(array $a_values = array())
     {
-        if ($a_values == array()) {
+        $a_required_keys = [
+            'login_id',
+            'real_name',
+            'short_name',
+            'password',
+            'description',
+            'is_logged_in',
+            'is_active',
+            'is_immutable'
+        ];
+        $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, true);
+        if (Arrays::hasBlankValues($a_values, ['login_id', 'password'])) {
             return false;
-        }
-        if (isset($a_values[0]) && is_array($a_values[0])) {
-            foreach ($a_values as $key => $a_new_person) {
-                $a_new_person = $this->setPersonValues($a_new_person);
-                if ($a_new_person !== false) {
-                    $a_values[$key] = $a_new_person;
-                }
-                else {
-                    return false;
-                }
-            }
-        }
-        else {
-            $a_values = $this->setPersonValues($a_values);
-            if ($a_values === false) {
-                return false;
-            }
         }
         $sql = "
             INSERT INTO {$this->db_prefix}people
-                (login_id, real_name, short_name, password, is_active, is_immutable)
+                (login_id, real_name, short_name, password, description, is_logged_in, is_active, is_immutable)
             VALUES
-                (:login_id, :real_name, :short_name, :password, :is_active, :is_immutable)
+                (:login_id, :real_name, :short_name, :password, :description, :is_logged_in, :is_active, :is_immutable)
         ";
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}people")) {
             $ids = $this->o_db->getNewIds();
@@ -169,13 +164,7 @@ class PeopleModel implements ModelInterface
         $a_possible_keys = array(
             'people_id',
             'login_id',
-            'real_name',
-            'short_name',
-            'password',
-            'description',
-            'is_logged_in',
-            'is_active',
-            'is_immutable'
+            'password'
         );
         if (Arrays::hasBlankValues($a_values, $a_possible_keys)) {
             foreach ($a_possible_keys as $key_name) {
@@ -184,28 +173,26 @@ class PeopleModel implements ModelInterface
                         unset($a_values[$key_name]);
                     }
                 }
-                else {
-                    unset($a_values[$key_name]);
-                }
             }
         }
-        if ($a_values == array()
-            ||
-            (
-                !isset($a_values['people_id'])
-                &&
-                !isset($a_values['login_id'])
-            )
-            ||
-            (
-                (isset($a_values['people_id']) && $a_values['people_id'] == '')
-                &&
-                (isset($a_values['login_id']) && $a_values['login_id'] == '')
-            )
-        ) {
+        if (!isset($a_values['people_id']) && !isset($a_values['login_id'])) {
             return false;
         }
-        $sql_set = $this->o_db->buildSqlSet($a_values, array('people_id', 'login_id'));
+        $a_allowed_keys = [
+            'people_id',
+            'login_id',
+            'real_name',
+            'short_name',
+            'password',
+            'description',
+            'is_logged_in',
+            'bad_login_count',
+            'bad_login_ts',
+            'is_active',
+            'is_immutable'
+        ];
+        $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
+        $sql_set = $this->o_db->buildSqlSet($a_values, ['people_id', 'login_id']);
         if (isset($a_values['people_id'])) {
             $sql_where = 'WHERE people_id = :people_id';
             if (isset($a_values['login_id'])) {
@@ -598,7 +585,7 @@ class PeopleModel implements ModelInterface
                             $a_person['real_name'] = $a_person['login_id'];
                             break;
                         case 'short_name':
-                            $a_person['short_name'] = strtoupper(substr($a_person['real_name'], 0, 3));
+                            $a_person['short_name'] = $this->createShortName($a_person['real_name']);
                             break;
                         default:
                             break;
@@ -612,7 +599,7 @@ class PeopleModel implements ModelInterface
                 $a_ids = $this->create($a_person);
                 if ($a_ids !== false) {
                     $new_people_id = $a_ids[0];
-                    $a_pgm_values = $this->createPgmValues($new_people_id, $a_groups);
+                    $a_pgm_values = $this->makePgmArray($new_people_id, $a_groups);
                     if ($a_pgm_values != array()) {
                         if ($this->o_pgm->create($a_pgm_values)) {
                             if ($this->o_db->commitTransaction()) {
@@ -644,7 +631,7 @@ class PeopleModel implements ModelInterface
                             $a_person['real_name'] = $a_person['login_id'];
                             break;
                         case 'short_name':
-                            $a_person['short_name'] = strtoupper(substr($a_person['real_name'], 0, 3));
+                            $a_person['short_name'] = $this->createShortName($a_person['real_name']);
                             break;
                         default:
                             break;
@@ -654,7 +641,7 @@ class PeopleModel implements ModelInterface
             $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
             $a_groups = $this->makeGroupIdArray($a_person['groups']);
             $a_person = $this->setPersonValues($a_person);
-            $a_pg_values = $this->createPgmValues($a_person['people_id'], $a_groups);
+            $a_pg_values = $this->makePgmArray($a_person['people_id'], $a_groups);
             if ($a_pg_values != array()) {
                 if ($this->o_db->startTransaction()) {
                     if ($this->update($a_person)) {
@@ -687,61 +674,12 @@ class PeopleModel implements ModelInterface
         return false;
     }
     /**
-     *  Returns an array mapping a person to the group(s) specified.
-     *  @param string $people_id
-     *  @param array  $a_groups
-     *  @return array
-     */
-    private function createPgmValues($people_id = '', array $a_groups = array())
-    {
-        if ($people_id == '' || $a_groups == array()) {
-            return array();
-        }
-        $a_return_map = array();
-        foreach ($a_groups as $group_id) {
-            $a_return_map[] = ['people_id' => $people_id, 'group_id' => $group_id];
-        }
-        return $a_return_map;
-    }
-    /**
-     *  Returns an array to be used to create or update a people record.
-     *  @param array $a_person
-     *  @return array|bool
-     */
-    private function setPersonValues(array $a_person = array()) {
-        if ($a_person == array()) {
-            return false;
-        }
-        $a_required_keys = array(
-            'login_id',
-            'real_name',
-            'short_name',
-            'password'
-        );
-        if (!Arrays::hasRequiredKeys($a_person, $a_required_keys)) {
-            return false;
-        }
-        $a_allowed_keys   = $a_required_keys;
-        $a_allowed_keys[] = 'people_id';
-        $a_allowed_keys[] = 'description';
-        $a_allowed_keys[] = 'is_active';
-        $a_allowed_keys[] = 'is_immutable';
-        $a_person = Arrays::removeUndesiredPairs($a_person, $a_allowed_keys);
-        if (!isset($a_person['is_active']) || $a_person['is_active'] == '') {
-            $a_person['is_active'] = 0;
-        }
-        if (!isset($a_person['is_immutable']) || $a_person['is_immutable'] == '') {
-            $a_person['is_immutable'] = 0;
-        }
-        return $a_person;
-    }
-    /**
      *  Returns an array used in the creation of people group map records.
      *  @param array $group_id
      *  @param       $group_name
      *  @return array
      */
-    private function makeGroupIdArray($group_id = array(), $group_name)
+    private function makeGroupIdArray($group_id = array(), $group_name = '')
     {
         if (is_array($group_id)) {
             $a_group_ids = $group_id;
@@ -768,6 +706,23 @@ class PeopleModel implements ModelInterface
             }
         }
         return $a_group_ids;
+    }
+    /**
+     *  Returns an array mapping a person to the group(s) specified.
+     *  @param string $people_id
+     *  @param array  $a_groups
+     *  @return array
+     */
+    private function makePgmArray($people_id = '', array $a_groups = array())
+    {
+        if ($people_id == '' || $a_groups == array()) {
+            return array();
+        }
+        $a_return_map = array();
+        foreach ($a_groups as $group_id) {
+            $a_return_map[] = ['people_id' => $people_id, 'group_id' => $group_id];
+        }
+        return $a_return_map;
     }
 
     ### Required by Interface ###

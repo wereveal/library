@@ -91,6 +91,7 @@ class PeopleAdminView
     }
     public function renderNew()
     {
+        $meth = __METHOD__ . '.';
         $a_values = [
             'public_dir'  => PUBLIC_DIR,
             'description' => 'Add a Person.',
@@ -119,9 +120,10 @@ class PeopleAdminView
         ];
         $a_groups = $this->o_group_model->read();
         foreach ($a_groups as $key => $a_group) {
-
+            $a_groups[$key]['checked'] = '';
         }
-        $a_values['person']['groups'] = $a_group;
+        $a_values['person']['groups'] = $a_groups;
+        $this->logIt('A person values: ' . var_export($a_values, true), LOG_ON, $meth . __LINE__);
         return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }
     public function renderModify($people_id = -1)

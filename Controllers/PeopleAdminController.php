@@ -11,8 +11,8 @@
  *  @note A file in Library v5
  *  @note <pre><b>Change Log</b>
  *      v1.0.0β4 - Realized this is nowhere near done            - 01/06/2015 wer
- *               This code was copied from somewhere else and
- *               not modified to fit the need.
+ *                 This code was copied from somewhere else and
+ *                 not modified to fit the need.
  *      v1.0.0β3 - refactoring of namespaces                     - 12/05/2014 wer
  *      v1.0.0β2 - Adjusted to match file name change            - 11/13/2014 wer
  *      v1.0.0β1 - Initial version                               - 04/02/2014 wer
@@ -88,19 +88,18 @@ class PeopleAdminController implements MangerControllerInterface
                 $a_message = $this->save();
                 break;
             case 'modify':
+                $people_id = $a_post['people_id'];
+                return $this->o_view->renderModify($people_id);
+            case 'update':
                 if ($form_action == 'verify') {
                     return $this->verifyDelete();
                 }
                 elseif ($form_action == 'modify') {
-                    $people_id = $a_post['people_id'];
-                    return $this->o_view->renderModify($people_id);
+                    $a_message = $this->update();
                 }
                 else {
                     $a_message = $this->failureMessage('A problem has occured. Could not determine action');
                 }
-                break;
-            case 'update':
-                $a_message = $this->update();
                 break;
             case 'delete':
                 $a_message = $this->delete();
@@ -114,11 +113,15 @@ class PeopleAdminController implements MangerControllerInterface
     /**
      *  Saves the person mapped to group(s).
      *  Returns array that specifies succsss or failure.
-     *  @return array
+     *  @return array a message regarding outcome.
      */
     public function save()
     {
         $a_person = $this->a_post_values['person'];
+        $a_person = $this->setPersonValues($a_person);
+        if ($a_person === false) {
+            return ViewHelper::failureMessage("Opps, the person was not saved.");
+        }
         $a_person['groups'] = $this->a_post_values['groups'];
         if ($this->o_model->savePerson($a_person) !== false) {
             return ViewHelper::successMessage("Success! The person was saved.");
@@ -126,12 +129,16 @@ class PeopleAdminController implements MangerControllerInterface
         return ViewHelper::failureMessage("Opps, the person was not saved.");
     }
     /**
-     * Updates the user record and then displays the list of people.
-     * @return array
+     * Updates the user record.
+     * @return array a message regarding outcome.
      */
     public function update()
     {
         $a_person = $this->a_post_values['person'];
+        $a_person = $this->setPersonValues($a_person);
+        if ($a_person === false) {
+            return ViewHelper::failureMessage("Opps, the person was not updated.");
+        }
         $a_person['groups'] = $this->a_post_values['groups'];
         if ($this->o_model->savePerson($a_person) !== false) {
             return ViewHelper::successMessage("Success! The person was updated.");
@@ -147,12 +154,74 @@ class PeopleAdminController implements MangerControllerInterface
         return $this->o_view->renderVerifyDelete($this->a_post_values);
     }
     /**
-     * Deletes the user record and displays the list of people.
-     * @return array
+     * Deletes the user record.
+     * @return array a message regarding outcome.
      */
     public function delete()
     {
         return ViewHelper::failureMessage();
     }
+
+    ### Utility Methods ###
+    /**
+     *  Creates a short name/alias if none is provided
+     *  @param  string $long_name
+     *  @return string the short name.
+     */
+    private function createShortName($long_name = '')
+    {
+        if (strpos($long_name, ' ') !== false) {
+            $a_real_name = explode(' ', $long_name);
+            $short_name = '';
+            foreach($a_real_name as $name) {
+                $short_name .= strtoupper(substr($name, 0, 1));
+            }
+        }
+        else {
+            $short_name = strtoupper(substr($long_name, 0, 3));
+        }
+        return $short_name;
+    }
+    /**
+     *  Returns an array to be used to create or update a people record.
+     *  @param array $a_person
+     *  @return array|bool
+     */
+    private function setPersonValues(array $a_person = array())
+    {
+        $a_required_keys = array(
+            'login_id',
+            'real_name',
+            'password'
+        );
+        if (Arrays::hasBlankValues($a_person, $a_required_keys)) {
+            return false;
+        }
+        $a_allowed_keys   = $a_required_keys;
+        $a_allowed_keys[] = 'people_id';
+        $a_allowed_keys[] = 'short_name';
+        $a_allowed_keys[] = 'description';
+        $a_allowed_keys[] = 'is_logged_in';
+        $a_allowed_keys[] = 'is_active';
+        $a_allowed_keys[] = 'is_immutable';
+        $a_person = Arrays::createRequiredPairs($a_person, $a_allowed_keys, true);
+        if ($a_person['is_logged_in'] == '') {
+            $a_person['is_logged_in'] = 0;
+        }
+        if ($a_person['is_active'] == '') {
+            $a_person['is_active'] = 0;
+        }
+        if ($a_person['is_immutable'] == '') {
+            $a_person['is_immutable'] = 0;
+        }
+        if ($a_person['people_id'] == '') {
+            unset($a_person['people_id']); // this must be a new person.
+        }
+        if (!isset($a_person['people_id']) && $a_person['login_id'] == '') {
+            return false;
+        }
+        return $a_person;
+    }
+
 
 }

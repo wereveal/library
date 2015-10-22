@@ -9,30 +9,30 @@
         <h1>Add/Modify a Person</h1>
     </div>
 </div>
-{% if a_message.message != '' %}
+    {% if a_message.message != '' %}
     <div class="row">
         <div class="col-md-12">
-            {% include '@snippets/message.twig' %}
+    {% include '@snippets/message.twig' %}
         </div>
     </div>
-{% endif %}
+    {% endif %}
 <div class="row border-radius-bottom-right">
     <div class="col-md-12">
-        <form action="{{ public_dir }}/manager/people/{{ action }}" method="post" id="people-form"><fieldset>
+        <form action="{{ public_dir }}/manager/people/{{ action }}/" method="post" id="people-form"><fieldset>
 
         <div class="row">
             <div class="col-md-2 col-sm-2 col-xs-2 aright">
                 <label for="login_id">Login ID: </label>
             </div>
-        {% if person.is_immutable == 1 %}
+    {% if person.is_immutable == 1 %}
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
                 {{ person.login_id }}
             </div>
-        {% else %}
+    {% else %}
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
                 <input type="text" id="login_id" name="person[login_id]" class="colorful" maxlength="64" value="{{ person.login_id }}">
             </div>
-        {% endif %}
+    {% endif %}
         </div>
         <div class="row alt-row">
             <div class="col-md-2 col-sm-2 col-xs-2  aright">
@@ -83,24 +83,24 @@
                 <label for="is_active">Active: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-            {% if person.is_active == 1 %}
-                {% set checked = 'true' %}
-            {% else %}
-                {% set checked = 'false' %}
-            {% endif %}
+    {% if person.is_active == 1 %}
+        {% set checked = ' checked' %}
+    {% else %}
+        {% set checked = '' %}
+    {% endif %}
 
-        {% if person.immutable != 1 or adm_level <= person.highest_role %}
-                <input type="checkbox" name="person[is_active]" checked="{{ checked }}" id="is_active" class="colorful" />
+    {% if person.immutable != 1 or adm_level <= person.highest_role %}
+                <input type="checkbox" name="person[is_active]"{{ checked }} id="is_active" class="colorful" />
+    {% else %}
+        {% if checked == 'true' %}
+            True
         {% else %}
-            {% if checked == 'true' %}
-                True
-            {% else %}
-                False
-            {% endif %}
+            False
         {% endif %}
+    {% endif %}
             </div>
         </div>
-    {% if adm_lvl <= 1 %}
+    {% if adm_lvl <= 1 and action == 'update' %}
         <div class="row">
             <div class="col-md-2 col-sm-2 col-xs-2  aright">
                 <label>Created On:</label>
@@ -114,11 +114,11 @@
                 <label for="is_logged_in">Is Logged In: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                {% if person.is_logged_in == 1 %}
-                    {% set is_checked = " checked" %}
-                {% else %}
-                    {% set is_checked = "" %}
-                {% endif %}
+    {% if person.is_logged_in == 1 %}
+        {% set is_checked = " checked" %}
+    {% else %}
+        {% set is_checked = "" %}
+    {% endif %}
                 <input type="checkbox" name="person[is_logged_in]" id="is_logged_in" class="colorful"{{ is_checked }}/>
             </div>
         </div>
@@ -128,15 +128,15 @@
                 <label for="is_immutable">Is Immutable: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-            {% if person.is_immutable == 1 and adm_level <= person.highest_role %}
+    {% if person.is_immutable == 1 and adm_level <= person.highest_role %}
                 <input type="checkbox" name="person[is_immutable]" checked="checked" id="is_immutable" class="colorful" value="true" />
-            {% elseif person.is_immutable == 1 %}
+    {% elseif person.is_immutable == 1 %}
                 True
-            {% elseif adm_level <= person.highest_role %}
+    {% elseif adm_level <= person.highest_role %}
                 <input type="checkbox" name="person[is_immutable]" id="is_immutable" class="colorful" value="true" />
-            {% else %}
+    {% else %}
                 False
-            {% endif %}
+    {% endif %}
             </div>
         </div>
         <div class="row alt-row bold">
@@ -144,12 +144,13 @@
                 Groups:
             </div>
         </div>
-    {% for group in person.groups %}
         <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2 aright pad-right-12">
-                <label for="groups{{ group.group_id }}">{{ group.group_name }} </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10">
+    {% for group in person.groups %}
+        {% if loop.index0 % 3 == 0 %}
+        </div>
+        <div class="row">
+        {% endif %}
+            <div class="col-md-1 col-sm-1 col-xs-1 aright">
         {% if person.is_immutable == 1 %}
             {% if adm_level <= person.highest_role %}
                 <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />
@@ -160,11 +161,21 @@
                 <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />
         {% endif %}
             </div>
-        </div>
+            <div class="col-md-2 col-sm-2 col-xs-2">
+                <label for="groups{{ group.group_id }}">{{ group.group_name }} </label>
+            </div>
     {% endfor %}
+        </div>
         <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <button type="submit" value="update" class="btn btn-primary btn-sm">Update</button>
+            <div class="col-md-3 col-sm-3 col-xs-3 aright">
+    {% if action == 'save' %}
+                <button type="submit" value="create" class="btn btn-primary btn-sm">Create New Person</button>
+    {% else %}
+                <button type="submit" value="update" class="btn btn-primary btn-sm">Update Person</button>
+        {% if person.is_immutable == 0 or adm_lvl <= 1 %}
+                <button type="submit" value="verify" class="btn btn-warning btn-sm">Delete</button>
+        {% endif %}
+    {% endif %}
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10">
                 <input type="hidden" id="tolken" name="tolken" value="{{ tolken }}">
@@ -179,11 +190,12 @@
             <div class="col-md-12">
                 <h3>Instructions:</h3>
                 <ul>
-                    <li>Login ID is what is used for authentication and access. Immutable Login IDs are locked and should never be changed.</li>
-                    <li>Real Name can be anything. It is used for display.</li>
-                    <li>Initials can be anything that is 8 characters or less and may be used in some views. Can be blank.</li>
+                    <li>Login ID is required. It is what is used for authentication and access. Immutable Login IDs are locked and should never be changed.</li>
+                    <li>Name is required. It can be anything. It is used for display.</li>
+                    <li>Alias can be anything that is 8 characters or less and may be used in some views. Can be blank.</li>
                     <li>Password:
                         <ul>
+                            <li>Is required</li>
                             <li>Is Encrypted and cannot be recovered, only replaced.</li>
                             <li>Must be at least 8 characters long.</li>
                             <li>Recommendation: It be at least 12 random or psuedo-random characters, upper and lower alpha, numeric and characters such as @% etc.</li>
@@ -192,8 +204,9 @@
                             <li>password and 12345678 are not good passwords. Come on! You don't want to be responsible for someone maliciously accessing this site and deface it.</li>
                         </ul>
                     </li>
-                    <li>Description can be anything and is not required.</li>
+                    <li>Description can be anything and is optional.</li>
                     <li>Active determines if the person is allowed to log in. Allows for historical data, keeping the person in the database but preventing one from logging in again.</li>
+                    <li>Groups allow the person to access the materials that group can access. A person can be assigned to multiple groups. Some groups are inclusive of other groups.
                 </ul>
             </div>
         </div>
