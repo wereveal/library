@@ -6,7 +6,7 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 
-class ConfigAdminModelTester extends Tester
+class ConstantsModelTester extends Tester
 {
     protected $a_test_order;
     protected $a_test_values = array();

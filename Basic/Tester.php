@@ -8,9 +8,10 @@
  *  @ingroup ritc_library basic
  *  @class Tester
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version  3.1.0
- *  @date 2015-08-19 12:53:01
+ *  @version  3.1.1
+ *  @date 2015-10-23 12:21:52
  *  @note <pre><b>Change log</b>
+ *      v3.1.1 - minor change to setTestOrder method, now required an array                - 10/23/2015 wer
  *      v3.1.0 - no longer extends Base class, uses Logit Trait instead                    - 08/19/2015 wer
  *      v3.0.2 - moved to the Basic namespace where it was more appropriate                - 12/05/2014 wer
  *      v3.0.1 - moved to the Services namespace                                           - 11/15/2014 wer
@@ -36,15 +37,15 @@ class Tester
 {
     use LogitTraits;
 
-    protected $a_test_order;
-    protected $a_test_values = array();
-    protected $failed_subtests;
+    protected $a_test_order      = array();
+    protected $a_test_values     = array();
+    protected $failed_subtests   = 0;
     protected $failed_test_names = array();
-    protected $failed_tests;
-    protected $num_o_tests;
-    protected $passed_subtests;
-    protected $passed_test_names  = array();
-    protected $passed_tests;
+    protected $failed_tests      = 0;
+    protected $num_o_tests       = 0;
+    protected $passed_subtests   = 0;
+    protected $passed_test_names = array();
+    protected $passed_tests      = 0;
 
     public function addMethodToTestOrder($method_name = '')
     {
@@ -232,14 +233,13 @@ class Tester
             $this->failed_subtests[$method_name] = array($test_name);
         }
     }
-    public function setTestOrder($a_test_order = '')
+    /**
+     *  Sets the array a_test_order to the array passed in
+     *  @param array $a_test_values optional, defaults to an empty array
+     *  @return null
+    **/
+    public function setTestOrder(array $a_test_order = array())
     {
-        if ($a_test_order == '') {
-            $this->a_test_order = array();
-        }
-        if (is_array($a_test_order) === false) {
-            $this->a_test_order = array();
-        }
         $this->a_test_order = $a_test_order;
     }
     /**

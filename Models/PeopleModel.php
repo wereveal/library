@@ -572,8 +572,7 @@ class PeopleModel implements ModelInterface
             $a_required_keys = array(
                 'login_id',
                 'real_name',
-                'password',
-                'short_name'
+                'password'
             );
             foreach($a_required_keys as $key_name) {
                 if ($a_person[$key_name] == '') {
@@ -584,9 +583,6 @@ class PeopleModel implements ModelInterface
                         case 'real_name':
                             $a_person['real_name'] = $a_person['login_id'];
                             break;
-                        case 'short_name':
-                            $a_person['short_name'] = $this->createShortName($a_person['real_name']);
-                            break;
                         default:
                             break;
                     }
@@ -594,7 +590,6 @@ class PeopleModel implements ModelInterface
             }
             $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
             $a_groups = $this->makeGroupIdArray($a_person['groups']);
-            $a_person = $this->setPersonValues($a_person);
             if ($this->o_db->startTransaction()) {
                 $a_ids = $this->create($a_person);
                 if ($a_ids !== false) {
@@ -617,8 +612,7 @@ class PeopleModel implements ModelInterface
                 'people_id',
                 'login_id',
                 'real_name',
-                'password',
-                'short_name'
+                'password'
             );
             foreach($a_required_keys as $key_name) {
                 if ($a_person[$key_name] == '') {
@@ -630,9 +624,6 @@ class PeopleModel implements ModelInterface
                         case 'real_name':
                             $a_person['real_name'] = $a_person['login_id'];
                             break;
-                        case 'short_name':
-                            $a_person['short_name'] = $this->createShortName($a_person['real_name']);
-                            break;
                         default:
                             break;
                     }
@@ -640,7 +631,6 @@ class PeopleModel implements ModelInterface
             }
             $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
             $a_groups = $this->makeGroupIdArray($a_person['groups']);
-            $a_person = $this->setPersonValues($a_person);
             $a_pg_values = $this->makePgmArray($a_person['people_id'], $a_groups);
             if ($a_pg_values != array()) {
                 if ($this->o_db->startTransaction()) {

@@ -5,9 +5,9 @@ use Ritc\Library\Basic\Tester;
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Elog;
-use Ritc\Library\Models\GroupRoleMapModel;
+use Ritc\Library\Models\PeopleGroupMapModel;
 
-class UserRoleMapModelTests extends Tester
+class PeopleGroupMapModelTests extends Tester
 {
     protected $a_test_order;
     protected $a_test_values = array();
@@ -21,7 +21,7 @@ class UserRoleMapModelTests extends Tester
     protected $passed_tests = 0;
     private $o_db;
     private $o_elog;
-    private $o_urm;
+    private $o_ugm;
 
     public function __construct(array $a_test_order = array(), $db_config = 'db_config.php')
     {
@@ -34,7 +34,7 @@ class UserRoleMapModelTests extends Tester
         else {
             $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
         }
-        $this->o_urm = new GroupRoleMapModel($this->o_db);
+        $this->o_ugm = new PeopleGroupMapModel($this->o_db);
     }
 
     ### Tests ###

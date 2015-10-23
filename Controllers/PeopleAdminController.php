@@ -24,6 +24,7 @@
 **/
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\PeopleGroupMapModel;

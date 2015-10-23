@@ -45,6 +45,11 @@ if (!defined('DEVELOPER_MODE')) {
 if (!defined('RODB')) {
     define('RODB', false);
 }
+if (!defined('LIBRARY_PATH')) {
+    if(file_exists(SRC_PATH . '/Ritc/Library')) {
+        define('LIBRARY_PATH', SRC_PATH . '/Ritc/Library');
+    }
+}
 
 /**
  * Variables used by the classes Elog.

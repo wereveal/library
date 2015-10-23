@@ -7,7 +7,7 @@ use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Elog;
 use Ritc\Library\Models\RolesModel;
 
-class RolesModelTests extends Tester
+class RolesModelTester extends Tester
 {
     protected $a_test_order;
     protected $a_test_values = array();

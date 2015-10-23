@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Controllers
  *  @class ManagerController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β5
- *  @date 2015-09-25 09:30:02
+ *  @version 1.0.0β6
+ *  @date 2015-10-23 11:40:58
  *  @note A file in RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β6 - added tests controller                - 10/23/2015 wer
  *      v1.0.0β5 - working for groups                    - 09/25/2015 wer
  *      v1.0.0β4 - working for Roles                     - 01/28/2015 wer
  *      v1.0.0β3 - working for router and config         - 01/16/2015 wer
@@ -110,17 +111,27 @@ class ManagerController implements ControllerInterface
         return $this->renderLogin('', $a_message);
     }
     /**
-     * Passes control over to the router admin controller.
+     * Passes control over to the groups admin controller.
      * @return string
      */
-    public function renderRoutesAdmin()
+    public function renderGroupsAdmin()
     {
         if ($this->o_auth->isAllowedAccess(2)) {
-            $o_router_admin = new RoutesAdminController($this->o_di);
-            return $o_router_admin->render();
+            $o_groups_admin = new GroupsAdmimController($this->o_di);
+            return $o_groups_admin->render();
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
+    }
+    /**
+     * Renders login form after resetting session.
+     * @param array $a_message optional e.g. ['message' => '', 'type' => 'info']
+     * @return string
+     */
+    private function renderLogin($login_id = '', array $a_message = array())
+    {
+        $this->o_session->resetSession();
+        return $this->o_manager_view->renderLoginForm($login_id, $a_message);
     }
     /**
      * Passes control over to the people admin controller.
@@ -149,27 +160,30 @@ class ManagerController implements ControllerInterface
         return $this->renderLogin('', $a_message);
     }
     /**
-     * Passes control over to the groups admin controller.
+     * Passes control over to the router admin controller.
      * @return string
      */
-    public function renderGroupsAdmin()
+    public function renderRoutesAdmin()
     {
         if ($this->o_auth->isAllowedAccess(2)) {
-            $o_groups_admin = new GroupsAdmimController($this->o_di);
-            return $o_groups_admin->render();
+            $o_router_admin = new RoutesAdminController($this->o_di);
+            return $o_router_admin->render();
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
     /**
-     * Renders login form after resetting session.
-     * @param array $a_message optional e.g. ['message' => '', 'type' => 'info']
-     * @return string
+     *  Passes control over to the tests admin controller.
+     *  @return string
      */
-    private function renderLogin($login_id = '', array $a_message = array())
+    public function renderTestsAdmin()
     {
-        $this->o_session->resetSession();
-        return $this->o_manager_view->renderLoginForm($login_id, $a_message);
+        if ($this->o_auth->isAllowedAccess(1)) {
+            $o_tests = new TestsAdminController($this->o_di);
+            return $o_tests->render();
+        }
+        $a_message = ViewHelper::warningMessage("Access Prohibited");
+        return $this->renderLogin('', $a_message);
     }
     /**
      *  Authorizes the person and allows access or kicks them.
