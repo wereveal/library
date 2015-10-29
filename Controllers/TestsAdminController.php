@@ -19,6 +19,7 @@
 **/
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Services\Di;
 use Ritc\Library\Tests\PeopleModelTester;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\TestsAdminView;
@@ -38,7 +39,7 @@ class TestsAdminController
         $this->o_di     = $o_di;
         $this->o_db     = $o_di->get('db');
         $this->o_router = $o_di->get('router');
-        $this-o_view    = new TestsAdminView($o_di);
+        $this->o_view   = new TestsAdminView($o_di);
         if (file_exists(LIBRARY_PATH . '/resources/config/tests')) {
             $this->test_configs_path = LIBRARY_PATH . '/resources/config/tests';
         }
@@ -69,8 +70,6 @@ class TestsAdminController
         if ($main_action == '' && $url_action != '') {
             $main_action = $url_action;
         }
-        $a_order  = include $this->test_configs_path . '/' . $main_action . '_test_order.php';
-        $a_values = include $this->test_configs_path . '/' . $main_action . '_test_values.php';
         switch ($main_action) {
             case 'PeopleModel':
                 $o_test = new PeopleModelTester($this->o_di);
@@ -83,9 +82,11 @@ class TestsAdminController
             default:
                 return $this->o_view->renderList();
         }
+        $a_order  = include $this->test_configs_path . '/' . $main_action . '_test_order.php';
+        $a_values = include $this->test_configs_path . '/' . $main_action . '_test_values.php';
         $o_test->setTestOrder($a_order);
         $o_test->setTestValues($a_values);
-        $test_results = $o_test->runTests();
-        return $this->o_view->renderResults($test_results);
+        $a_test_results = $o_test->runTests();
+        return $this->o_view->renderResults($a_test_results);
     }
 }

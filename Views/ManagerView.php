@@ -36,8 +36,6 @@ class ManagerView
     }
     public function renderLandingPage()
     {
-        $this->setAuthLevel();
-        $this->setLinks();
         $a_values = [
             'description'   => 'This is the Manager Page',
             'public_dir'    => '',

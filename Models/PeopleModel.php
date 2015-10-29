@@ -135,11 +135,11 @@ class PeopleModel implements ModelInterface
                 password,
                 description,
                 is_logged_in,
+                bad_login_count,
+                bad_login_ts,
                 is_active,
                 is_immutable,
-                created_on,
-                bad_login_count,
-                bad_login_ts
+                created_on
             FROM {$this->db_prefix}people
             {$where}
         ";
@@ -669,7 +669,7 @@ class PeopleModel implements ModelInterface
      *  @param       $group_name
      *  @return array
      */
-    private function makeGroupIdArray($group_id = array(), $group_name = '')
+    public function makeGroupIdArray($group_id = array(), $group_name = '')
     {
         if (is_array($group_id)) {
             $a_group_ids = $group_id;
@@ -703,7 +703,7 @@ class PeopleModel implements ModelInterface
      *  @param array  $a_groups
      *  @return array
      */
-    private function makePgmArray($people_id = '', array $a_groups = array())
+    public function makePgmArray($people_id = '', array $a_groups = array())
     {
         if ($people_id == '' || $a_groups == array()) {
             return array();

@@ -1,17 +1,11 @@
 {% extends '@default/base.twig' %}
-
-{% block title %}{{ title }}{% endblock %}
-{% block search %}{% endblock %}
+{% block stylesheets %}{% include '@snippets/base_css.twig' %}{% endblock %}
 {% block body %}
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12">
-                    Passed: {{ content.passed_tests }}<br>
-                    Failed: {{ content.failed_tests }}<br>
-                    Total: {{ content.num_o_tests }}<br>
-                    {{ content.passed_test_names|raw }}<br><br>
-                    {% if content.failed_test_names != '' %}
-                    {{ content.failed_test_names|raw }}
-                    {% endif %}
+                {% for link in links %}
+                    {% include '@elements/anchor.twig' %}
+                {% endfor %}
                 </div>
             </div>
 {% endblock %}

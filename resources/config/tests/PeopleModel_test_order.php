@@ -1,5 +1,9 @@
 <?php
 return [
+    'read'
+];
+/*
+return [
     'read',
     'create',
     'update',
@@ -11,9 +15,16 @@ return [
     'resetBadLoginCount',
     'resetBadLoginTimestamp',
     'setBadLoginTimestamp',
+    'setLoggedIn',
+    'setLoggedOut',
     'updatePassword',
     'updateActive',
     'readInfo',
-    'readUsersInfo',
-    'savePerson'
+    'savePerson',
+    'deletePerson',
+    'isId',
+    'makeGroupIdArray',
+    'makePgmArray',
+    'getErrorMessage'
 ];
+*/

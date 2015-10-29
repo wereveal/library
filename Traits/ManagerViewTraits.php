@@ -72,63 +72,13 @@ trait ManagerViewTraits
      */
     private function setLinks()
     {
-        $a_links = [
-            [
-                'text'        => 'Home',
-                'url'         => '/manager/',
-                'description' => 'Manager Home Page',
-                'name'        => 'Home',
-                'class'       => ''
-            ],
-            [
-                'text'        => 'Constants Manger',
-                'url'         => '/manager/constants/',
-                'description' => 'Constant values changed and new constants added.',
-                'name'        => 'Constants',
-                'class'       => ''
-            ],
-            [
-                'text'        => 'Routes Manager',
-                'url'         => '/manager/routes/',
-                'description' => 'Create and manage routes for the app.',
-                'name'        => 'Routes',
-                'class'       => ''
-            ],
-            [
-                'text' => 'People Manager',
-                'url'  => '/manager/people/',
-                'description' => 'Create and manage people which get assigned to groups.',
-                'name' => 'People',
-                'class' => ''
-            ],
-            [
-                'text'        => 'Groups Manager',
-                'url'         => '/manager/groups/',
-                'description' => 'Create and manage groups to which people are assigned.',
-                'name'        => 'Groups',
-                'class'       => ''
-            ],
-            [
-                'text'        => 'Roles Manager',
-                'url'         => '/manager/roles/',
-                'description' => 'Create and manage roles to which groups are assigned.',
-                'name'        => 'Roles',
-                'class'       => ''
-            ],
-            [
-                'text'        => 'Logout',
-                'url'         => '/manager/logout/',
-                'description' => 'Logout.',
-                'name'        => 'Logout',
-                'class'       => ''
-            ]
-        ];
         if ($this->adm_level == '') {
             $this->setAuthLevel();
         }
         $person_role_level = $this->adm_level;
         $current_route_path = $this->o_router->getRoutePath();
         $o_routes = new RoutesHelper($this->o_di, '');
+        $a_links = include LIBRARY_CONFIG_PATH . '/links_config.php';
         foreach ($a_links as $key => $a_link) {
             $o_routes->setRouteParts($a_link['url']);
             $a_route_parts = $o_routes->getRouteParts();
@@ -136,7 +86,10 @@ trait ManagerViewTraits
                 unset($a_links[$key]);
             }
             if ($a_link['url'] == $current_route_path) {
-                $a_links[$key]['menu_class'] = 'active';
+                $a_links[$key]['class'] = 'menu-active';
+            }
+            else {
+                $a_links[$key]['class'] = 'menu-inactive';
             }
         }
         $this->a_links = $a_links;
