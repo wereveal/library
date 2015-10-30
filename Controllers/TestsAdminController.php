@@ -40,8 +40,8 @@ class TestsAdminController
         $this->o_db     = $o_di->get('db');
         $this->o_router = $o_di->get('router');
         $this->o_view   = new TestsAdminView($o_di);
-        if (file_exists(LIBRARY_PATH . '/resources/config/tests')) {
-            $this->test_configs_path = LIBRARY_PATH . '/resources/config/tests';
+        if (file_exists(LIBRARY_CONFIG_PATH . '/tests')) {
+            $this->test_configs_path = LIBRARY_CONFIG_PATH . '/tests';
         }
         elseif (file_exists(APP_CONFIG_PATH . '/tests')) {
             $this->test_configs_path = APP_CONFIG_PATH . '/tests';
