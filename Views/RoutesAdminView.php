@@ -4,7 +4,7 @@
  *  @file RoutesAdminView.php
  *  @ingroup ritc_library views
  *  @namespace Ritc/Library/Views
- *  @class RouterAdminView
+ *  @class RoutesAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 1.0.0
  *  @date 2015-01-28 14:45:02
@@ -24,7 +24,7 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ManagerViewTraits;
 
-class RouterAdminView
+class RoutesAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
@@ -32,11 +32,8 @@ class RouterAdminView
 
     public function __construct(Di $o_di)
     {
-        $this->o_di    = $o_di;
-        $this->o_twig  = $o_di->get('twig');
-        $o_db          = $o_di->get('db');
-        $this->o_model = new RoutesModel($o_db);
         $this->setupView($o_di);
+        $this->o_model = new RoutesModel($this->o_db);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);

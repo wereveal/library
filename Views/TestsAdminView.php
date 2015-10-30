@@ -27,11 +27,8 @@ class TestsAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
-    private $o_db;
-
     public function __construct(Di $o_di)
     {
-        $this->o_db = $o_di->get('db');
         $this->setupView($o_di);
     }
 

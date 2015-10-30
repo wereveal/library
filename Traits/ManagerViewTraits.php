@@ -19,6 +19,7 @@ namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
+use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\Di;
 
 trait ManagerViewTraits
@@ -26,6 +27,7 @@ trait ManagerViewTraits
     protected $a_links;
     protected $adm_level;
     protected $o_auth;
+    protected $o_db;
     protected $o_di;
     protected $o_router;
     protected $o_twig;
@@ -50,6 +52,7 @@ trait ManagerViewTraits
         $this->o_auth   = new AuthHelper($o_di);
         $this->o_router = $o_di->get('router');
         $this->o_twig   = $o_di->get('twig');
+        $this->o_db     = $o_di->get('db');
     }
     /**
      *  Sets the class property $login_id to a value of the highest role level found or 999 if not found.
@@ -93,5 +96,41 @@ trait ManagerViewTraits
             }
         }
         $this->a_links = $a_links;
+    }
+    /**
+     *
+     */
+    private function getPageValues()
+    {
+        $page_url = $this->o_router->getRequestUri();
+        $o_page_model = new PageModel($this->o_db);
+        $a_page_values = $o_page_model->read(['page_url' => $page_url]);
+        if ($a_values !== false) {
+            $base_url = $a_page_values['page_base_url'] == '/'
+                ? SITE_URL
+                : $a_page_values['page_base_url'];
+            return [
+                'description'   => $a_page_values['page_description'],
+                'title'         => $a_page_values['page_title'],
+                'base_url'      => $base_url,
+                'lang'          => $a_page_values['page_lang'],
+                'charset'       => $a_page_values['page_charset'],
+                'public_dir'    => PUBLIC_DIR,
+                'site_url'      => SITE_URL,
+                'rights_holder' => RIGHTS_HOLDER
+            ];
+        }
+        else {
+            return [
+                'description'   => 'Backend Manager',
+                'title'         => 'Manager',
+                'base_url'      => '/',
+                'lang'          => 'en',
+                'charset'       => 'utf-8',
+                'public_dir'    => PUBLIC_DIR,
+                'site_url'      => SITE_URL,
+                'rights_holder' => RIGHTS_HOLDER
+            ];
+        }
     }
 }

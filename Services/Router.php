@@ -244,6 +244,10 @@ class Router
     {
         $this->a_post = Arrays::cleanArrayValues($_POST, $a_allowed_keys, true);
     }
+    public function getRequestUri()
+    {
+        return $this->a_router_parts['request_uri'];
+    }
     /* From LogItTraits
         protected function getElog
         protected function logIt

@@ -1,7 +1,5 @@
 {% extends '@default/base.twig' %}
-
-{% block title %}{{ title }}{% endblock %}
-
+{% block stylesheets %}{% include '@snippets/base_css.twig' %}{% endblock %}
 {% block body %}
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12">
@@ -19,7 +17,7 @@
 <!-- Footer -->
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 footer">
-        <p>Copyright &copy;&nbsp;2011-2014 <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved &reg;</p>
+        <p>Copyright &copy;&nbsp;2001-2015 <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved &reg;</p>
     </div>
 </div>
 <!-- /footer -->
@@ -27,6 +25,9 @@
 {#
     expected array
         [
+            'lang',
+            'charset',
+            'base_url',
             'description',
             'public_dir',
             'title',

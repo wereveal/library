@@ -27,24 +27,15 @@ class ManagerView
 {
     use LogitTraits, ManagerViewTraits;
 
-    private $o_db;
-
     public function __construct(Di $o_di)
     {
-        $this->o_db = $o_di->get('db');
         $this->setupView($o_di);
     }
     public function renderLandingPage()
     {
-        $a_values = [
-            'description'   => 'This is the Manager Page',
-            'public_dir'    => '',
-            'title'         => 'This is the Main Manager Page',
-            'links'         => $this->a_links,
-            'site_url'      => SITE_URL,
-            'rights_holder' => RIGHTS_HOLDER,
-            'menus'         => $this->a_links
-        ];
+        $a_values = $this->getPageValues();
+        $a_values['links'] = $this->a_links;
+        $a_values['menus'] = $this->a_links;
         return $this->o_twig->render('@main/index.twig', $a_values);
     }
     /**
@@ -62,15 +53,13 @@ class ManagerView
             $body_text =  "something seriously is wrong.
                 The array in in the definition should have prevented this from happening.";
         }
+        $a_page_values = $this->getPageValues();
         $a_values = [
-            'description'   => 'This is the Tester Page',
-            'public_dir'    => '',
-            'title'         => 'This is the Main Tester Page',
+            'title'         => 'This is a Temp Page',
             'a_message'     => $a_message,
-            'body_text'     => $body_text,
-            'site_url'      => SITE_URL,
-            'rights_holder' => RIGHTS_HOLDER
+            'body_text'     => $body_text
         ];
+        $a_values = array_merge($a_page_values, $a_values);
         return $this->o_twig->render('@main/list_logins.twig', $a_values);
     }
     /**
@@ -96,6 +85,7 @@ class ManagerView
         else {
             $a_message = array();
         }
+        $a_page_values = $this->getPageValues();
         $a_values = [
             'tolken'    => $tolken,
             'form_ts'   => $idle_ts,
@@ -105,6 +95,7 @@ class ManagerView
             'a_message' => $a_message,
             'menus'     => array()
         ];
+        $a_values = array_merge($a_page_values, $a_values);
         $o_sess->unsetVar('login_id');
         return $this->o_twig->render('@pages/login_form.twig', $a_values);
     }

@@ -1,0 +1,19 @@
+{% extends '@main/index.twig' %}
+{% block body %}
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="red">Please Verify</h1>
+            <p>Please verify you wish to delete the {{ what }} '{{ name }}'.</p>
+            <form action="{{ public_dir }}/manager/{{ where }}/delete/" method="post">
+                <button type="submit" name="submit" value="delete" class="btn btn-primary btn-xs">Delete {{ btn_value }}</button>
+                <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
+                <input type="hidden" name="tolken" value="{{ tolken }}" />
+                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                <input type="text" name="hobbit" value="" class="hobbit" size="2" maxlength="2" />
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{# expected array
+    [what, name, public_dir, where, btn_value, hidden_name, hidden_value, tolken, form_ts]
+#}

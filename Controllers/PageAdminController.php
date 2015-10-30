@@ -1,35 +1,28 @@
 <?php
 /**
- *  @brief Controller for the Routes Admin page.
- *  @file RoutesAdminController.php
+ *  @brief Controller for the Page Admin page.
+ *  @file PageAdminController.php
  *  @ingroup ritc_library controllers
  *  @namespace Ritc/Library/Controllers
- *  @class RoutesAdminController
+ *  @class PageAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.1.0
- *  @date 2015-10-06 13:55:38
- *  @note A file in Library
+ *  @version 1.0.0β1
+ *  @date 2015-10-30 08:39:24
  *  @note <pre><b>Change Log</b>
- *      v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
- *                 If the route doesn't end with a file ext
- *                 add a slash to the end as well.
- *      v2.0.0   - renamed                                      - 09/26/2015 wer
- *      v1.0.0   - first working version                        - 01/28/2015 wer
- *      v1.0.0β2 - refactored for namespaces                    - 12/05/2014 wer
- *      v1.0.0β1 - Initial version                              - 11/14/2014 wer
+ *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
  *  </pre>
- *  @pre The route to this controller has to already be in the database and should not be able to be deleted.
+ * @TODO needs testing
  **/
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
-use Ritc\Library\Models\RoutesModel;
+use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Views\RoutesAdminView;
+use Ritc\Library\Views\PageAdminView;
 
-class RoutesAdminController implements MangerControllerInterface
+class PageAdminController implements MangerControllerInterface
 {
     use LogitTraits;
     private $a_post;
@@ -45,8 +38,8 @@ class RoutesAdminController implements MangerControllerInterface
         $o_db            = $o_di->get('db');
         $this->o_session = $o_di->get('session');
         $this->o_router  = $o_di->get('router');
-        $this->o_model   = new RoutesModel($o_db);
-        $this->o_view    = new RoutesAdminView($o_di);
+        $this->o_model   = new PageModel($o_db);
+        $this->o_view    = new PageAdminView($o_di);
         $this->a_post    = $this->o_router->getPost();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
@@ -94,18 +87,19 @@ class RoutesAdminController implements MangerControllerInterface
     ### Required by Interface ###
     public function delete()
     {
-        $route_id = $this->a_post['route_id'];
-        if ($route_id == -1) {
-            $a_message = ViewHelper::errorMessage('A Problem Has Occured. The route id was not provided.');
+        $page_id = isset($this->a_post['page_id']) ? $this->a_post['page_id'] : -1;
+        if ($page_id == -1) {
+            $a_message = ViewHelper::errorMessage('A Problem Has Occured. The page id was not provided.');
             return $this->o_view->renderList($a_message);
         }
-        $a_results = $this->o_model->delete($route_id);
+        $a_results = $this->o_model->delete($page_id);
         return $this->o_view->renderList($a_results);
     }
     public function save()
     {
-        $a_route = $this->fixRoutePath($this->a_post['route']);
-        $results = $this->o_model->create($a_route);
+        $a_page = $this->a_post['page'];
+        $a_page['page_url'] = $this->fixUrl($a_page['page_url']);
+        $results = $this->o_model->create($a_page);
         if ($results) {
             $a_message = ViewHelper::successMessage();
         }
@@ -116,8 +110,9 @@ class RoutesAdminController implements MangerControllerInterface
     }
     public function update()
     {
-        $a_route = $this->fixRoutePath($this->a_post['route']);
-        $results = $this->o_model->update($a_route);
+        $a_page = $this->a_post['page'];
+        $a_page['page_url'] = $this->fixUrl($a_page['page_url']);
+        $results = $this->o_model->update($a_page);
         if ($results) {
             $a_message = ViewHelper::successMessage();
         }
@@ -132,29 +127,23 @@ class RoutesAdminController implements MangerControllerInterface
     }
 
     /**
-     * Adds slashes to route path if needed.
-     * @param array $a_route
-     * @return array
+     * Adds slashes to url if needed.
+     * @param string $url
+     * @return string
      */
-    private function fixRoutePath(array $a_route = array())
+    private function fixUrl($url = '/')
     {
-        if ($a_route == array()) {
-            return [
-                'route_path'      => '',
-                'route_class'     => '',
-                'route_method'    => '',
-                'route_action'    => '',
-                'route_immutable' => 0
-            ];
+        if ($url == '/') {
+            return '/';
         }
-        if (substr($a_route['route_path'], 0, 1) != '/') {
-            $a_route['route_path'] = '/' . $a_route['route_path'];
+        if (substr($url, 0, 1) != '/') {
+            $url = '/' . $url;
         }
-        if (strrpos($a_route['route_path'], '.') === false) {
-            if (substr($a_route['route_path'], -1, 1) != '/') {
-                $a_route['route_path'] .= '/';
+        if (strrpos($url, '.') === false) { // url is not like /index.php
+            if (substr($url, -1, 1) != '/') {
+                $url .= '/';
             }
         }
-        return $a_route;
+        return $url;
     }
 }

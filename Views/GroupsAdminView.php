@@ -30,14 +30,12 @@ class GroupsAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
-    private $o_db;
     private $o_groups;
 
     public function __construct(Di $o_di)
     {
-        $this->o_db     = $o_di->get('db');
-        $this->o_groups = new GroupsModel($this->o_db);
         $this->setupView($o_di);
+        $this->o_groups = new GroupsModel($this->o_db);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_groups->setElog($this->o_elog);

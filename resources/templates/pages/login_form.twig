@@ -1,8 +1,4 @@
-{% extends '@default/base.twig' %}
-{% block title %}Welcome. Please Login.{% endblock %}
-{% block stylesheets %}
-    {% include '@snippets/base_css.twig' %}
-{% endblock %}
+{% extends '@main/index.twig' %}
 {% block body %}
 <div class="row border-radius-top-right">
     <div class="col-md-12">
@@ -39,4 +35,3 @@
     </div>
 </div>
 {% endblock %}
-{# expected array ['public_dir','login_id', 'tolken', 'form_ts', 'a_message'] #}

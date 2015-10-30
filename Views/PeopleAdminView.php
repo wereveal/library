@@ -38,11 +38,10 @@ class PeopleAdminView
 
     public function __construct(Di $o_di)
     {
-        $o_db                 = $o_di->get('db');
-        $this->o_people_model = new PeopleModel($o_db);
-        $this->o_group_model  = new GroupsModel($o_db);
-        $this->o_pgm_model    = new PeopleGroupMapModel($o_db);
         $this->setupView($o_di);
+        $this->o_people_model = new PeopleModel($this->o_db);
+        $this->o_group_model  = new GroupsModel($this->o_db);
+        $this->o_pgm_model    = new PeopleGroupMapModel($this->o_db);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people_model->setElog($this->o_elog);

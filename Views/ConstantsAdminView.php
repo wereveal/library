@@ -38,11 +38,11 @@ class ConstantsAdminView
 
     public function __construct(Di $o_di)
     {
+        $this->setupView($o_di);
         $this->o_manager = new ManagerView($o_di);
         $this->o_model   = new ConstantsModel($o_di->get('db'));
         $this->o_people  = new PeopleModel($o_di->get('db'));
         $this->o_auth    = new AuthHelper($o_di);
-        $this->setupView($o_di);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
@@ -56,8 +56,6 @@ class ConstantsAdminView
     public function renderList(array $a_message = array())
     {
         $a_values = array(
-            'public_dir'  => PUBLIC_DIR,
-            'description' => 'Admin page for the app constants.',
             'a_message'   => array(),
             'a_constants' => array(
                 array(
@@ -92,6 +90,8 @@ class ConstantsAdminView
         if ($a_constants !== false && count($a_constants) > 0) {
             $a_values['a_constants'] = $a_constants;
         }
+        $a_page_values = $this->getPageValues(); // provided in ManagerViewTraits
+        $a_values = array_merge($a_values, $a_page_values);
         return $this->o_twig->render('@pages/constants_admin.twig', $a_values);
     }
     /**
@@ -104,13 +104,22 @@ class ConstantsAdminView
         if ($a_values === array()) {
             return $this->renderList(array('message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure'));
         }
-        if (!isset($a_values['public_dir'])) {
-            $a_values['public_dir'] = '';
+        $a_page_values = $this->getPageValues(); // provided in ManagerViewTraits
+        $a_twig_values = [
+            'what'         => 'constant',
+            'name'         => $a_values['constant']['const_name'],
+            'where'        => 'constants',
+            'btn_value'    => 'Constant',
+            'hidden_name'  => 'const_id',
+            'hidden_value' => $a_values['constant']['const_id'],
+            'tolken'       => $a_values['tolken'],
+            'form_ts'      => $a_values['form_ts'],
+            'menus'        => $this->a_links
+        ];
+        if (isset($a_values['public_dir'])) {
+            $a_twig_values['public_dir'] = $a_values['public_dir'];
         }
-        if (!isset($a_values['description'])) {
-            $a_values['description'] = 'Form to verify the action to delete the configuration.';
-        }
-        $a_values['menus'] = $this->a_links;
-        return $this->o_twig->render('@pages/verify_delete_constant.twig', $a_values);
+        $a_twig_values = array_merge($a_twig_values, $a_page_values);
+        return $this->o_twig->render('@pages/verify_delete.twig', $a_values);
     }
 }

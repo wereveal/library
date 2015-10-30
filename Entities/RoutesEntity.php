@@ -1,10 +1,10 @@
 <?php
 /**
  *  @brief SQL for routes table and basic accessors.
- *  @file RouterEntity.php
+ *  @file RoutesEntity.php
  *  @ingroup ritc_library entities
  *  @namespace Ritc\Library\Entities
- *  @class RouterEntity
+ *  @class RoutesEntity
  *  @author William E Reveal
  *  @date 2015-10-06 14:20:33
  *  @version 1.0.0
@@ -26,7 +26,7 @@ namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
-class RouterEntity implements EntityInterface
+class RoutesEntity implements EntityInterface
 {
     private $route_id;
     private $route_path;
