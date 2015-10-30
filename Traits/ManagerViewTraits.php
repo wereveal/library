@@ -103,22 +103,15 @@ trait ManagerViewTraits
     private function getPageValues()
     {
         $page_url = $this->o_router->getRequestUri();
+        $route_path = $this->o_route->getRoutePath();
         $o_page_model = new PageModel($this->o_db);
-        $a_page_values = $o_page_model->read(['page_url' => $page_url]);
-        if ($a_values !== false) {
-            $base_url = $a_page_values['page_base_url'] == '/'
-                ? SITE_URL
-                : $a_page_values['page_base_url'];
-            return [
-                'description'   => $a_page_values['page_description'],
-                'title'         => $a_page_values['page_title'],
-                'base_url'      => $base_url,
-                'lang'          => $a_page_values['page_lang'],
-                'charset'       => $a_page_values['page_charset'],
-                'public_dir'    => PUBLIC_DIR,
-                'site_url'      => SITE_URL,
-                'rights_holder' => RIGHTS_HOLDER
-            ];
+        $a_values1 = $o_page_model->read(['page_url' => $page_url]);
+        $a_values2 = $o_page_model->read(['page_url' => $route_path]);
+        if ($a_values1 !== false) {
+            $a_page_values = $a_values1;
+        }
+        elseif ($a_values2 !== false) {
+            $a_page_values = $a_values2;
         }
         else {
             return [
@@ -132,5 +125,18 @@ trait ManagerViewTraits
                 'rights_holder' => RIGHTS_HOLDER
             ];
         }
+        $base_url = $a_page_values['page_base_url'] == '/'
+            ? SITE_URL
+            : $a_page_values['page_base_url'];
+        return [
+            'description'   => $a_page_values['page_description'],
+            'title'         => $a_page_values['page_title'],
+            'base_url'      => $base_url,
+            'lang'          => $a_page_values['page_lang'],
+            'charset'       => $a_page_values['page_charset'],
+            'public_dir'    => PUBLIC_DIR,
+            'site_url'      => SITE_URL,
+            'rights_holder' => RIGHTS_HOLDER
+        ];
     }
 }
