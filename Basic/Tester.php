@@ -64,26 +64,44 @@ class Tester
         if ($key == '') { return; }
         $this->a_test_values[$key] = $value;
     }
+    /**
+     *  @return array
+     */
     public function getFailedTestNames()
     {
         return $this->failed_test_names;
     }
+    /**
+     *  @return array
+     */
     public function getFailedTests()
     {
         return $this->failed_tests;
     }
+    /**
+     *  @return int
+     */
     public function getNumOTests()
     {
         return $this->num_o_tests;
     }
+    /**
+     *  @return int
+     */
     public function getPassedTests()
     {
         return $this->passed_tests;
     }
+    /**
+     *  @return array
+     */
     public function getPassedTestNames()
     {
         return $this->passed_test_names;
     }
+    /**
+     *  @return array
+     */
     public function getTestOrder()
     {
         return $this->a_test_order;
@@ -207,23 +225,40 @@ class Tester
         $this->logIt("num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: " . var_export($this->failed_test_names, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $failed_tests;
     }
+    /**
+     *  Removes Tester or Test from method name
+     *  @param  string $method_name defaults to 'Tester'
+     *  @return string
+     */
     public function shortenName($method_name = 'Tester')
     {
         if (substr($method_name, -6) == 'Tester') {
             return substr($method_name, 0, -6);
         }
+        if (substr($method_name, -4) == 'Test') {
+            return substr($method_name, 0, -6);
+        }
         return $method_name;
     }
+    /**
+     *  Sets three properties, num_o_test++, failed_tests++, and failed test names.
+     *  @param string $method_name
+     */
     public function setFailures($method_name = '')
     {
         $this->num_o_tests++;
         $this->failed_tests++;
-        $this->failed_test_names[] = str_replace('Tester', '', $method_name);
+        $this->failed_test_names[] = $this->shortenName($method_name);
     }
+    /**
+     *  Sets failed_subtests
+     *  @param string $method_name
+     *  @param string $test_name
+     */
     public function setSubfailure($method_name = '', $test_name = '')
     {
         if ($method_name == '' || $test_name == '') { return; }
-        $method_name = str_replace('Tester', '', $method_name);
+        $method_name = $this->shortenName($method_name);
         if (is_array($this->failed_subtests) === false) {
             $this->failed_subtests = array();
         }
@@ -249,7 +284,16 @@ class Tester
     **/
     public function setTestValues(array $a_test_values = array())
     {
-        $this->a_test_values = $a_test_values;
+        if ($a_test_values != array()) {
+            $this->a_test_values = $a_test_values;
+        }
+        else {
+            $method_name = $this->shortenName(__METHOD__);
+            $file_name = LIBRARY_CONFIG_PATH . '/tests/' . $method_name . '_test_values.php';
+            if (file_exists($file_name)) {
+                $this->a_test_values = include $file_name;
+            }
+        }
     }
     /**
      *  Return the values in $this->a_test_values

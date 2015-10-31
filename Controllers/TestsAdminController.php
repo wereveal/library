@@ -12,14 +12,11 @@
  *  @note <pre><b>Change Log</b>
  *      v1.0.0β1 - Initial version                               - 10/23/2015 wer
  *  </pre>
- *  @TODO write the save method
- *  @TODO write the update method
- *  @TODO write the verifyDelete method
- *  @TODO write the delete method
 **/
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Services\Di;
+use Ritc\Library\Tests\PageModelTester;
 use Ritc\Library\Tests\PeopleModelTester;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\TestsAdminView;
@@ -73,6 +70,9 @@ class TestsAdminController
         switch ($main_action) {
             case 'PeopleModel':
                 $o_test = new PeopleModelTester($this->o_di);
+                break;
+            case 'PageModel':
+                $o_test = new PageModelTester($this->o_di);
                 break;
             case 'ConstantsModel':
             case 'GroupsModel':
