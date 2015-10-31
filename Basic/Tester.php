@@ -235,9 +235,6 @@ class Tester
         if (substr($method_name, -6) == 'Tester') {
             return substr($method_name, 0, -6);
         }
-        if (substr($method_name, -4) == 'Test') {
-            return substr($method_name, 0, -6);
-        }
         return $method_name;
     }
     /**
@@ -284,16 +281,7 @@ class Tester
     **/
     public function setTestValues(array $a_test_values = array())
     {
-        if ($a_test_values != array()) {
-            $this->a_test_values = $a_test_values;
-        }
-        else {
-            $method_name = $this->shortenName(__METHOD__);
-            $file_name = LIBRARY_CONFIG_PATH . '/tests/' . $method_name . '_test_values.php';
-            if (file_exists($file_name)) {
-                $this->a_test_values = include $file_name;
-            }
-        }
+        $this->a_test_values = $a_test_values;
     }
     /**
      *  Return the values in $this->a_test_values

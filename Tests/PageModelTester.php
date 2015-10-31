@@ -28,7 +28,15 @@ class PeopleModelTester extends Tester
     }
     public function readTester()
     {
-        return false;
+        $a_test_values  = $this->a_test_values['read']['test_values'];
+        $a_test_results = $this->a_test_values['read']['expected_results'];
+        foreach ($a_test_values as $key => $a_input_values) {
+            $results = $this->o_model->read($a_input_values);
+            if ($this->compareArrays($a_test_results[$key], $results)) {
+
+            }
+        }
+        return true;
     }
     public function updateTester()
     {
