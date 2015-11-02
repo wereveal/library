@@ -2,11 +2,12 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
-use Ritc\Library\Service\Di;
+use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Models\PageModel;
 
-class PeopleModelTester extends Tester
+class PageModelTester extends Tester
 {
     use LogitTraits;
 
@@ -32,7 +33,7 @@ class PeopleModelTester extends Tester
         $a_test_results = $this->a_test_values['read']['expected_results'];
         foreach ($a_test_values as $key => $a_input_values) {
             $results = $this->o_model->read($a_input_values);
-            if ($this->compareArrays($a_test_results[$key], $results)) {
+            if (Arrays::compareArrays($a_test_results[$key], $results)) {
 
             }
         }

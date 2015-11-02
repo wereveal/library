@@ -8,9 +8,10 @@
  *  @ingroup ritc_library basic
  *  @class Tester
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version  3.1.1
- *  @date 2015-10-23 12:21:52
+ *  @version  3.2.0
+ *  @date 2015-11-02 13:03:31
  *  @note <pre><b>Change log</b>
+ *      v3.2.0 - moved the compare_arrays to the Arrays helper class                       - 11/02/2015 wer
  *      v3.1.1 - minor change to setTestOrder method, now required an array                - 10/23/2015 wer
  *      v3.1.0 - no longer extends Base class, uses Logit Trait instead                    - 08/19/2015 wer
  *      v3.0.2 - moved to the Basic namespace where it was more appropriate                - 12/05/2014 wer
@@ -31,6 +32,7 @@
 **/
 namespace Ritc\Library\Basic;
 
+
 use Ritc\Library\Traits\LogitTraits;
 
 class Tester
@@ -47,6 +49,11 @@ class Tester
     protected $passed_test_names = array();
     protected $passed_tests      = 0;
 
+    /**
+     *  Adds a method name to the test order.
+     *  @param string $method_name
+     *  @return bool
+     */
     public function addMethodToTestOrder($method_name = '')
     {
         if ($method_name == '') { return false; }
@@ -267,7 +274,7 @@ class Tester
     }
     /**
      *  Sets the array a_test_order to the array passed in
-     *  @param array $a_test_values optional, defaults to an empty array
+     *  @param array $a_test_order optional, defaults to an empty array
      *  @return null
     **/
     public function setTestOrder(array $a_test_order = array())
@@ -294,21 +301,6 @@ class Tester
     }
 
     ### Utility Methods ###
-    /**
-     *  Compares two arrays and sees if the values in the second array match the first.
-     *  @param array $a_good_values required
-     *  @param array $a_check_values required
-     *  @return bool true or false
-    **/
-    public function compareArrays(array $a_good_values = array(), array $a_check_values = array())
-    {
-        foreach ($a_good_values as $key => $value) {
-            if ($a_good_values[$key] != $a_check_values[$key]) {
-                return false;
-            }
-        }
-        return true;
-    }
     /**
      *  Checks to see if a method is public.
      *  Fixes method names that end in Tester.

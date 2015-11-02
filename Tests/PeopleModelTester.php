@@ -2,7 +2,8 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
-use Ritc\Library\Service\Di;
+use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Models\PeopleModel;
 
@@ -31,10 +32,10 @@ class PeopleModelTester extends Tester
         $a_test_stuph = $this->a_test_values['read'];
         foreach ($a_test_stuph as $a_test) {
             $results = $this->o_model->read($a_test['test_values']);
-            if (!$this->compareArrays($a_test['expected_results'], $results)) {
+            if (!Arrays::compareArrays($a_test['expected_results'], $results)) {
                 return false;
             }
-        } 
+        }
         return true;
     }
     public function updateTester()
