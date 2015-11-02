@@ -206,6 +206,9 @@ class PeopleAdminController implements MangerControllerInterface
         $a_allowed_keys[] = 'is_active';
         $a_allowed_keys[] = 'is_immutable';
         $a_person = Arrays::createRequiredPairs($a_person, $a_allowed_keys, true);
+        if ($a_person['short_name'] == '') {
+            $a_person['short_name'] = $this->createShortName($a_person['real_name']);
+        }
         if ($a_person['is_logged_in'] == '') {
             $a_person['is_logged_in'] = 0;
         }
