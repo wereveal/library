@@ -1,6 +1,6 @@
 <?php
 /**
- *  @brief SQL for constants table and basic accessors.
+ *  @brief Basic accessors for a constants entity.
  *  @file ConstantsEntity.php
  *  @ingroup ritc_library entities
  *  @namespace Ritc\Library\Entities
