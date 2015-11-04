@@ -84,7 +84,7 @@ class AuthHelper
         $this->o_groups  = new GroupsModel($this->o_db);
         $this->o_roles   = new RolesModel($this->o_db);
         $this->db_prefix = $this->o_db->getDbPrefix();
-        if (DEVELOPER_MODE) {
+        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people->setElog($this->o_elog);
             $this->o_groups->setElog($this->o_elog);

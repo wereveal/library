@@ -6,11 +6,12 @@
  *  @namespace Ritc/Library/Traits
  *  @class LogitTraits
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-08-19 09:53:24
+ *  @version 1.0.1
+ *  @date 2015-11-03 13:04:28
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0 - initial version - 08/19/2015 wer
+ *      v1.0.0 - checked to see if we want to even bother with calling o_elog.  - 11/03/2015 wer
+ *      v1.0.0 - initial version                                                - 08/19/2015 wer
  *  </pre>
  *  @note this is derived from the abstract class Base and may
  *      end up replacing the abstract class or used in classes that
@@ -35,7 +36,8 @@ trait LogitTraits
         return null;
     }
     /**
-     * Writes the message into the log
+     * Logs the $message as defined by $log_type.
+     * Does some checking if it should be written to log first.
      * @param  string $message
      * @param  int    $log_type see Elog Class for allowed values
      * @param  string $location
@@ -43,10 +45,11 @@ trait LogitTraits
      */
     public function logIt($message = '', $log_type = LOG_OFF, $location = '')
     {
-        if (is_object($this->o_elog) && is_int($log_type)) {
-            if ($log_type > LOG_ALWAYS) {
-                $log_type = LOG_OFF;
-            }
+        if (is_object($this->o_elog)
+            && is_int($log_type)
+            && $log_type <= LOG_ALWAYS
+            && $message != ''
+        ) {
             $this->o_elog->write($message, $log_type, $location);
         }
     }

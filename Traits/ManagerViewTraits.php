@@ -102,27 +102,28 @@ trait ManagerViewTraits
      */
     private function getPageValues()
     {
+        $meth = __METHOD__ . '.';
         $page_url = $this->o_router->getRequestUri();
-        $route_path = $this->o_route->getRoutePath();
+        $route_path = $this->o_router->getRoutePath();
         $o_page_model = new PageModel($this->o_db);
         $a_values1 = $o_page_model->read(['page_url' => $page_url]);
         $a_values2 = $o_page_model->read(['page_url' => $route_path]);
-        if ($a_values1 !== false) {
-            $a_page_values = $a_values1;
+        if (isset($a_values1[0])) {
+            $a_page_values = $a_values1[0];
         }
-        elseif ($a_values2 !== false) {
-            $a_page_values = $a_values2;
+        elseif (isset($a_values2[0])) {
+            $a_page_values = $a_values2[0];
         }
         else {
             return [
-                'description'   => 'Backend Manager',
-                'title'         => 'Manager',
-                'base_url'      => '/',
-                'lang'          => 'en',
-                'charset'       => 'utf-8',
-                'public_dir'    => PUBLIC_DIR,
-                'site_url'      => SITE_URL,
-                'rights_holder' => RIGHTS_HOLDER
+                'page_description'   => 'Backend Manager',
+                'page_title'         => 'Manager',
+                'page_base_url'      => '/',
+                'page_lang'          => 'en',
+                'page_charset'       => 'utf-8',
+                'page_public_dir'    => PUBLIC_DIR,
+                'page_site_url'      => SITE_URL,
+                'page_rights_holder' => RIGHTS_HOLDER
             ];
         }
         $base_url = $a_page_values['page_base_url'] == '/'

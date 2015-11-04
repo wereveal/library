@@ -57,7 +57,7 @@ class ManagerController implements ControllerInterface
         $this->a_post_values  = $this->a_route_parts['post'];
         $this->o_auth         = new AuthHelper($this->o_di);
         $this->o_manager_view = new ManagerView($this->o_di);
-        if (DEVELOPER_MODE) {
+        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
         }
     }
