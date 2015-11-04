@@ -8,18 +8,9 @@
  *  @author William E Reveal
  *  @date 2015-10-06 14:20:33
  *  @version 1.0.0
- *  SQL
- *  MySQL sql
-    CREATE TABLE `{$dbPrefix}routes` (
-      `route_id` int(11) NOT NULL AUTO_INCREMENT,
-      `route_path` varchar(255) NOT NULL,
-      `route_class` varchar(128) NOT NULL,
-      `route_method` varchar(64) DEFAULT NULL,
-      `route_action` varchar(255) NOT NULL,
-      `route_immutable` tinyint(1) DEFAULT 0
-      PRIMARY KEY (`router_id`),
-      UNIQUE KEY `uri_path` (`uri_path``)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ *  @note <b>SQL for table<b><pre>
+ *      MySQL      - resources/sql/mysql/routes_mysql.sql
+ *      PostgreSQL - resources/sql/postgresql/routes_pg.sql</pre>
 **/
 
 namespace Ritc\Library\Entities;

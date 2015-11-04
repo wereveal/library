@@ -14,45 +14,10 @@
  *                Users now can only belong to multiple groups, the groups determine their role.
  *      v0.1.0  - Initial version                             - 09/11/2014 wer
  *  </pre>
- *  @note Be sure to replace '{dbPrefix}' with the db prefix<pre>
- *  CREATE TABLE `{dbPrefix}group_role_map` (
- *    `grm_id` int(11) NOT NULL,
- *    `group_id` int(11) NOT NULL,
- *    `role_id` int(11) NOT NULL,
- *  ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+ *  @note  <b>SQL for table<b><pre>
+ *      MySQL      - resources/sql/mysql/group_role_map_mysql.sql
+ *      PostgreSQL - resources/sql/postgresql/group_role_map_pg.sql</pre>
  *
- *  ALTER TABLE `{dbPrefix}group_role_map`
- *    ADD PRIMARY KEY (`grm_id`),
- *    ADD UNIQUE KEY `group_role` (`group_id`,`role_id`),
- *    ADD KEY `role_id` (`role_id`),
- *    ADD KEY `group_id` (`group_id`);
- *
- *  ALTER TABLE `{dbPrefix}group_group_map`
- *  MODIFY `ugm_id` int(11) NOT NULL AUTO_INCREMENT;
- *
- *  ALTER TABLE `{dbPrefix}group_role_map`
- *    ADD CONSTRAINT `{dbPrefix}group_role_map_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `{dbPrefix}users` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
- *    ADD CONSTRAINT `{dbPrefix}group_role_map_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `{dbPrefix}roles` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE;
- *
- *  PostgreSQL
- *  CREATE SEQUENCE grm_id_seq;
- *  CREATE TABLE {dbPrefix}group_role_map (
- *      grm_id integer DEFAULT nextval('grm_id_seq'::regclass) NOT NULL,
- *      group_id integer NOT NULL,
- *      role_id integer NOT NULL
- *  );
- *  ALTER TABLE ONLY {dbPrefix}group_role_map
- *      ADD CONSTRAINT {dbPrefix}group_role_map_pkey PRIMARY KEY (grm_id);
- *  CREATE INDEX {dbPrefix}group_role_map_role_id_idx ON {dbPrefix}group_role_map USING btree (role_id);
- *  CREATE INDEX {dbPrefix}group_role_map_group_id_idx ON {dbPrefix}group_role_map USING btree (group_id);
- *  ALTER TABLE ONLY {dbPrefix}group_role_map
- *      ADD CONSTRAINT {dbPrefix}group_role_map_ibfk_1 FOREIGN KEY (group_id) REFERENCES {dbPrefix}users(group_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
- *  ALTER TABLE ONLY {dbPrefix}group_role_map
- *      ADD CONSTRAINT {dbPrefix}group_role_map_ibfk_2 FOREIGN KEY (role_id) REFERENCES {dbPrefix}roles(role_id) ON UPDATE CASCADE ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
- *
- *  INSERT INTO {dbPrefix}group_role_map (group_id, role_id)
- *  VALUES (1, 1);
- *  </pre>
 **/
 namespace Ritc\Library\Entities;
 

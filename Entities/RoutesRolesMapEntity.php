@@ -10,33 +10,9 @@
  * @note <pre><b>Change Log</b>
  *       v1.0.0ß1 - Initial version                    - 08/01/2015 wer
  *       </pre>
- * @note Be sure to replace '{dbPrefix}' with the db prefix<pre>
- * MySQL
-CREATE TABLE `{$dbPrefix}routes_roles_map` (
-    `rrm_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-    `route_id` int(11) NOT NULL DEFAULT '0',
-    `role_id` int(11) NOT NULL DEFAULT '0',
-    PRIMARY KEY (`rrm_id`),
-    UNIQUE KEY `rrm_key` (`route_id`,`role_id`),
-    KEY `role_id` (`role_id`),
-    CONSTRAINT `{$dbPrefix}routes_roles_map_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `ftp_roles` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `{$dbPrefix}routes_roles_map_ibfk_1` FOREIGN KEY (`route_id`) REFERENCES `ftp_routes` (`route_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
- *
- * PostgreSQL
-CREATE SEQUENCE rrm_id_seq;
-CREATE TABLE {$dbPrefix}routes_roles_map (
-    rrm_id integer DEFAULT nextval('rrm_id_swq'::regclass) NOT NULL,
-    route_id integer NOT NULL DEFAULT 0,
-    role_id integer NOT NULL DEFAULT 0
-);
-ALTER TABLE ONLY {$dbPrefix}routes_roles_map
-    ADD CONSTRAINT {$dbPrefix}routes_roles_map_pkey PRIMARY KEY (rrm_id);
-ALTER TABLE `dbPrefix_user_group_map`
-    ADD CONSTRAINT `{$dbPrefix}routes_roles_map_ibfk_1` FOREIGN KEY (`people_id`) REFERENCES `dbPrefix_users` (`people_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    ADD CONSTRAINT `{$dbPrefix}routes_roles_map_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `dbPrefix_groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
- * </pre>
+ *  @note <b>SQL for table<b><pre>
+ *      MySQL      - resources/sql/mysql/routes_roles_map_mysql.sql
+ *      PostgreSQL - resources/sql/postgresql/routes_roles_map_pg.sql</pre>
  */
 
 namespace Ritc\Library\Entities;

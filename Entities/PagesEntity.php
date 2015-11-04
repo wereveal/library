@@ -1,6 +1,6 @@
 <?php
 /**
- *  @brief An entity class for Pages.
+ *  @brief An entity class for the page table.
  *  @details This Provides data needed to generate the html, e.g. title,
  *      description, file type, etc that would be in the <head> part of the page.
  *  @file PageEntity.php
@@ -14,28 +14,9 @@
  *  @note <pre><b>Change Log</b>
  *      v1.0.0β1 - Initial version - 10/30/2015 wer
  *  </pre>
- *  @note <pre>
- *  MySQL sql
-CREATE TABLE `{$dbPrefix}page` (
-  `page_id` int(11) NOT NULL AUTO_INCREMENT,
-  `page_url` varchar(255) NOT NULL DEFAULT '/',
-  `page_type` varchar(20) NOT NULL DEFAULT 'text/html',
-  `page_title` varchar(100) NOT NULL,
-  `page_description` varchar(200) NOT NULL,
-  `page_base_url` varchar(100) NOT NULL DEFAULT '/',
-  `page_lang` varchar(50) NOT NULL DEFAULT 'en',
-  `page_charset` varchar(100) NOT NULL DEFAULT 'utf-8',
-  `page_immutable` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`page_id`),
-  UNIQUE KEY `page_url` (`page_url`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
-INSERT INTO `{$dbPrefix}page` (
-    `page_id`, `page_url`, `page_type`, `page_title`, `page_description`, `page_base_url`, `page_lang`, `page_charset`, `page_immutable`
-) VALUES (
-    1, '/manager/', 'text/html', 'Manager', 'Manages People, Places and Things', '/', 'en', 'utf-8', 1
-);
-    </pre>
+ *  @note  <b>SQL for table<b><pre>
+ *      MySQL      - resources/sql/mysql/page_mysql.sql
+ *      PostgreSQL - resources/sql/postgresql/page_pg.sql</pre>
  */
 
 namespace Ritc\Library\Entities;
