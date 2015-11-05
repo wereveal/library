@@ -1,6 +1,13 @@
 {% extends '@default/base.twig' %}
 {% block stylesheets %}{% include '@snippets/base_css.twig' %}{% endblock %}
 {% block body %}
+            {% if a_message.message != '' %}
+            <div class="row">
+                <div class="col-md-12">
+                    {% include '@snippets/message.twig' %}
+                </div>
+            </div>
+            {% endif %}
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <ul class="manager-links">

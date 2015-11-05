@@ -30,12 +30,26 @@ class ManagerView
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
+        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+        }
     }
-    public function renderLandingPage()
+    public function renderLandingPage($a_message = array())
     {
+        $meth = __METHOD__ . '.';
+        $this->setAuthLevel($_SESSION['login_id']);
+        $this->setLinks();
         $a_values = $this->getPageValues();
-        $a_values['links'] = $this->a_links;
-        $a_values['menus'] = $this->a_links;
+        $this->logIt('Links Again: ' . var_export($this->a_links, true), LOG_OFF, $meth . __LINE__);
+        $a_values['links']   = $this->a_links;
+        $a_values['menus']   = $this->a_links;
+        if (is_array($a_message)) {
+            $a_values['a_message'] = ViewHelper::messageProperties($a_message);
+        }
+        else {
+            $a_values['a_message'] = ViewHelper::messageProperties(['message' => '']);
+        }
+        $this->logIt('Final Values for twig: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@main/index.twig', $a_values);
     }
     /**

@@ -174,7 +174,7 @@ class AuthHelper
                 ];
             }
             $a_person_post['created_on'] = $a_person['created_on'];
-            $a_person_post['people_id']    = $a_person['people_id'];
+            $a_person_post['people_id']  = $a_person['people_id'];
 
             $this->logIt("Password Needed: " . $a_person['password'], LOG_OFF, $meth . __LINE__);
             $this->logIt("Password Given (hashed): " . password_hash($a_person_post['password'], PASSWORD_DEFAULT), LOG_OFF, $meth . __LINE__);

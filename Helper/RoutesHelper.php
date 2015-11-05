@@ -98,8 +98,6 @@ class RoutesHelper
                 if (substr($remainder_path, -1) == '/') {
                     $remainder_path = substr($remainder_path, 0, -1);
                 }
-                error_log(var_export($a_last_good_results, true));
-                error_log('Route Path: ' . $route_path);
                 $a_route_parts                   = $a_last_good_results;
                 $a_route_parts['request_uri']    = $route_path;
                 $a_route_parts['last_found_url'] = $last_url;
@@ -178,7 +176,7 @@ class RoutesHelper
         $min_role_level = 0;
         foreach ($a_roles as $role_id) {
             $results = $this->o_role->readById($role_id);
-            if ($results['role_level'] >= $min_role_level) {
+            if (!is_null($results) && $results['role_level'] >= $min_role_level) {
                 $min_role_level = $results['role_level'];
             }
         }

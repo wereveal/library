@@ -75,16 +75,21 @@ trait ManagerViewTraits
      */
     private function setLinks()
     {
+        $meth = __METHOD__ . '.';
         if ($this->adm_level == '') {
             $this->setAuthLevel();
         }
         $person_role_level = $this->adm_level;
+        $this->logIt('Person role level: ' . $person_role_level, LOG_OFF, $meth . __LINE__);
         $current_route_path = $this->o_router->getRoutePath();
         $o_routes = new RoutesHelper($this->o_di, '');
         $a_links = include LIBRARY_CONFIG_PATH . '/links_config.php';
+        $this->logIt('In Set Links: ' . var_export($a_links, TRUE), LOG_OFF, $meth . __LINE__);
         foreach ($a_links as $key => $a_link) {
             $o_routes->setRouteParts($a_link['url']);
             $a_route_parts = $o_routes->getRouteParts();
+
+            $this->logIt('Route Parts: ' . var_export($a_route_parts, TRUE), LOG_OFF, $meth . __LINE__);
             if ($person_role_level > $a_route_parts['min_role_level']) {
                 unset($a_links[$key]);
             }
@@ -139,5 +144,9 @@ trait ManagerViewTraits
             'site_url'      => SITE_URL,
             'rights_holder' => RIGHTS_HOLDER
         ];
+    }
+    private function getLinks()
+    {
+        return $this->a_links;
     }
 }

@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β11
- *  @date 2015-09-25 15:34:56
+ *  @version 1.0.0β12
+ *  @date 2015-11-05 13:14:53
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β12 - Bug fix in sql, incompatible with Postgresql                - 11/05/2015 wer
  *      v1.0.0β11 - Added missing method isId - causing bug elsewhere           - 09/25/2015 wer
  *      v1.0.0β10 - Added db error message retrieval                            - 09/23/2015 wer
  *      v1.0.0β9  - Added 'description' to database and added it here           - 09/22/2015 wer
@@ -465,7 +466,8 @@ class PeopleModel implements ModelInterface
         if ($people_id == '') {
             return array();
         }
-        if (ctype_digit($people_id)) {
+
+        if (is_numeric($people_id)) {
             $where          = "p.people_id = :people_id";
             $a_where_values = [':people_id' => $people_id];
         }
@@ -479,18 +481,19 @@ class PeopleModel implements ModelInterface
                 p.bad_login_ts, p.is_active, p.is_immutable, p.created_on,
                 g.group_id, g.group_name, g.group_description,
                 r.role_id, r.role_level, r.role_name
-            FROM {$this->db_prefix}people as p
-            JOIN {$this->db_prefix}groups as g
-            JOIN {$this->db_prefix}people_group_map as pgm
-                ON p.people_id = pgm.people_id
-                AND pgm.group_id = g.group_id
-            JOIN {$this->db_prefix}roles as r
-            JOIN {$this->db_prefix}group_role_map as grm
-                ON grm.group_id = g.group_id
-                AND grm.role_id = r.role_id
+            FROM ftp_people as p
+            JOIN ftp_people_group_map as pgm
+                USING (people_id)
+            JOIN ftp_groups as g
+                USING (group_id)
+            JOIN ftp_group_role_map as grm
+               USING (group_id)
+            JOIN ftp_roles as r
+                USING (role_id)
             WHERE {$where}
             ORDER BY r.role_level ASC, g.group_name ASC
         ";
+
         $this->logIt("Select User: {$sql}", LOG_OFF, $meth . __LINE__);
         $this->logIt("a_where_values: " . var_export($a_where_values, true), LOG_OFF, $meth . __LINE__);
         $a_people = $this->o_db->search($sql, $a_where_values);

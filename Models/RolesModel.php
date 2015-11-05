@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class RolesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.3
- *  @date 2015-10-05 14:45:43
+ *  @version 1.0.4
+ *  @date 2015-11-05 13:39:01
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.4   - bug fix have to use is_numeric not ctype    - 11/05/2015 wer
  *      v1.0.3   - new method, bug fix, db table update        - 10/05/2015 wer
  *      v1.0.2   - bug fixes                                   - 09/24/2015 wer
  *      v1.0.1   - refactoring elsewhere changes here to match - 07/31/2015 wer
@@ -202,8 +203,13 @@ class RolesModel implements ModelInterface
     **/
     public function readById($role_id = -1)
     {
-        if ($role_id == -1) { return -2; }
-        if (!ctype_digit($role_id)) { return -2; }
+        $meth = __METHOD__ . '.';
+        if ($role_id == -1) {
+            return -2;
+        }
+        if (!is_numeric($role_id)) {
+            return -2;
+        }
         $results = $this->read(['role_id' => $role_id]);
         if (count($results[0]) > 0) {
             return $results[0];
@@ -276,7 +282,7 @@ class RolesModel implements ModelInterface
             case -1:
                 return "Array was empty";
             case -2:
-                return "Role ID was not set";
+                return "Role ID was not set properly";
             case -3:
                 return "Role Level is not allowed";
             case -4:

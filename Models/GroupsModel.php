@@ -198,7 +198,7 @@ class GroupsModel implements ModelInterface
     public function updateWithRoles(array $a_values = array())
     {
         $meth = __METHOD__ . '.';
-        $this->logIt('a values' . var_export($a_values, TRUE), LOG_ON, $meth . __LINE__);
+        $this->logIt('a values' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
         if (   !isset($a_values['group_id'])
             || $a_values['group_id'] == ''
             || !ctype_digit($a_values['group_id'])

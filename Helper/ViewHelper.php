@@ -6,9 +6,10 @@
  *  @namespace Ritc/Library/Helper
  *  @class ViewHelper
  *  @author William E Reveal <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 2015-09-25 10:11:07
+ *  @version 1.1.1
+ *  @date 2015-11-05 14:29:45
  *  @note Change Log
+ *      v1.1.1 - little sanitization of values - 11/05/2015 wer
  *      v1.1.0 - added lazy man's methods      - 09/25/2015 wer
  *      v1.0.1 - changed function to static    - 09/25/2014 wer
  *      v1.0.1 - minor key name change         - 12/31/2013 wer
@@ -33,8 +34,11 @@ class ViewHelper
 	 *	)
 	 *  @return array values for the template.
 	**/
-	public static function messageProperties($a_message_params = array())
+	public static function messageProperties(array $a_message_params = array())
 	{
+	    if ($a_message_params == array()) {
+	        $a_message_params = ['type' => '', 'message' => ''];
+	    }
 	    $alt_text    = '';
 		$image_dir   = IMAGE_DIR . '/icons';
 		$image_class = 'icon';
