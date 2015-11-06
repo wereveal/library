@@ -70,7 +70,6 @@ CREATE TABLE `{$dbPrefix}groups` (
   `group_id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(40) NOT NULL,
   `group_description` varchar(128) NOT NULL DEFAULT '',
-  `group_auth_level` int(11) NOT NULL DEFALUT '0',
   `group_immutable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`group_id`),
   UNIQUE KEY `group_name` (`group_name`)
@@ -80,15 +79,77 @@ LOCK TABLES `{$dbPrefix}groups` WRITE;
 /*!40000 ALTER TABLE `{$dbPrefix}groups` DISABLE KEYS */;
 
 INSERT INTO `{$dbPrefix}groups`
-    (`group_id`, `group_name`, `group_description`, `group_auth_level`, `group_immutable`)
+    (`group_id`, `group_name`, `group_description`, `group_immutable`)
 VALUES
-	(1,'SuperAdmin','The group for super administrators. There should be only a couple of these.',10,1),
-	(2,'Managers','Most people accessing the manager should be in this group.',9,1),
-	(3,'Editor','Editor for the CMS which doesn&#039;t exist in the FtpManager',5,1),
-	(4,'Registered','The group for people that should&#039;t have access to the manager.',3,1),
-	(5,'Anonymous','Not logged in, possibly unregistered',0,1);
+	(1,'SuperAdmin','The group for super administrators. There should be only a couple of these.',1),
+	(2,'Managers','Most people accessing the manager should be in this group.',1),
+	(3,'Editor','Editor for the CMS which doesn&#039;t exist in the FtpManager',1),
+	(4,'Registered','The group for people that should&#039;t have access to the manager.',1),
+	(5,'Anonymous','Not logged in, possibly unregistered',1);
 
 /*!40000 ALTER TABLE `{$dbPrefix}groups` ENABLE KEYS */;
+UNLOCK TABLES;
+
+# Dump of table {$dbPrefix}roles
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `{$dbPrefix}roles`;
+
+CREATE TABLE `{$dbPrefix}roles` (
+  `role_id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(20) NOT NULL,
+  `role_description` text NOT NULL,
+  `role_level` int(11) NOT NULL DEFAULT '4',
+  `role_immutable` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`role_id`),
+  UNIQUE KEY `rolename` (`role_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `{$dbPrefix}roles` WRITE;
+/*!40000 ALTER TABLE `{$dbPrefix}roles` DISABLE KEYS */;
+
+INSERT INTO `{$dbPrefix}roles`
+    (`role_id`, `role_name`, `role_description`, `role_level`, `role_immutable`)
+VALUES
+	(1,'superadmin','Has Access to Everything.',1,1),
+	(2,'admin','Has complete access to the administration area.',2,1),
+	(3,'editor','Can modify the CMS content.',3,1),
+	(4,'registered','Registered User',4,1),
+	(5,'anonymous','Anonymous User',5,1);
+
+/*!40000 ALTER TABLE `{$dbPrefix}roles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+# Dump of table {$dbPrefix}group_role_map
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `{$dbPrefix}group_role_map`;
+
+CREATE TABLE `{$dbPrefix}group_role_map` (
+  `grm_id` int(11) NOT NULL AUTO_INCREMENT,
+  `group_id` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL,
+  PRIMARY KEY (`grm_id`),
+  KEY `group_id` (`group_id`),
+  KEY `role_id` (`role_id`),
+  CONSTRAINT `{$dbPrefix}group_role_map_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `{$dbPrefix}groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `{$dbPrefix}group_role_map_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `{$dbPrefix}roles` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `{$dbPrefix}group_role_map` WRITE;
+/*!40000 ALTER TABLE `{$dbPrefix}group_role_map` DISABLE KEYS */;
+
+INSERT INTO `{$dbPrefix}group_role_map`
+    (`group_id`, `role_id`)
+VALUES
+	(1,1),
+	(2,2),
+	(3,3),
+	(4,4),
+	(5,5),
+	(6,6);
+
+/*!40000 ALTER TABLE `{$dbPrefix}group_role_map` ENABLE KEYS */;
 UNLOCK TABLES;
 
 # Dump of table {$dbPrefix}routes
@@ -119,9 +180,10 @@ VALUES
 	(4,'/manager/constants/','ManagerController','renderConstantsAdmin','',1),
 	(5,'/manager/people/','ManagerController','renderPeopleAdmin','',1),
 	(6,'/manager/groups/','ManagerController','renderGroupsAdmin','',1),
-	(7,'/manager/pages/','ManagerController','renderPageAdmin','',1),
-	(8,'/manager/tests/','ManagerController','renderTestsAdmin','',1),
-	(9,'/manager/logout/','ManagerController','render','logout',1);
+	(7,'/manager/roles/','ManagerController','renderRolesAdmin','',1),
+	(8,'/manager/pages/','ManagerController','renderPageAdmin','',1),
+	(9,'/manager/tests/','ManagerController','renderTestsAdmin','',1),
+	(10,'/manager/logout/','ManagerController','render','logout',1);
 
 /*!40000 ALTER TABLE `{$dbPrefix}routes` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -165,6 +227,8 @@ VALUES
 	('/manager/people/modify/','text/html','Manager for People','Manages people, for modifying a person','/','en','utf-8',1),
 	('/manager/people/verify/','text/html','Manager for People','Manages people, verifies a person should be deleted.','/','en','utf-8',1),
 	('/manager/people/delete/','text/html','Manager for People','Manages people','/','en','utf-8',1),
+	('/manager/roles/','text/html','Manager for Roles','Manages the roles','/','en','utf-8',1),
+	('/manager/roles/verify/','text/html','Manager for Roles','Manages the roles, verifies a role should be deleted.','/','en','utf-8',1),
 	('/manager/routes/','text/html','Manager for Routes','Manages the routes','/','en','utf-8',1),
 	('/manager/routes/verify/','text/html','Manager for Routes','Manages the routes, verifies route should be deleted.','/','en','utf-8',1),
 	('/manager/tests/','text/html','Manager Tests','Runs tests for the code.','/','en','utf-8',1),
@@ -290,6 +354,57 @@ VALUES
 	(10,5);
 
 /*!40000 ALTER TABLE `{$dbPrefix}routes_group_map` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table {$dbPrefix}routes_roles_map
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `{$dbPrefix}routes_roles_map`;
+
+CREATE TABLE `{$dbPrefix}routes_roles_map` (
+  `rrm_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `route_id` int(11) NOT NULL DEFAULT '0',
+  `role_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`rrm_id`),
+  UNIQUE KEY `rrm_key` (`route_id`,`role_id`),
+  KEY `role_id` (`role_id`),
+  CONSTRAINT `{$dbPrefix}routes_roles_map_ibfk_1` FOREIGN KEY (`route_id`) REFERENCES `{$dbPrefix}routes` (`route_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `{$dbPrefix}routes_roles_map_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `{$dbPrefix}roles` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `{$dbPrefix}routes_roles_map` WRITE;
+/*!40000 ALTER TABLE `{$dbPrefix}routes_roles_map` DISABLE KEYS */;
+
+INSERT INTO `{$dbPrefix}routes_roles_map` (`rrm_id`, `route_id`, `role_id`)
+VALUES
+	(1,1),
+	(1,2),
+	(2,1),
+	(2,2),
+	(2,3),
+	(2,4),
+	(2,5),
+	(3,1),
+	(3,2),
+	(4,1),
+	(4,2),
+	(5,1),
+	(5,2),
+	(6,1),
+	(6,2),
+	(7,1),
+	(7,2),
+	(8,1),
+	(8,2),
+	(9,1),
+	(10,1),
+	(10,2),
+	(10,3),
+	(10,4),
+	(10,5);
+
+/*!40000 ALTER TABLE `{$dbPrefix}routes_roles_map` ENABLE KEYS */;
 UNLOCK TABLES;
 
 

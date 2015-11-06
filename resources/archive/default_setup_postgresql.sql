@@ -46,19 +46,70 @@ CREATE TABLE {$dbPrefix}groups (
   group_id SERIAL,
   group_name character varying(40) NOT NULL UNIQUE,
   group_description character varying(128) NOT NULL,
-  group_auth_level integer NOT NULL DEFAULT 0,
   group_immutable smallint NOT NULL DEFAULT 0,
   PRIMARY KEY (group_id)
 );
 
 INSERT INTO {$dbPrefix}groups
-    (group_name, group_description, group_auth_level, group_immutable)
+    (group_name, group_description, group_immutable)
 VALUES
-    ('SuperAdmin','The group for super administrators. There should be only a couple of these.',10,1),
-    ('Managers','Most people accessing the manager should be in this group.',9,1),
-    ('Editor','Editor for the CMS which doesn&#039;t exist in the FtpManager',5,1),
-    ('Registered','The group for people that should&#039;t have access to the manager.',3,1),
-    ('Anonymous','Not logged in, possibly unregistered',0,1);
+    ('SuperAdmin','The group for super administrators. There should be only a couple of these.',1),
+    ('Managers','Most people accessing the manager should be in this group.',1),
+    ('Editor','Editor for the CMS which doesn&#039;t exist in the FtpManager',1),
+    ('Registered','The group for people that should&#039;t have access to the manager.',1),
+    ('Anonymous','Not logged in, possibly unregistered',1);
+
+--
+-- Table structure for table {$dbPrefix}roles
+--
+
+CREATE TABLE {$dbPrefix}roles (
+  role_id SERIAL,
+  role_name character varying(20) NOT NULL,
+  role_description text NOT NULL,
+  role_level integer NOT NULL DEFAULT '4',
+  role_immutable smallint NOT NULL DEFAULT '0',
+  PRIMARY KEY (role_id)
+);
+CREATE UNIQUE INDEX roles_role_name_idx ON {$dbPrefix}roles (role_name);
+
+INSERT INTO {$dbPrefix}roles
+    (role_name, role_description, role_level, role_immutable)
+VALUES
+    ('superadmin','Has Access to Everything.',1,1),
+	('admin','Has complete access to the administration area.',2,1),
+	('editor','Can modify the CMS content.',3,1),
+	('registered','Registered User',4,1),
+	('anonymous','Anonymous User',5,1);
+
+
+--
+-- Table structure for table {$dbPrefix}group_role_map
+--
+
+CREATE TABLE {$dbPrefix}group_role_map (
+  grm_id SERIAL,
+  group_id integer NOT NULL UNIQUE,
+  role_id integer NOT NULL,
+  PRIMARY KEY (grm_id)
+);
+
+CREATE INDEX grm_role_id_idx on {$dbPrefix}group_role_map (role_id);
+CREATE INDEX grm_group_id_idx on {$dbPrefix}group_role_map (group_id);
+
+ALTER TABLE ONLY {$dbPrefix}group_role_map
+    ADD CONSTRAINT {$dbPrefix}grm_ibfk_1 FOREIGN KEY (group_id) REFERENCES {$dbPrefix}groups (group_id) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE ONLY {$dbPrefix}group_role_map
+    ADD CONSTRAINT {$dbPrefix}grm_ibfk_2 FOREIGN KEY (role_id) REFERENCES {$dbPrefix}roles (role_id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+INSERT INTO {$dbPrefix}group_role_map
+    (group_id, role_id)
+VALUES
+    (1,1),
+    (2,2),
+    (3,3),
+    (4,4),
+    (5,5);
 
 --
 -- Table structure for table {$dbPrefix}page
@@ -93,6 +144,8 @@ VALUES
     ('/manager/people/modify/','text/html','Manager for People','Manages people, for modifying a person','/','en','utf-8',1),
     ('/manager/people/verify/','text/html','Manager for People','Manages people, verifies a person should be deleted.','/','en','utf-8',1),
     ('/manager/people/delete/','text/html','Manager for People','Manages people','/','en','utf-8',1),
+    ('/manager/roles/','text/html','Manager for Roles','Manages the roles','/','en','utf-8',1),
+	('/manager/roles/verify/','text/html','Manager for Roles','Manages the roles, verifies a role should be deleted.','/','en','utf-8',1),
 	('/manager/routes/','text/html','Manager for Routes','Manages the routes','/','en','utf-8',1),
 	('/manager/routes/verify/','text/html','Manager for Routes','Manages the routes, verifies route should be deleted.','/','en','utf-8',1),
 	('/manager/tests/','text/html','Manager Tests','Runs tests for the code.','/','en','utf-8',1),
@@ -178,15 +231,16 @@ ALTER SEQUENCE {$dbPrefix}routes_route_id_seq RESTART WITH 31;
 INSERT INTO {$dbPrefix}routes
     (route_id, route_path, route_class, route_method, route_action, route_immutable)
 VALUES
-    (1, '/manager/','ManagerController','render','',1),
-	(2, '/manager/login/','ManagerController','render','verifyLogin',1),
-	(3, '/manager/routes/','ManagerController','renderRoutesAdmin','',1),
-	(4, '/manager/constants/','ManagerController','renderConstantsAdmin','',1),
-	(5, '/manager/people/','ManagerController','renderPeopleAdmin','',1),
-	(6, '/manager/groups/','ManagerController','renderGroupsAdmin','',1),
-	(7, '/manager/pages/','ManagerController','renderPageAdmin','',1),
-	(8, '/manager/tests/','ManagerController','renderTestsAdmin','',1),
-	(9, '/manager/logout/','ManagerController','render','logout',1);
+    ( 1, '/manager/','ManagerController','render','',1),
+	( 2, '/manager/login/','ManagerController','render','verifyLogin',1),
+	( 3, '/manager/routes/','ManagerController','renderRoutesAdmin','',1),
+	( 4, '/manager/constants/','ManagerController','renderConstantsAdmin','',1),
+	( 5, '/manager/people/','ManagerController','renderPeopleAdmin','',1),
+	( 6, '/manager/groups/','ManagerController','renderGroupsAdmin','',1),
+	( 7, '/manager/roles/','ManagerController','renderRolesAdmin','',1),
+	( 8, '/manager/pages/','ManagerController','renderPageAdmin','',1),
+	( 9, '/manager/tests/','ManagerController','renderTestsAdmin','',1),
+	(10, '/manager/logout/','ManagerController','render','logout',1);
 
 
 --
@@ -227,11 +281,59 @@ VALUES
 	(7,1),
 	(7,2),
 	(8,1),
+	(8,2),
 	(9,1),
-	(9,2),
-	(9,3),
-	(9,4),
-	(9,5);
+	(10,1),
+	(10,2),
+	(10,3),
+	(10,4),
+	(10,5);
 
+--
+-- Table structure for table {$dbPrefix}routes_roles_map
+--
+
+CREATE TABLE {$dbPrefix}routes_roles_map (
+  rrm_id SERIAL,
+  route_id integer NOT NULL DEFAULT '0',
+  role_id integer NOT NULL DEFAULT '0',
+  PRIMARY KEY (rrm_id)
+);
+CREATE INDEX rrm_route_id_idx ON {$dbPrefix}routes_roles_map (route_id);
+CREATE INDEX rrm_role_id_idx ON {$dbPrefix}routes_roles_map (role_id);
+CREATE UNIQUE INDEX rrm_key ON {$dbPrefix}routes_roles_map (route_id, role_id);
+ALTER TABLE ONLY {$dbPrefix}routes_roles_map
+    ADD CONSTRAINT {$dbPrefix}routes_roles_map_ibfk_1 FOREIGN KEY (route_id) REFERENCES {$dbPrefix}routes (route_id) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE ONLY {$dbPrefix}routes_roles_map
+    ADD CONSTRAINT {$dbPrefix}routes_roles_map_ibfk_2 FOREIGN KEY (role_id) REFERENCES {$dbPrefix}roles (role_id) ON DELETE CASCADE ON UPDATE CASCADE;
+
+INSERT INTO {$dbPrefix}routes_roles_map
+    (route_id, role_id)
+VALUES
+    (1,1),
+	(1,2),
+	(2,1),
+	(2,2),
+	(2,3),
+	(2,4),
+	(2,5),
+	(3,1),
+	(3,2),
+	(4,1),
+	(4,2),
+	(5,1),
+	(5,2),
+	(6,1),
+	(6,2),
+	(7,1),
+	(7,2),
+	(8,1),
+	(8,2),
+	(9,1),
+	(10,1),
+	(10,2),
+	(10,3),
+	(10,4),
+	(10,5);
 
 
