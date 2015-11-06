@@ -6,11 +6,12 @@
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 2015-09-01 06:56:17
+ *  @version 1.2.0
+ *  @date 2015-11-06 17:02:13 
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.1.0 - added traits     - 09/01/2015 wer
+ *      v1.2.0 - added code to not include archives - 11/06/2015 wer
+ *      v1.1.0 - added traits                       - 09/01/2015 wer
  *      v1.0.0 - initial version
  *  </pre>
 **/
@@ -66,6 +67,7 @@ class ClassMapper
             }
             $value = str_replace($this->app_dir . '/', '', $value);
             $classmap_text .= "    '{$key}'{$padding} => __DIR__ . '/../{$value}',\n";
+            echo $key . "\n";
         }
 
         $classmap_text .= ');';
@@ -77,20 +79,23 @@ class ClassMapper
             $name = $o_dir->getFilename();
             if ($name != '.' && $name != '..') {
                 if ($o_dir->isFile()) {
-                    $file_name = $o_dir->getPath() . "/" . $name;
-                    $o_file_info = new SplFileInfo($file_name);
-                    if ($o_file_info->getExtension() == 'php') {
-                        $file_real_path = $o_file_info->getRealPath();
-                        $file_contents = file_get_contents($file_real_path);
-                        $a_tokens = token_get_all($file_contents);
-                        // error_log($file_real_path);
-                        $namespace = $this->getNamespace($a_tokens);
-                        $classname = $this->getClassName($a_tokens);
-                        if (trim($namespace) != '' && trim($classname) != '') {
-                            // print $namespace . "\\" . $classname . " => " . $file_real_path . "\n";
-                            $left_side = trim($namespace) . "\\" . trim($classname);
-                            $a_classmap["{$left_side}"] = $file_real_path;
-                        }
+                    $path = $o_dir->getPath();
+                    if (strpos($path, '/archive') === false) {
+	                    $file_name = $path . "/" . $name;
+	                    $o_file_info = new SplFileInfo($file_name);
+	                    if ($o_file_info->getExtension() == 'php') {
+	                        $file_real_path = $o_file_info->getRealPath();
+	                        $file_contents = file_get_contents($file_real_path);
+	                        $a_tokens = token_get_all($file_contents);
+	                        // error_log($file_real_path);
+	                        $namespace = $this->getNamespace($a_tokens);
+	                        $classname = $this->getClassName($a_tokens);
+	                        if (trim($namespace) != '' && trim($classname) != '') {
+	                            // print $namespace . "\\" . $classname . " => " . $file_real_path . "\n";
+	                            $left_side = trim($namespace) . "\\" . trim($classname);
+	                            $a_classmap["{$left_side}"] = $file_real_path;
+	                        }
+	                    }
                     }
                 }
                 else {
