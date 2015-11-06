@@ -14,10 +14,9 @@
  **/
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Models\RolesModel;
+use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RouterGroupMapModel;
 use Ritc\Library\Models\RoutesModel;
-use Ritc\Library\Models\RouterRolesMapModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -26,10 +25,9 @@ class RoutesHelper
     use LogitTraits;
 
     private $a_route_parts;
+    private $o_group;
     private $o_model;
     private $o_rgm;
-    private $o_role;
-    private $o_rrm;
     private $route_path;
     private $request_uri;
 
@@ -37,13 +35,13 @@ class RoutesHelper
     {
         $o_db = $o_di->get('db');
         $this->o_model = new RoutesModel($o_db);
-        $this->o_role  = new RolesModel($o_db);
+        $this->o_group = new GroupsModel($o_db);
         $this->o_rgm   = new RouterGroupMapModel($o_db);
-        $this->o_rrm   = new RouterRolesMapModel($o_db);
         $this->route_path = $route_path;
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
+            $this->o_group->setElog($this->o_elog);
         }
     }
 
@@ -69,9 +67,8 @@ class RoutesHelper
             $this->route_path                = $a_route_parts['route_path'];
             $a_route_parts['request_uri']    = $route_path;
             $a_route_parts['url_actions']    = [];
-            $a_route_parts['roles']          = $this->getRoles($a_route_parts['route_id']);
             $a_route_parts['groups']         = $this->getGroups($a_route_parts['route_id']);
-            $a_route_parts['min_role_level'] = $this->getMinRoleLevel($a_route_parts['roles'], $a_route_parts['route_id']);
+            $a_route_parts['min_auth_level'] = $this->getMinAuthLevel($a_route_parts['groups']);
             $this->a_route_parts             = $a_route_parts;
         }
         else {
@@ -103,9 +100,8 @@ class RoutesHelper
                 $a_route_parts['last_found_url'] = $last_url;
                 $a_route_parts['url_actions']    = [];
                 $a_route_parts['url_actions']    = explode('/', $remainder_path);
-                $a_route_parts['roles']          = $this->getRoles($a_route_parts['route_id']);
                 $a_route_parts['groups']         = $this->getGroups($a_route_parts['route_id']);
-                $a_route_parts['min_role_level'] = $this->getMinRoleLevel($a_route_parts['roles']);
+                $a_route_parts['min_auth_level'] = $this->getMinAuthLevel($a_route_parts['groups']);
                 $this->a_route_parts = $a_route_parts;
             }
             else {
@@ -117,9 +113,8 @@ class RoutesHelper
                     'route_method'   => '',
                     'route_action'   => '',
                     'url_actions'    => [],
-                    'roles'          => [],
                     'groups'         => [],
-                    'min_role_level' => 999
+                    'min_auth_level' => 0
                 ];
             }
         }
@@ -138,21 +133,6 @@ class RoutesHelper
      *  @param $route_id
      *  @return array|mixed
      */
-    public function getRoles($route_id)
-    {
-        $a_roles = array();
-        $a_rrm_results = $this->o_rrm->read(['route_id' => $route_id]);
-        if ($a_rrm_results !== false && count($a_rrm_results) > 0) {
-            foreach($a_rrm_results as $a_rrm) {
-                $a_roles[] = $a_rrm['role_id'];
-            }
-        }
-        return $a_roles;
-    }
-    /**
-     *  @param $route_id
-     *  @return array|mixed
-     */
     public function getGroups($route_id)
     {
         $a_groups = array();
@@ -165,22 +145,22 @@ class RoutesHelper
         return $a_groups;
     }
     /**
-     *  Gets the min role level needed for the route.
-     *  The roles allowed are passed in and iterated to determine the role level.
-     *  Searches the role db for the role level.
-     *  @param array $a_roles
+     *  Gets the min auth level needed for the route.
+     *  The groups for the route are passed in
+     *     and iterated searching the group db for the auth level.
+     *  @param array $a_groups
      *  @return int
      */
-    public function getMinRoleLevel(array $a_roles = array())
+    public function getMinAuthLevel(array $a_groups = array())
     {
-        $min_role_level = 0;
-        foreach ($a_roles as $role_id) {
-            $results = $this->o_role->readById($role_id);
-            if (!is_null($results) && $results['role_level'] >= $min_role_level) {
-                $min_role_level = $results['role_level'];
+        $min_auth_level = 0;
+        foreach ($a_groups as $group_id) {
+            $results = $this->o_group->readById($group_id);
+            if (!is_null($results) && $results['group_auth_level'] >= $min_auth_level) {
+                $min_auth_level = $results['group_auth_level'];
             }
         }
-        return $min_role_level;
+        return $min_auth_level;
     }
     /**
      *  @param string $route_path

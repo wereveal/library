@@ -93,14 +93,6 @@ class Router
         return $this->a_router_parts['groups'];
     }
     /**
-     * Gets the roles that are allowed to access this route.
-     * return array $a_allowed_roles
-     */
-    public function getAllowedRoles()
-    {
-        return $this->a_router_parts['roles'];
-    }
-    /**
      * @return mixed
      */
     public function getFormAction()

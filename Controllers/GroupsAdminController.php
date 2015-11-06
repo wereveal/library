@@ -107,9 +107,8 @@ class GroupsAdmimController implements MangerControllerInterface
     {
         $meth = __METHOD__ . '.';
         $a_group = $this->a_post['groups'];
-        $a_group['roles'] = $this->a_post['roles'];
         $this->logIt(var_export($a_group, true), LOG_OFF, $meth . __LINE__);
-        $results = $this->o_model->createWithRoles($a_group);
+        $results = $this->o_model->create($a_group);
         if ($results !== false) {
             $a_message = ViewHelper::successMessage();
         }
@@ -124,9 +123,8 @@ class GroupsAdmimController implements MangerControllerInterface
     {
         $meth = __METHOD__ . '.';
         $a_group = $this->a_post['groups'];
-        $a_group['roles'] = $this->a_post['roles'];
         $this->logIt("Update vars: " . var_export($a_group, true), LOG_OFF, $meth . __LINE__);
-        $results = $this->o_model->updateWithRoles($a_group);
+        $results = $this->o_model->update($a_group);
         if ($results !== false) {
             $a_message = ViewHelper::successMessage();
         }

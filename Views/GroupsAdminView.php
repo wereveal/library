@@ -12,7 +12,6 @@
  *  @note <pre><b>Change Log</b>
  *      v1.0.0β1 - Initial version       - 01/28/2015 wer
  *  </pre>
- * @BUG Doesn't display roles correctly for SA and Adm
  * @TODO Immutable code needs to be added.
  **/
 namespace Ritc\Library\Views;
@@ -49,13 +48,6 @@ class GroupsAdminView
     public function renderList(array $a_message = array())
     {
         $meth    = __METHOD__ . '.';
-        $o_grm   = new GroupRoleMapModel($this->o_db);
-        $o_roles = new RolesModel($this->o_db);
-        $a_roles = $o_roles->read();
-        foreach ($a_roles as $key => $a_role) {
-            $a_roles[$key]['checked'] = '';
-        }
-        $this->logIt("Roles: " . var_export($a_roles, true), LOG_OFF, $meth . __LINE__);
         $a_values = [
             'public_dir'  => PUBLIC_DIR,
             'description' => 'Admin page for the groups.',
@@ -65,14 +57,12 @@ class GroupsAdminView
                     'group_id'          => '',
                     'group_name'        => '',
                     'group_description' => '',
-                    'group_immutable'   => 0,
-                    'a_roles'           => array()
+                    'group_immutable'   => 0
                 ]
             ),
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'a_blank_roles' => $a_roles,
             'menus'   => $this->a_links,
             'adm_lvl' => $this->adm_level
         ];
@@ -87,21 +77,8 @@ class GroupsAdminView
             $this->logIt("Groups: " . var_export($a_groups, true), LOG_OFF, $meth . __LINE__);
             foreach ($a_groups as $a_group_key => $a_row) {
                 $a_groups[$a_group_key]['group_description'] = html_entity_decode($a_row['group_description'], ENT_QUOTES);
-
-                $a_grm = $o_grm->read(['group_id' => $a_row['group_id']]);
-                $this->logIt('GRM for ' . $a_row['group_name'] . "\n" . var_export($a_grm, TRUE), LOG_OFF, $meth . __LINE__);
-                $a_temp_roles = $a_roles;
-                foreach($a_grm as $a_grm_row) {
-                    $this_row_role_id = $a_grm_row['role_id'];
-                    $role_key = false;
-                    foreach ($a_temp_roles as $key => $a_temp_role) {
-                        if ($a_temp_role['role_id'] == $this_row_role_id) {
-                            $a_temp_roles[$key]['checked'] = ' checked';
-                        }
-                    }
-                }
-                $this->logIt("Temp Roles for Group {$a_row['group_name']}:\n" . var_export($a_temp_roles, TRUE), LOG_OFF, $meth . __LINE__);
-                $a_groups[$a_group_key]['a_roles'] = $a_temp_roles;
+                $selected_key_name = 'selected' . $a_row['group_auth_level'];
+                $a_groups[$a_group_key][$selected_key_name] = ' selected';
             }
             $a_values['a_groups'] = $a_groups;
         }

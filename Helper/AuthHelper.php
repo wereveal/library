@@ -8,10 +8,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class AuthHelper
  *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 4.4.1
- *  @date 2015-10-06 15:23:20
+ *  @version 5.0.0
+ *  @date 2015-11-06 15:03:52
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v5.0.0 - removed roles from code                               - 11/06/2015 wer
  *      v4.4.1 - bug fix                                               - 10/06/2015 wer
  *      v4.4.0 - bunch of changes primarily in access control          - 09/26/2015 wer
  *      v4.3.2 - added getHighestRoleLevel method                      - 09/25/2015 wer
@@ -59,7 +60,6 @@ namespace Ritc\Library\Helper;
 
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleModel;
-use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -70,7 +70,6 @@ class AuthHelper
     private $db_prefix;
     private $o_db;
     private $o_groups;
-    private $o_roles;
     private $o_router;
     private $o_session;
     private $o_people;
@@ -82,13 +81,11 @@ class AuthHelper
         $this->o_router  = $o_di->get('router');
         $this->o_people  = new PeopleModel($this->o_db);
         $this->o_groups  = new GroupsModel($this->o_db);
-        $this->o_roles   = new RolesModel($this->o_db);
         $this->db_prefix = $this->o_db->getDbPrefix();
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people->setElog($this->o_elog);
             $this->o_groups->setElog($this->o_elog);
-            $this->o_roles->setElog($this->o_elog);
         }
     }
 
@@ -231,55 +228,50 @@ class AuthHelper
         ];
     }
     /**
-     * Gets the highest role level.
-     * Of course, the weird part, role_level highest level is the lowest
-     * number, i.e. 1 is the highest level, 999 is the lowest level.
-     * @param int|string $people_id
-     * return int
+     *  Gets the highest auth level the person has.
+     *  Note that this is not associated with a route or page, just the highest
+     *  auth level that the person has based on groups the person is in.
+     *  @param string|int $people_id and be either db field people_id or login_id
+     *  @return int
      */
-    public function getHighestRoleLevel($people_id = '')
+    public function getHighestAuthLevel($people_id = '')
     {
-        if ($people_id == '') { return 999; }
-        $role_level = 999;
+        if ($people_id == '') {
+            return 0;
+        }
+        $auth_level = 0;
         $a_person = $this->o_people->readInfo($people_id);
-        if ($a_person !== false && !is_null($a_person) && $a_person != array()) {
-            foreach ($a_person['roles'] as $a_role) {
-                $role_level = $a_role['role_level'] < $role_level
-                    ? $a_role['role_level'] : $role_level;
+        if (is_array($a_person) && count($a_person) > 0) {
+            foreach($a_person['groups'] as $a_group) {
+                $auth_level = $a_group['group_auth_level'] > $auth_level
+                    ? $a_group['group_auth_level']
+                    : $auth_level;
             }
         }
-        return $role_level;
+        return $auth_level;
     }
 
     #### Verifiers ####
-    /**
-     * Figure out if the person has a role level at or higher than param.
-     * Of course, the weird part, role_level highest level is the lowest
-     * number, i.e. 1 is the highest level, 999 is the lowest level.
-     * @param int $people_id the id of the person being checked
-     * @param int $role_level (has a fallback so could be a role name
-     * @return bool
-     */
-    public function hasMinimumRoleLevel($people_id = '', $role_level = 999)
+    public function hasMinimumAuthLevel($people_id = '', $auth_level = 0)
     {
-        $highest_role_level = $this->getHighestRoleLevel($people_id);
-        if ($highest_role_level <= $role_level) {
+        $highest_auth_level = $this->getHighestAuthLevel($people_id);
+        if ($auth_level <= $highest_auth_level) {
             return true;
         }
         return false;
     }
     /**
      * Determines if a person is allowed access to something.
-     * Checks to see if the person is logged in and either has the minimum
-     * role level allowed or the route is allowed to the group the person is in.
+     * Checks to see if the person is logged in and the route is allowed to the
+     * group the person is in.
      * @return bool
      */
-    public function isAllowedAccess($people_id = '', $role_level = 999)
+    public function isAllowedAccess($people_id = '', $auth_level = 0)
     {
         if ($this->isLoggedIn()
             &&
             (
-                $this->hasMinimumRoleLevel($people_id, $role_level)
+                $this->hasMinimumAuthLevel($people_id, $auth_level)
                 ||
                 $this->isRouteAllowed($people_id)
             )
@@ -295,9 +287,9 @@ class AuthHelper
      * @param int $role_level level at which access is denied.
      * @return bool
      */
-    public function isDeniedAccess($people_id = '', $role_level = 999)
+    public function isDeniedAccess($people_id = '', $auth_level = 0)
     {
-        if ($this->isAllowedAccess($people_id, $role_level - 1)) {
+        if ($this->isAllowedAccess($people_id, $auth_level + 1)) {
             return false;
         }
         return true;
@@ -344,35 +336,21 @@ class AuthHelper
     /**
      * Checks to see if the person has a valid role for the route.
      * @param int|string $people_id
-     * @param bool $use_group_access defaults to true, otherwise it uses roles
      * @return bool
      */
-    public function isRouteAllowed($people_id = -1, $use_group_access = true)
+    public function isRouteAllowed($people_id = -1)
     {
         if ($people_id == -1 || $people_id == '') { return false; }
         $meth = __METHOD__ . '.';
         $a_person = $this->o_people->readInfo($people_id);
         $this->logIt('Person: ' . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
         if ($a_person !== false) {
-            if ($use_group_access) {
-                $a_allowed_groups = $this->o_router->getAllowedGroups();
-                $this->logIt(var_export($a_allowed_groups, true), LOG_OFF, $meth . __LINE__);
-                foreach($a_person['groups'] as $a_group) {
-                    foreach ($a_allowed_groups as $a_allowed_group) {
-                        if ($a_group['group_id'] == $a_allowed_group) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            else {
-                $a_allowed_roles = $this->o_router->getAllowedRoles();
-                $this->logIt(var_export($a_allowed_roles, true), LOG_OFF, $meth . __LINE__);
-                foreach($a_person['roles'] as $a_role) {
-                    foreach ($a_allowed_roles as $a_allowed_role) {
-                        if ($a_role['role_id'] == $a_allowed_role['role_id']) {
-                            return true;
-                        }
+            $a_allowed_groups = $this->o_router->getAllowedGroups();
+            $this->logIt(var_export($a_allowed_groups, true), LOG_OFF, $meth . __LINE__);
+            foreach($a_person['groups'] as $a_group) {
+                foreach ($a_allowed_groups as $a_allowed_group) {
+                    if ($a_group['group_id'] == $a_allowed_group) {
+                        return true;
                     }
                 }
             }
@@ -380,14 +358,18 @@ class AuthHelper
         return false;
     }
     /**
-     *  Verifies person has the role of super administrator.
+     *  Verifies person is in the group SuperAdmin (group_id == 1).
      *  @param int|string $people_id required
      *  @return bool - true = is a super admin, false = not a super admin
     **/
     public function isSuperAdmin($people_id = '')
     {
-        $role_level = $this->getHighestRoleLevel($people_id);
-        if ($role_level == 1) {
+        if ($people_id == '') {
+            return false;
+        }
+        $a_super_admin = $this->o_groups->readyById(1);
+        $auth_level = $this->getHighestAuthLevel($people_id);
+        if ($auth_level == $a_super_admin['group_auth_level']) {
             return true;
         }
         return false;
@@ -421,39 +403,6 @@ class AuthHelper
         if ($group == -1) { return false; }
         if (ctype_digit($group)) {
             return $this->isValidGroup($group);
-        }
-        return false;
-    }
-    /**
-     *  Checks to see if the value is a valid role id or name.
-     *  @param int|string $role
-     *  @return bool true or false
-     **/
-    public function isValidRole($role = -1)
-    {
-        if ($role == -1) { return false; }
-        if (ctype_digit($role)) {
-            $a_search_by = ['role_id' => $role];
-        }
-        else {
-            $a_search_by = ['role_name' => $role];
-        }
-        if (is_array($this->o_roles->read($a_search_by))) {
-            return true;
-        }
-        return false;
-    }
-    /**
-     * Verifies the role id provided is a valid id.
-     * Uses the isValidRole method
-     * @param int $role_id
-     * @return bool
-     */
-    public function isValidRoleId($role_id = -1)
-    {
-        if ($role_id == -1) { return false; }
-        if (ctype_digit($role_id)) {
-            return $this->isValidRole($role_id);
         }
         return false;
     }

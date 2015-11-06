@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β12
- *  @date 2015-11-05 13:14:53
+ *  @version 1.0.0β13
+ *  @date 2015-11-06 14:49:41
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β13 - removed roles from code                                     - 11/06/2015 wer
  *      v1.0.0β12 - Bug fix in sql, incompatible with Postgresql                - 11/05/2015 wer
  *      v1.0.0β11 - Added missing method isId - causing bug elsewhere           - 09/25/2015 wer
  *      v1.0.0β10 - Added db error message retrieval                            - 09/23/2015 wer
@@ -479,19 +480,14 @@ class PeopleModel implements ModelInterface
             SELECT DISTINCT p.people_id, p.login_id, p.real_name, p.short_name,
                 p.password, p.description, p.is_logged_in, p.bad_login_count,
                 p.bad_login_ts, p.is_active, p.is_immutable, p.created_on,
-                g.group_id, g.group_name, g.group_description,
-                r.role_id, r.role_level, r.role_name
+                g.group_id, g.group_name, g.group_description, g.group_auth_level
             FROM ftp_people as p
             JOIN ftp_people_group_map as pgm
                 USING (people_id)
             JOIN ftp_groups as g
                 USING (group_id)
-            JOIN ftp_group_role_map as grm
-               USING (group_id)
-            JOIN ftp_roles as r
-                USING (role_id)
             WHERE {$where}
-            ORDER BY r.role_level ASC, g.group_name ASC
+            ORDER BY g.group_auth_level DESC, g.group_name ASC
         ";
 
         $this->logIt("Select User: {$sql}", LOG_OFF, $meth . __LINE__);
@@ -500,38 +496,19 @@ class PeopleModel implements ModelInterface
         $this->logIt("a_people: " . var_export($a_people, true), LOG_OFF, $meth);
         if (isset($a_people[0]) && is_array($a_people[0])) {
             if (($a_people[0]['people_id'] == $people_id) || ($a_people[0]['login_id'] == $people_id)) {
-                $a_roles = array();
                 $a_groups = array();
                 foreach ($a_people as $key => $person) {
-                    $a_roles[] = [
-                        'role_id'    => $person['role_id'],
-                        'role_level' => $person['role_level'],
-                        'role_name'  => $person['role_name']
-                    ];
                     $a_groups[] = [
                         'group_id'          => $person['group_id'],
                         'group_name'        => $person['group_name'],
-                        'group_description' => $person['group_description']
+                        'group_description' => $person['group_description'],
+                        'group_auth_level'  => $person['group_auth_level']
                     ];
                 }
-                foreach ($a_roles as $key => $row) {
-                    $a_role_id[$key] = $row['role_id'];
-                }
-                array_multisort($a_role_id, SORT_ASC, $a_roles);
                 foreach ($a_groups as $key => $row) {
                     $a_group_id[$key] = $row['group_id'];
                 }
                 array_multisort($a_group_id, SORT_ASC, $a_groups);
-
-                $previous_role = '';
-                foreach ($a_roles as $key => $a_role) {
-                    if ($a_role['role_id'] == $previous_role) {
-                        unset($a_roles[$key]);
-                    }
-                    else {
-                        $previous_role = $a_role['role_id'];
-                    }
-                }
                 $previous_group = '';
                 foreach ($a_groups as $key => $a_group) {
                     if ($a_group['group_id'] == $previous_group) {
@@ -542,13 +519,10 @@ class PeopleModel implements ModelInterface
                     }
                 }
                 $a_person = $a_people[0];
-                unset($a_person['role_id']);
-                unset($a_person['role_level']);
-                unset($a_person['role_name']);
                 unset($a_person['group_id']);
                 unset($a_person['group_name']);
                 unset($a_person['group_description']);
-                $a_person['roles'] = $a_roles;
+                unset($a_person['group_auth_level']);
                 $a_person['groups'] = $a_groups;
                 $this->logIt("Found Person: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
                 return $a_person;

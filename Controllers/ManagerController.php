@@ -151,19 +151,6 @@ class ManagerController implements ControllerInterface
         return $this->renderLogin('', $a_message);
     }
     /**
-     * Passes control over to the roles admin controller.
-     * @return string
-     */
-    public function renderRolesAdmin()
-    {
-        if ($this->o_auth->isAllowedAccess(2)) {
-            $o_roles_admin = new RolesAdmimController($this->o_di);
-            return $o_roles_admin->render();
-        }
-        $a_message = ViewHelper::warningMessage("Access Prohibited");
-        return $this->renderLogin('', $a_message);
-    }
-    /**
      * Passes control over to the router admin controller.
      * @return string
      */
