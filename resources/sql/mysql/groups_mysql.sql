@@ -7,8 +7,8 @@ CREATE TABLE `{$dbPrefix}groups` (
   `group_id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(40) NOT NULL,
   `group_description` varchar(128) NOT NULL DEFAULT '',
-  `group_auth_level` int(11) NOT NULL DEFALUT '0',
-  `group_immutable` tinyint(1) NOT NULL DEFAULT '0',
+  `group_auth_level` int(11) NOT NULL DEFAULT 0,
+  `group_immutable` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`group_id`),
   UNIQUE KEY `group_name` (`group_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

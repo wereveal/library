@@ -70,7 +70,7 @@ CREATE TABLE `{$dbPrefix}groups` (
   `group_id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(40) NOT NULL,
   `group_description` varchar(128) NOT NULL DEFAULT '',
-  `group_auth_level` int(11) NOT NULL DEFALUT '0',
+  `group_auth_level` int(11) NOT NULL DEFAULT '0',
   `group_immutable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`group_id`),
   UNIQUE KEY `group_name` (`group_name`)
@@ -114,14 +114,14 @@ INSERT INTO `{$dbPrefix}routes`
     (`route_id`, `route_path`, `route_class`, `route_method`, `route_action`, `route_immutable`)
 VALUES
 	(1,'/manager/','ManagerController','render','',1),
-	(2,'/manager/login/','ManagerController','render','verifyLogin',1),
-	(3,'/manager/routes/','ManagerController','renderRoutesAdmin','',1),
-	(4,'/manager/constants/','ManagerController','renderConstantsAdmin','',1),
-	(5,'/manager/people/','ManagerController','renderPeopleAdmin','',1),
-	(6,'/manager/groups/','ManagerController','renderGroupsAdmin','',1),
-	(7,'/manager/pages/','ManagerController','renderPageAdmin','',1),
-	(8,'/manager/tests/','ManagerController','renderTestsAdmin','',1),
-	(9,'/manager/logout/','ManagerController','render','logout',1);
+	(2,'/manager/constants/','ManagerController','renderConstantsAdmin','',1),
+	(3,'/manager/groups/','ManagerController','renderGroupsAdmin','',1),
+	(4,'/manager/login/','ManagerController','render','verifyLogin',1),
+	(5,'/manager/logout/','ManagerController','render','logout',1),
+	(6,'/manager/pages/','ManagerController','renderPageAdmin','',1),
+	(7,'/manager/people/','ManagerController','renderPeopleAdmin','',1),
+	(8,'/manager/routes/','ManagerController','renderRoutesAdmin','',1),
+	(9,'/manager/tests/','ManagerController','renderTestsAdmin','',1);
 
 /*!40000 ALTER TABLE `{$dbPrefix}routes` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -158,6 +158,8 @@ VALUES
 	('/manager/constants/verify/','text/html','Manager for Constants','Manages the Constants, verifies that the constant should be deleted.','/','en','utf-8',1),
 	('/manager/groups/','text/html','Manager for Groups','Manages the Groups','/','en','utf-8',1),
 	('/manager/groups/verify/','text/html','Manager for Groups','Manages the groups, this page verifies deletion.','/','en','utf-8',1),
+	('/manager/login/','text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',1),
+	('/manager/logout/','text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',0),
 	('/manager/pages/','text/html','Manager for Pages','Manages pages head information primarily','/','en','utf-8',1),
 	('/manager/pages/verify/','text/html','Manager for Pages','Manages pages, verifies if record should be deleted','/','en','utf-8',1),
 	('/manager/people/','text/html','Manager for People','Manages people','/','en','utf-8',1),
@@ -167,9 +169,7 @@ VALUES
 	('/manager/people/delete/','text/html','Manager for People','Manages people','/','en','utf-8',1),
 	('/manager/routes/','text/html','Manager for Routes','Manages the routes','/','en','utf-8',1),
 	('/manager/routes/verify/','text/html','Manager for Routes','Manages the routes, verifies route should be deleted.','/','en','utf-8',1),
-	('/manager/tests/','text/html','Manager Tests','Runs tests for the code.','/','en','utf-8',1),
-	('/manager/login/','text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',1),
-	('/manager/logout/','text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',0);
+	('/manager/tests/','text/html','Manager Tests','Runs tests for the code.','/','en','utf-8',1);
 
 /*!40000 ALTER TABLE `{$dbPrefix}page` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -267,27 +267,25 @@ VALUES
 	(1,2),
 	(2,1),
 	(2,2),
-	(2,3),
-	(2,4),
-	(2,5),
 	(3,1),
 	(3,2),
 	(4,1),
 	(4,2),
+	(4,3),
+	(4,4),
+	(4,5),
 	(5,1),
 	(5,2),
+	(5,3),
+	(5,4),
+	(5,5),
 	(6,1),
 	(6,2),
 	(7,1),
 	(7,2),
 	(8,1),
 	(8,2),
-	(9,1),
-	(10,1),
-	(10,2),
-	(10,3),
-	(10,4),
-	(10,5);
+	(9,1);
 
 /*!40000 ALTER TABLE `{$dbPrefix}routes_group_map` ENABLE KEYS */;
 UNLOCK TABLES;
