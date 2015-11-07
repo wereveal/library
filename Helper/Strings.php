@@ -14,6 +14,8 @@
  *  @date 2015-01-27 15:08:41
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v6.1.0 - renamed makeAlphanumeric to makeAlphanumericPlus and added two    - 11/07/2015 wer
+ *               new methods called makeAlphanumeric and makeCamelCase.
  *      v6.0.0 - changed all methods to static                                     - 01/27/2015 wer
  *      v5.1.2 - moved to the Helper namespace                                     - 11/15/2014 wer
  *      v5.1.1 - changed to implment the changes in Base class                     - 09/23/2014 wer
@@ -102,9 +104,10 @@ class Strings
         elseif (is_string($input)) {
             $input = strtoupper(trim($input));
             if (ctype_digit($input)) {
-                $input = ((int) $input === 0 ? 'false' : 'true');
+                $input = (int) $input === 0 ? 'false' : 'true';
             }
             switch ($input) {
+                case 'FALSE':
                 case 'false':
                 case 'NO':
                 case 'OFF':
@@ -138,17 +141,59 @@ class Strings
         return preg_replace("/[^a-zA-Z]/", '', $the_string);
     }
     /**
-     *  Removes everything except letters, numbers, -, and _.
-     *  Removes html and php tags first, replaces spaces with undersHelpers,
-     *  then finally removes all other characters
-     *  @param $the_string (str)
+     *  Removes everything except letters and numbers.
+     *  @param string $the_string
      *  @return string - the modified string
     **/
     public static function makeAlphanumeric($the_string = '')
     {
+        return preg_replace("/[^a-zA-Z0-9]/", '', $the_string);
+    }
+    /**
+     *  Removes everything except letters, numbers, -, and _.
+     *  Removes html and php tags first, replaces spaces with undersHelpers,
+     *  then finally removes all other characters
+     *  @param string $the_string
+     *  @return string - the modified string
+    **/
+    public static function makeAlphanumericPlus($the_string = '')
+    {
         $the_string = self::removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
         return preg_replace("/[^a-zA-Z0-9_\-]/", '', $the_string);
+    }
+    /**
+     *  Makes the string alpha camelCase.
+     *  Splits string at spaces, dashes and underscores into alpha 'words' which
+     *  it will uppercase all but the first word by default.
+     *  @param string $the_string defaults to blank string
+     *  @param bool $leave_first_alone defaults to true
+     *  @return string
+     */
+    public static function makeCamelCase($the_string = '', $leave_first_alone = true)
+    {
+        $the_string = self::removeTags(trim($the_string));
+        if (strpos($the_string, ' ') !== false) {
+            $a_string = explode(' ', $the_string);
+        }
+        elseif (strpos($the_string, '_') !== false) {
+            $a_string = explode('_', $the_string);
+        }
+        elseif (strpos($the_string, '-') !== false) {
+            $a_string = explode('-', $the_string);
+        }
+        else {
+            return self::makeAlpha($the_string);
+        }
+        $new_string = '';
+        foreach($a_string as $key => $word) {
+            $word = self::makeAlpha($word);
+            if ($key != 0 || $leave_first_alone === false) {
+                $word = ucfirst($word);
+            }
+            $new_string .= $word;
+        }
+        return $new_string;
     }
     /**
      *  Makes the string alphanumeric plus _*.+!- in all lower case.

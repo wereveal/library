@@ -32,39 +32,6 @@
  *      v1.0.1 - new namespace, FIG standards (mostly)
  *  </pre>
 **/
-/**
- *  @brief Class that does stuff with arrays.
- *  @file Arrays.php
- *  @ingroup ritc_library helper
- *  @namespace Ritc/Library/Helper
- *  @class Arrays
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.6.0
- *  @date 2015-11-02 13:01:24
- *  @note A part of the RITC Library
- *  @note <pre><b>Change Log</b>
- *      v2.6.0 - new method, moved from Tester class, can be more generic.           - 11/02/2015 wer
- *      v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs        - 10/22/2015 wer
- *      v2.5.1 - bug fix, inArrayRecursive                                           - 10/20/2015 wer
- *      v2.5.0 - new method, createRequiredPairs                                     - 10/06/2015 wer
- *      v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                - 09/12/2015 wer
- *      v2.3.0 - New method, inArrayRecursive                                        - 09/10/2015 wer
- *      v2.2.0 - Removed use of abstract class Base                                  - 09/03/2015 wer
- *      v2.1.0 - After looking at the inconsistency, changed to be more consistent   - 07/31/2015 wer
- *               Also changed variable name to be more descriptive than array.
- *      v2.0.1 - oops, missed one to be static, changed its name                     - 07/31/2015 wer
- *      v2.0.0 - changed methods to be static                                        - 01/27/2015 wer
- *      v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it - 12/05/2014 wer
- *      v1.2.1 - moved to the Helper namespace                                       - 11/15/2014 wer
- *      v1.2.1 - clean up                                                            - 09/23/2014 wer
- *      v1.2.0 - new method added                                                    - 12/30/2013 wer
- *      v1.1.1 - match package change                                                - 12/19/2013 wer
- *      v1.1.0 - namespace changes                                                   - 07/30/2013 wer
- *      v1.0.3 - moved array methods from class Strings to here                      - 03/27/2013 wer
- *      v1.0.2 - added new method
- *      v1.0.1 - new namespace, FIG standards (mostly)
- *  </pre>
-**/
 namespace Ritc\Library\Helper;
 
 class Arrays
