@@ -15,6 +15,7 @@
  **/
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\GroupsModel;
@@ -104,6 +105,7 @@ class GroupsAdmimController implements MangerControllerInterface
     {
         $meth = __METHOD__ . '.';
         $a_group = $this->a_post['groups'];
+        $a_group['group_name'] = Strings::makeCamelCase($a_group['group_name'], false);
         $this->logIt(var_export($a_group, true), LOG_OFF, $meth . __LINE__);
         $results = $this->o_model->create($a_group);
         if ($results !== false) {
@@ -120,6 +122,7 @@ class GroupsAdmimController implements MangerControllerInterface
     {
         $meth = __METHOD__ . '.';
         $a_group = $this->a_post['groups'];
+        $a_group['group_name'] = Strings::makeCamelCase($a_group['group_name'], false);
         $this->logIt("Update vars: " . var_export($a_group, true), LOG_OFF, $meth . __LINE__);
         $results = $this->o_model->update($a_group);
         if ($results !== false) {

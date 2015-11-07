@@ -54,6 +54,32 @@ class GroupsModel implements ModelInterface
             'group_immutable'
         );
         $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, true);
+        if (isset($a_values['group_auth_level']) && ($a_values['group_auth_level'] == '' || $a_values['group_auth_level'] > 10)) {
+            $a_values['group_auth_level'] = 0;
+        }
+        if (!isset($a_values['group_immutable']) || $a_values['group_immutable'] == '' || $a_values['group_immutable'] > 1) {
+            $a_values['group_immutable'] = 0;
+        }
+        $a_required_keys = ['group_name', 'group_description'];
+        if (Arrays::hasBlankValues($a_values, $a_required_keys)) {
+            $missing_info = '';
+            foreach ($a_required_keys as $key_name) {
+                if ($a_values[$key_name] == '') {
+                    switch ($key_name) {
+                        case 'group_name':
+                            $missing_info .= " Name";
+                            break;
+                        case 'group_description':
+                            $missing_info .= " Description";
+                            break;
+                        default:
+                            $missing_info .= ' Unknown Error';
+                    }
+                }
+            }
+            $this->error_message = 'Missing required information:' . $missing_info;
+            return false;
+        }
         $sql = "
             INSERT INTO {$this->db_prefix}groups
                 (group_name, group_description, group_auth_level, group_immutable)
@@ -109,14 +135,26 @@ class GroupsModel implements ModelInterface
      */
     public function update(array $a_values = array())
     {
-        $a_required_keys = ['group_id', 'group_name', 'group_description', 'group_auth_level', 'group_immutable'];
-        $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, true);
-        if ($a_values['group_immutable'] == '') {
+        $a_required_keys = ['group_id'];
+        $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, false);
+        if (!isset($a_values['group_immutable']) || $a_values['group_immutable'] == '' || $a_values['group_immutable'] > 1 ) {
             $a_values['group_immutable'] = 0;
         }
         if (Arrays::hasBlankValues($a_values, $a_required_keys)) {
-            $this->error_message = 'Missing required information (name or description)';
+            $missing_info = '';
+            foreach ($a_required_keys as $key_name) {
+                if ($a_values[$key_name] == '') {
+                    $missing_info = ' ' . $key_name;
+                }
+            }
+            $this->error_message = 'Missing required information:' . $missing_info;
             return false;
+        }
+        if ($a_values['group_name'] == '') {
+            unset($a_values['group_name']);
+        }
+        if ($a_values['group_description'] == '') {
+            unset($a_values['group_description']);
         }
         $set_sql = $this->o_db->buildSqlSet($a_values, ['group_id']);
         $sql = "
@@ -124,7 +162,6 @@ class GroupsModel implements ModelInterface
             {$set_sql}
             WHERE group_id = :group_id
         ";
-        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->update($sql, $a_values, true);
     }
     /**

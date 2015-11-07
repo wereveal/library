@@ -13,7 +13,7 @@
  *      v1.0.1ß - Changed to use DI/IOC                           - 11/15/2014 wer
  *      v1.0.0ß - Initial version                                 - 11/13/2014 wer
  *  </pre>
- *  @TODO base access to crud people on role access levels
+ *  @TODO base access to crud people on auth levels
  *  @TODO write the code to display users to allow for CRUD actions
  */
 namespace Ritc\Library\Views;
@@ -23,7 +23,6 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleGroupMapModel;
-use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ManagerViewTraits;
@@ -52,30 +51,29 @@ class PeopleAdminView
 
     public function renderList(array $a_message = array())
     {
+        $a_page_values = $this->getPageValues();
         $a_values = [
-            'public_dir'  => PUBLIC_DIR,
-            'description' => 'Admin page for people.',
-            'a_message'   => array(),
-            'a_people'    => array(
+            'a_message' => array(),
+            'a_people'  => array(
                 [
                     'people_id'  => '',
                     'login_id'   => '',
                     'real_name'  => '',
-                    'auth_level' => 999
+                    'auth_level' => 0
                 ]
             ),
-            'tolken'      => $_SESSION['token'],
-            'form_ts'     => $_SESSION['idle_timestamp'],
-            'hobbit'      => '',
-            'menus'       => $this->a_links,
-            'adm_level'   => $this->adm_level
+            'tolken'    => $_SESSION['token'],
+            'form_ts'   => $_SESSION['idle_timestamp'],
+            'hobbit'    => '',
+            'menus'     => $this->a_links,
+            'adm_lvl'   => $this->adm_level
         ];
-
+        $a_values = array_merge($a_page_values, $a_values);
         $a_people = $this->o_people_model->read();
         if ($a_people !== false) {
             foreach($a_people as $key => $a_person) {
-                $highest_role_level = $this->o_auth->getHighestRoleLevel($a_person['people_id']);
-                $a_people[$key]['auth_level'] = $highest_role_level;
+                $highest_auth_level = $this->o_auth->getHighestAuthLevel($a_person['people_id']);
+                $a_people[$key]['auth_level'] = $highest_auth_level;
             }
             $a_values['a_people'] = $a_people;
         }
@@ -85,15 +83,15 @@ class PeopleAdminView
         else {
             $a_values['a_message'] = '';
         }
+        error_log('twig values' . var_export($a_values, true));
         $html = $this->o_twig->render('@pages/people_admin.twig', $a_values);
         return $html;
     }
     public function renderNew()
     {
         $meth = __METHOD__ . '.';
+        $a_page_values = $this->getPageValues();
         $a_values = [
-            'public_dir'  => PUBLIC_DIR,
-            'description' => 'Add a Person.',
             'a_message'   => array(),
             'person'      => array(
                 [
@@ -107,7 +105,7 @@ class PeopleAdminView
                     'is_immutable' => 0,
                     'created_on'   => date('Y-m-d H:i:s'),
                     'groups'       => [],
-                    'highest_role' => 999
+                    'highest_role' => 0
                 ]
             ),
             'action'  => 'save',
@@ -117,12 +115,13 @@ class PeopleAdminView
             'adm_lvl' => $this->adm_level,
             'menus'   => $this->a_links
         ];
+        $a_values = array_merge($a_page_values, $a_values);
         $a_groups = $this->o_group_model->read();
         foreach ($a_groups as $key => $a_group) {
             $a_groups[$key]['checked'] = '';
         }
         $a_values['person']['groups'] = $a_groups;
-        $this->logIt('A person values: ' . var_export($a_values, true), LOG_ON, $meth . __LINE__);
+        $this->logIt('A person values: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }
     public function renderModify($people_id = -1)
@@ -130,9 +129,8 @@ class PeopleAdminView
         if ($people_id == -1) {
             return $this->renderList(['message' => 'A Problem Has Occured. Please Try Again.', 'type' => 'error']);
         }
+        $a_page_values = $this->getPageValues();
         $a_values = [
-            'public_dir'  => PUBLIC_DIR,
-            'description' => 'Modify a Person.',
             'a_message'   => array(),
             'person'      => array(
                 [
@@ -146,7 +144,7 @@ class PeopleAdminView
                     'is_immutable' => 0,
                     'created_on'   => date('Y-m-d H:i:s'),
                     'groups'       => [],
-                    'highest_role' => 999
+                    'highest_role' => 0
                 ]
             ),
             'action'  => 'update',
@@ -175,7 +173,7 @@ class PeopleAdminView
         }
         $a_person['groups'] = $a_default_groups;
         $a_person['password'] = '************';
-        $this->logIt("Person: " . var_export($a_person, true), LOG_ON, __METHOD__);
+        $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, __METHOD__);
         $a_values['person'] = $a_person;
         return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }
@@ -188,8 +186,10 @@ class PeopleAdminView
         if ($a_person[0]['is_immutable'] == 1) {
             return $this->renderList(['message' => 'Sorry, that user can not be deleted.', 'type' => 'failure']);
         }
-        $a_posted_values['menus'] = $this->a_links;
-        return $this->o_twig->render('@pages/verify_delete_person.twig', $a_posted_values);
+        $a_page_values = $this->getPageValues();
+        $a_twig_values = array_merge($a_page_values, $a_posted_values);
+        $a_twig_values['menus'] = $this->a_links;
+        return $this->o_twig->render('@pages/verify_delete_person.twig', $a_twig_values);
     }
     /**
      * Something to keep phpStorm from complaining until I use the ViewHelper.

@@ -49,8 +49,6 @@ class GroupsAdminView
     {
         $meth    = __METHOD__ . '.';
         $a_values = [
-            'public_dir'  => PUBLIC_DIR,
-            'description' => 'Admin page for the groups.',
             'a_message'   => array(),
             'a_groups'    => array(
                 [
@@ -66,6 +64,7 @@ class GroupsAdminView
             'menus'   => $this->a_links,
             'adm_lvl' => $this->adm_level
         ];
+        $a_page_values = $this->getPageValues();
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
@@ -82,6 +81,7 @@ class GroupsAdminView
             }
             $a_values['a_groups'] = $a_groups;
         }
+        $a_values = array_merge($a_page_values, $a_values);
         $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@pages/groups_admin.twig', $a_values);
     }

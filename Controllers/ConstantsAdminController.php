@@ -120,6 +120,7 @@ class ConstantsAdminController implements MangerControllerInterface
      */
     public function update()
     {
+        $meth = __METHOD__ . '.';
         $a_constants = $this->a_post['constant'];
         if (!isset($a_constants['const_immutable'])) {
             $a_constants['const_immutable'] = 0;

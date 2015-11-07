@@ -1,6 +1,6 @@
 <?php
 /**
- * @brief Entity to map the Router to the Roles.
+ * @brief Entity to map the Router to the Groups.
  * @file RoutesGroupMapEntity.php
  * @ingroup ritc_library entities
  * @namespace Ritc\Library\Entities
@@ -70,7 +70,7 @@ class RouterGroupMapEntity implements EntityInterface
     /**
      * @return mixed
      */
-    public function getRoleId()
+    public function getGroupId()
     {
         return $this->group_id;
     }
@@ -78,7 +78,7 @@ class RouterGroupMapEntity implements EntityInterface
     /**
      * @param mixed $group_id
      */
-    public function setRoleId($group_id)
+    public function setGroupId($group_id)
     {
         $this->group_id = $group_id;
     }

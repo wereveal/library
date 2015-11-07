@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Views
  *  @class ConstantsAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.2.0
- *  @date 2015-10-07 14:33:44
+ *  @version 1.2.1
+ *  @date 2015-11-07 09:38:35
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.2.1   - Bug Fix                                              - 11/07/2015 wer
  *      v1.2.0   - Immutable code added                                 - 10/07/2015 wer
  *      v1.1.0   - removed abstract class Base, added LogitTraits       - 09/01/2015 wer
  *      v1.0.0   - first fully working version                          - 01/28/2015 wer
@@ -120,6 +121,6 @@ class ConstantsAdminView
             $a_twig_values['public_dir'] = $a_values['public_dir'];
         }
         $a_twig_values = array_merge($a_twig_values, $a_page_values);
-        return $this->o_twig->render('@pages/verify_delete.twig', $a_values);
+        return $this->o_twig->render('@pages/verify_delete.twig', $a_twig_values);
     }
 }

@@ -282,7 +282,7 @@ class AuthHelper
     }
     /**
      * Checks to see if the person is denied access to something.
-     * Uses the isAllowedAccess method, subtracting 1 from denied role level
+     * Uses the isAllowedAccess method, subtracting 1 from denied auth level
      * to see if that level has access.
      * @param int $role_level level at which access is denied.
      * @return bool
@@ -334,7 +334,7 @@ class AuthHelper
         return false;
     }
     /**
-     * Checks to see if the person has a valid role for the route.
+     * Checks to see if the person has a valid group for the route.
      * @param int|string $people_id
      * @return bool
      */

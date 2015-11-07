@@ -31,8 +31,6 @@ VALUES
     ('/manager/people/modify/','text/html','Manager for People','Manages people, for modifying a person','/','en','utf-8',1),
     ('/manager/people/verify/','text/html','Manager for People','Manages people, verifies a person should be deleted.','/','en','utf-8',1),
     ('/manager/people/delete/','text/html','Manager for People','Manages people','/','en','utf-8',1),
-    ('/manager/roles/','text/html','Manager for Roles','Manages the roles','/','en','utf-8',1),
-    ('/manager/roles/verify/','text/html','Manager for Roles','Manages the roles, verifies a role should be deleted.','/','en','utf-8',1),
     ('/manager/routes/','text/html','Manager for Routes','Manages the routes','/','en','utf-8',1),
     ('/manager/routes/verify/','text/html','Manager for Routes','Manages the routes, verifies route should be deleted.','/','en','utf-8',1),
     ('/manager/tests/','text/html','Manager Tests','Runs tests for the code.','/','en','utf-8',1),

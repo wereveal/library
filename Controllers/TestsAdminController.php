@@ -77,7 +77,6 @@ class TestsAdminController
             case 'ConstantsModel':
             case 'GroupsModel':
             case 'Login':
-            case 'RolesModel':
             case 'RoutesModel':
             default:
                 return $this->o_view->renderList();

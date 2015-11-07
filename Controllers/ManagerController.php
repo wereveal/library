@@ -70,8 +70,8 @@ class ManagerController implements ControllerInterface
     {
         $meth = __METHOD__ . '.';
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
-            $min_role_level = $this->a_route_parts['min_role_level'];
-            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_role_level)) {
+            $min_auth_level = $this->a_route_parts['min_auth_level'];
+            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
                 switch ($this->route_action) {
                     case 'logout':
                         $this->o_auth->logout($_SESSION['login_id']);
@@ -86,7 +86,6 @@ class ManagerController implements ControllerInterface
             $this->logIt('Login Message: ' . var_export($a_message, TRUE), LOG_OFF, $meth . __LINE__);
             $this->logIt('Session after login: ' . var_export($_SESSION, TRUE), LOG_OFF, $meth . __LINE__);
             if ($a_message['type'] == 'success') {
-                error_log("====");
                 return $this->o_manager_view->renderLandingPage($a_message);
             }
             else {
@@ -189,8 +188,8 @@ class ManagerController implements ControllerInterface
             $this->o_session->setVar('login_id', $a_results['login_id']);
             $this->logIt('The Session: ' . var_export($_SESSION, TRUE), LOG_OFF, $meth . __LINE__);
             $this->logIt('Route Parts: ' . var_export($this->a_route_parts, TRUE), LOG_OFF, $meth . __LINE__);
-            $min_role_level = $this->a_route_parts['min_role_level'];
-            if ($this->o_auth->isAllowedAccess($a_results['people_id'], $min_role_level)) { // authorization part
+            $min_auth_level = $this->a_route_parts['min_auth_level'];
+            if ($this->o_auth->isAllowedAccess($a_results['people_id'], $min_auth_level)) { // authorization part
                 return ViewHelper::successMessage('Success, you are now logged in!');
             }
         }

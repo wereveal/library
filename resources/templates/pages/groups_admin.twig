@@ -53,7 +53,7 @@
                             </select>
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-2">
-                            <label class="w100" for="groups[group_immutable]">Immutable: </label>
+                            <label class="w100 aright" for="groups[group_immutable]">Immutable: </label>
                             <input type="checkbox" name="groups[group_immutable]" value="1"/>
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-2">
@@ -79,7 +79,7 @@
                                 {{ group.group_name }}
                                 <input type="hidden" name="groups[group_name]" value="{{ group.group_name }}"/>
                             {% else %}
-                                <input type="text" name="groups[group_name]" value="{{ group.group_name }}" maxlength="20" class="colorful w200"/>
+                                <input type="text" name="groups[group_name]" value="{{ group.group_name }}" maxlength="20" class="colorful w100"/>
                             {% endif %}
                             </div>
                             <div class="col-md-4 col-sm-4 col-xs-4">
@@ -137,7 +137,7 @@
                     <div class="row row-inside">
                         <div class="col-md-2 col-sm-2 col-xs-2 {{ class }}">
                             <label class="visible-sm-inline-block visible-xs-inline-block w100" for="groups[group_name]">Name: </label>
-                            <input type="text" name="groups[group_name]" value="" maxlength="20" class="colorful"/>
+                            <input type="text" name="groups[group_name]" value="" maxlength="20" class="colorful w100"/>
                         </div>
                         <div class="col-md-4 col-sm-4 col-xs-4 {{ class }}">
                             <label class="visible-sm-inline-block visible-xs-inline-block w100" for="groups[group_description]">Description: </label>
@@ -162,7 +162,7 @@
                             </select>
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-2 {{ class }}">
-                            <label for="groups[group_immutable]" class="w100">Immutable: </label>
+                            <label for="groups[group_immutable]" class="w100 aright">Immutable: </label>
                             <input type="checkbox" name="groups[group_immutable]" value="1"/>
                         </div>
                         <div class="col-md-2 {{ class }}">
@@ -183,7 +183,7 @@
             <h3>Instructions</h3>
             <ul>
                 <li>Certain groups are fixed so that the app will work. They are not visible.</li>
-                <li>Group Name is a single word, alpha characters only. The app will change the group name to camelCase where spaces are, removing any other characters.</li>
+                <li>Group Name is a single word, alpha characters only. The app will change the group name to camelCase, then capitalizing the first letter, removing any other characters.</li>
                 <li>Group Description can be anything that is meaningful. Text will be sanitized.</li>
                 <li>Group Auth Level sets a general authorization level for the group, 0-9, 9 having the highest authorization level.</li>
                 <li>Immutable means the name cannot be changed and the group can not be deleted. <b class="red bold">Be careful!</b>
@@ -191,3 +191,30 @@
         </div>
     </div>
 {% endblock %}
+{# Expected Array
+    [
+        'description'   => '',
+        'title'         => '',
+        'base_url'      => '',
+        'lang'          => 'en',
+        'charset'       => 'utf8',
+        'public_dir'    => PUBLIC_DIR,
+        'site_url'      => SITE_URL,
+        'rights_holder' => RIGHTS_HOLDER
+        'a_message'   => array(),
+        'a_groups'    => array(
+            [
+                'group_id'          => '',
+                'group_name'        => '',
+                'group_description' => '',
+                'group_auth_level'  => 0,
+                'group_immutable'   => 0
+            ]
+        ),
+        'tolken'  => $_SESSION['token'],
+        'form_ts' => $_SESSION['idle_timestamp'],
+        'hobbit'  => '',
+        'menus'   => $this->a_links,
+        'adm_lvl' => $this->adm_level
+    ]
+#}

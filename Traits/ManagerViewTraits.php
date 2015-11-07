@@ -55,7 +55,8 @@ trait ManagerViewTraits
         $this->o_db     = $o_di->get('db');
     }
     /**
-     *  Sets the class property $login_id to a value of the highest role level found or 999 if not found.
+     *  Sets the class property $adm_level to a value of the highest auth level
+     *  found or 0 if not found.
      *  @param string $login_id
      */
     private function setAuthLevel($login_id = '')
@@ -79,8 +80,8 @@ trait ManagerViewTraits
         if ($this->adm_level == '') {
             $this->setAuthLevel();
         }
-        $person_role_level = $this->adm_level;
-        $this->logIt('Person role level: ' . $person_role_level, LOG_OFF, $meth . __LINE__);
+        $person_auth_level = $this->adm_level;
+        $this->logIt('Person adm level: ' . $person_auth_level, LOG_OFF, $meth . __LINE__);
         $current_route_path = $this->o_router->getRoutePath();
         $o_routes = new RoutesHelper($this->o_di, '');
         $a_links = include LIBRARY_CONFIG_PATH . '/links_config.php';
@@ -90,7 +91,7 @@ trait ManagerViewTraits
             $a_route_parts = $o_routes->getRouteParts();
 
             $this->logIt('Route Parts: ' . var_export($a_route_parts, TRUE), LOG_OFF, $meth . __LINE__);
-            if ($person_role_level > $a_route_parts['min_auth_level']) {
+            if ($person_auth_level > $a_route_parts['min_auth_level']) {
                 unset($a_links[$key]);
             }
             else {
