@@ -96,7 +96,7 @@
     {% endif %}
             </div>
         </div>
-    {% if adm_lvl <= 1 and action == 'update' %}
+    {% if adm_lvl == 10 and action == 'update' %}
         <div class="row">
             <div class="col-md-2 col-sm-2 col-xs-2  aright">
                 <label>Created On:</label>
@@ -168,7 +168,7 @@
                 <button type="submit" value="create" class="btn btn-primary btn-sm">Create New Person</button>
     {% else %}
                 <button type="submit" value="update" class="btn btn-primary btn-sm">Update Person</button>
-        {% if person.is_immutable == 0 or adm_lvl <= 1 %}
+        {% if person.is_immutable == 0 or adm_lvl == 10 %}
                 <button type="submit" value="verify" class="btn btn-warning btn-sm">Delete</button>
         {% endif %}
     {% endif %}
@@ -233,7 +233,7 @@
         'tolken'  => 'token',
         'form_ts' => 'idle_timestamp',
         'hobbit'  => '',
-        'adm_lvl' => 999,
+        'adm_lvl' => 0,
         'menus'   => array()
     ]
 #}

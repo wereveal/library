@@ -61,13 +61,13 @@ trait ManagerViewTraits
     private function setAuthLevel($login_id = '')
     {
         if ($login_id != '') {
-            $this->adm_level = $this->o_auth->getHighestRoleLevel($login_id);
+            $this->adm_level = $this->o_auth->getHighestAuthLevel($login_id);
         }
         elseif (isset($_SESSION['login_id'])) {
-            $this->adm_level = $this->o_auth->getHighestRoleLevel($_SESSION['login_id']);
+            $this->adm_level = $this->o_auth->getHighestAuthLevel($_SESSION['login_id']);
         }
         else {
-            $this->adm_level = 999;
+            $this->adm_level = 0;
         }
     }
     /**
@@ -90,14 +90,16 @@ trait ManagerViewTraits
             $a_route_parts = $o_routes->getRouteParts();
 
             $this->logIt('Route Parts: ' . var_export($a_route_parts, TRUE), LOG_OFF, $meth . __LINE__);
-            if ($person_role_level > $a_route_parts['min_role_level']) {
+            if ($person_role_level > $a_route_parts['min_auth_level']) {
                 unset($a_links[$key]);
             }
-            if ($a_link['url'] == $current_route_path) {
-                $a_links[$key]['class'] = 'menu-active';
-            }
             else {
-                $a_links[$key]['class'] = 'menu-inactive';
+                if ($a_link['url'] == $current_route_path) {
+                    $a_links[$key]['class'] = 'menu-active';
+                }
+                else {
+                    $a_links[$key]['class'] = 'menu-inactive';
+                }
             }
         }
         $this->a_links = $a_links;

@@ -17,7 +17,6 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
-use Ritc\Library\Models\GroupRoleMapModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -41,13 +40,11 @@ class GroupsAdmimController implements MangerControllerInterface
         $this->o_router  = $o_di->get('router');
         $this->o_session = $o_di->get('session');
         $this->o_model   = new GroupsModel($o_db);
-        $this->o_grm     = new GroupRoleMapModel($o_db);
         $this->o_view    = new GroupsAdminView($o_di);
         $this->a_post    = $this->o_router->getPost();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
-            $this->o_grm->setElog($this->o_elog);
         }
     }
     public function render()

@@ -19,13 +19,13 @@
             <div class="row {{ class }}">
                 <form action="{{ public_dir }}/manager/constants/save/" method= "post">
                 <div class="col-md-4 col-sm-4 col-xs-4">
-                    <label for="constant[const_name[">Constant Name: </label><input type="text" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful" />
+                    <label for="constant[const_name[">Constant Name: </label><input type="text" name="constant[const_name]" value="" maxlength="32" class="colorful w200" />
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-4">
-                    <label for="constant[const_value]">Constant Value: </label><input type="text" name="constant[const_value]" value="" size="30" maxlength="32" class="colorful"/>
+                    <label for="constant[const_value]">Constant Value: </label><input type="text" name="constant[const_value]" value="" maxlength="32" class="colorful w200"/>
                 </div>
                 <div class="col-md-2 col-sm-2 col-xs-2">
-                    {% if adm_lvl <= 1 %}
+                    {% if adm_lvl == 10 %}
                     <label for="constant[const_immutable]">Immutable: </label><input type="checkbox" name="constant[const_immutable]" value="1">
                     {% else %}
                         &nbsp;
@@ -49,17 +49,17 @@
                     {% if row.const_immutable == 1 %}
                         <input type="hidden" name="constant[const_name]" id="constant[const_name]" value="{{ row.const_name }}" />{{ row.const_name }}
                     {% else %}
-                        <input type="text" name="constant[const_name]" id="constant[const_name]" value="{{ row.const_name }}">
+                        <input type="text" name="constant[const_name]" id="constant[const_name]" value="{{ row.const_name }}" class="colorful w200">
                     {% endif %}
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-4">
                     <label for="constant[const_value]">Constant Value: </label>
-                    <input type="text" name="constant[const_value]" value="{{ row.const_value }}" size="30" maxlength="32" class="colorful"/>
+                    <input type="text" name="constant[const_value]" value="{{ row.const_value }}" size="30" maxlength="32" class="colorful w200"/>
 
                 </div>
                 <div class="col-md-2 col-sm-2 col-xs-2">
                     <label for="constant[const_immutable]">Immutable: </label>
-                    {% if row.const_immutable == 1 and adm_lvl > 1 %}
+                    {% if row.const_immutable == 1 and adm_lvl < 10 %}
                         True
                     {% else %}
                         {% if row.const_immutable == 1 %}
@@ -88,13 +88,13 @@
             <div class="row {{ class }}">
                 <form action="{{ public_dir }}/manager/constants/save/" method= "post">
                     <div class="col-md-4 col-sm-4 col-xs-4">
-                        <label for="constant[const_name]">Constant Name: </label><input type="text" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful" />
+                        <label for="constant[const_name]">Constant Name: </label><input type="text" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful w200" />
                     </div>
                     <div class="col-md-4 col-sm-4 col-xs-4">
-                        <label for="constant[const_value]">Constant Value: </label><input type="text" name="constant[const_value]" value="" size="30" maxlength="32" class="colorful"/>
+                        <label for="constant[const_value]">Constant Value: </label><input type="text" name="constant[const_value]" value="" maxlength="32" class="colorful w200"/>
                     </div>
                     <div class="col-md-2 col-sm-2 col-xs-2">
-                        {% if adm_lvl <= 1 %}
+                        {% if adm_lvl == 10 %}
                             <label for="constant[const_immutable]">Immutable: </label><input type="checkbox" name="is_immutable" value="1">
                         {% else %}
                             &nbsp;

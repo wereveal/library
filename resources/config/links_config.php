@@ -41,14 +41,6 @@ return array(
         'extras'      => ''
     ],
     [
-        'text'        => 'Roles Manager',
-        'url'         => '/manager/roles/',
-        'description' => 'Create and manage roles to which groups are assigned.',
-        'name'        => 'Roles',
-        'class'       => '',
-        'extras'      => ''
-    ],
-    [
         'text'        => 'Tests',
         'url'         => '/manager/tests/',
         'description' => 'Tests',
