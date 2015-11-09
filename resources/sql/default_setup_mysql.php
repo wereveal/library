@@ -1,8 +1,14 @@
 <?php
 return [
-"DROP TABLE IF EXISTS `{$dbPrefix}constants`",
+"DROP TABLE IF EXISTS `{dbPrefix}people_group_map`",
+"DROP TABLE IF EXISTS `{dbPrefix}routes_group_map`",
+"DROP TABLE IF EXISTS `{dbPrefix}constants`",
+"DROP TABLE IF EXISTS `{dbPrefix}groups`",
+"DROP TABLE IF EXISTS `{dbPrefix}page`",
+"DROP TABLE IF EXISTS `{dbPrefix}people`",
+"DROP TABLE IF EXISTS `{dbPrefix}routes`",
 
-"CREATE TABLE `{$dbPrefix}constants` (
+"CREATE TABLE `{dbPrefix}constants` (
   `const_id` int(11) NOT NULL AUTO_INCREMENT,
   `const_name` varchar(64) NOT NULL DEFAULT '',
   `const_value` varchar(64) NOT NULL DEFAULT '',
@@ -11,9 +17,9 @@ return [
   UNIQUE KEY `config_key` (`const_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
 
-"LOCK TABLES `{$dbPrefix}constants` WRITE",
+"LOCK TABLES `{dbPrefix}constants` WRITE",
 
-"INSERT INTO `{$dbPrefix}constants`
+"INSERT INTO `{dbPrefix}constants`
     (`const_name`, `const_value`, `const_immutable`)
 VALUES
 	('DISPLAY_DATE_FORMAT','m/d/Y',1),
@@ -40,34 +46,30 @@ VALUES
 
 "UNLOCK TABLES",
 
-"DROP TABLE IF EXISTS `{$dbPrefix}groups`",
-
-"CREATE TABLE `{$dbPrefix}groups` (
+"CREATE TABLE `{dbPrefix}groups` (
   `group_id` int(11) NOT NULL AUTO_INCREMENT,
   `group_name` varchar(40) NOT NULL,
   `group_description` varchar(128) NOT NULL DEFAULT '',
-  `group_auth_level` int(11) NOT NULL DEFALUT '0',
+  `group_auth_level` int(11) NOT NULL DEFAULT '0',
   `group_immutable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`group_id`),
   UNIQUE KEY `group_name` (`group_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
 
-"LOCK TABLES `{$dbPrefix}groups` WRITE",
+"LOCK TABLES `{dbPrefix}groups` WRITE",
 
-"INSERT INTO `{$dbPrefix}groups`
+"INSERT INTO `{dbPrefix}groups`
     (`group_id`, `group_name`, `group_description`, `group_auth_level`, `group_immutable`)
 VALUES
 	(1,'SuperAdmin','The group for super administrators. There should be only a couple of these.',10,1),
 	(2,'Managers','Most people accessing the manager should be in this group.',9,1),
-	(3,'Editor','Editor for the CMS which doesn&#039",t exist in the FtpManager',5,1),
-	(4,'Registered','The group for people that should&#039",t have access to the manager.',3,1),
+	(3,'Editor','Editor for the CMS which does not exist in the FtpManager',5,1),
+	(4,'Registered','The group for people that should not have access to the manager.',3,1),
 	(5,'Anonymous','Not logged in, possibly unregistered',0,1)",
 
 "UNLOCK TABLES",
 
-"DROP TABLE IF EXISTS `{$dbPrefix}routes`",
-
-"CREATE TABLE `{$dbPrefix}routes` (
+"CREATE TABLE `{dbPrefix}routes` (
   `route_id` int(11) NOT NULL AUTO_INCREMENT,
   `route_path` varchar(128) NOT NULL,
   `route_class` varchar(64) NOT NULL,
@@ -78,26 +80,24 @@ VALUES
   UNIQUE KEY `route_path` (`route_path`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1",
 
-"LOCK TABLES `{$dbPrefix}routes` WRITE",
+"LOCK TABLES `{dbPrefix}routes` WRITE",
 
-"INSERT INTO `{$dbPrefix}routes`
+"INSERT INTO `{dbPrefix}routes`
     (`route_id`, `route_path`, `route_class`, `route_method`, `route_action`, `route_immutable`)
 VALUES
 	(1,'/manager/','ManagerController','render','',1),
-	(2,'/manager/login/','ManagerController','render','verifyLogin',1),
-	(3,'/manager/routes/','ManagerController','renderRoutesAdmin','',1),
-	(4,'/manager/constants/','ManagerController','renderConstantsAdmin','',1),
-	(5,'/manager/people/','ManagerController','renderPeopleAdmin','',1),
-	(6,'/manager/groups/','ManagerController','renderGroupsAdmin','',1),
-	(7,'/manager/pages/','ManagerController','renderPageAdmin','',1),
-	(8,'/manager/tests/','ManagerController','renderTestsAdmin','',1),
-	(9,'/manager/logout/','ManagerController','render','logout',1)",
+	(2,'/manager/constants/','ManagerController','renderConstantsAdmin','',1),
+	(3,'/manager/groups/','ManagerController','renderGroupsAdmin','',1),
+	(4,'/manager/login/','ManagerController','render','verifyLogin',1),
+	(5,'/manager/logout/','ManagerController','render','logout',1),
+	(6,'/manager/pages/','ManagerController','renderPageAdmin','',1),
+	(7,'/manager/people/','ManagerController','renderPeopleAdmin','',1),
+	(8,'/manager/routes/','ManagerController','renderRoutesAdmin','',1),
+	(9,'/manager/tests/','ManagerController','renderTestsAdmin','',1)",
 
 "UNLOCK TABLES",
 
-"DROP TABLE IF EXISTS `{$dbPrefix}page`",
-
-"CREATE TABLE `{$dbPrefix}page` (
+"CREATE TABLE `{dbPrefix}page` (
   `page_id` int(11) NOT NULL AUTO_INCREMENT,
   `page_url` varchar(255) NOT NULL DEFAULT '/',
   `page_type` varchar(20) NOT NULL DEFAULT 'text/html',
@@ -111,9 +111,9 @@ VALUES
   UNIQUE KEY `pages_url` (`page_url`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
 
-"LOCK TABLES `{$dbPrefix}page` WRIT
+"LOCK TABLES `{dbPrefix}page` WRITE",
 
-"INSERT INTO `{$dbPrefix}page`
+"INSERT INTO `{dbPrefix}page`
     (`page_url`, `page_type`, `page_title`, `page_description`, `page_base_url`, `page_lang`, `page_charset`, `page_immutable`)
 VALUES
 	('/manager/','text/html','Manager','Manages People, Places and Things','/','en','utf-8',1),
@@ -136,9 +136,7 @@ VALUES
 
 "UNLOCK TABLES",
 
-"DROP TABLE IF EXISTS `{$dbPrefix}people`",
-
-"CREATE TABLE `{$dbPrefix}people` (
+"CREATE TABLE `{dbPrefix}people` (
   `people_id` int(11) NOT NULL AUTO_INCREMENT,
   `login_id` varchar(60) NOT NULL,
   `real_name` varchar(50) NOT NULL,
@@ -155,19 +153,17 @@ VALUES
   UNIQUE KEY `loginid` (`login_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
 
-"LOCK TABLES `{$dbPrefix}people` WRITE",
+"LOCK TABLES `{dbPrefix}people` WRITE",
 
-"INSERT INTO `{$dbPrefix}people`
+'INSERT INTO `{dbPrefix}people`
     (`people_id`, `login_id`, `real_name`, `short_name`, `password`, `description`, `is_logged_in`, `bad_login_count`, `bad_login_ts`, `is_active`, `is_immutable`, `created_on`)
 VALUES
-	(1,'SuperAdmin','Super Admin','GSA','$2y$10$mAQZrjwnPDkfpdhmdfqxFuBJwY7w5HeCli2qs2H2Kg69w0MooNsJW','The all powerful Admin',0,0,0,1,1,'2012-08-12 02:55:28'),
-	(2,'Admin','Admin','ADM','$2y$10$mAQZrjwnPDkfpdhmdfqxFuBJwY7w5HeCli2qs2H2Kg69w0MooNsJW','Allowed to admin the backend.',1,0,0,1,1,'2015-09-04 13:15:55')",
+	(1,"SuperAdmin","Super Admin","GSA","$2y$10$mAQZrjwnPDkfpdhmdfqxFuBJwY7w5HeCli2qs2H2Kg69w0MooNsJW","The all powerful Admin",0,0,0,1,1,"2012-08-12 02:55:28"),
+	(2,"Admin","Admin","ADM","$2y$10$mAQZrjwnPDkfpdhmdfqxFuBJwY7w5HeCli2qs2H2Kg69w0MooNsJW","Allowed to admin the backend.",1,0,0,1,1,"2015-09-04 13:15:55")',
 
 "UNLOCK TABLES",
 
-"DROP TABLE IF EXISTS `{$dbPrefix}people_group_map`",
-
-"CREATE TABLE `{$dbPrefix}people_group_map` (
+"CREATE TABLE `{dbPrefix}people_group_map` (
   `pgm_id` int(11) NOT NULL AUTO_INCREMENT,
   `people_id` int(11) NOT NULL,
   `group_id` int(11) NOT NULL DEFAULT '3',
@@ -177,9 +173,9 @@ VALUES
   KEY `group_id` (`group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
 
-"LOCK TABLES `{$dbPrefix}people_group_map` WRITE",
+"LOCK TABLES `{dbPrefix}people_group_map` WRITE",
 
-"INSERT INTO `{$dbPrefix}people_group_map`
+"INSERT INTO `{dbPrefix}people_group_map`
     (`people_id`, `group_id`)
 VALUES
 	(1,1),
@@ -190,49 +186,45 @@ VALUES
 
 "UNLOCK TABLES",
 
-"DROP TABLE IF EXISTS `{$dbPrefix}routes_group_map`",
-
-"CREATE TABLE `{$dbPrefix}routes_group_map` (
+"CREATE TABLE `{dbPrefix}routes_group_map` (
   `rgm_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `route_id` int(11) NOT NULL DEFAULT '0',
   `group_id` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`rgm_id`),
   UNIQUE KEY `rgm_key` (`route_id`,`group_id`),
   KEY `group_id` (`group_id`),
-  CONSTRAINT `{$dbPrefix}routes_group_map_ibfk_1` FOREIGN KEY (`route_id`) REFERENCES `{$dbPrefix}routes` (`route_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `{$dbPrefix}routes_group_map_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `{$dbPrefix}groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `{dbPrefix}routes_group_map_ibfk_1` FOREIGN KEY (`route_id`) REFERENCES `{dbPrefix}routes` (`route_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `{dbPrefix}routes_group_map_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `{dbPrefix}groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
 
-"LOCK TABLES `{$dbPrefix}routes_group_map` WRITE",
+"LOCK TABLES `{dbPrefix}routes_group_map` WRITE",
 
-"INSERT INTO `{$dbPrefix}routes_group_map`
+"INSERT INTO `{dbPrefix}routes_group_map`
     (`route_id`, `group_id`)
 VALUES
 	(1,1),
 	(1,2),
 	(2,1),
 	(2,2),
-	(2,3),
-	(2,4),
-	(2,5),
 	(3,1),
 	(3,2),
 	(4,1),
 	(4,2),
+	(4,3),
+	(4,4),
+	(4,5),
 	(5,1),
 	(5,2),
+	(5,3),
+	(5,4),
+	(5,5),
 	(6,1),
 	(6,2),
 	(7,1),
 	(7,2),
 	(8,1),
 	(8,2),
-	(9,1),
-	(10,1),
-	(10,2),
-	(10,3),
-	(10,4),
-	(10,5)",
+	(9,1)",
 
 "UNLOCK TABLES"
 ];
