@@ -163,7 +163,6 @@ class DatesTimes
     }
     public static function getInterval($start_date = '', $end_date = '')
     {
-        // error_log($start_date . ' = ' . $end_date);
         $start_date = $start_date == '' ? date("m/d/Y H:i:s") : $start_date;
         $end_date   = $end_date   == '' ? date("m/d/Y H:i:s") : $end_date;
         if (DatesTimes::isUnixTimestamp($start_date)) {
@@ -172,17 +171,13 @@ class DatesTimes
             $start_date = date('m/d/Y H:i:s', strtotime($start_date));
         }
         if (DatesTimes::isUnixTimestamp($end_date)) {
-            // error_log($end_date . ' is a unix_timestamp');
             $end_date = date('m/d/Y H:i:s', (int) $end_date);
         } else {
             $end_date = date('m/d/Y H:i:s', strtotime($end_date));
         }
         try {
-            // error_log($end_date);
             $o_start = new \DateTime($start_date);
             $o_end   = new \DateTime($end_date);
-            // error_log($start_date . '=' . $o_start->format("m/d/Y H:i:s"));
-            // error_log($end_date . '=' . $o_end->format('m/d/Y H:i:s'));
             return $o_start->diff($o_end);
         }
         catch (\Exception $e) {
@@ -479,7 +474,6 @@ class DatesTimes
         if ($value == '') {
             return false;
         }
-        // error_log("Str to time for value '" . $value . "' -- '" . strtotime($value) . "' in " . __METHOD__ . '.' . __LINE__);
         switch (strtotime($value)) {
             case '':
                 return (date('m/d/Y', (int) $value) != '' ? true : false);
@@ -492,7 +486,6 @@ class DatesTimes
     public static function isValidDateFormat($date_format = '')
     {
         $a_date_info = date_parse_from_format($date_format, date($date_format));
-        // error_log(var_export($a_date_info, true));
         if ($a_date_info['error_count'] > 0) {
             return false;
         } elseif ($a_date_info['year']

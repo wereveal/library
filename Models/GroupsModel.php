@@ -119,7 +119,7 @@ class GroupsModel implements ModelInterface
             $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
         }
         else {
-            $where = " ORDER BY 'group_name'";
+            $where = " ORDER BY group_name";
         }
         $sql = "
             SELECT group_id, group_name, group_description, group_auth_level, group_immutable

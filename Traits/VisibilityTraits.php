@@ -116,7 +116,7 @@ trait VisibilityTraits {
             return true;
         }
         else {
-            // error_log("Required property [{$var}] has not been set!", 4);
+            error_log("Required property [{$var}] has not been set!", 4);
             return false;
         }
     }

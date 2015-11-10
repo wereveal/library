@@ -83,7 +83,7 @@ class PeopleAdminView
         else {
             $a_values['a_message'] = '';
         }
-        error_log('twig values' . var_export($a_values, true));
+        // error_log('twig values' . var_export($a_values, true));
         $html = $this->o_twig->render('@pages/people_admin.twig', $a_values);
         return $html;
     }
@@ -117,11 +117,12 @@ class PeopleAdminView
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $a_groups = $this->o_group_model->read();
+        $this->logIt('A group values: ' . var_export($a_groups, true), LOG_ON, $meth . __LINE__);
         foreach ($a_groups as $key => $a_group) {
             $a_groups[$key]['checked'] = '';
         }
         $a_values['person']['groups'] = $a_groups;
-        $this->logIt('A person values: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
+        $this->logIt('A person values: ' . var_export($a_values, true), LOG_ON, $meth . __LINE__);
         return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }
     public function renderModify($people_id = -1)

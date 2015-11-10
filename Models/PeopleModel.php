@@ -127,7 +127,7 @@ class PeopleModel implements ModelInterface
             $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
         }
         else {
-            $where = " ORDER BY 'login_id'";
+            $where = " ORDER BY login_id";
         }
         $sql = "
             SELECT people_id,
@@ -145,7 +145,7 @@ class PeopleModel implements ModelInterface
             FROM {$this->db_prefix}people
             {$where}
         ";
-        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
         $results = $this->o_db->search($sql, $a_search_values);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
