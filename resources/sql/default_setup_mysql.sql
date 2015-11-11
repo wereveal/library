@@ -184,7 +184,7 @@ CREATE TABLE `{$dbPrefix}people` (
   `people_id` int(11) NOT NULL AUTO_INCREMENT,
   `login_id` varchar(60) NOT NULL,
   `real_name` varchar(50) NOT NULL,
-  `short_name` varchar(8) NOT NULL DEFAULT '',
+  `short_name` varchar(8) NOT NULL,
   `password` varchar(128) NOT NULL,
   `description` varchar(250) NOT NULL DEFAULT '',
   `is_logged_in` tinyint(2) NOT NULL DEFAULT '0',
@@ -194,7 +194,8 @@ CREATE TABLE `{$dbPrefix}people` (
   `is_immutable` tinyint(1) NOT NULL DEFAULT '0',
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`people_id`),
-  UNIQUE KEY `loginid` (`login_id`)
+  UNIQUE KEY `loginid` (`login_id`),
+  UNIQUE KEY `shortname` (`short_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `{$dbPrefix}people` WRITE;

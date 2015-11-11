@@ -107,7 +107,7 @@ CREATE TABLE {$dbPrefix}people (
   people_id SERIAL,
   login_id character varying(60) NOT NULL,
   real_name character varying(50) NOT NULL,
-  short_name character varying(8) NOT NULL DEFAULT '',
+  short_name character varying(8) NOT NULL,
   password character varying(128) NOT NULL,
   description character varying(250) NOT NULL DEFAULT '',
   is_logged_in smallint NOT NULL DEFAULT 0,
@@ -117,7 +117,8 @@ CREATE TABLE {$dbPrefix}people (
   is_immutable smallint NOT NULL DEFAULT 0,
   created_on timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (people_id),
-  UNIQUE (login_id)
+  UNIQUE (login_id),
+  UNIQUE (short_name)
 );
 
 INSERT INTO {$dbPrefix}people
