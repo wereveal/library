@@ -145,7 +145,7 @@ class PeopleModel implements ModelInterface
             FROM {$this->db_prefix}people
             {$where}
         ";
-        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         $results = $this->o_db->search($sql, $a_search_values);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -194,31 +194,19 @@ class PeopleModel implements ModelInterface
             'is_immutable'
         ];
         $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
-        $sql_set = $this->o_db->buildSqlSet($a_values, ['people_id', 'login_id']);
-        if (isset($a_values['people_id'])) {
-            $sql_where = 'WHERE people_id = :people_id';
-            if (isset($a_values['login_id'])) {
-                unset($a_values['login_id']);
-            }
+        if ($a_values['is_immutable'] == 1 && isset($a_values['login_id'])) {
+            unset($a_values['login_id']);
         }
-        elseif (isset($a_values['login_id'])) {
-            $sql_where = 'WHERE login_id = :login_id';
-            if (isset($a_values['people_id'])) {
-                unset($a_values['people_id']);
-            }
-        }
-        else { // it should never fall into this.
-            $sql_where = '';
-        }
-        if ($sql_where == '' || $sql_set == '') {
+        $sql_set = $this->o_db->buildSqlSet($a_values, ['people_id']);
+        if ($sql_set == '') {
             return false;
         }
         $sql = "
             UPDATE {$this->db_prefix}people
             {$sql_set}
-            {$sql_where}
+            WHERE people_id = :people_id
         ";
-        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
         $results = $this->o_db->update($sql, $a_values, true);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -302,14 +290,14 @@ class PeopleModel implements ModelInterface
     public function readPeopleRecord($user = '')
     {
         if ($user == '') { return array(); }
-        if (ctype_digit($user)) {
+        if (is_numeric($user)) {
             $a_search_by = ['$people_id' => $user];
         }
         else {
             $a_search_by = ['login_id' => $user];
         }
         $a_records = $this->read($a_search_by);
-        if (is_array($a_records[0])) {
+        if (isset($a_records[0]) && is_array($a_records[0])) {
             return $a_records[0];
         } else {
             return array();
@@ -446,13 +434,39 @@ class PeopleModel implements ModelInterface
     ### More complex methods using multiple tables ###
     /**
      *  Deletes the person and related records.
-     *  @param array $a_person
+     *  @param int $people_id
      *  @return bool
      */
-    public function deletePerson(array $a_person = array())
+    public function deletePerson($people_id = -1)
     {
-        if ($a_person == array()) {
+        if ($people_id == -1) {
             return false;
+        }
+        $delete_person_sql = "
+            DELETE FROM {$this->db_prefix}people
+            WHERE people_id = :people_id
+        ";
+        if ($this->o_db->startTransaction()) {
+            if ($this->o_pgm->deleteByPeopleId($people_id)) {
+                if ($this->o_db->delete($delete_person_sql, [':people_id' => $people_id])) {
+                    if ($this->o_db->commitTransaction()) {
+                        return true;
+                    }
+                    else {
+                        $this->error_message = "Could not commit the transaction.";
+                    }
+                }
+                else {
+                    $this->error_message = $this->o_db->getSqlErrorMessage();
+                }
+            }
+            else {
+                $this->error_message = $this->o_pgm->getErrorMessage();
+            }
+            $this->o_db->rollbackTransaction();
+        }
+        else {
+            $this->error_message = "Could not start transaction.";
         }
         return false;
     }
@@ -637,6 +651,21 @@ class PeopleModel implements ModelInterface
             if (isset($results[0]['people_id']) && $results[0]['people_id'] == $people_id) {
                 return true;
             }
+        }
+        return false;
+    }
+    public function isExistingLoginId($login_id = '')
+    {
+        if ($this->readPeopleRecord($login_id) == array()) {
+            return false;
+        }
+        return true;
+    }
+    public function isExistingShortName($short_name = '')
+    {
+        $a_results = $this->read(['short_name' => $short_name]);
+        if (isset($a_results[0]['short_name']) && $a_results[0]['short_name'] == $short_name) {
+            return true;
         }
         return false;
     }

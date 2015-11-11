@@ -180,17 +180,32 @@ class PeopleAdminView
     }
     public function renderVerifyDelete(array $a_posted_values = array())
     {
+        $meth = __METHOD__ . '.';
+        $this->logIt('Posted Values: ' . var_export($a_posted_values, TRUE), LOG_ON, $meth . __LINE__);
         if ($a_posted_values == array()) {
             return $this->renderList(['message' => 'Sorry, a problem has occured, please try again.', 'type' => 'failure']);
         }
-        $a_person = $this->o_people_model->read(['people_id' => $a_posted_values['people_id']]);
+        $a_person = $this->o_people_model->read(['people_id' => $a_posted_values['person']['people_id']]);
+        $this->logIt('Person found: ' . var_export($a_person, TRUE), LOG_ON, $meth . __LINE__);
         if ($a_person[0]['is_immutable'] == 1) {
             return $this->renderList(['message' => 'Sorry, that user can not be deleted.', 'type' => 'failure']);
         }
         $a_page_values = $this->getPageValues();
-        $a_twig_values = array_merge($a_page_values, $a_posted_values);
+        $a_values = [
+            'what'         => 'Person',
+            'name'         => $a_posted_values['person']['real_name'],
+            'public_dir'   => PUBLIC_DIR,
+            'where'        => 'people',
+            'btn_value'    => 'Person',
+            'hidden_name'  => 'people_id',
+            'hidden_value' => $a_posted_values['person']['people_id'],
+            'tolken'       => $a_posted_values['tolken'],
+            'form_ts'      => $a_posted_values['form_ts']
+        ];
+        $a_twig_values = array_merge($a_page_values, $a_values);
         $a_twig_values['menus'] = $this->a_links;
-        return $this->o_twig->render('@pages/verify_delete_person.twig', $a_twig_values);
+        $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_ON, $meth . __LINE__);
+        return $this->o_twig->render('@pages/verify_delete.twig', $a_twig_values);
     }
     /**
      * Something to keep phpStorm from complaining until I use the ViewHelper.
