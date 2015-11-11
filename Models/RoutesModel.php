@@ -96,7 +96,7 @@ class RoutesModel implements ModelInterface
             $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
         }
         else {
-            $where = " ORDER BY 'route_path'";
+            $where = " ORDER BY route_path";
         }
         $sql = "
             SELECT route_id, route_path, route_class, route_method, route_action, route_immutable

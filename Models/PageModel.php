@@ -115,7 +115,7 @@ class PageModel implements ModelInterface
             $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
         }
         else {
-            $where = " ORDER BY 'page_path'";
+            $where = " ORDER BY page_path";
         }
         $sql = "
             SELECT
