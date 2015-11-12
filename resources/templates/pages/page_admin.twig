@@ -2,7 +2,7 @@
 {% block body %}
     <div class="row">
         <div class="col-md-12">
-            <h1>Welcome! This is the manager to add/modify/delete people.</h1>
+            <h1>Welcome! {{ page_title }}</h1>
         </div>
     </div>
     {% if a_message.message != '' %}
@@ -16,10 +16,10 @@
         <div class="col-md-12">
             <div class="row {{ class }}">
                 <div class="col-md-12">
-                <form action="{{ public_dir }}/manager/people/new/" method= "post">
+                <form action="{{ public_dir }}/manager/page/new/" method= "post">
                     <div class="row row-inside">
-                        <div class="col-md-3 .col-md-offset-9">
-                            <button type="submit" name="submit" value="create" class="btn btn-primary btn-xs">Create New Person</button>
+                        <div class="col-md-2 .col-md-offset-10">
+                            <button type="submit" name="submit" value="create" class="btn btn-primary btn-xs">Create New Page</button>
                             <input type="hidden" name="tolken" value="{{ tolken }}" />
                             <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                             <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
@@ -29,40 +29,34 @@
                 </div>
             </div>
         {% set x = -1 %}
-        {% for person in a_people %}
-            {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+        {% for page in a_pages %}
+            {% if page.page_immutable != 1 or adm_lvl == 10 %}
+                {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <div class="col-md-12">
-                    <form action="{{ public_dir }}/manager/people/modify/" method="post">
+                    <form action="{{ public_dir }}/manager/page/modify/" method="post">
                         <div class="row row-inside {{ class }}">
-                            <div class="col-md-2">
-                                <span class="inline-block bold w75 aright pad-right-12">LoginID:</span>
-                                {{ person.login_id }}
+                            <div class="col-md-4">
+                                <span class="inline-block bold w75 aright pad-right-12">URL:</span>
+                                {{ page.page_url }}
                             </div>
-                            <div class="col-md-3">
-                                <span class="inline-block bold w75 aright pad-right-12">Name:</span>
-                                {{ person.real_name }}
+                            <div class="col-md-6">
+                                <span class="inline-block bold w75 aright pad-right-12">Title:</span>
+                                {{ page.page_title }}
                             </div>
-                            <div class="col-md-5">
-                                <span class="inline-block bold w100 aright pad-right-12">Description:</span>
-                            {% if person.description|length > 45 %}
-                                {{ person.description|slice(0, 45) }}....
-                            {% else %}
-                                {{ person.description }}
-                            {% endif %}
-                            </div>
-                            <div class="col-md-2">
+                             <div class="col-md-2">
                                 <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Modify</button>
                                 <input type="hidden" name="tolken" value="{{ tolken }}" />
                                 <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                                 <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                                <input type="hidden" name="people_id" value="{{ person.people_id }}" />
+                                <input type="hidden" name="people_id" value="{{ page.page_id }}" />
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            {% set x = x * -1 %}
+                {% set x = x * -1 %}
+            {% endif %}
         {% endfor %}
         </div>
     </div>

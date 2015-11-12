@@ -28,18 +28,15 @@ VALUES
     ('/manager/constants/verify/','text/html','Manager for Constants','Manages the Constants, verifies that the constant should be deleted.','/','en','utf-8',1),
     ('/manager/groups/','text/html','Manager for Groups','Manages the Groups','/','en','utf-8',1),
     ('/manager/groups/verify/','text/html','Manager for Groups','Manages the groups, this page verifies deletion.','/','en','utf-8',1),
+    ('/manager/login/','text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',1),
+    ('/manager/logout/','text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',0),
     ('/manager/pages/','text/html','Manager for Pages','Manages pages head information primarily','/','en','utf-8',1),
     ('/manager/pages/verify/','text/html','Manager for Pages','Manages pages, verifies if record should be deleted','/','en','utf-8',1),
     ('/manager/people/','text/html','Manager for People','Manages people','/','en','utf-8',1),
-    ('/manager/people/new/','text/html','Manager for People','Manages people, form to add a new person.','/','en','utf-8',1),
-    ('/manager/people/modify/','text/html','Manager for People','Manages people, for modifying a person','/','en','utf-8',1),
     ('/manager/people/verify/','text/html','Manager for People','Manages people, verifies a person should be deleted.','/','en','utf-8',1),
-    ('/manager/people/delete/','text/html','Manager for People','Manages people','/','en','utf-8',1),
     ('/manager/routes/','text/html','Manager for Routes','Manages the routes','/','en','utf-8',1),
     ('/manager/routes/verify/','text/html','Manager for Routes','Manages the routes, verifies route should be deleted.','/','en','utf-8',1),
-    ('/manager/tests/','text/html','Manager Tests','Runs tests for the code.','/','en','utf-8',1),
-    ('/manager/login/','text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',1),
-    ('/manager/logout/','text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',0);
+    ('/manager/tests/','text/html','Manager Tests','Runs tests for the code.','/','en','utf-8',1);
 
 /*!40000 ALTER TABLE `{$dbPrefix}page` ENABLE KEYS */;
 UNLOCK TABLES;

@@ -163,10 +163,7 @@ VALUES
 	('/manager/pages/','text/html','Manager for Pages','Manages pages head information primarily','/','en','utf-8',1),
 	('/manager/pages/verify/','text/html','Manager for Pages','Manages pages, verifies if record should be deleted','/','en','utf-8',1),
 	('/manager/people/','text/html','Manager for People','Manages people','/','en','utf-8',1),
-	('/manager/people/new/','text/html','Manager for People','Manages people, form to add a new person.','/','en','utf-8',1),
-	('/manager/people/modify/','text/html','Manager for People','Manages people, for modifying a person','/','en','utf-8',1),
 	('/manager/people/verify/','text/html','Manager for People','Manages people, verifies a person should be deleted.','/','en','utf-8',1),
-	('/manager/people/delete/','text/html','Manager for People','Manages people','/','en','utf-8',1),
 	('/manager/routes/','text/html','Manager for Routes','Manages the routes','/','en','utf-8',1),
 	('/manager/routes/verify/','text/html','Manager for Routes','Manages the routes, verifies route should be deleted.','/','en','utf-8',1),
 	('/manager/tests/','text/html','Manager Tests','Runs tests for the code.','/','en','utf-8',1);

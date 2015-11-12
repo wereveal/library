@@ -8,10 +8,12 @@
  *  @namespace Ritc/Library/Controllers
  *  @class ManagerController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β6
- *  @date 2015-10-23 11:40:58
+ *  @version 1.0.0β7
+ *  @date 2015-11-12 12:17:40
  *  @note A file in RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β7 - added page controller                 - 11/12/2015 wer
+ *                 also fixed logic bugs.
  *      v1.0.0β6 - added tests controller                - 10/23/2015 wer
  *      v1.0.0β5 - working for groups                    - 09/25/2015 wer
  *      v1.0.0β4 - working for Roles                     - 01/28/2015 wer
@@ -98,7 +100,6 @@ class ManagerController implements ControllerInterface
         else {
             return $this->renderLogin();
         }
-
     }
     /**
      * Passes control over to the Constants Admin Controller.
@@ -106,9 +107,12 @@ class ManagerController implements ControllerInterface
      */
     public function renderConstantsAdmin()
     {
-        if ($this->o_auth->isAllowedAccess(2)) {
-            $o_constants_admin = new ConstantsAdminController($this->o_di);
-            return $o_constants_admin->render();
+        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
+            $min_auth_level = $this->a_route_parts['min_auth_level'];
+            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
+                $o_constants_admin = new ConstantsAdminController($this->o_di);
+                return $o_constants_admin->render();
+            }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
@@ -119,9 +123,12 @@ class ManagerController implements ControllerInterface
      */
     public function renderGroupsAdmin()
     {
-        if ($this->o_auth->isAllowedAccess(2)) {
-            $o_groups_admin = new GroupsAdmimController($this->o_di);
-            return $o_groups_admin->render();
+        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
+            $min_auth_level = $this->a_route_parts['min_auth_level'];
+            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
+                $o_groups_admin = new GroupsAdmimController($this->o_di);
+                return $o_groups_admin->render();
+            }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
@@ -136,15 +143,30 @@ class ManagerController implements ControllerInterface
         $this->o_session->resetSession();
         return $this->o_manager_view->renderLoginForm($login_id, $a_message);
     }
+    public function renderPageAdmin()
+    {
+        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
+            $min_auth_level = $this->a_route_parts['min_auth_level'];
+            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
+                $o_page_admin = new PageAdminController($this->o_di);
+                return $o_page_admin->render();
+            }
+        }
+        $a_message = ViewHelper::warningMessage("Access Prohibited");
+        return $this->renderLogin('', $a_message);
+    }
     /**
      * Passes control over to the people admin controller.
      * @return string
      */
     public function renderPeopleAdmin()
     {
-        if ($this->o_auth->isAllowedAccess(2)) {
-            $o_people_admin = new PeopleAdminController($this->o_di);
-            return $o_people_admin->render();
+        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
+            $min_auth_level = $this->a_route_parts['min_auth_level'];
+            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
+                $o_people_admin = new PeopleAdminController($this->o_di);
+                return $o_people_admin->render();
+            }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
@@ -155,9 +177,12 @@ class ManagerController implements ControllerInterface
      */
     public function renderRoutesAdmin()
     {
-        if ($this->o_auth->isAllowedAccess(2)) {
-            $o_router_admin = new RoutesAdminController($this->o_di);
-            return $o_router_admin->render();
+        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
+            $min_auth_level = $this->a_route_parts['min_auth_level'];
+            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
+                $o_router_admin = new RoutesAdminController($this->o_di);
+                return $o_router_admin->render();
+            }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
@@ -168,9 +193,12 @@ class ManagerController implements ControllerInterface
      */
     public function renderTestsAdmin()
     {
-        if ($this->o_auth->isAllowedAccess(1)) {
-            $o_tests = new TestsAdminController($this->o_di);
-            return $o_tests->render();
+        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
+            $min_auth_level = $this->a_route_parts['min_auth_level'];
+            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
+                $o_tests = new TestsAdminController($this->o_di);
+                return $o_tests->render();
+            }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);

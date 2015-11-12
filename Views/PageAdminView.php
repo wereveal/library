@@ -36,17 +36,16 @@ class PageAdminView
         }
     }
     /**
-     *  Returns the list of routes in html.
+     *  Returns the list of pages in html.
      *  @param array $a_message
      *  @return string
      */
     public function renderList(array $a_message = array())
     {
+        $a_page_values = $this->getPageValues();
         $a_values = array(
-            'public_dir' => '',
-            'description' => 'Admin page for the router configuration.',
             'a_message' => array(),
-            'a_page' => array(
+            'a_pages'   => array(
                 [
                     'page_id'        => '',
                     'page_url'       => '',
@@ -60,25 +59,24 @@ class PageAdminView
             'menus'   => $this->a_links,
             'adm_lvl' => $this->adm_level
         );
+        $a_values = array_merge($a_page_values, $a_values);
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
         else {
-            $a_values['a_message'] = ViewHelper::messageProperties(
-                array(
-                    'message'       => 'Changing page values can result in unexpected results. If you are not sure, do not do it.',
-                    'type'          => 'warning'
-                )
-            );
+            $a_values['a_message'] = ViewHelper::messageProperties([
+                'message' => 'Changing page values can result in unexpected results. If you are not sure, do not do it.',
+                'type'    => 'warning'
+            ]);
         }
-        $a_page = $this->o_model->read(array(), ['order_by' => 'page_immutable DESC, page_url']);
+        $a_pages = $this->o_model->read(array(), ['order_by' => 'page_immutable DESC, page_url']);
         $this->logIt(
-            'a_page: ' . var_export($a_page, TRUE),
+            'a_page: ' . var_export($a_pages, TRUE),
             LOG_OFF,
             __METHOD__ . '.' . __LINE__
         );
-        if ($a_page !== false && count($a_page) > 0) {
-            $a_values['a_page'] = $a_page;
+        if ($a_pages !== false && count($a_pages) > 0) {
+            $a_values['a_pages'] = $a_pages;
         }
         return $this->o_twig->render('@pages/page_admin.twig', $a_values);
     }
