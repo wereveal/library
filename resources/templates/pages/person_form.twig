@@ -201,7 +201,7 @@
                     </li>
                     <li>Description can be anything and is optional.</li>
                     <li>Active determines if the person is allowed to log in. Allows for historical data, keeping the person in the database but preventing one from logging in again.</li>
-                    <li>Groups allow the person to access the materials that group can access. A person can be assigned to multiple groups. Some groups are inclusive of other groups.
+                    <li>Groups allow the person to access the materials that group can access. A person can be assigned to multiple groups. Some groups are inclusive of other groups.</li>
                 </ul>
             </div>
         </div>
@@ -210,8 +210,15 @@
 {% endblock %}
 {# expected array
     [
-        'public_dir'  => '',
-        'description' => '.',
+        'lang',
+        'charset',
+        'base_url',
+        'description',
+        'public_dir',
+        'title',
+        'links',
+        'site_url',
+        'rights_holder',
         'a_message'   => array(),
         'person'      => array(
             [
@@ -225,7 +232,7 @@
                 'is_immutable' => 0,
                 'created_on'   => date('Y-m-d H:i:s'),
                 'groups'       => [],
-                'highest_role' => 999
+                'highest_role' => 0
             ]
         ),
         'action'  => 'update',

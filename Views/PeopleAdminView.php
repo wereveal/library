@@ -6,15 +6,14 @@
  *  @namespace Ritc/Library/Views
  *  @class PeopleAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1ß
- *  @date 2014-11-15 15:20:52
+ *  @version 1.0.0
+ *  @date 2015-11-12 10:56:16
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.1ß - Changed to use DI/IOC                           - 11/15/2014 wer
- *      v1.0.0ß - Initial version                                 - 11/13/2014 wer
+ *      v1.0.0   - Initial non-beta version                         - 11/12/2015 wer
+ *      v1.0.0β2 - Changed to use DI/IOC                            - 11/15/2014 wer
+ *      v1.0.0β1 - Initial version                                  - 11/13/2014 wer
  *  </pre>
- *  @TODO base access to crud people on auth levels
- *  @TODO write the code to display users to allow for CRUD actions
  */
 namespace Ritc\Library\Views;
 
@@ -51,7 +50,9 @@ class PeopleAdminView
 
     public function renderList(array $a_message = array())
     {
+        $meth = __METHOD__ . '.';
         $a_page_values = $this->getPageValues();
+        $this->logIt('page values' . var_export($a_page_values, TRUE), LOG_OFF, $meth . __LINE__);
         $a_values = [
             'a_message' => array(),
             'a_people'  => array(
@@ -117,16 +118,17 @@ class PeopleAdminView
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $a_groups = $this->o_group_model->read();
-        $this->logIt('A group values: ' . var_export($a_groups, true), LOG_ON, $meth . __LINE__);
+        $this->logIt('A group values: ' . var_export($a_groups, true), LOG_OFF, $meth . __LINE__);
         foreach ($a_groups as $key => $a_group) {
             $a_groups[$key]['checked'] = '';
         }
         $a_values['person']['groups'] = $a_groups;
-        $this->logIt('A person values: ' . var_export($a_values, true), LOG_ON, $meth . __LINE__);
+        $this->logIt('A person values: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }
     public function renderModify($people_id = -1)
     {
+        $meth = __METHOD__ . '.';
         if ($people_id == -1) {
             return $this->renderList(['message' => 'A Problem Has Occured. Please Try Again.', 'type' => 'error']);
         }
@@ -155,6 +157,7 @@ class PeopleAdminView
             'adm_lvl' => $this->adm_level,
             'menus'   => $this->a_links
         ];
+        $a_values = array_merge($a_page_values, $a_values);
         $a_person = $this->o_people_model->readInfo($people_id);
         if ($a_person == array()) {
             return $this->renderList(['message' => 'The person was not found. Please Try Again.', 'type' => 'error']);
@@ -176,17 +179,18 @@ class PeopleAdminView
         $a_person['password'] = '************';
         $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, __METHOD__);
         $a_values['person'] = $a_person;
+        $this->logIt('twig values' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }
     public function renderVerifyDelete(array $a_posted_values = array())
     {
         $meth = __METHOD__ . '.';
-        $this->logIt('Posted Values: ' . var_export($a_posted_values, TRUE), LOG_ON, $meth . __LINE__);
+        $this->logIt('Posted Values: ' . var_export($a_posted_values, TRUE), LOG_OFF, $meth . __LINE__);
         if ($a_posted_values == array()) {
             return $this->renderList(['message' => 'Sorry, a problem has occured, please try again.', 'type' => 'failure']);
         }
         $a_person = $this->o_people_model->read(['people_id' => $a_posted_values['person']['people_id']]);
-        $this->logIt('Person found: ' . var_export($a_person, TRUE), LOG_ON, $meth . __LINE__);
+        $this->logIt('Person found: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
         if ($a_person[0]['is_immutable'] == 1) {
             return $this->renderList(['message' => 'Sorry, that user can not be deleted.', 'type' => 'failure']);
         }
@@ -204,7 +208,7 @@ class PeopleAdminView
         ];
         $a_twig_values = array_merge($a_page_values, $a_values);
         $a_twig_values['menus'] = $this->a_links;
-        $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_ON, $meth . __LINE__);
+        $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@pages/verify_delete.twig', $a_twig_values);
     }
     /**

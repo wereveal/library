@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β13
- *  @date 2015-11-06 14:49:41
+ *  @version 1.0.0
+ *  @date 2015-11-12 10:58:41
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0    - initial working version                                     - 11/12/2015 wer
  *      v1.0.0β13 - removed roles from code                                     - 11/06/2015 wer
  *      v1.0.0β12 - Bug fix in sql, incompatible with Postgresql                - 11/05/2015 wer
  *      v1.0.0β11 - Added missing method isId - causing bug elsewhere           - 09/25/2015 wer
@@ -206,7 +207,7 @@ class PeopleModel implements ModelInterface
             {$sql_set}
             WHERE people_id = :people_id
         ";
-        $this->logIt($sql, LOG_ON, __METHOD__ . '.' . __LINE__);
+        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         $results = $this->o_db->update($sql, $a_values, true);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();

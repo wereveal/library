@@ -54,7 +54,7 @@ class ConstantsModel implements ModelInterface
     public function create(array $a_values)
     {
         $meth = __METHOD__ . '.';
-        $this->logIt(var_export($a_values, true), LOG_ON, $meth);
+        $this->logIt(var_export($a_values, true), LOG_OFF, $meth);
         $a_required_keys = array(
             'const_name',
             'const_value'
@@ -79,14 +79,14 @@ class ConstantsModel implements ModelInterface
             INSERT INTO {$this->db_prefix}constants (const_name, const_value, const_immutable)
             VALUES (:const_name, :const_value, :const_immutable)
         ";
-        $this->logIt(var_export($a_values, true), LOG_ON, $meth . __LINE__);
+        $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}constants")) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
             return $ids[0];
         }
         else {
-            $this->logIt("Error Message: " . $this->o_db->getSqlErrorMessage(), LOG_ON, $meth . __LINE__);
+            $this->logIt("Error Message: " . $this->o_db->getSqlErrorMessage(), LOG_OFF, $meth . __LINE__);
             return false;
         }
     }

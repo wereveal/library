@@ -6,16 +6,17 @@
  *  @namespace Ritc/Library/Controllers
  *  @class PeopleAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β4
- *  @date 2015-01-06 12:14:23
+ *  @version 1.0.0
+ *  @date 2015-11-12 10:58:06
  *  @note A file in Library v5
  *  @note <pre><b>Change Log</b>
- *      v1.0.0β4 - Realized this is nowhere near done            - 01/06/2015 wer
+ *      v1.0.0   - initial working version                          - 11/12/2015 wer
+ *      v1.0.0β4 - Realized this is nowhere near done               - 01/06/2015 wer
  *                 This code was copied from somewhere else and
  *                 not modified to fit the need.
- *      v1.0.0β3 - refactoring of namespaces                     - 12/05/2014 wer
- *      v1.0.0β2 - Adjusted to match file name change            - 11/13/2014 wer
- *      v1.0.0β1 - Initial version                               - 04/02/2014 wer
+ *      v1.0.0β3 - refactoring of namespaces                        - 12/05/2014 wer
+ *      v1.0.0β2 - Adjusted to match file name change               - 11/13/2014 wer
+ *      v1.0.0β1 - Initial version                                  - 04/02/2014 wer
  *  </pre>
  *  @TODO write the save method
  *  @TODO write the update method
@@ -25,6 +26,7 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\PeopleGroupMapModel;
@@ -83,7 +85,7 @@ class PeopleAdminController implements MangerControllerInterface
                 header("Location: " . SITE_URL . '/manager/login/');
             }
         }
-        $this->logIt('Post: ' . var_export($a_post, TRUE), LOG_ON, $meth . __LINE__);
+        $this->logIt('Post: ' . var_export($a_post, TRUE), LOG_OFF, $meth . __LINE__);
         switch ($main_action) {
             case 'new':
                 return $this->o_view->renderNew();
@@ -129,8 +131,11 @@ class PeopleAdminController implements MangerControllerInterface
         if ($this->o_model->isExistingLoginId($a_person['login_id'])) {
             return ViewHelper::failureMessage("Opps, the Login ID already exists.");
         }
+        if ($this->o_model->isExistingShortName($a_person['short_name'])) {
+            $a_person['short_name'] = $this->createShortName($a_person['short_name']);
+        }
         $a_person['groups'] = $this->a_post_values['groups'];
-        $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_ON, $meth . __LINE__);
+        $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
         if ($this->o_model->savePerson($a_person) !== false) {
             return ViewHelper::successMessage("Success! The person was saved.");
         }
@@ -163,7 +168,7 @@ class PeopleAdminController implements MangerControllerInterface
             }
         }
         $a_person['groups'] = $this->a_post_values['groups'];
-        $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_ON, $meth . __LINE__);
+        $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
         if ($this->o_model->savePerson($a_person) !== false) {
             if ($addendum != '') {
                 $addendum = '<br><b class="red">However' . $addendum . '</b>';
@@ -208,10 +213,10 @@ class PeopleAdminController implements MangerControllerInterface
             }
         }
         else {
-            $short_name = strtoupper(substr($long_name, 0, 3));
+            $short_name = strtoupper(substr($long_name, 0, 8));
         }
         if ($this->o_model->isExistingShortName($short_name)) {
-            $short_name = $this->createShortName(substr($short_name, 0, 2) . rand(0,9));
+            $short_name = $this->createShortName(substr($short_name, 0, 6) . rand(0,99));
         }
         return $short_name;
     }
@@ -229,6 +234,17 @@ class PeopleAdminController implements MangerControllerInterface
         if (Arrays::hasBlankValues($a_person, $a_required_keys)) {
             return false;
         }
+        $a_fix_these = ['login_id', 'real_name', 'short_name', 'description'];
+        foreach ($a_fix_these as $key) {
+            if (isset($a_person[$key])) {
+                $a_person[$key] = Strings::removeTags($a_person[$key]);
+                if ($key == 'short_name') {
+                    $a_person[$key] = Strings::makeAlphanumeric($a_person[$key]);
+                }
+            }
+        }
+        $a_person['login_id'] = Strings::makeAlphanumericPlus($a_person['login_id']);
+
         $a_allowed_keys   = $a_required_keys;
         $a_allowed_keys[] = 'real_name';
         $a_allowed_keys[] = 'people_id';
@@ -241,13 +257,8 @@ class PeopleAdminController implements MangerControllerInterface
         if ($a_person['real_name'] == '') {
             $a_person['real_name'] = $a_person['login_id'];
         }
-        if ($a_person['short_name'] == '') {
+        if ($a_person['short_name'] == '' || !isset($a_person['short_name'])) {
             $a_person['short_name'] = $this->createShortName($a_person['real_name']);
-        }
-        else {
-            if ($this->o_model->isExistingShortName($a_person['short_name'])) {
-                $short_name = $this->createShortName(substr($short_name, 0, 2) . rand(0,9));
-            }
         }
         $a_person['is_logged_in'] = isset($a_person['is_logged_in']) && $a_person['is_logged_in'] == 'true'
             ? 1

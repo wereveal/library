@@ -106,7 +106,8 @@ trait ManagerViewTraits
         $this->a_links = $a_links;
     }
     /**
-     *
+     *  Returns an array with the values used primarily in the meta tags of the html.
+     *  @return array
      */
     private function getPageValues()
     {
