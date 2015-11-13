@@ -36,6 +36,46 @@ class PageAdminView
         }
     }
     /**
+     *  Returns a form to enter page data into db.
+     *  @param array $a_message
+     *  @return string
+     */
+    public function renderForm(array $a_message = array())
+    {
+        $a_page_values = $this->getPageValues(); 
+        $action = $this->o_router->getFormAction() == 'create'
+            ? 'save'
+            : 'update';
+        $a_values = [
+            'a_message' => array(),
+            'a_page'    => [
+                'page_id'          => '',
+                'page_url'         => '',
+                'page_title'       => '',
+                'page_description' => '',
+                'page_base_url'    => '/',
+                'page_type'        => 'text/html',
+                'page_lang'        => 'en',
+                'page_charset'     => 'utf8',
+                'page_immutable'   => 0
+            ],
+            'action'  => $action,
+            'tolken'  => $_SESSION['token'],
+            'form_ts' => $_SESSION['idle_timestamp'],
+            'hobbit'  => '',
+            'menus'   => $this->a_links,
+            'adm_lvl' => $this->adm_level
+        ];
+        $a_values = array_merge($a_page_values, $a_values);
+        if ($action == 'update') {
+            $a_pages = $this->o_model->read(
+                ['page_id' => $this->a_post['page_id']]
+            );
+            $a_values['a_page'] = $a_pages[0];
+        }
+        return $this->o_twig->render('@pages/page_form.twig', $a_values);
+    }
+    /**
      *  Returns the list of pages in html.
      *  @param array $a_message
      *  @return string

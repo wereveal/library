@@ -63,7 +63,7 @@ class PageAdminController implements MangerControllerInterface
             }
         }
         switch ($main_action) {
-            case 'save':
+            case 'create':
                 return $this->save();
             case 'delete':
                 return $this->delete();
@@ -78,6 +78,9 @@ class PageAdminController implements MangerControllerInterface
                     $a_message = ViewHelper::failureMessage();
                     return $this->o_view->renderList($a_message);
                 }
+            case 'new':
+            case 'modify':
+                return $this->o_view->renderForm();
             case '':
             default:
                 return $this->o_view->renderList();
