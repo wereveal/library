@@ -46,9 +46,16 @@ class PageAdminController implements MangerControllerInterface
             $this->o_model->setElog($this->o_elog);
         }
     }
+
+    /**
+     * Returns the html for the route as determined.
+     * @return string
+     */
     public function render()
     {
+        $meth = __METHOD__ . '.';
         $a_route_parts = $this->o_router->getRouterParts();
+        $this->logIt('Route Parts' . var_export($a_route_parts, TRUE), LOG_OFF, $meth . __LINE__);
         $main_action = $a_route_parts['route_action'];
         $form_action = $a_route_parts['form_action'];
         $url_action    = isset($a_route_parts['url_actions'][0])
@@ -62,6 +69,7 @@ class PageAdminController implements MangerControllerInterface
                 header("Location: " . SITE_URL . '/manager/login/');
             }
         }
+        $this->logIt("Main Action: {$main_action}", LOG_OFF, $meth . __LINE__);
         switch ($main_action) {
             case 'create':
                 return $this->save();

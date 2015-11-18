@@ -16,16 +16,16 @@
         <div class="col-md-12">
             <div class="row {{ class }}">
                 <div class="col-md-12">
-                <form action="{{ public_dir }}/manager/page/new/" method= "post">
                     <div class="row row-inside">
                         <div class="col-md-2 .col-md-offset-10">
-                            <button type="submit" name="submit" value="create" class="btn btn-primary btn-xs">Create New Page</button>
-                            <input type="hidden" name="tolken" value="{{ tolken }}" />
-                            <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                            <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                            <form action="{{ public_dir }}/manager/pages/new/" method= "post">
+                                <button type="submit" name="submit" value="new_page" class="btn btn-primary btn-xs">Create New Page</button>
+                                <input type="hidden" name="tolken" value="{{ tolken }}" />
+                                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                                <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                            </form>
                         </div>
                     </div>
-                </form>
                 </div>
             </div>
         {% set x = -1 %}
@@ -34,7 +34,6 @@
                 {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <div class="col-md-12">
-                    <form action="{{ public_dir }}/manager/page/modify/" method="post">
                         <div class="row row-inside {{ class }}">
                             <div class="col-md-4">
                                 <span class="inline-block bold w75 aright pad-right-12">URL:</span>
@@ -45,14 +44,15 @@
                                 {{ page.page_title }}
                             </div>
                              <div class="col-md-2">
-                                <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Modify</button>
-                                <input type="hidden" name="tolken" value="{{ tolken }}" />
-                                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                                <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                                <input type="hidden" name="people_id" value="{{ page.page_id }}" />
+                                 <form action="{{ public_dir }}/manager/pages/modify/" method="post">
+                                     <button type="submit" name="submit" value="modify_page" class="btn btn-primary btn-xs">Modify</button>
+                                     <input type="hidden" name="tolken" value="{{ tolken }}" />
+                                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                                     <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                                     <input type="hidden" name="people_id" value="{{ page.page_id }}" />
+                                 </form>
                             </div>
                         </div>
-                    </form>
                 </div>
             </div>
                 {% set x = x * -1 %}

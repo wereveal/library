@@ -111,7 +111,6 @@ trait ManagerViewTraits
      */
     private function getPageValues()
     {
-        $meth = __METHOD__ . '.';
         $page_url = $this->o_router->getRequestUri();
         $route_path = $this->o_router->getRoutePath();
         $o_page_model = new PageModel($this->o_db);
@@ -149,7 +148,10 @@ trait ManagerViewTraits
             'rights_holder' => RIGHTS_HOLDER
         ];
     }
-    private function getLinks()
+    /**
+     * @return array
+     */
+    public function getLinks()
     {
         return $this->a_links;
     }

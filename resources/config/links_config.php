@@ -41,6 +41,14 @@ return array(
         'extras'      => ''
     ],
     [
+        'text'        => 'Page Meta Manager',
+        'url'         => '/manager/pages/',
+        'description' => 'Create and manage page meta data.',
+        'name'        => 'Pages',
+        'class'       => '',
+        'extras'      => ''
+    ],
+    [
         'text'        => 'Tests',
         'url'         => '/manager/tests/',
         'description' => 'Tests',

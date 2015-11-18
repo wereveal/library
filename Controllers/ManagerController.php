@@ -1,17 +1,15 @@
 <?php
 /**
- *  @brief The main Controller for the manager.
- *  @details It is expected that this class will be extended by the manager controller of the app
- *      in which it resides. However, it is written to work as is.
- *  @file ManagerController.php
- *  @ingroup ritc_library controllers
- *  @namespace Ritc/Library/Controllers
- *  @class ManagerController
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β7
- *  @date 2015-11-12 12:17:40
- *  @note A file in RITC Library
- *  @note <pre><b>Change Log</b>
+ * @brief     The main Controller for the manager.
+ * @file      ManagerController.php
+ * @ingroup   ritc_library controllers
+ * @namespace Ritc/Library/Controllers
+ * @class     ManagerController
+ * @author    William Reveal <bill@revealitconsulting.com>
+ * @date      2015-11-18 13:56:11
+ * @note      A file in RITC Library
+ * @note <pre><b>Change Log</b>
+ *      v1.0.0β8 - bug fixes                             - 11/18/2015 wer
  *      v1.0.0β7 - added page controller                 - 11/12/2015 wer
  *                 also fixed logic bugs.
  *      v1.0.0β6 - added tests controller                - 10/23/2015 wer
@@ -21,8 +19,8 @@
  *      v1.0.0β2 - Set up to render a basic landing page - 01/06/2015 wer
  *      v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
  *      v1.0.0α1 - Initial version                       - 11/14/2014 wer
- *  </pre>
- **/
+ * </pre>
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\AuthHelper;
@@ -78,6 +76,7 @@ class ManagerController implements ControllerInterface
                     case 'logout':
                         $this->o_auth->logout($_SESSION['login_id']);
                         header("Location: " . SITE_URL . '/manager/');
+                        break;
                     default:
                         return $this->o_manager_view->renderLandingPage();
                 }
@@ -134,15 +133,20 @@ class ManagerController implements ControllerInterface
         return $this->renderLogin('', $a_message);
     }
     /**
-     * Renders login form after resetting session.
-     * @param array $a_message optional e.g. ['message' => '', 'type' => 'info']
-     * @return string
+     *  Renders login form after resetting session.
+     *  @param string $login_id
+     *  @param array  $a_message optional e.g. ['message' => '', 'type' => 'info']
+     *  @return string
      */
     private function renderLogin($login_id = '', array $a_message = array())
     {
         $this->o_session->resetSession();
         return $this->o_manager_view->renderLoginForm($login_id, $a_message);
     }
+    /**
+     *  Returns the html for the page admin.
+     *  @return string
+     */
     public function renderPageAdmin()
     {
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
@@ -225,9 +229,6 @@ class ManagerController implements ControllerInterface
         if ($a_results['is_logged_in'] == 1) {
             $this->o_auth->logout($a_results['people_id']);
         }
-        $login_id = isset($this->a_post_values['login_id'])
-            ? $this->a_post_values['login_id']
-            : '';
         return isset($a_results['message'])
             ? ViewHelper::failureMessage($a_results['message'])
             : ViewHelper::failureMessage('Login Id or Password was incorrect. Please Try Again');

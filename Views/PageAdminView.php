@@ -42,12 +42,13 @@ class PageAdminView
      */
     public function renderForm(array $a_message = array())
     {
-        $a_page_values = $this->getPageValues(); 
+        $meth = __METHOD__ . '.';
+        $a_page_values = $this->getPageValues();
         $action = $this->o_router->getFormAction() == 'create'
             ? 'save'
             : 'update';
         $a_values = [
-            'a_message' => array(),
+            'a_message' => $a_message,
             'a_page'    => [
                 'page_id'          => '',
                 'page_url'         => '',
@@ -69,9 +70,10 @@ class PageAdminView
         $a_values = array_merge($a_page_values, $a_values);
         if ($action == 'update') {
             $a_pages = $this->o_model->read(
-                ['page_id' => $this->a_post['page_id']]
+                ['page_id' => $this->o_router->getPost('page_id')]
             );
             $a_values['a_page'] = $a_pages[0];
+            $this->logIt('a_values: ' . var_export($a_values, TRUE), LOG_ON, $meth . __LINE__);
         }
         return $this->o_twig->render('@pages/page_form.twig', $a_values);
     }
