@@ -50,20 +50,3 @@ if (!defined('LIBRARY_PATH')) {
         define('LIBRARY_PATH', SRC_PATH . '/Ritc/Library');
     }
 }
-
-/**
- * Variables used by the classes Elog.
- * Needs to be set early.
- * USE_PHP_LOG should be false normally in Production sites
- * but it can slow things a bit. The class Elog has a
- * method that allows temporary overrides of these global
- * settings in the class (not the constants themselves of course).
-**/
-define('USE_PHP_LOG',  true);
-define('USE_TEXT_LOG', false);
-define('LOG_OFF', 0);
-define('LOG_ON', 1);
-define('LOG_PHP', 1);
-define('LOG_BOTH', 2);
-define('LOG_EMAIL', 3);
-define('LOG_ALWAYS', 4);

@@ -26,9 +26,11 @@ namespace Ritc\Library\Services;
 class Elog
 {
     protected $current_page;
+    private $custom_log_used = false;
     private $debug_text;
     private $display_last_message = false;
     private $error_email_address = 'wer@qca.net';
+    private $html_used = false;
     private $ignore_log_off = false;
     private $from_class = '';
     private $from_function = '';
@@ -36,10 +38,11 @@ class Elog
     private $from_file = '';
     private $from_line = '';
     private static $instance;
+    private $json_file_used = false;
     private $last_message = '';
+    private $elog_file = 'elog.log';
+    private $o_json_file;
     private $php_log_used = false;
-    private $use_php_log = true;
-    private $use_text_log = false;
 
     private function __construct()
     {
@@ -48,11 +51,18 @@ class Elog
     }
     public function __destruct()
     {
-        if ($this->php_log_used && $this->display_last_message && $this->use_php_log) {
+        if ($this->php_log_used && $this->display_last_message) {
             error_log("Last last_message:\n" . $this->last_message . "\n");
         }
-        if ($this->php_log_used && $this->use_php_log) {
+        if ($this->php_log_used) {
             error_log("==== End of Elog ====\n\n");
+        }
+        if ($this->custom_log_used) {
+            error_log("==== End of Elog ====\n\n");
+        }
+        if ($this->json_log_used) {
+            fwrite($this->o_json_file, '};');
+            fclose($this->o_json_file);
         }
     }
     /**
@@ -67,6 +77,36 @@ class Elog
             self::$instance = new $c;
         }
         return self::$instance;
+    }
+    public function errorHandler($error_number, $error_string, $error_file, $error_ling, $error_context)
+    {
+        if (!(error_reporting() & $error_number)) { // Error code not valid
+            return;
+        }
+        switch ($error_number) {
+            case E_USER_ERROR:
+            case E_USER_WARNING:
+            case E_USER_NOTICE:
+                break;
+            case E_ERROR:
+            case E_WARNING:
+            case E_PARSE:
+            case E_NOTICE:
+            case E_CORE_ERROR:
+            case E_CORE_WARNING:
+            case E_COMPILE_ERROR:
+            case E_COMPILE_WARNING:
+            case E_STRICT:
+            case E_RECOVERABLE_ERROR:
+            case E_DEPRECIATED:
+            case E_ALL:
+            default:
+                return;
+        }
+    }
+    public function exceptionHandler($exception)
+    {
+        return;
     }
     public function getVar($var_name)
     {
@@ -100,11 +140,14 @@ class Elog
     private function setElogConstants()
     {
         if (!defined('LOG_OFF'))    { define('LOG_OFF',    0); }
-        if (!defined('LOG_ON'))     { define('LOG_ON',     1); }
         if (!defined('LOG_PHP'))    { define('LOG_PHP',    1); }
         if (!defined('LOG_BOTH'))   { define('LOG_BOTH',   2); }
         if (!defined('LOG_EMAIL'))  { define('LOG_EMAIL',  3); }
         if (!defined('LOG_ALWAYS')) { define('LOG_ALWAYS', 4); }
+        if (!defined('LOG_ON'))     { define('LOG_ON',     5); }
+        if (!defined('LOG_CUSTOM')) { define('LOG_CUSTOM', 5); }
+        if (!defined('LOG_DB'))     { define('LOG_DB',     6); }
+        if (!defined('LOG_HTML'))   { define('LOG_HTML',   7); }
     }
     /**
      *  A combo setter for 5 properties.
@@ -155,29 +198,48 @@ class Elog
         $this->ignore_log_off = $boolean;
     }
     /**
-     *  Setter for the private property use_php_log.
-     *  Purpose of use_php_log is to specify if logging
-     *  can be done to the php log via do_it
-     *  @param $boolean (bool) - defaults to false;
+     *  Setter for the private property use_custom_log.
+     *  use_custom_log specifies logging done to a custom log file.
+     *  @param bool   $boolean  defaults to true.
+     *  @param string $elog_file name of log file.
+     *  @return null
+    **/
+    public function useCustomLog($boolean = true, $elog_file = 'elog.log')
+    {
+        $this->use_custom_log = $boolean;
+        $this->elog_file = $elog_file;
+    }
+    /**
+     *  Setter for the private property use_db_log.
+     *  use_db_log specifies logging done to a database table.
+     *  @param bool $boolean defaults to true;
      *  @return NULL
     **/
-    public function usePhpLog($boolean = false)
+    public function useDbLog($boolean = true)
+    {
+        $this->use_custom_log = $boolean;
+    }
+    /**
+     *  Setter for the private property use_php_log.
+     *  use_php_log specifies logging done to the php log file.
+     *  @param bool $boolean defaults to true;
+     *  @return NULL
+    **/
+    public function usePhpLog($boolean = true)
     {
         $this->use_php_log = $boolean;
     }
     /**
      *  Setter for private property use_text_log.
-     *  debug_text purpose
-     *  is to create a piece of text that is placed in the html, either as
-     *  an HTML comment or visible textContent
-     *  @param $boolean (bool) - defaults to false;
+     *  debug_text creates a piece of text that is placed in the html, either as
+     *  an HTML comment or visible textContent.
+     *  @param bool $boolean defaults to true;
      *  @return NULL
     **/
-    public function useTextLog($boolean = false)
+    public function useTextLog($boolean = true)
     {
         $this->use_text_log = $boolean;
     }
-
     /**
      * Logs a message somewhere.
      * Provides several methods to log a message.
@@ -225,46 +287,53 @@ class Elog
             $log_method = 1;
         }
         switch ($log_method) {
-            case 0:
+            case LOG_OFF:
                 return true;
-            case 4:
+            case LOG_ALWAYS:
                 if ($this->php_log_used === false) {
                     $the_string = "\n\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
                     $this->php_log_used    = true;
                 }
                 return error_log($the_string, 0);
-            case 3:
+            case LOG_EMAIL:
                 return error_log($the_string, 1, $this->error_email_address,
                                   "From: error_" . $this->error_email_address
                                   . "\r\nX-Mailer: PHP/" . phpversion());
+            case LOG_JSON:
+                return trigger_error($the_string, E_USER_NOTICE);
             /** @noinspection PhpMissingBreakStatementInspection */
-            case 2:
-                if (!error_log($the_string, 1, $this->error_email_address,
+            case LOG_BOTH:
+                error_log($the_string, 1, $this->error_email_address,
                                  "From: error_" . $this->error_email_address
-                                 . "\r\nX-Mailer: PHP/" . phpversion())) {
-                    return false;
+                                 . "\r\nX-Mailer: PHP/" . phpversion()));
+            case LOG_ON:
+            case LOG_CUSTOM:
+                if ($this->custom_log_used === false) {
+                    $the_string = "\n\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
+                    $this->custom_log_used    = true;
                 }
-            case 1:
+                return error_log($the_string . "\n", 3, BASE_PATH . '/tmp/' . $this->elog_file);
+            case LOG_HTML:
+                $this->debug_text .= $this->makeComment($the_string);
+                return true;
+            case LOG_DB: // not implemented at this time.
+                return true;
+            case LOG_PHP:
             default:
-                if ($this->use_text_log) {
-                    $this->debug_text .= $this->makeComment($the_string);
+                if ($this->php_log_used === false) {
+                    $the_string = "\n\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
+                    $this->php_log_used    = true;
                 }
-                if ($this->use_php_log) {
-                    if ($this->php_log_used === false) {
-                        $the_string = "\n\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
-                        $this->php_log_used    = true;
-                    }
-                    return error_log($the_string, 0);
-                }
+                return error_log($the_string, 0);
         }
         return false;
     }
     /**
      *  Formats a string for display in html.
-     *  Can be either an html comment or a string that starts with COMMENT:
-     *  @param $the_string (str) - the string to be formated
-     *  @param $not_visible (bool) - should it formated as an HTML comment
-     *  @return string - the formated string
+     *  Can be either an html comment or a string that starts with COMMENT:.
+     *  @param string $the_string  the string to be formated
+     *  @param bool   $not_visible should it formated as an HTML comment
+     *  @return string the formated string
     **/
     public function makeComment($the_string, $not_visible = true)
     {

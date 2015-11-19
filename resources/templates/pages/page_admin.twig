@@ -30,8 +30,7 @@
             </div>
         {% set x = -1 %}
         {% for page in a_pages %}
-            {% if page.page_immutable != 1 or adm_lvl == 10 %}
-                {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+            {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
                 <div class="col-md-12">
                         <div class="row row-inside {{ class }}">
@@ -44,19 +43,20 @@
                                 {{ page.page_title }}
                             </div>
                              <div class="col-md-2">
-                                 <form action="{{ public_dir }}/manager/pages/modify/" method="post">
+                                {% if page.page_immutable != 1 or adm_lvl >= 9 %}
+                                <form action="{{ public_dir }}/manager/pages/modify/" method="post">
                                      <button type="submit" name="submit" value="modify_page" class="btn btn-primary btn-xs">Modify</button>
                                      <input type="hidden" name="tolken" value="{{ tolken }}" />
                                      <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                                      <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
                                      <input type="hidden" name="people_id" value="{{ page.page_id }}" />
-                                 </form>
+                                </form>
+                                {% endif %}
                             </div>
                         </div>
                 </div>
             </div>
-                {% set x = x * -1 %}
-            {% endif %}
+            {% set x = x * -1 %}
         {% endfor %}
         </div>
     </div>
