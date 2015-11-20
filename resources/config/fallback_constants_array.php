@@ -19,9 +19,5 @@ return array(
     ['PRIVATE_DIR_NAME', 'private', 1],
     ['TMP_DIR_NAME', 'tmp', 1],
     ['DEVELOPER_MODE', false, 1],
-    ['SESSION_IDLE_TIME', 1800, 1],
-    ['ENCRYPT_TYPE', 'cleartext', 1],
-    ['FTP_BASE_PATH', '/srv/websites', 1],
-    ['SYSTEM_USER_ID', 1001, 1],
-    ['SYSTEM_GROUP_ID', 81, 1],
+    ['SESSION_IDLE_TIME', 1800, 1]
 );

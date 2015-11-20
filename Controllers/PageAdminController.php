@@ -25,6 +25,7 @@ use Ritc\Library\Views\PageAdminView;
 class PageAdminController implements MangerControllerInterface
 {
     use LogitTraits;
+
     private $a_post;
     private $o_di;
     private $o_model;

@@ -48,5 +48,14 @@ if (!defined('RODB')) {
 if (!defined('LIBRARY_PATH')) {
     if(file_exists(SRC_PATH . '/Ritc/Library')) {
         define('LIBRARY_PATH', SRC_PATH . '/Ritc/Library');
+        if (file_exists(LIBRARY_PATH . '/resources/config')) {
+            define('LIBRARY_CONFIG_PATH', LIBRARY_PATH . '/resources/config');
+        }
+        else {
+            define('LIBRARY_CONFIG_PATH', APP_CONFIG_PATH);
+        }
+    }
+    else {
+        define('LIBRARY_PATH', '');
     }
 }

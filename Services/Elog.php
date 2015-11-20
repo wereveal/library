@@ -7,10 +7,11 @@
  *  @namespace Ritc/Library/Services
  *  @class Elog
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version:  2.7.1
- *  @date 2014-11-15 13:25:56
+ *  @version:  3.0.0
+ *  @date 2015-11-19 22:4522:45
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.0.0 - added new logging methods, changed default to custom log        - 11/19/2015 wer
  *      v2.7.1 - moved to Services namespace                                     - 11/15/2014 wer
  *      v2.7.0 - added method to ignore LOG_OFF settings to allow global logging - 11/11/2014 wer
  *      v2.6.2 - clean up, removed extend to Base class, not needed/wanted       - 09/23/2014 wer
@@ -29,6 +30,7 @@ class Elog
     private $custom_log_used = false;
     private $debug_text;
     private $display_last_message = false;
+    private $elog_file = 'elog.log';
     private $error_email_address = 'wer@qca.net';
     private $html_used = false;
     private $ignore_log_off = false;
@@ -38,10 +40,9 @@ class Elog
     private $from_file = '';
     private $from_line = '';
     private static $instance;
-    private $json_file_used = false;
+    private $json_file = 'json.log';
+    private $json_log_used = false;
     private $last_message = '';
-    private $elog_file = 'elog.log';
-    private $o_json_file;
     private $php_log_used = false;
 
     private function __construct()
@@ -55,14 +56,10 @@ class Elog
             error_log("Last last_message:\n" . $this->last_message . "\n");
         }
         if ($this->php_log_used) {
-            error_log("==== End of Elog ====\n\n");
+            error_log("\n==== End of Elog ====\n\n");
         }
         if ($this->custom_log_used) {
-            error_log("==== End of Elog ====\n\n");
-        }
-        if ($this->json_log_used) {
-            fwrite($this->o_json_file, '};');
-            fclose($this->o_json_file);
+            error_log("\n==== End of Elog ====\n\n", 3, BASE_PATH . '/tmp/' . $this->elog_file);
         }
     }
     /**
@@ -78,31 +75,55 @@ class Elog
         }
         return self::$instance;
     }
-    public function errorHandler($error_number, $error_string, $error_file, $error_ling, $error_context)
+    public function errorHandler($error_number, $error_string, $error_file, $error_line, $error_context)
     {
         if (!(error_reporting() & $error_number)) { // Error code not valid
             return;
         }
         switch ($error_number) {
-            case E_USER_ERROR:
-            case E_USER_WARNING:
-            case E_USER_NOTICE:
+            case E_ALL:
+                $error_type = 'E_ALL';
                 break;
             case E_ERROR:
-            case E_WARNING:
-            case E_PARSE:
+                $error_type = 'E_ERROR';
+                break;
             case E_NOTICE:
-            case E_CORE_ERROR:
-            case E_CORE_WARNING:
-            case E_COMPILE_ERROR:
-            case E_COMPILE_WARNING:
-            case E_STRICT:
+                $error_type = 'E_NOTICE';
+                break;
             case E_RECOVERABLE_ERROR:
-            case E_DEPRECIATED:
-            case E_ALL:
+                $error_type = 'E_RECOVERABLE_ERROR';
+                break;
+            case E_STRICT:
+                $error_type = 'E_STRICT';
+                break;
+            case E_USER_ERROR:
+                $error_type = 'E_USER_ERROR';
+                break;
+            case E_USER_NOTICE:
+                $error_type = 'E_USER_NOTICE';
+                break;
+            case E_USER_WARNING:
+                $error_type = 'E_USER_WARNING';
+                break;
+            case E_WARNING:
+                $error_type = 'E_WARNING';
+                break;
             default:
-                return;
+                $error_type = 'Unknown';
         }
+        $a_context = $this->fixContext($error_context);
+        $error_string = str_replace("\n", '', $error_string);
+        $string = stripslashes(json_encode ([
+            'error_type' => $error_type,
+            'message'    => $error_string,
+            'file'       => $error_file,
+            'line'       => $error_line,
+            'variables'  => stripslashes(json_encode($a_context))
+        ]));
+        $string = str_replace('"variables":"{', ':variables":{', $string); 
+        $string = str_replace('}"}', '}}', $string);
+        $string .= "\n";
+        return file_put_contents(BASE_PATH . '/tmp/' . $this->json_file, $string, FILE_APPEND);
     }
     public function exceptionHandler($exception)
     {
@@ -148,6 +169,7 @@ class Elog
         if (!defined('LOG_CUSTOM')) { define('LOG_CUSTOM', 5); }
         if (!defined('LOG_DB'))     { define('LOG_DB',     6); }
         if (!defined('LOG_HTML'))   { define('LOG_HTML',   7); }
+        if (!defined('LOG_JSON'))   { define('LOG_JSON',   8); }
     }
     /**
      *  A combo setter for 5 properties.
@@ -263,35 +285,41 @@ class Elog
         if ($the_string == '') {
             return true;
         }
-        $this->last_message    = $the_string;
+        $this->last_message = $the_string;
         if ($manual_from != '') {
-            $from = ' (From: ' . $manual_from. ")\n";
-        } elseif ($this->from_file . $this->from_method . $this->from_class . $this->from_function . $this->from_line != '') {
-            $from = ' (From: '
-                . $this->from_file
-                . ($this->from_file != '' ? '  ' : '')
-                . $this->from_method
-                . ($this->from_method != '' ? '  ' : '')
-                . $this->from_class
-                . ($this->from_class != '' ? '  ' : '')
-                . $this->from_function
-                . ($this->from_function != '' ? '  ' : '')
-                . ($this->from_line != '' ? 'Line: ' : '')
-                . $this->from_line
-                . ")\n";
-        } else {
+            $from = $log_method != LOG_JSON
+                ? ' (From: ' . $manual_from. ")\n"
+                : '';
+        } 
+        elseif ($this->from_file . $this->from_method . $this->from_class . $this->from_function . $this->from_line != '') {
+            $from = $log_method != LOG_JSON
+                ? ' (From: '
+                    . $this->from_file
+                    . ($this->from_file != '' ? '  ' : '')
+                    . $this->from_method
+                    . ($this->from_method != '' ? '  ' : '')
+                    . $this->from_class
+                    . ($this->from_class != '' ? '  ' : '')
+                    . $this->from_function
+                    . ($this->from_function != '' ? '  ' : '')
+                    . ($this->from_line != '' ? 'Line: ' : '')
+                    . $this->from_line
+                    . ")\n"
+                : '';
+        } 
+        else {
             $from = '';
         }
-        $the_string    = $the_string . $from;
-        if ($this->ignore_log_off && $log_method === 0) {
-            $log_method = 1;
+        $the_string = $the_string . $from;
+        if ($this->ignore_log_off && $log_method == LOG_OFF) {
+            $log_method = LOG_ON;
         }
         switch ($log_method) {
             case LOG_OFF:
                 return true;
             case LOG_ALWAYS:
                 if ($this->php_log_used === false) {
-                    $the_string = "\n\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
+                    $the_string = "\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
                     $this->php_log_used    = true;
                 }
                 return error_log($the_string, 0);
@@ -299,17 +327,17 @@ class Elog
                 return error_log($the_string, 1, $this->error_email_address,
                                   "From: error_" . $this->error_email_address
                                   . "\r\nX-Mailer: PHP/" . phpversion());
-            case LOG_JSON:
+            case LOG_JSON: 
                 return trigger_error($the_string, E_USER_NOTICE);
             /** @noinspection PhpMissingBreakStatementInspection */
             case LOG_BOTH:
                 error_log($the_string, 1, $this->error_email_address,
                                  "From: error_" . $this->error_email_address
-                                 . "\r\nX-Mailer: PHP/" . phpversion()));
+                                 . "\r\nX-Mailer: PHP/" . phpversion());
             case LOG_ON:
             case LOG_CUSTOM:
                 if ($this->custom_log_used === false) {
-                    $the_string = "\n\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
+                    $the_string = "\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
                     $this->custom_log_used    = true;
                 }
                 return error_log($the_string . "\n", 3, BASE_PATH . '/tmp/' . $this->elog_file);
@@ -321,7 +349,7 @@ class Elog
             case LOG_PHP:
             default:
                 if ($this->php_log_used === false) {
-                    $the_string = "\n\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
+                    $the_string = "\n=== Start Elog " . date('Y/m/d H:i:s') . " ===\n\n" . $the_string;
                     $this->php_log_used    = true;
                 }
                 return error_log($the_string, 0);
@@ -339,5 +367,12 @@ class Elog
     {
         return $not_visible ? "<!-- {$the_string} -->\n"
                             : "COMMENT: {$the_string}<br />\n";
+    }
+    private function fixContext(array $values = array())
+    {
+        foreach ($values as $key => $value) {
+            $values[$key] = stripslashes($value);
+        }
+        return $values;
     }
 }
