@@ -26,6 +26,7 @@ class PageModel implements ModelInterface
 
     private $db_prefix;
     private $db_type;
+    private $error_message;
     private $o_db;
 
     public function __construct(DbModel $o_db)
@@ -38,7 +39,7 @@ class PageModel implements ModelInterface
     /**
      * Generic create a record using the values provided.
      * @param array $a_values
-     * @return bool
+     * @return string|bool
      */
     public function create(array $a_values)
     {
@@ -48,6 +49,7 @@ class PageModel implements ModelInterface
             'page_url'
         ];
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
+            $this->error_message = 'Did not have a page url.';
             return false;
         }
         $a_needed_keys = [
@@ -57,9 +59,18 @@ class PageModel implements ModelInterface
             'page_description',
             'page_base_url',
             'page_lang',
-            'page_charset'
+            'page_charset',
+            'page_immutable'
         ];
         $a_values = Arrays::createRequiredPairs($a_values, $a_needed_keys, true);
+        $a_results = $this->read(['page_url' => $a_values['page_url']]);
+        if (isset($a_results[0])) {
+            $a_existing_url = $a_results[0];
+            if ($a_values['page_url'] != $a_existing_url['page_url']) {
+                $this->error_message = 'The URL for the page already exists.';
+                return false;
+            }
+        }
         $sql = "
             INSERT INTO {$this->db_prefix}page (
                 page_url,
@@ -68,7 +79,8 @@ class PageModel implements ModelInterface
                 page_description,
                 page_base_url,
                 page_lang,
-                page_charset
+                page_charset,
+                page_immutable
             ) VALUES (
                 :page_url,
                 :page_type,
@@ -76,7 +88,8 @@ class PageModel implements ModelInterface
                 :page_description,
                 :page_base_url,
                 :page_lang,
-                :page_charset
+                :page_charset,
+                :page_immutable
             )
         ";
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}page")) {
@@ -85,6 +98,7 @@ class PageModel implements ModelInterface
             return $ids[0];
         }
         else {
+            $this->error_message = 'The page could not be saved.';
             return false;
         }
     }
@@ -106,7 +120,8 @@ class PageModel implements ModelInterface
                 'page_type',
                 'page_base_url',
                 'page_lang',
-                'page_charset'
+                'page_charset',
+                'page_immutable'
             ];
             $a_search_values = Arrays::removeUndesiredPairs($a_search_values, $a_allowed_keys);
             $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
@@ -126,11 +141,13 @@ class PageModel implements ModelInterface
                 page_description,
                 page_base_url,
                 page_lang,
-                page_charset
+                page_charset,
+                page_immutable
             FROM {$this->db_prefix}page
             {$where}
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__);
+        $this->logIt("Search Values: " . var_export($a_search_values, true), LOG_OFF);
         $results = $this->o_db->search($sql, $a_search_values);
         return $results;
     }
@@ -141,30 +158,68 @@ class PageModel implements ModelInterface
      */
     public function update(array $a_values)
     {
+        $meth = __METHOD__ . '.';
         if (!isset($a_values['page_id'])
             || $a_values['page_id'] == ''
-            || (is_string($a_values['page_id']) && !ctype_digit($a_values['page_id']))
+            || (is_string($a_values['page_id']) && !is_numeric($a_values['page_id']))
         ) {
+            $this->error_message = 'The Page Id was not supplied.';
             return false;
         }
         $a_allowed_keys = [
             'page_id',
+            'page_url',
             'page_type',
             'page_title',
             'page_description',
             'page_base_url',
             'page_lang',
-            'page_charset'
+            'page_charset',
+            'page_immutable'
         ];
         $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
+        if (isset($a_values['page_immutable']) && $a_values['page_immutable'] == 'true') {
+            $a_values['page_immutable'] = 1;
+        }
+        else {
+            $a_values['page_immutable'] = 0;
+        }
+        if ($a_values['page_immutable'] == 0) {
+            if (isset($a_values['page_url'])) {
+                $a_results = $this->read(['page_id' => $a_values['page_id']]);
+                if (isset($a_results[0])) {
+                    $a_old_values = $a_results[0];
+                }
+                else {
+                    $this->error_message = 'The page appears not to be available to update.';
+                    return false;
+                }
+                $a_results = $this->read(['page_url' => $a_values['page_url']]);
+                if (isset($a_results[0])) {
+                    $a_existing_url = $a_results[0];
+                    if ($a_old_values['page_id'] != $a_existing_url['page_id']) {
+                        $this->error_message = 'The Page URL already exists.';
+                        return false;
+                    }
+                }
+            }
+        }
         $set_sql = $this->o_db->buildSqlSet($a_values, ['page_id']);
         $sql = "
             UPDATE {$this->db_prefix}page
             {$set_sql}
             WHERE page_id = :page_id
         ";
-        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->update($sql, $a_values, true);
+        $this->logIt($sql, LOG_ON, $meth . __LINE__);
+        $this->logIt(var_export($a_values, true), LOG_ON, $meth . __LINE__);
+        $results = $this->o_db->update($sql, $a_values, true);
+        if ($results) {
+            return true;
+        }
+        else {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            return false;
+        }
     }
     /**
      * Generic deletes a record based on the id provided.
@@ -186,19 +241,12 @@ class PageModel implements ModelInterface
         $results = $this->o_db->delete($sql, array(':page_id' => $page_id), true);
         $this->logIt(var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($results) {
-            $a_results = [
-                'message' => 'Success!',
-                'type'    => 'success'
-            ];
+            return true;
         }
         else {
-            $message = $this->o_db->getSqlErrorMessage();
-            $a_results = [
-                'message' => $message,
-                'type'    => 'failure'
-            ];
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            return false;
         }
-        return $a_results;
     }
 
     /**
@@ -207,6 +255,6 @@ class PageModel implements ModelInterface
      */
     public function getErrorMessage()
     {
-        return $this->o_db->getSqlErrorMessage();
+        return $this->error_message;
     }
 }

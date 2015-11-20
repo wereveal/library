@@ -70,9 +70,10 @@ class PageAdminController implements MangerControllerInterface
                 header("Location: " . SITE_URL . '/manager/login/');
             }
         }
-        $this->logIt("Main Action: {$main_action}", LOG_OFF, $meth . __LINE__);
+        $this->logIt("Main Action: {$main_action}", LOG_ON, $meth . __LINE__);
+        $this->logIt("Form Action: {$form_action}", LOG_ON, $meth . __LINE__);
         switch ($main_action) {
-            case 'create':
+            case 'save':
                 return $this->save();
             case 'delete':
                 return $this->delete();
@@ -101,10 +102,17 @@ class PageAdminController implements MangerControllerInterface
     {
         $page_id = isset($this->a_post['page_id']) ? $this->a_post['page_id'] : -1;
         if ($page_id == -1) {
-            $a_message = ViewHelper::errorMessage('A Problem Has Occured. The page id was not provided.');
+            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The page id was not provided.');
             return $this->o_view->renderList($a_message);
         }
-        $a_results = $this->o_model->delete($page_id);
+        $results = $this->o_model->delete($page_id);
+        if ($results) {
+            $a_results = ViewHelper::successMessage();
+        }
+        else {
+            $error_message = $this->o_model->getErrorMessage();
+            $a_results = ViewHelper::failureMessage($error_message);
+        }
         return $this->o_view->renderList($a_results);
     }
     public function save()
@@ -116,20 +124,26 @@ class PageAdminController implements MangerControllerInterface
             $a_message = ViewHelper::successMessage();
         }
         else {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new route could not be saved.');
+            $message = $this->o_model->getErrorMessage();
+            $a_message = ViewHelper::failureMessage($message);
         }
         return $this->o_view->renderList($a_message);
     }
     public function update()
     {
+        $meth = __METHOD__ . '.';
         $a_page = $this->a_post['page'];
-        $a_page['page_url'] = $this->fixUrl($a_page['page_url']);
+        if (isset($a_page['page_url'])) {
+            $a_page['page_url'] = $this->fixUrl($a_page['page_url']);
+        }
+        $this->logIt('Posted Page: ' . var_export($a_page, TRUE), LOG_ON, $meth . __LINE__);
         $results = $this->o_model->update($a_page);
         if ($results) {
             $a_message = ViewHelper::successMessage();
         }
         else {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The route could not be updated.');
+            $message = $this->o_model->getErrorMessage();
+            $a_message = ViewHelper::failureMessage($message);
         }
         return $this->o_view->renderList($a_message);
     }

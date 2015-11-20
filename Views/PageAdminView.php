@@ -44,10 +44,11 @@ class PageAdminView
     {
         $meth = __METHOD__ . '.';
         $a_page_values = $this->getPageValues();
-        $action = $this->o_router->getFormAction() == 'create'
+        $action = $this->o_router->getFormAction() == 'new_page'
             ? 'save'
             : 'update';
         $a_values = [
+            'adm_lvl' => $this->adm_level,
             'a_message' => $a_message,
             'a_page'    => [
                 'page_id'          => '',
@@ -64,16 +65,19 @@ class PageAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'menus'   => $this->a_links,
-            'adm_lvl' => $this->adm_level
+            'menus'   => $this->a_links
         ];
         $a_values = array_merge($a_page_values, $a_values);
         if ($action == 'update') {
+            $this->logIt(var_export($this->o_router->getPost(), true), LOG_OFF, $meth);
             $a_pages = $this->o_model->read(
                 ['page_id' => $this->o_router->getPost('page_id')]
             );
-            $a_values['a_page'] = $a_pages[0];
-            $this->logIt('a_values: ' . var_export($a_values, TRUE), LOG_ON, $meth . __LINE__);
+            $this->logIt("a pages: " . var_export($a_pages, true), LOG_OFF, $meth . __LINE__);
+            if ($a_pages != array()) {
+                $a_values['a_page'] = $a_pages[0];
+            }
+            $this->logIt('a_values: ' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
         }
         return $this->o_twig->render('@pages/page_form.twig', $a_values);
     }

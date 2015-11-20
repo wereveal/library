@@ -14,19 +14,18 @@
     {% endif %}
 <div class="row border-radius-bottom-right">
     <div class="col-md-12">
-        <form action="{{ public_dir }}/manager/page/{{ action }}/" method="post" id="page-form"><fieldset>
-
+        <form action="{{ public_dir }}/manager/pages/{{ action }}/" method="post" id="page-form"><fieldset>
         <div class="row">
             <div class="col-md-2 col-sm-2 col-xs-2 aright">
                 <label for="page_url">Page URI: </label>
             </div>
-    {% if page.page_immutable == 1 %}
+    {% if a_page.page_immutable == 1 %}
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                {{ page.page_url }}
+                {{ a_page.page_url }}
             </div>
     {% else %}
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_url" name="page[page_url]" class="colorful" maxlength="64" value="{{ page.page_url }}">
+                <input type="text" id="page_url" name="page[page_url]" class="colorful w300" maxlength="64" value="{{ a_page.page_url }}">
             </div>
     {% endif %}
         </div>
@@ -35,7 +34,7 @@
                 <label for="page_title">Title: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_title" name="page[page_title]" class="colorful" maxlength="64" value="{{ page.page_title }}">
+                <input type="text" id="page_title" name="page[page_title]" class="colorful w300" maxlength="64" value="{{ a_page.page_title }}">
             </div>
         </div>
         <div class="row">
@@ -43,7 +42,7 @@
                 <label for="page_description">Meta Description: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_description" name="page[page_description]" class="colorful" maxlength="64" value="{{ page.page_description }}">
+                <input type="text" id="page_description" name="page[page_description]" class="colorful w300" maxlength="64" value="{{ a_page.page_description }}">
             </div>
         </div>
         <div class="row alt-row">
@@ -51,7 +50,7 @@
                 <label for="page_base_url">Base URL: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_base_url" name="page[page_base_url]" class="colorful" maxlength="64" value="{{ page.page_base_url }}" />
+                <input type="text" id="page_base_url" name="page[page_base_url]" class="colorful w300" maxlength="64" value="{{ a_page.page_base_url }}" />
             </div>
         </div>
         <div class="row">
@@ -59,7 +58,7 @@
                 <label for="page_type">MIME Type: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_type" name="page[page_type]" class="colorful" maxlength="250" value="{{ page.page_type }}" />
+                <input type="text" id="page_type" name="page[page_type]" class="colorful w300" maxlength="250" value="{{ a_page.page_type }}" />
             </div>
         </div>
         <div class="row alt-row">
@@ -67,7 +66,7 @@
                 <label for="page_lang">Language: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_lang" name="page[page_lang]" class="colorful" maxlength="4" value="{{ page.page_lang }}" />
+                <input type="text" id="page_lang" name="page[page_lang]" class="colorful" maxlength="4" value="{{ a_page.page_lang }}" />
             </div>
         </div>
         <div class="row alt-row">
@@ -75,7 +74,7 @@
                 <label for="page_charset">Character Set: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_charset" name="page[page_charset]" class="colorful" maxlength="20" value="{{ page.page_charset }}" />
+                <input type="text" id="page_charset" name="page[page_charset]" class="colorful w300" maxlength="20" value="{{ a_page.page_charset }}" />
             </div>
         </div>
         <div class="row">
@@ -83,11 +82,11 @@
                 <label for="page_immutable">Immutable: </label>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-    {% if page.page_immutable == 1 and adm_level >= 9 %}
+    {% if adm_lvl >= 9 and a_page.page_immutable == 1 %}
                 <input type="checkbox" name="page[page_immutable]" checked="checked" id="page_immutable" class="colorful" value="true" />
-    {% elseif page.is_immutable == 1 %}
+    {% elseif a_page.page_immutable == 1 %}
                 True
-    {% elseif adm_level >= 9 %}
+    {% elseif adm_lvl >= 9 %}
                 <input type="checkbox" name="page[page_immutable]" id="page_immutable" class="colorful" value="true" />
     {% else %}
                 False
@@ -97,29 +96,28 @@
         <div class="row">
             <div class="col-md-3 col-sm-3 col-xs-3 aright">
     {% if action == 'save' %}
-                <button type="submit" value="save" class="btn btn-primary btn-sm">Create New Page</button>
+                <button type="submit" name="submit" value="save" class="btn btn-primary btn-sm">Create New Page</button>
     {% else %}
-                <button type="submit" value="update" class="btn btn-primary btn-sm">Update Page</button>
-        {% if page.is_immutable == 0 %}
-                <button type="submit" value="verify" class="btn btn-warning btn-sm">Delete</button>
+                <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Update Page</button>
+        {% if a_page.page_immutable == 0 %}
+                <button type="submit" name="submit" value="verify" class="btn btn-warning btn-sm">Delete</button>
         {% endif %}
     {% endif %}
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10">
                 <input type="hidden" id="tolken" name="tolken" value="{{ tolken }}">
                 <input type="hidden" id="form_ts" name="form_ts" value="{{ form_ts }}">
-                <input type="hidden" id="page_id" name="page[page_id]" value="{{ page.page_id }}">
+                <input type="hidden" id="page_id" name="page[page_id]" value="{{ a_page.page_id }}">
                 <label class="hobbit" for="hobbit">Enter Age</label><input type="text" id="hobbit" name="hobbit" value="" class="hobbit">
             </div>
         </div>
-
         </fieldset></form>
         <div class="row">
             <div class="col-md-12">
                 <h3>Instructions:</h3>
                 <ul>
                     <li>Most values are used in the HTML meta tags, used in the head.
-                    <li>Page URI is required and must be unique. It is used to find the data. The http(s)://site.tld part of a URL is not needed. The URI must match the actual URI of the page.</li>
+                    <li>Page URI is required and must be unique. It is used to find the data. The http(s)://site.tld part of a URL is not needed. The URI must match the actual URI of the a_page.</li>
                     <li>Page Title is used in the meta data but may also be used in a &lt;h1&gt;. If not specified, a default value may be used.</li>
                     <li>Page Description can be pretty much any text. Can be blank. If not specified, a default value may be used.</li>
                     <li>Base URL is a meta tag value. The default '/' is normally fine - the base site url will be used then.</li>
