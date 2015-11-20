@@ -43,7 +43,7 @@ trait LogitTraits
      * @param  string $location
      * @return null
      */
-    public function logIt($message = '', $log_type = LOG_OFF, $location = '')
+    protected function logIt($message = '', $log_type = LOG_OFF, $location = '')
     {
         if (is_object($this->o_elog)
             && is_int($log_type)
@@ -52,6 +52,57 @@ trait LogitTraits
         ) {
             $this->o_elog->write($message, $log_type, $location);
         }
+    }
+    /**
+     * Logs the $message in the custom log if available.
+     * Does some checking if it should be written to log first.
+     * @param  string $message
+     * @param  string $location
+     * @return null
+     */
+    protected function cLog($message, $location)
+    {
+        if (is_object($this->o_elog) && $message != '') {
+            $go = $this->o_elog->handlerIsSet()
+                ? true
+                : $this->o_elog->setErrorHandler()
+                    ? true
+                    : false;
+            if ($go) {
+                $this->o_elog->setLogMethod(LOG_CUSTOM);
+                $this->o_elog->setFromMethod($location);
+                trigger_error($message, E_USER_NOTICE);
+            }
+            else {
+                $this->logIt($message, LOG_PHP, $location);
+            }
+        }
+    }
+    /**
+     * Logs the $message in the custom json formated log if available.
+     * Does some checking if it should be written to log first.
+     * @param  string $message
+     * @param  string $location
+     * @return null
+     */
+    protected function jLog($message, $location)
+    {
+        if (is_object($this->o_elog) && $message != '') {
+            $go = $this->o_elog->handlerIsSet()
+                ? true
+                : $this->o_elog->setErrorHandler()
+                    ? true
+                    : false;
+            if ($go) {
+                $this->o_elog->setLogMethod(LOG_JSON);
+                $this->o_elog->setFromMethod($location);
+                trigger_error($message, E_USER_NOTICE);
+            }
+            else {
+                $this->logIt($message, LOG_PHP, $location);
+            }
+        }
+    
     }
     /**
      *  Injectes the Elog object into the class.
