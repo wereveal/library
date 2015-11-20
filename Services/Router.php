@@ -150,16 +150,17 @@ class Router
      */
     public function getPost($value = '')
     {
+        $meth = __METHOD__ . '.';
         if ($value == '') {
             return $this->a_post;
         }
         else {
-            $this->logIt("Value is: {$value}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Value is: {$value}", LOG_OFF, $meth . __LINE__);
             if (isset($this->a_post[$value])) {
                 return $this->a_post[$value];
             }
             else {
-                $this->logIt("The Value Doesn't Exist. " . var_export($this->a_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("The Value Doesn't Exist. " . var_export($this->a_post, true), LOG_ON, $meth . __LINE__);
                 return false;
             }
         }

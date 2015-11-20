@@ -78,6 +78,7 @@ class ManagerController implements ControllerInterface
                         header("Location: " . SITE_URL . '/manager/');
                         break;
                     default:
+                        $this->logIt('Session: ' . var_export($_SESSION, TRUE), LOG_OFF, $meth . __LINE__);
                         return $this->o_manager_view->renderLandingPage();
                 }
             }

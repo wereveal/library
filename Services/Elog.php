@@ -96,7 +96,7 @@ class Elog
      *
      * @return bool - success or failure of logging
      */
-    public function write($the_string = '', $log_method = 1, $manual_from = '')
+    public function write($the_string = '', $log_method = LOG_OFF, $manual_from = '')
     {
         if ($the_string == '') {
             return true;
@@ -106,7 +106,7 @@ class Elog
             $from = $log_method != LOG_JSON
                 ? ' (From: ' . $manual_from. ")"
                 : '';
-        } 
+        }
         elseif ($this->from_file . $this->from_method . $this->from_class . $this->from_function . $this->from_line != '') {
             $from = $log_method != LOG_JSON
                 ? ' (From: '
@@ -122,7 +122,7 @@ class Elog
                     . $this->from_line
                     . ")\n"
                 : '';
-        } 
+        }
         else {
             $from = '';
         }
@@ -136,9 +136,9 @@ class Elog
                 return true;
             case LOG_ALWAYS:
                 if ($this->php_log_used === false) {
-                    $the_string = "\n=== Start logging session " 
-                        . date('Y/m/d H:i:s') 
-                        . " ===\n\n" 
+                    $the_string = "\n=== Start logging session "
+                        . date('Y/m/d H:i:s')
+                        . " ===\n\n"
                         . $the_string;
                     $this->php_log_used    = true;
                 }
@@ -147,7 +147,7 @@ class Elog
                 return error_log($the_string, 1, $this->error_email_address,
                                   "From: error_" . $this->error_email_address
                                   . "\r\nX-Mailer: PHP/" . phpversion());
-            case LOG_JSON: 
+            case LOG_JSON:
                 return trigger_error($the_string, E_USER_NOTICE);
             /** @noinspection PhpMissingBreakStatementInspection */
             case LOG_BOTH:
@@ -165,9 +165,9 @@ class Elog
             case LOG_PHP:
             default:
                 if ($this->php_log_used === false) {
-                    $the_string = "\n=== Start Logging Session " 
-                        . date('Y/m/d H:i:s') 
-                        . " ===\n\n" 
+                    $the_string = "\n=== Start Logging Session "
+                        . date('Y/m/d H:i:s')
+                        . " ===\n\n"
                         . $the_string;
                     $this->php_log_used    = true;
                 }
@@ -184,13 +184,8 @@ class Elog
         switch ($this->log_method) {
             case LOG_ON:
             case LOG_CUSTOM:
-                if (strpos($error_string, "(From:") === false 
-                    && strpos($error_string, 'End of Elog') === false
-                ) {
-                    $error_string .= " (From: {$error_file} Line: {$error_line})"; 
-                }
                 if ($this->custom_log_used === false) {
-                    $string = "=== Start Elog ===\n" 
+                    $string = "=== Start Elog ===\n"
                         . date("Y-m-d H:i:s")
                         . " - "
                         . $error_string
@@ -208,12 +203,10 @@ class Elog
 		        $error_string = str_replace("\n", '', $error_string);
 		        $string = stripslashes(json_encode ([
                     'date'       => date("Y-m-d H:i:s"),
-		            'message'    => $error_string,
-		            'file'       => $error_file,
-		            'line'       => $error_line
+		            'message'    => $error_string
 		        ]));
 		        $string .= "\n";
-		        return file_put_contents(LOG_PATH . '/' . $this->json_file, $string, FILE_APPEND); 
+		        return file_put_contents(LOG_PATH . '/' . $this->json_file, $string, FILE_APPEND);
             default:
                 return false;
         }
@@ -258,12 +251,12 @@ class Elog
         if (!defined('LOG_PHP'))    { define('LOG_PHP',    1); }
         if (!defined('LOG_BOTH'))   { define('LOG_BOTH',   2); }
         if (!defined('LOG_EMAIL'))  { define('LOG_EMAIL',  3); }
-        if (!defined('LOG_ALWAYS')) { define('LOG_ALWAYS', 4); }
-        if (!defined('LOG_ON'))     { define('LOG_ON',     5); }
-        if (!defined('LOG_CUSTOM')) { define('LOG_CUSTOM', 5); }
+        if (!defined('LOG_ON'))     { define('LOG_ON',     4); }
+        if (!defined('LOG_CUSTOM')) { define('LOG_CUSTOM', 4); }
+        if (!defined('LOG_JSON'))   { define('LOG_JSON',   5); }
         if (!defined('LOG_DB'))     { define('LOG_DB',     6); }
         if (!defined('LOG_HTML'))   { define('LOG_HTML',   7); }
-        if (!defined('LOG_JSON'))   { define('LOG_JSON',   8); }
+        if (!defined('LOG_ALWAYS')) { define('LOG_ALWAYS', 8); }
         if (!defined('LOG_PATH'))   { define('LOG_PATH', BASE_PATH . '/tmp'); }
     }
     public function setErrorHandler($error_types = -2)
