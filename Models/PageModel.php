@@ -43,8 +43,9 @@ class PageModel implements ModelInterface
      */
     public function create(array $a_values)
     {
+        $meth = __METHOD__ . '.';
         if ($a_values == array()) { return false; }
-        $this->logIt(var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         $a_required_keys = [
             'page_url'
         ];
@@ -63,6 +64,12 @@ class PageModel implements ModelInterface
             'page_immutable'
         ];
         $a_values = Arrays::createRequiredPairs($a_values, $a_needed_keys, true);
+        if ($a_values['page_immutable'] == 'true') {
+            $a_values['page_immutable'] = 1;
+        }
+        else {
+            $a_values['page_immutable'] = 0;
+        }
         $a_results = $this->read(['page_url' => $a_values['page_url']]);
         if (isset($a_results[0])) {
             $a_existing_url = $a_results[0];
@@ -92,9 +99,11 @@ class PageModel implements ModelInterface
                 :page_immutable
             )
         ";
+        $this->logIt('values to save: ' . var_export($a_values, TRUE), LOG_ON, $meth . __LINE__);
         if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}page")) {
+            $this->logIt('Test', LOG_ON, $meth . __LINE__);
             $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("New Ids: " . var_export($ids , true), LOG_ON, $meth . __LINE__);
             return $ids[0];
         }
         else {
@@ -210,8 +219,8 @@ class PageModel implements ModelInterface
             {$set_sql}
             WHERE page_id = :page_id
         ";
-        $this->logIt($sql, LOG_ON, $meth . __LINE__);
-        $this->logIt(var_export($a_values, true), LOG_ON, $meth . __LINE__);
+        $this->logIt($sql, LOG_OFF, $meth . __LINE__);
+        $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->update($sql, $a_values, true);
         if ($results) {
             return true;

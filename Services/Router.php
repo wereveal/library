@@ -160,7 +160,7 @@ class Router
                 return $this->a_post[$value];
             }
             else {
-                $this->logIt("The Value Doesn't Exist. " . var_export($this->a_post, true), LOG_ON, $meth . __LINE__);
+                $this->logIt("The Value Doesn't Exist. " . var_export($this->a_post, true), LOG_OFF, $meth . __LINE__);
                 return false;
             }
         }

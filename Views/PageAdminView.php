@@ -69,11 +69,9 @@ class PageAdminView
         ];
         $a_values = array_merge($a_page_values, $a_values);
         if ($action == 'update') {
-            $this->logIt(var_export($this->o_router->getPost(), true), LOG_OFF, $meth);
             $a_pages = $this->o_model->read(
                 ['page_id' => $this->o_router->getPost('page_id')]
             );
-            $this->logIt("a pages: " . var_export($a_pages, true), LOG_OFF, $meth . __LINE__);
             if ($a_pages != array()) {
                 $a_values['a_page'] = $a_pages[0];
             }
@@ -131,18 +129,24 @@ class PageAdminView
      *  @param array $a_values
      *  @return string
      */
-    public function renderVerify(array $a_values = array())
+    public function renderVerify()
     {
-        if ($a_values === array()) {
-            return $this->renderList(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
-        }
-        if (!isset($a_values['public_dir'])) {
-            $a_values['public_dir'] = '';
-        }
-        if (!isset($a_values['description'])) {
-            $a_values['description'] = 'Form to verify the action to delete the page.';
-        }
-        $a_values['menus'] = $this->a_links;
-        return $this->o_twig->render('@pages/verify_delete_page.twig', $a_values);
+        $meth = __METHOD__ . '.';
+        $a_values = array(
+            'what'       => '',
+            'name'       => '',
+            'where'      => '',
+            'public_dir' => PUBLIC_DIR,
+            'tolken'     => $_SESSION['token'],
+            'form_ts'    => $_SESSION['idle_timestamp'],
+            'hobbit'     => '',
+            'menus'      => $this->a_links,
+            'adm_lvl'    => $this->adm_level
+        );
+        $a_post_values = $this->o_router->getPost();
+        $a_page_values = $this->getPageValues();
+        $a_values = array_merge($a_page_values, $a_values);
+        $this->logIt('Post Values' . var_export($a_post_values, TRUE), LOG_ON, $meth . __LINE__);
+        return $this->o_twig->render('@pages/verify_delete.twig', $a_values);
     }
 }
