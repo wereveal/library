@@ -7,10 +7,12 @@
  *  @namespace Ritc/Library/Services
  *  @class DbModel
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.2.5
+ *  @version 3.3.0
  *  @date 2015-09-01 10:55:03
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v3.3.0 - bug fix - pgsql insert wasn't working right                              - 11/22/2015 wer
+ *      v3.2.6 - changed from extending Base class to using traits                        - unknown    wer
  *      v3.2.5 - added some additional information to be retrieved                        - 09/01/2015 wer
  *      v3.2.4 - refactoring elsewhere made a small name change here                      - 07/31/2015 wer
  *      v3.2.3 - moved to Services namespace                                              - 11/15/2014 wer
@@ -81,28 +83,32 @@ class DbModel
      *  @param array $a_values default is empty array
      *      If blank, the values are in the INSERT string
      *      If array then the INSERT string is for a prepared query
-     *  @param string @table_name - needed only if PostgreSQL is being used, Default ''
-     *  @return BOOL - success or failure
+     *  @param array @a_table_info needed only if PostgreSQL is being used, Default array() 
+     *                               ['table_name' => '', 'column_name' => '', 'schema_name' => '']
+     *  @return bool success or failure
     **/
-    public function insert($the_query = '', array $a_values = array(), $table_name = '')
+    public function insert($the_query = '', array $a_values = array(), array $a_table_info = array())
     {
+        $meth = __METHOD__ . '.';
+        $this->logIt('Query and values: ' . $the_query . '  ' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
         if ($the_query == '') {
-            $this->logIt('The query must not be blank.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            $this->logIt('The query must not be blank.', LOG_ALWAYS, $meth . __LINE__);
             return false;
         }
         $sequence_name = '';
-        if($this->db_type == 'pgsql' && $table_name != '') {
-            $sequence_name = $this->getPgsqlSequenceName($table_name);
+        if ($this->db_type == 'pgsql' && $a_table_info != array()) {
+            $sequence_name = $this->getPgsqlSequenceName($a_table_info);
         }
+        $this->logIt('Sequence Name: ' . $sequence_name, LOG_ON, $meth . __LINE__);
         if (count($a_values) == 0) {
             $this->affected_rows = $this->o_db->exec($the_query);
             if ($this->affected_rows === false) {
                 $this->setSqlErrorMessage($this->o_db);
-                $this->logIt($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt($this->getSqlErrorMessage(), LOG_ALWAYS, $meth . __LINE__);
                 return false;
             }
             elseif ($this->affected_rows == 0) {
-                $this->logIt('The INSERT affected no records.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt('The INSERT affected no records.', LOG_ALWAYS, $meth . __LINE__);
                 return false;
             }
             else { // note: kind of assumes there was a single record inserted
@@ -113,15 +119,16 @@ class DbModel
         elseif (count($a_values) > 0) {
             $o_pdo_stmt = $this->prepare($the_query);
             if ($o_pdo_stmt === false) {
-                $this->logIt('Could not prepare the statement', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt('Could not prepare the statement', LOG_ALWAYS, $meth . __LINE__);
                 return false;
             }
             else {
-                return $this->insertPrepared($a_values, $o_pdo_stmt);
+                $this->logIt('Sending to insert Prepared.', LOG_ON, $meth . __LINE__);
+                return $this->insertPrepared($a_values, $o_pdo_stmt, $a_table_info);
             }
         }
         else {
-            $this->logIt('The array of values for a prepared insert was empty.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('The array of values for a prepared insert was empty.', LOG_ON, $meth . __LINE__);
             return false;
         }
     }
@@ -186,10 +193,10 @@ class DbModel
     /**
      *  Executes a query to modify one or more records.
      *  This is a stub. It executes the $this->mdQuery method
-     *  @param string $the_query default ''
-     *  @param array $a_values associative array with paramaters default empty array
-     *  @param bool $single_record default true specifies if only a single record should be deleted per query
-     *  @return bool - success or failure
+     *  @param string $the_query     default ''
+     *  @param array  $a_values      associative array with paramaters default empty array
+     *  @param bool   $single_record default true specifies if only a single record should be deleted per query
+     *  @return bool                 success or failure
     **/
     public function update($the_query = '', array $a_values = array(), $single_record = true)
     {
@@ -199,9 +206,9 @@ class DbModel
      *  Executes a query to delete one or more records.
      *  This is a stub. It executes the $this->mdQuery method
      *  @param string $the_query
-     *  @param array $a_values associative array with where paramaters
-     *  @param bool @single_record - specifies if only a single record should be deleted per query
-     *  @return bool - success or failure
+     *  @param array  $a_values      associative array with where paramaters
+     *  @param bool   $single_record specifies if only a single record should be deleted per query
+     *  @return bool                 success or failure
     **/
     public function delete($the_query = '', array $a_values = array(), $single_record = true)
     {
@@ -221,7 +228,7 @@ class DbModel
     /**
      *  Get the value of the property specified.
      *  @param string $var_name
-     *  @return mixed - value of the property
+     *  @return mixed value of the property
      *  @note - this is normally set to private so not to be used
     **/
     protected function getVar($var_name)
@@ -320,25 +327,38 @@ class DbModel
     }
     /**
      *  Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
-     *  @param $table_name (str) - name of the table - Default '' - Required
-     *  @param $schema_name (str) - name of the schema the table is in - Default 'public' - Optional
-     *  @param $column_name (str) - name of the column that should have the sequence - default 'id' - optional
+     *  @param array $a_table_info  ['table_name', 'column_name', 'schema']
+     *  @param string $table_name  name of the table - Default '' - Required
+     *  @param string $schema_name name of the schema the table is in - Default 'public' - Optional
+     *  @param string $column_name name of the column that should have the sequence - default 'id' - optional
      *  @return bool success or failure
     **/
-    public function setPgsqlSequenceName($table_name = '', $schema_name = 'public', $column_name = 'id')
+    public function setPgsqlSequenceName(array $a_table_info = array())
     {
+        if ($a_table_info == array()) {
+            return false;
+        }
+        if (!isset($a_table_info['table_name']) || $a_table_info['table_name'] == '') {
+            return false;
+        }
+        if (!isset($a_table_info['column_name']) || $a_table_info['column_name'] == '') {
+            $a_table_info['column_name'] = 'id';
+        }
+        if (!isset($a_table_info['schema']) || $a_table_info['schema'] == '') {
+            $a_table_info['schema'] = 'public';
+        }
         $query = "
             SELECT column_default
             FROM information_schema.columns
             WHERE table_schema = :schema
             AND table_name = :table_name
             AND column_name = :column_name";
-        $results = $this->search($query, array('schema'=>$schema_name, 'table_name'=>$table_name, 'column_name'=>$column_name));
+        $results = $this->search($query, $a_table_info);
         if ($results) {
-            $this->logIt("Results: " . var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Results: " . var_export($results, true), LOG_ON, __METHOD__ . '.' . __LINE__);
             $column_default = $results[0]['column_default'];
             $this->pgsql_sequence_name = preg_replace("/nextval\('(.*)'(.*)\)/i", '$1', $column_default);
-            $this->logIt("pgsql_sequence_name: " . $this->pgsql_sequence_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("pgsql_sequence_name: " . $this->pgsql_sequence_name, LOG_ON, __METHOD__ . '.' . __LINE__);
             return true;
         }
         else {
@@ -424,14 +444,12 @@ class DbModel
     }
     /**
      * Executes a prepared query
-     *
-     * @param                      $a_values   array <pre>
-     *                                         $a_values could be:
-     *                                         array("test", "brains") for question mark place holders prepared statement
-     *                                         array(":test"=>"test", ":food"=>"brains") for named parameters prepared statement
-     *                                         '' when the values have been bound before calling this method
+     * @param array $a_values <pre>
+     *        $a_values could be:
+     *        array("test", "brains") for question mark place holders prepared statement
+     *        array(":test"=>"test", ":food"=>"brains") for named parameters prepared statement
+     *        '' when the values have been bound before calling this method
      * @param object|\PDOStatement $o_pdo_stmt - the object created from the prepare
-     *
      * @return bool - success or failure
      */
     public function execute(array $a_values = array(), \PDOStatement $o_pdo_stmt)
@@ -709,30 +727,31 @@ class DbModel
     ### Complex Commands
     /**
      *  Does an insert based on a prepared query.
-     *  @param $a_values (array) - the values to be insert
-     *  @param $o_pdo_stmt (obj) - the object pointing to the prepared statement
-     *  @param $table_name (str) - the name of the table into which an insert is happening
-     *  @return bool - success or failure
+     *  @param array  $a_values the values to be insert
+     *  @param obj    $o_pdo_stmt the object pointing to the prepared statement
+     *  @param string $table_name the name of the table into which an insert is happening
+     *  @return bool  success or failure
     **/
-    public function insertPrepared($a_values = '', \PDOStatement $o_pdo_stmt, $table_name = '')
+    public function insertPrepared(array $a_values = array(), \PDOStatement $o_pdo_stmt, array $a_table_info = array())
     {
-        if (is_array($a_values) && count($a_values) > 0) {
-            $this->logIt("" . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $meth = __METHOD__ . '.';
+        if (count($a_values) > 0) {
+            $this->logIt("" . var_export($a_values , true), LOG_ON, $meth . __LINE__);
             $this->resetNewIds();
-            $results = $this->executeInsert($a_values, $o_pdo_stmt, $table_name);
+            $results = $this->executeInsert($a_values, $o_pdo_stmt, $a_table_info);
             if ($results === false) {
-                $this->logIt('Execute Failure', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('Execute Failure', LOG_ON, $meth . __LINE__);
                 $this->setSqlErrorMessage($this->o_db);
-                $this->logIt('PDO: ' . $this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('PDO: ' . $this->getSqlErrorMessage(), LOG_ON, $meth . __LINE__);
                 $this->setSqlErrorMessage($o_pdo_stmt);
-                $this->logIt('PDO_Statement: ' . $this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('PDO_Statement: ' . $this->getSqlErrorMessage(), LOG_ON, $meth . __LINE__);
                 $this->resetNewIds();
                 return false;
             }
             return true;
         }
         else {
-            $this->logIt('The array of values for a prepared insert was empty.', 4);
+            $this->logIt('The array of values for a prepared insert was empty.', LOG_ALWAYS, $meth . __LINE__);
             $this->resetNewIds();
             return false;
         }
@@ -742,17 +761,21 @@ class DbModel
      *
      *  @param array $a_values see $this->execute for details
      *  @param \PDOStatement $o_pdo_stmt
-     *  @param string $table_name
+     *  @param array $a_table_info
      *
      *  @return bool
      */
-    public function executeInsert(array $a_values = array(), \PDOStatement $o_pdo_stmt, $table_name = '')
+    public function executeInsert(array $a_values = array(), \PDOStatement $o_pdo_stmt, array $a_table_info = array())
     {
+        $meth = __METHOD__ . '.';
         if (count($a_values) > 0) {
-            $sequence_name = $this->db_type == 'pgsql' ? $this->getPgsqlSequenceName($table_name) : '' ;
+            $sequence_name = $this->db_type == 'pgsql' && $a_table_info != array() 
+                ? $this->getPgsqlSequenceName($a_table_info) 
+                : '' ;
+            $this->logIt('Sequence Name: ' . $sequence_name, LOG_ON, $meth . __LINE__); 
             if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays, can not be mixed
                 foreach ($a_values as $a_stuph) {
-                    if ($this->executeInsert($a_stuph, $o_pdo_stmt, $table_name) === false) {
+                    if ($this->executeInsert($a_stuph, $o_pdo_stmt, $a_table_info) === false) {
                         return false;
                     }
                 }
@@ -766,7 +789,7 @@ class DbModel
             return true;
         }
         else {
-            $this->logIt('The function executeInsert requires a an array for its first parameter.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('A non-empty array for its first parameter.', LOG_ALWAYS, $meth . __LINE__);
             return false;
         }
     }

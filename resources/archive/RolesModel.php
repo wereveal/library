@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class RolesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.4
- *  @date 2015-11-05 13:39:01
+ *  @version 1.0.5
+ *  @date 2015-11-22 17:57:02 
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.5   - bug fix to work properly with pgsql         - 11/22/2015 wer
  *      v1.0.4   - bug fix have to use is_numeric not ctype    - 11/05/2015 wer
  *      v1.0.3   - new method, bug fix, db table update        - 10/05/2015 wer
  *      v1.0.2   - bug fixes                                   - 09/24/2015 wer
@@ -81,7 +82,11 @@ class RolesModel implements ModelInterface
             VALUES
                 (:role_name, :role_description, :role_level, :role_immutable)
         ";
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}roles")) {
+        $a_table_info = [
+            'table_name'  => "{$this->db_prefix}roles",
+            'column_name' => 'roles_id'
+        ];
+        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];

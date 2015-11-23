@@ -15,6 +15,7 @@
  **/
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\PageModel;
@@ -79,7 +80,7 @@ class PageAdminController implements MangerControllerInterface
                 return $this->delete();
             case 'update':
                 if ($form_action == 'verify') {
-                    return $this->verifyDelete();
+                    return $this->o_view->renderVerify($this->a_post);
                 }
                 elseif ($form_action == 'update') {
                     return $this->update();
@@ -149,11 +150,14 @@ class PageAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+    /*
+     * Required by interface. Not called.
+     * @return string
+     */
     public function verifyDelete()
     {
         return $this->o_view->renderVerify($this->a_post);
     }
-
     /**
      * Adds slashes to url if needed.
      * @param string $url
@@ -164,6 +168,9 @@ class PageAdminController implements MangerControllerInterface
         if ($url == '/') {
             return '/';
         }
+        $url = Strings::removeTags($url);
+        $url = str_replace(' ', '_', $url);
+        $url = preg_replace("/[^a-zA-Z0-9_\-\/]/", '', $url);
         if (substr($url, 0, 1) != '/') {
             $url = '/' . $url;
         }

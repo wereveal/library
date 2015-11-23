@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-11-12 10:58:41
+ *  @version 1.1.0
+ *  @date 2015-11-22 18:05:37 
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.1.0    - refactoring to make compatible with postgresql              - 11/22/2015 wer
  *      v1.0.0    - initial working version                                     - 11/12/2015 wer
  *      v1.0.0β13 - removed roles from code                                     - 11/06/2015 wer
  *      v1.0.0β12 - Bug fix in sql, incompatible with Postgresql                - 11/05/2015 wer
@@ -91,7 +92,11 @@ class PeopleModel implements ModelInterface
             VALUES
                 (:login_id, :real_name, :short_name, :password, :description, :is_logged_in, :is_active, :is_immutable)
         ";
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}people")) {
+        $a_table_info = [
+            'table_name'  => "{$this->db_prefix}people",
+            'column_name' => 'people_id'
+        ];
+        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids;

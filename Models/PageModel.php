@@ -71,9 +71,10 @@ class PageModel implements ModelInterface
             $a_values['page_immutable'] = 0;
         }
         $a_results = $this->read(['page_url' => $a_values['page_url']]);
+        $this->logIt('page results: ' . var_export($a_results, TRUE), LOG_OFF, $meth . __LINE__);
         if (isset($a_results[0])) {
             $a_existing_url = $a_results[0];
-            if ($a_values['page_url'] != $a_existing_url['page_url']) {
+            if ($a_values['page_url'] == $a_existing_url['page_url']) {
                 $this->error_message = 'The URL for the page already exists.';
                 return false;
             }
@@ -99,11 +100,16 @@ class PageModel implements ModelInterface
                 :page_immutable
             )
         ";
-        $this->logIt('values to save: ' . var_export($a_values, TRUE), LOG_ON, $meth . __LINE__);
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}page")) {
-            $this->logIt('Test', LOG_ON, $meth . __LINE__);
+        $a_table_info = [
+            'table_name'  => "{$this->db_prefix}page",
+            'column_name' => 'page_id'
+        ];
+        $results = $this->o_db->insert($sql, $a_values, $a_table_info);
+        $this->logIt('Insert Results: ' . $results, LOG_OFF, $meth . __LINE__);
+        $this->logIt('db object: ' . var_export($this->o_db, TRUE), LOG_ON, $meth . __LINE__);
+        if ($results) {
             $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_ON, $meth . __LINE__);
+            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
             return $ids[0];
         }
         else {

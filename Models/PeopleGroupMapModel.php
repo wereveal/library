@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleGroupMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β6
- *  @date 2015-09-03 12:25:50
+ *  @version 1.0.0β7
+ *  @date 2015-11-22 17:59:19 
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β7 - refactoring fix for postgres compatibility            - 11/22/2015 wer
  *      v1.0.0β6 - removed abstract Base, implemented LogitTraits        - 09/03/2015 wer
  *      v1.0.0β5 - refactoring elsewhere caused changes here             - 07/31/2015 wer
  *      v1.0.0β4 - refactored user to people                             - 01/26/2015 wer
@@ -78,7 +79,11 @@ class PeopleGroupMapModel implements ModelInterface
             INSERT INTO {$this->db_prefix}people_group_map (people_id, group_id)
             VALUES (:people_id, :group_id)
         ";
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}people_group_map")) {
+        $a_table_info = [
+            'table_name'  => "{$this->db_prefix}people_group_map",
+            'column_name' => 'pgm_id'
+        ];
+        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids;

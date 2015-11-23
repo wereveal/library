@@ -6,15 +6,16 @@
  *  @namespace Ritc/Library/Models
  *  @class RoutesModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.2
- *  @date 2015-09-03 14:13:31
+ *  @version 1.1.0
+ *  @date 2015-11-22 18:02:52 
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.2   - Database structure change reflected here.            - 09/03/2015 wer
- *      v1.0.1   - Refactoring elsewhere necessitated changes here      - 07/31/2015 wer
- *      v1.0.0   - first working version                                - 01/28/2015 wer
- *      v1.0.0β2 - Changed to match some namespace changes, and bug fix - 11/15/2014 wer
- *      v1.0.0β1 - First live version                                   - 11/11/2014 wer
+ *      v1.1.0   - refactoring to provide better postgresql compatibility - 11/22/2015 wer
+ *      v1.0.2   - Database structure change reflected here.              - 09/03/2015 wer
+ *      v1.0.1   - Refactoring elsewhere necessitated changes here        - 07/31/2015 wer
+ *      v1.0.0   - first working version                                  - 01/28/2015 wer
+ *      v1.0.0β2 - Changed to match some namespace changes, and bug fix   - 11/15/2014 wer
+ *      v1.0.0β1 - First live version                                     - 11/11/2014 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
@@ -63,7 +64,11 @@ class RoutesModel implements ModelInterface
             VALUES
                 (:route_path, :route_class, :route_method, :route_action)
         ";
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}routes")) {
+        $a_table_info = [
+            'table_name'  => "{$this->db_prefix}routes",
+            'column_name' => 'route_id'
+        ];
+        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];

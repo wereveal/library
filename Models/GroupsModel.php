@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class GroupsModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β4
- *  @date 2015-10-08 11:20:32
+ *  @version 1.0.0β5
+ *  @date 2015-11-22 18:00:40 
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β5 - refactoring to provide postgresql compatibility              - 11/22/2015 wer
  *      v1.0.0β4 - added group_immutable field in db and changed code to match  - 10/08/2015 wer
  *      v1.0.0ß3 - removed abstract class Base, used LogitTraits                - 09/01/2015 wer
  *      v1.0.0ß2 - changed to use IOC (Inversion of Control)                    - 11/15/2014 wer
@@ -86,7 +87,11 @@ class GroupsModel implements ModelInterface
             VALUES
                 (:group_name, :group_description, :group_auth_level, :group_immutable)
         ";
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}groups")) {
+        $a_table_info = [
+            'table_name'  => "{$this->db_prefix}groups",
+            'column_name' => 'group_id'
+        ];
+        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];

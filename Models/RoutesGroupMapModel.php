@@ -57,7 +57,11 @@ class RouterGroupMapModel implements ModelInterface
             INSERT INTO {$this->db_prefix}routes_group_map (route_id, group_id)
             VALUES (:route_id, :group_id)
         ";
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}routes_group_map")) {
+        $a_table_info = [
+            'table_name'  => "{$this->db_prefix}routes_group_map",
+            'column_name' => 'rgm_id'
+        ];
+        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             return $ids[0];

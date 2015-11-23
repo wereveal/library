@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class GroupRoleMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β6
- *  @date 2015-09-03 12:23:20
+ *  @version 1.0.0β7
+ *  @date 2015-11-22 18:07:28 
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0β7 - refactoring for pgsql compatibility                           - 11/22/2015 wer
  *      v1.0.0β6 - Removed abstract class Base, use LogitTraits                  - 09/03/2015 wer
  *      v1.0.0β5 - Changed name to match DB change                               - 01/19/2015 wer
  *      v1.0.0ß4 - reverted back to injecting DbModel                            - 11/17/2014 wer
@@ -63,7 +64,11 @@ class GroupRoleMapModel implements ModelInterface
             VALUES (:group_id, :role_id)
         ";
         $this->logIt("create values: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}group_role_map")) {
+        $a_table_info = [
+            'table_name'  => "{$this->db_prefix}group_role_map",
+            'column_name' => 'grm_id'
+        ];
+        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
             return $ids[0];

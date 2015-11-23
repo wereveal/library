@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class ConstantsModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.1.0
- *  @date 2015-08-19 13:04:47
+ *  @version 2.2.0
+ *  @date 2015-11-22 18:04:07 
  *  @note A file in the Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v2.2.0 - Refactoring to provide better pgsql compatibility - 11/22/2015 wer
  *      v2.1.0 - No longer extends Base class but uses LogitTraits = 08/19/2015 wer
  *      v2.0.1 - Refactoring of Class Arrays required changes here - 07/31/2015 wer
  *      v2.0.0 - Renamed to match functionality                    - 01/17/2015 wer
@@ -80,7 +81,11 @@ class ConstantsModel implements ModelInterface
             VALUES (:const_name, :const_value, :const_immutable)
         ";
         $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-        if ($this->o_db->insert($sql, $a_values, "{$this->db_prefix}constants")) {
+        $a_table_info = [
+            'table_name'  => "{$this->db_prefix}constants",
+            'column_name' => 'const_id'
+        ];
+        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
             return $ids[0];
