@@ -175,7 +175,9 @@
             <div class="col-md-10 col-sm-10 col-xs-10">
                 <input type="hidden" id="tolken" name="tolken" value="{{ tolken }}">
                 <input type="hidden" id="form_ts" name="form_ts" value="{{ form_ts }}">
+                {% if person.people_id != '' %}
                 <input type="hidden" id="people_id" name="person[people_id]" value="{{ person.people_id }}">
+                {% endif %}
                 <label class="hobbit" for="hobbit">Enter Age</label><input type="text" id="hobbit" name="hobbit" value="" class="hobbit">
             </div>
         </div>

@@ -6,9 +6,10 @@
  *  @namespace Ritc/Library/Helper
  *  @class RoutesHelper
  *  @author William E Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0β2
- *  @date 2015-10-30 08:31:04
+ *  @version 1.0.0β3
+ *  @date 2015-11-24 14:51:20
  *  @note Change Log
+ *      v1.0.0β3 - bug fix                       - 11/24/2015 wer
  *      v1.0.0β2 - logic change                  - 10/30/2015 wer
  *      v1.0.0β1 - intial file                   - 09/26/2015 wer
  **/
@@ -52,12 +53,8 @@ class RoutesHelper
                 $route_path = $this->route_path;
             }
             else {
-                $this->route_path = $_SERVER["REQUEST_URI"];
-                $route_path = $this->route_path;
+                $route_path = $_SERVER["REQUEST_URI"];
             }
-        }
-        else {
-            $this->route_path = $route_path;
         }
         $a_values = ['route_path' => $route_path];
         $a_results = $this->o_model->read($a_values);
@@ -96,8 +93,8 @@ class RoutesHelper
                     $remainder_path = substr($remainder_path, 0, -1);
                 }
                 $a_route_parts                   = $a_last_good_results;
+                $this->route_path                = $a_route_parts['route_path'];
                 $a_route_parts['request_uri']    = $route_path;
-                $a_route_parts['last_found_url'] = $last_url;
                 $a_route_parts['url_actions']    = [];
                 $a_route_parts['url_actions']    = explode('/', $remainder_path);
                 $a_route_parts['groups']         = $this->getGroups($a_route_parts['route_id']);
@@ -107,8 +104,8 @@ class RoutesHelper
             else {
                 $this->a_route_parts = [
                     'route_id'       => 0,
-                    'route_path'     => $this->route_path,
-                    'request_uri'    => $this->route_path,
+                    'route_path'     => $route_path,
+                    'request_uri'    => $route_path,
                     'route_class'    => 'MainController',
                     'route_method'   => '',
                     'route_action'   => '',

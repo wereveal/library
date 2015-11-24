@@ -52,7 +52,6 @@ class PeopleAdminView
     {
         $meth = __METHOD__ . '.';
         $a_page_values = $this->getPageValues();
-        $this->logIt('page values' . var_export($a_page_values, TRUE), LOG_OFF, $meth . __LINE__);
         $a_values = [
             'a_message' => array(),
             'a_people'  => array(
@@ -70,6 +69,10 @@ class PeopleAdminView
             'adm_lvl'   => $this->adm_level
         ];
         $a_values = array_merge($a_page_values, $a_values);
+
+        $log_message = 'a_values: ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         $a_people = $this->o_people_model->read();
         if ($a_people !== false) {
             foreach($a_people as $key => $a_person) {
@@ -84,14 +87,20 @@ class PeopleAdminView
         else {
             $a_values['a_message'] = '';
         }
-        // error_log('twig values' . var_export($a_values, true));
         $html = $this->o_twig->render('@pages/people_admin.twig', $a_values);
         return $html;
     }
     public function renderNew()
     {
         $meth = __METHOD__ . '.';
+
+        $a_route_values = $this->o_router->getRouterParts();
+        $log_message = 'router parts ' . var_export($a_route_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         $a_page_values = $this->getPageValues();
+        $log_message = 'page values ' . var_export($a_page_values, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_values = [
             'a_message'   => array(),
             'person'      => array(
@@ -117,13 +126,18 @@ class PeopleAdminView
             'menus'   => $this->a_links
         ];
         $a_values = array_merge($a_page_values, $a_values);
+        $log_message = 'a_values: ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         $a_groups = $this->o_group_model->read();
-        $this->logIt('A group values: ' . var_export($a_groups, true), LOG_OFF, $meth . __LINE__);
+        $log_message = 'A group values: ' . var_export($a_groups, true);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         foreach ($a_groups as $key => $a_group) {
             $a_groups[$key]['checked'] = '';
         }
         $a_values['person']['groups'] = $a_groups;
-        $this->logIt('A person values: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
+        $log_message = 'A person values: ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@pages/person_form.twig', $a_values);
     }
     public function renderModify($people_id = -1)
@@ -158,6 +172,10 @@ class PeopleAdminView
             'menus'   => $this->a_links
         ];
         $a_values = array_merge($a_page_values, $a_values);
+
+        $log_message = 'a_values: ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         $a_person = $this->o_people_model->readInfo($people_id);
         if ($a_person == array()) {
             return $this->renderList(['message' => 'The person was not found. Please Try Again.', 'type' => 'error']);

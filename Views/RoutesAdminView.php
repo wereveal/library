@@ -47,9 +47,9 @@ class RoutesAdminView
      */
     public function renderList(array $a_message = array())
     {
+        $meth = __METHOD__ . '.';
+        $a_page_values = $this->getPageValues();
         $a_values = array(
-            'public_dir' => '',
-            'description' => 'Admin page for the router configuration.',
             'a_message' => array(),
             'a_routes' => array(
                 [
@@ -67,23 +67,22 @@ class RoutesAdminView
             'menus'   => $this->a_links,
             'adm_lvl' => $this->adm_level
         );
+        $a_values = array_merge($a_page_values, $a_values);
+        $log_message = 'a_values: ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
         else {
+            $message = 'Changing router values can result in unexpected results. If you are not sure, do not do it.';
             $a_values['a_message'] = ViewHelper::messageProperties(
-                array(
-                    'message'       => 'Changing router values can result in unexpected results. If you are not sure, do not do it.',
-                    'type'          => 'warning'
-                )
+                ViewHelper::warningMessage($message)
             );
         }
-        $a_routes = $this->o_model->read(array(), ['order_by' => 'route_immutable DESC, route_path']);
-        $this->logIt(
-            'a_routes: ' . var_export($a_routes, TRUE),
-            LOG_OFF,
-            __METHOD__ . '.' . __LINE__
-        );
+        $a_order_by = ['order_by' => 'route_immutable DESC, route_path'];
+        $a_routes = $this->o_model->read(array(), $a_order_by);
+        $log_message = 'a_routes: ' . var_export($a_routes, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if ($a_routes !== false && count($a_routes) > 0) {
             $a_values['a_routes'] = $a_routes;
         }

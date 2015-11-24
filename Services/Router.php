@@ -6,23 +6,24 @@
  *  @namespace Ritc/Library/Services
  *  @class Router
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β9
- *  @date 2015-09-22 13:01:33
+ *  @version 1.0.0β10
+ *  @date 2015-11-24 15:18:15
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0β9 - Bug fixes to fix logic error in actionable data          - 09/22/2015 wer
- *      v1.0.0β8 - Changed to allow route path to include additional        - 09/14/2015 wer
- *                 actionable data.
- *      v1.0.0β7 - Added Allowed Groups to the class.                       - 09/03/2015 wer
- *                 Groups can now be mapped to the route.
- *      v1.0.0β6 - Removed abstract class Base, added LogitTraits           - 09/01/2015 wer
- *      v1.0.0β5 - changed several properties to be static (just in case)   - 01/06/2015 wer
- *      v1.0.0β4 - changed to use Di class for DI/IOC.                      - 12/10/2014 wer
- *      v1.0.0β3 - added form_action class property.                        - 12/05/2014 wer
- *                 Added setter and getters for form_action class property.
- *      v1.0.0β2 - moved to Services namespace                              - 11/15/2014 wer
- *      v1.0.0β1 - bug fixes                                                - 11/14/2014 wer
- *      v1.0.0β0 - initial attempt to make this                             - 09/25/2014 wer
+ *      v1.0.0β10 - Bug fix to fix logic error with route path                  - 11/24/2015 wer
+ *      v1.0.0β9  - Bug fixes to fix logic error in actionable data             - 09/22/2015 wer
+ *      v1.0.0β8  - Changed to allow route path to include additional           - 09/14/2015 wer
+ *                  actionable data.
+ *      v1.0.0β7  - Added Allowed Groups to the class.                          - 09/03/2015 wer
+ *                  Groups can now be mapped to the route.
+ *      v1.0.0β6  - Removed abstract class Base, added LogitTraits              - 09/01/2015 wer
+ *      v1.0.0β5  - changed several properties to be static (just in case)      - 01/06/2015 wer
+ *      v1.0.0β4  - changed to use Di class for DI/IOC.                         - 12/10/2014 wer
+ *      v1.0.0β3  - added form_action class property.                           - 12/05/2014 wer
+ *                  Added setter and getters for form_action class property.
+ *      v1.0.0β2  - moved to Services namespace                                 - 11/15/2014 wer
+ *      v1.0.0β1  - bug fixes                                                   - 11/14/2014 wer
+ *      v1.0.0β0  - initial attempt to make this                                - 09/25/2014 wer
 **/
 namespace Ritc\Library\Services;
 
@@ -38,19 +39,16 @@ class Router
     private $a_post;
     private $a_router_parts;
     private $o_routes_helper;
-    public static $form_action;
-    public static $route_action;
-    public static $route_class;
-    public static $route_method;
-    public static $route_path;
+    private $form_action;
+    private $request_uri;
+    private $route_action;
+    private $route_class;
+    private $route_method;
+    private $route_path;
 
     public function __construct(Di $o_di)
     {
         $this->o_routes_helper = new RoutesHelper($o_di);
-        $this->setRoutePath();
-        $this->setGet();
-        $this->setPost();
-        $this->setFormAction();
         $this->setRouterParts();
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
@@ -58,6 +56,7 @@ class Router
     }
 
     /**
+     *  Sets the router parts from the routes helper plus other information.
      *  Sets the router parts from the routes helper plus other information.
      *  Sets additional url actionable parts, GET parts and Post parts.
      *  Addional url actional parts is like /fred/barney/wilma/ which could
@@ -70,17 +69,20 @@ class Router
      */
     public function setRouterParts()
     {
-        if (self::$route_path == '') {
-            self::$route_path = $_SERVER["REQUEST_URI"];
-        }
-        $a_router_parts = $this->o_routes_helper->createRouteParts(self::$route_path);
+        $this->setRoutePath();
+        $this->setGet();
+        $this->setPost();
+        $this->setFormAction();
+        $a_router_parts = $this->o_routes_helper->createRouteParts($this->route_path);
         $a_router_parts['get'] = $this->a_get;
         $a_router_parts['post'] = $this->a_post;
-        $a_router_parts['form_action'] = self::$form_action;
+        $a_router_parts['form_action'] = $this->form_action;
         $this->a_router_parts = $a_router_parts;
-        self::$route_action = $this->a_router_parts['route_action'];
-        self::$route_class  = $this->a_router_parts['route_class'];
-        self::$route_method = $this->a_router_parts['route_method'];
+        $this->request_uri    = $a_router_parts['request_uri'];
+        $this->route_path     = $a_router_parts['route_path'];
+        $this->route_action   = $a_router_parts['route_action'];
+        $this->route_class    = $a_router_parts['route_class'];
+        $this->route_method   = $a_router_parts['route_method'];
     }
 
     ### GETters and SETters ###
@@ -97,7 +99,7 @@ class Router
      */
     public function getFormAction()
     {
-        return self::$form_action;
+        return $this->form_action;
     }
     /**
      * @param string $value
@@ -121,21 +123,21 @@ class Router
      */
     public function getRouteAction()
     {
-        return self::$route_action;
+        return $this->route_action;
     }
     /**
      * @return mixed
      */
     public function getRouteClass()
     {
-        return self::$route_class;
+        return $this->route_class;
     }
     /**
      * @return mixed
      */
     public function getRoutePath()
     {
-        return self::$route_path;
+        return $this->route_path;
     }
     /**
      * @return mixed
@@ -203,7 +205,7 @@ class Router
             $action = '';
         }
         $this->logIt("Form Action is: {$action}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-        self::$form_action = $action;
+        $this->form_action = $action;
         return true;
     }
     /**
@@ -224,10 +226,10 @@ class Router
             $request_uri = $_SERVER["REQUEST_URI"];
         }
         if (strpos($request_uri, "?") !== false) {
-            self::$route_path = substr($request_uri, 0, strpos($request_uri, "?"));
+            $this->route_path = substr($request_uri, 0, strpos($request_uri, "?"));
         }
         else {
-            self::$route_path = $request_uri;
+            $this->route_path = $request_uri;
         }
     }
     /**
@@ -237,6 +239,9 @@ class Router
     {
         $this->a_post = Arrays::cleanArrayValues($_POST, $a_allowed_keys, true);
     }
+    /**
+     * @return mixed
+     */
     public function getRequestUri()
     {
         return $this->a_router_parts['request_uri'];

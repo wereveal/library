@@ -75,7 +75,8 @@ class PageAdminView
             if ($a_pages != array()) {
                 $a_values['a_page'] = $a_pages[0];
             }
-            $this->logIt('a_values: ' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
+            $log_message = 'a_values: ' . var_export($a_values, TRUE);
+            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         }
         return $this->o_twig->render('@pages/page_form.twig', $a_values);
     }
@@ -132,21 +133,28 @@ class PageAdminView
     public function renderVerify()
     {
         $meth = __METHOD__ . '.';
-        $a_values = array(
-            'what'       => '',
-            'name'       => '',
-            'where'      => '',
-            'public_dir' => PUBLIC_DIR,
-            'tolken'     => $_SESSION['token'],
-            'form_ts'    => $_SESSION['idle_timestamp'],
-            'hobbit'     => '',
-            'menus'      => $this->a_links,
-            'adm_lvl'    => $this->adm_level
-        );
         $a_post_values = $this->o_router->getPost();
+        $a_page = $a_post_values['page'];
+        $log_message = 'Post Values ' . var_export($a_post_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         $a_page_values = $this->getPageValues();
-        $a_values = array_merge($a_page_values, $a_values);
-        $this->logIt('Post Values' . var_export($a_post_values, TRUE), LOG_ON, $meth . __LINE__);
+        $a_values = array(
+            'what'         => 'Page ' . $a_page['page_title'],
+            'name'         => $a_page['page_url'],
+            'where'        => 'pages',
+            'btn_value'    => 'Page',
+            'hidden_name'  => 'page_id',
+            'hidden_value' => $a_page['page_id'],
+            'public_dir'   => PUBLIC_DIR,
+            'tolken'       => $_SESSION['token'],
+            'form_ts'      => $_SESSION['idle_timestamp'],
+            'hobbit'       => '',
+            'menus'        => $this->a_links,
+            'adm_lvl'      => $this->adm_level
+        );
+        $a_values = array_merge($a_values, $a_page_values);
+        $this->logIt('Twig Values: ' . var_export($a_values, TRUE), LOG_ON, $meth . __LINE__);
         return $this->o_twig->render('@pages/verify_delete.twig', $a_values);
     }
 }

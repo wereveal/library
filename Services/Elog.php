@@ -185,7 +185,7 @@ class Elog
             case LOG_ON:
             case LOG_CUSTOM:
                 if ($this->custom_log_used === false) {
-                    $string = "=== Start Elog ===\n"
+                    $string = "\n\n\n\n\n\n\n\n\n\n=== Start Elog ===\n"
                         . date("Y-m-d H:i:s")
                         . " - "
                         . $error_string

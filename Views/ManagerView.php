@@ -40,16 +40,16 @@ class ManagerView
         $this->setAuthLevel($_SESSION['login_id']);
         $this->setLinks();
         $a_values = $this->getPageValues();
-        $this->logIt('Links Again: ' . var_export($this->a_links, true), LOG_OFF, $meth . __LINE__);
-        $a_values['links']   = $this->a_links;
-        $a_values['menus']   = $this->a_links;
+        $a_values['links'] = $this->a_links;
+        $a_values['menus'] = $this->a_links;
         if (is_array($a_message)) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
         else {
             $a_values['a_message'] = ViewHelper::messageProperties(['message' => '']);
         }
-        $this->logIt('Final Values for twig: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
+        $log_message = 'Final Values for twig: ' . var_export($a_values, true);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@main/index.twig', $a_values);
     }
     /**

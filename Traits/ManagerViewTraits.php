@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Traits
  *  @class ManagerViewTraits
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.1
- *  @date 2015-10-16 14:22:23
+ *  @version 1.0.2
+ *  @date 2015-11-24 14:40:00
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.2 - bug fix                 - 11/24/2015 wer
  *      v1.0.1 - changed property name   - 10/16/2015 wer
  *      v1.0.0 - think it is working now - 10/05/2015 wer
  *      v0.1.0 - initial version         - 10/01/2015 wer
@@ -111,11 +112,12 @@ trait ManagerViewTraits
      */
     private function getPageValues()
     {
-        $page_url = $this->o_router->getRequestUri();
-        $route_path = $this->o_router->getRoutePath();
+        $page_url     = $this->o_router->getRequestUri();
+        $route_path   = $this->o_router->getRoutePath();
         $o_page_model = new PageModel($this->o_db);
-        $a_values1 = $o_page_model->read(['page_url' => $page_url]);
-        $a_values2 = $o_page_model->read(['page_url' => $route_path]);
+        $a_values1    = $o_page_model->read(['page_url' => $page_url]);
+        $a_values2    = $o_page_model->read(['page_url' => $route_path]);
+
         if (isset($a_values1[0])) {
             $a_page_values = $a_values1[0];
         }
@@ -124,14 +126,14 @@ trait ManagerViewTraits
         }
         else {
             return [
-                'page_description'   => 'Backend Manager',
-                'page_title'         => 'Manager',
-                'page_base_url'      => '/',
-                'page_lang'          => 'en',
-                'page_charset'       => 'utf-8',
-                'page_public_dir'    => PUBLIC_DIR,
-                'page_site_url'      => SITE_URL,
-                'page_rights_holder' => RIGHTS_HOLDER
+                'description'   => 'Backend Manager',
+                'title'         => 'Manager',
+                'base_url'      => '/',
+                'lang'          => 'en',
+                'charset'       => 'utf-8',
+                'public_dir'    => PUBLIC_DIR,
+                'site_url'      => SITE_URL,
+                'rights_holder' => RIGHTS_HOLDER
             ];
         }
         $base_url = $a_page_values['page_base_url'] == '/'
