@@ -83,7 +83,7 @@ class GroupsAdminView
             $a_values['a_groups'] = $a_groups;
         }
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $this->o_twig->render('@pages/groups_admin.twig', $a_values);
     }
     /**

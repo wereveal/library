@@ -99,7 +99,7 @@ class DbModel
         if ($this->db_type == 'pgsql' && $a_table_info != array()) {
             $sequence_name = $this->getPgsqlSequenceName($a_table_info);
         }
-        $this->logIt('Sequence Name: ' . $sequence_name, LOG_ON, $meth . __LINE__);
+        $this->logIt('Sequence Name: ' . $sequence_name, LOG_OFF, $meth . __LINE__);
         if (count($a_values) == 0) {
             $this->affected_rows = $this->o_db->exec($the_query);
             if ($this->affected_rows === false) {
@@ -123,12 +123,12 @@ class DbModel
                 return false;
             }
             else {
-                $this->logIt('Sending to insert Prepared.', LOG_ON, $meth . __LINE__);
+                $this->logIt('Sending to insert Prepared.', LOG_OFF, $meth . __LINE__);
                 return $this->insertPrepared($a_values, $o_pdo_stmt, $a_table_info);
             }
         }
         else {
-            $this->logIt('The array of values for a prepared insert was empty.', LOG_ON, $meth . __LINE__);
+            $this->logIt('The array of values for a prepared insert was empty.', LOG_OFF, $meth . __LINE__);
             return false;
         }
     }
@@ -355,10 +355,10 @@ class DbModel
             AND column_name = :column_name";
         $results = $this->search($query, $a_table_info);
         if ($results) {
-            $this->logIt("Results: " . var_export($results, true), LOG_ON, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Results: " . var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             $column_default = $results[0]['column_default'];
             $this->pgsql_sequence_name = preg_replace("/nextval\('(.*)'(.*)\)/i", '$1', $column_default);
-            $this->logIt("pgsql_sequence_name: " . $this->pgsql_sequence_name, LOG_ON, __METHOD__ . '.' . __LINE__);
+            $this->logIt("pgsql_sequence_name: " . $this->pgsql_sequence_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
             return true;
         }
         else {
@@ -736,15 +736,15 @@ class DbModel
     {
         $meth = __METHOD__ . '.';
         if (count($a_values) > 0) {
-            $this->logIt("" . var_export($a_values , true), LOG_ON, $meth . __LINE__);
+            $this->logIt("" . var_export($a_values , true), LOG_OFF, $meth . __LINE__);
             $this->resetNewIds();
             $results = $this->executeInsert($a_values, $o_pdo_stmt, $a_table_info);
             if ($results === false) {
-                $this->logIt('Execute Failure', LOG_ON, $meth . __LINE__);
+                $this->logIt('Execute Failure', LOG_OFF, $meth . __LINE__);
                 $this->setSqlErrorMessage($this->o_db);
-                $this->logIt('PDO: ' . $this->getSqlErrorMessage(), LOG_ON, $meth . __LINE__);
+                $this->logIt('PDO: ' . $this->getSqlErrorMessage(), LOG_OFF, $meth . __LINE__);
                 $this->setSqlErrorMessage($o_pdo_stmt);
-                $this->logIt('PDO_Statement: ' . $this->getSqlErrorMessage(), LOG_ON, $meth . __LINE__);
+                $this->logIt('PDO_Statement: ' . $this->getSqlErrorMessage(), LOG_OFF, $meth . __LINE__);
                 $this->resetNewIds();
                 return false;
             }
@@ -772,7 +772,7 @@ class DbModel
             $sequence_name = $this->db_type == 'pgsql' && $a_table_info != array() 
                 ? $this->getPgsqlSequenceName($a_table_info) 
                 : '' ;
-            $this->logIt('Sequence Name: ' . $sequence_name, LOG_ON, $meth . __LINE__); 
+            $this->logIt('Sequence Name: ' . $sequence_name, LOG_OFF, $meth . __LINE__); 
             if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays, can not be mixed
                 foreach ($a_values as $a_stuph) {
                     if ($this->executeInsert($a_stuph, $o_pdo_stmt, $a_table_info) === false) {

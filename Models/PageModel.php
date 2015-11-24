@@ -106,7 +106,7 @@ class PageModel implements ModelInterface
         ];
         $results = $this->o_db->insert($sql, $a_values, $a_table_info);
         $this->logIt('Insert Results: ' . $results, LOG_OFF, $meth . __LINE__);
-        $this->logIt('db object: ' . var_export($this->o_db, TRUE), LOG_ON, $meth . __LINE__);
+        $this->logIt('db object: ' . var_export($this->o_db, TRUE), LOG_OFF, $meth . __LINE__);
         if ($results) {
             $ids = $this->o_db->getNewIds();
             $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);

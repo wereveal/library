@@ -96,7 +96,7 @@ class PeopleAdminView
 
         $a_route_values = $this->o_router->getRouterParts();
         $log_message = 'router parts ' . var_export($a_route_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_page_values = $this->getPageValues();
         $log_message = 'page values ' . var_export($a_page_values, TRUE);
@@ -174,7 +174,7 @@ class PeopleAdminView
         $a_values = array_merge($a_page_values, $a_values);
 
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_person = $this->o_people_model->readInfo($people_id);
         if ($a_person == array()) {

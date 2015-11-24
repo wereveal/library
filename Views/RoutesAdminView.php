@@ -69,7 +69,7 @@ class RoutesAdminView
         );
         $a_values = array_merge($a_page_values, $a_values);
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
