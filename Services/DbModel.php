@@ -272,13 +272,13 @@ class DbModel
         return $this->a_new_ids;
     }
     /**
-     * @param string $table_name
+     * @param array $a_table_info
      * @return string
      */
-    public function getPgsqlSequenceName($table_name = '')
+    public function getPgsqlSequenceName(array $a_table_info = array())
     {
-        if ($table_name != '') {
-            $this->setPgsqlSequenceName($table_name);
+        if ($a_table_info != array()) {
+            $this->setPgsqlSequenceName($a_table_info);
         }
         return $this->pgsql_sequence_name;
     }
@@ -327,10 +327,10 @@ class DbModel
     }
     /**
      *  Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
-     *  @param array $a_table_info  ['table_name', 'column_name', 'schema']
-     *  @param string $table_name  name of the table - Default '' - Required
-     *  @param string $schema_name name of the schema the table is in - Default 'public' - Optional
-     *  @param string $column_name name of the column that should have the sequence - default 'id' - optional
+     *  @param array $a_table_info  ['table_name', 'column_name', 'schema']<pre>
+     *                              'table_name'  value required, 
+     *                              'column_name' value optional but recommended, defaults to 'id'
+     *                              'schema'      value optional, defaults to 'public'</pre>
      *  @return bool success or failure
     **/
     public function setPgsqlSequenceName(array $a_table_info = array())
