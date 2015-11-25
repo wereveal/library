@@ -22,6 +22,7 @@
  **/
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\RoutesModel;
@@ -104,7 +105,7 @@ class RoutesAdminController implements MangerControllerInterface
     }
     public function save()
     {
-        $a_route = $this->fixRoutePath($this->a_post['route']);
+        $a_route = $this->fixRoute($this->a_post['route']);
         $results = $this->o_model->create($a_route);
         if ($results) {
             $a_message = ViewHelper::successMessage();
@@ -116,7 +117,7 @@ class RoutesAdminController implements MangerControllerInterface
     }
     public function update()
     {
-        $a_route = $this->fixRoutePath($this->a_post['route']);
+        $a_route = $this->fixRoute($this->a_post['route']);
         $results = $this->o_model->update($a_route);
         if ($results) {
             $a_message = ViewHelper::successMessage();
@@ -132,11 +133,11 @@ class RoutesAdminController implements MangerControllerInterface
     }
 
     /**
-     * Adds slashes to route path if needed.
-     * @param array $a_route
+     * Removes tags and adds appropriate slashes to route path.
+     * @param array $a_route defaults to empty array.
      * @return array
      */
-    private function fixRoutePath(array $a_route = array())
+    private function fixRoute(array $a_route = array())
     {
         if ($a_route == array()) {
             return [
@@ -146,6 +147,11 @@ class RoutesAdminController implements MangerControllerInterface
                 'route_action'    => '',
                 'route_immutable' => 0
             ];
+        }
+        foreach ($a_route as $key => $value) {
+            if ($key != 'route_immutable') {
+                $a_route[$key] = Strings::removeTagsWithDecode($value, ENT_QUOTES);
+            }
         }
         if (substr($a_route['route_path'], 0, 1) != '/') {
             $a_route['route_path'] = '/' . $a_route['route_path'];

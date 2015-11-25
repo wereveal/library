@@ -237,7 +237,7 @@ class PeopleAdminController implements MangerControllerInterface
         $a_fix_these = ['login_id', 'real_name', 'short_name', 'description'];
         foreach ($a_fix_these as $key) {
             if (isset($a_person[$key])) {
-                $a_person[$key] = Strings::removeTags($a_person[$key]);
+                $a_person[$key] = Strings::removeTagsWithDecode($a_person[$key], ENT_QUOTES);
                 if ($key == 'short_name') {
                     $a_person[$key] = Strings::makeAlphanumeric($a_person[$key]);
                 }
@@ -277,6 +277,4 @@ class PeopleAdminController implements MangerControllerInterface
         }
         return $a_person;
     }
-
-
 }

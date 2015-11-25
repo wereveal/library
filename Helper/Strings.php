@@ -10,10 +10,11 @@
  *  @namespace Ritc/Library/Helper
  *  @class Strings
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 6.0.0
- *  @date 2015-01-27 15:08:41
+ *  @version 6.2.0
+ *  @date 2015-11-25 12:19:46
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v6.2.0 - added new method to strip tags from htmlentites coded string      - 11/25/2015 wer
  *      v6.1.0 - renamed makeAlphanumeric to makeAlphanumericPlus and added two    - 11/07/2015 wer
  *               new methods called makeAlphanumeric and makeCamelCase.
  *      v6.0.0 - changed all methods to static                                     - 01/27/2015 wer
@@ -90,8 +91,8 @@ class Strings
     /**
      *  Takes the input and makes it a boolean.
      *  Basically, looks for the boolean false, int 0, or string of false (case insensitive).
-     *  @param $input (mixed) - the value to turn to a boolean
-     *  @return bool - the changed value
+     *  @param mixed $input the value to turn to a boolean
+     *  @return bool        the changed value
     **/
     public static function isTrue($input = '')
     {
@@ -143,7 +144,7 @@ class Strings
     /**
      *  Removes everything except letters and numbers.
      *  @param string $the_string
-     *  @return string - the modified string
+     *  @return string the modified string
     **/
     public static function makeAlphanumeric($the_string = '')
     {
@@ -154,7 +155,7 @@ class Strings
      *  Removes html and php tags first, replaces spaces with undersHelpers,
      *  then finally removes all other characters
      *  @param string $the_string
-     *  @return string - the modified string
+     *  @return string
     **/
     public static function makeAlphanumericPlus($the_string = '')
     {
@@ -166,8 +167,8 @@ class Strings
      *  Makes the string alpha camelCase.
      *  Splits string at spaces, dashes and underscores into alpha 'words' which
      *  it will uppercase all but the first word by default.
-     *  @param string $the_string defaults to blank string
-     *  @param bool $leave_first_alone defaults to true
+     *  @param string $the_string        defaults to blank string
+     *  @param bool   $leave_first_alone defaults to true
      *  @return string
      */
     public static function makeCamelCase($the_string = '', $leave_first_alone = true)
@@ -198,9 +199,9 @@ class Strings
     /**
      *  Makes the string alphanumeric plus _*.+!- in all lower case.
      *  Removes html and php tags first, replaces spaces with undersHelpers,
-     *  removes all other characters, then finally make lowercase
-     *  @param $the_string (str)
-     *  @return string - the modified string
+     *  removes all other characters, then finally make lowercase.
+     *  @param string $the_string
+     *  @return string the modified string
     **/
     public static function makeInternetUsable($the_string = '')
     {
@@ -241,10 +242,10 @@ class Strings
      *      number of words if the number of characters restricts it.
      *  @note this method strips all html and php tags before shortening the
      *      string.
-     *  @param $string (str) - string to be shortened.
-     *  @param $num_of_words (int) - number of words, defaults to 5
-     *  @param $num_of_chars (int) - number of characters, if not '', the
-     *      method uses this param to shorten the string
+     *  @param string $string       string to be shortened.
+     *  @param int    $num_of_words number of words, defaults to 5
+     *  @param in     $num_of_chars number of characters, if not '', the method
+     *                              uses this param to shorten the string
      *  @return string - short string.
     **/
     public static function makeShortString($string = '', $num_of_words = 0, $num_of_chars = 0)
@@ -306,7 +307,7 @@ class Strings
     }
     /**
      *  Remove HTML tags, javascript sections and white space.
-     *  idea taken from php.net documentation
+     *  Idea taken from php.net documentation.
      *  @param string $html
      *  @return string
     **/
@@ -320,4 +321,24 @@ class Strings
         $replace = ['', '', '\1'];
         return preg_replace($search, $replace, $html);
     }
+    /**
+     *  Remove HTML tags, javascript sections and white space.
+     *  Decodes htmlentities first.
+     *  Idea taken from php.net documentation.
+     *  @param string $string
+     *  @param int    $ent_flag defaults to ENT_QUOTES
+     *  @return string
+    **/
+    public static function removeTagsWithDecode($string = '', $ent_flag = ENT_QUOTES)
+    {
+        $search = [
+            '@<script[^>]*?>.*?</script>@si', // Strip out javascript
+            '@<[\/\!]*?[^<>]*?>@si',          // Strip out HTML tags
+            '@([\r\n])[\s]+@'                 // evaluate as php
+        ];
+        $replace = ['', '', '\1'];
+        $string = html_entity_decode($string, $ent_flag);
+        return preg_replace($search, $replace, $string);
+    }
+
 }

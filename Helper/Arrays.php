@@ -10,27 +10,27 @@
  *  @date 2015-11-25 11:27:29
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v2.7.0 - Changed entity coding/decoding to be defineable via ENTITIES_CODING - 11/25/2015 wer
- *               constant. ENTITIES_CODING is set in the app setup. ENT_HTML5 is default
- *      v2.6.1 - bug fix, stripTags -- logic error                                   - 11/12/2015 wer
- *      v2.6.0 - new method, moved from Tester class, can be more generic.           - 11/02/2015 wer
- *      v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs        - 10/22/2015 wer
- *      v2.5.1 - bug fix, inArrayRecursive                                           - 10/20/2015 wer
- *      v2.5.0 - new method, createRequiredPairs                                     - 10/06/2015 wer
- *      v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                - 09/12/2015 wer
- *      v2.3.0 - New method, inArrayRecursive                                        - 09/10/2015 wer
- *      v2.2.0 - Removed use of abstract class Base                                  - 09/03/2015 wer
- *      v2.1.0 - After looking at the inconsistency, changed to be more consistent   - 07/31/2015 wer
+ *      v2.7.0 - Changed entity coding/decoding to be defineable via paramater.         - 11/25/2015 wer
+ *               Defaults to ENT_QUOTES.
+ *      v2.6.1 - bug fix, stripTags -- logic error                                      - 11/12/2015 wer
+ *      v2.6.0 - new method, moved from Tester class, can be more generic.              - 11/02/2015 wer
+ *      v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs           - 10/22/2015 wer
+ *      v2.5.1 - bug fix, inArrayRecursive                                              - 10/20/2015 wer
+ *      v2.5.0 - new method, createRequiredPairs                                        - 10/06/2015 wer
+ *      v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                   - 09/12/2015 wer
+ *      v2.3.0 - New method, inArrayRecursive                                           - 09/10/2015 wer
+ *      v2.2.0 - Removed use of abstract class Base                                     - 09/03/2015 wer
+ *      v2.1.0 - After looking at the inconsistency, changed to be more consistent      - 07/31/2015 wer
  *               Also changed variable name to be more descriptive than array.
- *      v2.0.1 - oops, missed one to be static, changed its name                     - 07/31/2015 wer
- *      v2.0.0 - changed methods to be static                                        - 01/27/2015 wer
- *      v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it - 12/05/2014 wer
- *      v1.2.1 - moved to the Helper namespace                                       - 11/15/2014 wer
- *      v1.2.1 - clean up                                                            - 09/23/2014 wer
- *      v1.2.0 - new method added                                                    - 12/30/2013 wer
- *      v1.1.1 - match package change                                                - 12/19/2013 wer
- *      v1.1.0 - namespace changes                                                   - 07/30/2013 wer
- *      v1.0.3 - moved array methods from class Strings to here                      - 03/27/2013 wer
+ *      v2.0.1 - oops, missed one to be static, changed its name                        - 07/31/2015 wer
+ *      v2.0.0 - changed methods to be static                                           - 01/27/2015 wer
+ *      v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it    - 12/05/2014 wer
+ *      v1.2.1 - moved to the Helper namespace                                          - 11/15/2014 wer
+ *      v1.2.1 - clean up                                                               - 09/23/2014 wer
+ *      v1.2.0 - new method added                                                       - 12/30/2013 wer
+ *      v1.1.1 - match package change                                                   - 12/19/2013 wer
+ *      v1.1.0 - namespace changes                                                      - 07/30/2013 wer
+ *      v1.0.3 - moved array methods from class Strings to here                         - 03/27/2013 wer
  *      v1.0.2 - added new method
  *      v1.0.1 - new namespace, FIG standards (mostly)
  *  </pre>
@@ -46,9 +46,10 @@ class Arrays
      *  @param array $a_pairs             the array to clean
      *  @param array $a_allowed_keys      allows only specified keys to be returned
      *  @param bool  $unsafe_php_commands defaults to true strips 'unsafe' php commands, rare should it be false
+     *  @param int   $ent_flag            sets the entity coding defaults to ENT_QUOTES
      *  @return array                     the cleaned array
      */
-    public static function cleanArrayValues(array $a_pairs = array(), $a_allowed_keys = array(), $unsafe_php_commands = true)
+    public static function cleanArrayValues(array $a_pairs = array(), $a_allowed_keys = array(), $unsafe_php_commands = true, $ent_flag = ENT_QUOTES)
     {
         $a_clean = array();
         if (count($a_pairs) === 0) {
@@ -65,11 +66,11 @@ class Arrays
                 $value = trim($value);
                 if (count($a_allowed_keys) >= 1) {
                     if (in_array($key, $a_allowed_keys)) {
-                        $a_clean[$key] = htmlentities($value, ENTITIES_CODING);
+                        $a_clean[$key] = htmlentities($value, $ent_flag);
                     }
                 }
                 else {
-                    $a_clean[$key] = htmlentities($value, ENTITIES_CODING);
+                    $a_clean[$key] = htmlentities($value, $ent_flag);
                 }
             }
         }
@@ -138,9 +139,10 @@ class Arrays
     /**
      *  Decodes htmlentities in array values
      *  @param array $a_pairs
+     *  @param int   $ent_flag sets the entity decoding defaults to ENT_QUOTES
      *  @return array
     **/
-    public static function decodeEntities(array $a_pairs = array())
+    public static function decodeEntities(array $a_pairs = array(), $ent_flag = ENT_QUOTES)
     {
         $a_clean = array();
         if (count($a_pairs) === 0) {
@@ -148,10 +150,10 @@ class Arrays
         }
         foreach ($a_pairs as $key => $value) {
             if (is_array($value)) {
-                $a_clean[$key] = self::decodeEntities($value);
+                $a_clean[$key] = self::decodeEntities($value, $ent_flag);
             }
             else {
-                $a_clean[$key] = html_entity_decode($value, ENTITIES_CODING);
+                $a_clean[$key] = html_entity_decode($value, $ent_flag);
             }
         }
         return $a_clean;
@@ -315,9 +317,9 @@ class Arrays
     }
     /**
      *  Strip HTML and PHP tags from the values in an array
-     *  @param array  $a_pairs         the array with the values to modify
-     *  @param array  $a_allowed_keys  an array with a list of keys allowed to have tags (optional)
-     *  @param string $allowable_tags  a string with allowed tags (see php strip_tags())
+     *  @param array  $a_pairs        the array with the values to modify
+     *  @param array  $a_allowed_keys an array with a list of keys allowed to have tags (optional)
+     *  @param string $allowable_tags a string with allowed tags (see php strip_tags())
      *  @return array $a_clean
     **/
     public static function stripTags(array $a_pairs = array(), array $a_allowed_keys = array(), $allowable_tags = '')
@@ -371,16 +373,5 @@ class Arrays
             $a_return_this[$key] = preg_replace($a_functions, '', $value);
         }
         return $a_return_this;
-    }
-    /**
-     *  A just in case function, if the constant isn't set, allows it to be set.
-     *  @param int $entities_flag see PHP documentation for ENT_flags.
-     *  @return null
-     */
-    public static function setEntitiesCoding($entities_flag = ENT_HTML5)
-    {
-        if (!defined('ENTITIES_CODING')) {
-            define('ENTITIES_CODING', $entities_flag);
-        }
     }
 }

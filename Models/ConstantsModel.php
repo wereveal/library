@@ -55,7 +55,7 @@ class ConstantsModel implements ModelInterface
     public function create(array $a_values)
     {
         $meth = __METHOD__ . '.';
-        $this->logIt(var_export($a_values, true), LOG_ON, $meth);
+        $this->logIt(var_export($a_values, true), LOG_OFF, $meth);
         $a_required_keys = array(
             'const_name',
             'const_value'
@@ -352,8 +352,7 @@ class ConstantsModel implements ModelInterface
      **/
     public function makeValidName($const_name = '')
     {
-        $const_name = html_entity_decode($const_name, ENTITIES_CODING);
-        $const_name = Strings::removeTags($const_name);
+        $const_name = Strings::removeTagsWithDecode($const_name, ENT_QUOTES);
         $const_name = preg_replace("/[^a-zA-Z_ ]/", '', $const_name);
         $const_name = preg_replace('/(\s+)/i', '_', $const_name);
         return strtoupper($const_name);
@@ -365,9 +364,8 @@ class ConstantsModel implements ModelInterface
      **/
     public function makeValidValue($const_value = '')
     {
-        $const_value = html_entity_decode($const_value, ENTITIES_CODING);
-        $const_value = Strings::removeTags($const_value);
-        return htmlentities($const_value, ENTITIES_CODING);
+        $const_value = Strings::removeTagsWithDecode($const_value, ENT_QUOTES);
+        return htmlentities($const_value,  ENT_QUOTES);
     }
 
     ### SETters and GETters ###
