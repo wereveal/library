@@ -6,10 +6,12 @@
  *  @namespace Ritc/Library/Helper
  *  @class Arrays
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.6.1
- *  @date 2015-11-12 10:25:39
+ *  @version 2.7.0
+ *  @date 2015-11-25 11:27:29
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v2.7.0 - Changed entity coding/decoding to be defineable via ENTITIES_CODING - 11/25/2015 wer
+ *               constant. ENTITIES_CODING is set in the app setup. ENT_HTML5 is default
  *      v2.6.1 - bug fix, stripTags -- logic error                                   - 11/12/2015 wer
  *      v2.6.0 - new method, moved from Tester class, can be more generic.           - 11/02/2015 wer
  *      v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs        - 10/22/2015 wer
@@ -41,7 +43,7 @@ class Arrays
      *  Modifies array values with htmlentities and strips unsafe php commands.
      *  Initially designed to do some basic filtering of $_POST, $_GET, etc
      *  but will work with any array.
-     *  @param array $a_pairs               the array to clean
+     *  @param array $a_pairs             the array to clean
      *  @param array $a_allowed_keys      allows only specified keys to be returned
      *  @param bool  $unsafe_php_commands defaults to true strips 'unsafe' php commands, rare should it be false
      *  @return array                     the cleaned array
@@ -63,11 +65,11 @@ class Arrays
                 $value = trim($value);
                 if (count($a_allowed_keys) >= 1) {
                     if (in_array($key, $a_allowed_keys)) {
-                        $a_clean[$key] = htmlentities($value, ENT_QUOTES);
+                        $a_clean[$key] = htmlentities($value, ENTITIES_CODING);
                     }
                 }
                 else {
-                    $a_clean[$key] = htmlentities($value, ENT_QUOTES);
+                    $a_clean[$key] = htmlentities($value, ENTITIES_CODING);
                 }
             }
         }
@@ -149,7 +151,7 @@ class Arrays
                 $a_clean[$key] = self::decodeEntities($value);
             }
             else {
-                $a_clean[$key] = html_entity_decode($value, ENT_QUOTES);
+                $a_clean[$key] = html_entity_decode($value, ENTITIES_CODING);
             }
         }
         return $a_clean;
@@ -242,7 +244,7 @@ class Arrays
     /**
      *  Determines that the value passed in is an associative array with all non-numeric keys.
      *  Also determines that the array is not empty.
-     *  @param $a_pairs (array)
+     *  @param array $a_pairs
      *  @return bool
     **/
     public static function isAssocArray($a_pairs = array())
@@ -257,8 +259,8 @@ class Arrays
     }
     /**
      *  Sees if the array passed in is an array of assoc arrays.
-     * @param array
-     * @return bool
+     *  @param array
+     *  @return bool
      */
     public static function isArrayOfAssocArrays(array $a_arrays = array())
     {
@@ -313,9 +315,9 @@ class Arrays
     }
     /**
      *  Strip HTML and PHP tags from the values in an array
-     *  @param array $a_pairs the array with the values to modify
-     *  @param array $a_allowed_keys an array with a list of keys allowed to have tags (optional)
-     *  @param string $allowable_tags a string with allowed tags (see php strip_tags())
+     *  @param array  $a_pairs         the array with the values to modify
+     *  @param array  $a_allowed_keys  an array with a list of keys allowed to have tags (optional)
+     *  @param string $allowable_tags  a string with allowed tags (see php strip_tags())
      *  @return array $a_clean
     **/
     public static function stripTags(array $a_pairs = array(), array $a_allowed_keys = array(), $allowable_tags = '')
@@ -369,5 +371,16 @@ class Arrays
             $a_return_this[$key] = preg_replace($a_functions, '', $value);
         }
         return $a_return_this;
+    }
+    /**
+     *  A just in case function, if the constant isn't set, allows it to be set.
+     *  @param int $entities_flag see PHP documentation for ENT_flags.
+     *  @return null
+     */
+    public static function setEntitiesCoding($entities_flag = ENT_HTML5)
+    {
+        if (!defined('ENTITIES_CODING')) {
+            define('ENTITIES_CODING', $entities_flag);
+        }
     }
 }
