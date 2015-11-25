@@ -7,7 +7,7 @@
  *  @class ConstantsModel
  *  @author William Reveal  <bill@revealitconsulting.com>
  *  @version 2.2.0
- *  @date 2015-11-22 18:04:07 
+ *  @date 2015-11-22 18:04:07
  *  @note A file in the Ritc Library
  *  @note <pre><b>Change Log</b>
  *      v2.2.0 - Refactoring to provide better pgsql compatibility - 11/22/2015 wer
@@ -55,7 +55,7 @@ class ConstantsModel implements ModelInterface
     public function create(array $a_values)
     {
         $meth = __METHOD__ . '.';
-        $this->logIt(var_export($a_values, true), LOG_OFF, $meth);
+        $this->logIt(var_export($a_values, true), LOG_ON, $meth);
         $a_required_keys = array(
             'const_name',
             'const_value'
@@ -66,6 +66,7 @@ class ConstantsModel implements ModelInterface
                     return false;
                 }
                 $a_values[$key]['const_name'] = $this->makeValidName($a_values[$key]['const_name']);
+                $a_values[$key]['const_value'] = $this->makeValidValue($a_values[$key]['const_value']);
                 $a_values[$key] = Arrays::createRequiredPairs($a_values[$key], ['const_name', 'const_value', 'const_immutable'], true);
             }
         }
@@ -74,6 +75,7 @@ class ConstantsModel implements ModelInterface
                 return false;
             }
             $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
+            $a_values['const_value'] = $this->makeValidValue($a_values['const_value']);
             $a_values = Arrays::createRequiredPairs($a_values, ['const_name', 'const_value', 'const_immutable'], true);
         }
         $sql = "
@@ -350,10 +352,22 @@ class ConstantsModel implements ModelInterface
      **/
     public function makeValidName($const_name = '')
     {
+        $const_name = html_entity_decode($const_name, ENTITIES_CODING);
         $const_name = Strings::removeTags($const_name);
         $const_name = preg_replace("/[^a-zA-Z_ ]/", '', $const_name);
         $const_name = preg_replace('/(\s+)/i', '_', $const_name);
         return strtoupper($const_name);
+    }
+    /**
+     *  Changes the string to be a valid constant name.
+     *  @param $const_name
+     *  @return string
+     **/
+    public function makeValidValue($const_value = '')
+    {
+        $const_value = html_entity_decode($const_value, ENTITIES_CODING);
+        $const_value = Strings::removeTags($const_value);
+        return htmlentities($const_value, ENTITIES_CODING);
     }
 
     ### SETters and GETters ###
