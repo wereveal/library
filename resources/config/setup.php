@@ -91,6 +91,8 @@ $o_loader->addClassMap($my_classmap);
 
 $o_elog = Elog::start();
 $o_elog->setIgnoreLogOff(false); // turns on logging globally ignoring LOG_OFF when set to true
+// set_error_handler([$o_elog, 'errorHandler'], E_USER_WARNING | E_USER_NOTICE | E_USER_ERROR);
+$o_elog->setErrorHandler(E_USER_WARNING | E_USER_NOTICE | E_USER_ERROR);
 
 $o_session = Session::start();
 
@@ -102,6 +104,8 @@ $o_pdo = PdoFactory::start($db_config_file, 'rw', $o_di);
 
 if ($o_pdo !== false) {
     $o_db = new DbModel($o_pdo, $db_config_file);
+    $o_db->setElog($o_elog);
+
     if (!is_object($o_db)) {
         $o_elog->write("Could not create a new DbModel\n", LOG_ALWAYS);
         die("Could not get the database to work");

@@ -42,9 +42,6 @@ if (!defined('SITE_URL')) {
 if (!defined('DEVELOPER_MODE')) {
     define('DEVELOPER_MODE', false);
 }
-if (!defined('ENTITIES_CODING')) {
-    define('ENTITIES_CODING', ENT_QUOTES);
-}
 if (!defined('RODB')) {
     define('RODB', false);
 }
