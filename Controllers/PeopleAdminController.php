@@ -134,6 +134,9 @@ class PeopleAdminController implements MangerControllerInterface
         if ($this->o_model->isExistingShortName($a_person['short_name'])) {
             $a_person['short_name'] = $this->createShortName($a_person['short_name']);
         }
+        if (!isset($this->a_post_values['groups']) || count($this->a_post_values['groups']) < 1) {
+            return ViewHelper::failureMessage("Opps, the person was not saved. The person must be assigned to at least one group.");
+        }
         $a_person['groups'] = $this->a_post_values['groups'];
         $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
         if ($this->o_model->savePerson($a_person) !== false) {
@@ -166,6 +169,9 @@ class PeopleAdminController implements MangerControllerInterface
                 $a_person['short_name'] = $a_previous_values[0]['short_name'];
                 $addendum .= '<br>The alias was not changed because the new value aleady existed for someone else.';
             }
+        }
+        if (!isset($this->a_post_values['groups']) || count($this->a_post_values['groups']) < 1) {
+            return ViewHelper::failureMessage("Opps, the person was not saved. The person must be assigned to at least one group.");
         }
         $a_person['groups'] = $this->a_post_values['groups'];
         $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
