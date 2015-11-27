@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Services
  *  @class Router
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β10
- *  @date 2015-11-24 15:18:15
+ *  @version 1.0.0
+ *  @date 2015-11-27 14:57:15
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0    - take out of beta                                            - 11/27/2015 wer
  *      v1.0.0β10 - Bug fix to fix logic error with route path                  - 11/24/2015 wer
  *      v1.0.0β9  - Bug fixes to fix logic error in actionable data             - 09/22/2015 wer
  *      v1.0.0β8  - Changed to allow route path to include additional           - 09/14/2015 wer

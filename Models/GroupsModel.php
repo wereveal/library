@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class GroupsModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β5
- *  @date 2015-11-22 18:00:40 
+ *  @version 1.0.0
+ *  @date 2015-11-27 14:46:28
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0   - First working version                                        - 11/27/2015 wer
  *      v1.0.0β5 - refactoring to provide postgresql compatibility              - 11/22/2015 wer
  *      v1.0.0β4 - added group_immutable field in db and changed code to match  - 10/08/2015 wer
  *      v1.0.0ß3 - removed abstract class Base, used LogitTraits                - 09/01/2015 wer

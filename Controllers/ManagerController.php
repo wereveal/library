@@ -6,9 +6,11 @@
  * @namespace Ritc/Library/Controllers
  * @class     ManagerController
  * @author    William Reveal <bill@revealitconsulting.com>
- * @date      2015-11-18 13:56:11
+ * @version   v1.0.0
+ * @date      2015-11-27 14:47:51
  * @note      A file in RITC Library
  * @note <pre><b>Change Log</b>
+ *      v1.0.0   - first working version                 - 11/27/2015 wer
  *      v1.0.0β8 - bug fixes                             - 11/18/2015 wer
  *      v1.0.0β7 - added page controller                 - 11/12/2015 wer
  *                 also fixed logic bugs.

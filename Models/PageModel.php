@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PageModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β1
- *  @date 2015-10-30 09:01:06
+ *  @version 1.0.0
+ *  @date 2015-11-27 14:59:00
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0   - take out of beta                             - 11/27/2015 wer
  *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
  *  </pre>
 **/

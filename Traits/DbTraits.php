@@ -6,11 +6,12 @@
  *  @namespace Ritc/Library/Traits
  *  @class DbTraits
  *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0ß1
- *  @date 2015-08-19 09:53:24
+ *  @version 1.0.0
+ *  @date 2015-11-27 14:43:14
  *  @note A part of the RITC Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0ß1 - initial version - 08/19/2015 wer
+ *      v1.0.0   - first working version        - 11/27/2015 wer
+ *      v1.0.0ß1 - initial version              - 08/19/2015 wer
  *  </pre>
  */
 namespace Ritc\Library\Traits;

@@ -6,9 +6,10 @@
  *  @namespace Ritc/Library/Controllers
  *  @class PageAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β1
- *  @date 2015-10-30 08:39:24
+ *  @version 1.0.0
+ *  @date 2015-11-27 14:49:00
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0   - First working version                        - 11/27/2015 wer
  *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
  *  </pre>
  * @TODO needs testing

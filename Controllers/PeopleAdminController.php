@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Controllers
  *  @class PeopleAdminController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-11-12 10:58:06
+ *  @version 1.0.1
+ *  @date 2015-11-27 14:58:40
  *  @note A file in Library v5
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1   - bug fixes                                        - 11/27/2015 wer
  *      v1.0.0   - initial working version                          - 11/12/2015 wer
  *      v1.0.0β4 - Realized this is nowhere near done               - 01/06/2015 wer
  *                 This code was copied from somewhere else and

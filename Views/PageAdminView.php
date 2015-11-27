@@ -6,9 +6,10 @@
  *  @namespace Ritc/Library/Views
  *  @class PageAdminView
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β1
- *  @date 2015-10-30 08:58:33
+ *  @version 1.0.0
+ *  @date 2015-11-27 15:02:30
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0   - take out of beta                             - 11/27/2015 wer
  *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
  *  </pre>
 **/

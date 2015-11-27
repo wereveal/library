@@ -6,11 +6,12 @@
  *  @namespace Ritc/Library/Controllers
  *  @class GroupsAdmimController
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β1
- *  @date 2015-01-28 15:17:59
+ *  @version 1.0.0
+ *  @date 2015-11-27 14:45:11
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
- *      v1.0.0β1 - Initial version                              - 01/28/2015 wer
+ *      v1.0.0   - First working version    - 11/27/2015 wer
+ *      v1.0.0β1 - Initial version          - 01/28/2015 wer
  *  </pre>
  **/
 namespace Ritc\Library\Controllers;

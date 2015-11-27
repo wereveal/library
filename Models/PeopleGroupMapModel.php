@@ -6,10 +6,11 @@
  *  @namespace Ritc/Library/Models
  *  @class PeopleGroupMapModel
  *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β7
- *  @date 2015-11-22 17:59:19 
+ *  @version 1.0.0
+ *  @date 2015-11-27 14:57:55
  *  @note A file in Ritc Library
  *  @note <pre><b>Change Log</b>
+ *      v1.0.0   - take out of beta                                      - 11/27/2015 wer
  *      v1.0.0β7 - refactoring fix for postgres compatibility            - 11/22/2015 wer
  *      v1.0.0β6 - removed abstract Base, implemented LogitTraits        - 09/03/2015 wer
  *      v1.0.0β5 - refactoring elsewhere caused changes here             - 07/31/2015 wer
