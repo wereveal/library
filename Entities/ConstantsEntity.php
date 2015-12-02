@@ -1,13 +1,13 @@
 <?php
 /**
- *  @brief Basic accessors for a constants entity.
- *  @file ConstantsEntity.php
- *  @ingroup ritc_library entities
+ *  @brief     Basic accessors for a constants entity.
+ *  @ingroup   ritc_library entities
+ *  @file      ConstantsEntity.php
  *  @namespace Ritc\Library\Entities
- *  @class ConstantsEntity
- *  @author William E Reveal
- *  @date 2015-10-06 14:20:33
- *  @version 1.0.0
+ *  @class     ConstantsEntity
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-10-06 14:20:33
  *  @note <b>SQL for table<b><pre>
  *      MySQL      - resources/sql/mysql/constants_mysql.sql
  *      PostgreSQL - resources/sql/postgresql/constants_pg.sql</pre>

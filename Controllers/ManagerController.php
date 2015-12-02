@@ -1,15 +1,14 @@
 <?php
 /**
- * @brief     The main Controller for the manager.
- * @file      ManagerController.php
- * @ingroup   ritc_library controllers
- * @namespace Ritc/Library/Controllers
- * @class     ManagerController
- * @author    William Reveal <bill@revealitconsulting.com>
- * @version   v1.0.1
- * @date      2015-12-01 21:41:39
- * @note      A file in RITC Library
- * @note <pre><b>Change Log</b>
+ *  @brief     The main Controller for the manager.
+ *  @ingroup   ritc_library controllers
+ *  @file      ManagerController.php
+ *  @namespace Ritc\Library\Controllers
+ *  @class     ManagerController
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   v1.0.1
+ *  @date      2015-12-01 21:41:39
+ *  @note <pre><b>Change Log</b>
  *      v1.0.1   - needed to change private to protected - 12/01/2015 wer
  *                 in order to extend this class.
  *      v1.0.0   - first working version                 - 11/27/2015 wer
@@ -23,7 +22,7 @@
  *      v1.0.0β2 - Set up to render a basic landing page - 01/06/2015 wer
  *      v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
  *      v1.0.0α1 - Initial version                       - 11/14/2014 wer
- * </pre>
+ *  </pre>
  */
 namespace Ritc\Library\Controllers;
 

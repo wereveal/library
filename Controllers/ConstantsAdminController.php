@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Controller for the Configuration page.
- *  @file ConstantsAdminController.php
- *  @ingroup ritc_library controllers
- *  @namespace Ritc/Library/Controllers
- *  @class ConstantsAdminController
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.3.0
- *  @date 2015-10-07 14:31:59
- *  @note A file in Library
+ *  @brief     Controller for the Configuration page.
+ *  @ingroup   ritc_library controllers
+ *  @file      ConstantsAdminController.php
+ *  @namespace Ritc\Library\Controllers
+ *  @class     ConstantsAdminController
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.3.0
+ *  @date      2015-10-07 14:31:59
  *  @note <pre><b>Change Log</b>
  *      v1.3.0 - added immutable code                            - 10/07/2015 wer
  *      v1.2.1 - code clean up                                   - 09/25/2015 wer

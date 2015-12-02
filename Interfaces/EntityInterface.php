@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Class used to set up entity classes.
- *  @file EntityInterface.php
- *  @ingroup ritc_library core
- *  @namespace Ritc/Library/Interfaces
- *  @class EntityInterface
- *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2014-01-30 14:18:05
- *  @note A part of the RITC Library
+ *  @brief     Class used to set up entity classes.
+ *  @ingroup   ritc_library interfaces
+ *  @file      EntityInterface.php
+ *  @namespace Ritc\Library\Interfaces
+ *  @class     EntityInterface
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2014-01-30 14:18:05
  *  @note <pre><b>Change Log</b>
  *      v1.0.0 initial versioning 01/30/2014 wer
  *  </pre>

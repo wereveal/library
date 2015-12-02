@@ -1,19 +1,17 @@
 <?php
 /**
- *  @brief View for the Groups Admin page.
- *  @file GroupsAdminView.php
- *  @ingroup ritc_library views
- *  @namespace Ritc/Library/Views
- *  @class GroupsAdminView
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-11-27 14:45:39
- *  @note A file in Ritc Library
+ *  @brief     View for the Groups Admin page.
+ *  @ingroup   ritc_library views
+ *  @file      GroupsAdminView.php
+ *  @namespace Ritc\Library\Views
+ *  @class     GroupsAdminView
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-11-27 14:45:39
  *  @note <pre><b>Change Log</b>
  *      v1.0.0   - First working version    - 11/27/2015 wer
  *      v1.0.0β1 - Initial version          - 01/28/2015 wer
  *  </pre>
- * @TODO Immutable code needs to be added.
  **/
 namespace Ritc\Library\Views;
 

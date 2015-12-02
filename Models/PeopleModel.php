@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Does all the database CRUD stuff.
- *  @file PeopleModel.php
- *  @ingroup ritc_library models
- *  @namespace Ritc/Library/Models
- *  @class PeopleModel
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 2015-11-22 18:05:37 
- *  @note A file in Ritc Library
+ *  @brief     Does all the database CRUD stuff.
+ *  @ingroup   ritc_library models
+ *  @file      PeopleModel.php
+ *  @namespace Ritc\Library\Models
+ *  @class     PeopleModel
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.1.0
+ *  @date      2015-11-22 18:05:37
  *  @note <pre><b>Change Log</b>
  *      v1.1.0    - refactoring to make compatible with postgresql              - 11/22/2015 wer
  *      v1.0.0    - initial working version                                     - 11/12/2015 wer

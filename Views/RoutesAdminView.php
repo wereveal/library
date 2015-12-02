@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief View for the Router Admin page.
- *  @file RoutesAdminView.php
- *  @ingroup ritc_library views
- *  @namespace Ritc/Library/Views
- *  @class RoutesAdminView
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-01-28 14:45:02
- *  @note A file in Ritc Library
+ *  @brief     View for the Router Admin page.
+ *  @ingroup   ritc_library views
+ *  @file      RoutesAdminView.php
+ *  @namespace Ritc\Library\Views
+ *  @class     RoutesAdminView
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-01-28 14:45:02
  *  @note <pre><b>Change Log</b>
  *      v1.0.1   - change in database structure forced change here  - 09/03/2015 wer
  *      v1.0.0   - first working version                            - 01/28/2015 wer

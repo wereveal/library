@@ -1,13 +1,13 @@
 <?php
 /**
- *  @brief Basic accessors for a routes entity.
- *  @file RoutesEntity.php
- *  @ingroup ritc_library entities
+ *  @brief     Basic accessors for a routes entity.
+ *  @ingroup   ritc_library entities
+ *  @file      RoutesEntity.php
  *  @namespace Ritc\Library\Entities
- *  @class RoutesEntity
- *  @author William E Reveal
- *  @date 2015-10-06 14:20:33
- *  @version 1.0.0
+ *  @class     RoutesEntity
+ *  @author    William E Reveal
+ *  @version   1.0.0
+ *  @date      2015-10-06 14:20:33
  *  @note <b>SQL for table<b><pre>
  *      MySQL      - resources/sql/mysql/routes_mysql.sql
  *      PostgreSQL - resources/sql/postgresql/routes_pg.sql</pre>

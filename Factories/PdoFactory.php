@@ -1,18 +1,14 @@
 <?php
 /**
- *  @brief A PDO Factory.
- *  @details The factory returns a \PDO object. The old version was a two step
- *      process where you would create a factory object then connect. But that
- *      I realized was wrong, the factory should produce a \PDO instance. Thus
- *      v2 was born.
- *  @file PdoFactory.php
- *  @ingroup ritc_library Services
- *  @namespace Ritc/Library/Services
- *  @class PdoFactory
- *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 2.0.0
- *  @date 2015-08-28 08:01:33
- *  @note A part of the RITC Library
+ *  @brief     A PDO Factory.
+ *  @details   The factory returns a \PDO object.
+ *  @ingroup   ritc_library Services
+ *  @file      PdoFactory.php
+ *  @namespace Ritc\Library\Services
+ *  @class     PdoFactory
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   2.0.0
+ *  @date      2015-08-28 08:01:33
  *  @note <pre><b>Change Log</b>
  *      v2.0.0 - realized a stupid error in thinking, this should produce         - 08/28/2015 wer
  *               an instance of the PDO not an instance of the factory itself duh!

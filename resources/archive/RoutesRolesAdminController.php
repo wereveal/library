@@ -1,15 +1,15 @@
 <?php
 /**
- *  @brief Controller for the Router to Roles Admin page.
+ *  @brief     Controller for the Router to Roles Admin page.
  *  @detail Allows one to map which routes have specific role access.
  *      If you don't have the role, you can't go there.
- *  @file RoutesRolesAdminController.php
- *  @ingroup ritc_library controllers
- *  @namespace Ritc/Library/Controllers
- *  @class RoutesRolesAdminController
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0ß1
- *  @date 2015-08-04 04:25:11
+ *  @file      RoutesRolesAdminController.php
+ *  @ingroup   ritc_library controllers
+ *  @namespace Ritc\Library\Controllers
+ *  @class     RoutesRolesAdminController
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0ß1
+ *  @date      2015-08-04 04:25:11
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
  *      v1.0.0β1 - Initial version           - 08/04/2015 wer

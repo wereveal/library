@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief View for the User Admin page.
- *  @file PeopleAdminView.php
- *  @ingroup blog views
- *  @namespace Ritc/Library/Views
- *  @class PeopleAdminView
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-11-12 10:56:16
- *  @note A file in Ritc Library
+ *  @brief     View for the User Admin page.
+ *  @ingroup   ritc_library views
+ *  @file      PeopleAdminView.php
+ *  @namespace Ritc\Library\Views
+ *  @class     PeopleAdminView
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-11-12 10:56:16
  *  @note <pre><b>Change Log</b>
  *      v1.0.0   - Initial non-beta version                         - 11/12/2015 wer
  *      v1.0.0β2 - Changed to use DI/IOC                            - 11/15/2014 wer

@@ -1,13 +1,13 @@
 <?php
 /**
- *  @brief Various helper functions for views.
- *  @file ViewHelper.php
- *  @ingroup ritc_library views
- *  @namespace Ritc/Library/Helper
- *  @class ViewHelper
- *  @author William E Reveal <bill@revealitconsulting.com>
- *  @version 1.1.1
- *  @date 2015-11-05 14:29:45
+ *  @brief     Various helper functions for views.
+ *  @ingroup   ritc_library helper
+ *  @file      ViewHelper.php
+ *  @namespace Ritc\Library\Helper
+ *  @class     ViewHelper
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.1.1
+ *  @date      2015-11-05 14:29:45
  *  @note Change Log
  *      v1.1.1 - little sanitization of values - 11/05/2015 wer
  *      v1.1.0 - added lazy man's methods      - 09/25/2015 wer
@@ -15,7 +15,6 @@
  *      v1.0.1 - minor key name change         - 12/31/2013 wer
  *      v1.0.0 - intial file                   - 07/30/2013 wer
  *  @note RITC Library
- *  @ingroup ritc_library helper
 **/
 namespace Ritc\Library\Helper;
 

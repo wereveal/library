@@ -1,13 +1,13 @@
 <?php
 /**
- *  @brief This file sets up the App.
- *  @description Required to get the entire framework to work. The only thing
- *  that changes primarily is the defgroup in this comment for Doxygen.
- *  @file setup.php
+ *  @brief     This file sets up the App.
+ *  @details   Required to get the entire framework to work. The only thing
+ *             that changes primarily is the defgroup in this comment for Doxygen.
+ *  @file      setup.php
  *  @namespace Ritc
  *  @defgroup ritc_library
  *  @{
- *      @version 5.0
+ *      @version   5.0
  *      @defgroup abstracts classes that are extended by other classes
  *      @ingroup ritc_library
  *      @defgroup basic stuff that doesn't have another place
@@ -37,7 +37,7 @@
  *  }
  *  @defgroup main_app_name
  *  @{
- *      @version 1.0
+ *      @version   1.0
  *      @defgroup app_abstracts abstract class files
  *      @ingroup main_app_name
  *      @defgroup app_controllers controller files

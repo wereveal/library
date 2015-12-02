@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief A basic entity class for the Group Role Map table.
- *  @file GroupRoleMapEntity.php
- *  @ingroup ritc_library entities
- *  @namespace Ritc/Library/Entities
- *  @class GroupRoleMapEntity
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β
- *  @date 2015-07-29 11:38:19
- *  @note A file in Ritc Library
+ *  @brief     A basic entity class for the Group Role Map table.
+ *  @file      GroupRoleMapEntity.php
+ *  @ingroup   ritc_library entities
+ *  @namespace Ritc\Library\Entities
+ *  @class     GroupRoleMapEntity
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0β
+ *  @date      2015-07-29 11:38:19
  *  @note <pre><b>Change Log</b>
  *      v1.0.0β - changed to a mapping between group and role - 07/29/2015 wer
  *                Users now can only belong to multiple groups, the groups determine their role.

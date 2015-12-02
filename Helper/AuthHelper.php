@@ -1,16 +1,16 @@
 <?php
 /**
- *  @brief Manages User Authentication and Authorization to the site.
- *  @details It is expected that this will be used within a controller and
- *  more finely grained access with be handled there or in a sub-controller.
- *  @file AuthHelper.php
- *  @ingroup ritc_library helper
- *  @namespace Ritc/Library/Helper
- *  @class AuthHelper
- *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version 5.0.0
- *  @date 2015-11-06 15:03:52
- *  @note A part of the RITC Library
+ *  @brief     Manages User Authentication and Authorization to the site.
+ *  @details   It is expected that this will be used within a controller and
+ *             more finely grained access with be handled there
+ *             or in a sub-controller.
+ *  @ingroup   ritc_library helper
+ *  @file      AuthHelper.php
+ *  @namespace Ritc\Library\Helper
+ *  @class     AuthHelper
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   5.0.0
+ *  @date      2015-11-06 15:03:52
  *  @note <pre><b>Change Log</b>
  *      v5.0.0 - removed roles from code                               - 11/06/2015 wer
  *      v4.4.1 - bug fix                                               - 10/06/2015 wer

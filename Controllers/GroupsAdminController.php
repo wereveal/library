@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Controller for the Groups Admin page.
- *  @file GroupsAdmimController.php
- *  @ingroup ritc_library controllers
- *  @namespace Ritc/Library/Controllers
- *  @class GroupsAdmimController
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-11-27 14:45:11
- *  @note A file in Library
+ *  @brief     Controller for the Groups Admin page.
+ *  @ingroup   ritc_library controllers
+ *  @file      GroupsAdmimController.php
+ *  @namespace Ritc\Library\Controllers
+ *  @class     GroupsAdmimController
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-11-27 14:45:11
  *  @note <pre><b>Change Log</b>
  *      v1.0.0   - First working version    - 11/27/2015 wer
  *      v1.0.0β1 - Initial version          - 01/28/2015 wer

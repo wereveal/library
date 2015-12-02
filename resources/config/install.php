@@ -1,12 +1,13 @@
 <?php
 /**
- *  @brief This file sets up standard stuff for the Framework.
- *  @description This creates the database config and some standard directories.
- *  @file install.php
+ *  @brief     This file sets up standard stuff for the Framework.
+ *  @details   This creates the database config and some standard directories.
+ *  @ingroup   ritc_library configs
+ *  @file      install.php
  *  @namespace Ritc
- *  @author William E Reveal
- *  @date 2015-11-27 15:23:44
- *  @version 1.0.0
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @date      2015-11-27 15:23:44
+ *  @version   1.0.0
 */
 namespace Ritc;
 

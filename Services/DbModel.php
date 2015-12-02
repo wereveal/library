@@ -1,15 +1,14 @@
 <?php
 /**
- *  @brief Does all the database CRUD stuff.
- *  @details For read/write access to the database based on PDO.
- *  @file DbModel.php
- *  @ingroup ritc_library Services
- *  @namespace Ritc/Library/Services
- *  @class DbModel
- *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 3.3.0
- *  @date 2015-09-01 10:55:03
- *  @note A part of the RITC Library
+ *  @brief     Does all the database CRUD stuff.
+ *  @details   For read/write access to the database based on PDO.
+ *  @ingroup   ritc_library services
+ *  @file      DbModel.php
+ *  @namespace Ritc\Library\Services
+ *  @class     DbModel
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   3.3.0
+ *  @date      2015-09-01 10:55:03
  *  @note <pre><b>Change Log</b>
  *      v3.3.0 - bug fix - pgsql insert wasn't working right                              - 11/22/2015 wer
  *      v3.2.6 - changed from extending Base class to using traits                        - unknown    wer
@@ -83,7 +82,7 @@ class DbModel
      *  @param array $a_values default is empty array
      *      If blank, the values are in the INSERT string
      *      If array then the INSERT string is for a prepared query
-     *  @param array @a_table_info needed only if PostgreSQL is being used, Default array() 
+     *  @param array @a_table_info needed only if PostgreSQL is being used, Default array()
      *                               ['table_name' => '', 'column_name' => '', 'schema_name' => '']
      *  @return bool success or failure
     **/
@@ -328,7 +327,7 @@ class DbModel
     /**
      *  Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
      *  @param array $a_table_info  ['table_name', 'column_name', 'schema']<pre>
-     *                              'table_name'  value required, 
+     *                              'table_name'  value required,
      *                              'column_name' value optional but recommended, defaults to 'id'
      *                              'schema'      value optional, defaults to 'public'</pre>
      *  @return bool success or failure
@@ -769,10 +768,10 @@ class DbModel
     {
         $meth = __METHOD__ . '.';
         if (count($a_values) > 0) {
-            $sequence_name = $this->db_type == 'pgsql' && $a_table_info != array() 
-                ? $this->getPgsqlSequenceName($a_table_info) 
+            $sequence_name = $this->db_type == 'pgsql' && $a_table_info != array()
+                ? $this->getPgsqlSequenceName($a_table_info)
                 : '' ;
-            $this->logIt('Sequence Name: ' . $sequence_name, LOG_OFF, $meth . __LINE__); 
+            $this->logIt('Sequence Name: ' . $sequence_name, LOG_OFF, $meth . __LINE__);
             if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays, can not be mixed
                 foreach ($a_values as $a_stuph) {
                     if ($this->executeInsert($a_stuph, $o_pdo_stmt, $a_table_info) === false) {

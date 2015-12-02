@@ -1,24 +1,23 @@
 <?php
 /**
- *  @brief An entity class for the page table.
- *  @details This Provides data needed to generate the html, e.g. title,
- *      description, file type, etc that would be in the <head> part of the page.
- *  @file PageEntity.php
- *  @ingroup ritc_library entities
- *  @namespace Ritc/Library/Entities
- *  @class PageEntity
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β1
- *  @date 2015-10-30 08:14:03
- *  @note A file in Ritc Library
- *  @note <pre><b>Change Log</b>
- *      v1.0.0β1 - Initial version - 10/30/2015 wer
- *  </pre>
+ *  @brief     An entity class for the page table.
+ *  @details   This Provides data needed to generate the html, e.g. title,
+ *             description, file type, etc that would be in the <head> part of
+ *             the page.
+ *  @ingroup   ritc_library entities
+ *  @file      PageEntity.php
+ *  @namespace Ritc\Library\Entities
+ *  @class     PageEntity
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0β1
+ *  @date      2015-10-30 08:14:03
  *  @note  <b>SQL for table<b><pre>
  *      MySQL      - resources/sql/mysql/page_mysql.sql
  *      PostgreSQL - resources/sql/postgresql/page_pg.sql</pre>
+ *  @note <pre><b>Change Log</b>
+ *      v1.0.0β1 - Initial version - 10/30/2015 wer
+ *  </pre>
  */
-
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Helper\Arrays;

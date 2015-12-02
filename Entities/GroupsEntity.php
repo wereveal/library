@@ -1,21 +1,20 @@
 <?php
 /**
- *  @brief A basic entity class Groups table.
- *  @file GroupsEntity.php
- *  @ingroup ritc_library entities
- *  @namespace Ritc/Library/Entities
- *  @class GroupsEntity
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-07-29 11:41:03
- *  @note A file in Ritc Library
+ *  @brief     A basic entity class Groups table.
+ *  @ingroup   ritc_library entities
+ *  @file      GroupsEntity.php
+ *  @namespace Ritc\Library\Entities
+ *  @class     GroupsEntity
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-07-29 11:41:03
+ *  @note <b>SQL for table<b><pre>
+ *      MySQL      - resources/sql/mysql/groups_mysql.sql
+ *      PostgreSQL - resource\sql/postgresql/groups_pg.sql</pre>
  *  @note <pre><b>Change Log</b>
  *      v1.0.0 - finished        - 07/29/2015 wer
  *      v0.1.0 - Initial version - 09/11/2014 wer
  *  </pre>
- *  @note <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/groups_mysql.sql
- *      PostgreSQL - resource\sql/postgresql/groups_pg.sql</pre>
 **/
 namespace Ritc\Library\Entities;
 

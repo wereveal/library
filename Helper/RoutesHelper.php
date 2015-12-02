@@ -1,13 +1,13 @@
 <?php
 /**
- *  @brief Various helper functions for routes.
- *  @file RoutesHelper.php
- *  @ingroup ritc_library helper
- *  @namespace Ritc/Library/Helper
- *  @class RoutesHelper
- *  @author William E Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-11-27 14:55:02
+ *  @brief     Various helper functions for routes.
+ *  @ingroup   ritc_library helper
+ *  @file      RoutesHelper.php
+ *  @namespace Ritc\Library\Helper
+ *  @class     RoutesHelper
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-11-27 14:55:02
  *  @note Change Log
  *      v1.0.0   - took out of beta              - 11/27/2015 wer
  *      v1.0.0β3 - bug fix                       - 11/24/2015 wer

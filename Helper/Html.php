@@ -1,17 +1,16 @@
 <?php
 /**
- *  @brief Creates HTML strings.
- *  @details Methods which start with make_ return a modified version
- *  of the value passed into the method, usually indicated by
- *  the name of the method
- *  @file Html.php
- *  @ingroup ritc_library Helper
- *  @namespace Ritc/Library/Helper
- *  @class Html
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.6
- *  @date 2015-09-01 07:38:42
- *  @note A part of the RITC Library
+ *  @brief     Creates HTML strings.
+ *  @details   Methods which start with make_ return a modified version
+ *             of the value passed into the method, usually indicated by
+ *             the name of the method
+ *  @ingroup   ritc_library helper
+ *  @file      Html.php
+ *  @namespace Ritc\Library\Helper
+ *  @class     Html
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.6
+ *  @date      2015-09-01 07:38:42
  *  @note <pre><b>Change Log</b>
  *      v1.0.6 - removed abstract class Base, used LogitTraits            - 09/01/2015 wer
  *      v1.0.5 - Refactored to match the Arrays class                     - 07/31/2015 wer

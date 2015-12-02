@@ -1,14 +1,14 @@
 <?php
 /**
- *  @brief Creates a Model object.
- *  @file ConstantsModel.php
- *  @ingroup ritc_library models
- *  @namespace Ritc/Library/Models
- *  @class ConstantsModel
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.2.0
- *  @date 2015-11-22 18:04:07
- *  @note A file in the Ritc Library
+ *  @brief     Creates a Model object.
+ *  @ingroup   ritc_library models
+ *  @file      ConstantsModel.php
+ *  @namespace Ritc\Library\Models
+ *  @class     ConstantsModel
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   2.2.0
+ *  @date      2015-11-22 18:04:07
+ *  @note      see ConstantsEntity for database table definition.
  *  @note <pre><b>Change Log</b>
  *      v2.2.0 - Refactoring to provide better pgsql compatibility - 11/22/2015 wer
  *      v2.1.0 - No longer extends Base class but uses LogitTraits = 08/19/2015 wer
@@ -20,7 +20,6 @@
  *      v1.0.1 - minor change to the comments                      - 09/11/2014 wer
  *      v1.0.0 - Initial version                                   - 04/01/2014 wer
  *  </pre>
- * @note see ConstantsEntity for database table definition.
 **/
 namespace Ritc\Library\Models;
 

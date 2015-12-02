@@ -1,17 +1,16 @@
 <?php
 /**
- *  @brief Returns a Twig instance to render templates.
- *  @description Lets us create a twig object, specific to a configuration
- *      allowing multiple twig objects to render the html
- *  @file Tpl.php
- *  @ingroup ritc_library Services
- *  @namespace Ritc/Library/Services
- *  @class Tpl
- *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0ß
- *  @date 2014-12-05 14:19:00
- *  @note A part of the RITC Library v5
- *  @note <pre><b>Change Log</b>
+ *  @brief     Returns a Twig instance to render templates.
+ *  @details   Lets us create a twig object, specific to a configuration
+ *             allowing multiple twig objects to render the html
+ *  @ingroup   ritc_library services
+ *  @file      Tpl.php
+ *  @namespace Ritc\Library\Services
+ *  @class     Tpl
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0ß
+ *  @date      2014-12-05 14:19:00
+*  @note <pre><b>Change Log</b>
  *      v1.0.0   - took out of beta, removed abstract class Base                - 09/03/2015 wer
  *      v1.0.0ß2 - changed to match TwigFactory - still a stupid class          - 12/05/2014 wer
  *                 Here to provide backward compatibility. From now on,

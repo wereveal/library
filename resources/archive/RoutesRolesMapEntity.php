@@ -1,12 +1,12 @@
 <?php
 /**
- * @brief Entity to map the Router to the Roles.
- * @file RoutesRolesMapEntity.php
- * @ingroup ritc_library entities
+ * @brief     Entity to map the Router to the Roles.
+ * @file      RoutesRolesMapEntity.php
+ * @ingroup   ritc_library entities
  * @namespace Ritc\Library\Entities
- * @author William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0ß1
- * @date 2015-08-01 13:33:57
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0ß1
+ * @date      2015-08-01 13:33:57
  * @note <pre><b>Change Log</b>
  *       v1.0.0ß1 - Initial version                    - 08/01/2015 wer
  *       </pre>

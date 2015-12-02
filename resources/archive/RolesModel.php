@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Does all the database CRUD stuff.
- *  @file RolesModel.php
+ *  @brief     Does all the database CRUD stuff.
+ *  @file      RolesModel.php
  *  @inrole ritc_library models
- *  @namespace Ritc/Library/Models
- *  @class RolesModel
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.5
- *  @date 2015-11-22 17:57:02 
- *  @note A file in Ritc Library
+ *  @namespace Ritc\Library\Models
+ *  @class     RolesModel
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.5
+ *  @date      2015-11-22 17:57:02
  *  @note <pre><b>Change Log</b>
  *      v1.0.5   - bug fix to work properly with pgsql         - 11/22/2015 wer
  *      v1.0.4   - bug fix have to use is_numeric not ctype    - 11/05/2015 wer

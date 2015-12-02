@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Determines the controller and method to use based on URI.
- *  @file Router.php
- *  @ingroup ritc_library services
- *  @namespace Ritc/Library/Services
- *  @class Router
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-11-27 14:57:15
- *  @note A part of the RITC Library
+ *  @brief     Determines the controller and method to use based on URI.
+ *  @ingroup   ritc_library services
+ *  @file      Router.php
+ *  @namespace Ritc\Library\Services
+ *  @class     Router
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-11-27 14:57:15
  *  @note <pre><b>Change Log</b>
  *      v1.0.0    - take out of beta                                            - 11/27/2015 wer
  *      v1.0.0β10 - Bug fix to fix logic error with route path                  - 11/24/2015 wer

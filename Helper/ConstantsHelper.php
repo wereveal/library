@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Create Constants from the constants database
- *  @file ConstantsHelper.php
- *  @ingroup ritc_library helper
- *  @namespace Ritc/Library/Helper
- *  @class ConstantsHelper
- *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @brief     Create Constants from the constants database
+ *  @ingroup   ritc_library helper
+ *  @file      ConstantsHelper.php
+ *  @namespace Ritc\Library\Helper
+ *  @class     ConstantsHelper
+ *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version  4.0.0
- *  @date 2015-01-17 11:41:56
- *  @note A part of the RITC Library
+ *  @date      2015-01-17 11:41:56
  *  @note <pre><b>Change Log</b>
  *      v4.0.0 - renamed to reflect what it was doing. Since it isn't       - 01/17/2015 wer
  *               a service, moved it Ritc\Library\Helper namespace.

@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Common functions for the manager views.
- *  @file ManagerViewTraits.php
- *  @ingroup ritc_library Services
- *  @namespace Ritc/Library/Traits
- *  @class ManagerViewTraits
- *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.2
- *  @date 2015-11-24 14:40:00
- *  @note A part of the RITC Library
+ *  @brief     Common functions for the manager views.
+ *  @ingroup   ritc_library traits
+ *  @file      ManagerViewTraits.php
+ *  @namespace Ritc\Library\Traits
+ *  @class     ManagerViewTraits
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.2
+ *  @date      2015-11-24 14:40:00
  *  @note <pre><b>Change Log</b>
  *      v1.0.2 - bug fix                 - 11/24/2015 wer
  *      v1.0.1 - changed property name   - 10/16/2015 wer

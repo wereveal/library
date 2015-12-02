@@ -1,16 +1,15 @@
 <?php
 /**
- *  @brief A Twig Factory.
- *  @description Lets us create a twig object, specific to a configuration
- *      allowing multiple twig objects to render the html
- *  @file TwigFactory.php
- *  @ingroup ritc_library Services
- *  @namespace Ritc/Library/Services
- *  @class TwigFactory
- *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-09-01 07:31:00
- *  @note A part of the RITC Library
+ *  @brief     A Twig Factory.
+ *  @details   Lets us create a twig object, specific to a configuration
+ *             allowing multiple twig objects to render the html
+ *  @ingroup   ritc_library Services
+ *  @file      TwigFactory.php
+ *  @namespace Ritc\Library\Services
+ *  @class     TwigFactory
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-09-01 07:31:00
  *  @note <pre><b>Change Log</b>
  *      v1.0.0   - not sure why this is beta. Removed Base abstract class                                - 09/01/2015 wer
  *      v1.0.0ß2 - moved to the Factories namespace

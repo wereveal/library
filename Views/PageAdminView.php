@@ -1,13 +1,13 @@
 <?php
 /**
- *  @brief View for the Page Admin page.
- *  @file PageAdminView.php
- *  @ingroup ritc_library views
- *  @namespace Ritc/Library/Views
- *  @class PageAdminView
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-11-27 15:02:30
+ *  @brief     View for the Page Admin page.
+ *  @ingroup   ritc_library views
+ *  @file      PageAdminView.php
+ *  @namespace Ritc\Library\Views
+ *  @class     PageAdminView
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-11-27 15:02:30
  *  @note <pre><b>Change Log</b>
  *      v1.0.0   - take out of beta                             - 11/27/2015 wer
  *      v1.0.0β1 - Initial version                              - 10/30/2015 wer

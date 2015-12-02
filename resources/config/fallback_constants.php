@@ -1,9 +1,9 @@
 <?php
 /**
- *  Defines some required constants.
- *  Used only if the class Constants could not create them from the database.
- *  @file just_in_case.php
- *  @ingroup sm configs
+ *  @brief     Defines some required constants.
+ *  @details   Used only if the class Constants could not create them from the database.
+ *  @file      fallback_constants.php
+ *  @ingroup   ritc_library configs
  *  _PATH = Full server path
  *  _DIR = Path in web site (URI)
  *  _NAME = Name of item without any path information

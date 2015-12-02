@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Class that does stuff with arrays.
- *  @file Arrays.php
- *  @ingroup ritc_library helper
- *  @namespace Ritc/Library/Helper
- *  @class Arrays
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.7.0
- *  @date 2015-11-25 11:27:29
- *  @note A part of the RITC Library
+ *  @brief     Class that does stuff with arrays.
+ *  @ingroup   ritc_library helper
+ *  @file      Arrays.php
+ *  @namespace Ritc\Library\Helper
+ *  @class     Arrays
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   2.7.0
+ *  @date      2015-11-25 11:27:29
  *  @note <pre><b>Change Log</b>
  *      v2.7.0 - Changed entity coding/decoding to be defineable via paramater.         - 11/25/2015 wer
  *               Defaults to ENT_QUOTES.

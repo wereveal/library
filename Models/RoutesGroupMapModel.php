@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Does all the database CRUD stuff.
- *  @file RoutesGroupMapModel.php
- *  @ingroup ritc_library models
- * @namespace Ritc\Library\Models
- *  @class RouterGroupMapModel
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β1
- *  @date 2015-08-01 14:01:09
- *  @note A file in Ritc Library
+ *  @brief     Does all the database CRUD stuff.
+ *  @ingroup   ritc_library models
+ *  @file      RoutesGroupMapModel.php
+ *  @namespace Ritc\Library\Models
+ *  @class     RouterGroupMapModel
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0β1
+ *  @date      2015-08-01 14:01:09
  *  @note <pre><b>Change Log</b>
  *      v0.1.0ß1 - Initial version                                               - 08/01/2015 wer
  *  </pre>

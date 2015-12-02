@@ -1,18 +1,17 @@
 <?php
 /**
- *  @brief Modifies strings and strings in arrays.
- *  @details Methods which start with make_ return a modified version
- *  of the value passed into the method, usually indicated by
- *  the name of the method.
- *  Renamed and modified version of old class Output.
- *  @file Strings.php
- *  @ingroup ritc_library helper
- *  @namespace Ritc/Library/Helper
- *  @class Strings
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 6.2.0
- *  @date 2015-11-25 12:19:46
- *  @note A part of the RITC Library
+ *  @brief     Modifies strings and strings in arrays.
+ *  @details   Methods which start with make_ return a modified version
+ *             of the value passed into the method, usually indicated by
+ *             the name of the method.
+ *             Renamed and modified version of old class Output.
+ *  @ingroup   ritc_library helper
+ *  @file      Strings.php
+ *  @namespace Ritc\Library\Helper
+ *  @class     Strings
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   6.2.0
+ *  @date      2015-11-25 12:19:46
  *  @note <pre><b>Change Log</b>
  *      v6.2.0 - added new method to strip tags from htmlentites coded string      - 11/25/2015 wer
  *      v6.1.0 - renamed makeAlphanumeric to makeAlphanumericPlus and added two    - 11/07/2015 wer

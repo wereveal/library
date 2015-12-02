@@ -1,14 +1,14 @@
 <?php
 /**
- *  @brief Controller for the Routes Admin page.
- *  @file RoutesAdminController.php
- *  @ingroup ritc_library controllers
- *  @namespace Ritc/Library/Controllers
- *  @class RoutesAdminController
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.1.0
- *  @date 2015-10-06 13:55:38
- *  @note A file in Library
+ *  @brief     Controller for the Routes Admin page.
+ *  @ingroup   ritc_library controllers
+ *  @file      RoutesAdminController.php
+ *  @namespace Ritc\Library\Controllers
+ *  @class     RoutesAdminController
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   2.1.0
+ *  @date      2015-10-06 13:55:38
+ *  @pre       The route to this controller has to already be in the database and should not be able to be deleted.
  *  @note <pre><b>Change Log</b>
  *      v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
  *                 If the route doesn't end with a file ext
@@ -18,7 +18,6 @@
  *      v1.0.0β2 - refactored for namespaces                    - 12/05/2014 wer
  *      v1.0.0β1 - Initial version                              - 11/14/2014 wer
  *  </pre>
- *  @pre The route to this controller has to already be in the database and should not be able to be deleted.
  **/
 namespace Ritc\Library\Controllers;
 

@@ -1,15 +1,15 @@
 <?php
 /**
- *  @brief A class for testing that all other testing classes should extend.
- *  @details Class that extends this class should end with the word Tests or
- *           Tester, e.g. MyClassTester or MyClassTests.
- *  @file Tester.php
- *  @namespace Ritc/Library/Basic
- *  @ingroup ritc_library basic
- *  @class Tester
- *  @author William E Reveal  <bill@revealitconsulting.com>
- *  @version  3.2.0
- *  @date 2015-11-02 13:03:31
+ *  @brief     A class for testing that all other testing classes should extend.
+ *  @details   Class that extends this class should end with the word Tests or
+ *             Tester, e.g. MyClassTester or MyClassTests.
+ *  @ingroup   ritc_library basic
+ *  @file      Tester.php
+ *  @namespace Ritc\Library\Basic
+ *  @class     Tester
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   3.2.0
+ *  @date      2015-11-02 13:03:31
  *  @note <pre><b>Change log</b>
  *      v3.2.0 - moved the compare_arrays to the Arrays helper class                       - 11/02/2015 wer
  *      v3.1.1 - minor change to setTestOrder method, now required an array                - 10/23/2015 wer
@@ -28,7 +28,6 @@
  *              within the method tester
  *      v1.0.1 - updated to match new framework                                            - 2013-04-03 wer
  *  </pre>
- *  @note RITC Library
 **/
 namespace Ritc\Library\Basic;
 

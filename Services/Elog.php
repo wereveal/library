@@ -1,15 +1,14 @@
 <?php
 /**
- *  @brief Something simple to help me debug my websites.
- *  @details A singleton pattern because that is what I want. pfffttttt!
- *  @file Elog.php
- *  @ingroup ritc_library services
- *  @namespace Ritc/Library/Services
- *  @class Elog
- *  @author William Reveal  <bill@revealitconsulting.com>
+ *  @brief     Something simple to help me debug my websites.
+ *  @details   A singleton pattern because that is what I want. pfffttttt!
+ *  @ingroup   ritc_library services
+ *  @file      Elog.php
+ *  @namespace Ritc\Library\Services
+ *  @class     Elog
+ *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version:  3.0.0
- *  @date 2015-11-19 22:4522:45
- *  @note A part of the RITC Library
+ *  @date      2015-11-19 22:4522:45
  *  @note <pre><b>Change Log</b>
  *      v3.0.0 - added new logging methods, changed default to custom log        - 11/19/2015 wer
  *      v2.7.1 - moved to Services namespace                                     - 11/15/2014 wer

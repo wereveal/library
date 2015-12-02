@@ -1,12 +1,12 @@
 <?php
 /**
- *  @brief Define Constants that will be used throughout the website.
- *  @file constants.php
+ *  @brief     Define Constants that will be used throughout the website.
+ *  @file      constants.php
  *  @note <pre>
  *      _PATH = Full server path
  *      _DIR  = Path in web site (URI)
  *      _NAME = Name of item without any path information
- *  @ingroup ritc_framework configs
+ *  @ingroup   ritc_framework configs
 **/
 namespace Ritc;
 

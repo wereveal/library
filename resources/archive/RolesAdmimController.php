@@ -1,13 +1,13 @@
 <?php
 /**
- *  @brief Controller for the Roles Admin page.
- *  @file RolesAdmimController.php
- *  @ingroup ritc_library controllers
- *  @namespace Ritc/Library/Controllers
- *  @class RolesAdmimController
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 2015-10-07 14:31:15
+ *  @brief     Controller for the Roles Admin page.
+ *  @file      RolesAdmimController.php
+ *  @ingroup   ritc_library controllers
+ *  @namespace Ritc\Library\Controllers
+ *  @class     RolesAdmimController
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.1.0
+ *  @date      2015-10-07 14:31:15
  *  @note A file in Library
  *  @note <pre><b>Change Log</b>
  *      v1.1.0   - added immutable code            - 10/07/2015 wer

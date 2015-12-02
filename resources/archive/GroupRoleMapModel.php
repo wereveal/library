@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Does all the database CRUD stuff.
- *  @file GroupRoleMapModel.php
- *  @ingroup ritc_library models
- *  @namespace Ritc/Library/Models
- *  @class GroupRoleMapModel
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β7
- *  @date 2015-11-22 18:07:28 
- *  @note A file in Ritc Library
+ *  @brief     Does all the database CRUD stuff.
+ *  @file      GroupRoleMapModel.php
+ *  @ingroup   ritc_library models
+ *  @namespace Ritc\Library\Models
+ *  @class     GroupRoleMapModel
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0β7
+ *  @date      2015-11-22 18:07:28
  *  @note <pre><b>Change Log</b>
  *      v1.0.0β7 - refactoring for pgsql compatibility                           - 11/22/2015 wer
  *      v1.0.0β6 - Removed abstract class Base, use LogitTraits                  - 09/03/2015 wer

@@ -1,24 +1,24 @@
 <?php
 /**
- *  @brief An entity class for People.
- *  @details It needs to be noted that this reflects the fact that
- *      a user entity consists of data that comes from more than one database table.
- *  @file PeopleEntity.php
- *  @ingroup ritc_library entities
- *  @namespace Ritc/Library/Entities
- *  @class PeopleEntity
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 2015-09-03 15:31:12
- *  @note A file in Ritc Library
+ *  @brief     An entity class for People.
+ *  @details   It needs to be noted that this reflects the fact that
+ *             a user entity consists of data that comes from more than one
+ *             database table.
+ *  @ingroup   ritc_library entities
+ *  @file      PeopleEntity.php
+ *  @namespace Ritc\Library\Entities
+ *  @class     PeopleEntity
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.1.0
+ *  @date      2015-09-03 15:31:12
+ *  @note  <b>SQL for table<b><pre>
+ *      MySQL      - resources/sql/mysql/page_mysql.sql
+ *      PostgreSQL - resources/sql/postgresql/page_pg.sql</pre>
  *  @note <pre><b>Change Log</b>
  *      v1.1.0 - changed is_default to is_immutable to be more descriptive - 09/03/2015 wer
  *      v1.0.0 - finalized       - 07/29/2015 wer
  *      v0.1.0 - Initial version - 09/11/2014 wer
  *  </pre>
- *  @note  <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/page_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/page_pg.sql</pre>
  **/
 namespace Ritc\Library\Entities;
 

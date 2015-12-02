@@ -1,13 +1,13 @@
 <?php
 /**
- * @brief Entity to map the Router to the Groups.
- * @file RoutesGroupMapEntity.php
- * @ingroup ritc_library entities
+ * @brief     Entity to map the Router to the Groups.
+ * @ingroup   ritc_library entities
+ * @file      RoutesGroupMapEntity.php
  * @namespace Ritc\Library\Entities
- * @class RouterGroupMapEntity
- * @author William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0β1
- * @date 2015-09-03 12:47:56
+ * @class     RouterGroupMapEntity
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0β1
+ * @date      2015-09-03 12:47:56
  * @note <pre><b>Change Log</b>
  *       v1.0.0β1 - Initial version                             - 09/03/2015 wer
  *       </pre>

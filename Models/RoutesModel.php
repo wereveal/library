@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Does all the database CRUD stuff.
- *  @file RoutesModel.php
- *  @ingroup ritc_library models
- *  @namespace Ritc/Library/Models
- *  @class RoutesModel
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 2015-11-22 18:02:52 
- *  @note A file in Ritc Library
+ *  @brief     Does all the database CRUD stuff.
+ *  @ingroup   ritc_library models
+ *  @file      RoutesModel.php
+ *  @namespace Ritc\Library\Models
+ *  @class     RoutesModel
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.1.0
+ *  @date      2015-11-22 18:02:52
  *  @note <pre><b>Change Log</b>
  *      v1.1.0   - refactoring to provide better postgresql compatibility - 11/22/2015 wer
  *      v1.0.2   - Database structure change reflected here.              - 09/03/2015 wer

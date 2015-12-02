@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief For managing sessions.
- *  @file Session.php
- *  @ingroup ritc_library Services
- *  @namespace Ritc/Library/Services
- *  @class Session
- *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.3.1
- *  @date 2015-10-06 14:42:18
- *  @note A part of the RITC Library
+ *  @brief     For managing sessions.
+ *  @ingroup   ritc_library services
+ *  @file      Session.php
+ *  @namespace Ritc\Library\Services
+ *  @class     Session
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.3.1
+ *  @date      2015-10-06 14:42:18
  *  @note <pre><b>Change Log</b>
  *      v1.3.1 - added the ability to use the global constant          - 10/06/2015 wer
  *               SESSION_IDLE_TIME if it is set.

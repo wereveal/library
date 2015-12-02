@@ -1,17 +1,15 @@
 <?php
 /**
- *  @brief Extracts the action to use for the page.
- *  @details Can get the action from the URL - htaccess required
- *  or from a form element with a few select id names
- *
- *  @file Actions.php
- *  @ingroup ritc_library helper
- *  @namespace Ritc/Library/Helper
- *  @class Actions
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 2.2.7
- *  @date 2015-01-27 15:15:06
- *  @note A part of the RITC Library
+ *  @brief     Extracts the action to use for the page.
+ *  @details   Can get the action from the URL - htaccess required
+ *             or from a form element with a few select id names
+ *  @ingroup   ritc_library helper
+ *  @file      Actions.php
+ *  @namespace Ritc\Library\Helper
+ *  @class     Actions
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   2.2.7
+ *  @date      2015-01-27 15:15:06
  *  @note <pre><b>Change Log</b>
  *      v2.2.7 - match refactoring of Strings and Arrays to     - 01/27/2015 wer
  *               static methods
@@ -23,6 +21,7 @@
  *      v2.2.1 - added a bit more sanitation to uri actions,
  *               renamed action to form_action to be clearer what it was
  *      v2.2.0 - refactored to be closer to FIG standards
+ *  </pre>
 **/
 namespace Ritc\Library\Helper;
 

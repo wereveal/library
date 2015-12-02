@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Determines the path to the file.
- *  @file Files.php
- *  @ingroup ritc_library Helper
- *  @namespace Ritc/Library/Helper
- *  @class Files
- *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 4.2.2
- *  @date 2014-11-15 12:34:56
- *  @note A part of the RITC Library v5
+ *  @brief     Determines the path to the file.
+ *  @ingroup   ritc_library Helper
+ *  @file      Files.php
+ *  @namespace Ritc\Library\Helper
+ *  @class     Files
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   4.2.2
+ *  @date      2014-11-15 12:34:56
  *  @note <pre>The constants with _DIR_NAME should correspond to dir names in
  *      the site theme or namespace (e.g. templates are in namespace). If a directory
  *      is missing, this could cause a fatal error.

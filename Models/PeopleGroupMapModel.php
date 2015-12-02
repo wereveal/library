@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Does all the database CRUD stuff for the PeopleGroupMap table.
- *  @file PeopleGroupMapModel.php
- *  @ingroup ritc_library models
- *  @namespace Ritc/Library/Models
- *  @class PeopleGroupMapModel
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-11-27 14:57:55
- *  @note A file in Ritc Library
+ *  @brief     Does all the database CRUD stuff for the PeopleGroupMap table.
+ *  @ingroup   ritc_library models
+ *  @file      PeopleGroupMapModel.php
+ *  @namespace Ritc\Library\Models
+ *  @class     PeopleGroupMapModel
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-11-27 14:57:55
  *  @note <pre><b>Change Log</b>
  *      v1.0.0   - take out of beta                                      - 11/27/2015 wer
  *      v1.0.0β7 - refactoring fix for postgres compatibility            - 11/22/2015 wer

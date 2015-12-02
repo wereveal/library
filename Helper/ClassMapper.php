@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief Creates the autoload_classmap.php file.
- *  @file ClassMapper.php
- *  @ingroup ritc_library helper
- *  @namespace Ritc/Library/Helper
- *  @class Arrays
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.2.0
- *  @date 2015-11-06 17:02:13 
- *  @note A part of the RITC Library
+ *  @brief     Creates the autoload_classmap.php file.
+ *  @ingroup   ritc_library helper
+ *  @file      ClassMapper.php
+ *  @namespace Ritc\Library\Helper
+ *  @class     Arrays
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.2.0
+ *  @date      2015-11-06 17:02:13
  *  @note <pre><b>Change Log</b>
  *      v1.2.0 - added code to not include archives - 11/06/2015 wer
  *      v1.1.0 - added traits                       - 09/01/2015 wer

@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief View for the Tests page.
- *  @file ManagerView.php
- *  @ingroup ritc_library views
- *  @namespace Ritc/Library/Views
- *  @class ManagerView
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.1.0
- *  @date 2015-09-01 08:05:20
- *  @note A file in Ritc Library
+ *  @brief     View for the Tests page.
+ *  @ingroup   ritc_library views
+ *  @file      ManagerView.php
+ *  @namespace Ritc\Library\Views
+ *  @class     ManagerView
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.1.0
+ *  @date      2015-09-01 08:05:20
  *  @note <pre><b>Change Log</b>
  *      v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
  *      v1.0.0   - First stable version                         - 01/16/2015 wer

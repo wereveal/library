@@ -1,22 +1,21 @@
 <?php
 /**
- *  @brief Common functions that inject and use the Elog class service.
- *  @file LogitTraits.php
- *  @ingroup ritc_library Services
- *  @namespace Ritc/Library/Traits
- *  @class LogitTraits
- *  @author William Reveal <bill@revealitconsulting.com>
- *  @version 1.0.2
- *  @date 2015-11-20 15:39:32
- *  @note A part of the RITC Library
+ *  @brief     Common functions that inject and use the Elog class service.
+ *  @ingroup   ritc_library traits
+ *  @file      LogitTraits.php
+ *  @namespace Ritc\Library\Traits
+ *  @class     LogitTraits
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.2
+ *  @date      2015-11-20 15:39:32
+ *  @note      this is derived from the abstract class Base and may
+ *             end up replacing the abstract class or used in classes that
+ *             don't use the abstract class.
  *  @note <pre><b>Change Log</b>
  *      v1.1.0 - added code to utilize the custom logging capabilities          - 11/20/2015 wer
  *      v1.0.1 - checked to see if we want to even bother with calling o_elog.  - 11/03/2015 wer
  *      v1.0.0 - initial version                                                - 08/19/2015 wer
  *  </pre>
- *  @note this is derived from the abstract class Base and may
- *      end up replacing the abstract class or used in classes that
- *      don't use the abstract class.
  */
 namespace Ritc\Library\Traits;
 

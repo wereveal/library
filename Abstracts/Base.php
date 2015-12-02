@@ -1,16 +1,15 @@
 <?php
 /**
- *  @brief A Base Class that all other classes use.
- *  @details Primarily this is used to fix the visibility issue that PHP ignores.
- *      Also establishes the way the error logging can be injected when needed.
- *  @file Base.php
- *  @ingroup ritc_library abstracts
+ *  @brief     A Base Class that all other classes use.
+ *  @details   Primarily this is used to fix the visibility issue that PHP ignores.
+ *             Also establishes the way the error logging can be injected when needed.
+ *  @ingroup   ritc_library abstracts
+ *  @file      Base.php
  *  @namespace Ritc\Library\Abstracts
- *  @class Base
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version  1.2.0
- *  @date 2014-09-25 15:18:00
- *  @note A part of the RITC Library v5
+ *  @class     Base
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.2.0
+ *  @date      2014-09-25 15:18:00
  *  @note <pre><b>Change Log</b>
  *      v1.2.0 - changed back to abstract making it easer for other abstracts to extend it - 09/25/2014 wer
  *               Note that there may have been an interface for it but it no longer exists, not sure when.

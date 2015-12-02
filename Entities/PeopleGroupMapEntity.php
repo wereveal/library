@@ -1,21 +1,20 @@
 <?php
 /**
- *  @brief A basic entity class for the Article table.
- *  @file PeopleGroupMapEntity.php
- *  @ingroup ritc_library entities
- *  @namespace Ritc/Library/Entities
- *  @class PeopleGroupMapEntity
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0
- *  @date 2015-07-29 11:43:02
- *  @note A file in Ritc Library
+ *  @brief     A basic entity class for the Article table.
+ *  @ingroup   ritc_library entities
+ *  @file      PeopleGroupMapEntity.php
+ *  @namespace Ritc\Library\Entities
+ *  @class     PeopleGroupMapEntity
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0
+ *  @date      2015-07-29 11:43:02
+ *  @note <b>SQL for table<b><pre>
+ *      MySQL      - resources/sql/mysql/people_group_map_mysql.sql
+ *      PostgreSQL - resources/sql/postgresql/people_group_map_pg.sql</pre>
  *  @note <pre><b>Change Log</b>
  *      v1.0.0 - Finished        - 07/29/2015 wer
  *      v0.1.0 - Initial version - 09/11/2014 wer
  *  </pre>
- *  @note <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/people_group_map_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/people_group_map_pg.sql</pre>
 **/
 namespace Ritc\Library\Entities;
 

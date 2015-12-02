@@ -1,16 +1,15 @@
 <?php
 /**
- *  @brief Controller for the Test page.
- *  @file TestsAdminController.php
- *  @ingroup ritc_library controllers
- *  @namespace Ritc/Library/Controllers
- *  @class TestsAdminController
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.0β1
- *  @date 2015-10-23 11:43:13
- *  @note A file in Library v5
+ *  @brief     Controller for the Test page.
+ *  @ingroup   ritc_library controllers
+ *  @file      TestsAdminController.php
+ *  @namespace Ritc\Library\Controllers
+ *  @class     TestsAdminController
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.0β1
+ *  @date      2015-10-23 11:43:13
  *  @note <pre><b>Change Log</b>
- *      v1.0.0β1 - Initial version                               - 10/23/2015 wer
+ *      v1.0.0β1 - Initial version                              - 10/23/2015 wer
  *  </pre>
 **/
 namespace Ritc\Library\Controllers;

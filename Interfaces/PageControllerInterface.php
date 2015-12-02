@@ -1,16 +1,15 @@
 <?php
 /**
- *  @brief Interface for page controllers
- *  @details Page Contollers are primary controllers, first thing called.
- *      Usually one Page Controller per App.
- *  @file PageControllerInterface.php
- *  @ingroup ritc_library interfaces
- *  @namespace Ritc/Library/Interfaces
- *  @class PageControllerInterface
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.0.1
- *  @date 2014-01-31 15:58:35
- *  @note A part of the RITC Library v5
+ *  @brief     Interface for page controllers
+ *  @details   Page Contollers are primary controllers, first thing called.
+ *             Usually one Page Controller per App.
+ *  @ingroup   ritc_library interfaces
+ *  @file      PageControllerInterface.php
+ *  @namespace Ritc\Library\Interfaces
+ *  @class     PageControllerInterface
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.0.1
+ *  @date      2014-01-31 15:58:35
  *  @note <pre><b>Change Log</b>
  *      v1.0.1 - fixed potential bug
  *      v1.0.0 - Initial version 12/12/2013

@@ -1,14 +1,13 @@
 <?php
 /**
- *  @brief View for the Configuration page.
- *  @file ConstantsAdminView.php
- *  @ingroup ritc_library views
- *  @namespace Ritc/Library/Views
- *  @class ConstantsAdminView
- *  @author William Reveal  <bill@revealitconsulting.com>
- *  @version 1.2.1
- *  @date 2015-11-07 09:38:35
- *  @note A file in Ritc Library
+ *  @brief     View for the Configuration page.
+ *  @ingroup   ritc_library views
+ *  @file      ConstantsAdminView.php
+ *  @namespace Ritc\Library\Views
+ *  @class     ConstantsAdminView
+ *  @author    William E Reveal <bill@revealitconsulting.com>
+ *  @version   1.2.1
+ *  @date      2015-11-07 09:38:35
  *  @note <pre><b>Change Log</b>
  *      v1.2.1   - Bug Fix                                              - 11/07/2015 wer
  *      v1.2.0   - Immutable code added                                 - 10/07/2015 wer
