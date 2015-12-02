@@ -6,10 +6,12 @@
  * @namespace Ritc/Library/Controllers
  * @class     ManagerController
  * @author    William Reveal <bill@revealitconsulting.com>
- * @version   v1.0.0
- * @date      2015-11-27 14:47:51
+ * @version   v1.0.1
+ * @date      2015-12-01 21:41:39
  * @note      A file in RITC Library
  * @note <pre><b>Change Log</b>
+ *      v1.0.1   - needed to change private to protected - 12/01/2015 wer
+ *                 in order to extend this class.
  *      v1.0.0   - first working version                 - 11/27/2015 wer
  *      v1.0.0β8 - bug fixes                             - 11/18/2015 wer
  *      v1.0.0β7 - added page controller                 - 11/12/2015 wer
@@ -36,16 +38,16 @@ class ManagerController implements ControllerInterface
 {
     use LogitTraits;
 
-    private $a_route_parts;
-    private $a_post_values;
-    private $form_action;
-    private $o_auth;
-    private $o_di;
-    private $o_manager_view;
-    private $o_router;
-    private $o_session;
-    private $route_method;
-    private $route_action;
+    protected $a_route_parts;
+    protected $a_post_values;
+    protected $form_action;
+    protected $o_auth;
+    protected $o_di;
+    protected $o_manager_view;
+    protected $o_router;
+    protected $o_session;
+    protected $route_method;
+    protected $route_action;
 
     public function __construct(Di $o_di)
     {
@@ -214,7 +216,7 @@ class ManagerController implements ControllerInterface
      *  Authorizes the person and allows access or kicks them.
      *  @return bool
      */
-    private function verifyLogin()
+    protected function verifyLogin()
     {
         $meth = __METHOD__ . '.';
         $a_results = $this->o_auth->login($this->a_post_values); // authentication part
