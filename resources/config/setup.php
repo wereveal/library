@@ -7,52 +7,52 @@
  *  @namespace Ritc
  *  @defgroup ritc_library
  *  @{
- *      @version   5.0
- *      @defgroup abstracts classes that are extended by other classes
+ *      @version 5.5.0
+ *      @defgroup abstracts Classes that are extended by other classes
  *      @ingroup ritc_library
- *      @defgroup basic stuff that doesn't have another place
+ *      @defgroup basic Stuff that doesn't have another place
  *      @ingroup ritc_library
- *      @defgroup configs place for configurations
+ *      @defgroup configs Place for configurations
  *      @ingroup ritc_library
- *      @defgroup controllers controllers in the app
+ *      @defgroup controllers Controllers
  *      @ingroup ritc_library
- *      @defgroup entities defines the tables in the database
+ *      @defgroup entities Defines the tables in the database
  *      @ingroup ritc_library
- *      @defgroup factories classes that create objects
+ *      @defgroup factories Classes that create objects
  *      @ingroup ritc_library
- *      @defgroup helper classes that do helper things
+ *      @defgroup helper Classes that do helper things
  *      @ingroup ritc_library
- *      @defgroup interfaces files that define what a class should have
+ *      @defgroup interfaces Files that define what a class should have
  *      @ingroup ritc_library
- *      @defgroup models classes that do database calls
+ *      @defgroup models Classes that do database calls
  *      @ingroup ritc_library
- *      @defgroup services classes that are normally injected into other classes
+ *      @defgroup services Classes that are normally injected into other classes
  *      @ingroup ritc_library
- *      @defgroup tests classes that test other classes
+ *      @defgroup tests Classes that test other classes
  *      @ingroup ritc_library
- *      @defgroup traits functions that are common to multiple classes
+ *      @defgroup traits Functions that are common to multiple classes
  *      @ingroup ritc_library
- *      @defgroup views classes that provide the end user experience
+ *      @defgroup views Classes that provide the end user experience
  *      @ingroup ritc_library
  *  }
  *  @defgroup main_app_name
  *  @{
- *      @version   1.0
- *      @defgroup app_abstracts abstract class files
+ *      @version 1.0
+ *      @defgroup app_abstracts Abstract class files
  *      @ingroup main_app_name
- *      @defgroup app_controllers controller files
+ *      @defgroup app_controllers Controller files
  *      @ingroup main_app_name
- *      @defgroup app_entities defines the tables in the database
+ *      @defgroup app_entities Defines the tables in the database
  *      @ingroup main_app_name
- *      @defgroup app_interfaces files that define what a class should have
+ *      @defgroup app_interfaces Files that define what a class should have
  *      @ingroup main_app_name
- *      @defgroup app_models classes that do database calls
+ *      @defgroup app_models Classes that do database calls
  *      @ingroup main_app_name
- *      @defgroup app_tests classes that test other classes
+ *      @defgroup app_tests Classes that test other classes
  *      @ingroup main_app_name
- *      @defgroup app_traits functions that are common to multiple classes
+ *      @defgroup app_traits Functions that are common to multiple classes
  *      @ingroup main_app_name
- *      @defgroup app_views classes that provide the end user experience
+ *      @defgroup app_views Classes that provide the end user experience
  *      @ingroup main_app_name
  *  }
  *  @note <pre>
