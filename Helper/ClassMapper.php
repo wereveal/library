@@ -6,11 +6,12 @@
  *  @namespace Ritc\Library\Helper
  *  @class     Arrays
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.2.0
- *  @date      2015-11-06 17:02:13
+ *  @version   1.2.1
+ *  @date      2015-12-07 12:22:09 
  *  @note <pre><b>Change Log</b>
- *      v1.2.0 - added code to not include archives - 11/06/2015 wer
- *      v1.1.0 - added traits                       - 09/01/2015 wer
+ *      v1.2.1 - refactored var names to be more descriptive - 12/07/2015 wer
+ *      v1.2.0 - added code to not include archives          - 11/06/2015 wer
+ *      v1.1.0 - added traits                                - 09/01/2015 wer
  *      v1.0.0 - initial version
  *  </pre>
 **/
@@ -21,34 +22,34 @@ use \SplFileInfo;
 
 class ClassMapper
 {
-    private $app_dir;
-    private $config_dir;
-    private $src_dir;
+    private $app_path;
+    private $config_path;
+    private $src_path;
 
     /**
      *  Constructor for the class.
      *  @param array $a_dirs should be [
-     *      'app_dir'    => '/some_path',
-     *      'config_dir' => '/some_path',
-     *      'src_dir'    => '/some_path'
+     *      'app_path'    => '/some_path',
+     *      'config_path' => '/some_path',
+     *      'src_path'    => '/some_path'
      *  ]
      */
     public function __construct(array $a_dirs = array()) {
-        $this->app_dir = isset($a_dirs['app_dir'])
-            ? $a_dirs['app_dir']
+        $this->app_path = isset($a_dirs['app_path'])
+            ? $a_dirs['app_path']
             : '/app';
-        $this->config_dir = isset($a_dirs['config_dir'])
-            ? $a_dirs['config_dir']
+        $this->config_path = isset($a_dirs['config_path'])
+            ? $a_dirs['config_path']
             : '/app/config';
-        $this->src_dir = isset($a_dirs['src_dir'])
-            ? $a_dirs['src_dir']
+        $this->src_path = isset($a_dirs['src_path'])
+            ? $a_dirs['src_path']
             : '/app/src';
     }
-    public function generateClassMap($src_dir = '') {
-        if ($src_dir != '' && file_exists($src_dir)) {
-            $this->src_dir =  $src_dir;
+    public function generateClassMap($src_path = '') {
+        if ($src_path != '' && file_exists($src_path)) {
+            $this->src_path =  $src_path;
         }
-        $o_dir = new DirectoryIterator($this->src_dir);
+        $o_dir = new DirectoryIterator($this->src_path);
         $a_classmap = $this->createClassMapArray($o_dir, array());
         $classmap_text = "<?php\n/* Generated on " . date('c') . " by ClassMapper */\n\nreturn array(\n";
         $string_length = 0;
@@ -64,13 +65,13 @@ class ClassMapper
                     $padding .= ' ';
                 }
             }
-            $value = str_replace($this->app_dir . '/', '', $value);
-            $classmap_text .= "    '{$key}'{$padding} => __DIR__ . '/../{$value}',\n";
+            $value = str_replace($this->app_path . '/', '', $value);
+            $classmap_text .= "    '{$key}'{$padding} => $this->src_path . '/{$value}',\n";
             echo $key . "\n";
         }
 
         $classmap_text .= ');';
-        file_put_contents($this->config_dir . '/autoload_classmap.php', $classmap_text);
+        file_put_contents($this->config_path . '/autoload_classmap.php', $classmap_text);
     }
 
     private function createClassMapArray(DirectoryIterator $o_dir, array $a_classmap) {
