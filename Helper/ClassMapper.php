@@ -66,7 +66,7 @@ class ClassMapper
                 }
             }
             $value = str_replace($this->app_path . '/', '', $value);
-            $classmap_text .= "    '{$key}'{$padding} => $this->src_path . '/{$value}',\n";
+            $classmap_text .= "    '{$key}'{$padding} => __DIR__ . '/../{$value}',\n";
             echo $key . "\n";
         }
 
