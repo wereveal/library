@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Models
  *  @class     RoutesModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.0
- *  @date      2015-11-22 18:02:52
+ *  @version   1.2.0
+ *  @date      2015-12-08 15:04:52
  *  @note <pre><b>Change Log</b>
+ *      v1.2.0   - added field to table                                   - 12/08/2015 wer
  *      v1.1.0   - refactoring to provide better postgresql compatibility - 11/22/2015 wer
  *      v1.0.2   - Database structure change reflected here.              - 09/03/2015 wer
  *      v1.0.1   - Refactoring elsewhere necessitated changes here        - 07/31/2015 wer
@@ -50,6 +51,7 @@ class RoutesModel implements ModelInterface
         $this->logIt(var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $a_required_keys = [
             'route_path',
+            'route_namespace',
             'route_class',
             'route_method',
             'route_action'
@@ -59,9 +61,9 @@ class RoutesModel implements ModelInterface
         }
         $sql = "
             INSERT INTO {$this->db_prefix}routes
-                (route_path, route_class, route_method, route_action)
+                (route_path, route_namespace, route_class, route_method, route_action)
             VALUES
-                (:route_path, :route_class, :route_method, :route_action)
+                (:route_path, :route_namespace, :route_class, :route_method, :route_action)
         ";
         $a_table_info = [
             'table_name'  => "{$this->db_prefix}routes",
@@ -91,6 +93,7 @@ class RoutesModel implements ModelInterface
             $a_allowed_keys = [
                 'route_id',
                 'route_path',
+                'route_namespace',
                 'route_class'
             ];
             $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
@@ -103,7 +106,7 @@ class RoutesModel implements ModelInterface
             $where = " ORDER BY route_path";
         }
         $sql = "
-            SELECT route_id, route_path, route_class, route_method, route_action, route_immutable
+            SELECT route_id, route_path, route_namespace, route_class, route_method, route_action, route_immutable
             FROM {$this->db_prefix}routes
             {$where}
         ";
@@ -127,6 +130,7 @@ class RoutesModel implements ModelInterface
         $a_allowed_keys = [
             'route_id',
             'route_path',
+            'route_namespace',
             'route_class',
             'route_method',
             'route_action'

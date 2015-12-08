@@ -6,10 +6,11 @@
  *  @namespace Ritc\Library\Controllers
  *  @class     RoutesAdminController
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   2.1.0
- *  @date      2015-10-06 13:55:38
+ *  @version   2.2.0
+ *  @date      2015-12-08 15:05:12
  *  @pre       The route to this controller has to already be in the database and should not be able to be deleted.
  *  @note <pre><b>Change Log</b>
+ *      v2.2.0   - New field in the db table                    - 12/08/2015 wer
  *      v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
  *                 If the route doesn't end with a file ext
  *                 add a slash to the end as well.
@@ -70,6 +71,10 @@ class RoutesAdminController implements MangerControllerInterface
             }
         }
         switch ($main_action) {
+            case 'new':
+                return $this->o_view->renderForm();
+            case 'modify':
+                return $this->modify();
             case 'save':
                 return $this->save();
             case 'delete':
@@ -102,6 +107,10 @@ class RoutesAdminController implements MangerControllerInterface
         $a_results = $this->o_model->delete($route_id);
         return $this->o_view->renderList($a_results);
     }
+    public function modify()
+    {
+        return $this->o_view->renderForm($this->a_post);
+    }
     public function save()
     {
         $a_route = $this->fixRoute($this->a_post['route']);
@@ -130,7 +139,6 @@ class RoutesAdminController implements MangerControllerInterface
     {
         return $this->o_view->renderVerify($this->a_post);
     }
-
     /**
      * Removes tags and adds appropriate slashes to route path.
      * @param array $a_route defaults to empty array.

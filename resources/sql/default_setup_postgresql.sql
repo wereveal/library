@@ -192,17 +192,17 @@ VALUES
 	(2,3);
 
 INSERT INTO {$dbPrefix}routes
-    (route_id, route_path, route_class, route_method, route_action, route_immutable)
+    (route_id, route_path, route_namespace, route_class, route_method, route_action, route_immutable)
 VALUES
-    (1, '/manager/','ManagerController','render','',1),
-	(2, '/manager/login/','ManagerController','render','verifyLogin',1),
-	(3, '/manager/routes/','ManagerController','renderRoutesAdmin','',1),
-	(4, '/manager/constants/','ManagerController','renderConstantsAdmin','',1),
-	(5, '/manager/people/','ManagerController','renderPeopleAdmin','',1),
-	(6, '/manager/groups/','ManagerController','renderGroupsAdmin','',1),
-	(7, '/manager/pages/','ManagerController','renderPageAdmin','',1),
-	(8, '/manager/tests/','ManagerController','renderTestsAdmin','',1),
-	(9, '/manager/logout/','ManagerController','render','logout',1);
+    (1, '/manager/','Ritc\Library\Controllers','ManagerController','render','',1),
+	(2, '/manager/login/','Ritc\Library\Controllers','ManagerController','render','verifyLogin',1),
+	(3, '/manager/routes/','Ritc\Library\Controllers','ManagerController','renderRoutesAdmin','',1),
+	(4, '/manager/constants/','Ritc\Library\Controllers','ManagerController','renderConstantsAdmin','',1),
+	(5, '/manager/people/','Ritc\Library\Controllers','ManagerController','renderPeopleAdmin','',1),
+	(6, '/manager/groups/','Ritc\Library\Controllers','ManagerController','renderGroupsAdmin','',1),
+	(7, '/manager/pages/','Ritc\Library\Controllers','ManagerController','renderPageAdmin','',1),
+	(8, '/manager/tests/','Ritc\Library\Controllers','ManagerController','renderTestsAdmin','',1),
+	(9, '/manager/logout/','Ritc\Library\Controllers','ManagerController','render','logout',1);
 
 INSERT INTO {$dbPrefix}routes_group_map
     (route_id, group_id)

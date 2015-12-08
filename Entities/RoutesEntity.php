@@ -21,6 +21,7 @@ class RoutesEntity implements EntityInterface
 {
     private $route_id;
     private $route_path;
+    private $route_namespace;
     private $route_class;
     private $route_method;
     private $route_action;
@@ -35,6 +36,7 @@ class RoutesEntity implements EntityInterface
         return array(
             'route_id'        => $this->route_id,
             'route_path'      => $this->route_path,
+            'route_namespace' => $this->route_namespace,
             'route_class'     => $this->route_class,
             'route_method'    => $this->route_method,
             'route_action'    => $this->route_action,
@@ -49,11 +51,12 @@ class RoutesEntity implements EntityInterface
     public function setAllProperties(array $a_entity = array())
     {
         $a_default_values = [
-            'route_id'       => 0,
-            'route_path'     => '',
-            'route_class'    => '',
-            'route_method'   => '',
-            'route_action'   => '',
+            'route_id'        => 0,
+            'route_path'      => '',
+            'route_namespace' => '',
+            'route_class'     => '',
+            'route_method'    => '',
+            'route_action'    => '',
             'route_immutable' => 1
         ];
         foreach ($a_default_values as $key_name => $default_value) {
@@ -97,6 +100,21 @@ class RoutesEntity implements EntityInterface
     public function setRoutePath($route_path)
     {
         $this->route_path = $route_path;
+    }
+    /**
+     * @return string
+     */
+    public function getRouteNamespace()
+    {
+        return $this->route_namespace;
+    }
+
+    /**
+     * @param string $route_namespace
+     */
+    public function setRouteNamespace($route_namespace)
+    {
+        $this->route_namespace = $route_namespace;
     }
 
     /**

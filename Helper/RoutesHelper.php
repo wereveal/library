@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Helper
  *  @class     RoutesHelper
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:55:02
+ *  @version   1.1.0
+ *  @date      2015-12-08 15:11:18
  *  @note Change Log
+ *      v1.1.0   - new field in db table         - 12/08/2015 wer
  *      v1.0.0   - took out of beta              - 11/27/2015 wer
  *      v1.0.0β3 - bug fix                       - 11/24/2015 wer
  *      v1.0.0β2 - logic change                  - 10/30/2015 wer
@@ -104,15 +105,16 @@ class RoutesHelper
             }
             else {
                 $this->a_route_parts = [
-                    'route_id'       => 0,
-                    'route_path'     => $route_path,
-                    'request_uri'    => $route_path,
-                    'route_class'    => 'MainController',
-                    'route_method'   => '',
-                    'route_action'   => '',
-                    'url_actions'    => [],
-                    'groups'         => [],
-                    'min_auth_level' => 0
+                    'route_id'        => 0,
+                    'route_path'      => $route_path,
+                    'request_uri'     => $route_path,
+                    'route_namespace' => 'Ritc',
+                    'route_class'     => 'MainController',
+                    'route_method'    => '',
+                    'route_action'    => '',
+                    'url_actions'     => [],
+                    'groups'          => [],
+                    'min_auth_level'  => 0
                 ];
             }
         }
