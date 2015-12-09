@@ -13,7 +13,6 @@ mkdir -p resources/templates
 mkdir -p resources/themes
 mkdir -p resources/templates/default
 mkdir -p resources/templates/elements
-mkdir -p resources/templates/main
 mkdir -p resources/templates/pages
 mkdir -p resources/templates/snippets'
 mkdir -p resources/templates/tests
@@ -35,7 +34,6 @@ cp index.php resources/sql
 cp index.php resources/themes
 cp resources/templates/no_file.twig resources/templates/default
 cp resources/templates/no_file.twig resources/templates/elements
-cp resources/templates/no_file.twig resources/templates/main
 cp resources/templates/no_file.twig resources/templates/pages
 cp resources/templates/no_file.twig resources/templates/snippets'
 cp resources/templates/no_file.twig resources/templates/tests

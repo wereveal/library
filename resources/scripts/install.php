@@ -12,6 +12,7 @@ namespace Ritc;
 
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Factories\TwigFactory;
+use Ritc\Library\Helper\ClassMapper;
 use Ritc\Library\Helper\ConstantsHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -32,6 +33,10 @@ $long_opts  = [
 ];
 
 $a_options = getopt($short_opts, $long_opts);
+
+if (count($a_options) < 5) {
+   die("The options are \nnamespace (n), appname (a), dbhost (h), \ndbtype (t), dbname (d), dbuser (u), \ndbpass (p), dbprefix (f)\n"); 
+}
 
 $app_name  = '';
 $namespace = '';
@@ -99,13 +104,24 @@ if ($db_pass == '') {
 if ($missing_params != '') {
     die("Missing argument(s): {$missing_params}\n");
 }
+
 define('DEVELOPER_MODE', true);
 define('SITE_PATH', __DIR__);
 define('BASE_PATH', dirname(SITE_PATH));
 
 require_once BASE_PATH . '/app/config/constants.php';
 
-$db_config_file = "db_setup_config.php";
+if (!file_exists(SRC_PATH . '/Ritc/Library')) {
+    die("You must clone the Ritc/Library in the src dir first and any other desired apps.\n");
+}
+
+### generate classmap so autoloader will work ###
+require_once SRC_PATH . '/Ritc/Library/Helper/ClassMapper.php'; 
+$a_dirs = ['app_path' => APP_PATH, 'config_path' => APP_CONFIG_PATH, 'src_path' => SRC_PATH];
+$o_cm = new ClassMapper($a_dirs);
+$o_cm->generateClassMap();
+
+$db_config_file = "db_config_setup.php";
 $db_config_file_text =<<<EOT
 <?php
 return array(
@@ -176,19 +192,30 @@ $o_db->commitTransaction();
 
 $app_path = SRC_PATH . '/' . $namespace. '/' . $app_name;
 $a_new_dirs = ['Abstracts', 'Controllers', 'Entities', 'Interfaces', 'Models',
-'Tests', 'Traits', 'Views', 'resources/config', 'resources/sql',
-'resources/templates', 'resources/themes'];
+'Tests', 'Traits', 'Views', 'resources', 'resources/config', 'resources/sql',
+'resources/templates', 'resources/themes', 'resources/templates/default',
+'resources/templates/elements', 'resources/templates/pages', 
+'resources/templates/snippets', 'resources/templates/tests'];
+
 $index_file_text = '<?php
 header("Location: http://$_SERVER["SERVER_NAME"]/");
 ?>';
+
+$tpl_text = "<h3>An Error Has Occurred</h3>";
 
 if (!file_exists($app_path)) {
     mkdir($app_path, 0755, true);
     foreach($a_new_dirs as $dir) {
         $new_dir = $app_path . '/' . $dir;
         $new_file = $new_dir . '/' . 'index.php';
+        $new_tpl = $new_dir . '/' . 'no_file.twig';
         mkdir($app_path . '/' . $dir, 0755, true);
-        file_put_contents($new_file, $index_file_text);
+        if (strpos($dir, 'resources') === false) {
+            file_put_contents($new_file, $index_file_text);
+        }
+        else {
+            file_put_contents($new_tpl, $tpl_text);
+        }
     }
 }
 ?>

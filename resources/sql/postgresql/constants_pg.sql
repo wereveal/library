@@ -16,6 +16,7 @@ VALUES
     ('EMAIL_FORM_TO','bill@revealitconsulting.com',1),
     ('ERROR_EMAIL_ADDRESS','webmaster@revealitconsulting.com',1),
     ('PAGE_TEMPLATE','index.twig',1),
+	('TWIG_PREFIX','app_',1),
     ('THEME_NAME','',1),
     ('ADMIN_THEME_NAME','',1),
     ('CSS_DIR_NAME','css',1),
