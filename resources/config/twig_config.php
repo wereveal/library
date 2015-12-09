@@ -6,7 +6,6 @@ return array(
         $library_path . '/tests'    => 'tests',
         $library_path . '/snippets' => 'snippets',
         $library_path . '/pages'    => 'pages',
-        $library_path . '/main'     => 'main',
         $library_path . '/elements' => 'elements',
         $library_path . '/default'  => 'default',
         $library_path . '/forms'    => 'forms',
