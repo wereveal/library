@@ -6,7 +6,6 @@ DROP TABLE IF EXISTS `{$dbPrefix}routes`;
 CREATE TABLE `{$dbPrefix}routes` (
   `route_id` int(11) NOT NULL AUTO_INCREMENT,
   `route_path` varchar(128) NOT NULL,
-  `route_namespace` varchar(255) NOT NULL,
   `route_class` varchar(64) NOT NULL,
   `route_method` varchar(64) NOT NULL,
   `route_action` varchar(255) NOT NULL,
@@ -18,18 +17,30 @@ CREATE TABLE `{$dbPrefix}routes` (
 LOCK TABLES `{$dbPrefix}routes` WRITE;
 /*!40000 ALTER TABLE `{$dbPrefix}routes` DISABLE KEYS */;
 
-INSERT INTO `{$dbPrefix}routes`
-    (`route_id`, `route_path`, `route_namespace`, `route_class`, `route_method`, `route_action`, `route_immutable`)
+INSERT INTO `{$dbPrefix}routes` (`route_id`, `route_path`, `route_class`, `route_method`, `route_action`, `route_can_edit`)
 VALUES
-	(1,'/manager/','Ritc\Library\Controllers','ManagerController','render','',1),
-	(2,'/manager/constants/','Ritc\Library\Controllers','ManagerController','renderConstantsAdmin','',1),
-	(3,'/manager/groups/','Ritc\Library\Controllers','ManagerController','renderGroupsAdmin','',1),
-	(4,'/manager/login/','Ritc\Library\Controllers','ManagerController','render','verifyLogin',1),
-	(5,'/manager/logout/','Ritc\Library\Controllers','ManagerController','render','logout',1),
-	(6,'/manager/pages/','Ritc\Library\Controllers','ManagerController','renderPageAdmin','',1),
-	(7,'/manager/people/','Ritc\Library\Controllers','ManagerController','renderPeopleAdmin','',1),
-	(8,'/manager/routes/','Ritc\Library\Controllers','ManagerController','renderRoutesAdmin','',1),
-	(9,'/manager/tests/','Ritc\Library\Controllers','ManagerController','renderTestsAdmin','',1);
+	(1,'/manager/','ManagerController','render','',1),
+	(2,'/manager/login/','ManagerController','render','verifyLogin',1),
+	(3,'/manager/routes/','ManagerController','renderRouterAdmin','',1),
+	(4,'/manager/constants/','ManagerController','renderConstantsAdmin','',1),
+	(5,'/manager/people/','ManagerController','renderPeopleAdmin','',1),
+	(6,'/manager/people/save/','ManagerController','renderPeopleAdmin','save',1),
+	(7,'/manager/people/modify/','ManagerController','renderPeopleAdmin','modify',1),
+	(8,'/manager/people/delete/','ManagerController','renderPeopleAdmin','delete',1),
+	(9,'/manager/groups/','ManagerController','renderGroupsAdmin','',1),
+	(10,'/manager/groups/save/','ManagerController','renderGroupsAdmin','save',1),
+	(11,'/manager/groups/update/','ManagerController','renderGroupsAdmin','update',1),
+	(12,'/manager/groups/delete/','ManagerController','renderGroupsAdmin','delete',1),
+	(13,'/manager/routes/list/','ManagerController','renderRouterAdmin','',1),
+	(14,'/manager/constants/list/','ManagerController','renderConstantsAdmin','list',1),
+	(15,'/manager/people/list/','ManagerController','renderPeopleAdmin','list',1),
+	(16,'/manager/groups/list/','ManagerController','renderGroupsAdmin','',1),
+	(17,'/manager/routes/save/','ManagerController','renderRouterAdmin','save',1),
+	(18,'/manager/routes/update/','ManagerController','renderRouterAdmin','update',1),
+	(19,'/manager/routes/delete/','ManagerController','renderRouterAdmin','delete',1),
+	(20,'/manager/constants/save/','ManagerController','renderConstantsAdmin','save',1),
+	(21,'/manager/constants/modify/','ManagerController','renderConstantsAdmin','modify',1),
+	(22,'/manager/constants/delete/','ManagerController','renderConstantsAdmin','delete',1);
 
 /*!40000 ALTER TABLE `{$dbPrefix}routes` ENABLE KEYS */;
 UNLOCK TABLES;

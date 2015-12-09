@@ -42,7 +42,6 @@ class Router
     private $form_action;
     private $request_uri;
     private $route_action;
-    private $route_namespace;
     private $route_class;
     private $route_method;
     private $route_path;
@@ -78,13 +77,12 @@ class Router
         $a_router_parts['get'] = $this->a_get;
         $a_router_parts['post'] = $this->a_post;
         $a_router_parts['form_action'] = $this->form_action;
-        $this->a_router_parts  = $a_router_parts;
-        $this->request_uri     = $a_router_parts['request_uri'];
-        $this->route_path      = $a_router_parts['route_path'];
-        $this->route_action    = $a_router_parts['route_action'];
-        $this->route_namespace = $a_router_parts['route_namespace'];
-        $this->route_class     = $a_router_parts['route_class'];
-        $this->route_method    = $a_router_parts['route_method'];
+        $this->a_router_parts = $a_router_parts;
+        $this->request_uri    = $a_router_parts['request_uri'];
+        $this->route_path     = $a_router_parts['route_path'];
+        $this->route_action   = $a_router_parts['route_action'];
+        $this->route_class    = $a_router_parts['route_class'];
+        $this->route_method   = $a_router_parts['route_method'];
     }
 
     ### GETters and SETters ###
@@ -133,13 +131,6 @@ class Router
     public function getRouteClass()
     {
         return $this->route_class;
-    }
-    /**
-     * @return string
-     */
-    public function getRouteNamespace()
-    {
-        return $this->route_namespace;
     }
     /**
      * @return mixed
@@ -223,10 +214,6 @@ class Router
     public function setGet(array $a_allowed_keys = array())
     {
         $this->a_get = Arrays::cleanArrayValues($_GET, $a_allowed_keys, true);
-    }
-    public function setRouteNamespace($value = '')
-    {
-        $this->route_namespace = $value;
     }
     /**
      *  Sets the property $route_path.

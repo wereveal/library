@@ -6,10 +6,9 @@
  *  @namespace Ritc\Library\Views
  *  @class     RoutesAdminView
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.0
- *  @date      2015-12-08 15:01:57
+ *  @version   1.0.0
+ *  @date      2015-01-28 14:45:02
  *  @note <pre><b>Change Log</b>
- *      v1.1.0   - added new field to database                      - 12/08/2015 wer
  *      v1.0.1   - change in database structure forced change here  - 09/03/2015 wer
  *      v1.0.0   - first working version                            - 01/28/2015 wer
  *      v1.0.0β2 - changed to use DI/IOC                            - 11/15/2014 wer
@@ -40,39 +39,6 @@ class RoutesAdminView
         }
 
     }
-    public function renderForm(array $a_post = array())
-    {
-        $meth = __METHOD__ . '.';
-        $a_page_values = $this->getPageValues();
-        $a_values = array(
-            'a_message'       => array(),
-            'route_id'        => '',
-            'route_path'      => '',
-            'route_namespace' => '',
-            'route_class'     => '',
-            'route_method'    => '',
-            'route_action'    => '',
-            'route_immutable' => 1,
-            'tolken'          => $_SESSION['token'],
-            'form_ts'         => $_SESSION['idle_timestamp'],
-            'hobbit'          => '',
-            'menus'           => $this->a_links,
-            'adm_lvl'         => $this->adm_level
-        );
-        if (count($a_post) > 0) {
-            $a_routes = $this->o_model->read(['route_id' => $a_post['route_id']]);
-            $log_message = 'a_routes: ' . var_export($a_routes, true);
-            $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-            if (isset($a_routes[0]) && is_array($a_routes[0])) {
-                $a_values = array_merge($a_values, $a_routes[0]);
-            }
-        }
-        $a_values = array_merge($a_page_values, $a_values);
-        $log_message = 'a_values: ' . var_export($a_values, true);
-        die($log_message);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-        return $this->o_twig->render('@pages/routes_form.twig', $a_values);
-    }
     /**
      *  Returns the list of routes in html.
      *  @param array $a_message
@@ -87,7 +53,10 @@ class RoutesAdminView
             'a_routes' => array(
                 [
                     'route_id'        => '',
-                    'route_path'      => ''
+                    'route_path'      => '',
+                    'route_class'     => '',
+                    'route_method'    => '',
+                    'route_action'    => '',
                     'route_immutable' => 1
                 ]
             ),
@@ -98,7 +67,7 @@ class RoutesAdminView
             'adm_lvl' => $this->adm_level
         );
         $a_values = array_merge($a_page_values, $a_values);
-        $log_message = 'a_values: ' . var_export($a_values, true);
+        $log_message = 'a_values: ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
@@ -111,7 +80,7 @@ class RoutesAdminView
         }
         $a_order_by = ['order_by' => 'route_immutable DESC, route_path'];
         $a_routes = $this->o_model->read(array(), $a_order_by);
-        $log_message = 'a_routes: ' . var_export($a_routes, true);
+        $log_message = 'a_routes: ' . var_export($a_routes, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if ($a_routes !== false && count($a_routes) > 0) {
             $a_values['a_routes'] = $a_routes;
