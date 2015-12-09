@@ -6,7 +6,8 @@ return array(
         'description' => 'Manager Home Page',
         'name'        => 'Home',
         'class'       => '',
-        'extras'      => ''
+        'extras'      => '',
+        'submenu'     => ''
     ],
     [
         'text'        => 'Constants Manger',
@@ -14,7 +15,8 @@ return array(
         'description' => 'Constant values changed and new constants added.',
         'name'        => 'Constants',
         'class'       => '',
-        'extras'      => ''
+        'extras'      => '',
+        'submenu'     => ''
     ],
     [
         'text'        => 'Routes Manager',
@@ -22,7 +24,8 @@ return array(
         'description' => 'Create and manage routes for the app.',
         'name'        => 'Routes',
         'class'       => '',
-        'extras'      => ''
+        'extras'      => '',
+        'submenu'     => ''
     ],
     [
         'text'        => 'People Manager',
@@ -30,7 +33,8 @@ return array(
         'description' => 'Create and manage people which get assigned to groups.',
         'name'        => 'People',
         'class'       => '',
-        'extras'      => ''
+        'extras'      => '',
+        'submenu'     => ''
     ],
     [
         'text'        => 'Groups Manager',
@@ -38,7 +42,8 @@ return array(
         'description' => 'Create and manage groups to which people are assigned.',
         'name'        => 'Groups',
         'class'       => '',
-        'extras'      => ''
+        'extras'      => '',
+        'submenu'     => ''
     ],
     [
         'text'        => 'Page Meta Manager',
@@ -46,7 +51,8 @@ return array(
         'description' => 'Create and manage page meta data.',
         'name'        => 'Pages',
         'class'       => '',
-        'extras'      => ''
+        'extras'      => '',
+        'submenu'     => ''
     ],
     [
         'text'        => 'Tests',
@@ -54,7 +60,8 @@ return array(
         'description' => 'Tests',
         'name'        => 'Tests',
         'class'       => '',
-        'extras'      => ''
+        'extras'      => '',
+        'submenu'     => ''
     ],
     [
         'text'        => 'Logout',
@@ -62,6 +69,7 @@ return array(
         'description' => 'Logout.',
         'name'        => 'Logout',
         'class'       => '',
-        'extras'      => ''
+        'extras'      => '',
+        'submenu'     => ''
     ]
 );
