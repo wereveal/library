@@ -74,7 +74,7 @@ trait ManagerViewTraits
     /**
      *  Sets an array of links used for the manager home page and for the menus.
      */
-    private function setLinks()
+    private function setLinks($config_path = '')
     {
         $meth = __METHOD__ . '.';
         if ($this->adm_level == '') {
@@ -84,7 +84,10 @@ trait ManagerViewTraits
         $this->logIt('Person adm level: ' . $person_auth_level, LOG_OFF, $meth . __LINE__);
         $current_route_path = $this->o_router->getRoutePath();
         $o_routes = new RoutesHelper($this->o_di, '');
-        $a_links = include LIBRARY_CONFIG_PATH . '/links_config.php';
+        if ($config_path == '') {
+            $config_path = LIBRARY_CONFIG_PATH;
+        }
+        $a_links = include $config_path . '/manager_links.php';
         $this->logIt('In Set Links: ' . var_export($a_links, TRUE), LOG_OFF, $meth . __LINE__);
         foreach ($a_links as $key => $a_link) {
             $o_routes->setRouteParts($a_link['url']);
