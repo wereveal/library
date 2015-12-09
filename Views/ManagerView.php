@@ -33,6 +33,11 @@ class ManagerView
             $this->o_elog = $o_di->get('elog');
         }
     }
+    /**
+     *  Creates the home page of the Manager.
+     *  @param array $a_message A message, optional.
+     *  @return string
+     */
     public function renderLandingPage($a_message = array())
     {
         $meth = __METHOD__ . '.';

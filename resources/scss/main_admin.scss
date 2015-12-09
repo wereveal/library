@@ -10,13 +10,6 @@
     }
 }
 
-.w100 {
-    width: 100px;
-}
-.w450 {
-    width: 450px;
-}
-
 #people-form {
     fieldset {
         border: 1px black dotted;
@@ -38,5 +31,6 @@
 }
 
 @import "form";
+@import "widths";
 @import "media_queries";
 @import "media_queries_admin";
