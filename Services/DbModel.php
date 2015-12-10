@@ -7,9 +7,10 @@
  *  @namespace Ritc\Library\Services
  *  @class     DbModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   3.3.0
- *  @date      2015-09-01 10:55:03
+ *  @version   3.4.0
+ *  @date      2015-12-09 18:24:11
  *  @note <pre><b>Change Log</b>
+ *      v3.4.0 = changed so that an array can be used in place of the preferred file      - 12/09/2015 wer
  *      v3.3.0 - bug fix - pgsql insert wasn't working right                              - 11/22/2015 wer
  *      v3.2.6 - changed from extending Base class to using traits                        - unknown    wer
  *      v3.2.5 - added some additional information to be retrieved                        - 09/01/2015 wer
@@ -1135,13 +1136,40 @@ class DbModel
         return $where;
     }
     /**
-     *  Creates the class properties of a_db_config, db_type and db_prefix from config file
-     *  @param string $config_file
+     *  Creates the class properties of a_db_config, db_type and db_prefix from config file or array if passed in.
+     *  Prefer config file but array is allowed so this can be called without a config file.
+     *  @param string|array $config_file
      *  @return null
     **/
     private function createDbParms($config_file = 'db_config.php')
     {
-        $a_db = $this->retrieveDbConfig($config_file);
+        if (is_array($config_file)) {
+            $a_required_keys = ['driver', 'host', 'name', 'user', 'password'];
+            if ($this->findMissingKeys($a_required_keys, $config_file) == array()) {
+                $a_db = $config_file;
+                if (!isset($a_db['prefix'])) {
+                    $a_db['prefix'] = '';
+                }
+                if (!isset($a_db['persist'])) {
+                    $a_db['persist'] = true;
+                }
+                if (!isset($a_db['port'])) {
+                    $a_db['port'] = '';
+                }
+                if (!isset($a_db['userro'])) {
+                    $a_db['userro'] = $a_db['user'];
+                }
+                if (!isset($a_db['passro'])) {
+                    $a_db['passro'] = $a_db['password'];
+                }
+            } 
+            else {
+                $a_db = $this->retrieveDbConfig('db_config.php');
+            }
+        }
+        else {
+            $a_db = $this->retrieveDbConfig($config_file);
+        }
         $this->a_db_config = $a_db;
         $this->db_prefix   = $a_db['prefix'];
         $this->db_type     = $a_db['driver'];
