@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Views
  *  @class     GroupsAdminView
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:45:39
+ *  @version   1.0.1
+ *  @date      2015-12-12 16:01:11
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1   - Implent TWIG_PREFIX      - 12/12/2015 wer
  *      v1.0.0   - First working version    - 11/27/2015 wer
  *      v1.0.0β1 - Initial version          - 01/28/2015 wer
  *  </pre>
@@ -83,7 +84,8 @@ class GroupsAdminView
         }
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        return $this->o_twig->render('@pages/groups_admin.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/groups_admin.twig'
+        return $this->o_twig->render($tpl, $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -102,6 +104,7 @@ class GroupsAdminView
             $a_values['description'] = 'Form to verify the action to delete the group.';
         }
         $a_values['menus'] = $this->a_links;
-        return $this->o_twig->render('@pages/verify_delete_group.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/verify_delete_group.twig'
+        return $this->o_twig->render($tpl, $a_values);
     }
 }

@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Views
  *  @class     RoutesAdminView
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-01-28 14:45:02
+ *  @version   1.0.2
+ *  @date      2015-12-12 16:21:06
  *  @note <pre><b>Change Log</b>
+ *      v1.0.2   - Implement TWIG_PREFIX                            - 12/12/2015 wer
  *      v1.0.1   - change in database structure forced change here  - 09/03/2015 wer
  *      v1.0.0   - first working version                            - 01/28/2015 wer
  *      v1.0.0β2 - changed to use DI/IOC                            - 11/15/2014 wer
@@ -85,7 +86,8 @@ class RoutesAdminView
         if ($a_routes !== false && count($a_routes) > 0) {
             $a_values['a_routes'] = $a_routes;
         }
-        return $this->o_twig->render('@pages/routes_admin.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/routes_admin.twig';
+        return $this->o_twig->render($tpl, $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -104,6 +106,7 @@ class RoutesAdminView
             $a_values['description'] = 'Form to verify the action to delete the route.';
         }
         $a_values['menus'] = $this->a_links;
-        return $this->o_twig->render('@pages/verify_delete_route.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/verify_delete_route.twig';
+        return $this->o_twig->render($tpl, $a_values);
     }
 }

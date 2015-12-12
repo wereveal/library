@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Views
  *  @class     PageAdminView
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 15:02:30
+ *  @version   1.0.1
+ *  @date      2015-12-12 16:19:33 
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1   - Implement TWIG_PREFIX                        - 12/12/2015 wer 
  *      v1.0.0   - take out of beta                             - 11/27/2015 wer
  *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
  *  </pre>
@@ -79,7 +80,8 @@ class PageAdminView
             $log_message = 'a_values: ' . var_export($a_values, TRUE);
             $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         }
-        return $this->o_twig->render('@pages/page_form.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/page_form.twig'
+        return $this->o_twig->render($tpl, $a_values);
     }
     /**
      *  Returns the list of pages in html.
@@ -124,7 +126,8 @@ class PageAdminView
         if ($a_pages !== false && count($a_pages) > 0) {
             $a_values['a_pages'] = $a_pages;
         }
-        return $this->o_twig->render('@pages/page_admin.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/page_admin.twig';
+        return $this->o_twig->render($tpl, $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -156,6 +159,7 @@ class PageAdminView
         );
         $a_values = array_merge($a_values, $a_page_values);
         $this->logIt('Twig Values: ' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
-        return $this->o_twig->render('@pages/verify_delete.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/verify_delete.twig';
+        return $this->o_twig->render($tpl, $a_values);
     }
 }

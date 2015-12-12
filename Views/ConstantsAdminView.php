@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Views
  *  @class     ConstantsAdminView
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.2.1
- *  @date      2015-11-07 09:38:35
+ *  @version   1.2.2
+ *  @date      2015-12-12 16:01:57
  *  @note <pre><b>Change Log</b>
+ *      v1.2.2   - Implement TWIG_PREFIX                                - 12/12/2015 wer
  *      v1.2.1   - Bug Fix                                              - 11/07/2015 wer
  *      v1.2.0   - Immutable code added                                 - 10/07/2015 wer
  *      v1.1.0   - removed abstract class Base, added LogitTraits       - 09/01/2015 wer
@@ -92,7 +93,8 @@ class ConstantsAdminView
         }
         $a_page_values = $this->getPageValues(); // provided in ManagerViewTraits
         $a_values = array_merge($a_values, $a_page_values);
-        return $this->o_twig->render('@pages/constants_admin.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/constants_admin.twig';
+        return $this->o_twig->render($tpl, $a_values);
     }
     /**
      *  Returns HTML verify form to delete.
@@ -120,6 +122,7 @@ class ConstantsAdminView
             $a_twig_values['public_dir'] = $a_values['public_dir'];
         }
         $a_twig_values = array_merge($a_twig_values, $a_page_values);
-        return $this->o_twig->render('@pages/verify_delete.twig', $a_twig_values);
+        $tpl = TWIG_PREFIX . 'pages/verify_delete.twig';
+        return $this->o_twig->render($tpl, $a_twig_values);
     }
 }

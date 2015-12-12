@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Views
  *  @class     ManagerView
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.0
- *  @date      2015-09-01 08:05:20
+ *  @version   1.1.1
+ *  @date      2015-12-12 16:18:32 
  *  @note <pre><b>Change Log</b>
+ *      v1.1.1   - Implent TWIG_PREFIX                          - 12/12/2015 wer
  *      v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
  *      v1.0.0   - First stable version                         - 01/16/2015 wer
  *      v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
@@ -39,7 +40,7 @@ class ManagerView
      *  @return string
      */
     public function renderLandingPage($a_message = array())
-    {
+   {
         $meth = __METHOD__ . '.';
         $this->setAuthLevel($_SESSION['login_id']);
         $this->setLinks();
@@ -54,7 +55,8 @@ class ManagerView
         }
         $log_message = 'Final Values for twig: ' . var_export($a_values, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        return $this->o_twig->render('@main/index.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/index.twig';
+        return $this->o_twig->render($tpl, $a_values);
     }
     /**
      * Temp method to test stuff
@@ -78,7 +80,8 @@ class ManagerView
             'body_text'     => $body_text
         ];
         $a_values = array_merge($a_page_values, $a_values);
-        return $this->o_twig->render('@main/list_logins.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/list_logins.twig'
+        return $this->o_twig->render($tpl, $a_values);
     }
     /**
      * Creates the html that displays the login form to access the app.
@@ -115,6 +118,7 @@ class ManagerView
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $o_sess->unsetVar('login_id');
-        return $this->o_twig->render('@pages/login_form.twig', $a_values);
+        $tpl = TWIG_PREFIX . 'pages/login_form.twig';
+        return $this->o_twig->render($tpl, $a_values);
     }
 }
