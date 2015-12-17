@@ -84,7 +84,7 @@ class GroupsAdminView
         }
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $tpl = TWIG_PREFIX . 'pages/groups_admin.twig'
+        $tpl = TWIG_PREFIX . 'pages/groups_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
     /**
@@ -104,7 +104,7 @@ class GroupsAdminView
             $a_values['description'] = 'Form to verify the action to delete the group.';
         }
         $a_values['menus'] = $this->a_links;
-        $tpl = TWIG_PREFIX . 'pages/verify_delete_group.twig'
+        $tpl = TWIG_PREFIX . 'pages/verify_delete_group.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 }
