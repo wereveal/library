@@ -37,18 +37,18 @@ foreach ($a_options as $option => $value) {
 $missing_params = '';
 
 if ($app_name == '') {
-    $missing_params .= $missing_params == '' ? "App Name" : ", App Name";
+    $missing_params .= $missing_params == '' ? "App Name (-a --appname)" : ", App Name (-a --appname)";
 }
 if ($namespace == '') {
-    $missing_params .= $missing_params == '' ? "Namespace" : ", Namespace";
+    $missing_params .= $missing_params == '' ? "Namespace (-n --namespace)" : ", Namespace (-n --namespace)";
 }
 
 if ($missing_params != '') {
     die("Missing argument(s): {$missing_params}\n");
 }
 define('DEVELOPER_MODE', true);
-define('SITE_PATH', __DIR__);
-define('BASE_PATH', dirname(SITE_PATH));
+define('BASE_PATH', dirname(dirname(__DIR__)));
+define('SITE_PATH', BASE_PATH . '/public');
 
 require_once BASE_PATH . '/app/config/constants.php';
 $app_path = SRC_PATH . '/' . $namespace. '/' . $app_name;
@@ -58,17 +58,38 @@ $a_new_dirs = ['Abstracts', 'Controllers', 'Entities', 'Interfaces', 'Models',
 'resources/templates/elements', 'resources/templates/pages', 
 'resources/templates/snippets', 'resources/templates/tests'];
 
-$index_file_text = '<?php
-header("Location: http://$_SERVER["SERVER_NAME"]/");
-?>';
+$htaccess_text =<<<EOF
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
+EOF;
+
+$keep_me_text =<<<EOF
+Place Holder
+EOF;
+
+$no_tpl_text =<<<EOF
+<h3>An Error Has Occurred</h3>
+EOF;
 
 if (!file_exists($app_path)) {
     mkdir($app_path, 0755, true);
+    file_put_contents($app_path . '/.htaccess', $htaccess_text);
     foreach($a_new_dirs as $dir) {
         $new_dir = $app_path . '/' . $dir;
-        $new_file = $new_dir . '/' . 'index.php';
-        mkdir($app_path . '/' . $dir, 0755, true);
-        file_put_contents($new_file, $index_file_text);
+        $new_file = $new_dir . '/.keepme';
+        $new_tpl_file = $new_dir . '/no_file.twig';
+        mkdir($new_dir, 0755, true);
+        if (strpos($dir, 'templates') !== false) {
+            file_put_contents($new_tpl_file, $no_tpl_text);
+        }
+        else {
+            file_put_contents($new_file, $keep_me_text);
+        }
     }
 }
 ?>

@@ -16,24 +16,23 @@ mkdir -p resources/templates/elements
 mkdir -p resources/templates/pages
 mkdir -p resources/templates/snippets'
 mkdir -p resources/templates/tests
-echo "<?php" > index.php
-echo 'header("Location: http://" . $_SERVER["SERVER_NAME"] . "/");' >> index.php
-echo '?>' >> index.php
+echo "Deny from all" > .htaccess
+echo "Place Holder" > Abstracts/.keep_me
+echo "Place Holder" > Controllers/.keep_me
+echo "Place Holder" > Entities/.keep_me
+echo "Place Holder" > Interfaces/.keep_me
+echo "Place Holder" > Models/.keep_me
+echo "Place Holder" > Tests/.keep_me
+echo "Place Holder" > Traits/.keep_me
+echo "Place Holder" > Views/.keep_me
+echo "Place Holder" > resources/.keep_me
+echo "Place Holder" > resources/config/.keep_me
+echo "Place Holder" > resources/sql/.keep_me
+echo "Place Holder" > resources/themes/.keep_me
 echo "<h3>An Error Has Occured.</h3>" > resources/templates/no_file.twig
-cp index.php Abstracts/
-cp index.php Controllers/
-cp index.php Entities/
-cp index.php Interfaces/
-cp index.php Models/
-cp index.php Tests/
-cp index.php Traits/
-cp index.php Views/
-cp index.php resources/
-cp index.php resources/config
-cp index.php resources/sql
-cp index.php resources/themes
-cp resources/templates/no_file.twig resources/templates/default
-cp resources/templates/no_file.twig resources/templates/elements
-cp resources/templates/no_file.twig resources/templates/pages
-cp resources/templates/no_file.twig resources/templates/snippets'
-cp resources/templates/no_file.twig resources/templates/tests
+echo "<h3>An Error Has Occured.</h3>" > resources/templates/default/no_file.twig
+echo "<h3>An Error Has Occured.</h3>" > resources/templates/elements/no_file.twig
+echo "<h3>An Error Has Occured.</h3>" > resources/templates/pages/no_file.twig
+echo "<h3>An Error Has Occured.</h3>" > resources/templates/snippets/no_file.twig
+echo "<h3>An Error Has Occured.</h3>" > resources/templates/tests/no_file.twig
+
