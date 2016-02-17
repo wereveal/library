@@ -197,24 +197,35 @@ $a_new_dirs = ['Abstracts', 'Controllers', 'Entities', 'Interfaces', 'Models',
 'resources/templates/elements', 'resources/templates/pages', 
 'resources/templates/snippets', 'resources/templates/tests'];
 
-$index_file_text = '<?php
-header("Location: http://$_SERVER["SERVER_NAME"]/");
-?>';
+$htaccess_text =<<<EOF
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
+EOF;
+
+$keep_me_text =<<<EOF
+Place Holder
+EOF;
 
 $tpl_text = "<h3>An Error Has Occurred</h3>";
 
 if (!file_exists($app_path)) {
     mkdir($app_path, 0755, true);
+    file_put_contents($app_path . '/.htaccess' . $htaccess_text);
     foreach($a_new_dirs as $dir) {
         $new_dir = $app_path . '/' . $dir;
-        $new_file = $new_dir . '/' . 'index.php';
-        $new_tpl = $new_dir . '/' . 'no_file.twig';
+        $new_file = $new_dir . '/.keepme';
+        $new_tpl = $new_dir . '/no_file.twig';
         mkdir($app_path . '/' . $dir, 0755, true);
-        if (strpos($dir, 'resources') === false) {
-            file_put_contents($new_file, $index_file_text);
+        if (strpos($dir, 'templates') !== false) {
+            file_put_contents($new_tpl, $tpl_text);
         }
         else {
-            file_put_contents($new_tpl, $tpl_text);
+            file_put_contents($new_file, $keep_me_text);
         }
     }
 }
