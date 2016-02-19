@@ -86,8 +86,18 @@ if (!isset($db_config_file)) {
 }
 
 $o_loader = require_once VENDOR_PATH . '/autoload.php';
-$my_classmap = require_once APP_CONFIG_PATH . '/autoload_classmap.php';
-$o_loader->addClassMap($my_classmap);
+
+### PSR-4 autoload method
+$my_namespaces = require_once APP_CONFIG_PATH . '/autoload_namespaces.php';
+foreach ($my_namespaces as $psr4_prefix => $psr0_paths) {
+    $o_loader->addPsr4($psr4_prefix, $psr0_paths);
+}
+###
+
+### classmap method of autoload ###
+# $my_classmap = require_once APP_CONFIG_PATH . '/autoload_classmap.php';
+# $o_loader->addClassMap($my_classmap);
+###
 
 $o_elog = Elog::start();
 $o_elog->setIgnoreLogOff(false); // turns on logging globally ignoring LOG_OFF when set to true
