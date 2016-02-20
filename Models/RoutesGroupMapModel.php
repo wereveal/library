@@ -19,7 +19,7 @@ use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
-class RouterGroupMapModel implements ModelInterface
+class RoutesGroupMapModel implements ModelInterface
 {
     use LogitTraits;
 

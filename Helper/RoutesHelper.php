@@ -17,7 +17,7 @@
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Models\GroupsModel;
-use Ritc\Library\Models\RouterGroupMapModel;
+use Ritc\Library\Models\RoutesGroupMapModel;
 use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -38,7 +38,7 @@ class RoutesHelper
         $o_db = $o_di->get('db');
         $this->o_model = new RoutesModel($o_db);
         $this->o_group = new GroupsModel($o_db);
-        $this->o_rgm   = new RouterGroupMapModel($o_db);
+        $this->o_rgm   = new RoutesGroupMapModel($o_db);
         $this->route_path = $route_path;
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
