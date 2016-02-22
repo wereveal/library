@@ -52,15 +52,45 @@ class DbModel
 {
     use DbTraits, LogitTraits;
 
+    /**
+     * @var array
+     */
     private $a_db_config;
+    /**
+     * @var array
+     */
     private $a_new_ids = array();
+    /**
+     * @var int
+     */
     private $affected_rows;
+    /**
+     * @var string
+     */
     private $db_prefix;
+    /**
+     * @var string
+     */
     private $db_type;
+    /**
+     * @var \PDO
+     */
     private $o_db;
+    /**
+     * @var string
+     */
     private $pgsql_sequence_name = '';
+    /**
+     * @var string
+     */
     private $root_path;
+    /**
+     * @var mixed
+     */
     private $sql_error_message;
+    /**
+     * @var int
+     */
     private $success;
 
     /**
@@ -609,7 +639,7 @@ class DbModel
      */
     public function rollbackTransaction()
     {
-        return $this->o_db->rollback();
+        return $this->o_db->rollBack();
     }
     /**
      * @param \PDOStatement $o_pdo_stmt
@@ -659,7 +689,7 @@ class DbModel
         }
         $this->setSqlErrorMessage($this->o_db);
         $this->logIt($this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $this->o_db->rollback();
+        $this->o_db->rollBack();
         $this->logIt($message);
         return false;
     }
@@ -726,12 +756,12 @@ class DbModel
 
     ### Complex Commands
     /**
-     *  Does an insert based on a prepared query.
-     *  @param array  $a_values the values to be insert
-     *  @param obj    $o_pdo_stmt the object pointing to the prepared statement
-     *  @param string $table_name the name of the table into which an insert is happening
-     *  @return bool  success or failure
-    **/
+     * Does an insert based on a prepared query.
+     * @param array          $a_values   the values to be insert
+     * @param \PDOStatement  $o_pdo_stmt the object pointing to the prepared statement
+     * @param array          $a_table_info
+     * @return bool success or failure
+     */
     public function insertPrepared(array $a_values = array(), \PDOStatement $o_pdo_stmt, array $a_table_info = array())
     {
         $meth = __METHOD__ . '.';
@@ -1162,7 +1192,7 @@ class DbModel
                 if (!isset($a_db['passro'])) {
                     $a_db['passro'] = $a_db['password'];
                 }
-            } 
+            }
             else {
                 $a_db = $this->retrieveDbConfig('db_config.php');
             }
@@ -1416,6 +1446,9 @@ class DbModel
     }
 
     ### Magic Method fix ###
+    /**
+     *
+     */
     public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);

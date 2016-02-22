@@ -38,14 +38,41 @@ class Tester
 {
     use LogitTraits;
 
+    /**
+     * @var array
+     */
     protected $a_test_order      = array();
+    /**
+     * @var array
+     */
     protected $a_test_values     = array();
+    /**
+     * @var int
+     */
     protected $failed_subtests   = 0;
+    /**
+     * @var array
+     */
     protected $failed_test_names = array();
+    /**
+     * @var int
+     */
     protected $failed_tests      = 0;
+    /**
+     * @var int
+     */
     protected $num_o_tests       = 0;
+    /**
+     * @var int
+     */
     protected $passed_subtests   = 0;
+    /**
+     * @var array
+     */
     protected $passed_test_names = array();
+    /**
+     * @var int
+     */
     protected $passed_tests      = 0;
 
     /**

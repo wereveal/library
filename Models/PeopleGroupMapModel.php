@@ -30,10 +30,23 @@ class PeopleGroupMapModel implements ModelInterface
 {
     use LogitTraits;
 
+    /**
+     * @var string
+     */
     private $db_prefix;
+    /**
+     * @var string
+     */
     private $db_type;
+    /**
+     * @var \Ritc\Library\Services\DbModel
+     */
     private $o_db;
 
+    /**
+     * PeopleGroupMapModel constructor.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
@@ -134,7 +147,7 @@ class PeopleGroupMapModel implements ModelInterface
     }
     /**
      * Deletes a single record.
-     * @param string $pgm_id required
+     * @param int $pgm_id required
      * @return bool
      */
     public function delete($pgm_id = -1)
@@ -184,8 +197,12 @@ class PeopleGroupMapModel implements ModelInterface
     }
 
     ### Required by Interface ###
+    /**
+     * Returns error message.
+     * @return string
+     */
     public function getErrorMessage()
     {
-        $this->o_db->getSqlErrorMessage();
+        return $this->o_db->getSqlErrorMessage();
     }
 }

@@ -5,9 +5,9 @@
  *             description, file type, etc that would be in the <head> part of
  *             the page.
  *  @ingroup   ritc_library entities
- *  @file      PageEntity.php
+ *  @file      PagesEntity.php
  *  @namespace Ritc\Library\Entities
- *  @class     PageEntity
+ *  @class     PagesEntity
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0β1
  *  @date      2015-10-30 08:14:03
@@ -23,7 +23,7 @@ namespace Ritc\Library\Entities;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\EntityInterface;
 
-class PageEntity implements EntityInterface
+class PagesEntity implements EntityInterface
 {
 
     private $a_entity;
@@ -43,8 +43,10 @@ class PageEntity implements EntityInterface
     {
         return $this->a_entity;
     }
+
     /**
      * @param array $a_entity
+     * @return bool|void
      */
     public function setAllProperties(array $a_entity = array())
     {

@@ -60,20 +60,45 @@ namespace Ritc\Library\Helper;
 
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleModel;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Router;
+use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 
 class AuthHelper
 {
     use LogitTraits;
 
+    /**
+     * @var string
+     */
     private $db_prefix;
+    /**
+     * @var DbModel
+     */
     private $o_db;
+    /**
+     * @var GroupsModel
+     */
     private $o_groups;
+    /**
+     * @var Router
+     */
     private $o_router;
+    /**
+     * @var Session
+     */
     private $o_session;
+    /**
+     * @var PeopleModel
+     */
     private $o_people;
 
+    /**
+     * AuthHelper constructor.
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_db      = $o_di->get('db');
@@ -252,6 +277,11 @@ class AuthHelper
     }
 
     #### Verifiers ####
+    /**
+     * @param string $people_id
+     * @param int $auth_level
+     * @return bool
+     */
     public function hasMinimumAuthLevel($people_id = '', $auth_level = 0)
     {
         $highest_auth_level = $this->getHighestAuthLevel($people_id);
@@ -260,10 +290,13 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Determines if a person is allowed access to something.
      * Checks to see if the person is logged in and the route is allowed to the
      * group the person is in.
+     * @param string $people_id
+     * @param int    $auth_level
      * @return bool
      */
     public function isAllowedAccess($people_id = '', $auth_level = 0)
@@ -280,11 +313,13 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Checks to see if the person is denied access to something.
      * Uses the isAllowedAccess method, subtracting 1 from denied auth level
      * to see if that level has access.
-     * @param int $role_level level at which access is denied.
+     * @param string $people_id
+     * @param int    $auth_level
      * @return bool
      */
     public function isDeniedAccess($people_id = '', $auth_level = 0)
@@ -367,7 +402,7 @@ class AuthHelper
         if ($people_id == '') {
             return false;
         }
-        $a_super_admin = $this->o_groups->readyById(1);
+        $a_super_admin = $this->o_groups->readById(1);
         $auth_level = $this->getHighestAuthLevel($people_id);
         if ($auth_level == $a_super_admin['group_auth_level']) {
             return true;

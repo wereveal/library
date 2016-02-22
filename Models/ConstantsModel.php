@@ -33,10 +33,23 @@ class ConstantsModel implements ModelInterface
 {
     use LogitTraits;
 
+    /**
+     * @var array|bool
+     */
     private $a_constants;
+    /**
+     * @var string
+     */
     private $db_prefix;
+    /**
+     * @var \Ritc\Library\Services\DbModel
+     */
     private $o_db;
 
+    /**
+     * ConstantsModel constructor.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function __construct(DbModel $o_db)
     {
         $this->o_db        = $o_db;
@@ -356,11 +369,12 @@ class ConstantsModel implements ModelInterface
         $const_name = preg_replace('/(\s+)/i', '_', $const_name);
         return strtoupper($const_name);
     }
+
     /**
      *  Changes the string to be a valid constant name.
-     *  @param $const_name
+     *  @param string $const_value
      *  @return string
-     **/
+     */
     public function makeValidValue($const_value = '')
     {
         $const_value = Strings::removeTagsWithDecode($const_value, ENT_QUOTES);
@@ -368,12 +382,20 @@ class ConstantsModel implements ModelInterface
     }
 
     ### SETters and GETters ###
+    /**
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function setDb(DbModel $o_db)
     {
         $this->o_db = $o_db;
     }
+
+    /**
+     * Returns Error Message, required by interface.
+     * @return string
+     */
     public function getErrorMessage()
     {
-        $this->o_db->getSqlErrorMessage();
+        return $this->o_db->getSqlErrorMessage();
     }
 }

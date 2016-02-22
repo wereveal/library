@@ -243,7 +243,7 @@ class Strings
      *      string.
      *  @param string $string       string to be shortened.
      *  @param int    $num_of_words number of words, defaults to 5
-     *  @param in     $num_of_chars number of characters, if not '', the method
+     *  @param int    $num_of_chars number of characters, if not '', the method
      *                              uses this param to shorten the string
      *  @return string - short string.
     **/

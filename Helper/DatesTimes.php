@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Helper
  *  @class     DatesTimes
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   3.0.1
- *  @date      2014-11-15 12:33:33
+ *  @version   3.0.2
+ *  @date      2016-02-22 15:08:38
  *  @note <pre><b>Change Log</b>
+ *      v3.0.2 - bug fix                                - 02/22/2016 wer
  *      v3.0.1 - moved to Ritc\Library\Helper namespace - 11/15/2014 wer
  *      v3.0.0 - FIG standards (mostly)
  *  </pre>
@@ -136,7 +137,7 @@ class DatesTimes
             error_log('Caught Exception: ' . $e->getMessage() . " from: " . __METHOD__ . '.' . __LINE__);
             return null;
         }
-        $o_time->setTimeZone(new \DateTimeZone($timezone));
+        $o_time->setTimezone(new \DateTimeZone($timezone));
         return $o_time->format($date_format);
     }
     public static function getDayName($timestamp = '', $format = 'short')

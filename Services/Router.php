@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Services
  *  @class     Router
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:57:15
+ *  @version   1.0.1
+ *  @date      2016-02-22 15:40:33
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1    - clean up of code.                                           - 02/22/2016 wer
  *      v1.0.0    - take out of beta                                            - 11/27/2015 wer
  *      v1.0.0β10 - Bug fix to fix logic error with route path                  - 11/24/2015 wer
  *      v1.0.0β9  - Bug fixes to fix logic error in actionable data             - 09/22/2015 wer
@@ -35,17 +36,51 @@ class Router
 {
     use LogitTraits;
 
+    /**
+     * @var array
+     */
     private $a_get;
+    /**
+     * @var array
+     */
     private $a_post;
+    /**
+     * @var array
+     */
     private $a_router_parts;
+    /**
+     * @var \Ritc\Library\Helper\RoutesHelper
+     */
     private $o_routes_helper;
+    /**
+     * @var string
+     */
     private $form_action;
+    /**
+     * @var string
+     */
     private $request_uri;
+    /**
+     * @var string
+     */
     private $route_action;
+    /**
+     * @var string
+     */
     private $route_class;
+    /**
+     * @var string
+     */
     private $route_method;
+    /**
+     * @var string
+     */
     private $route_path;
 
+    /**
+     * Router constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_routes_helper = new RoutesHelper($o_di);
@@ -64,7 +99,6 @@ class Router
      *      wilma represents a variable that the controller understands.
      *      For example wilma could be an blog id or blog name 'blog_id'
      *      for which a blog controller would search in the blog db by blog_id.
-     *  @param string $route_path
      *  @return array
      */
     public function setRouterParts()
@@ -113,7 +147,7 @@ class Router
             if (isset($this->a_get[$value])) {
                 return $this->a_get[$value];
             } else {
-                $this->logIt(var_export($this->a_clean_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt(var_export($this->a_get, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return '';
             }
         }

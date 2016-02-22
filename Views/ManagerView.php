@@ -20,6 +20,7 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ManagerViewTraits;
 
@@ -92,6 +93,7 @@ class ManagerView
      */
     public function renderLoginForm($previous_login_id = '', array $a_message = array())
     {
+        /** @var Session $o_sess */
         $o_sess  = $this->o_di->get('session');
         $tolken  = $o_sess->getVar('token');
         $idle_ts = $o_sess->getVar('idle_timestamp');

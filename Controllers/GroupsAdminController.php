@@ -20,6 +20,8 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Router;
+use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\GroupsAdminView;
 
@@ -27,13 +29,35 @@ class GroupsAdmimController implements MangerControllerInterface
 {
     use LogitTraits;
 
+    /**
+     * @var array
+     */
     private $a_post;
+    /**
+     * @var Di
+     */
     private $o_di;
+    /**
+     * @var GroupsModel
+     */
     private $o_model;
+    /**
+     * @var Router
+     */
     private $o_router;
+    /**
+     * @var Session
+     */
     private $o_session;
+    /**
+     * @var GroupsAdminView
+     */
     private $o_view;
 
+    /**
+     * GroupsAdmimController constructor.
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_di      = $o_di;
@@ -48,6 +72,10 @@ class GroupsAdmimController implements MangerControllerInterface
             $this->o_model->setElog($this->o_elog);
         }
     }
+
+    /**
+     * @return string
+     */
     public function render()
     {
         $a_route_parts = $this->o_router->getRouterParts();
@@ -88,6 +116,10 @@ class GroupsAdmimController implements MangerControllerInterface
     }
 
     ### Required by Interface ###
+    /**
+     * Deletes the record.
+     * @return string
+     */
     public function delete()
     {
         $group_id = $this->a_post['group_id'];
@@ -101,6 +133,10 @@ class GroupsAdmimController implements MangerControllerInterface
             : ViewHelper::failureMessage();
         return $this->o_view->renderList($a_message);
     }
+
+    /**
+     * @return string
+     */
     public function save()
     {
         $meth = __METHOD__ . '.';
@@ -118,6 +154,10 @@ class GroupsAdmimController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
+    /**
+     * @return string
+     */
     public function update()
     {
         $meth = __METHOD__ . '.';
@@ -134,6 +174,10 @@ class GroupsAdmimController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
+    /**
+     * @return string
+     */
     public function verifyDelete()
     {
         return $this->o_view->renderVerify($this->a_post);

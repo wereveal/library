@@ -11,21 +11,28 @@
  *  @namespace Ritc\Library\Services
  *  @class     Access
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-09-03 12:29:11
+ *  @version   1.0.1
+ *  @date      2016-02-22 15:24:56
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1 - removed unused use                             - 02/22/2016 wer
  *      v1.0.0 - it works, not sure why it wasn't out of beta   - 09/03/2015 wer
  *               Removed abstract Base as it wasn't being used
  *      v1.0.0β1 - initial version                              - 11/17/2014 wer
 **/
 namespace Ritc\Library\Services;
 
-use Ritc\Library\Abstracts\Base;
-
 class Di
 {
+    /**
+     * @var array
+     */
     private $a_objects = array();
 
+    /**
+     * @param string $object_name
+     * @param        $object
+     * @return bool
+     */
     public function set($object_name = '', $object)
     {
         if (!is_object($object) || $object_name == '') {
@@ -34,6 +41,11 @@ class Di
         $this->a_objects[$object_name] = $object;
         return true;
     }
+
+    /**
+     * @param string $object_name
+     * @return bool
+     */
     public function get($object_name = '')
     {
         if ($object_name != '' && isset($this->a_objects[$object_name]) && is_object($this->a_objects[$object_name])) {

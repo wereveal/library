@@ -26,19 +26,44 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Router;
+use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RoutesAdminView;
 
 class RoutesAdminController implements MangerControllerInterface
 {
     use LogitTraits;
+
+    /**
+     * @var array
+     */
     private $a_post;
+    /**
+     * @var Di
+     */
     private $o_di;
+    /**
+     * @var RoutesModel
+     */
     private $o_model;
+    /**
+     * @var Router
+     */
     private $o_router;
+    /**
+     * @var Session
+     */
     private $o_session;
+    /**
+     * @var RoutesAdminView
+     */
     private $o_view;
 
+    /**
+     * RoutesAdminController constructor.
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_di      = $o_di;
@@ -53,6 +78,10 @@ class RoutesAdminController implements MangerControllerInterface
             $this->o_model->setElog($this->o_elog);
         }
     }
+
+    /**
+     * @return string
+     */
     public function render()
     {
         $a_route_parts = $this->o_router->getRouterParts();
@@ -92,6 +121,10 @@ class RoutesAdminController implements MangerControllerInterface
     }
 
     ### Required by Interface ###
+    /**
+     * Deletes a record.
+     * @return string
+     */
     public function delete()
     {
         $route_id = $this->a_post['route_id'];
@@ -102,6 +135,11 @@ class RoutesAdminController implements MangerControllerInterface
         $a_results = $this->o_model->delete($route_id);
         return $this->o_view->renderList($a_results);
     }
+
+    /**
+     * Saves a record
+     * @return string
+     */
     public function save()
     {
         $a_route = $this->fixRoute($this->a_post['route']);
@@ -114,6 +152,11 @@ class RoutesAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
+    /**
+     * Updates the record.
+     * @return string
+     */
     public function update()
     {
         $a_route = $this->fixRoute($this->a_post['route']);
@@ -126,6 +169,11 @@ class RoutesAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
+    /**
+     * Verifies the deletion.
+     * @return string
+     */
     public function verifyDelete()
     {
         return $this->o_view->renderVerify($this->a_post);

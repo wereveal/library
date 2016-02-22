@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Helper
  *  @class     Arrays
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.2.1
- *  @date      2015-12-07 12:22:09 
+ *  @version   1.2.2
+ *  @date      2016-02-22 15:00:10
  *  @note <pre><b>Change Log</b>
+ *      v1.2.2 - bug fix                                     - 02/22/2016 wer
  *      v1.2.1 - refactored var names to be more descriptive - 12/07/2015 wer
  *      v1.2.0 - added code to not include archives          - 11/06/2015 wer
  *      v1.1.0 - added traits                                - 09/01/2015 wer
@@ -22,8 +23,17 @@ use \SplFileInfo;
 
 class ClassMapper
 {
+    /**
+     * @var string
+     */
     private $app_path;
+    /**
+     * @var string
+     */
     private $config_path;
+    /**
+     * @var string
+     */
     private $src_path;
 
     /**
@@ -45,6 +55,10 @@ class ClassMapper
             ? $a_dirs['src_path']
             : '/app/src';
     }
+
+    /**
+     * @param string $src_path
+     */
     public function generateClassMap($src_path = '') {
         if ($src_path != '' && file_exists($src_path)) {
             $this->src_path =  $src_path;
@@ -74,6 +88,11 @@ class ClassMapper
         file_put_contents($this->config_path . '/autoload_classmap.php', $classmap_text);
     }
 
+    /**
+     * @param \DirectoryIterator $o_dir
+     * @param array              $a_classmap
+     * @return array
+     */
     private function createClassMapArray(DirectoryIterator $o_dir, array $a_classmap) {
         while ($o_dir->valid()) {
             $name = $o_dir->getFilename();
@@ -109,6 +128,10 @@ class ClassMapper
         return $a_classmap;
     }
 
+    /**
+     * @param array $a_tokens
+     * @return mixed
+     */
     private function getClassName(array $a_tokens = array()) {
         foreach ($a_tokens as $key => $a_token) {
             if (is_array($a_token)) {
@@ -126,7 +149,13 @@ class ClassMapper
                 }
             }
         }
+        return '';
     }
+
+    /**
+     * @param array $a_tokens
+     * @return string
+     */
     private function getNamespace(array $a_tokens = array()) {
         $a_tokens2 = $a_tokens;
         $namespace = '';
@@ -145,7 +174,7 @@ class ClassMapper
                                     $namespace .= $a_token2[1];
                                     break;
                                 default:
-                                    // do nothing
+                                    return '';
                             }
                         }
                     }

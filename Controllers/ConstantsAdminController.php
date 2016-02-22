@@ -25,6 +25,8 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\ConstantsModel;
+use Ritc\Library\Services\DbModel;
+use Ritc\Library\Services\Router;
 use Ritc\Library\Views\ConstantsAdminView;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -33,18 +35,39 @@ class ConstantsAdminController implements MangerControllerInterface
 {
     use LogitTraits;
 
+    /**
+     * @var array
+     */
     private $a_post;
+    /**
+     * @var array
+     */
     private $a_router_parts;
+    /**
+     * @var Di
+     */
     private $o_di;
+    /**
+     * @var ConstantsModel
+     */
     private $o_model;
+    /**
+     * @var ConstantsAdminView
+     */
     private $o_view;
 
+    /**
+     * ConstantsAdminController constructor.
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_di     = $o_di;
+        /** @var DbModel $o_db */
         $o_db           = $this->o_di->get('db');
         $this->o_model  = new ConstantsModel($o_db);
         $this->o_view   = new ConstantsAdminView($this->o_di);
+        /** @var Router $o_router */
         $o_router       = $this->o_di->get('router');
         $a_router_parts = $o_router->getRouterParts();
         $this->a_post   = $a_router_parts['post'];

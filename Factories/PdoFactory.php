@@ -35,13 +35,38 @@ class PdoFactory
 {
     use DbTraits, LogitTraits;
 
+    /**
+     * @var array
+     */
+    private $a_db_config;
+    /**
+     * @var array
+     */
     private static $factory_rw_instance = array();
+    /**
+     * @var array
+     */
     private static $factory_ro_instance = array();
+    /**
+     * @var string
+     */
     private $config_file;
+    /**
+     * @var \PDO
+     */
     private $o_db;
+    /**
+     * @var string
+     */
     private $read_type;
 
-    private function __construct($config_file, $read_type, $o_di)
+    /**
+     * PdoFactory constructor.
+     * @param $config_file
+     * @param $read_type
+     * @param $o_di
+     */
+    private function __construct($config_file, $read_type, Di $o_di)
     {
         $this->config_file = $config_file;
         $this->read_type = $read_type;
@@ -87,6 +112,7 @@ class PdoFactory
      */
     private function createPdo()
     {
+        $meth = __METHOD__ . '.';
         if (is_object($this->o_db)) {
             $this->logIt('The database is already connected.', LOG_OFF);
             return $this->o_db;
@@ -94,31 +120,32 @@ class PdoFactory
         if ($this->config_file == '') {
             $this->config_file = 'db_config.php';
         }
+        /** @var array|bool $a_db */
         $a_db = $this->retrieveDbConfig($this->config_file);
+        if ($a_db === false) {
+            return false;
+        }
         $a_db['dsn'] = $this->createDsn($a_db);
         try {
-            if ($this->read_type == 'ro') {
-                $this->o_db = new \PDO(
+            $this->o_db = $this->read_type == 'ro'
+                ? new \PDO(
                     $a_db['dsn'],
                     $a_db['userro'],
                     $a_db['passro'],
-                    array(\PDO::ATTR_PERSISTENT=>$a_db['persist']));
-            }
-            else {
-                $this->o_db = new \PDO(
+                    array(\PDO::ATTR_PERSISTENT => $a_db['persist']))
+                : new \PDO(
                     $a_db['dsn'],
                     $a_db['user'],
                     $a_db['password'],
-                    array(\PDO::ATTR_PERSISTENT=>$a_db['persist']));
-            }
-            $this->logIt("The dsn is: {$a_db['dsn']}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->logIt('Connect to db success.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                    array(\PDO::ATTR_PERSISTENT => $a_db['persist']));
+            $this->logIt("The dsn is: {$a_db['dsn']}", LOG_OFF, $meth . __LINE__);
+            $this->logIt('Connect to db success.', LOG_OFF, $meth . __LINE__);
             $this->a_db_config = $a_db;
             return $this->o_db;
         }
         catch(\PDOException $e) {
             $this->logIt('Error! Could not connect to database: ' . $e->getMessage(), LOG_ALWAYS);
-            $this->logIt(var_export($a_db, true), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            $this->logIt(var_export($a_db, true), LOG_ALWAYS, $meth . __LINE__);
             return false;
         }
     }
@@ -148,7 +175,10 @@ class PdoFactory
         }
     }
 
-    ### Magic Method fix
+    ### Magic Method fixes
+    /**
+     * Magic Method Fix
+     */
     public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);

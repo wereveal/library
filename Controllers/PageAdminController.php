@@ -20,6 +20,8 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Router;
+use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PageAdminView;
 
@@ -27,13 +29,35 @@ class PageAdminController implements MangerControllerInterface
 {
     use LogitTraits;
 
+    /**
+     * @var array
+     */
     private $a_post;
+    /**
+     * @var Di
+     */
     private $o_di;
+    /**
+     * @var PageModel
+     */
     private $o_model;
+    /**
+     * @var Router
+     */
     private $o_router;
+    /**
+     * @var Session
+     */
     private $o_session;
+    /**
+     * @var PageAdminView
+     */
     private $o_view;
 
+    /**
+     * PageAdminController constructor.
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_di      = $o_di;
@@ -80,7 +104,7 @@ class PageAdminController implements MangerControllerInterface
                 return $this->delete();
             case 'update':
                 if ($form_action == 'verify') {
-                    return $this->o_view->renderVerify($this->a_post);
+                    return $this->o_view->renderVerify();
                 }
                 elseif ($form_action == 'update') {
                     return $this->update();
@@ -99,6 +123,9 @@ class PageAdminController implements MangerControllerInterface
     }
 
     ### Required by Interface ###
+    /**
+     * @return string
+     */
     public function delete()
     {
         $page_id = isset($this->a_post['page_id']) ? $this->a_post['page_id'] : -1;
@@ -116,6 +143,11 @@ class PageAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_results);
     }
+
+    /**
+     * Saves a record and returns the list again.
+     * @return string
+     */
     public function save()
     {
         $meth = __METHOD__ . '.';
@@ -132,6 +164,11 @@ class PageAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
+    /**
+     * Updates a record and returns the list.
+     * @return string
+     */
     public function update()
     {
         $meth = __METHOD__ . '.';
@@ -150,13 +187,13 @@ class PageAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
-    /*
+    /**
      * Required by interface. Not called.
      * @return string
      */
     public function verifyDelete()
     {
-        return $this->o_view->renderVerify($this->a_post);
+        return $this->o_view->renderVerify();
     }
     /**
      * Adds slashes to url if needed.

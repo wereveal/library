@@ -33,7 +33,8 @@ class Tpl
 
     /**
      * Returns the twig environment object which we use to do all the template rendering.
-     * @return Twig_Environment
+     * @param string $config_file
+     * @return \Twig_Environment
      */
     public function getTwig($config_file = 'twig_config.php')
     {

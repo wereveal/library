@@ -181,6 +181,7 @@ class Arrays
     /**
      * Checks array for blank values and missing key=>value pairs.
      * @param array $a_pairs
+     * @param array $a_keys_to_check
      * @return bool
      */
     public static function hasBlankValues(array $a_pairs = array(), array $a_keys_to_check = array())

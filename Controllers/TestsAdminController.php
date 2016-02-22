@@ -14,7 +14,9 @@
 **/
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Router;
 use Ritc\Library\Tests\PageModelTester;
 use Ritc\Library\Tests\PeopleModelTester;
 use Ritc\Library\Traits\LogitTraits;
@@ -24,12 +26,31 @@ class TestsAdminController
 {
     use LogitTraits;
 
+    /**
+     * @var DbModel
+     */
     private $o_db;
+    /**
+     * @var Di
+     */
     private $o_di;
+    /**
+     * @var Router
+     */
     private $o_router;
+    /**
+     * @var TestsAdminView
+     */
     private $o_view;
+    /**
+     * @var string
+     */
     private $test_configs_path;
 
+    /**
+     * TestsAdminController constructor.
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_di     = $o_di;

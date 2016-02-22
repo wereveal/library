@@ -38,13 +38,35 @@ class PeopleModel implements ModelInterface
 {
     use LogitTraits;
 
+    /**
+     * @var string
+     */
     private $db_prefix;
+    /**
+     * @var string
+     */
     private $db_type;
+    /**
+     * @var string
+     */
     private $error_message;
+    /**
+     * @var \Ritc\Library\Services\DbModel
+     */
     private $o_db;
+    /**
+     * @var \Ritc\Library\Models\GroupsModel
+     */
     private $o_group;
+    /**
+     * @var \Ritc\Library\Models\PeopleGroupMapModel
+     */
     private $o_pgm;
 
+    /**
+     * PeopleModel constructor.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
@@ -648,6 +670,10 @@ class PeopleModel implements ModelInterface
     }
 
     ### Utility methods ###
+    /**
+     * @param int $people_id
+     * @return bool
+     */
     public function isId($people_id = -1)
     {
         if (ctype_digit($people_id) && $people_id != -1) {
@@ -659,6 +685,11 @@ class PeopleModel implements ModelInterface
         }
         return false;
     }
+
+    /**
+     * @param string $login_id
+     * @return bool
+     */
     public function isExistingLoginId($login_id = '')
     {
         if ($this->readPeopleRecord($login_id) == array()) {
@@ -666,6 +697,11 @@ class PeopleModel implements ModelInterface
         }
         return true;
     }
+
+    /**
+     * @param string $short_name
+     * @return bool
+     */
     public function isExistingShortName($short_name = '')
     {
         $a_results = $this->read(['short_name' => $short_name]);
@@ -727,6 +763,10 @@ class PeopleModel implements ModelInterface
     }
 
     ### Required by Interface ###
+    /**
+     * Returns error message.
+     * @return string
+     */
     public function getErrorMessage()
     {
         return $this->error_message;

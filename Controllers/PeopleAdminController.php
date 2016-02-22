@@ -25,9 +25,10 @@ use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\MangerControllerInterface;
-use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Router;
+use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PeopleAdminView;
 
@@ -35,14 +36,39 @@ class PeopleAdminController implements MangerControllerInterface
 {
     use LogitTraits;
 
+    /**
+     * @var array
+     */
     private $a_route_parts;
+    /**
+     * @var array
+     */
     private $a_post_values;
+    /**
+     * @var Di
+     */
     private $o_di;
+    /**
+     * @var PeopleModel
+     */
     private $o_model;
+    /**
+     * @var Router
+     */
     private $o_router;
+    /**
+     * @var Session
+     */
     private $o_session;
+    /**
+     * @var PeopleAdminView
+     */
     private $o_view;
 
+    /**
+     * PeopleAdminController constructor.
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_di          = $o_di;
@@ -196,7 +222,7 @@ class PeopleAdminController implements MangerControllerInterface
         if ($this->o_model->deletePerson($this->a_post_values['people_id'])) {
             return ViewHelper::successMessage();
         }
-        return ViewHelper::failureMessage($this->o_model->getErrorMessage);
+        return ViewHelper::failureMessage($this->o_model->getErrorMessage());
     }
 
     ### Utility Methods ###

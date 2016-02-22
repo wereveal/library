@@ -30,10 +30,23 @@ class PeopleAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
+    /**
+     * @var \Ritc\Library\Models\PeopleModel
+     */
     private $o_people_model;
+    /**
+     * @var \Ritc\Library\Models\GroupsModel
+     */
     private $o_group_model;
+    /**
+     * @var \Ritc\Library\Models\PeopleGroupMapModel
+     */
     private $o_pgm_model;
 
+    /**
+     * PeopleAdminView constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
@@ -48,6 +61,10 @@ class PeopleAdminView
         }
     }
 
+    /**
+     * @param array $a_message
+     * @return string
+     */
     public function renderList(array $a_message = array())
     {
         $meth = __METHOD__ . '.';
@@ -91,6 +108,10 @@ class PeopleAdminView
         $html = $this->o_twig->render($tpl, $a_values);
         return $html;
     }
+
+    /**
+     * @return string
+     */
     public function renderNew()
     {
         $meth = __METHOD__ . '.';
@@ -142,6 +163,11 @@ class PeopleAdminView
         $tpl = TWIG_PREFIX . 'pages/person_form.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
+
+    /**
+     * @param int $people_id
+     * @return string
+     */
     public function renderModify($people_id = -1)
     {
         $meth = __METHOD__ . '.';
@@ -191,7 +217,8 @@ class PeopleAdminView
         foreach ($a_person_groups as $a_group) {
             $found_location = Arrays::inArrayRecursive($a_group['group_id'], $a_default_groups);
             if ($found_location) {
-                list($main_key, $secondary_key) = explode('.', $found_location);
+                $a_found_location = explode('.', $found_location);
+                $main_key = $a_found_location[0];
                 $a_default_groups[$main_key]['checked'] = ' checked';
             }
         }
@@ -203,6 +230,11 @@ class PeopleAdminView
         $tpl = TWIG_PREFIX . 'pages/person_form.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
+
+    /**
+     * @param array $a_posted_values
+     * @return string
+     */
     public function renderVerifyDelete(array $a_posted_values = array())
     {
         $meth = __METHOD__ . '.';

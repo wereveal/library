@@ -129,10 +129,10 @@ class PageAdminView
         $tpl = TWIG_PREFIX . 'pages/page_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
+
     /**
-     *  Returns HTML verify form to delete.
-     *  @param array $a_values
-     *  @return string
+     * Returns HTML verify form to delete.
+     * @return string
      */
     public function renderVerify()
     {

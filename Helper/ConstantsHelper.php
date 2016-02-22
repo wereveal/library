@@ -6,9 +6,10 @@
  *  @namespace Ritc\Library\Helper
  *  @class     ConstantsHelper
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version  4.0.0
- *  @date      2015-01-17 11:41:56
+ *  @version   4.0.1
+ *  @date      2016-02-22 15:05:55
  *  @note <pre><b>Change Log</b>
+ *      v4.0.1 - bug fix. Wondering if another is still here.               - 02/22/2016 wer
  *      v4.0.0 - renamed to reflect what it was doing. Since it isn't       - 01/17/2015 wer
  *               a service, moved it Ritc\Library\Helper namespace.
  *      v3.3.0 - moved some contant definitions into this class             - 12/10/2014 wer
@@ -42,10 +43,23 @@ class ConstantsHelper
 {
     use LogitTraits;
 
+    /**
+     * @var bool
+     */
     private $created = false;
+    /**
+     * @var ConstantsHelper
+     */
     private static $instance;
+    /**
+     * @var \Ritc\Library\Models\ConstantsModel
+     */
     private $o_constants_model;
 
+    /**
+     * ConstantsHelper constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     private function __construct(Di $o_di)
     {
         $o_db = $o_di->get('db');
@@ -92,10 +106,18 @@ class ConstantsHelper
         }
         return self::$instance;
     }
+
+    /**
+     * @return bool
+     */
     public function getSuccess()
     {
         return $this->created;
     }
+
+    /**
+     * @return bool
+     */
     private function createConstants()
     {
         if ($this->created === false) {
@@ -245,11 +267,11 @@ class ConstantsHelper
         define('IMAGE_PATH', SITE_PATH . IMAGE_DIR);
         define('JS_PATH',    SITE_PATH . JS_DIR);
         if (defined('THUMBS_DIR_NAME')) {
-            define('THUMBS_DIR', IMAGES_DIR . '/' . THUMBS_DIR_NAME);
+            define('THUMBS_DIR', IMAGE_DIR . '/' . THUMBS_DIR_NAME);
             define('THUMBS_PATH', SITE_PATH . THUMBS_DIR);
         }
         if (defined('STAFF_DIR_NAME')) {
-            define('STAFF_DIR', IMAGES_DIR . '/' . STAFF_DIR_NAME);
+            define('STAFF_DIR', IMAGE_DIR . '/' . STAFF_DIR_NAME);
             define('STAFF_PATH', SITE_PATH . STAFF_DIR);
         }
         if (defined('LIBS_DIR_NAME')) {
@@ -259,6 +281,9 @@ class ConstantsHelper
     }
 
     ### Magic Method fix
+    /**
+     *
+     */
     public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);

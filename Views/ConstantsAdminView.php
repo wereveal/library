@@ -33,10 +33,23 @@ class ConstantsAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
+    /**
+     * @var \Ritc\Library\Views\ManagerView
+     */
     private $o_manager;
+    /**
+     * @var \Ritc\Library\Models\ConstantsModel
+     */
     private $o_model;
+    /**
+     * @var \Ritc\Library\Models\PeopleModel
+     */
     private $o_people;
 
+    /**
+     * ConstantsAdminView constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);

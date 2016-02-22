@@ -28,10 +28,23 @@ class RoutesModel implements ModelInterface
 {
     use LogitTraits;
 
+    /**
+     * @var string
+     */
     private $db_prefix;
+    /**
+     * @var string
+     */
     private $db_type;
+    /**
+     * @var \Ritc\Library\Services\DbModel
+     */
     private $o_db;
 
+    /**
+     * RoutesModel constructor.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;

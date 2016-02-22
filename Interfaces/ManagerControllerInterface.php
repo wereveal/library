@@ -2,9 +2,9 @@
 /**
  *  @brief     Class used to set up controller classes in the manager.
  *  @ingroup   ritc_library interfaces
- *  @file      MangerControllerInterface.php
+ *  @file      ManagerControllerInterface.php
  *  @namespace Ritc\Library\Interfaces
- *  @class     MangerControllerInterface
+ *  @class     ManagerControllerInterface
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0
  *  @date      2015-01-11 11:25:07
@@ -14,7 +14,7 @@
 **/
 namespace Ritc\Library\Interfaces;
 
-interface MangerControllerInterface
+interface ManagerControllerInterface
 {
     public function render();
     public function save();

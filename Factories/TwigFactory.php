@@ -27,9 +27,19 @@ use Twig_Environment;
 
 class TwigFactory
 {
+    /**
+     * @var Twig_Environment
+     */
     private $o_twig;
+    /**
+     * @var array
+     */
     private static $instance = array();
 
+    /**
+     * TwigFactory constructor.
+     * @param $a_twig_config
+     */
     private function __construct($a_twig_config)
     {
         $o_loader = new Twig_Loader_Filesystem($a_twig_config['default_path']);
@@ -54,15 +64,20 @@ class TwigFactory
         return self::$instance[$name];
     }
     /**
-     * Returns the twig environment object which we use to do all the
-     * template rendering.
-     * @return Twig_Environment
+     *  Returns the twig environment object which we use to do all the
+     *  template rendering.
+     *  @param string $config_file
+     *  @return Twig_Environment
      */
     public static function getTwig($config_file = 'twig_config.php')
     {
         $o_tf = self::create($config_file);
         return $o_tf->o_twig;
     }
+    /**
+     * @param $config_file
+     * @return array|mixed
+     */
     private static function retrieveTwigConfigArray($config_file)
     {
         $config_w_path = APP_PATH . '/config/' . $config_file;
@@ -73,6 +88,7 @@ class TwigFactory
             $a_twig_config = array('default_path' => $_SERVER['DOCUMENT_ROOT'] . '/assets/templates/default');
         }
         else {
+            /** @noinspection PhpIncludeInspection */
             $a_twig_config = require $config_w_path;
         }
         return $a_twig_config;

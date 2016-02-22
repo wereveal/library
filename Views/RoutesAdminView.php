@@ -28,8 +28,15 @@ class RoutesAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
+    /**
+     * @var \Ritc\Library\Models\RoutesModel
+     */
     private $o_model;
 
+    /**
+     * RoutesAdminView constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);

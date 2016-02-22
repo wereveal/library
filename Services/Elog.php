@@ -7,9 +7,10 @@
  *  @namespace Ritc\Library\Services
  *  @class     Elog
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version:  3.0.0
- *  @date      2015-11-19 22:4522:45
+ *  @version:  3.0.1
+ *  @date      2016-02-22 15:32:11
  *  @note <pre><b>Change Log</b>
+ *      v3.0.1 - clean up code                                                   - 02/22/2016 wer
  *      v3.0.0 - added new logging methods, changed default to custom log        - 11/19/2015 wer
  *      v2.7.1 - moved to Services namespace                                     - 11/15/2014 wer
  *      v2.7.0 - added method to ignore LOG_OFF settings to allow global logging - 11/11/2014 wer
@@ -25,33 +26,100 @@ namespace Ritc\Library\Services;
 
 class Elog
 {
+    /**
+     * @var string
+     */
     protected $current_page;
+    /**
+     * @var bool
+     */
     private $custom_log_used = false;
+    /**
+     * @var string
+     */
     private $debug_text;
+    /**
+     * @var bool
+     */
     private $display_last_message = false;
+    /**
+     * @var string
+     */
     private $elog_file = 'elog.log';
+    /**
+     * @var string
+     */
     private $error_email_address = 'wer@qca.net';
+    /**
+     * @var bool
+     */
     private $html_used = false;
+    /**
+     * @var bool
+     */
     private $ignore_log_off = false;
+    /**
+     * @var string
+     */
     private $from_class = '';
+    /**
+     * @var string
+     */
     private $from_function = '';
+    /**
+     * @var string
+     */
     private $from_method = '';
+    /**
+     * @var string
+     */
     private $from_file = '';
+    /**
+     * @var string
+     */
     private $from_line = '';
+    /**
+     * @var bool
+     */
     private $handler_set = false;
+    /**
+     * @var Elog
+     */
     private static $instance;
+    /**
+     * @var string
+     */
     private $json_file = 'json.log';
+    /**
+     * @var bool
+     */
     private $json_log_used = false;
+    /**
+     * @var string
+     */
     private $last_message = '';
+    /**
+     * @var int
+     */
     private $log_method;
+    /**
+     * @var bool
+     */
     private $php_log_used = false;
 
+    /**
+     * Elog constructor.
+     */
     private function __construct()
     {
         $this->setElogConstants();
         $this->log_method = LOG_CUSTOM;
         $this->debug_text = "<!-- Start of Debug Text -->\n";
     }
+
+    /**
+     *
+     */
     public function __destruct()
     {
         if ($this->php_log_used && $this->display_last_message) {
@@ -147,6 +215,7 @@ class Elog
                                   "From: error_" . $this->error_email_address
                                   . "\r\nX-Mailer: PHP/" . phpversion());
             case LOG_JSON:
+                $this->json_log_used = true;
                 return trigger_error($the_string, E_USER_NOTICE);
             /** @noinspection PhpMissingBreakStatementInspection */
             case LOG_BOTH:
@@ -157,6 +226,7 @@ class Elog
             case LOG_CUSTOM:
                 return trigger_error($the_string, E_USER_NOTICE);
             case LOG_HTML:
+                $this->html_used = true;
                 $this->debug_text .= $this->makeComment($the_string);
                 return true;
             case LOG_DB: // not implemented at this time.
@@ -172,14 +242,18 @@ class Elog
                 }
                 return error_log($the_string, 0);
         }
-        return false;
     }
-    public function errorHandler($error_number, $error_string, $error_file, $error_line)
+
+    /**
+     * @param $error_number
+     * @param $error_string
+     * @return bool|int|void
+     */
+    public function errorHandler($error_number, $error_string)
     {
         if (!(error_reporting() & $error_number)) { // Error code not valid
-            return;
+            return null;
         }
-        $error_file = str_replace(BASE_PATH, '', $error_file);
         switch ($this->log_method) {
             case LOG_ON:
             case LOG_CUSTOM:
@@ -199,6 +273,7 @@ class Elog
                 }
 		        return file_put_contents(LOG_PATH . '/' . $this->elog_file, $string, FILE_APPEND);
             case LOG_JSON:
+                $this->json_log_used = true;
 		        $error_string = str_replace("\n", '', $error_string);
 		        $string = stripslashes(json_encode ([
                     'date'       => date("Y-m-d H:i:s"),
@@ -209,12 +284,21 @@ class Elog
             default:
                 return false;
         }
-        return false;
     }
+
+    /**
+     * @param $exception
+     * @return null
+     */
     public function exceptionHandler($exception)
     {
-        return;
+        return $exception;
     }
+
+    /**
+     * @param $var_name
+     * @return string
+     */
     public function getVar($var_name)
     {
         if (isset($this->$var_name)) {
@@ -258,6 +342,10 @@ class Elog
         if (!defined('LOG_ALWAYS')) { define('LOG_ALWAYS', 8); }
         if (!defined('LOG_PATH'))   { define('LOG_PATH', BASE_PATH . '/tmp'); }
     }
+
+    /**
+     * @param int $error_types
+     */
     public function setErrorHandler($error_types = -2)
     {
         if ($error_types == -2) {
@@ -284,30 +372,55 @@ class Elog
         $this->setFromFunction($function);
         $this->setFromLine($line);
     }
+
+    /**
+     * @param string $class
+     */
     public function setFromClass($class = '')
     {
         $this->from_class = $class;
     }
+
+    /**
+     * @param string $line
+     */
     public function setFromLine($line = '')
     {
         $this->from_line = $line;
     }
+
+    /**
+     * @param string $function
+     */
     public function setFromFunction($function = '')
     {
         $this->from_function = $function;
     }
+
+    /**
+     * @param string $method
+     */
     public function setFromMethod($method = '')
     {
         $this->from_method = $method;
     }
+
+    /**
+     * @param string $file
+     */
     public function setFromFile($file = '')
     {
             $this->from_file = basename($file);
     }
+
+    /**
+     * @param bool $value
+     */
     public function setHandlerSet($value = true)
     {
         $this->handler_set = $value;
     }
+
     /**
      *  Setter for the private property ignore_log_off.
      *  Basically turns logging on globally.
@@ -318,6 +431,10 @@ class Elog
     {
         $this->ignore_log_off = $boolean;
     }
+
+    /**
+     * @param int $log_method
+     */
     public function setLogMethod($log_method = LOG_CUSTOM)
     {
         $this->log_method = $log_method;
@@ -333,12 +450,5 @@ class Elog
     {
         return $not_visible ? "<!-- {$the_string} -->\n"
                             : "COMMENT: {$the_string}<br />\n";
-    }
-    private function fixContext(array $values = array())
-    {
-        foreach ($values as $key => $value) {
-            $values[$key] = stripslashes($value);
-        }
-        return $values;
     }
 }

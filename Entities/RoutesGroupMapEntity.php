@@ -4,7 +4,7 @@
  * @ingroup   ritc_library entities
  * @file      RoutesGroupMapEntity.php
  * @namespace Ritc\Library\Entities
- * @class     RouterGroupMapEntity
+ * @class     RoutesGroupMapEntity
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0β1
  * @date      2015-09-03 12:47:56
@@ -20,7 +20,7 @@ namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
-class RouterGroupMapEntity implements EntityInterface
+class RoutesGroupMapEntity implements EntityInterface
 {
     private $rgm_id;
     private $route_id;

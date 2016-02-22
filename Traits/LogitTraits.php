@@ -23,6 +23,9 @@ use Ritc\Library\Services\Elog;
 
 trait LogitTraits
 {
+    /**
+     * @var Elog
+     */
     protected $o_elog;
 
     /**

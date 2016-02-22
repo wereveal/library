@@ -53,7 +53,7 @@ trait VisibilityTraits {
     {
         $a_backtrace = debug_backtrace();
         if (is_null($this->private_properties) || $this->private_properties == array()) {
-            $this->var = $val;
+            $this->$var = $val;
             return null;
         }
         if (($a_backtrace[0]['file'] != $this->current_page) && (array_key_exists($var, $this->private_properties))) {

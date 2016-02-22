@@ -23,11 +23,27 @@ class RoutesGroupMapModel implements ModelInterface
 {
     use LogitTraits;
 
+    /**
+     * @var string
+     */
     private $db_prefix;
+    /**
+     * @var string
+     */
     private $db_type;
+    /**
+     * @var string
+     */
     private $error_message;
+    /**
+     * @var \Ritc\Library\Services\DbModel
+     */
     private $o_db;
 
+    /**
+     * RoutesGroupMapModel constructor.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
@@ -186,6 +202,10 @@ class RoutesGroupMapModel implements ModelInterface
     }
 
     ### Required by Interface ###
+    /**
+     * Returns the error message
+     * @return mixed
+     */
     public function getErrorMessage()
     {
         return $this->error_message;

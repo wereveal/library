@@ -21,16 +21,39 @@ namespace Ritc\Library\Traits;
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Models\PageModel;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Router;
 
 trait ManagerViewTraits
 {
+    /**
+     * @var array
+     */
     protected $a_links;
+    /**
+     * @var int
+     */
     protected $adm_level;
+    /**
+     * @var AuthHelper
+     */
     protected $o_auth;
+    /**
+     * @var DbModel
+     */
     protected $o_db;
+    /**
+     * @var Di
+     */
     protected $o_di;
+    /**
+     * @var Router
+     */
     protected $o_router;
+    /**
+     * @var \Twig_Environment
+     */
     protected $o_twig;
 
     /**

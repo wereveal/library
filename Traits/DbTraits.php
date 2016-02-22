@@ -16,6 +16,10 @@
 namespace Ritc\Library\Traits;
 
 trait DbTraits {
+    /**
+     * @param string $config_file
+     * @return bool|array
+     */
     private function retrieveDbConfig($config_file = 'db_config.php')
     {
         $config_w_apppath  = '';
@@ -47,6 +51,11 @@ trait DbTraits {
             return false;
         }
         $a_db = include $config_w_path;
-        return $a_db;
+        if (is_array($a_db)) {
+            return $a_db;
+        }
+        else {
+            return false;
+        }
     }
 }

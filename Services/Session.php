@@ -30,11 +30,28 @@ class Session
 {
     use LogitTraits;
 
+    /**
+     * @var Session
+     */
     private static $instance;
+    /**
+     * @var string
+     */
     private $session_id;
+    /**
+     * @var string
+     */
     private $session_name;
+    /**
+     * @var bool
+     */
     private $session_started = false;
 
+    /**
+     * Session constructor.
+     * @param string $session_id
+     * @param string $session_name
+     */
     private function __construct($session_id = '', $session_name = '')
     {
         if ($session_id != '') {
