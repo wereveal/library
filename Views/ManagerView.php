@@ -41,7 +41,7 @@ class ManagerView
      *  @return string
      */
     public function renderLandingPage($a_message = array())
-   {
+    {
         $meth = __METHOD__ . '.';
         $this->setAuthLevel($_SESSION['login_id']);
         $this->setLinks();
