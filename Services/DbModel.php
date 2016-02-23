@@ -7,10 +7,11 @@
  *  @namespace Ritc\Library\Services
  *  @class     DbModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   3.4.0
- *  @date      2015-12-09 18:24:11
+ *  @version   3.5.0
+ *  @date      2016-02-23 11:55:01
  *  @note <pre><b>Change Log</b>
- *      v3.4.0 = changed so that an array can be used in place of the preferred file      - 12/09/2015 wer
+ *      v3.5.0 - added new method to create a string for the insert value names           - 02/23/2016 wer
+ *      v3.4.0 - changed so that an array can be used in place of the preferred file      - 12/09/2015 wer
  *      v3.3.0 - bug fix - pgsql insert wasn't working right                              - 11/22/2015 wer
  *      v3.2.6 - changed from extending Base class to using traits                        - unknown    wer
  *      v3.2.5 - added some additional information to be retrieved                        - 09/01/2015 wer
@@ -1064,6 +1065,30 @@ class DbModel
     }
 
     ### Utility Functions
+    /**
+     * Creates a string that is part of an INSERT sql statement.
+     * @param array $a_values
+     * @param array $a_allowed_keys
+     * @return string
+     */
+    public function buildSqlInsert(array $a_values = [], array $a_allowed_keys = [])
+    {
+        if (count($a_values) === 0 || count($a_allowed_keys) === 0) {
+            return '';
+        }
+        $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
+        $insert_names = '';
+        $value_names  = '';
+        foreach ($a_values as $key => $value) {
+            $insert_names .= $insert_names == ''
+                ? $key
+                : ",\n\t"  . $key;
+            $value_names  .= $value_names == ''
+                ? ':' . $key
+                : ",\n\t:" . $key;
+        }
+        return $insert_names . "\n) VALUES (\n" . $value_names;
+    }
     /**
      *  Builds the SET part of an UPDATE sql statement
      *  @param array $a_values required key=>value pairs

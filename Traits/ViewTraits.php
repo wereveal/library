@@ -1,21 +1,22 @@
 <?php
 /**
- *  @brief     Common functions for  views.
+ *  @brief     Common functions for views.
  *  @ingroup   ritc_library traits
  *  @file      ViewTraits.php
  *  @namespace Ritc\Library\Traits
  *  @class     ViewTraits
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0 β1
- *  @date      2016-02-22 20:15:04 
+ *  @date      2016-02-22 20:15:04
  *  @note <pre><b>Change Log</b>
- *      v1.0.0 β1  - inital version - 02/22/2016 wer 
+ *      v1.0.0 β1  - inital version - 02/22/2016 wer
  *  </pre>
  */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
+use Ritc\Library\Models\MenusModel;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -44,6 +45,14 @@ trait ViewTraits
      */
     protected $o_di;
     /**
+     * @var MenusModel
+     */
+    protected $o_menu_model;
+    /**
+     * @var PageModel
+     */
+    protected $o_page_model;
+    /**
      * @var Router
      */
     protected $o_router;
@@ -56,30 +65,34 @@ trait ViewTraits
      *  The default setup for a view.
      *  @param Di $o_di
      */
-    private function setupView(Di $o_di)
+    protected function setupView(Di $o_di)
     {
         $this->setObjects($o_di);
-        $this->setAdmevel();
+        $this->setAdmLevel();
         $this->setLinks();
     }
+
     /**
      * Sets the standard used objects from the object injector.
      * @param Di $o_di
      */
-    private function setObjects(Di $o_di)
+    protected function setObjects(Di $o_di)
     {
-        $this->o_di     = $o_di;
-        $this->o_auth   = new AuthHelper($o_di);
-        $this->o_router = $o_di->get('router');
-        $this->o_twig   = $o_di->get('twig');
-        $this->o_db     = $o_di->get('db');
+        $this->o_di         = $o_di;
+        $this->o_router     = $o_di->get('router');
+        $this->o_twig       = $o_di->get('twig');
+        $this->o_db         = $o_di->get('db');
+        $this->o_auth       = new AuthHelper($o_di);
+        $this->o_page_model = new PageModel($this->o_db);
+        $this->o_menu_model = new MenusModel($this->o_db);
     }
+
     /**
      *  Sets the class property $adm_level to a value of the highest auth level
      *  found or 0 if not found.
      *  @param string $login_id
      */
-    private function setAdmLevel($login_id = '')
+    protected function setAdmLevel($login_id = '')
     {
         if ($login_id != '') {
             $this->adm_level = $this->o_auth->getHighestAuthLevel($login_id);
@@ -91,40 +104,32 @@ trait ViewTraits
             $this->adm_level = 0;
         }
     }
+
     /**
      *  Sets an array of links used for the menus.
      *  @return null
      *  @todo Need to work on a way to create the links from the pages table.
      */
-    private function setLinks()
+    protected function setLinks()
     {
         $meth = __METHOD__ . '.';
         if ($this->adm_level == '') {
             $this->setAdmLevel();
         }
-        $person_auth_level = $this->adm_level;
-        $this->logIt('Person adm level: ' . $person_auth_level, LOG_OFF, $meth . __LINE__);
+        $person_adm_level = $this->adm_level;
+        $this->logIt('Person adm level: ' . $person_adm_level, LOG_OFF, $meth . __LINE__);
         $current_route_path = $this->o_router->getRoutePath();
         $o_routes = new RoutesHelper($this->o_di, '');
-        if (file_exists(APP_CONFIG_PATH . '/links.php')) {
-            $manager_links_file = APP_CONFIG_PATH . '/links.php';
-        }
-        elseif (file_exists(LIBRARY_CONFIG_PATH . '/links.php')) {
-            $manager_links_file = LIBRARY_CONFIG_PATH . '/links.php';
-        }
-        else {
-            $manager_links_file = '';
-        }
-        $a_links = $manager_links_file != ''
-            ? include $manager_links_file
-            : array();
+
+        $a_links = $this->o_menu_model->read();
+
         $this->logIt('In Set Links: ' . var_export($a_links, TRUE), LOG_OFF, $meth . __LINE__);
         foreach ($a_links as $key => $a_link) {
             $o_routes->setRouteParts($a_link['url']);
             $a_route_parts = $o_routes->getRouteParts();
 
             $this->logIt('Route Parts: ' . var_export($a_route_parts, TRUE), LOG_OFF, $meth . __LINE__);
-            if ($person_auth_level > $a_route_parts['min_auth_level']) {
+            if ($person_adm_level > $a_route_parts['min_auth_level']) {
                 unset($a_links[$key]);
             }
             else {
@@ -138,17 +143,17 @@ trait ViewTraits
         }
         $this->a_links = $a_links;
     }
+
     /**
      *  Returns an array with the values used primarily in the meta tags of the html.
      *  @return array
      */
-    private function getPageValues()
+    public function getPageValues()
     {
         $page_url     = $this->o_router->getRequestUri();
         $route_path   = $this->o_router->getRoutePath();
-        $o_page_model = new PageModel($this->o_db);
-        $a_values1    = $o_page_model->read(['page_url' => $page_url]);
-        $a_values2    = $o_page_model->read(['page_url' => $route_path]);
+        $a_values1    = $this->o_page_model->read(['page_url' => $page_url]);
+        $a_values2    = $this->o_page_model->read(['page_url' => $route_path]);
 
         if (isset($a_values1[0])) {
             $a_page_values = $a_values1[0];
@@ -182,6 +187,7 @@ trait ViewTraits
             'rights_holder' => RIGHTS_HOLDER
         ];
     }
+
     /**
      * @return array
      */
