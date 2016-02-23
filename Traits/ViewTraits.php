@@ -59,7 +59,7 @@ trait ViewTraits
     private function setupView(Di $o_di)
     {
         $this->setObjects($o_di);
-        $this->setAuthLevel();
+        $this->setAdmevel();
         $this->setLinks();
     }
     /**
@@ -79,7 +79,7 @@ trait ViewTraits
      *  found or 0 if not found.
      *  @param string $login_id
      */
-    private function setAuthLevel($login_id = '')
+    private function setAdmLevel($login_id = '')
     {
         if ($login_id != '') {
             $this->adm_level = $this->o_auth->getHighestAuthLevel($login_id);
@@ -94,12 +94,13 @@ trait ViewTraits
     /**
      *  Sets an array of links used for the menus.
      *  @return null
+     *  @todo Need to work on a way to create the links from the pages table.
      */
     private function setLinks()
     {
         $meth = __METHOD__ . '.';
         if ($this->adm_level == '') {
-            $this->setAuthLevel();
+            $this->setAdmLevel();
         }
         $person_auth_level = $this->adm_level;
         $this->logIt('Person adm level: ' . $person_auth_level, LOG_OFF, $meth . __LINE__);
