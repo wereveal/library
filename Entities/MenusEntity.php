@@ -42,6 +42,10 @@ class MenusEntity implements EntityInterface
     /**
      * @var int
      */
+    private $menu_level;
+    /**
+     * @var int
+     */
     private $menu_order;
     /**
      * @var int
@@ -59,6 +63,7 @@ class MenusEntity implements EntityInterface
             'menu_parent_id' => $this->menu_parent_id,
             'menu_name'      => $this->menu_name,
             'menu_css'       => $this->menu_css,
+            'menu_level'     => $this->menu_level,
             'menu_order'     => $this->menu_order,
             'menu_active'    => $this->menu_active
         );
@@ -77,6 +82,7 @@ class MenusEntity implements EntityInterface
             'menu_parent_id' => 0,
             'menu_name'      => 'Fred',
             'menu_css'       => 'menu-item',
+            'menu_level'     => 1,
             'menu_order'     => 0,
             'menu_active'    => 1
         ];
@@ -201,6 +207,22 @@ class MenusEntity implements EntityInterface
     public function setMenuActive($menu_active)
     {
         $this->menu_active = $menu_active;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMenuLevel()
+    {
+        return $this->menu_level;
+    }
+
+    /**
+     * @param int $menu_level
+     */
+    public function setMenuLevel($menu_level)
+    {
+        $this->menu_level = $menu_level;
     }
 
 }

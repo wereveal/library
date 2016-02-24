@@ -44,6 +44,14 @@ class MenusModel implements ModelInterface
      * @var \Ritc\Library\Services\DbModel
      */
     private $o_db;
+    /**
+     * @var string
+     */
+    private $read_menu_sql;
+    /**
+     * @var string
+     */
+    private $read_menu_order_sql;
 
     /**
      * PageModel constructor.
@@ -60,9 +68,12 @@ class MenusModel implements ModelInterface
             'menu_parent_id',
             'menu_name',
             'menu_css',
+            'menu_level',
             'menu_order',
             'menu_active'
         ];
+        $this->setReadMenuSql();
+        $this->setReadMenuOrderSql();
     }
 
     /**
@@ -205,33 +216,52 @@ class MenusModel implements ModelInterface
     }
 
     /**
-     * Returns the search results.
-     * @param array $a_search_for    optional defaults to [] and returns all records
-     * @param array $a_search_params optional defaults to ['order_by' => 'm.menu_parent_id ASC, m.menu_order ASC, m.menu_name ASC'];
+     * Returns the search results for all menu records.
      * @return array
      */
-    public function readMenu(
-        array $a_search_for    = [],
-        array $a_search_params = ['order_by' => 'm.menu_parent_id ASC, m.menu_order ASC, m.menu_name ASC']
-    ) {
-        $sql_where = $this->o_db->buildSqlWhere($a_search_for, $a_search_params);
-        if (strpos($sql_where, 'menu_active') === false) {
-            $sql_where = "m.menu.active = 1
-            AND {$sql_where}";
+    public function readMenu() {
+        $sql = $this->read_menu_sql . $this->read_menu_order_sql;
+        $results = $this->o_db->search($sql);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            return false;
         }
-        $sql = <<<EOT
-            SELECT
-                p.page_id as 'id',
-                p.page_url as 'url',
-                p.page_description as 'description',
-                m.menu_parent_id as 'parent_id',
-                m.menu_name as 'name',
-                m.menu_css as 'css',
-                m.menu_order as 'order'
-            FROM {$this->db_prefix}page as p, {$this->db_prefix}menus as m
-            WHERE p.page_id = m.menu_page_id
-            AND {$sql_where}
+        else {
+            return $results;
+        }
+    }
+
+    /**
+     * Returns the menu items based on level and parent ID.
+     * @param int $level           required
+     * @param int $menu_parent_id  optional, if not provided, all menus of that level are returned.
+     * @return array|bool
+     */
+    public function readMenuByLevel($level = -1, $menu_parent_id = -1)
+    {
+        if ($level < 1) {
+            return false;
+        }
+        elseif ($menu_parent_id == -1) {
+            $where1 = "    AND m.menu_level = :menu_level";
+            $where2 = '';
+            $a_search_for = [':menu_level' => $level];
+        }
+        else {
+            $where1 = "    AND m.menu_level = :menu_level";
+            $where2 = "    AND m.menu_parent_id = :menu_parent_id";
+            $a_search_for = [
+                ':menu_level'     => $level,
+                ':menu_parent_id' => $menu_parent_id
+            ];
+        }
+        $sql = $this->read_menu_sql;
+        $where =<<<EOT
+{$where1}
+{$where2}
+{$this->read_menu_order_sql}
 EOT;
+        $sql .= $where;
         $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -241,77 +271,175 @@ EOT;
             return $results;
         }
     }
-    /**
-     * Creates the array used to build a menu, this is only a two level array
-     * @param int $parent_id optional, allows only a partial menu to be built
-     * @param int $page_id   optional, allows a menu to be build on a page id only
-     * @return array
-     */
-    public function createNavArray($parent_id = -1, $page_id = -1)
+    public function readMenuByPageId($page_id = -1)
     {
-        $get_all = $parent_id === -1 && $page_id === -1;
-        $a_search_params = ['order_by' => 'm.menu_parent_id ASC, m.menu_order ASC, m.menu_name ASC'];
-        $a_search_for = ['menu_active' => 1];
-        if ($get_all) {
-            $results = $this->readMenu();
+        if ($page_id == -1) {
+            return false;
+        }
+        $a_search_for = [':menu_page_id' => $page_id];
+        $results = $this->read($a_search_for);
+        if ($results !== false && count($results) > 0) {
+            $menu_id = $results[0]['menu_id'];
+            $parent_id = $results[0]['menu_parent_id'];
+            if ($menu_id != $parent_id) {
+                $menu_id = $this->findTopMenu($menu_id);
+            }
+            return $this->readMenuByParentId($menu_id);
         }
         else {
-            if ($parent_id >= 0) {
-                $a_search_for['menu_parent_id'] = $parent_id;
-            }
-            if ($page_id > 0) {
-                $a_search_for['menu_page_id'] = $page_id;
-            }
-            $results = $this->readMenu($a_search_for, $a_search_params);
+            return false;
         }
+    }
+
+    /**
+     * Returns an array of menu records that have the given menu id as menu_parent_id.
+     * Note that the menu_id needs to be a parent of menu records.
+     * Else it will return no records.
+     * @param int $menu_id
+     * @return bool|array
+     */
+    public function readMenuByParentId($menu_id = -1)
+    {
+        if ($menu_id < 1) {
+            return false;
+        }
+        $sql = $this->read_menu_sql;
+        $where = "    AND m.menu_parent_id = :menu_parent_id\n";
+        $sql .= $where . $this->read_menu_order_sql;
+        $a_search_for = [':menu_parent_id' => $menu_id];
+        $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
             return false;
         }
         else {
-            $a_menu_links = array();
-            // time to get the top level menus
-            foreach ($results as $menu) {
-                if ($menu['id'] == $menu['parent_id']) {
-                    $a_menu_links[$menu['id']] = [
-                        'text'        => $menu['name'],
-                        'url'         => $menu['url'],
-                        'description' => $menu['description'],
-                        'name'        => $menu['name'],
-                        'class'       => $menu['class'],
-                        'extras'      => '',
-                        'submenu'     => array()
-                    ];
-                }
-            }
-            // now a second loop
-            foreach ($results as $menu) {
-                foreach ($a_menu_links as $key => $parent_menu) {
-                    if ($menu['parent_id'] == $key) {
-                        $a_menu_links[$key]['submenu'][$menu['id']] = [
-                            'text'        => $menu['name'],
-                            'url'         => $menu['url'],
-                            'description' => $menu['description'],
-                            'name'        => $menu['name'],
-                            'class'       => $menu['class'],
-                            'extras'      => '',
-                            'submenu'     => array()
-                        ];
-                    }
-                    else {
-                        if (count($a_menu_links[$key]['submenu']) > 0) {
-                            foreach
-                        }
-                    }
-                }
-            }
-            return $a_menu_links;
+            return $results;
         }
     }
 
-    private function addSubMenu(array $a_menu = [], array $a_parent_menu = [])
+    /**
+     * Returns the menu id of the top most menu for the given menu id.
+     * @param int $menu_id
+     * @return int
+     */
+    public function findTopMenu($menu_id = -1)
     {
-
+        if ($menu_id == -1) {
+            return 0;
+        }
+        $a_search_for = [':menu_id' => $menu_id];
+        $results = $this->read($a_search_for);
+        if ($results !== false && count($results) > 0) {
+            $menu_id = $results[0]['menu_id'];
+            $parent_id = $results[0]['menu_parent_id'];
+            if ($menu_id != $parent_id) {
+                return $this->findTopMenu($parent_id);
+            }
+            else {
+                return $menu_id;
+            }
+        }
     }
+
+    /**
+     * Creates the array used to build a menu
+     * @param int $page_id   optional, allows a menu to be build on a page id only
+     * @param int $parent_id optional, allows only a partial menu to be built
+     * @return array
+     */
+    public function createNavArray($page_id = -1, $parent_id = -1)
+    {
+        if ($page_id > 0) {
+            $results = $this->readMenuByPageId($page_id);
+        }
+        elseif ($parent_id > 0) {
+            $results = $this->readMenuByParentId($parent_id);
+        }
+        else {
+            // do a loopy loop
+        }
+    }
+
+    /**
+     * Checks to see the the menu has children.
+     * @param int $menu_id
+     * @return bool
+     */
+    private function menuHasChildren($menu_id = -1)
+    {
+        if ($menu_id == -1) {
+            return false;
+        }
+        $sql = "
+            SELECT DISTINCT menu_level
+            FROM {$this->db_prefix}menus
+            WHERE menu_parent_id = :menu_parent_id
+            AND menu_id != menu_parent_id
+        ";
+        $a_search_values = [':menu_parent_id' => $menu_id, ];
+        $results = $this->o_db->search($sql, $a_search_values);
+        if ($results !== false && count($results) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReadMenuString()
+    {
+        return $this->read_menu_sql;
+    }
+
+    /**
+     * @param string $read_menu_sql normally not set.
+     */
+    public function setReadMenuSql($read_menu_sql = '')
+    {
+        if ($read_menu_sql == '') {
+            $read_menu_sql =<<<EOT
+SELECT
+    p.page_id as 'page_id',
+    p.page_url as 'url',
+    p.page_description as 'description',
+    m.menu_id as 'menu_id',
+    m.menu_parent_id as 'parent_id',
+    m.menu_name as 'name',
+    m.menu_css as 'css',
+    m.menu_level as 'level',
+    m.menu_order as 'order'
+FROM {$this->db_prefix}page as p, {$this->db_prefix}menus as m
+WHERE p.page_id = m.menu_page_id
+    AND m.menu_active = 1
+
+EOT;
+        }
+        $this->read_menu_sql = $read_menu_sql;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReadMenuOrderSql()
+    {
+        return $this->read_menu_order_sql;
+    }
+
+    /**
+     * Sets the string for the ORDER BY statement used in several ReadMenuX methods.
+     * @param string $string optional
+     */
+    public function setReadMenuOrderSql($string = '')
+    {
+        if ($string == '') {
+            $string =<<<EOT
+ORDER BY m.menu_level ASC, m.menu_order ASC, m.menu_name ASC
+EOT;
+        }
+        $this->read_menu_order_sql = $string;
+    }
+
     /**
      * Implements the ModelInterface method, getErrorMessage.
      * return string
