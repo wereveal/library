@@ -10,9 +10,10 @@
  *  @namespace Ritc\Library\Helper
  *  @class     Strings
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   6.2.0
- *  @date      2015-11-25 12:19:46
+ *  @version   6.3.0
+ *  @date      2016-02-24 13:11:07
  *  @note <pre><b>Change Log</b>
+ *      v6.3.0 - added new method to translate a digit to an English word          - 02/24/2016 wer
  *      v6.2.0 - added new method to strip tags from htmlentites coded string      - 11/25/2015 wer
  *      v6.1.0 - renamed makeAlphanumeric to makeAlphanumericPlus and added two    - 11/07/2015 wer
  *               new methods called makeAlphanumeric and makeCamelCase.
@@ -28,7 +29,37 @@ namespace Ritc\Library\Helper;
 
 class Strings
 {
-    ### String Methods ###
+    /**
+     * Returns the English string for the digit, e.g., 1 = 'one'
+     * @param int $var
+     * @return string
+     */
+    public static function digitToString($var = 0)
+    {
+        switch ($var) {
+            case 0:
+                return 'zero';
+            case 1;
+                return 'one';
+            case 2;
+                return 'two';
+            case 3;
+                return 'three';
+            case 4;
+                return 'four';
+            case 5;
+                return 'five';
+            case 6;
+                return 'six';
+            case 7;
+                return 'seven';
+            case 8;
+                return 'eight';
+            case 9;
+                return 'nine';
+        }
+    }
+
     /**
      * Changes the phone number to the specified phone format (or default format)
      * This works only for US numbers and is not international (yet).
