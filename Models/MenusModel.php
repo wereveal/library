@@ -1,16 +1,15 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff.
+ *  @brief     Does all the database CRUD stuff for the menus.
  *  @ingroup   ritc_library models
  *  @file      MenusModel.php
  *  @namespace Ritc\Library\Models
  *  @class     MenusModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:59:00
+ *  @version   1.0.0 β1
+ *  @date      2016-02-24 13:24:09
  *  @note <pre><b>Change Log</b>
- *      v1.0.0   - take out of beta                             - 11/27/2015 wer
- *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
+ *      v1.0.0 β1 - Initial version                              - 02/24/2016 wer
  *  </pre>
 **/
 namespace Ritc\Library\Models;
@@ -239,29 +238,23 @@ class MenusModel implements ModelInterface
      */
     public function readMenuByLevel($level = -1, $menu_parent_id = -1)
     {
+        $meth = __METHOD__ . '.';
         if ($level < 1) {
             return false;
         }
         elseif ($menu_parent_id == -1) {
-            $where1 = "    AND m.menu_level = :menu_level";
-            $where2 = '';
+            $where = "    AND m.menu_level = :menu_level\n";
             $a_search_for = [':menu_level' => $level];
         }
         else {
-            $where1 = "    AND m.menu_level = :menu_level";
-            $where2 = "    AND m.menu_parent_id = :menu_parent_id";
+            $where = "    AND m.menu_level = :menu_level\n    AND m.menu_parent_id = :menu_parent_id\n";
             $a_search_for = [
                 ':menu_level'     => $level,
                 ':menu_parent_id' => $menu_parent_id
             ];
         }
-        $sql = $this->read_menu_sql;
-        $where =<<<EOT
-{$where1}
-{$where2}
-{$this->read_menu_order_sql}
-EOT;
-        $sql .= $where;
+        $sql = $this->read_menu_sql . $where . $this->read_menu_order_sql;
+        $this->logIt($sql, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -271,6 +264,13 @@ EOT;
             return $results;
         }
     }
+
+    /**
+     * Returns an array of menu records based on page id.
+     * Gets the top parent and all the children that are related to that page.
+     * @param int $page_id
+     * @return array|bool
+     */
     public function readMenuByPageId($page_id = -1)
     {
         if ($page_id == -1) {
@@ -339,6 +339,7 @@ EOT;
                 return $menu_id;
             }
         }
+        return 0;
     }
 
     /**
@@ -356,8 +357,12 @@ EOT;
             $results = $this->readMenuByParentId($parent_id);
         }
         else {
-            // do a loopy loop
+            $results = $this->readMenu();
         }
+
+        // do some sort of loopy loop here
+
+        return $results; // temp
     }
 
     /**
