@@ -7,9 +7,10 @@
  *  @namespace Ritc\Library\Services
  *  @class     DbModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   3.5.0
- *  @date      2016-02-23 11:55:01
+ *  @version   3.5.1
+ *  @date      2016-02-25 12:44:54
  *  @note <pre><b>Change Log</b>
+ *      v3.5.1 - added new method to create a string for the select field names           - 02/25/2016 wer
  *      v3.5.0 - added new method to create a string for the insert value names           - 02/23/2016 wer
  *      v3.4.0 - changed so that an array can be used in place of the preferred file      - 12/09/2015 wer
  *      v3.3.0 - bug fix - pgsql insert wasn't working right                              - 11/22/2015 wer
@@ -168,7 +169,7 @@ class DbModel
      *  Can be set up with upto 3 arguments, the first required, the sql
      *  @param string $the_query, required
      *  @param array $a_values associative array, key in named prepared
-     *      format e.g., array(':id'=>1, ':name'=>'fred');
+     *      format preferred e.g., [':id'=>1, ':name'=>'fred'] but optional.
      *  @param string $type optional, type of results, num, both, assoc which
      *      specifies the PDO formats, defaults to assoc
      *  @return mixed results of search or false
@@ -1090,6 +1091,33 @@ class DbModel
         return $insert_names . "\n) VALUES (\n" . $value_names;
     }
     /**
+     * Builds the select field portion of a sql select statement.
+     * Can be a simple array list or an assoc array which specifies
+     * as the key the name of the field, the value the name to be as, e.g.,
+     * ['ngv' => 'general] becomes the string "ngv as 'general'"
+     * @param array $a_values
+     * @return string
+     */
+    public function buildSqlSelectFields(array $a_values = [])
+    {
+        $select_me = '';
+        if (Arrays::isAssocArray($a_values)) {
+            foreach ($a_values as $name => $name_as) {
+                $select_me .= $select_me == ''
+                    ? $name . " as '" . $name_as . "'"
+                    : ', ' . $name . " as '" . $name_as . "'";
+            }
+        }
+        else {
+            foreach ($a_values as $name) {
+                $select_me .= $select_me == ''
+                    ? $name
+                    : ', ' . $name;
+            }
+        }
+        return $select_me;
+    }
+    /**
      *  Builds the SET part of an UPDATE sql statement
      *  @param array $a_values required key=>value pairs
      *      pairs are those to be used in the statement fragment
@@ -1471,9 +1499,6 @@ class DbModel
     }
 
     ### Magic Method fix ###
-    /**
-     *
-     */
     public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);
