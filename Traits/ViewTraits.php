@@ -16,7 +16,7 @@ namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
-use Ritc\Library\Models\MenusModel;
+use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -27,7 +27,7 @@ trait ViewTraits
     /**
      * @var array
      */
-    protected $a_links;
+    protected $a_nav;
     /**
      * @var int
      */
@@ -47,7 +47,7 @@ trait ViewTraits
     /**
      * @var MenusModel
      */
-    protected $o_menu_model;
+    protected $o_nav;
     /**
      * @var PageModel
      */
@@ -69,7 +69,7 @@ trait ViewTraits
     {
         $this->setObjects($o_di);
         $this->setAdmLevel();
-        $this->setLinks();
+        $this->setNav();
     }
 
     /**
@@ -84,7 +84,7 @@ trait ViewTraits
         $this->o_db         = $o_di->get('db');
         $this->o_auth       = new AuthHelper($o_di);
         $this->o_page_model = new PageModel($this->o_db);
-        $this->o_menu_model = new MenusModel($this->o_db);
+        $this->o_nav        = new NavComplexModel($this->o_db);
     }
 
     /**
@@ -106,42 +106,64 @@ trait ViewTraits
     }
 
     /**
-     *  Sets an array of links used for the menus.
-     *  @return null
-     *  @todo Need to work on a way to create the links from the pages table.
+     *  Creates an array of links used for menus and other navigation areas.
+     *  @param int $nav_group optional, defaults to the 1 nav group.
+     *  @return array
      */
-    protected function setLinks()
+    protected function createNav($nav_group = 1)
     {
         $meth = __METHOD__ . '.';
         if ($this->adm_level == '') {
             $this->setAdmLevel();
         }
+        $a_nav = $this->o_nav->createNavArray($nav_group);
+        $message = 'In Set Nav: ' . var_export($a_nav, TRUE);
+        $this->logIt($message, LOG_OFF, $meth . __LINE__);
+        $o_routes = new RoutesHelper($this->o_di, '');
+        return $this->removeUnauthorized($a_nav, $o_routes);
+    }
+
+    /**
+     * Sets the class property a_nav.
+     * Uses the createNav method to do so.
+     * @param int $nav_group optional, defaults to 1
+     * @return null
+     */
+    protected function setNav($nav_group = 1)
+    {
+        $this->a_nav = $this->createNav($nav_group);
+    }
+
+    /**
+     * Removes Navigation links that the person is not authorized to see.
+     * @param array        $a_nav    If empty, this is a waste.
+     * @param RoutesHelper $o_routes an instance of the RoutesHelper.
+     * @return array
+     */
+    protected function removeUnauthorizedLinks(array $a_nav = [], RoutesHelper $o_routes) {
         $person_adm_level = $this->adm_level;
         $this->logIt('Person adm level: ' . $person_adm_level, LOG_OFF, $meth . __LINE__);
         $current_route_path = $this->o_router->getRoutePath();
-        $o_routes = new RoutesHelper($this->o_di, '');
 
-        $a_links = $this->o_menu_model->read();
-
-        $this->logIt('In Set Links: ' . var_export($a_links, TRUE), LOG_OFF, $meth . __LINE__);
-        foreach ($a_links as $key => $a_link) {
-            $o_routes->setRouteParts($a_link['url']);
-            $a_route_parts = $o_routes->getRouteParts();
-
-            $this->logIt('Route Parts: ' . var_export($a_route_parts, TRUE), LOG_OFF, $meth . __LINE__);
-            if ($person_adm_level > $a_route_parts['min_auth_level']) {
-                unset($a_links[$key]);
+        foreach($a_nav as $key => $a_item) {
+            if (count($a_item['submenu']) > 0) {
+                $a_nav[$key]['submenu'] = $this->removeUnauthorizedLinks($a_item['submenu']);
             }
             else {
-                if ($a_link['url'] == $current_route_path) {
-                    $a_links[$key]['class'] = 'menu-active';
+                if ($this->adm_level < $a_route_parts['min_auth_level']) {
+                    unset($a_nav[$key]);
                 }
                 else {
-                    $a_links[$key]['class'] = 'menu-inactive';
+                    if ($a_nav['url'] = $current_route_path) {
+                        $a_nav[$key]['class'] .= ' menu-active';
+                    }
+                    else {
+                        $a_nav[$key]['class'] .= ' menu-inactive';
+                    }
                 }
             }
         }
-        $this->a_links = $a_links;
+        return $a_nav;
     }
 
     /**
@@ -191,8 +213,8 @@ trait ViewTraits
     /**
      * @return array
      */
-    public function getLinks()
+    public function getNav()
     {
-        return $this->a_links;
+        return $this->a_nav;
     }
 }

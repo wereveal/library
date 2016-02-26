@@ -9,10 +9,11 @@
  *  @version   1.0.0
  *  @date      2015-11-27 14:55:02
  *  @note Change Log
- *      v1.0.0   - took out of beta              - 11/27/2015 wer
- *      v1.0.0β3 - bug fix                       - 11/24/2015 wer
- *      v1.0.0β2 - logic change                  - 10/30/2015 wer
- *      v1.0.0β1 - intial file                   - 09/26/2015 wer
+ *      v1.1.0   - added method for quick min auth level for a route.   - 02/26/2016 wer
+ *      v1.0.0   - took out of beta                                     - 11/27/2015 wer
+ *      v1.0.0β3 - bug fix                                              - 11/24/2015 wer
+ *      v1.0.0β2 - logic change                                         - 10/30/2015 wer
+ *      v1.0.0β1 - intial file                                          - 09/26/2015 wer
  **/
 namespace Ritc\Library\Helper;
 
@@ -35,13 +36,17 @@ class RoutesHelper
 
     public function __construct(Di $o_di, $route_path = '')
     {
+        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+        }
+
         $o_db = $o_di->get('db');
         $this->o_model = new RoutesModel($o_db);
         $this->o_group = new GroupsModel($o_db);
         $this->o_rgm   = new RoutesGroupMapModel($o_db);
         $this->route_path = $route_path;
+
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);
             $this->o_group->setElog($this->o_elog);
         }
@@ -117,6 +122,7 @@ class RoutesHelper
             }
         }
     }
+
     /**
      *  Shortcut for setRouteParts and getRouteParts.
      *  @param string $route_path
@@ -127,12 +133,14 @@ class RoutesHelper
         $this->setRouteParts($route_path);
         return $this->getRouteParts();
     }
+
     /**
-     *  @param $route_id
+     *  @param int $route_id
      *  @return array|mixed
      */
-    public function getGroups($route_id)
+    public function getGroups($route_id = -1)
     {
+        if ($route_id == -1) { return []; }
         $a_groups = array();
         $a_rgm_results = $this->o_rgm->read(['route_id' => $route_id]);
         if ($a_rgm_results !== false && count($a_rgm_results) > 0) {
@@ -142,6 +150,7 @@ class RoutesHelper
         }
         return $a_groups;
     }
+
     /**
      *  Gets the min auth level needed for the route.
      *  The groups for the route are passed in
@@ -159,6 +168,18 @@ class RoutesHelper
             }
         }
         return $min_auth_level;
+    }
+
+    /**
+     * Returns minimum auth level for a route.
+     * @param int $route_id if not supplied an auth level of 10 is returned.
+     * @return int
+     */
+    public function getMinAuthLevelForRoute($route_id = -1)
+    {
+        if ($route_id == -1) { return 10; }
+        $a_groups = $this->getGroups($route_id);
+        return $this->getMinAuthLevel($a_groups);
     }
     /**
      *  @param string $route_path
