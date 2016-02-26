@@ -7,9 +7,10 @@
  *  @namespace Ritc\Library\Services
  *  @class     Elog
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version:  3.0.1
- *  @date      2016-02-22 15:32:11
+ *  @version:  3.0.2
+ *  @date      2016-02-26 12:16:48
  *  @note <pre><b>Change Log</b>
+ *      v3.0.2 - bug fixes                                                       - 02/26/2016 wer
  *      v3.0.1 - clean up code                                                   - 02/22/2016 wer
  *      v3.0.0 - added new logging methods, changed default to custom log        - 11/19/2015 wer
  *      v2.7.1 - moved to Services namespace                                     - 11/15/2014 wer
@@ -66,6 +67,10 @@ class Elog
      * @var string
      */
     private $from_function = '';
+    /**
+     * @var string
+     */
+    private $from_location = '';
     /**
      * @var string
      */
@@ -258,18 +263,25 @@ class Elog
             case LOG_ON:
             case LOG_CUSTOM:
                 if ($this->custom_log_used === false) {
-                    $string = "\n\n\n\n\n\n\n\n\n\n=== Start Elog ===\n"
-                        . date("Y-m-d H:i:s")
-                        . " - "
-                        . $error_string
-                        . "\n";
+                    $string = "\n\n\n\n\n\n\n\n\n\n=== Start Elog ===\n" .
+                        date("Y-m-d H:i:s") .
+                        " - " .
+                        $this->from_location .
+                        "\n" .
+                        $error_string .
+                        "\n\n";
                     $this->custom_log_used = true;
                 }
                 elseif (strpos($error_string, 'End of Elog') !== false) {
-                    $string = $error_string . "\n";
+                    $string = $error_string . "\n\n";
                 }
                 else {
-                    $string = date("Y-m-d H:i:s") . " - " . $error_string . "\n";
+                    $string = date("Y-m-d H:i:s") .
+                        " - " .
+                        $this->from_location .
+                        "\n" .
+                        $error_string .
+                        "\n\n";
                 }
 		        return file_put_contents(LOG_PATH . '/' . $this->elog_file, $string, FILE_APPEND);
             case LOG_JSON:
@@ -277,6 +289,7 @@ class Elog
 		        $error_string = str_replace("\n", '', $error_string);
 		        $string = stripslashes(json_encode ([
                     'date'       => date("Y-m-d H:i:s"),
+                    'location'   => $this->from_location,
 		            'message'    => $error_string
 		        ]));
 		        $string .= "\n";
@@ -387,6 +400,11 @@ class Elog
     public function setFromLine($line = '')
     {
         $this->from_line = $line;
+    }
+
+    public function setFromLocation($location = '')
+    {
+        $this->from_location = $location;
     }
 
     /**

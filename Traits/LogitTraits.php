@@ -6,12 +6,13 @@
  *  @namespace Ritc\Library\Traits
  *  @class     LogitTraits
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.2
- *  @date      2015-11-20 15:39:32
+ *  @version   1.1.1
+ *  @date      2016-02-26 12:17:41
  *  @note      this is derived from the abstract class Base and may
  *             end up replacing the abstract class or used in classes that
  *             don't use the abstract class.
  *  @note <pre><b>Change Log</b>
+ *      v1.1.1 - bug fixes                                                      - 02/26/2016 wer
  *      v1.1.0 - added code to utilize the custom logging capabilities          - 11/20/2015 wer
  *      v1.0.1 - checked to see if we want to even bother with calling o_elog.  - 11/03/2015 wer
  *      v1.0.0 - initial version                                                - 08/19/2015 wer
@@ -58,12 +59,12 @@ trait LogitTraits
                 case LOG_ON:
                 case LOG_CUSTOM:
                     $this->o_elog->setLogMethod(LOG_CUSTOM);
-                    $this->o_elog->setFromMethod($location);
+                    $this->o_elog->setFromLocation($location);
                     trigger_error($message, E_USER_NOTICE);
                     break;
                 case LOG_JSON:
                     $this->o_elog->setLogMethod(LOG_JSON);
-                    $this->o_elog->setFromMethod($location);
+                    $this->o_elog->setFromLocation($location);
                     trigger_error($message, E_USER_NOTICE);
                     break;
                 default:
