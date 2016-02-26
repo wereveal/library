@@ -55,6 +55,8 @@ class NavComplexModel
         $this->o_db      = $o_db;
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->setSelectSql();
+        $this->setSelectOrderSql();
     }
 
     /**
@@ -87,12 +89,14 @@ class NavComplexModel
      */
     public function getTopLevelNavList($ng_id = -1)
     {
+        $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
             return false;
         }
-        $where = "     AND ng.ng_id = :ng_id\n     AND nav.nav_level = :nav_level\n";
+        $where = "     AND ng.ng_id = :ng_id\n     AND n.nav_level = :nav_level\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
         $a_search_for = [':ng_id' => $ng_id, ':nav_level' => 1];
+        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -109,13 +113,26 @@ class NavComplexModel
      * @param int $parent_id
      * @return bool|mixed
      */
-    public function getNavListByParent($parent_id = -1) {
-        if ($parent_id == -1) {
+    public function getNavListByParent($parent_id = -1, $ng_id = -1) {
+        $meth = __METHOD__ . '.';
+        if ($parent_id == -1 || $ng_id == -1) {
             return false;
         }
-        $where = "    AND n.nav_parent_id = :parent_id\n    AND n.nav_id != :parent_nav_id";
+        $where =<<<EOT
+AND n.nav_parent_id = :parent_id
+AND n.nav_id != :parent_nav_id
+AND map.ng_id = :map_ng_id
+
+EOT;
         $sql = $this->select_sql . $where . $this->select_order_sql;
-        $a_search_for = [':parent_id' => $parent_id, ':parent_nav_id' => $parent_id];
+        $a_search_for = [
+            ':parent_id'     => $parent_id,
+            ':parent_nav_id' => $parent_id,
+            ':map_ng_id'     => $ng_id
+        ];
+        $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
+        $log_message = 'search for ' . var_export($a_search_for, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -131,13 +148,20 @@ class NavComplexModel
      * @param int $parent_id required
      * @return array
      */
-    public function getChildrenRecursive($parent_id = -1)
+    public function getChildrenRecursive($parent_id = -1, $ng_id = -1)
     {
+        $meth = __METHOD__ . '.';
+        if ($parent_id == -1 || $ng_id == -1) {
+            return false;
+        }
         $a_new_list = array();
-        $a_results = $this->getNavListByParent($parent_id);
+        $a_results = $this->getNavListByParent($parent_id, $ng_id);
+        $log_message = 'Parent Values ' . var_export($a_results, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         if ($a_results !== false && count($a_results) > 0) {
             foreach ($a_results as $a_nav) {
-                $a_results = $this->getChildrenRecursive($a_nav['nav_id']);
+                $a_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
                 $a_new_list[] = [
                     'id'          => $a_nav['nav_id'],
                     'name'        => $a_nav['name'],
@@ -150,8 +174,11 @@ class NavComplexModel
                     'submenu'     => $a_results
                 ];
             }
+            return $a_new_list;
         }
-        return $a_new_list;
+        else {
+            return [];
+        }
     }
 
     /**
@@ -161,14 +188,20 @@ class NavComplexModel
      */
     public function createNavArray($ng_id = -1)
     {
+        $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
             return false;
         }
         $a_new_list = array();
         $a_top_list = $this->getTopLevelNavList($ng_id);
+        $this->logIt("top level nav: " . var_export($a_top_list, true), LOG_OFF, $meth . __LINE__);
         if ($a_top_list === false) { return false; }
         foreach ($a_top_list as $a_nav) {
-            $a_results = $this->getChildrenRecursive($a_nav['nav_id']);
+            $this->logIt(var_export($a_nav, true), LOG_OFF, $meth . __LINE__);
+            $a_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
+            $log_message = 'Recursive Results ' . var_export($a_results, TRUE);
+            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
             $a_new_list[] = [
                 'id'          => $a_nav['nav_id'],
                 'name'        => $a_nav['name'],
@@ -259,7 +292,10 @@ EOT;
     {
         if ($string == '') {
             $string =<<<EOT
-ORDER BY n.nav_level ASC, n.nav_order ASC, n.nav_name ASC
+ORDER BY
+    n.nav_level ASC,
+    n.nav_order ASC,
+    n.nav_name ASC
 EOT;
         }
         $this->select_order_sql = $string;

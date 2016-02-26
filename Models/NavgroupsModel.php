@@ -108,6 +108,7 @@ class NavgroupsModel implements ModelInterface
      */
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
+        $meth = __METHOD__ . '.';
         if (count($a_search_values) > 0) {
             $a_search_params = $a_search_params == []
                 ? ['order_by' => 'ng_name ASC']
@@ -122,13 +123,16 @@ class NavgroupsModel implements ModelInterface
             $where = " ORDER BY ng_name ASC";
         }
         $select_me = $this->o_db->buildSqlSelectFields($this->a_field_names);
-        $sql = "
-            SELECT {$select_me}
-            FROM {$this->db_prefix}navgroups
-            {$where}
-        ";
-        $this->logIt($sql, LOG_ON, __METHOD__);
-        $this->logIt("Search Values: " . var_export($a_search_values, true), LOG_ON, __METHOD__);
+        $where = trim($where);
+        $sql =<<<EOT
+
+SELECT {$select_me}
+FROM {$this->db_prefix}navgroups
+{$where}
+
+EOT;
+        $this->logIt($sql, LOG_OFF, $meth . __LINE__);
+        $this->logIt("Search Values: " . var_export($a_search_values, true), LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_values);
         return $results;
     }
