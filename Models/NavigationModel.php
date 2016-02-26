@@ -206,6 +206,29 @@ class NavigationModel implements ModelInterface
         }
     }
 
+    /**
+     * Checks to see the the nav has children.
+     * @param int $nav_id
+     * @return bool
+     */
+    public function navHasChildren($nav_id = -1)
+    {
+        if ($nav_id == -1) {
+            return false;
+        }
+        $sql =<<<EOT
+SELECT DISTINCT nav_level
+FROM {$this->db_prefix}navigation
+WHERE nav_parent_id = :nav_parent_id
+AND nav_id != nav_parent_id
+EOT;
+        $a_search_values = [':nav_parent_id' => $nav_id, ];
+        $results = $this->o_db->search($sql, $a_search_values);
+        if ($results !== false && count($results) > 0) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * @return array
@@ -238,7 +261,6 @@ class NavigationModel implements ModelInterface
             ];
         }
     }
-
 
     /**
      * Implements the ModelInterface method, getErrorMessage.

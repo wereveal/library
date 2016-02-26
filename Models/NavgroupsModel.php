@@ -236,6 +236,7 @@ class NavgroupsModel implements ModelInterface
             $this->a_field_names = [
                 'ng_id',
                 'ng_name',
+                'ng_class',
                 'ng_active'
             ];
         }

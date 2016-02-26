@@ -14,6 +14,7 @@
  **/
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -44,11 +45,11 @@ class NavAllModel
     /**
      * @var string
      */
-    private $read_nav_sql;
+    private $select_sql;
     /**
      * @var string
      */
-    private $read_nav_order_sql;
+    private $select_order_sql;
 
     /**
      * NavAllModel constructor.
@@ -65,178 +66,132 @@ class NavAllModel
     }
 
     /**
-     * Returns the search results for all nav records.
+     * Returns the search results for all nav records for a navgroup.
+     * @param int $ng_id required navgroup id
+     * @return array|false
+     */
+    public function getNavList($ng_id = -1)
+    {
+        if ($ng_id == -1) {
+            return false;
+        }
+        $where = "AND ng.ng_id = :ng_id\n";
+        $sql = $this->select_sql . $where . $this->select_order_sql;
+        $a_search_for = [':ng_id' => $ng_id];
+        $results = $this->o_db->search($sql, $a_search_for);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            return false;
+        }
+        else {
+            return $results;
+        }
+    }
+
+    public function getTopLevelNavList($ng_id = -1)
+    {
+        if ($ng_id == -1) {
+            return false;
+        }
+        $where = "     AND ng.ng_id = :ng_id\n     AND nav.nav_level = :nav_level\n";
+        $sql = $this->select_sql . $where . $this->select_order_sql;
+        $a_search_for = [':ng_id' => $ng_id, ':nav_level' => 1];
+        $results = $this->o_db->search($sql, $a_search_for);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            return false;
+        }
+        else {
+            return $results;
+        }
+
+    }
+
+    public function getNavListByParent($parent_id = -1) {
+        if ($parent_id == -1) {
+            return false;
+        }
+        $where = "    AND n.nav_parent_id = :parent_id\n    AND n.nav_id != :parent_nav_id";
+        $sql = $this->select_sql . $where . $this->select_order_sql;
+        $a_search_for = [':parent_id' => $parent_id, ':parent_nav_id' => $parent_id];
+        $results = $this->o_db->search($sql, $a_search_for);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            return false;
+        }
+        else {
+            return $results;
+        }
+    }
+
+    /**
+     * Attempt to get all the sub navigation for the parent, recursively.
+     * @param int $parent_id required
      * @return array
      */
-    public function readNav() {
-        $sql = $this->read_nav_sql . $this->read_nav_order_sql;
-        $results = $this->o_db->search($sql);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
-        }
-        else {
-            return $results;
-        }
-    }
-
-    /**
-     * Returns the nav items based on level and parent ID.
-     * @param int $level           required
-     * @param int $nav_parent_id  optional, if not provided, all navigation of that level are returned.
-     * @return array|bool
-     */
-    public function readNavByLevel($level = -1, $nav_parent_id = -1)
+    public function getChildrenRecursive($parent_id = -1)
     {
-        $meth = __METHOD__ . '.';
-        if ($level < 1) {
-            return false;
-        }
-        elseif ($nav_parent_id == -1) {
-            $where = "    AND m.nav_level = :nav_level\n";
-            $a_search_for = [':nav_level' => $level];
-        }
-        else {
-            $where = "    AND m.nav_level = :nav_level\n    AND m.nav_parent_id = :nav_parent_id\n";
-            $a_search_for = [
-                ':nav_level'     => $level,
-                ':nav_parent_id' => $nav_parent_id
-            ];
-        }
-        $sql = $this->read_nav_sql . $where . $this->read_nav_order_sql;
-        $this->logIt($sql, LOG_OFF, $meth . __LINE__);
-        $results = $this->o_db->search($sql, $a_search_for);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
-        }
-        else {
-            return $results;
-        }
-    }
-
-    /**
-     * Returns an array of nav records based on page id.
-     * Gets the top parent and all the children that are related to that page.
-     * @param int $page_id
-     * @return array|bool
-     */
-    public function readNavByPageId($page_id = -1)
-    {
-        if ($page_id == -1) {
-            return false;
-        }
-        $a_search_for = [':nav_page_id' => $page_id];
-        $results = $this->read($a_search_for);
-        if ($results !== false && count($results) > 0) {
-            $nav_id = $results[0]['nav_id'];
-            $parent_id = $results[0]['nav_parent_id'];
-            if ($nav_id != $parent_id) {
-                $nav_id = $this->findTopNav($nav_id);
-            }
-            return $this->readNavByParentId($nav_id);
-        }
-        else {
-            return false;
-        }
-    }
-
-    /**
-     * Returns an array of nav records that have the given nav id as nav_parent_id.
-     * Note that the nav_id needs to be a parent of nav records.
-     * Else it will return no records.
-     * @param int $nav_id
-     * @return bool|array
-     */
-    public function readNavByParentId($nav_id = -1)
-    {
-        if ($nav_id < 1) {
-            return false;
-        }
-        $sql = $this->read_nav_sql;
-        $where = "    AND m.nav_parent_id = :nav_parent_id\n";
-        $sql .= $where . $this->read_nav_order_sql;
-        $a_search_for = [':nav_parent_id' => $nav_id];
-        $results = $this->o_db->search($sql, $a_search_for);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
-        }
-        else {
-            return $results;
-        }
-    }
-
-    /**
-     * Returns the nav id of the top most nav for the given nav id.
-     * @param int $nav_id
-     * @return int
-     */
-    public function findTopNav($nav_id = -1)
-    {
-        if ($nav_id == -1) {
-            return 0;
-        }
-        $a_search_for = [':nav_id' => $nav_id];
-        $results = $this->read($a_search_for);
-        if ($results !== false && count($results) > 0) {
-            $nav_id = $results[0]['nav_id'];
-            $parent_id = $results[0]['nav_parent_id'];
-            if ($nav_id != $parent_id) {
-                return $this->findTopNav($parent_id);
-            }
-            else {
-                return $nav_id;
+        $a_new_list = array();
+        $a_results = $this->getNavListByParent($parent_id);
+        if ($a_results !== false && count($a_results) > 0) {
+            foreach ($a_results as $a_nav) {
+                $a_results = $this->getChildrenRecursive($a_nav['nav_id']);
+                $a_new_list[] = [
+                    'id'          => $a_nav['nav_id'],
+                    'name'        => $a_nav['name'],
+                    'url'         => $a_nav['url'],
+                    'description' => $a_nav['description'],
+                    'class'       => $a_nav['css'],
+                    'level'       => $a_nav['level'],
+                    'order'       => $a_nav['order'],
+                    'parent_id'   => $a_nav['parent_id'],
+                    'submenu'     => $a_results
+                ];
             }
         }
-        return 0;
+        return $a_new_list;
     }
 
     /**
      * Creates the array used to build a nav
      * @param int $page_id   optional, allows a nav to be build on a page id only
      * @param int $parent_id optional, allows only a partial nav to be built
-     * @return array
+     * @return array|false
      */
-    public function createNavArray($page_id = -1, $parent_id = -1)
+    public function createNavArray($ng_id = -1)
     {
-        if ($page_id > 0) {
-            $results = $this->readNavByPageId($page_id);
-        }
-        elseif ($parent_id > 0) {
-            $results = $this->readNavByParentId($parent_id);
-        }
-        else {
-            $results = $this->readNav();
-        }
-
-        // do some sort of loopy loop here
-
-        return $results; // temp
-    }
-
-    /**
-     * Checks to see the the nav has children.
-     * @param int $nav_id
-     * @return bool
-     */
-    public function navHasChildren($nav_id = -1)
-    {
-        if ($nav_id == -1) {
+        if ($ng_id == -1) {
             return false;
         }
-        $sql = "
-            SELECT DISTINCT nav_level
-            FROM {$this->db_prefix}navigation
-            WHERE nav_parent_id = :nav_parent_id
-            AND nav_id != nav_parent_id
-        ";
-        $a_search_values = [':nav_parent_id' => $nav_id, ];
-        $results = $this->o_db->search($sql, $a_search_values);
-        if ($results !== false && count($results) > 0) {
-            return true;
+        $a_new_list = array();
+        $a_top_list = $this->getTopLevelNavList($ng_id);
+        if ($a_top_list === false) { return false; }
+        foreach ($a_top_list as $a_nav) {
+            $a_results = $this->getChildrenRecursive($a_nav['nav_id']);
+            $a_new_list[] = [
+                'id'          => $a_nav['nav_id'],
+                'name'        => $a_nav['name'],
+                'url'         => $a_nav['url'],
+                'description' => $a_nav['description'],
+                'class'       => $a_nav['css'],
+                'level'       => $a_nav['level'],
+                'order'       => $a_nav['order'],
+                'parent_id'   => $a_nav['parent_id'],
+                'submenu'     => $a_results
+            ];
         }
-        return false;
+        return $a_new_list;
+    }
+
+    public function numOfLevels(array $a_nav_list = [])
+    {
+        $nav_level = 0;
+        foreach ($a_nav_list as $a_nav) {
+            if ($a_nav['nav_level'] > $nav_level) {
+                $nav_level = $a_nav['nav_level'];
+            }
+        }
+        return $nav_level;
     }
 
     /**
@@ -244,33 +199,40 @@ class NavAllModel
      */
     public function getReadNavString()
     {
-        return $this->read_nav_sql;
+        return $this->select_sql;
     }
 
     /**
-     * @param string $read_nav_sql normally not set.
+     * @param string $select_sql normally not set.
      */
-    public function setReadNavSql($read_nav_sql = '')
+    public function setReadNavSql($select_sql = '')
     {
-        if ($read_nav_sql == '') {
-            $read_nav_sql =<<<EOT
+        if ($select_sql == '') {
+            $select_sql =<<<EOT
 SELECT
     p.page_id as 'page_id',
     p.page_url as 'url',
     p.page_description as 'description',
-    m.nav_id as 'nav_id',
-    m.nav_parent_id as 'parent_id',
-    m.nav_name as 'name',
-    m.nav_css as 'css',
-    m.nav_level as 'level',
-    m.nav_order as 'order'
-FROM {$this->db_prefix}page as p, {$this->db_prefix}navigation as m
-WHERE p.page_id = m.nav_page_id
-    AND m.nav_active = 1
+    n.nav_id as 'nav_id',
+    n.nav_parent_id as 'parent_id',
+    n.nav_name as 'name',
+    n.nav_css as 'css',
+    n.nav_level as 'level',
+    n.nav_order as 'order'
+FROM
+    {$this->db_prefix}page as p,
+    {$this->db_prefix}navigation as n,
+    {$this->db_prefix}nav_ng_map as map,
+    {$this->db_prefix}navgroups as ng
+WHERE
+    p.page_id = n.nav_page_id
+AND n.nav_active = 1
+AND ng.ng_id = map.ng_id
+AND n.nav_id = map.nav_id
 
 EOT;
         }
-        $this->read_nav_sql = $read_nav_sql;
+        $this->select_sql = $select_sql;
     }
 
     /**
@@ -278,7 +240,7 @@ EOT;
      */
     public function getReadNavOrderSql()
     {
-        return $this->read_nav_order_sql;
+        return $this->select_order_sql;
     }
 
     /**
@@ -289,10 +251,10 @@ EOT;
     {
         if ($string == '') {
             $string =<<<EOT
-ORDER BY m.nav_level ASC, m.nav_order ASC, m.nav_name ASC
+ORDER BY n.nav_level ASC, n.nav_order ASC, n.nav_name ASC
 EOT;
         }
-        $this->read_nav_order_sql = $string;
+        $this->select_order_sql = $string;
     }
 
     /**
