@@ -2,9 +2,9 @@
 /**
  *  @brief     Does all the complex database CRUD stuff for the navigation.
  *  @ingroup   ritc_library models
- *  @file      NavAllModel.php
+ *  @file      NavComplexModel.php
  *  @namespace Ritc\Library\Models
- *  @class     NavAllModel
+ *  @class     NavComplexModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0 β1
  *  @date      2016-02-25 12:04:44
@@ -14,14 +14,21 @@
  **/
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Helper\Strings;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
-class NavAllModel
+class NavComplexModel
 {
     use LogitTraits;
 
+    /**
+     * @var string
+     */
+    private $db_prefix;
+    /**
+     * @var string
+     */
+    private $db_type;
     /**
      * @var string
      */
@@ -30,18 +37,6 @@ class NavAllModel
      * @var \Ritc\Library\Services\DbModel
      */
     private $o_db;
-    /**
-     * @var \Ritc\Library\Models\NavigationModel
-     */
-    private $o_nav;
-    /**
-     * @var \Ritc\Library\Models\NavgroupsModel
-     */
-    private $o_ng;
-    /**
-     * @var \Ritc\Library\Models\NavNgMapModel
-     */
-    private $o_map;
     /**
      * @var string
      */
@@ -60,9 +55,6 @@ class NavAllModel
         $this->o_db      = $o_db;
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
-        $this->o_nav     = new NavigationModel($o_db);
-        $this->o_ng      = new NavgroupsModel($o_db);
-        $this->o_map     = new NavNgMapModel($o_db);
     }
 
     /**
@@ -88,6 +80,11 @@ class NavAllModel
         }
     }
 
+    /**
+     * Returns array of the top level nav items for a navgroup.
+     * @param int $ng_id
+     * @return bool|array
+     */
     public function getTopLevelNavList($ng_id = -1)
     {
         if ($ng_id == -1) {
@@ -107,6 +104,11 @@ class NavAllModel
 
     }
 
+    /**
+     * Returns an array of nav items based on parent nav id.
+     * @param int $parent_id
+     * @return bool|mixed
+     */
     public function getNavListByParent($parent_id = -1) {
         if ($parent_id == -1) {
             return false;
@@ -154,8 +156,7 @@ class NavAllModel
 
     /**
      * Creates the array used to build a nav
-     * @param int $page_id   optional, allows a nav to be build on a page id only
-     * @param int $parent_id optional, allows only a partial nav to be built
+     * @param int $ng_id
      * @return array|false
      */
     public function createNavArray($ng_id = -1)
@@ -183,6 +184,11 @@ class NavAllModel
         return $a_new_list;
     }
 
+    /**
+     * Returns the number of levels for a given nav list.
+     * @param array $a_nav_list
+     * @return int
+     */
     public function numOfLevels(array $a_nav_list = [])
     {
         $nav_level = 0;
@@ -195,9 +201,10 @@ class NavAllModel
     }
 
     /**
+     * Getter for var $select_sql
      * @return string
      */
-    public function getReadNavString()
+    public function getSelectSql()
     {
         return $this->select_sql;
     }
@@ -205,7 +212,7 @@ class NavAllModel
     /**
      * @param string $select_sql normally not set.
      */
-    public function setReadNavSql($select_sql = '')
+    public function setSelectSql($select_sql = '')
     {
         if ($select_sql == '') {
             $select_sql =<<<EOT
@@ -236,9 +243,10 @@ EOT;
     }
 
     /**
+     * Getter for var $select_order_sql.
      * @return string
      */
-    public function getReadNavOrderSql()
+    public function getSelectOrderSql()
     {
         return $this->select_order_sql;
     }
@@ -247,7 +255,7 @@ EOT;
      * Sets the string for the ORDER BY statement used in several ReadNavX methods.
      * @param string $string optional
      */
-    public function setReadNavOrderSql($string = '')
+    public function setSelectOrderSql($string = '')
     {
         if ($string == '') {
             $string =<<<EOT
@@ -265,5 +273,4 @@ EOT;
     {
         return false;
     }
-
 }

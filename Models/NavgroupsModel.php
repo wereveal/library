@@ -127,8 +127,8 @@ class NavgroupsModel implements ModelInterface
             FROM {$this->db_prefix}navgroups
             {$where}
         ";
-        $this->logIt($sql, LOG_OFF, __METHOD__);
-        $this->logIt("Search Values: " . var_export($a_search_values, true), LOG_OFF, __METHOD__);
+        $this->logIt($sql, LOG_ON, __METHOD__);
+        $this->logIt("Search Values: " . var_export($a_search_values, true), LOG_ON, __METHOD__);
         $results = $this->o_db->search($sql, $a_search_values);
         return $results;
     }

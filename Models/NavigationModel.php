@@ -54,8 +54,6 @@ class NavigationModel implements ModelInterface
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
         $this->setFieldNames();
-        $this->setReadNavSql();
-        $this->setReadNavOrderSql();
     }
 
     /**
@@ -130,8 +128,9 @@ class NavigationModel implements ModelInterface
             {$where}
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__);
-        $this->logIt("Search Values: " . var_export($a_search_values, true), LOG_OFF);
+        $this->logIt("Search Values: " . var_export($a_search_values, true), LOG_OFF, __METHOD__);
         $results = $this->o_db->search($sql, $a_search_values);
+        $this->logIt("Nav Search results:\n" . var_export($results, true), LOG_OFF, __METHOD__);
         return $results;
     }
 
