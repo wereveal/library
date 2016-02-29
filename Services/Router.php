@@ -84,7 +84,7 @@ class Router
     public function __construct(Di $o_di)
     {
         $this->o_routes_helper = new RoutesHelper($o_di);
-        $this->setRouterParts();
+        $this->setRouteParts();
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
         }
@@ -101,7 +101,7 @@ class Router
      *      for which a blog controller would search in the blog db by blog_id.
      *  @return array
      */
-    public function setRouterParts()
+    public function setRouteParts()
     {
         $this->setRoutePath();
         $this->setGet();
@@ -176,7 +176,7 @@ class Router
     /**
      * @return mixed
      */
-    public function getRouterParts()
+    public function getRouteParts()
     {
         return $this->a_router_parts;
     }

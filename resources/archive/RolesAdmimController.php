@@ -19,23 +19,45 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\MangerControllerInterface;
+use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\RolesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RolesAdminView;
 
-class RolesAdmimController implements MangerControllerInterface
+class RolesAdmimController implements ManagerControllerInterface
 {
     use LogitTraits;
 
+    /**
+     * @var array
+     */
     private $a_post;
+    /**
+     * @var \Ritc\Library\Services\Di
+     */
     private $o_di;
+    /**
+     * @var \Ritc\Library\Models\RolesModel
+     */
     private $o_model;
+    /**
+     * @var \Ritc\Library\Services\Router
+     */
     private $o_router;
+    /**
+     * @var \Ritc\Library\Services\Session
+     */
     private $o_session;
+    /**
+     * @var \Ritc\Library\Views\RolesAdminView
+     */
     private $o_view;
 
+    /**
+     * RolesAdmimController constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_di      = $o_di;
@@ -52,7 +74,7 @@ class RolesAdmimController implements MangerControllerInterface
     }
     public function render()
     {
-        $a_route_parts = $this->o_router->getRouterParts();
+        $a_route_parts = $this->o_router->getRouteParts();
         $this->a_post  = $a_route_parts['post'];
         $main_action   = $a_route_parts['route_action'];
         $form_action   = $a_route_parts['form_action'];

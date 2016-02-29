@@ -89,7 +89,7 @@ class ManagerController implements ControllerInterface
         $this->o_di           = $o_di;
         $this->o_router       = $o_di->get('router');
         $this->o_session      = $o_di->get('session');
-        $this->a_route_parts  = $this->o_router->getRouterParts();
+        $this->a_route_parts  = $this->o_router->getRouteParts();
         $this->route_action   = $this->a_route_parts['route_action'];
         $this->route_method   = $this->a_route_parts['route_method'];
         $this->form_action    = $this->a_route_parts['form_action'];

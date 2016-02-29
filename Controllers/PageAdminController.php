@@ -80,7 +80,7 @@ class PageAdminController implements MangerControllerInterface
     public function render()
     {
         $meth = __METHOD__ . '.';
-        $a_route_parts = $this->o_router->getRouterParts();
+        $a_route_parts = $this->o_router->getRouteParts();
         $this->logIt('Route Parts' . var_export($a_route_parts, TRUE), LOG_OFF, $meth . __LINE__);
         $main_action = $a_route_parts['route_action'];
         $form_action = $a_route_parts['form_action'];
