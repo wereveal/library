@@ -116,7 +116,7 @@ class PeopleAdminView
     {
         $meth = __METHOD__ . '.';
 
-        $a_route_values = $this->o_router->getRouterParts();
+        $a_route_values = $this->o_router->getRouteParts();
         $log_message = 'router parts ' . var_export($a_route_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 

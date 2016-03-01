@@ -11,6 +11,7 @@
  *  @note <pre><b>Change Log</b>
  *      v1.0.0 β1  - inital version - 02/22/2016 wer
  *  </pre>
+ * @todo removeUnauthorizedLinks not working
  */
 namespace Ritc\Library\Traits;
 
@@ -45,7 +46,7 @@ trait ViewTraits
      */
     protected $o_di;
     /**
-     * @var MenusModel
+     * @var NavComplexModel
      */
     protected $o_nav;
     /**
@@ -65,7 +66,7 @@ trait ViewTraits
      *  The default setup for a view.
      *  @param Di $o_di
      */
-    protected function setupView(Di $o_di)
+    public function setupView(Di $o_di)
     {
         $this->setObjects($o_di);
         $this->setAdmLevel();
@@ -120,7 +121,7 @@ trait ViewTraits
         $message = 'In Set Nav: ' . var_export($a_nav, TRUE);
         $this->logIt($message, LOG_OFF, $meth . __LINE__);
         $o_routes = new RoutesHelper($this->o_di, '');
-        return $this->removeUnauthorized($a_nav, $o_routes);
+        return $this->removeUnauthorizedLinks($a_nav, $o_routes);
     }
 
     /**
@@ -142,9 +143,8 @@ trait ViewTraits
      */
     protected function removeUnauthorizedLinks(array $a_nav = [], RoutesHelper $o_routes) {
         $person_adm_level = $this->adm_level;
-        $this->logIt('Person adm level: ' . $person_adm_level, LOG_OFF, $meth . __LINE__);
         $current_route_path = $this->o_router->getRoutePath();
-
+        $a_route_parts = $this->o_router->getRouteParts();
         foreach($a_nav as $key => $a_item) {
             if (count($a_item['submenu']) > 0) {
                 $a_nav[$key]['submenu'] = $this->removeUnauthorizedLinks($a_item['submenu']);

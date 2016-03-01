@@ -69,7 +69,7 @@ class ConstantsAdminController implements MangerControllerInterface
         $this->o_view   = new ConstantsAdminView($this->o_di);
         /** @var Router $o_router */
         $o_router       = $this->o_di->get('router');
-        $a_router_parts = $o_router->getRouterParts();
+        $a_router_parts = $o_router->getRouteParts();
         $this->a_post   = $a_router_parts['post'];
         $this->a_router_parts = $a_router_parts;
         if (DEVELOPER_MODE) { // instead of needing the setElog method

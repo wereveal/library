@@ -77,7 +77,7 @@ class PeopleAdminController implements MangerControllerInterface
         $this->o_session     = $o_di->get('session');
         $this->o_router      = $o_di->get('router');
         $this->o_model       = new PeopleModel($o_db);
-        $this->a_route_parts = $this->o_router->getRouterParts();
+        $this->a_route_parts = $this->o_router->getRouteParts();
         $this->a_post_values = $this->a_route_parts['post'];
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');

@@ -84,7 +84,7 @@ class RoutesAdminController implements MangerControllerInterface
      */
     public function render()
     {
-        $a_route_parts = $this->o_router->getRouterParts();
+        $a_route_parts = $this->o_router->getRouteParts();
         $main_action = $a_route_parts['route_action'];
         $form_action = $a_route_parts['form_action'];
         $url_action    = isset($a_route_parts['url_actions'][0])
