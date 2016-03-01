@@ -1,19 +1,19 @@
-/* Idea is to have media queries break where it looks good, not on device size */
-@media screen and (max-width: 1200px) {
+/* Idea is to have media queries break where it looks good, not on device size - based on Bootstrap 4 */
+@media screen and (min-width: 1200px) {
 
 }
-@media screen and (max-width: 980px) {
+@media screen and (min-width: 992px) {
 
 }
-@media screen and (max-width: 750px) {
+@media screen and (min-width: 768px) {
 
 }
-@media screen and (max-width: 540px) {
+@media screen and (min-width: 544px) {
     .w450 {
         width: 200px;
     }
 }
-@media screen and (max-width: 380px) {
+@media screen and (min-width: 0px) {
     .w450 {
         width: 200px;
     }

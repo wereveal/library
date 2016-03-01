@@ -1,31 +1,3 @@
-/* Changes from Bootstrap */
-html { font-size: 13px; }
-body {
-    font-family: 'Lato', Helvetica, sans-serif;
-    font-weight: 400;
-    background-color: $default_body;
-    @media only screen and (max-width: 480px) {
-        padding: 0;
-    }
-}
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Merriweather', serif;
-    margin-top: 0;
-    padding-top: 0;
-}
-h1, h2, h3 { font-weight: 900; }
-h4, h5, h6 { font-weight: 700; }
-h1 { font-size: 2rem; }
-h2 { font-size: 1.75rem; }
-h3 { font-size: 1.5rem; }
-h4 { font-size: 1.25rem; }
-h5, h6 { font-size: 1rem; }
-h1, h3, h5 { color: $default_dark; }
-h2, h4, h6 { color: $default_complement; }
-p {
-    font-weight: 400;
-    font-size: 1rem;
-}
 .aright {
     text-align: right;
 }
@@ -36,20 +8,20 @@ p {
     font-weight: 900;
 }
 .container {
-    border: 1px solid $default_border;
+    border: 1px solid $color_border;
     border-radius: 0 2rem 2rem 0;
-    box-shadow: 0.6rem 0.6rem 1rem $default_shadow;
+    box-shadow: 0.6rem 0.6rem 1rem $color_shadow;
     padding: 1rem 2rem;
     margin-top: 1rem;
     margin-bottom: 2rem;
-    background-color: $default_container;
+    background-color: $color_container;
     .row {
-        background-color: $default_span;
+        background-color: $color_span;
         padding-right: 2rem;
         padding-left: 1rem;
         margin: 0;
         [class*="col"] {
-            background-color: $default_span;
+            background-color: $color_span;
             border: 0;
             padding: 0 .25rem;
             border-radius: 0;
@@ -58,8 +30,8 @@ p {
         }
         &.boxed {
             [class*="col"] {
-                background-color: $default_span;
-                border: 1px solid $default_border;
+                background-color: $color_span;
+                border: 1px solid $color_border;
                 border-radius: 10px;
                 margin-bottom: 1rem;
                 padding: 1rem 2rem;
@@ -81,9 +53,9 @@ p {
                 margin-top: .25rem;
                 margin-bottom: .25rem;
                 border-radius: 0;
-                background-color: $default_medium;
+                background-color: $color_medium;
             }
-            background-color: $default_medium;
+            background-color: $color_medium;
         }
         &.upper {
             border-radius: 0 2rem 0 0;
@@ -98,11 +70,15 @@ p {
     }
 }
 .red {
-    color: darkred;
+    color: $red_color;
 }
 .green {
     color: $green_color;
 }
+.blue {
+    color: $blue_color;
+}
+
 #login-form {
     .row {
         margin-right: 0;
@@ -116,24 +92,32 @@ p {
     }
 }
 .border-radius-top-right {
-    border-top-right-radius: 12px;
+    border-top-right-radius: $default_radius;
 }
 .border-radius-bottom-right {
-    border-bottom-right-radius: 12px;
+    border-bottom-right-radius: $default_radius;
 }
 .border-radius-top-left {
-    border-top-left-radius: 12px;
+    border-top-left-radius: $default_radius;
 }
 .border-radius-bottom-left {
-    border-bottom-left-radius: 12px;
+    border-bottom-left-radius: $default_radius;
 }
 .border-radius-left {
-    border-top-left-radius: 12px;
-    border-bottom-left-radius: 12px;
+    border-top-left-radius: $default_radius;
+    border-bottom-left-radius: $default_radius;
 }
 .border-radius-right {
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
+    border-top-right-radius: $default_radius;
+    border-bottom-right-radius: $default_radius;
+}
+.border-radius-top {
+    border-top-left-radius: $default_radius;
+    border-top-right-radius: $default_radius;
+}
+.border-radius-bottom {
+    border-bottom-left-radius: $default_radius;
+    border-bottom-right-radius: $default_radius;
 }
 .pad-right-12 {
     padding-right: 12px !important;
