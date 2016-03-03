@@ -84,7 +84,7 @@ class Router
     public function __construct(Di $o_di)
     {
         $this->o_routes_helper = new RoutesHelper($o_di);
-        $this->setRouterParts();
+        $this->setRouteParts();
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
         }
@@ -101,7 +101,7 @@ class Router
      *      for which a blog controller would search in the blog db by blog_id.
      *  @return array
      */
-    public function setRouterParts()
+    public function setRouteParts()
     {
         $this->setRoutePath();
         $this->setGet();
@@ -128,6 +128,7 @@ class Router
     {
         return $this->a_router_parts['groups'];
     }
+
     /**
      * @return mixed
      */
@@ -135,6 +136,7 @@ class Router
     {
         return $this->form_action;
     }
+
     /**
      * @param string $value
      * @return string
@@ -152,6 +154,7 @@ class Router
             }
         }
     }
+
     /**
      * @return mixed
      */
@@ -159,6 +162,7 @@ class Router
     {
         return $this->route_action;
     }
+
     /**
      * @return mixed
      */
@@ -166,6 +170,7 @@ class Router
     {
         return $this->route_class;
     }
+
     /**
      * @return mixed
      */
@@ -173,13 +178,15 @@ class Router
     {
         return $this->route_path;
     }
+
     /**
      * @return mixed
      */
-    public function getRouterParts()
+    public function getRouteParts()
     {
         return $this->a_router_parts;
     }
+
     /**
      * @param string $value
      * @return bool
@@ -201,6 +208,7 @@ class Router
             }
         }
     }
+
     /**
      *  Sets the class property $form_action.
      *  Assumes the array passed in is from a form posted after it was sanitized.
@@ -242,6 +250,7 @@ class Router
         $this->form_action = $action;
         return true;
     }
+
     /**
      * @param array $a_allowed_keys
      */
@@ -249,6 +258,7 @@ class Router
     {
         $this->a_get = Arrays::cleanArrayValues($_GET, $a_allowed_keys, true);
     }
+
     /**
      *  Sets the property $route_path.
      *  @param string $request_uri optional, defaults to $_SERVER['REQUEST_URI']
@@ -266,6 +276,7 @@ class Router
             $this->route_path = $request_uri;
         }
     }
+
     /**
      * @param array $a_allowed_keys
      */
@@ -273,6 +284,7 @@ class Router
     {
         $this->a_post = Arrays::cleanArrayValues($_POST, $a_allowed_keys, true);
     }
+
     /**
      * @return mixed
      */
