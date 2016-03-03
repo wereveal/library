@@ -11,12 +11,10 @@
  *  @note <pre><b>Change Log</b>
  *      v1.0.0 β1  - inital version - 02/22/2016 wer
  *  </pre>
- * @todo removeUnauthorizedLinks not working
  */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\AuthHelper;
-use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\DbModel;
@@ -113,15 +111,12 @@ trait ViewTraits
      */
     protected function createNav($nav_group = 1)
     {
-        $meth = __METHOD__ . '.';
         if ($this->adm_level == '') {
             $this->setAdmLevel();
         }
         $a_nav = $this->o_nav->createNavArray($nav_group);
-        $message = 'In Set Nav: ' . var_export($a_nav, TRUE);
-        $this->logIt($message, LOG_OFF, $meth . __LINE__);
-        $o_routes = new RoutesHelper($this->o_di, '');
-        return $this->removeUnauthorizedLinks($a_nav, $o_routes);
+        $a_nav = $this->removeUnauthorizedLinks($a_nav);
+        return $a_nav;
     }
 
     /**
@@ -137,12 +132,10 @@ trait ViewTraits
 
     /**
      * Removes Navigation links that the person is not authorized to see.
-     * @param array        $a_nav    If empty, this is a waste.
-     * @param RoutesHelper $o_routes an instance of the RoutesHelper.
+     * @param array $a_nav If empty, this is a waste.
      * @return array
      */
-    protected function removeUnauthorizedLinks(array $a_nav = [], RoutesHelper $o_routes) {
-        $person_adm_level = $this->adm_level;
+    protected function removeUnauthorizedLinks(array $a_nav = []) {
         $current_route_path = $this->o_router->getRoutePath();
         $a_route_parts = $this->o_router->getRouteParts();
         foreach($a_nav as $key => $a_item) {
