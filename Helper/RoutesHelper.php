@@ -27,13 +27,36 @@ class RoutesHelper
 {
     use LogitTraits;
 
+    /**
+     * @var array
+     */
     private $a_route_parts;
+    /**
+     * @var \Ritc\Library\Models\GroupsModel
+     */
     private $o_group;
+    /**
+     * @var \Ritc\Library\Models\RoutesModel
+     */
     private $o_model;
+    /**
+     * @var \Ritc\Library\Models\RoutesGroupMapModel
+     */
     private $o_rgm;
+    /**
+     * @var string
+     */
     private $route_path;
+    /**
+     * @var string
+     */
     private $request_uri;
 
+    /**
+     * RoutesHelper constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     * @param string                    $route_path
+     */
     public function __construct(Di $o_di, $route_path = '')
     {
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
@@ -52,6 +75,9 @@ class RoutesHelper
         }
     }
 
+    /**
+     * @param string $route_path
+     */
     public function setRouteParts($route_path = '')
     {
         if ($route_path == '') {
@@ -181,6 +207,10 @@ class RoutesHelper
         $a_groups = $this->getGroups($route_id);
         return $this->getMinAuthLevel($a_groups);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     /**
      *  @param string $route_path
      */
@@ -188,6 +218,7 @@ class RoutesHelper
     {
         $this->route_path = $route_path;
     }
+
     /**
      *  @return string
      */
@@ -195,6 +226,7 @@ class RoutesHelper
     {
         return $this->route_path;
     }
+
     /**
      *  @return array
      */
@@ -202,6 +234,7 @@ class RoutesHelper
     {
         return $this->a_route_parts;
     }
+
     /**
      *  @return string
      */
