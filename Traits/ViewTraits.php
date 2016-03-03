@@ -15,6 +15,7 @@
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\AuthHelper;
+use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\DbModel;
@@ -56,6 +57,10 @@ trait ViewTraits
      */
     protected $o_router;
     /**
+     * @var \Ritc\Library\Helper\RoutesHelper
+     */
+    protected $o_routes_helper;
+    /**
      * @var \Twig_Environment
      */
     protected $o_twig;
@@ -77,13 +82,14 @@ trait ViewTraits
      */
     protected function setObjects(Di $o_di)
     {
-        $this->o_di         = $o_di;
-        $this->o_router     = $o_di->get('router');
-        $this->o_twig       = $o_di->get('twig');
-        $this->o_db         = $o_di->get('db');
-        $this->o_auth       = new AuthHelper($o_di);
-        $this->o_page_model = new PageModel($this->o_db);
-        $this->o_nav        = new NavComplexModel($this->o_db);
+        $this->o_di            = $o_di;
+        $this->o_router        = $o_di->get('router');
+        $this->o_twig          = $o_di->get('twig');
+        $this->o_db            = $o_di->get('db');
+        $this->o_auth          = new AuthHelper($o_di);
+        $this->o_page_model    = new PageModel($this->o_db);
+        $this->o_nav           = new NavComplexModel($this->o_db);
+        $this->o_routes_helper = new RoutesHelper($o_di);
     }
 
     /**
@@ -116,6 +122,7 @@ trait ViewTraits
         }
         $a_nav = $this->o_nav->createNavArray($nav_group);
         $a_nav = $this->removeUnauthorizedLinks($a_nav);
+        $a_nav = $this->setActiveMenu($a_nav);
         return $a_nav;
     }
 
@@ -136,23 +143,15 @@ trait ViewTraits
      * @return array
      */
     protected function removeUnauthorizedLinks(array $a_nav = []) {
-        $current_route_path = $this->o_router->getRoutePath();
-        $a_route_parts = $this->o_router->getRouteParts();
         foreach($a_nav as $key => $a_item) {
             if (count($a_item['submenu']) > 0) {
                 $a_nav[$key]['submenu'] = $this->removeUnauthorizedLinks($a_item['submenu']);
             }
             else {
+                $this->o_routes_helper->setRouteParts($a_item['url']);
+                $a_route_parts = $this->o_routes_helper->getRouteParts();
                 if ($this->adm_level < $a_route_parts['min_auth_level']) {
                     unset($a_nav[$key]);
-                }
-                else {
-                    if ($a_nav['url'] = $current_route_path) {
-                        $a_nav[$key]['class'] .= ' menu-active';
-                    }
-                    else {
-                        $a_nav[$key]['class'] .= ' menu-inactive';
-                    }
                 }
             }
         }
@@ -209,5 +208,30 @@ trait ViewTraits
     public function getNav()
     {
         return $this->a_nav;
+    }
+
+    /**
+     * Adds class to the nav array to indicate active menu.
+     * @param array $a_nav
+     * @return array
+     */
+    protected function setActiveMenu(array $a_nav = [])
+    {
+        $a_route_parts = $this->o_router->getRouteParts();
+        $current_uri = $a_route_parts['request_uri'];
+        foreach ($a_nav as $key => $a_item) {
+            if (count($a_item['submenu']) > 0) {
+                $a_nav[$key]['submenu'] = $this->setActiveMenu($a_item['submenu']);
+            }
+            else {
+                if ($a_item['url'] == $current_uri) {
+                    $a_item['class'] .= ' menu-active';
+                }
+                else {
+                    $a_item['class'] .= ' menu-inactive';
+                }
+            }
+        }
+        return $a_nav;
     }
 }
