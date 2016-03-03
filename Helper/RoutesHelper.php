@@ -207,10 +207,7 @@ class RoutesHelper
         $a_groups = $this->getGroups($route_id);
         return $this->getMinAuthLevel($a_groups);
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> master
     /**
      *  @param string $route_path
      */

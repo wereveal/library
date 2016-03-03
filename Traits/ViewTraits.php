@@ -111,22 +111,6 @@ trait ViewTraits
     }
 
     /**
-     *  Creates an array of links used for menus and other navigation areas.
-     *  @param int $nav_group optional, defaults to the 1 nav group.
-     *  @return array
-     */
-    protected function createNav($nav_group = 1)
-    {
-        if ($this->adm_level == '') {
-            $this->setAdmLevel();
-        }
-        $a_nav = $this->o_nav->createNavArray($nav_group);
-        $a_nav = $this->removeUnauthorizedLinks($a_nav);
-        $a_nav = $this->setActiveMenu($a_nav);
-        return $a_nav;
-    }
-
-    /**
      * Sets the class property a_nav.
      * Uses the createNav method to do so.
      * @param int $nav_group optional, defaults to 1
@@ -134,28 +118,13 @@ trait ViewTraits
      */
     protected function setNav($nav_group = 1)
     {
-        $this->a_nav = $this->createNav($nav_group);
-    }
-
-    /**
-     * Removes Navigation links that the person is not authorized to see.
-     * @param array $a_nav If empty, this is a waste.
-     * @return array
-     */
-    protected function removeUnauthorizedLinks(array $a_nav = []) {
-        foreach($a_nav as $key => $a_item) {
-            if (count($a_item['submenu']) > 0) {
-                $a_nav[$key]['submenu'] = $this->removeUnauthorizedLinks($a_item['submenu']);
-            }
-            else {
-                $this->o_routes_helper->setRouteParts($a_item['url']);
-                $a_route_parts = $this->o_routes_helper->getRouteParts();
-                if ($this->adm_level < $a_route_parts['min_auth_level']) {
-                    unset($a_nav[$key]);
-                }
-            }
+        if ($this->adm_level == '') {
+            $this->setAdmLevel();
         }
-        return $a_nav;
+        $a_nav = $this->o_nav->createNavArray($nav_group);
+        $a_nav = $this->removeUnauthorizedLinks($a_nav);
+        $a_nav = $this->specifyActiveMenu($a_nav);
+        $this->a_nav = $a_nav;
     }
 
     /**
@@ -211,17 +180,38 @@ trait ViewTraits
     }
 
     /**
+     * Removes Navigation links that the person is not authorized to see.
+     * @param array $a_nav If empty, this is a waste.
+     * @return array
+     */
+    protected function removeUnauthorizedLinks(array $a_nav = []) {
+        foreach($a_nav as $key => $a_item) {
+            if (count($a_item['submenu']) > 0) {
+                $a_nav[$key]['submenu'] = $this->removeUnauthorizedLinks($a_item['submenu']);
+            }
+            else {
+                $this->o_routes_helper->setRouteParts($a_item['url']);
+                $a_route_parts = $this->o_routes_helper->getRouteParts();
+                if ($this->adm_level < $a_route_parts['min_auth_level']) {
+                    unset($a_nav[$key]);
+                }
+            }
+        }
+        return $a_nav;
+    }
+
+    /**
      * Adds class to the nav array to indicate active menu.
      * @param array $a_nav
      * @return array
      */
-    protected function setActiveMenu(array $a_nav = [])
+    protected function specifyActiveMenu(array $a_nav = [])
     {
         $a_route_parts = $this->o_router->getRouteParts();
         $current_uri = $a_route_parts['request_uri'];
         foreach ($a_nav as $key => $a_item) {
             if (count($a_item['submenu']) > 0) {
-                $a_nav[$key]['submenu'] = $this->setActiveMenu($a_item['submenu']);
+                $a_nav[$key]['submenu'] = $this->specifyActiveMenu($a_item['submenu']);
             }
             else {
                 if ($a_item['url'] == $current_uri) {
