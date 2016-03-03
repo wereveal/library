@@ -11,9 +11,10 @@
  *  @namespace Ritc\Library\Services
  *  @class     Access
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.1
- *  @date      2016-02-22 15:24:56
+ *  @version   1.1.0
+ *  @date      2016-03-03 01:13:16
  *  @note <pre><b>Change Log</b>
+ *      v1.1.0 - added function to return all objects           - 03/03/2016 wer
  *      v1.0.1 - removed unused use                             - 02/22/2016 wer
  *      v1.0.0 - it works, not sure why it wasn't out of beta   - 09/03/2015 wer
  *               Removed abstract Base as it wasn't being used
@@ -52,5 +53,14 @@ class Di
             return $this->a_objects[$object_name];
         }
         return false;
+    }
+
+    /**
+     * Returns the array of objects.
+     * @return array
+     */
+    public function getObjects()
+    {
+        return $this->a_objects;
     }
 }
