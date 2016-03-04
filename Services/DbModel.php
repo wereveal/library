@@ -7,9 +7,16 @@
  *  @namespace Ritc\Library\Services
  *  @class     DbModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   3.5.1
- *  @date      2016-02-25 12:44:54
+ *  @version   3.6.0
+ *  @date      2016-03-04 15:22:15
  *  @note <pre><b>Change Log</b>
+ *      v3.6.0 - Changed property name o_db to o_pdo to clarify what the object was       - 03/04/2016 wer
+ *               Added new method to "prepare" a list array
+ *               Added new method to create and return the formated sql error message.
+ *               Added new method to return the raw sql error info array.
+ *               Updated update set build method to block unallowed key value pairs
+ *               bug fixes, build insert sql didn't take into account prepared key names
+ *               Misc other fixes and modifications.
  *      v3.5.1 - added new method to create a string for the select field names           - 02/25/2016 wer
  *      v3.5.0 - added new method to create a string for the insert value names           - 02/23/2016 wer
  *      v3.4.0 - changed so that an array can be used in place of the preferred file      - 12/09/2015 wer
@@ -77,15 +84,11 @@ class DbModel
     /**
      * @var \PDO
      */
-    private $o_db;
+    private $o_pdo;
     /**
      * @var string
      */
     private $pgsql_sequence_name = '';
-    /**
-     * @var string
-     */
-    private $root_path;
     /**
      * @var mixed
      */
@@ -97,27 +100,27 @@ class DbModel
 
     /**
      * On creating a new object, certain things happen.
-     * @param  \PDO   $o_db        can be from PdoFactory or from a direct new PDO
-     *                             This means it can be independent of the PdoFactory.
+     * @param  \PDO   $o_pdo       can be from PdoFactory or from a direct new PDO
+     *                             This allows it to be independent of the PdoFactory.
      * @param  string $config_file name of the config file which is a returned array
      */
-    public function __construct(\PDO $o_db, $config_file = 'db_config.php')
+    public function __construct(\PDO $o_pdo, $config_file = 'db_config.php')
     {
-        $this->root_path = $_SERVER['DOCUMENT_ROOT'];
         $this->createDbParms($config_file);
-        $this->o_db = $o_db;
+        $this->o_pdo = $o_pdo;
     }
 
     ### Main Four Commands (CRUD) ###
     /**
      *  Inserts data into the database
      *  @param string $the_query the INSERT statement, default is empty.
-     *  @param array $a_values default is empty array
-     *      If blank, the values are in the INSERT string
-     *      If array then the INSERT string is for a prepared query
+     *  @param array $a_values     default is empty array
+     *                             If blank, the values are in the INSERT string
+     *                             If array then the INSERT string is for a prepared query
      *  @param array @a_table_info needed only if PostgreSQL is being used, Default array()
-     *                               ['table_name' => '', 'column_name' => '', 'schema_name' => '']
-     *  @return bool success or failure
+     *                             ['table_name' => '', 'column_name' => '', 'schema_name' => '']
+     *  @return bool
+     *  @return bool
     **/
     public function insert($the_query = '', array $a_values = array(), array $a_table_info = array())
     {
@@ -133,9 +136,9 @@ class DbModel
         }
         $this->logIt('Sequence Name: ' . $sequence_name, LOG_OFF, $meth . __LINE__);
         if (count($a_values) == 0) {
-            $this->affected_rows = $this->o_db->exec($the_query);
+            $this->affected_rows = $this->o_pdo->exec($the_query);
             if ($this->affected_rows === false) {
-                $this->setSqlErrorMessage($this->o_db);
+                $this->setSqlErrorMessage($this->o_pdo);
                 $this->logIt($this->getSqlErrorMessage(), LOG_ALWAYS, $meth . __LINE__);
                 return false;
             }
@@ -144,7 +147,7 @@ class DbModel
                 return false;
             }
             else { // note: kind of assumes there was a single record inserted
-                $this->a_new_ids = array($this->o_db->lastInsertId($sequence_name));
+                $this->a_new_ids = array($this->o_pdo->lastInsertId($sequence_name));
                 return true;
             }
         }
@@ -164,6 +167,7 @@ class DbModel
             return false;
         }
     }
+
     /**
      *  Searches the database for records.
      *  Can be set up with upto 3 arguments, the first required, the sql
@@ -192,9 +196,9 @@ class DbModel
             return false;
         }
         if (count($a_values) == 0) {
-            $o_pdo_stmt = $this->o_db->prepare($the_query);
+            $o_pdo_stmt = $this->o_pdo->prepare($the_query);
             if ($o_pdo_stmt === false) {
-                $this->setSqlErrorMessage($this->o_db);
+                $this->setSqlErrorMessage($this->o_pdo);
                 $this->logIt($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
                 return false;
             }
@@ -222,6 +226,7 @@ class DbModel
         }
         return $a_results;
     }
+
     /**
      *  Executes a query to modify one or more records.
      *  This is a stub. It executes the $this->mdQuery method
@@ -234,6 +239,7 @@ class DbModel
     {
         return $this->mdQuery($the_query, $a_values, $single_record);
     }
+
     /**
      *  Executes a query to delete one or more records.
      *  This is a stub. It executes the $this->mdQuery method
@@ -246,6 +252,7 @@ class DbModel
     {
         return $this->mdQuery($the_query, $a_values, $single_record);
     }
+
     /**
      *  Allows a raw query to be made.
      *  @param string $the_query
@@ -253,7 +260,7 @@ class DbModel
      */
     public function rawQuery($the_query)
     {
-        return $this->o_db->exec($the_query);
+        return $this->o_pdo->exec($the_query);
     }
 
     ### Getters and Setters
@@ -267,6 +274,7 @@ class DbModel
     {
         return $this->$var_name;
     }
+
     /**
      * @return mixed
      */
@@ -274,6 +282,7 @@ class DbModel
     {
         return $this->affected_rows;
     }
+
     /**
      * Gets the array $a_db_config which holds the config for the db.
      * @return array
@@ -282,6 +291,7 @@ class DbModel
     {
         return $this->a_db_config;
     }
+
     /**
      * @return mixed
      */
@@ -289,6 +299,7 @@ class DbModel
     {
         return $this->db_prefix;
     }
+
     /**
      * @return mixed
      */
@@ -296,6 +307,7 @@ class DbModel
     {
         return $this->db_type;
     }
+
     /**
      * @return array
      */
@@ -303,6 +315,7 @@ class DbModel
     {
         return $this->a_new_ids;
     }
+
     /**
      * @param array $a_table_info
      * @return string
@@ -314,6 +327,7 @@ class DbModel
         }
         return $this->pgsql_sequence_name;
     }
+
     /**
      * @return mixed
      */
@@ -321,6 +335,7 @@ class DbModel
     {
         return $this->success;
     }
+
     /**
      * @return mixed
      */
@@ -328,6 +343,7 @@ class DbModel
     {
         return $this->sql_error_message;
     }
+
     /**
      * @param string $value
      * @return null
@@ -337,6 +353,7 @@ class DbModel
         unset($value);
         return null; // db prefix can only be set privately
     }
+
     /**
      * @param string $value
      * @return null
@@ -346,6 +363,7 @@ class DbModel
         unset($value);
         return null; // db type can only be set privately
     }
+
     /**
      * @param string $value
      * @return bool
@@ -357,6 +375,7 @@ class DbModel
         }
         return true;
     }
+
     /**
      *  Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
      *  @param array $a_table_info  ['table_name', 'column_name', 'schema']<pre>
@@ -397,16 +416,46 @@ class DbModel
             return false;
         }
     }
+
     /**
-     *  @param object $o_pdo  a PDO object or a PDOStatement object
-     *  @return bool
-    **/
-    public function setSqlErrorMessage($o_pdo)
+     * Sets the class propery error_message to a formated string.
+     * @param \PDO $o_pdo
+     * @return bool
+     */
+    public function setSqlErrorMessage(\PDO $o_pdo)
     {
+        if (!is_object($o_pdo)) {
+            $o_pdo = $this->o_pdo;
+        }
         $a_error_stuff = $o_pdo->errorInfo();
-        $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] . ' Driver Error Code: ' . $a_error_stuff[1] . ' Driver Error Message: ' . $a_error_stuff[2];
+        $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] . "\nDriver Error Code: " . $a_error_stuff[1] . "\nDriver Error Message: " . $a_error_stuff[2];
         return true;
     }
+
+    /**
+     * Sets and gets the sql_error_message property.
+     * @param \PDO $o_pdo
+     * @return mixed
+     */
+    public function retrieveFormatedSqlErrorMessage(\PDO $o_pdo)
+    {
+        if (!is_object($o_pdo)) {
+            $o_pdo = $this->o_pdo;
+        }
+        $this->setSqlErrorMessage($o_pdo);
+        return $this->sql_error_message;
+    }
+
+    /**
+     * Retrieves the raw sql errors.
+     * In the format of ['SQLSTATE Error Code', 'Driver Error Code', 'Driver Error Message'].
+     * @return array
+     */
+    public function retrieveRawSqlErrorInfo()
+    {
+        return $this->o_pdo->errorInfo();
+    }
+
     /**
      *  A setter of the $a_new_ids property
      *  @return void
@@ -459,6 +508,7 @@ class DbModel
             return false;
         }
     }
+
     /**
      * @param \PDOStatement $o_pdo_stmt
      * @return bool
@@ -467,13 +517,15 @@ class DbModel
     {
         return $o_pdo_stmt->closeCursor();
     }
+
     /**
      * @return bool
      */
     public function commitTransaction()
     {
-        return $this->o_db->commit();
+        return $this->o_pdo->commit();
     }
+
     /**
      * Executes a prepared query
      * @param array $a_values <pre>
@@ -514,6 +566,7 @@ class DbModel
             return $o_pdo_stmt->execute(); // values have been bound elsewhere
         }
     }
+
     /**
      *  Executes the pdo fetch method
      *
@@ -567,6 +620,7 @@ class DbModel
                 return $o_pdo_stmt->fetch(\PDO::FETCH_ASSOC, $cursor_orientation, $cursor_offset);
         }
     }
+
     /**
      *  Prepares a sql statement for execution
      *
@@ -604,6 +658,7 @@ class DbModel
                 return $o_pdo_stmt->fetchAll(\PDO::FETCH_ASSOC);
         }
     }
+
     /**
      * @param string $the_query
      * @param string $cursor
@@ -615,11 +670,11 @@ class DbModel
         if ($the_query != '') {
             switch ($cursor) {
                 case 'SCROLL':
-                    $o_pdo_stmt = $this->o_db->prepare($the_query, array(\PDO::ATTR_CURSOR =>  \PDO::CURSOR_SCROLL));
+                    $o_pdo_stmt = $this->o_pdo->prepare($the_query, array(\PDO::ATTR_CURSOR =>  \PDO::CURSOR_SCROLL));
                     break;
                 case 'FWDONLY':
                 default:
-                    $o_pdo_stmt = $this->o_db->prepare($the_query, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+                    $o_pdo_stmt = $this->o_pdo->prepare($the_query, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
             }
             if ($o_pdo_stmt !== false) {
                 $this->logIt('Success for prepare.', LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -636,13 +691,15 @@ class DbModel
             return false;
         }
     }
+
     /**
      * @return bool
      */
     public function rollbackTransaction()
     {
-        return $this->o_db->rollBack();
+        return $this->o_pdo->rollBack();
     }
+
     /**
      * @param \PDOStatement $o_pdo_stmt
      * @return int
@@ -651,12 +708,13 @@ class DbModel
     {
         return $o_pdo_stmt->rowCount();
     }
+
     /**
      * @return bool
      */
     public function startTransaction()
     {
-        return $this->o_db->beginTransaction();
+        return $this->o_pdo->beginTransaction();
     }
 
     ### Complete Transaction in a single command
@@ -672,10 +730,10 @@ class DbModel
             $this->logIt('The Query was blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return false;
         }
-        if ($this->o_db->beginTransaction()) {
+        if ($this->o_pdo->beginTransaction()) {
             $results = $this->insert($the_query, $a_values, $table_name);
             if ($results) {
-                if ($this->o_db->commit() === false) {
+                if ($this->o_pdo->commit() === false) {
                     $message = 'Could Not Commit the Transaction.';
                 }
                 else {
@@ -689,12 +747,13 @@ class DbModel
         else {
             $message = 'Could not start transaction so we could not execute the insert, Please Try Again.';
         }
-        $this->setSqlErrorMessage($this->o_db);
+        $this->setSqlErrorMessage($this->o_pdo);
         $this->logIt($this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $this->o_db->rollBack();
+        $this->o_pdo->rollBack();
         $this->logIt($message);
         return false;
     }
+
     /**
      * @param string $the_query
      * @param array  $the_array
@@ -704,10 +763,10 @@ class DbModel
     public function queryTransaction($the_query = '', array $the_array = array(), $single_record = true)
     {
         $this->logIt("The Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-        if ($this->o_db->beginTransaction()) {
+        if ($this->o_pdo->beginTransaction()) {
             $results = $this->mdQuery($the_query, $the_array, $single_record);
             if ($results) {
-                if ($this->o_db->commit() === false) {
+                if ($this->o_pdo->commit() === false) {
                     $message = 'Could Not Commit the Transaction.';
                 }
                 else {
@@ -721,11 +780,12 @@ class DbModel
         else {
             $message = 'Could not start transaction so we could not execute the query, Please Try Again.';
         }
-        $this->setSqlErrorMessage($this->o_db);
+        $this->setSqlErrorMessage($this->o_pdo);
         $this->logIt($message . ' ==> ' . $this->getSqlErrorMessage(), LOG_OFF);
         $this->rollbackTransaction();
         return false;
     }
+
     /**
      * @param string $the_query
      * @param array  $the_array
@@ -741,6 +801,7 @@ class DbModel
         }
         return $results;
     }
+
     /**
      * @param string $the_query
      * @param array  $the_array
@@ -773,7 +834,7 @@ class DbModel
             $results = $this->executeInsert($a_values, $o_pdo_stmt, $a_table_info);
             if ($results === false) {
                 $this->logIt('Execute Failure', LOG_OFF, $meth . __LINE__);
-                $this->setSqlErrorMessage($this->o_db);
+                $this->setSqlErrorMessage($this->o_pdo);
                 $this->logIt('PDO: ' . $this->getSqlErrorMessage(), LOG_OFF, $meth . __LINE__);
                 $this->setSqlErrorMessage($o_pdo_stmt);
                 $this->logIt('PDO_Statement: ' . $this->getSqlErrorMessage(), LOG_OFF, $meth . __LINE__);
@@ -788,6 +849,7 @@ class DbModel
             return false;
         }
     }
+
     /**
      *  Specialized version of execute which retains ids of each insert.
      *
@@ -816,7 +878,7 @@ class DbModel
                 if ($this->execute($a_values, $o_pdo_stmt) === false) {
                     return false;
                 }
-                $this->a_new_ids[] = $this->o_db->lastInsertId($sequence_name);
+                $this->a_new_ids[] = $this->o_pdo->lastInsertId($sequence_name);
             }
             return true;
         }
@@ -825,6 +887,7 @@ class DbModel
             return false;
         }
     }
+
     /**
      *  Used for both modifying and deleting record(s)
      *  @param string $the_query - the sql statement, required, default is ''
@@ -840,9 +903,9 @@ class DbModel
             return false;
         }
         if ($a_values == array()) {
-            $this->affected_rows = $this->o_db->exec($the_query);
+            $this->affected_rows = $this->o_pdo->exec($the_query);
             if ($this->affected_rows === false) {
-                $this->setSqlErrorMessage($this->o_db);
+                $this->setSqlErrorMessage($this->o_pdo);
                 $this->logIt($this->getSqlErrorMessage(), LOG_OFF, $from_method . __LINE__);
                 return false;
             }
@@ -876,6 +939,7 @@ class DbModel
             return false;
         }
     }
+
     /**
      * @param array         $a_values
      * @param bool          $single_record
@@ -916,6 +980,7 @@ class DbModel
             return false;
         }
     }
+
     /**
      *  Do a query.
      *  Has two params. The first is required. The second is required if the first param doesn't include a valid sql statement.
@@ -1015,6 +1080,7 @@ class DbModel
                 return false;
         }
     }
+
     /**
      * @param array         $a_values
      * @param \PDOStatement $o_pdo_stmt
@@ -1068,8 +1134,13 @@ class DbModel
     ### Utility Functions
     /**
      * Creates a string that is part of an INSERT sql statement.
-     * @param array $a_values
-     * @param array $a_allowed_keys
+     * It produces a string in "prepared" format, e.g. ":fred" for the values.
+     * It removes any pair whose key is not in the allowed keys array.
+     * @param array $a_values       assoc array of values to that will be inserted.
+     *                              It should be noted that only the key name is important,
+     *                              but using the array of the actual values being inserted
+     *                              ensures that only those values are inserted.
+     * @param array $a_allowed_keys list array of key names that are allowed in the a_values array.
      * @return string
      */
     public function buildSqlInsert(array $a_values = [], array $a_allowed_keys = [])
@@ -1077,19 +1148,30 @@ class DbModel
         if (count($a_values) === 0 || count($a_allowed_keys) === 0) {
             return '';
         }
+        $a_values = $this->prepareKeys($a_values);
+        $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
         $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
         $insert_names = '';
         $value_names  = '';
         foreach ($a_values as $key => $value) {
+            if (strpos($key, ':') !== false) {
+                $insert_name = str_replace(':', '', $key);
+                $value_name  = $key;
+            }
+            else {
+                $insert_name = $key;
+                $value_name  = ':' . $key;
+            }
             $insert_names .= $insert_names == ''
-                ? $key
-                : ",\n\t"  . $key;
+                ? '    ' . $insert_name
+                : ",\n    "  . $insert_name;
             $value_names  .= $value_names == ''
-                ? ':' . $key
-                : ",\n\t:" . $key;
+                ? '    ' . $value_name
+                : ",\n    " . $$value_name;
         }
         return $insert_names . "\n) VALUES (\n" . $value_names;
     }
+
     /**
      * Builds the select field portion of a sql select statement.
      * Can be a simple array list or an assoc array which specifies
@@ -1117,22 +1199,26 @@ class DbModel
         }
         return $select_me;
     }
+
     /**
-     *  Builds the SET part of an UPDATE sql statement
-     *  @param array $a_values required key=>value pairs
-     *      pairs are those to be used in the statement fragment
-     *  @param array $a_skip_keys optional list of keys to skip in the set statement
-     *  @return string $set_sql
+     * Builds the SET part of an UPDATE sql statement.
+     * Provides optional abilities to skip certain pairs and removed undesired pairs.
+     * @param array $a_values required key=>value pairs
+     *                        pairs are those to be used in the statement fragment.
+     * @param array $a_skip_keys optional list of keys to skip in the set statement
+     * @param array $a_allowed_keys optional list of allowed keys to be in the values array.
+     * @return string $set_sql
     **/
-    public function buildSqlSet(array $a_values = array(), $a_skip_keys = array('nothing_to_skip'))
+    public function buildSqlSet(array $a_values = [], array $a_skip_keys = ['nothing_to_skip'], array $a_allowed_keys = [])
     {
         if ($a_values == array()) { return ''; }
         $set_sql = '';
         $a_values = $this->prepareKeys($a_values);
-        foreach ($a_skip_keys as $skip_key => $skip_value) {
-            $a_skip_keys[$skip_key] = strpos($skip_value, ':') === 0 ? $skip_value : ':' . $skip_value;
+        if ($a_allowed_keys !== []) {
+            $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
+            $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
         }
-        $this->logIt('skip keys: ' . var_export($a_skip_keys, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $a_skip_keys = $this->prepareListArray($a_skip_keys);
         foreach ($a_values as $key => $value) {
             if (!in_array($key, $a_skip_keys)) {
                 if ($set_sql == '' ) {
@@ -1145,12 +1231,13 @@ class DbModel
         }
         return $set_sql;
     }
+
     /**
-     *  Builds the WHERE section of a SELECT stmt.
-     *  Also optionally builds the ORDER BY and LIMIT section of a SELECT stmt.
-     *  It might be noted that if both arguments are missing, it returns a blank string.
-     *  @param array $a_search_for optional assoc array field_name=>field_value
-     *  @param array $a_search_parameters optional allows one to specify various settings
+     * Builds the WHERE section of a SELECT stmt.
+     * Also optionally builds the ORDER BY and LIMIT section of a SELECT stmt.
+     * It might be noted that if first two arguments are empty, it returns a blank string.
+     * @param array $a_search_for optional assoc array field_name=>field_value
+     * @param array $a_search_parameters optional allows one to specify various settings
      *      array(
      *          'search_type' => 'AND', // can also be or
      *          'limit_to' => '', // limit the number of records to return
@@ -1160,10 +1247,12 @@ class DbModel
      *          'where_exists' => false //
      *      )
      *      Not all parameters need to be in the array, if doesn't exist, the default setting will be used.
-     *  @return string $where
+     * @param array $a_allowed_keys optional list array
+     * @return string $where
     **/
-    public function buildSqlWhere(array $a_search_for = array(), array $a_search_parameters = array())
+    public function buildSqlWhere(array $a_search_for = [], array $a_search_parameters = [], array $a_allowed_keys = [])
     {
+        $meth = __METHOD__ . '.';
         $search_type = 'AND';
         $comparison_type = '=';
         $starting_from = '';
@@ -1186,10 +1275,20 @@ class DbModel
                 }
             }
         }
+        /* set the $key to have a value compatible for a prepared statement */
         if (count($a_search_for) > 0) {
-            $a_search_pairs = $this->prepareKeys($a_search_for);
-            $this->logIt('search pairs prepared: ' . var_export($a_search_pairs, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            foreach ($a_search_pairs as $key => $value) {
+            $a_search_for = $this->prepareKeys($a_search_for);
+        }
+        /* remove any unwanted pairs from array */
+        if (count($a_search_for) > 0 && count($a_allowed_keys) > 0) {
+            $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
+            $a_search_for = Arrays::removeUndesiredPairs($a_search_for, $a_allowed_keys);
+        }
+        /* after all that, if there are still pairs, go for it */
+        if (count($a_search_for) > 0) {
+            $message = 'search pairs prepared: ' . var_export($a_search_for, true);
+            $this->logIt($message, LOG_OFF, $meth . __LINE__);
+            foreach ($a_search_for as $key => $value) {
                 $field_name = preg_replace('/^:/', '', $key);
                 if (strpos($key, '.') !== false) {
                     $key = preg_replace('/^:(.*)\.(.*)/', ':$2', $key);
@@ -1218,6 +1317,7 @@ class DbModel
         }
         return $where;
     }
+
     /**
      *  Creates the class properties of a_db_config, db_type and db_prefix from config file or array if passed in.
      *  Prefer config file but array is allowed so this can be called without a config file.
@@ -1257,6 +1357,7 @@ class DbModel
         $this->db_prefix   = $a_db['prefix'];
         $this->db_type     = $a_db['driver'];
     }
+
     /**
      *  Gets the variable for the fetch style
      *  @param string $type
@@ -1276,6 +1377,7 @@ class DbModel
                 return \PDO::FETCH_ASSOC;
         }
     }
+
     /**
      *  Determines if any required keys are missing
      *  @param array $a_required_keys required
@@ -1301,6 +1403,7 @@ class DbModel
         }
         return $a_missing_keys;
     }
+
     /**
      *  Finds missing or empty values for given key => value pair
      *  @param array $a_required_keys required list of keys that need to have values
@@ -1327,6 +1430,7 @@ class DbModel
         }
         return $a_keys;
     }
+
     /**
      *  Verifies that the php mysqli extension is installed
      *  Left over, not sure it is needed now
@@ -1340,10 +1444,11 @@ class DbModel
             return false;
         }
     }
+
     /**
-     *  Changes array keys to be compatible with prepared statements
-     *  @param array $array associative array, named keys, required
-     *  @return array - fixed key names
+     *  Changes array keys to be compatible with prepared statements.
+     *  @param array $array required associative array, named keys
+     *  @return array fixed key names
     **/
     public function prepareKeys(array $array = array())
     {
@@ -1370,6 +1475,22 @@ class DbModel
             return false;
         }
     }
+
+    /**
+     * Changes the list array so that the values (key names) have "prepared" format, e.g., ":fred".
+     * @param array $array
+     * @return array
+     */
+    public function prepareListArray(array $array = [])
+    {
+        foreach ($array as $key => $value) {
+            $array[$key] = strpos($value, ':') === 0
+                ? $value
+                : ':' . $value;
+        }
+        return $array;
+    }
+
     /**
      *  Changes array values to help build a prepared statement primarily the WHERE.
      *  @param array $array key/value pairs to fix
@@ -1393,17 +1514,19 @@ class DbModel
             return false;
         }
     }
+
     /**
      *  Use the \PDO::quote function to make the string safe for use in a query.
-     *  Used only when not using a prepared sql statement
+     *  Used only when not using a prepared sql statement.
      *  @see \PDO::quote
      *  @param $value (str)
      *  @return string - quoted string
     **/
     public function quoteString($value)
     {
-        return $this->o_db->quote($value);
+        return $this->o_pdo->quote($value);
     }
+
     /**
      *  Removes unwanted key=>values for a prepared query
      *  @param array $a_required_keys
@@ -1425,6 +1548,7 @@ class DbModel
         }
         return $a_values;
     }
+
     /**
      *  Returns a list of the columns from a database table.
      *  @param $table_name (str) - name of the table
@@ -1470,6 +1594,7 @@ class DbModel
             return false;
         }
     }
+
     /**
      *  Selects the table names from the database.
      *  @return array $a_table_names
