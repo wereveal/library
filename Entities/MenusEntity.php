@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Basic accessors for a menu entity.
- *  @ingroup   ritc_library entities
+ *  @ingroup   ritc_library lib_entities
  *  @file      MenusEntity.php
  *  @namespace Ritc\Library\Entities
  *  @class     MenusEntity

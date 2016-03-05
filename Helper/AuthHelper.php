@@ -4,7 +4,7 @@
  *  @details   It is expected that this will be used within a controller and
  *             more finely grained access with be handled there
  *             or in a sub-controller.
- *  @ingroup   ritc_library helper
+ *  @ingroup   ritc_library lib_helper
  *  @file      AuthHelper.php
  *  @namespace Ritc\Library\Helper
  *  @class     AuthHelper

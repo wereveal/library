@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     View for the Configuration page.
- *  @ingroup   ritc_library views
+ *  @ingroup   ritc_library lib_views
  *  @file      ConstantsAdminView.php
  *  @namespace Ritc\Library\Views
  *  @class     ConstantsAdminView

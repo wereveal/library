@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Common functions that would be used in several database classes.
- *  @ingroup   ritc_library traits
+ *  @ingroup   ritc_library lib_traits
  *  @file      DbTraits.php
  *  @namespace Ritc\Library\Traits
  *  @class     DbTraits

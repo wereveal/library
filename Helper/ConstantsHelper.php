@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Create Constants from the constants database
- *  @ingroup   ritc_library helper
+ *  @ingroup   ritc_library lib_helper
  *  @file      ConstantsHelper.php
  *  @namespace Ritc\Library\Helper
  *  @class     ConstantsHelper

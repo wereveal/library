@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     View for the Page Admin page.
- *  @ingroup   ritc_library views
+ *  @ingroup   ritc_library lib_views
  *  @file      PageAdminView.php
  *  @namespace Ritc\Library\Views
  *  @class     PageAdminView

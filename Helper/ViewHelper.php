@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Various helper functions for views.
- *  @ingroup   ritc_library helper
+ *  @ingroup   ritc_library lib_helper
  *  @file      ViewHelper.php
  *  @namespace Ritc\Library\Helper
  *  @class     ViewHelper

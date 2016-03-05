@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     View for the Manager page.
- *  @ingroup   ritc_library views
+ *  @ingroup   ritc_library lib_views
  *  @file      ManagerView.php
  *  @namespace Ritc\Library\Views
  *  @class     ManagerView

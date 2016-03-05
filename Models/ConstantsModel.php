@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Creates a Model object.
- *  @ingroup   ritc_library models
+ *  @ingroup   ritc_library lib_models
  *  @file      ConstantsModel.php
  *  @namespace Ritc\Library\Models
  *  @class     ConstantsModel

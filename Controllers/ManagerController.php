@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     The main Controller for the manager.
- *  @ingroup   ritc_library controllers
+ *  @ingroup   ritc_library lib_controllers
  *  @file      ManagerController.php
  *  @namespace Ritc\Library\Controllers
  *  @class     ManagerController

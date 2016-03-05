@@ -4,7 +4,7 @@
  *  @details   Methods which start with make_ return a modified version
  *             of the value passed into the method, usually indicated by
  *             the name of the method
- *  @ingroup   ritc_library helper
+ *  @ingroup   ritc_library lib_helper
  *  @file      Html.php
  *  @namespace Ritc\Library\Helper
  *  @class     Html

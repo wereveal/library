@@ -1,4 +1,17 @@
 <?php
+/**
+ * @brief     Tests the Constants Model Class.
+ * @details   Tests the Constants Model Class.
+ * @ingroup   ritc_library lib_tests
+ * @file      ConstantsModelTester.php
+ * @namespace Ritc\Library\Tests
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0-alpha.0
+ * @date      2016-03-05 10:44:05
+ * @note Change Log
+ * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
+ * - v0.1.0         - Initial version                - unknown wer
+ */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
@@ -6,6 +19,11 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 
+/**
+ * Class ConstantsModelTester.
+ * @class   ConstantsModelTester
+ * @package Ritc\Library\Tests
+ */
 class ConstantsModelTester extends Tester
 {
     protected $a_test_order;

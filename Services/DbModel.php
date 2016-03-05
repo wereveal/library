@@ -2,7 +2,7 @@
 /**
  *  @brief     Does all the database CRUD stuff.
  *  @details   For read/write access to the database based on PDO.
- *  @ingroup   ritc_library services
+ *  @ingroup   ritc_library lib_services
  *  @file      DbModel.php
  *  @namespace Ritc\Library\Services
  *  @class     DbModel

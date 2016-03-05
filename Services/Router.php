@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Determines the controller and method to use based on URI.
- *  @ingroup   ritc_library services
+ *  @ingroup   ritc_library lib_services
  *  @file      Router.php
  *  @namespace Ritc\Library\Services
  *  @class     Router

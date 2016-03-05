@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Various helper functions for routes.
- *  @ingroup   ritc_library helper
+ *  @ingroup   ritc_library lib_helper
  *  @file      RoutesHelper.php
  *  @namespace Ritc\Library\Helper
  *  @class     RoutesHelper

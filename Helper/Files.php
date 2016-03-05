@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Determines the path to the file.
- *  @ingroup   ritc_library Helper
+ *  @ingroup   ritc_library lib_helper
  *  @file      Files.php
  *  @namespace Ritc\Library\Helper
  *  @class     Files

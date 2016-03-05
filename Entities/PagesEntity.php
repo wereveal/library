@@ -4,7 +4,7 @@
  *  @details   This Provides data needed to generate the html, e.g. title,
  *             description, file type, etc that would be in the <head> part of
  *             the page.
- *  @ingroup   ritc_library entities
+ *  @ingroup   ritc_library lib_entities
  *  @file      PagesEntity.php
  *  @namespace Ritc\Library\Entities
  *  @class     PagesEntity

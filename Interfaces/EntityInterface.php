@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Class used to set up entity classes.
- *  @ingroup   ritc_library interfaces
+ *  @ingroup   ritc_library lib_interfaces
  *  @file      EntityInterface.php
  *  @namespace Ritc\Library\Interfaces
  *  @class     EntityInterface

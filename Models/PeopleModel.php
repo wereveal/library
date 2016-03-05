@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Does all the database CRUD stuff.
- *  @ingroup   ritc_library models
+ *  @ingroup   ritc_library lib_models
  *  @file      PeopleModel.php
  *  @namespace Ritc\Library\Models
  *  @class     PeopleModel

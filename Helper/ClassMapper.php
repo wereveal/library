@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Creates the autoload_classmap.php file.
- *  @ingroup   ritc_library helper
+ *  @ingroup   ritc_library lib_helper
  *  @file      ClassMapper.php
  *  @namespace Ritc\Library\Helper
  *  @class     Arrays

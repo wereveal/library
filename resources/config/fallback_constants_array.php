@@ -5,8 +5,9 @@ return array(
     ['EMAIL_DOMAIN', 'replaceme.com',  1],
     ['EMAIL_FORM_TO', 'me@replaceme.com',  1],
     ['ERROR_EMAIL_ADDRESS', 'webmaster@revealitconsulting.com', 1],
-    ['PAGE_TEMPLATE', 'base.twig', 1],
-    ['TWIG_PREFIX', 'app_', 1],
+    ['RIGHTS_HOLDER', 'Reveal IT Consulting'],
+    ['PAGE_TEMPLATE', 'index.twig', 1],
+    ['TWIG_PREFIX', '@qcdg_', 1],
     ['THEME_NAME', '', 1],
     ['ADMIN_THEME_NAME', '', 1],
     ['THEMES_DIR', '', 1],
@@ -19,6 +20,6 @@ return array(
     ['FILES_DIR_NAME', 'files', 1],
     ['PRIVATE_DIR_NAME', 'private', 1],
     ['TMP_DIR_NAME', 'tmp', 1],
-    ['DEVELOPER_MODE', false, 1],
-    ['SESSION_IDLE_TIME', 1800, 1]
+    ['SESSION_IDLE_TIME', 1800, 1],
+    ['DEVELOPER_MODE', false, 1]
 );

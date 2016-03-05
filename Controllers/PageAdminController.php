@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Controller for the Page Admin page.
- *  @ingroup   ritc_library controllers
+ *  @ingroup   ritc_library lib_controllers
  *  @file      PageAdminController.php
  *  @namespace Ritc\Library\Controllers
  *  @class     PageAdminController

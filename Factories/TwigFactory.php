@@ -3,7 +3,7 @@
  *  @brief     A Twig Factory.
  *  @details   Lets us create a twig object, specific to a configuration
  *             allowing multiple twig objects to render the html
- *  @ingroup   ritc_library Services
+ *  @ingroup   ritc_library lib_factories
  *  @file      TwigFactory.php
  *  @namespace Ritc\Library\Services
  *  @class     TwigFactory

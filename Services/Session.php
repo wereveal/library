@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     For managing sessions.
- *  @ingroup   ritc_library services
+ *  @ingroup   ritc_library lib_services
  *  @file      Session.php
  *  @namespace Ritc\Library\Services
  *  @class     Session

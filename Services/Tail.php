@@ -2,7 +2,7 @@
 /**
  *  @brief     Similar to the Unix tail command e.g. tail -n 40 file.php.
  *  @detail    When on a webpage, use the meta refresh to keep tailing a file.
- *  @ingroup   ritc_library services
+ *  @ingroup   ritc_library lib_services
  *  @file      Tail.php
  *  @namespace Ritc\Library\Services
  *  @class     Tail

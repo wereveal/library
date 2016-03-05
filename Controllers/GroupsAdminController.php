@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Controller for the Groups Admin page.
- *  @ingroup   ritc_library controllers
+ *  @ingroup   ritc_library lib_controllers
  *  @file      GroupsAdmimController.php
  *  @namespace Ritc\Library\Controllers
  *  @class     GroupsAdmimController

@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     A basic entity class for the Article table.
- *  @ingroup   ritc_library entities
+ *  @ingroup   ritc_library lib_entities
  *  @file      PeopleGroupMapEntity.php
  *  @namespace Ritc\Library\Entities
  *  @class     PeopleGroupMapEntity

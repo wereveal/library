@@ -3,7 +3,7 @@
  *  @brief     A Base Class that all other classes use.
  *  @details   Primarily this is used to fix the visibility issue that PHP ignores.
  *             Also establishes the way the error logging can be injected when needed.
- *  @ingroup   ritc_library abstracts
+ *  @ingroup   ritc_library lib_abstracts
  *  @file      Base.php
  *  @namespace Ritc\Library\Abstracts
  *  @class     Base
@@ -16,7 +16,7 @@
  *               Also, it should be an abstract since it should never be instantiated by itself.
  *      v1.1.0 - allow elog to be injected into a class else ignores logging. 09/23/2014 wer
  *      v1.0.4 - changed back to a class. Couldn't figure out why
- *          it should be abstract. Made an interface for it just because. 12/19/2013
+ *               it should be abstract. Made an interface for it just because. 12/19/2013
  *      v1.0.3 - namespace change, changed to an abstract class
  *  </pre>
 **/

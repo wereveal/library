@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Basic accessors for a constants entity.
- *  @ingroup   ritc_library entities
+ *  @ingroup   ritc_library lib_entities
  *  @file      ConstantsEntity.php
  *  @namespace Ritc\Library\Entities
  *  @class     ConstantsEntity

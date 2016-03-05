@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     View for the Groups Admin page.
- *  @ingroup   ritc_library views
+ *  @ingroup   ritc_library lib_views
  *  @file      GroupsAdminView.php
  *  @namespace Ritc\Library\Views
  *  @class     GroupsAdminView

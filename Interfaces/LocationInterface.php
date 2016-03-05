@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Class used to set up classes that look to establish the location of a file.
- *  @ingroup   ritc_library interfaces
+ *  @ingroup   ritc_library lib_interfaces
  *  @file      LocationInterface.php
  *  @namespace Ritc\Library\Interfaces
  *  @class     LocationInterface

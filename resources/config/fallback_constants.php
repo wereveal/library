@@ -15,8 +15,8 @@ define('DISPLAY_PHONE_FORMAT', 'XXX-XXX-XXXX');
 define('EMAIL_DOMAIN', 'replaceme.com');
 define('EMAIL_FORM_TO', 'me@replaceme.com');
 define('ERROR_EMAIL_ADDRESS', 'webmaster@revealitconsulting.com');
-define('PAGE_TEMPLATE', 'base.twig');
-define('TWIG_PREFIX', 'app_');
+define('PAGE_TEMPLATE', 'index.twig');
+define('TWIG_PREFIX', '@qcdg_');
 define('THEME_NAME', '');
 define('ADMIN_THEME_NAME', '');
 define('THEMES_DIR', '');
@@ -29,3 +29,8 @@ define('ASSETS_DIR_NAME', 'assets');
 define('FILES_DIR_NAME', 'files');
 define('PRIVATE_DIR_NAME', 'private');
 define('TMP_DIR_NAME', 'tmp');
+define('RIGHTS_HOLDER', 'Reveal IT Consulting');
+define('SESSION_IDLE_TIME', 1800);
+if (!defined('DEVELOPER_MODE')) {
+    define('DEVELOPER_MODE', true);
+}

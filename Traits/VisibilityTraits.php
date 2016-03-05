@@ -5,7 +5,7 @@
  *             methods instead of using the magic methods. Note that
  *             setPrivateProperties() has to be run first or the magic methods
  *             will work as normal.
- *  @ingroup   ritc_library traits
+ *  @ingroup   ritc_library lib_traits
  *  @file      VisibilityTraits.php
  *  @namespace Ritc\Library\Traits
  *  @class     VisibilityTraits

@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Controller for the Test page.
- *  @ingroup   ritc_library controllers
+ *  @ingroup   ritc_library lib_controllers
  *  @file      TestsAdminController.php
  *  @namespace Ritc\Library\Controllers
  *  @class     TestsAdminController

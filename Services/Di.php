@@ -6,7 +6,7 @@
  *             throughout the app then get added to it.
  *             This is real basic. You put an instanced service in and pull a service
  *             out. The service must have been instanced already.
- *  @ingroup   ritc_library services
+ *  @ingroup   ritc_library lib_services
  *  @file      Di.php
  *  @namespace Ritc\Library\Services
  *  @class     Access

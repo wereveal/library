@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Common functions that inject and use the Elog class service.
- *  @ingroup   ritc_library traits
+ *  @ingroup   ritc_library lib_traits
  *  @file      LogitTraits.php
  *  @namespace Ritc\Library\Traits
  *  @class     LogitTraits

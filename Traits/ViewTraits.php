@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Common functions for views.
- *  @ingroup   ritc_library traits
+ *  @ingroup   ritc_library lib_traits
  *  @file      ViewTraits.php
  *  @namespace Ritc\Library\Traits
  *  @class     ViewTraits

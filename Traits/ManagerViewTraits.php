@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Common functions for the manager views.
- *  @ingroup   ritc_library traits
+ *  @ingroup   ritc_library lib_traits
  *  @file      ManagerViewTraits.php
  *  @namespace Ritc\Library\Traits
  *  @class     ManagerViewTraits

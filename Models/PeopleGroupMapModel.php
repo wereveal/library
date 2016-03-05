@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Does all the database CRUD stuff for the PeopleGroupMap table.
- *  @ingroup   ritc_library models
+ *  @ingroup   ritc_library lib_models
  *  @file      PeopleGroupMapModel.php
  *  @namespace Ritc\Library\Models
  *  @class     PeopleGroupMapModel

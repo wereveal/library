@@ -3,7 +3,7 @@
  *  @brief     A class for testing that all other testing classes should extend.
  *  @details   Class that extends this class should end with the word Tests or
  *             Tester, e.g. MyClassTester or MyClassTests.
- *  @ingroup   ritc_library basic
+ *  @ingroup   ritc_library lib_basic
  *  @file      Tester.php
  *  @namespace Ritc\Library\Basic
  *  @class     Tester

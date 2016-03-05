@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Basic accessors for a routes entity.
- *  @ingroup   ritc_library entities
+ *  @ingroup   ritc_library lib_entities
  *  @file      RoutesEntity.php
  *  @namespace Ritc\Library\Entities
  *  @class     RoutesEntity

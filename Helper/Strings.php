@@ -5,7 +5,7 @@
  *             of the value passed into the method, usually indicated by
  *             the name of the method.
  *             Renamed and modified version of old class Output.
- *  @ingroup   ritc_library helper
+ *  @ingroup   ritc_library lib_helper
  *  @file      Strings.php
  *  @namespace Ritc\Library\Helper
  *  @class     Strings

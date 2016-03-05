@@ -2,7 +2,7 @@
 /**
  *  @brief     Something simple to help me debug my websites.
  *  @details   A singleton pattern because that is what I want. pfffttttt!
- *  @ingroup   ritc_library services
+ *  @ingroup   ritc_library lib_services
  *  @file      Elog.php
  *  @namespace Ritc\Library\Services
  *  @class     Elog

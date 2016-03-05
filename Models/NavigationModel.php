@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     Does all the database CRUD stuff for the navigation.
- *  @ingroup   ritc_library models
+ *  @ingroup   ritc_library lib_models
  *  @file      NavigationModel.php
  *  @namespace Ritc\Library\Models
  *  @class     NavigationModel

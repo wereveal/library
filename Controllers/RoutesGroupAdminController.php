@@ -3,7 +3,7 @@
  *  @brief     Controller for the Routes to Group Admin page.
  *  @detail    Allows one to map which routes have specific group access.
  *             If you are not in the group, you can't go there.
- *  @ingroup   ritc_library controllers
+ *  @ingroup   ritc_library lib_controllers
  *  @file      RoutesGroupAdminController.php
  *  @namespace Ritc\Library\Controllers
  *  @class     RoutesGroupAdminController

@@ -2,7 +2,7 @@
 /**
  *  @brief     A PDO Factory.
  *  @details   The factory returns a \PDO object.
- *  @ingroup   ritc_library Services
+ *  @ingroup   ritc_library lib_factories
  *  @file      PdoFactory.php
  *  @namespace Ritc\Library\Services
  *  @class     PdoFactory

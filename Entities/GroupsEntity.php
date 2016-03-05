@@ -1,7 +1,7 @@
 <?php
 /**
  *  @brief     A basic entity class Groups table.
- *  @ingroup   ritc_library entities
+ *  @ingroup   ritc_library lib_entities
  *  @file      GroupsEntity.php
  *  @namespace Ritc\Library\Entities
  *  @class     GroupsEntity
