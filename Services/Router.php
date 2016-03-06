@@ -83,11 +83,11 @@ class Router
      */
     public function __construct(Di $o_di)
     {
-        $this->o_routes_helper = new RoutesHelper($o_di);
-        $this->setRouteParts();
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
         }
+        $this->o_routes_helper = new RoutesHelper($o_di);
+        $this->setRouteParts();
     }
 
     /**
@@ -103,11 +103,15 @@ class Router
      */
     public function setRouteParts()
     {
+        $meth = __METHOD__ . '.';
         $this->setRoutePath();
         $this->setGet();
         $this->setPost();
         $this->setFormAction();
+        $this->logIt("Route Path: " . $this->route_path, LOG_OFF, $meth . __LINE__);
         $a_router_parts = $this->o_routes_helper->createRouteParts($this->route_path);
+        $log_message = 'a_router_parts ' . var_export($a_router_parts, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_router_parts['get'] = $this->a_get;
         $a_router_parts['post'] = $this->a_post;
         $a_router_parts['form_action'] = $this->form_action;

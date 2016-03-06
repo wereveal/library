@@ -77,9 +77,11 @@ class RoutesHelper
 
     /**
      * @param string $route_path
+     * @return null
      */
     public function setRouteParts($route_path = '')
     {
+        $meth = __METHOD__ . '.';
         if ($route_path == '') {
             if ($this->route_path != '') {
                 $route_path = $this->route_path;
@@ -90,7 +92,8 @@ class RoutesHelper
         }
         $a_values = ['route_path' => $route_path];
         $a_results = $this->o_model->read($a_values);
-        $this->logIt("Actions from DB: " . var_export($a_results, true), LOG_OFF, __METHOD__);
+        $message = "Actions from DB for route path {$route_path}: " . var_export($a_results, true);
+        $this->logIt($message, LOG_OFF, $meth . __LINE__);
         if ($a_results !== false && count($a_results) === 1) {
             $a_route_parts                   = $a_results[0];
             $this->route_path                = $a_route_parts['route_path'];

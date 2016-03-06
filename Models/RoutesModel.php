@@ -28,17 +28,15 @@ class RoutesModel implements ModelInterface
 {
     use LogitTraits;
 
-    /**
-     * @var string
-     */
+    /** @var array  */
+    private $db_fields;
+    /** @var string */
     private $db_prefix;
-    /**
-     * @var string
-     */
+    /** @var string  */
+    private $db_table;
+    /** @var string */
     private $db_type;
-    /**
-     * @var \Ritc\Library\Services\DbModel
-     */
+    /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
 
     /**
@@ -50,6 +48,8 @@ class RoutesModel implements ModelInterface
         $this->o_db      = $o_db;
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_table  = $this->db_prefix . "routes";
+        $this->db_fields = $o_db->selectDbColumns($this->db_table);
     }
 
     /**
@@ -97,6 +97,8 @@ class RoutesModel implements ModelInterface
      */
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
+        $meth = __METHOD__ . '.';
+        $select_me = $this->o_db->buildSqlSelectFields($this->db_fields);
         if (count($a_search_values) > 0) {
             $a_search_params = $a_search_params == array()
                 ? ['order_by' => 'route_path']
@@ -106,8 +108,10 @@ class RoutesModel implements ModelInterface
                 'route_path',
                 'route_class'
             ];
-            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $log_message = 'Search Values ' . var_export($a_search_values, TRUE);
+            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params, $a_allowed_keys);
         }
         elseif (count($a_search_params) > 0) {
             $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
@@ -116,11 +120,11 @@ class RoutesModel implements ModelInterface
             $where = " ORDER BY route_path";
         }
         $sql = "
-            SELECT route_id, route_path, route_class, route_method, route_action, route_immutable
-            FROM {$this->db_prefix}routes
+            SELECT {$select_me}
+            FROM {$this->db_table}
             {$where}
         ";
-        $this->logIt($sql, LOG_OFF, __METHOD__);
+        $this->logIt($sql, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_values);
         return $results;
     }

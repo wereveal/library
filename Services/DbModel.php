@@ -1238,16 +1238,10 @@ class DbModel
      * It might be noted that if first two arguments are empty, it returns a blank string.
      * @param array $a_search_for optional assoc array field_name=>field_value
      * @param array $a_search_parameters optional allows one to specify various settings
-     *      array(
-     *          'search_type' => 'AND', // can also be or
-     *          'limit_to' => '', // limit the number of records to return
-     *          'starting_from' => '' // which record to start a limited return
-     *          'comparison_type' => '=' // what kind of comparison to use for ALL WHEREs
-     *          'order_by' => '' // column name(s) to sort by eg column_name [ASC,DESC][, column_name]
-     *          'where_exists' => false //
-     *      )
-     *      Not all parameters need to be in the array, if doesn't exist, the default setting will be used.
      * @param array $a_allowed_keys optional list array
+     *
+     * @ref searchparams For more info on a_search_parameters.
+     *
      * @return string $where
     **/
     public function buildSqlWhere(array $a_search_for = [], array $a_search_parameters = [], array $a_allowed_keys = [])
@@ -1261,7 +1255,7 @@ class DbModel
         $where_exists = false;
         $where = '';
         if (count($a_search_parameters) > 0) {
-            $a_allowed_keys = array(
+            $a_allowed_parms = array(
                 'search_type',
                 'comparison_type',
                 'starting_from',
@@ -1270,7 +1264,7 @@ class DbModel
                 'where_exists'
             );
             foreach ($a_search_parameters as $key => $value) {
-                if (array_search($key, $a_allowed_keys) !== false) {
+                if (array_search($key, $a_allowed_parms) !== false) {
                     $$key = $value;
                 }
             }
