@@ -12,7 +12,7 @@ namespace Ritc;
 
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Factories\TwigFactory;
-use Ritc\Library\Helper\ClassMapper;
+use Ritc\Library\Helper\AutoloadMapper;
 use Ritc\Library\Helper\ConstantsHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -20,7 +20,7 @@ use Ritc\Library\Services\Elog;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 
-$short_opts = "a:n:h:t:d:u:p:f:";
+$short_opts = "a:n:h:t:d:u:p:f:l:";
 $long_opts  = [
     "appname:",
     "namespace:",
@@ -29,14 +29,11 @@ $long_opts  = [
     "dbname:",
     "dbuser:",
     "dbpass:",
-    "dbprefix:"
+    "dbprefix:",
+    "loader:"
 ];
 
 $a_options = getopt($short_opts, $long_opts);
-
-if (count($a_options) < 5) {
-   die("The options are \nnamespace (n), appname (a), dbhost (h), \ndbtype (t), dbname (d), dbuser (u), \ndbpass (p), dbprefix (f)\n"); 
-}
 
 $app_name  = '';
 $namespace = '';
@@ -46,6 +43,7 @@ $db_name   = '';
 $db_user   = '';
 $db_pass   = '';
 $db_prefix = '';
+$loader    = 'psr4';
 
 foreach ($a_options as $option => $value) {
     switch ($option) {
@@ -80,6 +78,9 @@ foreach ($a_options as $option => $value) {
         case "f":
         case "dbprefix":
             $db_prefix = $value;
+        case "l":
+        case "loader":
+            $db_prefix = $value == 'psr0' ? 'psr0' : 'psr4';
     }
 }
 
@@ -115,12 +116,19 @@ if (!file_exists(SRC_PATH . '/Ritc/Library')) {
     die("You must clone the Ritc/Library in the src dir first and any other desired apps.\n");
 }
 
-### generate classmap so autoloader will work ###
-require_once SRC_PATH . '/Ritc/Library/Helper/ClassMapper.php'; 
-$a_dirs = ['app_path' => APP_PATH, 'config_path' => APP_CONFIG_PATH, 'src_path' => SRC_PATH];
-$o_cm = new ClassMapper($a_dirs);
-$o_cm->generateClassMap();
+### generate files for autoloader ###
+require SRC_PATH . '/Ritc/Library/Helper/AutoloadMapper.php';
+$a_dirs = [
+    'app_path'    => APP_PATH, 
+    'config_path' => APP_CONFIG_PATH, 
+    'src_path'    => SRC_PATH];
+$o_cm = new AutoloadMapper($a_dirs);
+if (!is_object($o_cm)) {
+    die("Could not instance AutoloadMapper");
+}
+$o_cm->generateMapFiles();
 
+### Setup the database ###
 $db_config_file = "db_config_setup.php";
 $db_config_file_text =<<<EOT
 <?php
@@ -141,8 +149,17 @@ EOT;
 file_put_contents(APP_CONFIG_PATH . '/' . $db_config_file, $db_config_file_text);
 
 $o_loader = require_once VENDOR_PATH . '/autoload.php';
-$my_classmap = require_once APP_CONFIG_PATH . '/autoload_classmap.php';
-$o_loader->addClassMap($my_classmap);
+
+if ($loader == 'psr0') {
+    $my_classmap = require_once APP_CONFIG_PATH . '/autoload_classmap.php';
+    $o_loader->addClassMap($my_classmap);
+}
+else {
+    $my_namespaces = require_once APP_CONFIG_PATH . '/autoload_namespaces.php';
+    foreach ($my_namespaces as $psr4_prefix => $psr0_paths) {
+        $o_loader->addPsr4($psr4_prefix, $psr0_paths);
+    }
+}
 
 $o_elog = Elog::start();
 $o_elog->setIgnoreLogOff(true); // turns on logging globally ignoring LOG_OFF when set to true
@@ -190,6 +207,7 @@ foreach ($a_sql as $sql) {
 }
 $o_db->commitTransaction();
 
+### Create the directories for the new app ###
 $app_path = SRC_PATH . '/' . $namespace. '/' . $app_name;
 $a_new_dirs = ['Abstracts', 'Controllers', 'Entities', 'Interfaces', 'Models',
 'Tests', 'Traits', 'Views', 'resources', 'resources/config', 'resources/sql',
