@@ -2,14 +2,14 @@
 /**
  *  @brief     Controller for the Routes Admin page.
  *  @ingroup   ritc_library lib_controllers
- *  @file      RoutesAdminController.php
+ *  @file      Ritc/Library/Controllers/RoutesAdminController.php
  *  @namespace Ritc\Library\Controllers
- *  @class     RoutesAdminController
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   2.1.0
+ *  @version   2.1.1
  *  @date      2015-10-06 13:55:38
  *  @pre       The route to this controller has to already be in the database and should not be able to be deleted.
  *  @note <pre><b>Change Log</b>
+ *      v2.1.1   - bug fix                                      - 2016-03-08 wer
  *      v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
  *                 If the route doesn't end with a file ext
  *                 add a slash to the end as well.
@@ -23,7 +23,7 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\MangerControllerInterface;
+use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
@@ -31,7 +31,12 @@ use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RoutesAdminView;
 
-class RoutesAdminController implements MangerControllerInterface
+/**
+ * Class RoutesAdminController
+ * @class   RoutesAdminController
+ * @package Ritc\Library\Controllers
+ */
+class RoutesAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 

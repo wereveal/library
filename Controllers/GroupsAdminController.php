@@ -2,13 +2,13 @@
 /**
  *  @brief     Controller for the Groups Admin page.
  *  @ingroup   ritc_library lib_controllers
- *  @file      GroupsAdmimController.php
+ *  @file      Ritc/Library/Controllers/GroupsAdmimController.php
  *  @namespace Ritc\Library\Controllers
- *  @class     GroupsAdmimController
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:45:11
+ *  @version   1.0.1
+ *  @date      2016-03-08 15:14:44
  *  @note <pre><b>Change Log</b>
+ *      v1.0.1   - bug fix                  - 2016-03-08 wer
  *      v1.0.0   - First working version    - 11/27/2015 wer
  *      v1.0.0β1 - Initial version          - 01/28/2015 wer
  *  </pre>
@@ -17,7 +17,7 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\MangerControllerInterface;
+use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
@@ -25,7 +25,12 @@ use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\GroupsAdminView;
 
-class GroupsAdmimController implements MangerControllerInterface
+/**
+ * Class GroupsAdmimController.
+ * @class GroupsAdmimController
+ * @package Ritc\Library\Controllers
+ */
+class GroupsAdmimController implements ManagerControllerInterface
 {
     use LogitTraits;
 

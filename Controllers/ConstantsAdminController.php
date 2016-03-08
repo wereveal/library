@@ -2,13 +2,13 @@
 /**
  *  @brief     Controller for the Configuration page.
  *  @ingroup   ritc_library lib_controllers
- *  @file      ConstantsAdminController.php
+ *  @file      Ritc/Library/Controllers/ConstantsAdminController.php
  *  @namespace Ritc\Library\Controllers
- *  @class     ConstantsAdminController
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.3.0
- *  @date      2015-10-07 14:31:59
+ *  @version   1.3.1
+ *  @date      2016-03-08 15:13:35
  *  @note <pre><b>Change Log</b>
+ *      v1.3.1 - bug fix                                         - 2016-03-08 wer
  *      v1.3.0 - added immutable code                            - 10/07/2015 wer
  *      v1.2.1 - code clean up                                   - 09/25/2015 wer
  *      v1.2.0 - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
@@ -23,7 +23,7 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\MangerControllerInterface;
+use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Router;
@@ -31,7 +31,12 @@ use Ritc\Library\Views\ConstantsAdminView;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
-class ConstantsAdminController implements MangerControllerInterface
+/**
+ * Class ConstantsAdminController
+ * @class ConstantsAdminController
+ * @package Ritc\Library\Controllers
+ */
+class ConstantsAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 

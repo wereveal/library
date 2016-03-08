@@ -2,13 +2,13 @@
 /**
  *  @brief     Controller for the Configuration page.
  *  @ingroup   ritc_library lib_controllers
- *  @file      PeopleAdminController.php
+ *  @file      Ritc/Library/Controllers/PeopleAdminController.php
  *  @namespace Ritc\Library\Controllers
- *  @class     PeopleAdminController
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.1
+ *  @version   1.0.2
  *  @date      2015-11-27 14:58:40
  *  @note <pre><b>Change Log</b>
+ *      v1.0.2   - bug fix                                          - 2016-03-08 wer
  *      v1.0.1   - bug fixes                                        - 11/27/2015 wer
  *      v1.0.0   - initial working version                          - 11/12/2015 wer
  *      v1.0.0β4 - Realized this is nowhere near done               - 01/06/2015 wer
@@ -24,7 +24,7 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\MangerControllerInterface;
+use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
@@ -32,7 +32,12 @@ use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PeopleAdminView;
 
-class PeopleAdminController implements MangerControllerInterface
+/**
+ * Class PeopleAdminController.
+ * @class   PeopleAdminController
+ * @package Ritc\Library\Controllers
+ */
+class PeopleAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 
