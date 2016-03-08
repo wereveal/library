@@ -2,7 +2,7 @@
 /**
  *  @brief     Class used to set up controller classes in the manager.
  *  @ingroup   ritc_library lib_interfaces
- *  @file      ManagerControllerInterface.php
+ *  @file      Ritc/Library/Interfaces/ManagerControllerInterface.php
  *  @namespace Ritc\Library\Interfaces
  *  @class     ManagerControllerInterface
  *  @author    William E Reveal <bill@revealitconsulting.com>

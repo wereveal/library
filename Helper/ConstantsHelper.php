@@ -2,7 +2,7 @@
 /**
  *  @brief     Create Constants from the constants database
  *  @ingroup   ritc_library lib_helper
- *  @file      ConstantsHelper.php
+ *  @file      Ritc/Library/Helper/ConstantsHelper.php
  *  @namespace Ritc\Library\Helper
  *  @class     ConstantsHelper
  *  @author    William E Reveal <bill@revealitconsulting.com>

@@ -2,9 +2,8 @@
 /**
  * @brief     Entity to map the Router to the Groups.
  * @ingroup   ritc_library lib_entities
- * @file      RoutesGroupMapEntity.php
+ * @file      Ritc/Library/Entities/RoutesGroupMapEntity.php
  * @namespace Ritc\Library\Entities
- * @class     RoutesGroupMapEntity
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0β1
  * @date      2015-09-03 12:47:56
@@ -20,12 +19,29 @@ namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class RoutesGroupMapEntity.
+ * @class   RoutesGroupMapEntity
+ * @package Ritc\Library\Entities
+ */
 class RoutesGroupMapEntity implements EntityInterface
 {
+    /**
+     * @var int
+     */
     private $rgm_id;
+    /**
+     * @var int
+     */
     private $route_id;
+    /**
+     * @var int
+     */
     private $group_id;
 
+    /**
+     * @return array
+     */
     public function getAllProperties()
     {
         return [
@@ -83,6 +99,10 @@ class RoutesGroupMapEntity implements EntityInterface
         $this->group_id = $group_id;
     }
 
+    /**
+     * @param array $a_entity
+     * @return bool
+     */
     public function setAllProperties(array $a_entity = array())
     {
         $a_defaults = [

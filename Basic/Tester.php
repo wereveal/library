@@ -4,9 +4,8 @@
  *  @details   Class that extends this class should end with the word Tests or
  *             Tester, e.g. MyClassTester or MyClassTests.
  *  @ingroup   ritc_library lib_basic
- *  @file      Tester.php
+ *  @file      Ritc/Library/Basic/Tester.php
  *  @namespace Ritc\Library\Basic
- *  @class     Tester
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   3.2.0
  *  @date      2015-11-02 13:03:31
@@ -34,6 +33,11 @@ namespace Ritc\Library\Basic;
 
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class Tester provides a base class of which one extends specific testers for specific classes.
+ * @class Tester
+ * @package Ritc\Library\Basic
+ */
 class Tester
 {
     use LogitTraits;

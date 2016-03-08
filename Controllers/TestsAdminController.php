@@ -1,16 +1,15 @@
 <?php
 /**
- *  @brief     Controller for the Test page.
- *  @ingroup   ritc_library lib_controllers
- *  @file      TestsAdminController.php
- *  @namespace Ritc\Library\Controllers
- *  @class     TestsAdminController
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0β1
- *  @date      2015-10-23 11:43:13
- *  @note <pre><b>Change Log</b>
- *      v1.0.0β1 - Initial version                              - 10/23/2015 wer
- *  </pre>
+ * @brief     Controller for the Test page.
+ * @ingroup   ritc_library lib_controllers
+ * @file      Ritc/Library/Controllers/TestsAdminController.php
+ * @namespace Ritc\Library\Controllers
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0β1
+ * @date      2015-10-23 11:43:13
+ * @note <pre><b>Change Log</b>
+ *     v1.0.0β1 - Initial version                              - 10/23/2015 wer
+ * </pre>
 **/
 namespace Ritc\Library\Controllers;
 
@@ -22,6 +21,11 @@ use Ritc\Library\Tests\PeopleModelTester;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\TestsAdminView;
 
+/**
+ * Class TestsAdminController
+ * @class   TestsAdminController
+ * @package Ritc\Library\Controllers
+ */
 class TestsAdminController
 {
     use LogitTraits;
@@ -72,9 +76,9 @@ class TestsAdminController
         }
     }
     /**
-     *  Main method for the controller.
-     *  Routes everything around from here.
-     *  @return string
+     * Main method for the controller.
+     * Routes everything around from here.
+     * @return string
      */
     public function render()
     {

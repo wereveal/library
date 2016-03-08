@@ -4,9 +4,8 @@
  *  @details   Primarily this is used to fix the visibility issue that PHP ignores.
  *             Also establishes the way the error logging can be injected when needed.
  *  @ingroup   ritc_library lib_abstracts
- *  @file      Base.php
+ *  @file      Ritc/Library/Abstracts/Base.php
  *  @namespace Ritc\Library\Abstracts
- *  @class     Base
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.2.0
  *  @date      2014-09-25 15:18:00
@@ -24,6 +23,11 @@ namespace Ritc\Library\Abstracts;
 
 use Ritc\Library\Services\Elog;
 
+/**
+ * Abstract Class Base - used to be an important part of the Library.
+ * @class Base
+ * @package Ritc\Library\Abstracts
+ */
 abstract class Base
 {
     /**

@@ -2,9 +2,8 @@
 /**
  *  @brief     Creates a Model object.
  *  @ingroup   ritc_library lib_models
- *  @file      ConstantsModel.php
+ *  @file      Ritc/Library/Models/ConstantsModel.php
  *  @namespace Ritc\Library\Models
- *  @class     ConstantsModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   2.2.0
  *  @date      2015-11-22 18:04:07
@@ -29,6 +28,11 @@ use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class ConstantsModel.
+ * @class   ConstantsModel
+ * @package Ritc\Library\Models
+ */
 class ConstantsModel implements ModelInterface
 {
     use LogitTraits;

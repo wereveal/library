@@ -2,9 +2,8 @@
 /**
  *  @brief     Basic accessors for a menu entity.
  *  @ingroup   ritc_library lib_entities
- *  @file      MenusEntity.php
+ *  @file      Ritc/Library/Entities/MenusEntity.php
  *  @namespace Ritc\Library\Entities
- *  @class     MenusEntity
  *  @author    William E Reveal
  *  @version   1.0.0
  *  @date      2016-02-23 11:09:18
@@ -17,6 +16,11 @@ namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class MenusEntity
+ * @class   MenusEntity
+ * @package Ritc\Library\Entities
+ */
 class MenusEntity implements EntityInterface
 {
     /**

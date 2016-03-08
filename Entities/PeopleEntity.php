@@ -5,9 +5,8 @@
  *             a user entity consists of data that comes from more than one
  *             database table.
  *  @ingroup   ritc_library lib_entities
- *  @file      PeopleEntity.php
+ *  @file      PRitc/Library/Entities/eopleEntity.php
  *  @namespace Ritc\Library\Entities
- *  @class     PeopleEntity
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.1.0
  *  @date      2015-09-03 15:31:12
@@ -24,18 +23,56 @@ namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class PeopleEntity
+ * @class   PeopleEntity
+ * @package Ritc\Library\Entities
+ */
 class PeopleEntity implements EntityInterface
 {
+    /**
+     * @var string
+     */
     private $people_id = '';
+    /**
+     * @var string
+     */
     private $login_id = '';
+    /**
+     * @var string
+     */
     private $real_name = '';
+    /**
+     * @var string
+     */
     private $short_name = '';
+    /**
+     * @var string
+     */
     private $password = '';
+    /**
+     * @var int
+     */
     private $is_logged_in = 0;
+    /**
+     * @var int
+     */
     private $bad_login_count = 0;
+    /**
+     * @var int
+     */
     private $bad_login_ts = 0;
+    /**
+     * @var int
+     */
     private $is_active = 0;
+    /**
+     * @var int
+     */
     private $is_immutable = 0;
+    /**
+     * @var int
+     */
     private $created_on = 0;
 
     /**

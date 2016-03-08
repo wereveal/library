@@ -2,7 +2,7 @@
 /**
  *  @brief     Adds some standard use formatting methods for date and time.
  *  @ingroup   ritc_library lib_helper
- *  @file      DatesTimes.php
+ *  @file      Ritc/Library/Helper/DatesTimes.php
  *  @namespace Ritc\Library\Helper
  *  @class     DatesTimes
  *  @author    William E Reveal <bill@revealitconsulting.com>

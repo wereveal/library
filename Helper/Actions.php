@@ -4,7 +4,7 @@
  *  @details   Can get the action from the URL - htaccess required
  *             or from a form element with a few select id names
  *  @ingroup   ritc_library lib_helper
- *  @file      Actions.php
+ *  @file      Ritc/Library/Helper/Actions.php
  *  @namespace Ritc\Library\Helper
  *  @class     Actions
  *  @author    William E Reveal <bill@revealitconsulting.com>

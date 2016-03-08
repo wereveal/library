@@ -2,7 +2,7 @@
 /**
  *  @brief     Various helper functions for views.
  *  @ingroup   ritc_library lib_helper
- *  @file      ViewHelper.php
+ *  @file      Ritc/Library/Helper/ViewHelper.php
  *  @namespace Ritc\Library\Helper
  *  @class     ViewHelper
  *  @author    William E Reveal <bill@revealitconsulting.com>

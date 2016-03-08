@@ -5,7 +5,7 @@
  *             more finely grained access with be handled there
  *             or in a sub-controller.
  *  @ingroup   ritc_library lib_helper
- *  @file      AuthHelper.php
+ *  @file      Ritc/Library/Helper/AuthHelper.php
  *  @namespace Ritc\Library\Helper
  *  @class     AuthHelper
  *  @author    William E Reveal <bill@revealitconsulting.com>

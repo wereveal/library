@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Define Constants that will be used throughout the website.
- * @file      constants.php
+ * @file      /app/src/Ritc/Library/resources/config/constants.php
  * @note <pre>
  *     _PATH = Full server path
  *     _DIR  = Path in web site (URI)

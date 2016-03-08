@@ -2,7 +2,7 @@
 /**
  *  @brief     Class used to set up controller classes.
  *  @ingroup   ritc_library lib_interfaces
- *  @file      ControllerInterface.php
+ *  @file      Ritc/Library/Interfaces/ControllerInterface.php
  *  @namespace Ritc\Library\Interfaces
  *  @class     ControllerInterface
  *  @author    William E Reveal <bill@revealitconsulting.com>

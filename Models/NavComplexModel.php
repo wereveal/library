@@ -2,9 +2,8 @@
 /**
  *  @brief     Does all the complex database CRUD stuff for the navigation.
  *  @ingroup   ritc_library lib_models
- *  @file      NavComplexModel.php
+ *  @file      Ritc/Library/Models/NavComplexModel.php
  *  @namespace Ritc\Library\Models
- *  @class     NavComplexModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0 β1
  *  @date      2016-02-25 12:04:44
@@ -17,6 +16,11 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class NavComplexModel.
+ * @class   NavComplexModel
+ * @package Ritc\Library\Models
+ */
 class NavComplexModel
 {
     use LogitTraits;

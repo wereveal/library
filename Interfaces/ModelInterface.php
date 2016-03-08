@@ -2,7 +2,7 @@
 /**
  *  @brief     Class used to set up model classes.
  *  @ingroup   ritc_library lib_interface
- *  @file      ModelInterface.php
+ *  @file      Ritc/Library/Interfaces/ModelInterface.php
  *  @namespace Ritc\Library\Interfaces
  *  @class     ModelInterface
  *  @author    William E Reveal <bill@revealitconsulting.com>

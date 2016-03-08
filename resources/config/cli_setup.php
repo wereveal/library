@@ -3,8 +3,8 @@
  * @brief     This file sets up the App.
  * @details   Required to get the entire framework to work. The only thing
  *            that changes primarily is the defgroup in this comment for Doxygen.
- * @file      setup.php
- * @namespace Ritc
+ * @file      /app/src/Ritc/Library/resources/config/setup.php
+ * @namespace Ritc The Reveal IT Consulting Vendor Namespace
  * @defgroup ritc
  * @{
  *      @defgroup ritc_library Library basic group of classes used to build other apps.

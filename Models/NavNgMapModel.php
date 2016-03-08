@@ -2,9 +2,8 @@
 /**
  *  @brief     Does all the database CRUD stuff for the navigation to navgroups mapping.
  *  @ingroup   ritc_library lib_models
- *  @file      NavNgMapModel.php
+ *  @file      Ritc/Library/Models/NavNgMapModel.php
  *  @namespace Ritc\Library\Models
- *  @class     NavNgMapModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0 β1
  *  @date      2016-02-25 12:06:45
@@ -19,6 +18,11 @@ use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class NavNgMapModel.
+ * @class   NavNgMapModel
+ * @package Ritc\Library\Models
+ */
 class NavNgMapModel implements ModelInterface
 {
     use LogitTraits;

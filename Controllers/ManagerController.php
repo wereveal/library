@@ -2,9 +2,8 @@
 /**
  *  @brief     The main Controller for the manager.
  *  @ingroup   ritc_library lib_controllers
- *  @file      ManagerController.php
+ *  @file      Ritc/Library/Controllers/ManagerController.php
  *  @namespace Ritc\Library\Controllers
- *  @class     ManagerController
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   v1.0.1
  *  @date      2015-12-01 21:41:39
@@ -35,6 +34,11 @@ use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\ManagerView;
 
+/**
+ * Class ManagerController.
+ * @class ManagerController
+ * @package Ritc\Library\Controllers
+ */
 class ManagerController implements ControllerInterface
 {
     use LogitTraits;

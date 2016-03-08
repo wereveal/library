@@ -2,7 +2,7 @@
 /**
  *  @brief     Class that does stuff with arrays.
  *  @ingroup   ritc_library lib_helper
- *  @file      Arrays.php
+ *  @file      Ritc/Library/Helper/Arrays.php
  *  @namespace Ritc\Library\Helper
  *  @class     Arrays
  *  @author    William E Reveal <bill@revealitconsulting.com>

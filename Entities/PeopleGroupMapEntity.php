@@ -2,9 +2,8 @@
 /**
  *  @brief     A basic entity class for the Article table.
  *  @ingroup   ritc_library lib_entities
- *  @file      PeopleGroupMapEntity.php
+ *  @file      Ritc/Library/Entities/PeopleGroupMapEntity.php
  *  @namespace Ritc\Library\Entities
- *  @class     PeopleGroupMapEntity
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0
  *  @date      2015-07-29 11:43:02
@@ -20,11 +19,26 @@ namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class PeopleGroupMapEntity
+ * @class   PeopleGroupMapEntity
+ * @package Ritc\Library\Entities
+ */
 class PeopleGroupMapEntity implements EntityInterface
 {
+    /**
+     * @var int
+     */
     private $pgm_id;
+    /**
+     * @var int
+     */
     private $people_id;
+    /**
+     * @var int
+     */
     private $group_id;
+
     /**
      * Gets all the entity properties.
      * @return array

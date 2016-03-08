@@ -1,16 +1,16 @@
 <?php
 /**
- *  @brief     Basic accessors for a constants entity.
- *  @ingroup   ritc_library lib_entities
- *  @file      ConstantsEntity.php
- *  @namespace Ritc\Library\Entities
- *  @class     ConstantsEntity
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-10-06 14:20:33
- *  @note <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/constants_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/constants_pg.sql</pre>
+ * @brief     Basic accessors for a constants entity.
+ * @ingroup   ritc_library lib_entities
+ * @file      Ritc/Library/Entities/ConstantsEntity.php
+ * @namespace Ritc\Library\Entities
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0
+ * @date      2015-10-06 14:20:33
+ * @note <b>SQL for table<b><pre>
+ *     MySQL      - resources/sql/mysql/constants_mysql.sql
+ *     PostgreSQL - resources/sql/postgresql/constants_pg.sql</pre>
+ * @todo add class properties that are missing.
  */
 
 namespace Ritc\Library\Entities;
@@ -18,6 +18,11 @@ namespace Ritc\Library\Entities;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class ConstantsEntity.
+ * @class   ConstantsEntity
+ * @package Ritc\Library\Entities
+ */
 class ConstantsEntity implements EntityInterface
 {
     private $a_properties;

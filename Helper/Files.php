@@ -2,7 +2,7 @@
 /**
  *  @brief     Determines the path to the file.
  *  @ingroup   ritc_library lib_helper
- *  @file      Files.php
+ *  @file      Ritc/Library/Helper/Files.php
  *  @namespace Ritc\Library\Helper
  *  @class     Files
  *  @author    William E Reveal <bill@revealitconsulting.com>

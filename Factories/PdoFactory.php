@@ -3,9 +3,8 @@
  *  @brief     A PDO Factory.
  *  @details   The factory returns a \PDO object.
  *  @ingroup   ritc_library lib_factories
- *  @file      PdoFactory.php
- *  @namespace Ritc\Library\Services
- *  @class     PdoFactory
+ *  @file      Ritc/Library/Factories/PdoFactory.php
+ *  @namespace Ritc\Library\Factories
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   2.0.0
  *  @date      2015-08-28 08:01:33
@@ -31,6 +30,11 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbTraits;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class PdoFactory
+ * @class   PdoFactory
+ * @package Ritc\Library\Factories
+ */
 class PdoFactory
 {
     use DbTraits, LogitTraits;

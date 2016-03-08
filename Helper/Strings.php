@@ -6,7 +6,7 @@
  *             the name of the method.
  *             Renamed and modified version of old class Output.
  *  @ingroup   ritc_library lib_helper
- *  @file      Strings.php
+ *  @file      Ritc/Library/Helper/Strings.php
  *  @namespace Ritc\Library\Helper
  *  @class     Strings
  *  @author    William E Reveal <bill@revealitconsulting.com>

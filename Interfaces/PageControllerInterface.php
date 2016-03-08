@@ -4,7 +4,7 @@
  *  @details   Page Contollers are primary controllers, first thing called.
  *             Usually one Page Controller per App.
  *  @ingroup   ritc_library lib_interfaces
- *  @file      PageControllerInterface.php
+ *  @file      Ritc/Library/Interfaces/PageControllerInterface.php
  *  @namespace Ritc\Library\Interfaces
  *  @class     PageControllerInterface
  *  @author    William E Reveal <bill@revealitconsulting.com>

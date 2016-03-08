@@ -2,9 +2,8 @@
 /**
  *  @brief     Does all the database CRUD stuff for the navigation groups.
  *  @ingroup   ritc_library lib_models
- *  @file      NavgroupsModel.php
+ *  @file      Ritc/Library/Models/NavgroupsModel.php
  *  @namespace Ritc\Library\Models
- *  @class     NavgroupsModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0 β1
  *  @date      2016-02-25 12:04:44
@@ -19,6 +18,11 @@ use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class NavgroupsModel.
+ * @class   NavgroupsModel
+ * @package Ritc\Library\Models
+ */
 class NavgroupsModel implements ModelInterface
 {
     use LogitTraits;

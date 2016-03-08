@@ -2,9 +2,8 @@
 /**
  *  @brief     Does all the database CRUD stuff.
  *  @ingroup   ritc_library lib_models
- *  @file      GroupsModel.php
+ *  @file      Ritc/Library/Models/GroupsModel.php
  *  @namespace Ritc\Library\Models
- *  @class     GroupsModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0
  *  @date      2015-11-27 14:46:28
@@ -26,6 +25,11 @@ use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class GroupsModel.
+ * @class   GroupsModel
+ * @package Ritc\Library\Models
+ */
 class GroupsModel implements ModelInterface
 {
     use LogitTraits;

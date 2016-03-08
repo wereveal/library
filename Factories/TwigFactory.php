@@ -1,30 +1,34 @@
 <?php
 /**
- *  @brief     A Twig Factory.
- *  @details   Lets us create a twig object, specific to a configuration
- *             allowing multiple twig objects to render the html
- *  @ingroup   ritc_library lib_factories
- *  @file      TwigFactory.php
- *  @namespace Ritc\Library\Services
- *  @class     TwigFactory
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-09-01 07:31:00
- *  @note <pre><b>Change Log</b>
- *      v1.0.0   - not sure why this is beta. Removed Base abstract class                                - 09/01/2015 wer
- *      v1.0.0ß2 - moved to the Factories namespace
- *      v1.0.0ß1 - moved to the Services namespace                                                       - 11/15/2014 wer
- *      v0.2.0   - changed the name of the method which is used to create/return the object              - 09/25/2014 wer
- *                 and cleaned up some code.
- *      v0.1.1   - changed to implment the changes in Base class                                         - 09/23/2014 wer
- *      v0.1.0   - initial file creation                                                                 - 2013-11-11 wer
- *  </pre>
+ * @brief     A Twig Factory.
+ * @details   Lets us create a twig object, specific to a configuration
+ *            allowing multiple twig objects to render the html
+ * @ingroup   ritc_library lib_factories
+ * @file      Ritc/Library/FactoriesTwigFactory.php
+ * @namespace Ritc\Library\Factories
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0
+ * @date      2015-09-01 07:31:00
+ * @note <pre><b>Change Log</b>
+ *     v1.0.0   - not sure why this is beta. Removed Base abstract class                                - 09/01/2015 wer
+ *     v1.0.0ß2 - moved to the Factories namespace
+ *     v1.0.0ß1 - moved to the Services namespace                                                       - 11/15/2014 wer
+ *     v0.2.0   - changed the name of the method which is used to create/return the object              - 09/25/2014 wer
+ *                and cleaned up some code.
+ *     v0.1.1   - changed to implment the changes in Base class                                         - 09/23/2014 wer
+ *     v0.1.0   - initial file creation                                                                 - 2013-11-11 wer
+ * </pre>
 **/
 namespace Ritc\Library\Factories;
 
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 
+/**
+ * Class TwigFactory
+ * @class   TwigFactory
+ * @package Ritc\Library\Factories
+ */
 class TwigFactory
 {
     /**
@@ -64,10 +68,10 @@ class TwigFactory
         return self::$instance[$name];
     }
     /**
-     *  Returns the twig environment object which we use to do all the
-     *  template rendering.
-     *  @param string $config_file
-     *  @return Twig_Environment
+     * Returns the twig environment object which we use to do all the
+     * template rendering.
+     * @param string $config_file
+     * @return Twig_Environment
      */
     public static function getTwig($config_file = 'twig_config.php')
     {

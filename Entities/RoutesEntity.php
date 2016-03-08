@@ -2,9 +2,8 @@
 /**
  *  @brief     Basic accessors for a routes entity.
  *  @ingroup   ritc_library lib_entities
- *  @file      RoutesEntity.php
+ *  @file      Ritc/Library/Entities/RoutesEntity.php
  *  @namespace Ritc\Library\Entities
- *  @class     RoutesEntity
  *  @author    William E Reveal
  *  @version   1.0.0
  *  @date      2015-10-06 14:20:33
@@ -17,13 +16,36 @@ namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class RoutesEntity
+ * @class   RoutesEntity
+ * @package Ritc\Library\Entities
+ */
 class RoutesEntity implements EntityInterface
 {
+    /**
+     * @var int
+     */
     private $route_id;
+    /**
+     * @var string
+     */
     private $route_path;
+    /**
+     * @var string
+     */
     private $route_class;
+    /**
+     * @var string
+     */
     private $route_method;
+    /**
+     * @var string
+     */
     private $route_action;
+    /**
+     * @var int
+     */
     private $route_immutable;
 
     /**

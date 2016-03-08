@@ -3,7 +3,7 @@
  *  @brief     Class used to set up database admin classes.
  *  @details   Started because of the guilt trip that interfaces are all that.
  *  @ingroup   ritc_library lib_interfaces
- *  @file      DbAdminInterface.php
+ *  @file      Ritc/Library/Interfaces/DbAdminInterface.php
  *  @namespace Ritc\Library\Interfaces
  *  @class     DbAdminInterface
  *  @author    William E Reveal <bill@revealitconsulting.com>

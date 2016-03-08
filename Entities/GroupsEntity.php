@@ -2,9 +2,8 @@
 /**
  *  @brief     A basic entity class Groups table.
  *  @ingroup   ritc_library lib_entities
- *  @file      GroupsEntity.php
+ *  @file      Ritc/Library/Entities/GroupsEntity.php
  *  @namespace Ritc\Library\Entities
- *  @class     GroupsEntity
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0
  *  @date      2015-07-29 11:41:03
@@ -20,6 +19,11 @@ namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class GroupsEntity.
+ * @class   GroupsEntity
+ * @package Ritc\Library\Entities
+ */
 class GroupsEntity implements EntityInterface
 {
     private $group_id;

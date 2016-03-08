@@ -2,7 +2,7 @@
 /**
  *  @brief     Defines some required constants.
  *  @details   Used only if the class Constants could not create them from the database.
- *  @file      fallback_constants.php
+ *  @file      /app/src/Ritc/Library/resources/config/fallback_constants.php
  *  @ingroup   ritc_library configs
  *  _PATH = Full server path
  *  _DIR = Path in web site (URI)

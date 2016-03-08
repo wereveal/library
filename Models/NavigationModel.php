@@ -2,9 +2,8 @@
 /**
  *  @brief     Does all the database CRUD stuff for the navigation.
  *  @ingroup   ritc_library lib_models
- *  @file      NavigationModel.php
+ *  @file      Ritc/Library/Models/NavigationModel.php
  *  @namespace Ritc\Library\Models
- *  @class     NavigationModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0 β1
  *  @date      2016-02-24 13:24:09
@@ -19,6 +18,11 @@ use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class NavigationModel.
+ * @class   NavigationModel
+ * @package Ritc\Library\Models
+ */
 class NavigationModel implements ModelInterface
 {
     use LogitTraits;

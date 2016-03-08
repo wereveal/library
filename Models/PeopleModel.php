@@ -2,9 +2,8 @@
 /**
  *  @brief     Does all the database CRUD stuff.
  *  @ingroup   ritc_library lib_models
- *  @file      PeopleModel.php
+ *  @file      Ritc/Library/Models/PeopleModel.php
  *  @namespace Ritc\Library\Models
- *  @class     PeopleModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.1.0
  *  @date      2015-11-22 18:05:37
@@ -34,6 +33,11 @@ use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class PeopleModel.
+ * @class   PeopleModel
+ * @package Ritc\Library\Models
+ */
 class PeopleModel implements ModelInterface
 {
     use LogitTraits;

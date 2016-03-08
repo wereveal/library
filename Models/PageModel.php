@@ -2,9 +2,8 @@
 /**
  *  @brief     Does all the database CRUD stuff.
  *  @ingroup   ritc_library lib_models
- *  @file      PageModel.php
+ *  @file      Ritc/Library/Models/PageModel.php
  *  @namespace Ritc\Library\Models
- *  @class     PageModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.0.0
  *  @date      2015-11-27 14:59:00
@@ -20,6 +19,11 @@ use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class PageModel.
+ * @class   PageModel
+ * @package Ritc\Library\Models
+ */
 class PageModel implements ModelInterface
 {
     use LogitTraits;

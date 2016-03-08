@@ -2,9 +2,9 @@
 /**
  *  @brief     Creates the autoload_classmap.php file.
  *  @ingroup   ritc_library lib_helper
- *  @file      AutoloadMapper.php
+ *  @file      Ritc/Library/Helper/AutoloadMapper.php
  *  @namespace Ritc\Library\Helper
- *  @class     Arrays
+ *  @class     AutoloadMapper
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   1.2.2
  *  @date      2016-02-22 15:00:10
