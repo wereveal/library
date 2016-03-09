@@ -7,9 +7,10 @@
  *  @file      Ritc/Library/Basic/Tester.php
  *  @namespace Ritc\Library\Basic
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   3.2.0
- *  @date      2015-11-02 13:03:31
+ *  @version   3.2.1
+ *  @date      2016-03-09 12:59:29
  *  @note <pre><b>Change log</b>
+ *      v3.2.1 - bug fix                                                                   - 2016-03-09 wer
  *      v3.2.0 - moved the compare_arrays to the Arrays helper class                       - 11/02/2015 wer
  *      v3.1.1 - minor change to setTestOrder method, now required an array                - 10/23/2015 wer
  *      v3.1.0 - no longer extends Base class, uses Logit Trait instead                    - 08/19/2015 wer
@@ -343,6 +344,6 @@ class Tester
         if ($class_name == '' || $method_name == '') { return false; }
         $o_ref = new \ReflectionClass($class_name);
         $o_method = $o_ref->getMethod($method_name);
-        return $o_method->IsPublic();
+        return $o_method->isPublic();
     }
 }
