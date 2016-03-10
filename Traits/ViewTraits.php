@@ -6,10 +6,11 @@
  *  @namespace Ritc\Library\Traits
  *  @class     ViewTraits
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0 β1
- *  @date      2016-02-22 20:15:04
+ *  @version   1.0.0-alpha.1
+ *  @date      2016-03-10 14:18:23
  *  @note <pre><b>Change Log</b>
- *      v1.0.0 β1  - inital version - 02/22/2016 wer
+ *      v1.0.0-alpha.1 - close to working version                   - 2016-03-10 wer
+ *      v1.0.0-alpha.0 - inital version                             - 2016-02-22 wer
  *  </pre>
  */
 namespace Ritc\Library\Traits;
@@ -17,6 +18,7 @@ namespace Ritc\Library\Traits;
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Models\NavComplexModel;
+use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -125,6 +127,18 @@ trait ViewTraits
         $a_nav = $this->removeUnauthorizedLinks($a_nav);
         $a_nav = $this->specifyActiveMenu($a_nav);
         $this->a_nav = $a_nav;
+    }
+
+    /**
+     * Sets the property a_nav array by the navgroup_name.
+     * @param string $navgroup_name
+     * @return null
+     */
+    protected function setNavByNgName($navgroup_name = '')
+    {
+        $o_ng = new NavgroupsModel($this->o_db);
+        $ng_id = $o_ng->readNavgroupId($navgroup_name);
+        $this->setNav($ng_id);
     }
 
     /**

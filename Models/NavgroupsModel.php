@@ -5,10 +5,10 @@
  *  @file      Ritc/Library/Models/NavgroupsModel.php
  *  @namespace Ritc\Library\Models
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0 β1
+ *  @version   1.0.0-alpha.0
  *  @date      2016-02-25 12:04:44
  *  @note <pre><b>Change Log</b>
- *      v1.0.0 β1 - Initial version                              - 02/25/2016 wer
+ *      v1.0.0-alpha.0 - Initial version                              - 02/25/2016 wer
  *  </pre>
  **/
 namespace Ritc\Library\Models;
@@ -35,6 +35,8 @@ class NavgroupsModel implements ModelInterface
      * @var string
      */
     private $db_prefix;
+    /** @var string  */
+    private $db_table;
     /**
      * @var string
      */
@@ -57,6 +59,7 @@ class NavgroupsModel implements ModelInterface
         $this->o_db      = $o_db;
         $this->db_type   = $this->o_db->getDbType();
         $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_table  = $this->db_prefix . 'navgroups';
         $this->setFieldNames();
     }
 
@@ -131,7 +134,7 @@ class NavgroupsModel implements ModelInterface
         $sql =<<<EOT
 
 SELECT {$select_me}
-FROM {$this->db_prefix}navgroups
+FROM {$this->db_table}
 {$where}
 
 EOT;
@@ -160,7 +163,7 @@ EOT;
         $a_values = Arrays::removeUndesiredPairs($a_values, $this->a_field_names);
         $set_sql = $this->o_db->buildSqlSet($a_values, ['ng_id']);
         $sql = "
-            UPDATE {$this->db_prefix}navgroups
+            UPDATE {$this->db_table}
             {$set_sql}
             WHERE ng_id = :ng_id
         ";
@@ -195,7 +198,7 @@ EOT;
             }
             else {
                 $sql = "
-                    DELETE FROM {$this->db_prefix}navgroups
+                    DELETE FROM {$this->db_table}
                     WHERE ng_id = :ng_id
                 ";
                 $results = $this->o_db->delete($sql, array(':ng_id' => $ng_id), true);
@@ -212,6 +215,35 @@ EOT;
         }
         else {
             $this->error_message = "Could not start transaction.";
+            return false;
+        }
+    }
+
+    /**
+     * Returns the whole record base on name.
+     * @param string $name
+     * @return array
+     */
+    public function readByName($name = '')
+    {
+        $a_search_values = ['ng_name' => $name];
+        return $this->read($a_search_values);
+    }
+
+    /**
+     * Returns the navgroup id based on navgroup name.
+     * @param string $name
+     * @return mixed
+     */
+    public function readNavgroupId($name = '')
+    {
+        $sql = "SELECT ng_id FROM {$this->db_table} WHERE ng_name = :ng_name";
+        $a_values = [':ng_name' => $name];
+        $results = $this->o_db->search($sql, $a_values);
+        if ($results) {
+            return $results[0]['ng_id'];
+        }
+        else {
             return false;
         }
     }

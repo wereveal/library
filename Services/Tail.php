@@ -5,19 +5,19 @@
  *  @ingroup   ritc_library lib_services
  *  @file      Tail.php
  *  @namespace Ritc\Library\Services
- *  @class     Tail
  *  @author    William E Reveal <bill@revealitconsulting.com>
  *  @version   2.1.1
  *  @date      2014-11-15 13:33:15
- *  @note <pre><b>Change Log</b>
- *      v2.1.1 - Moved to Services namespace         - 11/15/2014 wer
- *      v2.1.0 - Changed to work in the ritc_library - 04/22/2013 wer
- *  </pre>
+ *  @note <b>Change Log</b>
+ *  - v2.1.1 - Moved to Services namespace         - 11/15/2014 wer
+ *  - v2.1.0 - Changed to work in the ritc_library - 04/22/2013 wer
+ * @todo Tail - update to current coding practices
 **/
 namespace Ritc\Library\Services;
 
 /**
- * Class Tail
+ * Class Tail - tails a log file.
+ * @class Tail
  * @package Ritc\Library\Services
  */
 class Tail

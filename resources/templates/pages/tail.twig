@@ -1,0 +1,22 @@
+{% extends '@default/base.twig' %}
+{% block othermeta %}
+<meta http-equiv="refresh" content="15">
+{% endblock %}
+{% block header %}{% endblock %}
+{% block body %}
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    {{ content|raw }}
+                </div>
+            </div>
+{% endblock %}
+
+{# expected array [
+    'lang',
+    'charset',
+    'title',
+    'description',
+    'public_dir',
+    'content'
+    ]
+#}

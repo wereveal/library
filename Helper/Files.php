@@ -35,6 +35,10 @@ namespace Ritc\Library\Helper;
 use Ritc\Library\Interfaces\LocationInterface;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class Files
+ * @package Ritc\Library\Helper
+ */
 class Files implements LocationInterface
 {
     use LogitTraits;
@@ -48,13 +52,26 @@ class Files implements LocationInterface
     const PRIVATE_DIR_NAME   = 'private';
     const TEMPLATES_DIR_NAME = 'templates';
     const TMP_DIR_NAME       = 'tmp';
+    /** @var string */
     protected $file_name     = 'no_file.tpl';
+    /** @var string */
     protected $file_dir_name = 'assets';
+    /** @var string  */
     protected $namespace;
+    /** @var string  */
     protected $file_w_dir;
+    /** @var string  */
     protected $file_w_path;
+    /** @var string  */
     protected $theme_name = 'default';
 
+    /**
+     * Files constructor.
+     * @param string $file_name
+     * @param string $the_directory
+     * @param string $theme_name
+     * @param string $namespace
+     */
     public function __construct($file_name = '', $the_directory = '', $theme_name = '', $namespace = '')
     {
         if ($file_name != '') {
@@ -73,10 +90,20 @@ class Files implements LocationInterface
         }
         $this->setFileLocations();
     }
+
+    /**
+     * @param $var_name
+     * @return mixed
+     */
     public function getVar($var_name)
     {
         return $this->$var_name;
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getConfigWithDir($file_name)
     {
         $this->file_dir_name = defined('CONFIG_DIR_NAME')
@@ -84,6 +111,11 @@ class Files implements LocationInterface
             : self::CONFIG_DIR_NAME;
         return $this->getFileWithDir($file_name);
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getConfigWithPath($file_name)
     {
         $this->file_dir_name = defined('CONFIG_DIR_NAME')
@@ -134,6 +166,11 @@ class Files implements LocationInterface
             return false;
         }
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getCssWithDir($file_name)
     {
         $this->file_dir_name = defined('CSS_DIR_NAME')
@@ -141,6 +178,11 @@ class Files implements LocationInterface
             : self::CSS_DIR_NAME;
         return $this->getFileWithDir($file_name);
     }
+
+    /**
+     * @param string $file_name
+     * @return bool
+     */
     public function getCssWithPath($file_name = '')
     {
         $this->file_dir_name = defined('CSS_DIR_NAME')
@@ -148,14 +190,27 @@ class Files implements LocationInterface
             : self::CSS_DIR_NAME;
         return $this->getFileWithPath($file_name);
     }
+
+    /**
+     * @return string
+     */
     public function getFileName()
     {
         return $this->file_name;
     }
+
+    /**
+     * @return string
+     */
     public function getFileDirName()
     {
         return $this->file_dir_name;
     }
+
+    /**
+     * @param string $file_name
+     * @return bool
+     */
     public function getFileWithDir($file_name = '')
     {
         if ($file_name != '') {
@@ -169,6 +224,11 @@ class Files implements LocationInterface
             return false;
         }
     }
+
+    /**
+     * @param string $file_name
+     * @return bool
+     */
     public function getFileWithPath($file_name = '')
     {
         if ($file_name != '') {
@@ -182,6 +242,11 @@ class Files implements LocationInterface
             return false;
         }
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getHtmlWithDir($file_name)
     {
         $this->file_dir_name = defined('HTML_DIR_NAME')
@@ -189,6 +254,11 @@ class Files implements LocationInterface
             : self::HTML_DIR_NAME;
         return $this->getFileWithDir($file_name);
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getHtmlWithPath($file_name)
     {
         $this->file_dir_name = defined('HTML_DIR_NAME')
@@ -196,6 +266,11 @@ class Files implements LocationInterface
             : self::HTML_DIR_NAME;
         return $this->getFileWithPath($file_name);
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getImageWithDir($file_name)
     {
         $this->file_dir_name = defined('IMAGE_DIR_NAME')
@@ -203,6 +278,11 @@ class Files implements LocationInterface
             : self::IMAGE_DIR_NAME;
         return $this->getFileWithDir($file_name);
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getImageWithPath($file_name)
     {
         $this->file_dir_name = defined('IMAGE_DIR_NAME')
@@ -210,6 +290,11 @@ class Files implements LocationInterface
             : self::IMAGE_DIR_NAME;
         return $this->getFileWithPath($file_name);
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getJsWithDir($file_name)
     {
         $this->file_dir_name = defined('JS_DIR_NAME')
@@ -218,6 +303,11 @@ class Files implements LocationInterface
         $this->setFileLocations();
         return $this->getFileWithDir($file_name);
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getJsWithPath($file_name)
     {
         $this->file_dir_name = defined('JS_DIR_NAME')
@@ -226,6 +316,11 @@ class Files implements LocationInterface
         $this->setFileLocations();
         return $this->getFileWithPath($file_name);
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getLibWithDir($file_name)
     {
         $this->file_dir_name = defined('LIBS_DIR_NAME')
@@ -233,6 +328,11 @@ class Files implements LocationInterface
             : self::LIBS_DIR_NAME;
         return $this->getFileWithDir($file_name);
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getLibWithPath($file_name)
     {
         $this->file_dir_name = defined('LIBS_DIR_NAME')
@@ -240,6 +340,11 @@ class Files implements LocationInterface
             : self::LIBS_DIR_NAME;
         return $this->getFileWithPath($file_name);
     }
+
+    /**
+     * @param string $file_name
+     * @return bool|string
+     */
     public function getPrivateFile($file_name = '')
     {
         $private_path = $_SERVER['DOCUMENT_ROOT'] . '/../' . self::PRIVATE_DIR_NAME;
@@ -250,6 +355,11 @@ class Files implements LocationInterface
         $this->logIt("The File w/ Path didn't exist: '$file_w_path'. It is possible the Constant PRIVATE_PATH isn't set.", LOG_OFF, __METHOD__ . '.' . __LINE__);
         return false;
     }
+
+    /**
+     * @param string $file_name
+     * @return bool|string
+     */
     public function getTmpFile($file_name = '')
     {
         $file_w_path = TMP_PATH . '/' . $file_name;
@@ -258,6 +368,11 @@ class Files implements LocationInterface
         }
         return false;
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getTemplateWithDir($file_name)
     {
         $this->file_dir_name = defined('TEMPLATES_DIR_NAME')
@@ -265,6 +380,11 @@ class Files implements LocationInterface
             : self::TEMPLATES_DIR_NAME;
         return $this->getFileWithDir($file_name);
     }
+
+    /**
+     * @param $file_name
+     * @return bool
+     */
     public function getTemplateWithPath($file_name)
     {
         $this->file_dir_name = defined('TEMPLATES_DIR_NAME')
@@ -273,6 +393,11 @@ class Files implements LocationInterface
         $this->setFileLocations();
         return $this->getFileWithPath($file_name);
     }
+
+    /**
+     * @param string $which_one
+     * @return array
+     */
     public function getFileLocations($which_one = '')
     {
         $a_file_locations = array();
@@ -351,6 +476,11 @@ class Files implements LocationInterface
         }
         return false;
     }
+
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function setFileDirName($value = '')
     {
         if ($value == '') { return false; }
@@ -364,12 +494,22 @@ class Files implements LocationInterface
         $this->setFileLocations();
         return true;
     }
+
+    /**
+     * @param $value
+     * @return bool
+     */
     public function setFileName($value)
     {
         $this->file_name = $value;
         $this->setFileLocations();
         return true;
     }
+
+    /**
+     * @param string $value
+     * @return bool
+     */
     public function setNamespace($value = '')
     {
         $this->namespace = $value;
