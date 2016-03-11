@@ -36,45 +36,25 @@ class Router
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_get;
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_post;
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_router_parts;
-    /**
-     * @var \Ritc\Library\Helper\RoutesHelper
-     */
+    /** @var \Ritc\Library\Helper\RoutesHelper  */
     private $o_routes_helper;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $form_action;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $request_uri;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $route_action;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $route_class;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $route_method;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $route_path;
 
     /**

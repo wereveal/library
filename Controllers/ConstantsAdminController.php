@@ -40,25 +40,15 @@ class ConstantsAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_post;
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_router_parts;
-    /**
-     * @var Di
-     */
+    /** @var Di  */
     private $o_di;
-    /**
-     * @var ConstantsModel
-     */
+    /** @var ConstantsModel  */
     private $o_model;
-    /**
-     * @var ConstantsAdminView
-     */
+    /** @var ConstantsAdminView  */
     private $o_view;
 
     /**

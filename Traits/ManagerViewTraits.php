@@ -27,33 +27,19 @@ use Ritc\Library\Services\Router;
 
 trait ManagerViewTraits
 {
-    /**
-     * @var array
-     */
+    /** @var array  */
     protected $a_links;
-    /**
-     * @var int
-     */
+    /** @var int  */
     protected $adm_level;
-    /**
-     * @var AuthHelper
-     */
+    /** @var AuthHelper  */
     protected $o_auth;
-    /**
-     * @var DbModel
-     */
+    /** @var DbModel  */
     protected $o_db;
-    /**
-     * @var Di
-     */
+    /** @var Di  */
     protected $o_di;
-    /**
-     * @var Router
-     */
+    /** @var Router  */
     protected $o_router;
-    /**
-     * @var \Twig_Environment
-     */
+    /** @var \Twig_Environment  */
     protected $o_twig;
 
     /**

@@ -27,89 +27,47 @@ namespace Ritc\Library\Services;
 
 class Elog
 {
-    /**
-     * @var string
-     */
+    /** @var string  */
     protected $current_page;
-    /**
-     * @var bool
-     */
+    /** @var bool  */
     private $custom_log_used = false;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $debug_text;
-    /**
-     * @var bool
-     */
+    /** @var bool  */
     private $display_last_message = false;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $elog_file = 'elog.log';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $error_email_address = 'wer@qca.net';
-    /**
-     * @var bool
-     */
+    /** @var bool  */
     private $html_used = false;
-    /**
-     * @var bool
-     */
+    /** @var bool  */
     private $ignore_log_off = false;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $from_class = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $from_function = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $from_location = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $from_method = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $from_file = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $from_line = '';
-    /**
-     * @var bool
-     */
+    /** @var bool  */
     private $handler_set = false;
-    /**
-     * @var Elog
-     */
+    /** @var Elog  */
     private static $instance;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $json_file = 'json.log';
-    /**
-     * @var bool
-     */
+    /** @var bool  */
     private $json_log_used = false;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $last_message = '';
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $log_method;
-    /**
-     * @var bool
-     */
+    /** @var bool  */
     private $php_log_used = false;
 
     /**

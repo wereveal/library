@@ -31,13 +31,9 @@ use Twig_Environment;
  */
 class TwigFactory
 {
-    /**
-     * @var Twig_Environment
-     */
+    /** @var Twig_Environment  */
     private $o_twig;
-    /**
-     * @var array
-     */
+    /** @var array  */
     private static $instance = array();
 
     /**

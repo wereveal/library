@@ -30,25 +30,15 @@ class TestsAdminController
 {
     use LogitTraits;
 
-    /**
-     * @var DbModel
-     */
+    /** @var DbModel  */
     private $o_db;
-    /**
-     * @var Di
-     */
+    /** @var Di  */
     private $o_di;
-    /**
-     * @var Router
-     */
+    /** @var Router  */
     private $o_router;
-    /**
-     * @var TestsAdminView
-     */
+    /** @var TestsAdminView  */
     private $o_view;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $test_configs_path;
 
     /**

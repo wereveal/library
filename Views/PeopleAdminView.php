@@ -30,17 +30,11 @@ class PeopleAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
-    /**
-     * @var \Ritc\Library\Models\PeopleModel
-     */
+    /** @var \Ritc\Library\Models\PeopleModel  */
     private $o_people_model;
-    /**
-     * @var \Ritc\Library\Models\GroupsModel
-     */
+    /** @var \Ritc\Library\Models\GroupsModel  */
     private $o_group_model;
-    /**
-     * @var \Ritc\Library\Models\PeopleGroupMapModel
-     */
+    /** @var \Ritc\Library\Models\PeopleGroupMapModel  */
     private $o_pgm_model;
 
     /**

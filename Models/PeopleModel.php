@@ -42,29 +42,17 @@ class PeopleModel implements ModelInterface
 {
     use LogitTraits;
 
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $db_prefix;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $db_type;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $error_message;
-    /**
-     * @var \Ritc\Library\Services\DbModel
-     */
+    /** @var \Ritc\Library\Services\DbModel  */
     private $o_db;
-    /**
-     * @var \Ritc\Library\Models\GroupsModel
-     */
+    /** @var \Ritc\Library\Models\GroupsModel  */
     private $o_group;
-    /**
-     * @var \Ritc\Library\Models\PeopleGroupMapModel
-     */
+    /** @var \Ritc\Library\Models\PeopleGroupMapModel  */
     private $o_pgm;
 
     /**

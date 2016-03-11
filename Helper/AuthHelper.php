@@ -70,29 +70,17 @@ class AuthHelper
 {
     use LogitTraits;
 
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $db_prefix;
-    /**
-     * @var DbModel
-     */
+    /** @var DbModel  */
     private $o_db;
-    /**
-     * @var GroupsModel
-     */
+    /** @var GroupsModel  */
     private $o_groups;
-    /**
-     * @var Router
-     */
+    /** @var Router  */
     private $o_router;
-    /**
-     * @var Session
-     */
+    /** @var Session  */
     private $o_session;
-    /**
-     * @var PeopleModel
-     */
+    /** @var PeopleModel  */
     private $o_people;
 
     /**

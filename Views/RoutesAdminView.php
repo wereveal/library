@@ -28,9 +28,7 @@ class RoutesAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
-    /**
-     * @var \Ritc\Library\Models\RoutesModel
-     */
+    /** @var \Ritc\Library\Models\RoutesModel  */
     private $o_model;
 
     /**

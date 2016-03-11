@@ -26,17 +26,11 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class PeopleGroupMapEntity implements EntityInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $pgm_id;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $people_id;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $group_id;
 
     /**

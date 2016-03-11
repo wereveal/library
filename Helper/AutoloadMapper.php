@@ -23,17 +23,11 @@ use \SplFileInfo;
 
 class AutoloadMapper
 {
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $app_path;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $config_path;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $src_path;
 
     /**

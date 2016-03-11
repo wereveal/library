@@ -39,29 +39,17 @@ class PdoFactory
 {
     use DbTraits, LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_db_config;
-    /**
-     * @var array
-     */
+    /** @var array  */
     private static $factory_rw_instance = array();
-    /**
-     * @var array
-     */
+    /** @var array  */
     private static $factory_ro_instance = array();
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $config_file;
-    /**
-     * @var \PDO
-     */
+    /** @var \PDO  */
     private $o_db;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $read_type;
 
     /**

@@ -27,25 +27,15 @@ class NavNgMapModel implements ModelInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_field_names = array();
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $db_type = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $db_prefix = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $error_message = '';
-    /**
-     * @var \Ritc\Library\Services\DbModel
-     */
+    /** @var \Ritc\Library\Services\DbModel  */
     private $o_db;
 
     public function __construct(DbModel $o_db)

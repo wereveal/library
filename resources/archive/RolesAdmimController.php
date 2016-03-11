@@ -29,29 +29,17 @@ class RolesAdmimController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_post;
-    /**
-     * @var \Ritc\Library\Services\Di
-     */
+    /** @var \Ritc\Library\Services\Di  */
     private $o_di;
-    /**
-     * @var \Ritc\Library\Models\RolesModel
-     */
+    /** @var \Ritc\Library\Models\RolesModel  */
     private $o_model;
-    /**
-     * @var \Ritc\Library\Services\Router
-     */
+    /** @var \Ritc\Library\Services\Router  */
     private $o_router;
-    /**
-     * @var \Ritc\Library\Services\Session
-     */
+    /** @var \Ritc\Library\Services\Session  */
     private $o_session;
-    /**
-     * @var \Ritc\Library\Views\RolesAdminView
-     */
+    /** @var \Ritc\Library\Views\RolesAdminView  */
     private $o_view;
 
     /**

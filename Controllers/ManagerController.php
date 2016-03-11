@@ -43,45 +43,25 @@ class ManagerController implements ControllerInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     protected $a_route_parts;
-    /**
-     * @var array
-     */
+    /** @var array  */
     protected $a_post_values;
-    /**
-     * @var string
-     */
+    /** @var string  */
     protected $form_action;
-    /**
-     * @var AuthHelper
-     */
+    /** @var AuthHelper  */
     protected $o_auth;
-    /**
-     * @var Di
-     */
+    /** @var Di  */
     protected $o_di;
-    /**
-     * @var ManagerView
-     */
+    /** @var ManagerView  */
     protected $o_manager_view;
-    /**
-     * @var Router
-     */
+    /** @var Router  */
     protected $o_router;
-    /**
-     * @var Session
-     */
+    /** @var Session  */
     protected $o_session;
-    /**
-     * @var string
-     */
+    /** @var string  */
     protected $route_method;
-    /**
-     * @var string
-     */
+    /** @var string  */
     protected $route_action;
 
     /**

@@ -30,21 +30,13 @@ class Session
 {
     use LogitTraits;
 
-    /**
-     * @var Session
-     */
+    /** @var Session  */
     private static $instance;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $session_id;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $session_name;
-    /**
-     * @var bool
-     */
+    /** @var bool  */
     private $session_started = false;
 
     /**

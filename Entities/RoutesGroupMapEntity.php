@@ -26,17 +26,11 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class RoutesGroupMapEntity implements EntityInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $rgm_id;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $route_id;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $group_id;
 
     /**

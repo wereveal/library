@@ -34,29 +34,17 @@ class PageAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_post;
-    /**
-     * @var Di
-     */
+    /** @var Di  */
     private $o_di;
-    /**
-     * @var PageModel
-     */
+    /** @var PageModel  */
     private $o_model;
-    /**
-     * @var Router
-     */
+    /** @var Router  */
     private $o_router;
-    /**
-     * @var Session
-     */
+    /** @var Session  */
     private $o_session;
-    /**
-     * @var PageAdminView
-     */
+    /** @var PageAdminView  */
     private $o_view;
 
     /**

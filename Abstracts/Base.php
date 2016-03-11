@@ -30,17 +30,11 @@ use Ritc\Library\Services\Elog;
  */
 abstract class Base
 {
-    /**
-     * @var string
-     */
+    /** @var string  */
     protected $current_page;
-    /**
-     * @var array
-     */
+    /** @var array  */
     protected $private_properties;
-    /**
-     * @var Elog
-     */
+    /** @var Elog  */
     protected $o_elog;
 
     /**

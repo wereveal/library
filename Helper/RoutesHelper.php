@@ -27,29 +27,17 @@ class RoutesHelper
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_route_parts;
-    /**
-     * @var \Ritc\Library\Models\GroupsModel
-     */
+    /** @var \Ritc\Library\Models\GroupsModel  */
     private $o_group;
-    /**
-     * @var \Ritc\Library\Models\RoutesModel
-     */
+    /** @var \Ritc\Library\Models\RoutesModel  */
     private $o_model;
-    /**
-     * @var \Ritc\Library\Models\RoutesGroupMapModel
-     */
+    /** @var \Ritc\Library\Models\RoutesGroupMapModel  */
     private $o_rgm;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $route_path;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $request_uri;
 
     /**
@@ -130,8 +118,10 @@ class RoutesHelper
                 $a_route_parts                   = $a_last_good_results;
                 $this->route_path                = $a_route_parts['route_path'];
                 $a_route_parts['request_uri']    = $route_path;
-                $a_route_parts['url_actions']    = [];
-                $a_route_parts['url_actions']    = explode('/', $remainder_path);
+                $this->logIt("Remainder Path: " . $remainder_path, LOG_ON, $meth . __LINE__);
+                $a_route_parts['url_actions']    = $remainder_path != ''
+                    ? explode('/', $remainder_path)
+                    : [];
                 $a_route_parts['groups']         = $this->getGroups($a_route_parts['route_id']);
                 $a_route_parts['min_auth_level'] = $this->getMinAuthLevel($a_route_parts['groups']);
                 $this->a_route_parts = $a_route_parts;

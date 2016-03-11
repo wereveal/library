@@ -23,37 +23,21 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class MenusEntity implements EntityInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $menu_id;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $menu_page_id;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $menu_parent_id;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $menu_name;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $menu_css;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $menu_level;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $menu_order;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $menu_active;
     /**
      * Returns all the record values.

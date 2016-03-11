@@ -40,29 +40,17 @@ class RoutesAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_post;
-    /**
-     * @var Di
-     */
+    /** @var Di  */
     private $o_di;
-    /**
-     * @var RoutesModel
-     */
+    /** @var RoutesModel  */
     private $o_model;
-    /**
-     * @var Router
-     */
+    /** @var Router  */
     private $o_router;
-    /**
-     * @var Session
-     */
+    /** @var Session  */
     private $o_session;
-    /**
-     * @var RoutesAdminView
-     */
+    /** @var RoutesAdminView  */
     private $o_view;
 
     /**

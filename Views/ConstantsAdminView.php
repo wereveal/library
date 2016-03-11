@@ -33,17 +33,11 @@ class ConstantsAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
-    /**
-     * @var \Ritc\Library\Views\ManagerView
-     */
+    /** @var \Ritc\Library\Views\ManagerView  */
     private $o_manager;
-    /**
-     * @var \Ritc\Library\Models\ConstantsModel
-     */
+    /** @var \Ritc\Library\Models\ConstantsModel  */
     private $o_model;
-    /**
-     * @var \Ritc\Library\Models\PeopleModel
-     */
+    /** @var \Ritc\Library\Models\PeopleModel  */
     private $o_people;
 
     /**

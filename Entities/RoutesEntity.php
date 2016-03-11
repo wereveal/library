@@ -23,29 +23,17 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class RoutesEntity implements EntityInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $route_id;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $route_path;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $route_class;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $route_method;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $route_action;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $route_immutable;
 
     /**

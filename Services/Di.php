@@ -24,9 +24,7 @@ namespace Ritc\Library\Services;
 
 class Di
 {
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_objects = array();
 
     /**

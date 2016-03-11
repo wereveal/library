@@ -43,17 +43,11 @@ class ConstantsHelper
 {
     use LogitTraits;
 
-    /**
-     * @var bool
-     */
+    /** @var bool  */
     private $created = false;
-    /**
-     * @var ConstantsHelper
-     */
+    /** @var ConstantsHelper  */
     private static $instance;
-    /**
-     * @var \Ritc\Library\Models\ConstantsModel
-     */
+    /** @var \Ritc\Library\Models\ConstantsModel  */
     private $o_constants_model;
 
     /**

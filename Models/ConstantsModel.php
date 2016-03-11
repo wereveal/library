@@ -37,17 +37,11 @@ class ConstantsModel implements ModelInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array|bool
-     */
+    /** @var array|bool  */
     private $a_constants;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $db_prefix;
-    /**
-     * @var \Ritc\Library\Services\DbModel
-     */
+    /** @var \Ritc\Library\Services\DbModel  */
     private $o_db;
 
     /**

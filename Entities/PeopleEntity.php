@@ -30,49 +30,27 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class PeopleEntity implements EntityInterface
 {
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $people_id = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $login_id = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $real_name = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $short_name = '';
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $password = '';
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $is_logged_in = 0;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $bad_login_count = 0;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $bad_login_ts = 0;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $is_active = 0;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $is_immutable = 0;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $created_on = 0;
 
     /**

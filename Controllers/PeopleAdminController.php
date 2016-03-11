@@ -41,33 +41,19 @@ class PeopleAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_route_parts;
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_post_values;
-    /**
-     * @var Di
-     */
+    /** @var Di  */
     private $o_di;
-    /**
-     * @var PeopleModel
-     */
+    /** @var PeopleModel  */
     private $o_model;
-    /**
-     * @var Router
-     */
+    /** @var Router  */
     private $o_router;
-    /**
-     * @var Session
-     */
+    /** @var Session  */
     private $o_session;
-    /**
-     * @var PeopleAdminView
-     */
+    /** @var PeopleAdminView  */
     private $o_view;
 
     /**

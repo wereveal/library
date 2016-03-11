@@ -26,45 +26,25 @@ use Ritc\Library\Services\Router;
 
 trait ViewTraits
 {
-    /**
-     * @var array
-     */
+    /** @var array  */
     protected $a_nav;
-    /**
-     * @var int
-     */
+    /** @var int  */
     protected $adm_level;
-    /**
-     * @var AuthHelper
-     */
+    /** @var AuthHelper  */
     protected $o_auth;
-    /**
-     * @var DbModel
-     */
+    /** @var DbModel  */
     protected $o_db;
-    /**
-     * @var Di
-     */
+    /** @var Di  */
     protected $o_di;
-    /**
-     * @var NavComplexModel
-     */
+    /** @var NavComplexModel  */
     protected $o_nav;
-    /**
-     * @var PageModel
-     */
+    /** @var PageModel  */
     protected $o_page_model;
-    /**
-     * @var Router
-     */
+    /** @var Router  */
     protected $o_router;
-    /**
-     * @var \Ritc\Library\Helper\RoutesHelper
-     */
+    /** @var \Ritc\Library\Helper\RoutesHelper  */
     protected $o_routes_helper;
-    /**
-     * @var \Twig_Environment
-     */
+    /** @var \Twig_Environment  */
     protected $o_twig;
 
     /**

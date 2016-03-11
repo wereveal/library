@@ -27,27 +27,17 @@ class NavgroupsModel implements ModelInterface
 {
     use LogitTraits;
 
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $a_field_names;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $db_prefix;
     /** @var string  */
     private $db_table;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $db_type;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $error_message;
-    /**
-     * @var \Ritc\Library\Services\DbModel
-     */
+    /** @var \Ritc\Library\Services\DbModel  */
     private $o_db;
 
     /**
