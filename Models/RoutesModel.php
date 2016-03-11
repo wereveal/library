@@ -16,7 +16,8 @@
  *  - v1.0.0   - first working version                                  - 01/28/2015 wer
  *  - v1.0.0β2 - Changed to match some namespace changes, and bug fix   - 11/15/2014 wer
  *  - v1.0.0β1 - First live version                                     - 11/11/2014 wer
-**/
+ * @todo Ritc/Library/Models/RoutesModel.php - this needs testing and a lot of code elsewhere has to be changed.
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
@@ -220,7 +221,7 @@ class RoutesModel implements ModelInterface
             $a_search_params['order_by'] = 'u.url_text';
         }
         $a_search_params['where_exists'] = true;
-        
+
         if (count($a_search_values) > 0) {
             $a_allowed_keys = [
                 'route_id'        => 'r.route_id',
