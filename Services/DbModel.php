@@ -7,7 +7,7 @@
  *  @namespace Ritc\Library\Services
  *  @class     DbModel
  *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   3.6.0
+ *  @version   3.6.0+2
  *  @date      2016-03-04 15:22:15
  *  @note <pre><b>Change Log</b>
  *      v3.6.0 - Changed property name o_db to o_pdo to clarify what the object was       - 03/04/2016 wer
@@ -61,41 +61,23 @@ class DbModel
 {
     use DbTraits, LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_db_config;
-    /**
-     * @var array
-     */
+    /** @var array  */
     private $a_new_ids = array();
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $affected_rows;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $db_prefix;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $db_type;
-    /**
-     * @var \PDO
-     */
+    /** @var \PDO  */
     private $o_pdo;
-    /**
-     * @var string
-     */
+    /** @var string  */
     private $pgsql_sequence_name = '';
-    /**
-     * @var mixed
-     */
+    /** @var mixed  */
     private $sql_error_message;
-    /**
-     * @var int
-     */
+    /** @var int  */
     private $success;
 
     /**
@@ -1108,7 +1090,8 @@ class DbModel
                     if ($this->execute($row, $o_pdo_stmt)) {
                         $fetched = $o_pdo_stmt->fetchAll($fetch_style);
                         $a_results[] = $fetched;
-                    } else {
+                    } 
+                    else {
                         return false;
                     }
                 }
@@ -1290,7 +1273,8 @@ class DbModel
                 if ($where_exists === false) {
                     $where = "WHERE {$field_name} {$comparison_type} {$key} \n";
                     $where_exists = true;
-                } else {
+                } 
+                else {
                     $where .= "{$search_type} {$field_name} {$comparison_type} {$key} \n";
                 }
             }
@@ -1391,7 +1375,8 @@ class DbModel
                 array_key_exists(str_replace(':', '', $key), $a_check_values)
             ) {
                 // we are happy
-            } else {
+            } 
+            else {
                 $a_missing_keys[] = $key;
             }
         }
@@ -1434,7 +1419,8 @@ class DbModel
     {
         if (function_exists('mysqli_connect')) {
             return true;
-        } else {
+        } 
+        else {
             return false;
         }
     }
@@ -1583,7 +1569,8 @@ class DbModel
             }
             return $a_column_names;
 
-        } else {
+        } 
+        else {
             $this->logIt('You must specify a table name for this to work.', LOG_OFF, __METHOD__);
             return false;
         }
