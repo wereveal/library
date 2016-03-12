@@ -1,31 +1,31 @@
 <?php
 /**
- *  @brief     Determines the controller and method to use based on URI.
- *  @ingroup   ritc_library lib_services
- *  @file      Router.php
- *  @namespace Ritc\Library\Services
- *  @class     Router
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.1
- *  @date      2016-02-22 15:40:33
- *  @note <pre><b>Change Log</b>
- *      v1.0.1    - clean up of code.                                           - 02/22/2016 wer
- *      v1.0.0    - take out of beta                                            - 11/27/2015 wer
- *      v1.0.0β10 - Bug fix to fix logic error with route path                  - 11/24/2015 wer
- *      v1.0.0β9  - Bug fixes to fix logic error in actionable data             - 09/22/2015 wer
- *      v1.0.0β8  - Changed to allow route path to include additional           - 09/14/2015 wer
- *                  actionable data.
- *      v1.0.0β7  - Added Allowed Groups to the class.                          - 09/03/2015 wer
- *                  Groups can now be mapped to the route.
- *      v1.0.0β6  - Removed abstract class Base, added LogitTraits              - 09/01/2015 wer
- *      v1.0.0β5  - changed several properties to be static (just in case)      - 01/06/2015 wer
- *      v1.0.0β4  - changed to use Di class for DI/IOC.                         - 12/10/2014 wer
- *      v1.0.0β3  - added form_action class property.                           - 12/05/2014 wer
- *                  Added setter and getters for form_action class property.
- *      v1.0.0β2  - moved to Services namespace                                 - 11/15/2014 wer
- *      v1.0.0β1  - bug fixes                                                   - 11/14/2014 wer
- *      v1.0.0β0  - initial attempt to make this                                - 09/25/2014 wer
-**/
+ * @brief     Determines the controller and method to use based on URI.
+ * @ingroup   ritc_library lib_services
+ * @file      Router.php
+ * @namespace Ritc\Library\Services
+ * @class     Router
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.1
+ * @date      2016-02-22 15:40:33
+ * @note <b>Change Log</b>
+ * - v1.0.1    - clean up of code.                                           - 02/22/2016 wer
+ * - v1.0.0    - take out of beta                                            - 11/27/2015 wer
+ * - v1.0.0β10 - Bug fix to fix logic error with route path                  - 11/24/2015 wer
+ * - v1.0.0β9  - Bug fixes to fix logic error in actionable data             - 09/22/2015 wer
+ * - v1.0.0β8  - Changed to allow route path to include additional           - 09/14/2015 wer
+ *                 actionable data.
+ * - v1.0.0β7  - Added Allowed Groups to the class.                          - 09/03/2015 wer
+ *                 Groups can now be mapped to the route.
+ * - v1.0.0β6  - Removed abstract class Base, added LogitTraits              - 09/01/2015 wer
+ * - v1.0.0β5  - changed several properties to be static (just in case)      - 01/06/2015 wer
+ * - v1.0.0β4  - changed to use Di class for DI/IOC.                         - 12/10/2014 wer
+ * - v1.0.0β3  - added form_action class property.                           - 12/05/2014 wer
+ *                 Added setter and getters for form_action class property.
+ * - v1.0.0β2  - moved to Services namespace                                 - 11/15/2014 wer
+ * - v1.0.0β1  - bug fixes                                                   - 11/14/2014 wer
+ * - v1.0.0β0  - initial attempt to make this                                - 09/25/2014 wer
+ */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Helper\Arrays;
@@ -36,25 +36,25 @@ class Router
 {
     use LogitTraits;
 
-    /** @var array  */
+    /** @var array */
     private $a_get;
-    /** @var array  */
+    /** @var array */
     private $a_post;
-    /** @var array  */
+    /** @var array */
     private $a_router_parts;
-    /** @var \Ritc\Library\Helper\RoutesHelper  */
+    /** @var \Ritc\Library\Helper\RoutesHelper */
     private $o_routes_helper;
-    /** @var string  */
+    /** @var string */
     private $form_action;
-    /** @var string  */
+    /** @var string */
     private $request_uri;
-    /** @var string  */
+    /** @var string */
     private $route_action;
-    /** @var string  */
+    /** @var string */
     private $route_class;
-    /** @var string  */
+    /** @var string */
     private $route_method;
-    /** @var string  */
+    /** @var string */
     private $route_path;
 
     /**
@@ -71,15 +71,15 @@ class Router
     }
 
     /**
-     *  Sets the router parts from the routes helper plus other information.
-     *  Sets the router parts from the routes helper plus other information.
-     *  Sets additional url actionable parts, GET parts and Post parts.
-     *  Addional url actional parts is like /fred/barney/wilma/ which could
-     *      only be found as /fred/barney/ by the routerModel class.
-     *      wilma represents a variable that the controller understands.
-     *      For example wilma could be an blog id or blog name 'blog_id'
-     *      for which a blog controller would search in the blog db by blog_id.
-     *  @return array
+     * Sets the router parts from the routes helper plus other information.
+     *  - Sets the router parts from the routes helper plus other information.
+     *  - Sets additional url actionable parts, GET parts and Post parts.
+     *  - Addional url actional parts is like /fred/barney/wilma/ which could
+     *    only be found as /fred/barney/ by the routerModel class.
+     *      - wilma represents a variable that the controller understands.
+     *      - For example wilma could be an blog id or blog name 'blog_id'
+     *      - for which a blog controller would search in the blog db by blog_id.
+     * @return array
      */
     public function setRouteParts()
     {
@@ -194,10 +194,10 @@ class Router
     }
 
     /**
-     *  Sets the class property $form_action.
-     *  Assumes the array passed in is from a form posted after it was sanitized.
-     *  @param array $a_post an associate array put through filter_var($var, FILTER_SANITIZE_ENCODED)
-     *  @return bool
+     * Sets the class property $form_action.
+     * Assumes the array passed in is from a form posted after it was sanitized.
+     * @param array $a_post an associate array put through filter_var($var, FILTER_SANITIZE_ENCODED)
+     * @return bool
      */
     public function setFormAction(array $a_post = array())
     {
@@ -244,9 +244,9 @@ class Router
     }
 
     /**
-     *  Sets the property $route_path.
-     *  @param string $request_uri optional, defaults to $_SERVER['REQUEST_URI']
-     *  @return null
+     * Sets the property $route_path.
+     * @param string $request_uri optional, defaults to $_SERVER['REQUEST_URI']
+     * @return null
      */
     public function setRoutePath($request_uri = '')
     {
@@ -280,5 +280,5 @@ class Router
         protected function getElog
         protected function logIt
         protected function setElog
-    */
+   */
 }

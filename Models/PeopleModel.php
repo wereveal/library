@@ -1,31 +1,30 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff.
- *  @ingroup   ritc_library lib_models
- *  @file      Ritc/Library/Models/PeopleModel.php
- *  @namespace Ritc\Library\Models
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.0
- *  @date      2015-11-22 18:05:37
- *  @note <pre><b>Change Log</b>
- *      v1.1.0    - refactoring to make compatible with postgresql              - 11/22/2015 wer
- *      v1.0.0    - initial working version                                     - 11/12/2015 wer
- *      v1.0.0β13 - removed roles from code                                     - 11/06/2015 wer
- *      v1.0.0β12 - Bug fix in sql, incompatible with Postgresql                - 11/05/2015 wer
- *      v1.0.0β11 - Added missing method isId - causing bug elsewhere           - 09/25/2015 wer
- *      v1.0.0β10 - Added db error message retrieval                            - 09/23/2015 wer
- *      v1.0.0β9  - Added 'description' to database and added it here           - 09/22/2015 wer
- *      v1.0.0β8  - more changes to the readInfo method                         - 09/03/2015 wer
- *      v1.0.0β7  - had to rewrite the sql for the readInfo method              - 08/04/2015 wer
- *      v1.0.0β6  - refactoring elsewhere caused changes here                   - 07/31/2015 wer
- *      v1.0.0β5  - refactoring method name to reflect what is happening better - 01/06/2015 wer
- *      v1.0.0β4  - reverted to injecting DbModel                               - 11/17/2014 wer
- *      v1.0.0β3  - changed to use DI/IOC                                       - 11/15/2014 wer
- *      v1.0.0β2  - extends the Base class, injects the DbModel, clean up       - 09/23/2014 wer
- *      v1.0.0β1  - First Live version                                          - 09/15/2014 wer
- *      v0.1.0β1  - Initial version                                             - 09/11/2014 wer
- *  </pre>
-**/
+ * @brief     Does all the database CRUD stuff.
+ * @ingroup   ritc_library lib_models
+ * @file      Ritc/Library/Models/PeopleModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.0
+ * @date      2015-11-22 18:05:37
+ * @note <b>Change Log</b>
+ * - v1.1.0    - refactoring to make compatible with postgresql              - 11/22/2015 wer
+ * - v1.0.0    - initial working version                                     - 11/12/2015 wer
+ * - v1.0.0β13 - removed roles from code                                     - 11/06/2015 wer
+ * - v1.0.0β12 - Bug fix in sql, incompatible with Postgresql                - 11/05/2015 wer
+ * - v1.0.0β11 - Added missing method isId - causing bug elsewhere           - 09/25/2015 wer
+ * - v1.0.0β10 - Added db error message retrieval                            - 09/23/2015 wer
+ * - v1.0.0β9  - Added 'description' to database and added it here           - 09/22/2015 wer
+ * - v1.0.0β8  - more changes to the readInfo method                         - 09/03/2015 wer
+ * - v1.0.0β7  - had to rewrite the sql for the readInfo method              - 08/04/2015 wer
+ * - v1.0.0β6  - refactoring elsewhere caused changes here                   - 07/31/2015 wer
+ * - v1.0.0β5  - refactoring method name to reflect what is happening better - 01/06/2015 wer
+ * - v1.0.0β4  - reverted to injecting DbModel                               - 11/17/2014 wer
+ * - v1.0.0β3  - changed to use DI/IOC                                       - 11/15/2014 wer
+ * - v1.0.0β2  - extends the Base class, injects the DbModel, clean up       - 09/23/2014 wer
+ * - v1.0.0β1  - First Live version                                          - 09/15/2014 wer
+ * - v0.1.0β1  - Initial version                                             - 09/11/2014 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
@@ -42,17 +41,17 @@ class PeopleModel implements ModelInterface
 {
     use LogitTraits;
 
-    /** @var string  */
+    /** @var string */
     private $db_prefix;
-    /** @var string  */
+    /** @var string */
     private $db_type;
-    /** @var string  */
+    /** @var string */
     private $error_message;
-    /** @var \Ritc\Library\Services\DbModel  */
+    /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
-    /** @var \Ritc\Library\Models\GroupsModel  */
+    /** @var \Ritc\Library\Models\GroupsModel */
     private $o_group;
-    /** @var \Ritc\Library\Models\PeopleGroupMapModel  */
+    /** @var \Ritc\Library\Models\PeopleGroupMapModel */
     private $o_pgm;
 
     /**
@@ -70,19 +69,19 @@ class PeopleModel implements ModelInterface
 
     ### Basic CRUD commands, required by interface, deals only with the {$this->db_prefix}user table ###
     /**
-     *  Creates new people record(s) in the people table.
-     *  @param array $a_values required Can be a simple assoc array or array of assoc arrays
-     *                         e.g. ['login_id' => 'fred', 'real_name' => 'Fred', 'password' => 'letmein']
-     *                         or
-     *                         [
-     *                             ['login_id' => 'fred',   'real_name' => 'Fred',   'password' => 'letmein'],
-     *                             ['login_id' => 'barney', 'real_name' => 'Barney', 'password' => 'lethimin']
-     *                         ].
-     *                         Optional key=>values 'short_name',
-     *                                              'description', 'is_logged_in',
-     *                                              'is_active' & 'is_immutable'
-     *  @return array|bool
-    **/
+     * Creates new people record(s) in the people table.
+     * @param array $a_values required Can be a simple assoc array or array of assoc arrays
+     *                        e.g. ['login_id' => 'fred', 'real_name' => 'Fred', 'password' => 'letmein']
+     *                        or
+     *                        [
+     *                            ['login_id' => 'fred',   'real_name' => 'Fred',   'password' => 'letmein'],
+     *                            ['login_id' => 'barney', 'real_name' => 'Barney', 'password' => 'lethimin']
+     *                        ].
+     *                        Optional key=>values 'short_name',
+     *                                             'description', 'is_logged_in',
+     *                                             'is_active' & 'is_immutable'
+     * @return array|bool
+     */
     public function create(array $a_values = array())
     {
         $a_required_keys = [
@@ -233,10 +232,10 @@ class PeopleModel implements ModelInterface
         return $results;
     }
     /**
-     *  Deletes a {$this->db_prefix}people record based on id.
-     *  @param int $people_id required
-     *  @return bool
-    **/
+     * Deletes a {$this->db_prefix}people record based on id.
+     * @param int $people_id required
+     * @return bool
+     */
     public function delete($people_id = -1)
     {
         if ($people_id == -1 || !ctype_digit($people_id)) { return false; }
@@ -253,9 +252,9 @@ class PeopleModel implements ModelInterface
 
     ### Single User Methods ###
     /**
-     *  Gets the people_id (primary record key) for a specific login_id.
-     *  @param string $login_id required
-     *  @return int|bool $people_id
+     * Gets the people_id (primary record key) for a specific login_id.
+     * @param string $login_id required
+     * @return int|bool $people_id
      */
     public function getPeopleId($login_id = '')
     {
@@ -270,10 +269,10 @@ class PeopleModel implements ModelInterface
         return false;
     }
     /**
-     *  Updates the bad_login_count field for the user by one
-     *  @param int $people_id
-     *  @return bool
-     **/
+     * Updates the bad_login_count field for the user by one
+     * @param int $people_id
+     * @return bool
+      */
     public function incrementBadLoginCount($people_id = -1)
     {
         if ($people_id == -1) { return false; }
@@ -286,9 +285,9 @@ class PeopleModel implements ModelInterface
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     *  Increments the bad_login_ts record by one minute
-     *  @param int $people_id required
-     *  @return bool
+     * Increments the bad_login_ts record by one minute
+     * @param int $people_id required
+     * @return bool
      */
     public function incrementBadLoginTimestamp($people_id = -1)
     {
@@ -302,9 +301,9 @@ class PeopleModel implements ModelInterface
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     *  Returns the user record.
-     *  @param int|string $user either user id or user name
-     *  @return array
+     * Returns the user record.
+     * @param int|string $user either user id or user name
+     * @return array
      */
     public function readPeopleRecord($user = '')
     {
@@ -323,10 +322,10 @@ class PeopleModel implements ModelInterface
         }
     }
     /**
-     *  Resets the bad_login_count to 0
-     *  @param int $people_id required
-     *  @return bool
-     **/
+     * Resets the bad_login_count to 0
+     * @param int $people_id required
+     * @return bool
+      */
     public function resetBadLoginCount($people_id = -1)
     {
         if ($people_id == -1) { return false; }
@@ -339,10 +338,10 @@ class PeopleModel implements ModelInterface
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     *  Resets the timestamp to 0
-     *  @param int $people_id required
-     *  @return bool
-    **/
+     * Resets the timestamp to 0
+     * @param int $people_id required
+     * @return bool
+     */
     public function resetBadLoginTimestamp($people_id = -1)
     {
         if ($people_id == -1) { return false; }
@@ -356,10 +355,10 @@ class PeopleModel implements ModelInterface
         return $results;
     }
     /**
-     *  Sets the bad login timestamp for the user.
-     *  @param int $people_id required
-     *  @return bool
-    **/
+     * Sets the bad login timestamp for the user.
+     * @param int $people_id required
+     * @return bool
+     */
     public function setBadLoginTimestamp($people_id = -1)
     {
         if ($people_id == -1) { return false; }
@@ -405,10 +404,10 @@ class PeopleModel implements ModelInterface
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     *  Updates the user record with a new password
-     *  @param int    $people_id required
-     *  @param string $password required
-     *  @return bool success or failure
+     * Updates the user record with a new password
+     * @param int    $people_id required
+     * @param string $password required
+     * @return bool success or failure
      */
     public function updatePassword($people_id = -1, $password = '')
     {
@@ -422,10 +421,10 @@ class PeopleModel implements ModelInterface
         return $this->o_db->update($sql, $a_values, true);
     }
     /**
-     *  Updates the user record to be make the user active or inactive, normally inactive.
-     *  @param int $people_id   required id of a user
-     *  @param int $is_active optional defaults to inactive (0)
-     *  @return bool success or failure
+     * Updates the user record to be make the user active or inactive, normally inactive.
+     * @param int $people_id   required id of a user
+     * @param int $is_active optional defaults to inactive (0)
+     * @return bool success or failure
      */
     public function updateActive($people_id = -1, $is_active = 0)
     {
@@ -452,9 +451,9 @@ class PeopleModel implements ModelInterface
 
     ### More complex methods using multiple tables ###
     /**
-     *  Deletes the person and related records.
-     *  @param int $people_id
-     *  @return bool
+     * Deletes the person and related records.
+     * @param int $people_id
+     * @return bool
      */
     public function deletePerson($people_id = -1)
     {
@@ -490,10 +489,10 @@ class PeopleModel implements ModelInterface
         return false;
     }
     /**
-     *  Gets the user values based on login_id or people_id.
-     *  @param int|string $people_id the people_id or login_id (as defined in the db)
-     *  @return array, the records for the person
-    **/
+     * Gets the user values based on login_id or people_id.
+     * @param int|string $people_id the people_id or login_id (as defined in the db)
+     * @return array, the records for the person
+     */
     public function readInfo($people_id = '')
     {
         $meth = __METHOD__ . '.';
@@ -567,12 +566,12 @@ class PeopleModel implements ModelInterface
         return array();
     }
     /**
-     *  Saves the person.
-     *  If the values contain a value of people_id, person is updated
-     *  Else it is a new person.
-     *  @param array $a_person values to save
-     *  @return mixed, people_id or false
-     **/
+     * Saves the person.
+     * If the values contain a value of people_id, person is updated
+     * Else it is a new person.
+     * @param array $a_person values to save
+     * @return mixed, people_id or false
+      */
     public function savePerson(array $a_person = array())
     {
         if (!Arrays::hasRequiredKeys($a_person, ['login_id', 'password'])) {
@@ -703,10 +702,10 @@ class PeopleModel implements ModelInterface
         return false;
     }
     /**
-     *  Returns an array used in the creation of people group map records.
-     *  @param array $group_id
-     *  @param       $group_name
-     *  @return array
+     * Returns an array used in the creation of people group map records.
+     * @param array $group_id
+     * @param       $group_name
+     * @return array
      */
     public function makeGroupIdArray($group_id = array(), $group_name = '')
     {
@@ -737,10 +736,10 @@ class PeopleModel implements ModelInterface
         return $a_group_ids;
     }
     /**
-     *  Returns an array mapping a person to the group(s) specified.
-     *  @param string $people_id
-     *  @param array  $a_groups
-     *  @return array
+     * Returns an array mapping a person to the group(s) specified.
+     * @param string $people_id
+     * @param array  $a_groups
+     * @return array
      */
     public function makePgmArray($people_id = '', array $a_groups = array())
     {

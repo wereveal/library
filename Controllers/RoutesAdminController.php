@@ -1,24 +1,23 @@
 <?php
 /**
- *  @brief     Controller for the Routes Admin page.
- *  @ingroup   ritc_library lib_controllers
- *  @file      Ritc/Library/Controllers/RoutesAdminController.php
- *  @namespace Ritc\Library\Controllers
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   2.1.1
- *  @date      2015-10-06 13:55:38
- *  @pre       The route to this controller has to already be in the database and should not be able to be deleted.
- *  @note <pre><b>Change Log</b>
- *      v2.1.1   - bug fix                                      - 2016-03-08 wer
- *      v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
- *                 If the route doesn't end with a file ext
- *                 add a slash to the end as well.
- *      v2.0.0   - renamed                                      - 09/26/2015 wer
- *      v1.0.0   - first working version                        - 01/28/2015 wer
- *      v1.0.0β2 - refactored for namespaces                    - 12/05/2014 wer
- *      v1.0.0β1 - Initial version                              - 11/14/2014 wer
- *  </pre>
- **/
+ * @brief     Controller for the Routes Admin page.
+ * @ingroup   ritc_library lib_controllers
+ * @file      Ritc/Library/Controllers/RoutesAdminController.php
+ * @namespace Ritc\Library\Controllers
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   2.1.1
+ * @date      2015-10-06 13:55:38
+ * @pre       The route to this controller has to already be in the database and should not be able to be deleted.
+ * @note <b>Change Log</b>
+ * - v2.1.1   - bug fix                                      - 2016-03-08 wer
+ * - v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
+ *                If the route doesn't end with a file ext
+ *                add a slash to the end as well.
+ * - v2.0.0   - renamed                                      - 09/26/2015 wer
+ * - v1.0.0   - first working version                        - 01/28/2015 wer
+ * - v1.0.0β2 - refactored for namespaces                    - 12/05/2014 wer
+ * - v1.0.0β1 - Initial version                              - 11/14/2014 wer
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Strings;
@@ -40,17 +39,17 @@ class RoutesAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /** @var array  */
+    /** @var array */
     private $a_post;
-    /** @var Di  */
+    /** @var Di */
     private $o_di;
-    /** @var RoutesModel  */
+    /** @var RoutesModel */
     private $o_model;
-    /** @var Router  */
+    /** @var Router */
     private $o_router;
-    /** @var Session  */
+    /** @var Session */
     private $o_session;
-    /** @var RoutesAdminView  */
+    /** @var RoutesAdminView */
     private $o_view;
 
     /**

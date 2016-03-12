@@ -1,21 +1,20 @@
 <?php
 /**
- *  @brief     Controller for the Roles Admin page.
- *  @file      RolesAdmimController.php
- *  @ingroup   ritc_library controllers
- *  @namespace Ritc\Library\Controllers
- *  @class     RolesAdmimController
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.0
- *  @date      2015-10-07 14:31:15
- *  @note A file in Library
- *  @note <pre><b>Change Log</b>
- *      v1.1.0   - added immutable code            - 10/07/2015 wer
- *      v1.0.1   - changes to model reflected here - 09/24/2015 wer
- *      v1.0.0   - First working version           - 01/28/2015 wer
- *      v1.0.0β1 - Initial version                 - 01/20/2015 wer
- *  </pre>
- **/
+ * @brief     Controller for the Roles Admin page.
+ * @file      RolesAdmimController.php
+ * @ingroup   ritc_library controllers
+ * @namespace Ritc\Library\Controllers
+ * @class     RolesAdmimController
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.0
+ * @date      2015-10-07 14:31:15
+ * @note A file in Library
+ * @note <b>Change Log</b>
+ * - v1.1.0   - added immutable code            - 10/07/2015 wer
+ * - v1.0.1   - changes to model reflected here - 09/24/2015 wer
+ * - v1.0.0   - First working version           - 01/28/2015 wer
+ * - v1.0.0β1 - Initial version                 - 01/20/2015 wer
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
@@ -29,17 +28,17 @@ class RolesAdmimController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /** @var array  */
+    /** @var array */
     private $a_post;
-    /** @var \Ritc\Library\Services\Di  */
+    /** @var \Ritc\Library\Services\Di */
     private $o_di;
-    /** @var \Ritc\Library\Models\RolesModel  */
+    /** @var \Ritc\Library\Models\RolesModel */
     private $o_model;
-    /** @var \Ritc\Library\Services\Router  */
+    /** @var \Ritc\Library\Services\Router */
     private $o_router;
-    /** @var \Ritc\Library\Services\Session  */
+    /** @var \Ritc\Library\Services\Session */
     private $o_session;
-    /** @var \Ritc\Library\Views\RolesAdminView  */
+    /** @var \Ritc\Library\Views\RolesAdminView */
     private $o_view;
 
     /**

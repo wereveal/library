@@ -1,24 +1,23 @@
 <?php
 /**
- *  @brief     An entity class for People.
- *  @details   It needs to be noted that this reflects the fact that
- *             a user entity consists of data that comes from more than one
- *             database table.
- *  @ingroup   ritc_library lib_entities
- *  @file      PRitc/Library/Entities/eopleEntity.php
- *  @namespace Ritc\Library\Entities
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.0
- *  @date      2015-09-03 15:31:12
- *  @note  <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/page_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/page_pg.sql</pre>
- *  @note <pre><b>Change Log</b>
- *      v1.1.0 - changed is_default to is_immutable to be more descriptive - 09/03/2015 wer
- *      v1.0.0 - finalized       - 07/29/2015 wer
- *      v0.1.0 - Initial version - 09/11/2014 wer
- *  </pre>
- **/
+ * @brief     An entity class for People.
+ * @details   It needs to be noted that this reflects the fact that
+ *            a user entity consists of data that comes from more than one
+ *            database table.
+ * @ingroup   ritc_library lib_entities
+ * @file      PRitc/Library/Entities/eopleEntity.php
+ * @namespace Ritc\Library\Entities
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.0
+ * @date      2015-09-03 15:31:12
+ * @note  <b>SQL for table<b>
+ * - MySQL      - resources/sql/mysql/page_mysql.sql
+ * - PostgreSQL - resources/sql/postgresql/page_pg.sql
+ * @note <b>Change Log</b>
+ * - v1.1.0 - changed is_default to is_immutable to be more descriptive - 09/03/2015 wer
+ * - v1.0.0 - finalized       - 07/29/2015 wer
+ * - v0.1.0 - Initial version - 09/11/2014 wer
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
@@ -30,27 +29,27 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class PeopleEntity implements EntityInterface
 {
-    /** @var string  */
+    /** @var string */
     private $people_id = '';
-    /** @var string  */
+    /** @var string */
     private $login_id = '';
-    /** @var string  */
+    /** @var string */
     private $real_name = '';
-    /** @var string  */
+    /** @var string */
     private $short_name = '';
-    /** @var string  */
+    /** @var string */
     private $password = '';
-    /** @var int  */
+    /** @var int */
     private $is_logged_in = 0;
-    /** @var int  */
+    /** @var int */
     private $bad_login_count = 0;
-    /** @var int  */
+    /** @var int */
     private $bad_login_ts = 0;
-    /** @var int  */
+    /** @var int */
     private $is_active = 0;
-    /** @var int  */
+    /** @var int */
     private $is_immutable = 0;
-    /** @var int  */
+    /** @var int */
     private $created_on = 0;
 
     /**

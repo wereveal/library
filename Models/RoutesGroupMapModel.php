@@ -1,16 +1,15 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff.
- *  @ingroup   ritc_library lib_models
- *  @file      Ritc/Library/Models/RoutesGroupMapModel.php
- *  @namespace Ritc\Library\Models
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0β1
- *  @date      2015-08-01 14:01:09
- *  @note <pre><b>Change Log</b>
- *      v0.1.0ß1 - Initial version                                               - 08/01/2015 wer
- *  </pre>
-**/
+ * @brief     Does all the database CRUD stuff.
+ * @ingroup   ritc_library lib_models
+ * @file      Ritc/Library/Models/RoutesGroupMapModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0-alpha.0
+ * @date      2015-08-01 14:01:09
+ * @note <b>Change Log</b>
+ * - v0.1.0-alpha.0 - Initial version                                               - 08/01/2015 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
@@ -27,13 +26,13 @@ class RoutesGroupMapModel implements ModelInterface
 {
     use LogitTraits;
 
-    /** @var string  */
+    /** @var string */
     private $db_prefix;
-    /** @var string  */
+    /** @var string */
     private $db_type;
-    /** @var string  */
+    /** @var string */
     private $error_message;
-    /** @var \Ritc\Library\Services\DbModel  */
+    /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
 
     /**
@@ -49,10 +48,10 @@ class RoutesGroupMapModel implements ModelInterface
 
     ### Basic CRUD commands, required by interface ###
     /**
-     *  Creates a new group_role map record in the routes_group_map table.
-     *  @param array $a_values required
-     *  @return int|bool
-    **/
+     * Creates a new group_role map record in the routes_group_map table.
+     * @param array $a_values required
+     * @return int|bool
+     */
     public function create(array $a_values = array())
     {
         if ($a_values == array()) { return false; }
@@ -121,14 +120,14 @@ class RoutesGroupMapModel implements ModelInterface
         return $this->o_db->search($sql);
     }
     /**
-     *  Updates the record, NOT! Well, sort of.
-     *  Method is required by interface.
-     *      Update should never happen!
-     *      Reasoning. The group_id and route_id form a unique index. As such
-     *      they should not be modified. The record should always be deleted and
-     *      a new one added. That is what this function actually does.
-     *  @param array $a_values
-     *  @return bool
+     * Updates the record, NOT! Well, sort of.
+     * Method is required by interface.
+     *     Update should never happen!
+     *     Reasoning. The group_id and route_id form a unique index. As such
+     *     they should not be modified. The record should always be deleted and
+     *     a new one added. That is what this function actually does.
+     * @param array $a_values
+     * @return bool
      */
     public function update(array $a_values = array())
     {

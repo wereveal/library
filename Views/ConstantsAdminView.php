@@ -1,24 +1,22 @@
 <?php
 /**
- *  @brief     View for the Configuration page.
- *  @ingroup   ritc_library lib_views
- *  @file      ConstantsAdminView.php
- *  @namespace Ritc\Library\Views
- *  @class     ConstantsAdminView
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.2.2
- *  @date      2015-12-12 16:01:57
- *  @note <pre><b>Change Log</b>
- *      v1.2.2   - Implement TWIG_PREFIX                                - 12/12/2015 wer
- *      v1.2.1   - Bug Fix                                              - 11/07/2015 wer
- *      v1.2.0   - Immutable code added                                 - 10/07/2015 wer
- *      v1.1.0   - removed abstract class Base, added LogitTraits       - 09/01/2015 wer
- *      v1.0.0   - first fully working version                          - 01/28/2015 wer
- *      v1.0.0β3 - changed to use the new Di class                      - 11/17/2014 wer
- *      v1.0.0β2 - changed to use Base class and inject database object - 09/24/2014 wer
- *      v1.0.0β1 - Initial version                                      - 04/02/2014 wer
- *  </pre>
-**/
+ * @brief     View for the Configuration page.
+ * @ingroup   ritc_library lib_views
+ * @file      ConstantsAdminView.php
+ * @namespace Ritc\Library\Views
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.2.2
+ * @date      2015-12-12 16:01:57
+ * @note <b>Change Log</b>
+ * - v1.2.2   - Implement TWIG_PREFIX                                - 12/12/2015 wer
+ * - v1.2.1   - Bug Fix                                              - 11/07/2015 wer
+ * - v1.2.0   - Immutable code added                                 - 10/07/2015 wer
+ * - v1.1.0   - removed abstract class Base, added LogitTraits       - 09/01/2015 wer
+ * - v1.0.0   - first fully working version                          - 01/28/2015 wer
+ * - v1.0.0β3 - changed to use the new Di class                      - 11/17/2014 wer
+ * - v1.0.0β2 - changed to use Base class and inject database object - 09/24/2014 wer
+ * - v1.0.0β1 - Initial version                                      - 04/02/2014 wer
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\AuthHelper;
@@ -29,15 +27,20 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ManagerViewTraits;
 
+/**
+ * Class ConstantsAdminView
+ * @class   ConstantsAdminView
+ * @package Ritc\Library\Views
+ */
 class ConstantsAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
-    /** @var \Ritc\Library\Views\ManagerView  */
+    /** @var \Ritc\Library\Views\ManagerView */
     private $o_manager;
-    /** @var \Ritc\Library\Models\ConstantsModel  */
+    /** @var \Ritc\Library\Models\ConstantsModel */
     private $o_model;
-    /** @var \Ritc\Library\Models\PeopleModel  */
+    /** @var \Ritc\Library\Models\PeopleModel */
     private $o_people;
 
     /**
@@ -57,9 +60,9 @@ class ConstantsAdminView
         }
     }
     /**
-     *  Returns the list of configs in html.
-     *  @param array $a_message
-     *  @return string
+     * Returns the list of configs in html.
+     * @param array $a_message
+     * @return string
      */
     public function renderList(array $a_message = array())
     {
@@ -104,9 +107,9 @@ class ConstantsAdminView
         return $this->o_twig->render($tpl, $a_values);
     }
     /**
-     *  Returns HTML verify form to delete.
-     *  @param array $a_values
-     *  @return string
+     * Returns HTML verify form to delete.
+     * @param array $a_values
+     * @return string
      */
     public function renderVerify(array $a_values = array())
     {

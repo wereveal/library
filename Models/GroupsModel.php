@@ -1,23 +1,22 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff.
- *  @ingroup   ritc_library lib_models
- *  @file      Ritc/Library/Models/GroupsModel.php
- *  @namespace Ritc\Library\Models
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:46:28
- *  @note <pre><b>Change Log</b>
- *      v1.0.0   - First working version                                        - 11/27/2015 wer
- *      v1.0.0β5 - refactoring to provide postgresql compatibility              - 11/22/2015 wer
- *      v1.0.0β4 - added group_immutable field in db and changed code to match  - 10/08/2015 wer
- *      v1.0.0ß3 - removed abstract class Base, used LogitTraits                - 09/01/2015 wer
- *      v1.0.0ß2 - changed to use IOC (Inversion of Control)                    - 11/15/2014 wer
- *      v1.0.0β1 - extends the Base class, injects the DbModel, clean up        - 09/23/2014 wer
- *      v1.0.0β0 - First live version                                           - 09/15/2014 wer
- *      v0.1.0β  - Initial version                                              - 01/18/2014 wer
- *  </pre>
-**/
+ * @brief     Does all the database CRUD stuff.
+ * @ingroup   ritc_library lib_models
+ * @file      Ritc/Library/Models/GroupsModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0
+ * @date      2015-11-27 14:46:28
+ * @note <b>Change Log</b>
+ * - v1.0.0   - First working version                                        - 11/27/2015 wer
+ * - v1.0.0β5 - refactoring to provide postgresql compatibility              - 11/22/2015 wer
+ * - v1.0.0β4 - added group_immutable field in db and changed code to match  - 10/08/2015 wer
+ * - v1.0.0ß3 - removed abstract class Base, used LogitTraits                - 09/01/2015 wer
+ * - v1.0.0ß2 - changed to use IOC (Inversion of Control)                    - 11/15/2014 wer
+ * - v1.0.0β1 - extends the Base class, injects the DbModel, clean up        - 09/23/2014 wer
+ * - v1.0.0β0 - First live version                                           - 09/15/2014 wer
+ * - v0.1.0β  - Initial version                                              - 01/18/2014 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
@@ -220,9 +219,9 @@ class GroupsModel implements ModelInterface
 
     ### Shortcuts ###
     /**
-     *  Returns a record of the group specified by id.
-     *  @param int $group_id
-     *  @return array|bool
+     * Returns a record of the group specified by id.
+     * @param int $group_id
+     * @return array|bool
      */
     public function readById($group_id = -1)
     {
@@ -235,9 +234,9 @@ class GroupsModel implements ModelInterface
         return false;
     }
     /**
-     *  Returns a record of the group specified by name.
-     *  @param string $group_name
-     *  @return array()
+     * Returns a record of the group specified by name.
+     * @param string $group_name
+     * @return array()
      */
     public function readyByName($group_name = '')
     {
@@ -249,10 +248,10 @@ class GroupsModel implements ModelInterface
         return false;
     }
     /**
-     *  Checks to see if the id is a valid group id.
-     *  @param int $group_id
-     *  @return bool true or false
-     **/
+     * Checks to see if the id is a valid group id.
+     * @param int $group_id
+     * @return bool true or false
+      */
     public function isValidGroupId($group_id = -1)
     {
         if ($group_id == -1) { return false; }
@@ -263,8 +262,8 @@ class GroupsModel implements ModelInterface
         return false;
     }
     /**
-     *  Required by Interface
-     *  @return mixed
+     * Required by Interface
+     * @return mixed
      */
     public function getErrorMessage()
     {

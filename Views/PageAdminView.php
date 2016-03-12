@@ -1,19 +1,17 @@
 <?php
 /**
- *  @brief     View for the Page Admin page.
- *  @ingroup   ritc_library lib_views
- *  @file      PageAdminView.php
- *  @namespace Ritc\Library\Views
- *  @class     PageAdminView
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.1
- *  @date      2015-12-12 16:19:33
- *  @note <pre><b>Change Log</b>
- *      v1.0.1   - Implement TWIG_PREFIX                        - 12/12/2015 wer
- *      v1.0.0   - take out of beta                             - 11/27/2015 wer
- *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
- *  </pre>
-**/
+ * @brief     View for the Page Admin page.
+ * @ingroup   ritc_library lib_views
+ * @file      PageAdminView.php
+ * @namespace Ritc\Library\Views
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.1
+ * @date      2015-12-12 16:19:33
+ * @note <b>Change Log</b>
+ * - v1.0.1   - Implement TWIG_PREFIX                        - 12/12/2015 wer
+ * - v1.0.0   - take out of beta                             - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                              - 10/30/2015 wer
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Models\PageModel;
@@ -22,12 +20,24 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ManagerViewTraits;
 
+/**
+ * Class PageAdminView
+ * @class   PageAdminView
+ * @package Ritc\Library\Views
+ */
 class PageAdminView
 {
     use LogitTraits, ManagerViewTraits;
 
+    /**
+     * @var \Ritc\Library\Models\PageModel
+     */
     private $o_model;
 
+    /**
+     * PageAdminView constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
@@ -37,10 +47,11 @@ class PageAdminView
             $this->o_model->setElog($this->o_elog);
         }
     }
+
     /**
-     *  Returns a form to enter page data into db.
-     *  @param array $a_message
-     *  @return string
+     * Returns a form to enter page data into db.
+     * @param array $a_message
+     * @return string
      */
     public function renderForm(array $a_message = array())
     {
@@ -83,10 +94,11 @@ class PageAdminView
         $tpl = TWIG_PREFIX . 'pages/page_form.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
+
     /**
-     *  Returns the list of pages in html.
-     *  @param array $a_message
-     *  @return string
+     * Returns the list of pages in html.
+     * @param array $a_message
+     * @return string
      */
     public function renderList(array $a_message = array())
     {

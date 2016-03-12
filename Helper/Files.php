@@ -1,35 +1,34 @@
 <?php
 /**
- *  @brief     Determines the path to the file.
- *  @ingroup   ritc_library lib_helper
- *  @file      Ritc/Library/Helper/Files.php
- *  @namespace Ritc\Library\Helper
- *  @class     Files
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   4.2.2
- *  @date      2014-11-15 12:34:56
- *  @note <pre>The constants with _DIR_NAME should correspond to dir names in
- *      the site theme or namespace (e.g. templates are in namespace). If a directory
- *      is missing, this could cause a fatal error.
- *      </pre>
- *  @note <pre><b>Change Log</b>
- *      v4.2.1 - moved to the namespace Ritc\Library\Helper - 11/15/2014 wer
- *      v4.2.1 - implements changes to Base class for logging
- *      v4.2.0 - Several changes. - 12/19/2013 wer
- *              Base was changed from abstract to normal class
- *              Location was modified to be an interface
- *              Two methods needed added to match the Location interface.
- *              Unused stuff removed.
- *      v4.1.2 - some layout changes require changes in code. 07/06/2013 wer
- *          NOTE: the fact that layout changes require this class to be changed
- *              is not good. I need to change it so that the parameters.php file
- *              can specify the layout. But that won't be trivial.
- *      v4.1.1 - bug fixes and clean up 4/30/2013 wer
- *      v4.1.0 - New RITC Library Layout serious changes wer
- *               BUT method results and names were not changed
- *      v4.0.0 - FIG standards (mostly) wer
- *  </pre>
-**/
+ * @brief     Determines the path to the file.
+ * @ingroup   ritc_library lib_helper
+ * @file      Ritc/Library/Helper/Files.php
+ * @namespace Ritc\Library\Helper
+ * @class     Files
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   4.2.2
+ * @date      2014-11-15 12:34:56
+ * @note The constants with _DIR_NAME should correspond to dir names in
+ *     the site theme or namespace (e.g. templates are in namespace). If a directory
+ *     is missing, this could cause a fatal error.
+ *     </pre>
+ * @note <b>Change Log</b>
+ * - v4.2.1 - moved to the namespace Ritc\Library\Helper - 11/15/2014 wer
+ * - v4.2.1 - implements changes to Base class for logging
+ * - v4.2.0 - Several changes. - 12/19/2013 wer
+ *             Base was changed from abstract to normal class
+ *             Location was modified to be an interface
+ *             Two methods needed added to match the Location interface.
+ *             Unused stuff removed.
+ * - v4.1.2 - some layout changes require changes in code. 07/06/2013 wer
+ *         NOTE: the fact that layout changes require this class to be changed
+ *             is not good. I need to change it so that the parameters.php file
+ *             can specify the layout. But that won't be trivial.
+ * - v4.1.1 - bug fixes and clean up 4/30/2013 wer
+ * - v4.1.0 - New RITC Library Layout serious changes wer
+ *              BUT method results and names were not changed
+ * - v4.0.0 - FIG standards (mostly) wer
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Interfaces\LocationInterface;
@@ -56,13 +55,13 @@ class Files implements LocationInterface
     protected $file_name     = 'no_file.tpl';
     /** @var string */
     protected $file_dir_name = 'assets';
-    /** @var string  */
+    /** @var string */
     protected $namespace;
-    /** @var string  */
+    /** @var string */
     protected $file_w_dir;
-    /** @var string  */
+    /** @var string */
     protected $file_w_path;
-    /** @var string  */
+    /** @var string */
     protected $theme_name = 'default';
 
     /**
@@ -124,22 +123,22 @@ class Files implements LocationInterface
         return $this->getFileWithPath($file_name);
     }
     /**
-     *  Returns the contents of a file as a string.
-     *  Does more than the php function of file_get_contents in that
-     *  file_get_contents requires a full path where as this only requires
-     *  a file name. The path can be specified either directly or indirectly.
-     *  @note Examples:
-     *      getContents('test.tpl');\n
-     *      getContents('test.css', 'css');\n
-     *      getContents('test/test.tpl', 'templates');\n
-     *      getContents('fred.html', 'my/file/path');
-     *  @param $file_name (str) - name of file - required - can include
-     *      sub-paths to work with one of the several file_dir_name types,
-     *      especially useful when using sub-dirs of templates and other
-     *      sections of the theme.
-     *  @param $file_dir_name (str) - one of several types or raw path - optional
-     *  @return string - the contents of the file or false.
-    **/
+     * Returns the contents of a file as a string.
+     * Does more than the php function of file_get_contents in that
+     * file_get_contents requires a full path where as this only requires
+     * a file name. The path can be specified either directly or indirectly.
+     * @note Examples:
+     *     getContents('test.tpl');\n
+     *     getContents('test.css', 'css');\n
+     *     getContents('test/test.tpl', 'templates');\n
+     *     getContents('fred.html', 'my/file/path');
+     * @param $file_name (str) - name of file - required - can include
+     *     sub-paths to work with one of the several file_dir_name types,
+     *     especially useful when using sub-dirs of templates and other
+     *     sections of the theme.
+     * @param $file_dir_name (str) - one of several types or raw path - optional
+     * @return string - the contents of the file or false.
+     */
     public function getContents($file_name = '', $file_dir_name = '')
     {
         if($file_name == '' && $this->file_name == "no_file.tpl") {
@@ -415,28 +414,27 @@ class Files implements LocationInterface
         return $a_file_locations;
     }
     /**
-     *  Finds the location of the file
-     *  the possible places a file could exist.
-     *    <pre>One of many places:
-     *      NOTE: $file_dir_name can be pathlike, e.g. '/assets/css'
-     *            $file_name can also be pathlike, e.g. '/assets/css/main.css'
-     *      SITE_PATH/$file_name
-     *      SITE_PATH/$file_dir_name/$file_name
-     *      SITE_PATH/assets/$file_name
-     *      SITE_PATH/assets/$file_dir_name/$file_name
-     *      SITE_PATH/assets/themes/$this->theme_name/$file_dir_name/$file_name
-     *      BASE_PATH/$file_name
-     *      BASE_PATH/$file_dir_name/$file_name
-     *      APP_DIR/$file_name
-     *      APP_DIR/config/$file_name
-     *      APP_DIR/$file_dir_name/$file_name
-     *      APP_DIR/str_replace('Ritc\', '', $namespace)/$file_name
-     *  </pre>
-     *  @param string $file_name required
-     *  @param string $namespace optional defaults to $this->namespace
-     *  @param string $file_dir_name optional default to none
-     *  @return mixed str $path_of_file or false
-    **/
+     * Finds the location of the file
+     * the possible places a file could exist.
+     *   <pre>One of many places:
+     *     NOTE: $file_dir_name can be pathlike, e.g. '/assets/css'
+     *           $file_name can also be pathlike, e.g. '/assets/css/main.css'
+     *     SITE_PATH/$file_name
+     *     SITE_PATH/$file_dir_name/$file_name
+     *     SITE_PATH/assets/$file_name
+     *     SITE_PATH/assets/$file_dir_name/$file_name
+     *     SITE_PATH/assets/themes/$this->theme_name/$file_dir_name/$file_name
+     *     BASE_PATH/$file_name
+     *     BASE_PATH/$file_dir_name/$file_name
+     *     APP_DIR/$file_name
+     *     APP_DIR/config/$file_name
+     *     APP_DIR/$file_dir_name/$file_name
+     *     APP_DIR/str_replace('Ritc\', '', $namespace)/$file_name
+         * @param string $file_name required
+     * @param string $namespace optional defaults to $this->namespace
+     * @param string $file_dir_name optional default to none
+     * @return mixed str $path_of_file or false
+     */
     public function locateFile($file_name = '', $namespace = '', $file_dir_name = '')
     {
         if ($file_name == '') {
@@ -517,10 +515,10 @@ class Files implements LocationInterface
         return true;
     }
     /**
-     *  Sets the themename variable
-     *  @param string $theme_name
-     *  @return null
-    **/
+     * Sets the themename variable
+     * @param string $theme_name
+     * @return null
+     */
     public function setThemeName($theme_name = 'default')
     {
         $this->theme_name = $theme_name;
@@ -528,8 +526,8 @@ class Files implements LocationInterface
         return true;
     }
     /**
-     *  Sets the two main file paths. One is server path, one is site path (within web site)
-    **/
+     * Sets the two main file paths. One is server path, one is site path (within web site)
+     */
     protected function setFileLocations()
     {
         $this->logIt(

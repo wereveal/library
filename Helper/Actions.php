@@ -1,32 +1,35 @@
 <?php
 /**
- *  @brief     Extracts the action to use for the page.
- *  @details   Can get the action from the URL - htaccess required
- *             or from a form element with a few select id names
- *  @ingroup   ritc_library lib_helper
- *  @file      Ritc/Library/Helper/Actions.php
- *  @namespace Ritc\Library\Helper
- *  @class     Actions
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   2.2.7
- *  @date      2015-01-27 15:15:06
- *  @note <pre><b>Change Log</b>
- *      v2.2.7 - match refactoring of Strings and Arrays to     - 01/27/2015 wer
- *               static methods
- *      v2.2.6 - moved file into Helper area                    - 11/15/2014 wer
- *      v2.2.5 - changed to implment the changes in Base class  - 09/23/2014 wer
- *      v2.2.4 - changed to match namespace change              - 12/19/2013 wer
- *      v2.2.3 - Changed to namespace reorge
- *      v2.2.2 - changed to new namespace                       - 03/27/2013 wer
- *      v2.2.1 - added a bit more sanitation to uri actions,
- *               renamed action to form_action to be clearer what it was
- *      v2.2.0 - refactored to be closer to FIG standards
- *  </pre>
-**/
+ * @brief     Extracts the action to use for the page.
+ * @details   Can get the action from the URL - htaccess required
+ *           or from a form element with a few select id names
+ * @ingroup   lib_helper
+ * @file      Ritc/Library/Helper/Actions.php
+ * @namespace Ritc\Library\Helper
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   2.2.7
+ * @date      2015-01-27 15:15:06
+ * @note <b>Change Log</b>
+ * - 2.2.7 - match refactoring of Strings and Arrays to static methods  - 01/27/2015 wer
+ *
+ * - 2.2.6 - moved file into Helper area                                - 11/15/2014 wer
+ * - 2.2.5 - changed to implment the changes in Base class              - 09/23/2014 wer
+ * - 2.2.4 - changed to match namespace change                          - 12/19/2013 wer
+ * - 2.2.3 - Changed to namespace reorge
+ * - 2.2.2 - changed to new namespace                                   - 03/27/2013 wer
+ * - 2.2.1 - added a bit more sanitation to uri actions,
+ *          renamed action to form_action to be clearer what it was
+ * - 2.2.0 - refactored to be closer to FIG standards
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class Actions
+ * @class   Actions
+ * @package Ritc\Library\Helper
+ */
 class Actions
 {
     use LogitTraits;
@@ -80,7 +83,7 @@ class Actions
     }
     public function getFilePath()
     {
-        /*  returns the full path where a file is located **/
+        /* returns the full path where a file is located */
         $a_file_path = explode("/", __FILE__);
         $the_count = count($a_file_path);
         $the_output = "/";
@@ -181,7 +184,7 @@ class Actions
     }
     public function setUriActions($root_dir = '')
     {
-        /* $root_dir defines what isn't an action in the URI**/
+        /* $root_dir defines what isn't an action in the URI */
         $log_from = __METHOD__ . '.' . __LINE__;
         $this->logIt("Root Dir is: " . $root_dir, LOG_OFF, $log_from);
         $this->logIt("Request URI is: " . $this->uri_no_get, LOG_OFF, $log_from);

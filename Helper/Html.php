@@ -1,25 +1,24 @@
 <?php
 /**
- *  @brief     Creates HTML strings.
- *  @details   Methods which start with make_ return a modified version
- *             of the value passed into the method, usually indicated by
- *             the name of the method
- *  @ingroup   ritc_library lib_helper
- *  @file      Ritc/Library/Helper/Html.php
- *  @namespace Ritc\Library\Helper
- *  @class     Html
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.6
- *  @date      2015-09-01 07:38:42
- *  @note <pre><b>Change Log</b>
- *      v1.0.6 - removed abstract class Base, used LogitTraits            - 09/01/2015 wer
- *      v1.0.5 - Refactored to match the Arrays class                     - 07/31/2015 wer
- *      v1.0.4 - moved to the Ritc\Library\Helper namespace               - 11/15/2014 wer
- *      v1.0.3 - changed to implment the changes in Base class            - 09/23/2014 wer
- *      v1.0.2 - some refactoring changes based on changes in package     - 12/19/2013 wer
- *      v1.0.1 - some refactoring changes based on changes in other files - 03/17/2013 wer
- *  </pre>
- *  @note Probably a dead class.
+ * @brief     Creates HTML strings.
+ * @details   Methods which start with make_ return a modified version
+ *            of the value passed into the method, usually indicated by
+ *            the name of the method
+ * @ingroup   ritc_library lib_helper
+ * @file      Ritc/Library/Helper/Html.php
+ * @namespace Ritc\Library\Helper
+ * @class     Html
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.6
+ * @date      2015-09-01 07:38:42
+ * @note <b>Change Log</b>
+ * - v1.0.6 - removed abstract class Base, used LogitTraits            - 09/01/2015 wer
+ * - v1.0.5 - Refactored to match the Arrays class                     - 07/31/2015 wer
+ * - v1.0.4 - moved to the Ritc\Library\Helper namespace               - 11/15/2014 wer
+ * - v1.0.3 - changed to implment the changes in Base class            - 09/23/2014 wer
+ * - v1.0.2 - some refactoring changes based on changes in package     - 12/19/2013 wer
+ * - v1.0.1 - some refactoring changes based on changes in other files - 03/17/2013 wer
+ * @note Probably a dead class.
  */
 namespace Ritc\Library\Helper;
 
@@ -138,17 +137,17 @@ class Html
         return $this->render('message.tpl', $a_stuff, true);
     }
     /**
-     *  Fill the template with the values passed in.
-     *  @param mixed $template may be the name of a file or a string. If
-     *      a name of a file, the file must be in the templates directory
-     *      of the in use theme. Suggestion is simple, if the same template
-     *      is being used multiple time consecutively, put the template in
-     *      a string once and pass it into the fill template method.
-     *  @param array $a_values the values to insert into the template in
-     *      an assoc array. $key is the string to find $value is the replacement.
-     *  @param bool $is_file the template is the path to a file, defaults to false
-     *  @return string - the filled in template
-    **/
+     * Fill the template with the values passed in.
+     * @param mixed $template may be the name of a file or a string. If
+     *     a name of a file, the file must be in the templates directory
+     *     of the in use theme. Suggestion is simple, if the same template
+     *     is being used multiple time consecutively, put the template in
+     *     a string once and pass it into the fill template method.
+     * @param array $a_values the values to insert into the template in
+     *     an assoc array. $key is the string to find $value is the replacement.
+     * @param bool $is_file the template is the path to a file, defaults to false
+     * @return string - the filled in template
+     */
     public function render($template = '', array $a_values = array(), $is_file = false)
     {
         if ($is_file) {

@@ -1,20 +1,20 @@
 <?php
 /**
- *  @brief     Various helper functions for routes.
- *  @ingroup   ritc_library lib_helper
- *  @file      Ritc/Library/Helper/RoutesHelper.php
- *  @namespace Ritc\Library\Helper
- *  @class     RoutesHelper
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:55:02
- *  @note Change Log
- *      v1.1.0   - added method for quick min auth level for a route.   - 02/26/2016 wer
- *      v1.0.0   - took out of beta                                     - 11/27/2015 wer
- *      v1.0.0β3 - bug fix                                              - 11/24/2015 wer
- *      v1.0.0β2 - logic change                                         - 10/30/2015 wer
- *      v1.0.0β1 - intial file                                          - 09/26/2015 wer
- **/
+ * @brief     Various helper functions for routes.
+ * @ingroup   ritc_library lib_helper
+ * @file      Ritc/Library/Helper/RoutesHelper.php
+ * @namespace Ritc\Library\Helper
+ * @class     RoutesHelper
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0
+ * @date      2015-11-27 14:55:02
+ * @note Change Log
+ * - v1.1.0   - added method for quick min auth level for a route.   - 02/26/2016 wer
+ * - v1.0.0   - took out of beta                                     - 11/27/2015 wer
+ * - v1.0.0β3 - bug fix                                              - 11/24/2015 wer
+ * - v1.0.0β2 - logic change                                         - 10/30/2015 wer
+ * - v1.0.0β1 - intial file                                          - 09/26/2015 wer
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Models\GroupsModel;
@@ -27,17 +27,17 @@ class RoutesHelper
 {
     use LogitTraits;
 
-    /** @var array  */
+    /** @var array */
     private $a_route_parts;
-    /** @var \Ritc\Library\Models\GroupsModel  */
+    /** @var \Ritc\Library\Models\GroupsModel */
     private $o_group;
-    /** @var \Ritc\Library\Models\RoutesModel  */
+    /** @var \Ritc\Library\Models\RoutesModel */
     private $o_model;
-    /** @var \Ritc\Library\Models\RoutesGroupMapModel  */
+    /** @var \Ritc\Library\Models\RoutesGroupMapModel */
     private $o_rgm;
-    /** @var string  */
+    /** @var string */
     private $route_path;
-    /** @var string  */
+    /** @var string */
     private $request_uri;
 
     /**
@@ -143,9 +143,9 @@ class RoutesHelper
     }
 
     /**
-     *  Shortcut for setRouteParts and getRouteParts.
-     *  @param string $route_path
-     *  @return array
+     * Shortcut for setRouteParts and getRouteParts.
+     * @param string $route_path
+     * @return array
      */
     public function createRouteParts($route_path = '')
     {
@@ -154,8 +154,8 @@ class RoutesHelper
     }
 
     /**
-     *  @param int $route_id
-     *  @return array|mixed
+     * @param int $route_id
+     * @return array|mixed
      */
     public function getGroups($route_id = -1)
     {
@@ -171,11 +171,11 @@ class RoutesHelper
     }
 
     /**
-     *  Gets the min auth level needed for the route.
-     *  The groups for the route are passed in
-     *     and iterated searching the group db for the auth level.
-     *  @param array $a_groups
-     *  @return int
+     * Gets the min auth level needed for the route.
+     * The groups for the route are passed in
+     *    and iterated searching the group db for the auth level.
+     * @param array $a_groups
+     * @return int
      */
     public function getMinAuthLevel(array $a_groups = array())
     {
@@ -202,7 +202,7 @@ class RoutesHelper
     }
 
     /**
-     *  @param string $route_path
+     * @param string $route_path
      */
     public function setRoutePath($route_path = '')
     {
@@ -210,7 +210,7 @@ class RoutesHelper
     }
 
     /**
-     *  @return string
+     * @return string
      */
     public function getRoutePath()
     {
@@ -218,7 +218,7 @@ class RoutesHelper
     }
 
     /**
-     *  @return array
+     * @return array
      */
     public function getRouteParts()
     {
@@ -226,7 +226,7 @@ class RoutesHelper
     }
 
     /**
-     *  @return string
+     * @return string
      */
     public function getRequestUri()
     {

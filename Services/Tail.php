@@ -1,18 +1,18 @@
 <?php
 /**
- *  @brief     Similar to the Unix tail command e.g. tail -n 40 file.php.
- *  @detail    When on a webpage, use the meta refresh to keep tailing a file.
- *  @ingroup   ritc_library lib_services
- *  @file      Tail.php
- *  @namespace Ritc\Library\Services
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   2.2.0
- *  @date      2016-03-11 09:01:12
- *  @note <b>Change Log</b>
- *  - v2.2.0 - Changed method names to reflect current coding standards                             - 2016-03-11 wer
- *  - v2.1.1 - Moved to Services namespace                                                          - 11/15/2014 wer
- *  - v2.1.0 - Changed to work in the ritc_library                                                  - 04/22/2013 wer
-**/
+ * @brief     Similar to the Unix tail command e.g. tail -n 40 file.php.
+ * @detail    When on a webpage, use the meta refresh to keep tailing a file.
+ * @ingroup   ritc_library lib_services
+ * @file      Tail.php
+ * @namespace Ritc\Library\Services
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   2.2.0
+ * @date      2016-03-11 09:01:12
+ * @note <b>Change Log</b>
+ * - v2.2.0 - Changed method names to reflect current coding standards                             - 2016-03-11 wer
+ * - v2.1.1 - Moved to Services namespace                                                          - 11/15/2014 wer
+ * - v2.1.0 - Changed to work in the ritc_library                                                  - 04/22/2013 wer
+ */
 namespace Ritc\Library\Services;
 
 /**
@@ -22,35 +22,35 @@ namespace Ritc\Library\Services;
  */
 class Tail
 {
-    /** @var int  */
+    /** @var int */
     private $timestamp           = 0;
-    /** @var int  */
+    /** @var int */
     private $file_size           = 0;
-    /** @var string  */
+    /** @var string */
     private $file_name           = ""; // requires full path
-    /** @var array  */
+    /** @var array */
     private $a_lines             = array();
-    /** @var int  */
+    /** @var int */
     private $lines               = 0;
-    /** @var int  */
+    /** @var int */
     private $show_lines          = 10;
-    /** @var string  */
+    /** @var string */
     private $search_string       = "";
-    /** @var string  */
+    /** @var string */
     private $search_string_regex = "";
-    /** @var bool  */
+    /** @var bool */
     private $changed             = false;
-    /** @var string  */
+    /** @var string */
     private $pre_highlight       = '<span style="color: red; font-weight: 900;">';
-    /** @var string  */
+    /** @var string */
     private $post_highlight      = "</span>";
-    /** @var bool  */
+    /** @var bool */
     private $newest_first        = true;
-    /** @var string  */
+    /** @var string */
     private $output_format       = "BR";
-    /** @var string  */
+    /** @var string */
     private $pre_output          = "";
-    /** @var string  */
+    /** @var string */
     private $post_output         = "";
 
     /**
@@ -235,7 +235,7 @@ class Tail
     }
 
     /**
-     *
+     * @return null
      */
     private function openFile()
     {
@@ -244,7 +244,7 @@ class Tail
     }
 
     /**
-     *
+     * @return null
      */
     private function updateStats()
     {

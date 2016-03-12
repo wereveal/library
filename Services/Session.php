@@ -1,27 +1,26 @@
 <?php
 /**
- *  @brief     For managing sessions.
- *  @ingroup   ritc_library lib_services
- *  @file      Session.php
- *  @namespace Ritc\Library\Services
- *  @class     Session
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.3.1
- *  @date      2015-10-06 14:42:18
- *  @note <pre><b>Change Log</b>
- *      v1.3.1 - added the ability to use the global constant          - 10/06/2015 wer
- *               SESSION_IDLE_TIME if it is set.
- *      v1.3.0 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
- *      v1.2.0 - added a couple new method to unset a session var      - 01/16/2015 wer
- *               and a shortcut to reset the session.
- *      v1.1.5 - added phpDoc comments                                 - 01/13/2015 wer
- *      v1.1.4 - changed session validation defaults                   - 01/06/2015 wer
- *      v1.1.3 - moved to Services namespace                           - 11/15/2014 wer
- *      v1.1.2 - changed to implement the changes in Base class        - 09/23/2014 wer
- *      v1.1.1 - Bug fixes                                             - 12/31/2013 wer
- *      v1.1.0 - Unknown Changes                                       - 06/14/2011 wer
- *  </pre>
-**/
+ * @brief     For managing sessions.
+ * @ingroup   ritc_library lib_services
+ * @file      Session.php
+ * @namespace Ritc\Library\Services
+ * @class     Session
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.3.1
+ * @date      2015-10-06 14:42:18
+ * @note <b>Change Log</b>
+ * - v1.3.1 - added the ability to use the global constant          - 10/06/2015 wer
+ *            SESSION_IDLE_TIME if it is set.
+ * - v1.3.0 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
+ * - v1.2.0 - added a couple new method to unset a session var      - 01/16/2015 wer
+ *            and a shortcut to reset the session.
+ * - v1.1.5 - added phpDoc comments                                 - 01/13/2015 wer
+ * - v1.1.4 - changed session validation defaults                   - 01/06/2015 wer
+ * - v1.1.3 - moved to Services namespace                           - 11/15/2014 wer
+ * - v1.1.2 - changed to implement the changes in Base class        - 09/23/2014 wer
+ * - v1.1.1 - Bug fixes                                             - 12/31/2013 wer
+ * - v1.1.0 - Unknown Changes                                       - 06/14/2011 wer
+ */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Traits\LogitTraits;
@@ -30,13 +29,13 @@ class Session
 {
     use LogitTraits;
 
-    /** @var Session  */
+    /** @var Session */
     private static $instance;
-    /** @var string  */
+    /** @var string */
     private $session_id;
-    /** @var string  */
+    /** @var string */
     private $session_name;
-    /** @var bool  */
+    /** @var bool */
     private $session_started = false;
 
     /**
@@ -139,20 +138,20 @@ class Session
         return $this->isIdle() ? false : true;
     }
     /**
-     *  Verifies the session is valid.
-     *  This is a simple and probably easily spoofed validation but it seems
-     *  to fool many XSS things.
-     *  @pre session variables token and idle_timestamp
+     * Verifies the session is valid.
+     * This is a simple and probably easily spoofed validation but it seems
+     * to fool many XSS things.
+     * @pre session variables token and idle_timestamp
      *      as well as the session id matches cookie name
-     *  @param array $a_values  array(
-     *      'token'   => SESSION['token'],
-     *      'tolken'  => SESSION['token'], // optional, if set and token isn't, token = tolken
-     *      'form_ts' => SESSION['idle_timestamp'],
-     *      'hobbit   => '' // optional anti-spam measure, if not blank, invalidate session
-     *      )
-     *  @param bool $use_form_values specifies if to use form data for validation
-     *  @return bool, true or false if valid
-     **/
+     * @param array $a_values  <pre>array(
+     *     'token'   => SESSION['token'],
+     *     'tolken'  => SESSION['token'], // optional, if set and token isn't, token = tolken
+     *     'form_ts' => SESSION['idle_timestamp'],
+     *     'hobbit   => '' // optional anti-spam measure, if not blank, invalidate session
+     *     )</pre>
+     * @param bool $use_form_values specifies if to use form data for validation
+     * @return bool, true or false if valid
+      */
     public function isValidSession($a_values = array(), $use_form_values = false)
     {
         if (isset($_SESSION['token']) === false
@@ -205,14 +204,14 @@ class Session
         return false;
     }
     /**
-     *  Tells you if it is not a valid session.
-     *  returns the opposite of isValidSession method. See its comments for more info
-     *  @param $a_values (array), array(
+     * Tells you if it is not a valid session.
+     * returns the opposite of isValidSession method. See its comments for more info
+     * @param array $a_values <pre>array(
      *      'token'=>_SESSION['token'],
-    'form_ts'=>_SESSION['idle_timestamp'])
-     *  @param bool $use_form_values specifies if to use form data for validation
-     *  @return bool true or false
-     **/
+     *      'form_ts'=>_SESSION['idle_timestamp'])</pre>
+     * @param bool $use_form_values specifies if to use form data for validation
+     * @return bool true or false
+      */
     public function isNotValidSession($a_values = array(), $use_form_values = false)
     {
         if ($this->isValidSession($a_values, $use_form_values)) {
@@ -220,13 +219,15 @@ class Session
         }
         return true;
     }
+
     /**
-     *  Updates the Idle timestamp.
+     * Updates the Idle timestamp.
      */
     public function updateIdleTimestamp()
     {
         $_SESSION["idle_timestamp"] = time();
     }
+
     /**
      * Returns the Session ID.
      * @param string $id
@@ -239,6 +240,7 @@ class Session
         }
         return session_id();
     }
+
     /**
      * Returns the session name.
      * @param string $name
@@ -251,6 +253,7 @@ class Session
         }
         return session_name();
     }
+
     /**
      * Regenerates the session id.
      * @param bool $delete_old
@@ -260,14 +263,16 @@ class Session
     {
         return session_regenerate_id($delete_old);
     }
+
     /**
-     *  Resets the session to default values.
+     * Resets the session to default values.
      */
     public function resetSession()
     {
         $this->clear();
         $this->setSessionVars();
     }
+
     /**
      * Returns the Session variable value for the session variable name.
      * @param string $var_name
@@ -281,6 +286,7 @@ class Session
                 ? $_SESSION[$var_name]
                 : '';
     }
+
     /**
      * Sets a session variable.
      * @param string $var_name
@@ -293,12 +299,13 @@ class Session
         $_SESSION[$var_name] = $var_value;
         return true;
     }
+
     /**
-     *  Sets basic session vars for form validation.
+     * Sets basic session vars for form validation.
      *
-     *  @param array $a_values valid array()
-     *  @return bool
-    **/
+     * @param array $a_values valid array()
+     * @return bool
+     */
     public function setSessionVars(array $a_values = array())
     {
         if (count($a_values) === 0) {
@@ -327,20 +334,21 @@ class Session
             }
         }
     }
+
     /**
-     *  Sets $_SESSION vars specified in the array.
-     *  Any number session vars can be set/created with this function.
+     * Sets $_SESSION vars specified in the array.
+     * Any number session vars can be set/created with this function.
      *
-     *  @pre     If the $a_vars array is from a POST or GET it is assumed in this
-     *           method that the values have been put through some sort of data
-     *           cleaner. In other words, you should not put a raw $_POST or $_GET
-     *           through this.
+     * @pre If the $a_vars array is from a POST or GET it is assumed in this
+     *      method that the values have been put through some sort of data
+     *      cleaner. In other words, you should not put a raw $_POST or $_GET
+     *      through this.
      *
-     *  @param array $a_vars
-     *  @param array $a_allowed_keys
+     * @param array $a_vars
+     * @param array $a_allowed_keys
      *
-     *  @return void
-    **/
+     * @return null
+     */
     public function setVarsFromArray(array $a_vars = array(), array $a_allowed_keys = array())
     {
         foreach ($a_vars as $name=>$value) {
@@ -354,6 +362,7 @@ class Session
             }
         }
     }
+
     /**
      * Sets the amount of time for a page to be allowed idle.
      * Can either be passed in or defaults to the constant SESSION_IDLE_TIME
@@ -381,9 +390,10 @@ class Session
             $_SESSION["idle_timestamp"] = time();
         }
     }
+
     /**
-     *  Unsets a session var.
-     *  @param string $var_name name of the var to unset
+     * Unsets a session var.
+     * @param string $var_name name of the var to unset
      */
     public function unsetVar($var_name = '')
     {
@@ -393,6 +403,7 @@ class Session
             }
         }
     }
+
     /**
      * @param bool $use_cookies
      * @return bool|string
@@ -407,6 +418,7 @@ class Session
                 return ini_set('session.use_cookies', 1) && ini_set("session.use_only_cookies", 1);
         }
     }
+
     /**
      * @param bool $use_trans
      * @return bool|string
@@ -419,13 +431,16 @@ class Session
         }
         return true;
     }
+
     /**
-     *  Sets the session variable 'token' which is used in a bunch of places.
+     * Sets the session variable 'token' which is used in a bunch of places.
+     * @return null
      */
     public function setToken()
     {
         $_SESSION['token'] = md5(uniqid(mt_rand(), true));
     }
+
     /**
      * Gets the token.
      * @return mixed
@@ -434,6 +449,7 @@ class Session
     {
         return $_SESSION['token'];
     }
+
     /**
      * Cloning is not allowed.
      */

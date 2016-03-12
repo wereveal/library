@@ -1,20 +1,19 @@
 <?php
 /**
- *  @brief     A basic entity class for the Article table.
- *  @ingroup   ritc_library lib_entities
- *  @file      Ritc/Library/Entities/PeopleGroupMapEntity.php
- *  @namespace Ritc\Library\Entities
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-07-29 11:43:02
- *  @note <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/people_group_map_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/people_group_map_pg.sql</pre>
- *  @note <pre><b>Change Log</b>
- *      v1.0.0 - Finished        - 07/29/2015 wer
- *      v0.1.0 - Initial version - 09/11/2014 wer
- *  </pre>
-**/
+ * @brief     A basic entity class for the Article table.
+ * @ingroup   ritc_library lib_entities
+ * @file      Ritc/Library/Entities/PeopleGroupMapEntity.php
+ * @namespace Ritc\Library\Entities
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0
+ * @date      2015-07-29 11:43:02
+ * @note <b>SQL for table<b><pre>
+ * - MySQL      - resources/sql/mysql/people_group_map_mysql.sql
+ * - PostgreSQL - resources/sql/postgresql/people_group_map_pg.sql</pre>
+ * @note <b>Change Log</b>
+ * - v1.0.0 - Finished        - 07/29/2015 wer
+ * - v0.1.0 - Initial version - 09/11/2014 wer
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
@@ -26,11 +25,11 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class PeopleGroupMapEntity implements EntityInterface
 {
-    /** @var int  */
+    /** @var int */
     private $pgm_id;
-    /** @var int  */
+    /** @var int */
     private $people_id;
-    /** @var int  */
+    /** @var int */
     private $group_id;
 
     /**
@@ -70,7 +69,7 @@ class PeopleGroupMapEntity implements EntityInterface
     }
 
     /**
-     *  @param integer $group_id
+     * @param integer $group_id
      */
     public function setGroupId($group_id = -1)
     {
@@ -86,7 +85,7 @@ class PeopleGroupMapEntity implements EntityInterface
     }
 
     /**
-     *  @param integer $pgm_id
+     * @param integer $pgm_id
      */
     public function setPgmId($pgm_id = -1)
     {
@@ -94,7 +93,7 @@ class PeopleGroupMapEntity implements EntityInterface
     }
 
     /**
-     *  @return integer
+     * @return integer
      */
     public function getPgmId()
     {
@@ -102,7 +101,7 @@ class PeopleGroupMapEntity implements EntityInterface
     }
 
     /**
-     *  @param integer $people_id
+     * @param integer $people_id
      */
     public function setPeopleId($people_id = -1)
     {

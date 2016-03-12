@@ -8,8 +8,8 @@
  * @version   1.0.0
  * @date      2015-10-06 14:20:33
  * @note <b>SQL for table<b><pre>
- *     MySQL      - resources/sql/mysql/constants_mysql.sql
- *     PostgreSQL - resources/sql/postgresql/constants_pg.sql</pre>
+ *    MySQL      - resources/sql/mysql/constants_mysql.sql
+ *    PostgreSQL - resources/sql/postgresql/constants_pg.sql</pre>
  * @todo add class properties that are missing.
  */
 

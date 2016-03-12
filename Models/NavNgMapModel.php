@@ -1,16 +1,15 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff for the navigation to navgroups mapping.
- *  @ingroup   ritc_library lib_models
- *  @file      Ritc/Library/Models/NavNgMapModel.php
- *  @namespace Ritc\Library\Models
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0 β1
- *  @date      2016-02-25 12:06:45
- *  @note <pre><b>Change Log</b>
- *      v1.0.0 β1 - Initial version                              - 02/25/2016 wer
- *  </pre>
- **/
+ * @brief     Does all the database CRUD stuff for the navigation to navgroups mapping.
+ * @ingroup   ritc_library lib_models
+ * @file      Ritc/Library/Models/NavNgMapModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0 β1
+ * @date      2016-02-25 12:06:45
+ * @note <b>Change Log</b>
+ * - v1.0.0 β1 - Initial version                              - 02/25/2016 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
@@ -27,15 +26,15 @@ class NavNgMapModel implements ModelInterface
 {
     use LogitTraits;
 
-    /** @var array  */
+    /** @var array */
     private $a_field_names = array();
-    /** @var string  */
+    /** @var string */
     private $db_type = '';
-    /** @var string  */
+    /** @var string */
     private $db_prefix = '';
-    /** @var string  */
+    /** @var string */
     private $error_message = '';
-    /** @var \Ritc\Library\Services\DbModel  */
+    /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
 
     public function __construct(DbModel $o_db)
@@ -154,7 +153,7 @@ class NavNgMapModel implements ModelInterface
      * @param int $ng_id  semi-optional, either/both ng_id and/or nav_id must be set
      * @param int $nav_id semi-optional, either/both ng_id and/or nav_id must be set
      * @note The obvious needs to be noted. If only one param is provided, all the records
-     *       for that id will be deleted.
+     *      for that id will be deleted.
      * @return bool
      */
     public function delete($ng_id = -1, $nav_id = -1)

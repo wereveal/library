@@ -1,29 +1,28 @@
 <?php
 /**
- *  @brief     A PDO Factory.
- *  @details   The factory returns a \PDO object.
- *  @ingroup   ritc_library lib_factories
- *  @file      Ritc/Library/Factories/PdoFactory.php
- *  @namespace Ritc\Library\Factories
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   2.0.0
- *  @date      2015-08-28 08:01:33
- *  @note <pre><b>Change Log</b>
- *      v2.0.0 - realized a stupid error in thinking, this should produce         - 08/28/2015 wer
- *               an instance of the PDO not an instance of the factory itself duh!
- *               I believe this was a result of not thinking how to do it correctly.
- *               Renamed class to match what the factory produces.
- *      v1.6.0 - no longer extends Base class, uses DbTraits and LogitTraits      - 08/19/2015 wer
- *      v1.5.3 - moved to the Factories namespace                                 - 01/27/2015 wer
- *      v1.5.2 - moved to Services namespace                                      - 11/15/2014 wer
- *      v1.5.1 - changed to implement the changes to the Base class               - 09/23/2014 wer
- *      v1.5.0 - massive change to the factory, cutting out the fat               - 03/25/2014 wer
- *      v1.0.0 - figured it was time to take this out of beta, with one addition. - 02/24/2014 wer
- *      v0.1.2 - minor package change required minor modification                 - 12/19/2013 wer
- *      v0.1.1 - added two additional places the config files can exist           - 2013-11-08
- *      v0.1.0 - initial file creation - 2013-11-06
- *  </pre>
-**/
+ * @brief     A PDO Factory.
+ * @details   The factory returns a \PDO object.
+ * @ingroup   ritc_library lib_factories
+ * @file      Ritc/Library/Factories/PdoFactory.php
+ * @namespace Ritc\Library\Factories
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   2.0.0
+ * @date      2015-08-28 08:01:33
+ * @note <b>Change Log</b>
+ * - v2.0.0 - realized a stupid error in thinking, this should produce         - 08/28/2015 wer
+ *              an instance of the PDO not an instance of the factory itself duh!
+ *              I believe this was a result of not thinking how to do it correctly.
+ *              Renamed class to match what the factory produces.
+ * - v1.6.0 - no longer extends Base class, uses DbTraits and LogitTraits      - 08/19/2015 wer
+ * - v1.5.3 - moved to the Factories namespace                                 - 01/27/2015 wer
+ * - v1.5.2 - moved to Services namespace                                      - 11/15/2014 wer
+ * - v1.5.1 - changed to implement the changes to the Base class               - 09/23/2014 wer
+ * - v1.5.0 - massive change to the factory, cutting out the fat               - 03/25/2014 wer
+ * - v1.0.0 - figured it was time to take this out of beta, with one addition. - 02/24/2014 wer
+ * - v0.1.2 - minor package change required minor modification                 - 12/19/2013 wer
+ * - v0.1.1 - added two additional places the config files can exist           - 2013-11-08
+ * - v0.1.0 - initial file creation - 2013-11-06
+ */
 namespace Ritc\Library\Factories;
 
 use Ritc\Library\Services\Di;
@@ -39,17 +38,17 @@ class PdoFactory
 {
     use DbTraits, LogitTraits;
 
-    /** @var array  */
+    /** @var array */
     private $a_db_config;
-    /** @var array  */
+    /** @var array */
     private static $factory_rw_instance = array();
-    /** @var array  */
+    /** @var array */
     private static $factory_ro_instance = array();
-    /** @var string  */
+    /** @var string */
     private $config_file;
-    /** @var \PDO  */
+    /** @var \PDO */
     private $o_db;
-    /** @var string  */
+    /** @var string */
     private $read_type;
 
     /**
@@ -69,17 +68,17 @@ class PdoFactory
         }
     }
     /**
-     *  Starts a Singleton object for the specific database config file
-     *  or returns the existing object if it is already started.
-     *  It can be noted then that two objects can be created for each
-     *  config file, read/write and read only and multiple configs can
-     *  be used to create all kinds of database connections - even if
-     *  to the same database simply by using different config file name.
-     *  @param string $config_file default 'db_config.php'
-     *  @param string $read_type Default rw
-     *  @param Di     $o_di
-     *  @return object PDO object
-    **/
+     * Starts a Singleton object for the specific database config file
+     * or returns the existing object if it is already started.
+     * It can be noted then that two objects can be created for each
+     * config file, read/write and read only and multiple configs can
+     * be used to create all kinds of database connections - even if
+     * to the same database simply by using different config file name.
+     * @param string $config_file default 'db_config.php'
+     * @param string $read_type Default rw
+     * @param Di     $o_di
+     * @return object PDO object
+     */
     public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di)
     {
         list($name, $extension) = explode('.', $config_file);
@@ -99,8 +98,8 @@ class PdoFactory
     }
 
     /**
-     *  Creates the \PDO instance
-     *  @return \PDO
+     * Creates the \PDO instance
+     * @return \PDO
      */
     private function createPdo()
     {
@@ -142,10 +141,10 @@ class PdoFactory
         }
     }
     /**
-     *  Creates the DSN string from the db config array.
-     *  Needed to connect to the database.
-     *  @param array $a_db ['port', 'driver', 'host', 'name']
-     *  @return string
+     * Creates the DSN string from the db config array.
+     * Needed to connect to the database.
+     * @param array $a_db ['port', 'driver', 'host', 'name']
+     * @return string
      */
     private function createDsn(array $a_db = array())
     {

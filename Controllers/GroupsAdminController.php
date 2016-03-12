@@ -1,18 +1,17 @@
 <?php
 /**
- *  @brief     Controller for the Groups Admin page.
- *  @ingroup   ritc_library lib_controllers
- *  @file      Ritc/Library/Controllers/GroupsAdmimController.php
- *  @namespace Ritc\Library\Controllers
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.1
- *  @date      2016-03-08 15:14:44
- *  @note <pre><b>Change Log</b>
- *      v1.0.1   - bug fix                  - 2016-03-08 wer
- *      v1.0.0   - First working version    - 11/27/2015 wer
- *      v1.0.0β1 - Initial version          - 01/28/2015 wer
- *  </pre>
- **/
+ * @brief     Controller for the Groups Admin page.
+ * @ingroup   ritc_library lib_controllers
+ * @file      Ritc/Library/Controllers/GroupsAdmimController.php
+ * @namespace Ritc\Library\Controllers
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.1
+ * @date      2016-03-08 15:14:44
+ * @note <b>Change Log</b>
+ * - v1.0.1   - bug fix                  - 2016-03-08 wer
+ * - v1.0.0   - First working version    - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version          - 01/28/2015 wer
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Strings;
@@ -34,17 +33,17 @@ class GroupsAdmimController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /** @var array  */
+    /** @var array */
     private $a_post;
-    /** @var Di  */
+    /** @var Di */
     private $o_di;
-    /** @var GroupsModel  */
+    /** @var GroupsModel */
     private $o_model;
-    /** @var Router  */
+    /** @var Router */
     private $o_router;
-    /** @var Session  */
+    /** @var Session */
     private $o_session;
-    /** @var GroupsAdminView  */
+    /** @var GroupsAdminView */
     private $o_view;
 
     /**

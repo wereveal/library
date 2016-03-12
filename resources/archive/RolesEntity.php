@@ -1,21 +1,20 @@
 <?php
 /**
- *  @brief     A basic entity class for the Article table.
- *  @file      RolesEntity.php
- *  @ingroup   ritc_library entities
- *  @namespace Ritc\Library\Entities
- *  @class     RolesEntity
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-07-29 11:43:50
- *  @note <pre><b>Change Log</b>
- *      v1.0.0 - Finished        - 07/29/2015 wer
- *      v0.1.0 - Initial version - 09/11/2014 wer
- *  </pre>
- *  @note <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/roles_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/roles_pg.sql</pre>
-**/
+ * @brief     A basic entity class for the Article table.
+ * @file      RolesEntity.php
+ * @ingroup   ritc_library entities
+ * @namespace Ritc\Library\Entities
+ * @class     RolesEntity
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0
+ * @date      2015-07-29 11:43:50
+ * @note <b>Change Log</b>
+ * - v1.0.0 - Finished        - 07/29/2015 wer
+ * - v0.1.0 - Initial version - 09/11/2014 wer
+ * @note <b>SQL for table<b><pre>
+ * - MySQL      - resources/sql/mysql/roles_mysql.sql
+ * - PostgreSQL - resources/sql/postgresql/roles_pg.sql</pre>
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;

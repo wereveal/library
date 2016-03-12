@@ -1,23 +1,22 @@
 <?php
 /**
- *  @brief     A basic entity class for the Group Role Map table.
- *  @file      GroupRoleMapEntity.php
- *  @ingroup   ritc_library entities
- *  @namespace Ritc\Library\Entities
- *  @class     GroupRoleMapEntity
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0β
- *  @date      2015-07-29 11:38:19
- *  @note <pre><b>Change Log</b>
- *      v1.0.0β - changed to a mapping between group and role - 07/29/2015 wer
- *                Users now can only belong to multiple groups, the groups determine their role.
- *      v0.1.0  - Initial version                             - 09/11/2014 wer
- *  </pre>
- *  @note  <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/group_role_map_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/group_role_map_pg.sql</pre>
+ * @brief     A basic entity class for the Group Role Map table.
+ * @file      GroupRoleMapEntity.php
+ * @ingroup   ritc_library entities
+ * @namespace Ritc\Library\Entities
+ * @class     GroupRoleMapEntity
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0-beta.0
+ * @date      2015-07-29 11:38:19
+ * @note <b>Change Log</b>
+ * - v1.0.0-beta.0 - changed to a mapping between group and role                                    - 07/29/2015 wer
+ *                   Users now can only belong to multiple groups, the groups determine their role.
+ * - v0.1.0        - Initial version                                                                - 09/11/2014 wer
+ * @note  <b>SQL for table<b>
+ * - MySQL      - resources/sql/mysql/group_role_map_mysql.sql
+ * - PostgreSQL - resources/sql/postgresql/group_role_map_pg.sql
  *
-**/
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;

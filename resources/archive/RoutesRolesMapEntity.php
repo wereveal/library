@@ -7,12 +7,11 @@
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0ß1
  * @date      2015-08-01 13:33:57
- * @note <pre><b>Change Log</b>
- *       v1.0.0ß1 - Initial version                    - 08/01/2015 wer
- *       </pre>
- *  @note <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/routes_roles_map_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/routes_roles_map_pg.sql</pre>
+ * @note <b>Change Log</b>
+ * - v1.0.0-alpha.0 - Initial version                    - 08/01/2015 wer
+ * @note <b>SQL for table<b>
+ * - MySQL      - resources/sql/mysql/routes_roles_map_mysql.sql
+ * - PostgreSQL - resources/sql/postgresql/routes_roles_map_pg.sql
  */
 
 namespace Ritc\Library\Entities;

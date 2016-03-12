@@ -1,20 +1,23 @@
 <?php
 /**
- *  @brief     Common functions that would be used in several database classes.
- *  @ingroup   ritc_library lib_traits
- *  @file      DbTraits.php
- *  @namespace Ritc\Library\Traits
- *  @class     DbTraits
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:43:14
- *  @note <pre><b>Change Log</b>
- *      v1.0.0   - first working version        - 11/27/2015 wer
- *      v1.0.0ß1 - initial version              - 08/19/2015 wer
- *  </pre>
+ * @brief     Common functions that would be used in several database classes.
+ * @ingroup   ritc_library lib_traits
+ * @file      DbTraits.php
+ * @namespace Ritc\Library\Traits
+ * @class     DbTraits
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0
+ * @date      2015-11-27 14:43:14
+ * @note <b>Change Log</b>
+ * - v1.0.0   - first working version        - 11/27/2015 wer
+ * - v1.0.0ß1 - initial version              - 08/19/2015 wer
  */
 namespace Ritc\Library\Traits;
 
+/**
+ * Class DbTraits
+ * @package Ritc\Library\Traits
+ */
 trait DbTraits {
     /**
      * @param string $config_file

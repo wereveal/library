@@ -2,34 +2,33 @@
 /**
  * @brief     A class for testing that all other testing classes should extend.
  * @details   Class that extends this class should end with the word Tests or
- *            Tester, e.g. MyClassTester or MyClassTests.
+ *           Tester, e.g. MyClassTester or MyClassTests.
  * @ingroup   ritc_library lib_basic
  * @file      Ritc/Library/Basic/Tester.php
  * @namespace Ritc\Library\Basic
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   3.3.0
  * @date      2016-03-10 12:59:29
- * @note <pre><b>Change log</b>
- *     v3.3.0 - added new method to automate some setup                                   - 2016-03-10 wer
- *     v3.2.1 - bug fix                                                                   - 2016-03-09 wer
- *     v3.2.0 - moved the compare_arrays to the Arrays helper class                       - 11/02/2015 wer
- *     v3.1.1 - minor change to setTestOrder method, now required an array                - 10/23/2015 wer
- *     v3.1.0 - no longer extends Base class, uses Logit Trait instead                    - 08/19/2015 wer
- *     v3.0.2 - moved to the Basic namespace where it was more appropriate                - 12/05/2014 wer
- *     v3.0.1 - moved to the Services namespace                                           - 11/15/2014 wer
- *     v3.0.0 - changed to be a class so it could extend Base class and modified for such - 09/24/2014 wer
- *     v2.0.1 - added missing method                                                      - 07/01/2014 wer
- *     v2.0.0 - modified to not do any view stuff                                         - 2013-12-13 wer
- *     v1.1.0 - added new a couple new methods                                            - 2013-05-10 wer
- *         compare_arrays
- *             checks to see if the values in the first array
- *             exist in the second array
- *         setSubfailure
- *             allows the test results to display individual subtests
- *             within the method tester
- *     v1.0.1 - updated to match new framework                                            - 2013-04-03 wer
- * </pre>
-**/
+ * @note <b>Change log</b>
+ * - v3.3.0 - added new method to automate some setup                                   - 2016-03-10 wer
+ * - v3.2.1 - bug fix                                                                   - 2016-03-09 wer
+ * - v3.2.0 - moved the compare_arrays to the Arrays helper class                       - 11/02/2015 wer
+ * - v3.1.1 - minor change to setTestOrder method, now required an array                - 10/23/2015 wer
+ * - v3.1.0 - no longer extends Base class, uses Logit Trait instead                    - 08/19/2015 wer
+ * - v3.0.2 - moved to the Basic namespace where it was more appropriate                - 12/05/2014 wer
+ * - v3.0.1 - moved to the Services namespace                                           - 11/15/2014 wer
+ * - v3.0.0 - changed to be a class so it could extend Base class and modified for such - 09/24/2014 wer
+ * - v2.0.1 - added missing method                                                      - 07/01/2014 wer
+ * - v2.0.0 - modified to not do any view stuff                                         - 2013-12-13 wer
+ * - v1.1.0 - added new a couple new methods                                            - 2013-05-10 wer
+ *      - compare_arrays
+ *          - checks to see if the values in the first array
+ *          - exist in the second array
+ *      - setSubfailure
+ *          - allows the test results to display individual subtests
+ *          - within the method tester
+ * - v1.0.1 - updated to match new framework                                            - 2013-04-03 wer
+ */
 namespace Ritc\Library\Basic;
 
 use Ritc\Library\Helper\Files;
@@ -44,23 +43,23 @@ class Tester
 {
     use LogitTraits;
 
-    /** @var array  */
+    /** @var array */
     protected $a_test_order      = array();
-    /** @var array  */
+    /** @var array */
     protected $a_test_values     = array();
-    /** @var int  */
+    /** @var int */
     protected $failed_subtests   = 0;
-    /** @var array  */
+    /** @var array */
     protected $failed_test_names = array();
-    /** @var int  */
+    /** @var int */
     protected $failed_tests      = 0;
-    /** @var int  */
+    /** @var int */
     protected $num_o_tests       = 0;
-    /** @var int  */
+    /** @var int */
     protected $passed_subtests   = 0;
-    /** @var array  */
+    /** @var array */
     protected $passed_test_names = array();
-    /** @var int  */
+    /** @var int */
     protected $passed_tests      = 0;
 
     /**
@@ -79,7 +78,7 @@ class Tester
      * @param string $key the key name
      * @param mixed $value  the value assigned to the key
      * @return null
-    **/
+     */
     public function addTestValue($key = '', $value = '')
     {
         if ($key == '') { return; }
@@ -131,7 +130,7 @@ class Tester
      * Returns an array showing the number and optionally names of tests success and failure
      * @param bool $show_test_names optional defaults to showing names
      * @return array
-    **/
+     */
     public function returnTestResults($show_test_names = true)
     {
         $a_failed_test_names = array();
@@ -172,16 +171,15 @@ class Tester
     }
     /**
      * Runs tests where method ends in Test.
-     * @param string $class_name optional, name of the class to be tested - only really needed if
-     *                           the class name doesn't match this class name minus Tester or Tests
-     *                           e.g. MyClass and MyClassTester doesn't require $class_name
-     *                           but MyClass and ThisClassTest requires a valid value for $class_name,
-     *                           i.e., $class_name = MyClass
-     * @param array $a_test_order optional, if provided it ignores
-     *     the class property $a_test_order and won't try to build one
-     *     from the class methods.
+     * @param string $class_name  optional, name of the class to be tested - only really needed if
+     *                            the class name doesn't match this class name minus Tester or Tests
+     *                            e.g. MyClass and MyClassTester doesn't require $class_name
+     *                            but MyClass and ThisClassTest requires a valid value for $class_name,
+     *                            i.e., $class_name = MyClass
+     * @param array $a_test_order optional, if provided it ignores the class property $a_test_order
+     *                            and won't try to build one from the class methods.
      * @return int $failed_tests
-    **/
+     */
     public function runTests($class_name = '', array $a_test_order = array())
     {
         if ($class_name == '') {
@@ -295,7 +293,7 @@ class Tester
      * Sets the array a_test_order to the array passed in
      * @param array $a_test_order optional, defaults to an empty array
      * @return null
-    **/
+     */
     public function setTestOrder(array $a_test_order = array())
     {
         $this->a_test_order = $a_test_order;
@@ -304,7 +302,7 @@ class Tester
      * Sets the array a_test_value to the array passed in
      * @param array $a_test_values optional, defaults to an empty array
      * @return null
-    **/
+     */
     public function setTestValues(array $a_test_values = array())
     {
         $this->a_test_values = $a_test_values;
@@ -313,7 +311,7 @@ class Tester
      * Return the values in $this->a_test_values
      * @param none
      * @return array $a_test_values
-    **/
+     */
     public function getTestValues()
     {
         return $this->a_test_values;
@@ -326,7 +324,7 @@ class Tester
      * @param string $class_name required defaults to ''
      * @param string $method_name required defaults to ''
      * @return bool true or false
-    **/
+     */
     public function isPublicMethod($class_name = '', $method_name = '')
     {
         if ($class_name == '' || $method_name == '') {

@@ -1,17 +1,16 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff.
- *  @file      RoutesRolesMapModel.php
- *  @ingroup   ritc_library models
- *  @namespace Ritc\Library\Models
- *  @class     RouterRolesMapModel
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0β1
- *  @date      2015-08-01 14:01:09
- *  @note <pre><b>Change Log</b>
- *      v0.1.0ß1 - Initial version                                               - 08/01/2015 wer
- *  </pre>
-**/
+ * @brief     Does all the database CRUD stuff.
+ * @file      RoutesRolesMapModel.php
+ * @ingroup   ritc_library models
+ * @namespace Ritc\Library\Models
+ * @class     RouterRolesMapModel
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0β1
+ * @date      2015-08-01 14:01:09
+ * @note <b>Change Log</b>
+ * - v0.1.0ß1 - Initial version                                               - 08/01/2015 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
@@ -37,10 +36,10 @@ class RouterRolesMapModel implements ModelInterface
 
     ### Basic CRUD commands, required by interface ###
     /**
-     *  Creates a new group_role map record in the routes_roles_map table.
-     *  @param array $a_values required
-     *  @return int|bool
-    **/
+     * Creates a new group_role map record in the routes_roles_map table.
+     * @param array $a_values required
+     * @return int|bool
+     */
     public function create(array $a_values = array())
     {
         if ($a_values == array()) { return false; }
@@ -70,6 +69,7 @@ class RouterRolesMapModel implements ModelInterface
         }
 
     }
+
     /**
      * @param array $a_search_values ['rrm_id', 'role_id', 'route_id']
      * @return mixed
@@ -94,6 +94,7 @@ class RouterRolesMapModel implements ModelInterface
         ";
         return $this->o_db->search($sql, $a_search_values);
     }
+
     /**
      * Returns all records in the table.
      * @param none
@@ -109,14 +110,14 @@ class RouterRolesMapModel implements ModelInterface
         return $this->o_db->search($sql);
     }
     /**
-     *  Updates the record, NOT! Well, sort of.
-     *  Method is required by interface.
-     *      Update should never happen!
-     *      Reasoning. The role_id and route_id form a unique index. As such
-     *      they should not be modified. The record should always be deleted and
-     *      a new one added. That is what this function actually does.
-     *  @param array $a_values
-     *  @return bool
+     * Updates the record, NOT! Well, sort of.
+     * Method is required by interface.
+     * - Update should never happen!
+     * - The role_id and route_id form a unique index and should not be modified.
+     * - The record should always be deleted and a new one added.
+     * - As such that is what this function actually does.
+     * @param array $a_values
+     * @return bool
      */
     public function update(array $a_values = array())
     {
@@ -142,6 +143,7 @@ class RouterRolesMapModel implements ModelInterface
         $this->error_message = $this->o_db->getSqlErrorMessage();
         return false;
     }
+
     /**
      * Deletes a record by rrm_id.
      * @param string $rrm_id
@@ -156,6 +158,7 @@ class RouterRolesMapModel implements ModelInterface
         ";
         return $this->o_db->delete($sql, array(':rrm_id' => $rrm_id), true);
     }
+
     /**
      * Deletes record(s) by Group ID.
      * @param int $route_id
@@ -170,6 +173,7 @@ class RouterRolesMapModel implements ModelInterface
         ";
         return $this->o_db->delete($sql, array(':route_id' => $route_id), true);
     }
+
     /**
      * Deletes record(s) by Role ID.
      * @param int $role_id

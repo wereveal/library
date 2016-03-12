@@ -5,12 +5,11 @@
  * @file      Ritc/Library/Controllers/TestsAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0β1
+ * @version   1.0.0-alpha.0
  * @date      2015-10-23 11:43:13
- * @note <pre><b>Change Log</b>
- *     v1.0.0β1 - Initial version                              - 10/23/2015 wer
- * </pre>
-**/
+ * @note <b>Change Log</b>
+ * - v1.0.0-alpha.0 - Initial version                               - 10/23/2015 wer
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Services\DbModel;
@@ -30,15 +29,15 @@ class TestsAdminController
 {
     use LogitTraits;
 
-    /** @var DbModel  */
+    /** @var DbModel */
     private $o_db;
-    /** @var Di  */
+    /** @var Di */
     private $o_di;
-    /** @var Router  */
+    /** @var Router */
     private $o_router;
-    /** @var TestsAdminView  */
+    /** @var TestsAdminView */
     private $o_view;
-    /** @var string  */
+    /** @var string */
     private $test_configs_path;
 
     /**

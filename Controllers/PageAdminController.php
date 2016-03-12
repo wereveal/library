@@ -1,18 +1,17 @@
 <?php
 /**
- *  @brief     Controller for the Page Admin page.
- *  @ingroup   ritc_library lib_controllers
- *  @file      Ritc/Library/Controllers/PageAdminController.php
- *  @namespace Ritc\Library\Controllers
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.1
- *  @date      2015-11-27 14:49:00
- *  @note <pre><b>Change Log</b>
- *      v1.0.1   - bug fix                                      - 2016-03-08 wer
- *      v1.0.0   - First working version                        - 11/27/2015 wer
- *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
- *  </pre>
- **/
+ * @brief     Controller for the Page Admin page.
+ * @ingroup   ritc_library lib_controllers
+ * @file      Ritc/Library/Controllers/PageAdminController.php
+ * @namespace Ritc\Library\Controllers
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.1
+ * @date      2015-11-27 14:49:00
+ * @note <b>Change Log</b>
+ * - v1.0.1   - bug fix                                      - 2016-03-08 wer
+ * - v1.0.0   - First working version                        - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                              - 10/30/2015 wer
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Strings;
@@ -34,17 +33,17 @@ class PageAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /** @var array  */
+    /** @var array */
     private $a_post;
-    /** @var Di  */
+    /** @var Di */
     private $o_di;
-    /** @var PageModel  */
+    /** @var PageModel */
     private $o_model;
-    /** @var Router  */
+    /** @var Router */
     private $o_router;
-    /** @var Session  */
+    /** @var Session */
     private $o_session;
-    /** @var PageAdminView  */
+    /** @var PageAdminView */
     private $o_view;
 
     /**

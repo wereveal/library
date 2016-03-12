@@ -2,12 +2,12 @@
 /**
  * @brief     Define Constants that will be used throughout the website.
  * @file      /app/src/Ritc/Library/resources/config/constants.php
- * @note <pre>
- *     _PATH = Full server path
- *     _DIR  = Path in web site (URI)
- *     _NAME = Name of item without any path information
- * @ingroup   ritc_library lib_configs
-**/
+ * @note NOTE:
+ * - _PATH = Full server path
+ * - _DIR  = Path in web site (URI)
+ * - _NAME = Name of item without any path information
+ * @ingroup lib_configs
+ */
 namespace Ritc;
 
 if (!defined('SITE_PATH')) {

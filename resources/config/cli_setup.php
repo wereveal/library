@@ -2,49 +2,13 @@
 /**
  * @brief     This file sets up the App.
  * @details   Required to get the entire framework to work. The only thing
- *            that changes primarily is the defgroup in this comment for Doxygen.
+ *           that changes primarily is the defgroup in this comment for Doxygen.
  * @file      /app/src/Ritc/Library/resources/config/setup.php
- * @namespace Ritc The Reveal IT Consulting Vendor Namespace
- * @defgroup ritc
- * @{
- *      @defgroup ritc_library Library basic group of classes used to build other apps.
- *      @ingroup ritc
- *      @{
- *          @namespace Ritc\Library
- *          @version 5.5.0
- *          @defgroup abstracts Abstracts - Semi-Classes that are extended by other classes
- *          @ingroup ritc_library
- *          @defgroup lib_basic Basic Classes - Stuff that doesn't have another place
- *          @ingroup ritc_library
- *          @defgroup lib_configs Configs - Place for configurations
- *          @ingroup ritc_library
- *          @defgroup lib_controllers Controllers
- *          @ingroup ritc_library
- *          @defgroup lib_entities Entities - Defines the tables in the database
- *          @ingroup ritc_library
- *          @defgroup lilb_factories Factories - Classes that create objects
- *          @ingroup ritc_library
- *          @defgroup lib_helper Helpers - Classes that do helper things
- *          @ingroup ritc_library
- *          @defgroup lib_interfaces Interfaces - Files that define what a class should have
- *          @ingroup ritc_library
- *          @defgroup lib_models Models - Classes that do database calls
- *          @ingroup ritc_library
- *          @defgroup lib_services Services - Classes that are normally injected into other classes
- *          @ingroup ritc_library
- *          @defgroup lib_tests Tests - Classes that test other classes
- *          @ingroup ritc_library
- *          @defgroup lib_traits Traits - Functions that are common to multiple classes
- *          @ingroup ritc_library
- *          @defgroup lib_views Views - Classes that provide the end user experience
- *          @ingroup ritc_library
- *      @}
- *  @}
- *  @note <pre>
- *  NOTE: _path and _PATH indicates a full server path
- *        _dir and _DIR indicates the path in the site (URI)
- *        Both do not end with a slash
- *  </pre>
+ * @namespace Ritc
+ * @note NOTE:
+ * - _path and _PATH indicates a full server path
+ * - _dir and _DIR indicates the path in the site (URI)
+ * - Both paths do not end with a slash
 */
 namespace Ritc;
 

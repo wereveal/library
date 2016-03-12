@@ -1,24 +1,23 @@
 <?php
 /**
- *  @brief     A Base Class that all other classes use.
- *  @details   Primarily this is used to fix the visibility issue that PHP ignores.
- *             Also establishes the way the error logging can be injected when needed.
- *  @ingroup   ritc_library lib_abstracts
- *  @file      Ritc/Library/Abstracts/Base.php
- *  @namespace Ritc\Library\Abstracts
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.2.0
- *  @date      2014-09-25 15:18:00
- *  @note <pre><b>Change Log</b>
- *      v1.2.0 - changed back to abstract making it easer for other abstracts to extend it - 09/25/2014 wer
- *               Note that there may have been an interface for it but it no longer exists, not sure when.
- *               Also, it should be an abstract since it should never be instantiated by itself.
- *      v1.1.0 - allow elog to be injected into a class else ignores logging. 09/23/2014 wer
- *      v1.0.4 - changed back to a class. Couldn't figure out why
- *               it should be abstract. Made an interface for it just because. 12/19/2013
- *      v1.0.3 - namespace change, changed to an abstract class
- *  </pre>
-**/
+ * @brief     A Base Class that all other classes use.
+ * @details   Primarily this is used to fix the visibility issue that PHP ignores.
+ *            Also establishes the way the error logging can be injected when needed.
+ * @ingroup   ritc_library lib_abstracts
+ * @file      Ritc/Library/Abstracts/Base.php
+ * @namespace Ritc\Library\Abstracts
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.2.0
+ * @date      2014-09-25 15:18:00
+ * @note <b>Change Log</b>
+ * - v1.2.0 - changed back to abstract making it easer for other abstracts to extend it - 09/25/2014 wer
+ *              Note that there may have been an interface for it but it no longer exists, not sure when.
+ *              Also, it should be an abstract since it should never be instantiated by itself.
+ * - v1.1.0 - allow elog to be injected into a class else ignores logging. 09/23/2014 wer
+ * - v1.0.4 - changed back to a class. Couldn't figure out why
+ *              it should be abstract. Made an interface for it just because. 12/19/2013
+ * - v1.0.3 - namespace change, changed to an abstract class
+ */
 namespace Ritc\Library\Abstracts;
 
 use Ritc\Library\Services\Elog;
@@ -30,11 +29,11 @@ use Ritc\Library\Services\Elog;
  */
 abstract class Base
 {
-    /** @var string  */
+    /** @var string */
     protected $current_page;
-    /** @var array  */
+    /** @var array */
     protected $private_properties;
-    /** @var Elog  */
+    /** @var Elog */
     protected $o_elog;
 
     /**
@@ -59,9 +58,9 @@ abstract class Base
         }
     }
     /**
-     *  Injectes the Elog object into the class.
-     *  @param Elog $o_elog
-     *  @return null
+     * Injectes the Elog object into the class.
+     * @param Elog $o_elog
+     * @return null
      */
     public function setElog(Elog $o_elog)
     {
@@ -70,11 +69,11 @@ abstract class Base
 
     ### Fixing Visibility
     /**
-     *  Creates an array that lists the protected and private properties.
-     *  Used by the magic methods __set, __get, __isset, __unset to keep those
-     *  properties protected and private
-     *      @return NULL
-    **/
+     * Creates an array that lists the protected and private properties.
+     * Used by the magic methods __set, __get, __isset, __unset to keep those
+     * properties protected and private
+     *     @return NULL
+     */
     protected function setPrivateProperties()
     {
         $o_class = new \ReflectionClass(__CLASS__);
@@ -88,11 +87,11 @@ abstract class Base
         }
     }
     /**
-     *  Prevent direct access to protected and private properties.
-     *  @param string $var name of property being set
-     *  @param string $val value of the property to be set
-     *  @return NULL
-    **/
+     * Prevent direct access to protected and private properties.
+     * @param string $var name of property being set
+     * @param string $val value of the property to be set
+     * @return NULL
+     */
     public function __set($var, $val)
     {
         $a_backtrace = debug_backtrace();
@@ -112,10 +111,10 @@ abstract class Base
         return null;
     }
     /**
-     *  Prevent direct access to protected and private properties.
-     *  @param string $var name of property being get
-     *  @return mixed - value of the property being get
-    **/
+     * Prevent direct access to protected and private properties.
+     * @param string $var name of property being get
+     * @return mixed - value of the property being get
+     */
     public function __get($var)
     {
         $a_backtrace = debug_backtrace();
@@ -136,10 +135,10 @@ abstract class Base
         }
     }
     /**
-     *  Prevent direct access to protected and private properties.
-     *  @param string $var name of property being evaluated
-     *  @return bool
-    **/
+     * Prevent direct access to protected and private properties.
+     * @param string $var name of property being evaluated
+     * @return bool
+     */
     public function __isset($var)
     {
         $a_backtrace = debug_backtrace();
@@ -160,10 +159,10 @@ abstract class Base
         }
     }
     /**
-     *  Prevent direct access to protected and private properties.
-     *  @param string $var name of property being unset
-     *  @return null
-    **/
+     * Prevent direct access to protected and private properties.
+     * @param string $var name of property being unset
+     * @return null
+     */
     public function __unset($var)
     {
         $a_backtrace = debug_backtrace();

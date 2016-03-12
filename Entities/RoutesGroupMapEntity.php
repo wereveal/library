@@ -7,12 +7,12 @@
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0β1
  * @date      2015-09-03 12:47:56
- * @note <pre><b>Change Log</b>
- *       v1.0.0β1 - Initial version                             - 09/03/2015 wer
- *       </pre>
- *  @note <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/routes_group_map_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/routes_group_map_pg.sql</pre>
+ * @note <b>Change Log</b>
+ *      v1.0.0β1 - Initial version                             - 09/03/2015 wer
+ *      </pre>
+ * @note <b>SQL for table<b>
+ * - MySQL      - resources/sql/mysql/routes_group_map_mysql.sql
+ * - PostgreSQL - resources/sql/postgresql/routes_group_map_pg.sql
  */
 
 namespace Ritc\Library\Entities;
@@ -26,11 +26,11 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class RoutesGroupMapEntity implements EntityInterface
 {
-    /** @var int  */
+    /** @var int */
     private $rgm_id;
-    /** @var int  */
+    /** @var int */
     private $route_id;
-    /** @var int  */
+    /** @var int */
     private $group_id;
 
     /**

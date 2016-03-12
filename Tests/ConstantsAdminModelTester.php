@@ -69,14 +69,13 @@ class ConstantsModelTester extends Tester
         }
     }
     /**
-     *  Runs tests where method ends in Tester.
-     *  Extends the runTests method in abstract Tester.
-     *  @param string $class_name name of the class to be tested
-     *  @param array $a_test_order optional, if provided it ignores
-     *      the class property $a_test_order and won't try to build one
-     *      from the class methods.
-     *  @return int $failed_tests
-     **/
+     * Runs tests where method ends in Tester.
+     * Extends the runTests method in abstract Tester.
+     * @param string $class_name name of the class to be tested
+     * @param array $a_test_order optional, if provided it ignores the class property $a_test_order
+     *                            and won't try to build one from the class methods.
+     * @return int $failed_tests
+     */
     public function runTests($class_name = 'ConstantsModel', array $a_test_order = array())
     {
         if ($class_name == '') {
@@ -290,13 +289,13 @@ class ConstantsModelTester extends Tester
 
     ### Utility ###
     /**
-     *  Checks to see if a method is public.
-     *  Fixes method names that end in Tester.
-     *  Overriding method from abstact Tester class.
-     *  @param string $class_name required defaults to ''
-     *  @param string $method_name required defaults to ''
-     *  @return bool true or false
-    **/
+     * Checks to see if a method is public.
+     * Fixes method names that end in Tester.
+     * Overriding method from abstact Tester class.
+     * @param string $class_name required defaults to ''
+     * @param string $method_name required defaults to ''
+     * @return bool true or false
+     */
     public function isPublicMethod($class_name = '', $method_name = '')
     {
         if ($class_name == '' || $method_name == '') { return false; }

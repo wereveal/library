@@ -1,16 +1,15 @@
 <?php
 /**
- *  @brief     Does all the complex database CRUD stuff for the navigation.
- *  @ingroup   ritc_library lib_models
- *  @file      Ritc/Library/Models/NavComplexModel.php
- *  @namespace Ritc\Library\Models
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0 β1
- *  @date      2016-02-25 12:04:44
- *  @note <pre><b>Change Log</b>
- *      v1.0.0 β1 - Initial version                              - 02/25/2016 wer
- *  </pre>
- **/
+ * @brief     Does all the complex database CRUD stuff for the navigation.
+ * @ingroup   ritc_library lib_models
+ * @file      Ritc/Library/Models/NavComplexModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0 β1
+ * @date      2016-02-25 12:04:44
+ * @note <b>Change Log</b>
+ * - v1.0.0 β1 - Initial version                              - 02/25/2016 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Services\DbModel;
@@ -25,17 +24,17 @@ class NavComplexModel
 {
     use LogitTraits;
 
-    /** @var string  */
+    /** @var string */
     private $db_prefix;
-    /** @var string  */
+    /** @var string */
     private $db_type;
-    /** @var string  */
+    /** @var string */
     private $error_message;
-    /** @var \Ritc\Library\Services\DbModel  */
+    /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
-    /** @var string  */
+    /** @var string */
     private $select_sql;
-    /** @var string  */
+    /** @var string */
     private $select_order_sql;
 
     /**

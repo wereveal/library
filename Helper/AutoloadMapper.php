@@ -1,21 +1,20 @@
 <?php
 /**
- *  @brief     Creates the autoload_classmap.php file.
- *  @ingroup   ritc_library lib_helper
- *  @file      Ritc/Library/Helper/AutoloadMapper.php
- *  @namespace Ritc\Library\Helper
- *  @class     AutoloadMapper
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.2.2
- *  @date      2016-02-22 15:00:10
- *  @note <pre><b>Change Log</b>
- *      v1.2.2 - bug fix                                     - 02/22/2016 wer
- *      v1.2.1 - refactored var names to be more descriptive - 12/07/2015 wer
- *      v1.2.0 - added code to not include archives          - 11/06/2015 wer
- *      v1.1.0 - added traits                                - 09/01/2015 wer
- *      v1.0.0 - initial version
- *  </pre>
-**/
+ * @brief     Creates the autoload_classmap.php file.
+ * @ingroup   ritc_library lib_helper
+ * @file      Ritc/Library/Helper/AutoloadMapper.php
+ * @namespace Ritc\Library\Helper
+ * @class     AutoloadMapper
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.2.2
+ * @date      2016-02-22 15:00:10
+ * @note <b>Change Log</b>
+ * - v1.2.2 - bug fix                                     - 02/22/2016 wer
+ * - v1.2.1 - refactored var names to be more descriptive - 12/07/2015 wer
+ * - v1.2.0 - added code to not include archives          - 11/06/2015 wer
+ * - v1.1.0 - added traits                                - 09/01/2015 wer
+ * - v1.0.0 - initial version
+ */
 namespace Ritc\Library\Helper;
 
 use \DirectoryIterator;
@@ -23,20 +22,21 @@ use \SplFileInfo;
 
 class AutoloadMapper
 {
-    /** @var string  */
+    /** @var string */
     private $app_path;
-    /** @var string  */
+    /** @var string */
     private $config_path;
-    /** @var string  */
+    /** @var string */
     private $src_path;
 
     /**
-     *  Constructor for the class.
-     *  @param array $a_dirs should be [
-     *      'app_path'    => '/some_path',
-     *      'config_path' => '/some_path',
-     *      'src_path'    => '/some_path'
-     *  ]
+     * Constructor for the class.
+     * @param array $a_dirs should be <pre>[
+     *     'app_path'    => '/some_path',
+     *     'config_path' => '/some_path',
+     *     'src_path'    => '/some_path'
+     * ]
+     * </pre>
      */
     public function __construct(array $a_dirs = array())
     {

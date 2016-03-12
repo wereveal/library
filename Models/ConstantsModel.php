@@ -1,25 +1,24 @@
 <?php
 /**
- *  @brief     Creates a Model object.
- *  @ingroup   ritc_library lib_models
- *  @file      Ritc/Library/Models/ConstantsModel.php
- *  @namespace Ritc\Library\Models
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   2.2.0
- *  @date      2015-11-22 18:04:07
- *  @note      see ConstantsEntity for database table definition.
- *  @note <pre><b>Change Log</b>
- *      v2.2.0 - Refactoring to provide better pgsql compatibility - 11/22/2015 wer
- *      v2.1.0 - No longer extends Base class but uses LogitTraits = 08/19/2015 wer
- *      v2.0.1 - Refactoring of Class Arrays required changes here - 07/31/2015 wer
- *      v2.0.0 - Renamed to match functionality                    - 01/17/2015 wer
- *      v1.1.1 - Namespace changes elsewhere required changes here - 11/15/2014 wer
- *               Doesn't use DI/IOC because of where it is initialized
- *      v1.1.0 - Changed from Entity to Model                      - 11/13/2014 wer
- *      v1.0.1 - minor change to the comments                      - 09/11/2014 wer
- *      v1.0.0 - Initial version                                   - 04/01/2014 wer
- *  </pre>
-**/
+ * @brief     Creates a Model object.
+ * @ingroup   ritc_library lib_models
+ * @file      Ritc/Library/Models/ConstantsModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   2.2.0
+ * @date      2015-11-22 18:04:07
+ * @note      see ConstantsEntity for database table definition.
+ * @note <b>Change Log</b>
+ * - v2.2.0 - Refactoring to provide better pgsql compatibility - 11/22/2015 wer
+ * - v2.1.0 - No longer extends Base class but uses LogitTraits = 08/19/2015 wer
+ * - v2.0.1 - Refactoring of Class Arrays required changes here - 07/31/2015 wer
+ * - v2.0.0 - Renamed to match functionality                    - 01/17/2015 wer
+ * - v1.1.1 - Namespace changes elsewhere required changes here - 11/15/2014 wer
+ *              Doesn't use DI/IOC because of where it is initialized
+ * - v1.1.0 - Changed from Entity to Model                      - 11/13/2014 wer
+ * - v1.0.1 - minor change to the comments                      - 09/11/2014 wer
+ * - v1.0.0 - Initial version                                   - 04/01/2014 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
@@ -37,11 +36,11 @@ class ConstantsModel implements ModelInterface
 {
     use LogitTraits;
 
-    /** @var array|bool  */
+    /** @var array|bool */
     private $a_constants;
-    /** @var string  */
+    /** @var string */
     private $db_prefix;
-    /** @var \Ritc\Library\Services\DbModel  */
+    /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
 
     /**
@@ -307,22 +306,22 @@ class ConstantsModel implements ModelInterface
         }
     }
     /**
-     *  Create the records in the constants table.
-     *  @param array $a_constants must have at least one record.
-     *  array is in the form of
-     *  [
-     *      [
-     *          'const_name_value,
-     *          'const_value_value',
-     *          'const_immutable_value'
-     *      ],
-     *      [
-     *          'const_name_value,
-     *          'const_value_value',
-     *          'const_immutable_value'
-     *      ]
+     * Create the records in the constants table.
+     * @param array $a_constants must have at least one record.
+     * array is in the form of
+     * [
+     *     [
+     *         'const_name_value,
+     *         'const_value_value',
+     *         'const_immutable_value'
+     *     ],
+     *     [
+     *         'const_name_value,
+     *         'const_value_value',
+     *         'const_immutable_value'
+     *     ]
      * ]
-     *  @return bool
+     * @return bool
      */
     public function createConstantRecords(array $a_constants = array())
     {
@@ -356,10 +355,10 @@ class ConstantsModel implements ModelInterface
 
     ### Utility Methods ###
     /**
-     *  Changes the string to be a valid constant name.
-     *  @param $const_name
-     *  @return string
-     **/
+     * Changes the string to be a valid constant name.
+     * @param $const_name
+     * @return string
+      */
     public function makeValidName($const_name = '')
     {
         $const_name = Strings::removeTagsWithDecode($const_name, ENT_QUOTES);
@@ -369,9 +368,9 @@ class ConstantsModel implements ModelInterface
     }
 
     /**
-     *  Changes the string to be a valid constant name.
-     *  @param string $const_value
-     *  @return string
+     * Changes the string to be a valid constant name.
+     * @param string $const_value
+     * @return string
      */
     public function makeValidValue($const_value = '')
     {

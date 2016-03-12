@@ -1,30 +1,32 @@
 <?php
 /**
- *  @brief     Common functions that inject and use the Elog class service.
- *  @ingroup   ritc_library lib_traits
- *  @file      LogitTraits.php
- *  @namespace Ritc\Library\Traits
- *  @class     LogitTraits
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.1
- *  @date      2016-02-26 12:17:41
- *  @note      this is derived from the abstract class Base and may
- *             end up replacing the abstract class or used in classes that
- *             don't use the abstract class.
- *  @note <pre><b>Change Log</b>
- *      v1.1.1 - bug fixes                                                      - 02/26/2016 wer
- *      v1.1.0 - added code to utilize the custom logging capabilities          - 11/20/2015 wer
- *      v1.0.1 - checked to see if we want to even bother with calling o_elog.  - 11/03/2015 wer
- *      v1.0.0 - initial version                                                - 08/19/2015 wer
- *  </pre>
+ * @brief     Common functions that inject and use the Elog class service.
+ * @ingroup   ritc_library lib_traits
+ * @file      LogitTraits.php
+ * @namespace Ritc\Library\Traits
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.1
+ * @date      2016-02-26 12:17:41
+ * @note      this is derived from the abstract class Base and may end up replacing
+ *            the abstract class or used in classes that don't use the abstract class.
+ * @note <b>Change Log</b>
+ * - v1.1.1 - bug fixes                                                      - 02/26/2016 wer
+ * - v1.1.0 - added code to utilize the custom logging capabilities          - 11/20/2015 wer
+ * - v1.0.1 - checked to see if we want to even bother with calling o_elog.  - 11/03/2015 wer
+ * - v1.0.0 - initial version                                                - 08/19/2015 wer
  */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Services\Elog;
 
+/**
+ * Class LogitTraits
+ * @class   LogitTraits
+ * @package Ritc\Library\Traits
+ */
 trait LogitTraits
 {
-    /** @var Elog  */
+    /** @var Elog */
     protected $o_elog;
 
     /**
@@ -71,9 +73,9 @@ trait LogitTraits
         }
     }
     /**
-     *  Injectes the Elog object into the class.
-     *  @param  Elog $o_elog
-     *  @return null
+     * Injectes the Elog object into the class.
+     * @param  Elog $o_elog
+     * @return null
      */
     public function setElog(Elog $o_elog)
     {

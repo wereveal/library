@@ -1,19 +1,18 @@
 <?php
 /**
- *  @brief     Adds some standard use formatting methods for date and time.
- *  @ingroup   ritc_library lib_helper
- *  @file      Ritc/Library/Helper/DatesTimes.php
- *  @namespace Ritc\Library\Helper
- *  @class     DatesTimes
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   3.0.2
- *  @date      2016-02-22 15:08:38
- *  @note <pre><b>Change Log</b>
- *      v3.0.2 - bug fix                                - 02/22/2016 wer
- *      v3.0.1 - moved to Ritc\Library\Helper namespace - 11/15/2014 wer
- *      v3.0.0 - FIG standards (mostly)
- *  </pre>
-**/
+ * @brief     Adds some standard use formatting methods for date and time.
+ * @ingroup   ritc_library lib_helper
+ * @file      Ritc/Library/Helper/DatesTimes.php
+ * @namespace Ritc\Library\Helper
+ * @class     DatesTimes
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   3.0.2
+ * @date      2016-02-22 15:08:38
+ * @note <b>Change Log</b>
+ * - v3.0.2 - bug fix                                - 02/22/2016 wer
+ * - v3.0.1 - moved to Ritc\Library\Helper namespace - 11/15/2014 wer
+ * - v3.0.0 - FIG standards (mostly)
+ */
 namespace Ritc\Library\Helper;
 
 class DatesTimes

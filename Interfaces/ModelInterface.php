@@ -1,18 +1,17 @@
 <?php
 /**
- *  @brief     Class used to set up model classes.
- *  @ingroup   ritc_library lib_interface
- *  @file      Ritc/Library/Interfaces/ModelInterface.php
- *  @namespace Ritc\Library\Interfaces
- *  @class     ModelInterface
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.1
- *  @date      2014-11-11 11:14:58
- *  @note <pre><b>Change Log</b>
- *      v1.0.1 fixed default arg for delete
- *      v1.0.0 initial versioning 01/30/2014 wer
- *  </pre>
-**/
+ * @brief     Class used to set up model classes.
+ * @ingroup   ritc_library lib_interface
+ * @file      Ritc/Library/Interfaces/ModelInterface.php
+ * @namespace Ritc\Library\Interfaces
+ * @class     ModelInterface
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.1
+ * @date      2014-11-11 11:14:58
+ * @note <b>Change Log</b>
+ * - v1.0.1 fixed default arg for delete
+ * - v1.0.0 initial versioning 01/30/2014 wer
+ */
 namespace Ritc\Library\Interfaces;
 
 interface ModelInterface {

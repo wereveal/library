@@ -1,17 +1,16 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff.
- *  @ingroup   ritc_library lib_models
- *  @file      Ritc/Library/Models/PageModel.php
- *  @namespace Ritc\Library\Models
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:59:00
- *  @note <pre><b>Change Log</b>
- *      v1.0.0   - take out of beta                             - 11/27/2015 wer
- *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
- *  </pre>
-**/
+ * @brief     Does all the database CRUD stuff.
+ * @ingroup   ritc_library lib_models
+ * @file      Ritc/Library/Models/PageModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0
+ * @date      2015-11-27 14:59:00
+ * @note <b>Change Log</b>
+ * - v1.0.0   - take out of beta                             - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                              - 10/30/2015 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
@@ -28,13 +27,13 @@ class PageModel implements ModelInterface
 {
     use LogitTraits;
 
-    /** @var string  */
+    /** @var string */
     private $db_prefix;
-    /** @var string  */
+    /** @var string */
     private $db_type;
-    /** @var string  */
+    /** @var string */
     private $error_message;
-    /** @var \Ritc\Library\Services\DbModel  */
+    /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
 
     /**

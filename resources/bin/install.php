@@ -1,12 +1,12 @@
 <?php
 /**
- *  @brief     This file sets up standard stuff for the Framework.
- *  @details   This creates the database config and some standard directories.
- *  @file      install.php
- *  @namespace Ritc
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @date      2015-11-27 15:23:44
- *  @version   1.0.0
+ * @brief     This file sets up standard stuff for the Framework.
+ * @details   This creates the database config and some standard directories.
+ * @file      install.php
+ * @namespace Ritc
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @date      2015-11-27 15:23:44
+ * @version   1.0.0
 */
 namespace Ritc;
 
@@ -119,8 +119,8 @@ if (!file_exists(SRC_PATH . '/Ritc/Library')) {
 ### generate files for autoloader ###
 require SRC_PATH . '/Ritc/Library/Helper/AutoloadMapper.php';
 $a_dirs = [
-    'app_path'    => APP_PATH, 
-    'config_path' => APP_CONFIG_PATH, 
+    'app_path'    => APP_PATH,
+    'config_path' => APP_CONFIG_PATH,
     'src_path'    => SRC_PATH];
 $o_cm = new AutoloadMapper($a_dirs);
 if (!is_object($o_cm)) {
@@ -212,7 +212,7 @@ $app_path = SRC_PATH . '/' . $namespace. '/' . $app_name;
 $a_new_dirs = ['Abstracts', 'Controllers', 'Entities', 'Interfaces', 'Models',
 'Tests', 'Traits', 'Views', 'resources', 'resources/config', 'resources/sql',
 'resources/templates', 'resources/themes', 'resources/templates/default',
-'resources/templates/elements', 'resources/templates/pages', 
+'resources/templates/elements', 'resources/templates/pages',
 'resources/templates/snippets', 'resources/templates/tests'];
 
 $htaccess_text =<<<EOF
