@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Entity to map the Router to the Groups.
- * @ingroup   ritc_library lib_entities
+ * @ingroup   lib_entities
  * @file      Ritc/Library/Entities/RoutesGroupMapEntity.php
  * @namespace Ritc\Library\Entities
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -14,7 +14,6 @@
  * - MySQL      - resources/sql/mysql/routes_group_map_mysql.sql
  * - PostgreSQL - resources/sql/postgresql/routes_group_map_pg.sql
  */
-
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;

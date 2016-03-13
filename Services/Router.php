@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Determines the controller and method to use based on URI.
- * @ingroup   ritc_library lib_services
+ * @ingroup   lib_services
  * @file      Router.php
  * @namespace Ritc\Library\Services
- * @class     Router
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.1
  * @date      2016-02-22 15:40:33
@@ -32,6 +31,11 @@ use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class Router figures out the routes and route parts.
+ * @class Router
+ * @package Ritc\Library\Services
+ */
 class Router
 {
     use LogitTraits;
@@ -236,6 +240,7 @@ class Router
     }
 
     /**
+     * Sets the property a_get with semi-sanitized values from $_GET.
      * @param array $a_allowed_keys
      */
     public function setGet(array $a_allowed_keys = array())
@@ -262,6 +267,7 @@ class Router
     }
 
     /**
+     * Sets the property a_get with semi-sanitized values from $_POST.
      * @param array $a_allowed_keys
      */
     public function setPost(array $a_allowed_keys = array())
@@ -270,6 +276,7 @@ class Router
     }
 
     /**
+     * Gets the request uri from the property $a_router_parts.
      * @return mixed
      */
     public function getRequestUri()

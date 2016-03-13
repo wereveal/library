@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Controller for the Configuration page.
- * @ingroup   ritc_library lib_controllers
+ * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/PeopleAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -75,6 +75,7 @@ class PeopleAdminController implements ManagerControllerInterface
             $this->o_view->setElog($this->o_elog);
         }
     }
+
     /**
      * Routes the code to the appropriate methods and classes. Returns a string.
      * @return string html to be displayed.
@@ -127,6 +128,7 @@ class PeopleAdminController implements ManagerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
     /**
      * Saves the person mapped to group(s).
      * Returns array that specifies succsss or failure.
@@ -156,6 +158,7 @@ class PeopleAdminController implements ManagerControllerInterface
         }
         return ViewHelper::failureMessage("Opps, the person was not saved.");
     }
+
     /**
      * Updates the user record.
      * @return array a message regarding outcome.
@@ -195,6 +198,7 @@ class PeopleAdminController implements ManagerControllerInterface
         }
         return ViewHelper::failureMessage("Opps, the person was not updated.");
     }
+
     /**
      * Display the form to verify delete.
      * @return array
@@ -203,6 +207,7 @@ class PeopleAdminController implements ManagerControllerInterface
     {
         return $this->o_view->renderVerifyDelete($this->a_post_values);
     }
+
     /**
      * Deletes the user record.
      * @return array a message regarding outcome.
@@ -238,6 +243,7 @@ class PeopleAdminController implements ManagerControllerInterface
         }
         return $short_name;
     }
+
     /**
      * Returns an array to be used to create or update a people record.
      * @param array $a_person

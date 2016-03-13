@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Common functions for the manager views.
- * @ingroup   ritc_library lib_traits
+ * @ingroup   lib_traits
  * @file      ManagerViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -55,6 +55,7 @@ trait ManagerViewTraits
         $this->setAuthLevel();
         $this->setLinks();
     }
+
     /**
      * Sets the standard used objects from the object injector.
      * @param Di $o_di
@@ -67,6 +68,7 @@ trait ManagerViewTraits
         $this->o_twig   = $o_di->get('twig');
         $this->o_db     = $o_di->get('db');
     }
+
     /**
      * Sets the class property $adm_level to a value of the highest auth level
      * found or 0 if not found.
@@ -84,6 +86,7 @@ trait ManagerViewTraits
             $this->adm_level = 0;
         }
     }
+
     /**
      * Sets an array of links used for the manager home page and for the menus.
      * @return null
@@ -130,6 +133,7 @@ trait ManagerViewTraits
         }
         $this->a_links = $a_links;
     }
+
     /**
      * Returns an array with the values used primarily in the meta tags of the html.
      * @return array
@@ -174,6 +178,7 @@ trait ManagerViewTraits
             'rights_holder' => RIGHTS_HOLDER
         ];
     }
+
     /**
      * @return array
      */

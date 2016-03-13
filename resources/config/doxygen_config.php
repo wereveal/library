@@ -17,7 +17,7 @@
  *    @ingroup ritc_library
  *    @defgroup lib_entities Entities - Defines the tables in the database.
  *    @ingroup ritc_library
- *    @defgroup lilb_factories Factories - Classes that create objects.
+ *    @defgroup lib_factories Factories - Classes that create objects.
  *    @ingroup ritc_library
  *    @defgroup lib_helper Helpers - Classes that do helper things.
  *    @ingroup ritc_library

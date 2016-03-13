@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Common functions that would be used in several database classes.
- * @ingroup   ritc_library lib_traits
+ * @ingroup   lib_traits
  * @file      DbTraits.php
  * @namespace Ritc\Library\Traits
- * @class     DbTraits
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0
  * @date      2015-11-27 14:43:14
@@ -16,6 +15,7 @@ namespace Ritc\Library\Traits;
 
 /**
  * Class DbTraits
+ * @class DbTraits
  * @package Ritc\Library\Traits
  */
 trait DbTraits {

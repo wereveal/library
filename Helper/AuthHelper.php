@@ -4,10 +4,9 @@
  * @details   It is expected that this will be used within a controller and
  *            more finely grained access with be handled there
  *            or in a sub-controller.
- * @ingroup   ritc_library lib_helper
+ * @ingroup   lib_helper
  * @file      Ritc/Library/Helper/AuthHelper.php
  * @namespace Ritc\Library\Helper
- * @class     AuthHelper
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   5.0.0
  * @date      2015-11-06 15:03:52
@@ -65,6 +64,11 @@ use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class AuthHelper helps with authentication and authorization.
+ * @class   AuthHelper
+ * @package Ritc\Library\Helper
+ */
 class AuthHelper
 {
     use LogitTraits;
@@ -220,6 +224,7 @@ class AuthHelper
             ];
         }
     }
+
     /**
      * Logs the person out and resets session.
      * @param string|int $people_id either login_id or people_id
@@ -240,6 +245,7 @@ class AuthHelper
             'message'      => 'Logged Out.'
         ];
     }
+
     /**
      * Gets the highest auth level the person has.
      * Note that this is not associated with a route or page, just the highest
@@ -317,6 +323,7 @@ class AuthHelper
         }
         return true;
     }
+
     /**
      * Figures out if the person is specified as a default person.
      * @param string|int $person can be the person id or the person name.
@@ -335,6 +342,7 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Verifies a person is logged in and session is valid for person.
      * @return bool
@@ -356,6 +364,7 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Checks to see if the person has a valid group for the route.
      * @param int|string $people_id
@@ -380,6 +389,7 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Verifies person is in the group SuperAdmin (group_id == 1).
      * @param int|string $people_id required
@@ -397,11 +407,12 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Checks to see if the value is a valid group id or name.
      * @param int|string $group
      * @return bool true or false
-      */
+     */
     public function isValidGroup($group = -1)
     {
         if ($group == -1) { return false; }
@@ -416,6 +427,7 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Verifies the group id provided is a valid id
      * @param int $group
@@ -429,6 +441,7 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Checks to see if person exists.
      * @param int|string $person person id or login name
@@ -443,6 +456,7 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Checks to see if the person by id exists.
      * Uses the isValidPerson method.
@@ -457,11 +471,12 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Checks to see if the person id exists.
      * @param int $people_id
      * @return bool true false
-      */
+     */
     public function peopleIdExists($people_id = -1)
     {
         if (ctype_digit($people_id) && $people_id != -1) {
@@ -473,6 +488,7 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Checks to see if the person is in the group.
      * @param int|string $person
@@ -494,11 +510,12 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Checks to see if the login_id exists.
      * @param string $login_id
      * @return bool
-      */
+     */
     public function loginIdExists($login_id = '')
     {
         if ($login_id == '') { return false; }
@@ -508,6 +525,7 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Checks to see if the password provided is valid for person.
      * @param array $a_person required $a_person['password'] and either $a_person['people_id'] or $a_person['login_id']

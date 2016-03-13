@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     View for the User Admin page.
- * @ingroup   ritc_library lib_views
+ * @ingroup   lib_views
  * @file      PeopleAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -262,6 +262,7 @@ class PeopleAdminView
         $tpl = TWIG_PREFIX . 'pages/verify_delete.twig';
         return $this->o_twig->render($tpl, $a_twig_values);
     }
+
     /**
      * Something to keep phpStorm from complaining until I use the ViewHelper.
      * @return array

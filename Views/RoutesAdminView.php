@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     View for the Router Admin page.
- * @ingroup   ritc_library lib_views
+ * @ingroup   lib_views
  * @file      RoutesAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>

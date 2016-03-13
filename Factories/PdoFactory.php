@@ -2,7 +2,7 @@
 /**
  * @brief     A PDO Factory.
  * @details   The factory returns a \PDO object.
- * @ingroup   ritc_library lib_factories
+ * @ingroup   lib_factories
  * @file      Ritc/Library/Factories/PdoFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -67,6 +67,7 @@ class PdoFactory
             $this->o_elog = $o_di->get('elog');
         }
     }
+
     /**
      * Starts a Singleton object for the specific database config file
      * or returns the existing object if it is already started.
@@ -140,6 +141,7 @@ class PdoFactory
             return false;
         }
     }
+
     /**
      * Creates the DSN string from the db config array.
      * Needed to connect to the database.

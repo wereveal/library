@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Controller for the Page Admin page.
- * @ingroup   ritc_library lib_controllers
+ * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/PageAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -179,6 +179,7 @@ class PageAdminController implements ManagerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
     /**
      * Required by interface. Not called.
      * @return string
@@ -187,6 +188,7 @@ class PageAdminController implements ManagerControllerInterface
     {
         return $this->o_view->renderVerify();
     }
+
     /**
      * Adds slashes to url if needed.
      * @param string $url

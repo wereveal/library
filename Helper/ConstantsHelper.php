@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Create Constants from the constants database
- * @ingroup   ritc_library lib_helper
+ * @ingroup   lib_helper
  * @file      Ritc/Library/Helper/ConstantsHelper.php
  * @namespace Ritc\Library\Helper
- * @class     ConstantsHelper
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   4.0.1
  * @date      2016-02-22 15:05:55
@@ -38,6 +37,11 @@ use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class ConstantsHelper
+ * @class   ConstantsHelper
+ * @package Ritc\Library\Helper
+ */
 class ConstantsHelper
 {
     use LogitTraits;
@@ -275,7 +279,7 @@ class ConstantsHelper
 
     ### Magic Method fix
     /**
-     *
+     * Clone is not allowed.
      */
     public function __clone()
     {

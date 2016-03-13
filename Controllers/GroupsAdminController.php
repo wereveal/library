@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Controller for the Groups Admin page.
- * @ingroup   ritc_library lib_controllers
+ * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/GroupsAdmimController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>

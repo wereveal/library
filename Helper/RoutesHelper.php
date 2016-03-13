@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Various helper functions for routes.
- * @ingroup   ritc_library lib_helper
+ * @ingroup   lib_helper
  * @file      Ritc/Library/Helper/RoutesHelper.php
  * @namespace Ritc\Library\Helper
- * @class     RoutesHelper
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0
  * @date      2015-11-27 14:55:02
@@ -23,6 +22,11 @@ use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class RoutesHelper
+ * @class   RoutesHelper
+ * @package Ritc\Library\Helper
+ */
 class RoutesHelper
 {
     use LogitTraits;

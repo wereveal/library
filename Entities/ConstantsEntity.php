@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Basic accessors for a constants entity.
- * @ingroup   ritc_library lib_entities
+ * @ingroup   lib_entities
  * @file      Ritc/Library/Entities/ConstantsEntity.php
  * @namespace Ritc\Library\Entities
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -12,7 +12,6 @@
  *    PostgreSQL - resources/sql/postgresql/constants_pg.sql</pre>
  * @todo add class properties that are missing.
  */
-
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Helper\Arrays;
@@ -25,48 +24,94 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class ConstantsEntity implements EntityInterface
 {
+    /** @var array  */
     private $a_properties;
 
+    /**
+     * ConstantsEntity constructor.
+     * @param array $a_properties
+     */
     public function __construct(array $a_properties = array())
     {
         $this->setAllProperties($a_properties);
     }
+
+    /**
+     * @return int
+     */
     public function getId()
     {
         return $this->a_properties['const_id'];
     }
+
+    /**
+     * @param int $value
+     */
     public function setId($value)
     {
         $this->a_properties['const_id'] = $value;
     }
+
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->a_properties['const_name'];
     }
+
+    /**
+     * @param string $value
+     */
     public function setName($value)
     {
         $this->a_properties['const_name'] = $value;
     }
+
+    /**
+     * @return mixed
+     */
     public function getValue()
     {
         return $this->a_properties['const_value'];
     }
+
+    /**
+     * @param mixed $value
+     */
     public function setValue($value)
     {
         $this->a_properties['const_value'] = $value;
     }
+
+    /**
+     * @return int
+     */
     public function getImmutable()
     {
         return $this->a_properties['const_immutable'];
     }
+
+    /**
+     * @param int $value
+     */
     public function setImmutable($value)
     {
         $this->a_properties['const_immutable'] = $value;
     }
+
+    /**
+     * @return array
+     */
     public function getAllProperties()
     {
         return $this->a_properties;
     }
+
+    /**
+     * @param array $a_properties
+     * @return bool|void
+     */
     public function setAllProperties(array $a_properties = array())
     {
         $required_keys = [

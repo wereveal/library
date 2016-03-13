@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Tests the Group Model Class.
- * @ingroup   ritc_library lib_tests
+ * @ingroup   lib_tests
  * @file      PeopleModelTester.php
  * @namespace Ritc\Library\Tests
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -28,9 +28,15 @@ class PeopleModelTester extends Tester
 {
     use LogitTraits;
 
+    /** @var bool */
     private $o_db;
+    /** @var PeopleModel */
     private $o_model;
 
+    /**
+     * PeopleModelTester constructor.
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_db    = $o_di->get('db');
@@ -40,10 +46,17 @@ class PeopleModelTester extends Tester
     }
 
     ### Tests ###
+    /**
+     * @return bool
+     */
     public function createTester()
     {
         return false;
     }
+
+    /**
+     * @return bool
+     */
     public function readTester()
     {
         $a_test_values  = $this->a_test_values['read']['test_values'];
@@ -56,22 +69,42 @@ class PeopleModelTester extends Tester
         }
         return true;
     }
+
+    /**
+     * @return bool
+     */
     public function updateTester()
     {
         return false;
     }
+
+    /**
+     * @return bool
+     */
     public function deleteTester()
     {
         return false;
     }
+
+    /**
+     * @return bool
+     */
     public function readByIdTester()
     {
         return false;
     }
+
+    /**
+     * @return bool
+     */
     public function readyByName()
     {
         return false;
     }
+
+    /**
+     * @return bool
+     */
     public function isValidGroupId()
     {
         return false;

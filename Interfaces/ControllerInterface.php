@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Class used to set up controller classes.
- * @ingroup   ritc_library lib_interfaces
+ * @ingroup   lib_interfaces
  * @file      Ritc/Library/Interfaces/ControllerInterface.php
  * @namespace Ritc\Library\Interfaces
- * @class     ControllerInterface
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.1.0
  * @date      2014-11-15 14:54:02
@@ -15,7 +14,15 @@
  */
 namespace Ritc\Library\Interfaces;
 
+/**
+ * Interface ControllerInterface
+ * @class ControllerInterface
+ * @package Ritc\Library\Interfaces
+ */
 interface ControllerInterface
 {
+    /**
+     * @return mixed
+     */
     public function render();
 }

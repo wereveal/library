@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Creates a Model object.
- * @ingroup   ritc_library lib_models
+ * @ingroup   lib_models
  * @file      Ritc/Library/Models/ConstantsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -106,6 +106,7 @@ class ConstantsModel implements ModelInterface
             return false;
         }
     }
+
     /**
      * Returns an array of records based on the search params provided.
      * @param array $a_search_values optional, returns all records if not provided
@@ -140,6 +141,7 @@ class ConstantsModel implements ModelInterface
         ";
         return $this->o_db->search($sql, $a_search_values);
     }
+
     /**
      * Generic update for a record using the values provided.
      * @param array $a_values
@@ -164,6 +166,7 @@ class ConstantsModel implements ModelInterface
         ";
         return $this->o_db->update($sql, $a_values, true);
     }
+
     /**
      * Generic deletes a record based on the id provided.
      * @param int $const_id
@@ -238,6 +241,7 @@ class ConstantsModel implements ModelInterface
         }
         return false;
     }
+
     /**
      * Creates the database table to store the constants.
      * @return bool
@@ -305,10 +309,11 @@ class ConstantsModel implements ModelInterface
             // end default
         }
     }
+
     /**
      * Create the records in the constants table.
      * @param array $a_constants must have at least one record.
-     * array is in the form of
+     * array is in the form of<code>
      * [
      *     [
      *         'const_name_value,
@@ -320,7 +325,7 @@ class ConstantsModel implements ModelInterface
      *         'const_value_value',
      *         'const_immutable_value'
      *     ]
-     * ]
+     * ]</code>
      * @return bool
      */
     public function createConstantRecords(array $a_constants = array())

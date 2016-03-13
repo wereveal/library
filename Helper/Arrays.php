@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Class that does stuff with arrays.
- * @ingroup   ritc_library lib_helper
+ * @ingroup   lib_helper
  * @file      Ritc/Library/Helper/Arrays.php
  * @namespace Ritc\Library\Helper
- * @class     Arrays
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   2.7.0
  * @date      2015-11-25 11:27:29
@@ -35,6 +34,11 @@
  */
 namespace Ritc\Library\Helper;
 
+/**
+ * Class Arrays - does stuff with arrays.
+ * @class Arrays
+ * @package Ritc\Library\Helper
+ */
 class Arrays
 {
     /**
@@ -74,6 +78,7 @@ class Arrays
         }
         return $a_clean;
     }
+
     /**
      * Compares two arrays and sees if the values in the second array match the first.
      * It should be noted that the second array can have additional
@@ -94,7 +99,7 @@ class Arrays
      *         ['name' => 'barney', 'wife' => 'betty']
      *      ]
      * </pre>
-      */
+     */
     public static function compareArrays(array $a_expected_values = array(), array $a_check_values = array())
     {
         if ($a_check_values != array() && $a_expected_values == array()) {
@@ -113,6 +118,7 @@ class Arrays
         }
         return true;
     }
+
     /**
      * Returns an array which has only the required keys and has all of them.
      * @param array $a_pairs
@@ -135,6 +141,7 @@ class Arrays
         }
         return $a_pairs;
     }
+
     /**
      * Decodes htmlentities in array values
      * @param array $a_pairs
@@ -157,6 +164,7 @@ class Arrays
         }
         return $a_clean;
     }
+
     /**
      * Verifies an associate array has the necessary keys.
      * @param array $a_required_keys required to have at least one value
@@ -178,6 +186,7 @@ class Arrays
         }
         return true;
     }
+
     /**
      * Checks array for blank values and missing key=>value pairs.
      * @param array $a_pairs
@@ -212,6 +221,7 @@ class Arrays
         }
         return false;
     }
+
     /**
      * Searches a multidimensional array for a value.
      * If found, returns the key of the array, if multidimenstional array
@@ -243,6 +253,7 @@ class Arrays
         }
         return false;
     }
+
     /**
      * Determines that the value passed in is an associative array with all non-numeric keys.
      * Also determines that the array is not empty.
@@ -259,6 +270,7 @@ class Arrays
             count(array_diff_key($a_pairs, array_keys(array_keys($a_pairs)))) == count($a_pairs)
         );
     }
+
     /**
      * Sees if the array passed in is an array of assoc arrays.
      * @param array
@@ -273,6 +285,7 @@ class Arrays
         }
         return true;
     }
+
     /**
      * Removes the slashes from values in an array.
      * Used primarily for returned values from a database search.
@@ -296,6 +309,7 @@ class Arrays
         }
         return $a_stripped;
     }
+
     /**
      * Strips unwanted key=>value pairs.
      * Only really valuable for assoc arrays.
@@ -315,6 +329,7 @@ class Arrays
         }
         return $a_pairs;
     }
+
     /**
      * Strip HTML and PHP tags from the values in an array
      * @param array  $a_pairs        the array with the values to modify
@@ -346,6 +361,7 @@ class Arrays
         }
         return $a_clean;
     }
+
     /**
      * Removes unsafe php function names from array values.
      * @param array $a_pairs

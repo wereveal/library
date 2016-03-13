@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Controller for the Routes Admin page.
- * @ingroup   ritc_library lib_controllers
+ * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/RoutesAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>

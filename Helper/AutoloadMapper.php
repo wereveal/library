@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Creates the autoload_classmap.php file.
- * @ingroup   ritc_library lib_helper
+ * @ingroup   lib_helper
  * @file      Ritc/Library/Helper/AutoloadMapper.php
  * @namespace Ritc\Library\Helper
- * @class     AutoloadMapper
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.2.2
  * @date      2016-02-22 15:00:10
@@ -20,6 +19,11 @@ namespace Ritc\Library\Helper;
 use \DirectoryIterator;
 use \SplFileInfo;
 
+/**
+ * Class AutoloadMapper
+ * @class   AutoloadMapper
+ * @package Ritc\Library\Helper
+ */
 class AutoloadMapper
 {
     /** @var string */
@@ -239,30 +243,59 @@ EOT;
         return $namespace;
     }
 
+    /**
+     * Returns the app path.
+     * @return string
+     */
     public function getAppPath()
     {
         return $this->app_path;
     }
+
+    /**
+     * Sets the app path.
+     * @param string $value
+     */
     public function setAppPath($value = '')
     {
         $this->app_path = $value != ''
             ? $value
             : $this->app_path;
     }
+
+    /**
+     * Return the config path.
+     * @return string
+     */
     public function getConfigPath()
     {
         return $this->config_path;
     }
+
+    /**
+     * Sets the config path.
+     * @param string $value
+     */
     public function setConfigPath($value = '')
     {
         $this->config_path = $value != ''
             ? $value
             : $this->config_path;
     }
+
+    /**
+     * Returns the src path.
+     * @return string
+     */
     public function getSrcPath()
     {
         return $this->src_path;
     }
+
+    /**
+     * Sets the src path.
+     * @param string $value
+     */
     public function setSrcPath($value = '')
     {
         $this->src_path = $value != ''

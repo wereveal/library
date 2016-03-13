@@ -4,7 +4,7 @@
  * @details   This Provides data needed to generate the html, e.g. title,
  *            description, file type, etc that would be in the <head> part of
  *            the page.
- * @ingroup   ritc_library lib_entities
+ * @ingroup   lib_entities
  * @file      Ritc/Library/Entities/PagesEntity.php
  * @namespace Ritc\Library\Entities
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -78,6 +78,7 @@ class PagesEntity implements EntityInterface
             $this->$key = $value;
         }
     }
+
     /**
      * @return string
      */
@@ -207,5 +208,4 @@ class PagesEntity implements EntityInterface
     {
         $this->page_url = $page_url;
     }
-
 }

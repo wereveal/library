@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     A basic entity class Groups table.
- * @ingroup   ritc_library lib_entities
+ * @ingroup   lib_entities
  * @file      Ritc/Library/Entities/GroupsEntity.php
  * @namespace Ritc\Library\Entities
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -41,6 +41,7 @@ class GroupsEntity implements EntityInterface
             'group_description' => $this->group_description
         ];
     }
+
     /**
      * Sets all the properties for the entity in one step.
      * @param array $a_entity

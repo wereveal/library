@@ -3,7 +3,7 @@
  * @brief     A Twig Factory.
  * @details   Lets us create a twig object, specific to a configuration
  *           allowing multiple twig objects to render the html
- * @ingroup   ritc_library lib_factories
+ * @ingroup   lib_factories
  * @file      Ritc/Library/FactoriesTwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -47,6 +47,7 @@ class TwigFactory
         }
         $this->o_twig = new Twig_Environment($o_loader, $a_twig_config['environment_options']);
     }
+
     /**
      * Creates the Twig_Environment object to be used to render pages.
      * @param string $config_file
@@ -62,6 +63,7 @@ class TwigFactory
         }
         return self::$instance[$name];
     }
+
     /**
      * Returns the twig environment object which we use to do all the
      * template rendering.
@@ -73,6 +75,7 @@ class TwigFactory
         $o_tf = self::create($config_file);
         return $o_tf->o_twig;
     }
+
     /**
      * @param $config_file
      * @return array|mixed
