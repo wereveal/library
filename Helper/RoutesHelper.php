@@ -83,7 +83,7 @@ class RoutesHelper
             }
         }
         $a_values = ['route_path' => $route_path];
-        $a_results = $this->o_model->read($a_values);
+        $a_results = $this->o_model->readWithPath($a_values);
         $message = "Actions from DB for route path {$route_path}: " . var_export($a_results, true);
         $this->logIt($message, LOG_OFF, $meth . __LINE__);
         if ($a_results !== false && count($a_results) === 1) {
@@ -108,7 +108,7 @@ class RoutesHelper
             $last_url = '';
             foreach ($a_urls as $key => $url) {
                 $a_values = ['route_path' => $url];
-                $a_results = $this->o_model->read($a_values);
+                $a_results = $this->o_model->readWithPath($a_values);
                 if ($a_results !== false && isset($a_results[0])) {
                     $a_last_good_results = $a_results[0];
                     $last_url = $url;

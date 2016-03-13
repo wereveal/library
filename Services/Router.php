@@ -96,8 +96,8 @@ class Router
         $a_router_parts = $this->o_routes_helper->createRouteParts($this->route_path);
         $log_message = 'a_router_parts ' . var_export($a_router_parts, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $a_router_parts['get'] = $this->a_get;
-        $a_router_parts['post'] = $this->a_post;
+        $a_router_parts['get']         = $this->a_get;
+        $a_router_parts['post']        = $this->a_post;
         $a_router_parts['form_action'] = $this->form_action;
         $this->a_router_parts = $a_router_parts;
         $this->request_uri    = $a_router_parts['request_uri'];
@@ -118,6 +118,7 @@ class Router
     }
 
     /**
+     * Returns the property form_action.
      * @return mixed
      */
     public function getFormAction()
@@ -126,8 +127,9 @@ class Router
     }
 
     /**
+     * Returns the property a_get or one of the array values based on name.
      * @param string $value
-     * @return string
+     * @return array|string
      */
     public function getGet($value = '')
     {
@@ -144,6 +146,7 @@ class Router
     }
 
     /**
+     * Returns the property route_action value.
      * @return mixed
      */
     public function getRouteAction()
@@ -152,6 +155,7 @@ class Router
     }
 
     /**
+     * Returns the property route_class value.
      * @return mixed
      */
     public function getRouteClass()
@@ -160,6 +164,7 @@ class Router
     }
 
     /**
+     * Returns the property route_path value.
      * @return mixed
      */
     public function getRoutePath()
@@ -168,7 +173,8 @@ class Router
     }
 
     /**
-     * @return mixed
+     * Returns the property a_router_parts value.
+     * @return array
      */
     public function getRouteParts()
     {
@@ -176,6 +182,7 @@ class Router
     }
 
     /**
+     * Returns the property a_post or one of the property array values.
      * @param string $value
      * @return bool
      */

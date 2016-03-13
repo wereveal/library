@@ -255,6 +255,7 @@ EOT;
         $this->logIt("sql: " . $sql, LOG_ON, $meth . __LINE__);
         return $this->o_db->search($sql, $a_search_values);
     }
+
     /**
      * Implements the ModelInterface method, getErrorMessage.
      * return string
