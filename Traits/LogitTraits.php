@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Common functions that inject and use the Elog class service.
- * @ingroup   ritc_library lib_traits
+ * @ingroup   lib_traits
  * @file      LogitTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -39,6 +39,7 @@ trait LogitTraits
         }
         return null;
     }
+
     /**
      * Logs the $message as defined by $log_type.
      * Does some checking if it should be written to log first.
@@ -72,6 +73,7 @@ trait LogitTraits
             }
         }
     }
+
     /**
      * Injectes the Elog object into the class.
      * @param  Elog $o_elog

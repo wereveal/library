@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     View for the Configuration page.
- * @ingroup   ritc_library lib_views
+ * @ingroup   lib_views
  * @file      ConstantsAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -59,6 +59,7 @@ class ConstantsAdminView
             $this->o_model->setElog($this->o_elog);
         }
     }
+
     /**
      * Returns the list of configs in html.
      * @param array $a_message
@@ -106,6 +107,7 @@ class ConstantsAdminView
         $tpl = TWIG_PREFIX . 'pages/constants_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
+
     /**
      * Returns HTML verify form to delete.
      * @param array $a_values

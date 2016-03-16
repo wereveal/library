@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Basic accessors for a routes entity.
- * @ingroup   ritc_library lib_entities
+ * @ingroup   lib_entities
  * @file      Ritc/Library/Entities/RoutesEntity.php
  * @namespace Ritc\Library\Entities
  * @author    William E Reveal
@@ -51,6 +51,7 @@ class RoutesEntity implements EntityInterface
             'route_immutable' => $this->route_immutable
         );
     }
+
     /**
      * Sets all the properties for the entity in one step.
      * @param array $a_entity
@@ -172,5 +173,4 @@ class RoutesEntity implements EntityInterface
     {
         $this->route_immutable = $route_immutable;
     }
-
 }

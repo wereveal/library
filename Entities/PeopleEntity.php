@@ -4,7 +4,7 @@
  * @details   It needs to be noted that this reflects the fact that
  *            a user entity consists of data that comes from more than one
  *            database table.
- * @ingroup   ritc_library lib_entities
+ * @ingroup   lib_entities
  * @file      PRitc/Library/Entities/eopleEntity.php
  * @namespace Ritc\Library\Entities
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -72,6 +72,7 @@ class PeopleEntity implements EntityInterface
             'created_on'      => $this->created_on,
         );
     }
+
     /**
      * Sets all the properties for the entity in one step.
      * @param array $a_entity
@@ -102,6 +103,7 @@ class PeopleEntity implements EntityInterface
         }
         return true;
     }
+
     /**
      * @param int $bad_login_count
      */
@@ -109,6 +111,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->bad_login_count = $bad_login_count;
     }
+
     /**
      * @return int
      */
@@ -116,6 +119,7 @@ class PeopleEntity implements EntityInterface
     {
         return $this->bad_login_count;
     }
+
     /**
      * @param int $bad_login_ts
      */
@@ -123,6 +127,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->bad_login_ts = $bad_login_ts;
     }
+
     /**
      * @return int
      */
@@ -130,6 +135,7 @@ class PeopleEntity implements EntityInterface
     {
         return $this->bad_login_ts;
     }
+
     /**
      * @param int $created_on
      */
@@ -137,6 +143,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->created_on = $created_on;
     }
+
     /**
      * @return int
      */
@@ -144,6 +151,7 @@ class PeopleEntity implements EntityInterface
     {
         return $this->created_on;
     }
+
     /**
      * @param int $is_active
      */
@@ -151,6 +159,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->is_active = $is_active;
     }
+
     /**
      * @return int
      */
@@ -158,6 +167,7 @@ class PeopleEntity implements EntityInterface
     {
         return $this->is_active;
     }
+
     /**
      * @param int $is_immutable
      */
@@ -165,6 +175,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->$is_immutable = $is_immutable;
     }
+
     /**
      * @return int
      */
@@ -172,6 +183,7 @@ class PeopleEntity implements EntityInterface
     {
         return $this->is_immutable;
     }
+
     /**
      * @param string $password
      */
@@ -179,6 +191,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->password = $password;
     }
+
     /**
      * @return string
      */
@@ -186,6 +199,7 @@ class PeopleEntity implements EntityInterface
     {
         return $this->password;
     }
+
     /**
      * @param string $real_name
      */
@@ -193,6 +207,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->real_name = $real_name;
     }
+
     /**
      * @return string
      */
@@ -200,6 +215,7 @@ class PeopleEntity implements EntityInterface
     {
         return $this->real_name;
     }
+
     /**
      * @param string $short_name
      */
@@ -207,6 +223,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->short_name = $short_name;
     }
+
     /**
      * @return string
      */
@@ -214,6 +231,7 @@ class PeopleEntity implements EntityInterface
     {
         return $this->short_name;
     }
+
     /**
      * @param string $people_id
      */
@@ -221,6 +239,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->people_id = $people_id;
     }
+
     /**
      * @return string
      */
@@ -228,6 +247,7 @@ class PeopleEntity implements EntityInterface
     {
         return $this->people_id;
     }
+
     /**
      * @return int
      */
@@ -235,6 +255,7 @@ class PeopleEntity implements EntityInterface
     {
         return $this->is_logged_in;
     }
+
     /**
      * @param int $value
      */
@@ -242,6 +263,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->is_logged_in = $value;
     }
+
     /**
      * @param string $login_id
      */
@@ -249,6 +271,7 @@ class PeopleEntity implements EntityInterface
     {
         $this->login_id = $login_id;
     }
+
     /**
      * @return string
      */

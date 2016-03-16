@@ -1,10 +1,9 @@
 <?php
 /**
- * @brief     Class used to set up entity classes.
- * @ingroup   ritc_library lib_interfaces
+ * @brief     Interface used to set up entity classes.
+ * @ingroup   lib_interfaces
  * @file      Ritc/Library/Interfaces/EntityInterface.php
  * @namespace Ritc\Library\Interfaces
- * @class     EntityInterface
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0
  * @date      2014-01-30 14:18:05
@@ -13,13 +12,19 @@
  */
 namespace Ritc\Library\Interfaces;
 
+/**
+ * Interface EntityInterface
+ * @class EntityInterface
+ * @package Ritc\Library\Interfaces
+ */
 interface EntityInterface
 {
     /**
-     * returns an array of the properties
+     * Returns an array of the properties.
      * @return array
      */
     public function getAllProperties();
+
     /**
      * Sets the values of all the entity properties.
      * @param array $a_entity e.g., array('id'=>'', 'password'=>'', 'uid'=>'', 'gid'=>'', 'dir'=>'')

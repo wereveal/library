@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Controller for the Test page.
- * @ingroup   ritc_library lib_controllers
+ * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/TestsAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>

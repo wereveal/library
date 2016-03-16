@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Various helper functions for views.
- * @ingroup   ritc_library lib_helper
+ * @ingroup   lib_helper
  * @file      Ritc/Library/Helper/ViewHelper.php
  * @namespace Ritc\Library\Helper
- * @class     ViewHelper
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.1.1
  * @date      2015-11-05 14:29:45
@@ -18,6 +17,11 @@
  */
 namespace Ritc\Library\Helper;
 
+/**
+ * Class ViewHelper.
+ * @class ViewHelper
+ * @package Ritc\Library\Helper
+ */
 class ViewHelper
 {
     /**
@@ -127,6 +131,7 @@ class ViewHelper
 		    'extras'        => $extras
 		);
 	}
+
     /**
      * Lazy man's way of creating array used by self::messageProperties method.
      * @param string $message
@@ -142,6 +147,7 @@ class ViewHelper
             'type'    => 'code'
         ];
     }
+
     /**
      * Lazy man's way of creating array used by self::messageProperties method.
      * @param string $message
@@ -157,6 +163,7 @@ class ViewHelper
             'type'    => 'error'
         ];
     }
+
 	/**
 	 * Lazy man's way of creating array used by self::messageProperties method.
 	 * @param string $message
@@ -172,6 +179,7 @@ class ViewHelper
 			'type'    => 'failure'
 		];
 	}
+
     /**
      * Lazy man's way of creating array used by self::messageProperties method.
      * @param string $message
@@ -187,6 +195,7 @@ class ViewHelper
             'type'    => 'info'
         ];
     }
+
 	/**
 	 * Lazy man's way of creating array used by self::messageProperties method.
 	 * @param string $message
@@ -202,6 +211,7 @@ class ViewHelper
 			'type'    => 'success'
 		];
 	}
+
     /**
      * Lazy man's way of creating array used by self::messageProperties method.
      * @param string $message
@@ -217,5 +227,4 @@ class ViewHelper
             'type'    => 'warning'
         ];
     }
-
 }

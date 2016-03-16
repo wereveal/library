@@ -4,10 +4,9 @@
  * @details   Methods which start with make_ return a modified version
  *            of the value passed into the method, usually indicated by
  *            the name of the method
- * @ingroup   ritc_library lib_helper
+ * @ingroup   lib_helper
  * @file      Ritc/Library/Helper/Html.php
  * @namespace Ritc\Library\Helper
- * @class     Html
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.6
  * @date      2015-09-01 07:38:42
@@ -24,17 +23,33 @@ namespace Ritc\Library\Helper;
 
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class Html.
+ * @class   Html
+ * @package Ritc\Library\Helper
+ */
 class Html
 {
     use LogitTraits;
 
+    /** @var Arrays  */
     protected $o_arrays;
+    /** @var Files  */
     protected $o_files;
+    /** @var Strings  */
     private   $o_str;
+    /** @var string  */
     protected $the_original_string = 'Start';
+    /** @var string */
     protected $the_modified_string = '';
+    /** @var string  */
     protected $template_name     = 'default.twig';
+    /** @var string  */
     protected $namespace = 'Ritc';
+
+    /**
+     * Html constructor.
+     */
     public function __construct()
     {
         $this->o_str    = new Strings;
@@ -42,6 +57,10 @@ class Html
         $this->o_files  = new Files('main.twig', 'templates',  'default', 'Ritc');
     }
 
+    /**
+     * @param array $a_button_values
+     * @return string
+     */
     public function button($a_button_values = array())
     {
         $a_button_values = Arrays::removeUndesiredPairs(
@@ -74,6 +93,13 @@ class Html
         $a_button_values = array_merge($a_default_values, $a_button_values);
         return $this->render('elements/button.tpl', $a_button_values, true);
     }
+
+    /**
+     * @param string $css_file
+     * @param string $css_dir
+     * @param string $css_media
+     * @return string
+     */
     public function cssLink($css_file = '', $css_dir = 'css', $css_media = 'screen')
     {
         if($css_file == '') {
@@ -86,6 +112,12 @@ class Html
             'css_source' => $this->o_files->getFileWithDir($css_file));
         return $this->render('css.tpl', $a_tpl_values, true);
     }
+
+    /**
+     * @param string $message
+     * @param string $image_file
+     * @return string
+     */
     public function failure($message = 'A Problem Has Occurred. Please Try Again.', $image_file = '')
     {
         if ($image_file == '') {
@@ -100,6 +132,12 @@ class Html
         $a_stuff = array('message' => $message, 'image'=>$image, 'class'=>'msg-failure', 'alt'=>'A Problem Has Occurred');
         return $this->render('message.tpl', $a_stuff, true);
     }
+
+    /**
+     * @param string $js_file
+     * @param string $js_dir
+     * @return string
+     */
     public function jsLink($js_file = '', $js_dir = 'js')
     {
         if($js_file == '') {
@@ -110,6 +148,13 @@ class Html
         $a_tpl_values = array('js_source'=>$this->o_files->getFileWithDir($js_file));
         return $this->render('js.tpl', $a_tpl_values, true);
     }
+
+    /**
+     * Returns a formatted string for a success message.
+     * @param string $message
+     * @param string $image_file
+     * @return string
+     */
     public function success($message = 'Success!', $image_file = '')
     {
         if ($image_file == '') {
@@ -123,6 +168,13 @@ class Html
         $a_stuff = array('message' => $message, 'image'=>$image, 'class'=>'msg-success', 'alt'=>'Success');
         return $this->render('message.tpl', $a_stuff, true);
     }
+
+    /**
+     * Returns formated html for a warning message.
+     * @param string $message
+     * @param string $image_file
+     * @return string
+     */
     public function warning($message = "Warning!", $image_file = '')
     {
         if ($image_file == '') {
@@ -136,6 +188,7 @@ class Html
         $a_stuff = array('message' => $message, 'image'=>$image, 'class'=>'msg-warning', 'alt'=>'Warning');
         return $this->render('message.tpl', $a_stuff, true);
     }
+
     /**
      * Fill the template with the values passed in.
      * @param mixed $template may be the name of a file or a string. If
@@ -191,12 +244,18 @@ class Html
     }
 
     ### UTILITIES ###
+    /**
+     * @param string $value
+     */
     public function updateFilesNamespace($value = 'Ritc')
     {
         $this->o_files->setNamespace($value);
     }
 
     ### SETTERS ###
+    /**
+     * @param string $value
+     */
     public function setNamespace($value = 'Ritc')
     {
         $this->namespace = $value;

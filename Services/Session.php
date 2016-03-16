@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     For managing sessions.
- * @ingroup   ritc_library lib_services
+ * @ingroup   lib_services
  * @file      Session.php
  * @namespace Ritc\Library\Services
- * @class     Session
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.3.1
  * @date      2015-10-06 14:42:18
@@ -25,6 +24,11 @@ namespace Ritc\Library\Services;
 
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class Session does some basic session management.
+ * @class Session
+ * @package Ritc\Library\Services
+ */
 class Session
 {
     use LogitTraits;
@@ -80,6 +84,7 @@ class Session
         }
         return self::$instance;
     }
+
     /**
      * Clears the session values.
      * Allows certain ones not to be cleared based on the array $a_not_these.
@@ -93,6 +98,7 @@ class Session
             }
         }
     }
+
     /**
      * Destroy's the Session.
      */
@@ -107,6 +113,7 @@ class Session
         }
         session_destroy();
     }
+
     /**
      * Returns the values from session_get_cookie_params().
      * @return array the session's cookies values
@@ -115,6 +122,7 @@ class Session
     {
         return session_get_cookie_params();
     }
+
     /**
      * Checks to see if the session has sat there unused for $_SESSION['idle_time'] amount of time.
      * @return bool
@@ -129,6 +137,7 @@ class Session
         }
         return false;
     }
+
     /**
      * Returns if the Session has not been idle.
      * @return bool
@@ -137,6 +146,7 @@ class Session
     {
         return $this->isIdle() ? false : true;
     }
+
     /**
      * Verifies the session is valid.
      * This is a simple and probably easily spoofed validation but it seems
@@ -151,7 +161,7 @@ class Session
      *     )</pre>
      * @param bool $use_form_values specifies if to use form data for validation
      * @return bool, true or false if valid
-      */
+     */
     public function isValidSession($a_values = array(), $use_form_values = false)
     {
         if (isset($_SESSION['token']) === false
@@ -203,6 +213,7 @@ class Session
         }
         return false;
     }
+
     /**
      * Tells you if it is not a valid session.
      * returns the opposite of isValidSession method. See its comments for more info
@@ -211,7 +222,7 @@ class Session
      *      'form_ts'=>_SESSION['idle_timestamp'])</pre>
      * @param bool $use_form_values specifies if to use form data for validation
      * @return bool true or false
-      */
+     */
     public function isNotValidSession($a_values = array(), $use_form_values = false)
     {
         if ($this->isValidSession($a_values, $use_form_values)) {

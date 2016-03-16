@@ -3,7 +3,7 @@
  * @brief     Returns a Twig instance to render templates.
  * @details   Lets us create a twig object, specific to a configuration
  *            allowing multiple twig objects to render the html
- * @ingroup   ritc_library lib_services
+ * @ingroup   lib_services
  * @file      Tpl.php
  * @namespace Ritc\Library\Services
  * @class     Tpl
@@ -27,6 +27,11 @@ namespace Ritc\Library\Services;
 use Ritc\Library\Factories\TwigFactory;
 use Twig_Environment;
 
+/**
+ * Class Tpl that is basically a stub for the TwigFactory.
+ * @class Tpl
+ * @package Ritc\Library\Services
+ */
 class Tpl
 {
 

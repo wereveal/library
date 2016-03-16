@@ -2,10 +2,9 @@
 /**
  * @brief     Does all the database CRUD stuff.
  * @details   For read/write access to the database based on PDO.
- * @ingroup   ritc_library lib_services
+ * @ingroup   lib_services
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
- * @class     DbModel
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   3.6.0+2
  * @date      2016-03-04 15:22:15
@@ -56,6 +55,11 @@ use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Traits\DbTraits;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class DbModel Makes using the PDO stuff easier.
+ * @class DbModel
+ * @package Ritc\Library\Services
+ */
 class DbModel
 {
     use DbTraits, LogitTraits;
@@ -1606,6 +1610,9 @@ class DbModel
     }
 
     ### Magic Method fix ###
+    /**
+     * Prevents cloning of the class.
+     */
     public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);

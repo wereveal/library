@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Class used to set up model classes.
- * @ingroup   ritc_library lib_interface
+ * @ingroup   lib_interfaces
  * @file      Ritc/Library/Interfaces/ModelInterface.php
  * @namespace Ritc\Library\Interfaces
- * @class     ModelInterface
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.1
  * @date      2014-11-11 11:14:58
@@ -14,6 +13,11 @@
  */
 namespace Ritc\Library\Interfaces;
 
+/**
+ * Interface ModelInterface
+ * @class ModelInterface
+ * @package Ritc\Library\Interfaces
+ */
 interface ModelInterface {
     /**
      * Generic create a record using the values provided.

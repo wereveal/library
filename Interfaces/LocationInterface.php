@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Class used to set up classes that look to establish the location of a file.
- * @ingroup   ritc_library lib_interfaces
+ * @ingroup   lib_interfaces
  * @file      Ritc/Library/Interfaces/LocationInterface.php
  * @namespace Ritc\Library\Interfaces
- * @class     LocationInterface
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   2.0.0
  * @date      2011-06-14 15:11:26
@@ -14,15 +13,36 @@
  */
 namespace Ritc\Library\Interfaces;
 
+/**
+ * Interface LocationInterface.
+ * @class LocationInterface
+ * @package Ritc\Library\Interfaces
+ */
 interface LocationInterface
 {
     /**
-     * Getters and Setters
-     * Looking to set two class properties
-     * $file_name and $file_dir_name
+     * Returns the file directory name.
+     * @return mixed
      */
     public function getFileDirName();
+
+    /**
+     * Returns the file name.
+     * @return mixed
+     */
     public function getFileName();
+
+    /**
+     * Sets the file directory name.
+     * @param $value
+     * @return mixed
+     */
     public function setFileDirName($value);
+
+    /**
+     * Sets the file name.
+     * @param $value
+     * @return mixed
+     */
     public function setFileName($value);
 }

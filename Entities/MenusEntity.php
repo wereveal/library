@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Basic accessors for a menu entity.
- * @ingroup   ritc_library lib_entities
+ * @ingroup   lib_entities
  * @file      Ritc/Library/Entities/MenusEntity.php
  * @namespace Ritc\Library\Entities
  * @author    William E Reveal
@@ -11,7 +11,6 @@
  * - MySQL      - resources/sql/mysql/menus_mysql.sql
  * - PostgreSQL - resources/sql/postgresql/menus_pg.sql
  */
-
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
@@ -39,6 +38,7 @@ class MenusEntity implements EntityInterface
     private $menu_order;
     /** @var int */
     private $menu_active;
+
     /**
      * Returns all the record values.
      * @return array

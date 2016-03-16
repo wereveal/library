@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     View for the Groups Admin page.
- * @ingroup   ritc_library lib_views
+ * @ingroup   lib_views
  * @file      GroupsAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -47,6 +47,7 @@ class GroupsAdminView
             $this->o_groups->setElog($this->o_elog);
         }
     }
+
     /**
      * Returns the list of routes in html.
      * @param array $a_message
@@ -94,6 +95,7 @@ class GroupsAdminView
         $tpl = TWIG_PREFIX . 'pages/groups_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
+
     /**
      * Returns HTML verify form to delete.
      * @param array $a_values

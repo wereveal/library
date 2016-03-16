@@ -22,7 +22,7 @@
 namespace Ritc\Library\Services;
 
 /**
- * Class Di
+ * Class Di does some basic dependency injection.
  * @class   Di
  * @package Ritc\Library\Services
  */

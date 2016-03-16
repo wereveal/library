@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     The main Controller for the manager.
- * @ingroup   ritc_library lib_controllers
+ * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/ManagerController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -123,6 +123,7 @@ class ManagerController implements ControllerInterface
             return $this->renderLogin();
         }
     }
+
     /**
      * Passes control over to the Constants Admin Controller.
      * @return string
@@ -139,6 +140,7 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
      * Passes control over to the groups admin controller.
      * @return string
@@ -155,6 +157,7 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
      * Renders login form after resetting session.
      * @param string $login_id
@@ -166,6 +169,7 @@ class ManagerController implements ControllerInterface
         $this->o_session->resetSession();
         return $this->o_manager_view->renderLoginForm($login_id, $a_message);
     }
+
     /**
      * Returns the html for the page admin.
      * @return string
@@ -182,6 +186,7 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
      * Passes control over to the people admin controller.
      * @return string
@@ -198,6 +203,7 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
      * Passes control over to the router admin controller.
      * @return string
@@ -214,6 +220,7 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
      * Passes control over to the tests admin controller.
      * @return string
@@ -230,6 +237,7 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
      * Authorizes the person and allows access or kicks them.
      * @return bool

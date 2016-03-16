@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Determines the path to the file.
- * @ingroup   ritc_library lib_helper
+ * @ingroup   lib_helper
  * @file      Ritc/Library/Helper/Files.php
  * @namespace Ritc\Library\Helper
- * @class     Files
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   4.2.2
  * @date      2014-11-15 12:34:56
@@ -36,6 +35,7 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class Files
+ * @class Files
  * @package Ritc\Library\Helper
  */
 class Files implements LocationInterface
@@ -122,6 +122,7 @@ class Files implements LocationInterface
             : self::CONFIG_DIR_NAME;
         return $this->getFileWithPath($file_name);
     }
+
     /**
      * Returns the contents of a file as a string.
      * Does more than the php function of file_get_contents in that
@@ -413,6 +414,7 @@ class Files implements LocationInterface
         }
         return $a_file_locations;
     }
+
     /**
      * Finds the location of the file
      * the possible places a file could exist.
@@ -514,6 +516,7 @@ class Files implements LocationInterface
         $this->setFileLocations();
         return true;
     }
+
     /**
      * Sets the themename variable
      * @param string $theme_name
@@ -525,6 +528,7 @@ class Files implements LocationInterface
         $this->setFileLocations();
         return true;
     }
+
     /**
      * Sets the two main file paths. One is server path, one is site path (within web site)
      */

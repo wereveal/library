@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Does all the database CRUD stuff.
- * @ingroup   ritc_library lib_models
+ * @ingroup   lib_models
  * @file      Ritc/Library/Models/RoutesModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>

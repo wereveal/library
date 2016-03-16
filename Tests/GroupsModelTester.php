@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Tests the Group Model Class.
- * @ingroup   ritc_library lib_tests
+ * @ingroup   lib_tests
  * @file      GroupsModelTests.php
  * @namespace Ritc\Library\Tests
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -26,20 +26,38 @@ use Ritc\Library\Models\GroupsModel;
  */
 class GroupsModelTests extends Tester
 {
+    /** @var array */
     protected $a_test_order;
+    /** @var array */
     protected $a_test_values = array();
+    /** @var int */
     protected $failed_subtests;
+    /** @var array */
     protected $failed_test_names = array();
+    /** @var int */
     protected $failed_tests = 0;
+    /** @var int  */
     protected $new_id;
+    /** @var int */
     protected $num_o_tests = 0;
+    /** @var */
     protected $passed_subtests;
+    /** @var array */
     protected $passed_test_names  = array();
+    /** @var int */
     protected $passed_tests = 0;
+    /** @var DbModel */
     private $o_db;
+    /** @var object */
     private $o_elog;
+    /** @var GroupsModel */
     private $o_group;
 
+    /**
+     * GroupsModelTests constructor.
+     * @param array $a_test_order
+     * @param string $db_config
+     */
     public function __construct(array $a_test_order = array(), $db_config = 'db_config.php')
     {
         $this->a_test_order = $a_test_order;
@@ -55,18 +73,33 @@ class GroupsModelTests extends Tester
     }
 
     ### Tests ###
+    /**
+     * @return bool
+     */
     public function createTester()
     {
         return false;
     }
+
+    /**
+     * @return bool
+     */
     public function readTester()
     {
         return false;
     }
+
+    /**
+     * @return bool
+     */
     public function updateTester()
     {
         return false;
     }
+
+    /**
+     * @return bool
+     */
     public function deleteTester()
     {
         return false;

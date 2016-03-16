@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     A basic entity class for the Article table.
- * @ingroup   ritc_library lib_entities
+ * @ingroup   lib_entities
  * @file      Ritc/Library/Entities/PeopleGroupMapEntity.php
  * @namespace Ritc\Library\Entities
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -115,5 +115,4 @@ class PeopleGroupMapEntity implements EntityInterface
     {
         return $this->people_id;
     }
-
 }
