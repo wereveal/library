@@ -44,17 +44,17 @@ class Router
     private $a_router_parts;
     /** @var \Ritc\Library\Helper\RoutesHelper */
     private $o_routes_helper;
-    /** @var string */
+    /** @var string the action specified by a form */
     private $form_action;
-    /** @var string */
+    /** @var string the asked for route */
     private $request_uri;
-    /** @var string */
+    /** @var string the action associated with the route_path */
     private $route_action;
-    /** @var string */
+    /** @var string the class associated with the route_path */
     private $route_class;
-    /** @var string */
+    /** @var string the method associated with the route_path */
     private $route_method;
-    /** @var string */
+    /** @var string the path being routed (may be different from the request uri) */
     private $route_path;
 
     /**
@@ -84,12 +84,12 @@ class Router
     public function setRouteParts()
     {
         $meth = __METHOD__ . '.';
-        $this->setRoutePath();
+        $this->setRequestUri();
         $this->setGet();
         $this->setPost();
         $this->setFormAction();
-        $this->logIt("Route Path: " . $this->route_path, LOG_OFF, $meth . __LINE__);
-        $a_router_parts = $this->o_routes_helper->createRouteParts($this->route_path);
+        $this->logIt("Request URI: " . $this->request_uri, LOG_OFF, $meth . __LINE__);
+        $a_router_parts = $this->o_routes_helper->createRouteParts($this->request_uri);
         $log_message = 'a_router_parts ' . var_export($a_router_parts, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_router_parts['get'] = $this->a_get;
@@ -142,6 +142,14 @@ class Router
     /**
      * @return mixed
      */
+    public function getRequestUri()
+    {
+        return $this->request_uri;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getRouteAction()
     {
         return $this->route_action;
@@ -158,17 +166,17 @@ class Router
     /**
      * @return mixed
      */
-    public function getRoutePath()
+    public function getRouteParts()
     {
-        return $this->route_path;
+        return $this->a_router_parts;
     }
 
     /**
      * @return mixed
      */
-    public function getRouteParts()
+    public function getRoutePath()
     {
-        return $this->a_router_parts;
+        return $this->route_path;
     }
 
     /**
@@ -244,20 +252,31 @@ class Router
     }
 
     /**
-     * Sets the property $route_path.
+     * Sets the property $request_uri.
      * @param string $request_uri optional, defaults to $_SERVER['REQUEST_URI']
      * @return null
      */
-    public function setRoutePath($request_uri = '')
+    public function setRequestUri($request_uri = '')
     {
+        error_log(var_export($_SERVER, true));
         if ($request_uri == '') {
             $request_uri = $_SERVER["REQUEST_URI"];
         }
         if (strpos($request_uri, "?") !== false) {
-            $this->route_path = substr($request_uri, 0, strpos($request_uri, "?"));
+            $this->request_uri = substr($request_uri, 0, strpos($request_uri, "?"));
         }
         else {
-            $this->route_path = $request_uri;
+            $this->request_uri = $request_uri;
+        }
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setRoutePath($value = '')
+    {
+        if ($value != '') {
+            $this->route_path = $value;
         }
     }
 
@@ -269,13 +288,6 @@ class Router
         $this->a_post = Arrays::cleanArrayValues($_POST, $a_allowed_keys, true);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getRequestUri()
-    {
-        return $this->a_router_parts['request_uri'];
-    }
     /* From LogItTraits
         protected function getElog
         protected function logIt

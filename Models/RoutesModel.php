@@ -197,64 +197,31 @@ class RoutesModel implements ModelInterface
     }
 
     /**
-     * Reads the route with the url.
-     * @param array $a_search_values
-     * @param array $a_search_params see \ref searchparams
+     * Reads the route with the request uri.
+     * @param string $request_uri normally obtained from $_SERVER['REQUEST_URI']
      * @return mixed
      */
-    public function readWithPath(array $a_search_values = array(), array $a_search_params = array())
+    public function readWithRequestUri($request_uri = '')
     {
         $meth = __METHOD__ . '.';
-        $select = '';
-        foreach ($this->db_fields as $field) {
-            $select .= $select == ''
-                ? "r." . $field
-                : ', r.' . $field;
+        if ($request_uri == '') {
+            return false;
         }
-        $a_url_fields = $this->o_db->selectDbColumns($this->db_prefix . 'urls');
-        foreach ($a_url_fields as $field) {
-            $select .= ', u.' . $field;
-        }
-
-        $where = '';
-        if (!isset($a_search_params['order_by'])) {
-            $a_search_params['order_by'] = 'u.url_text';
-        }
-        $a_search_params['where_exists'] = true;
-
-        if (count($a_search_values) > 0) {
-            $a_allowed_keys = [
-                'route_id'        => 'r.route_id',
-                'url_id'          => 'u.url_id',
-                'url_text'        => 'u.url_text',
-                'url_type'        => 'u.url_type',
-                'route_class'     => 'r.route_class',
-                'route_immutable' => 'r.route_immutable'
-            ];
-            $log_message = 'Search Values ' . var_export($a_search_values, TRUE);
-            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-            $a_new_search_for = [];
-            foreach ($a_search_values as $search_key => $search_value) {
-                if (array_key_exists($search_key, $a_allowed_keys)) {
-                    $a_new_search_for[$a_allowed_keys[$search_key]] = $search_value;
-                }
-            }
-            $where .= $this->o_db->buildSqlWhere($a_new_search_for, $a_search_params);
-        }
-        else {
-            $where .= $this->o_db->buildSqlWhere([], $a_search_params);
-        }
+        $a_search_params = [':url_text' => $request_uri];
         $sql =<<<EOT
 
-SELECT {$select}
-FROM {$this->db_table} as r, {$this->db_prefix}urls as u
+SELECT r.route_id, r.route_class, r.route_method, r.route_action, r.route_immutable,
+       u.url_id, u.url_text, u.url_type
+FROM {$this->db_prefix}routes as r, {$this->db_prefix}urls as u
 WHERE r.url_id = u.url_id
-{$where}
+AND u.url_text = :url_text
+ORDER BY u.url_text
 
 EOT;
-        $this->logIt("sql: " . $sql, LOG_ON, $meth . __LINE__);
-        return $this->o_db->search($sql, $a_search_values);
+        $this->logIt("sql: " . $sql, LOG_OFF, $meth . __LINE__);
+        return $this->o_db->search($sql, $a_search_params);
     }
+
     /**
      * Implements the ModelInterface method, getErrorMessage.
      * return string

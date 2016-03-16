@@ -84,7 +84,7 @@ class NavComplexModel
         if ($ng_id == -1) {
             return false;
         }
-        $where = "     AND ng.ng_id = :ng_id\n     AND n.nav_level = :nav_level\n";
+        $where = "AND ng.ng_id = :ng_id\nAND n.nav_level = :nav_level\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
         $a_search_for = [':ng_id' => $ng_id, ':nav_level' => 1];
         $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
@@ -241,22 +241,21 @@ EOT;
         if ($select_sql == '') {
             $select_sql =<<<EOT
 SELECT
-    p.page_id as 'page_id',
-    p.page_url as 'url',
-    p.page_description as 'description',
     n.nav_id as 'nav_id',
     n.nav_parent_id as 'parent_id',
+    u.url_text as 'url',
     n.nav_name as 'name',
+    n.nav_text as 'text',
+    n.nav_description as 'description',
     n.nav_css as 'css',
     n.nav_level as 'level',
     n.nav_order as 'order'
 FROM
-    {$this->db_prefix}page as p,
+    {$this->db_prefix}urls as u,
     {$this->db_prefix}navigation as n,
     {$this->db_prefix}nav_ng_map as map,
     {$this->db_prefix}navgroups as ng
-WHERE
-    p.page_id = n.nav_page_id
+WHERE u.url_id = n.url_id
 AND n.nav_active = 1
 AND ng.ng_id = map.ng_id
 AND n.nav_id = map.nav_id

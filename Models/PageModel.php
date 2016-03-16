@@ -142,7 +142,7 @@ class PageModel implements ModelInterface
                 : $a_search_params;
             $a_allowed_keys = [
                 'page_id',
-                'page_url',
+                'url_id',
                 'page_type',
                 'page_base_url',
                 'page_lang',
@@ -161,7 +161,7 @@ class PageModel implements ModelInterface
         $sql = "
             SELECT
                 page_id,
-                page_url,
+                url_id,
                 page_type,
                 page_title,
                 page_description,

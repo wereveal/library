@@ -519,6 +519,7 @@ class DbModel
      */
     public function execute(array $a_values = array(), \PDOStatement $o_pdo_stmt)
     {
+        $meth = __METHOD__ . '.';
         $this->logIt('Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if (count($a_values) > 0) {
             if (Arrays::isAssocArray($a_values)) { // for a query with bind values
@@ -526,6 +527,7 @@ class DbModel
                 $this->logIt('Fixed Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
 
                 if ($this->bindValues($a_values, $o_pdo_stmt) === false) {
+                    $this->logIt("Could not bind the values.", LOG_OFF, $meth . __LINE__);
                     return false;
                 }
                 return $o_pdo_stmt->execute();
