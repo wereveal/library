@@ -1,10 +1,9 @@
 <?php
 /**
  * @brief     Determines the controller and method to use based on URI.
- * @ingroup   ritc_library lib_services
+ * @ingroup   lib_services
  * @file      Router.php
  * @namespace Ritc\Library\Services
- * @class     Router
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.1
  * @date      2016-02-22 15:40:33
@@ -32,6 +31,11 @@ use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class Router figures out the routes and route parts.
+ * @class Router
+ * @package Ritc\Library\Services
+ */
 class Router
 {
     use LogitTraits;
@@ -92,8 +96,8 @@ class Router
         $a_router_parts = $this->o_routes_helper->createRouteParts($this->request_uri);
         $log_message = 'a_router_parts ' . var_export($a_router_parts, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $a_router_parts['get'] = $this->a_get;
-        $a_router_parts['post'] = $this->a_post;
+        $a_router_parts['get']         = $this->a_get;
+        $a_router_parts['post']        = $this->a_post;
         $a_router_parts['form_action'] = $this->form_action;
         $this->a_router_parts = $a_router_parts;
         $this->request_uri    = $a_router_parts['request_uri'];
@@ -114,6 +118,7 @@ class Router
     }
 
     /**
+     * Returns the property form_action.
      * @return mixed
      */
     public function getFormAction()
@@ -122,8 +127,9 @@ class Router
     }
 
     /**
+     * Returns the property a_get or one of the array values based on name.
      * @param string $value
-     * @return string
+     * @return array|string
      */
     public function getGet($value = '')
     {
@@ -140,6 +146,7 @@ class Router
     }
 
     /**
+     * Returns the property route_action value.
      * @return mixed
      */
     public function getRequestUri()
@@ -156,6 +163,7 @@ class Router
     }
 
     /**
+     * Returns the property route_class value.
      * @return mixed
      */
     public function getRouteClass()
@@ -164,6 +172,7 @@ class Router
     }
 
     /**
+     * Returns the property route_path value.
      * @return mixed
      */
     public function getRouteParts()
@@ -172,7 +181,8 @@ class Router
     }
 
     /**
-     * @return mixed
+     * Returns the property a_router_parts value.
+     * @return array
      */
     public function getRoutePath()
     {
@@ -180,6 +190,7 @@ class Router
     }
 
     /**
+     * Returns the property a_post or one of the property array values.
      * @param string $value
      * @return bool
      */
@@ -244,6 +255,7 @@ class Router
     }
 
     /**
+     * Sets the property a_get with semi-sanitized values from $_GET.
      * @param array $a_allowed_keys
      */
     public function setGet(array $a_allowed_keys = array())
@@ -271,6 +283,7 @@ class Router
     }
 
     /**
+     * Sets the property route_path.
      * @param string $value
      */
     public function setRoutePath($value = '')
@@ -281,6 +294,7 @@ class Router
     }
 
     /**
+     * Sets the property a_post.
      * @param array $a_allowed_keys
      */
     public function setPost(array $a_allowed_keys = array())
