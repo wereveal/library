@@ -20,7 +20,7 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class ManagerView
@@ -29,7 +29,7 @@ use Ritc\Library\Traits\ManagerViewTraits;
  */
 class ManagerView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
     /**
      * ManagerView constructor.
@@ -51,11 +51,11 @@ class ManagerView
     public function renderLandingPage($a_message = array())
     {
         $meth = __METHOD__ . '.';
-        $this->setAuthLevel($_SESSION['login_id']);
-        $this->setLinks();
+        $this->setAdmLevel($_SESSION['login_id']);
+        $this->setNav();
         $a_values = $this->getPageValues();
-        $a_values['links'] = $this->a_links;
-        $a_values['menus'] = $this->a_links;
+        $a_values['links'] = $this->a_nav;
+        $a_values['menus'] = $this->a_nav;
         if (is_array($a_message)) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }

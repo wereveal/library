@@ -22,7 +22,7 @@ use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class PeopleAdminView
@@ -31,7 +31,7 @@ use Ritc\Library\Traits\ManagerViewTraits;
  */
 class PeopleAdminView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
     /** @var \Ritc\Library\Models\PeopleModel */
     private $o_people_model;
@@ -79,7 +79,7 @@ class PeopleAdminView
             'tolken'    => $_SESSION['token'],
             'form_ts'   => $_SESSION['idle_timestamp'],
             'hobbit'    => '',
-            'menus'     => $this->a_links,
+            'menus'     => $this->a_nav,
             'adm_lvl'   => $this->adm_level
         ];
         $a_values = array_merge($a_page_values, $a_values);
@@ -142,7 +142,7 @@ class PeopleAdminView
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
             'adm_lvl' => $this->adm_level,
-            'menus'   => $this->a_links
+            'menus'   => $this->a_nav
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
@@ -194,7 +194,7 @@ class PeopleAdminView
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
             'adm_lvl' => $this->adm_level,
-            'menus'   => $this->a_links
+            'menus'   => $this->a_nav
         ];
         $a_values = array_merge($a_page_values, $a_values);
 
@@ -257,7 +257,7 @@ class PeopleAdminView
             'form_ts'      => $a_posted_values['form_ts']
         ];
         $a_twig_values = array_merge($a_page_values, $a_values);
-        $a_twig_values['menus'] = $this->a_links;
+        $a_twig_values['menus'] = $this->a_nav;
         $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_OFF, $meth . __LINE__);
         $tpl = TWIG_PREFIX . 'pages/verify_delete.twig';
         return $this->o_twig->render($tpl, $a_twig_values);

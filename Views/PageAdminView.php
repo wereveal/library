@@ -18,7 +18,7 @@ use Ritc\Library\Models\PageModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class PageAdminView
@@ -27,7 +27,7 @@ use Ritc\Library\Traits\ManagerViewTraits;
  */
 class PageAdminView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
     /**
      * @var \Ritc\Library\Models\PageModel
@@ -78,7 +78,7 @@ class PageAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'menus'   => $this->a_links
+            'menus'   => $this->a_nav
         ];
         $a_values = array_merge($a_page_values, $a_values);
         if ($action == 'update') {
@@ -116,7 +116,7 @@ class PageAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'menus'   => $this->a_links,
+            'menus'   => $this->a_nav,
             'adm_lvl' => $this->adm_level
         );
         $a_values = array_merge($a_page_values, $a_values);
@@ -166,7 +166,7 @@ class PageAdminView
             'tolken'       => $_SESSION['token'],
             'form_ts'      => $_SESSION['idle_timestamp'],
             'hobbit'       => '',
-            'menus'        => $this->a_links,
+            'menus'        => $this->a_nav,
             'adm_lvl'      => $this->adm_level
         );
         $a_values = array_merge($a_values, $a_page_values);

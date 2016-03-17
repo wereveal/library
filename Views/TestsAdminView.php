@@ -18,7 +18,7 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class TestsAdminView
@@ -27,7 +27,7 @@ use Ritc\Library\Traits\ManagerViewTraits;
  */
 class TestsAdminView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
     /**
      * TestsAdminView constructor.
@@ -44,7 +44,7 @@ class TestsAdminView
     public function renderList()
     {
         $values = [
-            'menus' => $this->a_links,
+            'menus' => $this->a_nav,
             'links' => [
                 [
                     'url'    => '/manager/tests/PeopleModel/',

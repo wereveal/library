@@ -25,7 +25,7 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class ConstantsAdminView
@@ -34,7 +34,7 @@ use Ritc\Library\Traits\ManagerViewTraits;
  */
 class ConstantsAdminView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
     /** @var \Ritc\Library\Views\ManagerView */
     private $o_manager;
@@ -80,7 +80,7 @@ class ConstantsAdminView
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
             'adm_lvl' => $this->adm_level,
-            'menus'   => $this->a_links
+            'menus'   => $this->a_nav
         );
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
@@ -128,7 +128,7 @@ class ConstantsAdminView
             'hidden_value' => $a_values['constant']['const_id'],
             'tolken'       => $a_values['tolken'],
             'form_ts'      => $a_values['form_ts'],
-            'menus'        => $this->a_links
+            'menus'        => $this->a_nav
         ];
         if (isset($a_values['public_dir'])) {
             $a_twig_values['public_dir'] = $a_values['public_dir'];

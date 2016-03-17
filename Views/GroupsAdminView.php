@@ -18,7 +18,7 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class GroupsAdminView
@@ -27,7 +27,7 @@ use Ritc\Library\Traits\ManagerViewTraits;
  */
 class GroupsAdminView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
     /**
      * @var \Ritc\Library\Models\GroupsModel
@@ -69,7 +69,7 @@ class GroupsAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'menus'   => $this->a_links,
+            'menus'   => $this->a_nav,
             'adm_lvl' => $this->adm_level
         ];
         $a_page_values = $this->getPageValues();
@@ -112,7 +112,7 @@ class GroupsAdminView
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the group.';
         }
-        $a_values['menus'] = $this->a_links;
+        $a_values['menus'] = $this->a_nav;
         $tpl = TWIG_PREFIX . 'pages/verify_delete_group.twig';
         return $this->o_twig->render($tpl, $a_values);
     }

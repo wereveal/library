@@ -20,7 +20,7 @@ use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class RoutesAdminView
@@ -29,7 +29,7 @@ use Ritc\Library\Traits\ManagerViewTraits;
  */
 class RoutesAdminView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
     /** @var \Ritc\Library\Models\RoutesModel */
     private $o_model;
@@ -73,7 +73,7 @@ class RoutesAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'menus'   => $this->a_links,
+            'menus'   => $this->a_nav,
             'adm_lvl' => $this->adm_level
         );
         $a_values = array_merge($a_page_values, $a_values);
@@ -115,7 +115,7 @@ class RoutesAdminView
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the route.';
         }
-        $a_values['menus'] = $this->a_links;
+        $a_values['menus'] = $this->a_nav;
         $tpl = TWIG_PREFIX . 'pages/verify_delete_route.twig';
         return $this->o_twig->render($tpl, $a_values);
     }

@@ -1,12 +1,13 @@
 <?php
 /**
- * @brief     Common functions for the manager views.
- * @ingroup   lib_traits
- * @file      ManagerViewTraits.php
- * @namespace Ritc\Library\Traits
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2015-12-15 14:36:42
+ * @brief       Common functions for the manager views.
+ * @depreciated Use ViewTraits instead.
+ * @ingroup     lib_traits
+ * @file        ManagerViewTraits.php
+ * @namespace   Ritc\Library\Traits
+ * @author      William E Reveal <bill@revealitconsulting.com>
+ * @version     1.1.0
+ * @date        2015-12-15 14:36:42
  * @note <b>Change Log</b>
  * - v1.1.0 - manager links can be in two places. - 12/15/2015 wer
  * - v1.0.2 - bug fix                             - 11/24/2015 wer
