@@ -120,7 +120,7 @@ class RoutesHelper
         }
 
         $log_message = 'Route parts:  ' . var_export($a_route_parts, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $this->a_route_parts = $a_route_parts;
     }

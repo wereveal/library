@@ -91,7 +91,7 @@ class ViewHelper
 				break;
 			case 'info':
 				$alt_text  = $alt_text  != '' ? $alt_text  : 'Information';
-				$image_src = $image_src != '' ? $image_src : $image_dir . '/info.png';
+				$image_src = $image_src != '' ? $image_src : $image_dir . '/information.png';
                 $msg_class = $msg_class != '' ? $msg_class : 'message info';
 				break;
 			case 'warning':

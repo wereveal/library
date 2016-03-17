@@ -6,16 +6,17 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.6.0+2
- * @date      2016-03-04 15:22:15
+ * @version   3.6.1
+ * @date      2016-03-17 10:39:02
  * @note <b>Change Log</b>
+ * - v3.6.1 - bug fixes                                                                  - 2016-03-17 wer
  * - v3.6.0 - Changed property name o_db to o_pdo to clarify what the object was       - 03/04/2016 wer
- *              Added new method to "prepare" a list array
- *              Added new method to create and return the formated sql error message.
- *              Added new method to return the raw sql error info array.
- *              Updated update set build method to block unallowed key value pairs
- *              bug fixes, build insert sql didn't take into account prepared key names
- *              Misc other fixes and modifications.
+ *            Added new method to "prepare" a list array
+ *            Added new method to create and return the formated sql error message.
+ *            Added new method to return the raw sql error info array.
+ *            Updated update set build method to block unallowed key value pairs
+ *            bug fixes, build insert sql didn't take into account prepared key names
+ *            Misc other fixes and modifications.
  * - v3.5.1 - added new method to create a string for the select field names           - 02/25/2016 wer
  * - v3.5.0 - added new method to create a string for the insert value names           - 02/23/2016 wer
  * - v3.4.0 - changed so that an array can be used in place of the preferred file      - 12/09/2015 wer
@@ -26,12 +27,12 @@
  * - v3.2.3 - moved to Services namespace                                              - 11/15/2014 wer
  * - v3.2.1 - bug fix
  * - v3.2.0 - Made this class more stand alone except extending Base class.
- *              Added function to allow raw query.
- *              Changed it to use the new Base class elog inject method.
- *              Hammering down a couple bugs.
+ *            Added function to allow raw query.
+ *            Changed it to use the new Base class elog inject method.
+ *            Hammering down a couple bugs.
  * - v3.1.2 - bug fixes, needed to pass the pdo object into the class                  - 03/20/2014 wer
  * - v3.1.1 - added methods to set and return db prefix                                - 02/24/2014 wer
- *              It should be noted, this assumes a db prefix has been set. see PdoFactory
+ *            It should be noted, this assumes a db prefix has been set. see PdoFactory
  * - v3.1.0 - added method to return db tables                                         - 01/31/2014 wer
  * - v3.0.1 - renamed file to match function, eliminated the unnecessary               - 12/19/2013 wer
  * - v3.0.0 - split the pdo creation (database connection) from the crud               - 2013-11-06 wer
@@ -41,11 +42,11 @@
  * - v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
  * - v2.4.0 - Change to match new RITC Library layout                                  - 04/23/2013 wer
  * - v2.3.2 - new method to remove bad keys
- *              removed some redundant code
- *              reorganized putting main four commands at top for easy reference
- *              renamed from modify to update, no good reason truthfully except no legacy code to support
+ *            removed some redundant code
+ *            reorganized putting main four commands at top for easy reference
+ *            renamed from modify to update, no good reason truthfully except no legacy code to support
  * - v2.3.1 - new method to check for missing keys
- *              made a couple changes to clarify what was going on.
+ *            made a couple changes to clarify what was going on.
  * - v2.3.0 - Modified to work within Symfony
  * - v2.2.0 - FIG-standard changes
  */
@@ -404,17 +405,20 @@ class DbModel
 
     /**
      * Sets the class propery error_message to a formated string.
-     * @param \PDO $o_pdo
+     * @param \PDO|\PDOStatement $o_pdo
      * @return bool
      */
-    public function setSqlErrorMessage(\PDO $o_pdo)
+    public function setSqlErrorMessage($o_pdo)
     {
-        if (!is_object($o_pdo)) {
+        if (is_null($o_pdo)) {
             $o_pdo = $this->o_pdo;
         }
-        $a_error_stuff = $o_pdo->errorInfo();
-        $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] . "\nDriver Error Code: " . $a_error_stuff[1] . "\nDriver Error Message: " . $a_error_stuff[2];
-        return true;
+        if ($o_pdo instanceof \PDO || $o_pdo instanceof \PDOStatement) {
+            $a_error_stuff = $o_pdo->errorInfo();
+            $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] . "\nDriver Error Code: " . $a_error_stuff[1] . "\nDriver Error Message: " . $a_error_stuff[2];
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -812,7 +816,7 @@ class DbModel
      * @param array          $a_table_info
      * @return bool success or failure
      */
-    public function insertPrepared(array $a_values = array(), \PDOStatement $o_pdo_stmt, array $a_table_info = array())
+    public function insertPrepared(array $a_values = array(), \PDOStatement $o_pdo_stmt = '', array $a_table_info = array())
     {
         $meth = __METHOD__ . '.';
         if (count($a_values) > 0) {
@@ -1155,7 +1159,7 @@ class DbModel
                 : ",\n    "  . $insert_name;
             $value_names  .= $value_names == ''
                 ? '    ' . $value_name
-                : ",\n    " . $$value_name;
+                : ",\n    " . $value_name;
         }
         return $insert_names . "\n) VALUES (\n" . $value_names;
     }
