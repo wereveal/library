@@ -405,10 +405,10 @@ class DbModel
 
     /**
      * Sets the class propery error_message to a formated string.
-     * @param \PDO|\PDOStatement $o_pdo
+     * @param \PDO|\PDOStatement|null $o_pdo
      * @return bool
      */
-    public function setSqlErrorMessage($o_pdo)
+    public function setSqlErrorMessage($o_pdo = null)
     {
         if (is_null($o_pdo)) {
             $o_pdo = $this->o_pdo;
@@ -423,16 +423,20 @@ class DbModel
 
     /**
      * Sets and gets the sql_error_message property.
-     * @param \PDO $o_pdo
-     * @return mixed
+     * @param \PDO|\PDOStatement|null $o_pdo
+     * @return string
      */
-    public function retrieveFormatedSqlErrorMessage(\PDO $o_pdo)
+    public function retrieveFormatedSqlErrorMessage($o_pdo = null)
     {
-        if (!is_object($o_pdo)) {
+        if (is_null($o_pdo)) {
             $o_pdo = $this->o_pdo;
         }
-        $this->setSqlErrorMessage($o_pdo);
-        return $this->sql_error_message;
+        if ($this->setSqlErrorMessage($o_pdo)) {
+            return $this->sql_error_message;
+        }
+        else {
+            return 'Could not retrieve PDO error.';
+        }
     }
 
     /**
@@ -816,7 +820,7 @@ class DbModel
      * @param array          $a_table_info
      * @return bool success or failure
      */
-    public function insertPrepared(array $a_values = array(), \PDOStatement $o_pdo_stmt = '', array $a_table_info = array())
+    public function insertPrepared(array $a_values = array(), \PDOStatement $o_pdo_stmt, array $a_table_info = array())
     {
         $meth = __METHOD__ . '.';
         if (count($a_values) > 0) {
