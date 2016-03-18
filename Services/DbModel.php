@@ -9,7 +9,11 @@
  * @version   3.6.1
  * @date      2016-03-17 10:39:02
  * @note <b>Change Log</b>
- * - v3.6.1 - bug fixes                                                                  - 2016-03-17 wer
+ * - v4.0.0 - Changed class so that it focues on the actual database operations.       - 2016-03-18 wer
+ *            Removed sql building and validation methods to a trait class which
+ *            then can be used independently by other classes. Yes, this may require
+ *            a lot of refactoring elsewhere.
+ * - v3.6.1 - bug fixes                                                                - 2016-03-17 wer
  * - v3.6.0 - Changed property name o_db to o_pdo to clarify what the object was       - 03/04/2016 wer
  *            Added new method to "prepare" a list array
  *            Added new method to create and return the formated sql error message.
@@ -66,15 +70,9 @@ class DbModel
     use DbTraits, LogitTraits;
 
     /** @var array */
-    private $a_db_config;
-    /** @var array */
     private $a_new_ids = array();
     /** @var int */
     private $affected_rows;
-    /** @var string */
-    private $db_prefix;
-    /** @var string */
-    private $db_type;
     /** @var \PDO */
     private $o_pdo;
     /** @var string */
@@ -87,7 +85,7 @@ class DbModel
     /**
      * On creating a new object, certain things happen.
      * @param  \PDO   $o_pdo       can be from PdoFactory or from a direct new PDO
-     *                            This allows it to be independent of the PdoFactory.
+     *                             This allows it to be independent of the PdoFactory.
      * @param  string $config_file name of the config file which is a returned array
      */
     public function __construct(\PDO $o_pdo, $config_file = 'db_config.php')
@@ -270,31 +268,6 @@ class DbModel
     }
 
     /**
-     * Gets the array $a_db_config which holds the config for the db.
-     * @return array
-     */
-    public function getDbConfig()
-    {
-        return $this->a_db_config;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDbPrefix()
-    {
-        return $this->db_prefix;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDbType()
-    {
-        return $this->db_type;
-    }
-
-    /**
      * @return array
      */
     public function getNewIds()
@@ -328,26 +301,6 @@ class DbModel
     public function getSqlErrorMessage()
     {
         return $this->sql_error_message;
-    }
-
-    /**
-     * @param string $value
-     * @return null
-     */
-    public function setDbPrefix($value)
-    {
-        unset($value);
-        return null; // db prefix can only be set privately
-    }
-
-    /**
-     * @param string $value
-     * @return null
-     */
-    public function setDbType($value = '')
-    {
-        unset($value);
-        return null; // db type can only be set privately
     }
 
     /**
@@ -1129,227 +1082,6 @@ class DbModel
 
     ### Utility Functions
     /**
-     * Creates a string that is part of an INSERT sql statement.
-     * It produces a string in "prepared" format, e.g. ":fred" for the values.
-     * It removes any pair whose key is not in the allowed keys array.
-     * @param array $a_values       assoc array of values to that will be inserted.
-     *                             It should be noted that only the key name is important,
-     *                             but using the array of the actual values being inserted
-     *                             ensures that only those values are inserted.
-     * @param array $a_allowed_keys list array of key names that are allowed in the a_values array.
-     * @return string
-     */
-    public function buildSqlInsert(array $a_values = [], array $a_allowed_keys = [])
-    {
-        if (count($a_values) === 0 || count($a_allowed_keys) === 0) {
-            return '';
-        }
-        $a_values = $this->prepareKeys($a_values);
-        $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
-        $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
-        $insert_names = '';
-        $value_names  = '';
-        foreach ($a_values as $key => $value) {
-            if (strpos($key, ':') !== false) {
-                $insert_name = str_replace(':', '', $key);
-                $value_name  = $key;
-            }
-            else {
-                $insert_name = $key;
-                $value_name  = ':' . $key;
-            }
-            $insert_names .= $insert_names == ''
-                ? '    ' . $insert_name
-                : ",\n    "  . $insert_name;
-            $value_names  .= $value_names == ''
-                ? '    ' . $value_name
-                : ",\n    " . $value_name;
-        }
-        return $insert_names . "\n) VALUES (\n" . $value_names;
-    }
-
-    /**
-     * Builds the select field portion of a sql select statement.
-     * Can be a simple array list or an assoc array which specifies
-     * as the key the name of the field, the value the name to be as, e.g.,
-     * ['ngv' => 'general] becomes the string "ngv as 'general'"
-     * @param array $a_values
-     * @return string
-     */
-    public function buildSqlSelectFields(array $a_values = [])
-    {
-        $select_me = '';
-        if (Arrays::isAssocArray($a_values)) {
-            foreach ($a_values as $name => $name_as) {
-                $select_me .= $select_me == ''
-                    ? $name . " as '" . $name_as . "'"
-                    : ', ' . $name . " as '" . $name_as . "'";
-            }
-        }
-        else {
-            foreach ($a_values as $name) {
-                $select_me .= $select_me == ''
-                    ? $name
-                    : ', ' . $name;
-            }
-        }
-        return $select_me;
-    }
-
-    /**
-     * Builds the SET part of an UPDATE sql statement.
-     * Provides optional abilities to skip certain pairs and removed undesired pairs.
-     * @param array $a_values required key=>value pairs
-     *                       pairs are those to be used in the statement fragment.
-     * @param array $a_skip_keys optional list of keys to skip in the set statement
-     * @param array $a_allowed_keys optional list of allowed keys to be in the values array.
-     * @return string $set_sql
-     */
-    public function buildSqlSet(array $a_values = [], array $a_skip_keys = ['nothing_to_skip'], array $a_allowed_keys = [])
-    {
-        if ($a_values == array()) { return ''; }
-        $set_sql = '';
-        $a_values = $this->prepareKeys($a_values);
-        if ($a_allowed_keys !== []) {
-            $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
-            $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
-        }
-        $a_skip_keys = $this->prepareListArray($a_skip_keys);
-        foreach ($a_values as $key => $value) {
-            if (!in_array($key, $a_skip_keys)) {
-                if ($set_sql == '' ) {
-                    $set_sql = "SET " . str_replace(':', '', $key) . " = {$key} ";
-                }
-                else {
-                    $set_sql .= ", " . str_replace(':', '', $key) . " = {$key} ";
-                }
-            }
-        }
-        return $set_sql;
-    }
-
-    /**
-     * Builds the WHERE section of a SELECT stmt.
-     * Also optionally builds the ORDER BY and LIMIT section of a SELECT stmt.
-     * It might be noted that if first two arguments are empty, it returns a blank string.
-     * @param array $a_search_for optional assoc array field_name=>field_value
-     * @param array $a_search_parameters optional allows one to specify various settings
-     * @param array $a_allowed_keys optional list array
-     *
-     * @ref searchparams For more info on a_search_parameters.
-     *
-     * @return string $where
-     */
-    public function buildSqlWhere(array $a_search_for = [], array $a_search_parameters = [], array $a_allowed_keys = [])
-    {
-        $meth = __METHOD__ . '.';
-        $search_type = 'AND';
-        $comparison_type = '=';
-        $starting_from = '';
-        $limit_to = '';
-        $order_by = '';
-        $where_exists = false;
-        $where = '';
-        if (count($a_search_parameters) > 0) {
-            $a_allowed_parms = array(
-                'search_type',
-                'comparison_type',
-                'starting_from',
-                'limit_to',
-                'order_by',
-                'where_exists'
-            );
-            foreach ($a_search_parameters as $key => $value) {
-                if (array_search($key, $a_allowed_parms) !== false) {
-                    $$key = $value;
-                }
-            }
-        }
-        /* set the $key to have a value compatible for a prepared statement */
-        if (count($a_search_for) > 0) {
-            $a_search_for = $this->prepareKeys($a_search_for);
-        }
-        /* remove any unwanted pairs from array */
-        if (count($a_search_for) > 0 && count($a_allowed_keys) > 0) {
-            $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
-            $a_search_for = Arrays::removeUndesiredPairs($a_search_for, $a_allowed_keys);
-        }
-        /* after all that, if there are still pairs, go for it */
-        if (count($a_search_for) > 0) {
-            $message = 'search pairs prepared: ' . var_export($a_search_for, true);
-            $this->logIt($message, LOG_OFF, $meth . __LINE__);
-            foreach ($a_search_for as $key => $value) {
-                $field_name = preg_replace('/^:/', '', $key);
-                if (strpos($key, '.') !== false) {
-                    $key = preg_replace('/^:(.*)\.(.*)/', ':$2', $key);
-                }
-                if ($where_exists === false) {
-                    $where = "WHERE {$field_name} {$comparison_type} {$key} \n";
-                    $where_exists = true;
-                }
-                else {
-                    $where .= "{$search_type} {$field_name} {$comparison_type} {$key} \n";
-                }
-            }
-        }
-        if ($order_by != '') {
-            $where .= "ORDER BY {$order_by} \n";
-        }
-        if ($limit_to != '') {
-            if ($starting_from != '') {
-                if($starting_from > 0) {
-                    --$starting_from; // limit offset starts at 0 so if we want to start at record 6 the LIMIT offset is 5
-                }
-                $where .= "LIMIT {$starting_from}, {$limit_to}";
-            }
-            else {
-                $where .= "LIMIT {$limit_to}";
-            }
-        }
-        return $where;
-    }
-
-    /**
-     * Creates the class properties of a_db_config, db_type and db_prefix from config file or array if passed in.
-     * Prefer config file but array is allowed so this can be called without a config file.
-     * @param string|array $config_file
-     * @return null
-     */
-    private function createDbParms($config_file = 'db_config.php')
-    {
-        if (is_array($config_file)) {
-            $a_required_keys = ['driver', 'host', 'name', 'user', 'password'];
-            if ($this->findMissingKeys($a_required_keys, $config_file) == array()) {
-                $a_db = $config_file;
-                if (!isset($a_db['prefix'])) {
-                    $a_db['prefix'] = '';
-                }
-                if (!isset($a_db['persist'])) {
-                    $a_db['persist'] = true;
-                }
-                if (!isset($a_db['port'])) {
-                    $a_db['port'] = '';
-                }
-                if (!isset($a_db['userro'])) {
-                    $a_db['userro'] = $a_db['user'];
-                }
-                if (!isset($a_db['passro'])) {
-                    $a_db['passro'] = $a_db['password'];
-                }
-            }
-            else {
-                $a_db = $this->retrieveDbConfig('db_config.php');
-            }
-        }
-        else {
-            $a_db = $this->retrieveDbConfig($config_file);
-        }
-        $this->a_db_config = $a_db;
-        $this->db_prefix   = $a_db['prefix'];
-        $this->db_type     = $a_db['driver'];
-    }
-
-    /**
      * Gets the variable for the fetch style
      * @param string $type
      * @return int
@@ -1370,145 +1102,6 @@ class DbModel
     }
 
     /**
-     * Determines if any required keys are missing
-     * @param array $a_required_keys required
-     * @param array $a_check_values required
-     * @return array $a_missing_keys
-     */
-    public function findMissingKeys(array $a_required_keys = array(), array $a_check_values = array())
-    {
-        if ($a_required_keys == array() || $a_check_values == array()) { return array(); }
-        $a_missing_keys = array();
-        foreach ($a_required_keys as $key) {
-            if (
-                array_key_exists($key, $a_check_values)
-                ||
-                array_key_exists(':' . $key, $a_check_values)
-                ||
-                array_key_exists(str_replace(':', '', $key), $a_check_values)
-            ) {
-                // we are happy
-            }
-            else {
-                $a_missing_keys[] = $key;
-            }
-        }
-        return $a_missing_keys;
-    }
-
-    /**
-     * Finds missing or empty values for given key => value pair
-     * @param array $a_required_keys required list of keys that need to have values
-     * @param array $a_pairs
-     * @return array $a_keys list of the the keys that are missing values
-     */
-    public function findMissingValues(array $a_required_keys = array(), array $a_pairs = array())
-    {
-        if ($a_pairs == array() || $a_required_keys == array()) { return false; }
-        $a_keys = array();
-        foreach ($a_pairs as $key => $value) {
-            if (
-                array_key_exists($key, $a_required_keys)
-                ||
-                array_key_exists(':' . $key, $a_required_keys)
-                ||
-                array_key_exists(str_replace(':', '', $key), $a_required_keys)
-            )
-            {
-                if ($value == '' || is_null($value)) {
-                    $a_keys[] = $key;
-                }
-            }
-        }
-        return $a_keys;
-    }
-
-    /**
-     * Verifies that the php mysqli extension is installed
-     * Left over, not sure it is needed now
-     * @return bool
-     */
-    protected function mysqliInstalled()
-    {
-        if (function_exists('mysqli_connect')) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    /**
-     * Changes array keys to be compatible with prepared statements.
-     * @param array $array required associative array, named keys
-     * @return array fixed key names
-     */
-    public function prepareKeys(array $array = array())
-    {
-        $a_new = array();
-        if (Arrays::isAssocArray($array)) {
-            foreach ($array as $key=>$value) {
-                $new_key = strpos($key, ':') === 0 ? $key : ':' . $key;
-                $a_new[$new_key] = $value;
-            }
-            return $a_new;
-        }
-        elseif (Arrays::isAssocArray($array[0])) {
-            foreach ($array as $a_keys) {
-                $results = $this->prepareKeys($a_keys);
-                if ($results === false) {
-                    return false;
-                }
-                $a_new[] = $results;
-            }
-            return $a_new;
-        }
-        else {
-            $this->logIt('The array must be an associative array to fix.', LOG_OFF, __METHOD__);
-            return false;
-        }
-    }
-
-    /**
-     * Changes the list array so that the values (key names) have "prepared" format, e.g., ":fred".
-     * @param array $array
-     * @return array
-     */
-    public function prepareListArray(array $array = [])
-    {
-        foreach ($array as $key => $value) {
-            $array[$key] = strpos($value, ':') === 0
-                ? $value
-                : ':' . $value;
-        }
-        return $array;
-    }
-
-    /**
-     * Changes array values to help build a prepared statement primarily the WHERE.
-     * @param array $array key/value pairs to fix
-     * @return array fixed where needed
-     */
-    public function prepareValues(array $array)
-    {
-        $a_new = array();
-        if (Arrays::isAssocArray($array)) {
-            foreach ($array as $key => $value) {
-                $new_key = strpos($key, ':') === 0 ? $key : ':' . $key;
-                $a_new[$key] = $new_key;
-            }
-            return $a_new;
-        }
-        elseif (Arrays::isAssocArray($array[0])) {
-            return $this->prepareValues($array[0]);
-        }
-        else {
-            $this->logIt('The array must be an associative array to fix.', LOG_OFF, __METHOD__);
-            return false;
-        }
-    }
-
-    /**
      * Use the \PDO::quote function to make the string safe for use in a query.
      * Used only when not using a prepared sql statement.
      * @see \PDO::quote
@@ -1518,28 +1111,6 @@ class DbModel
     public function quoteString($value)
     {
         return $this->o_pdo->quote($value);
-    }
-
-    /**
-     * Removes unwanted key=>values for a prepared query
-     * @param array $a_required_keys
-     * @param array $a_values the array which needs cleaned up
-     * @return array $a_fixed_values
-     */
-    public function removeBadKeys(array $a_required_keys = array(), array $a_values = array())
-    {
-        foreach ($a_values as $key => $value) {
-            if (
-                array_search($key, $a_required_keys) === false
-                &&
-                array_search(str_replace(':', '', $key), $a_required_keys) === false
-                &&
-                array_search(':' . $key, $a_required_keys) === false
-            ) {
-                unset($a_values[$key]);
-            }
-        }
-        return $a_values;
     }
 
     /**

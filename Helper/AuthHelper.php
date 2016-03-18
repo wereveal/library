@@ -8,9 +8,10 @@
  * @file      Ritc/Library/Helper/AuthHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.0.0
- * @date      2015-11-06 15:03:52
+ * @version   5.1.0
+ * @date      2016-03-18 15:38:04
  * @note <b>Change Log</b>
+ * - v5.1.0 - Part of a refactoring, added DbUtilityTraits          - 2016-03-18 wer
  * - v5.0.0 - removed roles from code                               - 11/06/2015 wer
  * - v4.4.1 - bug fix                                               - 10/06/2015 wer
  * - v4.4.0 - bunch of changes primarily in access control          - 09/26/2015 wer
@@ -62,6 +63,7 @@ use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -71,7 +73,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class AuthHelper
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     /** @var string */
     private $db_prefix;
@@ -97,7 +99,7 @@ class AuthHelper
         $this->o_router  = $o_di->get('router');
         $this->o_people  = new PeopleModel($this->o_db);
         $this->o_groups  = new GroupsModel($this->o_db);
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_prefix = $this->getDbPrefix();
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people->setElog($this->o_elog);

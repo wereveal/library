@@ -9,15 +9,16 @@
  * @date      2015-11-22 18:04:07
  * @note      see ConstantsEntity for database table definition.
  * @note <b>Change Log</b>
- * - v2.2.0 - Refactoring to provide better pgsql compatibility - 11/22/2015 wer
- * - v2.1.0 - No longer extends Base class but uses LogitTraits = 08/19/2015 wer
- * - v2.0.1 - Refactoring of Class Arrays required changes here - 07/31/2015 wer
- * - v2.0.0 - Renamed to match functionality                    - 01/17/2015 wer
- * - v1.1.1 - Namespace changes elsewhere required changes here - 11/15/2014 wer
+ * - v2.3.0 - Refactoring of DbModel reflected here                         - 2016-03-18 wer
+ * - v2.2.0 - Refactoring to provide better pgsql compatibility             - 11/22/2015 wer
+ * - v2.1.0 - No longer extends Base class but uses LogitTraits             - 08/19/2015 wer
+ * - v2.0.1 - Refactoring of Class Arrays required changes here             - 07/31/2015 wer
+ * - v2.0.0 - Renamed to match functionality                                - 01/17/2015 wer
+ * - v1.1.1 - Namespace changes elsewhere required changes here             - 11/15/2014 wer
  *              Doesn't use DI/IOC because of where it is initialized
- * - v1.1.0 - Changed from Entity to Model                      - 11/13/2014 wer
- * - v1.0.1 - minor change to the comments                      - 09/11/2014 wer
- * - v1.0.0 - Initial version                                   - 04/01/2014 wer
+ * - v1.1.0 - Changed from Entity to Model                                  - 11/13/2014 wer
+ * - v1.0.1 - minor change to the comments                                  - 09/11/2014 wer
+ * - v1.0.0 - Initial version                                               - 04/01/2014 wer
  */
 namespace Ritc\Library\Models;
 
@@ -25,6 +26,7 @@ use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -34,7 +36,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ConstantsModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     /** @var array|bool */
     private $a_constants;
@@ -50,7 +52,7 @@ class ConstantsModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->o_db        = $o_db;
-        $this->db_prefix   = $o_db->getDbPrefix();
+        $this->db_prefix   = $this->getDbPrefix();
         $this->a_constants = $this->selectConstantsList();
     }
 
@@ -125,11 +127,11 @@ class ConstantsModel implements ModelInterface
                 'const_value',
                 'const_immutable'
             );
-            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+            $where = $$this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY const_name";
@@ -158,7 +160,7 @@ class ConstantsModel implements ModelInterface
         if (isset($a_values['const_name'])) {
             $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
         }
-        $sql_set = $this->o_db->buildSqlSet($a_values, ['const_id']);
+        $sql_set = $$this->buildSqlSet($a_values, ['const_id']);
         $sql = "
             UPDATE {$this->db_prefix}constants
             {$sql_set}
@@ -248,7 +250,7 @@ class ConstantsModel implements ModelInterface
      */
     public function createTable()
     {
-        $db_type = $this->o_db->getDbType();
+        $db_type = $this->getDbType();
         switch ($db_type) {
             case 'pgsql':
                 $sql_table = "
@@ -350,7 +352,7 @@ class ConstantsModel implements ModelInterface
      */
     public function tableExists()
     {
-        $db_prefix = $this->o_db->getDbPrefix();
+        $db_prefix = $this->getDbPrefix();
         $a_tables = $this->o_db->selectDbTables();
         if (array_search("{$db_prefix}constants", $a_tables, true) === false) {
             return false;

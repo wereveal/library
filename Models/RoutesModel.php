@@ -23,6 +23,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -32,7 +33,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     /** @var array */
     private $db_fields;
@@ -52,8 +53,8 @@ class RoutesModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_type   = $this->getDbType();
+        $this->db_prefix = $this->getDbPrefix();
         $this->db_table  = $this->db_prefix . "routes";
         $this->db_fields = $o_db->selectDbColumns($this->db_table);
     }
@@ -75,7 +76,7 @@ class RoutesModel implements ModelInterface
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             return false;
         }
-        $insert = $this->o_db->buildSqlInsert($a_values, $this->db_fields);
+        $insert = $this->buildSqlInsert($a_values, $this->db_fields);
         $sql = "
             INSERT INTO {$this->db_table}
                 (
@@ -105,7 +106,7 @@ class RoutesModel implements ModelInterface
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
         $meth = __METHOD__ . '.';
-        $select_me = $this->o_db->buildSqlSelectFields($this->db_fields);
+        $select_me = $this->buildSqlSelectFields($this->db_fields);
         if (count($a_search_values) > 0) {
             $a_search_params = $a_search_params == array()
                 ? ['order_by' => 'route_class']
@@ -118,10 +119,10 @@ class RoutesModel implements ModelInterface
             $log_message = 'Search Values ' . var_export($a_search_values, TRUE);
             $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params, $a_allowed_keys);
+            $where = $$this->buildSqlWhere($a_search_values, $a_search_params, $a_allowed_keys);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+            $where = $$this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY route_class";
@@ -150,8 +151,8 @@ class RoutesModel implements ModelInterface
             return false;
         }
         $a_allowed_keys = $this->db_fields;
-        $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);
-        $set_sql = $this->o_db->buildSqlSet($a_values, ['route_id']);
+        $a_values = $$this->removeBadKeys($a_allowed_keys, $a_values);
+        $set_sql = $$this->buildSqlSet($a_values, ['route_id']);
         $sql = "
             UPDATE {$this->db_table}
             {$set_sql}

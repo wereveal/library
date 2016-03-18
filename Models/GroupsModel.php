@@ -22,6 +22,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -31,7 +32,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class GroupsModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     private $db_prefix;
     private $db_type;
@@ -41,8 +42,8 @@ class GroupsModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_type   = $this->getDbType();
+        $this->db_prefix = $this->getDbPrefix();
     }
     /**
      * Generic create function to create a single record.
@@ -120,11 +121,11 @@ class GroupsModel implements ModelInterface
                 'group_auth_level',
                 'group_immutable'
             );
-            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+            $where = $$this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY group_name";
@@ -164,7 +165,7 @@ class GroupsModel implements ModelInterface
         if ($a_values['group_description'] == '') {
             unset($a_values['group_description']);
         }
-        $set_sql = $this->o_db->buildSqlSet($a_values, ['group_id']);
+        $set_sql = $$this->buildSqlSet($a_values, ['group_id']);
         $sql = "
             UPDATE {$this->db_prefix}groups
             {$set_sql}

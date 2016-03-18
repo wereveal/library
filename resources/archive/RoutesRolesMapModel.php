@@ -6,21 +6,23 @@
  * @namespace Ritc\Library\Models
  * @class     RouterRolesMapModel
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0β1
- * @date      2015-08-01 14:01:09
+ * @version   1.0.0-alpha.0
+ * @date      2016-03-18 15:49:42
  * @note <b>Change Log</b>
- * - v0.1.0ß1 - Initial version                                               - 08/01/2015 wer
+ * - v1.0.0-alpha.0 - Start of rewrite                                              - 2016-03-18 wer
+ * - v0.1.0ß1       - Initial version                                               - 08/01/2015 wer
  */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 class RouterRolesMapModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     private $db_prefix;
     private $db_type;
@@ -30,8 +32,8 @@ class RouterRolesMapModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->db_type   = $o_db->getDbType();
-        $this->db_prefix = $o_db->getDbPrefix();
+        $this->db_type   = $this->getDbType();
+        $this->db_prefix = $this->getDbPrefix();
     }
 
     ### Basic CRUD commands, required by interface ###
@@ -84,8 +86,8 @@ class RouterRolesMapModel implements ModelInterface
                 'route_id',
                 'rrm_id'
             );
-            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
         }
         $sql = "
             SELECT *

@@ -13,6 +13,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -22,7 +23,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavComplexModel
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     /** @var string */
     private $db_prefix;
@@ -44,8 +45,8 @@ class NavComplexModel
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_type   = $this->getDbType();
+        $this->db_prefix = $this->getDbPrefix();
         $this->setSelectSql();
         $this->setSelectOrderSql();
     }
@@ -101,7 +102,8 @@ class NavComplexModel
 
     /**
      * Returns an array of nav items based on parent nav id.
-     * @param int $parent_id
+     * @param int $parent_id Required. Parent id of the navigation record.
+     * @param int $ng_id     Required. Id of the navigation group it belongs in.
      * @return bool|mixed
      */
     public function getNavListByParent($parent_id = -1, $ng_id = -1) {
@@ -136,7 +138,8 @@ EOT;
 
     /**
      * Attempt to get all the sub navigation for the parent, recursively.
-     * @param int $parent_id required
+     * @param int $parent_id Required. Parent id of the navigation record.
+     * @param int $ng_id     Required. Id of the navigation group it belongs in.
      * @return array
      */
     public function getChildrenRecursive($parent_id = -1, $ng_id = -1)

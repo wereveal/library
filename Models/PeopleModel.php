@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2015-11-22 18:05:37
+ * @version   1.2.0
+ * @date      2016-03-18 15:47:54
  * @note <b>Change Log</b>
+ * - v1.2.0    - Refactoring of DbModel reflected here                       - 2016-03-18 wer
  * - v1.1.0    - refactoring to make compatible with postgresql              - 11/22/2015 wer
  * - v1.0.0    - initial working version                                     - 11/12/2015 wer
  * - v1.0.0β13 - removed roles from code                                     - 11/06/2015 wer
@@ -30,6 +31,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -39,7 +41,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PeopleModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     /** @var string */
     private $db_prefix;
@@ -61,8 +63,8 @@ class PeopleModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->db_type   = $o_db->getDbType();
-        $this->db_prefix = $o_db->getDbPrefix();
+        $this->db_type   = $this->getDbType();
+        $this->db_prefix = $this->getDbPrefix();
         $this->o_group   = new GroupsModel($this->o_db);
         $this->o_pgm     = new PeopleGroupMapModel($this->o_db);
     }
@@ -138,11 +140,11 @@ class PeopleModel implements ModelInterface
                 'is_immutable',
                 'is_active'
             );
-            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+            $where = $$this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY login_id";
@@ -215,7 +217,7 @@ class PeopleModel implements ModelInterface
         if ($a_values['is_immutable'] == 1 && isset($a_values['login_id'])) {
             unset($a_values['login_id']);
         }
-        $sql_set = $this->o_db->buildSqlSet($a_values, ['people_id']);
+        $sql_set = $$this->buildSqlSet($a_values, ['people_id']);
         if ($sql_set == '') {
             return false;
         }

@@ -6,9 +6,10 @@
  * @namespace Ritc\Library\Models
  * @class     GroupRoleMapModel
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.7
- * @date      2015-11-22 18:07:28
+ * @version   1.0.0-beta.8
+ * @date      2016-03-18 15:47:43
  * @note <b>Change Log</b>
+ * - v1.0.0-beta.8  - Refactoring of DbModel reflected here                         - 2016-03-18 wer
  * - v1.0.0-beta.7  - refactoring for pgsql compatibility                           - 11/22/2015 wer
  * - v1.0.0-beta.6  - Removed abstract class Base, use LogitTraits                  - 09/03/2015 wer
  * - v1.0.0-beta.5  - Changed name to match DB change                               - 01/19/2015 wer
@@ -23,11 +24,12 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 class GroupRoleMapModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     private $db_prefix;
     private $db_type;
@@ -36,8 +38,8 @@ class GroupRoleMapModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->db_type   = $o_db->getDbType();
-        $this->db_prefix = $o_db->getDbPrefix();
+        $this->db_type   = $this->getDbType();
+        $this->db_prefix = $this->getDbPrefix();
     }
 
     ### Basic CRUD commands, required by interface ###
@@ -90,8 +92,8 @@ class GroupRoleMapModel implements ModelInterface
                 'group_id',
                 'grm_id'
             );
-            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
         }
         $sql = "
             SELECT *

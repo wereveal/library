@@ -16,6 +16,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -25,7 +26,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PageModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     /** @var string */
     private $db_prefix;
@@ -43,8 +44,8 @@ class PageModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_type   = $this->getDbType();
+        $this->db_prefix = $this->getDbPrefix();
     }
 
     /**
@@ -150,10 +151,10 @@ class PageModel implements ModelInterface
                 'page_immutable'
             ];
             $a_search_values = Arrays::removeUndesiredPairs($a_search_values, $a_allowed_keys);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+            $where = $$this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY page_path";
@@ -230,7 +231,7 @@ class PageModel implements ModelInterface
                 }
             }
         }
-        $set_sql = $this->o_db->buildSqlSet($a_values, ['page_id']);
+        $set_sql = $$this->buildSqlSet($a_values, ['page_id']);
         $sql = "
             UPDATE {$this->db_prefix}page
             {$set_sql}

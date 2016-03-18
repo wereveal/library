@@ -15,6 +15,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -24,7 +25,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesGroupMapModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     /** @var string */
     private $db_prefix;
@@ -42,8 +43,8 @@ class RoutesGroupMapModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->db_type   = $o_db->getDbType();
-        $this->db_prefix = $o_db->getDbPrefix();
+        $this->db_type   = $this->getDbType();
+        $this->db_prefix = $this->getDbPrefix();
     }
 
     ### Basic CRUD commands, required by interface ###
@@ -95,8 +96,8 @@ class RoutesGroupMapModel implements ModelInterface
                 'route_id',
                 'rgm_id'
             );
-            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
         }
         $sql = "
             SELECT *

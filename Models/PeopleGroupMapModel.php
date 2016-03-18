@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleGroupMapModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2015-11-27 14:57:55
+ * @version   1.1.0
+ * @date      2016-03-18 15:48:08
  * @note <b>Change Log</b>
+ * - v1.1.0   - Refactoring of DbModel reflected here                 - 2016-03-18 wer
  * - v1.0.0   - take out of beta                                      - 11/27/2015 wer
  * - v1.0.0β7 - refactoring fix for postgres compatibility            - 11/22/2015 wer
  * - v1.0.0β6 - removed abstract Base, implemented LogitTraits        - 09/03/2015 wer
@@ -22,6 +23,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -31,7 +33,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PeopleGroupMapModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     /** @var string */
     private $db_prefix;
@@ -47,8 +49,8 @@ class PeopleGroupMapModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->db_type   = $o_db->getDbType();
-        $this->db_prefix = $o_db->getDbPrefix();
+        $this->db_type   = $this->getDbType();
+        $this->db_prefix = $this->getDbPrefix();
     }
 
     ### Basic CRUD commands, required by interface ###
@@ -117,8 +119,8 @@ class PeopleGroupMapModel implements ModelInterface
                 'people_id',
                 'pgm_id'
             );
-            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
         }
         $sql = "
             SELECT *

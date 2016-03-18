@@ -15,6 +15,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -24,7 +25,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavNgMapModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
     /** @var array */
     private $a_field_names = array();
@@ -40,8 +41,8 @@ class NavNgMapModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->o_db      = $o_db;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->db_type   = $this->getDbType();
+        $this->db_prefix = $this->getDbPrefix();
         $this->setFieldNames();
     }
 
@@ -77,7 +78,7 @@ class NavNgMapModel implements ModelInterface
         }
         /* check done */
 
-        $insert_value_names = $this->o_db->buildSqlInsert($a_values, $this->a_field_names);
+        $insert_value_names = $this->buildSqlInsert($a_values, $this->a_field_names);
         $sql = "
             INSERT INTO {$this->db_prefix}nav_ng_map (
             {$insert_value_names}
@@ -115,15 +116,15 @@ class NavNgMapModel implements ModelInterface
                 ? ['order_by' => 'ng_id ASC, nav_id ASC']
                 : $a_search_params;
             $a_search_values = Arrays::removeUndesiredPairs($a_search_values, $this->a_field_names);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+            $where = $$this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY ng_id ASC, nav_id ASC";
         }
-        $select_me = $this->o_db->buildSqlSelectFields($this->a_field_names);
+        $select_me = $this->buildSqlSelectFields($this->a_field_names);
         $sql = "
             SELECT {$select_me}
             FROM {$this->db_prefix}nav_ng_map
