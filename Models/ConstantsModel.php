@@ -40,10 +40,6 @@ class ConstantsModel implements ModelInterface
 
     /** @var array|bool */
     private $a_constants;
-    /** @var string */
-    private $db_prefix;
-    /** @var \Ritc\Library\Services\DbModel */
-    private $o_db;
 
     /**
      * ConstantsModel constructor.
@@ -51,8 +47,7 @@ class ConstantsModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->o_db        = $o_db;
-        $this->db_prefix   = $this->getDbPrefix();
+        $this->setupProperties($o_db, 'constants');
         $this->a_constants = $this->selectConstantsList();
     }
 
@@ -90,12 +85,12 @@ class ConstantsModel implements ModelInterface
             $a_values = Arrays::createRequiredPairs($a_values, ['const_name', 'const_value', 'const_immutable'], true);
         }
         $sql = "
-            INSERT INTO {$this->db_prefix}constants (const_name, const_value, const_immutable)
+            INSERT INTO {$this->db_table} (const_name, const_value, const_immutable)
             VALUES (:const_name, :const_value, :const_immutable)
         ";
         $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         $a_table_info = [
-            'table_name'  => "{$this->db_prefix}constants",
+            'table_name'  => $this->db_table,
             'column_name' => 'const_id'
         ];
         if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
@@ -128,17 +123,17 @@ class ConstantsModel implements ModelInterface
                 'const_immutable'
             );
             $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $$this->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY const_name";
         }
         $sql = "
             SELECT const_id, const_name, const_value, const_immutable
-            FROM {$this->db_prefix}constants
+            FROM {$this->db_table}
             {$where}
         ";
         return $this->o_db->search($sql, $a_search_values);
@@ -160,9 +155,9 @@ class ConstantsModel implements ModelInterface
         if (isset($a_values['const_name'])) {
             $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
         }
-        $sql_set = $$this->buildSqlSet($a_values, ['const_id']);
+        $sql_set = $this->buildSqlSet($a_values, ['const_id']);
         $sql = "
-            UPDATE {$this->db_prefix}constants
+            UPDATE {$this->db_table}
             {$sql_set}
             WHERE const_id  = :const_id
         ";
@@ -183,7 +178,7 @@ class ConstantsModel implements ModelInterface
             return ['message' => 'The constant does not exist', 'type' => 'failure'];
         }
         $sql = "
-            DELETE FROM {$this->db_prefix}constants
+            DELETE FROM {$this->db_table}
             WHERE const_id = :const_id
         ";
         $results = $this->o_db->delete($sql, array('const_id' => $const_id), true);
@@ -218,6 +213,7 @@ class ConstantsModel implements ModelInterface
      */
     public function createNewConstants()
     {
+        // todo ConstantsModel.createNewConstants - need to figure out if this is a bug
         $a_constants = include APP_CONFIG_PATH . '/fallback_constants_array.php';
         if ($this->o_db->startTransaction()) {
             if ($this->tableExists() === false) {
@@ -250,11 +246,11 @@ class ConstantsModel implements ModelInterface
      */
     public function createTable()
     {
-        $db_type = $this->getDbType();
+        $db_type = $this->o_db->getDbType();
         switch ($db_type) {
             case 'pgsql':
                 $sql_table = "
-                    CREATE TABLE IF NOT EXISTS {$this->db_prefix}constants (
+                    CREATE TABLE IF NOT EXISTS {$this->db_table} (
                         const_id integer NOT NULL DEFAULT nextval('const_id_seq'::regclass),
                         const_name character varying(64) NOT NULL,
                         const_value character varying(64) NOT NULL,
@@ -279,7 +275,7 @@ class ConstantsModel implements ModelInterface
                 return true;
             case 'sqlite':
                 $sql = "
-                    CREATE TABLE IF NOT EXISTS {$this->db_prefix}constants (
+                    CREATE TABLE IF NOT EXISTS {$this->db_table} (
                         const_id INTEGER PRIMARY KEY ASC,
                         const_name TEXT,
                         const_value TEXT,
@@ -294,7 +290,7 @@ class ConstantsModel implements ModelInterface
             case 'mysql':
             default:
                 $sql = "
-                    CREATE TABLE IF NOT EXISTS `{$this->db_prefix}constants` (
+                    CREATE TABLE IF NOT EXISTS `{$this->db_table}` (
                         `const_id` int(11) NOT NULL AUTO_INCREMENT,
                         `const_name` varchar(64) NOT NULL,
                         `const_value` varchar(64) NOT NULL,
@@ -334,10 +330,11 @@ class ConstantsModel implements ModelInterface
     {
         if ($a_constants == array()) { return false; }
         $query = "
-            INSERT INTO {$this->db_prefix}constants (const_name, const_value, const_immutable)
+            INSERT INTO {$this->db_table} (const_name, const_value, const_immutable)
             VALUES (?, ?, ?)";
-        return $this->o_db->insert($query, $a_constants, "{$this->db_prefix}constants");
+        return $this->o_db->insert($query, $a_constants, "{$this->db_table}");
     }
+
     /**
      * Selects the constants records.
      * @return array|bool
@@ -346,13 +343,14 @@ class ConstantsModel implements ModelInterface
     {
         return $this->read();
     }
+
     /**
      * Checks to see if the table exists.
      * @return bool
      */
     public function tableExists()
     {
-        $db_prefix = $this->getDbPrefix();
+        $db_prefix = $this->o_db->getDbPrefix();
         $a_tables = $this->o_db->selectDbTables();
         if (array_search("{$db_prefix}constants", $a_tables, true) === false) {
             return false;
@@ -395,11 +393,11 @@ class ConstantsModel implements ModelInterface
     }
 
     /**
-     * Returns Error Message, required by interface.
+     * Returns Error Message, overrides trait method.
      * @return string
      */
     public function getErrorMessage()
     {
-        return $this->o_db->getSqlErrorMessage();
+        return $this->o_db->retrieveFormatedSqlErrorMessage();
     }
 }

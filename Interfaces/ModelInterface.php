@@ -5,11 +5,12 @@
  * @file      Ritc/Library/Interfaces/ModelInterface.php
  * @namespace Ritc\Library\Interfaces
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.1
- * @date      2014-11-11 11:14:58
+ * @version   1.1.0
+ * @date      2016-03-19 06:26:14
  * @note <b>Change Log</b>
- * - v1.0.1 fixed default arg for delete
- * - v1.0.0 initial versioning 01/30/2014 wer
+ * - v1.1.0 moved getErrorMessage from interface to the DbUtilityTraits class                   - 2016-03-19 wer
+ * - v1.0.1 fixed default arg for delete                                                        - 11/11/2014 wer
+ * - v1.0.0 initial versioning                                                                  - 01/30/2014 wer
  */
 namespace Ritc\Library\Interfaces;
 
@@ -46,10 +47,4 @@ interface ModelInterface {
      * @return bool
      */
     public function delete($id = -1);
-
-    /**
-     * Returns the SQL error message
-     * @return string
-     */
-    public function getErrorMessage();
 }

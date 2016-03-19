@@ -5,10 +5,10 @@
  * @file      Ritc/Library/Models/NavNgMapModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0 β1
+ * @version   1.0.0-alpha.0
  * @date      2016-02-25 12:06:45
  * @note <b>Change Log</b>
- * - v1.0.0 β1 - Initial version                              - 02/25/2016 wer
+ * - v1.0.0-alpha.0 - Initial version                              - 02/25/2016 wer
  */
 namespace Ritc\Library\Models;
 
@@ -29,20 +29,10 @@ class NavNgMapModel implements ModelInterface
 
     /** @var array */
     private $a_field_names = array();
-    /** @var string */
-    private $db_type = '';
-    /** @var string */
-    private $db_prefix = '';
-    /** @var string */
-    private $error_message = '';
-    /** @var \Ritc\Library\Services\DbModel */
-    private $o_db;
 
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->getDbType();
-        $this->db_prefix = $this->getDbPrefix();
+        $this->setupProperties($o_db, 'nav_ng_map');
         $this->setFieldNames();
     }
 
@@ -80,13 +70,13 @@ class NavNgMapModel implements ModelInterface
 
         $insert_value_names = $this->buildSqlInsert($a_values, $this->a_field_names);
         $sql = "
-            INSERT INTO {$this->db_prefix}nav_ng_map (
+            INSERT INTO {$this->db_table} (
             {$insert_value_names}
             )
         ";
         // following probably is ineffective
         $a_table_info = [
-            'table_name'  => "{$this->db_prefix}nav_ng_map",
+            'table_name'  => $this->db_table,
             'column_name' => 'ng_id'
         ];
         $results = $this->o_db->insert($sql, $a_values, $a_table_info);
@@ -116,10 +106,10 @@ class NavNgMapModel implements ModelInterface
                 ? ['order_by' => 'ng_id ASC, nav_id ASC']
                 : $a_search_params;
             $a_search_values = Arrays::removeUndesiredPairs($a_search_values, $this->a_field_names);
-            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $$this->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY ng_id ASC, nav_id ASC";
@@ -127,7 +117,7 @@ class NavNgMapModel implements ModelInterface
         $select_me = $this->buildSqlSelectFields($this->a_field_names);
         $sql = "
             SELECT {$select_me}
-            FROM {$this->db_prefix}nav_ng_map
+            FROM {$this->db_table}
             {$where}
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__);
@@ -175,7 +165,7 @@ class NavNgMapModel implements ModelInterface
             $a_values = [':ng_id' => $ng_id, ':nav_id' => $nav_id];
         }
         $sql = "
-            DELETE FROM {$this->db_prefix}nav_ng_map
+            DELETE FROM {$this->db_table}
             WHERE {$where}";
         $results = $this->o_db->delete($sql, $a_values, true);
         if ($results === false) {

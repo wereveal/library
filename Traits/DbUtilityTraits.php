@@ -13,6 +13,7 @@
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Services\DbModel;
 
 /**
  * Class DbUtilityTraits Methods that are generic and can be used in many Model classes.
@@ -20,68 +21,20 @@ use Ritc\Library\Helper\Arrays;
  * @package Ritc\Library\Traits
  */
 trait DbUtilityTraits {
-    use DbTraits;
+    use DbCommonTraits;
 
+    /** @var array */
+    protected $a_db_config;
+    /** @var string */
+    protected $db_prefix = '';
+    /** @var  string */
+    protected $db_table = '';
+    /** @var string Can be 'mysql', 'pgsql', 'sqlite' */
+    protected $db_type = 'mysql';
     /** @var  string */
     protected $error_message;
     /** @var \Ritc\Library\Services\DbModel */
     protected $o_db;
-
-    #### Database Configuration Values ####
-    /**
-     * Gets the array $a_db_config which holds the config for the db.
-     * @return array
-     */
-    protected function getDbConfig()
-    {
-        return $this->a_db_config;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function getDbPrefix()
-    {
-        return $this->db_prefix;
-    }
-
-    /**
-     * @return mixed
-     */
-    protected function getDbType()
-    {
-        return $this->db_type;
-    }
-
-    /**
-     * @param string $value This method does nothing, intentionally.
-     * @return null
-     */
-    protected function setDbConfig($value)
-    {
-        unset($value);
-        return null; // db_config can only be set privately
-    }
-
-    /**
-     * @param string $value
-     * @return null
-     */
-    protected function setDbPrefix($value)
-    {
-        unset($value);
-        return null; // db prefix can only be set privately
-    }
-
-    /**
-     * @param string $value
-     * @return null
-     */
-    protected function setDbType($value = '')
-    {
-        unset($value);
-        return null; // db type can only be set privately
-    }
 
     #### Generic CRUD calls ####
     /**
@@ -203,6 +156,7 @@ SQL;
         }
         return false;
     }
+
     #### Utility Methods ####
     /**
      * Creates a string that is part of an INSERT sql statement.
@@ -220,7 +174,7 @@ SQL;
         if (count($a_values) === 0 || count($a_allowed_keys) === 0) {
             return '';
         }
-        $a_values = $this->prepareKeys($a_values);
+        $a_values = $this->o_db->prepareKeys($a_values);
         $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
         $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
         $insert_names = '';
@@ -285,7 +239,7 @@ SQL;
     {
         if ($a_values == array()) { return ''; }
         $set_sql = '';
-        $a_values = $this->prepareKeys($a_values);
+        $a_values = $this->o_db->prepareKeys($a_values);
         if ($a_allowed_keys !== []) {
             $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
             $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
@@ -343,7 +297,7 @@ SQL;
         }
         /* set the $key to have a value compatible for a prepared statement */
         if (count($a_search_for) > 0) {
-            $a_search_for = $this->prepareKeys($a_search_for);
+            $a_search_for = $this->o_db->prepareKeys($a_search_for);
         }
         /* remove any unwanted pairs from array */
         if (count($a_search_for) > 0 && count($a_allowed_keys) > 0) {
@@ -383,33 +337,6 @@ SQL;
             }
         }
         return $where;
-    }
-
-    /**
-     * Finds missing or empty values for given key => value pair
-     * @param array $a_required_keys required list of keys that need to have values
-     * @param array $a_pairs
-     * @return array $a_keys list of the the keys that are missing values
-     */
-    protected function findMissingValues(array $a_required_keys = array(), array $a_pairs = array())
-    {
-        if ($a_pairs == array() || $a_required_keys == array()) { return false; }
-        $a_keys = array();
-        foreach ($a_pairs as $key => $value) {
-            if (
-                array_key_exists($key, $a_required_keys)
-                ||
-                array_key_exists(':' . $key, $a_required_keys)
-                ||
-                array_key_exists(str_replace(':', '', $key), $a_required_keys)
-            )
-            {
-                if ($value == '' || is_null($value)) {
-                    $a_keys[] = $key;
-                }
-            }
-        }
-        return $a_keys;
     }
 
     /**
@@ -462,6 +389,35 @@ SQL;
             }
         }
         return $a_values;
+    }
+
+    /**
+     * Sets up the standard properties.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param string                         $table_name
+     * @return null
+     */
+    protected function setupProperties(DbModel $o_db, $table_name = '')
+    {
+        if ($o_db == '') {
+            return null;
+        }
+        $this->o_db        = $o_db;
+        $this->a_db_config = $o_db->getDbConfig();
+        $this->db_prefix   = $o_db->getDbPrefix();
+        $this->db_type     = $o_db->getDbType();
+        if ($table_name != '') {
+            $this->db_table = $this->db_prefix . $table_name;
+        }
+    }
+
+    /**
+     * Returns the SQL error message
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->error_message;
     }
 
 }

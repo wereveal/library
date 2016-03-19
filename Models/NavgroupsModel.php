@@ -29,16 +29,6 @@ class NavgroupsModel implements ModelInterface
 
     /** @var string */
     private $a_field_names;
-    /** @var string */
-    private $db_prefix;
-    /** @var string */
-    private $db_table;
-    /** @var string */
-    private $db_type;
-    /** @var string */
-    private $error_message;
-    /** @var \Ritc\Library\Services\DbModel */
-    private $o_db;
 
     /**
      * NavgroupsModel constructor.
@@ -46,10 +36,7 @@ class NavgroupsModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->getDbType();
-        $this->db_prefix = $this->getDbPrefix();
-        $this->db_table  = $this->db_prefix . 'navgroups';
+        $this->setupProperties($o_db, 'navgroups');
         $this->setFieldNames();
     }
 
@@ -111,10 +98,10 @@ class NavgroupsModel implements ModelInterface
                 ? ['order_by' => 'ng_name ASC']
                 : $a_search_params;
             $a_search_values = Arrays::removeUndesiredPairs($a_search_values, $this->a_field_names);
-            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $$this->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY ng_name ASC";
@@ -151,7 +138,7 @@ EOT;
             return false;
         }
         $a_values = Arrays::removeUndesiredPairs($a_values, $this->a_field_names);
-        $set_sql = $$this->buildSqlSet($a_values, ['ng_id']);
+        $set_sql = $this->buildSqlSet($a_values, ['ng_id']);
         $sql = "
             UPDATE {$this->db_table}
             {$set_sql}
@@ -238,14 +225,6 @@ EOT;
         }
     }
 
-    /**
-     * Returns the SQL error message
-     * @return string
-     */
-    public function getErrorMessage()
-    {
-        return $this->error_message;
-    }
     /**
      * @return array
      */

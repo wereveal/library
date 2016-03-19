@@ -8,11 +8,12 @@
  * @version   1.2.0
  * @date      2016-03-18 15:47:54
  * @note <b>Change Log</b>
+ * - v1.2.1    - Bug Fix, seriously, how did that get past testing?          - 2016-03-19 wer
  * - v1.2.0    - Refactoring of DbModel reflected here                       - 2016-03-18 wer
  * - v1.1.0    - refactoring to make compatible with postgresql              - 11/22/2015 wer
  * - v1.0.0    - initial working version                                     - 11/12/2015 wer
  * - v1.0.0β13 - removed roles from code                                     - 11/06/2015 wer
- * - v1.0.0β12 - Bug fix in sql, incompatible with Postgresql                - 11/05/2015 wer
+ * - v1.0.0β12 - Bug fix in sql, incompatible with postgresql                - 11/05/2015 wer
  * - v1.0.0β11 - Added missing method isId - causing bug elsewhere           - 09/25/2015 wer
  * - v1.0.0β10 - Added db error message retrieval                            - 09/23/2015 wer
  * - v1.0.0β9  - Added 'description' to database and added it here           - 09/22/2015 wer
@@ -43,14 +44,6 @@ class PeopleModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var string */
-    private $db_prefix;
-    /** @var string */
-    private $db_type;
-    /** @var string */
-    private $error_message;
-    /** @var \Ritc\Library\Services\DbModel */
-    private $o_db;
     /** @var \Ritc\Library\Models\GroupsModel */
     private $o_group;
     /** @var \Ritc\Library\Models\PeopleGroupMapModel */
@@ -62,11 +55,9 @@ class PeopleModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->getDbType();
-        $this->db_prefix = $this->getDbPrefix();
-        $this->o_group   = new GroupsModel($this->o_db);
-        $this->o_pgm     = new PeopleGroupMapModel($this->o_db);
+        $this->setupProperties($o_db, 'people');
+        $this->o_group  = new GroupsModel($o_db);
+        $this->o_pgm    = new PeopleGroupMapModel($o_db);
     }
 
     ### Basic CRUD commands, required by interface, deals only with the {$this->db_prefix}user table ###
@@ -101,13 +92,13 @@ class PeopleModel implements ModelInterface
             return false;
         }
         $sql = "
-            INSERT INTO {$this->db_prefix}people
+            INSERT INTO {$this->db_table}
                 (login_id, real_name, short_name, password, description, is_logged_in, is_active, is_immutable)
             VALUES
                 (:login_id, :real_name, :short_name, :password, :description, :is_logged_in, :is_active, :is_immutable)
         ";
         $a_table_info = [
-            'table_name'  => "{$this->db_prefix}people",
+            'table_name'  => "{$this->db_table}",
             'column_name' => 'people_id'
         ];
         if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
@@ -120,6 +111,7 @@ class PeopleModel implements ModelInterface
             return false;
         }
     }
+
     /**
      * Returns the record for
      * @param array $a_search_values
@@ -140,11 +132,11 @@ class PeopleModel implements ModelInterface
                 'is_immutable',
                 'is_active'
             );
-            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $$this->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY login_id";
@@ -162,7 +154,7 @@ class PeopleModel implements ModelInterface
                 is_active,
                 is_immutable,
                 created_on
-            FROM {$this->db_prefix}people
+            FROM {$this->db_table}
             {$where}
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -172,8 +164,9 @@ class PeopleModel implements ModelInterface
         }
         return $results;
     }
+
     /**
-     * Updates a single {$this->db_prefix}people record.
+     * Updates a single {$this->db_table} record.
      * @param array $a_values required $a_values['people_id'] || $a_values['login_id']
      * @return bool
      */
@@ -217,12 +210,12 @@ class PeopleModel implements ModelInterface
         if ($a_values['is_immutable'] == 1 && isset($a_values['login_id'])) {
             unset($a_values['login_id']);
         }
-        $sql_set = $$this->buildSqlSet($a_values, ['people_id']);
+        $sql_set = $this->buildSqlSet($a_values, ['people_id']);
         if ($sql_set == '') {
             return false;
         }
         $sql = "
-            UPDATE {$this->db_prefix}people
+            UPDATE {$this->db_table}
             {$sql_set}
             WHERE people_id = :people_id
         ";
@@ -233,8 +226,9 @@ class PeopleModel implements ModelInterface
         }
         return $results;
     }
+
     /**
-     * Deletes a {$this->db_prefix}people record based on id.
+     * Deletes a {$this->db_table} record based on id.
      * @param int $people_id required
      * @return bool
      */
@@ -242,7 +236,7 @@ class PeopleModel implements ModelInterface
     {
         if ($people_id == -1 || !ctype_digit($people_id)) { return false; }
         $sql = "
-            DELETE FROM {$this->db_prefix}people
+            DELETE FROM {$this->db_table}
             WHERE people_id = :people_id
         ";
         $results = $this->o_db->delete($sql, array(':people_id' => $people_id), true);
@@ -270,6 +264,7 @@ class PeopleModel implements ModelInterface
         $this->error_message = $this->o_db->getSqlErrorMessage();
         return false;
     }
+
     /**
      * Updates the bad_login_count field for the user by one
      * @param int $people_id
@@ -279,13 +274,14 @@ class PeopleModel implements ModelInterface
     {
         if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}people
+            UPDATE {$this->db_table}
             SET bad_login_count = bad_login_count + 1
             WHERE people_id = :people_id
         ";
         $a_values = array(':people_id' => $people_id);
         return $this->o_db->update($sql, $a_values, true);
     }
+
     /**
      * Increments the bad_login_ts record by one minute
      * @param int $people_id required
@@ -295,13 +291,14 @@ class PeopleModel implements ModelInterface
     {
         if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}people
+            UPDATE {$this->db_table}
             SET bad_login_ts = bad_login_ts + 60
             WHERE people_id = :people_id
         ";
         $a_values = array(':people_id' => $people_id);
         return $this->o_db->update($sql, $a_values, true);
     }
+
     /**
      * Returns the user record.
      * @param int|string $user either user id or user name
@@ -323,6 +320,7 @@ class PeopleModel implements ModelInterface
             return array();
         }
     }
+
     /**
      * Resets the bad_login_count to 0
      * @param int $people_id required
@@ -332,13 +330,14 @@ class PeopleModel implements ModelInterface
     {
         if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}people
+            UPDATE {$this->db_table}
             SET bad_login_count = 0
             WHERE people_id = :people_id
         ";
         $a_values = array(':people_id' => $people_id);
         return $this->o_db->update($sql, $a_values, true);
     }
+
     /**
      * Resets the timestamp to 0
      * @param int $people_id required
@@ -348,7 +347,7 @@ class PeopleModel implements ModelInterface
     {
         if ($people_id == -1) { return false; }
         $update_sql = "
-            UPDATE {$this->db_prefix}people
+            UPDATE {$this->db_table}
             SET bad_login_ts = 0
             WHERE people_id = :people_id
         ";
@@ -356,6 +355,7 @@ class PeopleModel implements ModelInterface
         $results = $this->o_db->update($update_sql, $a_values, true);
         return $results;
     }
+
     /**
      * Sets the bad login timestamp for the user.
      * @param int $people_id required
@@ -365,7 +365,7 @@ class PeopleModel implements ModelInterface
     {
         if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}people
+            UPDATE {$this->db_table}
             SET bad_login_ts = :timestamp
             WHERE people_id = :people_id
         ";
@@ -373,6 +373,7 @@ class PeopleModel implements ModelInterface
         $results = $this->o_db->update($sql, $a_values, true);
         return $results;
     }
+
     /**
      * Sets the user record to be logged in.
      * @param int $people_id
@@ -382,13 +383,14 @@ class PeopleModel implements ModelInterface
     {
         if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}people
+            UPDATE {$this->db_table}
             SET is_logged_in = 1
             WHERE people_id = :people_id
         ";
         $a_values = array(':people_id' => $people_id);
         return $this->o_db->update($sql, $a_values, true);
     }
+
     /**
      * Sets the user record to be logged out.
      * @param int $people_id
@@ -398,13 +400,14 @@ class PeopleModel implements ModelInterface
     {
         if ($people_id == -1) { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}people
+            UPDATE {$this->db_table}
             SET is_logged_in = 0
             WHERE people_id = :people_id
         ";
         $a_values = array(':people_id' => $people_id);
         return $this->o_db->update($sql, $a_values, true);
     }
+
     /**
      * Updates the user record with a new password
      * @param int    $people_id required
@@ -415,13 +418,14 @@ class PeopleModel implements ModelInterface
     {
         if ($people_id == -1 || $password == '') { return false; }
         $sql = "
-            UPDATE {$this->db_prefix}people
+            UPDATE {$this->db_table}
             SET password = :password
             WHERE id = :people_id
         ";
         $a_values = [':people_id' => $people_id, ':password' => $password];
         return $this->o_db->update($sql, $a_values, true);
     }
+
     /**
      * Updates the user record to be make the user active or inactive, normally inactive.
      * @param int $people_id   required id of a user
@@ -439,7 +443,7 @@ class PeopleModel implements ModelInterface
             $is_active = 0;
         }
         $sql = "
-            UPDATE {$this->db_prefix}people
+            UPDATE {$this->db_table}
             SET is_active = :is_active
             WHERE people_id = :people_id
         ";
@@ -463,7 +467,7 @@ class PeopleModel implements ModelInterface
             return false;
         }
         $delete_person_sql = "
-            DELETE FROM {$this->db_prefix}people
+            DELETE FROM {$this->db_table}
             WHERE people_id = :people_id
         ";
         if ($this->o_db->startTransaction()) {
@@ -490,6 +494,7 @@ class PeopleModel implements ModelInterface
         }
         return false;
     }
+
     /**
      * Gets the user values based on login_id or people_id.
      * @param int|string $people_id the people_id or login_id (as defined in the db)
@@ -515,10 +520,10 @@ class PeopleModel implements ModelInterface
                 p.password, p.description, p.is_logged_in, p.bad_login_count,
                 p.bad_login_ts, p.is_active, p.is_immutable, p.created_on,
                 g.group_id, g.group_name, g.group_description, g.group_auth_level
-            FROM ftp_people as p
-            JOIN ftp_people_group_map as pgm
+            FROM {$this->db_table} as p
+            JOIN {$this->db_table}_group_map as pgm
                 USING (people_id)
-            JOIN ftp_groups as g
+            JOIN {$this->db_prefix}groups as g
                 USING (group_id)
             WHERE {$where}
             ORDER BY g.group_auth_level DESC, g.group_name ASC
@@ -567,6 +572,7 @@ class PeopleModel implements ModelInterface
         }
         return array();
     }
+
     /**
      * Saves the person.
      * If the values contain a value of people_id, person is updated
@@ -703,6 +709,7 @@ class PeopleModel implements ModelInterface
         }
         return false;
     }
+
     /**
      * Returns an array used in the creation of people group map records.
      * @param array $group_id
@@ -737,6 +744,7 @@ class PeopleModel implements ModelInterface
         }
         return $a_group_ids;
     }
+
     /**
      * Returns an array mapping a person to the group(s) specified.
      * @param string $people_id
@@ -755,13 +763,4 @@ class PeopleModel implements ModelInterface
         return $a_return_map;
     }
 
-    ### Required by Interface ###
-    /**
-     * Returns error message.
-     * @return string
-     */
-    public function getErrorMessage()
-    {
-        return $this->error_message;
-    }
 }

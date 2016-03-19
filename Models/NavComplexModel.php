@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/NavComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0 β1
+ * @version   1.0.0-alpha.0
  * @date      2016-02-25 12:04:44
  * @note <b>Change Log</b>
- * - v1.0.0 β1 - Initial version                              - 02/25/2016 wer
+ * - v1.0.0-alpha.1 - Refactoring changes                          - 2016-03-19 wer
+ * - v1.0.0-alpha.0 - Initial version                              - 2016-02-25 wer
  */
 namespace Ritc\Library\Models;
 
@@ -26,14 +27,6 @@ class NavComplexModel
     use LogitTraits, DbUtilityTraits;
 
     /** @var string */
-    private $db_prefix;
-    /** @var string */
-    private $db_type;
-    /** @var string */
-    private $error_message;
-    /** @var \Ritc\Library\Services\DbModel */
-    private $o_db;
-    /** @var string */
     private $select_sql;
     /** @var string */
     private $select_order_sql;
@@ -44,9 +37,7 @@ class NavComplexModel
      */
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->getDbType();
-        $this->db_prefix = $this->getDbPrefix();
+        $this->setupProperties($o_db, 'navigation');
         $this->setSelectSql();
         $this->setSelectOrderSql();
     }
@@ -294,12 +285,4 @@ EOT;
         $this->select_order_sql = $string;
     }
 
-    /**
-     * Returns the SQL error message
-     * @return string
-     */
-    public function getErrorMessage()
-    {
-        return false;
-    }
 }

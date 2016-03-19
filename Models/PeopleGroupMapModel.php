@@ -35,22 +35,13 @@ class PeopleGroupMapModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var string */
-    private $db_prefix;
-    /** @var string */
-    private $db_type;
-    /** @var \Ritc\Library\Services\DbModel */
-    private $o_db;
-
     /**
      * PeopleGroupMapModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->getDbType();
-        $this->db_prefix = $this->getDbPrefix();
+        $this->setupProperties($o_db, 'people_group_map');
     }
 
     ### Basic CRUD commands, required by interface ###
@@ -88,11 +79,11 @@ class PeopleGroupMapModel implements ModelInterface
             }
         }
         $sql = "
-            INSERT INTO {$this->db_prefix}people_group_map (people_id, group_id)
+            INSERT INTO {$this->db_table} (people_id, group_id)
             VALUES (:people_id, :group_id)
         ";
         $a_table_info = [
-            'table_name'  => "{$this->db_prefix}people_group_map",
+            'table_name'  => $this->db_table,
             'column_name' => 'pgm_id'
         ];
         if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
@@ -104,6 +95,7 @@ class PeopleGroupMapModel implements ModelInterface
             return false;
         }
     }
+
     /**
      * Returns record(s) from the library_people_group_map table
      * @param array $a_search_values
@@ -119,17 +111,18 @@ class PeopleGroupMapModel implements ModelInterface
                 'people_id',
                 'pgm_id'
             );
-            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         $sql = "
             SELECT *
-            FROM {$this->db_prefix}people_group_map
+            FROM {$this->db_table}
             {$where}
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $this->o_db->search($sql, $a_search_values);
     }
+
     /**
      * Updates the record, NOT!
      * Method is required by interface.
@@ -144,6 +137,7 @@ class PeopleGroupMapModel implements ModelInterface
     {
         return false;
     }
+
     /**
      * Deletes a single record.
      * @param int $pgm_id required
@@ -154,11 +148,12 @@ class PeopleGroupMapModel implements ModelInterface
         if ($pgm_id == -1) { return false; }
         if (!ctype_digit($pgm_id)) { return false; }
         $sql = "
-            DELETE FROM {$this->db_prefix}people_group_map
+            DELETE FROM {$this->db_table}
             WHERE pgm_id = :pgm_id
         ";
         return $this->o_db->delete($sql, array(':pgm_id' => $pgm_id), true);
     }
+
     /**
      * Deletes the record(s) in table based on group id(s).
      * @param int|array $group_id either '1' or ['1', '2', '3']
@@ -167,7 +162,7 @@ class PeopleGroupMapModel implements ModelInterface
     public function deleteByGroupId($group_id = -1)
     {
         $sql = "
-            DELETE FROM {$this->db_prefix}people_group_map
+            DELETE FROM {$this->db_table}
             WHERE group_id = :group_id
         ";
         $a_values = array();
@@ -181,6 +176,7 @@ class PeopleGroupMapModel implements ModelInterface
         }
         return $this->o_db->delete($sql, $a_values, true);
     }
+
     /**
      * Deletes the records based on people id.
      * @param int $people_id
@@ -189,19 +185,19 @@ class PeopleGroupMapModel implements ModelInterface
     public function deleteByPeopleId($people_id = -1)
     {
         $sql = "
-            DELETE FROM {$this->db_prefix}people_group_map
+            DELETE FROM {$this->db_table}
             WHERE people_id = :people_id
         ";
         return $this->o_db->delete($sql, array(':people_id' => $people_id), true);
     }
 
-    ### Required by Interface ###
     /**
      * Returns error message.
+     * Overrides the trait method.
      * @return string
      */
     public function getErrorMessage()
     {
-        return $this->o_db->getSqlErrorMessage();
+        return $this->o_db->retrieveFormatedSqlErrorMessage();
     }
 }

@@ -35,15 +35,9 @@ class RolesModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
-    private $db_prefix;
-    private $db_type;
-    private $o_db;
-
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->getDbType();
-        $this->db_prefix = $this->getDbPrefix();
+        $this->setupProperties($o_db, 'roles');
     }
 
     ### BASE CRUD ###
@@ -113,11 +107,11 @@ class RolesModel implements ModelInterface
                 'role_level',
                 'role_immutable'
             );
-            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $$this->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY 'role_name'";
@@ -144,7 +138,7 @@ class RolesModel implements ModelInterface
             return -2;
         }
         $a_allowed_keys = ['role_id', 'role_name', 'role_description', 'role_level', 'role_immutable'];
-        $a_values = $$this->removeBadKeys($a_allowed_keys, $a_values);
+        $a_values = $this->removeBadKeys($a_allowed_keys, $a_values);
 
         if (isset($a_values['role_level']) && $a_values['role_level'] <= 2) {
             return -3;
@@ -157,7 +151,7 @@ class RolesModel implements ModelInterface
             }
         }
 
-        $set_sql = $$this->buildSqlSet($a_values, ['role_id']);
+        $set_sql = $this->buildSqlSet($a_values, ['role_id']);
         $sql = "
             UPDATE {$this->db_prefix}roles
             {$set_sql}
@@ -174,7 +168,7 @@ class RolesModel implements ModelInterface
     }
     /**
      * Deletes a role record.
-     * @param string $role_id
+     * @param int $role_id
      * @return array
      */
     public function delete($role_id = -1)
@@ -208,7 +202,6 @@ class RolesModel implements ModelInterface
      */
     public function readById($role_id = -1)
     {
-        $meth = __METHOD__ . '.';
         if ($role_id == -1) {
             return -2;
         }
@@ -240,7 +233,7 @@ class RolesModel implements ModelInterface
     /**
      * Selects the roles that are mapped to a group.
      * @param int $group_id
-     * return array
+     * @return array|int
      */
     public function readRolesForGroup($group_id = -1)
     {

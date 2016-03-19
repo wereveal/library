@@ -9,19 +9,20 @@
  * @version   2.0.0
  * @date      2015-08-28 08:01:33
  * @note <b>Change Log</b>
- * - v2.0.0 - realized a stupid error in thinking, this should produce         - 08/28/2015 wer
+ * - v2.0.1 - refactoring of DbTraits reflected here (caused strict standards error).                   - 2016-03-19 wer
+ * - v2.0.0 - realized a stupid error in thinking, this should produce                                  - 08/28/2015 wer
  *              an instance of the PDO not an instance of the factory itself duh!
  *              I believe this was a result of not thinking how to do it correctly.
  *              Renamed class to match what the factory produces.
- * - v1.6.0 - no longer extends Base class, uses DbTraits and LogitTraits      - 08/19/2015 wer
- * - v1.5.3 - moved to the Factories namespace                                 - 01/27/2015 wer
- * - v1.5.2 - moved to Services namespace                                      - 11/15/2014 wer
- * - v1.5.1 - changed to implement the changes to the Base class               - 09/23/2014 wer
- * - v1.5.0 - massive change to the factory, cutting out the fat               - 03/25/2014 wer
- * - v1.0.0 - figured it was time to take this out of beta, with one addition. - 02/24/2014 wer
- * - v0.1.2 - minor package change required minor modification                 - 12/19/2013 wer
- * - v0.1.1 - added two additional places the config files can exist           - 2013-11-08
- * - v0.1.0 - initial file creation - 2013-11-06
+ * - v1.6.0 - no longer extends Base class, uses DbTraits and LogitTraits                               - 08/19/2015 wer
+ * - v1.5.3 - moved to the Factories namespace                                                          - 01/27/2015 wer
+ * - v1.5.2 - moved to Services namespace                                                               - 11/15/2014 wer
+ * - v1.5.1 - changed to implement the changes to the Base class                                        - 09/23/2014 wer
+ * - v1.5.0 - massive change to the factory, cutting out the fat                                        - 03/25/2014 wer
+ * - v1.0.0 - figured it was time to take this out of beta, with one addition.                          - 02/24/2014 wer
+ * - v0.1.2 - minor package change required minor modification                                          - 12/19/2013 wer
+ * - v0.1.1 - added two additional places the config files can exist                                    - 2013-11-08 wer
+ * - v0.1.0 - initial file creation                                                                     - 2013-11-06 wer
  */
 namespace Ritc\Library\Factories;
 
@@ -38,8 +39,6 @@ class PdoFactory
 {
     use DbTraits, LogitTraits;
 
-    /** @var array */
-    private $a_db_config;
     /** @var array */
     private static $factory_rw_instance = array();
     /** @var array */

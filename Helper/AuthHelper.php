@@ -11,6 +11,9 @@
  * @version   5.1.0
  * @date      2016-03-18 15:38:04
  * @note <b>Change Log</b>
+ * - v5.2.0 - Adding DbUtilityTraits only pointed out problems.     - 2016-03-19 wer
+ *            - Removed DbUtilityTraits
+ *            - fixed the problems.
  * - v5.1.0 - Part of a refactoring, added DbUtilityTraits          - 2016-03-18 wer
  * - v5.0.0 - removed roles from code                               - 11/06/2015 wer
  * - v4.4.1 - bug fix                                               - 10/06/2015 wer
@@ -18,16 +21,17 @@
  * - v4.3.2 - added getHighestRoleLevel method                      - 09/25/2015 wer
  * - v4.3.1 - added logout method                                   - 09/24/2015 wer
  * - v4.3.0 - two changes. isDefaultPerson is now isImmutablePerson - 09/03/2015 wer
- *              isRouteAllowed now checks for group to route mapping
- *              as well as role to route mapping, defaults to group.
+ *            - isRouteAllowed now checks for group to route mapping
+ *            - role to route mapping, defaults to group.
  * - v4.2.6 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
  * - v4.2.5 - bug fixes, a change in PeopleModel->readInfo          - 08/14/2015 wer
  * - v4.2.4 - more references to user to person changes             - 08/04/2015 wer
  * - v4.2.3 - refactored references to user into person             - 01/26/2015 wer
  * - v4.2.2 - modified to work with user model changes              - 01/22/2015 wer
  * - v4.2.1 - bug fixes                                             - 01/16/2015 wer
- * - v4.2.0 - change the name of the file. It wasn't doing access   - 01/14/2015 wer
- *              it was doing authorization.
+ * - v4.2.0 - change the name of the file.                          - 01/14/2015 wer
+ *            - It wasn't doing access
+ *            - It was doing authorization and authentication.
  * - v4.1.1 - changed the login method to return an array always    - 01/14/2015 wer
  * - v4.1.0 - moved to the Helper namespace, changed name           - 12/09/2014 wer
  * - v4.0.5 - removed remaining db code, fixed bugs                 - 12/09/2014 wer
@@ -35,18 +39,18 @@
  * - v4.0.3 - moved to the Services namespace                       - 11/15/2014 wer
  * - v4.0.2 - part of the refactoring of the user model             - 11/11/2014 wer
  * - v4.0.1 - updated to implement the changes to the Base class    - 09/23/2014 wer
- *              Bug fixes.
+ *            - Bug fixes.
  * - v4.0.0 - Changed to use the user/group/role model classes      - 09/12/2014 wer
  * - v3.6.1 - Changed to use DbModel defined table prefix,          - 02/24/2014 wer
- *              bug fix, added anti-spambot code to login
- *              and some code clean up
+ *            - bug fix, added anti-spambot code to login
+ *            - some code clean up
  * - v3.6.0 - Database changes, added new user role connector table - 11/12/2013 wer
- *              New and revised methods to match database changes.
- *              General Clean up of the code.
+ *            - New and revised methods to match database changes.
+ *            - General Clean up of the code.
  * - v3.5.5 - refactor for change in the database class             - 2013-11-06 wer
  * - v3.5.4 - changed namespace and library reorg                   - 07/30/2013 wer
  * - v3.5.3 - changed namespace to match my framework namespace,    - 04/22/2013 wer
- *              refactored to match Elog method name change
+ *            - refactored to match Elog method name change
  * - v3.5.2 - database methods were renamed, changed to match
  * - v3.5.1 - changed namespace to match Symfony structure
  * - v3.5.0 - new methods to handle user groups, lots of minor changes
@@ -63,7 +67,6 @@ use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
-use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -73,12 +76,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class AuthHelper
 {
-    use LogitTraits, DbUtilityTraits;
+    use LogitTraits;
 
-    /** @var string */
-    private $db_prefix;
-    /** @var DbModel */
-    private $o_db;
     /** @var GroupsModel */
     private $o_groups;
     /** @var Router */
@@ -94,12 +93,12 @@ class AuthHelper
      */
     public function __construct(Di $o_di)
     {
-        $this->o_db      = $o_di->get('db');
+        /** @var DbModel $o_db */
+        $o_db            = $o_di->get('db');
         $this->o_session = $o_di->get('session');
         $this->o_router  = $o_di->get('router');
-        $this->o_people  = new PeopleModel($this->o_db);
-        $this->o_groups  = new GroupsModel($this->o_db);
-        $this->db_prefix = $this->getDbPrefix();
+        $this->o_people  = new PeopleModel($o_db);
+        $this->o_groups  = new GroupsModel($o_db);
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people->setElog($this->o_elog);

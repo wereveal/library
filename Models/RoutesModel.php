@@ -37,14 +37,6 @@ class RoutesModel implements ModelInterface
 
     /** @var array */
     private $db_fields;
-    /** @var string */
-    private $db_prefix;
-    /** @var string */
-    private $db_table;
-    /** @var string */
-    private $db_type;
-    /** @var \Ritc\Library\Services\DbModel */
-    private $o_db;
 
     /**
      * RoutesModel constructor.
@@ -52,10 +44,7 @@ class RoutesModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->getDbType();
-        $this->db_prefix = $this->getDbPrefix();
-        $this->db_table  = $this->db_prefix . "routes";
+        $this->setupProperties($o_db, 'routes');
         $this->db_fields = $o_db->selectDbColumns($this->db_table);
     }
 
@@ -119,10 +108,10 @@ class RoutesModel implements ModelInterface
             $log_message = 'Search Values ' . var_export($a_search_values, TRUE);
             $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-            $where = $$this->buildSqlWhere($a_search_values, $a_search_params, $a_allowed_keys);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params, $a_allowed_keys);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $$this->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY route_class";
@@ -151,8 +140,8 @@ class RoutesModel implements ModelInterface
             return false;
         }
         $a_allowed_keys = $this->db_fields;
-        $a_values = $$this->removeBadKeys($a_allowed_keys, $a_values);
-        $set_sql = $$this->buildSqlSet($a_values, ['route_id']);
+        $a_values = $this->removeBadKeys($a_allowed_keys, $a_values);
+        $set_sql = $this->buildSqlSet($a_values, ['route_id']);
         $sql = "
             UPDATE {$this->db_table}
             {$set_sql}
@@ -224,11 +213,12 @@ EOT;
     }
 
     /**
-     * Implements the ModelInterface method, getErrorMessage.
+     * Returns the sql error message.
+     * Overrides method in DbUtilityTraits.
      * return string
      */
     public function getErrorMessage()
     {
-        return $this->o_db->getSqlErrorMessage();
+        return $this->o_db->retrieveFormatedSqlErrorMessage();
     }
 }

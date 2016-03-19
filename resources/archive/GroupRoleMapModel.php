@@ -92,8 +92,8 @@ class GroupRoleMapModel implements ModelInterface
                 'group_id',
                 'grm_id'
             );
-            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         $sql = "
             SELECT *

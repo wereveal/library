@@ -24,16 +24,9 @@ class RouterRolesMapModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
-    private $db_prefix;
-    private $db_type;
-    private $error_message;
-    private $o_db;
-
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->getDbType();
-        $this->db_prefix = $this->getDbPrefix();
+        $this->setupProperties($o_db, 'routes_roles_map');
     }
 
     ### Basic CRUD commands, required by interface ###
@@ -86,8 +79,8 @@ class RouterRolesMapModel implements ModelInterface
                 'route_id',
                 'rrm_id'
             );
-            $a_search_values = $$this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         $sql = "
             SELECT *

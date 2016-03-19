@@ -5,10 +5,10 @@
  * @file      Ritc/Library/Models/NavigationModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0 β1
+ * @version   1.0.0-alpha.0
  * @date      2016-02-24 13:24:09
  * @note <b>Change Log</b>
- * - v1.0.0 β1 - Initial version                              - 02/24/2016 wer
+ * - v1.0.0-alpha.0 - Initial version                              - 02/24/2016 wer
  */
 namespace Ritc\Library\Models;
 
@@ -29,14 +29,6 @@ class NavigationModel implements ModelInterface
 
     /** @var array */
     private $a_field_names = array();
-    /** @var string */
-    private $db_prefix;
-    /** @var string */
-    private $db_type;
-    /** @var string */
-    private $error_message;
-    /** @var \Ritc\Library\Services\DbModel */
-    private $o_db;
 
     /**
      * PageModel constructor.
@@ -44,9 +36,7 @@ class NavigationModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->getDbType();
-        $this->db_prefix = $this->getDbPrefix();
+        $this->setupProperties($o_db, 'navigation');
         $this->setFieldNames();
     }
 
@@ -72,12 +62,12 @@ class NavigationModel implements ModelInterface
 
         $insert_value_names = $this->buildSqlInsert($a_values, $this->a_field_names);
         $sql = "
-            INSERT INTO {$this->db_prefix}navigation (
+            INSERT INTO {$this->db_table} (
             {$insert_value_names}
             )
         ";
         $a_table_info = [
-            'table_name'  => "{$this->db_prefix}navigation",
+            'table_name'  => "{$this->db_table}",
             'column_name' => 'nav_id'
         ];
         $results = $this->o_db->insert($sql, $a_values, $a_table_info);
@@ -108,10 +98,10 @@ class NavigationModel implements ModelInterface
                 ? ['order_by' => 'nav_parent_id ASC, nav_order ASC, nav_name ASC']
                 : $a_search_params;
             $a_search_values = Arrays::removeUndesiredPairs($a_search_values, $this->a_field_names);
-            $where = $$this->buildSqlWhere($a_search_values, $a_search_params);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $$this->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY nav_parent_id ASC, nav_order ASC, nav_name ASC";
@@ -121,7 +111,7 @@ class NavigationModel implements ModelInterface
         $sql =<<<EOT
 
 SELECT {$select_me}
-FROM {$this->db_prefix}navigation
+FROM {$this->db_table}
 {$where}
 
 EOT;
@@ -148,9 +138,9 @@ EOT;
             return false;
         }
         $a_values = Arrays::removeUndesiredPairs($a_values, $this->a_field_names);
-        $set_sql = $$this->buildSqlSet($a_values, ['nav_id']);
+        $set_sql = $this->buildSqlSet($a_values, ['nav_id']);
         $sql = "
-            UPDATE {$this->db_prefix}navigation
+            UPDATE {$this->db_table}
             {$set_sql}
             WHERE nav_id = :nav_id
         ";
@@ -187,7 +177,7 @@ EOT;
         }
         else {
             $sql = "
-                DELETE FROM {$this->db_prefix}navigation
+                DELETE FROM {$this->db_table}
                 WHERE nav_id = :nav_id
             ";
             $results = $this->o_db->delete($sql, array(':nav_id' => $nav_id), true);
@@ -215,7 +205,7 @@ EOT;
         }
         $sql =<<<EOT
 SELECT DISTINCT nav_level
-FROM {$this->db_prefix}navigation
+FROM {$this->db_table}
 WHERE nav_parent_id = :nav_parent_id
 AND nav_id != nav_parent_id
 EOT;

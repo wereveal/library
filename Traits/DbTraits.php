@@ -1,6 +1,6 @@
 <?php
 /**
- * @brief     Common functions that would be used in several database classes.
+ * @brief     Common functions that could be used in several database classes.
  * @ingroup   lib_traits
  * @file      DbTraits.php
  * @namespace Ritc\Library\Traits
@@ -8,7 +8,7 @@
  * @version   2.0.0
  * @date      2016-03-18 15:02:27
  * @note <b>Change Log</b>
- *   v2.0.0   - Moved a couple methods from DbModel to here         - 2016-03-18 wer
+ *   v2.0.0   - Moved a several methods from DbModel to here        - 2016-03-18 wer
  * - v1.0.0   - first working version                               - 11/27/2015 wer
  * - v1.0.0ß1 - initial version                                     - 08/19/2015 wer
  */
@@ -20,13 +20,18 @@ namespace Ritc\Library\Traits;
  * @package Ritc\Library\Traits
  */
 trait DbTraits {
+    use DbCommonTraits;
+
     /** @var array */
     private $a_db_config;
     /** @var string */
-    private $db_prefix;
+    protected $db_prefix;
     /** @var string */
-    private $db_type;
+    protected $db_type;
+    /** @var  string */
+    protected $error_message;
 
+    ### Db Config Utilities ###
     /**
      * Creates the class properties of a_db_config, db_type and db_prefix from config file or array if passed in.
      * Prefer config file but array is allowed so this can be called without a config file.
@@ -68,97 +73,26 @@ trait DbTraits {
     }
 
     /**
-     * Determines if any required keys are missing
-     * @param array $a_required_keys required
-     * @param array $a_check_values required
-     * @return array $a_missing_keys
-     */
-    public function findMissingKeys(array $a_required_keys = array(), array $a_check_values = array())
-    {
-        if ($a_required_keys == array() || $a_check_values == array()) { return array(); }
-        $a_missing_keys = array();
-        foreach ($a_required_keys as $key) {
-            if (
-                array_key_exists($key, $a_check_values)
-                ||
-                array_key_exists(':' . $key, $a_check_values)
-                ||
-                array_key_exists(str_replace(':', '', $key), $a_check_values)
-            ) {
-                // we are happy
-            }
-            else {
-                $a_missing_keys[] = $key;
-            }
-        }
-        return $a_missing_keys;
-    }
-
-    /**
-     * Changes array keys to be compatible with prepared statements.
-     * @param array $array required associative array, named keys
-     * @return array fixed key names
-     */
-    public function prepareKeys(array $array = array())
-    {
-        $a_new = array();
-        if (Arrays::isAssocArray($array)) {
-            foreach ($array as $key=>$value) {
-                $new_key = strpos($key, ':') === 0 ? $key : ':' . $key;
-                $a_new[$new_key] = $value;
-            }
-            return $a_new;
-        }
-        elseif (Arrays::isAssocArray($array[0])) {
-            foreach ($array as $a_keys) {
-                $results = $this->prepareKeys($a_keys);
-                if ($results === false) {
-                    return false;
-                }
-                $a_new[] = $results;
-            }
-            return $a_new;
-        }
-        else {
-            $this->logIt('The array must be an associative array to fix.', LOG_OFF, __METHOD__);
-            return false;
-        }
-    }
-
-    /**
-     * Changes array values to help build a prepared statement primarily the WHERE.
-     * @param array $array key/value pairs to fix
-     * @return array fixed where needed
-     */
-    public function prepareValues(array $array)
-    {
-        $a_new = array();
-        if (Arrays::isAssocArray($array)) {
-            foreach ($array as $key => $value) {
-                $new_key = strpos($key, ':') === 0 ? $key : ':' . $key;
-                $a_new[$key] = $new_key;
-            }
-            return $a_new;
-        }
-        elseif (Arrays::isAssocArray($array[0])) {
-            return $this->prepareValues($array[0]);
-        }
-        else {
-            $this->logIt('The array must be an associative array to fix.', LOG_OFF, __METHOD__);
-            return false;
-        }
-    }
-
-    /**
-     * @param string $config_file
+     * @param string $config_file  A file which returns an array with the following key=>value pairs:
+     *                             - 'driver'   => 'mysql' || 'pgsql',
+     *                             - 'host'     => 'localhost',
+     *                             - 'port'     => '3306',
+     *                             - 'name'     => 'db_name',
+     *                             - 'user'     => 'example_user',
+     *                             - 'password' => 'letmein',
+     *                             - 'userro'   => 'example_read_only_user', (required only if db is set to ro)
+     *                             - 'passro'   => 'letmein', (required only if db is set to ro)
+     *                             - 'persist'  => false, (debate over if persist should be true)
+     *                             - 'prefix'   => 'app_' (prefix to the database tables)
+     * @param string $special_path Optional path to use instead of the standard locations.
      * @return bool|array
      */
-    private function retrieveDbConfig($config_file = 'db_config.php')
+    private function retrieveDbConfig($config_file = 'db_config.php', $special_path = '')
     {
         $config_w_apppath  = '';
         $config_w_privpath = '';
         $config_w_sitepath = '';
-        $default_path     = $_SERVER['DOCUMENT_ROOT'] . '/config/' . $config_file;
+        $config_w_path     = $_SERVER['DOCUMENT_ROOT'] . '/config/' . $config_file;
         if (defined('APP_PATH')) {
             $config_w_apppath = APP_PATH . '/config/' . $config_file;
         }
@@ -168,7 +102,13 @@ trait DbTraits {
         if (defined('SITE_PATH')) {
             $config_w_sitepath = SITE_PATH . '/config/' . $config_file;
         }
-        if ($config_w_privpath != '' && file_exists($config_w_privpath)) {
+        if ($special_path != '') {
+            $config_w_special_path = $special_path . '/' . $config_file;
+            if (file_exists($config_w_special_path)) {
+                $config_w_path = $config_w_special_path;
+            }
+        }
+        elseif ($config_w_privpath != '' && file_exists($config_w_privpath)) {
             $config_w_path = $config_w_privpath;
         }
         elseif ($config_w_apppath != '' && file_exists($config_w_apppath)) {
@@ -176,9 +116,6 @@ trait DbTraits {
         }
         elseif ($config_w_sitepath != '' && file_exists($config_w_sitepath)) {
             $config_w_path = $config_w_sitepath;
-        }
-        else {
-            $config_w_path = $default_path;
         }
         if (!file_exists($config_w_path)) {
             return false;
@@ -191,5 +128,73 @@ trait DbTraits {
             return false;
         }
     }
+
+    ### General Utilities ###
+
+    ### GETters and SETters ###
+    /**
+     * Gets the array $a_db_config which holds the config for the db.
+     * @return array
+     */
+    public function getDbConfig()
+    {
+        return $this->a_db_config;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDbPrefix()
+    {
+        return $this->db_prefix;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDbType()
+    {
+        return $this->db_type;
+    }
+
+    /**
+     * Returns the SQL error message
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->error_message;
+    }
+
+    /**
+     * @param string $value This method does nothing, intentionally.
+     * @return null
+     */
+    protected function setDbConfig($value)
+    {
+        unset($value);
+        return null; // db_config can only be set privately
+    }
+
+    /**
+     * @param string $value
+     * @return null
+     */
+    protected function setDbPrefix($value)
+    {
+        unset($value);
+        return null; // db prefix can only be set privately
+    }
+
+    /**
+     * @param string $value
+     * @return null
+     */
+    protected function setDbType($value = '')
+    {
+        unset($value);
+        return null; // db type can only be set privately
+    }
+
 
 }
