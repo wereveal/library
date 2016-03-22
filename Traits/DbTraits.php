@@ -74,16 +74,18 @@ trait DbTraits {
 
     /**
      * @param string $config_file  A file which returns an array with the following key=>value pairs:
-     *                             - 'driver'   => 'mysql' || 'pgsql',
-     *                             - 'host'     => 'localhost',
-     *                             - 'port'     => '3306',
-     *                             - 'name'     => 'db_name',
-     *                             - 'user'     => 'example_user',
-     *                             - 'password' => 'letmein',
-     *                             - 'userro'   => 'example_read_only_user', (required only if db is set to ro)
-     *                             - 'passro'   => 'letmein', (required only if db is set to ro)
-     *                             - 'persist'  => false, (debate over if persist should be true)
-     *                             - 'prefix'   => 'app_' (prefix to the database tables)
+     * \code
+     * 'driver'   => 'mysql' || 'pgsql',
+     * 'host'     => 'localhost',
+     * 'port'     => '3306',
+     * 'name'     => 'db_name',
+     * 'user'     => 'example_user',
+     * 'password' => 'letmein',
+     * 'userro'   => 'example_read_only_user', (required only if db is set to ro)
+     * 'passro'   => 'letmein', (required only if db is set to ro)
+     * 'persist'  => false, (debate over if persist should be true)
+     * 'prefix'   => 'app_' (prefix to the database tables)
+     * \endcode
      * @param string $special_path Optional path to use instead of the standard locations.
      * @return bool|array
      */

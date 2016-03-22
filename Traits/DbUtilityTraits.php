@@ -25,6 +25,8 @@ trait DbUtilityTraits {
 
     /** @var array */
     protected $a_db_config;
+    /** @var array  */
+    protected $a_db_fields = [];
     /** @var string */
     protected $db_prefix = '';
     /** @var  string */
@@ -40,30 +42,49 @@ trait DbUtilityTraits {
     /**
      * Generic method to create a new record in a table.
      * Requires both parameters to be complete to work.
-     * @param array $a_values         The values to be saved in a new record.
-     * @param array $a_parameters     [
-     *                                 'a_required_keys' => [],
-     *                                 'a_field_names' => [],
-     *                                 'a_psql' => [
-     *                                     'table_name'  => string,
-     *                                     'column_name' => string
-     *                                ]]
+     * @param array $a_values      The values to be saved in a new record.
+     * @param array $a_parameters  \code
+     * ['a_required_keys' => [],
+     *  'a_field_names'   => [],
+     *  'a_psql'          => [
+     *      'table_name'  => string,
+     *      'column_name' => string
+     * ]] \endcode
+     * @see \ref createparams
      * @return array|bool
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = [])
     {
         $meth = __METHOD__ . '.';
-        $a_values        = $this->o_db->prepareKeys($a_values);
-        $db_table        = $a_parameters['psql']['table_name'];
-        $a_required_keys = $a_parameters['a_required_keys'];
-        $a_field_names   = $a_parameters['a_field_names'];
+        $a_values = $this->o_db->prepareKeys($a_values);
+
+        $db_table = $this->db_table != ''
+            ? $this->db_table
+            : isset($a_parameters['a_psql']['table_name'])
+                ? $a_parameters['a_psql']['table_name']
+                : '';
+
+        $a_required_keys = isset($a_parameters['a_required_keys'])
+            ? $this->prepareListArray($a_parameters['a_required_keys'])
+            : [];
+
+        $a_field_names = isset($a_parameters['a_field_names'])
+            ? $this->prepareListArray($a_parameters['a_field_names'])
+            : $this->a_db_fields != []
+                ? $this->prepareListArray($this->a_db_fields)
+                : [];
+
+        $a_psql = isset($a_parameters['a_psql'])
+            ? $a_parameters['a_psql']
+            : ['table_name' => $this->db_table];
+
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_values);
             $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
             return false;
         }
-        $a_allowed_keys = $this->prepareListArray($a_field_names);
-        $sql_set = $this->buildSqlInsert($a_values, $a_allowed_keys);
+
+        $sql_set = $this->buildSqlInsert($a_values, $a_field_names);
         $sql =<<<SQL
 INSERT INTO {$db_table} (
 {$sql_set}
@@ -71,7 +92,6 @@ INSERT INTO {$db_table} (
 
 SQL;
         $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
-        $a_psql = $a_parameters['a_psql'];
         $results = $this->o_db->insert($sql, $a_values, $a_psql);
         if ($results) {
             return $this->o_db->getNewIds();
@@ -82,25 +102,28 @@ SQL;
     /**
      * Generic method to read records from a table.
      * @param array $a_parameters Required ['table_name']
-     *                            May also include:
-     *                            - 'a_fields'        The fields to return ['id', 'name', 'is_alive'] or ['id' as 'id', 'name' as 'the_name', 'is_alive' as 'is_dead']
-     *                            - 'a_search_for'    What to search for    ['id' => 3]
-     *                            - 'return_format'   assoc, num, both - defaults to assoc
-     *                            - 'order_by'        The order to return  'is_alive DESC, name ASC'
-     *                            - 'search_type'     Either 'AND' | 'OR'
-     *                            - 'limit_to'        Limit the number of records to return
-     *                            - 'starting_from'   Which record number to start a limited return
-     *                            - 'comparison_type' What kind of comparison operator to use for ALL WHEREs
-     *                            - 'where_exists'    Either true or false
+     * @note $a_parameters may also include:\verbatim
+     * 'a_fields'        The fields to return ['id', 'name', 'is_alive'] or ['id' as 'id', 'name' as 'the_name', 'is_alive' as 'is_dead']
+     * 'a_search_for'    What to search for    ['id' => 3]
+     * 'return_format'   assoc, num, both - defaults to assoc
+     * 'order_by'        The order to return  'is_alive DESC, name ASC'
+     * 'search_type'     Either 'AND' | 'OR'
+     * 'limit_to'        Limit the number of records to return
+     * 'starting_from'   Which record number to start a limited return
+     * 'comparison_type' What kind of comparison operator to use for ALL WHEREs
+     * 'where_exists'    Either true or false \endverbatim
      * @return bool|array
      */
     protected function genericRead(array $a_parameters = [])
     {
-        if (!isset($a_parameters['table_name'])) {
+        if (!isset($a_parameters['table_name']) && $this->db_table == '') {
             return false;
         }
-        else {
+        elseif (isset($a_parameters['table_name'])) {
             $table_name = $a_parameters['table_name'];
+        }
+        else {
+            $table_name = $this->db_table;
         }
         $a_fields = isset($a_parameters['a_fields'])
             ? $a_parameters['a_fields']
@@ -127,34 +150,50 @@ SQL;
     }
 
     /**
-     * Generic method to update values in a table.
-     * @param array $a_values     Required
-     * @param array $a_parameter  Required ['table_name', 'id_field_name', 'record_id']
+     * Generic method to update values in a table WHERE primary index is as supplied.
+     * Needs the primary index name. The primary index value also needs to
+     * be in the $a_values. It only updates record(s) WHERE the primary index = primary index value.
+     * @param array  $a_values           Required
+     * @param string $primary_index_name Required
      * @return bool
      */
-    protected function genericUpdate(array $a_values = [], array $a_parameter = [])
+    protected function genericUpdate(array $a_values = [], $primary_index_name = '')
     {
-        if (   !isset($a_parameter['table_name'])
-            || !isset($a_parameter['id_field_name'])
-            || !isset($a_parameter['record_id'])
-            || count($a_values) < 1
-        ) {
+        if ($a_values == [] || $primary_index_name == '') {
             return false;
         }
-        return false;
+        $a_required_keys = array($primary_index_name);
+        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
+            return false;
+        }
+        $a_allowed_keys = $this->prepareListArray($this->db_fields);
+        $set_sql = $this->buildSqlSet($a_values, $a_required_keys, $a_allowed_keys);
+
+        $sql =<<<SQL
+UPDATE {$this->db_table} 
+{$set_sql} 
+WHERE {$primary_index_name} = :{$primary_index_name}
+
+SQL;
+        return $this->o_db->update($sql, $a_values, true);
     }
 
     /**
-     * @param int   $record_id     Required
-     * @param array $a_parameters  Required
+     * Deletes a record based on the primary index value.
+     * @param string $primary_index_name Required
+     * @param int    $record_id          Required
      * @return bool
      */
-    protected function genericDelete($record_id = -1, array $a_parameters = [])
+    protected function genericDelete($primary_index_name = '', $record_id = -1)
     {
-        if ($record_id < 1 || count($a_parameters) < 1) {
+        if ($primary_index_name == '' || $record_id < 1) {
             return false;
         }
-        return false;
+        $sql =<<<SQL
+DELETE FROM {$this->db_table} 
+WHERE {$primary_index_name} = :{$primary_index_name}
+SQL;
+        return $this->o_db->delete($sql, [':' . $primary_index_name => $record_id], true);
     }
 
     #### Utility Methods ####
@@ -163,9 +202,9 @@ SQL;
      * It produces a string in "prepared" format, e.g. ":fred" for the values.
      * It removes any pair whose key is not in the allowed keys array.
      * @param array $a_values       assoc array of values to that will be inserted.
-     *                             It should be noted that only the key name is important,
-     *                             but using the array of the actual values being inserted
-     *                             ensures that only those values are inserted.
+     *                              It should be noted that only the key name is important,
+     *                              but using the array of the actual values being inserted
+     *                              ensures that only those values are inserted.
      * @param array $a_allowed_keys list array of key names that are allowed in the a_values array.
      * @return string
      */
@@ -229,9 +268,9 @@ SQL;
     /**
      * Builds the SET part of an UPDATE sql statement.
      * Provides optional abilities to skip certain pairs and removed undesired pairs.
-     * @param array $a_values required key=>value pairs
-     *                       pairs are those to be used in the statement fragment.
-     * @param array $a_skip_keys optional list of keys to skip in the set statement
+     * @param array $a_values       required key=>value pairs
+     *                              pairs are those to be used in the statement fragment.
+     * @param array $a_skip_keys    optional list of keys to skip in the set statement
      * @param array $a_allowed_keys optional list of allowed keys to be in the values array.
      * @return string $set_sql
      */
@@ -262,9 +301,9 @@ SQL;
      * Builds the WHERE section of a SELECT stmt.
      * Also optionally builds the ORDER BY and LIMIT section of a SELECT stmt.
      * It might be noted that if first two arguments are empty, it returns a blank string.
-     * @param array $a_search_for optional assoc array field_name=>field_value
+     * @param array $a_search_for        optional assoc array field_name=>field_value
      * @param array $a_search_parameters optional allows one to specify various settings
-     * @param array $a_allowed_keys optional list array
+     * @param array $a_allowed_keys      optional list array
      *
      * @ref searchparams For more info on a_search_parameters.
      *
@@ -408,6 +447,7 @@ SQL;
         $this->db_type     = $o_db->getDbType();
         if ($table_name != '') {
             $this->db_table = $this->db_prefix . $table_name;
+            $this->a_db_fields = $o_db->selectDbColumns($this->db_table);
         }
     }
 

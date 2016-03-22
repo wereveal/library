@@ -11,11 +11,11 @@
  * @date      2014-09-25 15:18:00
  * @note <b>Change Log</b>
  * - v1.2.0 - changed back to abstract making it easer for other abstracts to extend it - 09/25/2014 wer
- *              Note that there may have been an interface for it but it no longer exists, not sure when.
- *              Also, it should be an abstract since it should never be instantiated by itself.
+ *            Note that there may have been an interface for it but it no longer exists, not sure when.
+ *            Also, it should be an abstract since it should never be instantiated by itself.
  * - v1.1.0 - allow elog to be injected into a class else ignores logging. 09/23/2014 wer
  * - v1.0.4 - changed back to a class. Couldn't figure out why
- *              it should be abstract. Made an interface for it just because. 12/19/2013
+ *            it should be abstract. Made an interface for it just because. 12/19/2013
  * - v1.0.3 - namespace change, changed to an abstract class
  */
 namespace Ritc\Library\Abstracts;
