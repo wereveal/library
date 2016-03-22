@@ -1,33 +1,40 @@
 <?php
 /**
- *  @brief     View for the Manager page.
- *  @ingroup   ritc_library lib_views
- *  @file      ManagerView.php
- *  @namespace Ritc\Library\Views
- *  @class     ManagerView
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.1
- *  @date      2015-12-12 16:18:32
- *  @note <pre><b>Change Log</b>
- *      v1.1.1   - Implent TWIG_PREFIX                          - 12/12/2015 wer
- *      v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
- *      v1.0.0   - First stable version                         - 01/16/2015 wer
- *      v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
- *      v1.0.0β1 - Initial version                              - 11/08/2014 wer
- *  </pre>
- **/
+ * @brief     View for the Manager page.
+ * @ingroup   lib_views
+ * @file      ManagerView.php
+ * @namespace Ritc\Library\Views
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.1
+ * @date      2015-12-12 16:18:32
+ * @note <b>Change Log</b>
+ * - v1.1.1   - Implent TWIG_PREFIX                          - 12/12/2015 wer
+ * - v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
+ * - v1.0.0   - First stable version                         - 01/16/2015 wer
+ * - v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                              - 11/08/2014 wer
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
+/**
+ * Class ManagerView
+ * @class   ManagerView
+ * @package Ritc\Library\Views
+ */
 class ManagerView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
+    /**
+     * ManagerView constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
@@ -35,19 +42,20 @@ class ManagerView
             $this->o_elog = $o_di->get('elog');
         }
     }
+
     /**
-     *  Creates the home page of the Manager.
-     *  @param array $a_message A message, optional.
-     *  @return string
+     * Creates the home page of the Manager.
+     * @param array $a_message A message, optional.
+     * @return string
      */
     public function renderLandingPage($a_message = array())
     {
         $meth = __METHOD__ . '.';
-        $this->setAuthLevel($_SESSION['login_id']);
-        $this->setLinks();
+        $this->setAdmLevel($_SESSION['login_id']);
+        $this->setNav();
         $a_values = $this->getPageValues();
-        $a_values['links'] = $this->a_links;
-        $a_values['menus'] = $this->a_links;
+        $a_values['links'] = $this->a_nav;
+        $a_values['menus'] = $this->a_nav;
         if (is_array($a_message)) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
@@ -59,6 +67,7 @@ class ManagerView
         $tpl = TWIG_PREFIX . 'pages/index.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
+
     /**
      * Temp method to test stuff
      * @param array $a_args
@@ -84,6 +93,7 @@ class ManagerView
         $tpl = TWIG_PREFIX . 'pages/list_logins.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
+
     /**
      * Creates the html that displays the login form to access the app.
      * Sometimes this will have been handled already elsewhere.

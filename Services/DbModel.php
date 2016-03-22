@@ -1,101 +1,85 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff.
- *  @details   For read/write access to the database based on PDO.
- *  @ingroup   ritc_library lib_services
- *  @file      DbModel.php
- *  @namespace Ritc\Library\Services
- *  @class     DbModel
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   3.6.0
- *  @date      2016-03-04 15:22:15
- *  @note <pre><b>Change Log</b>
- *      v3.6.0 - Changed property name o_db to o_pdo to clarify what the object was       - 03/04/2016 wer
- *               Added new method to "prepare" a list array
- *               Added new method to create and return the formated sql error message.
- *               Added new method to return the raw sql error info array.
- *               Updated update set build method to block unallowed key value pairs
- *               bug fixes, build insert sql didn't take into account prepared key names
- *               Misc other fixes and modifications.
- *      v3.5.1 - added new method to create a string for the select field names           - 02/25/2016 wer
- *      v3.5.0 - added new method to create a string for the insert value names           - 02/23/2016 wer
- *      v3.4.0 - changed so that an array can be used in place of the preferred file      - 12/09/2015 wer
- *      v3.3.0 - bug fix - pgsql insert wasn't working right                              - 11/22/2015 wer
- *      v3.2.6 - changed from extending Base class to using traits                        - unknown    wer
- *      v3.2.5 - added some additional information to be retrieved                        - 09/01/2015 wer
- *      v3.2.4 - refactoring elsewhere made a small name change here                      - 07/31/2015 wer
- *      v3.2.3 - moved to Services namespace                                              - 11/15/2014 wer
- *      v3.2.1 - bug fix
- *      v3.2.0 - Made this class more stand alone except extending Base class.
- *               Added function to allow raw query.
- *               Changed it to use the new Base class elog inject method.
- *               Hammering down a couple bugs.
- *      v3.1.2 - bug fixes, needed to pass the pdo object into the class                  - 03/20/2014 wer
- *      v3.1.1 - added methods to set and return db prefix                                - 02/24/2014 wer
- *               It should be noted, this assumes a db prefix has been set. see PdoFactory
- *      v3.1.0 - added method to return db tables                                         - 01/31/2014 wer
- *      v3.0.1 - renamed file to match function, eliminated the unnecessary               - 12/19/2013 wer
- *      v3.0.0 - split the pdo creation (database connection) from the crud               - 2013-11-06 wer
- *      v2.4.4 - bug fix in buildSqlWhere                                                 - 2013-07-23 wer
- *      v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff)      - 07/06/2013 wer
- *      v2.4.2 - added method to build sql where                                          - 05/09/2013 wer
- *      v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
- *      v2.4.0 - Change to match new RITC Library layout                                  - 04/23/2013 wer
- *      v2.3.2 - new method to remove bad keys
- *               removed some redundant code
- *               reorganized putting main four commands at top for easy reference
- *               renamed from modify to update, no good reason truthfully except no legacy code to support
- *      v2.3.1 - new method to check for missing keys
- *               made a couple changes to clarify what was going on.
- *      v2.3.0 - Modified to work within Symfony
- *      v2.2.0 - FIG-standard changes
- *  </pre>
-**/
+ * @brief     Does all the database CRUD stuff.
+ * @details   For read/write access to the database based on PDO.
+ * @ingroup   lib_services
+ * @file      DbModel.php
+ * @namespace Ritc\Library\Services
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   3.6.1
+ * @date      2016-03-17 10:39:02
+ * @note <b>Change Log</b>
+ * - v4.0.0 - Changed class so that it focues on the actual database operations.       - 2016-03-18 wer
+ *            Removed sql building and validation methods to a trait class which
+ *            then can be used independently by other classes. Yes, this may require
+ *            a lot of refactoring elsewhere.
+ * - v3.6.1 - bug fixes                                                                - 2016-03-17 wer
+ * - v3.6.0 - Changed property name o_db to o_pdo to clarify what the object was       - 03/04/2016 wer
+ *            Added new method to "prepare" a list array
+ *            Added new method to create and return the formated sql error message.
+ *            Added new method to return the raw sql error info array.
+ *            Updated update set build method to block unallowed key value pairs
+ *            bug fixes, build insert sql didn't take into account prepared key names
+ *            Misc other fixes and modifications.
+ * - v3.5.1 - added new method to create a string for the select field names           - 02/25/2016 wer
+ * - v3.5.0 - added new method to create a string for the insert value names           - 02/23/2016 wer
+ * - v3.4.0 - changed so that an array can be used in place of the preferred file      - 12/09/2015 wer
+ * - v3.3.0 - bug fix - pgsql insert wasn't working right                              - 11/22/2015 wer
+ * - v3.2.6 - changed from extending Base class to using traits                        - unknown    wer
+ * - v3.2.5 - added some additional information to be retrieved                        - 09/01/2015 wer
+ * - v3.2.4 - refactoring elsewhere made a small name change here                      - 07/31/2015 wer
+ * - v3.2.3 - moved to Services namespace                                              - 11/15/2014 wer
+ * - v3.2.1 - bug fix
+ * - v3.2.0 - Made this class more stand alone except extending Base class.
+ *            Added function to allow raw query.
+ *            Changed it to use the new Base class elog inject method.
+ *            Hammering down a couple bugs.
+ * - v3.1.2 - bug fixes, needed to pass the pdo object into the class                  - 03/20/2014 wer
+ * - v3.1.1 - added methods to set and return db prefix                                - 02/24/2014 wer
+ *            It should be noted, this assumes a db prefix has been set. see PdoFactory
+ * - v3.1.0 - added method to return db tables                                         - 01/31/2014 wer
+ * - v3.0.1 - renamed file to match function, eliminated the unnecessary               - 12/19/2013 wer
+ * - v3.0.0 - split the pdo creation (database connection) from the crud               - 2013-11-06 wer
+ * - v2.4.4 - bug fix in buildSqlWhere                                                 - 2013-07-23 wer
+ * - v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff)      - 07/06/2013 wer
+ * - v2.4.2 - added method to build sql where                                          - 05/09/2013 wer
+ * - v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
+ * - v2.4.0 - Change to match new RITC Library layout                                  - 04/23/2013 wer
+ * - v2.3.2 - new method to remove bad keys
+ *            removed some redundant code
+ *            reorganized putting main four commands at top for easy reference
+ *            renamed from modify to update, no good reason truthfully except no legacy code to support
+ * - v2.3.1 - new method to check for missing keys
+ *            made a couple changes to clarify what was going on.
+ * - v2.3.0 - Modified to work within Symfony
+ * - v2.2.0 - FIG-standard changes
+ */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Traits\DbTraits;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class DbModel Makes using the PDO stuff easier.
+ * @class DbModel
+ * @package Ritc\Library\Services
+ */
 class DbModel
 {
     use DbTraits, LogitTraits;
 
-    /**
-     * @var array
-     */
-    private $a_db_config;
-    /**
-     * @var array
-     */
+    /** @var array */
     private $a_new_ids = array();
-    /**
-     * @var int
-     */
+    /** @var int */
     private $affected_rows;
-    /**
-     * @var string
-     */
-    private $db_prefix;
-    /**
-     * @var string
-     */
-    private $db_type;
-    /**
-     * @var \PDO
-     */
+    /** @var \PDO */
     private $o_pdo;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $pgsql_sequence_name = '';
-    /**
-     * @var mixed
-     */
+    /** @var mixed */
     private $sql_error_message;
-    /**
-     * @var int
-     */
+    /** @var int */
     private $success;
 
     /**
@@ -112,16 +96,16 @@ class DbModel
 
     ### Main Four Commands (CRUD) ###
     /**
-     *  Inserts data into the database
-     *  @param string $the_query the INSERT statement, default is empty.
-     *  @param array $a_values     default is empty array
-     *                             If blank, the values are in the INSERT string
-     *                             If array then the INSERT string is for a prepared query
-     *  @param array @a_table_info needed only if PostgreSQL is being used, Default array()
-     *                             ['table_name' => '', 'column_name' => '', 'schema_name' => '']
-     *  @return bool
-     *  @return bool
-    **/
+     * Inserts data into the database
+     * @param string $the_query the INSERT statement, default is empty.
+     * @param array $a_values     default is empty array
+     *                            If blank, the values are in the INSERT string
+     *                            If array then the INSERT string is for a prepared query
+     * @param array @a_table_info needed only if PostgreSQL is being used, Default array()
+     *                            ['table_name' => '', 'column_name' => '', 'schema_name' => '']
+     * @return bool
+     * @return bool
+     */
     public function insert($the_query = '', array $a_values = array(), array $a_table_info = array())
     {
         $meth = __METHOD__ . '.';
@@ -169,15 +153,15 @@ class DbModel
     }
 
     /**
-     *  Searches the database for records.
-     *  Can be set up with upto 3 arguments, the first required, the sql
-     *  @param string $the_query, required
-     *  @param array $a_values associative array, key in named prepared
-     *      format preferred e.g., [':id'=>1, ':name'=>'fred'] but optional.
-     *  @param string $type optional, type of results, num, both, assoc which
-     *      specifies the PDO formats, defaults to assoc
-     *  @return mixed results of search or false
-    **/
+     * Searches the database for records.
+     * Can be set up with upto 3 arguments, the first required, the sql
+     * @param string $the_query, required
+     * @param array $a_values associative array, key in named prepared
+     *     format preferred e.g., [':id'=>1, ':name'=>'fred'] but optional.
+     * @param string $type optional, type of results, num, both, assoc which
+     *     specifies the PDO formats, defaults to assoc
+     * @return mixed results of search or false
+     */
     public function search($the_query = '', array $a_values = array(), $type = 'assoc')
     {
         switch ($type) {
@@ -228,35 +212,35 @@ class DbModel
     }
 
     /**
-     *  Executes a query to modify one or more records.
-     *  This is a stub. It executes the $this->mdQuery method
-     *  @param string $the_query     default ''
-     *  @param array  $a_values      associative array with paramaters default empty array
-     *  @param bool   $single_record default true specifies if only a single record should be deleted per query
-     *  @return bool                 success or failure
-    **/
+     * Executes a query to modify one or more records.
+     * This is a stub. It executes the $this->mdQuery method
+     * @param string $the_query     default ''
+     * @param array  $a_values      associative array with paramaters default empty array
+     * @param bool   $single_record default true specifies if only a single record should be deleted per query
+     * @return bool                 success or failure
+     */
     public function update($the_query = '', array $a_values = array(), $single_record = true)
     {
         return $this->mdQuery($the_query, $a_values, $single_record);
     }
 
     /**
-     *  Executes a query to delete one or more records.
-     *  This is a stub. It executes the $this->mdQuery method
-     *  @param string $the_query
-     *  @param array  $a_values      associative array with where paramaters
-     *  @param bool   $single_record specifies if only a single record should be deleted per query
-     *  @return bool                 success or failure
-    **/
+     * Executes a query to delete one or more records.
+     * This is a stub. It executes the $this->mdQuery method
+     * @param string $the_query
+     * @param array  $a_values      associative array with where paramaters
+     * @param bool   $single_record specifies if only a single record should be deleted per query
+     * @return bool                 success or failure
+     */
     public function delete($the_query = '', array $a_values = array(), $single_record = true)
     {
         return $this->mdQuery($the_query, $a_values, $single_record);
     }
 
     /**
-     *  Allows a raw query to be made.
-     *  @param string $the_query
-     *  @return int
+     * Allows a raw query to be made.
+     * @param string $the_query
+     * @return int
      */
     public function rawQuery($the_query)
     {
@@ -265,11 +249,11 @@ class DbModel
 
     ### Getters and Setters
     /**
-     *  Get the value of the property specified.
-     *  @param string $var_name
-     *  @return mixed value of the property
-     *  @note - this is normally set to private so not to be used
-    **/
+     * Get the value of the property specified.
+     * @param string $var_name
+     * @return mixed value of the property
+     * @note - this is normally set to private so not to be used
+     */
     protected function getVar($var_name)
     {
         return $this->$var_name;
@@ -281,31 +265,6 @@ class DbModel
     public function getAffectedRows()
     {
         return $this->affected_rows;
-    }
-
-    /**
-     * Gets the array $a_db_config which holds the config for the db.
-     * @return array
-     */
-    public function getDbConfig()
-    {
-        return $this->a_db_config;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDbPrefix()
-    {
-        return $this->db_prefix;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDbType()
-    {
-        return $this->db_type;
     }
 
     /**
@@ -346,26 +305,6 @@ class DbModel
 
     /**
      * @param string $value
-     * @return null
-     */
-    public function setDbPrefix($value)
-    {
-        unset($value);
-        return null; // db prefix can only be set privately
-    }
-
-    /**
-     * @param string $value
-     * @return null
-     */
-    public function setDbType($value = '')
-    {
-        unset($value);
-        return null; // db type can only be set privately
-    }
-
-    /**
-     * @param string $value
      * @return bool
      */
     public function setNewId($value = '')
@@ -377,13 +316,13 @@ class DbModel
     }
 
     /**
-     *  Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
-     *  @param array $a_table_info  ['table_name', 'column_name', 'schema']<pre>
-     *                              'table_name'  value required,
-     *                              'column_name' value optional but recommended, defaults to 'id'
-     *                              'schema'      value optional, defaults to 'public'</pre>
-     *  @return bool success or failure
-    **/
+     * Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
+     * @param array $a_table_info  ['table_name', 'column_name', 'schema']<pre>
+     *                             'table_name'  value required,
+     *                             'column_name' value optional but recommended, defaults to 'id'
+     *                             'schema'      value optional, defaults to 'public'</pre>
+     * @return bool success or failure
+     */
     public function setPgsqlSequenceName(array $a_table_info = array())
     {
         if ($a_table_info == array()) {
@@ -419,31 +358,38 @@ class DbModel
 
     /**
      * Sets the class propery error_message to a formated string.
-     * @param \PDO $o_pdo
+     * @param \PDO|\PDOStatement|null $o_pdo
      * @return bool
      */
-    public function setSqlErrorMessage(\PDO $o_pdo)
+    public function setSqlErrorMessage($o_pdo = null)
     {
-        if (!is_object($o_pdo)) {
+        if (is_null($o_pdo)) {
             $o_pdo = $this->o_pdo;
         }
-        $a_error_stuff = $o_pdo->errorInfo();
-        $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] . "\nDriver Error Code: " . $a_error_stuff[1] . "\nDriver Error Message: " . $a_error_stuff[2];
-        return true;
+        if ($o_pdo instanceof \PDO || $o_pdo instanceof \PDOStatement) {
+            $a_error_stuff = $o_pdo->errorInfo();
+            $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] . "\nDriver Error Code: " . $a_error_stuff[1] . "\nDriver Error Message: " . $a_error_stuff[2];
+            return true;
+        }
+        return false;
     }
 
     /**
      * Sets and gets the sql_error_message property.
-     * @param \PDO $o_pdo
-     * @return mixed
+     * @param \PDO|\PDOStatement|null $o_pdo
+     * @return string
      */
-    public function retrieveFormatedSqlErrorMessage(\PDO $o_pdo)
+    public function retrieveFormatedSqlErrorMessage($o_pdo = null)
     {
-        if (!is_object($o_pdo)) {
+        if (is_null($o_pdo)) {
             $o_pdo = $this->o_pdo;
         }
-        $this->setSqlErrorMessage($o_pdo);
-        return $this->sql_error_message;
+        if ($this->setSqlErrorMessage($o_pdo)) {
+            return $this->sql_error_message;
+        }
+        else {
+            return 'Could not retrieve PDO error.';
+        }
     }
 
     /**
@@ -457,9 +403,9 @@ class DbModel
     }
 
     /**
-     *  A setter of the $a_new_ids property
-     *  @return void
-    **/
+     * A setter of the $a_new_ids property
+     * @return void
+     */
     public function resetNewIds()
     {
         $this->a_new_ids = array();
@@ -467,11 +413,11 @@ class DbModel
 
     ### Basic Commands - The basic building blocks for doing db work
     /**
-     *  Bind values from an assoc array to a prepared query.
-     *  @param array                $a_values    Keys must match the prepared query
-     *  @param object|\PDOStatement $o_pdo_stmt
-     *  @return bool - success or failure
-    **/
+     * Bind values from an assoc array to a prepared query.
+     * @param array                $a_values    Keys must match the prepared query
+     * @param object|\PDOStatement $o_pdo_stmt
+     * @return bool - success or failure
+     */
     public function bindValues(array $a_values = array(), \PDOStatement $o_pdo_stmt)
     {
         $meth = __METHOD__ . '.';
@@ -529,15 +475,16 @@ class DbModel
     /**
      * Executes a prepared query
      * @param array $a_values <pre>
-     *        $a_values could be:
-     *        array("test", "brains") for question mark place holders prepared statement
-     *        array(":test"=>"test", ":food"=>"brains") for named parameters prepared statement
-     *        '' when the values have been bound before calling this method
+     *       $a_values could be:
+     *       array("test", "brains") for question mark place holders prepared statement
+     *       array(":test"=>"test", ":food"=>"brains") for named parameters prepared statement
+     *       '' when the values have been bound before calling this method
      * @param object|\PDOStatement $o_pdo_stmt - the object created from the prepare
      * @return bool - success or failure
      */
     public function execute(array $a_values = array(), \PDOStatement $o_pdo_stmt)
     {
+        $meth = __METHOD__ . '.';
         $this->logIt('Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if (count($a_values) > 0) {
             if (Arrays::isAssocArray($a_values)) { // for a query with bind values
@@ -545,6 +492,7 @@ class DbModel
                 $this->logIt('Fixed Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
 
                 if ($this->bindValues($a_values, $o_pdo_stmt) === false) {
+                    $this->logIt("Could not bind the values.", LOG_OFF, $meth . __LINE__);
                     return false;
                 }
                 return $o_pdo_stmt->execute();
@@ -568,7 +516,7 @@ class DbModel
     }
 
     /**
-     *  Executes the pdo fetch method
+     * Executes the pdo fetch method
      *
      * @param object|\PDOStatement $o_pdo_stmt     a \PDOStatement object
      * @param array                $a_fetch_config array('fetch_style'=>'ASSOC', 'cursor_orientation'=>'', 'cursor_offset'=>0)
@@ -622,7 +570,7 @@ class DbModel
     }
 
     /**
-     *  Prepares a sql statement for execution
+     * Prepares a sql statement for execution
      *
      * @param object|\PDOStatement $o_pdo_stmt  a \PDOStatement object
      * @param string               $fetch_style @see \PDO (optional)
@@ -851,13 +799,13 @@ class DbModel
     }
 
     /**
-     *  Specialized version of execute which retains ids of each insert.
+     * Specialized version of execute which retains ids of each insert.
      *
-     *  @param array $a_values see $this->execute for details
-     *  @param \PDOStatement $o_pdo_stmt
-     *  @param array $a_table_info
+     * @param array $a_values see $this->execute for details
+     * @param \PDOStatement $o_pdo_stmt
+     * @param array $a_table_info
      *
-     *  @return bool
+     * @return bool
      */
     public function executeInsert(array $a_values = array(), \PDOStatement $o_pdo_stmt, array $a_table_info = array())
     {
@@ -889,12 +837,12 @@ class DbModel
     }
 
     /**
-     *  Used for both modifying and deleting record(s)
-     *  @param string $the_query - the sql statement, required, default is ''
-     *  @param array $a_values - formated values for a prepared sql statement - optional, default is ''
-     *  @param $single_record - if only a single record should be changed/deleted - optional, default is true
-     *  @return bool - success or failure
-    **/
+     * Used for both modifying and deleting record(s)
+     * @param string $the_query - the sql statement, required, default is ''
+     * @param array $a_values - formated values for a prepared sql statement - optional, default is ''
+     * @param $single_record - if only a single record should be changed/deleted - optional, default is true
+     * @return bool - success or failure
+     */
     public function mdQuery($the_query = '', array $a_values = array(), $single_record = true)
     {
         $from_method = __METHOD__ . '.';
@@ -982,17 +930,17 @@ class DbModel
     }
 
     /**
-     *  Do a query.
-     *  Has two params. The first is required. The second is required if the first param doesn't include a valid sql statement.
-     *  @param $query_params (array) = default is empty str.  - required<pre>
-     *      Should correspond to something like
-     *      array('type'=>'search', 'table_name'=>'test_table', 'single_record'=>false, 'sql'=>'')</pre>
-     *  @param $data (mixed)<pre>
-     *      array(field_name => value) - data to be insert or modified
-     *      'id, name, date' (str) - a string of fields to be returned in a search</pre>
-     *  @param $where_values (array), array(field_name => value) - paramaters used to find records for search or modify
-     *  @return bool
-    **/
+     * Do a query.
+     * Has two params. The first is required. The second is required if the first param doesn't include a valid sql statement.
+     * @param $query_params (array) = default is empty str.  - required<pre>
+     *     Should correspond to something like
+     *     array('type'=>'search', 'table_name'=>'test_table', 'single_record'=>false, 'sql'=>'')</pre>
+     * @param $data (mixed)<pre>
+     *     array(field_name => value) - data to be insert or modified
+     *     'id, name, date' (str) - a string of fields to be returned in a search</pre>
+     * @param $where_values (array), array(field_name => value) - paramaters used to find records for search or modify
+     * @return bool
+     */
     public function query($query_params = '', $data = '', $where_values)
     {
         $default_params = array(
@@ -1108,7 +1056,8 @@ class DbModel
                     if ($this->execute($row, $o_pdo_stmt)) {
                         $fetched = $o_pdo_stmt->fetchAll($fetch_style);
                         $a_results[] = $fetched;
-                    } else {
+                    }
+                    else {
                         return false;
                     }
                 }
@@ -1133,229 +1082,9 @@ class DbModel
 
     ### Utility Functions
     /**
-     * Creates a string that is part of an INSERT sql statement.
-     * It produces a string in "prepared" format, e.g. ":fred" for the values.
-     * It removes any pair whose key is not in the allowed keys array.
-     * @param array $a_values       assoc array of values to that will be inserted.
-     *                              It should be noted that only the key name is important,
-     *                              but using the array of the actual values being inserted
-     *                              ensures that only those values are inserted.
-     * @param array $a_allowed_keys list array of key names that are allowed in the a_values array.
-     * @return string
-     */
-    public function buildSqlInsert(array $a_values = [], array $a_allowed_keys = [])
-    {
-        if (count($a_values) === 0 || count($a_allowed_keys) === 0) {
-            return '';
-        }
-        $a_values = $this->prepareKeys($a_values);
-        $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
-        $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
-        $insert_names = '';
-        $value_names  = '';
-        foreach ($a_values as $key => $value) {
-            if (strpos($key, ':') !== false) {
-                $insert_name = str_replace(':', '', $key);
-                $value_name  = $key;
-            }
-            else {
-                $insert_name = $key;
-                $value_name  = ':' . $key;
-            }
-            $insert_names .= $insert_names == ''
-                ? '    ' . $insert_name
-                : ",\n    "  . $insert_name;
-            $value_names  .= $value_names == ''
-                ? '    ' . $value_name
-                : ",\n    " . $$value_name;
-        }
-        return $insert_names . "\n) VALUES (\n" . $value_names;
-    }
-
-    /**
-     * Builds the select field portion of a sql select statement.
-     * Can be a simple array list or an assoc array which specifies
-     * as the key the name of the field, the value the name to be as, e.g.,
-     * ['ngv' => 'general] becomes the string "ngv as 'general'"
-     * @param array $a_values
-     * @return string
-     */
-    public function buildSqlSelectFields(array $a_values = [])
-    {
-        $select_me = '';
-        if (Arrays::isAssocArray($a_values)) {
-            foreach ($a_values as $name => $name_as) {
-                $select_me .= $select_me == ''
-                    ? $name . " as '" . $name_as . "'"
-                    : ', ' . $name . " as '" . $name_as . "'";
-            }
-        }
-        else {
-            foreach ($a_values as $name) {
-                $select_me .= $select_me == ''
-                    ? $name
-                    : ', ' . $name;
-            }
-        }
-        return $select_me;
-    }
-
-    /**
-     * Builds the SET part of an UPDATE sql statement.
-     * Provides optional abilities to skip certain pairs and removed undesired pairs.
-     * @param array $a_values required key=>value pairs
-     *                        pairs are those to be used in the statement fragment.
-     * @param array $a_skip_keys optional list of keys to skip in the set statement
-     * @param array $a_allowed_keys optional list of allowed keys to be in the values array.
-     * @return string $set_sql
-    **/
-    public function buildSqlSet(array $a_values = [], array $a_skip_keys = ['nothing_to_skip'], array $a_allowed_keys = [])
-    {
-        if ($a_values == array()) { return ''; }
-        $set_sql = '';
-        $a_values = $this->prepareKeys($a_values);
-        if ($a_allowed_keys !== []) {
-            $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
-            $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
-        }
-        $a_skip_keys = $this->prepareListArray($a_skip_keys);
-        foreach ($a_values as $key => $value) {
-            if (!in_array($key, $a_skip_keys)) {
-                if ($set_sql == '' ) {
-                    $set_sql = "SET " . str_replace(':', '', $key) . " = {$key} ";
-                }
-                else {
-                    $set_sql .= ", " . str_replace(':', '', $key) . " = {$key} ";
-                }
-            }
-        }
-        return $set_sql;
-    }
-
-    /**
-     * Builds the WHERE section of a SELECT stmt.
-     * Also optionally builds the ORDER BY and LIMIT section of a SELECT stmt.
-     * It might be noted that if first two arguments are empty, it returns a blank string.
-     * @param array $a_search_for optional assoc array field_name=>field_value
-     * @param array $a_search_parameters optional allows one to specify various settings
-     * @param array $a_allowed_keys optional list array
-     *
-     * @ref searchparams For more info on a_search_parameters.
-     *
-     * @return string $where
-    **/
-    public function buildSqlWhere(array $a_search_for = [], array $a_search_parameters = [], array $a_allowed_keys = [])
-    {
-        $meth = __METHOD__ . '.';
-        $search_type = 'AND';
-        $comparison_type = '=';
-        $starting_from = '';
-        $limit_to = '';
-        $order_by = '';
-        $where_exists = false;
-        $where = '';
-        if (count($a_search_parameters) > 0) {
-            $a_allowed_parms = array(
-                'search_type',
-                'comparison_type',
-                'starting_from',
-                'limit_to',
-                'order_by',
-                'where_exists'
-            );
-            foreach ($a_search_parameters as $key => $value) {
-                if (array_search($key, $a_allowed_parms) !== false) {
-                    $$key = $value;
-                }
-            }
-        }
-        /* set the $key to have a value compatible for a prepared statement */
-        if (count($a_search_for) > 0) {
-            $a_search_for = $this->prepareKeys($a_search_for);
-        }
-        /* remove any unwanted pairs from array */
-        if (count($a_search_for) > 0 && count($a_allowed_keys) > 0) {
-            $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
-            $a_search_for = Arrays::removeUndesiredPairs($a_search_for, $a_allowed_keys);
-        }
-        /* after all that, if there are still pairs, go for it */
-        if (count($a_search_for) > 0) {
-            $message = 'search pairs prepared: ' . var_export($a_search_for, true);
-            $this->logIt($message, LOG_OFF, $meth . __LINE__);
-            foreach ($a_search_for as $key => $value) {
-                $field_name = preg_replace('/^:/', '', $key);
-                if (strpos($key, '.') !== false) {
-                    $key = preg_replace('/^:(.*)\.(.*)/', ':$2', $key);
-                }
-                if ($where_exists === false) {
-                    $where = "WHERE {$field_name} {$comparison_type} {$key} \n";
-                    $where_exists = true;
-                } else {
-                    $where .= "{$search_type} {$field_name} {$comparison_type} {$key} \n";
-                }
-            }
-        }
-        if ($order_by != '') {
-            $where .= "ORDER BY {$order_by} \n";
-        }
-        if ($limit_to != '') {
-            if ($starting_from != '') {
-                if($starting_from > 0) {
-                    --$starting_from; // limit offset starts at 0 so if we want to start at record 6 the LIMIT offset is 5
-                }
-                $where .= "LIMIT {$starting_from}, {$limit_to}";
-            }
-            else {
-                $where .= "LIMIT {$limit_to}";
-            }
-        }
-        return $where;
-    }
-
-    /**
-     *  Creates the class properties of a_db_config, db_type and db_prefix from config file or array if passed in.
-     *  Prefer config file but array is allowed so this can be called without a config file.
-     *  @param string|array $config_file
-     *  @return null
-    **/
-    private function createDbParms($config_file = 'db_config.php')
-    {
-        if (is_array($config_file)) {
-            $a_required_keys = ['driver', 'host', 'name', 'user', 'password'];
-            if ($this->findMissingKeys($a_required_keys, $config_file) == array()) {
-                $a_db = $config_file;
-                if (!isset($a_db['prefix'])) {
-                    $a_db['prefix'] = '';
-                }
-                if (!isset($a_db['persist'])) {
-                    $a_db['persist'] = true;
-                }
-                if (!isset($a_db['port'])) {
-                    $a_db['port'] = '';
-                }
-                if (!isset($a_db['userro'])) {
-                    $a_db['userro'] = $a_db['user'];
-                }
-                if (!isset($a_db['passro'])) {
-                    $a_db['passro'] = $a_db['password'];
-                }
-            }
-            else {
-                $a_db = $this->retrieveDbConfig('db_config.php');
-            }
-        }
-        else {
-            $a_db = $this->retrieveDbConfig($config_file);
-        }
-        $this->a_db_config = $a_db;
-        $this->db_prefix   = $a_db['prefix'];
-        $this->db_type     = $a_db['driver'];
-    }
-
-    /**
-     *  Gets the variable for the fetch style
-     *  @param string $type
-     *  @return int
+     * Gets the variable for the fetch style
+     * @param string $type
+     * @return int
      */
     public function determineFetchStyle($type = 'assoc')
     {
@@ -1373,181 +1102,22 @@ class DbModel
     }
 
     /**
-     *  Determines if any required keys are missing
-     *  @param array $a_required_keys required
-     *  @param array $a_check_values required
-     *  @return array $a_missing_keys
-    **/
-    public function findMissingKeys(array $a_required_keys = array(), array $a_check_values = array())
-    {
-        if ($a_required_keys == array() || $a_check_values == array()) { return array(); }
-        $a_missing_keys = array();
-        foreach ($a_required_keys as $key) {
-            if (
-                array_key_exists($key, $a_check_values)
-                ||
-                array_key_exists(':' . $key, $a_check_values)
-                ||
-                array_key_exists(str_replace(':', '', $key), $a_check_values)
-            ) {
-                // we are happy
-            } else {
-                $a_missing_keys[] = $key;
-            }
-        }
-        return $a_missing_keys;
-    }
-
-    /**
-     *  Finds missing or empty values for given key => value pair
-     *  @param array $a_required_keys required list of keys that need to have values
-     *  @param array $a_pairs
-     *  @return array $a_keys list of the the keys that are missing values
-    **/
-    public function findMissingValues(array $a_required_keys = array(), array $a_pairs = array())
-    {
-        if ($a_pairs == array() || $a_required_keys == array()) { return false; }
-        $a_keys = array();
-        foreach ($a_pairs as $key => $value) {
-            if (
-                array_key_exists($key, $a_required_keys)
-                ||
-                array_key_exists(':' . $key, $a_required_keys)
-                ||
-                array_key_exists(str_replace(':', '', $key), $a_required_keys)
-            )
-            {
-                if ($value == '' || is_null($value)) {
-                    $a_keys[] = $key;
-                }
-            }
-        }
-        return $a_keys;
-    }
-
-    /**
-     *  Verifies that the php mysqli extension is installed
-     *  Left over, not sure it is needed now
-     *  @return bool
-    **/
-    protected function mysqliInstalled()
-    {
-        if (function_exists('mysqli_connect')) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     *  Changes array keys to be compatible with prepared statements.
-     *  @param array $array required associative array, named keys
-     *  @return array fixed key names
-    **/
-    public function prepareKeys(array $array = array())
-    {
-        $a_new = array();
-        if (Arrays::isAssocArray($array)) {
-            foreach ($array as $key=>$value) {
-                $new_key = strpos($key, ':') === 0 ? $key : ':' . $key;
-                $a_new[$new_key] = $value;
-            }
-            return $a_new;
-        }
-        elseif (Arrays::isAssocArray($array[0])) {
-            foreach ($array as $a_keys) {
-                $results = $this->prepareKeys($a_keys);
-                if ($results === false) {
-                    return false;
-                }
-                $a_new[] = $results;
-            }
-            return $a_new;
-        }
-        else {
-            $this->logIt('The array must be an associative array to fix.', LOG_OFF, __METHOD__);
-            return false;
-        }
-    }
-
-    /**
-     * Changes the list array so that the values (key names) have "prepared" format, e.g., ":fred".
-     * @param array $array
-     * @return array
+     * Use the \PDO::quote function to make the string safe for use in a query.
+     * Used only when not using a prepared sql statement.
+     * @see \PDO::quote
+     * @param $value (str)
+     * @return string - quoted string
      */
-    public function prepareListArray(array $array = [])
-    {
-        foreach ($array as $key => $value) {
-            $array[$key] = strpos($value, ':') === 0
-                ? $value
-                : ':' . $value;
-        }
-        return $array;
-    }
-
-    /**
-     *  Changes array values to help build a prepared statement primarily the WHERE.
-     *  @param array $array key/value pairs to fix
-     *  @return array fixed where needed
-    **/
-    public function prepareValues(array $array)
-    {
-        $a_new = array();
-        if (Arrays::isAssocArray($array)) {
-            foreach ($array as $key => $value) {
-                $new_key = strpos($key, ':') === 0 ? $key : ':' . $key;
-                $a_new[$key] = $new_key;
-            }
-            return $a_new;
-        }
-        elseif (Arrays::isAssocArray($array[0])) {
-            return $this->prepareValues($array[0]);
-        }
-        else {
-            $this->logIt('The array must be an associative array to fix.', LOG_OFF, __METHOD__);
-            return false;
-        }
-    }
-
-    /**
-     *  Use the \PDO::quote function to make the string safe for use in a query.
-     *  Used only when not using a prepared sql statement.
-     *  @see \PDO::quote
-     *  @param $value (str)
-     *  @return string - quoted string
-    **/
     public function quoteString($value)
     {
         return $this->o_pdo->quote($value);
     }
 
     /**
-     *  Removes unwanted key=>values for a prepared query
-     *  @param array $a_required_keys
-     *  @param array $a_values the array which needs cleaned up
-     *  @return array $a_fixed_values
-    **/
-    public function removeBadKeys(array $a_required_keys = array(), array $a_values = array())
-    {
-        foreach ($a_values as $key => $value) {
-            if (
-                array_search($key, $a_required_keys) === false
-                &&
-                array_search(str_replace(':', '', $key), $a_required_keys) === false
-                &&
-                array_search(':' . $key, $a_required_keys) === false
-            ) {
-                unset($a_values[$key]);
-            }
-        }
-        return $a_values;
-    }
-
-    /**
-     *  Returns a list of the columns from a database table.
-     *  @param $table_name (str) - name of the table
-     *  @return array - field names
-    **/
+     * Returns a list of the columns from a database table.
+     * @param $table_name (str) - name of the table
+     * @return array - field names
+     */
     public function selectDbColumns($table_name = '')
     {
         if ($table_name != '') {
@@ -1583,15 +1153,16 @@ class DbModel
             }
             return $a_column_names;
 
-        } else {
+        }
+        else {
             $this->logIt('You must specify a table name for this to work.', LOG_OFF, __METHOD__);
             return false;
         }
     }
 
     /**
-     *  Selects the table names from the database.
-     *  @return array $a_table_names
+     * Selects the table names from the database.
+     * @return array $a_table_names
      */
     public function selectDbTables()
     {
@@ -1618,6 +1189,9 @@ class DbModel
     }
 
     ### Magic Method fix ###
+    /**
+     * Prevents cloning of the class.
+     */
     public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);

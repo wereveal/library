@@ -1,54 +1,38 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff for the navigation to navgroups mapping.
- *  @ingroup   ritc_library lib_models
- *  @file      NavNgMapModel.php
- *  @namespace Ritc\Library\Models
- *  @class     NavNgMapModel
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0 β1
- *  @date      2016-02-25 12:06:45
- *  @note <pre><b>Change Log</b>
- *      v1.0.0 β1 - Initial version                              - 02/25/2016 wer
- *  </pre>
- **/
+ * @brief     Does all the database CRUD stuff for the navigation to navgroups mapping.
+ * @ingroup   lib_models
+ * @file      Ritc/Library/Models/NavNgMapModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0-alpha.0
+ * @date      2016-02-25 12:06:45
+ * @note <b>Change Log</b>
+ * - v1.0.0-alpha.0 - Initial version                              - 02/25/2016 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class NavNgMapModel.
+ * @class   NavNgMapModel
+ * @package Ritc\Library\Models
+ */
 class NavNgMapModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $a_field_names = array();
-    /**
-     * @var string
-     */
-    private $db_type = '';
-    /**
-     * @var string
-     */
-    private $db_prefix = '';
-    /**
-     * @var string
-     */
-    private $error_message = '';
-    /**
-     * @var \Ritc\Library\Services\DbModel
-     */
-    private $o_db;
 
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->setupProperties($o_db, 'nav_ng_map');
         $this->setFieldNames();
     }
 
@@ -84,15 +68,15 @@ class NavNgMapModel implements ModelInterface
         }
         /* check done */
 
-        $insert_value_names = $this->o_db->buildSqlInsert($a_values, $this->a_field_names);
+        $insert_value_names = $this->buildSqlInsert($a_values, $this->a_field_names);
         $sql = "
-            INSERT INTO {$this->db_prefix}nav_ng_map (
+            INSERT INTO {$this->db_table} (
             {$insert_value_names}
             )
         ";
         // following probably is ineffective
         $a_table_info = [
-            'table_name'  => "{$this->db_prefix}nav_ng_map",
+            'table_name'  => $this->db_table,
             'column_name' => 'ng_id'
         ];
         $results = $this->o_db->insert($sql, $a_values, $a_table_info);
@@ -122,18 +106,18 @@ class NavNgMapModel implements ModelInterface
                 ? ['order_by' => 'ng_id ASC, nav_id ASC']
                 : $a_search_params;
             $a_search_values = Arrays::removeUndesiredPairs($a_search_values, $this->a_field_names);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY ng_id ASC, nav_id ASC";
         }
-        $select_me = $this->o_db->buildSqlSelectFields($this->a_field_names);
+        $select_me = $this->buildSqlSelectFields($this->a_field_names);
         $sql = "
             SELECT {$select_me}
-            FROM {$this->db_prefix}nav_ng_map
+            FROM {$this->db_table}
             {$where}
         ";
         $this->logIt($sql, LOG_OFF, __METHOD__);
@@ -160,7 +144,7 @@ class NavNgMapModel implements ModelInterface
      * @param int $ng_id  semi-optional, either/both ng_id and/or nav_id must be set
      * @param int $nav_id semi-optional, either/both ng_id and/or nav_id must be set
      * @note The obvious needs to be noted. If only one param is provided, all the records
-     *       for that id will be deleted.
+     *      for that id will be deleted.
      * @return bool
      */
     public function delete($ng_id = -1, $nav_id = -1)
@@ -181,7 +165,7 @@ class NavNgMapModel implements ModelInterface
             $a_values = [':ng_id' => $ng_id, ':nav_id' => $nav_id];
         }
         $sql = "
-            DELETE FROM {$this->db_prefix}nav_ng_map
+            DELETE FROM {$this->db_table}
             WHERE {$where}";
         $results = $this->o_db->delete($sql, $a_values, true);
         if ($results === false) {

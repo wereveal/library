@@ -1,39 +1,51 @@
 <?php
 /**
- *  @brief     An entity class for the page table.
- *  @details   This Provides data needed to generate the html, e.g. title,
- *             description, file type, etc that would be in the <head> part of
- *             the page.
- *  @ingroup   ritc_library lib_entities
- *  @file      PagesEntity.php
- *  @namespace Ritc\Library\Entities
- *  @class     PagesEntity
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0β1
- *  @date      2015-10-30 08:14:03
- *  @note  <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/page_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/page_pg.sql</pre>
- *  @note <pre><b>Change Log</b>
- *      v1.0.0β1 - Initial version - 10/30/2015 wer
- *  </pre>
+ * @brief     An entity class for the page table.
+ * @details   This Provides data needed to generate the html, e.g. title,
+ *            description, file type, etc that would be in the <head> part of
+ *            the page.
+ * @ingroup   lib_entities
+ * @file      Ritc/Library/Entities/PagesEntity.php
+ * @namespace Ritc\Library\Entities
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0β1
+ * @date      2015-10-30 08:14:03
+ * @note  <b>SQL for table<b>
+ * - MySQL      - resources/sql/mysql/page_mysql.sql
+ * - PostgreSQL - resources/sql/postgresql/page_pg.sql
+ * @note <b>Change Log</b>
+ * - v1.0.0β1 - Initial version - 10/30/2015 wer
  */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class PagesEntity.
+ * @class   PagesEntity
+ * @package Ritc\Library\Entities
+ */
 class PagesEntity implements EntityInterface
 {
 
+    /** @var array */
     private $a_entity;
+    /** @var string */
     private $page_base_url;
+    /** @var string */
     private $page_charset;
+    /** @var string */
     private $page_description;
+    /** @var int */
     private $page_id;
+    /** @var string */
     private $page_lang;
+    /** @var string */
     private $page_title;
+    /** @var string */
     private $page_type;
+    /** @var string */
     private $page_url;
 
     /**
@@ -66,6 +78,7 @@ class PagesEntity implements EntityInterface
             $this->$key = $value;
         }
     }
+
     /**
      * @return string
      */
@@ -195,5 +208,4 @@ class PagesEntity implements EntityInterface
     {
         $this->page_url = $page_url;
     }
-
 }

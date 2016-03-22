@@ -1,19 +1,17 @@
 <?php
 /**
- *  @brief     View for the User Admin page.
- *  @ingroup   ritc_library lib_views
- *  @file      PeopleAdminView.php
- *  @namespace Ritc\Library\Views
- *  @class     PeopleAdminView
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.1
- *  @date      2015-12-12 16:20:24
- *  @note <pre><b>Change Log</b>
- *      v1.0.1   - Implement TWIG_PREFIX                            - 12/12/2015 wer
- *      v1.0.0   - Initial non-beta version                         - 11/12/2015 wer
- *      v1.0.0β2 - Changed to use DI/IOC                            - 11/15/2014 wer
- *      v1.0.0β1 - Initial version                                  - 11/13/2014 wer
- *  </pre>
+ * @brief     View for the User Admin page.
+ * @ingroup   lib_views
+ * @file      PeopleAdminView.php
+ * @namespace Ritc\Library\Views
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.1
+ * @date      2015-12-12 16:20:24
+ * @note <b>Change Log</b>
+ * - v1.0.1   - Implement TWIG_PREFIX                            - 12/12/2015 wer
+ * - v1.0.0   - Initial non-beta version                         - 11/12/2015 wer
+ * - v1.0.0β2 - Changed to use DI/IOC                            - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                                  - 11/13/2014 wer
  */
 namespace Ritc\Library\Views;
 
@@ -24,23 +22,22 @@ use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
+/**
+ * Class PeopleAdminView
+ * @class   PeopleAdminView
+ * @package Ritc\Library\Views
+ */
 class PeopleAdminView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
-    /**
-     * @var \Ritc\Library\Models\PeopleModel
-     */
+    /** @var \Ritc\Library\Models\PeopleModel */
     private $o_people_model;
-    /**
-     * @var \Ritc\Library\Models\GroupsModel
-     */
+    /** @var \Ritc\Library\Models\GroupsModel */
     private $o_group_model;
-    /**
-     * @var \Ritc\Library\Models\PeopleGroupMapModel
-     */
+    /** @var \Ritc\Library\Models\PeopleGroupMapModel */
     private $o_pgm_model;
 
     /**
@@ -82,7 +79,7 @@ class PeopleAdminView
             'tolken'    => $_SESSION['token'],
             'form_ts'   => $_SESSION['idle_timestamp'],
             'hobbit'    => '',
-            'menus'     => $this->a_links,
+            'menus'     => $this->a_nav,
             'adm_lvl'   => $this->adm_level
         ];
         $a_values = array_merge($a_page_values, $a_values);
@@ -145,7 +142,7 @@ class PeopleAdminView
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
             'adm_lvl' => $this->adm_level,
-            'menus'   => $this->a_links
+            'menus'   => $this->a_nav
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
@@ -197,7 +194,7 @@ class PeopleAdminView
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
             'adm_lvl' => $this->adm_level,
-            'menus'   => $this->a_links
+            'menus'   => $this->a_nav
         ];
         $a_values = array_merge($a_page_values, $a_values);
 
@@ -260,11 +257,12 @@ class PeopleAdminView
             'form_ts'      => $a_posted_values['form_ts']
         ];
         $a_twig_values = array_merge($a_page_values, $a_values);
-        $a_twig_values['menus'] = $this->a_links;
+        $a_twig_values['menus'] = $this->a_nav;
         $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_OFF, $meth . __LINE__);
         $tpl = TWIG_PREFIX . 'pages/verify_delete.twig';
         return $this->o_twig->render($tpl, $a_twig_values);
     }
+
     /**
      * Something to keep phpStorm from complaining until I use the ViewHelper.
      * @return array

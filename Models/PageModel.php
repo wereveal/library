@@ -1,45 +1,33 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff.
- *  @ingroup   ritc_library lib_models
- *  @file      PageModel.php
- *  @namespace Ritc\Library\Models
- *  @class     PageModel
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:59:00
- *  @note <pre><b>Change Log</b>
- *      v1.0.0   - take out of beta                             - 11/27/2015 wer
- *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
- *  </pre>
-**/
+ * @brief     Does all the database CRUD stuff.
+ * @ingroup   lib_models
+ * @file      Ritc/Library/Models/PageModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.0
+ * @date      2016-03-19 07:40:11
+ * @note <b>Change Log</b>
+ * - v1.1.0   - refactoring changes to DbModel reflected here.  - 2016-03-19 wer
+ * - v1.0.0   - take out of beta                                - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                                 - 10/30/2015 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class PageModel.
+ * @class   PageModel
+ * @package Ritc\Library\Models
+ */
 class PageModel implements ModelInterface
 {
-    use LogitTraits;
-
-    /**
-     * @var string
-     */
-    private $db_prefix;
-    /**
-     * @var string
-     */
-    private $db_type;
-    /**
-     * @var string
-     */
-    private $error_message;
-    /**
-     * @var \Ritc\Library\Services\DbModel
-     */
-    private $o_db;
+    use LogitTraits, DbUtilityTraits;
 
     /**
      * PageModel constructor.
@@ -47,9 +35,7 @@ class PageModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->setupProperties($o_db, 'page');
     }
 
     /**
@@ -133,6 +119,7 @@ class PageModel implements ModelInterface
             return false;
         }
     }
+
     /**
      * Returns an array of records based on the search params provided.
      * @param array $a_search_values optional, defaults to returning all records
@@ -147,7 +134,7 @@ class PageModel implements ModelInterface
                 : $a_search_params;
             $a_allowed_keys = [
                 'page_id',
-                'page_url',
+                'url_id',
                 'page_type',
                 'page_base_url',
                 'page_lang',
@@ -155,10 +142,10 @@ class PageModel implements ModelInterface
                 'page_immutable'
             ];
             $a_search_values = Arrays::removeUndesiredPairs($a_search_values, $a_allowed_keys);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY page_path";
@@ -166,7 +153,7 @@ class PageModel implements ModelInterface
         $sql = "
             SELECT
                 page_id,
-                page_url,
+                url_id,
                 page_type,
                 page_title,
                 page_description,
@@ -182,6 +169,7 @@ class PageModel implements ModelInterface
         $results = $this->o_db->search($sql, $a_search_values);
         return $results;
     }
+
     /**
      * Generic update for a record using the values provided.
      * @param array $a_values
@@ -235,7 +223,7 @@ class PageModel implements ModelInterface
                 }
             }
         }
-        $set_sql = $this->o_db->buildSqlSet($a_values, ['page_id']);
+        $set_sql = $this->buildSqlSet($a_values, ['page_id']);
         $sql = "
             UPDATE {$this->db_prefix}page
             {$set_sql}
@@ -252,6 +240,7 @@ class PageModel implements ModelInterface
             return false;
         }
     }
+
     /**
      * Generic deletes a record based on the id provided.
      * @param int $page_id
@@ -280,12 +269,4 @@ class PageModel implements ModelInterface
         }
     }
 
-    /**
-     * Implements the ModelInterface method, getErrorMessage.
-     * return string
-     */
-    public function getErrorMessage()
-    {
-        return $this->error_message;
-    }
 }

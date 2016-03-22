@@ -1,34 +1,38 @@
 <?php
 /**
- *  @brief     A set of visibility methods to keep things protected and private.
- *  @details   Sometimes you want to force a class to create getter and setter
- *             methods instead of using the magic methods. Note that
- *             setPrivateProperties() has to be run first or the magic methods
- *             will work as normal.
- *  @ingroup   ritc_library lib_traits
- *  @file      VisibilityTraits.php
- *  @namespace Ritc\Library\Traits
- *  @class     VisibilityTraits
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-08-19 12:18:25
- *  @note      This was a part of the Base abstract class. Spun it out so it could
- *             be used independently, only in classes where it is important.
- *  @note <pre><b>Change Log</b>
- *      v1.0.0 - initial version - 08/19/2015 wer
- *  </pre>
+ * @brief     A set of visibility methods to keep things protected and private.
+ * @details   Sometimes you want to force a class to create getter and setter
+ *            methods instead of using the magic methods. Note that
+ *            setPrivateProperties() has to be run first or the magic methods
+ *            will work as normal.
+ * @ingroup   lib_traits
+ * @file      VisibilityTraits.php
+ * @namespace Ritc\Library\Traits
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0-alpha.0
+ * @date      2015-08-19 12:18:25
+ * @note      This was a part of the Base abstract class. Spun it out so it could
+ *            be used independently, only in classes where it is important.
+ * @note <b>Change Log</b>
+ * - v1.0.0-alpha.0 - initial version - 08/19/2015 wer
  */
 namespace Ritc\Library\Traits;
 
+/**
+ * Class Trait VisibilityTraits
+ * @class   VisibilityTraits
+ * @package Ritc\Library\Traits
+ */
 trait VisibilityTraits {
     protected $current_page;
     protected $private_properties = array();
+
     /**
-     *  Creates an array that lists the protected and private properties.
-     *  Used by the magic methods __set, __get, __isset, __unset to keep those
-     *  properties protected and private
-     *      @return NULL
-    **/
+     * Creates an array that lists the protected and private properties.
+     * Used by the magic methods __set, __get, __isset, __unset to keep those
+     * properties protected and private
+     * @return NULL
+     */
     protected function setPrivateProperties()
     {
         $o_class = new \ReflectionClass(__CLASS__);
@@ -41,14 +45,15 @@ trait VisibilityTraits {
             }
         }
     }
+
     /**
-     *  Prevent direct access to protected and private properties.
-     *  $this->private_properties has to be set via setPrivateProperties()
-     *  for this to be effective.
-     *  @param string $var name of property being set
-     *  @param string $val value of the property to be set
-     *  @return NULL
-    **/
+     * Prevent direct access to protected and private properties.
+     * $this->private_properties has to be set via setPrivateProperties()
+     * for this to be effective.
+     * @param string $var name of property being set
+     * @param string $val value of the property to be set
+     * @return NULL
+     */
     public function __set($var, $val)
     {
         $a_backtrace = debug_backtrace();
@@ -68,13 +73,14 @@ trait VisibilityTraits {
         }
         return null;
     }
+
     /**
-     *  Prevent direct access to protected and private properties.
-     *  $this->private_properties has to be set via setPrivateProperties()
-     *  for this to be effective.
-     *  @param string $var name of property being get
-     *  @return mixed - value of the property being get
-    **/
+     * Prevent direct access to protected and private properties.
+     * $this->private_properties has to be set via setPrivateProperties()
+     * for this to be effective.
+     * @param string $var name of property being get
+     * @return mixed - value of the property being get
+     */
     public function __get($var)
     {
         $a_backtrace = debug_backtrace();
@@ -94,13 +100,14 @@ trait VisibilityTraits {
             return '';
         }
     }
+
     /**
-     *  Prevent direct access to protected and private properties.
-     *  $this->private_properties has to be set via setPrivateProperties()
-     *  for this to be effective.
-     *  @param string $var name of property being evaluated
-     *  @return bool
-    **/
+     * Prevent direct access to protected and private properties.
+     * $this->private_properties has to be set via setPrivateProperties()
+     * for this to be effective.
+     * @param string $var name of property being evaluated
+     * @return bool
+     */
     public function __isset($var)
     {
         $a_backtrace = debug_backtrace();
@@ -120,13 +127,14 @@ trait VisibilityTraits {
             return false;
         }
     }
+
     /**
-     *  Prevent direct access to protected and private properties.
-     *  $this->private_properties has to be set via setPrivateProperties()
-     *  for this to be effective.
-     *  @param string $var name of property being unset
-     *  @return null
-    **/
+     * Prevent direct access to protected and private properties.
+     * $this->private_properties has to be set via setPrivateProperties()
+     * for this to be effective.
+     * @param string $var name of property being unset
+     * @return null
+     */
     public function __unset($var)
     {
         $a_backtrace = debug_backtrace();

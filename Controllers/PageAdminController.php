@@ -1,23 +1,22 @@
 <?php
 /**
- *  @brief     Controller for the Page Admin page.
- *  @ingroup   ritc_library lib_controllers
- *  @file      PageAdminController.php
- *  @namespace Ritc\Library\Controllers
- *  @class     PageAdminController
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:49:00
- *  @note <pre><b>Change Log</b>
- *      v1.0.0   - First working version                        - 11/27/2015 wer
- *      v1.0.0β1 - Initial version                              - 10/30/2015 wer
- *  </pre>
- **/
+ * @brief     Controller for the Page Admin page.
+ * @ingroup   lib_controllers
+ * @file      Ritc/Library/Controllers/PageAdminController.php
+ * @namespace Ritc\Library\Controllers
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.1
+ * @date      2015-11-27 14:49:00
+ * @note <b>Change Log</b>
+ * - v1.0.1   - bug fix                                      - 2016-03-08 wer
+ * - v1.0.0   - First working version                        - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                              - 10/30/2015 wer
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\MangerControllerInterface;
+use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
@@ -25,33 +24,26 @@ use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PageAdminView;
 
-class PageAdminController implements MangerControllerInterface
+/**
+ * Class PageAdminController.
+ * @class PageAdminController
+ * @package Ritc\Library\Controllers
+ */
+class PageAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $a_post;
-    /**
-     * @var Di
-     */
+    /** @var Di */
     private $o_di;
-    /**
-     * @var PageModel
-     */
+    /** @var PageModel */
     private $o_model;
-    /**
-     * @var Router
-     */
+    /** @var Router */
     private $o_router;
-    /**
-     * @var Session
-     */
+    /** @var Session */
     private $o_session;
-    /**
-     * @var PageAdminView
-     */
+    /** @var PageAdminView */
     private $o_view;
 
     /**
@@ -187,6 +179,7 @@ class PageAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
     /**
      * Required by interface. Not called.
      * @return string
@@ -195,6 +188,7 @@ class PageAdminController implements MangerControllerInterface
     {
         return $this->o_view->renderVerify();
     }
+
     /**
      * Adds slashes to url if needed.
      * @param string $url

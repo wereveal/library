@@ -2,7 +2,7 @@
 /**
  * @brief     Tests the Constants Model Class.
  * @details   Tests the Constants Model Class.
- * @ingroup   ritc_library lib_tests
+ * @ingroup   lib_tests
  * @file      ConstantsModelTester.php
  * @namespace Ritc\Library\Tests
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -26,28 +26,53 @@ use Ritc\Library\Services\Di;
  */
 class ConstantsModelTester extends Tester
 {
+    /** @var array  */
     protected $a_test_order;
+    /** @var array  */
     protected $a_test_values = array();
+    /** @var int  */
     protected $failed_subtests;
+    /** @var array  */
     protected $failed_test_names = array();
+    /** @var int */
     protected $failed_tests = 0;
+    /** @var int */
     protected $new_id;
+    /** @var int */
     protected $num_o_tests = 0;
+    /** @var \Ritc\Library\Services\Elog  */
     protected $o_elog;
+    /** @var int  */
     protected $passed_subtests;
+    /** @var array */
     protected $passed_test_names  = array();
+    /** @var int  */
     protected $passed_tests = 0;
+    /** @var string */
     protected $private_properties;
+    /** @var ConstantsModel */
     private $o_config;
+    /** @var \Ritc\Library\Service\DbModel */
     private $o_db;
+    /** @var TwigEnvironment */
     private $o_twig;
 
+    /**
+     * ConstantsModelTester constructor.
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->o_db     = $o_di->get('db');
         $this->o_twig   = $o_di->get('twig');
         $this->o_config = new ConstantsModel($this->o_db);
     }
+
+    /**
+     * Returns the html for the results of the tests.
+     * @param array $a_result_values
+     * @return string
+     */
     public function renderResults(array $a_result_values = array())
     {
         if (count($a_result_values) == 0) {
@@ -68,15 +93,15 @@ class ConstantsModelTester extends Tester
             );
         }
     }
+
     /**
-     *  Runs tests where method ends in Tester.
-     *  Extends the runTests method in abstract Tester.
-     *  @param string $class_name name of the class to be tested
-     *  @param array $a_test_order optional, if provided it ignores
-     *      the class property $a_test_order and won't try to build one
-     *      from the class methods.
-     *  @return int $failed_tests
-     **/
+     * Runs tests where method ends in Tester.
+     * Extends the runTests method in abstract Tester.
+     * @param string $class_name name of the class to be tested
+     * @param array $a_test_order optional, if provided it ignores the class property $a_test_order
+     *                            and won't try to build one from the class methods.
+     * @return int $failed_tests
+     */
     public function runTests($class_name = 'ConstantsModel', array $a_test_order = array())
     {
         if ($class_name == '') {
@@ -151,6 +176,9 @@ class ConstantsModelTester extends Tester
     }
 
     ### TESTS ###
+    /**
+     * @return bool
+     */
     public function createTester()
     {
         $bad_results = false;
@@ -183,6 +211,10 @@ class ConstantsModelTester extends Tester
         }
         return true;
     }
+
+    /**
+     * @return bool
+     */
     public function readTester()
     {
         $bad_results = false;
@@ -211,6 +243,10 @@ class ConstantsModelTester extends Tester
         }
         return true;
     }
+
+    /**
+     * @return bool
+     */
     public function updateTester()
     {
         $bad_results = false;
@@ -243,6 +279,10 @@ class ConstantsModelTester extends Tester
         }
         return true;
     }
+
+    /**
+     * @return bool
+     */
     public function deleteTester()
     {
         $config_id = $this->new_id;
@@ -267,6 +307,10 @@ class ConstantsModelTester extends Tester
         }
         return true;
     }
+
+    /**
+     * @return bool
+     */
     public function makeValidNameTester()
     {
         $results1 = $this->o_config->makeValidName('<a href="http://go.to.bad.place/">my name</a>');
@@ -290,13 +334,13 @@ class ConstantsModelTester extends Tester
 
     ### Utility ###
     /**
-     *  Checks to see if a method is public.
-     *  Fixes method names that end in Tester.
-     *  Overriding method from abstact Tester class.
-     *  @param string $class_name required defaults to ''
-     *  @param string $method_name required defaults to ''
-     *  @return bool true or false
-    **/
+     * Checks to see if a method is public.
+     * Fixes method names that end in Tester.
+     * Overriding method from abstact Tester class.
+     * @param string $class_name required defaults to ''
+     * @param string $method_name required defaults to ''
+     * @return bool true or false
+     */
     public function isPublicMethod($class_name = '', $method_name = '')
     {
         if ($class_name == '' || $method_name == '') { return false; }
@@ -307,5 +351,4 @@ class ConstantsModelTester extends Tester
         $o_method = $o_ref->getMethod($method_name);
         return $o_method->IsPublic();
     }
-
 }

@@ -1,19 +1,18 @@
 <?php
 /**
- *  @brief     View for the Router Admin page.
- *  @file      RolesAdminView.php
- *  @ingroup   ritc_library views
- *  @namespace Ritc\Library\Views
- *  @class     RolesAdminView
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.0
- *  @date      2015-10-07 14:34:30
- *  @note <pre><b>Change Log</b>
- *      v1.1.0   - Immutable code added  - 10/07/2015 wer
- *      v1.0.0   - First working version - 01/28/2015 wer
- *      v1.0.0β1 - Initial version       - 01/20/2015 wer
- *  </pre>
- **/
+ * @brief     View for the Router Admin page.
+ * @file      RolesAdminView.php
+ * @ingroup   ritc_library views
+ * @namespace Ritc\Library\Views
+ * @class     RolesAdminView
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.0
+ * @date      2015-10-07 14:34:30
+ * @note <b>Change Log</b>
+ * - v1.1.0   - Immutable code added  - 10/07/2015 wer
+ * - v1.0.0   - First working version - 01/28/2015 wer
+ * - v1.0.0β1 - Initial version       - 01/20/2015 wer
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\ViewHelper;
@@ -38,9 +37,9 @@ class RolesAdminView
         }
     }
     /**
-     *  Returns the list of routes in html.
-     *  @param array $a_message
-     *  @return string
+     * Returns the list of routes in html.
+     * @param array $a_message
+     * @return string
      */
     public function renderList(array $a_message = array())
     {
@@ -78,9 +77,9 @@ class RolesAdminView
         return $this->o_twig->render('@pages/roles_admin.twig', $a_values);
     }
     /**
-     *  Returns HTML verify form to delete.
-     *  @param array $a_values
-     *  @return string
+     * Returns HTML verify form to delete.
+     * @param array $a_values
+     * @return string
      */
     public function renderVerify(array $a_values = array())
     {

@@ -1,36 +1,37 @@
 <?php
 /**
- *  @brief     View for the Router Admin page.
- *  @ingroup   ritc_library lib_views
- *  @file      RoutesAdminView.php
- *  @namespace Ritc\Library\Views
- *  @class     RoutesAdminView
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.2
- *  @date      2015-12-12 16:21:06
- *  @note <pre><b>Change Log</b>
- *      v1.0.2   - Implement TWIG_PREFIX                            - 12/12/2015 wer
- *      v1.0.1   - change in database structure forced change here  - 09/03/2015 wer
- *      v1.0.0   - first working version                            - 01/28/2015 wer
- *      v1.0.0β2 - changed to use DI/IOC                            - 11/15/2014 wer
- *      v1.0.0β1 - Initial version                                  - 11/14/2014 wer
- *  </pre>
-**/
+ * @brief     View for the Router Admin page.
+ * @ingroup   lib_views
+ * @file      RoutesAdminView.php
+ * @namespace Ritc\Library\Views
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.2
+ * @date      2015-12-12 16:21:06
+ * @note <b>Change Log</b>
+ * - v1.0.2   - Implement TWIG_PREFIX                            - 12/12/2015 wer
+ * - v1.0.1   - change in database structure forced change here  - 09/03/2015 wer
+ * - v1.0.0   - first working version                            - 01/28/2015 wer
+ * - v1.0.0β2 - changed to use DI/IOC                            - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                                  - 11/14/2014 wer
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
+/**
+ * Class RoutesAdminView
+ * @class   RoutesAdminView
+ * @package Ritc\Library\Views
+ */
 class RoutesAdminView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
-    /**
-     * @var \Ritc\Library\Models\RoutesModel
-     */
+    /** @var \Ritc\Library\Models\RoutesModel */
     private $o_model;
 
     /**
@@ -47,10 +48,11 @@ class RoutesAdminView
         }
 
     }
+
     /**
-     *  Returns the list of routes in html.
-     *  @param array $a_message
-     *  @return string
+     * Returns the list of routes in html.
+     * @param array $a_message
+     * @return string
      */
     public function renderList(array $a_message = array())
     {
@@ -71,7 +73,7 @@ class RoutesAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'menus'   => $this->a_links,
+            'menus'   => $this->a_nav,
             'adm_lvl' => $this->adm_level
         );
         $a_values = array_merge($a_page_values, $a_values);
@@ -96,10 +98,11 @@ class RoutesAdminView
         $tpl = TWIG_PREFIX . 'pages/routes_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
+
     /**
-     *  Returns HTML verify form to delete.
-     *  @param array $a_values
-     *  @return string
+     * Returns HTML verify form to delete.
+     * @param array $a_values
+     * @return string
      */
     public function renderVerify(array $a_values = array())
     {
@@ -112,7 +115,7 @@ class RoutesAdminView
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the route.';
         }
-        $a_values['menus'] = $this->a_links;
+        $a_values['menus'] = $this->a_nav;
         $tpl = TWIG_PREFIX . 'pages/verify_delete_route.twig';
         return $this->o_twig->render($tpl, $a_values);
     }

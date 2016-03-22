@@ -1,59 +1,56 @@
 <?php
 /**
- *  @brief     Create Constants from the constants database
- *  @ingroup   ritc_library lib_helper
- *  @file      ConstantsHelper.php
- *  @namespace Ritc\Library\Helper
- *  @class     ConstantsHelper
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   4.0.1
- *  @date      2016-02-22 15:05:55
- *  @note <pre><b>Change Log</b>
- *      v4.0.1 - bug fix. Wondering if another is still here.               - 02/22/2016 wer
- *      v4.0.0 - renamed to reflect what it was doing. Since it isn't       - 01/17/2015 wer
- *               a service, moved it Ritc\Library\Helper namespace.
- *      v3.3.0 - moved some contant definitions into this class             - 12/10/2014 wer
- *               the constants.php file was doing these definitions but
- *               it seemed that this should be done here. Also, moved a
- *               couple constant names into the database.
- *      v3.2.0 - changed to use DI/IOC                                      - 12/10/2014 wer
- *      v3.1.5 - moved to the Services Namespace in the Library             - 11/15/2014 wer
- *      v3.1.4 - changed to match changes in ConstantsModel                    - 11/13/2014 wer
- *      v3.1.3 - changed to implment the changes in Base class              - 09/23/2014 wer
- *      v3.1.2 - bug fixes                                                  - 09/18/2014 wer
- *      v3.1.1 - made it so the constants table name will be assigned from the - 02/24/2014 wer
- *               the db_prefix variable set from the db confuration
- *               (created in PdoFactory, passed on to DbModel).
- *      v3.1.0 - made it so it will create the constants table if it does not exist.
- *               Other changes to adjust to not having a theme based app.   - 01/31/2014 wer
- *      v3.0.3 - package change                                             - 12/19/2013 wer
- *      v3.0.2 - bug fixes, minor changes                                   - 2013-11-08 wer
- *      v3.0.1 - refactoring for database class change                      - 2013-11-06 wer
- *      v3.0.0 - Modified for new framework file hierarchy                  - 2013-04-30 wer
- *      v2.3.0 - mostly changes for FIG-standards
- *  </pre>
-**/
+ * @brief     Create Constants from the constants database
+ * @ingroup   lib_helper
+ * @file      Ritc/Library/Helper/ConstantsHelper.php
+ * @namespace Ritc\Library\Helper
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   4.0.1
+ * @date      2016-02-22 15:05:55
+ * @note <b>Change Log</b>
+ * - v4.0.1 - bug fix. Wondering if another is still here.               - 02/22/2016 wer
+ * - v4.0.0 - renamed to reflect what it was doing. Since it isn't       - 01/17/2015 wer
+ *              a service, moved it Ritc\Library\Helper namespace.
+ * - v3.3.0 - moved some contant definitions into this class             - 12/10/2014 wer
+ *              the constants.php file was doing these definitions but
+ *              it seemed that this should be done here. Also, moved a
+ *              couple constant names into the database.
+ * - v3.2.0 - changed to use DI/IOC                                      - 12/10/2014 wer
+ * - v3.1.5 - moved to the Services Namespace in the Library             - 11/15/2014 wer
+ * - v3.1.4 - changed to match changes in ConstantsModel                    - 11/13/2014 wer
+ * - v3.1.3 - changed to implment the changes in Base class              - 09/23/2014 wer
+ * - v3.1.2 - bug fixes                                                  - 09/18/2014 wer
+ * - v3.1.1 - made it so the constants table name will be assigned from the - 02/24/2014 wer
+ *              the db_prefix variable set from the db confuration
+ *              (created in PdoFactory, passed on to DbModel).
+ * - v3.1.0 - made it so it will create the constants table if it does not exist.
+ *              Other changes to adjust to not having a theme based app.   - 01/31/2014 wer
+ * - v3.0.3 - package change                                             - 12/19/2013 wer
+ * - v3.0.2 - bug fixes, minor changes                                   - 2013-11-08 wer
+ * - v3.0.1 - refactoring for database class change                      - 2013-11-06 wer
+ * - v3.0.0 - Modified for new framework file hierarchy                  - 2013-04-30 wer
+ * - v2.3.0 - mostly changes for FIG-standards
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class ConstantsHelper
+ * @class   ConstantsHelper
+ * @package Ritc\Library\Helper
+ */
 class ConstantsHelper
 {
     use LogitTraits;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $created = false;
-    /**
-     * @var ConstantsHelper
-     */
+    /** @var ConstantsHelper */
     private static $instance;
-    /**
-     * @var \Ritc\Library\Models\ConstantsModel
-     */
+    /** @var \Ritc\Library\Models\ConstantsModel */
     private $o_constants_model;
 
     /**
@@ -203,11 +200,11 @@ class ConstantsHelper
     }
 
     /**
-     *  Creates constants referring to the main assets for the primary (single) theme.
-     *  A theme may be unnamed, i.e. there is no theme. It uses the basic
-     *      assets directory for everything. If there is a defined THEMES_DIR,
-     *      that overrides the assets directory e.g. /themes
-    **/
+     * Creates constants referring to the main assets for the primary (single) theme.
+     * A theme may be unnamed, i.e. there is no theme. It uses the basic
+     *     assets directory for everything. If there is a defined THEMES_DIR,
+     *     that overrides the assets directory e.g. /themes
+     */
     private function createThemeConstants()
     {
         if (!defined('THEMES_DIR')) {
@@ -282,7 +279,7 @@ class ConstantsHelper
 
     ### Magic Method fix
     /**
-     *
+     * Clone is not allowed.
      */
     public function __clone()
     {

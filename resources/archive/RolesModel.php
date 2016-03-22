@@ -1,48 +1,43 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff.
- *  @file      RolesModel.php
- *  @inrole ritc_library models
- *  @namespace Ritc\Library\Models
- *  @class     RolesModel
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.5
- *  @date      2015-11-22 17:57:02
- *  @note <pre><b>Change Log</b>
- *      v1.0.5   - bug fix to work properly with pgsql         - 11/22/2015 wer
- *      v1.0.4   - bug fix have to use is_numeric not ctype    - 11/05/2015 wer
- *      v1.0.3   - new method, bug fix, db table update        - 10/05/2015 wer
- *      v1.0.2   - bug fixes                                   - 09/24/2015 wer
- *      v1.0.1   - refactoring elsewhere changes here to match - 07/31/2015 wer
- *      v1.0.0   - First working version                       - 01/28/2015 wer
- *      v1.0.0ß5 - reverted to injecting the DbModel           - 11/17/2014 wer
- *      v1.0.0ß4 - changed to use DI/IOC                       - 11/15/2014 wer
- *      v1.0.0β3 - extends the Base class, injects the DbModel - 09/23/2014 wer
- *      v1.0.0β2 - First live version                          - 09/15/2014 wer
- *      v1.0.0β1 - Initial version                             - 01/18/2014 wer
- *  </pre>
-**/
+ * @brief     Does all the database CRUD stuff.
+ * @file      RolesModel.php
+ * @inrole ritc_library models
+ * @namespace Ritc\Library\Models
+ * @class     RolesModel
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.0
+ * @date      2016-03-18 15:47:26
+ * @note <b>Change Log</b>
+ * - v1.1.0   - Refactoring of DbModel reflected here       - 2016-03-18 wer
+ * - v1.0.5   - bug fix to work properly with pgsql         - 11/22/2015 wer
+ * - v1.0.4   - bug fix have to use is_numeric not ctype    - 11/05/2015 wer
+ * - v1.0.3   - new method, bug fix, db table update        - 10/05/2015 wer
+ * - v1.0.2   - bug fixes                                   - 09/24/2015 wer
+ * - v1.0.1   - refactoring elsewhere changes here to match - 07/31/2015 wer
+ * - v1.0.0   - First working version                       - 01/28/2015 wer
+ * - v1.0.0ß5 - reverted to injecting the DbModel           - 11/17/2014 wer
+ * - v1.0.0ß4 - changed to use DI/IOC                       - 11/15/2014 wer
+ * - v1.0.0β3 - extends the Base class, injects the DbModel - 09/23/2014 wer
+ * - v1.0.0β2 - First live version                          - 09/15/2014 wer
+ * - v1.0.0β1 - Initial version                             - 01/18/2014 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 class RolesModel implements ModelInterface
 {
-    use LogitTraits;
-
-    private $db_prefix;
-    private $db_type;
-    private $o_db;
+    use LogitTraits, DbUtilityTraits;
 
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $o_db->getDbType();
-        $this->db_prefix = $o_db->getDbPrefix();
+        $this->setupProperties($o_db, 'roles');
     }
 
     ### BASE CRUD ###
@@ -50,7 +45,7 @@ class RolesModel implements ModelInterface
      * Creates a new record
      * @param array $a_values
      * @return int positive numbers are the ids, negative numbers are error codes.
-     *             see method getErrorMessage for values
+     *            see method getErrorMessage for values
      */
     public function create(array $a_values = array())
     {
@@ -112,11 +107,11 @@ class RolesModel implements ModelInterface
                 'role_level',
                 'role_immutable'
             );
-            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY 'role_name'";
@@ -132,7 +127,7 @@ class RolesModel implements ModelInterface
      * Update the role record.
      * @param array $a_values
      * @return int  1 = successful database operation, negative for errors
-     *              see method getErrorMessage for error values
+     *             see method getErrorMessage for error values
      */
     public function update(array $a_values = array())
     {
@@ -143,7 +138,7 @@ class RolesModel implements ModelInterface
             return -2;
         }
         $a_allowed_keys = ['role_id', 'role_name', 'role_description', 'role_level', 'role_immutable'];
-        $a_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_values);
+        $a_values = $this->removeBadKeys($a_allowed_keys, $a_values);
 
         if (isset($a_values['role_level']) && $a_values['role_level'] <= 2) {
             return -3;
@@ -156,7 +151,7 @@ class RolesModel implements ModelInterface
             }
         }
 
-        $set_sql = $this->o_db->buildSqlSet($a_values, ['role_id']);
+        $set_sql = $this->buildSqlSet($a_values, ['role_id']);
         $sql = "
             UPDATE {$this->db_prefix}roles
             {$set_sql}
@@ -173,7 +168,7 @@ class RolesModel implements ModelInterface
     }
     /**
      * Deletes a role record.
-     * @param string $role_id
+     * @param int $role_id
      * @return array
      */
     public function delete($role_id = -1)
@@ -201,13 +196,12 @@ class RolesModel implements ModelInterface
 
     ### Specialized CRUD ###
     /**
-     *  Selects a role record by the id.
-     *  @param int $role_id
-     *  @return array
-    **/
+     * Selects a role record by the id.
+     * @param int $role_id
+     * @return array
+     */
     public function readById($role_id = -1)
     {
-        $meth = __METHOD__ . '.';
         if ($role_id == -1) {
             return -2;
         }
@@ -221,9 +215,9 @@ class RolesModel implements ModelInterface
         return -4;
     }
     /**
-     *  Returns a record of the role specified by name.
-     *  @param string $role_name
-     *  @return array|int
+     * Returns a record of the role specified by name.
+     * @param string $role_name
+     * @return array|int
      */
     public function readyByName($role_name = '')
     {
@@ -237,9 +231,9 @@ class RolesModel implements ModelInterface
         return -1;
     }
     /**
-     *  Selects the roles that are mapped to a group.
-     *  @param int $group_id
-     *  return array
+     * Selects the roles that are mapped to a group.
+     * @param int $group_id
+     * @return array|int
      */
     public function readRolesForGroup($group_id = -1)
     {
@@ -260,10 +254,10 @@ class RolesModel implements ModelInterface
 
     ### Validators ###
     /**
-     *  Checks to see if the id is a valid role id.
-     *  @param int $role_id
-     *  @return bool true or false
-     **/
+     * Checks to see if the id is a valid role id.
+     * @param int $role_id
+     * @return bool true or false
+      */
     public function isValidId($role_id = -1)
     {
         if ($role_id == -1) { return false; }
@@ -276,9 +270,9 @@ class RolesModel implements ModelInterface
 
     ### Other ###
     /**
-     *  Returns text for an error message.
-     *  @param  int    $error_id
-     *  @return string
+     * Returns text for an error message.
+     * @param  int    $error_id
+     * @return string
      */
     public function getErrorMessage($error_id = 0)
     {

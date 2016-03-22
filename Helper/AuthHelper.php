@@ -1,61 +1,64 @@
 <?php
 /**
- *  @brief     Manages User Authentication and Authorization to the site.
- *  @details   It is expected that this will be used within a controller and
- *             more finely grained access with be handled there
- *             or in a sub-controller.
- *  @ingroup   ritc_library lib_helper
- *  @file      AuthHelper.php
- *  @namespace Ritc\Library\Helper
- *  @class     AuthHelper
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   5.0.0
- *  @date      2015-11-06 15:03:52
- *  @note <pre><b>Change Log</b>
- *      v5.0.0 - removed roles from code                               - 11/06/2015 wer
- *      v4.4.1 - bug fix                                               - 10/06/2015 wer
- *      v4.4.0 - bunch of changes primarily in access control          - 09/26/2015 wer
- *      v4.3.2 - added getHighestRoleLevel method                      - 09/25/2015 wer
- *      v4.3.1 - added logout method                                   - 09/24/2015 wer
- *      v4.3.0 - two changes. isDefaultPerson is now isImmutablePerson - 09/03/2015 wer
- *               isRouteAllowed now checks for group to route mapping
- *               as well as role to route mapping, defaults to group.
- *      v4.2.6 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
- *      v4.2.5 - bug fixes, a change in PeopleModel->readInfo          - 08/14/2015 wer
- *      v4.2.4 - more references to user to person changes             - 08/04/2015 wer
- *      v4.2.3 - refactored references to user into person             - 01/26/2015 wer
- *      v4.2.2 - modified to work with user model changes              - 01/22/2015 wer
- *      v4.2.1 - bug fixes                                             - 01/16/2015 wer
- *      v4.2.0 - change the name of the file. It wasn't doing access   - 01/14/2015 wer
- *               it was doing authorization.
- *      v4.1.1 - changed the login method to return an array always    - 01/14/2015 wer
- *      v4.1.0 - moved to the Helper namespace, changed name           - 12/09/2014 wer
- *      v4.0.5 - removed remaining db code, fixed bugs                 - 12/09/2014 wer
- *      v4.0.4 - switched to using IOC/DI                              - 11/17/2014 wer
- *      v4.0.3 - moved to the Services namespace                       - 11/15/2014 wer
- *      v4.0.2 - part of the refactoring of the user model             - 11/11/2014 wer
- *      v4.0.1 - updated to implement the changes to the Base class    - 09/23/2014 wer
- *               Bug fixes.
- *      v4.0.0 - Changed to use the user/group/role model classes      - 09/12/2014 wer
- *      v3.6.1 - Changed to use DbModel defined table prefix,          - 02/24/2014 wer
- *               bug fix, added anti-spambot code to login
- *               and some code clean up
- *      v3.6.0 - Database changes, added new user role connector table - 11/12/2013 wer
- *               New and revised methods to match database changes.
- *               General Clean up of the code.
- *      v3.5.5 - refactor for change in the database class             - 2013-11-06 wer
- *      v3.5.4 - changed namespace and library reorg                   - 07/30/2013 wer
- *      v3.5.3 - changed namespace to match my framework namespace,    - 04/22/2013 wer
- *               refactored to match Elog method name change
- *      v3.5.2 - database methods were renamed, changed to match
- *      v3.5.1 - changed namespace to match Symfony structure
- *      v3.5.0 - new methods to handle user groups, lots of minor changes
- *      v3.4.5 - modified the code to be closer to FIG standards and removed controller code (this is Model)
- *      v3.4.0 - added short_name to Access, changing Real Name back to a real name
- *      v3.3.0 - Refactored to extend the Base class
- *      v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
- *  </pre>
-**/
+ * @brief     Manages User Authentication and Authorization to the site.
+ * @details   It is expected that this will be used within a controller and
+ *            more finely grained access with be handled there
+ *            or in a sub-controller.
+ * @ingroup   lib_helper
+ * @file      Ritc/Library/Helper/AuthHelper.php
+ * @namespace Ritc\Library\Helper
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   5.1.0
+ * @date      2016-03-18 15:38:04
+ * @note <b>Change Log</b>
+ * - v5.2.0 - Adding DbUtilityTraits only pointed out problems.     - 2016-03-19 wer
+ *            - Removed DbUtilityTraits
+ *            - fixed the problems.
+ * - v5.1.0 - Part of a refactoring, added DbUtilityTraits          - 2016-03-18 wer
+ * - v5.0.0 - removed roles from code                               - 11/06/2015 wer
+ * - v4.4.1 - bug fix                                               - 10/06/2015 wer
+ * - v4.4.0 - bunch of changes primarily in access control          - 09/26/2015 wer
+ * - v4.3.2 - added getHighestRoleLevel method                      - 09/25/2015 wer
+ * - v4.3.1 - added logout method                                   - 09/24/2015 wer
+ * - v4.3.0 - two changes. isDefaultPerson is now isImmutablePerson - 09/03/2015 wer
+ *            - isRouteAllowed now checks for group to route mapping
+ *            - role to route mapping, defaults to group.
+ * - v4.2.6 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
+ * - v4.2.5 - bug fixes, a change in PeopleModel->readInfo          - 08/14/2015 wer
+ * - v4.2.4 - more references to user to person changes             - 08/04/2015 wer
+ * - v4.2.3 - refactored references to user into person             - 01/26/2015 wer
+ * - v4.2.2 - modified to work with user model changes              - 01/22/2015 wer
+ * - v4.2.1 - bug fixes                                             - 01/16/2015 wer
+ * - v4.2.0 - change the name of the file.                          - 01/14/2015 wer
+ *            - It wasn't doing access
+ *            - It was doing authorization and authentication.
+ * - v4.1.1 - changed the login method to return an array always    - 01/14/2015 wer
+ * - v4.1.0 - moved to the Helper namespace, changed name           - 12/09/2014 wer
+ * - v4.0.5 - removed remaining db code, fixed bugs                 - 12/09/2014 wer
+ * - v4.0.4 - switched to using IOC/DI                              - 11/17/2014 wer
+ * - v4.0.3 - moved to the Services namespace                       - 11/15/2014 wer
+ * - v4.0.2 - part of the refactoring of the user model             - 11/11/2014 wer
+ * - v4.0.1 - updated to implement the changes to the Base class    - 09/23/2014 wer
+ *            - Bug fixes.
+ * - v4.0.0 - Changed to use the user/group/role model classes      - 09/12/2014 wer
+ * - v3.6.1 - Changed to use DbModel defined table prefix,          - 02/24/2014 wer
+ *            - bug fix, added anti-spambot code to login
+ *            - some code clean up
+ * - v3.6.0 - Database changes, added new user role connector table - 11/12/2013 wer
+ *            - New and revised methods to match database changes.
+ *            - General Clean up of the code.
+ * - v3.5.5 - refactor for change in the database class             - 2013-11-06 wer
+ * - v3.5.4 - changed namespace and library reorg                   - 07/30/2013 wer
+ * - v3.5.3 - changed namespace to match my framework namespace,    - 04/22/2013 wer
+ *            - refactored to match Elog method name change
+ * - v3.5.2 - database methods were renamed, changed to match
+ * - v3.5.1 - changed namespace to match Symfony structure
+ * - v3.5.0 - new methods to handle user groups, lots of minor changes
+ * - v3.4.5 - modified the code to be closer to FIG standards and removed controller code (this is Model)
+ * - v3.4.0 - added short_name to Access, changing Real Name back to a real name
+ * - v3.3.0 - Refactored to extend the Base class
+ * - v3.2.0 - changed real name field to being just short_name, a temporary fix for a particular customer, wasn't intended to be permanent
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Models\GroupsModel;
@@ -66,33 +69,22 @@ use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class AuthHelper helps with authentication and authorization.
+ * @class   AuthHelper
+ * @package Ritc\Library\Helper
+ */
 class AuthHelper
 {
     use LogitTraits;
 
-    /**
-     * @var string
-     */
-    private $db_prefix;
-    /**
-     * @var DbModel
-     */
-    private $o_db;
-    /**
-     * @var GroupsModel
-     */
+    /** @var GroupsModel */
     private $o_groups;
-    /**
-     * @var Router
-     */
+    /** @var Router */
     private $o_router;
-    /**
-     * @var Session
-     */
+    /** @var Session */
     private $o_session;
-    /**
-     * @var PeopleModel
-     */
+    /** @var PeopleModel */
     private $o_people;
 
     /**
@@ -101,12 +93,12 @@ class AuthHelper
      */
     public function __construct(Di $o_di)
     {
-        $this->o_db      = $o_di->get('db');
+        /** @var DbModel $o_db */
+        $o_db            = $o_di->get('db');
         $this->o_session = $o_di->get('session');
         $this->o_router  = $o_di->get('router');
-        $this->o_people  = new PeopleModel($this->o_db);
-        $this->o_groups  = new GroupsModel($this->o_db);
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->o_people  = new PeopleModel($o_db);
+        $this->o_groups  = new GroupsModel($o_db);
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people->setElog($this->o_elog);
@@ -116,22 +108,23 @@ class AuthHelper
 
     #### Actions ####
     /**
-     *  Does the actual login, verifies valid person.
+     * Does the actual login, verifies valid person.
      *
-     *  @pre a form has been submitted from the site with all the needed
-     *      variables which have been put through a data cleaner.
+     * @pre a form has been submitted from the site with all the needed
+     * - variables which have been put through a data cleaner.
      *
-     *  @param array $a_person_post required with the following keys
-     *      array(
-     *          'login_id'=>'something',
-     *          'password'=>'something',
-     *          'tolken'=>'something',
-     *          'form_ts'=>'000000',
-     *          'hobbit'=>'' <-- hobbit should always be blank for valid submission (optional element)
-     *      ).
-     *
-     *  @return array person_values or login values with message.
-    **/
+     * @param array $a_person_post required with the following keys:
+     * <pre>
+     *     array(
+     *         'login_id'=>'something',
+     *         'password'=>'something',
+     *         'tolken'=>'something',
+     *         'form_ts'=>'000000',
+     *         'hobbit'=>'' <-- hobbit should always be blank for valid submission (optional element)
+     *     ).
+     * </pre>
+     * @return array person_values or login values with message.
+     */
     public function login(array $a_person_post = array())
     {
         $meth = __METHOD__ . '.';
@@ -232,10 +225,11 @@ class AuthHelper
             ];
         }
     }
+
     /**
-     *  Logs the person out and resets session.
-     *  @param string|int $people_id either login_id or people_id
-     *  @return array
+     * Logs the person out and resets session.
+     * @param string|int $people_id either login_id or people_id
+     * @return array
      */
     public function logout($people_id = '')
     {
@@ -252,12 +246,13 @@ class AuthHelper
             'message'      => 'Logged Out.'
         ];
     }
+
     /**
-     *  Gets the highest auth level the person has.
-     *  Note that this is not associated with a route or page, just the highest
-     *  auth level that the person has based on groups the person is in.
-     *  @param string|int $people_id and be either db field people_id or login_id
-     *  @return int
+     * Gets the highest auth level the person has.
+     * Note that this is not associated with a route or page, just the highest
+     * auth level that the person has based on groups the person is in.
+     * @param string|int $people_id and be either db field people_id or login_id
+     * @return int
      */
     public function getHighestAuthLevel($people_id = '')
     {
@@ -329,10 +324,11 @@ class AuthHelper
         }
         return true;
     }
+
     /**
-     *  Figures out if the person is specified as a default person.
-     *  @param string|int $person can be the person id or the person name.
-     *  @return bool true false
+     * Figures out if the person is specified as a default person.
+     * @param string|int $person can be the person id or the person name.
+     * @return bool true false
      */
     public function isImmutablePerson($person = -1)
     {
@@ -347,9 +343,10 @@ class AuthHelper
         }
         return false;
     }
+
     /**
-     *  Verifies a person is logged in and session is valid for person.
-     *  @return bool
+     * Verifies a person is logged in and session is valid for person.
+     * @return bool
      */
     public function isLoggedIn()
     {
@@ -368,6 +365,7 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Checks to see if the person has a valid group for the route.
      * @param int|string $people_id
@@ -392,11 +390,12 @@ class AuthHelper
         }
         return false;
     }
+
     /**
-     *  Verifies person is in the group SuperAdmin (group_id == 1).
-     *  @param int|string $people_id required
-     *  @return bool - true = is a super admin, false = not a super admin
-    **/
+     * Verifies person is in the group SuperAdmin (group_id == 1).
+     * @param int|string $people_id required
+     * @return bool - true = is a super admin, false = not a super admin
+     */
     public function isSuperAdmin($people_id = '')
     {
         if ($people_id == '') {
@@ -409,11 +408,12 @@ class AuthHelper
         }
         return false;
     }
+
     /**
-     *  Checks to see if the value is a valid group id or name.
-     *  @param int|string $group
-     *  @return bool true or false
-     **/
+     * Checks to see if the value is a valid group id or name.
+     * @param int|string $group
+     * @return bool true or false
+     */
     public function isValidGroup($group = -1)
     {
         if ($group == -1) { return false; }
@@ -428,6 +428,7 @@ class AuthHelper
         }
         return false;
     }
+
     /**
      * Verifies the group id provided is a valid id
      * @param int $group
@@ -441,11 +442,12 @@ class AuthHelper
         }
         return false;
     }
+
     /**
-     *  Checks to see if person exists.
-     *  @param int|string $person person id or login name
-     *  @return bool
-    **/
+     * Checks to see if person exists.
+     * @param int|string $person person id or login name
+     * @return bool
+     */
     public function isValidPerson($person = '')
     {
         if ($person == '') { return false; }
@@ -455,11 +457,12 @@ class AuthHelper
         }
         return false;
     }
+
     /**
-     *  Checks to see if the person by id exists.
-     *  Uses the isValidPerson method.
-     *  @param int $people_id required
-     *  @return bool
+     * Checks to see if the person by id exists.
+     * Uses the isValidPerson method.
+     * @param int $people_id required
+     * @return bool
      */
     public function isValidPeopleId($people_id = -1)
     {
@@ -469,11 +472,12 @@ class AuthHelper
         }
         return false;
     }
+
     /**
-     *  Checks to see if the person id exists.
-     *  @param int $people_id
-     *  @return bool true false
-     **/
+     * Checks to see if the person id exists.
+     * @param int $people_id
+     * @return bool true false
+     */
     public function peopleIdExists($people_id = -1)
     {
         if (ctype_digit($people_id) && $people_id != -1) {
@@ -485,11 +489,12 @@ class AuthHelper
         }
         return false;
     }
+
     /**
-     *  Checks to see if the person is in the group.
-     *  @param int|string $person
-     *  @param int|string $group
-     *  @return bool
+     * Checks to see if the person is in the group.
+     * @param int|string $person
+     * @param int|string $group
+     * @return bool
      */
     public function personInGroup($person = -1, $group = '')
     {
@@ -506,11 +511,12 @@ class AuthHelper
         }
         return false;
     }
+
     /**
-     *  Checks to see if the login_id exists.
-     *  @param string $login_id
-     *  @return bool
-     **/
+     * Checks to see if the login_id exists.
+     * @param string $login_id
+     * @return bool
+     */
     public function loginIdExists($login_id = '')
     {
         if ($login_id == '') { return false; }
@@ -520,10 +526,11 @@ class AuthHelper
         }
         return false;
     }
+
     /**
-     *  Checks to see if the password provided is valid for person.
-     *  @param array $a_person required $a_person['password'] and either $a_person['people_id'] or $a_person['login_id']
-     *  @return bool
+     * Checks to see if the password provided is valid for person.
+     * @param array $a_person required $a_person['password'] and either $a_person['people_id'] or $a_person['login_id']
+     * @return bool
      */
     public function validPassword(array $a_person = array())
     {

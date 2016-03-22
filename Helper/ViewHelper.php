@@ -1,38 +1,42 @@
 <?php
 /**
- *  @brief     Various helper functions for views.
- *  @ingroup   ritc_library lib_helper
- *  @file      ViewHelper.php
- *  @namespace Ritc\Library\Helper
- *  @class     ViewHelper
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.1
- *  @date      2015-11-05 14:29:45
- *  @note Change Log
- *      v1.1.1 - little sanitization of values - 11/05/2015 wer
- *      v1.1.0 - added lazy man's methods      - 09/25/2015 wer
- *      v1.0.1 - changed function to static    - 09/25/2014 wer
- *      v1.0.1 - minor key name change         - 12/31/2013 wer
- *      v1.0.0 - intial file                   - 07/30/2013 wer
- *  @note RITC Library
-**/
+ * @brief     Various helper functions for views.
+ * @ingroup   lib_helper
+ * @file      Ritc/Library/Helper/ViewHelper.php
+ * @namespace Ritc\Library\Helper
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.1
+ * @date      2015-11-05 14:29:45
+ * @note Change Log
+ * - v1.1.1 - little sanitization of values - 11/05/2015 wer
+ * - v1.1.0 - added lazy man's methods      - 09/25/2015 wer
+ * - v1.0.1 - changed function to static    - 09/25/2014 wer
+ * - v1.0.1 - minor key name change         - 12/31/2013 wer
+ * - v1.0.0 - intial file                   - 07/30/2013 wer
+ * @note RITC Library
+ */
 namespace Ritc\Library\Helper;
 
+/**
+ * Class ViewHelper.
+ * @class ViewHelper
+ * @package Ritc\Library\Helper
+ */
 class ViewHelper
 {
     /**
-	 *  Returns a message variables needed for a twig template.
-	 *  @param array $a_message_params array(
-	 *      'message'       => '',         // obviously if no message this is stupid
-	 *      'type'          => 'info',     // info is the generic message type
-	 *	    'message_class' => '',         // defaults to a class based on type
-	 *	    'image_src'     => '',         // is the web path including image file name
+	 * Returns a message variables needed for a twig template.
+	 * @param array $a_message_params <pre>array(
+	 *     'message'       => '',              // obviously if no message this is stupid
+	 *     'type'          => 'info',          // info is the generic message type
+	 *	    'message_class' => '',             // defaults to a class based on type
+	 *	    'image_src'     => '',             // is the web path including image file name
 	 *	    'image_class'   => 'message icon', // usually used to float image/manage where it goes
-	 *	    'alt_text'      => '',         // for the image
-	 *	    'extras'        => ''          // a just in case thing.
-	 *	)
-	 *  @return array values for the template.
-	**/
+	 *	    'alt_text'      => '',             // for the image
+	 *	    'extras'        => ''              // a just in case thing.
+	 *	)</pre>
+	 * @return array values for the template.
+	 */
 	public static function messageProperties(array $a_message_params = array())
 	{
 	    if ($a_message_params == array()) {
@@ -87,7 +91,7 @@ class ViewHelper
 				break;
 			case 'info':
 				$alt_text  = $alt_text  != '' ? $alt_text  : 'Information';
-				$image_src = $image_src != '' ? $image_src : $image_dir . '/info.png';
+				$image_src = $image_src != '' ? $image_src : $image_dir . '/information.png';
                 $msg_class = $msg_class != '' ? $msg_class : 'message info';
 				break;
 			case 'warning':
@@ -127,6 +131,7 @@ class ViewHelper
 		    'extras'        => $extras
 		);
 	}
+
     /**
      * Lazy man's way of creating array used by self::messageProperties method.
      * @param string $message
@@ -142,6 +147,7 @@ class ViewHelper
             'type'    => 'code'
         ];
     }
+
     /**
      * Lazy man's way of creating array used by self::messageProperties method.
      * @param string $message
@@ -157,6 +163,7 @@ class ViewHelper
             'type'    => 'error'
         ];
     }
+
 	/**
 	 * Lazy man's way of creating array used by self::messageProperties method.
 	 * @param string $message
@@ -172,6 +179,7 @@ class ViewHelper
 			'type'    => 'failure'
 		];
 	}
+
     /**
      * Lazy man's way of creating array used by self::messageProperties method.
      * @param string $message
@@ -187,6 +195,7 @@ class ViewHelper
             'type'    => 'info'
         ];
     }
+
 	/**
 	 * Lazy man's way of creating array used by self::messageProperties method.
 	 * @param string $message
@@ -202,6 +211,7 @@ class ViewHelper
 			'type'    => 'success'
 		];
 	}
+
     /**
      * Lazy man's way of creating array used by self::messageProperties method.
      * @param string $message
@@ -217,5 +227,4 @@ class ViewHelper
             'type'    => 'warning'
         ];
     }
-
 }

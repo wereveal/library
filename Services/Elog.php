@@ -1,115 +1,76 @@
 <?php
 /**
- *  @brief     Something simple to help me debug my websites.
- *  @details   A singleton pattern because that is what I want. pfffttttt!
- *  @ingroup   ritc_library lib_services
- *  @file      Elog.php
- *  @namespace Ritc\Library\Services
- *  @class     Elog
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version:  3.0.2
- *  @date      2016-02-26 12:16:48
- *  @note <pre><b>Change Log</b>
- *      v3.0.2 - bug fixes                                                       - 02/26/2016 wer
- *      v3.0.1 - clean up code                                                   - 02/22/2016 wer
- *      v3.0.0 - added new logging methods, changed default to custom log        - 11/19/2015 wer
- *      v2.7.1 - moved to Services namespace                                     - 11/15/2014 wer
- *      v2.7.0 - added method to ignore LOG_OFF settings to allow global logging - 11/11/2014 wer
- *      v2.6.2 - clean up, removed extend to Base class, not needed/wanted       - 09/23/2014 wer
- *      v2.6.1 - package change required minor update                            - 12/19/2013 wer
- *      v2.6.0 - Namespace changes                                               - 07/30/2013 wer
- *      v2.5.2 - added some sanity code to setElogConstants to prevent errors    - 04/23/2013 wer
- *      v2.5.1 - renamed main method from do_it to write (not so silly)
- *      v2.5.0 - FIG standars (mostly)
- *  </pre>
-**/
+ * @brief     Something simple to help me debug my websites.
+ * @details   A singleton pattern because that is what I want. pfffttttt!
+ * @ingroup   lib_services
+ * @file      Elog.php
+ * @namespace Ritc\Library\Services
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version:  3.0.2
+ * @date      2016-02-26 12:16:48
+ * @note <b>Change Log</b>
+ * - v3.0.2 - bug fixes                                                       - 02/26/2016 wer
+ * - v3.0.1 - clean up code                                                   - 02/22/2016 wer
+ * - v3.0.0 - added new logging methods, changed default to custom log        - 11/19/2015 wer
+ * - v2.7.1 - moved to Services namespace                                     - 11/15/2014 wer
+ * - v2.7.0 - added method to ignore LOG_OFF settings to allow global logging - 11/11/2014 wer
+ * - v2.6.2 - clean up, removed extend to Base class, not needed/wanted       - 09/23/2014 wer
+ * - v2.6.1 - package change required minor update                            - 12/19/2013 wer
+ * - v2.6.0 - Namespace changes                                               - 07/30/2013 wer
+ * - v2.5.2 - added some sanity code to setElogConstants to prevent errors    - 04/23/2013 wer
+ * - v2.5.1 - renamed main method from do_it to write (not so silly)
+ * - v2.5.0 - FIG standars (mostly)
+ */
 namespace Ritc\Library\Services;
 
+/**
+ * Class Elog does some basic logging.
+ * @class Elog
+ * @package Ritc\Library\Services
+ */
 class Elog
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $current_page;
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $custom_log_used = false;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $debug_text;
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $display_last_message = false;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $elog_file = 'elog.log';
-    /**
-     * @var string
-     */
+    /** @var string */
     private $error_email_address = 'wer@qca.net';
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $html_used = false;
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $ignore_log_off = false;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $from_class = '';
-    /**
-     * @var string
-     */
+    /** @var string */
     private $from_function = '';
-    /**
-     * @var string
-     */
+    /** @var string */
     private $from_location = '';
-    /**
-     * @var string
-     */
+    /** @var string */
     private $from_method = '';
-    /**
-     * @var string
-     */
+    /** @var string */
     private $from_file = '';
-    /**
-     * @var string
-     */
+    /** @var string */
     private $from_line = '';
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $handler_set = false;
-    /**
-     * @var Elog
-     */
+    /** @var Elog */
     private static $instance;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $json_file = 'json.log';
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $json_log_used = false;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $last_message = '';
-    /**
-     * @var int
-     */
+    /** @var int */
     private $log_method;
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $php_log_used = false;
 
     /**
@@ -123,7 +84,7 @@ class Elog
     }
 
     /**
-     *
+     * Does some last minute stuff.
      */
     public function __destruct()
     {
@@ -137,11 +98,12 @@ class Elog
             trigger_error("==== End of Elog ====\n", E_USER_NOTICE);
         }
     }
+
     /**
-     *  Create/use the instance.
-     *  Elog is a singleton and uses the start method to create/use the instance.
-     *  @return object - the instance
-    **/
+     * Create/use the instance.
+     * Elog is a singleton and uses the start method to create/use the instance.
+     * @return object - the instance
+     */
     public static function start()
     {
         if (!isset(self::$instance)) {
@@ -150,21 +112,15 @@ class Elog
         }
         return self::$instance;
     }
+
     /**
      * Logs a message somewhere.
      * Provides several methods to log a message.
      *
      * @param string $the_string the message to be logged
-     * @param int    $log_method the method to log message - Defaults to 1<pre>
-     *                           log_methods:
-     *                           0 = only set last_message - no other logging done
-     *                           1 = logs based on the two properties use_text_log and
-     *                           use_php_log
-     *                           2 = email the error and fall through to log_method 1/Default
-     *                           3 = email the error only
-     *                           4 = logs the message always
-     *                           default = log_method 1</pre>
+     * @param int    $log_method the method to log message - Defaults to LOG_OFF
      * @param string $manual_from
+     * @see setElogConstants() for possible values to $log_method
      *
      * @return bool - success or failure of logging
      */
@@ -250,6 +206,7 @@ class Elog
     }
 
     /**
+     * The function that is for custom logging with trigger_error.
      * @param $error_number
      * @param $error_string
      * @return bool|int|void
@@ -300,8 +257,10 @@ class Elog
     }
 
     /**
+     * Returns the exception handler - what???
      * @param $exception
      * @return null
+     * @todo exceptionHandler - this makes no sense as it stands.
      */
     public function exceptionHandler($exception)
     {
@@ -309,6 +268,7 @@ class Elog
     }
 
     /**
+     * Returns the private/protected property by name.
      * @param $var_name
      * @return string
      */
@@ -321,26 +281,29 @@ class Elog
             return '';
         }
     }
+
     /**
-     *  Getter for property debug_text.
-     *  @return string - the value of $debug_text
-    **/
+     * Getter for property debug_text.
+     * @return string - the value of $debug_text
+     */
     public function getText()
     {
         return $this->debug_text;
     }
+
     /**
-     *  Getter for property last_message.
-     *  @return string - the value of $last_message
-    **/
+     * Getter for property last_message.
+     * @return string - the value of $last_message
+     */
     public function getLastMessage()
     {
         return $this->last_message;
     }
+
     /**
-     *  Sets Constants for use whenever Elog is used.
-     *  @return null
-    **/
+     * Sets Constants for use whenever Elog is used.
+     * @return null
+     */
     private function setElogConstants()
     {
         if (!defined('LOG_OFF'))    { define('LOG_OFF',    0); }
@@ -367,16 +330,17 @@ class Elog
         set_error_handler([self::$instance,'errorHandler'], $error_types);
         $this->handler_set = true;
     }
+
     /**
-     *  A combo setter for 5 properties.
-     *  Setter for properties from_class, from_function, from_method, from_file, from_line
-     *  @param string $file file name
-     *  @param string $method method name
-     *  @param string $line line number
-     *  @param string $class class name
-     *  @param string $function function name
-     *  @return NULL
-    **/
+     * A combo setter for 5 properties.
+     * Setter for properties from_class, from_function, from_method, from_file, from_line
+     * @param string $file file name
+     * @param string $method method name
+     * @param string $line line number
+     * @param string $class class name
+     * @param string $function function name
+     * @return NULL
+     */
     public function setFrom($file = '', $method = '', $line = '', $class = '', $function = '')
     {
         $this->setFromFile($file);
@@ -387,6 +351,7 @@ class Elog
     }
 
     /**
+     * Sets the property from_class.
      * @param string $class
      */
     public function setFromClass($class = '')
@@ -395,6 +360,7 @@ class Elog
     }
 
     /**
+     * Sets the property from_line.
      * @param string $line
      */
     public function setFromLine($line = '')
@@ -402,12 +368,17 @@ class Elog
         $this->from_line = $line;
     }
 
+    /**
+     * Sets the property from_location.
+     * @param string $location
+     */
     public function setFromLocation($location = '')
     {
         $this->from_location = $location;
     }
 
     /**
+     * Sets the property from_function.
      * @param string $function
      */
     public function setFromFunction($function = '')
@@ -416,6 +387,7 @@ class Elog
     }
 
     /**
+     * Sets the property from_method.
      * @param string $method
      */
     public function setFromMethod($method = '')
@@ -424,6 +396,7 @@ class Elog
     }
 
     /**
+     * Sets the property from_file.
      * @param string $file
      */
     public function setFromFile($file = '')
@@ -432,6 +405,7 @@ class Elog
     }
 
     /**
+     * Sets the property handler_set.
      * @param bool $value
      */
     public function setHandlerSet($value = true)
@@ -440,10 +414,10 @@ class Elog
     }
 
     /**
-     *  Setter for the private property ignore_log_off.
-     *  Basically turns logging on globally.
-     *  @param bool $boolean
-     *  @return null
+     * Setter for the private property ignore_log_off.
+     * Basically turns logging on globally.
+     * @param bool $boolean
+     * @return null
      */
     public function setIgnoreLogOff($boolean = false)
     {
@@ -451,19 +425,21 @@ class Elog
     }
 
     /**
+     * Sets the property log_method.
      * @param int $log_method
      */
     public function setLogMethod($log_method = LOG_CUSTOM)
     {
         $this->log_method = $log_method;
     }
+
     /**
-     *  Formats a string for display in html.
-     *  Can be either an html comment or a string that starts with COMMENT:.
-     *  @param string $the_string  the string to be formated
-     *  @param bool   $not_visible should it formated as an HTML comment
-     *  @return string the formated string
-    **/
+     * Formats a string for display in html.
+     * Can be either an html comment or a string that starts with COMMENT:.
+     * @param string $the_string  the string to be formated
+     * @param bool   $not_visible should it formated as an HTML comment
+     * @return string the formated string
+     */
     public function makeComment($the_string, $not_visible = true)
     {
         return $not_visible ? "<!-- {$the_string} -->\n"

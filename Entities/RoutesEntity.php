@@ -1,29 +1,39 @@
 <?php
 /**
- *  @brief     Basic accessors for a routes entity.
- *  @ingroup   ritc_library lib_entities
- *  @file      RoutesEntity.php
- *  @namespace Ritc\Library\Entities
- *  @class     RoutesEntity
- *  @author    William E Reveal
- *  @version   1.0.0
- *  @date      2015-10-06 14:20:33
- *  @note <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/routes_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/routes_pg.sql</pre>
-**/
+ * @brief     Basic accessors for a routes entity.
+ * @ingroup   lib_entities
+ * @file      Ritc/Library/Entities/RoutesEntity.php
+ * @namespace Ritc\Library\Entities
+ * @author    William E Reveal
+ * @version   1.0.0
+ * @date      2015-10-06 14:20:33
+ * @note <b>SQL for table<b>
+ * - MySQL      - resources/sql/mysql/routes_mysql.sql
+ * - PostgreSQL - resources/sql/postgresql/routes_pg.sql
+ */
 
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class RoutesEntity
+ * @class   RoutesEntity
+ * @package Ritc\Library\Entities
+ */
 class RoutesEntity implements EntityInterface
 {
+    /** @var int */
     private $route_id;
+    /** @var string */
     private $route_path;
+    /** @var string */
     private $route_class;
+    /** @var string */
     private $route_method;
+    /** @var string */
     private $route_action;
+    /** @var int */
     private $route_immutable;
 
     /**
@@ -41,6 +51,7 @@ class RoutesEntity implements EntityInterface
             'route_immutable' => $this->route_immutable
         );
     }
+
     /**
      * Sets all the properties for the entity in one step.
      * @param array $a_entity
@@ -162,5 +173,4 @@ class RoutesEntity implements EntityInterface
     {
         $this->route_immutable = $route_immutable;
     }
-
 }

@@ -1,23 +1,31 @@
 <?php
 /**
- *  @brief     Adds some standard use formatting methods for date and time.
- *  @ingroup   ritc_library lib_helper
- *  @file      DatesTimes.php
- *  @namespace Ritc\Library\Helper
- *  @class     DatesTimes
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   3.0.2
- *  @date      2016-02-22 15:08:38
- *  @note <pre><b>Change Log</b>
- *      v3.0.2 - bug fix                                - 02/22/2016 wer
- *      v3.0.1 - moved to Ritc\Library\Helper namespace - 11/15/2014 wer
- *      v3.0.0 - FIG standards (mostly)
- *  </pre>
-**/
+ * @brief     Adds some standard use formatting methods for date and time.
+ * @ingroup   lib_helper
+ * @file      Ritc/Library/Helper/DatesTimes.php
+ * @namespace Ritc\Library\Helper
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   3.0.2
+ * @date      2016-02-22 15:08:38
+ * @note <b>Change Log</b>
+ * - v3.0.2 - bug fix                                - 02/22/2016 wer
+ * - v3.0.1 - moved to Ritc\Library\Helper namespace - 11/15/2014 wer
+ * - v3.0.0 - FIG standards (mostly)
+ */
 namespace Ritc\Library\Helper;
 
+/**
+ * Class DatesTimes - provides a lot of normal date time functionality.
+ * @class DatesTimes
+ * @package Ritc\Library\Helper
+ */
 class DatesTimes
 {
+    /**
+     * Changes the timestamp to midnight, keeping the same date.
+     * @param string $timestamp
+     * @return int
+     */
     public static function changeTimestampToMidnight($timestamp = '')
     {
         if ($timestamp == "") {
@@ -31,6 +39,13 @@ class DatesTimes
         $year  = date("Y", (int) $timestamp);
         return mktime(0, 0, 0, $month, $day, $year);
     }
+
+    /**
+     * Determines the difference in days.
+     * @param string $start_date
+     * @param string $end_date
+     * @return bool|string
+     */
     public static function diffInDays($start_date = '', $end_date = '')
     {
         if ($interval = DatesTimes::getInterval($start_date, $end_date)) {
@@ -40,6 +55,13 @@ class DatesTimes
             return false;
         }
     }
+
+    /**
+     * Determines the difference in months.
+     * @param string $start_date
+     * @param string $end_date
+     * @return bool|string
+     */
     public static function diffInMonths($start_date = '', $end_date = '')
     {
         if ($interval = DatesTimes::getInterval($start_date, $end_date)) {
@@ -49,6 +71,13 @@ class DatesTimes
             return false;
         }
     }
+
+    /**
+     * Determines the difference in years.
+     * @param string $start_date
+     * @param string $end_date
+     * @return bool|string
+     */
     public static function diffInYears($start_date = '', $end_date = '')
     {
         if ($interval = DatesTimes::getInterval($start_date, $end_date)) {
@@ -58,6 +87,13 @@ class DatesTimes
             return false;
         }
     }
+
+    /**
+     * Determines the difference in hours.
+     * @param string $start_time
+     * @param string $end_time
+     * @return bool|string
+     */
     public static function diffInHours($start_time = '', $end_time = '')
     {
         if ($interval = DatesTimes::getInterval($start_time, $end_time)) {
@@ -67,6 +103,13 @@ class DatesTimes
             return false;
         }
     }
+
+    /**
+     * Determines the difference in minutes.
+     * @param string $start_time
+     * @param string $end_time
+     * @return bool|string
+     */
     public static function diffInMinutes($start_time = '', $end_time = '')
     {
         if ($interval = DatesTimes::getInterval($start_time, $end_time)) {
@@ -76,6 +119,13 @@ class DatesTimes
             return false;
         }
     }
+
+    /**
+     * Determines the difference in seconds.
+     * @param string $start_time
+     * @param string $end_time
+     * @return bool|string
+     */
     public static function diffInSeconds($start_time = '', $end_time = '')
     {
         if ($interval = DatesTimes::getInterval($start_time, $end_time)) {
@@ -85,6 +135,14 @@ class DatesTimes
             return false;
         }
     }
+
+    /**
+     * Changes a time string in 24hr format to 12hr format.
+     * @param string $time_string
+     * @param bool|true $include_seconds
+     * @param bool|true $include_meridiem
+     * @return null|string
+     */
     public static function change24hTo12h($time_string = '', $include_seconds = true, $include_meridiem = true)
     {
         if ($include_seconds) {
@@ -111,11 +169,27 @@ class DatesTimes
             return null;
         }
     }
+
+    /**
+     * Converts a date to a specified date format.
+     * @param string $date_format
+     * @param string $timestamp
+     * @param string $timezone
+     * @return null|string
+     */
     public static function convertDateWith($date_format = '', $timestamp = '', $timezone = '')
     {
         $date_format = $date_format != '' ? $date_format : 'm/d/Y' ;
         return DatesTimes::convertDateTimeWith($date_format, $timestamp, $timezone);
     }
+
+    /**
+     * Converts a date to a specified date format.
+     * @param string $date_format
+     * @param string $timestamp
+     * @param string $timezone
+     * @return null|string
+     */
     public static function convertDateTimeWith($date_format = '', $timestamp = '', $timezone = '')
     {
         $date_format = $date_format == '' ? \DateTime::ATOM : $date_format ;
@@ -140,11 +214,25 @@ class DatesTimes
         $o_time->setTimezone(new \DateTimeZone($timezone));
         return $o_time->format($date_format);
     }
+
+    /**
+     * Returns the day name of a date.
+     * @param string $timestamp
+     * @param string $format
+     * @return bool|string
+     */
     public static function getDayName($timestamp = '', $format = 'short')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return ($format == 'short' ? date('D', (int) $timestamp) : date('l', (int) $timestamp));
     }
+
+    /**
+     * Returns the day number of a date.
+     * @param string $timestamp
+     * @param string $format
+     * @return bool|string
+     */
     public static function getDayNumber($timestamp = '', $format = 'default')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
@@ -161,6 +249,13 @@ class DatesTimes
                 return date('d', (int) $timestamp);
         }
     }
+
+    /**
+     * Gets the interval between two dates.
+     * @param string $start_date
+     * @param string $end_date
+     * @return bool|\DateInterval
+     */
     public static function getInterval($start_date = '', $end_date = '')
     {
         $start_date = $start_date == '' ? date("m/d/Y H:i:s") : $start_date;
@@ -185,26 +280,53 @@ class DatesTimes
             return false;
         }
     }
+
+    /**
+     * Converts a timestamp to long date time format.
+     * @param string $timestamp
+     * @return bool|string
+     */
     public static function convertToLongDateTime($timestamp = '')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("l, F dS, Y g:i a", (int) $timestamp);
     }
+
+    /**
+     * Converts a timestamp to long date format.
+     * @param string $timestamp
+     * @return bool|string
+     */
     public static function convertToLongDate($timestamp = '')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("l, F dS, Y", (int) $timestamp);
     }
+
+    /**
+     * Returns am or pm of a timestamp.
+     * @param string $timestamp
+     * @param bool|false $upper_case
+     * @return bool|string
+     */
     public static function getMeridiem($timestamp = '', $upper_case = false)
     {
         $time_format = $upper_case ? 'A' : 'a' ;
         if (DatesTimes::isUnixTimestamp($timestamp)) {
             return date($time_format, (int) $timestamp);
-        } else {
+        }
+        else {
             $o_date = new \DateTime($timestamp);
             return $o_date->format($time_format);
         }
     }
+
+    /**
+     * Converts timestamp to a month.
+     * @param string $timestamp
+     * @param string $format
+     * @return bool|string
+     */
     public static function convertToMonth($timestamp = '', $format = 'default')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
@@ -230,6 +352,13 @@ class DatesTimes
         }
         return date($format, (int) $timestamp);
     }
+
+    /**
+     * Changes the date to next day.
+     * @param string $timestamp
+     * @param string $format
+     * @return int|string
+     */
     public static function convertToNextDay($timestamp = '', $format = '')
     {
         $timestamp = DatesTimes::convertDateTimeWith(\DateTime::ATOM, $timestamp);
@@ -257,6 +386,13 @@ class DatesTimes
                 }
         }
     }
+
+    /**
+     * Changes the date to next month.
+     * @param string $timestamp
+     * @param string $format
+     * @return int|string
+     */
     public static function convertToNextMonth($timestamp = '', $format = '')
     {
         $timestamp = DatesTimes::convertDateTimeWith(\DateTime::ATOM, $timestamp);
@@ -278,6 +414,12 @@ class DatesTimes
                 return DatesTimes::changeTimestampToMidnight($date->getTimestamp());
         }
     }
+
+    /**
+     * Converts the date to next week.
+     * @param string $timestamp
+     * @return string
+     */
     public static function convertToNextWeek($timestamp = '')
     {
         $timestamp = DatesTimes::convertDateTimeWith(\DateTime::ATOM, $timestamp);
@@ -285,6 +427,13 @@ class DatesTimes
         $date->modify('+1 week');
         return $date->format('W');
     }
+
+    /**
+     * Converts the date to next year.
+     * @param string $timestamp
+     * @param string $format
+     * @return int|string
+     */
     public static function convertToNextYear($timestamp = '', $format = '')
     {
         $timestamp = DatesTimes::convertDateTimeWith(\DateTime::ATOM, $timestamp);
@@ -312,6 +461,13 @@ class DatesTimes
                 }
         }
     }
+
+    /**
+     * Converts the date to the previous day.
+     * @param string $timestamp
+     * @param string $format
+     * @return int|string
+     */
     public static function convertToPreviousDay($timestamp = '', $format = '')
     {
         $timestamp = DatesTimes::convertDateTimeWith(\DateTime::ATOM, $timestamp);
@@ -339,6 +495,13 @@ class DatesTimes
                 }
         }
     }
+
+    /**
+     * Converts the date to the previous month.
+     * @param string $timestamp
+     * @param string $format
+     * @return int|string
+     */
     public static function convertToPreviousMonth($timestamp = '', $format = '')
     {
         $timestamp = DatesTimes::convertDateTimeWith(\DateTime::ATOM, $timestamp);
@@ -360,6 +523,12 @@ class DatesTimes
                 return DatesTimes::changeTimestampToMidnight($date->getTimestamp());
         }
     }
+
+    /**
+     * Converts the date to the previous week.
+     * @param string $timestamp
+     * @return string
+     */
     public static function convertToPreviousWeek($timestamp = '')
     {
         $timestamp = DatesTimes::convertDateTimeWith(\DateTime::ATOM, $timestamp);
@@ -367,6 +536,13 @@ class DatesTimes
         $date->modify('-1 week');
         return $date->format('W');
     }
+
+    /**
+     * Converts the date to the previous year.
+     * @param string $timestamp
+     * @param string $format
+     * @return int|string
+     */
     public static function convertToPreviousYear($timestamp = '', $format = '')
     {
         $timestamp = DatesTimes::convertDateTimeWith(\DateTime::ATOM, $timestamp);
@@ -394,26 +570,56 @@ class DatesTimes
                 }
         }
     }
+
+    /**
+     * Converts timestamp to short date format (m/d/Y).
+     * @param string $timestamp
+     * @return bool|string
+     */
     public static function convertToShortDate($timestamp = '')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("m/d/Y", (int) $timestamp);
     }
+
+    /**
+     * Converts timestamp to short date time (m/d/Y hour:min a/p).
+     * @param string $timestamp
+     * @return bool|string
+     */
     public static function convertToShortDateTime($timestamp = '')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("m/d/Y g:i a", (int) $timestamp);
     }
+
+    /**
+     * Convert timestamp to sql formated timestamp.
+     * @param string $timestamp
+     * @return bool|string
+     */
     public static function convertToSqlTimestamp($timestamp = '')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("Y-m-d H:i:s", (int) $timestamp);
     }
+
+    /**
+     * Converts timestamp to the time (hour:minute:seconds).
+     * @param string $timestamp
+     * @return bool|string
+     */
     public static function convertToTime($timestamp = '')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date ("H:i:s",  $timestamp);
     }
+
+    /**
+     * Converts time string to a time format (hour:minute:second).
+     * @param string $timestring
+     * @return bool|string
+     */
     public static function convertToTimeFromString($timestring = '')
     {
         if (DatesTimes::isUnixTimestamp($timestring)) {
@@ -423,26 +629,59 @@ class DatesTimes
         }
         return date ("H:i:s",  (int) $unix_timestamp);
     }
+
+    /**
+     * Converts timestamp to time with timezone (H:i:s e).
+     * @param string $timestamp
+     * @param string $timezone
+     * @return null|string
+     */
     public static function convertToTimeWithTz($timestamp = '', $timezone = '')
     {
         $time_format = 'H:i:s e';
         return DatesTimes::convertDateTimeWith($time_format, $timestamp, $timezone);
     }
+
+    /**
+     * Convert timestamp to time with timezone offset (hour:min:sec+600).
+     * @param string $timestamp
+     * @param string $timezone
+     * @return null|string
+     */
     public static function convertToTimeWithTzOffset($timestamp = '', $timezone = '')
     {
         $time_format = 'H:i:sP';
         return DatesTimes::convertDateTimeWith($time_format, $timestamp, $timezone);
     }
+
+    /**
+     * Convert timestring to a time string in specified format.
+     * @param string $time_format
+     * @param string $timestamp
+     * @param string $timezone
+     * @return null|string
+     */
     public static function convertToTimeWith($time_format = '', $timestamp = '', $timezone = '')
     {
         $time_format = $time_format == '' ? "H:i:s" : $time_format;
         $timezone = $timezone = '' ? date('e') : $timezone;
         return DatesTimes::convertDateTimeWith($time_format, $timestamp, $timezone);
     }
+
+    /**
+     * Gets date for tomorrow.
+     * @return int|string
+     */
     public static function getTomorrow()
     {
         return DatesTimes::convertToNextDay(date('m/d/Y'), 'short_date');
     }
+
+    /**
+     * Converts a time string to a unix timestamp.
+     * @param string $timestamp
+     * @return int
+     */
     public static function convertToUnixTimestamp($timestamp = '')
     {
         $timestamp = $timestamp == '' ? time() : $timestamp;
@@ -450,25 +689,54 @@ class DatesTimes
             ? (int) $timestamp
             : strtotime($timestamp));
     }
+
+    /**
+     * Converts the timestamp to the week string.
+     * @param string $timestamp
+     * @return bool|string
+     */
     public static function convertToWeek($timestamp = '')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date('W', (int) $timestamp);
     }
+
+    /**
+     * Converts the timestamp to the year.
+     * @param string $timestamp
+     * @return bool|string
+     */
     public static function convertToYear($timestamp = '')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date('Y', (int) $timestamp);
     }
+
+    /**
+     * Returns the previous day in m/d/Y format.
+     * @return int|string
+     */
     public static function getYesterday()
     {
         return DatesTimes::convertToPreviousDay(date('m/d/Y'), 'short_date');
     }
+
+    /**
+     * Converts the timestamp to Ymd.
+     * @param string $timestamp
+     * @return bool|string
+     */
     public static function convertToYmd($timestamp = '')
     {
         $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
         return date("Ymd", (int) $timestamp);
     }
+
+    /**
+     * Determines if the string is a unix timestamp.
+     * @param string $value
+     * @return bool
+     */
     public static function isUnixTimestamp($value = '')
     {
         if ($value == '') {
@@ -483,6 +751,12 @@ class DatesTimes
                 return false;
         }
     }
+
+    /**
+     * Determines if the string is a valid date format.
+     * @param string $date_format
+     * @return bool
+     */
     public static function isValidDateFormat($date_format = '')
     {
         $a_date_info = date_parse_from_format($date_format, date($date_format));
@@ -500,6 +774,12 @@ class DatesTimes
             return true;
         }
     }
+
+    /**
+     * Determines if the string is a valid time zone.
+     * @param string $timezone
+     * @return bool
+     */
     public static function isValidTimezone($timezone = '')
     {
         if ($timezone == '') {

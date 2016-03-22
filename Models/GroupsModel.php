@@ -1,46 +1,49 @@
 <?php
 /**
- *  @brief     Does all the database CRUD stuff.
- *  @ingroup   ritc_library lib_models
- *  @file      GroupsModel.php
- *  @namespace Ritc\Library\Models
- *  @class     GroupsModel
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:46:28
- *  @note <pre><b>Change Log</b>
- *      v1.0.0   - First working version                                        - 11/27/2015 wer
- *      v1.0.0β5 - refactoring to provide postgresql compatibility              - 11/22/2015 wer
- *      v1.0.0β4 - added group_immutable field in db and changed code to match  - 10/08/2015 wer
- *      v1.0.0ß3 - removed abstract class Base, used LogitTraits                - 09/01/2015 wer
- *      v1.0.0ß2 - changed to use IOC (Inversion of Control)                    - 11/15/2014 wer
- *      v1.0.0β1 - extends the Base class, injects the DbModel, clean up        - 09/23/2014 wer
- *      v1.0.0β0 - First live version                                           - 09/15/2014 wer
- *      v0.1.0β  - Initial version                                              - 01/18/2014 wer
- *  </pre>
-**/
+ * @brief     Does all the database CRUD stuff.
+ * @ingroup   lib_models
+ * @file      Ritc/Library/Models/GroupsModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.0
+ * @date      2016-03-19 07:18:59
+ * @note <b>Change Log</b>
+ * - v1.1.0   - Bug fix and changes due to refactoring of DbModel            - 2016-03-19 wer
+ * - v1.0.0   - First working version                                        - 11/27/2015 wer
+ * - v1.0.0β5 - refactoring to provide postgresql compatibility              - 11/22/2015 wer
+ * - v1.0.0β4 - added group_immutable field in db and changed code to match  - 10/08/2015 wer
+ * - v1.0.0ß3 - removed abstract class Base, used LogitTraits                - 09/01/2015 wer
+ * - v1.0.0ß2 - changed to use IOC (Inversion of Control)                    - 11/15/2014 wer
+ * - v1.0.0β1 - extends the Base class, injects the DbModel, clean up        - 09/23/2014 wer
+ * - v1.0.0β0 - First live version                                           - 09/15/2014 wer
+ * - v0.1.0β  - Initial version                                              - 01/18/2014 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class GroupsModel.
+ * @class   GroupsModel
+ * @package Ritc\Library\Models
+ */
 class GroupsModel implements ModelInterface
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
-    private $db_prefix;
-    private $db_type;
-    private $error_message;
-    private $o_db;
-
+    /**
+     * GroupsModel constructor.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->setupProperties($o_db, 'groups');
     }
+
     /**
      * Generic create function to create a single record.
      * @param array $a_values required
@@ -82,13 +85,13 @@ class GroupsModel implements ModelInterface
             return false;
         }
         $sql = "
-            INSERT INTO {$this->db_prefix}groups
+            INSERT INTO {$this->db_table}
                 (group_name, group_description, group_auth_level, group_immutable)
             VALUES
                 (:group_name, :group_description, :group_auth_level, :group_immutable)
         ";
         $a_table_info = [
-            'table_name'  => "{$this->db_prefix}groups",
+            'table_name'  => $this->db_table,
             'column_name' => 'group_id'
         ];
         if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
@@ -100,6 +103,7 @@ class GroupsModel implements ModelInterface
             return false;
         }
     }
+
     /**
      * @param array $a_search_values
      * @param array $a_search_params
@@ -117,22 +121,23 @@ class GroupsModel implements ModelInterface
                 'group_auth_level',
                 'group_immutable'
             );
-            $a_search_values = $this->o_db->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->o_db->buildSqlWhere($a_search_values, $a_search_params);
+            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
+            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->o_db->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere(array(), $a_search_params);
         }
         else {
             $where = " ORDER BY group_name";
         }
         $sql = "
             SELECT group_id, group_name, group_description, group_auth_level, group_immutable
-            FROM {$this->db_prefix}groups
+            FROM {$this->db_table}
             {$where}
         ";
         return $this->o_db->search($sql, $a_search_values);
     }
+
     /**
      * Updates the group record
      * @param array $a_values
@@ -161,14 +166,15 @@ class GroupsModel implements ModelInterface
         if ($a_values['group_description'] == '') {
             unset($a_values['group_description']);
         }
-        $set_sql = $this->o_db->buildSqlSet($a_values, ['group_id']);
+        $set_sql = $this->buildSqlSet($a_values, ['group_id']);
         $sql = "
-            UPDATE {$this->db_prefix}groups
+            UPDATE {$this->db_table}
             {$set_sql}
             WHERE group_id = :group_id
         ";
         return $this->o_db->update($sql, $a_values, true);
     }
+
     /**
      * Deletes the specific record.
      * NOTE: this could leave orphaned records in the user_group_map table and group_role_map table
@@ -181,11 +187,12 @@ class GroupsModel implements ModelInterface
     {
         if ($group_id == -1) { return false; }
         $sql = "
-            DELETE FROM {$this->db_prefix}groups
+            DELETE FROM {$this->db_table}
             WHERE group_id = :group_id
         ";
         return $this->o_db->delete($sql, array(':group_id' => $group_id), true);
     }
+
     /**
      * Deletes related records as well as main group record.
      * @param int $group_id
@@ -216,9 +223,9 @@ class GroupsModel implements ModelInterface
 
     ### Shortcuts ###
     /**
-     *  Returns a record of the group specified by id.
-     *  @param int $group_id
-     *  @return array|bool
+     * Returns a record of the group specified by id.
+     * @param int $group_id
+     * @return array|bool
      */
     public function readById($group_id = -1)
     {
@@ -230,12 +237,13 @@ class GroupsModel implements ModelInterface
         }
         return false;
     }
+
     /**
-     *  Returns a record of the group specified by name.
-     *  @param string $group_name
-     *  @return array()
+     * Returns a record of the group specified by name.
+     * @param string $group_name
+     * @return array()
      */
-    public function readyByName($group_name = '')
+    public function readByName($group_name = '')
     {
         if ($group_name == '') { return false; }
         $results = $this->read(array('group_name' => $group_name));
@@ -244,11 +252,12 @@ class GroupsModel implements ModelInterface
         }
         return false;
     }
+
     /**
-     *  Checks to see if the id is a valid group id.
-     *  @param int $group_id
-     *  @return bool true or false
-     **/
+     * Checks to see if the id is a valid group id.
+     * @param int $group_id
+     * @return bool true or false
+      */
     public function isValidGroupId($group_id = -1)
     {
         if ($group_id == -1) { return false; }
@@ -258,12 +267,5 @@ class GroupsModel implements ModelInterface
         }
         return false;
     }
-    /**
-     *  Required by Interface
-     *  @return mixed
-     */
-    public function getErrorMessage()
-    {
-        return $this->error_message;
-    }
+
 }

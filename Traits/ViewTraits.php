@@ -1,73 +1,58 @@
 <?php
 /**
- *  @brief     Common functions for views.
- *  @ingroup   ritc_library lib_traits
- *  @file      ViewTraits.php
- *  @namespace Ritc\Library\Traits
- *  @class     ViewTraits
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0 β1
- *  @date      2016-02-22 20:15:04
- *  @note <pre><b>Change Log</b>
- *      v1.0.0 β1  - inital version - 02/22/2016 wer
- *  </pre>
+ * @brief     Common functions for views.
+ * @ingroup   lib_traits
+ * @file      ViewTraits.php
+ * @namespace Ritc\Library\Traits
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0-alpha.1
+ * @date      2016-03-10 14:18:23
+ * @note <b>Change Log</b>
+ * - v1.0.0-alpha.1 - close to working version                   - 2016-03-10 wer
+ * - v1.0.0-alpha.0 - inital version                             - 2016-02-22 wer
  */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Models\NavComplexModel;
+use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 
+/**
+ * Class ViewTraits
+ * @class   ViewTraits
+ * @package Ritc\Library\Traits
+ */
 trait ViewTraits
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $a_nav;
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $adm_level;
-    /**
-     * @var AuthHelper
-     */
+    /** @var AuthHelper */
     protected $o_auth;
-    /**
-     * @var DbModel
-     */
+    /** @var DbModel */
     protected $o_db;
-    /**
-     * @var Di
-     */
+    /** @var Di */
     protected $o_di;
-    /**
-     * @var NavComplexModel
-     */
+    /** @var NavComplexModel */
     protected $o_nav;
-    /**
-     * @var PageModel
-     */
+    /** @var PageModel */
     protected $o_page_model;
-    /**
-     * @var Router
-     */
+    /** @var Router */
     protected $o_router;
-    /**
-     * @var \Ritc\Library\Helper\RoutesHelper
-     */
+    /** @var \Ritc\Library\Helper\RoutesHelper */
     protected $o_routes_helper;
-    /**
-     * @var \Twig_Environment
-     */
+    /** @var \Twig_Environment */
     protected $o_twig;
 
     /**
-     *  The default setup for a view.
-     *  @param Di $o_di
+     * The default setup for a view.
+     * @param Di $o_di
      */
     public function setupView(Di $o_di)
     {
@@ -93,9 +78,9 @@ trait ViewTraits
     }
 
     /**
-     *  Sets the class property $adm_level to a value of the highest auth level
-     *  found or 0 if not found.
-     *  @param string $login_id
+     * Sets the class property $adm_level to a value of the highest auth level
+     * found or 0 if not found.
+     * @param string $login_id
      */
     protected function setAdmLevel($login_id = '')
     {
@@ -128,8 +113,20 @@ trait ViewTraits
     }
 
     /**
-     *  Returns an array with the values used primarily in the meta tags of the html.
-     *  @return array
+     * Sets the property a_nav array by the navgroup_name.
+     * @param string $navgroup_name
+     * @return null
+     */
+    protected function setNavByNgName($navgroup_name = '')
+    {
+        $o_ng = new NavgroupsModel($this->o_db);
+        $ng_id = $o_ng->readNavgroupId($navgroup_name);
+        $this->setNav($ng_id);
+    }
+
+    /**
+     * Returns an array with the values used primarily in the meta tags of the html.
+     * @return array
      */
     public function getPageValues()
     {

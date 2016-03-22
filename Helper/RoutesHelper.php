@@ -1,20 +1,19 @@
 <?php
 /**
- *  @brief     Various helper functions for routes.
- *  @ingroup   ritc_library lib_helper
- *  @file      RoutesHelper.php
- *  @namespace Ritc\Library\Helper
- *  @class     RoutesHelper
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-11-27 14:55:02
- *  @note Change Log
- *      v1.1.0   - added method for quick min auth level for a route.   - 02/26/2016 wer
- *      v1.0.0   - took out of beta                                     - 11/27/2015 wer
- *      v1.0.0β3 - bug fix                                              - 11/24/2015 wer
- *      v1.0.0β2 - logic change                                         - 10/30/2015 wer
- *      v1.0.0β1 - intial file                                          - 09/26/2015 wer
- **/
+ * @brief     Various helper functions for routes.
+ * @ingroup   lib_helper
+ * @file      Ritc/Library/Helper/RoutesHelper.php
+ * @namespace Ritc\Library\Helper
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0
+ * @date      2015-11-27 14:55:02
+ * @note Change Log
+ * - v1.1.0   - added method for quick min auth level for a route.   - 02/26/2016 wer
+ * - v1.0.0   - took out of beta                                     - 11/27/2015 wer
+ * - v1.0.0β3 - bug fix                                              - 11/24/2015 wer
+ * - v1.0.0β2 - logic change                                         - 10/30/2015 wer
+ * - v1.0.0β1 - intial file                                          - 09/26/2015 wer
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Models\GroupsModel;
@@ -23,33 +22,26 @@ use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class RoutesHelper
+ * @class   RoutesHelper
+ * @package Ritc\Library\Helper
+ */
 class RoutesHelper
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $a_route_parts;
-    /**
-     * @var \Ritc\Library\Models\GroupsModel
-     */
+    /** @var \Ritc\Library\Models\GroupsModel */
     private $o_group;
-    /**
-     * @var \Ritc\Library\Models\RoutesModel
-     */
+    /** @var \Ritc\Library\Models\RoutesModel */
     private $o_model;
-    /**
-     * @var \Ritc\Library\Models\RoutesGroupMapModel
-     */
+    /** @var \Ritc\Library\Models\RoutesGroupMapModel */
     private $o_rgm;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $route_path;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $request_uri;
 
     /**
@@ -57,7 +49,7 @@ class RoutesHelper
      * @param \Ritc\Library\Services\Di $o_di
      * @param string                    $route_path
      */
-    public function __construct(Di $o_di, $route_path = '')
+    public function __construct(Di $o_di, $request_uri = '')
     {
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
@@ -67,7 +59,7 @@ class RoutesHelper
         $this->o_model = new RoutesModel($o_db);
         $this->o_group = new GroupsModel($o_db);
         $this->o_rgm   = new RoutesGroupMapModel($o_db);
-        $this->route_path = $route_path;
+        $this->route_path = $request_uri;
 
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_model->setElog($this->o_elog);
@@ -76,86 +68,67 @@ class RoutesHelper
     }
 
     /**
-     * @param string $route_path
+     * @param string $request_uri
      * @return null
      */
-    public function setRouteParts($route_path = '')
+    public function setRouteParts($request_uri = '')
     {
         $meth = __METHOD__ . '.';
-        if ($route_path == '') {
-            if ($this->route_path != '') {
-                $route_path = $this->route_path;
+        $a_route_parts = [
+            'route_id'       => 0,
+            'route_path'     => $request_uri,
+            'request_uri'    => $request_uri,
+            'route_class'    => 'MainController',
+            'route_method'   => '',
+            'route_action'   => '',
+            'url_actions'    => [],
+            'groups'         => [],
+            'min_auth_level' => 0
+        ];
+        if ($request_uri == '') {
+            if ($this->request_uri != '') {
+                $request_uri = $this->request_uri;
             }
             else {
-                $route_path = $_SERVER["REQUEST_URI"];
+                $request_uri = $_SERVER["REQUEST_URI"];
             }
         }
-        $a_values = ['route_path' => $route_path];
-        $a_results = $this->o_model->read($a_values);
-        $message = "Actions from DB for route path {$route_path}: " . var_export($a_results, true);
-        $this->logIt($message, LOG_OFF, $meth . __LINE__);
-        if ($a_results !== false && count($a_results) === 1) {
-            $a_route_parts                   = $a_results[0];
-            $this->route_path                = $a_route_parts['route_path'];
-            $a_route_parts['request_uri']    = $route_path;
-            $a_route_parts['url_actions']    = [];
+
+        $a_route = $this->findValidRoute($request_uri);
+        if ($a_route !== false) {
+            $a_route_parts = $a_route;
+        }
+
+        if ($a_route_parts['route_id'] !== 0) {
+            $this->request_uri               = $request_uri;
+            $this->route_path                = $a_route_parts['url_text'];
+            $a_route_parts['request_uri']    = $request_uri;
+            $a_route_parts['route_path']     = $a_route_parts['url_text'];
+
+            $a_url_actions = [];
+            if ($this->request_uri != $this->route_path) {
+                $uri_actions = str_replace($this->route_path, '', $this->request_uri);
+                if (strrpos($uri_actions, '/') !== false) {
+                    $uri_actions = substr($uri_actions, 0, strlen($uri_actions) - 1);
+                }
+                $a_url_actions = explode('/', $uri_actions);
+            }
+
+            $a_route_parts['url_actions']    = $a_url_actions;
             $a_route_parts['groups']         = $this->getGroups($a_route_parts['route_id']);
             $a_route_parts['min_auth_level'] = $this->getMinAuthLevel($a_route_parts['groups']);
-            $this->a_route_parts             = $a_route_parts;
         }
-        else {
-            $a_route_path_parts = explode('/', trim($route_path));
-            $a_urls = ['/'];
-            $i = 0;
-            foreach ($a_route_path_parts as $key => $part) {
-                if ($part != '') {
-                    $a_urls[$i + 1] = $a_urls[$i++] . $part . '/';
-                }
-            }
-            $a_last_good_results = array();
-            $last_url = '';
-            foreach ($a_urls as $key => $url) {
-                $a_values = ['route_path' => $url];
-                $a_results = $this->o_model->read($a_values);
-                if ($a_results !== false && isset($a_results[0])) {
-                    $a_last_good_results = $a_results[0];
-                    $last_url = $url;
-                }
-            }
-            if ($a_last_good_results != array()) {
-                $remainder_path = trim(str_replace($last_url,'', $route_path));
-                if (substr($remainder_path, -1) == '/') {
-                    $remainder_path = substr($remainder_path, 0, -1);
-                }
-                $a_route_parts                   = $a_last_good_results;
-                $this->route_path                = $a_route_parts['route_path'];
-                $a_route_parts['request_uri']    = $route_path;
-                $a_route_parts['url_actions']    = [];
-                $a_route_parts['url_actions']    = explode('/', $remainder_path);
-                $a_route_parts['groups']         = $this->getGroups($a_route_parts['route_id']);
-                $a_route_parts['min_auth_level'] = $this->getMinAuthLevel($a_route_parts['groups']);
-                $this->a_route_parts = $a_route_parts;
-            }
-            else {
-                $this->a_route_parts = [
-                    'route_id'       => 0,
-                    'route_path'     => $route_path,
-                    'request_uri'    => $route_path,
-                    'route_class'    => 'MainController',
-                    'route_method'   => '',
-                    'route_action'   => '',
-                    'url_actions'    => [],
-                    'groups'         => [],
-                    'min_auth_level' => 0
-                ];
-            }
-        }
+
+        $log_message = 'Route parts:  ' . var_export($a_route_parts, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        $this->a_route_parts = $a_route_parts;
     }
 
     /**
-     *  Shortcut for setRouteParts and getRouteParts.
-     *  @param string $route_path
-     *  @return array
+     * Shortcut for setRouteParts and getRouteParts.
+     * @param string $route_path
+     * @return array
      */
     public function createRouteParts($route_path = '')
     {
@@ -164,8 +137,57 @@ class RoutesHelper
     }
 
     /**
-     *  @param int $route_id
-     *  @return array|mixed
+     * Returns the routes database record based on the request uri.
+     * Note that this is a recursive method so it can find a route which is
+     * a subset of the request uri, e.g. /fred/flinstone/barney/rubble/
+     * could return the route for /fred/flinstone/ if there is no
+     * /fred/flinstone/barney/rubble/ request_uri based route.
+     * @param string $request_uri
+     * @return array|bool
+     */
+    public function findValidRoute($request_uri = '')
+    {
+        $meth = __METHOD__ . '.';
+        $a_results = $this->o_model->readWithRequestUri($request_uri);
+        $log_message = 'For the request uri: ' .
+            $request_uri .
+            ' the readWidthRequestUri results:  '
+            . var_export($a_results, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        if ($a_results === false) {
+            $error_message = $this->o_model->getErrorMessage();
+            $this->logIt("Error Message: " . var_export($error_message, true), LOG_OFF, $meth . __LINE__);
+        }
+        if ($a_results !== false && count($a_results) === 1) {
+            return $a_results[0];
+        }
+        else {
+            if ($request_uri == '/') {
+                return false;
+            }
+            if (strpos($request_uri, '/') == 0) {
+                $uri = substr($request_uri, 1);
+            }
+            else {
+                $uri = $request_uri;
+            }
+            $uri_length = strlen($uri);
+            if (strrpos($uri, '/') == $uri_length - 1) {
+                $uri = substr($uri, 0, $uri_length - 1);
+            }
+
+            $a_uri_parts = explode('/', $uri);
+            $new_request_uri = str_replace($a_uri_parts[count($a_uri_parts) - 1], '', $request_uri);
+            if (strrpos($new_request_uri, '//') !== false) {
+                $new_request_uri = substr($new_request_uri, 0, strlen($new_request_uri) - 1);
+            }
+            return $this->findValidRoute($new_request_uri);
+        }
+    }
+
+    /**
+     * @param int $route_id
+     * @return array|mixed
      */
     public function getGroups($route_id = -1)
     {
@@ -181,11 +203,11 @@ class RoutesHelper
     }
 
     /**
-     *  Gets the min auth level needed for the route.
-     *  The groups for the route are passed in
-     *     and iterated searching the group db for the auth level.
-     *  @param array $a_groups
-     *  @return int
+     * Gets the min auth level needed for the route.
+     * The groups for the route are passed in
+     *    and iterated searching the group db for the auth level.
+     * @param array $a_groups
+     * @return int
      */
     public function getMinAuthLevel(array $a_groups = array())
     {
@@ -212,7 +234,7 @@ class RoutesHelper
     }
 
     /**
-     *  @param string $route_path
+     * @param string $route_path
      */
     public function setRoutePath($route_path = '')
     {
@@ -220,7 +242,7 @@ class RoutesHelper
     }
 
     /**
-     *  @return string
+     * @return string
      */
     public function getRoutePath()
     {
@@ -228,7 +250,7 @@ class RoutesHelper
     }
 
     /**
-     *  @return array
+     * @return array
      */
     public function getRouteParts()
     {
@@ -236,7 +258,7 @@ class RoutesHelper
     }
 
     /**
-     *  @return string
+     * @return string
      */
     public function getRequestUri()
     {

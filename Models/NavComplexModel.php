@@ -1,49 +1,34 @@
 <?php
 /**
- *  @brief     Does all the complex database CRUD stuff for the navigation.
- *  @ingroup   ritc_library lib_models
- *  @file      NavComplexModel.php
- *  @namespace Ritc\Library\Models
- *  @class     NavComplexModel
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0 β1
- *  @date      2016-02-25 12:04:44
- *  @note <pre><b>Change Log</b>
- *      v1.0.0 β1 - Initial version                              - 02/25/2016 wer
- *  </pre>
- **/
+ * @brief     Does all the complex database CRUD stuff for the navigation.
+ * @ingroup   lib_models
+ * @file      Ritc/Library/Models/NavComplexModel.php
+ * @namespace Ritc\Library\Models
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0-alpha.0
+ * @date      2016-02-25 12:04:44
+ * @note <b>Change Log</b>
+ * - v1.0.0-alpha.1 - Refactoring changes                          - 2016-03-19 wer
+ * - v1.0.0-alpha.0 - Initial version                              - 2016-02-25 wer
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
+/**
+ * Class NavComplexModel.
+ * @class   NavComplexModel
+ * @package Ritc\Library\Models
+ */
 class NavComplexModel
 {
-    use LogitTraits;
+    use LogitTraits, DbUtilityTraits;
 
-    /**
-     * @var string
-     */
-    private $db_prefix;
-    /**
-     * @var string
-     */
-    private $db_type;
-    /**
-     * @var string
-     */
-    private $error_message;
-    /**
-     * @var \Ritc\Library\Services\DbModel
-     */
-    private $o_db;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $select_sql;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $select_order_sql;
 
     /**
@@ -52,9 +37,7 @@ class NavComplexModel
      */
     public function __construct(DbModel $o_db)
     {
-        $this->o_db      = $o_db;
-        $this->db_type   = $this->o_db->getDbType();
-        $this->db_prefix = $this->o_db->getDbPrefix();
+        $this->setupProperties($o_db, 'navigation');
         $this->setSelectSql();
         $this->setSelectOrderSql();
     }
@@ -93,7 +76,7 @@ class NavComplexModel
         if ($ng_id == -1) {
             return false;
         }
-        $where = "     AND ng.ng_id = :ng_id\n     AND n.nav_level = :nav_level\n";
+        $where = "AND ng.ng_id = :ng_id\nAND n.nav_level = :nav_level\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
         $a_search_for = [':ng_id' => $ng_id, ':nav_level' => 1];
         $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
@@ -110,7 +93,8 @@ class NavComplexModel
 
     /**
      * Returns an array of nav items based on parent nav id.
-     * @param int $parent_id
+     * @param int $parent_id Required. Parent id of the navigation record.
+     * @param int $ng_id     Required. Id of the navigation group it belongs in.
      * @return bool|mixed
      */
     public function getNavListByParent($parent_id = -1, $ng_id = -1) {
@@ -145,7 +129,8 @@ EOT;
 
     /**
      * Attempt to get all the sub navigation for the parent, recursively.
-     * @param int $parent_id required
+     * @param int $parent_id Required. Parent id of the navigation record.
+     * @param int $ng_id     Required. Id of the navigation group it belongs in.
      * @return array
      */
     public function getChildrenRecursive($parent_id = -1, $ng_id = -1)
@@ -250,22 +235,21 @@ EOT;
         if ($select_sql == '') {
             $select_sql =<<<EOT
 SELECT
-    p.page_id as 'page_id',
-    p.page_url as 'url',
-    p.page_description as 'description',
     n.nav_id as 'nav_id',
     n.nav_parent_id as 'parent_id',
+    u.url_text as 'url',
     n.nav_name as 'name',
+    n.nav_text as 'text',
+    n.nav_description as 'description',
     n.nav_css as 'css',
     n.nav_level as 'level',
     n.nav_order as 'order'
 FROM
-    {$this->db_prefix}page as p,
+    {$this->db_prefix}urls as u,
     {$this->db_prefix}navigation as n,
     {$this->db_prefix}nav_ng_map as map,
     {$this->db_prefix}navgroups as ng
-WHERE
-    p.page_id = n.nav_page_id
+WHERE u.url_id = n.url_id
 AND n.nav_active = 1
 AND ng.ng_id = map.ng_id
 AND n.nav_id = map.nav_id
@@ -301,12 +285,4 @@ EOT;
         $this->select_order_sql = $string;
     }
 
-    /**
-     * Returns the SQL error message
-     * @return string
-     */
-    public function getErrorMessage()
-    {
-        return false;
-    }
 }

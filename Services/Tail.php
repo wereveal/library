@@ -1,86 +1,56 @@
 <?php
 /**
- *  @brief     Similar to the Unix tail command e.g. tail -n 40 file.php.
- *  @detail    When on a webpage, use the meta refresh to keep tailing a file.
- *  @ingroup   ritc_library lib_services
- *  @file      Tail.php
- *  @namespace Ritc\Library\Services
- *  @class     Tail
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   2.1.1
- *  @date      2014-11-15 13:33:15
- *  @note <pre><b>Change Log</b>
- *      v2.1.1 - Moved to Services namespace         - 11/15/2014 wer
- *      v2.1.0 - Changed to work in the ritc_library - 04/22/2013 wer
- *  </pre>
-**/
+ * @brief     Similar to the Unix tail command e.g. tail -n 40 file.php.
+ * @detail    When on a webpage, use the meta refresh to keep tailing a file.
+ * @ingroup   lib_services
+ * @file      Tail.php
+ * @namespace Ritc\Library\Services
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   2.2.0
+ * @date      2016-03-11 09:01:12
+ * @note <b>Change Log</b>
+ * - v2.2.0 - Changed method names to reflect current coding standards                             - 2016-03-11 wer
+ * - v2.1.1 - Moved to Services namespace                                                          - 11/15/2014 wer
+ * - v2.1.0 - Changed to work in the ritc_library                                                  - 04/22/2013 wer
+ */
 namespace Ritc\Library\Services;
 
 /**
- * Class Tail
+ * Class Tail - tails a log file.
+ * @class Tail
  * @package Ritc\Library\Services
  */
 class Tail
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $timestamp           = 0;
-    /**
-     * @var int
-     */
+    /** @var int */
     private $file_size           = 0;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $file_name           = ""; // requires full path
-    /**
-     * @var array
-     */
+    /** @var array */
     private $a_lines             = array();
-    /**
-     * @var int
-     */
+    /** @var int */
     private $lines               = 0;
-    /**
-     * @var int
-     */
+    /** @var int */
     private $show_lines          = 10;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $search_string       = "";
-    /**
-     * @var string
-     */
+    /** @var string */
     private $search_string_regex = "";
-    /**
-     * @var bool
-     */
-    private $changed             = FALSE;
-    /**
-     * @var string
-     */
+    /** @var bool */
+    private $changed             = false;
+    /** @var string */
     private $pre_highlight       = '<span style="color: red; font-weight: 900;">';
-    /**
-     * @var string
-     */
+    /** @var string */
     private $post_highlight      = "</span>";
-    /**
-     * @var bool
-     */
-    private $newest_first        = TRUE;
-    /**
-     * @var string
-     */
+    /** @var bool */
+    private $newest_first        = true;
+    /** @var string */
     private $output_format       = "BR";
-    /**
-     * @var string
-     */
+    /** @var string */
     private $pre_output          = "";
-    /**
-     * @var string
-     */
+    /** @var string */
     private $post_output         = "";
 
     /**
@@ -91,7 +61,7 @@ class Tail
     {
         if (file_exists($file_name)) {
             $this->file_name = $file_name;
-            $this->update_stats();
+            $this->updateStats();
         } else {
             return null;
         }
@@ -192,7 +162,7 @@ class Tail
     /**
      * @param string $value
      */
-    public function set_output_format($value = "BR")
+    public function setOutputFormat($value = "BR")
     {
         $this->output_format = $value;
     }
@@ -200,7 +170,7 @@ class Tail
     /**
      * @param string $value
      */
-    public function set_pre_output($value = "")
+    public function setPreOutput($value = "")
     {
         $this->pre_output = $value;
     }
@@ -208,7 +178,7 @@ class Tail
     /**
      * @param string $value
      */
-    public function set_post_output($value = "")
+    public function setPostOutput($value = "")
     {
         $this->post_output = $value;
     }
@@ -216,7 +186,7 @@ class Tail
     /**
      * @param string $search_string
      */
-    public function set_search_string($search_string = "")
+    public function setSearchString($search_string = "")
     {
         $this->search_string = $search_string;
     }
@@ -224,16 +194,16 @@ class Tail
     /**
      * @param string $search_string
      */
-    public function set_search_string_regex($search_string = "")
+    public function setSearchStringRegex($search_string = "")
     {
-        /* overrides set_search_string */
+        /* overrides setSearchString */
         $this->search_string_regex = $search_string;
     }
 
     /**
      * @param string $string
      */
-    public function set_highlight_code($string="<b>")
+    public function setHighlightCode($string="<b>")
     {
         $this->pre_highlight = $string;
         $a_string = explode(" ",$string);
@@ -243,7 +213,7 @@ class Tail
     /**
      * @return string
      */
-    public function get_highlight_code()
+    public function getHighlightCode()
     {
         return htmlentities($this->pre_highlight) . " && " . htmlentities($this->post_highlight);
     }
@@ -251,7 +221,7 @@ class Tail
     /**
      * @param int $lines
      */
-    public function set_number_of_lines($lines=20)
+    public function setNumberOfLines($lines=20)
     {
         $this->show_lines = $lines;
     }
@@ -259,30 +229,30 @@ class Tail
     /**
      * @param bool $value
      */
-    public function set_newest_first($value=TRUE)
+    public function setNewestFirst($value=TRUE)
     {
         $this->newest_first = $value == FALSE ? FALSE : TRUE;
     }
 
     /**
-     *
+     * @return null
      */
-    private function open_file()
+    private function openFile()
     {
         $this->a_lines = file($this->file_name,FILE_SKIP_EMPTY_LINES);
         $this->lines = count($this->a_lines);
     }
 
     /**
-     *
+     * @return null
      */
-    private function update_stats()
+    private function updateStats()
     {
         $new_timestamp = filemtime($this->file_name);
         // check for change
         if ($new_timestamp > $this->timestamp){
             $this->file_size = filesize($this->file_name);
-            $this->open_file();
+            $this->openFile();
             $this->timestamp = $new_timestamp;
             $this->changed = TRUE;
         }

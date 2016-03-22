@@ -1,33 +1,43 @@
 <?php
 /**
- *  @brief     View for the Groups Admin page.
- *  @ingroup   ritc_library lib_views
- *  @file      GroupsAdminView.php
- *  @namespace Ritc\Library\Views
- *  @class     GroupsAdminView
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.1
- *  @date      2015-12-12 16:01:11
- *  @note <pre><b>Change Log</b>
- *      v1.0.1   - Implent TWIG_PREFIX      - 12/12/2015 wer
- *      v1.0.0   - First working version    - 11/27/2015 wer
- *      v1.0.0β1 - Initial version          - 01/28/2015 wer
- *  </pre>
- **/
+ * @brief     View for the Groups Admin page.
+ * @ingroup   lib_views
+ * @file      GroupsAdminView.php
+ * @namespace Ritc\Library\Views
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.1
+ * @date      2015-12-12 16:01:11
+ * @note <b>Change Log</b>
+ * - v1.0.1   - Implent TWIG_PREFIX      - 12/12/2015 wer
+ * - v1.0.0   - First working version    - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version          - 01/28/2015 wer
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
+/**
+ * Class GroupsAdminView
+ * @class   GroupsAdminView
+ * @package Ritc\Library\Views
+ */
 class GroupsAdminView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
+    /**
+     * @var \Ritc\Library\Models\GroupsModel
+     */
     private $o_groups;
 
+    /**
+     * GroupsAdminView constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
@@ -37,10 +47,11 @@ class GroupsAdminView
             $this->o_groups->setElog($this->o_elog);
         }
     }
+
     /**
-     *  Returns the list of routes in html.
-     *  @param array $a_message
-     *  @return string
+     * Returns the list of routes in html.
+     * @param array $a_message
+     * @return string
      */
     public function renderList(array $a_message = array())
     {
@@ -58,7 +69,7 @@ class GroupsAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'menus'   => $this->a_links,
+            'menus'   => $this->a_nav,
             'adm_lvl' => $this->adm_level
         ];
         $a_page_values = $this->getPageValues();
@@ -84,10 +95,11 @@ class GroupsAdminView
         $tpl = TWIG_PREFIX . 'pages/groups_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
+
     /**
-     *  Returns HTML verify form to delete.
-     *  @param array $a_values
-     *  @return string
+     * Returns HTML verify form to delete.
+     * @param array $a_values
+     * @return string
      */
     public function renderVerify(array $a_values = array())
     {
@@ -100,7 +112,7 @@ class GroupsAdminView
         if (!isset($a_values['description'])) {
             $a_values['description'] = 'Form to verify the action to delete the group.';
         }
-        $a_values['menus'] = $this->a_links;
+        $a_values['menus'] = $this->a_nav;
         $tpl = TWIG_PREFIX . 'pages/verify_delete_group.twig';
         return $this->o_twig->render($tpl, $a_values);
     }

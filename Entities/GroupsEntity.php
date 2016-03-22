@@ -1,25 +1,28 @@
 <?php
 /**
- *  @brief     A basic entity class Groups table.
- *  @ingroup   ritc_library lib_entities
- *  @file      GroupsEntity.php
- *  @namespace Ritc\Library\Entities
- *  @class     GroupsEntity
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.0
- *  @date      2015-07-29 11:41:03
- *  @note <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/groups_mysql.sql
- *      PostgreSQL - resource\sql/postgresql/groups_pg.sql</pre>
- *  @note <pre><b>Change Log</b>
- *      v1.0.0 - finished        - 07/29/2015 wer
- *      v0.1.0 - Initial version - 09/11/2014 wer
- *  </pre>
-**/
+ * @brief     A basic entity class Groups table.
+ * @ingroup   lib_entities
+ * @file      Ritc/Library/Entities/GroupsEntity.php
+ * @namespace Ritc\Library\Entities
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.0
+ * @date      2015-07-29 11:41:03
+ * @note <b>SQL for table<b>
+ * - MySQL      - resources/sql/mysql/groups_mysql.sql
+ * - PostgreSQL - resource\sql/postgresql/groups_pg.sql
+ * @note <b>Change Log</b>
+ * - v1.0.0 - finished        - 07/29/2015 wer
+ * - v0.1.0 - Initial version - 09/11/2014 wer
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class GroupsEntity.
+ * @class   GroupsEntity
+ * @package Ritc\Library\Entities
+ */
 class GroupsEntity implements EntityInterface
 {
     private $group_id;
@@ -38,6 +41,7 @@ class GroupsEntity implements EntityInterface
             'group_description' => $this->group_description
         ];
     }
+
     /**
      * Sets all the properties for the entity in one step.
      * @param array $a_entity

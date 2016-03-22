@@ -1,13 +1,14 @@
 <?php
 /**
- *  @brief     Defines some required constants.
- *  @details   Used only if the class Constants could not create them from the database.
- *  @file      fallback_constants.php
- *  @ingroup   ritc_library configs
- *  _PATH = Full server path
- *  _DIR = Path in web site (URI)
- *  _NAME = Name of item without any path information
-**/
+ * @brief     Defines some required constants.
+ * @details   Used only if the class Constants could not create them from the database.
+ * @file      /app/src/Ritc/Library/resources/config/fallback_constants.php
+ * @ingroup   ritc_library configs
+ * @note NOTE:
+ * - _PATH = Full server path
+ * - _DIR  = Path in web site (URI)
+ * - _NAME = Name of item without any path information
+ */
 namespace Ritc;
 
 define('DISPLAY_DATE_FORMAT', 'm/d/Y');

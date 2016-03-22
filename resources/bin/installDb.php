@@ -1,12 +1,12 @@
 <?php
 /**
- *  @brief     Creates the database tables.
- *  @details   This is run in the Library.
- *  @file      installDb.php
- *  @namespace Ritc
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @date      2015-12-09 17:42:36 
- *  @version   1.0.0
+ * @brief     Creates the database tables.
+ * @details   This is run in the Library.
+ * @file      installDb.php
+ * @namespace Ritc
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @date      2015-12-09 17:42:36
+ * @version   1.0.0
 */
 namespace Ritc;
 
@@ -36,7 +36,7 @@ $long_opts  = [
 $a_options = getopt($short_opts, $long_opts);
 
 if (count($a_options) < 5) {
-   die("The options are \ndbhost (h),\ndbtype (t),\ndbname (d),\ndbuser (u),\ndbpass (p),\ndbprefix (f)\n"); 
+   die("The options are \ndbhost (h),\ndbtype (t),\ndbname (d),\ndbuser (u),\ndbpass (p),\ndbprefix (f)\n");
 }
 
 $db_host   = 'localhost';

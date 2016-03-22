@@ -1,56 +1,44 @@
 <?php
 /**
- *  @brief     Basic accessors for a menu entity.
- *  @ingroup   ritc_library lib_entities
- *  @file      MenusEntity.php
- *  @namespace Ritc\Library\Entities
- *  @class     MenusEntity
- *  @author    William E Reveal
- *  @version   1.0.0
- *  @date      2016-02-23 11:09:18
- *  @note <b>SQL for table<b><pre>
- *      MySQL      - resources/sql/mysql/menus_mysql.sql
- *      PostgreSQL - resources/sql/postgresql/menus_pg.sql</pre>
- **/
-
+ * @brief     Basic accessors for a menu entity.
+ * @ingroup   lib_entities
+ * @file      Ritc/Library/Entities/MenusEntity.php
+ * @namespace Ritc\Library\Entities
+ * @author    William E Reveal
+ * @version   1.0.0
+ * @date      2016-02-23 11:09:18
+ * @note <b>SQL for table<b>
+ * - MySQL      - resources/sql/mysql/menus_mysql.sql
+ * - PostgreSQL - resources/sql/postgresql/menus_pg.sql
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
+/**
+ * Class MenusEntity
+ * @class   MenusEntity
+ * @package Ritc\Library\Entities
+ */
 class MenusEntity implements EntityInterface
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $menu_id;
-    /**
-     * @var int
-     */
+    /** @var int */
     private $menu_page_id;
-    /**
-     * @var int
-     */
+    /** @var int */
     private $menu_parent_id;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $menu_name;
-    /**
-     * @var string
-     */
+    /** @var string */
     private $menu_css;
-    /**
-     * @var int
-     */
+    /** @var int */
     private $menu_level;
-    /**
-     * @var int
-     */
+    /** @var int */
     private $menu_order;
-    /**
-     * @var int
-     */
+    /** @var int */
     private $menu_active;
+
     /**
      * Returns all the record values.
      * @return array

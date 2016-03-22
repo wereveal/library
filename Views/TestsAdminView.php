@@ -1,40 +1,50 @@
 <?php
 /**
- *  @brief     View for the Tests page.
- *  @ingroup   ritc_library lib_views
- *  @file      ManagerView.php
- *  @namespace Ritc\Library\Views
- *  @class     ManagerView
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.1.0
- *  @date      2015-09-01 08:05:20
- *  @note <pre><b>Change Log</b>
- *      v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
- *      v1.0.0   - First stable version                         - 01/16/2015 wer
- *      v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
- *      v1.0.0β1 - Initial version                              - 11/08/2014 wer
- *  </pre>
- **/
+ * @brief     View for the Tests page.
+ * @ingroup   lib_views
+ * @file      ManagerView.php
+ * @namespace Ritc\Library\Views
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.1.0
+ * @date      2015-09-01 08:05:20
+ * @note <b>Change Log</b>
+ * - v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
+ * - v1.0.0   - First stable version                         - 01/16/2015 wer
+ * - v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                              - 11/08/2014 wer
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
+/**
+ * Class TestsAdminView
+ * @class   ManagerView
+ * @package Ritc\Library\Views
+ */
 class TestsAdminView
 {
-    use LogitTraits, ManagerViewTraits;
+    use LogitTraits, ViewTraits;
 
+    /**
+     * TestsAdminView constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
     }
 
+    /**
+     * @return string
+     */
     public function renderList()
     {
         $values = [
-            'menus' => $this->a_links,
+            'menus' => $this->a_nav,
             'links' => [
                 [
                     'url'    => '/manager/tests/PeopleModel/',
@@ -45,6 +55,11 @@ class TestsAdminView
         ]];
         return $this->o_twig->render('@pages/test.twig', $values);
     }
+
+    /**
+     * @param array $a_result_values
+     * @return string
+     */
     public function renderResults(array $a_result_values = array())
     {
         if (count($a_result_values) == 0) {

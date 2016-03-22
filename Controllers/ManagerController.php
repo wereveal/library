@@ -1,28 +1,26 @@
 <?php
 /**
- *  @brief     The main Controller for the manager.
- *  @ingroup   ritc_library lib_controllers
- *  @file      ManagerController.php
- *  @namespace Ritc\Library\Controllers
- *  @class     ManagerController
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   v1.0.1
- *  @date      2015-12-01 21:41:39
- *  @note <pre><b>Change Log</b>
- *      v1.0.1   - needed to change private to protected - 12/01/2015 wer
- *                 in order to extend this class.
- *      v1.0.0   - first working version                 - 11/27/2015 wer
- *      v1.0.0β8 - bug fixes                             - 11/18/2015 wer
- *      v1.0.0β7 - added page controller                 - 11/12/2015 wer
- *                 also fixed logic bugs.
- *      v1.0.0β6 - added tests controller                - 10/23/2015 wer
- *      v1.0.0β5 - working for groups                    - 09/25/2015 wer
- *      v1.0.0β4 - working for Roles                     - 01/28/2015 wer
- *      v1.0.0β3 - working for router and config         - 01/16/2015 wer
- *      v1.0.0β2 - Set up to render a basic landing page - 01/06/2015 wer
- *      v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
- *      v1.0.0α1 - Initial version                       - 11/14/2014 wer
- *  </pre>
+ * @brief     The main Controller for the manager.
+ * @ingroup   lib_controllers
+ * @file      Ritc/Library/Controllers/ManagerController.php
+ * @namespace Ritc\Library\Controllers
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   v1.0.1
+ * @date      2015-12-01 21:41:39
+ * @note <b>Change Log</b>
+ * - v1.0.1   - needed to change private to protected - 12/01/2015 wer
+ *                in order to extend this class.
+ * - v1.0.0   - first working version                 - 11/27/2015 wer
+ * - v1.0.0β8 - bug fixes                             - 11/18/2015 wer
+ * - v1.0.0β7 - added page controller                 - 11/12/2015 wer
+ *                also fixed logic bugs.
+ * - v1.0.0β6 - added tests controller                - 10/23/2015 wer
+ * - v1.0.0β5 - working for groups                    - 09/25/2015 wer
+ * - v1.0.0β4 - working for Roles                     - 01/28/2015 wer
+ * - v1.0.0β3 - working for router and config         - 01/16/2015 wer
+ * - v1.0.0β2 - Set up to render a basic landing page - 01/06/2015 wer
+ * - v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
+ * - v1.0.0α1 - Initial version                       - 11/14/2014 wer
  */
 namespace Ritc\Library\Controllers;
 
@@ -35,49 +33,34 @@ use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\ManagerView;
 
+/**
+ * Class ManagerController.
+ * @class ManagerController
+ * @package Ritc\Library\Controllers
+ */
 class ManagerController implements ControllerInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $a_route_parts;
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $a_post_values;
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $form_action;
-    /**
-     * @var AuthHelper
-     */
+    /** @var AuthHelper */
     protected $o_auth;
-    /**
-     * @var Di
-     */
+    /** @var Di */
     protected $o_di;
-    /**
-     * @var ManagerView
-     */
+    /** @var ManagerView */
     protected $o_manager_view;
-    /**
-     * @var Router
-     */
+    /** @var Router */
     protected $o_router;
-    /**
-     * @var Session
-     */
+    /** @var Session */
     protected $o_session;
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $route_method;
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $route_action;
 
     /**
@@ -140,6 +123,7 @@ class ManagerController implements ControllerInterface
             return $this->renderLogin();
         }
     }
+
     /**
      * Passes control over to the Constants Admin Controller.
      * @return string
@@ -156,6 +140,7 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
      * Passes control over to the groups admin controller.
      * @return string
@@ -172,20 +157,22 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
-     *  Renders login form after resetting session.
-     *  @param string $login_id
-     *  @param array  $a_message optional e.g. ['message' => '', 'type' => 'info']
-     *  @return string
+     * Renders login form after resetting session.
+     * @param string $login_id
+     * @param array  $a_message optional e.g. ['message' => '', 'type' => 'info']
+     * @return string
      */
     private function renderLogin($login_id = '', array $a_message = array())
     {
         $this->o_session->resetSession();
         return $this->o_manager_view->renderLoginForm($login_id, $a_message);
     }
+
     /**
-     *  Returns the html for the page admin.
-     *  @return string
+     * Returns the html for the page admin.
+     * @return string
      */
     public function renderPageAdmin()
     {
@@ -199,6 +186,7 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
      * Passes control over to the people admin controller.
      * @return string
@@ -215,6 +203,7 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
      * Passes control over to the router admin controller.
      * @return string
@@ -231,9 +220,10 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
-     *  Passes control over to the tests admin controller.
-     *  @return string
+     * Passes control over to the tests admin controller.
+     * @return string
      */
     public function renderTestsAdmin()
     {
@@ -247,9 +237,10 @@ class ManagerController implements ControllerInterface
         $a_message = ViewHelper::warningMessage("Access Prohibited");
         return $this->renderLogin('', $a_message);
     }
+
     /**
-     *  Authorizes the person and allows access or kicks them.
-     *  @return bool
+     * Authorizes the person and allows access or kicks them.
+     * @return bool
      */
     protected function verifyLogin()
     {

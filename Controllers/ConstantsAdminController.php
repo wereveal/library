@@ -1,29 +1,28 @@
 <?php
 /**
- *  @brief     Controller for the Configuration page.
- *  @ingroup   ritc_library lib_controllers
- *  @file      ConstantsAdminController.php
- *  @namespace Ritc\Library\Controllers
- *  @class     ConstantsAdminController
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.3.0
- *  @date      2015-10-07 14:31:59
- *  @note <pre><b>Change Log</b>
- *      v1.3.0 - added immutable code                            - 10/07/2015 wer
- *      v1.2.1 - code clean up                                   - 09/25/2015 wer
- *      v1.2.0 - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
- *      v1.1.0 - changed to implement ManagerControllerInterface - 01/16/2015 wer
- *               This class should only be called from the main
- *               manager controller which does session validation.
- *      v1.0.2 - changed to use the new Di class                 - 11/17/2014 wer
- *      v1.0.1 - Adjusted to match file name change              - 11/13/2014 wer
- *      v1.0.0 - Initial version                                 - 04/02/2014 wer
- *  </pre>
-**/
+ * @brief     Controller for the Configuration page.
+ * @ingroup   lib_controllers
+ * @file      Ritc/Library/Controllers/ConstantsAdminController.php
+ * @namespace Ritc\Library\Controllers
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.3.1
+ * @date      2016-03-08 15:13:35
+ * @note <b>Change Log</b>
+ * - v1.3.1 - bug fix                                         - 2016-03-08 wer
+ * - v1.3.0 - added immutable code                            - 10/07/2015 wer
+ * - v1.2.1 - code clean up                                   - 09/25/2015 wer
+ * - v1.2.0 - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
+ * - v1.1.0 - changed to implement ManagerControllerInterface - 01/16/2015 wer
+ *             This class should only be called from the main
+ *             manager controller which does session validation.
+ * - v1.0.2 - changed to use the new Di class                 - 11/17/2014 wer
+ * - v1.0.1 - Adjusted to match file name change              - 11/13/2014 wer
+ * - v1.0.0 - Initial version                                 - 04/02/2014 wer
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\MangerControllerInterface;
+use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Router;
@@ -31,29 +30,24 @@ use Ritc\Library\Views\ConstantsAdminView;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
-class ConstantsAdminController implements MangerControllerInterface
+/**
+ * Class ConstantsAdminController
+ * @class ConstantsAdminController
+ * @package Ritc\Library\Controllers
+ */
+class ConstantsAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $a_post;
-    /**
-     * @var array
-     */
+    /** @var array */
     private $a_router_parts;
-    /**
-     * @var Di
-     */
+    /** @var Di */
     private $o_di;
-    /**
-     * @var ConstantsModel
-     */
+    /** @var ConstantsModel */
     private $o_model;
-    /**
-     * @var ConstantsAdminView
-     */
+    /** @var ConstantsAdminView */
     private $o_view;
 
     /**
@@ -79,9 +73,9 @@ class ConstantsAdminController implements MangerControllerInterface
     }
 
     /**
-     *  Renders the html based on the route requested.
-     *  @return string html to be displayed.
-    **/
+     * Renders the html based on the route requested.
+     * @return string html to be displayed.
+     */
     public function render()
     {
         $main_action   = $this->a_router_parts['route_action'];
@@ -136,6 +130,7 @@ class ConstantsAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
     /**
      * Updates the constants record and returns the list of constants with a message.
      * @return mixed
@@ -157,15 +152,17 @@ class ConstantsAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
     /**
-     *  Returns the html to display a form to verify the delete.
-     *  Required by Interface.
-     *  @return string
+     * Returns the html to display a form to verify the delete.
+     * Required by Interface.
+     * @return string
      */
     public function verifyDelete()
     {
         return $this->o_view->renderVerify($this->a_post);
     }
+
     /**
      * Deletes the constants record and returns the list of constants with a message.
      * @return mixed

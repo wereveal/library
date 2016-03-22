@@ -1,30 +1,29 @@
 <?php
 /**
- *  @brief     Controller for the Configuration page.
- *  @ingroup   ritc_library lib_controllers
- *  @file      PeopleAdminController.php
- *  @namespace Ritc\Library\Controllers
- *  @class     PeopleAdminController
- *  @author    William E Reveal <bill@revealitconsulting.com>
- *  @version   1.0.1
- *  @date      2015-11-27 14:58:40
- *  @note <pre><b>Change Log</b>
- *      v1.0.1   - bug fixes                                        - 11/27/2015 wer
- *      v1.0.0   - initial working version                          - 11/12/2015 wer
- *      v1.0.0β4 - Realized this is nowhere near done               - 01/06/2015 wer
- *                 This code was copied from somewhere else and
- *                 not modified to fit the need.
- *      v1.0.0β3 - refactoring of namespaces                        - 12/05/2014 wer
- *      v1.0.0β2 - Adjusted to match file name change               - 11/13/2014 wer
- *      v1.0.0β1 - Initial version                                  - 04/02/2014 wer
- *  </pre>
-**/
+ * @brief     Controller for the Configuration page.
+ * @ingroup   lib_controllers
+ * @file      Ritc/Library/Controllers/PeopleAdminController.php
+ * @namespace Ritc\Library\Controllers
+ * @author    William E Reveal <bill@revealitconsulting.com>
+ * @version   1.0.2
+ * @date      2015-11-27 14:58:40
+ * @note <b>Change Log</b>
+ * - v1.0.2   - bug fix                                          - 2016-03-08 wer
+ * - v1.0.1   - bug fixes                                        - 11/27/2015 wer
+ * - v1.0.0   - initial working version                          - 11/12/2015 wer
+ * - v1.0.0β4 - Realized this is nowhere near done               - 01/06/2015 wer
+ *                This code was copied from somewhere else and
+ *                not modified to fit the need.
+ * - v1.0.0β3 - refactoring of namespaces                        - 12/05/2014 wer
+ * - v1.0.0β2 - Adjusted to match file name change               - 11/13/2014 wer
+ * - v1.0.0β1 - Initial version                                  - 04/02/2014 wer
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\MangerControllerInterface;
+use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
@@ -32,37 +31,28 @@ use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PeopleAdminView;
 
-class PeopleAdminController implements MangerControllerInterface
+/**
+ * Class PeopleAdminController.
+ * @class   PeopleAdminController
+ * @package Ritc\Library\Controllers
+ */
+class PeopleAdminController implements ManagerControllerInterface
 {
     use LogitTraits;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $a_route_parts;
-    /**
-     * @var array
-     */
+    /** @var array */
     private $a_post_values;
-    /**
-     * @var Di
-     */
+    /** @var Di */
     private $o_di;
-    /**
-     * @var PeopleModel
-     */
+    /** @var PeopleModel */
     private $o_model;
-    /**
-     * @var Router
-     */
+    /** @var Router */
     private $o_router;
-    /**
-     * @var Session
-     */
+    /** @var Session */
     private $o_session;
-    /**
-     * @var PeopleAdminView
-     */
+    /** @var PeopleAdminView */
     private $o_view;
 
     /**
@@ -85,10 +75,11 @@ class PeopleAdminController implements MangerControllerInterface
             $this->o_view->setElog($this->o_elog);
         }
     }
+
     /**
-     *  Routes the code to the appropriate methods and classes. Returns a string.
-     *  @return string html to be displayed.
-    **/
+     * Routes the code to the appropriate methods and classes. Returns a string.
+     * @return string html to be displayed.
+     */
     public function render()
     {
         $meth = __METHOD__ . '.';
@@ -137,10 +128,11 @@ class PeopleAdminController implements MangerControllerInterface
         }
         return $this->o_view->renderList($a_message);
     }
+
     /**
-     *  Saves the person mapped to group(s).
-     *  Returns array that specifies succsss or failure.
-     *  @return array a message regarding outcome.
+     * Saves the person mapped to group(s).
+     * Returns array that specifies succsss or failure.
+     * @return array a message regarding outcome.
      */
     public function save()
     {
@@ -166,6 +158,7 @@ class PeopleAdminController implements MangerControllerInterface
         }
         return ViewHelper::failureMessage("Opps, the person was not saved.");
     }
+
     /**
      * Updates the user record.
      * @return array a message regarding outcome.
@@ -205,6 +198,7 @@ class PeopleAdminController implements MangerControllerInterface
         }
         return ViewHelper::failureMessage("Opps, the person was not updated.");
     }
+
     /**
      * Display the form to verify delete.
      * @return array
@@ -213,6 +207,7 @@ class PeopleAdminController implements MangerControllerInterface
     {
         return $this->o_view->renderVerifyDelete($this->a_post_values);
     }
+
     /**
      * Deletes the user record.
      * @return array a message regarding outcome.
@@ -227,9 +222,9 @@ class PeopleAdminController implements MangerControllerInterface
 
     ### Utility Methods ###
     /**
-     *  Creates a short name/alias if none is provided
-     *  @param  string $long_name
-     *  @return string the short name.
+     * Creates a short name/alias if none is provided
+     * @param  string $long_name
+     * @return string the short name.
      */
     private function createShortName($long_name = '')
     {
@@ -248,10 +243,11 @@ class PeopleAdminController implements MangerControllerInterface
         }
         return $short_name;
     }
+
     /**
-     *  Returns an array to be used to create or update a people record.
-     *  @param array $a_person
-     *  @return array|bool
+     * Returns an array to be used to create or update a people record.
+     * @param array $a_person
+     * @return array|bool
      */
     private function setPersonValues(array $a_person = array())
     {
