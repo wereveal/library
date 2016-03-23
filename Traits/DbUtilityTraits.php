@@ -5,10 +5,11 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-03-18 15:03:04
+ * @version   1.0.0-alpha.1
+ * @date      2016-03-23 12:44:47
  * @note <b>Change Log</b>
- * - v1.0.0-alpha.0   - initial version                                                                 - 2016-03-18 wer
+ * - v1.0.0-alpha.1 - first hopefully working version                       - 2016-03-23 wer
+ * - v1.0.0-alpha.0 - initial version                                       - 2016-03-18 wer
  */
 namespace Ritc\Library\Traits;
 
@@ -42,6 +43,8 @@ trait DbUtilityTraits {
     /**
      * Generic method to create a new record in a table.
      * Requires both parameters to be complete to work.
+     * This method assumes that if $a_values is an array of assoc arrays
+     * then each assoc array has the same keys. It will blow up otherwise.
      * @param array $a_values      The values to be saved in a new record.
      * @param array $a_parameters  \code
      * ['a_required_keys' => [],
@@ -73,18 +76,34 @@ trait DbUtilityTraits {
             : $this->a_db_fields != []
                 ? $this->prepareListArray($this->a_db_fields)
                 : [];
+        // If a_field_names is empty, the sql cannot be built. Return false.
+        if ($a_field_names == []) {
+            return false;
+        }
 
         $a_psql = isset($a_parameters['a_psql'])
             ? $a_parameters['a_psql']
             : ['table_name' => $this->db_table];
 
-        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_values);
-            $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
-            return false;
+        if (Arrays::isArrayOfAssocArrays($a_values)) {
+            foreach ($a_values as $key => $a_value) {
+                if (!Arrays::hasRequiredKeys($a_value, $a_required_keys)) {
+                    $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_value);
+                    $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
+                    return false;
+                }
+            }
+            $sql_set = $this->buildSqlInsert($a_values[0], $a_field_names);
+        }
+        else {
+            if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
+                $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_values);
+                $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
+                return false;
+            }
+            $sql_set = $this->buildSqlInsert($a_values, $a_field_names);
         }
 
-        $sql_set = $this->buildSqlInsert($a_values, $a_field_names);
         $sql =<<<SQL
 INSERT INTO {$db_table} (
 {$sql_set}
@@ -96,13 +115,17 @@ SQL;
         if ($results) {
             return $this->o_db->getNewIds();
         }
-        return false;
+        else {
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage($this->o_db);
+            return false;
+        }
     }
 
     /**
      * Generic method to read records from a table.
      * @param array $a_parameters Required ['table_name']
-     * @note $a_parameters may also include:\verbatim
+     * @note $a_parameters may include:\verbatim
+     * 'table_name'      The name of the table being access.
      * 'a_fields'        The fields to return ['id', 'name', 'is_alive'] or ['id' as 'id', 'name' as 'the_name', 'is_alive' as 'is_dead']
      * 'a_search_for'    What to search for    ['id' => 3]
      * 'return_format'   assoc, num, both - defaults to assoc
@@ -146,7 +169,14 @@ FROM {$table_name}
 {$where}
 
 SQL;
-        return $this->o_db->search($sql, $a_search_for, $return_format);
+        $results = $this->o_db->search($sql, $a_search_for, $return_format);
+        if ($results !== false) {
+            return $this->o_db->getNewIds();
+        }
+        else {
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage($this->o_db);
+            return false;
+        }
     }
 
     /**
@@ -170,30 +200,44 @@ SQL;
         $set_sql = $this->buildSqlSet($a_values, $a_required_keys, $a_allowed_keys);
 
         $sql =<<<SQL
-UPDATE {$this->db_table} 
-{$set_sql} 
+UPDATE {$this->db_table}
+{$set_sql}
 WHERE {$primary_index_name} = :{$primary_index_name}
 
 SQL;
-        return $this->o_db->update($sql, $a_values, true);
+        $results = $this->o_db->update($sql, $a_values, true);
+        if ($results) {
+            return true;
+        }
+        else {
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage($this->o_db);
+            return false;
+        }
     }
 
     /**
      * Deletes a record based on the primary index value.
-     * @param string $primary_index_name Required
      * @param int    $record_id          Required
+     * @param string $primary_index_name Required
      * @return bool
      */
-    protected function genericDelete($primary_index_name = '', $record_id = -1)
+    protected function genericDelete($record_id = -1, $primary_index_name = '')
     {
         if ($primary_index_name == '' || $record_id < 1) {
             return false;
         }
         $sql =<<<SQL
-DELETE FROM {$this->db_table} 
+DELETE FROM {$this->db_table}
 WHERE {$primary_index_name} = :{$primary_index_name}
 SQL;
-        return $this->o_db->delete($sql, [':' . $primary_index_name => $record_id], true);
+        $results = $this->o_db->delete($sql, [':' . $primary_index_name => $record_id], true);
+        if ($results) {
+            return true;
+        }
+        else {
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage($this->o_db);
+            return false;
+        }
     }
 
     #### Utility Methods ####
@@ -452,6 +496,51 @@ SQL;
     }
 
     /**
+     * Getter for $a_db_config.
+     * @return array
+     */
+    public function getDbConfig()
+    {
+        return $this->a_db_config;
+    }
+
+    /**
+     * Getter for $a_db_fields.
+     * @return array
+     */
+    public function getDbFields()
+    {
+        return $this->a_db_fields;
+    }
+
+    /**
+     * Getter for $db_prefix.
+     * @return string
+     */
+    public function getDbPrefix()
+    {
+        return $this->db_prefix;
+    }
+
+    /**
+     * Getter for $db_table.
+     * @return string
+     */
+    public function getDbTable()
+    {
+        return $this->db_table;
+    }
+
+    /**
+     * Getter for $db_type.
+     * @return string
+     */
+    public function getDbType()
+    {
+        return $this->db_type;
+    }
+
+    /**
      * Returns the SQL error message
      * @return string
      */
@@ -461,3 +550,4 @@ SQL;
     }
 
 }
+
