@@ -6,11 +6,10 @@
  * @ingroup   lib_services
  * @file      Tpl.php
  * @namespace Ritc\Library\Services
- * @class     Tpl
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0
  * @date      2014-12-05 14:19:00
-* @note <b>Change Log</b>
+ * @note <b>Change Log</b>
  * - v1.0.0   - took out of beta, removed abstract class Base                - 09/03/2015 wer
  * - v1.0.0ß2 - changed to match TwigFactory - still a stupid class          - 12/05/2014 wer
  *              Here to provide backward compatibility. From now on,
