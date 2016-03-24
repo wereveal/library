@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleGroupMapModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2016-03-18 15:48:08
+ * @version   1.1.1
+ * @date      2016-03-24 07:31:20
  * @note <b>Change Log</b>
+ * - v1.1.1   - bug fix of read method, did not match interface       - 2016-03-24 wer
  * - v1.1.0   - Refactoring of DbModel reflected here                 - 2016-03-18 wer
  * - v1.0.0   - take out of beta                                      - 11/27/2015 wer
  * - v1.0.0β7 - refactoring fix for postgres compatibility            - 11/22/2015 wer
@@ -101,26 +102,25 @@ class PeopleGroupMapModel implements ModelInterface
      * @param array $a_search_values
      * @return mixed
      */
-    public function read(array $a_search_values = array())
+    public function read(array $a_search_values = [], array $a_search_parameters = [])
     {
-        $where = '';
-        if ($a_search_values != array()) {
-            $a_search_params = array('order_by' => 'people_id');
-            $a_allowed_keys = array(
+        $a_search_parameters = $a_search_parameters == []
+            ? ['order_by' => 'group_id ASC, people_id ASC']
+            : $a_search_parameters;
+
+        if (!isset($a_search_parameters['order_by'])) {
+            $a_search_parameters['order_by'] = 'group_id ASC, people_id ASC';
+        }
+        if (!isset($a_search_parameters['a_allowed_keys'])) {
+            $a_search_parameters['a_allowed_keys'] = [
                 'group_id',
                 'people_id',
                 'pgm_id'
-            );
-            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
+            ];
         }
-        $sql = "
-            SELECT *
-            FROM {$this->db_table}
-            {$where}
-        ";
-        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->search($sql, $a_search_values);
+        $a_search_parameters['a_search_for'] = $a_search_values;
+        $a_search_parameters['table_name'] = $this->db_table;
+        return $this->genericRead($a_search_parameters);
     }
 
     /**

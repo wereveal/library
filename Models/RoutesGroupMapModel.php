@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/RoutesGroupMapModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2015-08-01 14:01:09
+ * @version   1.0.0-alpha.1
+ * @date      2016-03-24 07:44:12
  * @note <b>Change Log</b>
- * - v0.1.0-alpha.0 - Initial version                                               - 08/01/2015 wer
+ * - v1.0.0-alpha.1 - Bug Fix to read method to match interface                     - 2016-03-24 wer
+ * - v1.0.0-alpha.0 - Initial version                                               - 08/01/2015 wer
  */
 namespace Ritc\Library\Models;
 
@@ -73,28 +74,18 @@ class RoutesGroupMapModel implements ModelInterface
     }
 
     /**
-     * @param array $a_search_values ['rgm_id', 'group_id', 'route_id']
+     * @param array $a_search_values     ['rgm_id', 'group_id', 'route_id']
+     * @param array $a_search_parameters \ref searchparams \ref readparams
      * @return mixed
      */
-    public function read(array $a_search_values = array())
+    public function read(array $a_search_values = [], array $a_search_parameters = [])
     {
-        $where = '';
-        if ($a_search_values != array()) {
-            $a_search_params = array('order_by' => 'route_id');
-            $a_allowed_keys = array(
-                'group_id',
-                'route_id',
-                'rgm_id'
-            );
-            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
+        $a_search_parameters['a_search_for'] = $a_search_values;
+        $a_search_parameters['table_name']   = $this->db_table;
+        if (!isset($a_search_parameters['order_by'])) {
+            $a_search_parameters['order_by'] = 'group_id ASC, route_id ASC';
         }
-        $sql = "
-            SELECT *
-            FROM {$this->db_table}
-            {$where}
-        ";
-        return $this->o_db->search($sql, $a_search_values);
+        return $this->genericRead($a_search_parameters);
     }
 
     /**

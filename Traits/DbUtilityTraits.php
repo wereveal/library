@@ -5,9 +5,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2016-03-23 12:44:47
+ * @version   1.0.0-alpha.2
+ * @date      2016-03-24 07:27:15
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.2 - modified genericRead to be more complete              - 2016-03-24 wer
  * - v1.0.0-alpha.1 - first hopefully working version                       - 2016-03-23 wer
  * - v1.0.0-alpha.0 - initial version                                       - 2016-03-18 wer
  */
@@ -128,6 +129,7 @@ SQL;
      * 'table_name'      The name of the table being access.
      * 'a_fields'        The fields to return ['id', 'name', 'is_alive'] or ['id' as 'id', 'name' as 'the_name', 'is_alive' as 'is_dead']
      * 'a_search_for'    What to search for    ['id' => 3]
+     * 'a_allowed_keys'  Which fields may be searched upon ['id', 'name']
      * 'return_format'   assoc, num, both - defaults to assoc
      * 'order_by'        The order to return  'is_alive DESC, name ASC'
      * 'search_type'     Either 'AND' | 'OR'
@@ -150,19 +152,23 @@ SQL;
         }
         $a_fields = isset($a_parameters['a_fields'])
             ? $a_parameters['a_fields']
-            : $this->o_db->selectDbColumns($table_name);
+            : $this->a_db_fields;
         $a_search_for = isset($a_parameters['a_search_for'])
             ? $a_parameters['a_search_for']
             : [];
         $return_format = isset($a_parameters['return_format'])
             ? $a_parameters['return_format']
             : 'assoc';
+        $a_allowed_keys = isset($a_parameters['a_allowed_keys'])
+            ? $a_parameters['a_allowed_keys']
+            : $this->a_db_fields;
         unset($a_parameters['table_name']);
         unset($a_parameters['a_search_for']);
         unset($a_parameters['return_format']);
+        unset($a_parameters['a_allowed_keys']);
 
         $select_me = $this->buildSqlSelectFields($a_fields);
-        $where = $this->buildSqlWhere($a_search_for, $a_parameters);
+        $where = $this->buildSqlWhere($a_search_for, $a_parameters, $a_allowed_keys);
         $sql =<<<SQL
 SELECT {$select_me}
 FROM {$table_name}
@@ -377,6 +383,9 @@ SQL;
                     $$key = $value;
                 }
             }
+        }
+        if ($a_allowed_keys == []) {
+            $a_allowed_keys = $this->a_db_fields;
         }
         /* set the $key to have a value compatible for a prepared statement */
         if (count($a_search_for) > 0) {

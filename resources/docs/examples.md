@@ -27,6 +27,7 @@ An array used in the DbUtilityTraits::genericRead() method with the following ke
     - 'table_name'      The name of the table - this one is required
     - 'a_fields'        The fields to return ['id', 'name', 'is_alive'] or ['id' as 'id', 'name' as 'the_name', 'is_alive' as 'is_dead']
     - 'a_search_for'    What to search for    ['id' => 3]
+    - 'a_allowed_keys'  Upon which fields are allowed to be searched
     - 'return_format'   assoc, num, both - defaults to assoc
     - 'order_by'        The order to return  'is_alive DESC, name ASC'
     - 'search_type'     Either 'AND' | 'OR'
