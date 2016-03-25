@@ -119,7 +119,7 @@ SQL;
             return $this->o_db->getNewIds();
         }
         else {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage($this->o_db);
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
             return false;
         }
     }
@@ -143,7 +143,9 @@ SQL;
      */
     protected function genericRead(array $a_parameters = [])
     {
+        $meth = __METHOD__ . '.';
         if (!isset($a_parameters['table_name']) && $this->db_table == '') {
+            $this->logIt("The table name must be specified.", LOG_OFF, $meth . __LINE__);
             return false;
         }
         elseif (isset($a_parameters['table_name'])) {
@@ -164,10 +166,16 @@ SQL;
         $a_allowed_keys = isset($a_parameters['a_allowed_keys'])
             ? $a_parameters['a_allowed_keys']
             : $this->a_db_fields;
+        $log_message = 'Parameters before unset:  ' . var_export($a_parameters, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         unset($a_parameters['table_name']);
         unset($a_parameters['a_search_for']);
         unset($a_parameters['return_format']);
         unset($a_parameters['a_allowed_keys']);
+
+        $log_message = 'Search For Values:  ' . var_export($a_search_for, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $select_me = $this->buildSqlSelectFields($a_fields);
         $where = $this->buildSqlWhere($a_search_for, $a_parameters, $a_allowed_keys);
@@ -177,12 +185,13 @@ FROM {$table_name}
 {$where}
 
 SQL;
+        $this->logIt("SQL:\n" . $sql, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for, $return_format);
         if ($results !== false) {
-            return $this->o_db->getNewIds();
+            return $results;
         }
         else {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage($this->o_db);
+            $this->setErrorMessage();
             return false;
         }
     }
@@ -218,7 +227,7 @@ SQL;
             return true;
         }
         else {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage($this->o_db);
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
             return false;
         }
     }
@@ -243,7 +252,7 @@ SQL;
             return true;
         }
         else {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage($this->o_db);
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
             return false;
         }
     }
@@ -483,6 +492,18 @@ SQL;
             }
         }
         return $a_values;
+    }
+
+    /**
+     * @param string $value
+     * @return null
+     */
+    public function setErrorMessage($value = '')
+    {
+        if ($value == '') {
+            $value = $this->o_db->retrieveFormatedSqlErrorMessage();
+        }
+        $this->error_message = $value;
     }
 
     /**

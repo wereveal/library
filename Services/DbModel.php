@@ -6,21 +6,27 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.6.1
- * @date      2016-03-17 10:39:02
+ * @version   4.1.0
+ * @date      2016-03-25 10:12:12
  * @note <b>Change Log</b>
+ * - v4.1.0 - Renamed rawQuery to rawExec and added a new rawQuery                     - 2016-03-25 wer
+ *            The old rawQuery was doing a \PDO::exec command which doesn't return
+ *            results of a SELECT. So, to avoid confusion it was renamed and
+ *            a new rawQuery was created using the \PDO::query command which does
+ *            allow returning the results of a SELECT via a PDOStatement::fetchAll.
+ *            Also did a couple bug fixes.
  * - v4.0.0 - Changed class so that it focues on the actual database operations.       - 2016-03-18 wer
  *            Removed sql building and validation methods to a trait class which
  *            then can be used independently by other classes. Yes, this may require
  *            a lot of refactoring elsewhere.
  * - v3.6.1 - bug fixes                                                                - 2016-03-17 wer
  * - v3.6.0 - Changed property name o_db to o_pdo to clarify what the object was       - 03/04/2016 wer
- *            Added new method to "prepare" a list array
- *            Added new method to create and return the formated sql error message.
- *            Added new method to return the raw sql error info array.
- *            Updated update set build method to block unallowed key value pairs
- *            bug fixes, build insert sql didn't take into account prepared key names
- *            Misc other fixes and modifications.
+ *            - Added new method to "prepare" a list array
+ *            - Added new method to create and return the formated sql error message.
+ *            - Added new method to return the raw sql error info array.
+ *            - Updated update set build method to block unallowed key value pairs
+ *            - bug fixes, build insert sql didn't take into account prepared key names
+ *            - Misc other fixes and modifications.
  * - v3.5.1 - added new method to create a string for the select field names           - 02/25/2016 wer
  * - v3.5.0 - added new method to create a string for the insert value names           - 02/23/2016 wer
  * - v3.4.0 - changed so that an array can be used in place of the preferred file      - 12/09/2015 wer
@@ -379,17 +385,11 @@ class DbModel
      * @param \PDO|\PDOStatement|null $o_pdo
      * @return bool
      */
-    public function setSqlErrorMessage($o_pdo = null)
+    public function setSqlErrorMessage()
     {
-        if (is_null($o_pdo)) {
-            $o_pdo = $this->o_pdo;
-        }
-        if ($o_pdo instanceof \PDO || $o_pdo instanceof \PDOStatement) {
-            $a_error_stuff = $o_pdo->errorInfo();
-            $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] . "\nDriver Error Code: " . $a_error_stuff[1] . "\nDriver Error Message: " . $a_error_stuff[2];
-            return true;
-        }
-        return false;
+        $a_error_stuff = $this->o_pdo->errorInfo();
+        $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] . "\nDriver Error Code: " . $a_error_stuff[1] . "\nDriver Error Message: " . $a_error_stuff[2];
+        return true;
     }
 
     /**
@@ -397,12 +397,9 @@ class DbModel
      * @param \PDO|\PDOStatement|null $o_pdo
      * @return string
      */
-    public function retrieveFormatedSqlErrorMessage($o_pdo = null)
+    public function retrieveFormatedSqlErrorMessage()
     {
-        if (is_null($o_pdo)) {
-            $o_pdo = $this->o_pdo;
-        }
-        if ($this->setSqlErrorMessage($o_pdo)) {
+        if ($this->setSqlErrorMessage()) {
             return $this->sql_error_message;
         }
         else {
