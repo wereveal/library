@@ -265,9 +265,9 @@ class ConstantsModel implements ModelInterface
                         NO MAXVALUE
                         CACHE 1
                     ";
-                $results = $this->o_db->rawQuery($sql_sequence);
+                $results = $this->o_db->rawExec($sql_sequence);
                 if ($results !== false) {
-                    $results2 = $this->o_db->rawQuery($sql_table);
+                    $results2 = $this->o_db->rawExec($sql_table);
                     if ($results2 === false) {
                         return false;
                     }
@@ -282,7 +282,7 @@ class ConstantsModel implements ModelInterface
                         const_immutable INTEGER
                     )
                 ";
-                $results = $this->o_db->rawQuery($sql);
+                $results = $this->o_db->rawExec($sql);
                 if ($results === false) {
                     return false;
                 }
@@ -299,7 +299,7 @@ class ConstantsModel implements ModelInterface
                         UNIQUE KEY `const_key` (`const_name`)
                     ) ENGINE=InnoDB  AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
                 ";
-                $results = $this->o_db->rawQuery($sql);
+                $results = $this->o_db->rawExec($sql);
                 if ($results === false) {
                     return false;
                 }

@@ -238,13 +238,30 @@ class DbModel
     }
 
     /**
-     * Allows a raw query to be made.
+     * Allows a raw \PDO::exec sql statement to be made.
+     * As specified by \PDO, this does not return results from a select statement.
+     * The query must be properly escaped, otherwise, this could be vulnerable.
      * @param string $the_query
      * @return int
      */
-    public function rawQuery($the_query)
+    public function rawExec($the_query)
     {
         return $this->o_pdo->exec($the_query);
+    }
+
+    /**
+     * Executes and returns the results of a \PDO::query.
+     * The query must be properly escaped, otherwise, this could be vulnerable.
+     * @param string $the_query
+     * @return array
+     */
+    public function rawQuery($the_query = '')
+    {
+        if ($the_query == '') {
+            return [];
+        }
+        $pdo_stmt = $this->o_pdo->query($the_query);
+        return $pdo_stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     ### Getters and Setters
@@ -317,10 +334,11 @@ class DbModel
 
     /**
      * Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
-     * @param array $a_table_info  ['table_name', 'column_name', 'schema']<pre>
-     *                             'table_name'  value required,
-     *                             'column_name' value optional but recommended, defaults to 'id'
-     *                             'schema'      value optional, defaults to 'public'</pre>
+     * @param array $a_table_info  ['table_name', 'column_name', 'schema']
+     * @note \verbatim
+     * 'table_name'  value required,
+     * 'column_name' value optional but recommended, defaults to 'id'
+     * 'schema'      value optional, defaults to 'public' \endverbatim
      * @return bool success or failure
      */
     public function setPgsqlSequenceName(array $a_table_info = array())

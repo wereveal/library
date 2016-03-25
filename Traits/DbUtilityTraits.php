@@ -39,6 +39,8 @@ trait DbUtilityTraits {
     protected $error_message;
     /** @var \Ritc\Library\Services\DbModel */
     protected $o_db;
+    /** @var  string */
+    protected $primary_index_name;
 
     #### Generic CRUD calls ####
     /**
@@ -484,6 +486,49 @@ SQL;
     }
 
     /**
+     * Retrieves the primary index field name from database and sets the class property.
+     * @return null
+     */
+    protected function setPrimaryIndexName()
+    {
+        switch($this->db_type) {
+            case 'pgsql':
+                $query =<<<SQL
+SELECT a.attname as pKeyName, format_type(a.atttypid, a.atttypmod) AS data_type
+FROM   pg_index i
+JOIN   pg_attribute a ON a.attrelid = i.indrelid
+       AND a.attnum = ANY(i.indkey)
+WHERE  i.indrelid = '{$this->db_table}'::regclass
+AND    i.indisprimary;
+SQL;
+                $results = $this->o_db->rawQuery($query);
+                $this->primary_index_name = $results[0]['pKeyName'];
+                return null;
+            case 'sqlite':
+                $query = "PRAGMA table_info({$this->db_table})";
+                $results = $this->o_db->rawQuery($query);
+                foreach ($results as $a_row) {
+                    if ($a_row['pk'] === 1) {
+                        $this->primary_index_name = $a_row['name'];
+                        return null;
+                    }
+                }
+                break;
+            case 'mysql':
+            default:
+                $query = "SHOW index FROM {$this->db_table}";
+                $results = $this->o_db->rawQuery($query);
+                foreach ($results as $a_index) {
+                    if ($a_index['Key_name'] == 'PRIMARY') {
+                        $this->primary_index_name = $a_index['Column_name'];
+                        return null;
+                    }
+                }
+            // end 'mysql' and default;
+        }
+    }
+
+    /**
      * Sets up the standard properties.
      * @param \Ritc\Library\Services\DbModel $o_db
      * @param string                         $table_name
@@ -499,8 +544,9 @@ SQL;
         $this->db_prefix   = $o_db->getDbPrefix();
         $this->db_type     = $o_db->getDbType();
         if ($table_name != '') {
-            $this->db_table = $this->db_prefix . $table_name;
-            $this->a_db_fields = $o_db->selectDbColumns($this->db_table);
+            $this->db_table           = $this->db_prefix . $table_name;
+            $this->a_db_fields        = $o_db->selectDbColumns($this->db_table);
+            $this->primary_index_name = $this->setPrimaryIndexName();
         }
     }
 
@@ -558,5 +604,13 @@ SQL;
         return $this->error_message;
     }
 
+    /**
+     * Retrieves the class property $primary_index_name.
+     * @return string
+     */
+    public function getPrimaryIndexName()
+    {
+        return $this->primary_index_name;
+    }
 }
 

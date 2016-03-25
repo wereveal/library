@@ -147,7 +147,7 @@ switch ($db_type) {
 $o_db->startTransaction();
 foreach ($a_sql as $sql) {
     $sql = str_replace('{dbPrefix}', $db_prefix, $sql);
-    if ($o_db->rawQuery($sql) === false) {
+    if ($o_db->rawExec($sql) === false) {
         $error_message = $o_db->getSqlErrorMessage();
         $o_db->rollbackTransaction();
         die("Database failure\n" . var_export($o_pdo->errorInfo(), true) . "\n");
