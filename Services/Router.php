@@ -270,7 +270,7 @@ class Router
      */
     public function setRequestUri($request_uri = '')
     {
-        error_log(var_export($_SERVER, true));
+        // error_log('_SERVER: ' . var_export($_SERVER, true));
         if ($request_uri == '') {
             $request_uri = $_SERVER["REQUEST_URI"];
         }

@@ -233,7 +233,7 @@ SQL;
     }
 
     /**
-     * Deletes a record based on the primary index value.
+     * Deletes a single record based on the primary index value.
      * @param int    $record_id          Required
      * @param string $primary_index_name Required
      * @return bool
