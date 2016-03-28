@@ -5,9 +5,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.2
- * @date      2016-03-24 07:27:15
+ * @version   1.0.0-alpha.3
+ * @date      2016-03-28 11:58:08
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.3 - bug fixes                                             - 2016-03-28 wer
  * - v1.0.0-alpha.2 - modified genericRead to be more complete              - 2016-03-24 wer
  * - v1.0.0-alpha.1 - first hopefully working version                       - 2016-03-23 wer
  * - v1.0.0-alpha.0 - initial version                                       - 2016-03-18 wer
@@ -83,6 +84,8 @@ trait DbUtilityTraits {
         if ($a_field_names == []) {
             return false;
         }
+        $log_message = 'Field Names ' . var_export($a_field_names, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_psql = isset($a_parameters['a_psql'])
             ? $a_parameters['a_psql']
@@ -114,6 +117,9 @@ INSERT INTO {$db_table} (
 
 SQL;
         $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
+        $log_message = 'Create Values:  ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         $results = $this->o_db->insert($sql, $a_values, $a_psql);
         if ($results) {
             return $this->o_db->getNewIds();
@@ -150,6 +156,9 @@ SQL;
         }
         elseif (isset($a_parameters['table_name'])) {
             $table_name = $a_parameters['table_name'];
+            if (strpos($table_name, $this->db_prefix) === false) {
+                $table_name = $this->db_prefix . $table_name;
+            }
         }
         else {
             $table_name = $this->db_table;
@@ -271,9 +280,15 @@ SQL;
      */
     protected function buildSqlInsert(array $a_values = [], array $a_allowed_keys = [])
     {
+        $meth = __METHOD__ . '.';
         if (count($a_values) === 0 || count($a_allowed_keys) === 0) {
             return '';
         }
+        $log_message = 'A Values:  ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $log_message = 'a_allowed_keys ' . var_export($a_allowed_keys, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         $a_values = $this->o_db->prepareKeys($a_values);
         $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
         $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);

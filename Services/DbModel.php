@@ -6,51 +6,52 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.1.0
- * @date      2016-03-25 10:12:12
+ * @version   4.1.1
+ * @date      2016-03-28 07:41:12
  * @note <b>Change Log</b>
- * - v4.1.0 - Renamed rawQuery to rawExec and added a new rawQuery                     - 2016-03-25 wer
+ * - v4.1.1 - Bug fixes, the set/create/retrieve sql error message needed clarification     - 2016-03-28 wer
+ * - v4.1.0 - Renamed rawQuery to rawExec and added a new rawQuery                          - 2016-03-25 wer
  *            The old rawQuery was doing a \PDO::exec command which doesn't return
  *            results of a SELECT. So, to avoid confusion it was renamed and
  *            a new rawQuery was created using the \PDO::query command which does
  *            allow returning the results of a SELECT via a PDOStatement::fetchAll.
  *            Also did a couple bug fixes.
- * - v4.0.0 - Changed class so that it focues on the actual database operations.       - 2016-03-18 wer
+ * - v4.0.0 - Changed class so that it focues on the actual database operations.            - 2016-03-18 wer
  *            Removed sql building and validation methods to a trait class which
  *            then can be used independently by other classes. Yes, this may require
  *            a lot of refactoring elsewhere.
- * - v3.6.1 - bug fixes                                                                - 2016-03-17 wer
- * - v3.6.0 - Changed property name o_db to o_pdo to clarify what the object was       - 03/04/2016 wer
+ * - v3.6.1 - bug fixes                                                                     - 2016-03-17 wer
+ * - v3.6.0 - Changed property name o_db to o_pdo to clarify what the object was            - 03/04/2016 wer
  *            - Added new method to "prepare" a list array
  *            - Added new method to create and return the formated sql error message.
  *            - Added new method to return the raw sql error info array.
  *            - Updated update set build method to block unallowed key value pairs
  *            - bug fixes, build insert sql didn't take into account prepared key names
  *            - Misc other fixes and modifications.
- * - v3.5.1 - added new method to create a string for the select field names           - 02/25/2016 wer
- * - v3.5.0 - added new method to create a string for the insert value names           - 02/23/2016 wer
- * - v3.4.0 - changed so that an array can be used in place of the preferred file      - 12/09/2015 wer
- * - v3.3.0 - bug fix - pgsql insert wasn't working right                              - 11/22/2015 wer
- * - v3.2.6 - changed from extending Base class to using traits                        - unknown    wer
- * - v3.2.5 - added some additional information to be retrieved                        - 09/01/2015 wer
- * - v3.2.4 - refactoring elsewhere made a small name change here                      - 07/31/2015 wer
- * - v3.2.3 - moved to Services namespace                                              - 11/15/2014 wer
+ * - v3.5.1 - added new method to create a string for the select field names                - 02/25/2016 wer
+ * - v3.5.0 - added new method to create a string for the insert value names                - 02/23/2016 wer
+ * - v3.4.0 - changed so that an array can be used in place of the preferred file           - 12/09/2015 wer
+ * - v3.3.0 - bug fix - pgsql insert wasn't working right                                   - 11/22/2015 wer
+ * - v3.2.6 - changed from extending Base class to using traits                             - unknown    wer
+ * - v3.2.5 - added some additional information to be retrieved                             - 09/01/2015 wer
+ * - v3.2.4 - refactoring elsewhere made a small name change here                           - 07/31/2015 wer
+ * - v3.2.3 - moved to Services namespace                                                   - 11/15/2014 wer
  * - v3.2.1 - bug fix
  * - v3.2.0 - Made this class more stand alone except extending Base class.
  *            Added function to allow raw query.
  *            Changed it to use the new Base class elog inject method.
  *            Hammering down a couple bugs.
- * - v3.1.2 - bug fixes, needed to pass the pdo object into the class                  - 03/20/2014 wer
- * - v3.1.1 - added methods to set and return db prefix                                - 02/24/2014 wer
+ * - v3.1.2 - bug fixes, needed to pass the pdo object into the class                       - 03/20/2014 wer
+ * - v3.1.1 - added methods to set and return db prefix                                     - 02/24/2014 wer
  *            It should be noted, this assumes a db prefix has been set. see PdoFactory
- * - v3.1.0 - added method to return db tables                                         - 01/31/2014 wer
- * - v3.0.1 - renamed file to match function, eliminated the unnecessary               - 12/19/2013 wer
- * - v3.0.0 - split the pdo creation (database connection) from the crud               - 2013-11-06 wer
- * - v2.4.4 - bug fix in buildSqlWhere                                                 - 2013-07-23 wer
- * - v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff)      - 07/06/2013 wer
- * - v2.4.2 - added method to build sql where                                          - 05/09/2013 wer
+ * - v3.1.0 - added method to return db tables                                              - 01/31/2014 wer
+ * - v3.0.1 - renamed file to match function, eliminated the unnecessary                    - 12/19/2013 wer
+ * - v3.0.0 - split the pdo creation (database connection) from the crud                    - 2013-11-06 wer
+ * - v2.4.4 - bug fix in buildSqlWhere                                                      - 2013-07-23 wer
+ * - v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff)           - 07/06/2013 wer
+ * - v2.4.2 - added method to build sql where                                               - 05/09/2013 wer
  * - v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
- * - v2.4.0 - Change to match new RITC Library layout                                  - 04/23/2013 wer
+ * - v2.4.0 - Change to match new RITC Library layout                                       - 04/23/2013 wer
  * - v2.3.2 - new method to remove bad keys
  *            removed some redundant code
  *            reorganized putting main four commands at top for easy reference
@@ -128,8 +129,7 @@ class DbModel
         if (count($a_values) == 0) {
             $this->affected_rows = $this->o_pdo->exec($the_query);
             if ($this->affected_rows === false) {
-                $this->setSqlErrorMessage($this->o_pdo);
-                $this->logIt($this->getSqlErrorMessage(), LOG_ALWAYS, $meth . __LINE__);
+                $this->logIt($this->retrieveFormatedSqlErrorMessage(), LOG_ALWAYS, $meth . __LINE__);
                 return false;
             }
             elseif ($this->affected_rows == 0) {
@@ -170,6 +170,7 @@ class DbModel
      */
     public function search($the_query = '', array $a_values = array(), $type = 'assoc')
     {
+        $meth = __METHOD__ . '.';
         switch ($type) {
             case 'num':
                 $fetch_style = \PDO::FETCH_NUM;
@@ -182,36 +183,48 @@ class DbModel
                 $fetch_style = \PDO::FETCH_ASSOC;
         }
         if ($the_query == '') {
-            $this->logIt('The query must not be blank.', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            $this->logIt('The query must not be blank.', LOG_ALWAYS, $meth . __LINE__);
             return false;
         }
         if (count($a_values) == 0) {
             $o_pdo_stmt = $this->o_pdo->prepare($the_query);
             if ($o_pdo_stmt === false) {
-                $this->setSqlErrorMessage($this->o_pdo);
-                $this->logIt($this->getSqlErrorMessage(), LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $this->logIt($this->retrieveFormatedSqlErrorMessage($this->o_pdo), LOG_ALWAYS, $meth . __LINE__);
                 return false;
             }
-            $o_pdo_stmt->execute();
-            $a_results = $o_pdo_stmt->fetchAll($fetch_style);
-            $o_pdo_stmt->closeCursor();
+            if ($o_pdo_stmt->execute()) {
+                $a_results = $o_pdo_stmt->fetchAll($fetch_style);
+                $o_pdo_stmt->closeCursor();
+            }
+            else {
+                $a_error = $o_pdo_stmt->errorInfo();
+                $log_message = 'Error array ' . var_export($a_error, TRUE);
+                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+                return false;
+            }
         }
         elseif (is_array($a_values) && count($a_values) > 0) {
             $this->logIt("Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->logIt("The array is " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("The array is " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
 
             $o_pdo_stmt = $this->prepare($the_query);
             if ($o_pdo_stmt) {
                 $a_results = $this->searchPrepared($a_values, $o_pdo_stmt, $type);
+                if ($a_results === false) {
+                    $this->logIt($this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
+                    return false;
+                }
             }
             else {
-                $this->logIt("Could not prepare the query " . $the_query, LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Could not prepare the query " . $the_query, LOG_OFF, $meth . __LINE__);
+                $this->logIt($this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
                 return false;
             }
         }
         else {
-            $this->logIt("There was a problem with the array", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->logIt("a_values is: " . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("There was a problem with the array", LOG_OFF, $meth . __LINE__);
+            $this->logIt("a_values is: " . var_export($a_values , true), LOG_OFF, $meth . __LINE__);
             return false;
         }
         return $a_results;
@@ -382,39 +395,51 @@ class DbModel
 
     /**
      * Sets the class propery error_message to a formated string.
-     * @param \PDO|\PDOStatement|null $o_pdo
-     * @return bool
+     * @param $pdo null|\PDO|\PDOStatement
      */
-    public function setSqlErrorMessage()
+    public function setSqlErrorMessage($pdo = null)
     {
-        $a_error_stuff = $this->o_pdo->errorInfo();
-        $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] . "\nDriver Error Code: " . $a_error_stuff[1] . "\nDriver Error Message: " . $a_error_stuff[2];
-        return true;
+        if ($pdo instanceof \PDOStatement || $pdo instanceof \PDO) {
+            $a_error_stuff = $pdo->errorInfo();
+        }
+        else {
+            $a_error_stuff = $this->o_pdo->errorInfo();
+        }
+        $this->sql_error_message = 'SQLSTATE Error Code: ' . $a_error_stuff[0] .
+            "\nDriver Error Code: " . $a_error_stuff[1] .
+            "\nDriver Error Message: " . $a_error_stuff[2];
     }
 
     /**
      * Sets and gets the sql_error_message property.
-     * @param \PDO|\PDOStatement|null $o_pdo
+     * @param $pdo null|\PDO|\PDOStatement
      * @return string
      */
-    public function retrieveFormatedSqlErrorMessage()
+    public function retrieveFormatedSqlErrorMessage($pdo = null)
     {
-        if ($this->setSqlErrorMessage()) {
-            return $this->sql_error_message;
+        if (!is_null($pdo)) {
+            $this->setSqlErrorMessage($pdo);
         }
-        else {
-            return 'Could not retrieve PDO error.';
+        elseif ($this->sql_error_message == '') {
+            $this->setSqlErrorMessage();
         }
+        return $this->sql_error_message;
     }
 
     /**
      * Retrieves the raw sql errors.
      * In the format of ['SQLSTATE Error Code', 'Driver Error Code', 'Driver Error Message'].
+     * @param $pdo null|\PDO|\PDOStatement
      * @return array
      */
-    public function retrieveRawSqlErrorInfo()
+    public function retrieveRawSqlErrorInfo($pdo = null)
     {
-        return $this->o_pdo->errorInfo();
+        if ($pdo instanceof \PDOStatement || $pdo instanceof \PDO) {
+            return $pdo->errorInfo();
+        }
+        else {
+            return $this->o_pdo->errorInfo();
+        }
     }
 
     /**
@@ -500,11 +525,11 @@ class DbModel
     public function execute(array $a_values = array(), \PDOStatement $o_pdo_stmt)
     {
         $meth = __METHOD__ . '.';
-        $this->logIt('Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt('Array: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         if (count($a_values) > 0) {
             if (Arrays::isAssocArray($a_values)) { // for a query with bind values
                 $a_values = $this->prepareKeys($a_values);
-                $this->logIt('Fixed Array: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('Fixed Array: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
 
                 if ($this->bindValues($a_values, $o_pdo_stmt) === false) {
                     $this->logIt("Could not bind the values.", LOG_OFF, $meth . __LINE__);
@@ -513,11 +538,11 @@ class DbModel
                 return $o_pdo_stmt->execute();
             }
             elseif (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays
-                $this->logIt('The array cannot be an array of array.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('The array cannot be an array of array.', LOG_ALWAYS, $meth . __LINE__);
                 return false;
             }
             else { // $array is for question mark place holders prepared statement
-                $this->logIt("Attempting to execute a question mark place prepared statement", LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt("Attempting to execute a question mark place prepared statement", LOG_OFF, $meth . __LINE__);
                 if ($this->bindValues($a_values, $o_pdo_stmt) === false) {
                     return false;
                 }
@@ -525,7 +550,7 @@ class DbModel
             }
         }
         else {
-            $this->logIt('Executing a query with pre-bound values', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('Executing a query with pre-bound values', LOG_OFF, $meth . __LINE__);
             return $o_pdo_stmt->execute(); // values have been bound elsewhere
         }
     }
@@ -797,10 +822,8 @@ class DbModel
             $results = $this->executeInsert($a_values, $o_pdo_stmt, $a_table_info);
             if ($results === false) {
                 $this->logIt('Execute Failure', LOG_OFF, $meth . __LINE__);
-                $this->setSqlErrorMessage($this->o_pdo);
-                $this->logIt('PDO: ' . $this->getSqlErrorMessage(), LOG_OFF, $meth . __LINE__);
-                $this->setSqlErrorMessage($o_pdo_stmt);
-                $this->logIt('PDO_Statement: ' . $this->getSqlErrorMessage(), LOG_OFF, $meth . __LINE__);
+                $this->logIt('PDO: ' . $this->retrieveFormatedSqlErrorMessage($this->o_pdo), LOG_OFF, $meth . __LINE__);
+                $this->logIt('PDO_Statement: ' . $this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
                 $this->resetNewIds();
                 return false;
             }
@@ -860,25 +883,25 @@ class DbModel
      */
     public function mdQuery($the_query = '', array $a_values = array(), $single_record = true)
     {
-        $from_method = __METHOD__ . '.';
+        $meth = __METHOD__ . '.';
         if ($the_query == '') {
-            $this->logIt('The query must not be blank.', LOG_OFF, $from_method);
+            $this->logIt('The query must not be blank.', LOG_OFF, $meth);
             return false;
         }
         if ($a_values == array()) {
             $this->affected_rows = $this->o_pdo->exec($the_query);
             if ($this->affected_rows === false) {
                 $this->setSqlErrorMessage($this->o_pdo);
-                $this->logIt($this->getSqlErrorMessage(), LOG_OFF, $from_method . __LINE__);
+                $this->logIt($this->getSqlErrorMessage(), LOG_OFF, $meth . __LINE__);
                 return false;
             }
             elseif ($single_record && $this->affected_rows > 1) {
-                $this->logIt('The query affected multiple records instead of a single one.', LOG_OFF, $from_method);
+                $this->logIt('The query affected multiple records instead of a single one.', LOG_OFF, $meth);
                 $this->sql_error_message = 'The query affected multiple records instead of a single one.';
                 return false;
             }
             elseif ($this->affected_rows == 0) {
-                $this->logIt('The query affected no records.', LOG_OFF, $from_method);
+                $this->logIt('The query affected no records.', LOG_OFF, $meth);
                 $this->sql_error_message = 'The query affected no records.';
                 return false;
             }
@@ -889,8 +912,7 @@ class DbModel
         elseif (count($a_values) > 0) {
             $o_pdo_stmt = $this->prepare($the_query);
             if (is_object($o_pdo_stmt) === false) {
-                $this->setSqlErrorMessage($o_pdo_stmt);
-                $this->logIt('Could not prepare the query: ' . $this->getSqlErrorMessage(), LOG_OFF, $from_method . __LINE__);
+                $this->logIt('Could not prepare the query: ' . $this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
                 return false;
             }
             else {
@@ -898,7 +920,7 @@ class DbModel
             }
         }
         else {
-            $this->logIt('The array of values for a prepared query was empty.', LOG_OFF, $from_method);
+            $this->logIt('The array of values for a prepared query was empty.', LOG_OFF, $meth);
             return false;
         }
     }
@@ -911,6 +933,7 @@ class DbModel
      */
     public function mdQueryPrepared(array $a_values = array(), $single_record = true, \PDOStatement $o_pdo_stmt)
     {
+        $meth = __METHOD__ . '.';
         if ($a_values == array()) {
             return false;
         }
@@ -919,9 +942,8 @@ class DbModel
                 foreach ($a_values as $row) {
                     $results = $this->mdQueryPrepared($row, $single_record, $o_pdo_stmt);
                     if ($results === false) {
-                        $this->setSqlErrorMessage($o_pdo_stmt);
-                        $this->logIt("Could not execute the query: {$this->getSqlErrorMessage()}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-                        $this->logIt('The array was: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                        $this->logIt("Could not execute the query: {$this->retrieveFormatedSqlErrorMessage($o_pdo_stmt)}", LOG_OFF, $meth . __LINE__);
+                        $this->logIt('The array was: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
                         return false;
                     }
                 }
@@ -930,16 +952,15 @@ class DbModel
             else {
                 $results = $this->execute($a_values, $o_pdo_stmt);
                 if ($results === false) {
-                    $this->setSqlErrorMessage($o_pdo_stmt);
-                    $this->logIt("Could not execute the query: {$this->getSqlErrorMessage()}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-                    $this->logIt('The array was: ' . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+                    $this->logIt("Could not execute the query: {$this->retrieveFormatedSqlErrorMessage($o_pdo_stmt)}", LOG_OFF, $meth . __LINE__);
+                    $this->logIt('The array was: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
                     return false;
                 }
                 return true;
             }
         }
         else {
-            $this->logIt('The array of values for a prepared query was empty.', LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt('The array of values for a prepared query was empty.', LOG_OFF, $meth . __LINE__);
             return false;
         }
     }
@@ -1052,6 +1073,7 @@ class DbModel
      */
     public function searchPrepared(array $a_values = array(), \PDOStatement $o_pdo_stmt, $type = 'assoc')
     {
+        $meth = __METHOD__ . '.';
         switch ($type) {
             case 'num':
                 $fetch_style = \PDO::FETCH_NUM;
@@ -1064,7 +1086,7 @@ class DbModel
                 $fetch_style = \PDO::FETCH_ASSOC;
         }
         if (count($a_values) > 0) {
-            $this->logIt("Array: " . var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Array: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
             if (isset($a_values[0]) && is_array($a_values[0])) {
                 $a_results = array();
                 foreach ($a_values as $row) {
@@ -1080,9 +1102,15 @@ class DbModel
             else {
                 if ($this->execute($a_values, $o_pdo_stmt)) {
                     $a_results = $o_pdo_stmt->fetchAll($fetch_style);
+                    if ($a_results === false) {
+                        $this->logIt($this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
+                    }
                 }
                 else {
-                    $this->logIt("Could not execute the query", LOG_OFF, __METHOD__ . '.' . __LINE__);
+                    $this->logIt("Could not execute the query", LOG_OFF, $meth . __LINE__);
+                    $message = $o_pdo_stmt->errorCode();
+                    $this->logIt("Error Code: " . $message, LOG_OFF, $meth . __LINE__);
+                    $this->logIt($this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
                     return false;
                 }
             }
@@ -1090,7 +1118,7 @@ class DbModel
         }
         else {
             $this->logIt('There was a problem with the array');
-            $this->logIt("a_values: " . var_export($a_values , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("a_values: " . var_export($a_values , true), LOG_OFF, $meth . __LINE__);
             return false;
         }
     }
