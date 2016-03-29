@@ -5,9 +5,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.3
- * @date      2016-03-28 11:58:08
+ * @version   1.0.0-alpha.4
+ * @date      2016-03-29 15:05:37
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.4 - bug fix                                               - 2016-03-29 wer
  * - v1.0.0-alpha.3 - bug fixes                                             - 2016-03-28 wer
  * - v1.0.0-alpha.2 - modified genericRead to be more complete              - 2016-03-24 wer
  * - v1.0.0-alpha.1 - first hopefully working version                       - 2016-03-23 wer
@@ -222,7 +223,7 @@ SQL;
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             return false;
         }
-        $a_allowed_keys = $this->prepareListArray($this->db_fields);
+        $a_allowed_keys = $this->prepareListArray($this->a_db_fields);
         $set_sql = $this->buildSqlSet($a_values, $a_required_keys, $a_allowed_keys);
 
         $sql =<<<SQL
