@@ -8,9 +8,9 @@
  * @version   1.0.1
  * @date      2015-12-12 16:19:33
  * @note <b>Change Log</b>
- * - v1.0.1   - Implement TWIG_PREFIX                        - 12/12/2015 wer
- * - v1.0.0   - take out of beta                             - 11/27/2015 wer
- * - v1.0.0β1 - Initial version                              - 10/30/2015 wer
+ * - v1.0.1   - Implement LIB_TWIG_PREFIX                   - 12/12/2015 wer
+ * - v1.0.0   - take out of beta                            - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                             - 10/30/2015 wer
  */
 namespace Ritc\Library\Views;
 
@@ -91,7 +91,7 @@ class PageAdminView
             $log_message = 'a_values: ' . var_export($a_values, TRUE);
             $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         }
-        $tpl = TWIG_PREFIX . 'pages/page_form.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/page_form.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -138,7 +138,7 @@ class PageAdminView
         if ($a_pages !== false && count($a_pages) > 0) {
             $a_values['a_pages'] = $a_pages;
         }
-        $tpl = TWIG_PREFIX . 'pages/page_admin.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/page_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -171,7 +171,7 @@ class PageAdminView
         );
         $a_values = array_merge($a_values, $a_page_values);
         $this->logIt('Twig Values: ' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
-        $tpl = TWIG_PREFIX . 'pages/verify_delete.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 }

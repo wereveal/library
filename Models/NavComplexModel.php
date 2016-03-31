@@ -44,17 +44,22 @@ class NavComplexModel
 
     /**
      * Returns the search results for all nav records for a navgroup.
-     * @param int $ng_id required navgroup id
+     * @param int $ng_id Optional, will use the default navgroup if not provided.
      * @return array|false
      */
     public function getNavList($ng_id = -1)
     {
+        $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
-            return false;
+            $ng_id = $this->retrieveDefaultNavgroup();
+            if ($ng_id == -1) {
+                return false;
+            }
         }
         $where = "AND ng.ng_id = :ng_id\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
         $a_search_for = [':ng_id' => $ng_id];
+        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -66,19 +71,19 @@ class NavComplexModel
     }
 
     /**
-     * Returns array of the top level nav items for a navgroup.
-     * @param int $ng_id
-     * @return bool|array
+     * Returns the Navigation list by navgroup name.
+     * @param string $navgroup_name Optional, will use default navgroup if not supplied.
+     * @return bool|mixed
      */
-    public function getTopLevelNavList($ng_id = -1)
+    public function getNavListByName($navgroup_name = '')
     {
         $meth = __METHOD__ . '.';
-        if ($ng_id == -1) {
-            return false;
+        if ($navgroup_name == '') {
+            $navgroup_name = $this->retrieveDefaultNavgroupName();
         }
-        $where = "AND ng.ng_id = :ng_id\nAND n.nav_level = :nav_level\n";
+        $where = "AND ng.ng_name = :ng_name\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
-        $a_search_for = [':ng_id' => $ng_id, ':nav_level' => 1];
+        $a_search_for = [':ng_name' => $navgroup_name];
         $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false) {
@@ -88,9 +93,7 @@ class NavComplexModel
         else {
             return $results;
         }
-
     }
-
     /**
      * Returns an array of nav items based on parent nav id.
      * @param int $parent_id Required. Parent id of the navigation record.
@@ -164,6 +167,32 @@ EOT;
         else {
             return [];
         }
+    }
+
+    /**
+     * Returns array of the top level nav items for a navgroup.
+     * @param int $ng_id
+     * @return bool|array
+     */
+    public function getTopLevelNavList($ng_id = -1)
+    {
+        $meth = __METHOD__ . '.';
+        if ($ng_id == -1) {
+            return false;
+        }
+        $where = "AND ng.ng_id = :ng_id\nAND n.nav_level = :nav_level\n";
+        $sql = $this->select_sql . $where . $this->select_order_sql;
+        $a_search_for = [':ng_id' => $ng_id, ':nav_level' => 1];
+        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
+        $results = $this->o_db->search($sql, $a_search_for);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            return false;
+        }
+        else {
+            return $results;
+        }
+
     }
 
     /**
@@ -285,4 +314,41 @@ EOT;
         $this->select_order_sql = $string;
     }
 
+    /**
+     * Gets the default navgroup by id.
+     * @return int
+     */
+    public function retrieveDefaultNavgroup()
+    {
+        $o_ng = new NavgroupsModel($this->o_db);
+        $a_search_for = [':ng_default' => 1];
+        $a_search_parms = [
+            'order_by' => 'ng_id',
+            'a_fields' => 'ng_id'
+        ];
+        $results = $o_ng->read($a_search_for, $a_search_parms);
+        if ($results !== false && count($results) > 0) {
+            return $results[0]['ng_id'];
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the default navgroup by name.
+     * @return string
+     */
+    public function retrieveDefaultNavgroupName()
+    {
+        $o_ng = new NavgroupsModel($this->o_db);
+        $a_search_for = [':ng_default' => 1];
+        $a_search_parms = [
+            'order_by' => 'ng_name',
+            'a_fields' => 'ng_name'
+        ];
+        $results = $o_ng->read($a_search_for, $a_search_parms);
+        if ($results !== false && count($results) > 0) {
+            return $results[0]['ng_name'];
+        }
+        return '';
+    }
 }

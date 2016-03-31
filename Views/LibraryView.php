@@ -2,17 +2,18 @@
 /**
  * @brief     View for the Manager page.
  * @ingroup   lib_views
- * @file      ManagerView.php
+ * @file      LibraryView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.1
- * @date      2015-12-12 16:18:32
+ * @version   2.0.0
+ * @date      2016-03-31 09:38:39
  * @note <b>Change Log</b>
- * - v1.1.1   - Implent TWIG_PREFIX                          - 12/12/2015 wer
- * - v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
- * - v1.0.0   - First stable version                         - 01/16/2015 wer
- * - v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                              - 11/08/2014 wer
+ * - v2.0.0   - Refactored - name change.                       - 2016-03-31 wer
+ * - v1.1.1   - Implent LIB_TWIG_PREFIX                         - 12/12/2015 wer
+ * - v1.1.0   - removed abstract class Base, use LogitTraits    - 09/01/2015 wer
+ * - v1.0.0   - First stable version                            - 01/16/2015 wer
+ * - v1.0.0β2 - changed to match DI/IOC                         - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                                 - 11/08/2014 wer
  */
 namespace Ritc\Library\Views;
 
@@ -23,16 +24,16 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class ManagerView
- * @class   ManagerView
+ * Class LibraryView
+ * @class   LibraryView
  * @package Ritc\Library\Views
  */
-class ManagerView
+class LibraryView
 {
     use LogitTraits, ViewTraits;
 
     /**
-     * ManagerView constructor.
+     * LibraryView constructor.
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -64,7 +65,7 @@ class ManagerView
         }
         $log_message = 'Final Values for twig: ' . var_export($a_values, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $tpl = TWIG_PREFIX . 'pages/index.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/index.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -90,7 +91,7 @@ class ManagerView
             'body_text'     => $body_text
         ];
         $a_values = array_merge($a_page_values, $a_values);
-        $tpl = TWIG_PREFIX . 'pages/list_logins.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/list_logins.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -130,7 +131,7 @@ class ManagerView
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $o_sess->unsetVar('login_id');
-        $tpl = TWIG_PREFIX . 'pages/login_form.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/login_form.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 }

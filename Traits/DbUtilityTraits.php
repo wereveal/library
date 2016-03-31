@@ -211,13 +211,16 @@ SQL;
      * Needs the primary index name. The primary index value also needs to
      * be in the $a_values. It only updates record(s) WHERE the primary index = primary index value.
      * @param array  $a_values           Required
-     * @param string $primary_index_name Required
+     * @param string $primary_index_name Optional, here for legacy purposes.
      * @return bool
      */
     protected function genericUpdate(array $a_values = [], $primary_index_name = '')
     {
-        if ($a_values == [] || $primary_index_name == '') {
+        if ($a_values == []) {
             return false;
+        }
+        if ($primary_index_name == '') {
+            $primary_index_name = $this->primary_index_name;
         }
         $a_required_keys = array($primary_index_name);
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
@@ -245,14 +248,17 @@ SQL;
     /**
      * Deletes a single record based on the primary index value.
      * @param int    $record_id          Required
-     * @param string $primary_index_name Required
+     * @param string $primary_index_name Optional, here for legacy purposes.
      * @return bool
      */
     protected function genericDelete($record_id = -1, $primary_index_name = '')
     {
-        if ($primary_index_name == '' || $record_id < 1) {
+        if ($record_id < 1) {
             return false;
         }
+        $primary_index_name = $primary_index_name == ''
+            ? $this->primary_index_name
+            : $primary_index_name;
         $sql =<<<SQL
 DELETE FROM {$this->db_table}
 WHERE {$primary_index_name} = :{$primary_index_name}

@@ -8,10 +8,10 @@
  * @version   1.0.1
  * @date      2015-12-12 16:20:24
  * @note <b>Change Log</b>
- * - v1.0.1   - Implement TWIG_PREFIX                            - 12/12/2015 wer
- * - v1.0.0   - Initial non-beta version                         - 11/12/2015 wer
- * - v1.0.0β2 - Changed to use DI/IOC                            - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                                  - 11/13/2014 wer
+ * - v1.0.1   - Implement LIB_TWIG_PREFIX                       - 12/12/2015 wer
+ * - v1.0.0   - Initial non-beta version                        - 11/12/2015 wer
+ * - v1.0.0β2 - Changed to use DI/IOC                           - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                                 - 11/13/2014 wer
  */
 namespace Ritc\Library\Views;
 
@@ -101,7 +101,7 @@ class PeopleAdminView
         else {
             $a_values['a_message'] = '';
         }
-        $tpl = TWIG_PREFIX . 'pages/people_admin.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/people_admin.twig';
         $html = $this->o_twig->render($tpl, $a_values);
         return $html;
     }
@@ -157,7 +157,7 @@ class PeopleAdminView
         $a_values['person']['groups'] = $a_groups;
         $log_message = 'A person values: ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $tpl = TWIG_PREFIX . 'pages/person_form.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/person_form.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -224,7 +224,7 @@ class PeopleAdminView
         $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, __METHOD__);
         $a_values['person'] = $a_person;
         $this->logIt('twig values' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
-        $tpl = TWIG_PREFIX . 'pages/person_form.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/person_form.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -259,7 +259,7 @@ class PeopleAdminView
         $a_twig_values = array_merge($a_page_values, $a_values);
         $a_twig_values['menus'] = $this->a_nav;
         $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_OFF, $meth . __LINE__);
-        $tpl = TWIG_PREFIX . 'pages/verify_delete.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 

@@ -2,12 +2,13 @@
 /**
  * @brief     The main Controller for the manager.
  * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/ManagerController.php
+ * @file      Ritc/Library/Controllers/LibraryController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   v1.0.1
- * @date      2015-12-01 21:41:39
+ * @version   v2.0.0
+ * @date      2016-03-31 06:35:46
  * @note <b>Change Log</b>
+ * - v2.0.0   - Renamed Class to be more specific     - 2016-03-31 wer
  * - v1.0.1   - needed to change private to protected - 12/01/2015 wer
  *                in order to extend this class.
  * - v1.0.0   - first working version                 - 11/27/2015 wer
@@ -31,14 +32,14 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Views\ManagerView;
+use Ritc\Library\Views\LibraryView;
 
 /**
- * Class ManagerController.
- * @class ManagerController
+ * Class LibraryController.
+ * @class LibraryController
  * @package Ritc\Library\Controllers
  */
-class ManagerController implements ControllerInterface
+class LibraryController implements ControllerInterface
 {
     use LogitTraits;
 
@@ -52,7 +53,7 @@ class ManagerController implements ControllerInterface
     protected $o_auth;
     /** @var Di */
     protected $o_di;
-    /** @var ManagerView */
+    /** @var LibraryView */
     protected $o_manager_view;
     /** @var Router */
     protected $o_router;
@@ -64,7 +65,7 @@ class ManagerController implements ControllerInterface
     protected $route_action;
 
     /**
-     * ManagerController constructor.
+     * LibraryController constructor.
      * @param Di $o_di
      */
     public function __construct(Di $o_di)
@@ -78,14 +79,14 @@ class ManagerController implements ControllerInterface
         $this->form_action    = $this->a_route_parts['form_action'];
         $this->a_post_values  = $this->a_route_parts['post'];
         $this->o_auth         = new AuthHelper($this->o_di);
-        $this->o_manager_view = new ManagerView($this->o_di);
+        $this->o_manager_view = new LibraryView($this->o_di);
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
         }
     }
 
     /**
-     * Default page for the manager and login.
+     * Default page for the library manager and login.
      * @return string
      */
     public function render()

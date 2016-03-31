@@ -8,11 +8,11 @@
  * @version   1.0.2
  * @date      2015-12-12 16:21:06
  * @note <b>Change Log</b>
- * - v1.0.2   - Implement TWIG_PREFIX                            - 12/12/2015 wer
- * - v1.0.1   - change in database structure forced change here  - 09/03/2015 wer
- * - v1.0.0   - first working version                            - 01/28/2015 wer
- * - v1.0.0β2 - changed to use DI/IOC                            - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                                  - 11/14/2014 wer
+ * - v1.0.2   - Implement LIB_TWIG_PREFIX                           - 12/12/2015 wer
+ * - v1.0.1   - change in database structure forced change here     - 09/03/2015 wer
+ * - v1.0.0   - first working version                               - 01/28/2015 wer
+ * - v1.0.0β2 - changed to use DI/IOC                               - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                                     - 11/14/2014 wer
  */
 namespace Ritc\Library\Views;
 
@@ -95,7 +95,7 @@ class RoutesAdminView
         if ($a_routes !== false && count($a_routes) > 0) {
             $a_values['a_routes'] = $a_routes;
         }
-        $tpl = TWIG_PREFIX . 'pages/routes_admin.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/routes_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -116,7 +116,7 @@ class RoutesAdminView
             $a_values['description'] = 'Form to verify the action to delete the route.';
         }
         $a_values['menus'] = $this->a_nav;
-        $tpl = TWIG_PREFIX . 'pages/verify_delete_route.twig';
+        $tpl = LIB_TWIG_PREFIX . 'pages/verify_delete_route.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 }

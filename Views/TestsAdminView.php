@@ -2,7 +2,7 @@
 /**
  * @brief     View for the Tests page.
  * @ingroup   lib_views
- * @file      ManagerView.php
+ * @file      LibraryView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.1.0
@@ -22,7 +22,7 @@ use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class TestsAdminView
- * @class   ManagerView
+ * @class   LibraryView
  * @package Ritc\Library\Views
  */
 class TestsAdminView

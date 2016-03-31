@@ -50,6 +50,7 @@ trait ViewTraits
     /** @var \Twig_Environment */
     protected $o_twig;
 
+    ### Main Public Methods ###
     /**
      * The default setup for a view.
      * @param Di $o_di
@@ -61,6 +62,29 @@ trait ViewTraits
         $this->setNav();
     }
 
+    /**
+     * Retrieves the navigation info for the nav group.
+     * This is different from the setNav Method since it doesn't set the
+     * property $a_nav.
+     * @param string|int $nav_group Defaults to the default navgroup.
+     *                              This can be either the navgroup id or name.
+     * @return array
+     */
+    public function retrieveNav($nav_group = '')
+    {
+        if ($nav_group == '') {
+            $nav_group = $this->o_nav->retrieveDefaultNavgroup();
+
+        }
+        if (is_numeric($nav_group)) {
+            return $this->o_nav->getNavList($nav_group);
+        }
+        else {
+            return $this->o_nav->getNavListByName($nav_group);
+        }
+    }
+
+    ### SETters and GETters ###
     /**
      * Sets the standard used objects from the object injector.
      * @param Di $o_di
@@ -176,6 +200,7 @@ trait ViewTraits
         return $this->a_nav;
     }
 
+    ### Utilities ###
     /**
      * Removes Navigation links that the person is not authorized to see.
      * @param array $a_nav If empty, this is a waste.
