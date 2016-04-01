@@ -8,6 +8,9 @@
  * @version   1.0.0-alpha.1
  * @date      2016-03-10 14:18:23
  * @note <b>Change Log</b>
+ * - v1.1.0-alpha.2 - Use LogitTraits now                        - 2016-04-01 wer
+ *   - Views that use this trait no longer need to 'use' LogitTraits
+ *   - May cause some complaints from those that don't fix this.
  * - v1.0.0-alpha.1 - close to working version                   - 2016-03-10 wer
  * - v1.0.0-alpha.0 - inital version                             - 2016-02-22 wer
  */
@@ -29,6 +32,8 @@ use Ritc\Library\Services\Router;
  */
 trait ViewTraits
 {
+    use LogitTraits;
+
     /** @var array */
     protected $a_nav;
     /** @var int */
@@ -99,6 +104,11 @@ trait ViewTraits
         $this->o_page_model    = new PageModel($this->o_db);
         $this->o_nav           = new NavComplexModel($this->o_db);
         $this->o_routes_helper = new RoutesHelper($o_di);
+        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+            $this->o_page_model->setElog($this->o_elog);
+            $this->o_nav->setElog($this->o_elog);
+        }
     }
 
     /**
@@ -154,19 +164,16 @@ trait ViewTraits
      */
     public function getPageValues()
     {
-        $page_url     = $this->o_router->getRequestUri();
-        $route_path   = $this->o_router->getRoutePath();
-        $a_values1    = $this->o_page_model->read(['page_url' => $page_url]);
-        $a_values2    = $this->o_page_model->read(['page_url' => $route_path]);
+        $url_id   = $this->o_router->getUrlId();
+        $a_values = $this->o_page_model->read(['url_id' => $url_id]);
 
-        if (isset($a_values1[0])) {
-            $a_page_values = $a_values1[0];
-        }
-        elseif (isset($a_values2[0])) {
-            $a_page_values = $a_values2[0];
+        if (isset($a_values[0])) {
+            $a_page_values = $a_values[0];
         }
         else {
             return [
+                'url_id'        => 0,
+                'page_url'      => '/',
                 'description'   => '',
                 'title'         => '',
                 'base_url'      => '/',
@@ -180,6 +187,7 @@ trait ViewTraits
         $base_url = $a_page_values['page_base_url'] == '/'
             ? SITE_URL
             : $a_page_values['page_base_url'];
+
         return [
             'description'   => $a_page_values['page_description'],
             'title'         => $a_page_values['page_title'],

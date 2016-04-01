@@ -5,8 +5,8 @@
  * @file      Ritc/Library/Models/NavgroupsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2016-02-25 12:04:44
+ * @version   1.0.0-alpha.1+2
+ * @date      2016-04-01 07:39:07
  * @note <b>Change Log</b>
  * - v1.0.0-alpha.1 - Updated to use DbUtilityTraits               - 2016-03-31 wer
  * - v1.0.0-alpha.0 - Initial version                              - 2016-02-25 wer
@@ -48,22 +48,19 @@ class NavgroupsModel implements ModelInterface
      */
     public function create(array $a_values)
     {
-        $meth = __METHOD__ . '.';
         $error_message = '';
         if ($a_values == []) {
             $error_message .= "Values must be there to create a record\n";
         }
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
-                $results = $this->read(['ng_name' => $a_record['ng_name']]);
-                if ($this->hasRecords($results)) {
+                if ($this->hasRecords(['ng_name' => $a_record['ng_name']])) {
                     $error_message .= "The record already exists for {$a_record['ng_name']}";
                 }
             }
         }
         else {
-            $results = $this->read(['ng_name' => $a_values['ng_name']]);
-            if ($this->hasRecords($results)) {
+            if ($this->hasRecords(['ng_name' => $a_values['ng_name']])) {
                 $error_message .= "The record already exists for {$a_values['ng_name']}";
             }
         }
@@ -79,7 +76,7 @@ class NavgroupsModel implements ModelInterface
                 ]
             ];
             $a_resulting_ids = $this->genericCreate($a_values, $a_parameters);
-            if ($a_resulting_ids === false || count($a_resulting_ids) < 1) {
+            if ($a_resulting_ids === false) {
                 $error_message .= "The navigation group record could not be saved.";
             }
         }
@@ -227,21 +224,4 @@ class NavgroupsModel implements ModelInterface
         }
     }
 
-    /**
-     * Returns true/false if there are records.
-     * @param array  $results
-     * @return bool
-     */
-    private function hasRecords($results = [])
-    {
-        if ($results === false) {
-            return false;
-        }
-        elseif ($results !== false && count($results) > 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
 }

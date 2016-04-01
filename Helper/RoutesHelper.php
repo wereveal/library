@@ -36,7 +36,7 @@ class RoutesHelper
     /** @var \Ritc\Library\Models\GroupsModel */
     private $o_group;
     /** @var \Ritc\Library\Models\RoutesModel */
-    private $o_model;
+    private $o_routes;
     /** @var \Ritc\Library\Models\RoutesGroupMapModel */
     private $o_rgm;
     /** @var string */
@@ -47,7 +47,7 @@ class RoutesHelper
     /**
      * RoutesHelper constructor.
      * @param \Ritc\Library\Services\Di $o_di
-     * @param string                    $route_path
+     * @param string                    $request_uri
      */
     public function __construct(Di $o_di, $request_uri = '')
     {
@@ -56,13 +56,13 @@ class RoutesHelper
         }
 
         $o_db = $o_di->get('db');
-        $this->o_model = new RoutesModel($o_db);
+        $this->o_routes = new RoutesModel($o_db);
         $this->o_group = new GroupsModel($o_db);
         $this->o_rgm   = new RoutesGroupMapModel($o_db);
         $this->route_path = $request_uri;
 
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_model->setElog($this->o_elog);
+            $this->o_routes->setElog($this->o_elog);
             $this->o_group->setElog($this->o_elog);
         }
     }
@@ -148,14 +148,14 @@ class RoutesHelper
     public function findValidRoute($request_uri = '')
     {
         $meth = __METHOD__ . '.';
-        $a_results = $this->o_model->readWithRequestUri($request_uri);
+        $a_results = $this->o_routes->readWithRequestUri($request_uri);
         $log_message = 'For the request uri: ' .
             $request_uri .
             ' the readWidthRequestUri results:  '
             . var_export($a_results, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
         if ($a_results === false) {
-            $error_message = $this->o_model->getErrorMessage();
+            $error_message = $this->o_routes->getErrorMessage();
             $this->logIt("Error Message: " . var_export($error_message, true), LOG_OFF, $meth . __LINE__);
         }
         if ($a_results !== false && count($a_results) === 1) {

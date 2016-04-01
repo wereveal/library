@@ -27,7 +27,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class TestsAdminView
 {
-    use LogitTraits, ViewTraits;
+    use ViewTraits;
 
     /**
      * TestsAdminView constructor.

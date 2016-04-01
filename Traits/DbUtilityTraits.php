@@ -5,9 +5,14 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.4
+ * @version   1.0.0-alpha.5
  * @date      2016-03-29 15:05:37
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.5 - Added new method, additional refactoring              - 2016-04-01 wer
+ *     - hasRecords
+ *     - notEmptyArray
+ *     - removed second parameter from genericUpdate, not needed
+ *     - removed second parameter from genericDelete, not needed
  * - v1.0.0-alpha.4 - bug fix                                               - 2016-03-29 wer
  * - v1.0.0-alpha.3 - bug fixes                                             - 2016-03-28 wer
  * - v1.0.0-alpha.2 - modified genericRead to be more complete              - 2016-03-24 wer
@@ -123,7 +128,12 @@ SQL;
 
         $results = $this->o_db->insert($sql, $a_values, $a_psql);
         if ($results) {
-            return $this->o_db->getNewIds();
+            $a_new_ids = $this->o_db->getNewIds();
+            if (count($a_new_ids) < 1) {
+                $this->error_message = 'No New Ids were returned in the create.';
+                return false;
+            }
+            return $a_new_ids;
         }
         else {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
@@ -211,17 +221,14 @@ SQL;
      * Needs the primary index name. The primary index value also needs to
      * be in the $a_values. It only updates record(s) WHERE the primary index = primary index value.
      * @param array  $a_values           Required
-     * @param string $primary_index_name Optional, here for legacy purposes.
      * @return bool
      */
-    protected function genericUpdate(array $a_values = [], $primary_index_name = '')
+    protected function genericUpdate(array $a_values = [])
     {
         if ($a_values == []) {
             return false;
         }
-        if ($primary_index_name == '') {
-            $primary_index_name = $this->primary_index_name;
-        }
+        $primary_index_name = $this->primary_index_name;
         $a_required_keys = array($primary_index_name);
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             return false;
@@ -248,22 +255,19 @@ SQL;
     /**
      * Deletes a single record based on the primary index value.
      * @param int    $record_id          Required
-     * @param string $primary_index_name Optional, here for legacy purposes.
      * @return bool
      */
-    protected function genericDelete($record_id = -1, $primary_index_name = '')
+    protected function genericDelete($record_id = -1)
     {
         if ($record_id < 1) {
             return false;
         }
-        $primary_index_name = $primary_index_name == ''
-            ? $this->primary_index_name
-            : $primary_index_name;
+        $piname = $this->primary_index_name;
         $sql =<<<SQL
 DELETE FROM {$this->db_table}
-WHERE {$primary_index_name} = :{$primary_index_name}
+WHERE {$piname} = :{$piname}
 SQL;
-        $results = $this->o_db->delete($sql, [':' . $primary_index_name => $record_id], true);
+        $results = $this->o_db->delete($sql, [':' . $piname => $record_id], true);
         if ($results) {
             return true;
         }
@@ -465,6 +469,40 @@ SQL;
     }
 
     /**
+     * Returns true/false if there are records.
+     * @param array  $a_values The values for the read statement.
+     * @return bool
+     */
+    protected function hasRecords($a_values = [])
+    {
+        if (Arrays::isArrayOfAssocArrays($a_values)) {
+            foreach ($a_values as $key => $a_record) {
+                $results = $this->read($a_record);
+                if (!is_array($results) || count($results) < 1) {
+                    return false;
+                }
+            }
+        }
+        else {
+            $results = $this->read($a_values);
+            if (!is_array($results) || count($results) < 1) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param $a_values
+     * @return bool
+     */
+    protected function notEmptyArray($a_values) {
+        if (!is_array($a_values) || count($a_values) < 1) {
+            return false;
+        }
+        return true;
+    }
+    /**
      * Verifies that the php mysqli extension is installed
      * Left over, not sure it is needed now
      * @return bool
@@ -593,6 +631,7 @@ SQL;
         }
     }
 
+    ### Getters and Setters ###
     /**
      * Getter for $a_db_config.
      * @return array
@@ -655,5 +694,6 @@ SQL;
     {
         return $this->primary_index_name;
     }
+
 }
 

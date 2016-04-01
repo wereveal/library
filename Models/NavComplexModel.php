@@ -94,6 +94,7 @@ class NavComplexModel
             return $results;
         }
     }
+
     /**
      * Returns an array of nav items based on parent nav id.
      * @param int $parent_id Required. Parent id of the navigation record.
@@ -204,7 +205,10 @@ EOT;
     {
         $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
-            return false;
+            $ng_id = $this->retrieveDefaultNavgroup();
+            if ($ng_id == -1) {
+                return false;
+            }
         }
         $a_new_list = array();
         $a_top_list = $this->getTopLevelNavList($ng_id);

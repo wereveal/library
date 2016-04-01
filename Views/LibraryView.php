@@ -30,7 +30,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class LibraryView
 {
-    use LogitTraits, ViewTraits;
+    use ViewTraits;
 
     /**
      * LibraryView constructor.

@@ -34,7 +34,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class ConstantsAdminView
 {
-    use LogitTraits, ViewTraits;
+    use ViewTraits;
 
     /** @var \Ritc\Library\Views\LibraryView */
     private $o_manager;

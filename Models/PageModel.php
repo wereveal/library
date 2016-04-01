@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PageModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2016-03-19 07:40:11
+ * @version   1.2.0
+ * @date      2016-04-01 07:10:42
  * @note <b>Change Log</b>
+ * - v1.2.0   - refactored to utilize the DbUtilityTraits       - 2016-04-01 wer
  * - v1.1.0   - refactoring changes to DbModel reflected here.  - 2016-03-19 wer
  * - v1.0.0   - take out of beta                                - 11/27/2015 wer
  * - v1.0.0β1 - Initial version                                 - 10/30/2015 wer
@@ -40,133 +41,71 @@ class PageModel implements ModelInterface
 
     /**
      * Generic create a record using the values provided.
-     * @param array $a_values
+     * @param array $a_values key=>value pairs of url_id=>value and page_title=>value required.
      * @return string|bool
      */
-    public function create(array $a_values)
+    public function create(array $a_values = [])
     {
-        $meth = __METHOD__ . '.';
-        if ($a_values == array()) { return false; }
-        $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-        $a_required_keys = [
-            'page_url'
-        ];
-        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            $this->error_message = 'Did not have a page url.';
-            return false;
-        }
-        $a_needed_keys = [
-            'page_url',
-            'page_type',
-            'page_title',
-            'page_description',
-            'page_base_url',
-            'page_lang',
-            'page_charset',
-            'page_immutable'
-        ];
-        $a_values = Arrays::createRequiredPairs($a_values, $a_needed_keys, true);
-        if ($a_values['page_immutable'] == 'true') {
-            $a_values['page_immutable'] = 1;
+        $error_message = '';
+
+        if (Arrays::isArrayOfAssocArrays($a_values)) {
+            foreach ($a_values as $key => $a_record) {
+                if ($this->hasRecords(['url_id' => $a_record['url_id']])) {
+                    $this->error_message = "The record already exists for {$a_record['page_title']}";
+                    return false;
+                }
+            }
         }
         else {
-            $a_values['page_immutable'] = 0;
-        }
-        $a_results = $this->read(['page_url' => $a_values['page_url']]);
-        $this->logIt('page results: ' . var_export($a_results, TRUE), LOG_OFF, $meth . __LINE__);
-        if (isset($a_results[0])) {
-            $a_existing_url = $a_results[0];
-            if ($a_values['page_url'] == $a_existing_url['page_url']) {
-                $this->error_message = 'The URL for the page already exists.';
+            if ($this->hasRecords(['url_id' => $a_values['url_id']])) {
+                $this->error_message = "The record already exists for {$a_values['page_title']}";
                 return false;
             }
         }
-        $sql = "
-            INSERT INTO {$this->db_prefix}page (
-                page_url,
-                page_type,
-                page_title,
-                page_description,
-                page_base_url,
-                page_lang,
-                page_charset,
-                page_immutable
-            ) VALUES (
-                :page_url,
-                :page_type,
-                :page_title,
-                :page_description,
-                :page_base_url,
-                :page_lang,
-                :page_charset,
-                :page_immutable
-            )
-        ";
-        $a_table_info = [
-            'table_name'  => "{$this->db_prefix}page",
-            'column_name' => 'page_id'
+
+        $a_parameters = [
+            'a_required_keys' => 'page_url',
+            'a_field_names'   => $this->a_db_fields,
+            'a_psql'          => [
+                'table_name'  => $this->db_table,
+                'column_name' => $this->primary_index_name
+            ]
         ];
-        $results = $this->o_db->insert($sql, $a_values, $a_table_info);
-        $this->logIt('Insert Results: ' . $results, LOG_OFF, $meth . __LINE__);
-        $this->logIt('db object: ' . var_export($this->o_db, TRUE), LOG_OFF, $meth . __LINE__);
-        if ($results) {
-            $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
-            return $ids[0];
+
+        $a_results = $this->genericCreate($a_values, $a_parameters);
+        if ($a_results === false) {
+            $error_message .= 'Could not create a new page record.';
         }
-        else {
-            $this->error_message = 'The page could not be saved.';
+        if ($error_message != '' || $this->error_message != '') {
+            $this->error_message .= $error_message;
             return false;
         }
+        return $a_results;
     }
 
     /**
      * Returns an array of records based on the search params provided.
      * @param array $a_search_values optional, defaults to returning all records
-     * @param array $a_search_params optional, defaults to ['order_by' => 'route_path']
+     * @param array $a_search_params optional, defaults to ['order_by' => 'route_path'] \ref readparams
      * @return array
      */
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
-        if (count($a_search_values) > 0) {
-            $a_search_params = $a_search_params == array()
-                ? ['order_by' => 'page_url']
-                : $a_search_params;
-            $a_allowed_keys = [
-                'page_id',
-                'url_id',
-                'page_type',
-                'page_base_url',
-                'page_lang',
-                'page_charset',
-                'page_immutable'
-            ];
-            $a_search_values = Arrays::removeUndesiredPairs($a_search_values, $a_allowed_keys);
-            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
+        $meth = __METHOD__ . '.';
+        $a_parameters = [
+            'table_name'     => $this->db_table,
+            'a_fields'       => $this->a_db_fields,
+            'a_search_for'   => $a_search_values,
+            'a_allowed_keys' => $this->a_db_fields
+        ];
+        $a_parameters = array_merge($a_parameters, $a_search_params);
+        if (!isset($a_parameters['order_by'])) {
+            $a_parameters['order_by'] = 'page_id';
         }
-        elseif (count($a_search_params) > 0) {
-            $where = $this->buildSqlWhere(array(), $a_search_params);
-        }
-        else {
-            $where = " ORDER BY page_path";
-        }
-        $sql = "
-            SELECT
-                page_id,
-                url_id,
-                page_type,
-                page_title,
-                page_description,
-                page_base_url,
-                page_lang,
-                page_charset,
-                page_immutable
-            FROM {$this->db_prefix}page
-            {$where}
-        ";
-        $this->logIt($sql, LOG_OFF, __METHOD__);
-        $this->logIt("Search Values: " . var_export($a_search_values, true), LOG_OFF);
-        $results = $this->o_db->search($sql, $a_search_values);
+        $log_message = 'Read Parameters ' . var_export($a_parameters, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
+        $results = $this->genericRead($a_parameters);
         return $results;
     }
 
@@ -177,7 +116,6 @@ class PageModel implements ModelInterface
      */
     public function update(array $a_values)
     {
-        $meth = __METHOD__ . '.';
         if (!isset($a_values['page_id'])
             || $a_values['page_id'] == ''
             || (is_string($a_values['page_id']) && !is_numeric($a_values['page_id']))
@@ -185,60 +123,7 @@ class PageModel implements ModelInterface
             $this->error_message = 'The Page Id was not supplied.';
             return false;
         }
-        $a_allowed_keys = [
-            'page_id',
-            'page_url',
-            'page_type',
-            'page_title',
-            'page_description',
-            'page_base_url',
-            'page_lang',
-            'page_charset',
-            'page_immutable'
-        ];
-        $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
-        if (isset($a_values['page_immutable']) && $a_values['page_immutable'] == 'true') {
-            $a_values['page_immutable'] = 1;
-        }
-        else {
-            $a_values['page_immutable'] = 0;
-        }
-        if ($a_values['page_immutable'] == 0) {
-            if (isset($a_values['page_url'])) {
-                $a_results = $this->read(['page_id' => $a_values['page_id']]);
-                if (isset($a_results[0])) {
-                    $a_old_values = $a_results[0];
-                }
-                else {
-                    $this->error_message = 'The page appears not to be available to update.';
-                    return false;
-                }
-                $a_results = $this->read(['page_url' => $a_values['page_url']]);
-                if (isset($a_results[0])) {
-                    $a_existing_url = $a_results[0];
-                    if ($a_old_values['page_id'] != $a_existing_url['page_id']) {
-                        $this->error_message = 'The Page URL already exists.';
-                        return false;
-                    }
-                }
-            }
-        }
-        $set_sql = $this->buildSqlSet($a_values, ['page_id']);
-        $sql = "
-            UPDATE {$this->db_prefix}page
-            {$set_sql}
-            WHERE page_id = :page_id
-        ";
-        $this->logIt($sql, LOG_OFF, $meth . __LINE__);
-        $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-        $results = $this->o_db->update($sql, $a_values, true);
-        if ($results) {
-            return true;
-        }
-        else {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
-        }
+        return $this->genericUpdate($a_values);
     }
 
     /**
@@ -249,24 +134,12 @@ class PageModel implements ModelInterface
     public function delete($page_id = -1)
     {
         if ($page_id == -1) { return false; }
-        $search_sql = "SELECT page_immutable FROM {$this->db_prefix}page WHERE page_id = :page_id";
-        $search_results = $this->o_db->search($search_sql, array(':page_id' => $page_id));
+        $search_results = $this->read(['page_id' => $page_id], ['a_fields' => 'page_immutable']);
         if ($search_results[0]['page_immutable'] == 1) {
-            return ['message' => 'Sorry, that page can not be deleted.', 'type' => 'failure'];
-        }
-        $sql = "
-            DELETE FROM {$this->db_prefix}page
-            WHERE page_id = :page_id
-        ";
-        $results = $this->o_db->delete($sql, array(':page_id' => $page_id), true);
-        $this->logIt(var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        if ($results) {
-            return true;
-        }
-        else {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
+            $this->error_message = 'Sorry, that page can not be deleted.';
             return false;
         }
+        return $this->genericDelete($page_id);
     }
 
 }

@@ -29,7 +29,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class RoutesAdminView
 {
-    use LogitTraits, ViewTraits;
+    use ViewTraits;
 
     /** @var \Ritc\Library\Models\RoutesModel */
     private $o_model;

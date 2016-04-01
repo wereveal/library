@@ -5,10 +5,11 @@
  * @file      Router.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.1
- * @date      2016-02-22 15:40:33
+ * @version   1.1.0
+ * @date      2016-04-01 09:44:34
  * @note <b>Change Log</b>
- * - v1.0.1    - clean up of code.                                           - 02/22/2016 wer
+ * - v1.1.0    - Added property and methods for url_id                       - 2016-04-01 wer
+ * - v1.0.1    - clean up of code.                                           - 2016-02-22 wer
  * - v1.0.0    - take out of beta                                            - 11/27/2015 wer
  * - v1.0.0β10 - Bug fix to fix logic error with route path                  - 11/24/2015 wer
  * - v1.0.0β9  - Bug fixes to fix logic error in actionable data             - 09/22/2015 wer
@@ -60,6 +61,8 @@ class Router
     private $route_method;
     /** @var string the path being routed (may be different from the request uri) */
     private $route_path;
+    /** @var  int */
+    private $url_id;
 
     /**
      * Router constructor.
@@ -105,6 +108,7 @@ class Router
         $this->route_action   = $a_router_parts['route_action'];
         $this->route_class    = $a_router_parts['route_class'];
         $this->route_method   = $a_router_parts['route_method'];
+        $this->url_id         = $a_router_parts['url_id'];
     }
 
     ### GETters and SETters ###
@@ -141,6 +145,29 @@ class Router
             } else {
                 $this->logIt(var_export($this->a_get, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 return '';
+            }
+        }
+    }
+
+    /**
+     * Returns the property a_post or one of the property array values.
+     * @param string $value
+     * @return bool
+     */
+    public function getPost($value = '')
+    {
+        $meth = __METHOD__ . '.';
+        if ($value == '') {
+            return $this->a_post;
+        }
+        else {
+            $this->logIt("Value is: {$value}", LOG_OFF, $meth . __LINE__);
+            if (isset($this->a_post[$value])) {
+                return $this->a_post[$value];
+            }
+            else {
+                $this->logIt("The Value Doesn't Exist. " . var_export($this->a_post, true), LOG_OFF, $meth . __LINE__);
+                return false;
             }
         }
     }
@@ -190,26 +217,12 @@ class Router
     }
 
     /**
-     * Returns the property a_post or one of the property array values.
-     * @param string $value
-     * @return bool
+     * Returns the property url_id.
+     * @return int
      */
-    public function getPost($value = '')
+    public function getUrlId()
     {
-        $meth = __METHOD__ . '.';
-        if ($value == '') {
-            return $this->a_post;
-        }
-        else {
-            $this->logIt("Value is: {$value}", LOG_OFF, $meth . __LINE__);
-            if (isset($this->a_post[$value])) {
-                return $this->a_post[$value];
-            }
-            else {
-                $this->logIt("The Value Doesn't Exist. " . var_export($this->a_post, true), LOG_OFF, $meth . __LINE__);
-                return false;
-            }
-        }
+        return $this->url_id;
     }
 
     /**

@@ -124,7 +124,21 @@ class RoutesAdminController implements ManagerControllerInterface
             $a_message = ViewHelper::errorMessage('A Problem Has Occured. The route id was not provided.');
             return $this->o_view->renderList($a_message);
         }
-        $a_results = $this->o_model->delete($route_id);
+        $results = $this->o_model->delete($route_id);
+        if ($results) {
+            $a_results = [
+                'message' => 'Success!',
+                'type'    => 'success'
+            ];
+        }
+        else {
+            $message = $this->o_model->getErrorMessage();
+            $a_results = [
+                'message' => $message,
+                'type'    => 'failure'
+            ];
+        }
+
         return $this->o_view->renderList($a_results);
     }
 

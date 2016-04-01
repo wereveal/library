@@ -31,7 +31,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class PeopleAdminView
 {
-    use LogitTraits, ViewTraits;
+    use ViewTraits;
 
     /** @var \Ritc\Library\Models\PeopleModel */
     private $o_people_model;

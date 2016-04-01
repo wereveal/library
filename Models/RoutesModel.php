@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/RoutesModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.0
- * @date      2016-03-11 10:49:34
+ * @version   1.3.0
+ * @date      2016-04-01 08:51:58
  * @note <b>Change Log</b>
+ * - v1.3.0   - updated to use more of the DbUtilityTraits             - 2016-04-01 wer
  * - v1.2.0   - Database structure change reflected here.              - 2016-03-11 wer
  *              Required new method to duplicate old functionality.
  * - v1.1.0   - refactoring to provide better postgresql compatibility - 11/22/2015 wer
@@ -35,9 +36,6 @@ class RoutesModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var array */
-    private $db_fields;
-
     /**
      * RoutesModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db
@@ -45,11 +43,10 @@ class RoutesModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'routes');
-        $this->db_fields = $o_db->selectDbColumns($this->db_table);
     }
 
     /**
-     * Generic create a record using the values provided.
+     * Create a record using the values provided.
      * @param array $a_values
      * @return bool
      */
@@ -62,28 +59,16 @@ class RoutesModel implements ModelInterface
             'route_class',
             'route_method'
         ];
-        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            return false;
-        }
-        $insert = $this->buildSqlInsert($a_values, $this->db_fields);
-        $sql = "
-            INSERT INTO {$this->db_table}
-                (
-                  {$insert}
-                )
-        ";
-        $a_table_info = [
-            'table_name'  => "{$this->db_table}",
-            'column_name' => 'route_id'
+        $a_psql = [
+            'table_name'  => $this->db_table,
+            'column_name' => $this->primary_index_name
         ];
-        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
-            $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return $ids[0];
-        }
-        else {
-            return false;
-        }
+        $a_params = [
+            'a_required_keys' => $a_required_keys,
+            'a_field_names'   => $this->a_db_fields,
+            'a_psql'          => $a_psql
+        ];
+        return $this->genericCreate($a_values, $a_params);
     }
 
     /**
@@ -94,96 +79,49 @@ class RoutesModel implements ModelInterface
      */
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
-        $meth = __METHOD__ . '.';
-        $select_me = $this->buildSqlSelectFields($this->db_fields);
-        if (count($a_search_values) > 0) {
-            $a_search_params = $a_search_params == array()
-                ? ['order_by' => 'route_class']
-                : $a_search_params;
-            $a_allowed_keys = [
-                'route_id',
-                'url_id',
-                'route_class'
-            ];
-            $log_message = 'Search Values ' . var_export($a_search_values, TRUE);
-            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-            $where = $this->buildSqlWhere($a_search_values, $a_search_params, $a_allowed_keys);
-        }
-        elseif (count($a_search_params) > 0) {
-            $where = $this->buildSqlWhere(array(), $a_search_params);
-        }
-        else {
-            $where = " ORDER BY route_class";
-        }
-        $sql = "
-            SELECT {$select_me}
-            FROM {$this->db_table}
-            {$where}
-        ";
-        $this->logIt($sql, LOG_OFF, $meth . __LINE__);
-        $results = $this->o_db->search($sql, $a_search_values);
-        return $results;
+        $a_parameters = [
+            'table_name'     => $this->db_table,
+            'a_search_for'   => $a_search_values,
+            'a_allowed_keys' => $this->a_db_fields,
+            'order_by'       => $this->primary_index_name . ' ASC'
+        ];
+        $a_parameters = array_merge($a_parameters, $a_search_params);
+        return $this->genericRead($a_parameters);
     }
 
     /**
-     * Generic update for a record using the values provided.
+     * Update a record using the values provided.
      * @param array $a_values
      * @return bool
      */
     public function update(array $a_values)
     {
-        if (!isset($a_values['route_id'])
-            || $a_values['route_id'] == ''
-            || (is_string($a_values['route_id']) && !ctype_digit($a_values['route_id']))
+        if (!isset($a_values[$this->primary_index_name])
+            || $a_values[$this->primary_index_name] == ''
+            || (!is_numeric($a_values[$this->primary_index_name]))
         ) {
             return false;
         }
-        $a_allowed_keys = $this->db_fields;
-        $a_values = $this->removeBadKeys($a_allowed_keys, $a_values);
-        $set_sql = $this->buildSqlSet($a_values, ['route_id']);
-        $sql = "
-            UPDATE {$this->db_table}
-            {$set_sql}
-            WHERE route_id = :route_id
-        ";
-        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $this->o_db->update($sql, $a_values, true);
+        return $this->genericUpdate($a_values);
     }
 
     /**
-     * Generic deletes a record based on the id provided.
+     * Deletes a record based on the id provided.
      * @param int $route_id
      * @return array
      */
     public function delete($route_id = -1)
     {
         if ($route_id == -1) { return false; }
-        $search_sql = "SELECT route_immutable FROM {$this->db_table} WHERE route_id = :route_id";
-        $search_results = $this->o_db->search($search_sql, array(':route_id' => $route_id));
-        if ($search_results[0]['route_immutable'] == 1) {
+        $search_results = $this->read([$this->primary_index_name => $route_id], ['a_fields' => 'route_immutable']);
+        if (isset($search_results[0]) && $search_results[0]['route_immutable'] == 1) {
             return ['message' => 'Sorry, that route can not be deleted.', 'type' => 'failure'];
         }
-        $sql = "
-            DELETE FROM {$this->db_table}
-            WHERE route_id = :route_id
-        ";
-        $results = $this->o_db->delete($sql, array(':route_id' => $route_id), true);
-        $this->logIt(var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        if ($results) {
-            $a_results = [
-                'message' => 'Success!',
-                'type'    => 'success'
-            ];
+        $results = $this->genericDelete($route_id);
+        if ($results === false) {
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
         }
-        else {
-            $message = $this->o_db->getSqlErrorMessage();
-            $a_results = [
-                'message' => $message,
-                'type'    => 'failure'
-            ];
-        }
-        return $a_results;
+        return $results;
     }
 
     /**

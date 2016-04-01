@@ -1,7 +1,7 @@
 # Examples Page {#examplespage}
 
 ## Search Parameters {#searchparams}
-a_search_parameters is an array with the following keys
+a_search_parameters is an array with the following optional keys \sa readparams
 
     - 'order_by'        => 'id ASC'         -- column name(s) to sort by e.g. id [ASC || DESC][, column_name]
     - 'search_type'     => 'AND' | 'OR'

@@ -27,7 +27,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class GroupsAdminView
 {
-    use LogitTraits, ViewTraits;
+    use ViewTraits;
 
     /**
      * @var \Ritc\Library\Models\GroupsModel
