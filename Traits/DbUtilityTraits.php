@@ -502,6 +502,7 @@ SQL;
         }
         return true;
     }
+
     /**
      * Verifies that the php mysqli extension is installed
      * Left over, not sure it is needed now

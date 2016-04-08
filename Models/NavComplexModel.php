@@ -310,6 +310,7 @@ EOT;
         if ($string == '') {
             $string =<<<EOT
 ORDER BY
+    n.nav_parent_id ASC,
     n.nav_level ASC,
     n.nav_order ASC,
     n.nav_name ASC

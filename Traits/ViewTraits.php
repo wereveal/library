@@ -5,10 +5,11 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2016-03-10 14:18:23
+ * @version   1.0.0-alpha.3
+ * @date      2016-04-08 14:22:35
  * @note <b>Change Log</b>
- * - v1.1.0-alpha.2 - Use LogitTraits now                        - 2016-04-01 wer
+ * - v1.0.0-alpha.3 - Navigation links are now sorted properly   - 2016-04-08 wer
+ * - v1.0.0-alpha.2 - Use LogitTraits now                        - 2016-04-01 wer
  *   - Views that use this trait no longer need to 'use' LogitTraits
  *   - May cause some complaints from those that don't fix this.
  * - v1.0.0-alpha.1 - close to working version                   - 2016-03-10 wer
@@ -20,7 +21,7 @@ use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
-use Ritc\Library\Models\PageModel;
+use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
@@ -46,8 +47,6 @@ trait ViewTraits
     protected $o_di;
     /** @var NavComplexModel */
     protected $o_nav;
-    /** @var PageModel */
-    protected $o_page_model;
     /** @var Router */
     protected $o_router;
     /** @var \Ritc\Library\Helper\RoutesHelper */
@@ -101,12 +100,10 @@ trait ViewTraits
         $this->o_twig          = $o_di->get('twig');
         $this->o_db            = $o_di->get('db');
         $this->o_auth          = new AuthHelper($o_di);
-        $this->o_page_model    = new PageModel($this->o_db);
         $this->o_nav           = new NavComplexModel($this->o_db);
         $this->o_routes_helper = new RoutesHelper($o_di);
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
-            $this->o_page_model->setElog($this->o_elog);
             $this->o_nav->setElog($this->o_elog);
         }
     }
@@ -142,7 +139,8 @@ trait ViewTraits
         }
         $a_nav = $this->o_nav->createNavArray($nav_group);
         $a_nav = $this->removeUnauthorizedLinks($a_nav);
-        $a_nav = $this->specifyActiveMenu($a_nav);
+        $a_nav = $this->createChildren($a_nav);
+        $a_nav = $this->sortTopLevel($a_nav);
         $this->a_nav = $a_nav;
     }
 
@@ -164,15 +162,19 @@ trait ViewTraits
      */
     public function getPageValues()
     {
-        $url_id   = $this->o_router->getUrlId();
-        $a_values = $this->o_page_model->read(['url_id' => $url_id]);
+        $o_page_model = new PageComplexModel($this->o_db);
+        $o_page_model->setElog($this->o_elog);
+        $url_id = $this->o_router->getUrlId();
+        $a_values = $o_page_model->readPageValuesByUrlId($url_id);
 
         if (isset($a_values[0])) {
             $a_page_values = $a_values[0];
         }
         else {
             return [
+                'page_id'       => 0,
                 'url_id'        => 0,
+                'url_type'      => 'http',
                 'page_url'      => '/',
                 'description'   => '',
                 'title'         => '',
@@ -186,9 +188,13 @@ trait ViewTraits
         }
         $base_url = $a_page_values['page_base_url'] == '/'
             ? SITE_URL
-            : $a_page_values['page_base_url'];
+            : SITE_URL . $a_page_values['page_base_url'];
 
         return [
+            'page_id'       => $a_page_values['page_id'],
+            'url_id'        => $a_page_values['url_id'],
+            'url_type'      => $a_page_values['url_type'],
+            'page_url'      => $a_page_values['url_text'],
             'description'   => $a_page_values['page_description'],
             'title'         => $a_page_values['page_title'],
             'base_url'      => $base_url,
@@ -209,6 +215,55 @@ trait ViewTraits
     }
 
     ### Utilities ###
+    /**
+     * Turns a flat db result into a multi-dimensional array for navigation.
+     * @param array $a_nav
+     * @return array
+     */
+    protected function createChildren(array $a_nav = [])
+    {
+        if ($a_nav == []) {
+            return [];
+        }
+        $a_new_nav = [];
+        foreach ($a_nav as $a_link) {
+            if ($a_link['level'] == 1) {
+                $this_link_id = $a_link['nav_id'];
+                $a_new_nav[$this_link_id] = $a_link;
+                $a_new_nav[$this_link_id]['children'] = [];
+            }
+            else {
+                $a_new_nav[$a_link['parent_id']]['children'][] = $a_link;
+            }
+        }
+        return $a_new_nav;
+    }
+
+    /**
+     * Sorts the top level nav array by the top level nav order.
+     * @param array $a_nav
+     * @return array
+     */
+    protected function sortTopLevel(array $a_nav = [])
+    {
+        // first see if the links have duplicate sort order
+        $a_used_order = [];
+        $a_new_nav = [];
+        foreach ($a_nav as $key => $a_link) {
+            $order_number = (int) $a_link['order'];
+            if (array_search($order_number, $a_used_order) !== false) {
+                $new_order_number = (int) $this->createNewOrder($a_used_order, $order_number);
+                $a_used_order[] = $new_order_number;
+                $a_new_nav[$new_order_number] = $a_link;
+            }
+            else {
+                $a_used_order[] = $order_number;
+                $a_new_nav[$order_number] = $a_link;
+            }
+        }
+        return $a_new_nav;
+    }
+
     /**
      * Removes Navigation links that the person is not authorized to see.
      * @param array $a_nav If empty, this is a waste.
@@ -253,5 +308,26 @@ trait ViewTraits
             }
         }
         return $a_nav;
+    }
+
+    /**
+     * Utility to create a new unique integer value for the array passed in.
+     * Recursive in nature, will find an integer value not in the array and return it.
+     * @param array $a_used
+     * @param int   $value
+     * @return int
+     */
+    protected function createNewOrder(array $a_used = [], $value = 0)
+    {
+        if (array_search($value, $a_used) === false) {
+            return (int) $value;
+        }
+        elseif (array_search($value + 1, $a_used) === false) {
+            $new_value = $value + 1;
+            return (int) $new_value;
+        }
+        else {
+            return $this->createNewOrder($a_used, $value + 1);
+        }
     }
 }
