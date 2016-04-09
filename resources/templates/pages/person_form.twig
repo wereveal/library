@@ -1,4 +1,4 @@
-{% extends '@page/index.twig' %}
+{% extends '@lib_pages/index.twig' %}
 {% block body %}
 <div class="row border-radius-top-right">
     <div class="col-md-12">
@@ -8,7 +8,7 @@
     {% if a_message.message != '' %}
     <div class="row">
         <div class="col-md-12">
-    {% include '@snippets/message.twig' %}
+    {% include '@lib_snippets/message.twig' %}
         </div>
     </div>
     {% endif %}

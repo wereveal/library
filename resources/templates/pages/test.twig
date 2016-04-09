@@ -1,9 +1,9 @@
-{% extends '@page/index.twig' %}
+{% extends '@lib_pages/index.twig' %}
 {% block body %}
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12">
                 {% for link in links %}
-                    {% include '@elements/anchor.twig' %}
+                    {% include '@lib_elements/anchor.twig' %}
                 {% endfor %}
                 </div>
             </div>

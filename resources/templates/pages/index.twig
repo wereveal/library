@@ -1,10 +1,10 @@
-{% extends '@default/base.twig' %}
-{% block stylesheets %}{% include '@snippets/base_css.twig' %}{% endblock %}
+{% extends '@lib_default/base.twig' %}
+{% block stylesheets %}{% include '@lib_snippets/base_css.twig' %}{% endblock %}
 {% block body %}
             {% if a_message.message != '' %}
             <div class="row">
                 <div class="col-md-12">
-                    {% include '@snippets/message.twig' %}
+                    {% include '@lib_snippets/message.twig' %}
                 </div>
             </div>
             {% endif %}
@@ -13,7 +13,7 @@
                     <ul class="manager-links">
                         {% for link in links %}
                             <li>
-                                {% include '@elements/anchor.twig' %} - {{ link.description }}
+                                {% include '@lib_elements/anchor.twig' %} - {{ link.description }}
                             </li>
                         {% endfor %}
                     </ul>
