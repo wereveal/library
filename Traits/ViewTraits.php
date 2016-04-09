@@ -68,24 +68,21 @@ trait ViewTraits
 
     /**
      * Retrieves the navigation info for the nav group.
-     * This is different from the setNav Method since it doesn't set the
-     * property $a_nav.
+     * Does not set the class property a_nav. Use the setNav method to do that.
      * @param string|int $nav_group Defaults to the default navgroup.
      *                              This can be either the navgroup id or name.
      * @return array
      */
     public function retrieveNav($nav_group = '')
     {
-        if ($nav_group == '') {
-            $nav_group = $this->o_nav->retrieveDefaultNavgroup();
-
+        if ($this->adm_level == '') {
+            $this->setAdmLevel();
         }
-        if (is_numeric($nav_group)) {
-            return $this->o_nav->getNavList($nav_group);
-        }
-        else {
-            return $this->o_nav->getNavListByName($nav_group);
-        }
+        $a_nav = $this->readNav($nav_group);
+        $a_nav = $this->removeUnauthorizedLinks($a_nav);
+        $a_nav = $this->createSubmenu($a_nav);
+        $a_nav = $this->sortTopLevel($a_nav);
+        return $a_nav;
     }
 
     ### SETters and GETters ###
@@ -128,20 +125,13 @@ trait ViewTraits
 
     /**
      * Sets the class property a_nav.
-     * Uses the createNav method to do so.
-     * @param int $nav_group optional, defaults to 1
+     * Uses the retrieveNav method to do so.
+     * @param int|string $nav_group optional, defaults to 1
      * @return null
      */
     protected function setNav($nav_group = 1)
     {
-        if ($this->adm_level == '') {
-            $this->setAdmLevel();
-        }
-        $a_nav = $this->o_nav->createNavArray($nav_group);
-        $a_nav = $this->removeUnauthorizedLinks($a_nav);
-        $a_nav = $this->createChildren($a_nav);
-        $a_nav = $this->sortTopLevel($a_nav);
-        $this->a_nav = $a_nav;
+        $this->a_nav = $this->retrieveNav($nav_group);
     }
 
     /**
@@ -162,10 +152,14 @@ trait ViewTraits
      */
     public function getPageValues()
     {
+        $meth = __METHOD__ . '.';
         $o_page_model = new PageComplexModel($this->o_db);
         $o_page_model->setElog($this->o_elog);
         $url_id = $this->o_router->getUrlId();
+        $this->logIt("url id: {$url_id}", LOG_ON, $meth . __LINE__);
         $a_values = $o_page_model->readPageValuesByUrlId($url_id);
+        $log_message = 'Page Values:  ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
 
         if (isset($a_values[0])) {
             $a_page_values = $a_values[0];
@@ -216,11 +210,32 @@ trait ViewTraits
 
     ### Utilities ###
     /**
+     * Utility to create a new unique integer value for the array passed in.
+     * Recursive in nature, will find an integer value not in the array and return it.
+     * @param array $a_used
+     * @param int   $value
+     * @return int
+     */
+    protected function createNewOrder(array $a_used = [], $value = 0)
+    {
+        if (array_search($value, $a_used) === false) {
+            return (int) $value;
+        }
+        elseif (array_search($value + 1, $a_used) === false) {
+            $new_value = $value + 1;
+            return (int) $new_value;
+        }
+        else {
+            return $this->createNewOrder($a_used, $value + 1);
+        }
+    }
+
+    /**
      * Turns a flat db result into a multi-dimensional array for navigation.
      * @param array $a_nav
      * @return array
      */
-    protected function createChildren(array $a_nav = [])
+    protected function createSubmenu(array $a_nav = [])
     {
         if ($a_nav == []) {
             return [];
@@ -228,15 +243,58 @@ trait ViewTraits
         $a_new_nav = [];
         foreach ($a_nav as $a_link) {
             if ($a_link['level'] == 1) {
-                $this_link_id = $a_link['nav_id'];
+                $this_link_id = isset($a_link['nav_id'])
+                    ? $a_link['nav_id']
+                    : 0;
                 $a_new_nav[$this_link_id] = $a_link;
-                $a_new_nav[$this_link_id]['children'] = [];
+                $a_new_nav[$this_link_id]['submenu'] = [];
             }
             else {
-                $a_new_nav[$a_link['parent_id']]['children'][] = $a_link;
+                $a_new_nav[$a_link['parent_id']]['submenu'][] = $a_link;
             }
         }
         return $a_new_nav;
+    }
+
+    /**
+     * Retrieves the raw nav records for the nav group.
+     * @param string|int $nav_group Defaults to the default navgroup.
+     *                              This can be either the navgroup id or name.
+     * @return array
+     */
+    protected function readNav($nav_group = '')
+    {
+        if ($nav_group == '') {
+            $nav_group = $this->o_nav->retrieveDefaultNavgroup();
+
+        }
+        if (is_numeric($nav_group)) {
+            return $this->o_nav->getNavList($nav_group);
+        }
+        else {
+            return $this->o_nav->getNavListByName($nav_group);
+        }
+    }
+
+    /**
+     * Removes Navigation links that the person is not authorized to see.
+     * @param array $a_nav If empty, this is a waste.
+     * @return array
+     */
+    protected function removeUnauthorizedLinks(array $a_nav = []) {
+        foreach($a_nav as $key => $a_item) {
+            if (isset($a_item['submenu']) && count($a_item['submenu']) > 0) {
+                $a_nav[$key]['submenu'] = $this->removeUnauthorizedLinks($a_item['submenu']);
+            }
+            else {
+                $this->o_routes_helper->setRouteParts($a_item['url']);
+                $a_route_parts = $this->o_routes_helper->getRouteParts();
+                if ($this->adm_level < $a_route_parts['min_auth_level']) {
+                    unset($a_nav[$key]);
+                }
+            }
+        }
+        return $a_nav;
     }
 
     /**
@@ -261,28 +319,8 @@ trait ViewTraits
                 $a_new_nav[$order_number] = $a_link;
             }
         }
+        ksort($a_new_nav);
         return $a_new_nav;
-    }
-
-    /**
-     * Removes Navigation links that the person is not authorized to see.
-     * @param array $a_nav If empty, this is a waste.
-     * @return array
-     */
-    protected function removeUnauthorizedLinks(array $a_nav = []) {
-        foreach($a_nav as $key => $a_item) {
-            if (count($a_item['submenu']) > 0) {
-                $a_nav[$key]['submenu'] = $this->removeUnauthorizedLinks($a_item['submenu']);
-            }
-            else {
-                $this->o_routes_helper->setRouteParts($a_item['url']);
-                $a_route_parts = $this->o_routes_helper->getRouteParts();
-                if ($this->adm_level < $a_route_parts['min_auth_level']) {
-                    unset($a_nav[$key]);
-                }
-            }
-        }
-        return $a_nav;
     }
 
     /**
@@ -310,24 +348,4 @@ trait ViewTraits
         return $a_nav;
     }
 
-    /**
-     * Utility to create a new unique integer value for the array passed in.
-     * Recursive in nature, will find an integer value not in the array and return it.
-     * @param array $a_used
-     * @param int   $value
-     * @return int
-     */
-    protected function createNewOrder(array $a_used = [], $value = 0)
-    {
-        if (array_search($value, $a_used) === false) {
-            return (int) $value;
-        }
-        elseif (array_search($value + 1, $a_used) === false) {
-            $new_value = $value + 1;
-            return (int) $new_value;
-        }
-        else {
-            return $this->createNewOrder($a_used, $value + 1);
-        }
-    }
 }

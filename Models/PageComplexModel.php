@@ -30,7 +30,7 @@ class PageComplexModel
 
     public function __construct(DbModel $o_db)
     {
-        $this->o_db = $o_db;
+        $this->setupProperties($o_db, 'page');
         $this->setSelectSql();
     }
 
@@ -42,6 +42,7 @@ class PageComplexModel
      */
     public function readPageValues(array $a_search_for = [], array $a_search_parameters = [])
     {
+        $meth = __METHOD__ . '.';
         $a_allowed_keys = ['url_id', 'url_text', 'page_id', 'page_title'];
         $a_search_for = Arrays::removeUndesiredPairs($a_search_for, $a_allowed_keys);
         if (!isset($a_search_parameters['order_by'])) {
@@ -49,6 +50,7 @@ class PageComplexModel
         }
         $sql_where = $this->buildSqlWhere($a_search_for, $a_search_parameters);
         $sql = $this->select_sql . $sql_where;
+        $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
         return $this->o_db->search($sql, $a_search_for);
     }
 
@@ -59,15 +61,17 @@ class PageComplexModel
      */
     public function readPageValuesByUrlId($url_id = -1)
     {
+        $meth = __METHOD__ . '.';
         if ($url_id == -1) {
             return false;
         }
-
+        $this->setSelectSql();
         $sql =<<<SQL
 {$this->select_sql}
 WHERE p.url_id = :url_id
 AND p.url_id = u.url_id
 SQL;
+        $this->logIt("sql: $sql", LOG_ON, $meth . __LINE__);
         return $this->o_db->search($sql, [':url_id' => $url_id]);
 
     }
@@ -94,6 +98,8 @@ SQL;
 
     private function setSelectSql($the_string = '')
     {
+        $meth = __METHOD__ . '.';
+        $this->logIt("db prefix: " . $this->db_prefix, LOG_ON, $meth . __LINE__);
         if ($the_string != '') {
             $this->select_sql = $the_string;
         }
@@ -101,7 +107,7 @@ SQL;
             $this->select_sql =<<<SQL
 SELECT p.page_id, p.page_type, p.page_title, p.page_description, 
        p.page_base_url, p.page_lang, p.page_charset, 
-       u.url_text, u.url_type
+       u.url_id, u.url_text, u.url_type
 FROM {$this->db_prefix}page as p, {$this->db_prefix}urls as u
 SQL;
         }

@@ -153,7 +153,7 @@ class RoutesHelper
             $request_uri .
             ' the readWidthRequestUri results:  '
             . var_export($a_results, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if ($a_results === false) {
             $error_message = $this->o_routes->getErrorMessage();
             $this->logIt("Error Message: " . var_export($error_message, true), LOG_OFF, $meth . __LINE__);
