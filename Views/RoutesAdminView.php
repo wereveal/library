@@ -5,9 +5,10 @@
  * @file      RoutesAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.2
- * @date      2015-12-12 16:21:06
+ * @version   1.0.3
+ * @date      2016-04-10 14:46:58
  * @note <b>Change Log</b>
+ * - v1.0.3   - Change in implementation of LIB_TWIG_PREFIX         - 2016-04-10 wer
  * - v1.0.2   - Implement LIB_TWIG_PREFIX                           - 12/12/2015 wer
  * - v1.0.1   - change in database structure forced change here     - 09/03/2015 wer
  * - v1.0.0   - first working version                               - 01/28/2015 wer
@@ -18,8 +19,8 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Helper\ViewHelper;
+use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
@@ -88,14 +89,22 @@ class RoutesAdminView
                 ViewHelper::warningMessage($message)
             );
         }
-        $a_order_by = ['order_by' => 'route_immutable DESC, route_path'];
-        $a_routes = $this->o_model->read(array(), $a_order_by);
+        $a_routes = $this->o_model->readAllWithUrl();
         $log_message = 'a_routes: ' . var_export($a_routes, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if ($a_routes !== false && count($a_routes) > 0) {
             $a_values['a_routes'] = $a_routes;
         }
-        $tpl = LIB_TWIG_PREFIX . 'pages/routes_admin.twig';
+        $o_urls = new UrlsModel($this->o_db);
+        $a_urls = $o_urls->read();
+        if ($a_urls === false) {
+            $error_message = $o_urls->getErrorMessage();
+            $a_values['a_message'] = ViewHelper::failureMessage($error_message);
+        }
+        else {
+            $a_values['a_urls'] = $a_urls;
+        }
+        $tpl = '@' . '@' . LIB_TWIG_PREFIX . 'pages/routes_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -116,7 +125,7 @@ class RoutesAdminView
             $a_values['description'] = 'Form to verify the action to delete the route.';
         }
         $a_values['menus'] = $this->a_nav;
-        $tpl = LIB_TWIG_PREFIX . 'pages/verify_delete_route.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete_route.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 }

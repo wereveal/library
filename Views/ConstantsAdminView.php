@@ -5,9 +5,10 @@
  * @file      ConstantsAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.2
- * @date      2015-12-12 16:01:57
+ * @version   1.2.3
+ * @date      2016-04-10 14:48:07
  * @note <b>Change Log</b>
+ * - v1.2.3   - Bug fix in the implementation of LIB_TWIG_PREFIX        - 2016-04-10 wer
  * - v1.2.2   - Implement LIB_TWIG_PREFIX                               - 12/12/2015 wer
  * - v1.2.1   - Bug Fix                                                 - 11/07/2015 wer
  * - v1.2.0   - Immutable code added                                    - 10/07/2015 wer
@@ -104,7 +105,7 @@ class ConstantsAdminView
         }
         $a_page_values = $this->getPageValues(); // provided in ManagerViewTraits
         $a_values = array_merge($a_values, $a_page_values);
-        $tpl = LIB_TWIG_PREFIX . 'pages/constants_admin.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/constants_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -134,7 +135,7 @@ class ConstantsAdminView
             $a_twig_values['public_dir'] = $a_values['public_dir'];
         }
         $a_twig_values = array_merge($a_twig_values, $a_page_values);
-        $tpl = LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 }

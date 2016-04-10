@@ -5,9 +5,10 @@
  * @file      LibraryView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2016-03-31 09:38:39
+ * @version   2.0.1
+ * @date      2016-04-10 14:49:43
  * @note <b>Change Log</b>
+ * - v2.0.1   - Bug fix with implementation of LIB_TWIG_PREFIX  - 2016-04-10 wer
  * - v2.0.0   - Refactored - name change.                       - 2016-03-31 wer
  * - v1.1.1   - Implent LIB_TWIG_PREFIX                         - 12/12/2015 wer
  * - v1.1.0   - removed abstract class Base, use LogitTraits    - 09/01/2015 wer
@@ -65,7 +66,7 @@ class LibraryView
         }
         $log_message = 'Final Values for twig: ' . var_export($a_values, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $tpl = LIB_TWIG_PREFIX . 'pages/index.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/index.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -91,7 +92,7 @@ class LibraryView
             'body_text'     => $body_text
         ];
         $a_values = array_merge($a_page_values, $a_values);
-        $tpl = LIB_TWIG_PREFIX . 'pages/list_logins.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/list_logins.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -131,7 +132,7 @@ class LibraryView
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $o_sess->unsetVar('login_id');
-        $tpl = LIB_TWIG_PREFIX . 'pages/login_form.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/login_form.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 }
