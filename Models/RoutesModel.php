@@ -8,6 +8,8 @@
  * @version   1.3.0
  * @date      2016-04-01 08:51:58
  * @note <b>Change Log</b>
+ * - v1.4.0   - Refactored readWithRequestUri to readByRequestUri      - 2016-04-10 wer
+ *              Added readWithUrl to return list of routes with url.
  * - v1.3.0   - updated to use more of the DbUtilityTraits             - 2016-04-01 wer
  * - v1.2.0   - Database structure change reflected here.              - 2016-03-11 wer
  *              Required new method to duplicate old functionality.
@@ -129,7 +131,7 @@ class RoutesModel implements ModelInterface
      * @param string $request_uri normally obtained from $_SERVER['REQUEST_URI']
      * @return mixed
      */
-    public function readWithRequestUri($request_uri = '')
+    public function readByRequestUri($request_uri = '')
     {
         $meth = __METHOD__ . '.';
         if ($request_uri == '') {
@@ -150,6 +152,24 @@ EOT;
         return $this->o_db->search($sql, $a_search_params);
     }
 
+    /**
+     * Returns the list of all the routes with the url.
+     * A join between routes and urls tables.
+     * @return bool|array
+     */
+    public function readAllWithUrl()
+    {
+        $sql =<<<EOT
+
+SELECT r.route_id, r.route_class, r.route_method, r.route_action, r.route_immutable,
+       u.url_id, u.url_text, u.url_type
+FROM {$this->db_prefix}routes as r, {$this->db_prefix}urls as u
+WHERE r.url_id = u.url_id
+ORDER BY r.route_immutable DESC, u.url_text
+
+EOT;
+        return $this->o_db->search($sql);
+    }
     /**
      * Returns the sql error message.
      * Overrides method in DbUtilityTraits.

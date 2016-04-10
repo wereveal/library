@@ -148,7 +148,7 @@ class RoutesHelper
     public function findValidRoute($request_uri = '')
     {
         $meth = __METHOD__ . '.';
-        $a_results = $this->o_routes->readWithRequestUri($request_uri);
+        $a_results = $this->o_routes->readByRequestUri($request_uri);
         $log_message = 'For the request uri: ' .
             $request_uri .
             ' the readWidthRequestUri results:  '
