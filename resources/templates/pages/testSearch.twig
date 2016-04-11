@@ -1,8 +1,8 @@
-{% extends '@lib_pages/index.twig' %}
+{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
 {% block searchSelections %}{% endblock %}
 {% block searchQuickForm %}
                 <div class="col-xs-6 col-sm-6 col-md-6 quick-form">
-                    {% include '@lib_snippets/quickSearch.twig' %}
+                    {% include '@' ~ twig_prefix ~ 'snippets/quickSearch.twig' %}
                 </div>
 {% endblock %}
 

@@ -141,7 +141,7 @@ class RoutesModel implements ModelInterface
         $sql =<<<EOT
 
 SELECT r.route_id, r.route_class, r.route_method, r.route_action, r.route_immutable,
-       u.url_id, u.url_text, u.url_type
+       u.url_id, u.url_text, u.url_scheme
 FROM {$this->db_prefix}routes as r, {$this->db_prefix}urls as u
 WHERE r.url_id = u.url_id
 AND u.url_text = :url_text
@@ -162,7 +162,7 @@ EOT;
         $sql =<<<EOT
 
 SELECT r.route_id, r.route_class, r.route_method, r.route_action, r.route_immutable,
-       u.url_id, u.url_text, u.url_type
+       u.url_id, u.url_text, u.url_scheme
 FROM {$this->db_prefix}routes as r, {$this->db_prefix}urls as u
 WHERE r.url_id = u.url_id
 ORDER BY r.route_immutable DESC, u.url_text

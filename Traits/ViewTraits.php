@@ -156,10 +156,10 @@ trait ViewTraits
         $o_page_model = new PageComplexModel($this->o_db);
         $o_page_model->setElog($this->o_elog);
         $url_id = $this->o_router->getUrlId();
-        $this->logIt("url id: {$url_id}", LOG_ON, $meth . __LINE__);
+        $this->logIt("url id: {$url_id}", LOG_OFF, $meth . __LINE__);
         $a_values = $o_page_model->readPageValuesByUrlId($url_id);
         $log_message = 'Page Values:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         if (isset($a_values[0])) {
             $a_page_values = $a_values[0];
@@ -168,7 +168,7 @@ trait ViewTraits
             return [
                 'page_id'       => 0,
                 'url_id'        => 0,
-                'url_type'      => 'http',
+                'url_scheme'    => 'https',
                 'page_url'      => '/',
                 'description'   => '',
                 'title'         => '',
@@ -187,7 +187,7 @@ trait ViewTraits
         return [
             'page_id'       => $a_page_values['page_id'],
             'url_id'        => $a_page_values['url_id'],
-            'url_type'      => $a_page_values['url_type'],
+            'url_scheme'    => $a_page_values['url_scheme'],
             'page_url'      => $a_page_values['url_text'],
             'description'   => $a_page_values['page_description'],
             'title'         => $a_page_values['page_title'],

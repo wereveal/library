@@ -5,13 +5,14 @@
  * @file      PageAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.1
- * @date      2015-12-12 16:19:33
+ * @version   1.0.3
+ * @date      2016-04-11 13:39:06
  * @note <b>Change Log</b>
- * - v1.0.2   - Bug fix for implementation of LIB_TWIG_PREFIX   - 2016-04-10 wer
- * - v1.0.1   - Implement LIB_TWIG_PREFIX                       - 12/12/2015 wer
- * - v1.0.0   - take out of beta                                - 11/27/2015 wer
- * - v1.0.0β1 - Initial version                                 - 10/30/2015 wer
+ * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - v1.0.2   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
+ * - v1.0.1   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
+ * - v1.0.0   - take out of beta                                                        - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                                                         - 10/30/2015 wer
  */
 namespace Ritc\Library\Views;
 
@@ -75,11 +76,12 @@ class PageAdminView
                 'page_charset'     => 'utf8',
                 'page_immutable'   => 0
             ],
-            'action'  => $action,
-            'tolken'  => $_SESSION['token'],
-            'form_ts' => $_SESSION['idle_timestamp'],
-            'hobbit'  => '',
-            'menus'   => $this->a_nav
+            'action'      => $action,
+            'tolken'      => $_SESSION['token'],
+            'form_ts'     => $_SESSION['idle_timestamp'],
+            'hobbit'      => '',
+            'a_menus'     => $this->a_nav,
+            'twig_prefix' => LIB_TWIG_PREFIX
         ];
         $a_values = array_merge($a_page_values, $a_values);
         if ($action == 'update') {
@@ -105,20 +107,21 @@ class PageAdminView
     {
         $a_page_values = $this->getPageValues();
         $a_values = array(
-            'a_message' => array(),
-            'a_pages'   => array(
+            'a_message' => [],
+            'a_pages'   => [
                 [
                     'page_id'        => '',
                     'page_url'       => '',
                     'page_title'     => '',
                     'page_immutable' => 1
                 ]
-            ),
-            'tolken'  => $_SESSION['token'],
-            'form_ts' => $_SESSION['idle_timestamp'],
-            'hobbit'  => '',
-            'menus'   => $this->a_nav,
-            'adm_lvl' => $this->adm_level
+            ],
+            'tolken'      => $_SESSION['token'],
+            'form_ts'     => $_SESSION['idle_timestamp'],
+            'hobbit'      => '',
+            'a_menus'     => $this->a_nav,
+            'adm_lvl'     => $this->adm_level,
+            'twig_prefix' => LIB_TWIG_PREFIX
         );
         $a_values = array_merge($a_page_values, $a_values);
         if (count($a_message) != 0) {
@@ -167,8 +170,9 @@ class PageAdminView
             'tolken'       => $_SESSION['token'],
             'form_ts'      => $_SESSION['idle_timestamp'],
             'hobbit'       => '',
-            'menus'        => $this->a_nav,
-            'adm_lvl'      => $this->adm_level
+            'a_menus'      => $this->a_nav,
+            'adm_lvl'      => $this->adm_level,
+            'twig_prefix'  => LIB_TWIG_PREFIX
         );
         $a_values = array_merge($a_values, $a_page_values);
         $this->logIt('Twig Values: ' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);

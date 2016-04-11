@@ -5,18 +5,20 @@
  * @file      ConstantsAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.3
- * @date      2016-04-10 14:48:07
+ * @version   1.2.4
+ * @date      2016-04-11 08:49:27
  * @note <b>Change Log</b>
- * - v1.2.3   - Bug fix in the implementation of LIB_TWIG_PREFIX        - 2016-04-10 wer
- * - v1.2.2   - Implement LIB_TWIG_PREFIX                               - 12/12/2015 wer
- * - v1.2.1   - Bug Fix                                                 - 11/07/2015 wer
- * - v1.2.0   - Immutable code added                                    - 10/07/2015 wer
- * - v1.1.0   - removed abstract class Base, added LogitTraits          - 09/01/2015 wer
- * - v1.0.0   - first fully working version                             - 01/28/2015 wer
- * - v1.0.0β3 - changed to use the new Di class                         - 11/17/2014 wer
- * - v1.0.0β2 - changed to use Base class and inject database object    - 09/24/2014 wer
- * - v1.0.0β1 - Initial version                                         - 04/02/2014 wer
+ * - v1.2.4   - Bug fix, removed unneeded use statement                                 - 2016-04-11 wer
+ *              Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here
+ * - v1.2.3   - Bug fix in the implementation of LIB_TWIG_PREFIX                        - 2016-04-10 wer
+ * - v1.2.2   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
+ * - v1.2.1   - Bug Fix                                                                 - 11/07/2015 wer
+ * - v1.2.0   - Immutable code added                                                    - 10/07/2015 wer
+ * - v1.1.0   - removed abstract class Base, added LogitTraits                          - 09/01/2015 wer
+ * - v1.0.0   - first fully working version                                             - 01/28/2015 wer
+ * - v1.0.0β3 - changed to use the new Di class                                         - 11/17/2014 wer
+ * - v1.0.0β2 - changed to use Base class and inject database object                    - 09/24/2014 wer
+ * - v1.0.0β1 - Initial version                                                         - 04/02/2014 wer
  */
 namespace Ritc\Library\Views;
 
@@ -25,7 +27,6 @@ use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
@@ -81,9 +82,11 @@ class ConstantsAdminView
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
             'adm_lvl' => $this->adm_level,
-            'menus'   => $this->a_nav
+            'a_menus' => $this->a_nav,
+            'twig_prefix' => LIB_TWIG_PREFIX
         );
         if (count($a_message) != 0) {
+            $a_message['message'] .= "<br><br>Changing configuration values can result in unexpected results. If you are not sure, do not do it.";
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
         else {
@@ -117,9 +120,10 @@ class ConstantsAdminView
     public function renderVerify(array $a_values = array())
     {
         if ($a_values === array()) {
-            return $this->renderList(array('message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure'));
+            $a_message = ViewHelper::messageProperties(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
+            return $this->renderList($a_message);
         }
-        $a_page_values = $this->getPageValues(); // provided in ManagerViewTraits
+        $a_page_values = $this->getPageValues(); // provided in ViewTraits
         $a_twig_values = [
             'what'         => 'constant',
             'name'         => $a_values['constant']['const_name'],
@@ -129,7 +133,8 @@ class ConstantsAdminView
             'hidden_value' => $a_values['constant']['const_id'],
             'tolken'       => $a_values['tolken'],
             'form_ts'      => $a_values['form_ts'],
-            'menus'        => $this->a_nav
+            'a_menus'      => $this->a_nav,
+            'twig_prefix'  => LIB_TWIG_PREFIX
         ];
         if (isset($a_values['public_dir'])) {
             $a_twig_values['public_dir'] = $a_values['public_dir'];

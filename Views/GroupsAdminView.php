@@ -5,13 +5,14 @@
  * @file      GroupsAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.1
- * @date      2015-12-12 16:01:11
+ * @version   1.0.3
+ * @date      2016-04-11 13:30:43
  * @note <b>Change Log</b>
- * - v1.0.2   - Bug fix to implementation of LIB_TWIG_PREFIX    - 2016-04-10 wer
- * - v1.0.1   - Implent LIB_TWIG_PREFIX                         - 12/12/2015 wer
- * - v1.0.0   - First working version                           - 11/27/2015 wer
- * - v1.0.0β1 - Initial version                                 - 01/28/2015 wer
+ * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - v1.0.2   - Bug fix to implementation of LIB_TWIG_PREFIX                            - 2016-04-10 wer
+ * - v1.0.1   - Implent LIB_TWIG_PREFIX                                                 - 12/12/2015 wer
+ * - v1.0.0   - First working version                                                   - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                                                         - 01/28/2015 wer
  */
 namespace Ritc\Library\Views;
 
@@ -67,11 +68,12 @@ class GroupsAdminView
                     'group_immutable'   => 0
                 ]
             ),
-            'tolken'  => $_SESSION['token'],
-            'form_ts' => $_SESSION['idle_timestamp'],
-            'hobbit'  => '',
-            'menus'   => $this->a_nav,
-            'adm_lvl' => $this->adm_level
+            'tolken'      => $_SESSION['token'],
+            'form_ts'     => $_SESSION['idle_timestamp'],
+            'hobbit'      => '',
+            'a_menus'     => $this->a_nav,
+            'adm_lvl'     => $this->adm_level,
+            'twig_prefix' => LIB_TWIG_PREFIX
         ];
         $a_page_values = $this->getPageValues();
         $a_values = array_merge($a_page_values, $a_values);
@@ -114,6 +116,7 @@ class GroupsAdminView
             $a_values['description'] = 'Form to verify the action to delete the group.';
         }
         $a_values['menus'] = $this->a_nav;
+        $a_values['twig_prefix'] = LIB_TWIG_PREFIX;
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete_group.twig';
         return $this->o_twig->render($tpl, $a_values);
     }

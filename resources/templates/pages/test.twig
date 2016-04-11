@@ -1,9 +1,9 @@
-{% extends '@lib_pages/index.twig' %}
+{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
 {% block body %}
             <div class="row">
                 <div class="col-xs-12 col-sm-12 col-md-12">
                 {% for link in links %}
-                    {% include '@lib_elements/anchor.twig' %}
+                    {% include '@' ~ twig_prefix ~ 'elements/anchor.twig' %}
                 {% endfor %}
                 </div>
             </div>

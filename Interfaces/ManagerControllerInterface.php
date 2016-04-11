@@ -5,8 +5,8 @@
  * @file      Ritc/Library/Interfaces/ManagerControllerInterface.php
  * @namespace Ritc\Library\Interfaces
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2015-01-11 11:25:07
+ * @version   1.0.0+2
+ * @date      2016-04-11 08:52:52
  * @note <b>Change Log</b>
  * - v1.0.0 - initial version                                  - 01/11/2015 wer
  */
@@ -26,25 +26,25 @@ interface ManagerControllerInterface
     public function render();
 
     /**
-     * Controller for saving data.
+     * Method for saving data.
      * @return mixed
      */
     public function save();
 
     /**
-     * Controller for updating data.
+     * Method for updating data.
      * @return mixed
      */
     public function update();
 
     /**
-     * Controller to display the verify delete form.
+     * Method to display the verify delete form.
      * @return mixed
      */
     public function verifyDelete();
 
     /**
-     * Controller to delete data.
+     * Method to delete data.
      * @return mixed
      */
     public function delete();

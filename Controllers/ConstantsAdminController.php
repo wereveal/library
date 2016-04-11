@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Controllers/ConstantsAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.1
- * @date      2016-03-08 15:13:35
+ * @version   1.3.2
+ * @date      2016-04-11 11:30:43
  * @note <b>Change Log</b>
+ * - v1.3.2 - bug fix                                         - 2016-04-11 wer
  * - v1.3.1 - bug fix                                         - 2016-03-08 wer
  * - v1.3.0 - added immutable code                            - 10/07/2015 wer
  * - v1.2.1 - code clean up                                   - 09/25/2015 wer
@@ -126,7 +127,7 @@ class ConstantsAdminController implements ManagerControllerInterface
             $a_message = ViewHelper::successMessage();
         }
         else {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new configuration could not be saved.');
+            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new constant could not be saved.');
         }
         return $this->o_view->renderList($a_message);
     }
@@ -148,7 +149,7 @@ class ConstantsAdminController implements ManagerControllerInterface
             $a_message = ViewHelper::successMessage();
         }
         else {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The route could not be updated.');
+            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The constant could not be updated.');
         }
         return $this->o_view->renderList($a_message);
     }

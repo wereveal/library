@@ -62,6 +62,7 @@ class UrlsModel implements ModelInterface
      */
     public function read(array $a_search_for = [], array $a_search_params = [])
     {
+        $meth = __METHOD__ . '.';
         $a_parameters = [
             'table_name'     => $this->db_table,
             'a_search_for'   => $a_search_for,
@@ -69,6 +70,9 @@ class UrlsModel implements ModelInterface
             'order_by'       => 'url_text ASC'
         ];
         $a_parameters = array_merge($a_parameters, $a_search_params);
+        $log_message = 'Parameters ' . var_export($a_parameters, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         return $this->genericRead($a_parameters);
     }
 

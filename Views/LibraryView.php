@@ -8,13 +8,14 @@
  * @version   2.0.1
  * @date      2016-04-10 14:49:43
  * @note <b>Change Log</b>
- * - v2.0.1   - Bug fix with implementation of LIB_TWIG_PREFIX  - 2016-04-10 wer
- * - v2.0.0   - Refactored - name change.                       - 2016-03-31 wer
- * - v1.1.1   - Implent LIB_TWIG_PREFIX                         - 12/12/2015 wer
- * - v1.1.0   - removed abstract class Base, use LogitTraits    - 09/01/2015 wer
- * - v1.0.0   - First stable version                            - 01/16/2015 wer
- * - v1.0.0β2 - changed to match DI/IOC                         - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                                 - 11/08/2014 wer
+ * - v2.0.2   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - v2.0.1   - Bug fix with implementation of LIB_TWIG_PREFIX                          - 2016-04-10 wer
+ * - v2.0.0   - Refactored - name change.                                               - 2016-03-31 wer
+ * - v1.1.1   - Implent LIB_TWIG_PREFIX                                                 - 12/12/2015 wer
+ * - v1.1.0   - removed abstract class Base, use LogitTraits                            - 09/01/2015 wer
+ * - v1.0.0   - First stable version                                                    - 01/16/2015 wer
+ * - v1.0.0β2 - changed to match DI/IOC                                                 - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                                                         - 11/08/2014 wer
  */
 namespace Ritc\Library\Views;
 
@@ -58,6 +59,7 @@ class LibraryView
         $a_values = $this->getPageValues();
         $a_values['links'] = $this->a_nav;
         $a_values['menus'] = $this->a_nav;
+        $a_values['twig_prefix'] = LIB_TWIG_PREFIX;
         if (is_array($a_message)) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
@@ -87,9 +89,10 @@ class LibraryView
         }
         $a_page_values = $this->getPageValues();
         $a_values = [
-            'title'         => 'This is a Temp Page',
-            'a_message'     => $a_message,
-            'body_text'     => $body_text
+            'title'       => 'This is a Temp Page',
+            'a_message'   => $a_message,
+            'body_text'   => $body_text,
+            'twig_prefix' => LIB_TWIG_PREFIX
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/list_logins.twig';
@@ -122,13 +125,14 @@ class LibraryView
         }
         $a_page_values = $this->getPageValues();
         $a_values = [
-            'tolken'    => $tolken,
-            'form_ts'   => $idle_ts,
-            'hobbit'    => '',
-            'login_id'  => $previous_login_id,
-            'password'  => '',
-            'a_message' => $a_message,
-            'menus'     => array()
+            'tolken'      => $tolken,
+            'form_ts'     => $idle_ts,
+            'hobbit'      => '',
+            'login_id'    => $previous_login_id,
+            'password'    => '',
+            'a_message'   => $a_message,
+            'a_menus'     => [],
+            'twig_prefix' => LIB_TWIG_PREFIX
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $o_sess->unsetVar('login_id');

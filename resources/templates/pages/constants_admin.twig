@@ -1,4 +1,4 @@
-{% extends '@lib_pages/index.twig' %}
+{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
 {% block body %}
     <div class="row">
         <div class="col-lg-12 col-md-12">
@@ -8,7 +8,7 @@
     {% if a_message.message != '' %}
     <div class="row">
         <div class="col-lg-12 col-md-12">
-            {% include '@lib_snippets/message.twig' %}
+            {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
         </div>
     </div>
     {% endif %}
@@ -17,9 +17,9 @@
         {% set x = -1 %}
         {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
-                <form action="{{ public_dir }}/manager/constants/save/" method= "post">
+                <form action="{{ public_dir }}/manager/library/constants/save/" method= "post">
                 <div class="col-md-4 col-sm-4 col-xs-4">
-                    <label for="constant[const_name[">Constant Name: </label><input type="text" name="constant[const_name]" value="" maxlength="32" class="colorful w200" />
+                    <label for="constant[const_name]">Constant Name: </label><input type="text" name="constant[const_name]" value="" maxlength="32" class="colorful w200" />
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-4">
                     <label for="constant[const_value]">Constant Value: </label><input type="text" name="constant[const_value]" value="" maxlength="32" class="colorful w200"/>
@@ -43,7 +43,7 @@
         {% for row in a_constants %}
             {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
-            <form action="{{ public_dir }}/manager/constants/modify/" method="post">
+            <form action="{{ public_dir }}/manager/library/constants/modify/" method="post">
                 <div class="col-md-4 col-sm-4 col-xs-4">
                     <label for="constant[const_value]">Constant Name: </label>
                     {% if row.const_immutable == 1 %}
@@ -86,7 +86,7 @@
         {% endfor %}
         {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
-                <form action="{{ public_dir }}/manager/constants/save/" method= "post">
+                <form action="{{ public_dir }}/manager/library/constants/save/" method= "post">
                     <div class="col-md-4 col-sm-4 col-xs-4">
                         <label for="constant[const_name]">Constant Name: </label><input type="text" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful w200" />
                     </div>

@@ -1,5 +1,5 @@
-{% extends '@lib_default/base.twig' %}
-{% block stylesheets %}{% include '@lib_snippets/base_css.twig' %}{% endblock %}
+{% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
+{% block stylesheets %}{% include '@' ~ twig_prefix ~ 'snippets/base_css.twig' %}{% endblock %}
 
 {% block body %}
     <div class="row">

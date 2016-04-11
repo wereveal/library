@@ -1,0 +1,112 @@
+{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% block body %}
+    <div class="container">
+        <h1 class="smaller">Welcome! This is a manager to add/modify/delete URLs used in website.</h1>
+    </div>
+    {% if a_message.message != '' %}
+    <div class="container">
+        {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
+    </div>
+    {% endif %}
+    <div class="container">
+        {% set x = -1 %}
+        {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
+        <div class="row {{ class }}">
+            <form action="{{ public_id }}/manager/library/urls/save/" method="post">
+                <div class="col-sm-6 col-xs-12">
+                    <label for="url" class="bold pad-right">Url:</label><input type="text" name="url" class="colorful w450" value="">
+                </div>
+                <div class="col-sm-3 col-xs-12">
+                    <label for="immutable" class="bold pad-right">Cannot Be Deleted: </label><input type="checkbox" name="immutable" value="1">
+                </div>
+                <div class="col-sm-3 col-xs-12">
+                    <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
+                    <input type="hidden" name="tolken" value="{{ tolken }}" />
+                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                    <label for="hobbit" class="hobbit">Humans don't enter anything here.</label><input type="text" name="hobbit" value="" size="2" maxlength="24" class="hobbit" />
+                </div>
+            </form>
+        </div>
+    {% set x = x * -1 %}
+    {% for row in a_urls %}
+        {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
+        <div class="row {{ class }}">
+            <form action="{{ public_id }}/manager/library/urls/update/" method="post">
+                <div class="col-sm-6 col-xs-12">
+                    <label for="url" class="bold pad-right">Url: </label><input type="text" name="url" class="colorful w450" value="{{ row.url }}">
+                </div>
+                <div class="col-sm-3 col-xs-12">
+                {% if row.immutable == 'true' and adm_lvl < 10 %}
+                    <b>Cannot Be Deleted</b> &nbsp; <i class="fa fa-check"></i>
+                    <input type="hidden" name="immutable" value="1">
+                {% else %}
+                    {% if row.immutable == 'true' %}
+                        {% set checked = ' checked' %}
+                    {% else %}
+                        {% set checked = '' %}
+                    {% endif %}
+                    <label for="immutable" class="bold pad-right">Cannot Be Deleted: </label><input type="checkbox" name="immutable" value="1"{{ checked }}>
+                {% endif %}
+                </div>
+                <div class="col-sm-3 col-xs-12">
+                    <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Update</button>
+                {% if row.immutable == 'true' and adm_lvl == 10 %}
+                    <button type="submit" name="submit" value="verify" class="btn btn-danger btn-xs">Delete</button>
+                {% endif %}
+                    <input type="hidden" name="url_id" value="{{ row.url_id }}">
+                    <input type="hidden" name="tolken" value="{{ tolken }}" />
+                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                    <label for="hobbit" class="hobbit">Humans don't enter anything here.</label><input type="text" name="hobbit" value="" size="2" maxlength="24" class="hobbit" />
+                </div>
+            </form>
+        </div>
+        {% set x = x * -1 %}
+    {% endfor %}
+    {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
+        <div class="row {{ class }}">
+            <form action="{{ public_id }}/manager/library/urls/save/" method="post">
+                <div class="col-sm-6 col-xs-12">
+                    <label for="url" class="bold pad-right">Url: </label><input type="text" name="url" class="colorful w450" value="">
+                </div>
+                <div class="col-sm-3 col-xs-12">
+                    <label for="immutable" class="bold pad-right">Cannot Be Deleted: </label><input type="checkbox" name="immutable" value="1">
+                </div>
+                <div class="col-sm-3 col-xs-12">
+                    <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
+                    <input type="hidden" name="tolken" value="{{ tolken }}" />
+                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                    <label for="hobbit" class="hobbit">Humans don't enter anything here.</label><input type="text" name="hobbit" value="" size="2" maxlength="24" class="hobbit" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="container">
+        <h3>Instructions</h3>
+        <ul>
+            <li>Urls must be valid in proper url format as defined in the standards, e.g. https://my.fred.com/</li>
+            <li>Cannot Be Deleted means you can't delete it, pretty clear eh?
+                <b class="red bold">So be careful!</b>
+                If you set it that way, it can't go back.
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+{# Expected values
+    [
+        'lang',
+        'charset',
+        'base_url',
+        'description',
+        'public_dir',
+        'title',
+        'links',
+        'site_url',
+        'rights_holder',
+        'a_message',
+        'a_urls' => [['url' => 'valid_url', 'immutable' => 1 or 0],...],
+        'adm_lvl',
+        'a_menus',
+        'tolken',
+        'form_ts'
+    ]
+#}

@@ -5,14 +5,15 @@
  * @file      PeopleAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.2
- * @date      2016-04-10 14:50:55
+ * @version   1.0.3
+ * @date      2016-04-11 13:40:30
  * @note <b>Change Log</b>
- * - v1.0.2   - Bug fix for implementation of LIB_TWIG_PREFIX   - 2016-04-10 wer
- * - v1.0.1   - Implement LIB_TWIG_PREFIX                       - 12/12/2015 wer
- * - v1.0.0   - Initial non-beta version                        - 11/12/2015 wer
- * - v1.0.0β2 - Changed to use DI/IOC                           - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                                 - 11/13/2014 wer
+ * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - v1.0.2   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
+ * - v1.0.1   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
+ * - v1.0.0   - Initial non-beta version                                                - 11/12/2015 wer
+ * - v1.0.0β2 - Changed to use DI/IOC                                                   - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                                                         - 11/13/2014 wer
  */
 namespace Ritc\Library\Views;
 
@@ -22,7 +23,6 @@ use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
@@ -77,11 +77,12 @@ class PeopleAdminView
                     'auth_level' => 0
                 ]
             ),
-            'tolken'    => $_SESSION['token'],
-            'form_ts'   => $_SESSION['idle_timestamp'],
-            'hobbit'    => '',
-            'menus'     => $this->a_nav,
-            'adm_lvl'   => $this->adm_level
+            'tolken'      => $_SESSION['token'],
+            'form_ts'     => $_SESSION['idle_timestamp'],
+            'hobbit'      => '',
+            'a_menus'     => $this->a_nav,
+            'adm_lvl'     => $this->adm_level,
+            'twig_prefix' => LIB_TWIG_PREFIX
         ];
         $a_values = array_merge($a_page_values, $a_values);
 
@@ -122,8 +123,8 @@ class PeopleAdminView
         $log_message = 'page values ' . var_export($a_page_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_values = [
-            'a_message'   => array(),
-            'person'      => array(
+            'a_message' => [],
+            'person'    => [
                 [
                     'people_id'    => '',
                     'login_id'     => '',
@@ -137,13 +138,14 @@ class PeopleAdminView
                     'groups'       => [],
                     'highest_role' => 0
                 ]
-            ),
-            'action'  => 'save',
-            'tolken'  => $_SESSION['token'],
-            'form_ts' => $_SESSION['idle_timestamp'],
-            'hobbit'  => '',
-            'adm_lvl' => $this->adm_level,
-            'menus'   => $this->a_nav
+            ],
+            'action'      => 'save',
+            'tolken'      => $_SESSION['token'],
+            'form_ts'     => $_SESSION['idle_timestamp'],
+            'hobbit'      => '',
+            'adm_lvl'     => $this->adm_level,
+            'a_menus'     => $this->a_nav,
+            'twig_prefix' => LIB_TWIG_PREFIX
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
@@ -174,8 +176,8 @@ class PeopleAdminView
         }
         $a_page_values = $this->getPageValues();
         $a_values = [
-            'a_message'   => array(),
-            'person'      => array(
+            'a_message'   => [],
+            'person'      => [
                 [
                     'people_id'    => '',
                     'login_id'     => '',
@@ -189,13 +191,14 @@ class PeopleAdminView
                     'groups'       => [],
                     'highest_role' => 0
                 ]
-            ),
-            'action'  => 'update',
-            'tolken'  => $_SESSION['token'],
-            'form_ts' => $_SESSION['idle_timestamp'],
-            'hobbit'  => '',
-            'adm_lvl' => $this->adm_level,
-            'menus'   => $this->a_nav
+            ],
+            'action'      => 'update',
+            'tolken'      => $_SESSION['token'],
+            'form_ts'     => $_SESSION['idle_timestamp'],
+            'hobbit'      => '',
+            'adm_lvl'     => $this->adm_level,
+            'a_menus'     => $this->a_nav,
+            'twig_prefix' => LIB_TWIG_PREFIX
         ];
         $a_values = array_merge($a_page_values, $a_values);
 
@@ -255,7 +258,8 @@ class PeopleAdminView
             'hidden_name'  => 'people_id',
             'hidden_value' => $a_posted_values['person']['people_id'],
             'tolken'       => $a_posted_values['tolken'],
-            'form_ts'      => $a_posted_values['form_ts']
+            'form_ts'      => $a_posted_values['form_ts'],
+            'twig_prefix'  => LIB_TWIG_PREFIX
         ];
         $a_twig_values = array_merge($a_page_values, $a_values);
         $a_twig_values['menus'] = $this->a_nav;
@@ -264,13 +268,4 @@ class PeopleAdminView
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 
-    /**
-     * Something to keep phpStorm from complaining until I use the ViewHelper.
-     * @return array
-     */
-    public function temp()
-    {
-        $a_stuph = ViewHelper::messageProperties(['stuff'=>'stuff']);
-        return $a_stuph;
-    }
 }

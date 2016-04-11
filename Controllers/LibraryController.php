@@ -5,12 +5,13 @@
  * @file      Ritc/Library/Controllers/LibraryController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   v2.0.0
- * @date      2016-03-31 06:35:46
+ * @version   v2.1.0
+ * @date      2016-04-11 10:13:40
  * @note <b>Change Log</b>
+ * - v2.1.0   - Added UrlAdminController              - 2016-04-11 wer
  * - v2.0.0   - Renamed Class to be more specific     - 2016-03-31 wer
  * - v1.0.1   - needed to change private to protected - 12/01/2015 wer
- *                in order to extend this class.
+ *              in order to extend this class.
  * - v1.0.0   - first working version                 - 11/27/2015 wer
  * - v1.0.0β8 - bug fixes                             - 11/18/2015 wer
  * - v1.0.0β7 - added page controller                 - 11/12/2015 wer
@@ -80,6 +81,9 @@ class LibraryController implements ControllerInterface
         $this->a_post_values  = $this->a_route_parts['post'];
         $this->o_auth         = new AuthHelper($this->o_di);
         $this->o_manager_view = new LibraryView($this->o_di);
+        if (!defined('LIB_TWIG_PREFIX')) {
+            define('LIB_TWIG_PREFIX', 'lib_');
+        }
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
         }
@@ -233,6 +237,23 @@ class LibraryController implements ControllerInterface
             if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
                 $o_tests = new TestsAdminController($this->o_di);
                 return $o_tests->render();
+            }
+        }
+        $a_message = ViewHelper::warningMessage("Access Prohibited");
+        return $this->renderLogin('', $a_message);
+    }
+
+    /**
+     * Passes control over to the url admin controller.
+     * @return string
+     */
+    public function renderUrlsAdmin()
+    {
+        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
+            $min_auth_level = $this->a_route_parts['min_auth_level'];
+            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
+                $o_urls_admin = new UrlsAdminController($this->o_di);
+                return $o_urls_admin->render();
             }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");

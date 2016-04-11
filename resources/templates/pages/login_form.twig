@@ -1,37 +1,14 @@
-{% extends '@lib_pages/index.twig' %}
+{% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
 {% block body %}
-<div class="row border-radius-top-right">
-    <div class="col-md-12">
-        <h1>Welcome! Please Login. <small>This is for site managers.</small></h1>
+    <div class="container">
+        <h1 class="smaller">Welcome! Please Login. <small>This is for site managers.</small></h1>
     </div>
-</div>
-{% if a_message.message != '' %}
-    <div class="row">
-        <div class="col-md-12">
-            {% include '@lib_snippets/message.twig' %}
+    {% if a_message.message != '' %}
+        <div class="container">
+            {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
         </div>
+    {% endif %}
+    <div class="container">
+    {% include '@' ~ twig_prefix ~ 'forms/login_form.twig' %}
     </div>
-{% endif %}
-<div class="row border-radius-bottom-right">
-    <div class="col-md-12">
-        <form action="{{ public_dir }}/manager/" method="post" id="login-form">
-            <div class="row">
-                <div class="col-md-3 col-sm-3 col-xs-3 aright"><label for="login_id">Your Login ID: </label></div>
-                <div class="col-md-9 col-sm-9 col-xs-9 aleft"><input type="text" id="login_id" name="login_id" class="colorful" maxlength="64" width="32" value="{{ login_id }}"></div>
-            </div>
-            <div class="row">
-                <div class="col-md-3 col-sm-3 col-xs-3 aright"><label for="password">Your Password: </label></div>
-                <div class="col-md-9 col-sm-9 col-xs-9 aleft"><input type="text" id="password" name="password" class="colorful" maxlength="64" width="32" value=""></div>
-            </div>
-            <input type="hidden" id="tolken" name="tolken" value="{{ tolken }}">
-            <input type="hidden" id="form_ts" name="form_ts" value="{{ form_ts }}">
-            <input type="text" id="hobbit" name="hobbit" value="" class="hobbit">
-            <div class="row">
-                <div class="col-md-6 col-sm-6 col-xs-6 aright"><button type="submit" name="submit" value="verifyLogin" class="btn btn-primary">Log In</button></div>
-                <div class="col-md-6 col-sm-6 col-xs-6">&nbsp;</div>
-            </div>
-
-        </form>
-    </div>
-</div>
 {% endblock %}

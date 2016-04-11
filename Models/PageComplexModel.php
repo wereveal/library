@@ -107,7 +107,7 @@ SQL;
             $this->select_sql =<<<SQL
 SELECT p.page_id, p.page_type, p.page_title, p.page_description, 
        p.page_base_url, p.page_lang, p.page_charset, 
-       u.url_id, u.url_text, u.url_type
+       u.url_id, u.url_text, u.url_scheme
 FROM {$this->db_prefix}page as p, {$this->db_prefix}urls as u
 SQL;
         }

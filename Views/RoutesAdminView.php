@@ -8,12 +8,13 @@
  * @version   1.0.3
  * @date      2016-04-10 14:46:58
  * @note <b>Change Log</b>
- * - v1.0.3   - Change in implementation of LIB_TWIG_PREFIX         - 2016-04-10 wer
- * - v1.0.2   - Implement LIB_TWIG_PREFIX                           - 12/12/2015 wer
- * - v1.0.1   - change in database structure forced change here     - 09/03/2015 wer
- * - v1.0.0   - first working version                               - 01/28/2015 wer
- * - v1.0.0β2 - changed to use DI/IOC                               - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                                     - 11/14/2014 wer
+ * - v1.0.4   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - v1.0.3   - Change in implementation of LIB_TWIG_PREFIX                             - 2016-04-10 wer
+ * - v1.0.2   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
+ * - v1.0.1   - change in database structure forced change here                         - 09/03/2015 wer
+ * - v1.0.0   - first working version                                                   - 01/28/2015 wer
+ * - v1.0.0β2 - changed to use DI/IOC                                                   - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                                                         - 11/14/2014 wer
  */
 namespace Ritc\Library\Views;
 
@@ -74,8 +75,9 @@ class RoutesAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'menus'   => $this->a_nav,
-            'adm_lvl' => $this->adm_level
+            'a_menus' => $this->a_nav,
+            'adm_lvl' => $this->adm_level,
+            'twig_prefix' => LIB_TWIG_PREFIX
         );
         $a_values = array_merge($a_page_values, $a_values);
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
@@ -125,6 +127,7 @@ class RoutesAdminView
             $a_values['description'] = 'Form to verify the action to delete the route.';
         }
         $a_values['menus'] = $this->a_nav;
+        $a_values['twig_prefix'] = LIB_TWIG_PREFIX;
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete_route.twig';
         return $this->o_twig->render($tpl, $a_values);
     }

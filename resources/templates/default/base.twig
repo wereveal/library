@@ -13,8 +13,8 @@
         <base href="{{ base_url }}">
 
         {% block stylesheets %}
-        <link rel="stylesheet" href="{{ public_dir }}/assets/css/bootstrap.min.css" media="screen">
-        <link rel="stylesheet" href="{{ public_dir }}/assets/css/main.css" media="screen">
+        <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css" integrity="sha384-XXXXXXXX" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ public_dir }}/assets/css/manager.css" media="screen">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         {% endblock %}
 
@@ -38,23 +38,21 @@
         {% block headjavascripts %}{% endblock %}
     </head>
     <body>
-        <div class="container">
+        <div class="container container-main">
 <!--[if lt IE 7]>
-            <div class="row">
-                <div class="col-md-12">
-                    <p>You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> to better experience this site.</p>
-                </div>
+            <div class="container">
+                <p>You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> to better experience this site.</p>
             </div>
 <![endif]-->
-        {% block header %}{% include '@lib_snippets/menu.twig' %}{% endblock %}
+        {% block header %}{% include '@' ~ twig_prefix ~ 'snippets/menu.twig' %}{% endblock %}
         {% block search %}{% endblock %}
         {% block body %}{% endblock %}
         {% block footer %}{% endblock %}
         </div>
 
         {% block javascripts %}
-        <script src="http://code.jquery.com/jquery.js"></script>
-        <script src="{{ public_dir }}/assets/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+        <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js" integrity="sha384-XXXXXXXX" crossorigin="anonymous"></script>
         {% endblock %}
     </body>
 </html>

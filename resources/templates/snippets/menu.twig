@@ -1,28 +1,50 @@
-<nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#manager-nav">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="manager-nav">
-            <ul class="nav navbar-nav">
-            {% for menu in menus %}
-                {% if menu.class == 'active' %}
-                    {% set spanstuff = ' <span class="sr-only">(current)</span>' %}
-                {% else %}
-                    {% set spanstuff = '' %}
-                {% endif %}
-                <li class="{{ menu.class }}"><a href="{{ public_dir }}{{ menu.url }}">{{ menu.name }}{{ spanstuff }}</a></li>
-            {% endfor %}
+    <nav class="navbar navbar-dark bg-gray" role="navigation">
+        <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#mainNav">
+            <span class="fa fa-bars"></span>
+        </button>
+        <div class="collapse navbar-toggleable-xs" id="mainNav">
+            <a class="navbar navbar-brand" href="#"><i class="fa fa-book fa-3x"></i></a>
+            <ul class="nav nav-inline">
+                {% for menu in a_menus %}
+                    {% if menu.css != '' %}
+                        {% set extra_css %}
+                            {{ ' ' ~ menu.css }}
+                        {% endset %}
+                    {% else %}
+                        {% set extra_css = '' %}
+                    {% endif %}
+                    {% if menu.url == page_url %}
+                        {% set active_url = ' active' %}
+                    {% else %}
+                        {% set active_url = '' %}
+                    {% endif %}
+                    {% if menu.submenu is empty %}
+                        <li class="nav-item">
+                            <a class="nav-link{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ menu.url }}">{{ menu.name }}</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle{{ menu.css }}{{ active_url }}" data-toggle="dropdown" href="{{ public_dir }}{{ menu.url }}" role="button" aria-haspopup="true" aria-expanded="false">{{ menu.name }}</a>
+                            <div class="dropdown-menu">
+                                {% for child in menu.submenu %}
+                                    {% if child.css != '' %}
+                                        {% set extra_css %}
+                                            {{ ' ' ~ child.css }}
+                                        {% endset %}
+                                    {% else %}
+                                        {% set extra_css = '' %}
+                                    {% endif %}
+                                    {% if child.url == page_url %}
+                                        {% set active_url = ' active' %}
+                                    {% else %}
+                                        {% set active_url = '' %}
+                                    {% endif %}
+                                    <a class="dropdown-item{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ child.url }}">{{ child.name }}</a>
+                                {% endfor %}
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endfor %}
             </ul>
-        </div><!-- /.navbar-collapse -->
-
-    </div><!-- /.container-fluid -->
-</nav>
+        </div>
+    </nav>

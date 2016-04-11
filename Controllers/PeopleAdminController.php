@@ -5,8 +5,8 @@
  * @file      Ritc/Library/Controllers/PeopleAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.2
- * @date      2015-11-27 14:58:40
+ * @version   1.0.2+2
+ * @date      2016-04-11 08:06:39
  * @note <b>Change Log</b>
  * - v1.0.2   - bug fix                                          - 2016-03-08 wer
  * - v1.0.1   - bug fixes                                        - 11/27/2015 wer
@@ -201,7 +201,7 @@ class PeopleAdminController implements ManagerControllerInterface
 
     /**
      * Display the form to verify delete.
-     * @return array
+     * @return string
      */
     public function verifyDelete()
     {
