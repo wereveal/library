@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Helper/Arrays.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.7.0
- * @date      2015-11-25 11:27:29
+ * @version   2.8.0
+ * @date      2016-04-12 16:01:00
  * @note <b>Change Log</b>
+ * - v2.8.0 - Added new method inAssocArrayRecursive()                               - 2016-04-12 wer
  * - v2.7.0 - Changed entity coding/decoding to be defineable via paramater.         - 11/25/2015 wer
  *              Defaults to ENT_QUOTES.
  * - v2.6.1 - bug fix, stripTags -- logic error                                      - 11/12/2015 wer
@@ -223,15 +224,50 @@ class Arrays
     }
 
     /**
+     * Determines if the value exists in an associative array or array or assoc arrays.
+     * @param string $key_name   Required.
+     * @param string $needle     Required.
+     * @param array  $a_haystack Required.
+     * @param bool   $strict     Optional.
+     * @return bool
+     */
+    public static function inAssocArrayRecursive($key_name = '', $needle = '', array $a_haystack, $strict = false)
+    {
+        if ($key_name == '' || $needle == '' || $a_haystack == []) {
+            return false;
+        }
+        if (!self::isArrayOfAssocArrays($a_haystack) && !self::isAssocArray($a_haystack)) {
+            return false;
+        }
+        foreach ($a_haystack as $key => $item) {
+            if (is_array($item)) {
+                $inner_key = self::inAssocArrayRecursive($key_name, $needle, $item, $strict);
+                if ($inner_key !== false) {
+                    return true;
+                }
+            }
+            else {
+                if (($strict && $key_name == $key && $item === $needle)) {
+                    return true;
+                }
+                elseif ($key_name == $key && $item == $needle) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Searches a multidimensional array for a value.
      * If found, returns the key of the array, if multidimenstional array
      * it returns the keys of each array dot separated, e.g., 1.3.2 or 'fred'.'wife'.'wilma'.
-     * @param string $needle
-     * @param array  $a_haystack
-     * @param bool   $strict
+     * @param string $needle     Required.
+     * @param array  $a_haystack Required.
+     * @param bool   $strict     Optional.
      * @return mixed|string|int|bool key of the found or false
      */
-    public static function inArrayRecursive($needle, array $a_haystack, $strict = false)
+    public static function inArrayRecursive($needle = '', array $a_haystack, $strict = false)
     {
         if ($needle == '' || $a_haystack == array()) {
             return false;
@@ -246,7 +282,7 @@ class Arrays
             else {
                 if (($strict && $item === $needle)
                 || ($strict === false && $item == $needle)) {
-                    print $key . "\n";
+                    // print $key . "\n";
                     return $key;
                 }
             }
