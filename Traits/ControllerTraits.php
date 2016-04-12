@@ -52,9 +52,7 @@ trait ControllerTraits
         $this->o_db      = $o_di->get('db');
         $this->o_router  = $o_di->get('router');
         $this->o_session = $o_di->get('session');
-        if (defined(DEVELOPER_MODE) && DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-        }
+        $this->o_elog    = $o_di->get('elog');
     }
 
     protected function setProperties()

@@ -1,4 +1,7 @@
 {% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% block headjavascripts %}
+    {{ parent() }}
+{% endblock %}
 {% block body %}
     <div class="container">
         <h1 class="smaller">Welcome! This is a manager to add/modify/delete URLs used in website.</h1>
@@ -10,11 +13,12 @@
     {% endif %}
     <div class="container">
         {% set x = -1 %}
+        {% set y = 1 %}
         {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
         <div class="row {{ class }}">
-            <form action="{{ public_id }}/manager/library/urls/save/" method="post">
+            <form action="{{ public_id }}/manager/library/urls/save/" method="post" id="{{ 'url' ~ y }}">
                 <div class="col-sm-6 col-xs-12">
-                    <label for="url" class="bold pad-right">Url:</label><input type="text" name="url" class="colorful w450" value="">
+                    <label for="url" class="bold pad-right">Url:</label><input type="url" name="url" class="colorful w450" value="" required>
                 </div>
                 <div class="col-sm-3 col-xs-12">
                     <label for="immutable" class="bold pad-right">Cannot Be Deleted: </label><input type="checkbox" name="immutable" value="1">
@@ -28,12 +32,13 @@
             </form>
         </div>
     {% set x = x * -1 %}
+    {% set y = y + 1 %}
     {% for row in a_urls %}
         {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
         <div class="row {{ class }}">
-            <form action="{{ public_id }}/manager/library/urls/update/" method="post">
+            <form action="{{ public_id }}/manager/library/urls/modify/" method="post" id="{{ 'url' ~ y }}">
                 <div class="col-sm-6 col-xs-12">
-                    <label for="url" class="bold pad-right">Url: </label><input type="text" name="url" class="colorful w450" value="{{ row.url }}">
+                    <label for="url" class="bold pad-right">Url: </label><input type="url" name="url" class="colorful w450" value="{{ row.url }}" required>
                 </div>
                 <div class="col-sm-3 col-xs-12">
                 {% if row.immutable == 'true' and adm_lvl < 10 %}
@@ -52,6 +57,8 @@
                     <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Update</button>
                 {% if row.immutable == 'true' and adm_lvl == 10 %}
                     <button type="submit" name="submit" value="verify" class="btn btn-danger btn-xs">Delete</button>
+                {% elseif row.immutable == 'false' %}
+                    <button type="submit" name="submit" value="verify" class="btn btn-danger btn-xs">Delete</button>
                 {% endif %}
                     <input type="hidden" name="url_id" value="{{ row.url_id }}">
                     <input type="hidden" name="tolken" value="{{ tolken }}" />
@@ -61,12 +68,13 @@
             </form>
         </div>
         {% set x = x * -1 %}
+        {% set y = y + 1 %}
     {% endfor %}
     {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
         <div class="row {{ class }}">
-            <form action="{{ public_id }}/manager/library/urls/save/" method="post">
+            <form action="{{ public_id }}/manager/library/urls/save/" method="post" id="{{ "url#{y}" }}">
                 <div class="col-sm-6 col-xs-12">
-                    <label for="url" class="bold pad-right">Url: </label><input type="text" name="url" class="colorful w450" value="">
+                    <label for="url" class="bold pad-right">Url: </label><input type="url" name="url" class="colorful w450" value="" required>
                 </div>
                 <div class="col-sm-3 col-xs-12">
                     <label for="immutable" class="bold pad-right">Cannot Be Deleted: </label><input type="checkbox" name="immutable" value="1">
@@ -90,6 +98,14 @@
             </li>
         </ul>
     </div>
+    <script>
+        $().ready(function() {
+            {% for i in 1..y %}
+            $("#url{{ i }}").validate();
+            {% endfor %}
+        });
+    </script>
+
 {% endblock %}
 {# Expected values
     [

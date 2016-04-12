@@ -1,7 +1,7 @@
 {% if a_message.message != '' %}
-<p class="{{ a_message.message_class }}">
+<p class="{{ a_message.message_class }}" role="alert">
     <img src="{{ a_message.image_src }}"{% if a_message.alt_text != '' %} alt="{{ a_message.alt_text }}"{% endif %}{% if a_message.image_class != '' %} class="{{ a_message.image_class }}"{% endif %}{{ a_message.extras }} />
-    {{ a_message.message }}
+    {{ a_message.message|raw }}
 </p>
 <div class="clearfix"></div>
 {% endif %}

@@ -40,6 +40,10 @@ class UrlsAdminController implements ManagerControllerInterface
         $this->setupController($o_di);
         $this->o_urls_model = new UrlsModel($this->o_db);
         $this->o_urls_view  = new UrlsView($o_di);
+        error_Log(defined('DEVELOPER_MODE') ? "yes" : "no");
+        if (DEVELOPER_MODE) {
+            $this->o_urls_model->setElog($this->o_elog);
+        }
     }
 
     /**
@@ -82,11 +86,21 @@ class UrlsAdminController implements ManagerControllerInterface
      */
     public function save()
     {
-        $url       = $this->a_post['url'];
-        $immutable = $this->a_post['immutable'];
+        $meth = __METHOD__ . '.';
+        $url = $this->a_post['url'];
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
+            return $this->o_urls_view->renderList($a_message);
+        }
         list($scheme, $text) = explode('://', $url);
+        $text = str_replace($_SERVER['HTTP_HOST'], '', $text);
+        if (!$this->isValidScheme($scheme)) {
+            $scheme = 'https';
+        }
+        $immutable = isset($this->a_post['immutable']) ? 1 : 0;
+
         $a_values = [
-            'url_text'      => str_replace($_SERVER['HTTP_HOST'], '', $text),
+            'url_text'      => $text,
             'url_scheme'    => $scheme,
             'url_immutable' => $immutable
         ];
@@ -97,6 +111,9 @@ class UrlsAdminController implements ManagerControllerInterface
         else {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new url could not be saved.');
         }
+        $log_message = 'Message ' . var_export($a_message, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         return $this->o_urls_view->renderList($a_message);
     }
 
@@ -106,17 +123,23 @@ class UrlsAdminController implements ManagerControllerInterface
      */
     public function update()
     {
-        if (!isset($this->a_post['url_id']) || !isset($this->a_post['url']) || !isset($this->a_post['immutable'])) {
+        if (!isset($this->a_post['url_id']) || !isset($this->a_post['url'])) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The url could not be updated.');
             return $this->o_urls_view->renderList($a_message);
         }
-
-        list($scheme, $text) = explode($this->a_post['url']);
+        $url = $this->a_post['url'];
+        $url_id = (int) $this->a_post['url_id'];
+        list($scheme, $text) = explode('://', $url);
+        $text = str_replace($_SERVER['HTTP_HOST'], '', $text);
+        if (!$this->isValidScheme($scheme)) {
+            $scheme = 'https';
+        }
+        $immutable = isset($this->a_post['immutable']) ? 1 : 0;
         $a_values = [
-            'url_id'        => $this->a_post['url_id'],
-            'url_text'      => str_replace($_SERVER['HTTP_HOST'], '', $text),
+            'url_id'        => $url_id,
+            'url_text'      => $text,
             'url_scheme'    => $scheme,
-            'url_immutable' => $this->a_post['immutable']
+            'url_immutable' => $immutable
         ];
         $results = $this->o_urls_model->update($a_values);
         if ($results !== false) {
@@ -143,7 +166,8 @@ class UrlsAdminController implements ManagerControllerInterface
      */
     public function delete()
     {
-        $results = false;
+        $url_id = isset($this->a_post['url_id']) ? $this->a_post['url_id'] : -1;
+        $results = $this->o_urls_model->delete($url_id);
         if ($results !== false) {
             $a_message = ViewHelper::successMessage();
         }
@@ -153,4 +177,17 @@ class UrlsAdminController implements ManagerControllerInterface
         return $this->o_urls_view->renderList($a_message);
     }
 
+    private function isValidScheme($value = '')
+    {
+        switch ($value) {
+            case 'http':
+            case 'https':
+            case 'ftp':
+            case 'gopher':
+            case 'mailto':
+                return true;
+            default:
+                return false;
+        }
+    }
 }

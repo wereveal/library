@@ -62,11 +62,11 @@ class UrlsView
             ];
         }
         if (count($a_message) != 0) {
-            $a_message['message'] .= "<br><br>Changing the URL can result in unexpected results. If you are not sure, do not do it.";
-            $a_values['a_message'] = ViewHelper::messageProperties($a_message);
+            $a_message['message'] .= "<br>Changing the URL can result in unexpected results. If you are not sure, do not do it.";
+            $a_message = ViewHelper::messageProperties($a_message);
         }
         else {
-            $a_values['a_message'] = ViewHelper::messageProperties(
+            $a_message = ViewHelper::messageProperties(
                 [
                     'message' => 'Changing the URL can result in unexpected results. If you are not sure, do not do it.',
                     'type'    => 'warning'
@@ -85,7 +85,7 @@ class UrlsView
             'twig_prefix' => LIB_TWIG_PREFIX
         ];
         $log_message = 'Twig Values:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/urls_admin.twig';
         return $this->o_twig->render($tpl, $a_values);

@@ -75,13 +75,14 @@ class RoutesAdminView
             'tolken'  => $_SESSION['token'],
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
-            'a_menus' => $this->a_nav,
+            'a_menus' => $this->retrieveNav('ManagerLinks'),
             'adm_lvl' => $this->adm_level,
             'twig_prefix' => LIB_TWIG_PREFIX
         );
         $a_values = array_merge($a_page_values, $a_values);
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
@@ -91,22 +92,61 @@ class RoutesAdminView
                 ViewHelper::warningMessage($message)
             );
         }
+
         $a_routes = $this->o_model->readAllWithUrl();
         $log_message = 'a_routes: ' . var_export($a_routes, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        if ($a_routes !== false && count($a_routes) > 0) {
-            $a_values['a_routes'] = $a_routes;
-        }
+
         $o_urls = new UrlsModel($this->o_db);
         $a_urls = $o_urls->read();
-        if ($a_urls === false) {
-            $error_message = $o_urls->getErrorMessage();
+        $log_message = 'URLs:  ' . var_export($a_urls, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        if ($a_urls === false || $a_routes === false) {
+            $error_message = 'A problem has occured. Please try reloading the page.';
             $a_values['a_message'] = ViewHelper::failureMessage($error_message);
         }
         else {
-            $a_values['a_urls'] = $a_urls;
+            $a_options = [];
+            $a_options[] = [
+                'value'       => 0,
+                'label'       => '--Select URL--',
+                'other_stuph' => ' selected'
+            ];
+            foreach ($a_urls as $a_url) {
+                $a_options[] = [
+                    'value' => $a_url['url_id'],
+                    'label' => $a_url['url_text']
+                ];
+            }
+            $a_values['select'] = [
+                'name'    => 'route[url_id]',
+                'class'   => 'form-control w200',
+                'options' => $a_options
+            ];
+            foreach ($a_routes as $key => $a_route) {
+                $a_options = [];
+                foreach ($a_urls as $a_url) {
+                    $a_options[] = [
+                        'value'       => $a_url['url_id'],
+                        'label'       => $a_url['url_text'],
+                        'other_stuph' => $a_route['url_id'] == $a_url['url_id'] ? ' selected' : ''
+                    ];
+                }
+                $a_routes[$key]['select'] = [
+                    'name'    => 'route[url_id]',
+                    'class'   => 'form-control w200',
+                    'options' => $a_options
+                ];
+                $a_routes[$key]['twig_prefix'] = LIB_TWIG_PREFIX;
+            }
+
         }
-        $tpl = '@' . '@' . LIB_TWIG_PREFIX . 'pages/routes_admin.twig';
+        $a_values['a_routes'] = $a_routes;
+        $log_message = 'Twig Values: ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/routes_admin.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 

@@ -256,7 +256,7 @@ class LibraryController implements ControllerInterface
                 return $o_urls_admin->render();
             }
         }
-        $a_message = ViewHelper::warningMessage("Access Prohibited");
+        $a_message = ViewHelper::warningMessage("You need to login with a valid usename and password.");
         return $this->renderLogin('', $a_message);
     }
 

@@ -5,9 +5,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.5
- * @date      2016-03-29 15:05:37
+ * @version   1.0.0-alpha.6
+ * @date      2016-04-12 14:13:59
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.6 - bug fix in setupProperties                            - 2016-04-12 wer
  * - v1.0.0-alpha.5 - Added new method, additional refactoring              - 2016-04-01 wer
  *     - hasRecords
  *     - notEmptyArray
@@ -628,7 +629,7 @@ SQL;
         if ($table_name != '') {
             $this->db_table           = $this->db_prefix . $table_name;
             $this->a_db_fields        = $o_db->selectDbColumns($this->db_table);
-            $this->primary_index_name = $this->setPrimaryIndexName();
+            $this->setPrimaryIndexName();
         }
     }
 

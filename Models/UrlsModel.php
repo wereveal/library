@@ -100,8 +100,14 @@ class UrlsModel implements ModelInterface
     public function delete($id = -1)
     {
         if ($id == -1) { return false; }
-        $search_results = $this->read([$this->primary_index_name => $id], ['a_fields' => 'url_immutable']);
-        if (isset($search_results[0]) && $search_results[0]['route_immutable'] == 1) {
+        $a_search_for = [$this->primary_index_name => $id];
+        $a_search_params = [
+            'order_by' => 'url_id',
+            'a_fields' => ['url_immutable']
+        ];
+        $search_results = $this->read($a_search_for, $a_search_params);
+        error_log(var_export($search_results, true));
+        if (isset($search_results[0]) && $search_results[0]['url_immutable'] == 1) {
             $this->error_message = 'Sorry, that url can not be deleted.';
             return false;
         }

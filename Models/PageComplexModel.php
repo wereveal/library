@@ -5,7 +5,7 @@
  * @file      PageComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
+ * @version   1.0.0-alpha.0+2
  * @date      2016-04-08 10:35:17
  * @note Change Log
  * - v1.0.0-alpha.0 - Initial version        - 2016-04-08 wer
@@ -26,8 +26,13 @@ class PageComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
+    /** @var string  */
     private $select_sql = '';
 
+    /**
+     * PageComplexModel constructor.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'page');
@@ -71,7 +76,7 @@ class PageComplexModel
 WHERE p.url_id = :url_id
 AND p.url_id = u.url_id
 SQL;
-        $this->logIt("sql: $sql", LOG_ON, $meth . __LINE__);
+        $this->logIt("sql: $sql", LOG_OFF, $meth . __LINE__);
         return $this->o_db->search($sql, [':url_id' => $url_id]);
 
     }
@@ -96,10 +101,14 @@ SQL;
         return $this->o_db->search($sql, [':url_text' => $url_text]);
     }
 
+    /**
+     * Sets the class property select_sql.
+     * @param string $the_string Optional, normally not specified.
+     */
     private function setSelectSql($the_string = '')
     {
         $meth = __METHOD__ . '.';
-        $this->logIt("db prefix: " . $this->db_prefix, LOG_ON, $meth . __LINE__);
+        $this->logIt("db prefix: " . $this->db_prefix, LOG_OFF, $meth . __LINE__);
         if ($the_string != '') {
             $this->select_sql = $the_string;
         }
@@ -111,6 +120,5 @@ SELECT p.page_id, p.page_type, p.page_title, p.page_description,
 FROM {$this->db_prefix}page as p, {$this->db_prefix}urls as u
 SQL;
         }
-
     }
 }

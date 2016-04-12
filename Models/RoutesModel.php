@@ -23,7 +23,6 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -170,6 +169,7 @@ ORDER BY r.route_immutable DESC, u.url_text
 EOT;
         return $this->o_db->search($sql);
     }
+
     /**
      * Returns the sql error message.
      * Overrides method in DbUtilityTraits.

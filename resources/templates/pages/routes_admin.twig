@@ -14,7 +14,7 @@
     {% endif %}
     <div class="row">
         <div class="col-md-12">
-            <div class="row hidden-sm hidden-xs list-header">
+            <div class="row hidden-md-down list-header">
                 <div class="col-md-4 list-header">Route Path</div>
                 <div class="col-md-2 list-header">Route Class</div>
                 <div class="col-md-2 list-header">Route Method</div>
@@ -24,11 +24,14 @@
         {% set x = -1 %}
         {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
-                <form action="{{ public_dir }}/manager/routes/save/" method= "post">
-                    <div class="col-md-4"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_path]">Route Path: </label><input type="text" name="route[route_path]" value="" size="40" maxlength="64" class="colorful"/></div>
-                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="" size="20" maxlength="32" class="colorful"/></div>
-                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="" size="20" maxlength="32" class="colorful"/></div>
-                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="" size="20" maxlength="32" class="colorful"/></div>
+                <form action="{{ public_dir }}/manager/library/routes/save/" method= "post">
+                    <div class="col-md-3">
+                        <label class="hidden-sm-up" for="route[url_id]">URL: </label>
+                        {% include '@' ~ twig_prefix ~ 'elements/select.twig' %}
+                    </div>
+                    <div class="col-md-3"><label class="hidden-sm-up" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="" maxlength="32" class="colorful w250"/></div>
+                    <div class="col-md-2"><label class="hidden-sm-up" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="" maxlength="32" class="colorful w150"/></div>
+                    <div class="col-md-2"><label class="hidden-sm-up" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="" maxlength="32" class="colorful w150"/></div>
                     <div class="col-md-2">
                         <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Route</button>
                         <input type="hidden" name="tolken" value="{{ tolken }}" />
@@ -42,11 +45,14 @@
             {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
             {% if row.route_immutable == 0 %}
-            <form action="{{ public_dir }}/manager/routes/update/" method="post">
-                <div class="col-md-4"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_path]">Route Path: </label><input type="text" name="route[route_path]" value="{{ row.route_path }}" size="40" maxlength="64" class="colorful"/></div>
-                <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="{{ row.route_class }}" size="20" maxlength="32" class="colorful"/></div>
-                <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="{{ row.route_method }}" size="20" maxlength="32" class="colorful"/></div>
-                <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="{{ row.route_action }}" size="20" maxlength="32" class="colorful"/></div>
+            <form action="{{ public_dir }}/manager/library/routes/update/" method="post">
+                <div class="col-md-3">
+                    <label class="hidden-sm-up" for="route[url_id]">URL: </label>
+                    {% include '@' ~ twig_prefix ~ 'elements/select.twig' with row only %}
+                </div>
+                <div class="col-md-3"><label class="hidden-sm-up" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="{{ row.route_class }}" maxlength="32" class="colorful w250"/></div>
+                <div class="col-md-2"><label class="hidden-sm-up" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="{{ row.route_method }}" maxlength="32" class="colorful w150"/></div>
+                <div class="col-md-2"><label class="hidden-sm-up" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="{{ row.route_action }}" maxlength="32" class="colorful w150"/></div>
                 <div class="col-md-2">
                     <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
                     <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
@@ -58,10 +64,10 @@
             </form>
             {% else %}
                 {# Disabled so the list is shorter and easier to use, don't want the non-editable records being accidently edited.
-                <div class="col-md-4"><span class="visible-sm-inline-block visible-xs-inline-block">Route Path: </span>{{ row.route_path }}</div>
-                <div class="col-md-2"><span class="visible-sm-inline-block visible-xs-inline-block">Route Class: </span>{{ row.route_class }}</div>
-                <div class="col-md-2"><span class="visible-sm-inline-block visible-xs-inline-block">Route Method: </span>{{ row.route_method }}</div>
-                <div class="col-md-2"><span class="visible-sm-inline-block visible-xs-inline-block">Route Action: </span>{{ row.route_action }}</div>
+                <div class="col-md-4"><span class="hidden-sm-up">URL: </span>{{ row.route_path }}</div>
+                <div class="col-md-2"><span class="hidden-sm-up">Route Class: </span>{{ row.route_class }}</div>
+                <div class="col-md-2"><span class="hidden-sm-up">Route Method: </span>{{ row.route_method }}</div>
+                <div class="col-md-2"><span class="hidden-sm-up">Route Action: </span>{{ row.route_action }}</div>
                 <div class="col-md-2">&nbsp;</div>
                 #}
             {% endif %}
@@ -70,11 +76,14 @@
         {% endfor %}
         {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
-                <form action="{{ public_dir }}/manager/routes/save/" method= "post">
-                    <div class="col-md-4"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_path]">Route Path: </label><input type="text" name="route[route_path]" value="" size="40" maxlength="64" class="colorful"/></div>
-                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="" size="20" maxlength="32" class="colorful"/></div>
-                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="" size="20" maxlength="32" class="colorful"/></div>
-                    <div class="col-md-2"><label class="visible-sm-inline-block visible-xs-inline-block" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="" size="20" maxlength="32" class="colorful"/></div>
+                <form action="{{ public_dir }}/manager/library/routes/save/" method= "post">
+                    <div class="col-md-3">
+                        <label class="hidden-sm-up" for="route[url_id]">URL: </label>
+                        {% include '@' ~ twig_prefix ~ 'elements/select.twig' %}
+                    </div>
+                    <div class="col-md-3"><label class="hidden-sm-up" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="" maxlength="32" class="colorful w250"/></div>
+                    <div class="col-md-2"><label class="hidden-sm-up" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="" maxlength="32" class="colorful w150"/></div>
+                    <div class="col-md-2"><label class="hidden-sm-up" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="" maxlength="32" class="colorful w150"/></div>
                     <div class="col-md-2">
                         <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Route</button>
                         <input type="hidden" name="tolken" value="{{ tolken }}" />
@@ -106,3 +115,31 @@
         </div>
     </div>
 {% endblock %}
+{# Expected values
+    [
+        'lang',
+        'charset',
+        'base_url',
+        'description',
+        'public_dir',
+        'title',
+        'site_url',
+        'rights_holder',
+        'a_menus',
+        'a_message',
+        'a_urls' => [['url_id', 'url_text', 'is_selected'],...],
+        'a_routes' => [
+            [
+                'route_id',
+                'route_class',
+                'route_method',
+                'route_action',
+                'route_immutable',
+                'url_id'
+            ],...
+        ],
+        'adm_lvl',
+        'tolken',
+        'form_ts'
+    ]
+#}

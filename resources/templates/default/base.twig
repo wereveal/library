@@ -16,6 +16,8 @@
         <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css" integrity="sha384-XXXXXXXX" crossorigin="anonymous">
         <link rel="stylesheet" href="{{ public_dir }}/assets/css/manager.css" media="screen">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link href='https://fonts.googleapis.com/css?family=Lato:400,400italic|Merriweather:400,400italic' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{{ public_dir }}/assets/css/manager.css" media="screen">
         {% endblock %}
 
         <!-- For IE6-8 support of HTML5 elements -->
@@ -35,7 +37,10 @@
         <link rel="apple-touch-icon" sizes="152x152" href="/assets/images/touch/icon_76x76@2x.png">
         {% endblock %}
 
-        {% block headjavascripts %}{% endblock %}
+        {% block headjavascripts %}
+        <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+        <script src="{{ public_dir }}/assets/js/jquery.validate.min.js"></script>
+        {% endblock %}
     </head>
     <body>
         <div class="container container-main">
@@ -51,7 +56,6 @@
         </div>
 
         {% block javascripts %}
-        <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
         <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js" integrity="sha384-XXXXXXXX" crossorigin="anonymous"></script>
         {% endblock %}
     </body>

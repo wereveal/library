@@ -1,14 +1,16 @@
 {% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
+
+{% block header %}{% endblock %}
 {% block body %}
     <div class="container">
-        <h1 class="smaller">Welcome! Please Login. <small>This is for site managers.</small></h1>
+            <h1 class="smaller"><i class="fa fa-book fa-3x pad-right"></i>  Welcome! Please Login</h1>
     </div>
-    {% if a_message.message != '' %}
-        <div class="container">
-            {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
-        </div>
-    {% endif %}
+{% if a_message.message != '' %}
     <div class="container">
-    {% include '@' ~ twig_prefix ~ 'forms/login_form.twig' %}
+        {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
+    </div>
+{% endif %}
+    <div class="container">
+        {% include '@' ~ twig_prefix ~ 'forms/login_form.twig' %}
     </div>
 {% endblock %}
