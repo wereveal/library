@@ -50,12 +50,19 @@ class PageComplexModel
         $meth = __METHOD__ . '.';
         $a_allowed_keys = ['url_id', 'url_text', 'page_id', 'page_title'];
         $a_search_for = Arrays::removeUndesiredPairs($a_search_for, $a_allowed_keys);
+
         if (!isset($a_search_parameters['order_by'])) {
             $a_search_parameters['order_by'] = 'page_id ASC';
+        }
+        if (!isset($a_search_parameters['where_exists'])) {
+            $a_search_parameters['where_exists'] = true;
         }
         $sql_where = $this->buildSqlWhere($a_search_for, $a_search_parameters);
         $sql = $this->select_sql . $sql_where;
         $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
+        $log_message = 'Search Parameters ' . var_export($a_search_for, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        
         return $this->o_db->search($sql, $a_search_for);
     }
 
@@ -115,9 +122,10 @@ SQL;
         else {
             $this->select_sql =<<<SQL
 SELECT p.page_id, p.page_type, p.page_title, p.page_description, 
-       p.page_base_url, p.page_lang, p.page_charset, 
-       u.url_id, u.url_text, u.url_scheme
+       p.page_base_url, p.page_lang, p.page_charset, p.page_immutable,
+       u.url_id, u.url_host, u.url_text, u.url_scheme, u.url_immutable
 FROM {$this->db_prefix}page as p, {$this->db_prefix}urls as u
+WHERE p.url_id = u.url_id
 SQL;
         }
     }

@@ -1,63 +1,32 @@
 {% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
 {% block body %}
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Welcome! {{ page_title }}</h1>
-        </div>
+    <div class="container">
+        <h1 class="smaller">{{ page_title }}</h1>
     </div>
     {% if a_message.message != '' %}
-    <div class="row">
-        <div class="col-md-12">
-            {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
-        </div>
+    <div class="container">
+        {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
     </div>
     {% endif %}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="row {{ class }}">
-                <div class="col-md-12">
-                    <div class="row row-inside">
-                        <div class="col-md-2 .col-md-offset-10">
-                            <form action="{{ public_dir }}/manager/pages/new/" method= "post">
-                                <button type="submit" name="submit" value="new_page" class="btn btn-primary btn-xs">Create New Page</button>
-                                <input type="hidden" name="tolken" value="{{ tolken }}" />
-                                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                                <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                            </form>
-                        </div>
-                    </div>
-                </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-1 col-md-offset-11">
+                <form action="{{ public_dir }}/manager/library/pages/new/" method= "post">
+                    <button type="submit" name="submit" value="new_page" class="btn btn-primary btn-xs">New Page</button>
+                    <input type="hidden" name="tolken" value="{{ tolken }}" />
+                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                </form>
             </div>
-        {% set x = -1 %}
-        {% for page in a_pages %}
-            {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
-            <div class="row {{ class }}">
-                <div class="col-md-12">
-                        <div class="row row-inside {{ class }}">
-                            <div class="col-md-4">
-                                <span class="inline-block bold w75 aright pad-right-12">URL:</span>
-                                {{ page.page_url }}
-                            </div>
-                            <div class="col-md-6">
-                                <span class="inline-block bold w75 aright pad-right-12">Title:</span>
-                                {{ page.page_title }}
-                            </div>
-                             <div class="col-md-2">
-                                {% if page.page_immutable != 1 or adm_lvl >= 9 %}
-                                <form action="{{ public_dir }}/manager/pages/modify/" method="post">
-                                     <button type="submit" name="submit" value="modify_page" class="btn btn-primary btn-xs">Modify</button>
-                                     <input type="hidden" name="tolken" value="{{ tolken }}" />
-                                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                                     <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                                     <input type="hidden" name="page_id" value="{{ page.page_id }}" />
-                                </form>
-                                {% endif %}
-                            </div>
-                        </div>
-                </div>
-            </div>
-            {% set x = x * -1 %}
-        {% endfor %}
         </div>
+{% for page in a_pages %}
+    {% if 'library' not in page.page_url %}
+        {% set class = loop.index % 2 == 0 ? 'normal-row' : 'alt-row' %}
+        {% include '@' ~ twig_prefix ~ 'snippets/page_line.twig' %}
+    {% elseif adm_lvl == 10 %}
+        {% set class = loop.index % 2 == 0 ? 'normal-row' : 'alt-row' %}
+        {% include '@' ~ twig_prefix ~ 'snippets/page_line.twig' %}
+    {% endif %}
+{% endfor %}
     </div>
 {% endblock %}

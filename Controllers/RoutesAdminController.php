@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Controllers/RoutesAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.1.1
- * @date      2015-10-06 13:55:38
+ * @version   2.2.0
+ * @date      2016-04-13 08:52:26
  * @pre       The route to this controller has to already be in the database and should not be able to be deleted.
  * @note <b>Change Log</b>
+ * - v2.2.0   - Refactored to work with the Urls class/model - 2016-04-13 wer
  * - v2.1.1   - bug fix                                      - 2016-03-08 wer
  * - v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
  *                If the route doesn't end with a file ext
@@ -186,7 +187,7 @@ class RoutesAdminController implements ManagerControllerInterface
     }
 
     /**
-     * Removes tags and adds appropriate slashes to route path.
+     * Removes tags and makes fields single words, camelCase.
      * @param array $a_route defaults to empty array.
      * @return array
      */
@@ -194,24 +195,27 @@ class RoutesAdminController implements ManagerControllerInterface
     {
         if ($a_route == array()) {
             return [
-                'route_path'      => '',
+                'url_id'          => '',
                 'route_class'     => '',
                 'route_method'    => '',
                 'route_action'    => '',
-                'route_immutable' => 0
+                'route_immutable' => 0,
+                'route_id'        => 0
             ];
         }
         foreach ($a_route as $key => $value) {
-            if ($key != 'route_immutable') {
-                $a_route[$key] = Strings::removeTagsWithDecode($value, ENT_QUOTES);
-            }
-        }
-        if (substr($a_route['route_path'], 0, 1) != '/') {
-            $a_route['route_path'] = '/' . $a_route['route_path'];
-        }
-        if (strrpos($a_route['route_path'], '.') === false) {
-            if (substr($a_route['route_path'], -1, 1) != '/') {
-                $a_route['route_path'] .= '/';
+            switch ($key) {
+                case 'route_id':
+                case 'route_immutable':
+                case 'url_id':
+                    break;
+                case 'route_class':
+                    $value = Strings::removeTagsWithDecode($value, ENT_QUOTES);
+                    $a_route[$key] = Strings::makeCamelCase($value, false);
+                    break;
+                default:
+                    $value = Strings::removeTagsWithDecode($value, ENT_QUOTES);
+                    $a_route[$key] = Strings::makeCamelCase($value, true);
             }
         }
         return $a_route;

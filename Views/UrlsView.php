@@ -5,10 +5,11 @@
  * @file      UrlsView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-04-11 08:41:34
+ * @version   1.0.0-beta.0
+ * @date      2016-04-13 11:35:27
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2016-04-11 wer
+ * - v1.0.0-beta.0  - Initial working version   - 2016-04-13 wer
+ * - v1.0.0-alpha.0 - Initial version           - 2016-04-11 wer
  */
 namespace Ritc\Library\Views;
 
@@ -55,9 +56,15 @@ class UrlsView
 
         $a_new_urls = [];
         foreach($a_urls as $a_url) {
+            if ($a_url['url_host'] == 'self') {
+                $http_host = $_SERVER['HTTP_HOST'];
+            }
+            else {
+                $http_host = $a_url['url_host'];
+            }
             $a_new_urls[] = [
                 'url_id'    => $a_url['url_id'],
-                'url'       => $a_url['url_scheme'] . '://' . $_SERVER['HTTP_HOST'] . $a_url['url_text'],
+                'url'       => $a_url['url_scheme'] . '://' . $http_host . $a_url['url_text'],
                 'immutable' => $a_url['url_immutable'] == 1 ? 'true' : 'false'
             ];
         }

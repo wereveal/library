@@ -5,9 +5,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.6
- * @date      2016-04-12 14:13:59
+ * @version   1.0.0-alpha.7
+ * @date      2016-04-13 10:18:53
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.7 - bug fix in buildSqlWhere                              - 2016-04-13 wer
  * - v1.0.0-alpha.6 - bug fix in setupProperties                            - 2016-04-12 wer
  * - v1.0.0-alpha.5 - Added new method, additional refactoring              - 2016-04-01 wer
  *     - hasRecords
@@ -448,11 +449,13 @@ SQL;
                     $where_exists = true;
                 }
                 else {
+                    $where = $where == '' ? "\n" : $where;
                     $where .= "{$search_type} {$field_name} {$comparison_type} {$key} \n";
                 }
             }
         }
         if ($order_by != '') {
+            $where .= $where == '' ? "\n" : '';
             $where .= "ORDER BY {$order_by} \n";
         }
         if ($limit_to != '') {

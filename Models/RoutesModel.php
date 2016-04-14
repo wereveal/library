@@ -5,8 +5,8 @@
  * @file      Ritc/Library/Models/RoutesModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.0
- * @date      2016-04-01 08:51:58
+ * @version   1.4.0+2
+ * @date      2016-04-10 08:51:58
  * @note <b>Change Log</b>
  * - v1.4.0   - Refactored readWithRequestUri to readByRequestUri      - 2016-04-10 wer
  *              Added readWithUrl to return list of routes with url.
@@ -19,7 +19,6 @@
  * - v1.0.0   - first working version                                  - 01/28/2015 wer
  * - v1.0.0β2 - Changed to match some namespace changes, and bug fix   - 11/15/2014 wer
  * - v1.0.0β1 - First live version                                     - 11/11/2014 wer
- * @todo Ritc/Library/Models/RoutesModel.php - this needs testing and a lot of code elsewhere has to be changed.
  */
 namespace Ritc\Library\Models;
 
@@ -92,15 +91,20 @@ class RoutesModel implements ModelInterface
 
     /**
      * Update a record using the values provided.
-     * @param array $a_values
+     * @param array $a_values Required.
      * @return bool
      */
-    public function update(array $a_values)
+    public function update(array $a_values = [])
     {
+        $meth = __METHOD__ . '.';
+        $log_message = 'Values Passed In:  ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         if (!isset($a_values[$this->primary_index_name])
             || $a_values[$this->primary_index_name] == ''
             || (!is_numeric($a_values[$this->primary_index_name]))
         ) {
+
             return false;
         }
         return $this->genericUpdate($a_values);
@@ -114,7 +118,7 @@ class RoutesModel implements ModelInterface
     public function delete($route_id = -1)
     {
         if ($route_id == -1) { return false; }
-        $search_results = $this->read([$this->primary_index_name => $route_id], ['a_fields' => 'route_immutable']);
+        $search_results = $this->read([$this->primary_index_name => $route_id], ['a_fields' => ['route_immutable']]);
         if (isset($search_results[0]) && $search_results[0]['route_immutable'] == 1) {
             return ['message' => 'Sorry, that route can not be deleted.', 'type' => 'failure'];
         }

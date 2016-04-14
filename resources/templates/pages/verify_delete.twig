@@ -1,8 +1,8 @@
 {% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
 {% block body %}
     <div class="container">
-        <h1 class="red">Please Verify</h1>
-        <p class="message warning">Please verify you wish to delete the {{ what }} '{{ name }}'.</p>
+        <h1 class="smaller red">Please Verify</h1>
+        <p class="alert alert-danger" role="alert">Please verify you wish to delete the {{ what }} '{{ name }}'.</p>
         <form action="{{ public_dir }}/manager/library/{{ where }}/delete/" method="post" id="delete-form" class="pad-bottom">
             <button type="submit" name="submit" value="delete" class="btn btn-danger btn-sm">Delete {{ btn_value }}</button>
             <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
@@ -23,5 +23,6 @@
      tolken,
      form_ts,
      'site_url',
-     'rights_holder']
+     'rights_holder',
+     'a_menus']
 #}

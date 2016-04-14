@@ -9,8 +9,8 @@
  * @file      Ritc/Library/Helper/Strings.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   6.3.0
- * @date      2016-02-24 13:11:07
+ * @version   6.3.0+2
+ * @date      2016-04-13 08:51:17
  * @note <b>Change Log</b>
  * - v6.3.0 - added new method to translate a digit to an English word          - 02/24/2016 wer
  * - v6.2.0 - added new method to strip tags from htmlentites coded string      - 11/25/2015 wer
@@ -121,6 +121,7 @@ class Strings
                 return $phone_number;
         }
     }
+
     /**
      * Takes the input and makes it a boolean.
      * Basically, looks for the boolean false, int 0, or string of false (case insensitive).
@@ -165,6 +166,7 @@ class Strings
             return true; // true just for default
         }
     }
+
     /**
      * Turns a string into pure alpha string stripping out everything else
      * @param string $the_string
@@ -174,6 +176,7 @@ class Strings
     {
         return preg_replace("/[^a-zA-Z]/", '', $the_string);
     }
+
     /**
      * Removes everything except letters and numbers.
      * @param string $the_string
@@ -183,6 +186,7 @@ class Strings
     {
         return preg_replace("/[^a-zA-Z0-9]/", '', $the_string);
     }
+
     /**
      * Removes everything except letters, numbers, -, and _.
      * Removes html and php tags first, replaces spaces with undersHelpers,
@@ -196,6 +200,7 @@ class Strings
         $the_string = str_replace(' ', '_', $the_string);
         return preg_replace("/[^a-zA-Z0-9_\-]/", '', $the_string);
     }
+
     /**
      * Makes the string alpha camelCase.
      * Splits string at spaces, dashes and underscores into alpha 'words' which
@@ -229,6 +234,7 @@ class Strings
         }
         return $new_string;
     }
+
     /**
      * Makes the string alphanumeric plus _*.+!- in all lower case.
      * Removes html and php tags first, replaces spaces with undersHelpers,
@@ -243,6 +249,7 @@ class Strings
         $the_string = preg_replace("/[^a-zA-Z0-9_*.+!\-]/", '', $the_string);
         return strtolower($the_string);
     }
+
     /**
      * Turns the string into sentence case.
      * Allows one to specify specific words to be cased as desired.
@@ -262,6 +269,7 @@ class Strings
         }
         return trim($return_this);
     }
+
     /**
      * Shortens a string.
      * Can shorten a string based on the number of words or the number
@@ -323,6 +331,7 @@ class Strings
         }
         return trim($this_string);
     }
+
     /**
      * Removes the image tag from the string.
      * @param string $string optional, defaults to empty
@@ -338,6 +347,7 @@ class Strings
         $replace = ['', ''];
         return preg_replace($search, $replace, $string);
     }
+
     /**
      * Remove HTML tags, javascript sections and white space.
      * Idea taken from php.net documentation.
@@ -354,6 +364,7 @@ class Strings
         $replace = ['', '', '\1'];
         return preg_replace($search, $replace, $html);
     }
+
     /**
      * Remove HTML tags, javascript sections and white space.
      * Decodes htmlentities first.

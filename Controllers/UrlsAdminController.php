@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Controllers/UrlsAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-04-11 08:01:52
+ * @version   1.0.0-beta.0
+ * @date      2016-04-13 11:34:49
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2016-04-11 wer
+ * - v1.0.0-beta.0  - Initial working version   - 2016-04-13 wer
+ * - v1.0.0-alpha.0 - Initial version           - 2016-04-11 wer
  */
 namespace Ritc\Library\Controllers;
 
@@ -92,18 +93,9 @@ class UrlsAdminController implements ManagerControllerInterface
             $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
             return $this->o_urls_view->renderList($a_message);
         }
-        list($scheme, $text) = explode('://', $url);
-        $text = str_replace($_SERVER['HTTP_HOST'], '', $text);
-        if (!$this->isValidScheme($scheme)) {
-            $scheme = 'https';
-        }
-        $immutable = isset($this->a_post['immutable']) ? 1 : 0;
+        $a_values  = $this->splitUrl($url);
+        $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 1 : 0;
 
-        $a_values = [
-            'url_text'      => $text,
-            'url_scheme'    => $scheme,
-            'url_immutable' => $immutable
-        ];
         $results = $this->o_urls_model->create($a_values);
         if ($results !== false) {
             $a_message = ViewHelper::successMessage();
@@ -128,19 +120,14 @@ class UrlsAdminController implements ManagerControllerInterface
             return $this->o_urls_view->renderList($a_message);
         }
         $url = $this->a_post['url'];
-        $url_id = (int) $this->a_post['url_id'];
-        list($scheme, $text) = explode('://', $url);
-        $text = str_replace($_SERVER['HTTP_HOST'], '', $text);
-        if (!$this->isValidScheme($scheme)) {
-            $scheme = 'https';
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
+            return $this->o_urls_view->renderList($a_message);
         }
-        $immutable = isset($this->a_post['immutable']) ? 1 : 0;
-        $a_values = [
-            'url_id'        => $url_id,
-            'url_text'      => $text,
-            'url_scheme'    => $scheme,
-            'url_immutable' => $immutable
-        ];
+        $a_values                  = $this->splitUrl($url);
+        $a_values['url_id']        = (int) $this->a_post['url_id'];
+        $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 1 : 0;
+
         $results = $this->o_urls_model->update($a_values);
         if ($results !== false) {
             $a_message = ViewHelper::successMessage();
@@ -189,5 +176,35 @@ class UrlsAdminController implements ManagerControllerInterface
             default:
                 return false;
         }
+    }
+
+    private function splitUrl($url = '')
+    {
+        list($scheme, $text) = explode('://', $url);
+
+        if (!$this->isValidScheme($scheme)) {
+            $scheme = 'https';
+        }
+
+        $first_slash = strpos($text, '/');
+        $host = substr($text, 0, $first_slash);
+        if ($host == $_SERVER['HTTP_HOST']) {
+            $host = 'self';
+        }
+        $text = substr($text, $first_slash);
+        if (substr($text, 0, 1) != '/') {
+            $text = '/' . $text;
+        }
+        if (strrpos($text, '.') === false) {
+            if (substr($text, -1, 1) != '/') {
+                $text .= '/';
+            }
+        }
+        $return_this = [
+            'url_scheme' => $scheme,
+            'url_host'   => $host,
+            'url_text'   => $text
+        ];
+        return $return_this;
     }
 }

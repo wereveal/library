@@ -103,7 +103,7 @@ class PageModel implements ModelInterface
             $a_parameters['order_by'] = 'page_id';
         }
         $log_message = 'Read Parameters ' . var_export($a_parameters, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $results = $this->genericRead($a_parameters);
         return $results;

@@ -1,135 +1,113 @@
 {% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
 {% block body %}
-<div class="row border-radius-top-right">
-    <div class="col-md-12">
-        <h1>Add/Modify a Page</h1>
+    <div class="container">
+        <h1 class="smaller">Manage a Page</h1>
     </div>
-</div>
     {% if a_message.message != '' %}
-    <div class="row">
-        <div class="col-md-12">
+    <div class="container">
     {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
-        </div>
     </div>
     {% endif %}
-<div class="row border-radius-bottom-right">
-    <div class="col-md-12">
-        <form action="{{ public_dir }}/manager/pages/{{ action }}/" method="post" id="page-form"><fieldset>
-        <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2 aright">
-                <label for="page_url">Page URI: </label>
+    <div class="container">
+        <form action="{{ public_dir }}/manager/library/pages/{{ action }}/" method="post" id="page-form">
+        <fieldset class="nice-fieldset">
+        <div class="form-group row alt-row">
+            <label for="page_url" class="col-md-2 form-control-label alt-row form-label">Page URL: </label>
+        {% if adm_lvl < 9 and a_page.page_immutable == 1 %}
+            <div class="col-md-10 alt-row aleft">
+                <input type="text" value="{{ a_page.url_text }}" class="form-control" disabled>
             </div>
-    {% if a_page.page_immutable == 1 %}
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                {{ a_page.page_url }}
+        {% else %}
+            <div class="col-md-10 alt-row aleft">
+                {% include '@' ~ twig_prefix ~ 'elements/select.twig' with select %}
             </div>
-    {% else %}
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_url" name="page[page_url]" class="colorful w300" maxlength="64" value="{{ a_page.page_url }}">
-            </div>
-    {% endif %}
+        {% endif %}
         </div>
-        <div class="row alt-row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="page_title">Title: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_title" name="page[page_title]" class="colorful w300" maxlength="64" value="{{ a_page.page_title }}">
+        <div class="form-group row normal-row">
+            <label for="page_title" class="col-md-2 form-control-label normal-row form-label">Title: </label>
+            <div class="col-md-10 aleft">
+                <input type="text" id="page_title" name="page[page_title]" class="form-control normal-row colorful w300" maxlength="64" value="{{ a_page.page_title }}">
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="page_description">Meta Description: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_description" name="page[page_description]" class="colorful w300" maxlength="64" value="{{ a_page.page_description }}">
+        <div class="form-group row alt-row ">
+            <label for="page_description" class="col-md-2 form-control-label alt-row form-label">Meta Description: </label>
+            <div class="col-md-10 aleft">
+                <input type="text" id="page_description" name="page[page_description]" class="form-control  alt-row colorful w300" maxlength="64" value="{{ a_page.page_description }}">
             </div>
         </div>
-        <div class="row alt-row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="page_base_url">Base URL: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_base_url" name="page[page_base_url]" class="colorful w300" maxlength="64" value="{{ a_page.page_base_url }}" />
+        <div class="form-group row normal-row">
+            <label for="page_base_url" class="col-md-2 form-control-label normal-row form-label">Base URL: </label>
+            <div class="col-md-10 aleft">
+                <input type="text" id="page_base_url" name="page[page_base_url]" class="form-control normal-row colorful w300" maxlength="64" value="{{ a_page.page_base_url }}" />
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="page_type">MIME Type: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_type" name="page[page_type]" class="colorful w300" maxlength="250" value="{{ a_page.page_type }}" />
+        <div class="form-group row alt-row ">
+            <label for="page_type" class="col-md-2 form-control-label alt-row form-label">MIME Type: </label>
+            <div class="col-md-10 aleft">
+                <input type="text" id="page_type" name="page[page_type]" class="form-control  alt-row colorful w300" maxlength="250" value="{{ a_page.page_type }}" />
             </div>
         </div>
-        <div class="row alt-row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="page_lang">Language: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_lang" name="page[page_lang]" class="colorful" maxlength="4" value="{{ a_page.page_lang }}" />
+        <div class="form-group row normal-row">
+            <label for="page_lang" class="col-md-2 form-control-label normal-row form-label">Language: </label>
+            <div class="col-md-10 aleft">
+                <input type="text" id="page_lang" name="page[page_lang]" class="form-control normal-row colorful w300" maxlength="4" value="{{ a_page.page_lang }}" />
             </div>
         </div>
-        <div class="row alt-row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="page_charset">Character Set: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="page_charset" name="page[page_charset]" class="colorful w300" maxlength="20" value="{{ a_page.page_charset }}" />
+        <div class="form-group row alt-row ">
+            <label for="page_charset" class="col-md-2 form-control-label alt-row form-label">Character Set: </label>
+            <div class="col-md-10 aleft">
+                <input type="text" id="page_charset" name="page[page_charset]" class="form-control alt-row colorful w300" maxlength="20" value="{{ a_page.page_charset }}" />
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="page_immutable">Immutable: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-    {% if adm_lvl >= 9 and a_page.page_immutable == 1 %}
-                <input type="checkbox" name="page[page_immutable]" checked="checked" id="page_immutable" class="colorful" value="true" />
+        <div class="form-group row normal-row">
+            <label for="page_immutable" class="col-md-2 form-control-label normal-row form-label">Immutable: </label>
+            <div class="col-md-10 aleft">
+    {% if adm_lvl >= 11 and a_page.page_immutable == 1 %}
+                <input type="checkbox" name="page[page_immutable]" checked="checked" id="page_immutable" class="colorful normal-row" value="true" />
     {% elseif a_page.page_immutable == 1 %}
                 True
     {% elseif adm_lvl >= 9 %}
-                <input type="checkbox" name="page[page_immutable]" id="page_immutable" class="colorful" value="true" />
+                <input type="checkbox" name="page[page_immutable]" id="page_immutable" class="form-control normal-row colorful" value="true" />
     {% else %}
                 False
     {% endif %}
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-3 col-sm-3 col-xs-3 aright">
+        </fieldset>
+        <div class="form-group row">
+            <div class="col-md-10 col-md-offset-2">
     {% if action == 'save' %}
                 <button type="submit" name="submit" value="save" class="btn btn-primary btn-sm">Create New Page</button>
     {% else %}
                 <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Update Page</button>
         {% if a_page.page_immutable == 0 %}
-                <button type="submit" name="submit" value="verify" class="btn btn-warning btn-sm">Delete</button>
+                <button type="submit" name="submit" value="verify" class="btn btn-danger btn-sm">Delete</button>
         {% endif %}
     {% endif %}
             </div>
-            <div class="col-md-10 col-sm-10 col-xs-10">
+            <div class="col-md-10">
                 <input type="hidden" id="tolken" name="tolken" value="{{ tolken }}">
                 <input type="hidden" id="form_ts" name="form_ts" value="{{ form_ts }}">
                 <input type="hidden" id="page_id" name="page[page_id]" value="{{ a_page.page_id }}">
                 <label class="hobbit" for="hobbit">Enter Age</label><input type="text" id="hobbit" name="hobbit" value="" class="hobbit">
             </div>
         </div>
-        </fieldset></form>
-        <div class="row">
-            <div class="col-md-12">
-                <h3>Instructions:</h3>
-                <ul>
-                    <li>Most values are used in the HTML meta tags, used in the head.
-                    <li>Page URI is required and must be unique. It is used to find the data. The http(s)://site.tld part of a URL is not needed. The URI must match the actual URI of the a_page.</li>
-                    <li>Page Title is used in the meta data but may also be used in a &lt;h1&gt;. If not specified, a default value may be used.</li>
-                    <li>Page Description can be pretty much any text. Can be blank. If not specified, a default value may be used.</li>
-                    <li>Base URL is a meta tag value. The default '/' is normally fine - the base site url will be used then.</li>
-                    <li>Mime Type is a meta tag value. The default 'text/html' is used for most web pages.</li>
-                    <li>Language is a meta tag value. The default is 'en' (English).</li>
-                    <li>Character Set is a meta tag value. The default is 'utf8' and should normally be used.</li>
-                    <li>Immutable means the page uri cannot be changed. <b class="red bold">Be careful!</b></li>
-                </ul>
-            </div>
-        </div>
+        </form>
     </div>
-</div>
+    <div class="container">
+        <h3>Instructions:</h3>
+        <ul>
+            <li>Most values are used in the HTML meta tags, used in the head.
+            <li>The Page Url is unique per page. Only unused URLs are available. If you need a new url, you need to create it first <a href="/manager/library/urls/">Here</a> and normally then a new route <a href="/manager/library/routes/">here</a></li>
+            <li>Page Title is used in the meta data but may also be used in a &lt;h1&gt;. If not specified, a default value may be used.</li>
+            <li>Page Description can be pretty much any text. Can be blank. If not specified, a default value may be used. Per SEO, the descriptions should be no more than 150 characters.</li>
+            <li>Base URL is a meta tag value. The default '/' is normally fine - the base site url will be used then.</li>
+            <li>Mime Type is a meta tag value. The default 'text/html' is used for most web pages.</li>
+            <li>Language is a meta tag value. The default is 'en' (English).</li>
+            <li>Character Set is a meta tag value. The default is 'utf8' and should normally be used.</li>
+            <li>Immutable means the page cannot be deleted nor the URL changed. <b class="red bold">Be careful!</b></li>
+        </ul>
+    </div>
 {% endblock %}
 {# expected array
     [

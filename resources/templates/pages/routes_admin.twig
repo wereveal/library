@@ -2,7 +2,7 @@
 {% block body %}
     <div class="row">
         <div class="col-md-12">
-            <h1>Welcome! This is the manager to add/modify/delete the routes.</h1>
+            <h1 class="smaller">Manage the routes.</h1>
         </div>
     </div>
     {% if a_message.message != '' %}
@@ -55,7 +55,7 @@
                 <div class="col-md-2"><label class="hidden-sm-up" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="{{ row.route_action }}" maxlength="32" class="colorful w150"/></div>
                 <div class="col-md-2">
                     <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
-                    <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
+                    <button type="submit" name="submit" value="verify" class="btn btn-danger btn-xs">Delete</button>
                     <input type="hidden" name="tolken" value="{{ tolken }}" />
                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
                     <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
@@ -102,12 +102,12 @@
                 <li>Routes maps the url to a class, method, and action.
                     Certain routes are fixed so that the app will work. They are not visible.
                 </li>
-                <li>Route Path is what appears in the browser address bar, e.g., '/about/charlie/'.</li>
-                <li>Route Class is the name of the class, e.g., MainController.
+                <li>Route Path is what appears in the browser address bar, e.g., '/about/charlie/' and is taken from the URL manager.</li>
+                <li>Route Class is the name of the class associated with the path, e.g., MainController.
                     The class is required and must match the class name exactly.
                     The class is normally a controller.
                 </li>
-                <li>The method is the name of the method to be used. The method is required,.
+                <li>The method is the name of the method to be used. The method is required.
                     The method must match the method name exactly.
                 </li>
                 <li>The action is normally an argument that is used in the method. This is optional.</li>

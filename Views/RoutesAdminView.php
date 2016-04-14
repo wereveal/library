@@ -5,9 +5,10 @@
  * @file      RoutesAdminView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.3
- * @date      2016-04-10 14:46:58
+ * @version   1.1.0
+ * @date      2016-04-13 11:38:50
  * @note <b>Change Log</b>
+ * - v1.1.0   - Refactoring elsewhere forced changes here                               - 2016-04-13 wer
  * - v1.0.4   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
  * - v1.0.3   - Change in implementation of LIB_TWIG_PREFIX                             - 2016-04-10 wer
  * - v1.0.2   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
@@ -18,6 +19,7 @@
  */
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\UrlsModel;
@@ -114,10 +116,16 @@ class RoutesAdminView
                 'other_stuph' => ' selected'
             ];
             foreach ($a_urls as $a_url) {
-                $a_options[] = [
-                    'value' => $a_url['url_id'],
-                    'label' => $a_url['url_text']
-                ];
+                // if url_id is not assigned to a route and not part of the library make it an option
+                $results = Arrays::inAssocArrayRecursive('url_id', $a_url['url_id'], $a_routes);
+                if (!$results) {
+                    if (strpos($a_url['url_text'], 'library') === false) {
+                        $a_options[] = [
+                            'value' => $a_url['url_id'],
+                            'label' => $a_url['url_text']
+                        ];
+                    }
+                }
             }
             $a_values['select'] = [
                 'name'    => 'route[url_id]',
@@ -125,18 +133,26 @@ class RoutesAdminView
                 'options' => $a_options
             ];
             foreach ($a_routes as $key => $a_route) {
-                $a_options = [];
+                $a_option = [];
                 foreach ($a_urls as $a_url) {
-                    $a_options[] = [
-                        'value'       => $a_url['url_id'],
-                        'label'       => $a_url['url_text'],
-                        'other_stuph' => $a_route['url_id'] == $a_url['url_id'] ? ' selected' : ''
-                    ];
+                    if ($a_route['url_id'] == $a_url['url_id']) { // there should only be one
+                        $a_option[] = [
+                            'value'       => $a_url['url_id'],
+                            'label'       => $a_url['url_text'],
+                            'other_stuph' => ' selected'
+                        ];
+                    }
+                }
+                $a_option = array_merge($a_options, $a_option);
+                foreach ($a_option as $the_key => $a_opt) {
+                    if ($a_opt['value'] == '0') {
+                        unset($a_option[$the_key]);
+                    }
                 }
                 $a_routes[$key]['select'] = [
                     'name'    => 'route[url_id]',
                     'class'   => 'form-control w200',
-                    'options' => $a_options
+                    'options' => $a_option
                 ];
                 $a_routes[$key]['twig_prefix'] = LIB_TWIG_PREFIX;
             }
@@ -157,18 +173,31 @@ class RoutesAdminView
      */
     public function renderVerify(array $a_values = array())
     {
+        $meth = __METHOD__ . '.';
+        $log_message = 'Posted Values: ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         if ($a_values === array()) {
             return $this->renderList(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
         }
-        if (!isset($a_values['public_dir'])) {
-            $a_values['public_dir'] = '';
-        }
-        if (!isset($a_values['description'])) {
-            $a_values['description'] = 'Form to verify the action to delete the route.';
-        }
-        $a_values['menus'] = $this->a_nav;
-        $a_values['twig_prefix'] = LIB_TWIG_PREFIX;
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete_route.twig';
-        return $this->o_twig->render($tpl, $a_values);
+        $a_twig_values = $this->getPageValues();
+        $a_more_values = [
+            'a_menus'      => $this->retrieveNav('ManagerGroup'),
+            'what'         => 'Route',
+            'name'         => $a_values['route']['route_id'] . ' for ' . $a_values['route']['route_class'],
+            'where'        => 'routes',
+            'btn_value'    => 'Route',
+            'hidden_name'  => 'route_id',
+            'hidden_value' => $a_values['route']['route_id'],
+            'tolken'       => $a_values['tolken'],
+            'form_ts'      => $a_values['form_ts'],
+            'twig_prefix'  => LIB_TWIG_PREFIX
+        ];
+        $a_twig_values = array_merge($a_twig_values, $a_more_values);
+        $log_message = 'Twig Values: ' . var_export($a_twig_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
+        return $this->o_twig->render($tpl, $a_twig_values);
     }
 }

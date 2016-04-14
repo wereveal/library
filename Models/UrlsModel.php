@@ -6,10 +6,11 @@
  * @file      UrlsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-04-10 14:24:48
+ * @version   1.0.0-beta.0
+ * @date      2016-04-13 10:46:43
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2016-04-10 wer
+ * - v1.0.0-beta.0  - Initial working version   - 2016-04-13 wer
+ * - v1.0.0-alpha.0 - Initial version           - 2016-04-10 wer
  */
 namespace Ritc\Library\Models;
 
@@ -39,6 +40,7 @@ class UrlsModel implements ModelInterface
      */
     public function create(array $a_values = [])
     {
+        $meth = __METHOD__ . '.';
         $a_required_keys = [
             'url_text'
         ];
@@ -51,6 +53,9 @@ class UrlsModel implements ModelInterface
             'a_field_names'   => $this->a_db_fields,
             'a_psql'          => $a_psql
         ];
+        $log_message = 'Values: ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        
         return $this->genericCreate($a_values, $a_params);
     }
 
@@ -94,6 +99,7 @@ class UrlsModel implements ModelInterface
 
     /**
      * Deletes a record based on the id provided.
+     * Checks to see if there are any other tables with relations.
      * @param int $id
      * @return bool
      */
@@ -109,6 +115,25 @@ class UrlsModel implements ModelInterface
         error_log(var_export($search_results, true));
         if (isset($search_results[0]) && $search_results[0]['url_immutable'] == 1) {
             $this->error_message = 'Sorry, that url can not be deleted.';
+            return false;
+        }
+        $a_search_for = ['url_id' => $id];
+        $o_routes = new RoutesModel($this->o_db);
+        $search_results = $o_routes->read($a_search_for);
+        if (isset($search_results[0])) {
+            $this->error_message = 'Please change/delete the route that refers to this url first.';
+            return false;
+        }
+        $o_pages  = new PageModel($this->o_db);
+        $search_results = $o_pages->read($a_search_for);
+        if (isset($search_results[0])) {
+            $this->error_message = 'Please change/delete the Page that refers to this url first.';
+            return false;
+        }
+        $o_nav    = new NavigationModel($this->o_db);
+        $search_results = $o_nav->read($a_search_for);
+        if (isset($search_results[0])) {
+            $this->error_message = 'Please change/delete the Navigation record that refers to this url first.';
             return false;
         }
         $results = $this->genericDelete($id);
