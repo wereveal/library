@@ -5,20 +5,22 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.3
- * @date      2016-04-08 14:22:35
+ * @version   1.0.0-alpha.4
+ * @date      2016-04-15 14:33:51
  * @note <b>Change Log</b>
- * - v1.0.0-alpha.3 - Navigation links are now sorted properly   - 2016-04-08 wer
- * - v1.0.0-alpha.2 - Use LogitTraits now                        - 2016-04-01 wer
+ * - v1.0.0-alpha.4 - Added new method createDefaultTwigValues          - 2016-04-15 wer
+ * - v1.0.0-alpha.3 - Navigation links are now sorted properly          - 2016-04-08 wer
+ * - v1.0.0-alpha.2 - Use LogitTraits now                               - 2016-04-01 wer
  *   - Views that use this trait no longer need to 'use' LogitTraits
  *   - May cause some complaints from those that don't fix this.
- * - v1.0.0-alpha.1 - close to working version                   - 2016-03-10 wer
- * - v1.0.0-alpha.0 - inital version                             - 2016-02-22 wer
+ * - v1.0.0-alpha.1 - close to working version                          - 2016-03-10 wer
+ * - v1.0.0-alpha.0 - inital version                                    - 2016-02-22 wer
  */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\PageComplexModel;
@@ -83,6 +85,47 @@ trait ViewTraits
         $a_nav = $this->createSubmenu($a_nav);
         $a_nav = $this->sortTopLevel($a_nav);
         return $a_nav;
+    }
+
+    /**
+     * Creates some commonly used values to pass into a twig template.
+     * @param string $tpl_type  Optional, defaults to 'main' other options are manager and library.
+     * @param array  $a_message Optional, defaults to []. Allows a message to be passed.
+     * @return array
+     */
+    public function createDefaultTwigValues($tpl_type = 'main', array $a_message = [])
+    {
+        $a_page_values = $this->getPageValues();
+        switch ($tpl_type) {
+            case 'manager':
+                $a_menus = $this->retrieveNav('ManagerLinks');
+                $twig_prefix = 'mgr_';
+                break;
+            case 'library':
+                $a_menus = $this->retrieveNav('ManagerLinks');
+                $twig_prefix = LIB_TWIG_PREFIX;
+                break;
+            case 'main':
+            default:
+                $a_menus = $this->a_nav;
+                $twig_prefix = TWIG_PREFIX;
+        }
+
+        if (count($a_message) != 0) {
+            $a_message = ViewHelper::messageProperties($a_message);
+        }
+
+        $a_values = array(
+            'a_message'   => $a_message,
+            'tolken'      => $_SESSION['token'],
+            'form_ts'     => $_SESSION['idle_timestamp'],
+            'hobbit'      => '',
+            'a_menus'     => $a_menus,
+            'adm_lvl'     => $this->adm_level,
+            'twig_prefix' => $twig_prefix,
+        );
+        $a_values = array_merge($a_page_values, $a_values);
+        return $a_values;
     }
 
     ### SETters and GETters ###
@@ -216,7 +259,7 @@ trait ViewTraits
      * @param int   $value
      * @return int
      */
-    protected function createNewOrder(array $a_used = [], $value = 0)
+    protected function createNewOrderNumber(array $a_used = [], $value = 0)
     {
         if (array_search($value, $a_used) === false) {
             return (int) $value;
@@ -226,7 +269,7 @@ trait ViewTraits
             return (int) $new_value;
         }
         else {
-            return $this->createNewOrder($a_used, $value + 1);
+            return $this->createNewOrderNumber($a_used, $value + 1);
         }
     }
 
@@ -310,7 +353,7 @@ trait ViewTraits
         foreach ($a_nav as $key => $a_link) {
             $order_number = (int) $a_link['order'];
             if (array_search($order_number, $a_used_order) !== false) {
-                $new_order_number = (int) $this->createNewOrder($a_used_order, $order_number);
+                $new_order_number = (int) $this->createNewOrderNumber($a_used_order, $order_number);
                 $a_used_order[] = $new_order_number;
                 $a_new_nav[$new_order_number] = $a_link;
             }

@@ -5,11 +5,12 @@
  * @file      Ritc/Library/Controllers/UrlsAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.0
- * @date      2016-04-13 11:34:49
+ * @version   1.0.0-beta.1
+ * @date      2016-04-15 12:44:28
  * @note Change Log
- * - v1.0.0-beta.0  - Initial working version   - 2016-04-13 wer
- * - v1.0.0-alpha.0 - Initial version           - 2016-04-11 wer
+ * - v1.0.0-beta.1  - minor change to ControllerTraits reflected here.  - 2016-04-15 wer
+ * - v1.0.0-beta.0  - Initial working version                           - 2016-04-13 wer
+ * - v1.0.0-alpha.0 - Initial version                                   - 2016-04-11 wer
  */
 namespace Ritc\Library\Controllers;
 
@@ -41,7 +42,6 @@ class UrlsAdminController implements ManagerControllerInterface
         $this->setupController($o_di);
         $this->o_urls_model = new UrlsModel($this->o_db);
         $this->o_urls_view  = new UrlsView($o_di);
-        error_Log(defined('DEVELOPER_MODE') ? "yes" : "no");
         if (DEVELOPER_MODE) {
             $this->o_urls_model->setElog($this->o_elog);
         }
@@ -53,17 +53,10 @@ class UrlsAdminController implements ManagerControllerInterface
      */
     public function render()
     {
-        $main_action   = $this->a_router_parts['route_action'];
-        $form_action   = $this->a_router_parts['form_action'];
-        $url_action    = isset($this->a_router_parts['url_actions'][0])
-            ? $this->a_router_parts['url_actions'][0]
-            : '';
-        if ($main_action == '' && $url_action != '') {
-            $main_action = $url_action;
-        }
-        switch ($main_action) {
+        $this->setProperties();
+        switch ($this->main_action) {
             case 'modify':
-                switch ($form_action) {
+                switch ($this->form_action) {
                     case 'verify':
                         return $this->verifyDelete();
                     case 'update':
@@ -164,6 +157,11 @@ class UrlsAdminController implements ManagerControllerInterface
         return $this->o_urls_view->renderList($a_message);
     }
 
+    /**
+     * Verifies that the scheme is a valid one for the app.
+     * @param string $value
+     * @return bool
+     */
     private function isValidScheme($value = '')
     {
         switch ($value) {
@@ -178,6 +176,11 @@ class UrlsAdminController implements ManagerControllerInterface
         }
     }
 
+    /**
+     * Splits the url into 3 components, scheme, host, and the rest of the url.
+     * @param string $url
+     * @return array
+     */
     private function splitUrl($url = '')
     {
         list($scheme, $text) = explode('://', $url);

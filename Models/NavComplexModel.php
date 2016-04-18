@@ -5,9 +5,11 @@
  * @file      Ritc/Library/Models/NavComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-02-25 12:04:44
+ * @version   1.0.0-alpha.3
+ * @date      2016-04-18 14:45:41
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.3 - Changed sql, removed redundant methods       - 2016-04-18 wer
+ * - v1.0.0-alpha.2 - Added new method getNavListAll               - 2016-04-15 wer
  * - v1.0.0-alpha.1 - Refactoring changes                          - 2016-03-19 wer
  * - v1.0.0-alpha.0 - Initial version                              - 2016-02-25 wer
  */
@@ -26,6 +28,8 @@ class NavComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
+    /** @var  NavgroupsModel */
+    private $o_ng;
     /** @var string */
     private $select_sql;
     /** @var string */
@@ -40,6 +44,7 @@ class NavComplexModel
         $this->setupProperties($o_db, 'navigation');
         $this->setSelectSql();
         $this->setSelectOrderSql();
+        $this->o_ng = new NavgroupsModel($this->o_db);
     }
 
     /**
@@ -51,7 +56,7 @@ class NavComplexModel
     {
         $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
-            $ng_id = $this->retrieveDefaultNavgroup();
+            $ng_id = $this->o_ng->retrieveDefaultNavgroup();
             if ($ng_id == -1) {
                 return false;
             }
@@ -71,6 +76,45 @@ class NavComplexModel
     }
 
     /**
+     * Gets all the navigation records with related values.
+     * @return bool|array
+     */
+    public function getNavListAll()
+    {
+        $meth = __METHOD__ . '.';
+        $select_sql =<<<EOT
+SELECT
+    n.nav_id as 'nav_id',
+    n.nav_parent_id as 'parent_id',
+    n.url_id as 'url_id',
+    u.url_text as 'url',
+    n.nav_name as 'name',
+    n.nav_text as 'text',
+    n.nav_description as 'description',
+    n.nav_css as 'css',
+    n.nav_level as 'level',
+    n.nav_order as 'order'
+FROM {$this->db_prefix}urls as u
+JOIN {$this->db_prefix}navigation as n
+    ON u.url_id = n.url_id
+ORDER BY
+    n.nav_parent_id ASC,
+    n.nav_level ASC,
+    n.nav_order ASC,
+    n.nav_name ASC
+EOT;
+        $this->logIt("SQL: {$select_sql}", LOG_ON, $meth . __LINE__);
+        $results = $this->o_db->search($select_sql);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            return false;
+        }
+        else {
+            return $results;
+        }
+    }
+
+    /**
      * Returns the Navigation list by navgroup name.
      * @param string $navgroup_name Optional, will use default navgroup if not supplied.
      * @return bool|mixed
@@ -79,12 +123,12 @@ class NavComplexModel
     {
         $meth = __METHOD__ . '.';
         if ($navgroup_name == '') {
-            $navgroup_name = $this->retrieveDefaultNavgroupName();
+            $navgroup_name = $this->o_ng->retrieveDefaultNavgroupName();
         }
         $where = "AND ng.ng_name = :ng_name\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
         $a_search_for = [':ng_name' => $navgroup_name];
-        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
+        $this->logIt("SQL: " . $sql, LOG_ON, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -121,6 +165,34 @@ EOT;
         $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
         $log_message = 'search for ' . var_export($a_search_for, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $results = $this->o_db->search($sql, $a_search_for);
+        if ($results === false) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            return false;
+        }
+        else {
+            return $results;
+        }
+    }
+
+    /**
+     * Returns a single nav record by nav_id with the url_text.
+     * @param int $nav_id
+     * @return bool|array
+     */
+    public function getNavRecord($nav_id = -1)
+    {
+        $meth = __METHOD__ . '.';
+        if ($nav_id == -1) {
+            return false;
+        }
+        $sql_and =<<<SQL
+AND n.nav_id = :nav_id
+
+SQL;
+        $sql = $this->select_sql . $sql_and . $this->select_order_sql;
+        $this->logIt("SQL:\n{$sql}", LOG_ON, $meth . __LINE__);
+        $a_search_for = [':nav_id' => $nav_id];
         $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -270,22 +342,24 @@ EOT;
 SELECT
     n.nav_id as 'nav_id',
     n.nav_parent_id as 'parent_id',
+    n.url_id as 'url_id',
     u.url_text as 'url',
     n.nav_name as 'name',
     n.nav_text as 'text',
     n.nav_description as 'description',
     n.nav_css as 'css',
     n.nav_level as 'level',
-    n.nav_order as 'order'
-FROM
-    {$this->db_prefix}urls as u,
-    {$this->db_prefix}navigation as n,
-    {$this->db_prefix}nav_ng_map as map,
-    {$this->db_prefix}navgroups as ng
-WHERE u.url_id = n.url_id
-AND n.nav_active = 1
-AND ng.ng_id = map.ng_id
-AND n.nav_id = map.nav_id
+    n.nav_order as 'order',
+    ng.ng_id,
+    ng.ng_name
+FROM {$this->db_prefix}urls as u
+JOIN {$this->db_prefix}navigation as n
+    ON n.url_id = u.url_id
+JOIN {$this->db_prefix}nav_ng_map as map
+    ON n.nav_id = map.nav_id
+JOIN {$this->db_prefix}navgroups as ng
+    ON ng.ng_id = map.ng_id
+WHERE n.nav_active = 1
 
 EOT;
         }
@@ -310,6 +384,7 @@ EOT;
         if ($string == '') {
             $string =<<<EOT
 ORDER BY
+    ng.ng_id ASC,
     n.nav_parent_id ASC,
     n.nav_level ASC,
     n.nav_order ASC,
@@ -317,43 +392,5 @@ ORDER BY
 EOT;
         }
         $this->select_order_sql = $string;
-    }
-
-    /**
-     * Gets the default navgroup by id.
-     * @return int
-     */
-    public function retrieveDefaultNavgroup()
-    {
-        $o_ng = new NavgroupsModel($this->o_db);
-        $a_search_for = [':ng_default' => 1];
-        $a_search_parms = [
-            'order_by' => 'ng_id',
-            'a_fields' => 'ng_id'
-        ];
-        $results = $o_ng->read($a_search_for, $a_search_parms);
-        if ($results !== false && count($results) > 0) {
-            return $results[0]['ng_id'];
-        }
-        return -1;
-    }
-
-    /**
-     * Returns the default navgroup by name.
-     * @return string
-     */
-    public function retrieveDefaultNavgroupName()
-    {
-        $o_ng = new NavgroupsModel($this->o_db);
-        $a_search_for = [':ng_default' => 1];
-        $a_search_parms = [
-            'order_by' => 'ng_name',
-            'a_fields' => 'ng_name'
-        ];
-        $results = $o_ng->read($a_search_for, $a_search_parms);
-        if ($results !== false && count($results) > 0) {
-            return $results[0]['ng_name'];
-        }
-        return '';
     }
 }

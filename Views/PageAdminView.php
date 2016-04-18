@@ -93,7 +93,7 @@ class PageAdminView
             }
         }
         $a_select = [
-            'name'         => 'url_id',
+            'name'         => 'page[url_id]',
             'select_class' => 'form-control',
             'other_stuff'  => '',
             'options'      => $a_options
@@ -224,8 +224,8 @@ class PageAdminView
 
         $a_page_values = $this->getPageValues();
         $a_values = array(
-            'what'         => 'Page ' . $a_page['page_title'],
-            'name'         => $a_page['page_url'],
+            'what'         => 'Page ',
+            'name'         => $a_page['page_title'],
             'where'        => 'pages',
             'btn_value'    => 'Page',
             'hidden_name'  => 'page_id',
@@ -234,7 +234,7 @@ class PageAdminView
             'tolken'       => $_SESSION['token'],
             'form_ts'      => $_SESSION['idle_timestamp'],
             'hobbit'       => '',
-            'a_menus'      => $this->a_nav,
+            'a_menus'      => $this->retrieveNav('ManagerLinks'),
             'adm_lvl'      => $this->adm_level,
             'twig_prefix'  => LIB_TWIG_PREFIX
         );

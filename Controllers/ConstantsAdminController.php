@@ -5,8 +5,8 @@
  * @file      Ritc/Library/Controllers/ConstantsAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.2
- * @date      2016-04-11 11:30:43
+ * @version   1.3.2+2
+ * @date      2016-04-15 11:57:43
  * @note <b>Change Log</b>
  * - v1.3.2 - bug fix                                         - 2016-04-11 wer
  * - v1.3.1 - bug fix                                         - 2016-03-08 wer
@@ -110,7 +110,7 @@ class ConstantsAdminController implements ManagerControllerInterface
     ### Required by Interface ###
     /**
      * Saves the constants record and returns the list of constants with a message.
-     * @return mixed
+     * @return string
      */
     public function save()
     {
@@ -134,7 +134,7 @@ class ConstantsAdminController implements ManagerControllerInterface
 
     /**
      * Updates the constants record and returns the list of constants with a message.
-     * @return mixed
+     * @return string
      */
     public function update()
     {
@@ -166,7 +166,7 @@ class ConstantsAdminController implements ManagerControllerInterface
 
     /**
      * Deletes the constants record and returns the list of constants with a message.
-     * @return mixed
+     * @return string
      */
     public function delete()
     {

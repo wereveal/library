@@ -40,7 +40,7 @@ class PageModel implements ModelInterface
     }
 
     /**
-     * Generic create a record using the values provided.
+     * Create a record using the values provided.
      * @param array $a_values key=>value pairs of url_id=>value and page_title=>value required.
      * @return string|bool
      */
@@ -51,20 +51,20 @@ class PageModel implements ModelInterface
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
                 if ($this->hasRecords(['url_id' => $a_record['url_id']])) {
-                    $this->error_message = "The record already exists for {$a_record['page_title']}";
+                    $this->error_message = "A record already exists using the url id {$a_record['url_id']} for {$a_record['page_title']}";
                     return false;
                 }
             }
         }
         else {
             if ($this->hasRecords(['url_id' => $a_values['url_id']])) {
-                $this->error_message = "The record already exists for {$a_values['page_title']}";
+                $this->error_message = "A record already exists using the url id {$a_record['url_id']} for {$a_record['page_title']}";
                 return false;
             }
         }
 
         $a_parameters = [
-            'a_required_keys' => 'page_url',
+            'a_required_keys' => ['url_id', 'page_title'],
             'a_field_names'   => $this->a_db_fields,
             'a_psql'          => [
                 'table_name'  => $this->db_table,
@@ -134,7 +134,7 @@ class PageModel implements ModelInterface
     public function delete($page_id = -1)
     {
         if ($page_id == -1) { return false; }
-        $search_results = $this->read(['page_id' => $page_id], ['a_fields' => 'page_immutable']);
+        $search_results = $this->read(['page_id' => $page_id], ['a_fields' => ['page_immutable']]);
         if ($search_results[0]['page_immutable'] == 1) {
             $this->error_message = 'Sorry, that page can not be deleted.';
             return false;

@@ -34,6 +34,7 @@ use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\LibraryView;
+use Ritc\Library\Views\NavigationAdminView;
 
 /**
  * Class LibraryController.
@@ -173,6 +174,23 @@ class LibraryController implements ControllerInterface
     {
         $this->o_session->resetSession();
         return $this->o_manager_view->renderLoginForm($login_id, $a_message);
+    }
+
+    /**
+     * Passes over control to the navigation manager controller.
+     * @return string
+     */
+    public function renderNavigationAdmin()
+    {
+        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
+            $min_auth_level = $this->a_route_parts['min_auth_level'];
+            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
+                $o_nav_admin = new NavigationAdminController($this->o_di);
+                return $o_nav_admin->render();
+            }
+        }
+        $a_message = ViewHelper::warningMessage("Access Prohibited");
+        return $this->renderLogin('', $a_message);
     }
 
     /**

@@ -144,7 +144,6 @@ class PageAdminController implements ManagerControllerInterface
     {
         $meth = __METHOD__ . '.';
         $a_page = $this->a_post['page'];
-        $a_page['page_url'] = $this->fixUrl($a_page['page_url']);
         $this->logIt('Post Values' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
         $results = $this->o_model->create($a_page);
         if ($results) {
@@ -165,10 +164,10 @@ class PageAdminController implements ManagerControllerInterface
     {
         $meth = __METHOD__ . '.';
         $a_page = $this->a_post['page'];
-        if (isset($a_page['page_url'])) {
-            $a_page['page_url'] = $this->fixUrl($a_page['page_url']);
-        }
         $this->logIt('Posted Page: ' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
+        if (!isset($a_page['page_immutable'])) {
+            $a_page['page_immutable'] = 0;
+        }
         $results = $this->o_model->update($a_page);
         if ($results) {
             $a_message = ViewHelper::successMessage();

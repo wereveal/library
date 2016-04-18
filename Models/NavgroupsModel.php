@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/NavgroupsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1+2
- * @date      2016-04-01 07:39:07
+ * @version   1.0.0-alpha.2
+ * @date      2016-04-18 14:46:49
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.2 - Added two methods to get default ng          - 2016-04-18 wer
  * - v1.0.0-alpha.1 - Updated to use DbUtilityTraits               - 2016-03-31 wer
  * - v1.0.0-alpha.0 - Initial version                              - 2016-02-25 wer
  */
@@ -222,6 +223,42 @@ class NavgroupsModel implements ModelInterface
                 'ng_active'
             ];
         }
+    }
+
+    /**
+     * Gets the default navgroup by id.
+     * @return int
+     */
+    public function retrieveDefaultNavgroup()
+    {
+        $a_search_for = [':ng_default' => 1];
+        $a_search_parms = [
+            'order_by' => 'ng_id',
+            'a_fields' => 'ng_id'
+        ];
+        $results = $this->read($a_search_for, $a_search_parms);
+        if ($results !== false && count($results) > 0) {
+            return $results[0]['ng_id'];
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the default navgroup by name.
+     * @return string
+     */
+    public function retrieveDefaultNavgroupName()
+    {
+        $a_search_for = [':ng_default' => 1];
+        $a_search_parms = [
+            'order_by' => 'ng_name',
+            'a_fields' => 'ng_name'
+        ];
+        $results = $this->read($a_search_for, $a_search_parms);
+        if ($results !== false && count($results) > 0) {
+            return $results[0]['ng_name'];
+        }
+        return '';
     }
 
 }

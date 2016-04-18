@@ -1,0 +1,7 @@
+<form action="{{ form_action }}" method="post"{% if form_class != '' %} class="{{ form_class }}{% endif %}">
+    <button type="submit" name="submit" value="{{ btn_value }}" class="btn {{ btn_color }} {{ btn_size }}">{{ btn_label }}</button>
+    <input type="hidden" name="tolken" value="{{ tolken }}" />
+    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+    <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
+</form>

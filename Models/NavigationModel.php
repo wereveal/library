@@ -87,7 +87,7 @@ class NavigationModel implements ModelInterface
     /**
      * Returns an array of records based on the search params provided.
      * @param array $a_search_values optional, defaults to returning all records
-     * @param array $a_search_params optional, defaults to ['nav_parent_id ASC, nav_order ASC, nav_name ASC']
+     * @param array $a_search_params optional, defaults to ['order_by' => 'nav_parent_id ASC, nav_order ASC, nav_name ASC']
      * @return array
      */
     public function read(array $a_search_values = [], array $a_search_params = [])

@@ -1,0 +1,82 @@
+{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% block body %}
+    <div class="container">
+        <h1 class="smaller">Manage Navigation</h1>
+    </div>
+    {% if a_message.message != '' %}
+    <div class="container">
+        {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
+    </div>
+    {% endif %}
+    <div class="container">
+        <form action="{{ public_dir }}/manager/library/navigation/{{ action }}/" method="post" id="nav-form">
+            <fieldset class="nice-fieldset">
+                <div class="form-group row alt-row">
+                    <label class="form-control-label col-md-2 alt-row form-label">URL</label>
+                    <div class="col-md-10 alt-row">
+                        {% include '@' ~ twig_prefix ~ 'elements/select.twig' with a_url_select %}
+                    </div>
+                </div>
+                <div class="form-group row normal-row">
+                    <label class="form-control-label col-md-2 normal-row form-label">Parent ID</label>
+                    <div class="col-md-10 normal-row">
+                        {% include '@' ~ twig_prefix ~ 'elements/select.twig' with a_nav_select %}
+                    </div>
+                </div>
+                <div class="form-group row alt-row">
+                    <label class="form-control-label col-md-2 alt-row form-label">Nav Group</label>
+                    <div class="col-md-10 alt-row">
+                        {% include '@' ~ twig_prefix ~ 'elements/select.twig' with a_ng_select %}
+                    </div>
+                </div>
+                <div class="form-group row normal-row">
+                    <label class="form-control-label col-md-2 normal-row form-label">Name</label>
+                    <div class="col-md-10 normal-row">
+                        <input type="text" id="nav_name" name="nav_name" class="form-control normal-row colorful w300" maxlength="64" value="{{ nav_name }}">
+                    </div>
+                </div>
+                <div class="form-group row alt-row">
+                    <label class="form-control-label col-md-2 alt-row form-label">Short Description</label>
+                    <div class="col-md-10 alt-row">
+                        <input type="text" id="nav_text" name="nav_text" class="form-control alt-row colorful w300" maxlength="64" value="{{ nav_text }}">
+                    </div>
+                </div>
+                <div class="form-group row normal-row">
+                    <label class="form-control-label col-md-2 normal-row form-label">Description</label>
+                    <div class="col-md-10 normal-row">
+                        <input type="text" id="nav_description" name="nav_description" class="form-control normal-row colorful w300" maxlength="64" value="{{ nav_description }}">
+                    </div>
+                </div>
+                <div class="form-group row alt-row">
+                    <label class="form-control-label col-md-2 alt-row form-label">CSS</label>
+                    <div class="col-md-10 alt-row">
+                        <input type="text" id="nav_css" name="nav_css" class="form-control alt-row colorful w300" maxlength="64" value="{{ nav_css }}">
+                    </div>
+                </div>
+                <div class="form-group row normal-row">
+                    <label class="form-control-label col-md-2 normal-row form-label">Nav Level</label>
+                    <div class="col-md-10 normal-row">
+                        <select name="nav_level">
+                            <option value="0"{{ selected0 }}>--Select Level--</option>
+                            <option value="1"{{ selected1 }}>1</option>
+                            <option value="2"{{ selected2 }}>2</option>
+                            <option value="3"{{ selected3 }}>3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row alt-row">
+                    <label class="form-control-label col-md-2 alt-row form-label">Nav Order</label>
+                    <div class="col-md-10 alt-row">
+                        <input type="text" id="nav_order" name="nav_order" class="form-control alt-row colorful w50" maxlength="2" value="{{ nav_order }}">
+                    </div>
+                </div>
+                <div class="form-group row normal-row">
+                    <label class="form-control-label col-md-2 normal-row form-label">Active</label>
+                    <div class="col-md-10 normal-row">
+                        <input type="checkbox" value="1"{{ active_checked }}>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+{% endblock %}

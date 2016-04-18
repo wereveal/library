@@ -1,0 +1,51 @@
+{% if nav.submenu is empty %}
+        <div class="row {{ class }}">
+            <div class="col-md-4">
+                <span class="inline-block bold w75 aright pad-right">Name:</span>
+                {{ nav.name }}
+            </div>
+            <div class="col-md-7">
+                <span class="inline-block bold w75 aright pad-right">Description:</span>
+                {{ nav.description }}
+            </div>
+            <div class="col-md-1">
+                {% set hidden_value = nav.nav_id %}
+                {% include '@' ~ twig_prefix ~ 'forms/single_button_form.twig' with modify_btn_form %}
+            </div>
+        </div>
+{% else %}
+        <div class="row {{ class }}">
+            <div class="col-md-12">
+                <div class="row row-inside {{ class }}">
+                    <div class="col-md-4">
+                        <span class="inline-block bold w75 aright pad-right">Name:</span>
+                        {{ nav.name }}
+                    </div>
+                    <div class="col-md-7">
+                        <span class="inline-block bold w75 aright pad-right">Description:</span>
+                        {{ nav.description }}
+                    </div>
+                    <div class="col-md-1">
+                        {% set hidden_value = nav.nav_id %}
+                        {% include '@' ~ twig_prefix ~ 'forms/single_button_form.twig' with modify_btn_form %}
+                    </div>
+                </div>
+            {% for child in nav.submenu %}
+                <div class="row {{ class }}">
+                    <div class="col-md-4">
+                        <span class="inline-block bold w75 aright pad-right">Name:</span>
+                        {{ child.name }}
+                    </div>
+                    <div class="col-md-7">
+                        <span class="inline-block bold w75 aright pad-right">Description:</span>
+                        {{ child.description }}
+                    </div>
+                    <div class="col-md-1">
+                        {% set hidden_value = child.nav_id %}
+                        {% include '@' ~ twig_prefix ~ 'forms/single_button_form.twig' with modify_btn_form %}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+{% endif %}

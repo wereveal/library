@@ -6,8 +6,8 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.1.1
- * @date      2016-03-28 07:41:12
+ * @version   4.1.1+2
+ * @date      2016-04-15 09:00:16
  * @note <b>Change Log</b>
  * - v4.1.1 - Bug fixes, the set/create/retrieve sql error message needed clarification     - 2016-03-28 wer
  * - v4.1.0 - Renamed rawQuery to rawExec and added a new rawQuery                          - 2016-03-25 wer
@@ -103,7 +103,7 @@ class DbModel
 
     ### Main Four Commands (CRUD) ###
     /**
-     * Inserts data into the database
+     * Inserts data into the database.
      * @param string $the_query the INSERT statement, default is empty.
      * @param array $a_values     default is empty array
      *                            If blank, the values are in the INSERT string
@@ -245,7 +245,7 @@ class DbModel
 
     /**
      * Executes a query to delete one or more records.
-     * This is a stub. It executes the $this->mdQuery method
+     * This is a stub. It executes the $this->mdQuery method.
      * @param string $the_query
      * @param array  $a_values      associative array with where paramaters
      * @param bool   $single_record specifies if only a single record should be deleted per query
@@ -296,6 +296,7 @@ class DbModel
     }
 
     /**
+     * GETter for the class property affected_rows.
      * @return mixed
      */
     public function getAffectedRows()
@@ -304,6 +305,7 @@ class DbModel
     }
 
     /**
+     * GETter for the class property a_new_ids.
      * @return array
      */
     public function getNewIds()
@@ -312,6 +314,8 @@ class DbModel
     }
 
     /**
+     * GETter for the class property pgsql_sequence_name.
+     * Also sets the class property if array is provided.
      * @param array $a_table_info
      * @return string
      */
@@ -324,6 +328,7 @@ class DbModel
     }
 
     /**
+     * GETter for class property success.
      * @return mixed
      */
     public function getSuccess()
@@ -332,6 +337,7 @@ class DbModel
     }
 
     /**
+     * GETter for class property sql_error_message.
      * @return mixed
      */
     public function getSqlErrorMessage()
@@ -340,6 +346,7 @@ class DbModel
     }
 
     /**
+     * SETter for an individual element of the class property array a_new_ids.
      * @param string $value
      * @return bool
      */
@@ -496,6 +503,7 @@ class DbModel
     }
 
     /**
+     * Shortcut for PDOStatement::closeCursor().
      * @param \PDOStatement $o_pdo_stmt
      * @return bool
      */
@@ -505,6 +513,7 @@ class DbModel
     }
 
     /**
+     * Commits the PDO transaction.
      * @return bool
      */
     public function commitTransaction()
@@ -681,6 +690,7 @@ class DbModel
     }
 
     /**
+     * Rolls back a PDO transaction.
      * @return bool
      */
     public function rollbackTransaction()
@@ -689,6 +699,7 @@ class DbModel
     }
 
     /**
+     * Executes PDOStatement::rowCount().
      * @param \PDOStatement $o_pdo_stmt
      * @return int
      */
@@ -698,6 +709,7 @@ class DbModel
     }
 
     /**
+     * Starts a PDO transaction.
      * @return bool
      */
     public function startTransaction()
@@ -707,6 +719,7 @@ class DbModel
 
     ### Complete Transaction in a single command
     /**
+     * Does an insert statement wrapped in a transaction.
      * @param string $the_query
      * @param array  $a_values
      * @param string $table_name
@@ -743,6 +756,7 @@ class DbModel
     }
 
     /**
+     * Does a query wrapped in a transaction.
      * @param string $the_query
      * @param array  $the_array
      * @param bool   $single_record
@@ -775,6 +789,7 @@ class DbModel
     }
 
     /**
+     * Does an update wrapped in a transaction.
      * @param string $the_query
      * @param array  $the_array
      * @param bool   $single_record
@@ -791,6 +806,7 @@ class DbModel
     }
 
     /**
+     * Does a delete wrapped in a transaction.
      * @param string $the_query
      * @param array  $the_array
      * @param bool   $single_record
@@ -926,6 +942,9 @@ class DbModel
     }
 
     /**
+     * Executes a prepared sql statement, allowing for it to call itself for multiple records.
+     * Question: why is it called mdQueryPrepared? You can tell this is an old method,
+     * with its mysterious name.
      * @param array         $a_values
      * @param bool          $single_record
      * @param \PDOStatement $o_pdo_stmt

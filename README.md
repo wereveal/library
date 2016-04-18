@@ -49,6 +49,14 @@ This README would normally document whatever steps are necessary to get your app
                  // do the default thing
              }
 ```
+- Version numbering - Try to use semantic version numbers e.g. 1.2.3+3 or 1.2.3-alpha.0 where
+    - 1 is a major version where backwards incompatibility is introduced.
+    - 2 is a minor version change with additional functionality while maintaining backwards compatibility.
+    - 3 is a patch version, normally bug fixes and the like
+    - +3 represents build metadata (comments, documentation, etc. where no code changes where made).
+    - -alpha, -beta, or -rc are pre-released versions. 
+    - -alpha.0 represents the version of that developmental stage.
+    - \ref http://semver.org/spec/v2.0.0.html
 - But some inconsistency may creep in over time. The goal is to remain as consistent as possible for readability and understandability over time without drowning out individuality.
 
 ## Who do I talk to? ##
