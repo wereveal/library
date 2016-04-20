@@ -1,41 +1,39 @@
 {% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
 {% block title %}{{ parent() }}: User Tests{% endblock %}
 {% block body %}
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            <ul class="test-results">
-                <li>Number of Failed Tests: <span class="red">{{ failed_tests }}</span></li>
-                <li>Number of Passed Tests: {{ passed_tests }}</li>
-                <li>Total Number of Tests: {{ num_o_tests }}</li>
-            {% if failed_test_names %}
-                <li>Failed Test Names
-                    <ul>
-                    {% for failedTest in failed_test_names %}
-                        {% if failedTest.subtest_names %}
-                        <li>{{ failedTest.name }}<br />
-                            {% for subname in failedTest.subtest_names %}
-                            <ul>
-                                <li>{{ subname }}</li>
-                            </ul>
-                            {% endfor %}
-                        </li>
-                        {% else %}
-                        <li>{{ failedTest.name }}</li>
-                        {% endif %}
-                    {% endfor %}
-                    </ul>
-                </li>
-            {% endif %}
-            {% if passed_test_names %}
-                <li>Passed Test Names
-                    <ul>
-                    {% for passedName in passed_test_names %}
-                        <li>{{ passedName }}</li>
-                    {% endfor %}
-                    </ul>
-                </li>
-            {% endif %}
-            </ul>
-        </div>
+    <div class="container">
+        <ul class="test-results">
+            <li>Number of Failed Tests: <span class="red">{{ failed_tests }}</span></li>
+            <li>Number of Passed Tests: {{ passed_tests }}</li>
+            <li>Total Number of Tests: {{ num_o_tests }}</li>
+        {% if failed_test_names is not empty %}
+            <li>Failed Test Names
+                <ul>
+                {% for failedTest in failed_test_names %}
+                    {% if failedTest.subtest_names %}
+                    <li>{{ failedTest.name }}<br />
+                        {% for subname in failedTest.subtest_names %}
+                        <ul>
+                            <li>{{ subname }}</li>
+                        </ul>
+                        {% endfor %}
+                    </li>
+                    {% else %}
+                    <li>{{ failedTest.name }}</li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </li>
+        {% endif %}
+        {% if passed_test_names is not empty %}
+            <li>Passed Test Names
+                <ul>
+                {% for passedName in passed_test_names %}
+                    <li>{{ passedName }}</li>
+                {% endfor %}
+                </ul>
+            </li>
+        {% endif %}
+        </ul>
     </div>
 {% endblock %}

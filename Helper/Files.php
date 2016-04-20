@@ -460,7 +460,7 @@ class Files implements LocationInterface
             'ns_path'        => $ns_path,
             'ns_res_path'    => $ns_path . '/resources',
             'ns_tpl_path'    => $ns_path . '/resources/templates',
-            'ns_conf_path'   => $ns_path . '/config',
+            'ns_conf_path'   => $ns_path . '/resources/config',
             'assets_path'    => SITE_PATH . '/assets',
             'themes_path'    => SITE_PATH . '/assets/themes/' . $this->theme_name,
             'default_theme'  => SITE_PATH . '/assets/themes/default',
