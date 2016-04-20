@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Basic/Tester.php
  * @namespace Ritc\Library\Basic
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.3.0
- * @date      2016-03-10 12:59:29
+ * @version   3.4.0
+ * @date      2016-04-20 10:54:20
  * @note <b>Change log</b>
+ * - v3.4.0 - modified setupTests to set a new property class_name                      - 2016-04-20 wer
  * - v3.3.0 - added new method to automate some setup                                   - 2016-03-10 wer
  * - v3.2.1 - bug fix                                                                   - 2016-03-09 wer
  * - v3.2.0 - moved the compare_arrays to the Arrays helper class                       - 11/02/2015 wer
@@ -47,6 +48,8 @@ class Tester
     protected $a_test_order      = array();
     /** @var array */
     protected $a_test_values     = array();
+    /** @var string  */
+    protected $class_name        = '';
     /** @var int */
     protected $failed_subtests   = 0;
     /** @var array */
@@ -178,16 +181,20 @@ class Tester
      *                            i.e., $class_name = MyClass
      * @param array $a_test_order optional, if provided it ignores the class property $a_test_order
      *                            and won't try to build one from the class methods.
-     * @return int $failed_tests
+     * @return int number of failed tests.
      */
     public function runTests($class_name = '', array $a_test_order = array())
     {
         if ($class_name == '') {
-            if (substr(__CLASS__, -5) == 'Tests') {
+            if ($this->class_name != '') {
+                $class_name = $this->class_name;
+            }
+            elseif (substr(__CLASS__, -5) == 'Tests') {
                 $class_name = str_replace('Tests','',__CLASS__);
             }
             elseif (substr(__CLASS__, -6) == 'Tester') {
                 $class_name = str_replace('Tester','',__CLASS__);
+                $this->class_name = $class_name;
             }
             else {
                 return 999;
@@ -327,8 +334,14 @@ class Tester
      */
     public function isPublicMethod($class_name = '', $method_name = '')
     {
-        if ($class_name == '' || $method_name == '') {
+        if ($method_name == '') {
             return false;
+        }
+        if ($class_name == '' && $this->class_name == '') {
+            return false;
+        }
+        elseif ($class_name == '') {
+            $class_name = $this->class_name;
         }
         $o_ref = new \ReflectionClass($class_name);
         $o_method = $o_ref->getMethod($method_name);
@@ -337,23 +350,25 @@ class Tester
 
     /**
      * Sets up the two main arrays the tests uses.
-     * @param array $a_values ['order_file', 'values_file', 'extra_dir', 'theme', 'namespace']
+     * @param array $a_values ['class_name', 'order_file', 'values_file', 'extra_dir', 'theme', 'namespace']
      * @return null
      */
-    public function setUpTests(array $a_values = [])
+    public function setupTests(array $a_values = [])
     {
+        $class_name  = '';
         $order_file  = 'test_order.php';
         $values_file = 'test_values.php';
         $extra_dir   = '';
         $theme       = 'default';
         $namespace   = '';
 
-        $a_expected_keys = ['order_file', 'values_file', 'extra_dir', 'theme', 'namespace'];
+        $a_expected_keys = ['class_name', 'order_file', 'values_file', 'extra_dir', 'theme', 'namespace'];
         foreach ($a_expected_keys as $keyname) {
             if (isset($a_values[$keyname]) && $a_values[$keyname] != '') {
                 $$keyname = $a_values[$keyname];
             }
         }
+        $this->class_name = $class_name;
         $o_files = new Files($order_file, $extra_dir, $theme, $namespace);
         $test_order_file = $o_files->getFileWithPath();
         if ($test_order_file) {

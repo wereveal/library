@@ -5,9 +5,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.7
- * @date      2016-04-13 10:18:53
+ * @version   1.0.0-alpha.8
+ * @date      2016-04-20 07:53:28
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.8 - potential bug fix in genericDelete                    - 2016-04-20 wer
  * - v1.0.0-alpha.7 - bug fix in buildSqlWhere                              - 2016-04-13 wer
  * - v1.0.0-alpha.6 - bug fix in setupProperties                            - 2016-04-12 wer
  * - v1.0.0-alpha.5 - Added new method, additional refactoring              - 2016-04-01 wer
@@ -261,7 +262,7 @@ SQL;
      */
     protected function genericDelete($record_id = -1)
     {
-        if ($record_id < 1) {
+        if ($record_id < 1 || !is_numeric($record_id)) {
             return false;
         }
         $piname = $this->primary_index_name;

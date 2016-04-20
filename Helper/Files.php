@@ -5,27 +5,28 @@
  * @file      Ritc/Library/Helper/Files.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.2.2
- * @date      2014-11-15 12:34:56
+ * @version   4.3.0
+ * @date      2016-04-20 10:43:18
  * @note The constants with _DIR_NAME should correspond to dir names in
  *     the site theme or namespace (e.g. templates are in namespace). If a directory
  *     is missing, this could cause a fatal error.
  *     </pre>
  * @note <b>Change Log</b>
- * - v4.2.1 - moved to the namespace Ritc\Library\Helper - 11/15/2014 wer
+ * - v4.3.0 - added an addition possible file location                              - 2016-04-20 wer
+ * - v4.2.1 - moved to the namespace Ritc\Library\Helper                            - 11/15/2014 wer
  * - v4.2.1 - implements changes to Base class for logging
- * - v4.2.0 - Several changes. - 12/19/2013 wer
- *             Base was changed from abstract to normal class
- *             Location was modified to be an interface
- *             Two methods needed added to match the Location interface.
- *             Unused stuff removed.
- * - v4.1.2 - some layout changes require changes in code. 07/06/2013 wer
- *         NOTE: the fact that layout changes require this class to be changed
- *             is not good. I need to change it so that the parameters.php file
- *             can specify the layout. But that won't be trivial.
- * - v4.1.1 - bug fixes and clean up 4/30/2013 wer
+ * - v4.2.0 - Several changes.                                                      - 12/19/2013 wer
+ *            Base was changed from abstract to normal class
+ *            Location was modified to be an interface
+ *            Two methods needed added to match the Location interface.
+ *            Unused stuff removed.
+ * - v4.1.2 - some layout changes require changes in code.                          - 07/06/2013 wer
+ *            NOTE: the fact that layout changes require this class to be changed
+ *            is not good. I need to change it so that the parameters.php file
+ *            can specify the layout. But that won't be trivial.
+ * - v4.1.1 - bug fixes and clean up                                                - 4/30/2013 wer
  * - v4.1.0 - New RITC Library Layout serious changes wer
- *              BUT method results and names were not changed
+ *            BUT method results and names were not changed
  * - v4.0.0 - FIG standards (mostly) wer
  */
 namespace Ritc\Library\Helper;
@@ -459,6 +460,7 @@ class Files implements LocationInterface
             'ns_path'        => $ns_path,
             'ns_res_path'    => $ns_path . '/resources',
             'ns_tpl_path'    => $ns_path . '/resources/templates',
+            'ns_conf_path'   => $ns_path . '/config',
             'assets_path'    => SITE_PATH . '/assets',
             'themes_path'    => SITE_PATH . '/assets/themes/' . $this->theme_name,
             'default_theme'  => SITE_PATH . '/assets/themes/default',
