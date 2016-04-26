@@ -82,7 +82,7 @@ class ConstantsAdminView
             'form_ts' => $_SESSION['idle_timestamp'],
             'hobbit'  => '',
             'adm_lvl' => $this->adm_level,
-            'a_menus' => $this->a_nav,
+            'a_menus' => $this->retrieveNav('ManagerLinks'),
             'twig_prefix' => LIB_TWIG_PREFIX
         );
         if (count($a_message) != 0) {
@@ -133,7 +133,7 @@ class ConstantsAdminView
             'hidden_value' => $a_values['constant']['const_id'],
             'tolken'       => $a_values['tolken'],
             'form_ts'      => $a_values['form_ts'],
-            'a_menus'      => $this->a_nav,
+            'a_menus'      => $this->retrieveNav('ManagerLinks'),
             'twig_prefix'  => LIB_TWIG_PREFIX
         ];
         if (isset($a_values['public_dir'])) {

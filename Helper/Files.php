@@ -5,13 +5,14 @@
  * @file      Ritc/Library/Helper/Files.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.3.0
- * @date      2016-04-20 10:43:18
+ * @version   4.3.1
+ * @date      2016-04-21 10:27:57
  * @note The constants with _DIR_NAME should correspond to dir names in
  *     the site theme or namespace (e.g. templates are in namespace). If a directory
  *     is missing, this could cause a fatal error.
  *     </pre>
  * @note <b>Change Log</b>
+ * - v4.3.1 - fixed bug (long standing)                                             - 2016-04-21 wer
  * - v4.3.0 - added an addition possible file location                              - 2016-04-20 wer
  * - v4.2.1 - moved to the namespace Ritc\Library\Helper                            - 11/15/2014 wer
  * - v4.2.1 - implements changes to Base class for logging
@@ -55,7 +56,7 @@ class Files implements LocationInterface
     /** @var string */
     protected $file_name     = 'no_file.tpl';
     /** @var string */
-    protected $file_dir_name = 'assets';
+    protected $file_dir_name = '';
     /** @var string */
     protected $namespace;
     /** @var string */
@@ -63,7 +64,7 @@ class Files implements LocationInterface
     /** @var string */
     protected $file_w_path;
     /** @var string */
-    protected $theme_name = 'default';
+    protected $theme_name = '';
 
     /**
      * Files constructor.

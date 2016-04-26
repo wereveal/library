@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/NavComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.3
- * @date      2016-04-18 14:45:41
+ * @version   1.0.0-alpha.4
+ * @date      2016-04-23 15:09:58
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.4 - added new method save                        - 2016-04-23 wer
  * - v1.0.0-alpha.3 - Changed sql, removed redundant methods       - 2016-04-18 wer
  * - v1.0.0-alpha.2 - Added new method getNavListAll               - 2016-04-15 wer
  * - v1.0.0-alpha.1 - Refactoring changes                          - 2016-03-19 wer
@@ -103,7 +104,7 @@ ORDER BY
     n.nav_order ASC,
     n.nav_name ASC
 EOT;
-        $this->logIt("SQL: {$select_sql}", LOG_ON, $meth . __LINE__);
+        $this->logIt("SQL: {$select_sql}", LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($select_sql);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -128,7 +129,7 @@ EOT;
         $where = "AND ng.ng_name = :ng_name\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
         $a_search_for = [':ng_name' => $navgroup_name];
-        $this->logIt("SQL: " . $sql, LOG_ON, $meth . __LINE__);
+        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -186,20 +187,20 @@ EOT;
         if ($nav_id == -1) {
             return false;
         }
-        $sql_and =<<<SQL
+        $sql_and =<<<EOT
 AND n.nav_id = :nav_id
 
-SQL;
+EOT;
         $sql = $this->select_sql . $sql_and . $this->select_order_sql;
         $this->logIt("SQL:\n{$sql}", LOG_ON, $meth . __LINE__);
         $a_search_for = [':nav_id' => $nav_id];
         $results = $this->o_db->search($sql, $a_search_for);
-        if ($results === false) {
+        if ($results === false || !isset($results[0])) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
             return false;
         }
         else {
-            return $results;
+            return $results[0];
         }
     }
 
@@ -277,7 +278,7 @@ SQL;
     {
         $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
-            $ng_id = $this->retrieveDefaultNavgroup();
+            $ng_id = $this->o_ng->retrieveDefaultNavgroup();
             if ($ng_id == -1) {
                 return false;
             }
@@ -392,5 +393,138 @@ ORDER BY
 EOT;
         }
         $this->select_order_sql = $string;
+    }
+
+    /**
+     * Does a transaction saving the navigation record and associated nav to navgroup map record.
+     * This handles both new records and updating old ones.
+     * @param array $a_post
+     * @return bool
+     */
+    public function save(array $a_post = [])
+    {
+        $meth = __METHOD__ . '.';
+        if ($a_post == []) {
+            $this->error_message = "An array with the save values was not supplied.";
+            return false;
+        }
+        $a_possible_keys = [
+            'nav_id',
+            'url_id',
+            'nav_parent_id',
+            'ng_id',
+            'nav_name',
+            'nav_text',
+            'nav_description',
+            'nav_css',
+            'nav_level',
+            'nav_order',
+            'nav_active'
+        ];
+        $action = '';
+        foreach ($a_possible_keys as $key_name) {
+            switch ($key_name) {
+                case 'nav_id':
+                    if (isset($a_post[$key_name]) && $a_post[$key_name] != '') {
+                        $action = 'update';
+                    }
+                    else {
+                        $action = 'create';
+                    }
+                    break;
+                case 'url_id':
+                    if (!isset($a_post[$key_name]) || intval($a_post[$key_name]) == 0) {
+                        $action = 'error';
+                        $this->error_message .= 'A URL must be selected. ';
+                    }
+                    break;
+                case 'nav_parent_id':
+                    if (!isset($a_post[$key_name]) || intval($a_post[$key_name]) == 0) {
+                        $action = 'error';
+                        $this->error_message .= 'A Parent must be selected. ';
+                    }
+                    break;
+                case 'ng_id':
+                    if (!isset($a_post[$key_name]) || intval($a_post[$key_name]) == 0) {
+                        $action = 'error';
+                        $this->error_message .= 'A navigation group must be selected. ';
+                    }
+                    break;
+                case 'nav_name':
+                    if (!isset($a_post[$key_name]) || $a_post[$key_name] == '') {
+                        $action = 'error';
+                        $this->error_message .= 'A Name must be given for the navigation record. ';
+                    }
+                    break;
+                case 'nav_text':
+                case 'nav_description':
+                    if (!isset($a_post[$key_name]) || $a_post[$key_name] == '') {
+                        $a_post[$key_name] = $a_post['nav_name'];
+                    }
+                    break;
+                case 'nav_level':
+                case 'nav_order':
+                case 'nav_active':
+                    if (!isset($a_post[$key_name]) || intval($a_post[$key_name]) == 0) {
+                        $a_post[$key_name] = 1;
+                    }
+                    break;
+                default:
+                // no default action needed
+            }
+        }
+        if ($action == 'error' || $action == '') {
+            return false;
+        }
+        $o_nav = new NavigationModel($this->o_db);
+        $o_map = new NavNgMapModel($this->o_db);
+        $old_ng_id = false;
+        if ($action == 'update') {
+            $old_record = $this->getNavRecord($a_post['nav_id']);
+            $log_message = 'Old Nav Record ' . var_export($old_record, TRUE);
+            $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
+            if ($old_record === false) {
+                $this->error_message .= 'Could not retrieve old navigation record. ';
+                return false;
+            }
+            $old_ng_id = $old_record['ng_id'] != $a_post['ng_id']
+                ? $old_record['ng_id']
+                : false;
+        }
+        $this->o_db->startTransaction();
+        if ($action = 'create') {
+            $results = $o_nav->create($a_post);
+            if ($results) {
+                $a_values = [
+                    'ng_id'  => $a_post['ng_id'],
+                    'nav_id' => $a_post['nav_id']
+                ];
+                $results = $o_map->create($a_values);
+            }
+        }
+        else {
+            $results = $o_nav->update($a_post);
+            if ($results) {
+                if ($old_ng_id) {
+                    $results = $o_map->delete($old_ng_id, $a_post['nav_id']);
+                    if ($results) {
+                        $a_values = [
+                            'ng_id'  => $a_post['ng_id'],
+                            'nav_id' => $a_post['nav_id']
+                        ];
+                        $results = $o_map->create($a_values);
+                    }
+                }
+            }
+        }
+        if ($results) {
+            return $this->o_db->commitTransaction();
+        }
+        else {
+            $this->error_message .= $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->o_db->rollbackTransaction();
+            return false;
+        }
     }
 }

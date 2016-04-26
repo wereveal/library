@@ -219,11 +219,20 @@ class NavigationAdminView
             'other_stuph' => '',
             'options'     => []
         ];
-        $a_options = [[
-            'value' => 0,
-            'label'       => '--Select Navigation--',
-            'other_stuph' => $nav_id == -1 ? ' selected' : ''
-        ]];
+        $a_options = [
+            [
+                'value'       => 0,
+                'label'       => '--Select Navigation--',
+                'other_stuph' => $nav_id == -1 ? ' selected' : ''
+            ],
+        ];
+        if  ($nav_id == -1) {
+            $a_options[] = [
+                'value'       => -1,
+                'label'       => 'SELF',
+                'other_stuph' => ''
+            ];
+        }
         foreach ($a_nav as $nav) {
             $a_temp = [
                 'value'       => $nav['nav_id'],
@@ -239,10 +248,15 @@ class NavigationAdminView
         return $a_select;
     }
 
-    private function createNgSelect($nav_id = -1)
+    /**
+     * Creates an array for the twig values to display a select for the navigation group.
+     * @param int $parent_ng_id The parent navigation group id
+     * @return array
+     */
+    private function createNgSelect($parent_ng_id = -1)
     {
         $meth = __METHOD__ . '.';
-        $o_ng = new NavgroupsModel();
+        $o_ng = new NavgroupsModel($this->o_db);
         $results = $o_ng->read();
         $log_message = 'navgroups ' . var_export($results, TRUE);
         $this->logIt($log_message, LOG_ON, $meth . __LINE__);
@@ -259,7 +273,7 @@ class NavigationAdminView
         $a_options = [[
             'value'       => 0,
             'label'       => '--Select NavGroup--',
-            'other_stuph' => $nav_id == -1 ? ' selected' : ''
+            'other_stuph' => $parent_ng_id == -1 ? ' selected' : ''
         ]];
         foreach($results as $ng) {
             $a_temp = [
@@ -267,7 +281,7 @@ class NavigationAdminView
                 'label'       => $ng['ng_name'],
                 'other_stuph' => ''
             ];
-            if ($ng['nav_id'] == $nav_id) {
+            if ($parent_ng_id != -1 && $ng['ng_id'] == $parent_ng_id) {
                 $a_temp['other_stuph'] = ' selected';
             }
             $a_options[] = $a_temp;

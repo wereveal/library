@@ -51,32 +51,24 @@ class NavigationModel implements ModelInterface
         if ($a_values == array()) { return false; }
         $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         $a_required_keys = [
-            'nav_page_id',
+            'url_id',
+            'nav_parent_id',
             'nav_name',
-
         ];
-        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            $this->error_message = 'Did not have a page id and/or nav name.';
-            return false;
-        }
-
-        $insert_value_names = $this->buildSqlInsert($a_values, $this->a_field_names);
-        $sql = "
-            INSERT INTO {$this->db_table} (
-            {$insert_value_names}
-            )
-        ";
-        $a_table_info = [
-            'table_name'  => "{$this->db_table}",
-            'column_name' => 'nav_id'
+        $a_psql = [
+            'table_name'  => $this->db_table,
+            'column_name' => $this->primary_index_name
         ];
-        $results = $this->o_db->insert($sql, $a_values, $a_table_info);
-        $this->logIt('Insert Results: ' . $results, LOG_OFF, $meth . __LINE__);
-        $this->logIt('db object: ' . var_export($this->o_db, TRUE), LOG_OFF, $meth . __LINE__);
+        $a_params = [
+            'a_required_keys' => $a_required_keys,
+            'a_field_names'   => $this->a_db_fields,
+            'a_psql'          => $a_psql
+        ];
+
+        $results = $this->genericCreate($a_values, $a_params);
+
         if ($results) {
-            $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
-            return $ids[0];
+            return $results[0];
         }
         else {
             $this->error_message = 'The nav could not be saved.';
@@ -93,74 +85,37 @@ class NavigationModel implements ModelInterface
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
         $meth = __METHOD__ . '.';
-        if (count($a_search_values) > 0) {
-            $a_search_params = $a_search_params == []
-                ? ['order_by' => 'nav_parent_id ASC, nav_order ASC, nav_name ASC']
-                : $a_search_params;
-            $a_search_values = Arrays::removeUndesiredPairs($a_search_values, $this->a_field_names);
-            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
-        }
-        elseif (count($a_search_params) > 0) {
-            $where = $this->buildSqlWhere(array(), $a_search_params);
-        }
-        else {
-            $where = " ORDER BY nav_parent_id ASC, nav_order ASC, nav_name ASC";
-        }
-        $select_me = $this->buildSqlSelectFields($this->a_field_names);
-        $where = trim($where);
-        $sql =<<<EOT
-
-SELECT {$select_me}
-FROM {$this->db_table}
-{$where}
-
-EOT;
-        $this->logIt($sql, LOG_OFF, $meth . __LINE__);
-        $this->logIt("Search Values: " . var_export($a_search_values, true), LOG_OFF, $meth . __LINE__);
-        $results = $this->o_db->search($sql, $a_search_values);
+        $a_parameters = [
+            'table_name'     => $this->db_table,
+            'a_search_for'   => $a_search_values,
+            'a_allowed_keys' => $this->a_db_fields,
+            'order_by'       => 'nav_parent_id ASC, nav_order ASC, nav_name ASC'
+        ];
+        $a_parameters = array_merge($a_parameters, $a_search_params);
+        $results = $this->genericRead($a_parameters);
         $this->logIt("Nav Search results:\n" . var_export($results, true), LOG_OFF, $meth . __LINE__);
         return $results;
     }
 
     /**
      * Generic update for a record using the values provided.
-     * @param array $a_values
+     * @param array $a_values Required
      * @return bool
      */
-    public function update(array $a_values)
+    public function update(array $a_values = [])
     {
-        $meth = __METHOD__ . '.';
-        if (!isset($a_values['nav_id'])
-            || $a_values['nav_id'] == ''
-            || (is_string($a_values['nav_id']) && !is_numeric($a_values['nav_id']))
-        ) {
-            $this->error_message = 'The Nav Id was not supplied.';
+        if ($a_values == []) {
+            $this->error_message = "No values supplied to update the record.";
             return false;
         }
-        $a_values = Arrays::removeUndesiredPairs($a_values, $this->a_field_names);
-        $set_sql = $this->buildSqlSet($a_values, ['nav_id']);
-        $sql = "
-            UPDATE {$this->db_table}
-            {$set_sql}
-            WHERE nav_id = :nav_id
-        ";
-        $this->logIt($sql, LOG_OFF, $meth . __LINE__);
-        $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-        $results = $this->o_db->update($sql, $a_values, true);
-        if ($results) {
-            return true;
-        }
-        else {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
-        }
+        return $this->genericUpdate($a_values);
     }
 
     /**
-     * Generic deletes a record based on the id provided.
+     * Deletes a record based on the id provided.
      * It also deletes the relational records in the nav navgroup map table.
-     * @param int $nav_id
-     * @return array
+     * @param int $nav_id Required.
+     * @return bool
      */
     public function delete($nav_id = -1)
     {
@@ -176,11 +131,7 @@ EOT;
             return false;
         }
         else {
-            $sql = "
-                DELETE FROM {$this->db_table}
-                WHERE nav_id = :nav_id
-            ";
-            $results = $this->o_db->delete($sql, array(':nav_id' => $nav_id), true);
+            $results = $this->genericDelete($nav_id);
             $this->logIt(var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
             if ($results) {
                 return $this->o_db->commitTransaction();

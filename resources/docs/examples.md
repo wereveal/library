@@ -9,6 +9,7 @@ a_search_parameters is an array with the following optional keys \sa readparams
     - 'starting_from'   => ''               -- which record number to start a limited return
     - 'comparison_type' => '='              -- what kind of comparison to use for ALL WHEREs
     - 'where_exists'    => false
+    - 'a_fields'        => ['field_name']   -- array list of field names to return (not all methods may use this)
 
 Not all parameters need to be in the array, if doesn't exist, the default setting will be used.
 

@@ -56,6 +56,8 @@ class Tester
     protected $failed_test_names = array();
     /** @var int */
     protected $failed_tests      = 0;
+    /** @var string  */
+    protected $namespace         = '';
     /** @var int */
     protected $num_o_tests       = 0;
     /** @var int */
@@ -362,10 +364,20 @@ class Tester
         $theme       = 'default';
         $namespace   = '';
 
-        $a_expected_keys = ['class_name', 'order_file', 'values_file', 'extra_dir', 'theme', 'namespace'];
+        $a_expected_keys = [
+            'class_name',
+            'order_file',
+            'values_file',
+            'extra_dir',
+            'theme',
+            'namespace'
+        ];
         foreach ($a_expected_keys as $keyname) {
             if (isset($a_values[$keyname]) && $a_values[$keyname] != '') {
                 $$keyname = $a_values[$keyname];
+                if ($keyname == 'namespace') {
+                    $this->namespace = $a_values[$keyname];
+                }
             }
         }
         $this->class_name = $class_name;

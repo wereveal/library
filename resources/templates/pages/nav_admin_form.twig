@@ -30,33 +30,33 @@
                     </div>
                 </div>
                 <div class="form-group row normal-row">
-                    <label class="form-control-label col-md-2 normal-row form-label">Name</label>
+                    <label for="nav_name" class="form-control-label col-md-2 normal-row form-label">Name</label>
                     <div class="col-md-10 normal-row">
-                        <input type="text" id="nav_name" name="nav_name" class="form-control normal-row colorful w300" maxlength="64" value="{{ nav_name }}">
+                        <input type="text" id="nav_name" name="nav_name" class="form-control normal-row colorful mw200" maxlength="64" value="{{ nav_name }}">
                     </div>
                 </div>
                 <div class="form-group row alt-row">
-                    <label class="form-control-label col-md-2 alt-row form-label">Short Description</label>
+                    <label for="nav_text" class="form-control-label col-md-2 alt-row form-label">Short Description</label>
                     <div class="col-md-10 alt-row">
-                        <input type="text" id="nav_text" name="nav_text" class="form-control alt-row colorful w300" maxlength="64" value="{{ nav_text }}">
+                        <input type="text" id="nav_text" name="nav_text" class="form-control alt-row colorful mw300" maxlength="64" value="{{ nav_text }}">
                     </div>
                 </div>
                 <div class="form-group row normal-row">
-                    <label class="form-control-label col-md-2 normal-row form-label">Description</label>
+                    <label for="nav_description" class="form-control-label col-md-2 normal-row form-label">Description</label>
                     <div class="col-md-10 normal-row">
-                        <input type="text" id="nav_description" name="nav_description" class="form-control normal-row colorful w300" maxlength="64" value="{{ nav_description }}">
+                        <input type="text" id="nav_description" name="nav_description" class="form-control normal-row colorful" maxlength="64" value="{{ nav_description }}">
                     </div>
                 </div>
                 <div class="form-group row alt-row">
-                    <label class="form-control-label col-md-2 alt-row form-label">CSS</label>
+                    <label for="nav_css" class="form-control-label col-md-2 alt-row form-label">CSS</label>
                     <div class="col-md-10 alt-row">
-                        <input type="text" id="nav_css" name="nav_css" class="form-control alt-row colorful w300" maxlength="64" value="{{ nav_css }}">
+                        <input type="text" id="nav_css" name="nav_css" class="form-control alt-row colorful mw300" maxlength="64" value="{{ nav_css }}">
                     </div>
                 </div>
                 <div class="form-group row normal-row">
-                    <label class="form-control-label col-md-2 normal-row form-label">Nav Level</label>
+                    <label for="nav_level" class="form-control-label col-md-2 normal-row form-label">Nav Level</label>
                     <div class="col-md-10 normal-row">
-                        <select name="nav_level">
+                        <select name="nav_level" id="nav_level">
                             <option value="0"{{ selected0 }}>--Select Level--</option>
                             <option value="1"{{ selected1 }}>1</option>
                             <option value="2"{{ selected2 }}>2</option>
@@ -65,15 +65,24 @@
                     </div>
                 </div>
                 <div class="form-group row alt-row">
-                    <label class="form-control-label col-md-2 alt-row form-label">Nav Order</label>
+                    <label for="nav_order" class="form-control-label col-md-2 alt-row form-label">Nav Order</label>
                     <div class="col-md-10 alt-row">
-                        <input type="text" id="nav_order" name="nav_order" class="form-control alt-row colorful w50" maxlength="2" value="{{ nav_order }}">
+                        <input type="text" id="nav_order" name="nav_order" class="form-control alt-row colorful mw50" maxlength="2" value="{{ nav_order }}">
                     </div>
                 </div>
                 <div class="form-group row normal-row">
-                    <label class="form-control-label col-md-2 normal-row form-label">Active</label>
+                    <label for="nav_active" class="form-control-label col-md-2 normal-row form-label">Active</label>
                     <div class="col-md-10 normal-row">
-                        <input type="checkbox" value="1"{{ active_checked }}>
+                        <input name="nav_active" id="nav_active" type="checkbox" value="1"{{ active_checked }}>
+                    </div>
+                </div>
+                <div class="form-group row normal-row">
+                    <div class="col-md-10 offset-md-2 normal-row">
+                        <button type="submit" name="submit" value="save" class="btn btn-primary btn-xs">Save</button>
+                        <input type="hidden" name="nav_id" value="{{ nav_id }}" />
+                        <input type="hidden" name="tolken" value="{{ tolken }}" />
+                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                        <label for="hobbit" class="hobbit">Humans don't enter anything here.</label><input type="text" name="hobbit" id="hobbit" value="" size="2" maxlength="24" class="hobbit" />
                     </div>
                 </div>
             </fieldset>
