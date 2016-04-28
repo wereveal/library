@@ -99,7 +99,7 @@ trait ViewTraits
         switch ($tpl_type) {
             case 'manager':
                 $a_menus = $this->retrieveNav('ManagerLinks');
-                $twig_prefix = 'mgr';
+                $twig_prefix = 'mgr_';
                 break;
             case 'library':
                 $a_menus = $this->retrieveNav('ManagerLinks');
