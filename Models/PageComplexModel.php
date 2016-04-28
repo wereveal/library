@@ -5,9 +5,10 @@
  * @file      PageComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0+2
- * @date      2016-04-08 10:35:17
+ * @version   1.0.0-alpha.1
+ * @date      2016-04-28 11:12:09
  * @note Change Log
+ * - v1.0.0-alpha.1 - bug fix                - 2016-04-28 wer
  * - v1.0.0-alpha.0 - Initial version        - 2016-04-08 wer
  */
 namespace Ritc\Library\Models;
@@ -62,7 +63,7 @@ class PageComplexModel
         $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
         $log_message = 'Search Parameters ' . var_export($a_search_for, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        
+
         return $this->o_db->search($sql, $a_search_for);
     }
 
@@ -80,8 +81,7 @@ class PageComplexModel
         $this->setSelectSql();
         $sql =<<<SQL
 {$this->select_sql}
-WHERE p.url_id = :url_id
-AND p.url_id = u.url_id
+AND p.url_id = :url_id
 SQL;
         $this->logIt("sql: $sql", LOG_OFF, $meth . __LINE__);
         return $this->o_db->search($sql, [':url_id' => $url_id]);
