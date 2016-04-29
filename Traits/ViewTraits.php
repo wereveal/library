@@ -197,7 +197,9 @@ trait ViewTraits
     {
         $meth = __METHOD__ . '.';
         $o_page_model = new PageComplexModel($this->o_db);
-        $o_page_model->setElog($this->o_elog);
+        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+            $o_page_model->setElog($this->o_elog);
+        }
         $url_id = $this->o_router->getUrlId();
         $this->logIt("url id: {$url_id}", LOG_OFF, $meth . __LINE__);
         $a_values = $o_page_model->readPageValuesByUrlId($url_id);
