@@ -122,7 +122,7 @@ trait ViewTraits
             'hobbit'      => '',
             'a_menus'     => $a_menus,
             'adm_lvl'     => $this->adm_level,
-            'twig_prefix' => $twig_prefix,
+            'twig_prefix' => $twig_prefix
         );
         $a_values = array_merge($a_page_values, $a_values);
         return $a_values;

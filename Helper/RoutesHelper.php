@@ -177,7 +177,8 @@ class RoutesHelper
             }
 
             $a_uri_parts = explode('/', $uri);
-            $new_request_uri = str_replace($a_uri_parts[count($a_uri_parts) - 1], '', $request_uri);
+            $last = array_pop($a_uri_parts);
+            $new_request_uri = '/' . implode('/', $a_uri_parts) . '/';
             if (strrpos($new_request_uri, '//') !== false) {
                 $new_request_uri = substr($new_request_uri, 0, strlen($new_request_uri) - 1);
             }
