@@ -5,9 +5,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.8
- * @date      2016-04-20 07:53:28
+ * @version   1.0.0-alpha.9
+ * @date      2016-05-04 09:08:09
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.9 - added functionality to buildSqlSelectFields method    - 2016-05-04 wer
  * - v1.0.0-alpha.8 - potential bug fix in genericDelete                    - 2016-04-20 wer
  * - v1.0.0-alpha.7 - bug fix in buildSqlWhere                              - 2016-04-13 wer
  * - v1.0.0-alpha.6 - bug fix in setupProperties                            - 2016-04-12 wer
@@ -330,26 +331,33 @@ SQL;
     /**
      * Builds the select field portion of a sql select statement.
      * Can be a simple array list or an assoc array which specifies
-     * as the key the name of the field, the value the name to be as, e.g.,
+     * the name of the field in the array key, the name to be as is the array value, e.g.,
      * ['ngv' => 'general] becomes the string "ngv as 'general'"
-     * @param array $a_values
+     * @param array $a_values Required
+     * @param string $prefix  Optional. Allows a table name or table alias to be added to the select name.
      * @return string
      */
-    protected function buildSqlSelectFields(array $a_values = [])
+    protected function buildSqlSelectFields(array $a_values = [], $prefix = '')
     {
+        if ($a_values == []) {
+            return '';
+        }
         $select_me = '';
+        if ($prefix != '') {
+            $prefix .= '.';
+        }
         if (Arrays::isAssocArray($a_values)) {
             foreach ($a_values as $name => $name_as) {
                 $select_me .= $select_me == ''
-                    ? $name . " as '" . $name_as . "'"
-                    : ', ' . $name . " as '" . $name_as . "'";
+                    ? $prefix . $name . " as '" . $name_as . "'"
+                    : ', ' . $prefix . $name . " as '" . $name_as . "'";
             }
         }
         else {
             foreach ($a_values as $name) {
                 $select_me .= $select_me == ''
-                    ? $name
-                    : ', ' . $name;
+                    ? $prefix . $name
+                    : ', ' . $prefix . $name;
             }
         }
         return $select_me;

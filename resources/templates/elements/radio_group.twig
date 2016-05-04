@@ -1,0 +1,7 @@
+{% for radio in radio_group.radios %}
+<label class="c-input c-radio">
+    <input id="{{ radio_group.name }}{{ loop.index }}" name="{{ radio_group.name }}" type="radio" value="{{ radio.value }}">
+    <span class="c-indicator"></span>
+    {{ radio.label }}
+</label>
+{% endfor %}
