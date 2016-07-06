@@ -235,6 +235,7 @@ SQL;
         $primary_index_name = $this->primary_index_name;
         $a_required_keys = array($primary_index_name);
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
+            $this->error_message = "The array must have the primary key in it.";
             return false;
         }
         $a_allowed_keys = $this->prepareListArray($this->a_db_fields);

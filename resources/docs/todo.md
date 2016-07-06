@@ -2,6 +2,12 @@
 
 ## Random Db Thoughts
 
+* DbUtilityTraits::genericUpdate needs to be modified to handle multiple record updates.
+
+* DbUtilityTraits::genericDeleteMultiple([1,2,3]) needs to be created
+
+* On multiple anything, should transactions be invoked? Or a switch be added to allow for that?
+
 * nav_ng_map table should have an automagical primary key
 
 * there are several tables (mostly map) which have field names like fs_sec_id to help keep straight
@@ -33,7 +39,7 @@
     - Consider the renaming of the item table to entity. The model file and class wouldn't have to be renamed,
       only the setupProperties argument changed. On the other hand, the file and class name ItemModel wouldn't then
       be obviously linked to the renamed table entity. 
-
+ 
 ## Random Other Thoughts
 
 * See if you can write/find a web front-end to phpUnit for testing so testing can be
