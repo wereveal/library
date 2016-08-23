@@ -2,15 +2,24 @@
 
 ## Random Db Thoughts
 
-* DbUtilityTraits::genericUpdate needs to be modified to handle multiple record updates.
-
-* DbUtilityTraits::genericDeleteMultiple([1,2,3]) needs to be created
+* Ritc\Library\Traits\DbUtilityTraits
+    - genericUpdate() needs to be modified to handle multiple record updates.
+    - genericDeleteMultiple([1,2,3]) needs to be created
+    - could use a method to determine the db table name (base name) from the model name.
+        * e.g., SectionModel.php, class SectionModel would then create 'section' for the base name of the
+          database table. 
+        * This would be used in the setProperties method instead of having to pass in the table name. 
+        * Forces the model to be precise in the name, a table name would force a complete refactoring, 
+          maybe a good thing, maybe a bad. 
+        * Consider the renaming of the word item to entity (or some other term)
+          - serious refactoring there
+          - could theoretically be confusing with the Entities classes
 
 * On multiple anything, should transactions be invoked? Or a switch be added to allow for that?
 
 * nav_ng_map table should have an automagical primary key
 
-* there are several tables (mostly map) which have field names like fs_sec_id to help keep straight
+* There are several tables (mostly map) which have field names like fs_sec_id to help keep straight
   the various field names apart which would otherwise be named the same in different tables.
   This may be too verbose since in most cases, we are either not using addtional tables
   or we are using the table_name.field_name syntax so there is no confusion. Oh yeah, the confusion
@@ -30,26 +39,28 @@
         4. Add a method to the revised DbCommonTraits to set the lib_prefix.
         5. Use the new lib_prefix in all the Library Models.
   
-* DbUtilityTraits could use a method to determine the db table name (base name) from the model name.
-    - e.g., SectionModel.php, class SectionModel would then create 'section' for the base name of the
-      database table. 
-    - This would be used in the setProperties method instead of having to pass in the table name. 
-    - Forces the model to be precise in the name, a table name would force a complete refactoring, 
-      maybe a good thing, maybe a bad. 
-    - Consider the renaming of the item table to entity. The model file and class wouldn't have to be renamed,
-      only the setupProperties argument changed. On the other hand, the file and class name ItemModel wouldn't then
-      be obviously linked to the renamed table entity. 
  
-## Random Other Thoughts
-
-* See if you can write/find a web front-end to phpUnit for testing so testing can be
-  done at either CLI or web and get rid of your own Testing class.
-  
 ## Noticed this needs done
 
-* ViewHelper could use some tweeking.
+* Ritc\Library\Helper\ViewHelper could use some tweeking.
     - ViewHelper::messageProperties comments need cleaned up
     - I feel that I am doing a lot of redundant stuff, couldn't the ViewHelper::errorMessage etc
       methods also call the ViewHelper::messageProperties method and get everything formatted in one
       step where now, one has to call them individually. 
+
+* Ritc\Library\Services\Elog
+    - several properties in Elog need SETter/GETter methods
+        * $elog_file
+        * $json_file
+        * $json_log_used
+        * $error_email_address
+        * $debug_text
+    - most likely need to then add a method in the LogitTraits class to call the SETters too.
+    - wonder if the log file path should be changed from a CONSTANT to a variable or allow for change
+      to be made on the fly.
       
+## Random Other Thoughts
+
+* See if you can write/find a web front-end to phpUnit for testing so testing can be
+  done at either CLI or web and get rid of your own Testing class.
+        
