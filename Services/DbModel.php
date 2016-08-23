@@ -9,6 +9,7 @@
  * @version   4.1.1+2
  * @date      2016-04-15 09:00:16
  * @note <b>Change Log</b>
+ * - v4.1.2 - Bug fix                                                                       - 2016-08-22 wer
  * - v4.1.1 - Bug fixes, the set/create/retrieve sql error message needed clarification     - 2016-03-28 wer
  * - v4.1.0 - Renamed rawQuery to rawExec and added a new rawQuery                          - 2016-03-25 wer
  *            The old rawQuery was doing a \PDO::exec command which doesn't return
@@ -280,7 +281,10 @@ class DbModel
             return [];
         }
         $pdo_stmt = $this->o_pdo->query($the_query);
-        return $pdo_stmt->fetchAll(\PDO::FETCH_ASSOC);
+        if ($pdo_stmt !== false) {
+            return $pdo_stmt->fetchAll(\PDO::FETCH_ASSOC);
+        }
+        return [];
     }
 
     ### Getters and Setters
@@ -1208,8 +1212,10 @@ class DbModel
                 default:
                     $sql = "SHOW COLUMNS FROM {$table_name}";
                     $results = $this->search($sql);
-                    foreach ($results as $row) {
-                        $a_column_names[] = $row['Field'];
+                    if (!empty($results)) {
+                        foreach ($results as $row) {
+                            $a_column_names[] = $row['Field'];
+                        }
                     }
                 // end both mysql and default
             }

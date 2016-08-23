@@ -5,9 +5,11 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.9
- * @date      2016-05-04 09:08:09
+ * @version   1.0.0
+ * @date      2016-08-22 10:40:19
  * @note <b>Change Log</b>
+ * - v1.0.0          - this went live a while back, guess it isn't alpha    - 2016-08-22 wer
+ * - v1.0.0-alpha.10 - bug fix                                              - 2016-08-22 wer
  * - v1.0.0-alpha.9 - added functionality to buildSqlSelectFields method    - 2016-05-04 wer
  * - v1.0.0-alpha.8 - potential bug fix in genericDelete                    - 2016-04-20 wer
  * - v1.0.0-alpha.7 - bug fix in buildSqlWhere                              - 2016-04-13 wer
@@ -37,7 +39,7 @@ trait DbUtilityTraits {
     use DbCommonTraits;
 
     /** @var array */
-    protected $a_db_config;
+    protected $a_db_config = [];
     /** @var array  */
     protected $a_db_fields = [];
     /** @var string */
@@ -47,11 +49,11 @@ trait DbUtilityTraits {
     /** @var string Can be 'mysql', 'pgsql', 'sqlite' */
     protected $db_type = 'mysql';
     /** @var  string */
-    protected $error_message;
+    protected $error_message = '';
     /** @var \Ritc\Library\Services\DbModel */
     protected $o_db;
     /** @var  string */
-    protected $primary_index_name;
+    protected $primary_index_name = '';
 
     #### Generic CRUD calls ####
     /**
@@ -598,27 +600,42 @@ WHERE  i.indrelid = '{$this->db_table}'::regclass
 AND    i.indisprimary;
 SQL;
                 $results = $this->o_db->rawQuery($query);
-                $this->primary_index_name = $results[0]['pKeyName'];
+                if (!empty($results)) {
+                    $this->primary_index_name = $results[0]['pKeyName'];
+                }
+                else {
+                    $this->primary_index_name = '';
+                }
                 return null;
             case 'sqlite':
                 $query = "PRAGMA table_info({$this->db_table})";
                 $results = $this->o_db->rawQuery($query);
-                foreach ($results as $a_row) {
-                    if ($a_row['pk'] === 1) {
-                        $this->primary_index_name = $a_row['name'];
-                        return null;
+                if (!empty($results)) {
+                    foreach ($results as $a_row) {
+                        if ($a_row['pk'] === 1) {
+                            $this->primary_index_name = $a_row['name'];
+                            return null;
+                        }
                     }
+                }
+                else {
+                    $this->primary_index_name = '';
                 }
                 break;
             case 'mysql':
             default:
                 $query = "SHOW index FROM {$this->db_table}";
                 $results = $this->o_db->rawQuery($query);
-                foreach ($results as $a_index) {
-                    if ($a_index['Key_name'] == 'PRIMARY') {
-                        $this->primary_index_name = $a_index['Column_name'];
-                        return null;
+                if (!empty($results)) {
+                    foreach ($results as $a_index) {
+                        if ($a_index['Key_name'] == 'PRIMARY') {
+                            $this->primary_index_name = $a_index['Column_name'];
+                            return null;
+                        }
                     }
+                }
+                else {
+                    $this->primary_index_name = '';
                 }
             // end 'mysql' and default;
         }
@@ -640,8 +657,8 @@ SQL;
         $this->db_prefix   = $o_db->getDbPrefix();
         $this->db_type     = $o_db->getDbType();
         if ($table_name != '') {
-            $this->db_table           = $this->db_prefix . $table_name;
-            $this->a_db_fields        = $o_db->selectDbColumns($this->db_table);
+            $this->db_table    = $this->db_prefix . $table_name;
+            $this->a_db_fields = $o_db->selectDbColumns($this->db_table);
             $this->setPrimaryIndexName();
         }
     }
