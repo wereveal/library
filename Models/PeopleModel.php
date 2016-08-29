@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.0
- * @date      2016-03-18 15:47:54
+ * @version   1.2.2
+ * @date      2016-08-29 11:16:08
  * @note <b>Change Log</b>
+ * - v1.2.2    - Bug fix                                                     - 2016-08-29 wer
  * - v1.2.1    - Bug Fix, seriously, how did that get past testing?          - 2016-03-19 wer
  * - v1.2.0    - Refactoring of DbModel reflected here                       - 2016-03-18 wer
  * - v1.1.0    - refactoring to make compatible with postgresql              - 11/22/2015 wer
@@ -60,7 +61,7 @@ class PeopleModel implements ModelInterface
         $this->o_pgm    = new PeopleGroupMapModel($o_db);
     }
 
-    ### Basic CRUD commands, required by interface, deals only with the {$this->db_prefix}user table ###
+    ### Basic CRUD commands, required by interface, deals only with the {$this->db_prefix}people table ###
     /**
      * Creates new people record(s) in the people table.
      * @param array $a_values required Can be a simple assoc array or array of assoc arrays
@@ -77,6 +78,7 @@ class PeopleModel implements ModelInterface
      */
     public function create(array $a_values = array())
     {
+        $meth = __METHOD__ . '.';
         $a_required_keys = [
             'login_id',
             'real_name',
@@ -87,23 +89,42 @@ class PeopleModel implements ModelInterface
             'is_active',
             'is_immutable'
         ];
-        $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, true);
-        if (Arrays::hasBlankValues($a_values, ['login_id', 'password'])) {
-            return false;
+        if (Arrays::isArrayOfAssocArrays($a_values)) {
+            foreach ($a_values as $key => $a_record) {
+                $a_record = Arrays::createRequiredPairs($a_record, $a_required_keys, true);
+                if (Arrays::hasBlankValues($a_record, ['login_id', 'password'])) {
+                    $this->error_message = "The array was missing required login_id and/or password";
+                    return false;
+                }
+                $a_values[$key] = $a_record;
+            }
         }
+        else {
+            $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, true);
+            if (Arrays::hasBlankValues($a_values, ['login_id', 'password'])) {
+                $this->error_message = "The array was missing required login_id and/or password";
+                return false;
+            }
+        }
+        $log_message = 'Values:  ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         $sql = "
             INSERT INTO {$this->db_table}
                 (login_id, real_name, short_name, password, description, is_logged_in, is_active, is_immutable)
             VALUES
                 (:login_id, :real_name, :short_name, :password, :description, :is_logged_in, :is_active, :is_immutable)
         ";
+        $log_message = "SQL: {$sql}";
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         $a_table_info = [
             'table_name'  => "{$this->db_table}",
             'column_name' => 'people_id'
         ];
         if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
             $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
             return $ids;
         }
         else {

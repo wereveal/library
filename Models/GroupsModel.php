@@ -5,8 +5,8 @@
  * @file      Ritc/Library/Models/GroupsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2016-03-19 07:18:59
+ * @version   1.1.0+01
+ * @date      2016-08-29 10:59:47
  * @note <b>Change Log</b>
  * - v1.1.0   - Bug fix and changes due to refactoring of DbModel            - 2016-03-19 wer
  * - v1.0.0   - First working version                                        - 11/27/2015 wer
@@ -241,7 +241,7 @@ class GroupsModel implements ModelInterface
     /**
      * Returns a record of the group specified by name.
      * @param string $group_name
-     * @return array()
+     * @return array|bool
      */
     public function readByName($group_name = '')
     {
