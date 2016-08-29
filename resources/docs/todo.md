@@ -59,6 +59,22 @@
     - wonder if the log file path should be changed from a CONSTANT to a variable or allow for change
       to be made on the fly.
       
+* Ritc\Library\Helper\Arrays
+    - The following need to be able to handle array of assoc arrays (and rename param on many from a_pairs)
+        - Arrays::createRequiredPairs()
+        - Arrays::hasRequiredKeys()
+        - Arrays::hasBlankValues()
+        - Arrays::removeSlashes()
+        - Arrays::removeUndesiredPairs()
+        - Arrays::stripTags()
+        - Arrays::stripUnsafePhp()
+    - Arrays::cleanArrayValues() 
+        - maybe change html_entities to filter_var($value, FILTER_SANITIZE_STRING)
+        - if change to filter_var also change ent_flag to array(FILTER_FLAG_NO_ENCODE_QUOTES) or default to ''. See php documentation.
+        - Also, maybe figure out a way to specify what type of filter to use per value
+          * Based on key name? email or e-mail = FILTER_SANITIZE_EMAIL etc would force better form design
+          * Based on a different parameters - change ent_flag to sanitize_filter or something like that?
+      
 ## Random Other Thoughts
 
 * See if you can write/find a web front-end to phpUnit for testing so testing can be
