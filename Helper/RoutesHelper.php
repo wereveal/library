@@ -5,14 +5,15 @@
  * @file      Ritc/Library/Helper/RoutesHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2015-11-27 14:55:02
+ * @version   2.0.0
+ * @date      2016-09-08 12:15:00
  * @note Change Log
- * - v1.1.0   - added method for quick min auth level for a route.   - 02/26/2016 wer
- * - v1.0.0   - took out of beta                                     - 11/27/2015 wer
- * - v1.0.0β3 - bug fix                                              - 11/24/2015 wer
- * - v1.0.0β2 - logic change                                         - 10/30/2015 wer
- * - v1.0.0β1 - intial file                                          - 09/26/2015 wer
+ * - v2.0.0   - Changed to handle inexact request URI (slashes)     - 2016-09-08 wer
+ * - v1.1.0   - added method for quick min auth level for a route.  - 02/26/2016 wer
+ * - v1.0.0   - took out of beta                                    - 11/27/2015 wer
+ * - v1.0.0β3 - bug fix                                             - 11/24/2015 wer
+ * - v1.0.0β2 - logic change                                        - 10/30/2015 wer
+ * - v1.0.0β1 - intial file                                         - 09/26/2015 wer
  */
 namespace Ritc\Library\Helper;
 
@@ -68,61 +69,115 @@ class RoutesHelper
     }
 
     /**
-     * @param string $request_uri
-     * @return null
+     * Compare request uri with route path.
+     * Determines if the only difference between the request uri and the route path
+     * is a missing or unneeded slash at the end or beginning.
+     * @param str $request_uri required
+     * @param str $route_path  required
+     * @return bool
      */
-    public function setRouteParts($request_uri = '')
+    public function compareUriToRoute($request_uri = '', $route_path = '')
     {
-        $meth = __METHOD__ . '.';
-        $a_route_parts = [
-            'route_id'       => 0,
-            'route_path'     => $request_uri,
-            'request_uri'    => $request_uri,
-            'route_class'    => 'MainController',
-            'route_method'   => '',
-            'route_action'   => '',
-            'url_actions'    => [],
-            'groups'         => [],
-            'min_auth_level' => 0
-        ];
+        if ($request_uri === $route_path) {
+            return true;
+        }
+        $a_compare_uri = $this->createComparisonUri($request_uri);
+        foreach ($a_compare_uri as $uri) {
+            if ($uri === $route_path) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Creates an array for possible uri to search for in database.
+     * @param string $request_uri
+     * @return array
+     */
+    private function createComparisonUri($request_uri = '')
+    {
         if ($request_uri == '') {
-            if ($this->request_uri != '') {
-                $request_uri = $this->request_uri;
-            }
-            else {
-                $request_uri = $_SERVER["REQUEST_URI"];
-            }
+            return [
+                'original'   => $request_uri,
+                'lastplus'   => '',
+                'lastminus'  => '',
+                'startplus'  => '',
+                'startminus' => '',
+                'both'       => '',
+                'reversed'   => '',
+                'none'       => ''
+            ];
+        }
+        $first_slash         = strpos($request_uri, '/');
+        $last_slash          = strrpos($request_uri, '/');
+        $possible_last_slash = strlen($request_uri) - 1;
+
+        /* example 'test/test' */
+        if ($first_slash !== 0 && ($last_slash !== $possible_last_slash)) {
+            return [
+                'original'   => $request_uri,
+                'lastplus'   => $request_uri . '/',
+                'lastminus'  => $request_uri,
+                'startplus'  => '/' . $request_uri,
+                'startminus' => $request_uri,
+                'both'       => '/' . $request_uri . '/',
+                'reversed'   => '/' . $request_uri . '/',
+                'none'       => $request_uri
+            ];
+        }
+        /* example 'test/test/' */
+        if ($first_slash !== 0 && ($last_slash === $possible_last_slash)) {
+            return [
+                'original'   => $request_uri,
+                'lastplus'   => $request_uri,
+                'lastminus'  => substr($request_uri, 0, -1),
+                'startplus'  => '/' . $request_uri,
+                'startminus' => $request_uri,
+                'both'       => '/' . $request_uri,
+                'reversed'   => '/' . substr($request_uri, 0, -1),
+                'none'       => substr($request_uri, 0, -1)
+            ];
         }
 
-        $a_route = $this->findValidRoute($request_uri);
-        if ($a_route !== false) {
-            $a_route_parts = $a_route;
+        /* example '/test/test/' */
+        if ($first_slash === 0 && ($last_slash === $possible_last_slash)) {
+            return [
+                'original'   => $request_uri,
+                'lastplus'   => $request_uri,
+                'lastminus'  => substr($request_uri, 0, -1),
+                'startplus'  => $request_uri,
+                'startminus' => substr($request_uri, 1),
+                'both'       => $request_uri,
+                'reversed'   => substr(substr($request_uri, 1), 0, -1),
+                'none'       => substr(substr($request_uri, 1), 0, -1)
+            ];
         }
 
-        if ($a_route_parts['route_id'] !== 0) {
-            $this->request_uri               = $request_uri;
-            $this->route_path                = $a_route_parts['url_text'];
-            $a_route_parts['request_uri']    = $request_uri;
-            $a_route_parts['route_path']     = $a_route_parts['url_text'];
-
-            $a_url_actions = [];
-            if ($this->request_uri != $this->route_path) {
-                $uri_actions = str_replace($this->route_path, '', $this->request_uri);
-                if (strrpos($uri_actions, '/') !== false) {
-                    $uri_actions = substr($uri_actions, 0, strlen($uri_actions) - 1);
-                }
-                $a_url_actions = explode('/', $uri_actions);
-            }
-
-            $a_route_parts['url_actions']    = $a_url_actions;
-            $a_route_parts['groups']         = $this->getGroups($a_route_parts['route_id']);
-            $a_route_parts['min_auth_level'] = $this->getMinAuthLevel($a_route_parts['groups']);
+        /* example '/test/test' */
+        if ($first_slash === 0 && ($last_slash !== $possible_last_slash)) {
+            return [
+                'original'   => $request_uri,
+                'lastplus'   => $request_uri . '/',
+                'lastminus'  => $request_uri,
+                'startplus'  => $request_uri,
+                'startminus' => substr($request_uri, 1),
+                'both'       => $request_uri . '/',
+                'reversed'   => substr($request_uri, 1) . '/',
+                'none'       => substr($request_uri, 1)
+            ];
         }
 
-        $log_message = 'Route parts:  ' . var_export($a_route_parts, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        $this->a_route_parts = $a_route_parts;
+        return [
+                'original'   => $request_uri,
+                'lastplus'   => '',
+                'lastminus'  => '',
+                'startplus'  => '',
+                'startminus' => '',
+                'both'       => '',
+                'reversed'   => '',
+                'none'       => ''
+        ];
     }
 
     /**
@@ -148,42 +203,68 @@ class RoutesHelper
     public function findValidRoute($request_uri = '')
     {
         $meth = __METHOD__ . '.';
-        $a_results = $this->o_routes->readByRequestUri($request_uri);
-        $log_message = 'For the request uri: ' .
-            $request_uri .
-            ' the readWidthRequestUri results:  '
-            . var_export($a_results, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        if ($a_results === false) {
-            $error_message = $this->o_routes->getErrorMessage();
-            $this->logIt("Error Message: " . var_export($error_message, true), LOG_OFF, $meth . __LINE__);
-        }
-        if ($a_results !== false && count($a_results) === 1) {
-            return $a_results[0];
-        }
-        else {
-            if ($request_uri == '/') {
-                return false;
-            }
-            if (strpos($request_uri, '/') == 0) {
-                $uri = substr($request_uri, 1);
-            }
-            else {
-                $uri = $request_uri;
-            }
-            $uri_length = strlen($uri);
-            if (strrpos($uri, '/') == $uri_length - 1) {
-                $uri = substr($uri, 0, $uri_length - 1);
-            }
 
-            $a_uri_parts = explode('/', $uri);
-            $last = array_pop($a_uri_parts);
-            $new_request_uri = '/' . implode('/', $a_uri_parts) . '/';
-            if (strrpos($new_request_uri, '//') !== false) {
-                $new_request_uri = substr($new_request_uri, 0, strlen($new_request_uri) - 1);
+        $a_search_for = $this->createComparisonUri($request_uri);
+        $log_message = 'Uri Comparison Array:  ' . var_export($a_search_for, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        foreach ($a_search_for as $key => $value) {
+            $a_results = $this->o_routes->readByRequestUri($value);
+            $log_message = 'For the request uri: ' .
+                $value .
+                ' the readWidthRequestUri results:  '
+                . var_export($a_results, TRUE);
+            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+            if ($a_results !== false && count($a_results) === 1) {
+                return $a_results[0];
             }
-            return $this->findValidRoute($new_request_uri);
         }
+
+        if ($request_uri == '/') {
+            return false;
+        }
+
+        /* Well, looks like the uri doesn't exist as is so check to see if a part of the uri is a route */
+        $uri = $a_search_for['none'];
+        $a_uri_parts = explode('/', $uri);
+        $last = array_pop($a_uri_parts);
+        $new_request_uri = '/' . implode('/', $a_uri_parts) . '/';
+        if (strrpos($new_request_uri, '//') !== false) {
+            $new_request_uri = substr($new_request_uri, 0, strlen($new_request_uri) - 1);
+        }
+        return $this->findValidRoute($new_request_uri);
+    }
+
+    /**
+     * Prepares the request uri to be explodes to establish uri actions.
+     * Uri actions are any parts of the uri that are not part of the route path
+     * so the route path has to be removed from the request uri string. Also remove
+     * any starting slashes and ending slashes.
+     * For example: $request_uri = '/test/fred/barney/' and $route_path is '/test/'
+     *              then the returned string = 'fred/barney'
+     * @param string $request_uri required.
+     * @param string $route_path required.
+     * @return string
+     */
+    private function prepareToExplode($request_uri = '', $route_path = '')
+    {
+        $meth = __METHOD__ . '.';
+        if ($request_uri == '/' || $request_uri == '' || $route_path == '') {
+            return '';
+        }
+
+        if ($this->compareUriToRoute($request_uri, $route_path)) {
+            return '';
+        }
+
+        $route_path = Strings::trimSlashes($route_path);
+        $this->logIt("Request: {$request_uri} and Route: {$route_path}", LOG_ON, $meth . __LINE__);
+
+        if ($route_path != '/' && $route_path != '') {
+            $request_uri = str_replace($route_path, '', $request_uri);
+        }
+
+        return Strings::trimSlashes($request_uri);
     }
 
     /**
@@ -235,14 +316,6 @@ class RoutesHelper
     }
 
     /**
-     * @param string $route_path
-     */
-    public function setRoutePath($route_path = '')
-    {
-        $this->route_path = $route_path;
-    }
-
-    /**
      * @return string
      */
     public function getRoutePath()
@@ -264,5 +337,71 @@ class RoutesHelper
     public function getRequestUri()
     {
         return $this->request_uri;
+    }
+
+    /**
+     * @param string $request_uri
+     * @return null
+     */
+    public function setRouteParts($request_uri = '')
+    {
+        $meth = __METHOD__ . '.';
+        $a_route_parts = [
+            'route_id'       => 0,
+            'route_path'     => $request_uri,
+            'request_uri'    => $request_uri,
+            'route_class'    => 'MainController',
+            'route_method'   => '',
+            'route_action'   => '',
+            'url_actions'    => [],
+            'groups'         => [],
+            'min_auth_level' => 0
+        ];
+        if ($request_uri == '') {
+            if ($this->request_uri != '') {
+                $request_uri = $this->request_uri;
+            }
+            else {
+                $request_uri = $_SERVER["REQUEST_URI"];
+            }
+        }
+
+        $a_route = $this->findValidRoute($request_uri);
+        if ($a_route !== false) {
+            $a_route_parts = $a_route;
+        }
+        $log_message = 'Route Found:  ' . var_export($a_route, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        if ($a_route_parts['route_id'] !== 0) {
+            $this->request_uri            = $request_uri;
+            $this->route_path             = $a_route_parts['url_text'];
+            $a_route_parts['request_uri'] = $request_uri;
+            $a_route_parts['route_path']  = $a_route_parts['url_text'];
+
+            $a_url_actions = [];
+            if ($this->compareUriToRoute($this->request_uri, $this->route_path) === false) {
+                $uri_actions = $this->prepareToExplode($this->request_uri, $this->route_path);
+                $this->logIt("URI Actions string: {$uri_actions}", LOG_ON, $meth . __LINE__);
+                $a_url_actions = explode('/', $uri_actions);
+            }
+
+            $a_route_parts['url_actions']    = $a_url_actions;
+            $a_route_parts['groups']         = $this->getGroups($a_route_parts['route_id']);
+            $a_route_parts['min_auth_level'] = $this->getMinAuthLevel($a_route_parts['groups']);
+        }
+
+        $log_message = 'Route parts:  ' . var_export($a_route_parts, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        $this->a_route_parts = $a_route_parts;
+    }
+
+    /**
+     * @param string $route_path
+     */
+    public function setRoutePath($route_path = '')
+    {
+        $this->route_path = $route_path;
     }
 }

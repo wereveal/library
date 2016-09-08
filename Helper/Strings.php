@@ -9,9 +9,10 @@
  * @file      Ritc/Library/Helper/Strings.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   6.3.0+2
- * @date      2016-04-13 08:51:17
+ * @version   6.4.0
+ * @date      2016-09-08 12:13:30
  * @note <b>Change Log</b>
+ * - v6.4.0 - added new method to trim slashes from front and back of string    - 2016-09-08 wer
  * - v6.3.0 - added new method to translate a digit to an English word          - 02/24/2016 wer
  * - v6.2.0 - added new method to strip tags from htmlentites coded string      - 11/25/2015 wer
  * - v6.1.0 - renamed makeAlphanumeric to makeAlphanumericPlus and added two    - 11/07/2015 wer
@@ -383,6 +384,27 @@ class Strings
         $replace = ['', '', '\1'];
         $string = html_entity_decode($string, $ent_flag);
         return preg_replace($search, $replace, $string);
+    }
+
+    /**
+     * Removes starting and ending slashes.
+     * @param string $value
+     * @return string
+     */
+    public static function trimSlashes($value)
+    {
+        if (strpos($value, '/') === 0) {
+            $value = substr($value, 1);
+        }
+
+        if (strrpos($value, '/') === strlen($value) - 1) {
+            $value = substr($value, 0, -1);
+        }
+
+        if (strpos($value, '/') === 0 || strrpos($value, '/') === strlen($value) - 1) {
+            $value = self::trimSlashes($value);
+        }
+        return $value;
     }
 
 }
