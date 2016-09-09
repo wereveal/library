@@ -5,9 +5,10 @@
  * @file      ControllerTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2016-09-03 12:47:21
+ * @version   1.1.0
+ * @date      2016-09-09 11:28:59
  * @note Change Log
+ * - v1.1.0         - added a commonly used property                            - 2016-09-09 wer
  * - v1.0.0         - added one more commonly used property and out of alpha    - 2016-09-03 wer
  * - v1.0.0-alpha.1 - added a couple more commonly used properties and setters  - 2016-04-15 wer
  * - v1.0.0-alpha.0 - Initial version                                           - 2016-04-11 wer
@@ -29,13 +30,15 @@ trait ControllerTraits
     use LogitTraits;
 
     /** @var  array */
-    protected $a_post;
+    protected $a_post = [];
     /** @var  array */
-    protected $a_router_parts;
+    protected $a_router_parts = [];
+    /** @var array */
+    protected $a_url_actions = [];
     /** @var  string */
-    protected $form_action;
+    protected $form_action = '';
     /** @var  string */
-    protected $main_action;
+    protected $main_action = '';
     /** @var  DbModel */
     protected $o_db;
     /** @var  Di */
@@ -45,9 +48,9 @@ trait ControllerTraits
     /** @var  Session */
     protected $o_session;
     /** @var  string */
-    protected $route_method;
+    protected $route_method = '';
     /** @var  string */
-    protected $url_action_one;
+    protected $url_action_one = '';
 
     protected function setupController(Di $o_di)
     {
@@ -71,9 +74,10 @@ trait ControllerTraits
         $this->a_post         = $a_router_parts['post'];
         $this->form_action    = $a_router_parts['form_action'];
         $this->route_method   = $a_router_parts['route_method'];
-        $this->url_action_one = isset($a_router_parts['url_actions'][0])
-            ? $a_router_parts['url_actions'][0]
-            : '';
+        if (isset($a_router_parts['url_actions'][0])) {
+            $this->a_url_actions  = $a_router_parts['url_actions'];
+            $this->url_action_one = $a_router_parts['url_actions'][0];
+        }
         if ($a_router_parts['route_action'] != '') {
             $this->main_action = $a_router_parts['route_action'];
         }
