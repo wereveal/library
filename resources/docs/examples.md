@@ -35,4 +35,5 @@ An array used in the DbUtilityTraits::genericRead() method with the following ke
     - 'limit_to'        Limit the number of records to return
     - 'starting_from'   Which record number to start a limited return
     - 'comparison_type' What kind of comparison operator to use for ALL WHEREs
-    - 'where_exists'    Either true or false
+    - 'where_exists'    Either true or false, If WHERE exists, do not add to returned string
+    - 'select_distinct' Either true or false Add DISTINCT to the SELECT 

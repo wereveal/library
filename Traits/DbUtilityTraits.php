@@ -5,9 +5,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2016-08-22 10:40:19
+ * @version   1.1.0
+ * @date      2016-09-09 13:29:28
  * @note <b>Change Log</b>
+ * - v1.1.0          - added a parameter to generic read select_distinct    - 2016-09-09 wer
  * - v1.0.0          - this went live a while back, guess it isn't alpha    - 2016-08-22 wer
  * - v1.0.0-alpha.10 - bug fix                                              - 2016-08-22 wer
  * - v1.0.0-alpha.9 - added functionality to buildSqlSelectFields method    - 2016-05-04 wer
@@ -192,6 +193,9 @@ SQL;
         $a_allowed_keys = isset($a_parameters['a_allowed_keys'])
             ? $a_parameters['a_allowed_keys']
             : $this->a_db_fields;
+        $distinct = isset($a_parameters['select_distinct'])
+            ? $a_parameters['select_distinct'] === true ? 'DISTINCT ' : ''
+            : '';
         $log_message = 'Parameters before unset:  ' . var_export($a_parameters, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
@@ -199,6 +203,7 @@ SQL;
         unset($a_parameters['a_search_for']);
         unset($a_parameters['return_format']);
         unset($a_parameters['a_allowed_keys']);
+        unset($a_parameters['select_distinct']);
 
         $log_message = 'Search For Values:  ' . var_export($a_search_for, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
@@ -206,7 +211,7 @@ SQL;
         $select_me = $this->buildSqlSelectFields($a_fields);
         $where = $this->buildSqlWhere($a_search_for, $a_parameters, $a_allowed_keys);
         $sql =<<<SQL
-SELECT {$select_me}
+SELECT {$distinct}{$select_me}
 FROM {$table_name}
 {$where}
 
