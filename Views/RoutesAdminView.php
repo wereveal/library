@@ -175,7 +175,7 @@ class RoutesAdminView
     {
         $meth = __METHOD__ . '.';
         $log_message = 'Posted Values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         if ($a_values === array()) {
             return $this->renderList(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
@@ -195,7 +195,7 @@ class RoutesAdminView
         ];
         $a_twig_values = array_merge($a_twig_values, $a_more_values);
         $log_message = 'Twig Values: ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
         return $this->o_twig->render($tpl, $a_twig_values);

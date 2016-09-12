@@ -146,7 +146,7 @@ class PageAdminView
                 $a_values['select']['options'][0]['other_stuph'] = ''; // this should be the default --Select-- option
             }
             else {
-                $this->logIt("Could not get the page values!", LOG_ON, $meth . __LINE__);
+                $this->logIt("Could not get the page values!", LOG_OFF, $meth . __LINE__);
             }
             $log_message = 'a_values in the update: ' . var_export($a_values, TRUE);
             $this->logIt($log_message, LOG_OFF, $meth . __LINE__);

@@ -54,8 +54,8 @@ class UrlsModel implements ModelInterface
             'a_psql'          => $a_psql
         ];
         $log_message = 'Values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-        
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         return $this->genericCreate($a_values, $a_params);
     }
 

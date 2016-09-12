@@ -47,8 +47,8 @@ class NavigationAdminController implements ManagerControllerInterface
     {
         $meth = __METHOD__ . '.';
         $log_message = 'route array: ' . var_export($this->a_router_parts, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-        $this->logIt("main action: " . $this->main_action, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $this->logIt("main action: " . $this->main_action, LOG_OFF, $meth . __LINE__);
         switch($this->main_action) {
             case 'new':
                 return $this->o_view->renderForm();
@@ -72,7 +72,7 @@ class NavigationAdminController implements ManagerControllerInterface
      */
     public function save()
     {
-        
+
         return $this->o_view->renderList();
     }
 

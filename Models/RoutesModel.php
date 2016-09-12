@@ -98,7 +98,7 @@ class RoutesModel implements ModelInterface
     {
         $meth = __METHOD__ . '.';
         $log_message = 'Values Passed In:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         if (!isset($a_values[$this->primary_index_name])
             || $a_values[$this->primary_index_name] == ''

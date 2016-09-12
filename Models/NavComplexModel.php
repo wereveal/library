@@ -192,7 +192,7 @@ AND n.nav_id = :nav_id
 
 EOT;
         $sql = $this->select_sql . $sql_and . $this->select_order_sql;
-        $this->logIt("SQL:\n{$sql}", LOG_ON, $meth . __LINE__);
+        $this->logIt("SQL:\n{$sql}", LOG_OFF, $meth . __LINE__);
         $a_search_for = [':nav_id' => $nav_id];
         $results = $this->o_db->search($sql, $a_search_for);
         if ($results === false || !isset($results[0])) {
@@ -482,7 +482,7 @@ EOT;
         if ($action == 'update') {
             $old_record = $this->getNavRecord($a_post['nav_id']);
             $log_message = 'Old Nav Record ' . var_export($old_record, TRUE);
-            $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
             if ($old_record === false) {
                 $this->error_message .= 'Could not retrieve old navigation record. ';
