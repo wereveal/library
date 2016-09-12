@@ -258,7 +258,7 @@ class RoutesHelper
         }
 
         $route_path = Strings::trimSlashes($route_path);
-        $this->logIt("Request: {$request_uri} and Route: {$route_path}", LOG_ON, $meth . __LINE__);
+        $this->logIt("Request: {$request_uri} and Route: {$route_path}", LOG_OFF, $meth . __LINE__);
 
         if ($route_path != '/' && $route_path != '') {
             $request_uri = str_replace($route_path, '', $request_uri);
@@ -382,7 +382,7 @@ class RoutesHelper
             $a_url_actions = [];
             if ($this->compareUriToRoute($this->request_uri, $this->route_path) === false) {
                 $uri_actions = $this->prepareToExplode($this->request_uri, $this->route_path);
-                $this->logIt("URI Actions string: {$uri_actions}", LOG_ON, $meth . __LINE__);
+                $this->logIt("URI Actions string: {$uri_actions}", LOG_OFF, $meth . __LINE__);
                 $a_url_actions = explode('/', $uri_actions);
             }
 

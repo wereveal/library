@@ -259,7 +259,7 @@ class NavigationAdminView
         $o_ng = new NavgroupsModel($this->o_db);
         $results = $o_ng->read();
         $log_message = 'navgroups ' . var_export($results, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_select = [
             'label_for'   => '',
