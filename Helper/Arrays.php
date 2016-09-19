@@ -5,11 +5,16 @@
  * @file      Ritc/Library/Helper/Arrays.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.8.0
- * @date      2016-04-12 16:01:00
+ * @version   3.0.0
+ * @date      2016-09-19 12:24:01
  * @note <b>Change Log</b>
+ * - v3.0.0 - Depreciated clearArrayValues in favor of two new methods.              - 2016-09-19 wer
+ *            Arrays::cleanValues() by default removes php and mysql commands from
+ *            the values in the array. Optionally it can call Arrays::encodeValues().
+ *            Arrays::encodeValues() encodes the values of the array using filter_var
+ *            and with the FILTER_SANITIZE_STRING filter and optional flags.
  * - v2.8.0 - Added new method inAssocArrayRecursive()                               - 2016-04-12 wer
- * - v2.7.0 - Changed entity coding/decoding to be defineable via paramater.         - 11/25/2015 wer
+ * - v2.7.0 - Changed entity coding/decoding to be definable via parameter.          - 11/25/2015 wer
  *              Defaults to ENT_QUOTES.
  * - v2.6.1 - bug fix, stripTags -- logic error                                      - 11/12/2015 wer
  * - v2.6.0 - new method, moved from Tester class, can be more generic.              - 11/02/2015 wer
@@ -46,6 +51,7 @@ class Arrays
      * Modifies array values with htmlentities and strips unsafe php commands.
      * Initially designed to do some basic filtering of $_POST, $_GET, etc
      * but will work with any array.
+     * This is now depreciated in favor of Arrays::cleanValues() and Arrays::encodeValues()
      * @param array $a_pairs             the array to clean
      * @param array $a_allowed_keys      allows only specified keys to be returned
      * @param bool  $unsafe_php_commands defaults to true strips 'unsafe' php commands, rare should it be false
@@ -78,6 +84,41 @@ class Arrays
             }
         }
         return $a_clean;
+    }
+
+    /**
+     * Modifies array values by removing php and mysql commands.
+     * @param array   $a_pairs            optional, sort of, the array to clean.
+     * @param array   $a_allowed_keys     optional, allows only specified keys to be returned.
+     * @param array   $a_allowed_commands optional, defaults to []. Used values is ['php' => true, 'mysql' => true].
+     * @param integer $sanitize_flags     optional, defaults to 0. If provided, calls Array::encodeValues().
+     * @return array
+     */
+    public static function cleanValues(array $a_pairs = [], array $a_allowed_keys = [], array $a_allowed_commands = [], $sanitize_flags = 0)
+    {
+        if (empty($a_pairs)) {
+            return [];
+        }
+        if (!empty($a_allowed_keys)) {
+            $a_pairs = self::removeUndesiredPairs($a_pairs, $a_allowed_keys);
+        }
+
+        if (empty($a_allowed_commands)) {
+            $a_pairs = self::stripUnsafePhp($a_pairs);
+            $a_pairs = self::stripSQL($a_pairs);
+        }
+        else {
+            if ($a_allowed_commands['php'] !== true) {
+                $a_pairs = self::stripUnsafePhp($a_pairs);
+            }
+            if ($a_allowed_commands['mysql'] !== true) {
+                $a_pairs = self::stripSQL($a_pairs);
+            }
+        }
+        if ($sanitize_flags > 0) {
+            $a_pairs = self::encodeValues($a_pairs, $sanitize_flags);
+        }
+        return $a_pairs;
     }
 
     /**
@@ -164,6 +205,30 @@ class Arrays
             }
         }
         return $a_clean;
+    }
+
+    /**
+     * Runs the value of each array pair through filter_var($var, FILTER_SANITIZE_STRING) using specified flags.
+     * Calling this method one would probably use the Flag Constants, e.g.
+     * encodeValues($a_pairs, FILTER_FLAG_NO_ENCODE_QUOTES) or encodeValues($a_pairs, FILTER_FLAG_NO_ENCODE_QUOTES | FILTER_FLAG_ENCODE_HIGH).
+     * @param array $a_pairs        Required of sorts
+     * @param int   $sanitize_flags Optional, defaults to 0 (i.e. default filtering).
+     * @return array
+     */
+    public static function encodeValues(array $a_pairs = array(), $sanitize_flags = 0)
+    {
+        if (empty($a_pairs)) {
+            return $a_pairs;
+        }
+        foreach ($a_pairs as $key => $value) {
+            if (is_array($value)) {
+                $a_pairs[$key] = self::encodeValues($value, $sanitize_flags);
+            }
+            else {
+                $a_pairs[$key] = filter_var($value, FILTER_SANITIZE_STRING, $sanitize_flags);
+            }
+        }
+        return $a_pairs;
     }
 
     /**
@@ -349,10 +414,8 @@ class Arrays
     /**
      * Strips unwanted key=>value pairs.
      * Only really valuable for assoc arrays.
-     *
      * @param array $a_pairs
      * @param array $a_allowed_keys
-     *
      * @return array $a_pairs
      */
     public static function removeUndesiredPairs(array $a_pairs = array(), array $a_allowed_keys = array())
@@ -361,6 +424,104 @@ class Arrays
         foreach ($a_pairs as $key => $value) {
             if (!in_array($key, $a_allowed_keys)) {
                 unset($a_pairs[$key]);
+            }
+        }
+        return $a_pairs;
+    }
+
+    /**
+     * Removes SQL commands from array pairs.
+     * @param array $a_pairs
+     * @return array
+     */
+    public static function stripSQL(array $a_pairs = [])
+    {
+        if (empty($a_pairs)) {
+            return [];
+        }
+        $a_commands = [
+            '/SELECT(.*) FROM/g',
+            '/INSERT(.*) INTO/g',
+            '/DELETE(.*) FROM/g',
+            '/UPDATE(.*) SET/g',
+            '/REPLACE(.*) INTO/g',
+            '/ALTER AGGREGATE/ig',
+            '/ALTER COLLATION/ig',
+            '/ALTER CONVERSION/ig',
+            '/ALTER DATABASE/ig',
+            '/ALTER DEFAULT PRIVILEGES/ig',
+            '/ALTER DOMAIN/ig',
+            '/ALTER EVENT TRIGGER/ig',
+            '/ALTER EVENT/ig',
+            '/ALTER EXTENSION/ig',
+            '/ALTER FOREIGN DATA WRAPPER/ig',
+            '/ALTER FOREIGN TABLE/ig',
+            '/ALTER FUNCTION/ig',
+            '/ALTER GROUP/ig',
+            '/ALTER INDEX/ig',
+            '/ALTER INSTANCE/ig',
+            '/ALTER LANGUAGE/ig',
+            '/ALTER LARGE OBJECT/ig',
+            '/ALTER LOGFILE GROUP/ig',
+            '/ALTER MAGERIALIZED VIEW/ig',
+            '/ALTER OPERATOR CLASS/ig',
+            '/ALTER OPERATOR FAMILY/ig',
+            '/ALTER OPERATOR/ig',
+            '/ALTER PROCEDURE/ig',
+            '/ALTER ROLE/ig',
+            '/ALTER SCHEMA/ig',
+            '/ALTER SEQUENCE/ig',
+            '/ALTER SERVER/ig',
+            '/ALTER SYSTEM/ig',
+            '/ALTER TABLE/ig',
+            '/ALTER TABLESPACE/ig',
+            '/ALTER TRIGGER/ig',
+            '/ALTER TYPE/ig',
+            '/ALTER USER MAPPING/ig',
+            '/ALTER USER/ig',
+            '/ALTER VIEW/ig',
+            '/CREATE DATABASE/ig',
+            '/CREATE EVENT/ig',
+            '/CREATE FUNCTION/ig',
+            '/CREATE INDEX/ig',
+            '/CREATE LOGFILE GROUP/ig',
+            '/CREATE PROCEDURE/ig',
+            '/CREATE FUNCTION/ig',
+            '/CREATE ROLE/ig',
+            '/CREATE SERVER/ig',
+            '/CREATE TABLE/ig',
+            '/CREATE TABLESPACE/ig',
+            '/CREATE TRIGGER/ig',
+            '/CREATE USER/ig',
+            '/CREATE VIEW/ig',
+            '/DROP DATABASE/ig',
+            '/DROP DOMAIN/ig',
+            '/DROP EVENT/ig',
+            '/DROP FOREIGN TABLE/ig',
+            '/DROP FUNCTION/ig',
+            '/DROP INDEX/ig',
+            '/DROP LOGFILE GROUP/ig',
+            '/DROP PROCEDURE/ig',
+            '/DROP ROLE/ig',
+            '/DROP FUNCTION/ig',
+            '/DROP SERVER/ig',
+            '/DROP TABLE/ig',
+            '/DROP TABLESPACE/ig',
+            '/DROP TRIGGER/ig',
+            '/DROP USER/ig',
+            '/DROP VIEW/ig',
+            '/RENAME TABLE/ig',
+            '/SET ROLE/ig',
+            '/SET SESSION AUTHORIZATION/ig',
+            '/TRUNCATE TABLE/ig'
+        ];
+
+        foreach ($a_pairs as $key => $value) {
+            if (is_array($value)) {
+                $a_pairs[$key] = self::stripSQL($value);
+            }
+            else {
+                $a_pairs[$key] = preg_replace($a_commands, '', $value);
             }
         }
         return $a_pairs;
@@ -406,9 +567,9 @@ class Arrays
     public static function stripUnsafePhp(array $a_pairs)
     {
         $a_functions = [
+            '/shell_exec\((.*)\)/i',
             '/exec\((.*)\)/i',
             '/passthru\((.*)\)/i',
-            '/shell_exec\((.*)\)/i',
             '/system\((.*)\)/i',
             '/proc_open\((.*)\)/i',
             '/popen\((.*)\)/i',
@@ -422,7 +583,9 @@ class Arrays
             if (is_array($value)) {
                 $a_return_this[$key] = self::stripUnsafePhp($value);
             }
-            $a_return_this[$key] = preg_replace($a_functions, '', $value);
+            else {
+                $a_return_this[$key] = preg_replace($a_functions, '', $value);
+            }
         }
         return $a_return_this;
     }
