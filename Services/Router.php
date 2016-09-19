@@ -8,6 +8,9 @@
  * @version   1.1.0
  * @date      2016-04-01 09:44:34
  * @note <b>Change Log</b>
+ * - v1.2.0    - Changed Router::setPost() and Router::setGet to use the     - 2016-09-19 wer
+ *               new Arrays::cleanValues() method. By default, they do
+ *               no create entities in the strings now.
  * - v1.1.0    - Added property and methods for url_id                       - 2016-04-01 wer
  * - v1.0.1    - clean up of code.                                           - 2016-02-22 wer
  * - v1.0.0    - take out of beta                                            - 11/27/2015 wer
@@ -86,7 +89,6 @@ class Router
      *      - wilma represents a variable that the controller understands.
      *      - For example wilma could be an blog id or blog name 'blog_id'
      *      - for which a blog controller would search in the blog db by blog_id.
-     * @return array
      */
     public function setRouteParts()
     {
@@ -152,7 +154,7 @@ class Router
     /**
      * Returns the property a_post or one of the property array values.
      * @param string $value
-     * @return bool
+     * @return array|string
      */
     public function getPost($value = '')
     {
@@ -167,7 +169,7 @@ class Router
             }
             else {
                 $this->logIt("The Value Doesn't Exist. " . var_export($this->a_post, true), LOG_OFF, $meth . __LINE__);
-                return false;
+                return '';
             }
         }
     }
@@ -270,16 +272,17 @@ class Router
     /**
      * Sets the property a_get with semi-sanitized values from $_GET.
      * @param array $a_allowed_keys
+     * @param array $a_allowed_commands
+     * @param int   $filter_flags
      */
-    public function setGet(array $a_allowed_keys = array())
+    public function setGet(array $a_allowed_keys = [], array $a_allowed_commands = [], $filter_flags = 0)
     {
-        $this->a_get = Arrays::cleanArrayValues($_GET, $a_allowed_keys, true);
+        $this->a_get = Arrays::cleanValues($_GET, $a_allowed_keys, $a_allowed_commands, $filter_flags);
     }
 
     /**
      * Sets the property $request_uri.
      * @param string $request_uri optional, defaults to $_SERVER['REQUEST_URI']
-     * @return null
      */
     public function setRequestUri($request_uri = '')
     {
@@ -309,10 +312,12 @@ class Router
     /**
      * Sets the property a_post.
      * @param array $a_allowed_keys
+     * @param array $a_allowed_commands
+     * @param int   $filter_flags
      */
-    public function setPost(array $a_allowed_keys = array())
+    public function setPost(array $a_allowed_keys = [], array $a_allowed_commands = [], $filter_flags = 0)
     {
-        $this->a_post = Arrays::cleanArrayValues($_POST, $a_allowed_keys, true);
+        $this->a_post = Arrays::cleanValues($_POST, $a_allowed_keys, $a_allowed_commands, $filter_flags);
     }
 
     /* From LogItTraits
