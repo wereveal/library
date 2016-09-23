@@ -5,9 +5,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2016-09-09 13:29:28
+ * @version   1.2.0
+ * @date      2016-09-23 15:35:22
  * @note <b>Change Log</b>
+ * - v1.2.0          - Refactoring of DbCommonTraits reflected here         - 2016-09-23 wer
  * - v1.1.0          - added a parameter to generic read select_distinct    - 2016-09-09 wer
  * - v1.0.0          - this went live a while back, guess it isn't alpha    - 2016-08-22 wer
  * - v1.0.0-alpha.10 - bug fix                                              - 2016-08-22 wer
@@ -107,7 +108,7 @@ trait DbUtilityTraits {
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_value) {
                 if (!Arrays::hasRequiredKeys($a_value, $a_required_keys)) {
-                    $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_value);
+                    $a_missing_keys = Arrays::findMissingKeys($a_required_keys, $a_value);
                     $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
                     return false;
                 }
@@ -116,7 +117,7 @@ trait DbUtilityTraits {
         }
         else {
             if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-                $a_missing_keys = $this->o_db->findMissingKeys($a_required_keys, $a_values);
+                $a_missing_keys = Arrays::findMissingKeys($a_required_keys, $a_values);
                 $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
                 return false;
             }

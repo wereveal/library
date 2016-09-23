@@ -22,60 +22,6 @@ use Ritc\Library\Helper\Arrays;
 trait DbCommonTraits
 {
     /**
-     * Determines if any required keys are missing
-     * @param array $a_required_keys required
-     * @param array $a_check_values required
-     * @return array $a_missing_keys
-     */
-    public function findMissingKeys(array $a_required_keys = array(), array $a_check_values = array())
-    {
-        if ($a_required_keys == array() || $a_check_values == array()) { return array(); }
-        $a_missing_keys = array();
-        foreach ($a_required_keys as $key) {
-            if (
-                array_key_exists($key, $a_check_values)
-                ||
-                array_key_exists(':' . $key, $a_check_values)
-                ||
-                array_key_exists(str_replace(':', '', $key), $a_check_values)
-            ) {
-                // we are happy
-            }
-            else {
-                $a_missing_keys[] = $key;
-            }
-        }
-        return $a_missing_keys;
-    }
-
-    /**
-     * Finds missing or empty values for given key => value pair
-     * @param array $a_required_keys required list of keys that need to have values
-     * @param array $a_pairs
-     * @return array $a_keys list of the the keys that are missing values
-     */
-    public function findMissingValues(array $a_required_keys = array(), array $a_pairs = array())
-    {
-        if ($a_pairs == array() || $a_required_keys == array()) { return false; }
-        $a_keys = array();
-        foreach ($a_pairs as $key => $value) {
-            if (
-                array_key_exists($key, $a_required_keys)
-                ||
-                array_key_exists(':' . $key, $a_required_keys)
-                ||
-                array_key_exists(str_replace(':', '', $key), $a_required_keys)
-            )
-            {
-                if ($value == '' || is_null($value)) {
-                    $a_keys[] = $key;
-                }
-            }
-        }
-        return $a_keys;
-    }
-
-    /**
      * Changes array keys to be compatible with prepared statements.
      * @param array $array required associative array, named keys
      * @return array fixed key names
@@ -94,14 +40,14 @@ trait DbCommonTraits
             foreach ($array as $a_keys) {
                 $results = $this->prepareKeys($a_keys);
                 if ($results === false) {
-                    return false;
+                    return $array;
                 }
                 $a_new[] = $results;
             }
             return $a_new;
         }
         else {
-            return false;
+            return $array;
         }
     }
 
@@ -124,7 +70,7 @@ trait DbCommonTraits
             return $this->prepareValues($array[0]);
         }
         else {
-            return false;
+            return $array;
         }
     }
 

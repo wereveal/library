@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Helper/Arrays.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.0.0
- * @date      2016-09-19 12:24:01
+ * @version   3.1.0
+ * @date      2016-09-23 15:30:31
  * @note <b>Change Log</b>
+ * - v3.1.0 - Moved a couple methods from DbCommonTraits to Arrays                      - 2016-09-23 wer
  * - v3.0.1 - Bug Fix                                                                   - 2016-09-23 wer
  * - v3.0.0 - Depreciated clearArrayValues in favor of two new methods.                 - 2016-09-19 wer
  *            Arrays::cleanValues() by default removes php and mysql commands from
@@ -230,6 +231,65 @@ class Arrays
             }
         }
         return $a_pairs;
+    }
+
+    /**
+     * Determines if any required keys are missing
+     * @param array $a_required_keys required
+     * @param array $a_check_values required
+     * @return array $a_missing_keys
+     */
+    public static function findMissingKeys(array $a_required_keys = array(), array $a_check_values = array())
+    {
+        if ($a_required_keys == array() || $a_check_values == array()) { return array(); }
+        $a_missing_keys = array();
+        foreach ($a_required_keys as $key) {
+            if (
+                array_key_exists($key, $a_check_values)
+                ||
+                array_key_exists(':' . $key, $a_check_values)
+                ||
+                array_key_exists(str_replace(':', '', $key), $a_check_values)
+            ) {
+                // we are happy
+            }
+            else {
+                $a_missing_keys[] = $key;
+            }
+        }
+        return $a_missing_keys;
+    }
+
+    /**
+     * Finds missing or empty values for given key => value pair
+     * @param array $a_required_keys required list of keys that need to have values
+     * @param array $a_pairs
+     * @return array $a_keys list of the the keys that are missing values
+     */
+    public static function findMissingValues(array $a_required_keys = array(), array $a_pairs = array())
+    {
+        if (empty($a_pairs) && !empty($a_required_keys)) {
+            return $a_required_keys;
+        }
+        elseif (empty($a_pairs) && empty($a_required_keys)) {
+            return [];
+        }
+        $a_keys = array();
+        foreach ($a_pairs as $key => $value) {
+            if (
+                array_key_exists($key, $a_required_keys)
+                ||
+                array_key_exists(':' . $key, $a_required_keys)
+                ||
+                array_key_exists(str_replace(':', '', $key), $a_required_keys)
+            )
+            {
+                if ($value == '' || is_null($value)) {
+                    $a_keys[] = $key;
+                }
+            }
+        }
+        return $a_keys;
     }
 
     /**

@@ -5,14 +5,17 @@
  * @file      DbTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2016-03-18 15:02:27
+ * @version   2.1.0
+ * @date      2016-09-23 15:34:45
  * @note <b>Change Log</b>
- *   v2.0.0   - Moved a several methods from DbModel to here        - 2016-03-18 wer
+ * - v2.1.0   - Refactoring of DbCommonTraits reflected here        - 2016-09-23 wer
+ * - v2.0.0   - Moved a several methods from DbModel to here        - 2016-03-18 wer
  * - v1.0.0   - first working version                               - 11/27/2015 wer
  * - v1.0.0ß1 - initial version                                     - 08/19/2015 wer
  */
 namespace Ritc\Library\Traits;
+
+use Ritc\Library\Helper\Arrays;
 
 /**
  * Class DbTraits
@@ -36,19 +39,18 @@ trait DbTraits {
      * Creates the class properties of a_db_config, db_type and db_prefix from config file or array if passed in.
      * Prefer config file but array is allowed so this can be called without a config file.
      * @param string|array $config_file
-     * @return null
      */
     private function createDbParms($config_file = 'db_config.php')
     {
         if (is_array($config_file)) {
             $a_required_keys = ['driver', 'host', 'name', 'user', 'password'];
-            if ($this->findMissingKeys($a_required_keys, $config_file) == array()) {
+            if (empty(Arrays::findMissingKeys($a_required_keys, $config_file))) {
                 $a_db = $config_file;
                 if (!isset($a_db['prefix'])) {
                     $a_db['prefix'] = '';
                 }
                 if (!isset($a_db['persist'])) {
-                    $a_db['persist'] = true;
+                    $a_db['persist'] = false;
                 }
                 if (!isset($a_db['port'])) {
                     $a_db['port'] = '';
