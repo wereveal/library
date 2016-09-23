@@ -8,33 +8,34 @@
  * @version   3.0.0
  * @date      2016-09-19 12:24:01
  * @note <b>Change Log</b>
- * - v3.0.0 - Depreciated clearArrayValues in favor of two new methods.              - 2016-09-19 wer
+ * - v3.0.1 - Bug Fix                                                                   - 2016-09-23 wer
+ * - v3.0.0 - Depreciated clearArrayValues in favor of two new methods.                 - 2016-09-19 wer
  *            Arrays::cleanValues() by default removes php and mysql commands from
  *            the values in the array. Optionally it can call Arrays::encodeValues().
  *            Arrays::encodeValues() encodes the values of the array using filter_var
  *            and with the FILTER_SANITIZE_STRING filter and optional flags.
- * - v2.8.0 - Added new method inAssocArrayRecursive()                               - 2016-04-12 wer
- * - v2.7.0 - Changed entity coding/decoding to be definable via parameter.          - 11/25/2015 wer
+ * - v2.8.0 - Added new method inAssocArrayRecursive()                                  - 2016-04-12 wer
+ * - v2.7.0 - Changed entity coding/decoding to be definable via parameter.             - 11/25/2015 wer
  *              Defaults to ENT_QUOTES.
- * - v2.6.1 - bug fix, stripTags -- logic error                                      - 11/12/2015 wer
- * - v2.6.0 - new method, moved from Tester class, can be more generic.              - 11/02/2015 wer
- * - v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs           - 10/22/2015 wer
- * - v2.5.1 - bug fix, inArrayRecursive                                              - 10/20/2015 wer
- * - v2.5.0 - new method, createRequiredPairs                                        - 10/06/2015 wer
- * - v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                   - 09/12/2015 wer
- * - v2.3.0 - New method, inArrayRecursive                                           - 09/10/2015 wer
- * - v2.2.0 - Removed use of abstract class Base                                     - 09/03/2015 wer
- * - v2.1.0 - After looking at the inconsistency, changed to be more consistent      - 07/31/2015 wer
+ * - v2.6.1 - bug fix, stripTags -- logic error                                         - 11/12/2015 wer
+ * - v2.6.0 - new method, moved from Tester class, can be more generic.                 - 11/02/2015 wer
+ * - v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs              - 10/22/2015 wer
+ * - v2.5.1 - bug fix, inArrayRecursive                                                 - 10/20/2015 wer
+ * - v2.5.0 - new method, createRequiredPairs                                           - 10/06/2015 wer
+ * - v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                      - 09/12/2015 wer
+ * - v2.3.0 - New method, inArrayRecursive                                              - 09/10/2015 wer
+ * - v2.2.0 - Removed use of abstract class Base                                        - 09/03/2015 wer
+ * - v2.1.0 - After looking at the inconsistency, changed to be more consistent         - 07/31/2015 wer
  *              Also changed variable name to be more descriptive than array.
- * - v2.0.1 - oops, missed one to be static, changed its name                        - 07/31/2015 wer
- * - v2.0.0 - changed methods to be static                                           - 01/27/2015 wer
- * - v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it    - 12/05/2014 wer
- * - v1.2.1 - moved to the Helper namespace                                          - 11/15/2014 wer
- * - v1.2.1 - clean up                                                               - 09/23/2014 wer
- * - v1.2.0 - new method added                                                       - 12/30/2013 wer
- * - v1.1.1 - match package change                                                   - 12/19/2013 wer
- * - v1.1.0 - namespace changes                                                      - 07/30/2013 wer
- * - v1.0.3 - moved array methods from class Strings to here                         - 03/27/2013 wer
+ * - v2.0.1 - oops, missed one to be static, changed its name                           - 07/31/2015 wer
+ * - v2.0.0 - changed methods to be static                                              - 01/27/2015 wer
+ * - v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it       - 12/05/2014 wer
+ * - v1.2.1 - moved to the Helper namespace                                             - 11/15/2014 wer
+ * - v1.2.1 - clean up                                                                  - 09/23/2014 wer
+ * - v1.2.0 - new method added                                                          - 12/30/2013 wer
+ * - v1.1.1 - match package change                                                      - 12/19/2013 wer
+ * - v1.1.0 - namespace changes                                                         - 07/30/2013 wer
+ * - v1.0.3 - moved array methods from class Strings to here                            - 03/27/2013 wer
  * - v1.0.2 - added new method
  * - v1.0.1 - new namespace, FIG standards (mostly)
  */
@@ -440,80 +441,80 @@ class Arrays
             return [];
         }
         $a_commands = [
-            '/SELECT(.*) FROM/g',
-            '/INSERT(.*) INTO/g',
-            '/DELETE(.*) FROM/g',
-            '/UPDATE(.*) SET/g',
-            '/REPLACE(.*) INTO/g',
-            '/ALTER AGGREGATE/ig',
-            '/ALTER COLLATION/ig',
-            '/ALTER CONVERSION/ig',
-            '/ALTER DATABASE/ig',
-            '/ALTER DEFAULT PRIVILEGES/ig',
-            '/ALTER DOMAIN/ig',
-            '/ALTER EVENT TRIGGER/ig',
-            '/ALTER EVENT/ig',
-            '/ALTER EXTENSION/ig',
-            '/ALTER FOREIGN DATA WRAPPER/ig',
-            '/ALTER FOREIGN TABLE/ig',
-            '/ALTER FUNCTION/ig',
-            '/ALTER GROUP/ig',
-            '/ALTER INDEX/ig',
-            '/ALTER INSTANCE/ig',
-            '/ALTER LANGUAGE/ig',
-            '/ALTER LARGE OBJECT/ig',
-            '/ALTER LOGFILE GROUP/ig',
-            '/ALTER MAGERIALIZED VIEW/ig',
-            '/ALTER OPERATOR CLASS/ig',
-            '/ALTER OPERATOR FAMILY/ig',
-            '/ALTER OPERATOR/ig',
-            '/ALTER PROCEDURE/ig',
-            '/ALTER ROLE/ig',
-            '/ALTER SCHEMA/ig',
-            '/ALTER SEQUENCE/ig',
-            '/ALTER SERVER/ig',
-            '/ALTER SYSTEM/ig',
-            '/ALTER TABLE/ig',
-            '/ALTER TABLESPACE/ig',
-            '/ALTER TRIGGER/ig',
-            '/ALTER TYPE/ig',
-            '/ALTER USER MAPPING/ig',
-            '/ALTER USER/ig',
-            '/ALTER VIEW/ig',
-            '/CREATE DATABASE/ig',
-            '/CREATE EVENT/ig',
-            '/CREATE FUNCTION/ig',
-            '/CREATE INDEX/ig',
-            '/CREATE LOGFILE GROUP/ig',
-            '/CREATE PROCEDURE/ig',
-            '/CREATE FUNCTION/ig',
-            '/CREATE ROLE/ig',
-            '/CREATE SERVER/ig',
-            '/CREATE TABLE/ig',
-            '/CREATE TABLESPACE/ig',
-            '/CREATE TRIGGER/ig',
-            '/CREATE USER/ig',
-            '/CREATE VIEW/ig',
-            '/DROP DATABASE/ig',
-            '/DROP DOMAIN/ig',
-            '/DROP EVENT/ig',
-            '/DROP FOREIGN TABLE/ig',
-            '/DROP FUNCTION/ig',
-            '/DROP INDEX/ig',
-            '/DROP LOGFILE GROUP/ig',
-            '/DROP PROCEDURE/ig',
-            '/DROP ROLE/ig',
-            '/DROP FUNCTION/ig',
-            '/DROP SERVER/ig',
-            '/DROP TABLE/ig',
-            '/DROP TABLESPACE/ig',
-            '/DROP TRIGGER/ig',
-            '/DROP USER/ig',
-            '/DROP VIEW/ig',
-            '/RENAME TABLE/ig',
-            '/SET ROLE/ig',
-            '/SET SESSION AUTHORIZATION/ig',
-            '/TRUNCATE TABLE/ig'
+            '/SELECT(.*) FROM/',
+            '/INSERT(.*) INTO/',
+            '/DELETE(.*) FROM/',
+            '/UPDATE(.*) SET/',
+            '/REPLACE(.*) INTO/',
+            '/ALTER AGGREGATE/i',
+            '/ALTER COLLATION/i',
+            '/ALTER CONVERSION/i',
+            '/ALTER DATABASE/i',
+            '/ALTER DEFAULT PRIVILEGES/i',
+            '/ALTER DOMAIN/i',
+            '/ALTER EVENT TRIGGER/i',
+            '/ALTER EVENT/i',
+            '/ALTER EXTENSION/i',
+            '/ALTER FOREIGN DATA WRAPPER/i',
+            '/ALTER FOREIGN TABLE/i',
+            '/ALTER FUNCTION/i',
+            '/ALTER GROUP/i',
+            '/ALTER INDEX/i',
+            '/ALTER INSTANCE/i',
+            '/ALTER LANGUAGE/i',
+            '/ALTER LARGE OBJECT/i',
+            '/ALTER LOGFILE GROUP/i',
+            '/ALTER MAGERIALIZED VIEW/i',
+            '/ALTER OPERATOR CLASS/i',
+            '/ALTER OPERATOR FAMILY/i',
+            '/ALTER OPERATOR/i',
+            '/ALTER PROCEDURE/i',
+            '/ALTER ROLE/i',
+            '/ALTER SCHEMA/i',
+            '/ALTER SEQUENCE/i',
+            '/ALTER SERVER/i',
+            '/ALTER SYSTEM/i',
+            '/ALTER TABLE/i',
+            '/ALTER TABLESPACE/i',
+            '/ALTER TRIGGER/i',
+            '/ALTER TYPE/i',
+            '/ALTER USER MAPPING/i',
+            '/ALTER USER/i',
+            '/ALTER VIEW/i',
+            '/CREATE DATABASE/i',
+            '/CREATE EVENT/i',
+            '/CREATE FUNCTION/i',
+            '/CREATE INDEX/i',
+            '/CREATE LOGFILE GROUP/i',
+            '/CREATE PROCEDURE/i',
+            '/CREATE FUNCTION/i',
+            '/CREATE ROLE/i',
+            '/CREATE SERVER/i',
+            '/CREATE TABLE/i',
+            '/CREATE TABLESPACE/i',
+            '/CREATE TRIGGER/i',
+            '/CREATE USER/i',
+            '/CREATE VIEW/i',
+            '/DROP DATABASE/i',
+            '/DROP DOMAIN/i',
+            '/DROP EVENT/i',
+            '/DROP FOREIGN TABLE/i',
+            '/DROP FUNCTION/i',
+            '/DROP INDEX/i',
+            '/DROP LOGFILE GROUP/i',
+            '/DROP PROCEDURE/i',
+            '/DROP ROLE/i',
+            '/DROP FUNCTION/i',
+            '/DROP SERVER/i',
+            '/DROP TABLE/i',
+            '/DROP TABLESPACE/i',
+            '/DROP TRIGGER/i',
+            '/DROP USER/i',
+            '/DROP VIEW/i',
+            '/RENAME TABLE/i',
+            '/SET ROLE/i',
+            '/SET SESSION AUTHORIZATION/i',
+            '/TRUNCATE TABLE/i'
         ];
 
         foreach ($a_pairs as $key => $value) {
