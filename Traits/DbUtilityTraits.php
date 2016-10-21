@@ -73,6 +73,7 @@ trait DbUtilityTraits {
      * ]] \endcode
      * @see \ref createparams
      * @return array|bool
+     * @todo Ritc\Library\Traits\DbUtilityTraits::genericCreate - modify to create multiple records if data provided
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = [])
     {
@@ -234,6 +235,7 @@ SQL;
      * be in the $a_values. It only updates record(s) WHERE the primary index = primary index value.
      * @param array  $a_values           Required
      * @return bool
+     * @todo Ritc\Library\Traits\DbUtilityTraits::genericUpdate - modify to update multiple records if provided
      */
     protected function genericUpdate(array $a_values = [])
     {
@@ -269,6 +271,7 @@ SQL;
      * Deletes a single record based on the primary index value.
      * @param int    $record_id          Required
      * @return bool
+     * @todo Ritc\Library\Traits\DbUtilityTraits::genericDelete - modify to delete multiple records by changing argument to array of ids
      */
     protected function genericDelete($record_id = -1)
     {
