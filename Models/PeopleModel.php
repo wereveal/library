@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.2
- * @date      2016-08-29 11:16:08
+ * @version   1.3.0
+ * @date      2016-12-08 12:33:12
  * @note <b>Change Log</b>
+ * - v1.3.0    - Moved the multi-table queries to own class                  - 2016-12-08 wer
  * - v1.2.2    - Bug fix                                                     - 2016-08-29 wer
  * - v1.2.1    - Bug Fix, seriously, how did that get past testing?          - 2016-03-19 wer
  * - v1.2.0    - Refactoring of DbModel reflected here                       - 2016-03-18 wer
@@ -45,11 +46,6 @@ class PeopleModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var \Ritc\Library\Models\GroupsModel */
-    private $o_group;
-    /** @var \Ritc\Library\Models\PeopleGroupMapModel */
-    private $o_pgm;
-
     /**
      * PeopleModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db
@@ -57,8 +53,6 @@ class PeopleModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'people');
-        $this->o_group  = new GroupsModel($o_db);
-        $this->o_pgm    = new PeopleGroupMapModel($o_db);
     }
 
     ### Basic CRUD commands, required by interface, deals only with the {$this->db_prefix}people table ###
@@ -476,219 +470,6 @@ class PeopleModel implements ModelInterface
         return $results;
     }
 
-    ### More complex methods using multiple tables ###
-    /**
-     * Deletes the person and related records.
-     * @param int $people_id
-     * @return bool
-     */
-    public function deletePerson($people_id = -1)
-    {
-        if ($people_id == -1) {
-            return false;
-        }
-        $delete_person_sql = "
-            DELETE FROM {$this->db_table}
-            WHERE people_id = :people_id
-        ";
-        if ($this->o_db->startTransaction()) {
-            if ($this->o_pgm->deleteByPeopleId($people_id)) {
-                if ($this->o_db->delete($delete_person_sql, [':people_id' => $people_id])) {
-                    if ($this->o_db->commitTransaction()) {
-                        return true;
-                    }
-                    else {
-                        $this->error_message = "Could not commit the transaction.";
-                    }
-                }
-                else {
-                    $this->error_message = $this->o_db->getSqlErrorMessage();
-                }
-            }
-            else {
-                $this->error_message = $this->o_pgm->getErrorMessage();
-            }
-            $this->o_db->rollbackTransaction();
-        }
-        else {
-            $this->error_message = "Could not start transaction.";
-        }
-        return false;
-    }
-
-    /**
-     * Gets the user values based on login_id or people_id.
-     * @param int|string $people_id the people_id or login_id (as defined in the db)
-     * @return array, the records for the person
-     */
-    public function readInfo($people_id = '')
-    {
-        $meth = __METHOD__ . '.';
-        if ($people_id == '') {
-            return array();
-        }
-
-        if (is_numeric($people_id)) {
-            $where          = "p.people_id = :people_id";
-            $a_where_values = [':people_id' => $people_id];
-        }
-        else {
-            $where          = "p.login_id = :login_id";
-            $a_where_values = [':login_id' => $people_id];
-        }
-        $sql = "
-            SELECT DISTINCT p.people_id, p.login_id, p.real_name, p.short_name,
-                p.password, p.description, p.is_logged_in, p.bad_login_count,
-                p.bad_login_ts, p.is_active, p.is_immutable, p.created_on,
-                g.group_id, g.group_name, g.group_description, g.group_auth_level
-            FROM {$this->db_table} as p
-            JOIN {$this->db_table}_group_map as pgm
-                USING (people_id)
-            JOIN {$this->db_prefix}groups as g
-                USING (group_id)
-            WHERE {$where}
-            ORDER BY g.group_auth_level DESC, g.group_name ASC
-        ";
-
-        $this->logIt("Select User: {$sql}", LOG_OFF, $meth . __LINE__);
-        $this->logIt("a_where_values: " . var_export($a_where_values, true), LOG_OFF, $meth . __LINE__);
-        $a_people = $this->o_db->search($sql, $a_where_values);
-        $this->logIt("a_people: " . var_export($a_people, true), LOG_OFF, $meth);
-        if (isset($a_people[0]) && is_array($a_people[0])) {
-            if (($a_people[0]['people_id'] == $people_id) || ($a_people[0]['login_id'] == $people_id)) {
-                $a_groups = array();
-                foreach ($a_people as $key => $person) {
-                    $a_groups[] = [
-                        'group_id'          => $person['group_id'],
-                        'group_name'        => $person['group_name'],
-                        'group_description' => $person['group_description'],
-                        'group_auth_level'  => $person['group_auth_level']
-                    ];
-                }
-                foreach ($a_groups as $key => $row) {
-                    $a_group_id[$key] = $row['group_id'];
-                }
-                array_multisort($a_group_id, SORT_ASC, $a_groups);
-                $previous_group = '';
-                foreach ($a_groups as $key => $a_group) {
-                    if ($a_group['group_id'] == $previous_group) {
-                        unset($a_groups[$key]);
-                    }
-                    else {
-                        $previous_group = $a_group['group_id'];
-                    }
-                }
-                $a_person = $a_people[0];
-                unset($a_person['group_id']);
-                unset($a_person['group_name']);
-                unset($a_person['group_description']);
-                unset($a_person['group_auth_level']);
-                $a_person['groups'] = $a_groups;
-                $this->logIt("Found Person: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
-                return $a_person;
-            }
-        }
-        else {
-            $this->logIt("Did not find person. {$sql}", LOG_OFF, $meth);
-        }
-        return array();
-    }
-
-    /**
-     * Saves the person.
-     * If the values contain a value of people_id, person is updated
-     * Else it is a new person.
-     * @param array $a_person values to save
-     * @return mixed, people_id or false
-      */
-    public function savePerson(array $a_person = array())
-    {
-        if (!Arrays::hasRequiredKeys($a_person, ['login_id', 'password'])) {
-            return false;
-        }
-        if (!isset($a_person['people_id']) || $a_person['people_id'] == '') { // New User
-            $a_required_keys = array(
-                'login_id',
-                'real_name',
-                'password'
-            );
-            foreach($a_required_keys as $key_name) {
-                if ($a_person[$key_name] == '') {
-                    switch ($key_name) {
-                        case 'login_id':
-                        case 'password':
-                            return false;
-                        case 'real_name':
-                            $a_person['real_name'] = $a_person['login_id'];
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
-            $a_groups = $this->makeGroupIdArray($a_person['groups']);
-            if ($this->o_db->startTransaction()) {
-                $a_ids = $this->create($a_person);
-                if ($a_ids !== false) {
-                    $new_people_id = $a_ids[0];
-                    $a_pgm_values = $this->makePgmArray($new_people_id, $a_groups);
-                    if ($a_pgm_values != array()) {
-                        if ($this->o_pgm->create($a_pgm_values)) {
-                            if ($this->o_db->commitTransaction()) {
-                                return $new_people_id;
-                            }
-                        }
-                    }
-                } // new user created
-                $this->error_message = $this->o_db->getSqlErrorMessage();
-                $this->o_db->rollbackTransaction();
-            }
-        }
-        else { // Existing User
-            $a_required_keys = array(
-                'people_id',
-                'login_id',
-                'real_name',
-                'password'
-            );
-            foreach($a_required_keys as $key_name) {
-                if ($a_person[$key_name] == '') {
-                    switch ($key_name) {
-                        case 'people_id':
-                        case 'login_id':
-                        case 'password':
-                            return false;
-                        case 'real_name':
-                            $a_person['real_name'] = $a_person['login_id'];
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
-            $a_groups = $this->makeGroupIdArray($a_person['groups']);
-            $a_pg_values = $this->makePgmArray($a_person['people_id'], $a_groups);
-            if ($a_pg_values != array()) {
-                if ($this->o_db->startTransaction()) {
-                    if ($this->update($a_person)) {
-                        if ($this->o_pgm->deleteByPeopleId($a_person['people_id'])) {
-                            if ($this->o_pgm->create($a_pg_values)) {
-                                if ($this->o_db->commitTransaction()) {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                    $this->error_message = $this->o_db->getSqlErrorMessage();
-                    $this->o_db->rollbackTransaction();
-                }
-            }
-        }
-        return false;
-    }
-
     ### Utility methods ###
     /**
      * @param int $people_id
@@ -730,58 +511,4 @@ class PeopleModel implements ModelInterface
         }
         return false;
     }
-
-    /**
-     * Returns an array used in the creation of people group map records.
-     * @param array $group_id
-     * @param       $group_name
-     * @return array
-     */
-    public function makeGroupIdArray($group_id = array(), $group_name = '')
-    {
-        if (is_array($group_id)) {
-            $a_group_ids = $group_id;
-        }
-        elseif ($group_id != '') {
-            $a_group_ids = $this->o_group->isValidGroupId($group_id)
-                ? array($group_id)
-                : array();
-        }
-        else {
-            $a_group_ids = array();
-        }
-        if ($a_group_ids == array() && $group_name != '') {
-            $a_group = $this->o_group->readByName($group_name);
-            if ($a_group !== false && count($a_group) > 0) {
-                $a_group_ids = array($a_group[0]['group_id']);
-            }
-            else {
-                $a_found_groups = $this->o_group->readByName('Registered');
-                $use_id = $a_found_groups !== false && count($a_found_groups) > 0
-                    ? $a_found_groups[0]['group_id']
-                    : 5;
-                $a_group_ids = array($use_id);
-            }
-        }
-        return $a_group_ids;
-    }
-
-    /**
-     * Returns an array mapping a person to the group(s) specified.
-     * @param string $people_id
-     * @param array  $a_groups
-     * @return array
-     */
-    public function makePgmArray($people_id = '', array $a_groups = array())
-    {
-        if ($people_id == '' || $a_groups == array()) {
-            return array();
-        }
-        $a_return_map = array();
-        foreach ($a_groups as $group_id) {
-            $a_return_map[] = ['people_id' => $people_id, 'group_id' => $group_id];
-        }
-        return $a_return_map;
-    }
-
 }

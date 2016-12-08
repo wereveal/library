@@ -22,7 +22,8 @@ use Ritc\Library\Helper\Arrays;
  * @class DbTraits
  * @package Ritc\Library\Traits
  */
-trait DbTraits {
+trait DbTraits
+{
     use DbCommonTraits;
 
     /** @var array */

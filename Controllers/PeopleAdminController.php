@@ -24,6 +24,7 @@ use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
+use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
@@ -44,10 +45,12 @@ class PeopleAdminController implements ManagerControllerInterface
     private $a_route_parts;
     /** @var array */
     private $a_post_values;
+    /** @var \Ritc\Library\Models\PeopleComplexModel */
+    private $o_complex;
     /** @var Di */
     private $o_di;
     /** @var PeopleModel */
-    private $o_model;
+    private $o_people;
     /** @var Router */
     private $o_router;
     /** @var Session */
@@ -66,12 +69,14 @@ class PeopleAdminController implements ManagerControllerInterface
         $this->o_view        = new PeopleAdminView($o_di);
         $this->o_session     = $o_di->get('session');
         $this->o_router      = $o_di->get('router');
-        $this->o_model       = new PeopleModel($o_db);
+        $this->o_people      = new PeopleModel($o_db);
+        $this->o_complex     = new PeopleComplexModel($o_db);
         $this->a_route_parts = $this->o_router->getRouteParts();
         $this->a_post_values = $this->a_route_parts['post'];
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
-            $this->o_model->setElog($this->o_elog);
+            $this->o_complex->setElog($this->o_elog);
+            $this->o_people->setElog($this->o_elog);
             $this->o_view->setElog($this->o_elog);
         }
     }
@@ -142,10 +147,10 @@ class PeopleAdminController implements ManagerControllerInterface
         if ($a_person === false) {
             return ViewHelper::failureMessage("Opps, the person was not saved -- missing information, either Login ID or Name.");
         }
-        if ($this->o_model->isExistingLoginId($a_person['login_id'])) {
+        if ($this->o_people->isExistingLoginId($a_person['login_id'])) {
             return ViewHelper::failureMessage("Opps, the Login ID already exists.");
         }
-        if ($this->o_model->isExistingShortName($a_person['short_name'])) {
+        if ($this->o_people->isExistingShortName($a_person['short_name'])) {
             $a_person['short_name'] = $this->createShortName($a_person['short_name']);
         }
         if (!isset($this->a_post_values['groups']) || count($this->a_post_values['groups']) < 1) {
@@ -153,7 +158,7 @@ class PeopleAdminController implements ManagerControllerInterface
         }
         $a_person['groups'] = $this->a_post_values['groups'];
         $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
-        if ($this->o_model->savePerson($a_person) !== false) {
+        if ($this->o_complex->savePerson($a_person) !== false) {
             return ViewHelper::successMessage("Success! The person was saved.");
         }
         return ViewHelper::failureMessage("Opps, the person was not saved.");
@@ -172,15 +177,15 @@ class PeopleAdminController implements ManagerControllerInterface
         if ($a_person === false) {
             return ViewHelper::failureMessage("Opps, the person was not updated.");
         }
-        $a_previous_values = $this->o_model->read(['people_id' => $a_person['people_id']]);
+        $a_previous_values = $this->o_people->read(['people_id' => $a_person['people_id']]);
         if ($a_previous_values[0]['login_id'] !== $a_person['login_id']) {
-            if ($this->o_model->isExistingLoginId($a_person['login_id'])) {
+            if ($this->o_people->isExistingLoginId($a_person['login_id'])) {
                 $a_person['login_id'] = $a_previous_values[0]['login_id'];
                 $addendum .= '<br>The login id was not changed because the new value aleady existed for someone else.';
             }
         }
         if ($a_previous_values[0]['short_name'] !== $a_person['short_name']) {
-            if ($this->o_model->isExistingShortName($a_person['short_name'])) {
+            if ($this->o_people->isExistingShortName($a_person['short_name'])) {
                 $a_person['short_name'] = $a_previous_values[0]['short_name'];
                 $addendum .= '<br>The alias was not changed because the new value aleady existed for someone else.';
             }
@@ -190,7 +195,7 @@ class PeopleAdminController implements ManagerControllerInterface
         }
         $a_person['groups'] = $this->a_post_values['groups'];
         $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
-        if ($this->o_model->savePerson($a_person) !== false) {
+        if ($this->o_complex->savePerson($a_person) !== false) {
             if ($addendum != '') {
                 $addendum = '<br><b class="red">However' . $addendum . '</b>';
             }
@@ -214,10 +219,10 @@ class PeopleAdminController implements ManagerControllerInterface
      */
     public function delete()
     {
-        if ($this->o_model->deletePerson($this->a_post_values['people_id'])) {
+        if ($this->o_complex->deletePerson($this->a_post_values['people_id'])) {
             return ViewHelper::successMessage();
         }
-        return ViewHelper::failureMessage($this->o_model->getErrorMessage());
+        return ViewHelper::failureMessage($this->o_people->getErrorMessage());
     }
 
     ### Utility Methods ###
@@ -238,7 +243,7 @@ class PeopleAdminController implements ManagerControllerInterface
         else {
             $short_name = strtoupper(substr($long_name, 0, 8));
         }
-        if ($this->o_model->isExistingShortName($short_name)) {
+        if ($this->o_people->isExistingShortName($short_name)) {
             $short_name = $this->createShortName(substr($short_name, 0, 6) . rand(0,99));
         }
         return $short_name;
