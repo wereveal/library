@@ -2,6 +2,15 @@
 
 ## Random Db Thoughts
 
+* Ritc\Library\Services\DbModel
+    - need to change the selectDbTables method to return a cleaner array
+    - need to add a method to verify a table exists
+    - need to add some generic methods to do basic data definition actions (CREATE, ALTER, etc)
+        * May need to be its own class
+        * Or maybe just a trait
+
+* Need to 
+
 * Ritc\Library\Traits\DbUtilityTraits
     - genericUpdate() needs to be modified to handle multiple record updates.
     - genericDeleteMultiple([1,2,3]) needs to be created
