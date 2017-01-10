@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Helper/AutoloadMapper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.2
- * @date      2016-02-22 15:00:10
+ * @version   1.2.3
+ * @date      2017-01-10 12:26:57
  * @note <b>Change Log</b>
+ * - v1.2.3 - bug fix                                     - 2017-01-10 wer
  * - v1.2.2 - bug fix                                     - 02/22/2016 wer
  * - v1.2.1 - refactored var names to be more descriptive - 12/07/2015 wer
  * - v1.2.0 - added code to not include archives          - 11/06/2015 wer
@@ -57,7 +58,7 @@ class AutoloadMapper
 
     /**
      * @param string $src_path
-     * @return null
+     * @return bool
      */
     public function generateMapFiles($src_path = '')
     {
@@ -122,14 +123,14 @@ class AutoloadMapper
         $date = date('c');
         $classmap_text =<<<EOT
 <?php
-* Generated on {$date} by AutoloadMapper *
+/* Generated on {$date} by AutoloadMapper */
 return array(
 {$classmap_array_str}
 );
 EOT;
         $ns_map_text =<<<EOT
 <?php
-* Generated on {$date} by AutoloadMapper *
+/* Generated on {$date} by AutoloadMapper */
 return array(
 {$ns_map_array_str}
 );
@@ -137,6 +138,7 @@ return array(
 EOT;
         file_put_contents($this->config_path . '/autoload_classmap.php', $classmap_text);
         file_put_contents($this->config_path . '/autoload_namespaces.php', $ns_map_text);
+        return true;
     }
 
     /**
@@ -215,8 +217,8 @@ EOT;
      */
     private function getNamespace(array $a_tokens = array())
     {
-        $a_tokens2 = $a_tokens;
         $namespace = '';
+        $line_number = -1;
         foreach ($a_tokens as $key => $a_token) {
             if (is_array($a_token)) {
                 if ($a_token[0] == T_NAMESPACE) {
