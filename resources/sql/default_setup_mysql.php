@@ -1,5 +1,6 @@
 <?php
 return [
+"DROP TABLE IF EXISTS `{dbPrefix}nav_ng_map`",
 "DROP TABLE IF EXISTS `{dbPrefix}people_group_map`",
 "DROP TABLE IF EXISTS `{dbPrefix}routes_group_map`",
 "DROP TABLE IF EXISTS `{dbPrefix}constants`",
@@ -7,6 +8,9 @@ return [
 "DROP TABLE IF EXISTS `{dbPrefix}page`",
 "DROP TABLE IF EXISTS `{dbPrefix}people`",
 "DROP TABLE IF EXISTS `{dbPrefix}routes`",
+"DROP TABLE IF EXISTS `{dbPrefix}navgroups`",
+"DROP TABLE IF EXISTS `{dbPrefix}navigation`",
+"DROP TABLE IF EXISTS `{dbPrefix}urls`",
 
 "CREATE TABLE `{dbPrefix}constants` (
   `const_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -27,7 +31,7 @@ VALUES
 	('EMAIL_FORM_TO','bill@revealitconsulting.com',1),
 	('ERROR_EMAIL_ADDRESS','webmaster@revealitconsulting.com',1),
 	('PAGE_TEMPLATE','index.twig',1),
-	('TWIG_PREFIX','app_',1),
+	('TWIG_PREFIX','ritc_',1),
 	('LIB_TWIG_PREFIX', 'lib_',1),
 	('THEME_NAME','',1),
 	('ADMIN_THEME_NAME','',1),
@@ -71,67 +75,94 @@ VALUES
 
 "UNLOCK TABLES",
 
+"CREATE TABLE `{dbPrefix}urls` (
+  `url_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `url_host` varchar(255) NOT NULL DEFAULT 'self',
+  `url_text` varchar(255) NOT NULL DEFAULT '',
+  `url_scheme` enum('http','https','ftp','gopher','mailto') NOT NULL DEFAULT 'https',
+  `url_immutable` tinyint(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`url_id`),
+  UNIQUE KEY `url_text` (`url_text`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8",
+
+"LOCK TABLES `{dbPrefix}urls` WRITE",
+
+"INSERT INTO `qcdg_urls` (`url_id`, `url_host`, `url_text`, `url_scheme`, `url_immutable`)
+VALUES
+	(1,'self','/','http',1),
+	(2,'self','/manager/','http',1),
+	(3,'self','/manager/logout/','http',1),
+	(4,'self','/manager/library/constants/','http',1),
+	(5,'self','/manager/library/groups/','http',1),
+	(6,'self','/manager/library/people/','http',1),
+	(7,'self','/manager/library/urls/','http',1),
+	(8,'self','/manager/library/routes/','http',1),
+	(9,'self','/manager/library/navigation/','http',1),
+	(10,'self','/manager/library/pages/','http',1),
+	(11,'self','/manager/login/','http',1),
+	(12,'self','/manager/library/tests/','http',1)",
+
 "CREATE TABLE `{dbPrefix}routes` (
-  `route_id` int(11) NOT NULL AUTO_INCREMENT,
-  `route_path` varchar(128) NOT NULL,
+  `route_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `url_id` int(11) unsigned NOT NULL,
   `route_class` varchar(64) NOT NULL,
   `route_method` varchar(64) NOT NULL,
   `route_action` varchar(255) NOT NULL,
   `route_immutable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`route_id`),
-  UNIQUE KEY `route_path` (`route_path`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1",
+  UNIQUE KEY `url_id` (`url_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8",
 
 "LOCK TABLES `{dbPrefix}routes` WRITE",
 
 "INSERT INTO `{dbPrefix}routes`
-    (`route_id`, `route_path`, `route_class`, `route_method`, `route_action`, `route_immutable`)
+    (`route_id`, `url_id`, `route_class`, `route_method`, `route_action`, `route_immutable`)
 VALUES
-	(1,'/manager/','GuideManagerController','render','',1),
-	(2,'/manager/constants/','GuideManagerController','renderConstantsAdmin','',1),
-	(3,'/manager/groups/','GuideManagerController','renderGroupsAdmin','',1),
-	(4,'/manager/login/','GuideManagerController','render','verifyLogin',1),
-	(5,'/manager/logout/','GuideManagerController','render','logout',1),
-	(6,'/manager/pages/','GuideManagerController','renderPageAdmin','',1),
-	(7,'/manager/people/','GuideManagerController','renderPeopleAdmin','',1),
-	(8,'/manager/routes/','GuideManagerController','renderRoutesAdmin','',1),
-	(9,'/manager/tests/','GuideManagerController','renderTestsAdmin','',1)",
+    (1,1,'HomeController','route','',1),
+	(2,2,'ManagerController','route','',1),
+	(3,3,'LibraryController','route','logout',1),
+	(4,4,'LibraryController','route','ConstantsAdmin',1),
+	(5,5,'LibraryController','route','GroupsAdmin',1),
+	(6,6,'LibraryController','route','PeopleAdmin',1),
+	(7,7,'LibraryController','route','UrlsAdmin',1),
+	(8,8,'LibraryController','route','RoutesAdmin',1),
+	(9,9,'LibraryController','route','NavigationAdmin',1),
+	(10,10,'LibraryController','route','PageAdmin',1),
+	(11,12,'ManagerController','route','TestsAdmin',1)",
 
 "UNLOCK TABLES",
 
 "CREATE TABLE `{dbPrefix}page` (
-  `page_id` int(11) NOT NULL AUTO_INCREMENT,
-  `page_url` varchar(255) NOT NULL DEFAULT '/',
+  `page_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `url_id` int(11) unsigned NOT NULL,
   `page_type` varchar(20) NOT NULL DEFAULT 'text/html',
-  `page_title` varchar(100) NOT NULL DEFAULT '',
-  `page_description` varchar(150) NOT NULL DEFAULT '',
+  `page_title` varchar(100) NOT NULL DEFAULT 'Needs a title',
+  `page_description` varchar(150) NOT NULL DEFAULT 'Needs a description',
   `page_base_url` varchar(50) NOT NULL DEFAULT '/',
   `page_lang` varchar(50) NOT NULL DEFAULT 'en',
   `page_charset` varchar(100) NOT NULL DEFAULT 'utf-8',
   `page_immutable` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`page_id`),
-  UNIQUE KEY `pages_url` (`page_url`)
+  PRIMARY KEY (`page_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8",
 
 "LOCK TABLES `{dbPrefix}page` WRITE",
 
 "INSERT INTO `{dbPrefix}page`
-    (`page_url`, `page_type`, `page_title`, `page_description`, `page_base_url`, `page_lang`, `page_charset`, `page_immutable`)
+    (`page_id`, `url_id`, `page_type`, `page_title`, `page_description`, `page_base_url`, `page_lang`, `page_charset`, `page_immutable`)
 VALUES
-	('/manager/','text/html','Manager','Manages People, Places and Things','/','en','utf-8',1),
-	('/manager/constants/','text/html','Manager for Constants','Manages the Constants used in app','/','en','utf-8',1),
-	('/manager/constants/verify/','text/html','Manager for Constants','Manages the Constants, verifies that the constant should be deleted.','/','en','utf-8',1),
-	('/manager/groups/','text/html','Manager for Groups','Manages the Groups','/','en','utf-8',1),
-	('/manager/groups/verify/','text/html','Manager for Groups','Manages the groups, this page verifies deletion.','/','en','utf-8',1),
-	('/manager/login/','text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',1),
-	('/manager/logout/','text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',0),
-	('/manager/pages/','text/html','Manager for Pages','Manages pages head information primarily','/','en','utf-8',1),
-	('/manager/pages/verify/','text/html','Manager for Pages','Manages pages, verifies if record should be deleted','/','en','utf-8',1),
-	('/manager/people/','text/html','Manager for People','Manages people','/','en','utf-8',1),
-	('/manager/people/verify/','text/html','Manager for People','Manages people, verifies a person should be deleted.','/','en','utf-8',1),
-	('/manager/routes/','text/html','Manager for Routes','Manages the routes','/','en','utf-8',1),
-	('/manager/routes/verify/','text/html','Manager for Routes','Manages the routes, verifies route should be deleted.','/','en','utf-8',1),
-	('/manager/tests/','text/html','Manager Tests','Runs tests for the code.','/','en','utf-8',1)",
+	(1,1,'text/html','My App','My App','/','en','utf-8',0),
+	(2,2,'text/html','Manager','Manages Advanced Configuration for People, Places and Things','/','en','utf-8',1),
+	(3,3,'text/html','Manager for Constants','Manages the Constants used in app','/','en','utf-8',1),
+	(5,5,'text/html','Manager for Groups','Manages the Groups','/','en','utf-8',1),
+	(7,7,'text/html','Manager for Pages','Manages pages head information primarily','/','en','utf-8',1),
+	(9,9,'text/html','Manager for People','Manages people','/','en','utf-8',1),
+	(11,11,'text/html','Manager for the Navigation tools','Manager for Navigation tools','/','en','utf-8',0),
+	(12,12,'text/html','Manager for Routes','Manages the routes','/','en','utf-8',1),
+	(14,14,'text/html','Manager Tests','Runs tests for the code.','/','en','utf-8',1),
+	(15,15,'text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',1),
+	(17,17,'text/html','Manager for Urls','Manages the Urls','/','en','utf-8',1),
+	(27,30,'text/html','Manager: Please Login','Login page for the manager.','/','en','utf-8',0),
+",
 
 "UNLOCK TABLES",
 

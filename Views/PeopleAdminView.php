@@ -19,6 +19,7 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ViewHelper;
+use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleGroupMapModel;
@@ -34,6 +35,8 @@ class PeopleAdminView
 {
     use ViewTraits;
 
+    /** @var PeopleComplexModel */
+    private $o_people_complex;
     /** @var \Ritc\Library\Models\PeopleModel */
     private $o_people_model;
     /** @var \Ritc\Library\Models\GroupsModel */
@@ -48,14 +51,16 @@ class PeopleAdminView
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
-        $this->o_people_model = new PeopleModel($this->o_db);
-        $this->o_group_model  = new GroupsModel($this->o_db);
-        $this->o_pgm_model    = new PeopleGroupMapModel($this->o_db);
+        $this->o_people_model   = new PeopleModel($this->o_db);
+        $this->o_group_model    = new GroupsModel($this->o_db);
+        $this->o_pgm_model      = new PeopleGroupMapModel($this->o_db);
+        $this->o_people_complex = new PeopleComplexModel($this->o_db);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people_model->setElog($this->o_elog);
             $this->o_group_model->setElog($this->o_elog);
             $this->o_pgm_model->setElog($this->o_elog);
+            $this->o_people_complex->setElog($this->o_elog);
         }
     }
 
@@ -205,7 +210,7 @@ class PeopleAdminView
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-        $a_person = $this->o_people_model->readInfo($people_id);
+        $a_person = $this->o_people_complex->readInfo($people_id);
         if ($a_person == array()) {
             return $this->renderList(['message' => 'The person was not found. Please Try Again.', 'type' => 'error']);
         }

@@ -62,6 +62,7 @@
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Models\GroupsModel;
+use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -78,6 +79,8 @@ class AuthHelper
 {
     use LogitTraits;
 
+    /** @var PeopleComplexModel */
+    private $o_complex;
     /** @var GroupsModel */
     private $o_groups;
     /** @var Router */
@@ -99,10 +102,12 @@ class AuthHelper
         $this->o_router  = $o_di->get('router');
         $this->o_people  = new PeopleModel($o_db);
         $this->o_groups  = new GroupsModel($o_db);
+        $this->o_complex = new PeopleComplexModel($o_db);
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_people->setElog($this->o_elog);
             $this->o_groups->setElog($this->o_elog);
+            $this->o_complex->setElog($this->o_elog);
         }
     }
 
@@ -148,7 +153,7 @@ class AuthHelper
             }
         }
         if ($this->o_session->isValidSession($a_person_post, true)) {
-            $a_person = $this->o_people->readInfo($a_person_post['login_id']);
+            $a_person = $this->o_complex->readInfo($a_person_post['login_id']);
             $this->logIt("Posted Values: " . var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
             $this->logIt("User Values: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
             if ($a_person == array() || !is_array($a_person)) {
@@ -260,7 +265,7 @@ class AuthHelper
             return 0;
         }
         $auth_level = 0;
-        $a_person = $this->o_people->readInfo($people_id);
+        $a_person = $this->o_complex->readInfo($people_id);
         if (is_array($a_person) && count($a_person) > 0) {
             foreach($a_person['groups'] as $a_group) {
                 $auth_level = $a_group['group_auth_level'] > $auth_level
@@ -335,7 +340,7 @@ class AuthHelper
         if ($person == -1) {
             return false;
         }
-        $a_person = $this->o_people->readInfo($person);
+        $a_person = $this->o_complex->readInfo($person);
         if (isset($a_person['is_immutable'])) {
             if ($a_person['is_immutable'] == 1) {
                 return true;
@@ -357,7 +362,7 @@ class AuthHelper
         if ($login_id == '') {
             return false;
         }
-        $a_person = $this->o_people->readInfo($login_id);
+        $a_person = $this->o_complex->readInfo($login_id);
         if ($a_person !== false && !is_null($a_person)) {
             if ($a_person['is_logged_in'] == 1) {
                 return true;
@@ -375,7 +380,7 @@ class AuthHelper
     {
         if ($people_id == -1 || $people_id == '') { return false; }
         $meth = __METHOD__ . '.';
-        $a_person = $this->o_people->readInfo($people_id);
+        $a_person = $this->o_complex->readInfo($people_id);
         $this->logIt('Person: ' . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
         if ($a_person !== false) {
             $a_allowed_groups = $this->o_router->getAllowedGroups();
@@ -451,7 +456,7 @@ class AuthHelper
     public function isValidPerson($person = '')
     {
         if ($person == '') { return false; }
-        $a_people = $this->o_people->readInfo($person);
+        $a_people = $this->o_complex->readInfo($person);
         if (isset($a_people['people_id'])) {
             return true;
         }
@@ -501,7 +506,7 @@ class AuthHelper
         if ($person == -1 || $group == '') {
             return false;
         }
-        $a_people = $this->o_people->readInfo($person);
+        $a_people = $this->o_complex->readInfo($person);
         if (isset($a_people['groups']) && count($a_people['groups']) > 0) {
             foreach ($a_people['groups'] as $a_group) {
                 if ($a_group['group_id'] == $group || $a_group['group_name'] == $group) {
