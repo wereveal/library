@@ -17,7 +17,7 @@ define('EMAIL_DOMAIN', 'replaceme.com');
 define('EMAIL_FORM_TO', 'me@replaceme.com');
 define('ERROR_EMAIL_ADDRESS', 'webmaster@revealitconsulting.com');
 define('PAGE_TEMPLATE', 'index.twig');
-define('TWIG_PREFIX', 'app_');
+define('TWIG_PREFIX', 'ritc_');
 define('LIB_TWIG_PREFIX', 'lib_');
 define('THEME_NAME', '');
 define('ADMIN_THEME_NAME', '');

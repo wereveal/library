@@ -9,8 +9,6 @@
         * May need to be its own class
         * Or maybe just a trait
 
-* Need to 
-
 * Ritc\Library\Traits\DbUtilityTraits
     - genericUpdate() needs to be modified to handle multiple record updates.
     - genericDeleteMultiple([1,2,3]) needs to be created
@@ -51,6 +49,9 @@
  
 ## Noticed this needs done
 
+* Need to rewrite most classes to implement Exceptions/SPL Exceptions.
+    - Create new Exception classes that extend the various default Exceptions/SPL Exceptions
+    - Start with the database classes
 * Ritc\Library\Helper\ViewHelper could use some tweeking.
     - ViewHelper::messageProperties comments need cleaned up
     - I feel that I am doing a lot of redundant stuff, couldn't the ViewHelper::errorMessage etc
