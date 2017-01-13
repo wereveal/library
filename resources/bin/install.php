@@ -2,6 +2,7 @@
 /**
  * @brief     This file sets up standard stuff for the Framework.
  * @details   This creates the database config and some standard directories.
+ *            This should be run from the /app/bin directory of the site.
  * @file      install.php
  * @namespace Ritc
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -11,14 +12,10 @@
 namespace Ritc;
 
 use Ritc\Library\Factories\PdoFactory;
-use Ritc\Library\Factories\TwigFactory;
 use Ritc\Library\Helper\AutoloadMapper;
-use Ritc\Library\Helper\ConstantsHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Elog;
-use Ritc\Library\Services\Router;
-use Ritc\Library\Services\Session;
 
 $short_opts = "a:n:h:t:d:u:p:f:l:";
 $long_opts  = [
@@ -106,9 +103,17 @@ if ($missing_params != '') {
     die("Missing argument(s): {$missing_params}\n");
 }
 
+if (strpos(__DIR__, 'Library') !== false) {
+    die("Please Run this script from the app/bin directory");
+}
+$base_path = str_replace('/app/bin', '', __DIR__);
 define('DEVELOPER_MODE', true);
-define('SITE_PATH', __DIR__);
-define('BASE_PATH', dirname(SITE_PATH));
+define('BASE_PATH', $base_path);
+define('SITE_PATH', $base_path . '/public');
+
+echo 'Base Path: ' . BASE_PATH . "\n";
+echo 'Site Path: ' . SITE_PATH . "\n";
+die('temp death');
 
 require_once BASE_PATH . '/app/config/constants.php';
 
@@ -121,7 +126,8 @@ require SRC_PATH . '/Ritc/Library/Helper/AutoloadMapper.php';
 $a_dirs = [
     'app_path'    => APP_PATH,
     'config_path' => APP_CONFIG_PATH,
-    'src_path'    => SRC_PATH];
+    'src_path'    => SRC_PATH
+];
 $o_cm = new AutoloadMapper($a_dirs);
 if (!is_object($o_cm)) {
     die("Could not instance AutoloadMapper");
@@ -165,7 +171,7 @@ $o_elog = Elog::start();
 $o_elog->setIgnoreLogOff(true); // turns on logging globally ignoring LOG_OFF when set to true
 
 $o_di = new Di();
-$o_di->set('elog',    $o_elog);
+$o_di->set('elog', $o_elog);
 
 $o_pdo = PdoFactory::start($db_config_file, 'rw', $o_di);
 
@@ -193,8 +199,10 @@ switch ($db_type) {
         break;
     case 'mysql':
     default:
-        $a_sql = include LIBRARY_PATH . '/resources/sql/default_setup_mysql.php';
+        $a_sql = include LIBRARY_PATH . '/resources/sql/default_mysql_create.php';
 }
+
+$a_data = include LIBRARY_PATH . '/resources/sql/default_data.php';
 
 $o_db->startTransaction();
 foreach ($a_sql as $sql) {
@@ -202,9 +210,58 @@ foreach ($a_sql as $sql) {
     if ($o_db->rawExec($sql) === false) {
         $error_message = $o_db->getSqlErrorMessage();
         $o_db->rollbackTransaction();
-        die("Database failure\n" . var_export($o_pdo->errorInfo(), true) . "\n");
+        die("Database failure\n" . var_export($o_pdo->errorInfo(), true) . " other: " . $error_message . "\n");
     }
 }
+/*
+$a_table_names = [
+    'constants',
+    'groups',
+    'urls',
+    'people',
+    'navgroups',
+    'people_group_map',
+    'routes',
+    'routes_group_map',
+    'navigation',
+    'nav_ng_map',
+    'page',
+];
+*/
+// Enter Constants
+$sql =<<<SQL
+INSERT INTO {$db_prefix}constants 
+  ('const_name', 'const_value', 'const_immutable') 
+VALUES 
+  (:const_name, :const_value, :const_immutable)
+SQL;
+$a_table_info = [
+    'table_name'  => $db_prefix . 'constants',
+    'column_name' => 'const_name'
+];
+$results = $o_db->insert($sql, $a_data['constants'], $a_table_info);
+if ($results === false) {
+    $o_db->rollbackTransaction();
+    die("Could not insert constants data\n");
+}
+
+// Enter Groups
+$sql =<<<SQL
+INSERT INTO {$db_prefix}groups 
+  ('group_name', 'group_description', 'group_auth_level', 'group_immutable') 
+VALUES 
+  (:group_name, :group_description, :group_auth_level, :group_immutable)
+SQL;
+$a_table_info = [
+    'table_name'  => $db_prefix . 'groups',
+    'column_name' => 'group_id'
+];
+$results = $o_db->insert($sql, $a_data['groups'], $a_table_info);
+if ($results === false) {
+    $o_db->rollbackTransaction();
+    die("Could not insert groups data\n");
+}
+
 $o_db->commitTransaction();
 
 ### Create the directories for the new app ###

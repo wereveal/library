@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/ConstantsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.2.0
- * @date      2015-11-22 18:04:07
+ * @version   2.3.1
+ * @date      2017-01-13 11:37:25
  * @note      see ConstantsEntity for database table definition.
  * @note <b>Change Log</b>
+ * - v2.3.1 - Bug fix in create mysql table                                 - 2017-01-13 wer
  * - v2.3.0 - Refactoring of DbModel reflected here                         - 2016-03-18 wer
  * - v2.2.0 - Refactoring to provide better pgsql compatibility             - 11/22/2015 wer
  * - v2.1.0 - No longer extends Base class but uses LogitTraits             - 08/19/2015 wer
@@ -291,7 +292,7 @@ class ConstantsModel implements ModelInterface
             default:
                 $sql = "
                     CREATE TABLE IF NOT EXISTS `{$this->db_table}` (
-                        `const_id` int(11) NOT NULL AUTO_INCREMENT,
+                        `const_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                         `const_name` varchar(64) NOT NULL,
                         `const_value` varchar(64) NOT NULL,
                         `const_immutable` int(1) NOT NULL DEFAULT 0

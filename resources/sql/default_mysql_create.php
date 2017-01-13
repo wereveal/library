@@ -1,0 +1,138 @@
+<?php
+return [
+"DROP TABLE IF EXISTS `{dbPrefix}nav_ng_map`",
+"DROP TABLE IF EXISTS `{dbPrefix}people_group_map`",
+"DROP TABLE IF EXISTS `{dbPrefix}routes_group_map`",
+"DROP TABLE IF EXISTS `{dbPrefix}constants`",
+"DROP TABLE IF EXISTS `{dbPrefix}groups`",
+"DROP TABLE IF EXISTS `{dbPrefix}page`",
+"DROP TABLE IF EXISTS `{dbPrefix}people`",
+"DROP TABLE IF EXISTS `{dbPrefix}routes`",
+"DROP TABLE IF EXISTS `{dbPrefix}navgroups`",
+"DROP TABLE IF EXISTS `{dbPrefix}navigation`",
+"DROP TABLE IF EXISTS `{dbPrefix}urls`",
+"CREATE TABLE `{dbPrefix}constants` (
+  `const_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `const_name` varchar(64) NOT NULL DEFAULT '',
+  `const_value` varchar(64) NOT NULL DEFAULT '',
+  `const_immutable` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`const_id`),
+  UNIQUE KEY `config_key` (`const_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8",
+"CREATE TABLE `{dbPrefix}groups` (
+  `group_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `group_name` varchar(40) NOT NULL,
+  `group_description` varchar(128) NOT NULL DEFAULT '',
+  `group_auth_level` int(11) NOT NULL DEFAULT '0',
+  `group_immutable` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`group_id`),
+  UNIQUE KEY `group_name` (`group_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8",
+"CREATE TABLE `{dbPrefix}urls` (
+  `url_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `url_host` varchar(255) NOT NULL DEFAULT 'self',
+  `url_text` varchar(255) NOT NULL DEFAULT '',
+  `url_scheme` enum('http','https','ftp','gopher','mailto') NOT NULL DEFAULT 'https',
+  `url_immutable` tinyint(2) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`url_id`),
+  UNIQUE KEY `url_text` (`url_text`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8",
+"CREATE TABLE `{dbPrefix}routes` (
+  `route_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `url_id` int(11) unsigned NOT NULL,
+  `route_class` varchar(64) NOT NULL,
+  `route_method` varchar(64) NOT NULL,
+  `route_action` varchar(255) NOT NULL,
+  `route_immutable` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`route_id`),
+  UNIQUE KEY `url_id` (`url_id`),
+  CONSTRAINT `{dbPrefix}routes_ibfk_1` FOREIGN KEY (`url_id`) REFERENCES `{dbPrefix}urls` (`url_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8",
+"CREATE TABLE `{dbPrefix}page` (
+  `page_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `url_id` int(11) unsigned NOT NULL,
+  `page_type` varchar(20) NOT NULL DEFAULT 'text/html',
+  `page_title` varchar(100) NOT NULL DEFAULT 'Needs a title',
+  `page_description` varchar(150) NOT NULL DEFAULT 'Needs a description',
+  `page_base_url` varchar(50) NOT NULL DEFAULT '/',
+  `page_lang` varchar(50) NOT NULL DEFAULT 'en',
+  `page_charset` varchar(100) NOT NULL DEFAULT 'utf-8',
+  `page_immutable` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`page_id`),
+  KEY (`url_id`),
+  CONSTRAINT `{dbPrefix}page_ibfk_1` FOREIGN KEY (`url_id`) REFERENCES `{dbPrefix}urls` (`url_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8",
+"CREATE TABLE `{dbPrefix}people` (
+  `people_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `login_id` varchar(60) NOT NULL,
+  `real_name` varchar(50) NOT NULL,
+  `short_name` varchar(8) NOT NULL,
+  `password` varchar(128) NOT NULL,
+  `description` varchar(250) NOT NULL DEFAULT '',
+  `is_logged_in` tinyint(2) NOT NULL DEFAULT '0',
+  `bad_login_count` int(11) NOT NULL DEFAULT '0',
+  `bad_login_ts` int(11) NOT NULL DEFAULT '0',
+  `is_active` tinyint(4) NOT NULL DEFAULT '1',
+  `is_immutable` tinyint(1) NOT NULL DEFAULT '0',
+  `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`people_id`),
+  UNIQUE KEY `loginid` (`login_id`),
+  UNIQUE KEY `shortname` (`short_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8",
+"CREATE TABLE `{dbPrefix}navgroups` (
+  `ng_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `ng_name` varchar(128) NOT NULL DEFAULT 'Main',
+  `ng_active` tinyint(1) NOT NULL DEFAULT '1',
+  `ng_default` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ng_id`),
+  UNIQUE KEY `ng_name` (`ng_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8",
+"CREATE TABLE `{dbPrefix}navigation` (
+  `nav_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `url_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `nav_parent_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `nav_name` varchar(128) NOT NULL DEFAULT 'Fred',
+  `nav_text` varchar(128) NOT NULL DEFAULT '',
+  `nav_description` varchar(255) NOT NULL DEFAULT '',
+  `nav_css` varchar(64) NOT NULL DEFAULT 'menu-item',
+  `nav_level` int(11) NOT NULL DEFAULT '1',
+  `nav_order` int(11) NOT NULL DEFAULT '0',
+  `nav_active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`nav_id`),
+  KEY `url_id` (`url_id`),
+  CONSTRAINT `{dbPrefix}navigation_ibfk_1` FOREIGN KEY (`url_id`) REFERENCES `{dbPrefix}urls` (`url_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8",
+"CREATE TABLE `{dbPrefix}nav_ng_map` (
+  `nnm_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `ng_id` int(11) unsigned NOT NULL,
+  `nav_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`nnm_id`),
+  UNIQUE KEY `ng_id_2` (`ng_id`,`nav_id`),
+  KEY `ng_id` (`ng_id`),
+  KEY `nav_id` (`nav_id`),
+  CONSTRAINT `ritc_nav_ng_map_ibfk_1` FOREIGN KEY (`ng_id`) REFERENCES `ritc_navgroups` (`ng_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `ritc_nav_ng_map_ibfk_2` FOREIGN KEY (`nav_id`) REFERENCES `ritc_navigation` (`nav_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;",
+"CREATE TABLE `{dbPrefix}people_group_map` (
+  `pgm_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `people_id` int(11) unsigned NOT NULL,
+  `group_id` int(11) unsigned NOT NULL DEFAULT '3',
+  PRIMARY KEY (`pgm_id`),
+  UNIQUE KEY `people_id_2` (`people_id`,`group_id`),
+  KEY `people_id` (`people_id`),
+  KEY `group_id` (`group_id`),
+  CONSTRAINT `{dbPrefix}pgm_ibfk_1` FOREIGN KEY (`people_id`) REFERENCES `{dbPrefix}people` (`people_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `{dbPrefix}pgm_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `{dbPrefix}groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8",
+"CREATE TABLE `{dbPrefix}routes_group_map` (
+  `rgm_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `route_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `group_id` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`rgm_id`),
+  UNIQUE KEY `rgm_key` (`route_id`,`group_id`),
+  KEY `route_id` (`route_id`),
+  KEY `group_id` (`group_id`),
+  CONSTRAINT `{dbPrefix}routes_group_map_ibfk_1` FOREIGN KEY (`route_id`) REFERENCES `{dbPrefix}routes` (`route_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `{dbPrefix}routes_group_map_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `{dbPrefix}groups` (`group_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8"
+];

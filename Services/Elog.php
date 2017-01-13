@@ -6,9 +6,10 @@
  * @file      Elog.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version:  3.0.2
- * @date      2016-02-26 12:16:48
+ * @version:  3.0.3
+ * @date      2017-01-13 11:53:25
  * @note <b>Change Log</b>
+ * - v3.0.3 - bug fix, clean up code                                          - 2017-01-13 wer
  * - v3.0.2 - bug fixes                                                       - 02/26/2016 wer
  * - v3.0.1 - clean up code                                                   - 02/22/2016 wer
  * - v3.0.0 - added new logging methods, changed default to custom log        - 11/19/2015 wer
@@ -209,7 +210,7 @@ class Elog
      * The function that is for custom logging with trigger_error.
      * @param $error_number
      * @param $error_string
-     * @return bool|int|void
+     * @return bool|int
      */
     public function errorHandler($error_number, $error_string)
     {
@@ -302,7 +303,6 @@ class Elog
 
     /**
      * Sets Constants for use whenever Elog is used.
-     * @return null
      */
     private function setElogConstants()
     {
@@ -316,7 +316,7 @@ class Elog
         if (!defined('LOG_DB'))     { define('LOG_DB',     6); }
         if (!defined('LOG_HTML'))   { define('LOG_HTML',   7); }
         if (!defined('LOG_ALWAYS')) { define('LOG_ALWAYS', 8); }
-        if (!defined('LOG_PATH'))   { define('LOG_PATH', BASE_PATH . '/tmp'); }
+        if (!defined('LOG_PATH'))   { define('LOG_PATH', BASE_PATH . '/logs'); }
     }
 
     /**
@@ -329,6 +329,7 @@ class Elog
         }
         set_error_handler([self::$instance,'errorHandler'], $error_types);
         $this->handler_set = true;
+
     }
 
     /**
@@ -339,7 +340,6 @@ class Elog
      * @param string $line line number
      * @param string $class class name
      * @param string $function function name
-     * @return NULL
      */
     public function setFrom($file = '', $method = '', $line = '', $class = '', $function = '')
     {
@@ -417,7 +417,6 @@ class Elog
      * Setter for the private property ignore_log_off.
      * Basically turns logging on globally.
      * @param bool $boolean
-     * @return null
      */
     public function setIgnoreLogOff($boolean = false)
     {
