@@ -68,7 +68,7 @@ class GroupsAdmimController implements ManagerControllerInterface
     /**
      * @return string
      */
-    public function render()
+    public function route()
     {
         $a_route_parts = $this->o_router->getRouteParts();
         $main_action   = $a_route_parts['route_action'];

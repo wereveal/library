@@ -43,7 +43,7 @@ class NavigationAdminController implements ManagerControllerInterface
      * Main method used to render the page.
      * @return string
      */
-    public function render()
+    public function route()
     {
         $meth = __METHOD__ . '.';
         $log_message = 'route array: ' . var_export($this->a_router_parts, TRUE);

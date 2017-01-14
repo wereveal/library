@@ -77,7 +77,7 @@ class ConstantsAdminController implements ManagerControllerInterface
      * Renders the html based on the route requested.
      * @return string html to be displayed.
      */
-    public function render()
+    public function route()
     {
         $main_action   = $this->a_router_parts['route_action'];
         $form_action   = $this->a_router_parts['form_action'];

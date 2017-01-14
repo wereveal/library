@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Interfaces/ManagerControllerInterface.php
  * @namespace Ritc\Library\Interfaces
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0+3
- * @date      2016-04-15 12:14:33
+ * @version   2.0.0
+ * @date      2017-01-14 09:32:39
  * @note <b>Change Log</b>
- * - v1.0.0 - initial version                                  - 01/11/2015 wer
+ * - v2.0.0 - changed name of method render to route to reflect intended purpose    - 2017-01-14 wer
+ * - v1.0.0 - initial version                                                       - 01/11/2015 wer
  */
 namespace Ritc\Library\Interfaces;
 
@@ -20,10 +21,10 @@ namespace Ritc\Library\Interfaces;
 interface ManagerControllerInterface
 {
     /**
-     * Main method used to render the page.
+     * Main method used to route the page to the appropriate controller/view/model.
      * @return string
      */
-    public function render();
+    public function route();
 
     /**
      * Method for saving data.
