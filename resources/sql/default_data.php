@@ -284,104 +284,104 @@ $a_routes = [
     ],
 	'manager' => [
 	    'url_id'          => 'manager',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'ManagerController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'login' => [
 	    'url_id'          => 'login',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'ManagerController',
         'route_method'    => 'route',
-        'route_action'    => '',
+        'route_action'    => 'login',
         'route_immutable' => 1
 	],
 	'logout' => [
 	    'url_id'          => 'logout',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'ManagerController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'library' => [
 	    'url_id'          => 'library',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'LibraryController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'constants' => [
 	    'url_id'          => 'constants',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'LibraryController',
         'route_method'    => 'route',
-        'route_action'    => '',
+        'route_action'    => 'constants',
         'route_immutable' => 1
 	],
 	'groups' => [
 	    'url_id'          => 'groups',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'LibraryController',
         'route_method'    => 'route',
-        'route_action'    => '',
+        'route_action'    => 'groups',
         'route_immutable' => 1
 	],
 	'people' => [
 	    'url_id'          => 'people',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'LibraryController',
         'route_method'    => 'route',
-        'route_action'    => '',
+        'route_action'    => 'people',
         'route_immutable' => 1
 	],
 	'urls' => [
 	    'url_id'          => 'urls',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'LibraryController',
         'route_method'    => 'route',
-        'route_action'    => '',
+        'route_action'    => 'urls',
         'route_immutable' => 1
 	],
 	'pages' => [
 	    'url_id'          => 'pages',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'LibraryController',
         'route_method'    => 'route',
-        'route_action'    => '',
+        'route_action'    => 'pages',
         'route_immutable' => 1
 	],
 	'routes' => [
 	    'url_id'          => 'routes',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'LibraryController',
         'route_method'    => 'route',
-        'route_action'    => '',
+        'route_action'    => 'routes',
         'route_immutable' => 1
 	],
 	'tests' => [
 	    'url_id'          => 'tests',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'LibraryController',
         'route_method'    => 'route',
-        'route_action'    => '',
+        'route_action'    => 'tests',
         'route_immutable' => 1
 	],
 	'navigation' => [
 	    'url_id'          => 'navigation',
-        'route_class'     => 'HomeController',
+        'route_class'     => 'LibraryController',
         'route_method'    => 'route',
-        'route_action'    => '',
+        'route_action'    => 'navigation',
         'route_immutable' => 1
 	]
 ];
 
 $a_route_group_map = [
-    ['route_id' => 'home',       'group_id' => $a_groups['anonymous']['group_name'],
-	['route_id' => 'manager',    'group_id' => $a_groups['anonymous']['group_name'],
-	['route_id' => 'login',      'group_id' => $a_groups['anonymous']['group_name'],
-	['route_id' => 'logout',     'group_id' => $a_groups['manager']['group_name'],
-	['route_id' => 'library',    'group_id' => $a_groups['admin']['group_name'],
-	['route_id' => 'constants',  'group_id' => $a_groups['admin']['group_name'],
-	['route_id' => 'groups',     'group_id' => $a_groups['admin']['group_name'],
-	['route_id' => 'people',     'group_id' => $a_groups['admin']['group_name'],
-	['route_id' => 'urls',       'group_id' => $a_groups['admin']['group_name'],
-    ['route_id' => 'routes',     'group_id' => $a_groups['admin']['group_name'],
-	['route_id' => 'pages',      'group_id' => $a_groups['admin']['group_name'],
-    ['route_id' => 'navigation', 'group_id' => $a_groups['admin']['group_name'],
-	['route_id' => 'tests',      'group_id' => $a_groups['admin']['group_name']
+    ['route_id' => 'home',       'group_id' => 'anonymous'],
+	['route_id' => 'manager',    'group_id' => 'anonymous'],
+	['route_id' => 'login',      'group_id' => 'anonymous'],
+	['route_id' => 'logout',     'group_id' => 'manager'],
+	['route_id' => 'library',    'group_id' => 'admin'],
+	['route_id' => 'constants',  'group_id' => 'admin'],
+	['route_id' => 'groups',     'group_id' => 'admin'],
+	['route_id' => 'people',     'group_id' => 'admin'],
+	['route_id' => 'urls',       'group_id' => 'admin'],
+    ['route_id' => 'routes',     'group_id' => 'admin'],
+	['route_id' => 'pages',      'group_id' => 'admin'],
+    ['route_id' => 'navigation', 'group_id' => 'admin'],
+	['route_id' => 'tests',      'group_id' => 'admin']
 ];
 
 $a_navigation = [
@@ -531,22 +531,36 @@ $a_navigation = [
 ];
 
 $a_nav_ng_map = [
-    ['ng_id' => 'Main',         'nav_id' => 'home'],
-    ['ng_id' => 'SiteMap',      'nav_id' => 'home'],
-    ['ng_id' => 'PageLinks',    'nav_id' => 'home'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'home'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'manager'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'login'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'logout'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'library'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'constants'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'groups'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'people'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'urls'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'pages'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'routes'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'navigation'],
-    ['ng_id' => 'ManagerLinks', 'nav_id' => 'tests']
+    ['ng_id' => 'main',         'nav_id' => 'home'],
+    ['ng_id' => 'sitemap',      'nav_id' => 'home'],
+    ['ng_id' => 'pagelinks',    'nav_id' => 'home'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'home'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'manager'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'login'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'logout'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'library'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'constants'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'groups'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'people'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'urls'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'pages'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'routes'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'navigation'],
+    ['ng_id' => 'managerlinks', 'nav_id' => 'tests'],
+    ['ng_id' => 'manager',      'nav_id' => 'home'],
+    ['ng_id' => 'manager',      'nav_id' => 'manager'],
+    ['ng_id' => 'manager',      'nav_id' => 'login'],
+    ['ng_id' => 'manager',      'nav_id' => 'logout'],
+    ['ng_id' => 'manager',      'nav_id' => 'library'],
+    ['ng_id' => 'manager',      'nav_id' => 'constants'],
+    ['ng_id' => 'manager',      'nav_id' => 'groups'],
+    ['ng_id' => 'manager',      'nav_id' => 'people'],
+    ['ng_id' => 'manager',      'nav_id' => 'urls'],
+    ['ng_id' => 'manager',      'nav_id' => 'pages'],
+    ['ng_id' => 'manager',      'nav_id' => 'routes'],
+    ['ng_id' => 'manager',      'nav_id' => 'navigation'],
+    ['ng_id' => 'manager',      'nav_id' => 'tests']
+
 ];
 
 $a_page = [
