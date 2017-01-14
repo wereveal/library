@@ -261,106 +261,106 @@ $a_navgroups = [
 
 $a_people_group = [
     [
-        'people_id' => $a_people['superadmin']['login_id'],
-        'group_id'  => $a_groups['superadmin']['group_name']
+        'people_id' => 'superadmin',
+        'group_id'  => 'superadmin'
     ],
     [
-        'people_id' => $a_people['admin']['login_id'],
-        'group_id'  => $a_groups['admin']['group_name']
+        'people_id' => 'admin',
+        'group_id'  => 'admin'
     ],
     [
-        'people_id' => $a_people['manager']['login_id'],
-        'group_id'  => $a_groups['manager']['group_name']
+        'people_id' => 'manager',
+        'group_id'  => 'manager'
     ],
 ];
 
 $a_routes = [
     'home' => [
-        'url_id'          => $a_u['home'],
+        'url_id'          => 'home',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
     ],
 	'manager' => [
-	    'url_id'          => $a_u['manager'],
+	    'url_id'          => 'manager',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'login' => [
-	    'url_id'          => $a_u['login'],
+	    'url_id'          => 'login',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'logout' => [
-	    'url_id'          => $a_u['logout'],
+	    'url_id'          => 'logout',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'library' => [
-	    'url_id'          => $a_u['library'],
+	    'url_id'          => 'library',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'constants' => [
-	    'url_id'          => $a_u['constants'],
+	    'url_id'          => 'constants',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'groups' => [
-	    'url_id'          => $a_u['groups'],
+	    'url_id'          => 'groups',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'people' => [
-	    'url_id'          => $a_u['people'],
+	    'url_id'          => 'people',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'urls' => [
-	    'url_id'          => $a_u['urls'],
+	    'url_id'          => 'urls',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'pages' => [
-	    'url_id'          => $a_u['pages'],
+	    'url_id'          => 'pages',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'routes' => [
-	    'url_id'          => $a_u['routes'],
+	    'url_id'          => 'routes',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'tests' => [
-	    'url_id'          => $a_u['tests'],
+	    'url_id'          => 'tests',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
         'route_immutable' => 1
 	],
 	'navigation' => [
-	    'url_id'          => $a_u['navigation'],
+	    'url_id'          => 'navigation',
         'route_class'     => 'HomeController',
         'route_method'    => 'route',
         'route_action'    => '',
@@ -369,24 +369,24 @@ $a_routes = [
 ];
 
 $a_route_group_map = [
-    ['route_id' => $a_u['home'],       'group_id' => $a_groups['anonymous']['group_name']],
-	['route_id' => $a_u['manager'],    'group_id' => $a_groups['anonymous']['group_name']],
-	['route_id' => $a_u['login'],      'group_id' => $a_groups['anonymous']['group_name']],
-	['route_id' => $a_u['logout'],     'group_id' => $a_groups['manager']['group_name']],
-	['route_id' => $a_u['library'],    'group_id' => $a_groups['admin']['group_name']],
-	['route_id' => $a_u['constants'],  'group_id' => $a_groups['admin']['group_name']],
-	['route_id' => $a_u['groups'],     'group_id' => $a_groups['admin']['group_name']],
-	['route_id' => $a_u['people'],     'group_id' => $a_groups['admin']['group_name']],
-	['route_id' => $a_u['urls'],       'group_id' => $a_groups['admin']['group_name']],
-    ['route_id' => $a_u['routes'],     'group_id' => $a_groups['admin']['group_name']],
-	['route_id' => $a_u['pages'],      'group_id' => $a_groups['admin']['group_name']],
-    ['route_id' => $a_u['navigation'], 'group_id' => $a_groups['admin']['group_name']],
-	['route_id' => $a_u['tests'],      'group_id' => $a_groups['admin']['group_name']]
+    ['route_id' => 'home',       'group_id' => $a_groups['anonymous']['group_name'],
+	['route_id' => 'manager',    'group_id' => $a_groups['anonymous']['group_name'],
+	['route_id' => 'login',      'group_id' => $a_groups['anonymous']['group_name'],
+	['route_id' => 'logout',     'group_id' => $a_groups['manager']['group_name'],
+	['route_id' => 'library',    'group_id' => $a_groups['admin']['group_name'],
+	['route_id' => 'constants',  'group_id' => $a_groups['admin']['group_name'],
+	['route_id' => 'groups',     'group_id' => $a_groups['admin']['group_name'],
+	['route_id' => 'people',     'group_id' => $a_groups['admin']['group_name'],
+	['route_id' => 'urls',       'group_id' => $a_groups['admin']['group_name'],
+    ['route_id' => 'routes',     'group_id' => $a_groups['admin']['group_name'],
+	['route_id' => 'pages',      'group_id' => $a_groups['admin']['group_name'],
+    ['route_id' => 'navigation', 'group_id' => $a_groups['admin']['group_name'],
+	['route_id' => 'tests',      'group_id' => $a_groups['admin']['group_name']
 ];
 
 $a_navigation = [
     'home'       => [
-        'url_id'          => $a_u['home'],
+        'url_id'          => 'home',
         'nav_parent_id'   => 'home',
         'nav_name'        => 'Home',
         'nav_text'        => 'Home',
@@ -397,7 +397,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'manager'    => [
-        'url_id'          => $a_u['manager'],
+        'url_id'          => 'manager',
         'nav_parent_id'   => 'manager',
         'nav_name'        => 'Manager',
         'nav_text'        => 'Manager',
@@ -408,7 +408,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'login'      => [
-        'url_id'          => $a_u['login'],
+        'url_id'          => 'login',
         'nav_parent_id'   => 'manager',
         'nav_name'        => 'Manager',
         'nav_text'        => 'Manager',
@@ -419,7 +419,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'logout'     => [
-        'url_id'          => $a_u['logout'],
+        'url_id'          => 'logout',
         'nav_parent_id'   => 'manager',
         'nav_name'        => 'Manager',
         'nav_text'        => 'Manager',
@@ -430,7 +430,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'library'    => [
-        'url_id'          => $a_u['library'],
+        'url_id'          => 'library',
         'nav_parent_id'   => 'manager',
         'nav_name'        => 'Advanced Config',
         'nav_text'        => 'Advanced Config',
@@ -441,7 +441,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'constants'  => [
-        'url_id'          => $a_u['constants'],
+        'url_id'          => 'constants',
         'nav_parent_id'   => 'library',
         'nav_name'        => 'Constants',
         'nav_text'        => 'Constants',
@@ -452,7 +452,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'groups'     => [
-        'url_id'          => $a_u['groups'],
+        'url_id'          => 'groups',
         'nav_parent_id'   => 'library',
         'nav_name'        => 'Groups',
         'nav_text'        => 'Groups',
@@ -463,7 +463,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'people'     => [
-        'url_id'          => $a_u['people'],
+        'url_id'          => 'people',
         'nav_parent_id'   => 'library',
         'nav_name'        => 'People',
         'nav_text'        => 'People',
@@ -474,7 +474,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'urls'       => [
-        'url_id'          => $a_u['urls'],
+        'url_id'          => 'urls',
         'nav_parent_id'   => 'library',
         'nav_name'        => 'Urls',
         'nav_text'        => 'Urls',
@@ -485,7 +485,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'pages'      => [
-        'url_id'          => $a_u['pages'],
+        'url_id'          => 'pages',
         'nav_parent_id'   => 'library',
         'nav_name'        => 'Pages',
         'nav_text'        => 'Pages',
@@ -496,7 +496,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'routes'     => [
-        'url_id'          => $a_u['routes'],
+        'url_id'          => 'routes',
         'nav_parent_id'   => 'library',
         'nav_name'        => 'Routes',
         'nav_text'        => 'Routes',
@@ -507,7 +507,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'navigation' => [
-        'url_id'          => $a_u['navigation'],
+        'url_id'          => 'navigation',
         'nav_parent_id'   => 'library',
         'nav_name'        => 'Navigation',
         'nav_text'        => 'Navigation',
@@ -518,7 +518,7 @@ $a_navigation = [
         'nav_active'      => 1
     ],
     'tests'      => [
-        'url_id'          => $a_u['tests'],
+        'url_id'          => 'tests',
         'nav_parent_id'   => 'library',
         'nav_name'        => 'Tests',
         'nav_text'        => 'Tests',
