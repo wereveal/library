@@ -6,9 +6,10 @@
  * @file      Ritc/Library/Factories/PdoFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2015-08-28 08:01:33
+ * @version   2.0.2
+ * @date      2017-01-13 10:29:24
  * @note <b>Change Log</b>
+ * - v2.0.2 - fixed potential bug                                                                       - 2017-01-13 wer
  * - v2.0.1 - refactoring of DbTraits reflected here (caused strict standards error).                   - 2016-03-19 wer
  * - v2.0.0 - realized a stupid error in thinking, this should produce                                  - 08/28/2015 wer
  *              an instance of the PDO not an instance of the factory itself duh!
@@ -99,7 +100,7 @@ class PdoFactory
 
     /**
      * Creates the \PDO instance
-     * @return \PDO
+     * @return \PDO|bool
      */
     private function createPdo()
     {
@@ -111,9 +112,10 @@ class PdoFactory
         if ($this->config_file == '') {
             $this->config_file = 'db_config.php';
         }
-        /** @var array|bool $a_db */
+        /** @var array $a_db */
         $a_db = $this->retrieveDbConfig($this->config_file);
-        if ($a_db === false) {
+        if (empty($a_db)) {
+            $this->logIt("Could not retrieve the db config file.");
             return false;
         }
         $a_db['dsn'] = $this->createDsn($a_db);

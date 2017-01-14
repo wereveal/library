@@ -5,9 +5,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.0
- * @date      2016-09-23 15:35:22
+ * @version   1.4.0
+ * @date      2017-01-13 10:40:29
  * @note <b>Change Log</b>
+ * - v1.3.0          - added new property lib_prefix, code clean up         - 2017-01-13 wer
  * - v1.2.0          - Refactoring of DbCommonTraits reflected here         - 2016-09-23 wer
  * - v1.1.0          - added a parameter to generic read select_distinct    - 2016-09-09 wer
  * - v1.0.0          - this went live a while back, guess it isn't alpha    - 2016-08-22 wer
@@ -52,6 +53,8 @@ trait DbUtilityTraits {
     protected $db_type = 'mysql';
     /** @var  string */
     protected $error_message = '';
+    /** @var string */
+    protected $lib_prefix = 'ritc_';
     /** @var \Ritc\Library\Services\DbModel */
     protected $o_db;
     /** @var  string */
@@ -582,7 +585,6 @@ SQL;
 
     /**
      * @param string $value
-     * @return null
      */
     public function setErrorMessage($value = '')
     {
@@ -594,7 +596,6 @@ SQL;
 
     /**
      * Retrieves the primary index field name from database and sets the class property.
-     * @return null
      */
     protected function setPrimaryIndexName()
     {
@@ -665,11 +666,13 @@ SQL;
         $this->a_db_config = $o_db->getDbConfig();
         $this->db_prefix   = $o_db->getDbPrefix();
         $this->db_type     = $o_db->getDbType();
+        $this->lib_prefix  = $o_db->getLibPrefix();
         if ($table_name != '') {
             $this->db_table    = $this->db_prefix . $table_name;
             $this->a_db_fields = $o_db->selectDbColumns($this->db_table);
             $this->setPrimaryIndexName();
         }
+        return;
     }
 
     ### Getters and Setters ###

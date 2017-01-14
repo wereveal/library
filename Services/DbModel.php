@@ -6,9 +6,10 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.1.1+2
- * @date      2016-04-15 09:00:16
+ * @version   4.2.0
+ * @date      2017-01-13 11:43:33
  * @note <b>Change Log</b>
+ * - v4.2.0 - Added some debugging code, cleaned up other.                                  - 2017-01-13 wer
  * - v4.1.2 - Bug fix                                                                       - 2016-08-22 wer
  * - v4.1.1 - Bug fixes, the set/create/retrieve sql error message needed clarification     - 2016-03-28 wer
  * - v4.1.0 - Renamed rawQuery to rawExec and added a new rawQuery                          - 2016-03-25 wer
@@ -78,7 +79,7 @@ class DbModel
     use DbTraits, LogitTraits;
 
     /** @var array */
-    private $a_new_ids = array();
+    private $a_new_ids = [];
     /** @var int */
     private $affected_rows;
     /** @var \PDO */
@@ -98,7 +99,7 @@ class DbModel
      */
     public function __construct(\PDO $o_pdo, $config_file = 'db_config.php')
     {
-        $this->createDbParms($config_file);
+        $this->createDbParams($config_file);
         $this->o_pdo = $o_pdo;
     }
 
@@ -114,7 +115,7 @@ class DbModel
      * @return bool
      * @return bool
      */
-    public function insert($the_query = '', array $a_values = array(), array $a_table_info = array())
+    public function insert($the_query = '', array $a_values = [], array $a_table_info = [])
     {
         $meth = __METHOD__ . '.';
         $this->logIt('Query and values: ' . $the_query . '  ' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
@@ -169,7 +170,7 @@ class DbModel
      *     specifies the PDO formats, defaults to assoc
      * @return mixed results of search or false
      */
-    public function search($the_query = '', array $a_values = array(), $type = 'assoc')
+    public function search($the_query = '', array $a_values = [], $type = 'assoc')
     {
         $meth = __METHOD__ . '.';
         switch ($type) {
@@ -239,7 +240,7 @@ class DbModel
      * @param bool   $single_record default true specifies if only a single record should be deleted per query
      * @return bool                 success or failure
      */
-    public function update($the_query = '', array $a_values = array(), $single_record = true)
+    public function update($the_query = '', array $a_values = [], $single_record = true)
     {
         return $this->mdQuery($the_query, $a_values, $single_record);
     }
@@ -252,7 +253,7 @@ class DbModel
      * @param bool   $single_record specifies if only a single record should be deleted per query
      * @return bool                 success or failure
      */
-    public function delete($the_query = '', array $a_values = array(), $single_record = true)
+    public function delete($the_query = '', array $a_values = [], $single_record = true)
     {
         return $this->mdQuery($the_query, $a_values, $single_record);
     }
@@ -323,7 +324,7 @@ class DbModel
      * @param array $a_table_info
      * @return string
      */
-    public function getPgsqlSequenceName(array $a_table_info = array())
+    public function getPgsqlSequenceName(array $a_table_info = [])
     {
         if ($a_table_info != array()) {
             $this->setPgsqlSequenceName($a_table_info);
@@ -371,7 +372,7 @@ class DbModel
      * 'schema'      value optional, defaults to 'public' \endverbatim
      * @return bool success or failure
      */
-    public function setPgsqlSequenceName(array $a_table_info = array())
+    public function setPgsqlSequenceName(array $a_table_info = [])
     {
         if ($a_table_info == array()) {
             return false;
@@ -459,7 +460,7 @@ class DbModel
      */
     public function resetNewIds()
     {
-        $this->a_new_ids = array();
+        $this->a_new_ids = [];
     }
 
     ### Basic Commands - The basic building blocks for doing db work
@@ -469,7 +470,7 @@ class DbModel
      * @param object|\PDOStatement $o_pdo_stmt
      * @return bool - success or failure
      */
-    public function bindValues(array $a_values = array(), \PDOStatement $o_pdo_stmt)
+    public function bindValues(array $a_values = [], \PDOStatement $o_pdo_stmt)
     {
         $meth = __METHOD__ . '.';
         $this->logIt("bind array: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
@@ -535,7 +536,7 @@ class DbModel
      * @param object|\PDOStatement $o_pdo_stmt - the object created from the prepare
      * @return bool - success or failure
      */
-    public function execute(array $a_values = array(), \PDOStatement $o_pdo_stmt)
+    public function execute(array $a_values = [], \PDOStatement $o_pdo_stmt)
     {
         $meth = __METHOD__ . '.';
         $this->logIt('Array: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
@@ -576,7 +577,7 @@ class DbModel
      *
      * @return mixed - depends on fetch_style, always return false on failure - @see \PDOStatment::fetch
      */
-    public function fetchRow(\PDOStatement $o_pdo_stmt, array $a_fetch_config = array())
+    public function fetchRow(\PDOStatement $o_pdo_stmt, array $a_fetch_config = [])
     {
         if ($a_fetch_config == array()) {
             $fetch_style = 'ASSOC';
@@ -729,7 +730,7 @@ class DbModel
      * @param string $table_name
      * @return bool
      */
-    public function insertTransaction($the_query = '', array $a_values = array(), $table_name = '')
+    public function insertTransaction($the_query = '', array $a_values = [], $table_name = '')
     {
         if ($the_query == '') {
             $this->logIt('The Query was blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
@@ -766,7 +767,7 @@ class DbModel
      * @param bool   $single_record
      * @return bool
      */
-    public function queryTransaction($the_query = '', array $the_array = array(), $single_record = true)
+    public function queryTransaction($the_query = '', array $the_array = [], $single_record = true)
     {
         $this->logIt("The Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($this->o_pdo->beginTransaction()) {
@@ -799,7 +800,7 @@ class DbModel
      * @param bool   $single_record
      * @return bool
      */
-    public function updateTransaction($the_query = '', array $the_array = array(), $single_record = true)
+    public function updateTransaction($the_query = '', array $the_array = [], $single_record = true)
     {
         $this->logIt("The query coming in is: $the_query", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $results = $this->queryTransaction($the_query, $the_array, $single_record);
@@ -816,7 +817,7 @@ class DbModel
      * @param bool   $single_record
      * @return bool
      */
-    public function deleteTransaction($the_query = '', array $the_array = array(), $single_record = true)
+    public function deleteTransaction($the_query = '', array $the_array = [], $single_record = true)
     {
         $results = $this->queryTransaction($the_query, $the_array, $single_record);
         if ($results === false) {
@@ -833,7 +834,7 @@ class DbModel
      * @param array          $a_table_info
      * @return bool success or failure
      */
-    public function insertPrepared(array $a_values = array(), \PDOStatement $o_pdo_stmt, array $a_table_info = array())
+    public function insertPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt, array $a_table_info = [])
     {
         $meth = __METHOD__ . '.';
         if (count($a_values) > 0) {
@@ -865,7 +866,7 @@ class DbModel
      *
      * @return bool
      */
-    public function executeInsert(array $a_values = array(), \PDOStatement $o_pdo_stmt, array $a_table_info = array())
+    public function executeInsert(array $a_values = [], \PDOStatement $o_pdo_stmt, array $a_table_info = [])
     {
         $meth = __METHOD__ . '.';
         if (count($a_values) > 0) {
@@ -876,6 +877,7 @@ class DbModel
             if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays, can not be mixed
                 foreach ($a_values as $a_stuph) {
                     if ($this->executeInsert($a_stuph, $o_pdo_stmt, $a_table_info) === false) {
+                        $this->logIt($this->o_pdo->errorInfo(), LOG_ALWAYS, $meth . __LINE__);
                         return false;
                     }
                 }
@@ -901,7 +903,7 @@ class DbModel
      * @param $single_record - if only a single record should be changed/deleted - optional, default is true
      * @return bool - success or failure
      */
-    public function mdQuery($the_query = '', array $a_values = array(), $single_record = true)
+    public function mdQuery($the_query = '', array $a_values = [], $single_record = true)
     {
         $meth = __METHOD__ . '.';
         if ($the_query == '') {
@@ -954,7 +956,7 @@ class DbModel
      * @param \PDOStatement $o_pdo_stmt
      * @return bool
      */
-    public function mdQueryPrepared(array $a_values = array(), $single_record = true, \PDOStatement $o_pdo_stmt)
+    public function mdQueryPrepared(array $a_values = [], $single_record = true, \PDOStatement $o_pdo_stmt)
     {
         $meth = __METHOD__ . '.';
         if ($a_values == array()) {
@@ -1023,7 +1025,7 @@ class DbModel
                     WHERE ";
                 $this->logIt("Where Params in method: " . var_export($where_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $where = '';
-                $a_where = array();
+                $a_where = [];
                 foreach ($where_values as $values) {
                     $where .= $where != '' ? ' AND ' : '' ;
                     $where .= $values['field_name'] . $values['operator'] . ':' . $values['field_name'];
@@ -1094,7 +1096,7 @@ class DbModel
      * @param string        $type
      * @return array|bool
      */
-    public function searchPrepared(array $a_values = array(), \PDOStatement $o_pdo_stmt, $type = 'assoc')
+    public function searchPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt, $type = 'assoc')
     {
         $meth = __METHOD__ . '.';
         switch ($type) {
@@ -1111,7 +1113,7 @@ class DbModel
         if (count($a_values) > 0) {
             $this->logIt("Array: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
             if (isset($a_values[0]) && is_array($a_values[0])) {
-                $a_results = array();
+                $a_results = [];
                 foreach ($a_values as $row) {
                     if ($this->execute($row, $o_pdo_stmt)) {
                         $fetched = $o_pdo_stmt->fetchAll($fetch_style);
@@ -1181,13 +1183,13 @@ class DbModel
 
     /**
      * Returns a list of the columns from a database table.
-     * @param $table_name (str) - name of the table
-     * @return array - field names
+     * @param string $table_name name of the table
+     * @return array|bool - field names
      */
     public function selectDbColumns($table_name = '')
     {
         if ($table_name != '') {
-            $a_column_names = array();
+            $a_column_names = [];
             switch ($this->db_type) {
                 case 'pgsql':
                     $sql = "
