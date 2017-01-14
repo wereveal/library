@@ -85,7 +85,7 @@ class PeopleAdminController implements ManagerControllerInterface
      * Routes the code to the appropriate methods and classes. Returns a string.
      * @return string html to be displayed.
      */
-    public function render()
+    public function route()
     {
         $meth = __METHOD__ . '.';
         $a_route_parts = $this->a_route_parts;

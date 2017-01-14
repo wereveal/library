@@ -51,7 +51,7 @@ class UrlsAdminController implements ManagerControllerInterface
      * Main method used to render the page.
      * @return string
      */
-    public function render()
+    public function route()
     {
         $this->setProperties();
         switch ($this->main_action) {

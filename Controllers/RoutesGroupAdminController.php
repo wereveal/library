@@ -30,7 +30,7 @@ class RoutesGroupAdminController implements ManagerControllerInterface
     /**
      * @return string
      */
-    public function render()
+    public function route()
     {
         return '';
     }

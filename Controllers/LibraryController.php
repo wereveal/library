@@ -94,7 +94,7 @@ class LibraryController implements ControllerInterface
      * Default page for the library manager and login.
      * @return string
      */
-    public function render()
+    public function route()
     {
         $meth = __METHOD__ . '.';
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {

@@ -69,7 +69,7 @@ class PageAdminController implements ManagerControllerInterface
      * Returns the html for the route as determined.
      * @return string
      */
-    public function render()
+    public function route()
     {
         $meth = __METHOD__ . '.';
         $a_route_parts = $this->o_router->getRouteParts();
