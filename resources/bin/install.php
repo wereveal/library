@@ -96,22 +96,23 @@ foreach ($a_options as $option => $value) {
 $missing_params = '';
 
 if ($app_name == '') {
-    $missing_params .= $missing_params == '' ? "App Name" : ", App Name";
+    $missing_params .= $missing_params == '' ? "App Name (-a or --appname=)" : ", App Name (-a or --appname=)";
 }
 if ($namespace == '') {
-    $missing_params .= $missing_params == '' ? "Namespace" : ", Namespace";
+    $missing_params .= $missing_params == '' ? "Namespace (-n or --namespace=)" : ", Namespace (-n or --namespace=)";
 }
 if ($db_name == '') {
-    $missing_params .= $missing_params == '' ? "DB Name" : ", DB Name";
+    $missing_params .= $missing_params == '' ? "DB Name (-d or --dbname=)" : ", DB Name  (-d or --dbname=)";
 }
 if ($db_user == '') {
-    $missing_params .= $missing_params == '' ? "DB User" : ", DB User";
+    $missing_params .= $missing_params == '' ? "DB User (-u or --dbuser=)" : ", DB User (-u or --dbuser=)";
 }
 if ($db_pass == '') {
-    $missing_params .= $missing_params == '' ? "DB Password" : ", DB Password";
+    $missing_params .= $missing_params == '' ? "DB Password (-p or --dbpass=)" : ", DB Password (-p or --dbpass=)";
 }
 
 if ($missing_params != '') {
+    $missing_params .= "\nOther arguments available: -h/--dbhost, -t/--dbtype, -l/--loader, -f/--dbprefix, -r/--libprefix";
     die("Missing argument(s): {$missing_params}\n");
 }
 

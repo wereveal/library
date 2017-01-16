@@ -8,6 +8,7 @@
  * @version   2.2.0
  * @date      2017-01-13 10:22:05
  * @note <b>Change Log</b>
+ * - v3.0.0   - changed the db prefix way of working                - 2017-01-14 wer
  * - v2.2.0   - added new property lib_prefix and fixed bug         - 2017-01-13 wer
  * - v2.1.0   - Refactoring of DbCommonTraits reflected here        - 2016-09-23 wer
  * - v2.0.0   - Moved a several methods from DbModel to here        - 2016-03-18 wer
@@ -29,14 +30,14 @@ trait DbTraits
 
     /** @var array */
     private $a_db_config;
-    /** @var string */
+    /** @var  array */
+    protected $a_prefix;
+    /** @var  string */
     protected $db_prefix;
     /** @var string */
     protected $db_type;
     /** @var  string */
     protected $error_message;
-    /** @var  string */
-    protected $lib_prefix;
 
     ### Db Config Utilities ###
     /**
@@ -62,9 +63,12 @@ trait DbTraits
                 'password' => ''
             ];
         }
-
-        if (!isset($a_db['prefix'])) {
-            $a_db['prefix'] = '';
+        $a_prefix = [];
+        foreach ($a_db as $key => $value) {
+            if (substr($key, -7) == '_prefix') {
+                $short_key = str_replace('_prefix', '', $key);
+                $a_prefix[$short_key] = $value;
+            }
         }
         if (!isset($a_db['persist'])) {
             $a_db['persist'] = false;
@@ -79,12 +83,16 @@ trait DbTraits
             $a_db['passro'] = $a_db['password'];
         }
         if (!isset($a_db['lib_prefix'])) {
-            $a_db['lib_prefix'] = 'ritc_';
+            $a_prefix['lib'] = 'ritc_';
         }
+
+        $this->a_prefix    = $a_prefix;
         $this->a_db_config = $a_db;
-        $this->db_prefix   = $a_db['prefix'];
-        $this->lib_prefix  = $a_db['lib_prefix'];
         $this->db_type     = $a_db['driver'];
+        if (!isset($this->a_prefix['db'])) {
+            $this->a_prefix['db'] = isset($a_db['prefix']) ? $a_db['prefix'] : '';
+        }
+        $this->db_prefix = $this->a_prefix['db'];
     }
 
     /**
@@ -160,11 +168,12 @@ trait DbTraits
     }
 
     /**
+     * @param string $prefix optional, default to db
      * @return mixed
      */
-    public function getDbPrefix()
+    public function getDbPrefix($prefix = 'db')
     {
-        return $this->db_prefix;
+        return $this->a_prefix[$prefix];
     }
 
     /**
@@ -190,9 +199,18 @@ trait DbTraits
      */
     public function getLibPrefix()
     {
-        return $this->lib_prefix;
+        return $this->a_prefix['lib'];
     }
-    
+
+    /**
+     * Standard Getter
+     * @return array
+     */
+    public function getPrefixArray()
+    {
+        return $this->a_prefix;
+    }
+
     /**
      * @param string $value This method does nothing, intentionally.
      * @return null
@@ -204,13 +222,12 @@ trait DbTraits
     }
 
     /**
-     * @param string $value
-     * @return null
+     * Allows one to set a db prefix without it being in the db_config file.
+     * @param array $a_value
      */
-    protected function setDbPrefix($value)
+    protected function setDbPrefix($name = 'db' , $value = 'ritc_')
     {
-        unset($value);
-        return null; // db prefix can only be set privately
+        $this->a_prefix[$name] = $value;
     }
 
     /**

@@ -6,8 +6,9 @@
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.4.0
- * @date      2017-01-13 10:40:29
+ * @date      2017-01-14 17:59:03
  * @note <b>Change Log</b>
+ * - v1.4.0          - refactoring elsewhere regarding db_prefix here too   - 2017-01-14 wer
  * - v1.3.0          - added new property lib_prefix, code clean up         - 2017-01-13 wer
  * - v1.2.0          - Refactoring of DbCommonTraits reflected here         - 2016-09-23 wer
  * - v1.1.0          - added a parameter to generic read select_distinct    - 2016-09-09 wer
@@ -45,6 +46,8 @@ trait DbUtilityTraits {
     protected $a_db_config = [];
     /** @var array  */
     protected $a_db_fields = [];
+    /** @var array  */
+    protected $a_prefix = [];
     /** @var string */
     protected $db_prefix = '';
     /** @var  string */
@@ -657,14 +660,15 @@ SQL;
      * @param string                         $table_name
      * @return null
      */
-    protected function setupProperties(DbModel $o_db, $table_name = '')
+    protected function setupProperties(DbModel $o_db, $table_name = '', $db_prefix = 'db')
     {
         if ($o_db == '') {
             return null;
         }
         $this->o_db        = $o_db;
         $this->a_db_config = $o_db->getDbConfig();
-        $this->db_prefix   = $o_db->getDbPrefix();
+        $this->a_prefix    = $o_db->getPrefixArray();
+        $this->db_prefix   = $o_db->getDbPrefix($db_prefix);
         $this->db_type     = $o_db->getDbType();
         $this->lib_prefix  = $o_db->getLibPrefix();
         if ($table_name != '') {
