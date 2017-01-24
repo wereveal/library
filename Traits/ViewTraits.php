@@ -106,9 +106,12 @@ trait ViewTraits
                 $twig_prefix = LIB_TWIG_PREFIX;
                 break;
             case 'main':
-            default:
                 $a_menus = $this->a_nav;
                 $twig_prefix = TWIG_PREFIX;
+                break;
+            default:
+                $a_menus = $this->retrieveNav($tpl_type);
+                $twig_prefix = $tpl_type . '_';
         }
 
         if (count($a_message) != 0) {
@@ -170,7 +173,6 @@ trait ViewTraits
      * Sets the class property a_nav.
      * Uses the retrieveNav method to do so.
      * @param int|string $nav_group optional, defaults to 1
-     * @return null
      */
     protected function setNav($nav_group = 1)
     {
@@ -180,7 +182,6 @@ trait ViewTraits
     /**
      * Sets the property a_nav array by the navgroup_name.
      * @param string $navgroup_name
-     * @return null
      */
     protected function setNavByNgName($navgroup_name = '')
     {
@@ -309,9 +310,9 @@ trait ViewTraits
      */
     protected function readNav($nav_group = '')
     {
+        $o_ng = new NavgroupsModel($this->o_db);
         if ($nav_group == '') {
-            $nav_group = $this->o_nav->retrieveDefaultNavgroup();
-
+            $nav_group = $o_ng->retrieveDefaultNavgroup();
         }
         if (is_numeric($nav_group)) {
             return $this->o_nav->getNavList($nav_group);
