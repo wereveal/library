@@ -1,6 +1,6 @@
 <?php
 /**
- * @brief     Class used to set up controller classes.
+ * @brief     Interface used to set up controller classes.
  * @ingroup   lib_interfaces
  * @file      Ritc/Library/Interfaces/ControllerInterface.php
  * @namespace Ritc\Library\Interfaces
