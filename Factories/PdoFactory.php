@@ -6,9 +6,10 @@
  * @file      Ritc/Library/Factories/PdoFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.2
- * @date      2017-01-13 10:29:24
+ * @version   2.1.0
+ * @date      2017-01-25 14:16:51
  * @note <b>Change Log</b>
+ * - v2.1.0 - Simplified the Factory                                                                    - 2017-01-25 wer
  * - v2.0.2 - fixed potential bug                                                                       - 2017-01-13 wer
  * - v2.0.1 - refactoring of DbTraits reflected here (caused strict standards error).                   - 2016-03-19 wer
  * - v2.0.0 - realized a stupid error in thinking, this should produce                                  - 08/28/2015 wer
@@ -28,7 +29,7 @@
 namespace Ritc\Library\Factories;
 
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\DbTraits;
+use Ritc\Library\Traits\DbCommonTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -38,29 +39,21 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PdoFactory
 {
-    use DbTraits, LogitTraits;
+    use DbCommonTraits, LogitTraits;
 
     /** @var array */
     private static $factory_rw_instance = array();
     /** @var array */
     private static $factory_ro_instance = array();
-    /** @var string */
-    private $config_file;
     /** @var \PDO */
     private $o_db;
-    /** @var string */
-    private $read_type;
 
     /**
      * PdoFactory constructor.
-     * @param $config_file
-     * @param $read_type
      * @param $o_di
      */
-    private function __construct($config_file, $read_type, Di $o_di)
+    private function __construct(Di $o_di)
     {
-        $this->config_file = $config_file;
-        $this->read_type = $read_type;
         /* Need to inject the elog instance here since it is needed before
            it can be injected via the trait method, setElog() */
         if (DEVELOPER_MODE && is_object($o_di)) {
@@ -78,7 +71,7 @@ class PdoFactory
      * @param string $config_file default 'db_config.php'
      * @param string $read_type Default rw
      * @param Di     $o_di
-     * @return object PDO object
+     * @return object|bool PDO object
      */
     public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di)
     {
@@ -86,15 +79,15 @@ class PdoFactory
         if ($extension != 'php' && $extension != 'cfg') { return false; }
         if ($read_type == 'ro') {
             if (!isset(self::$factory_ro_instance[$name])) {
-                self::$factory_ro_instance[$name] = new PdoFactory($config_file, 'ro', $o_di);
+                self::$factory_ro_instance[$name] = new PdoFactory($o_di);
             }
-            return self::$factory_ro_instance[$name]->createPdo();
+            return self::$factory_ro_instance[$name]->createPdo($config_file, $read_type);
         }
         else {
             if (!isset(self::$factory_rw_instance[$name])) {
-                self::$factory_rw_instance[$name] = new PdoFactory($config_file, 'rw', $o_di);
+                self::$factory_rw_instance[$name] = new PdoFactory($o_di);
             }
-            return self::$factory_rw_instance[$name]->createPdo();
+            return self::$factory_rw_instance[$name]->createPdo($config_file, $read_type);
         }
     }
 
@@ -102,25 +95,22 @@ class PdoFactory
      * Creates the \PDO instance
      * @return \PDO|bool
      */
-    private function createPdo()
+    private function createPdo($config_file = 'db_config.php', $read_type = 'rw')
     {
         $meth = __METHOD__ . '.';
         if (is_object($this->o_db)) {
             $this->logIt('The database is already connected.', LOG_OFF);
             return $this->o_db;
         }
-        if ($this->config_file == '') {
-            $this->config_file = 'db_config.php';
-        }
         /** @var array $a_db */
-        $a_db = $this->retrieveDbConfig($this->config_file);
+        $a_db = $this->retrieveDbConfig($config_file);
         if (empty($a_db)) {
             $this->logIt("Could not retrieve the db config file.");
             return false;
         }
         $a_db['dsn'] = $this->createDsn($a_db);
         try {
-            $this->o_db = $this->read_type == 'ro'
+            $this->o_db = $read_type == 'ro'
                 ? new \PDO(
                     $a_db['dsn'],
                     $a_db['userro'],
@@ -176,5 +166,13 @@ class PdoFactory
     public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return "PdoFactory";
     }
 }

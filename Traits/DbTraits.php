@@ -5,9 +5,10 @@
  * @file      DbTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.2.0
- * @date      2017-01-13 10:22:05
+ * @version   3.1.0
+ * @date      2017-01-25 13:45:50
  * @note <b>Change Log</b>
+ * - v3.1.0   - moved retrieveDbConfig to DbCommonTraits            - 2017-01-25 wer
  * - v3.0.0   - changed the db prefix way of working                - 2017-01-14 wer
  * - v2.2.0   - added new property lib_prefix and fixed bug         - 2017-01-13 wer
  * - v2.1.0   - Refactoring of DbCommonTraits reflected here        - 2016-09-23 wer
@@ -54,7 +55,7 @@ trait DbTraits
         else {
             $a_db = $this->retrieveDbConfig($config_file);
         }
-        if (!Arrays::hasRequiredKeys($a_required_keys, $a_db)) {
+        if (!Arrays::hasRequiredKeys($a_db, $a_required_keys)) {
             $a_db = [
                 'driver'   => 'mysql',
                 'host'     => 'localhost',
@@ -82,80 +83,31 @@ trait DbTraits
         if (!isset($a_db['passro'])) {
             $a_db['passro'] = $a_db['password'];
         }
-        if (!isset($a_db['lib_prefix'])) {
-            $a_prefix['lib'] = 'ritc_';
+        if (!isset($a_prefix['db'])) {
+            $a_prefix['db'] = isset($a_db['prefix']) ? $a_db['prefix'] : '';
+            $a_db['db_prefix'] = isset($a_db['prefix']) ? $a_db['prefix'] : '';
         }
-
-        $this->a_prefix    = $a_prefix;
+        if (!isset($a_prefix['lib'])) {
+            $a_prefix['lib'] = 'ritc_';
+            $a_db['lib_prefix'] = 'ritc_';
+        }
         $this->a_db_config = $a_db;
         $this->db_type     = $a_db['driver'];
-        if (!isset($this->a_prefix['db'])) {
-            $this->a_prefix['db'] = isset($a_db['prefix']) ? $a_db['prefix'] : '';
-        }
-        $this->db_prefix = $this->a_prefix['db'];
-    }
-
-    /**
-     * @param string $config_file  A file which returns an array with the following key=>value pairs:
-     * \code
-     * 'driver'     => 'mysql' || 'pgsql',
-     * 'host'       => 'localhost',
-     * 'port'       => '3306',
-     * 'name'       => 'db_name',
-     * 'user'       => 'example_user',
-     * 'password'   => 'letmein',
-     * 'userro'     => 'example_read_only_user', (required only if db is set to ro)
-     * 'passro'     => 'letmein', (required only if db is set to ro)
-     * 'persist'    => false, (debate over if persist should be true)
-     * 'prefix'     => 'app_' (prefix to the database tables)
-     * 'lib_prefix' => 'ritc_' (prefix to the database tables that are specific to the Ritc\Libraryj
-     * \endcode
-     * @param string $special_path Optional path to use instead of the standard locations.
-     * @return array
-     */
-    private function retrieveDbConfig($config_file = 'db_config.php', $special_path = '')
-    {
-        $config_w_apppath  = '';
-        $config_w_privpath = '';
-        $config_w_sitepath = '';
-        $config_w_path     = $_SERVER['DOCUMENT_ROOT'] . '/config/' . $config_file;
-        if (defined('APP_PATH')) {
-            $config_w_apppath = APP_PATH . '/config/' . $config_file;
-        }
-        if (defined('PRIVATE_PATH')) {
-            $config_w_privpath = PRIVATE_PATH . '/' . $config_file;
-        }
-        if (defined('SITE_PATH')) {
-            $config_w_sitepath = SITE_PATH . '/config/' . $config_file;
-        }
-        if ($special_path != '') {
-            $config_w_special_path = $special_path . '/' . $config_file;
-            if (file_exists($config_w_special_path)) {
-                $config_w_path = $config_w_special_path;
-            }
-        }
-        elseif ($config_w_privpath != '' && file_exists($config_w_privpath)) {
-            $config_w_path = $config_w_privpath;
-        }
-        elseif ($config_w_apppath != '' && file_exists($config_w_apppath)) {
-            $config_w_path = $config_w_apppath;
-        }
-        elseif ($config_w_sitepath != '' && file_exists($config_w_sitepath)) {
-            $config_w_path = $config_w_sitepath;
-        }
-        if (!file_exists($config_w_path)) {
-            return [];
-        }
-        $a_db = include $config_w_path;
-        if (is_array($a_db)) {
-            return $a_db;
-        }
-        else {
-            return [];
-        }
+        $this->db_prefix   = $a_prefix['db'];
+        $this->a_prefix    = $a_prefix;
+        // error_log(var_export($this->a_db_config, true));
     }
 
     ### General Utilities ###
+
+    /**
+     * Reloads Db Config file.
+     * @param string $config_file
+     */
+    public function reloadDbConfig($config_file = 'db_config.php')
+    {
+        $this->createDbParams($config_file);
+    }
 
     ### GETters and SETters ###
     /**

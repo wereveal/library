@@ -5,10 +5,11 @@
  * @file      DbCommonTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-03-19 08:58:00
+ * @version   1.0.0-beta.1
+ * @date      2017-01-25 14:12:15
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2016-03-19 wer
+ * - v1.0.0-beta.1  - Moved method from DbTraits to here and moved into beta    - 2017-01-25 wer
+ * - v1.0.0-alpha.0 - Initial version                                           - 2016-03-19 wer
  */
 namespace Ritc\Library\Traits;
 
@@ -71,6 +72,79 @@ trait DbCommonTraits
         }
         else {
             return $array;
+        }
+    }
+
+    /**
+     * Looks for the config file and includes it into an array.
+     * There are several different places the config file could be: APP_PATH, PRIVATE_PATH, SITE_PATH and
+     * $_SERVER['DOCUMENT_ROOT'] . /config. The config file name can also include a path to the file
+     * not in the standard locations. It it exists it will be used otherwise the path is stripped off
+     * and the file name is looked for in the standard places.
+     * @param string $config_file  A file which returns an array with the following key=>value pairs:
+     * \code
+     * 'driver'     => 'mysql' || 'pgsql',
+     * 'host'       => 'localhost',
+     * 'port'       => '3306',
+     * 'name'       => 'db_name',
+     * 'user'       => 'example_user',
+     * 'password'   => 'letmein',
+     * 'userro'     => 'example_read_only_user', (required only if db is set to ro)
+     * 'passro'     => 'letmein', (required only if db is set to ro)
+     * 'persist'    => false, (debate over if persist should be true)
+     * 'prefix'     => 'app_' (prefix to the database tables)
+     * 'db_prefix'  => same as 'prefix'
+     * 'lib_prefix' => 'ritc_' (prefix to the database tables that are specific to the Ritc\Library
+     * \endcode
+     * @return array
+     */
+    protected function retrieveDbConfig($config_file = 'db_config.php')
+    {
+        if (strpos($config_file, '/') !== false) {
+            if (file_exists($config_file)) {
+                $a_db = include $config_file;
+                if (is_array($a_db)) {
+                    return $a_db;
+                }
+                else {
+                    return [];
+                }
+            }
+            else {
+                $config_file = substr($config_file, strrpos($config_file, '/') + 1);
+            }
+        }
+        $config_w_apppath  = '';
+        $config_w_privpath = '';
+        $config_w_sitepath = '';
+        $config_w_path     = $_SERVER['DOCUMENT_ROOT'] . '/config/' . $config_file;
+        if (defined('APP_PATH')) {
+            $config_w_apppath = APP_PATH . '/config/' . $config_file;
+        }
+        if (defined('PRIVATE_PATH')) {
+            $config_w_privpath = PRIVATE_PATH . '/' . $config_file;
+        }
+        if (defined('SITE_PATH')) {
+            $config_w_sitepath = SITE_PATH . '/config/' . $config_file;
+        }
+        if ($config_w_privpath != '' && file_exists($config_w_privpath)) {
+            $config_w_path = $config_w_privpath;
+        }
+        elseif ($config_w_apppath != '' && file_exists($config_w_apppath)) {
+            $config_w_path = $config_w_apppath;
+        }
+        elseif ($config_w_sitepath != '' && file_exists($config_w_sitepath)) {
+            $config_w_path = $config_w_sitepath;
+        }
+        if (!file_exists($config_w_path)) {
+            return [];
+        }
+        $a_db = include $config_w_path;
+        if (is_array($a_db)) {
+            return $a_db;
+        }
+        else {
+            return [];
         }
     }
 
