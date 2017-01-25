@@ -5,9 +5,11 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.4
- * @date      2016-04-15 14:33:51
+ * @version   1.0.0-beta.1
+ * @date      2017-01-24 15:37:11
  * @note <b>Change Log</b>
+ * = v1.0.0-beta.1  - This should have come out of alpha a while back   - 2017-01-24 wer
+ *                    Added twigLoader method
  * - v1.0.0-alpha.4 - Added new method createDefaultTwigValues          - 2016-04-15 wer
  * - v1.0.0-alpha.3 - Navigation links are now sorted properly          - 2016-04-08 wer
  * - v1.0.0-alpha.2 - Use LogitTraits now                               - 2016-04-01 wer
@@ -129,6 +131,24 @@ trait ViewTraits
         );
         $a_values = array_merge($a_page_values, $a_values);
         return $a_values;
+    }
+
+    /**
+     * Adds additional twig path/namespaces to twig for use.
+     * Makes the twig object slightly lazy in implementation.
+     * @param array $a_paths in the form of [path => namespace, ...]
+     */
+    public function twigLoader(array $a_paths = [])
+    {
+        $o_loader = $this->o_twig->getLoader();
+        foreach ($a_paths as $path => $namespace) {
+            try {
+                $o_loader->prependPath($path, $namespace);
+            }
+            catch (\Twig_Error_Loader $e) {
+                error_log("Couldn't load path: " . $e->getMessage());
+            }
+        }
     }
 
     ### SETters and GETters ###
