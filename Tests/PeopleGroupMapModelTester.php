@@ -16,6 +16,7 @@ namespace Ritc\Library\Tests;
 use Ritc\Library\Basic\Tester;
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Elog;
 use Ritc\Library\Models\PeopleGroupMapModel;
 
@@ -48,6 +49,7 @@ class PeopleGroupMapModelTests extends Tester
     protected $passed_tests = 0;
     /** @var DbModel */
     private $o_db;
+    private $o_di;
     /** @var object */
     private $o_elog;
     /** @var PeopleGroupMapModel */
@@ -62,7 +64,9 @@ class PeopleGroupMapModelTests extends Tester
     {
         $this->a_test_order = $a_test_order;
         $this->o_elog = Elog::start();
-        $o_pdo = PdoFactory::start($db_config, 'rw');
+        $this->o_di = new Di();
+        $this->o_di->set('elog', $this->o_elog);
+        $o_pdo = PdoFactory::start($db_config, 'rw', $this->o_di);
         if ($o_pdo !== false) {
             $this->o_db = new DbModel($o_pdo, $db_config);
         }

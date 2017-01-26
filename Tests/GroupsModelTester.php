@@ -16,6 +16,7 @@ namespace Ritc\Library\Tests;
 use Ritc\Library\Basic\Tester;
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Elog;
 use Ritc\Library\Models\GroupsModel;
 
@@ -48,6 +49,8 @@ class GroupsModelTests extends Tester
     protected $passed_tests = 0;
     /** @var DbModel */
     private $o_db;
+    /** @var Di */
+    private $o_di;
     /** @var object */
     private $o_elog;
     /** @var GroupsModel */
@@ -62,7 +65,10 @@ class GroupsModelTests extends Tester
     {
         $this->a_test_order = $a_test_order;
         $this->o_elog = Elog::start();
-        $o_pdo = PdoFactory::start($db_config, 'rw');
+        $o_di = new Di();
+        $o_di->set('elog', $this->o_elog);
+        $this->o_di = $o_di;
+        $o_pdo = PdoFactory::start($db_config, 'rw', $o_di);
         if ($o_pdo !== false) {
             $this->o_db = new DbModel($o_pdo, $db_config);
         }
