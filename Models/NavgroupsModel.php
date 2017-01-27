@@ -5,12 +5,13 @@
  * @file      Ritc/Library/Models/NavgroupsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.2
- * @date      2016-04-18 14:46:49
+ * @version   1.0.0-alpha.3
+ * @date      2017-01-27 12:39:36
  * @note <b>Change Log</b>
- * - v1.0.0-alpha.2 - Added two methods to get default ng          - 2016-04-18 wer
- * - v1.0.0-alpha.1 - Updated to use DbUtilityTraits               - 2016-03-31 wer
- * - v1.0.0-alpha.0 - Initial version                              - 2016-02-25 wer
+ * - v1.0.0-alpha.3 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
+ * - v1.0.0-alpha.2 - Added two methods to get default ng           - 2016-04-18 wer
+ * - v1.0.0-alpha.1 - Updated to use DbUtilityTraits                - 2016-03-31 wer
+ * - v1.0.0-alpha.0 - Initial version                               - 2016-02-25 wer
  */
 namespace Ritc\Library\Models;
 
@@ -38,7 +39,7 @@ class NavgroupsModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'navgroups');
+        $this->setupProperties($o_db, 'navgroups', 'lib');
         $this->setFieldNames();
     }
 

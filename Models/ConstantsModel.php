@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/ConstantsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.3.1
- * @date      2017-01-13 11:37:25
+ * @version   2.4.0
+ * @date      2017-01-27 09:09:10
  * @note      see ConstantsEntity for database table definition.
  * @note <b>Change Log</b>
+ * - v2.4.0 - Implementing more of the DbUtilityTraits                      - 2017-01-27 wer
  * - v2.3.1 - Bug fix in create mysql table                                 - 2017-01-13 wer
  * - v2.3.0 - Refactoring of DbModel reflected here                         - 2016-03-18 wer
  * - v2.2.0 - Refactoring to provide better pgsql compatibility             - 11/22/2015 wer
@@ -48,7 +49,7 @@ class ConstantsModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'constants');
+        $this->setupProperties($o_db, 'constants', 'lib');
         $this->a_constants = $this->selectConstantsList();
     }
 
@@ -111,33 +112,16 @@ class ConstantsModel implements ModelInterface
      * @param array $a_search_params optional, defaults to ['order_by' => 'const_name']
      * @return array|bool
      */
-    public function read(array $a_search_values = array(), array $a_search_params = array())
+    public function read(array $a_search_values = [], array $a_search_params = [])
     {
-        if (count($a_search_values) > 0) {
-            $a_search_params = $a_search_params == array()
-                ? ['order_by' => 'const_name']
-                : $a_search_params;
-            $a_allowed_keys = array(
-                'const_id',
-                'const_name',
-                'const_value',
-                'const_immutable'
-            );
-            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
-        }
-        elseif (count($a_search_params) > 0) {
-            $where = $this->buildSqlWhere(array(), $a_search_params);
-        }
-        else {
-            $where = " ORDER BY const_name";
-        }
-        $sql = "
-            SELECT const_id, const_name, const_value, const_immutable
-            FROM {$this->db_table}
-            {$where}
-        ";
-        return $this->o_db->search($sql, $a_search_values);
+        $a_parameters = [
+            'table_name'     => $this->db_table,
+            'a_search_for'   => $a_search_values,
+            'a_allowed_keys' => $this->a_db_fields,
+            'order_by'       => $this->primary_index_name . ' ASC'
+        ];
+        $a_parameters = array_merge($a_parameters, $a_search_params);
+        return $this->genericRead($a_parameters);
     }
 
     /**
@@ -147,63 +131,38 @@ class ConstantsModel implements ModelInterface
      */
     public function update(array $a_values)
     {
-        if (Arrays::hasRequiredKeys($a_values, ['const_id']) === false) {
+        $meth = __METHOD__ . '.';
+        $log_message = 'Values Passed In:  ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        if (!isset($a_values[$this->primary_index_name])
+            || $a_values[$this->primary_index_name] == ''
+            || (!is_numeric($a_values[$this->primary_index_name]))
+        ) {
+
             return false;
         }
-        if (count($a_values) < 2) {
-            return false;
-        }
-        if (isset($a_values['const_name'])) {
-            $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
-        }
-        $sql_set = $this->buildSqlSet($a_values, ['const_id']);
-        $sql = "
-            UPDATE {$this->db_table}
-            {$sql_set}
-            WHERE const_id  = :const_id
-        ";
-        return $this->o_db->update($sql, $a_values, true);
+        return $this->genericUpdate($a_values);
     }
 
     /**
      * Generic deletes a record based on the id provided.
      * @param int $const_id
-     * @return array
+     * @return bool
      */
     public function delete($const_id = -1)
     {
-        if ($const_id == -1) {
-            return ['message' => 'The constant id is required', 'type' => 'failure'];
+        if ($const_id == -1) { return false; }
+        $search_results = $this->read([$this->primary_index_name => $const_id], ['a_fields' => ['const_immutable']]);
+        if (isset($search_results[0]) && $search_results[0]['const_immutable'] == 1) {
+            $this->error_message = 'Sorry, that constant can not be deleted.';
+            return false;
         }
-        if ($this->read(['const_id' => $const_id]) === false) {
-            return ['message' => 'The constant does not exist', 'type' => 'failure'];
+        $results = $this->genericDelete($const_id);
+        if ($results === false) {
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
         }
-        $sql = "
-            DELETE FROM {$this->db_table}
-            WHERE const_id = :const_id
-        ";
-        $results = $this->o_db->delete($sql, array('const_id' => $const_id), true);
-        if ($results) {
-            if ($this->o_db->getAffectedRows() === 0) {
-                $a_results = [
-                    'message' => 'The constant was not deleted.',
-                    'type'    => 'failure'
-                ];
-            }
-            else {
-                $a_results = [
-                    'message' => 'Success!',
-                    'type'    => 'success'
-                ];
-            }
-        }
-        else {
-            $a_results = [
-                'message' => 'A problem occurred and the constant was not deleted.',
-                'type'    => 'failure'
-            ];
-        }
-        return $a_results;
+        return $results;
     }
 
     # Specialized CRUD methods #

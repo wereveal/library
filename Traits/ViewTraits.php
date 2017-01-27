@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.1
- * @date      2017-01-24 15:37:11
+ * @version   1.0.0-beta.2
+ * @date      2017-01-27 09:50:37
  * @note <b>Change Log</b>
+ * - v1.0.0-beta.2  - added lib_prefix for twig prefixes as a default   - 2017-01-27 wer
  * = v1.0.0-beta.1  - This should have come out of alpha a while back   - 2017-01-24 wer
  *                    Added twigLoader method
  * - v1.0.0-alpha.4 - Added new method createDefaultTwigValues          - 2016-04-15 wer
@@ -127,7 +128,8 @@ trait ViewTraits
             'hobbit'      => '',
             'a_menus'     => $a_menus,
             'adm_lvl'     => $this->adm_level,
-            'twig_prefix' => $twig_prefix
+            'twig_prefix' => $twig_prefix,
+            'lib_prefix'  => LIB_TWIG_PREFIX
         );
         $a_values = array_merge($a_page_values, $a_values);
         return $a_values;

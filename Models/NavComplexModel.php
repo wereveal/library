@@ -5,14 +5,15 @@
  * @file      Ritc/Library/Models/NavComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.4
- * @date      2016-04-23 15:09:58
+ * @version   1.0.0-alpha.5
+ * @date      2017-01-27 12:40:56
  * @note <b>Change Log</b>
- * - v1.0.0-alpha.4 - added new method save                        - 2016-04-23 wer
- * - v1.0.0-alpha.3 - Changed sql, removed redundant methods       - 2016-04-18 wer
- * - v1.0.0-alpha.2 - Added new method getNavListAll               - 2016-04-15 wer
- * - v1.0.0-alpha.1 - Refactoring changes                          - 2016-03-19 wer
- * - v1.0.0-alpha.0 - Initial version                              - 2016-02-25 wer
+ * - v1.0.0-alpha.4 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
+ * - v1.0.0-alpha.4 - added new method save                         - 2016-04-23 wer
+ * - v1.0.0-alpha.3 - Changed sql, removed redundant methods        - 2016-04-18 wer
+ * - v1.0.0-alpha.2 - Added new method getNavListAll                - 2016-04-15 wer
+ * - v1.0.0-alpha.1 - Refactoring changes                           - 2016-03-19 wer
+ * - v1.0.0-alpha.0 - Initial version                               - 2016-02-25 wer
  */
 namespace Ritc\Library\Models;
 
@@ -42,7 +43,7 @@ class NavComplexModel
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'navigation');
+        $this->setupProperties($o_db, 'navigation', 'lib');
         $this->setSelectSql();
         $this->setSelectOrderSql();
         $this->o_ng = new NavgroupsModel($this->o_db);

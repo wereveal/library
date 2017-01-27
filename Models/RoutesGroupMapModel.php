@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/RoutesGroupMapModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2016-03-24 07:44:12
+ * @version   1.0.0-alpha.2
+ * @date      2017-01-27 12:33:06
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.2 - Bug fix                                                       - 2017-01-27 wer
  * - v1.0.0-alpha.1 - Bug Fix to read method to match interface                     - 2016-03-24 wer
  * - v1.0.0-alpha.0 - Initial version                                               - 08/01/2015 wer
  */
@@ -34,7 +35,7 @@ class RoutesGroupMapModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'routes_group_map');
+        $this->setupProperties($o_db, 'routes_group_map', 'lib');
     }
 
     ### Basic CRUD commands, required by interface ###

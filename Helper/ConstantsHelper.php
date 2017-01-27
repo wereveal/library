@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Helper/ConstantsHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.0.1
- * @date      2016-02-22 15:05:55
+ * @version   4.0.2
+ * @date      2017-01-27 10:59:55
  * @note <b>Change Log</b>
+ *   v4.0.2 - bug fix.                                                   - 2017-01-27 wer
  * - v4.0.1 - bug fix. Wondering if another is still here.               - 02/22/2016 wer
  * - v4.0.0 - renamed to reflect what it was doing. Since it isn't       - 01/17/2015 wer
  *              a service, moved it Ritc\Library\Helper namespace.
@@ -59,6 +60,7 @@ class ConstantsHelper
      */
     private function __construct(Di $o_di)
     {
+        $meth = __METHOD__ . '.';
         $o_db = $o_di->get('db');
         $this->o_constants_model = new ConstantsModel($o_db);
         if (defined('DEVELOPER_MODE')) {
@@ -69,7 +71,7 @@ class ConstantsHelper
         }
         $this->created = $this->createConstants();
         if ($this->created === false) {
-            $this->logIt("Could not create constants from db.", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            $this->logIt("Could not create constants from db.", LOG_ALWAYS, $meth . __LINE__);
             if (defined('APP_CONFIG_PATH')) {
                 if(file_exists(APP_CONFIG_PATH . '/fallback_constants.php')) {
                     include_once APP_CONFIG_PATH . '/fallback_constants.php';
@@ -80,7 +82,7 @@ class ConstantsHelper
                 }
             }
             else {
-                $this->logIt("APP_CONFIG_PATH is not defined.", LOG_ALWAYS);
+                $this->logIt("APP_CONFIG_PATH is not defined.", LOG_ALWAYS, $meth . __LINE__);
                 die ('A fatal error has occured. Please contact your web site administrator.');
             }
             $this->o_constants_model->createNewConstants();
@@ -117,11 +119,12 @@ class ConstantsHelper
      */
     private function createConstants()
     {
+        $meth = __METHOD__ . '.';
         if ($this->created === false) {
             $a_constants = $this->o_constants_model->selectConstantsList();
-            $this->logIt('Constants List -- ' . var_export($a_constants, TRUE), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            if (is_array($a_constants) && count($a_constants) > 0) {
-                $this->logIt("List of Configs: " . var_export($a_constants, true), LOG_OFF, __METHOD__);
+            $this->logIt('Constants List -- ' . var_export($a_constants, TRUE), LOG_OFF, $meth . __LINE__);
+            if (!empty($a_constants)) {
+                $this->logIt("List of Configs: " . var_export($a_constants, true), LOG_OFF, $meth . __LINE__);
                 foreach ($a_constants as $row) {
                     $key = strtoupper($row['const_name']);
                     if (!defined("{$key}")) {
@@ -192,6 +195,9 @@ class ConstantsHelper
                 return true;
             }
             else {
+                $log_message = 'Error:  ' . var_export($this->o_constants_model->getErrorMessage(), TRUE);
+                $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
                 return false;
             }
         } else {
@@ -207,6 +213,9 @@ class ConstantsHelper
      */
     private function createThemeConstants()
     {
+        if (!defined('ASSETS_DIR')) {
+            return;
+        }
         if (!defined('THEMES_DIR')) {
             define('THEMES_DIR', ASSETS_DIR);
         }

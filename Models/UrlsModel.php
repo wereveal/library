@@ -1,16 +1,16 @@
 <?php
 /**
  * @brief     Handles all the CRUD for the urls table.
- * @details
  * @ingroup   ritc_models
  * @file      UrlsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.0
- * @date      2016-04-13 10:46:43
+ * @version   1.0.0-beta.1
+ * @date      2017-01-27 09:07:46
  * @note Change Log
- * - v1.0.0-beta.0  - Initial working version   - 2016-04-13 wer
- * - v1.0.0-alpha.0 - Initial version           - 2016-04-10 wer
+ * - v1.0.0-beta.1  - Bug fix caused by changes elsewhere   - 2017-01-27 wer
+ * - v1.0.0-beta.0  - Initial working version               - 2016-04-13 wer
+ * - v1.0.0-alpha.0 - Initial version                       - 2016-04-10 wer
  */
 namespace Ritc\Library\Models;
 
@@ -30,7 +30,7 @@ class UrlsModel implements ModelInterface
 
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'urls');
+        $this->setupProperties($o_db, 'urls', 'lib');
     }
 
     /**

@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/RoutesModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.0+2
- * @date      2016-04-10 08:51:58
+ * @version   1.4.1
+ * @date      2017-01-27 12:31:35
  * @note <b>Change Log</b>
+ * - v1.4.1   - Bug fix caused by change elsewhere                     - 2017-01-27 wer
  * - v1.4.0   - Refactored readWithRequestUri to readByRequestUri      - 2016-04-10 wer
  *              Added readWithUrl to return list of routes with url.
  * - v1.3.0   - updated to use more of the DbUtilityTraits             - 2016-04-01 wer
@@ -42,7 +43,7 @@ class RoutesModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'routes');
+        $this->setupProperties($o_db, 'routes', 'lib');
     }
 
     /**
@@ -113,14 +114,15 @@ class RoutesModel implements ModelInterface
     /**
      * Deletes a record based on the id provided.
      * @param int $route_id
-     * @return array
+     * @return bool
      */
     public function delete($route_id = -1)
     {
         if ($route_id == -1) { return false; }
         $search_results = $this->read([$this->primary_index_name => $route_id], ['a_fields' => ['route_immutable']]);
         if (isset($search_results[0]) && $search_results[0]['route_immutable'] == 1) {
-            return ['message' => 'Sorry, that route can not be deleted.', 'type' => 'failure'];
+            $this->error_message = 'Sorry, that route can not be deleted.';
+            return false;
         }
         $results = $this->genericDelete($route_id);
         if ($results === false) {

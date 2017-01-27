@@ -5,11 +5,12 @@
  * @file      PageComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2016-04-28 11:12:09
+ * @version   1.0.0-alpha.2
+ * @date      2017-01-27 12:37:11
  * @note Change Log
- * - v1.0.0-alpha.1 - bug fix                - 2016-04-28 wer
- * - v1.0.0-alpha.0 - Initial version        - 2016-04-08 wer
+ * - v1.0.0-alpha.2 - refactoring reflected here    - 2017-01-27 wer
+ * - v1.0.0-alpha.1 - bug fix                       - 2016-04-28 wer
+ * - v1.0.0-alpha.0 - Initial version               - 2016-04-08 wer
  */
 namespace Ritc\Library\Models;
 
@@ -36,7 +37,7 @@ class PageComplexModel
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'page');
+        $this->setupProperties($o_db, 'page', 'lib');
         $this->setSelectSql();
     }
 

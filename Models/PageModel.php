@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PageModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.0
- * @date      2016-04-01 07:10:42
+ * @version   1.2.1
+ * @date      2017-01-27 12:36:15
  * @note <b>Change Log</b>
+ * - v1.2.1   - refactoring in DbUtiltity traits reflected here - 2017-01-27 wer
  * - v1.2.0   - refactored to utilize the DbUtilityTraits       - 2016-04-01 wer
  * - v1.1.0   - refactoring changes to DbModel reflected here.  - 2016-03-19 wer
  * - v1.0.0   - take out of beta                                - 11/27/2015 wer
@@ -36,7 +37,7 @@ class PageModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'page');
+        $this->setupProperties($o_db, 'page', 'lib');
     }
 
     /**

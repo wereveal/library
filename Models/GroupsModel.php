@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/GroupsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0+01
- * @date      2016-08-29 10:59:47
+ * @version   1.1.1
+ * @date      2017-01-27 09:02:57
  * @note <b>Change Log</b>
+ * - v1.1.1   - Bug fix caused by slight change elsewhere                    - 2017-01-27 wer
  * - v1.1.0   - Bug fix and changes due to refactoring of DbModel            - 2016-03-19 wer
  * - v1.0.0   - First working version                                        - 11/27/2015 wer
  * - v1.0.0β5 - refactoring to provide postgresql compatibility              - 11/22/2015 wer
@@ -41,7 +42,7 @@ class GroupsModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'groups');
+        $this->setupProperties($o_db, 'groups', 'lib');
     }
 
     /**

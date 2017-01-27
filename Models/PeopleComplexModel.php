@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-12-08 11:30:42
+ * @version   1.0.0-alpha.1
+ * @date      2017-01-27 12:33:59
  * @note Change Log
+ * - v1.0.0-alpha.1 - Bug fix                                   - 2017-01-27 wer
  * - v1.0.0-alpha.0 - Initial version                           - 2016-12-08 wer
  * @todo Ritc/Library/Models/PeopleComplexModel.php - Test
  */
@@ -46,7 +47,7 @@ class PeopleComplexModel
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'people');
+        $this->setupProperties($o_db, 'people', 'lib');
         $this->o_people = new PeopleModel($o_db);
         $this->o_group  = new GroupsModel($o_db);
         $this->o_pgm    = new PeopleGroupMapModel($o_db);

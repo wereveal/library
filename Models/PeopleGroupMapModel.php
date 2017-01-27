@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleGroupMapModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.1
- * @date      2016-03-24 07:31:20
+ * @version   1.1.2
+ * @date      2017-01-27 12:34:59
  * @note <b>Change Log</b>
+ * - v1.1.2   - refactoring of trait reflected here                   - 2017-01-27 wer
  * - v1.1.1   - bug fix of read method, did not match interface       - 2016-03-24 wer
  * - v1.1.0   - Refactoring of DbModel reflected here                 - 2016-03-18 wer
  * - v1.0.0   - take out of beta                                      - 11/27/2015 wer
@@ -42,7 +43,7 @@ class PeopleGroupMapModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'people_group_map');
+        $this->setupProperties($o_db, 'people_group_map', 'lib');
     }
 
     ### Basic CRUD commands, required by interface ###
