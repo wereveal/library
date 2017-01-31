@@ -6,9 +6,10 @@
  * @file      Elog.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version:  3.0.3
- * @date      2017-01-13 11:53:25
+ * @version:  3.0.4
+ * @date      2017-01-31 10:06:04
  * @note <b>Change Log</b>
+ * - v3.0.4 - bug fix with JSON logging                                       - 2017-01-31 wer
  * - v3.0.3 - bug fix, clean up code                                          - 2017-01-13 wer
  * - v3.0.2 - bug fixes                                                       - 02/26/2016 wer
  * - v3.0.1 - clean up code                                                   - 02/22/2016 wer
@@ -20,7 +21,7 @@
  * - v2.6.0 - Namespace changes                                               - 07/30/2013 wer
  * - v2.5.2 - added some sanity code to setElogConstants to prevent errors    - 04/23/2013 wer
  * - v2.5.1 - renamed main method from do_it to write (not so silly)
- * - v2.5.0 - FIG standars (mostly)
+ * - v2.5.0 - FIG standards (mostly)
  */
 namespace Ritc\Library\Services;
 
@@ -132,28 +133,30 @@ class Elog
         }
         $this->last_message = $the_string;
         if ($manual_from != '') {
+            $this->from_location = $manual_from;
             $from = $log_method != LOG_JSON
                 ? ' (From: ' . $manual_from. ")"
                 : '';
         }
         elseif ($this->from_file . $this->from_method . $this->from_class . $this->from_function . $this->from_line != '') {
-            $from = $log_method != LOG_JSON
-                ? ' (From: '
-                    . $this->from_file
-                    . ($this->from_file != '' ? '  ' : '')
-                    . $this->from_method
-                    . ($this->from_method != '' ? '  ' : '')
-                    . $this->from_class
-                    . ($this->from_class != '' ? '  ' : '')
-                    . $this->from_function
-                    . ($this->from_function != '' ? '  ' : '')
-                    . ($this->from_line != '' ? 'Line: ' : '')
-                    . $this->from_line
-                    . ")\n"
-                : '';
+            $from = $this->from_file
+                  . ($this->from_file != '' ? '  ' : '')
+                  . $this->from_method
+                  . ($this->from_method != '' ? '  ' : '')
+                  . $this->from_class
+                  . ($this->from_class != '' ? '  ' : '')
+                  . $this->from_function
+                  . ($this->from_function != '' ? '  ' : '')
+                  . ($this->from_line != '' ? 'Line: ' : '')
+                  . $this->from_line;
+            $this->from_location = $from;
+            if ($log_method != LOG_JSON) {
+                $from = ' (From: ' . $from . ")\n";
+            }
         }
         else {
             $from = '';
+            $this->from_location = '';
         }
         $the_string = $the_string . $from;
         if ($this->ignore_log_off && $log_method == LOG_OFF) {
