@@ -30,6 +30,7 @@ use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
+use Ritc\Library\Services\Session;
 
 /**
  * Class ViewTraits
@@ -56,6 +57,8 @@ trait ViewTraits
     protected $o_router;
     /** @var \Ritc\Library\Helper\RoutesHelper */
     protected $o_routes_helper;
+    /** @var  Session */
+    protected $o_session;
     /** @var \Twig_Environment */
     protected $o_twig;
 
@@ -92,7 +95,10 @@ trait ViewTraits
 
     /**
      * Creates some commonly used values to pass into a twig template.
-     * @param string $tpl_type  Optional, defaults to 'main' other options are manager and library.
+     * @param string $tpl_type Optional, defaults to 'main' which uses the default twig prefix.
+     *                         Other pre-set are manager and library for mgr_ and LIB_TWIG_PREFIX.
+     *                         Any twig prefix without underscore may be specified where the
+     *                         navgroup and twig prefix are the same, e.g. fred and fred_ respectively.
      * @param array  $a_message Optional, defaults to []. Allows a message to be passed.
      * @return array
      */
@@ -109,7 +115,7 @@ trait ViewTraits
                 $twig_prefix = LIB_TWIG_PREFIX;
                 break;
             case 'main':
-                $a_menus = $this->a_nav;
+                $a_menus = $this->retrieveNav('Main');
                 $twig_prefix = TWIG_PREFIX;
                 break;
             default:
@@ -164,6 +170,7 @@ trait ViewTraits
         $this->o_router        = $o_di->get('router');
         $this->o_twig          = $o_di->get('twig');
         $this->o_db            = $o_di->get('db');
+        $this->o_session       = $o_di->get('session');
         $this->o_auth          = new AuthHelper($o_di);
         $this->o_nav           = new NavComplexModel($this->o_db);
         $this->o_routes_helper = new RoutesHelper($o_di);

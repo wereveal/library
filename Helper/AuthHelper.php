@@ -8,9 +8,10 @@
  * @file      Ritc/Library/Helper/AuthHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.1.0
- * @date      2016-03-18 15:38:04
+ * @version   5.2.1
+ * @date      2017-02-07 15:22:59
  * @note <b>Change Log</b>
+ * - v5.2.1 - Bug fix, not sure why it suddenly appeared            - 2017-02-07 wer
  * - v5.2.0 - Adding DbUtilityTraits only pointed out problems.     - 2016-03-19 wer
  *            - Removed DbUtilityTraits
  *            - fixed the problems.
@@ -130,10 +131,10 @@ class AuthHelper
      * </pre>
      * @return array person_values or login values with message.
      */
-    public function login(array $a_person_post = array())
+    public function login(array $a_person_post = [])
     {
         $meth = __METHOD__ . '.';
-        if ($a_person_post == array()) {
+        if ($a_person_post == []) {
             return [
                 'login_id'     => '',
                 'is_logged_in' => 0,
@@ -141,22 +142,35 @@ class AuthHelper
             ];
         }
         $a_required = ['login_id', 'password', 'tolken', 'form_ts'];
-        foreach ($a_required as $required) {
-            if (isset($a_person_post[$required]) === false) {
-                return [
-                    'login_id' => isset($a_person_post['login_id'])
-                        ? $a_person_post['login_id']
-                        : '',
-                    'is_logged_in' => 0,
-                    'message' => 'Please try again. Missing info.'
-                ];
+        if (!Arrays::hasRequiredKeys($a_person_post, $a_required)) {
+            $a_missing_keys = Arrays::findMissingKeys($a_required, $a_person_post);
+            $missing_info = '';
+            foreach ($a_missing_keys as $key) {
+               switch ($key) {
+                   case 'login_id':
+                       $missing_info .= $missing_info == '' ? 'Login ID' : ', Login ID';
+                       break;
+                   case 'password':
+                       $missing_info .= $missing_info == '' ? 'Password' : ', Password';
+                       break;
+                   default:
+                       $missing_info .= $missing_info == '' ? 'Unknown Problem' : '';
+               }
             }
+            return [
+                'login_id' => isset($a_person_post['login_id'])
+                    ? $a_person_post['login_id']
+                    : '',
+                'is_logged_in' => 0,
+                'message' => 'Please try again. Missing info: ' . $missing_info
+            ];
+
         }
         if ($this->o_session->isValidSession($a_person_post, true)) {
-            $a_person = $this->o_complex->readInfo($a_person_post['login_id']);
+            $a_person = $this->o_people->readPeopleRecord($a_person_post['login_id']);
             $this->logIt("Posted Values: " . var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
             $this->logIt("User Values: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
-            if ($a_person == array() || !is_array($a_person)) {
+            if ($a_person == [] || !is_array($a_person)) {
                 $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
                 return [
                     'login_id'     => '',
@@ -196,8 +210,6 @@ class AuthHelper
             $a_person_post['created_on'] = $a_person['created_on'];
             $a_person_post['people_id']  = $a_person['people_id'];
 
-            $this->logIt("Password Needed: " . $a_person['password'], LOG_OFF, $meth . __LINE__);
-            $this->logIt("Password Given (hashed): " . password_hash($a_person_post['password'], PASSWORD_DEFAULT), LOG_OFF, $meth . __LINE__);
             if (password_verify($a_person_post['password'], $a_person['password'])) {
                 $this->o_people->resetBadLoginCount($a_person['people_id']);
                 $this->o_people->resetBadLoginTimestamp($a_person['people_id']);
@@ -537,7 +549,7 @@ class AuthHelper
      * @param array $a_person required $a_person['password'] and either $a_person['people_id'] or $a_person['login_id']
      * @return bool
      */
-    public function validPassword(array $a_person = array())
+    public function validPassword(array $a_person = [])
     {
         if (isset($a_person['people_id']) === false && isset($a_person['login_id']) === false ) {
             return false;

@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.1
- * @date      2017-01-27 12:32:16
+ * @version   1.3.2
+ * @date      2017-02-07 15:15:26
  * @note <b>Change Log</b>
+ * - v1.3.2    - Bug fix                                                     - 2017-02-07 wer
  * - v1.3.1    - Bug fix caused by change elsewhere                          - 2017-01-27 wer
  * - v1.3.0    - Moved the multi-table queries to own class                  - 2016-12-08 wer
  * - v1.2.2    - Bug fix                                                     - 2016-08-29 wer
@@ -71,7 +72,7 @@ class PeopleModel implements ModelInterface
      *                                             'is_active' & 'is_immutable'
      * @return array|bool
      */
-    public function create(array $a_values = array())
+    public function create(array $a_values = [])
     {
         $meth = __METHOD__ . '.';
         $a_required_keys = [
@@ -134,7 +135,7 @@ class PeopleModel implements ModelInterface
      * @param array $a_search_params
      * @return array|bool
      */
-    public function read(array $a_search_values = array(), array $a_search_params = array())
+    public function read(array $a_search_values = [], array $a_search_params = [])
     {
         if (count($a_search_values) > 0) {
             $a_search_params = count($a_search_params) == 0
@@ -152,7 +153,7 @@ class PeopleModel implements ModelInterface
             $where = $this->buildSqlWhere($a_search_values, $a_search_params);
         }
         elseif (count($a_search_params) > 0) {
-            $where = $this->buildSqlWhere(array(), $a_search_params);
+            $where = $this->buildSqlWhere([], $a_search_params);
         }
         else {
             $where = " ORDER BY login_id";
@@ -186,7 +187,7 @@ class PeopleModel implements ModelInterface
      * @param array $a_values required $a_values['people_id'] || $a_values['login_id']
      * @return bool
      */
-    public function update(array $a_values = array())
+    public function update(array $a_values = [])
     {
         /* the following keys in $a_values must have a value other than ''.
          * As such, they get removed from the sql
@@ -273,7 +274,7 @@ class PeopleModel implements ModelInterface
         if ($login_id == '') { return false; }
         $a_results = $this->read(array('login_id' => $login_id));
         if ($a_results !== false) {
-            if (isset($a_results[0]) && $a_results[0] != array()) {
+            if (isset($a_results[0]) && $a_results[0] != []) {
                 return $a_results[0]['people_id'];
             }
         }
@@ -322,9 +323,9 @@ class PeopleModel implements ModelInterface
      */
     public function readPeopleRecord($user = '')
     {
-        if ($user == '') { return array(); }
+        if ($user == '') { return []; }
         if (is_numeric($user)) {
-            $a_search_by = ['$people_id' => $user];
+            $a_search_by = ['people_id' => $user];
         }
         else {
             $a_search_by = ['login_id' => $user];
@@ -333,7 +334,7 @@ class PeopleModel implements ModelInterface
         if (isset($a_records[0]) && is_array($a_records[0])) {
             return $a_records[0];
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -494,7 +495,7 @@ class PeopleModel implements ModelInterface
      */
     public function isExistingLoginId($login_id = '')
     {
-        if ($this->readPeopleRecord($login_id) == array()) {
+        if ($this->readPeopleRecord($login_id) == []) {
             return false;
         }
         return true;
