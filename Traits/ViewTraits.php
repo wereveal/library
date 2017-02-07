@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.2
- * @date      2017-01-27 09:50:37
+ * @version   1.0.0-beta.3
+ * @date      2017-02-07 16:59:40
  * @note <b>Change Log</b>
+ * - v1.0.0-beta.3  - removed LogitTraits from this trait               - 2017-02-07 wer
  * - v1.0.0-beta.2  - added lib_prefix for twig prefixes as a default   - 2017-01-27 wer
  * = v1.0.0-beta.1  - This should have come out of alpha a while back   - 2017-01-24 wer
  *                    Added twigLoader method
@@ -39,8 +40,6 @@ use Ritc\Library\Services\Session;
  */
 trait ViewTraits
 {
-    use LogitTraits;
-
     /** @var array */
     protected $a_nav;
     /** @var int */
@@ -69,7 +68,7 @@ trait ViewTraits
      */
     public function setupView(Di $o_di)
     {
-        $this->setObjects($o_di);
+        $this->setOProperties($o_di);
         $this->setAdmLevel();
         $this->setNav();
     }
@@ -164,19 +163,35 @@ trait ViewTraits
      * Sets the standard used objects from the object injector.
      * @param Di $o_di
      */
-    protected function setObjects(Di $o_di)
+    protected function setOProperties(Di $o_di)
     {
-        $this->o_di            = $o_di;
-        $this->o_router        = $o_di->get('router');
-        $this->o_twig          = $o_di->get('twig');
-        $this->o_db            = $o_di->get('db');
-        $this->o_session       = $o_di->get('session');
-        $this->o_auth          = new AuthHelper($o_di);
-        $this->o_nav           = new NavComplexModel($this->o_db);
-        $this->o_routes_helper = new RoutesHelper($o_di);
+        if (empty($this->o_di)) {
+            $this->o_di = $o_di;
+        }
+        if (empty($this->o_router)) {
+            $this->o_router = $o_di->get('router');
+        }
+        if (empty($this->o_twig)) {
+            $this->o_twig = $o_di->get('twig');
+        }
+        if (empty($this->o_db)) {
+            $this->o_db = $o_di->get('db');
+        }
+        if (empty($this->o_session)) {
+            $this->o_session = $o_di->get('session');
+        }
+        if (empty($this->o_auth)) {
+            $this->o_auth = new AuthHelper($o_di);
+        }
+        if (empty($this->o_nav)) {
+            $this->o_nav = new NavComplexModel($this->o_db);
+        }
+        if (empty($this->o_routes_helper)) {
+            $this->o_routes_helper = new RoutesHelper($o_di);
+        }
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-            $this->o_nav->setElog($this->o_elog);
+            $o_elog = $o_di->get('elog');
+            $this->o_nav->setElog($o_elog);
         }
     }
 
@@ -225,16 +240,13 @@ trait ViewTraits
      */
     public function getPageValues()
     {
-        $meth = __METHOD__ . '.';
         $o_page_model = new PageComplexModel($this->o_db);
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $o_page_model->setElog($this->o_elog);
+            $o_elog = $this->o_di->get('elog');
+            $o_page_model->setElog($o_elog);
         }
         $url_id = $this->o_router->getUrlId();
-        $this->logIt("url id: {$url_id}", LOG_OFF, $meth . __LINE__);
         $a_values = $o_page_model->readPageValuesByUrlId($url_id);
-        $log_message = 'Page Values:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         if (isset($a_values[0])) {
             $a_page_values = $a_values[0];

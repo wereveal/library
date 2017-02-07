@@ -28,8 +28,6 @@ use Ritc\Library\Services\Session;
  */
 trait ControllerTraits
 {
-    use LogitTraits;
-
     /** @var  array */
     protected $a_post = [];
     /** @var  array */
@@ -63,11 +61,18 @@ trait ControllerTraits
 
     protected function setObjects(Di $o_di)
     {
-        $this->o_di      = $o_di;
-        $this->o_db      = $o_di->get('db');
-        $this->o_router  = $o_di->get('router');
-        $this->o_session = $o_di->get('session');
-        $this->o_elog    = $o_di->get('elog');
+        if (empty($this->o_di)) {
+            $this->o_di = $o_di;
+        }
+        if (empty($this->o_router)) {
+            $this->o_router = $o_di->get('router');
+        }
+        if (empty($this->o_db)) {
+            $this->o_db = $o_di->get('db');
+        }
+        if (empty($this->o_session)) {
+            $this->o_session = $o_di->get('session');
+        }
     }
 
     protected function setProperties()

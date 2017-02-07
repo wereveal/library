@@ -24,6 +24,7 @@ use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
@@ -33,7 +34,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class PeopleAdminView
 {
-    use ViewTraits;
+    use ViewTraits, LogitTraits;
 
     /** @var PeopleComplexModel */
     private $o_people_complex;
