@@ -73,9 +73,7 @@ class Router
      */
     public function __construct(Di $o_di)
     {
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-        }
+        $this->setupElog($o_di);
         $this->o_routes_helper = new RoutesHelper($o_di);
         $this->setRouteParts();
     }

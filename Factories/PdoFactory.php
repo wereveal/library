@@ -54,11 +54,7 @@ class PdoFactory
      */
     private function __construct(Di $o_di)
     {
-        /* Need to inject the elog instance here since it is needed before
-           it can be injected via the trait method, setElog() */
-        if (DEVELOPER_MODE && is_object($o_di)) {
-            $this->o_elog = $o_di->get('elog');
-        }
+        $this->setupElog($o_di);
     }
 
     /**

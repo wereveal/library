@@ -23,6 +23,7 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
@@ -32,7 +33,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class PageAdminView
 {
-    use ViewTraits;
+    use LogitTraits, ViewTraits;
 
     /**
      * @var \Ritc\Library\Models\PageComplexModel

@@ -27,7 +27,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class TestsAdminView
 {
-    use ViewTraits;
+    use ViewTraits, LogitTraits;
 
     /**
      * TestsAdminView constructor.
@@ -35,6 +35,7 @@ class TestsAdminView
      */
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
         $this->setupView($o_di);
     }
 

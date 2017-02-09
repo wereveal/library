@@ -16,6 +16,8 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Traits\ManagerViewTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
@@ -25,7 +27,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class UrlsView
 {
-    use ViewTraits;
+    use LogitTraits, ManagerViewTraits;
 
     protected $o_urls_model;
 
@@ -35,6 +37,7 @@ class UrlsView
      */
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
         $this->setupView($o_di);
         $this->o_urls_model = new UrlsModel($this->o_db);
         if (DEVELOPER_MODE) {

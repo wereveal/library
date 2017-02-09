@@ -274,14 +274,50 @@ SQL;
     }
 
     /**
-     * Deletes a single record based on the primary index value.
-     * @param int    $record_id          Required
+     * Deletes record(s) based on the primary index value.
+     * @param mixed $record_ids Required
+     *                          Can be an int, string or array. If array is list of record ids to delete, e.g.
+     *                          [1, 2, 3, 4] or ['fred', 'barney', 'wilma', 'betty'], matching primary index type.
+     *                          If array, it passes the values to the genericDeleteMultiple. This provided backwards
+     *                          compatibility when genericDelete only allowed int.
      * @return bool
-     * @todo Ritc\Library\Traits\DbUtilityTraits::genericDelete - modify to delete multiple records by changing argument to array of ids
      */
-    protected function genericDelete($record_id = -1)
+    protected function genericDelete($record_ids = -1)
     {
-        if ($record_id < 1 || !is_numeric($record_id)) {
+        if (is_array($record_ids)) {
+           if (empty($record_ids)) {
+               return false;
+           }
+           else {
+               return $this->genericDeleteMultiple($record_ids);
+           }
+        }
+        elseif (is_numeric($record_ids) && $record_ids < 1) {
+           return false;
+        }
+        $piname = $this->primary_index_name;
+        $sql =<<<SQL
+DELETE FROM {$this->db_table}
+WHERE {$piname} = :{$piname}
+SQL;
+        $results = $this->o_db->delete($sql, [':' . $piname => $record_ids], true);
+        if ($results) {
+            return true;
+        }
+        else {
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            return false;
+        }
+    }
+
+    /**
+     * Deletes a multiple records based on the primary index value.
+     * @param array $a_record_ids Required
+     * @return bool
+     */
+    protected function genericDeleteMultiple(array $a_record_ids = [])
+    {
+        if (empty($a_record_ids)) {
             return false;
         }
         $piname = $this->primary_index_name;
@@ -289,7 +325,11 @@ SQL;
 DELETE FROM {$this->db_table}
 WHERE {$piname} = :{$piname}
 SQL;
-        $results = $this->o_db->delete($sql, [':' . $piname => $record_id], true);
+        $a_delete_these = [];
+        foreach ($a_record_ids as $record_id) {
+           $a_delete_these[] = [':' . $piname => $record_id];
+        }
+        $results = $this->o_db->delete($sql, $a_delete_these, true);
         if ($results) {
             return true;
         }

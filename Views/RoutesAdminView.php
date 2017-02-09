@@ -24,6 +24,7 @@ use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
@@ -33,7 +34,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class RoutesAdminView
 {
-    use ViewTraits;
+    use LogitTraits, ViewTraits;
 
     /** @var \Ritc\Library\Models\RoutesModel */
     private $o_model;
@@ -44,10 +45,10 @@ class RoutesAdminView
      */
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
         $this->setupView($o_di);
         $this->o_model = new RoutesModel($this->o_db);
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
+        if (DEVELOPER_MODE && is_object($this->o_elog)) {
             $this->o_model->setElog($this->o_elog);
         }
 

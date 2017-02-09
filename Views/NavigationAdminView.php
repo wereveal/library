@@ -17,6 +17,7 @@ use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
@@ -26,13 +27,14 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class NavigationAdminView
 {
-    use ViewTraits;
+    use LogitTraits, ViewTraits;
 
     private $o_nav_complex;
     private $o_nav_model;
 
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
         $this->setupView($o_di);
         $this->o_nav_model = new NavgroupsModel($this->o_db);
         $this->o_nav_complex = new NavComplexModel($this->o_db);

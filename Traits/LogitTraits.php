@@ -10,6 +10,9 @@
  * @note      this is derived from the abstract class Base and may end up replacing
  *            the abstract class or used in classes that don't use the abstract class.
  * @note <b>Change Log</b>
+ * - v1.2.0 - setElog now allows anything to pass into it and then checks    - 2017-02-07 wer
+ *            to see if it is an instanceof Elog. That way, it doesn't
+ *            generate errors.
  * - v1.1.1 - bug fixes                                                      - 02/26/2016 wer
  * - v1.1.0 - added code to utilize the custom logging capabilities          - 11/20/2015 wer
  * - v1.0.1 - checked to see if we want to even bother with calling o_elog.  - 11/03/2015 wer
@@ -17,6 +20,7 @@
  */
 namespace Ritc\Library\Traits;
 
+use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Elog;
 
 /**
@@ -46,7 +50,6 @@ trait LogitTraits
      * @param  string $message
      * @param  int    $log_type see Elog Class for allowed values
      * @param  string $location
-     * @return null
      */
     protected function logIt($message = '', $log_type = LOG_OFF, $location = '')
     {
@@ -75,12 +78,24 @@ trait LogitTraits
     }
 
     /**
-     * Injectes the Elog object into the class.
-     * @param  Elog $o_elog
-     * @return null
+     * Injects the Elog object into the class that uses LogitTraits.
+     * @param object|mixed $o_elog
      */
-    public function setElog(Elog $o_elog)
+    public function setElog($o_elog = '')
     {
-        $this->o_elog = $o_elog;
+        if ($o_elog instanceof Elog) {
+            $this->o_elog = $o_elog;
+        }
+    }
+
+    /**
+     * Quick Stub for a commonly called thing.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
+    public function setupElog(Di $o_di)
+    {
+        if (defined('DEVLOPER_MODE') && DEVELOPER_MODE) {
+            $this->o_elog = $o_di->get('elog');
+        }
     }
 }

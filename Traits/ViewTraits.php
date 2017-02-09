@@ -8,20 +8,23 @@
  * @version   1.0.0-beta.3
  * @date      2017-02-07 16:59:40
  * @note <b>Change Log</b>
- * - v1.0.0-beta.3  - removed LogitTraits from this trait               - 2017-02-07 wer
- * - v1.0.0-beta.2  - added lib_prefix for twig prefixes as a default   - 2017-01-27 wer
- * = v1.0.0-beta.1  - This should have come out of alpha a while back   - 2017-01-24 wer
+ * - v1.0.0-beta.3  - removed LogitTraits from this trait, bug fix in twigLoader        - 2017-02-07 wer
+ *                    There were times when another trait also used LogitTraits
+ *                    and was causing conflicts.
+ * - v1.0.0-beta.2  - added lib_prefix for twig prefixes as a default                   - 2017-01-27 wer
+ * = v1.0.0-beta.1  - This should have come out of alpha a while back                   - 2017-01-24 wer
  *                    Added twigLoader method
- * - v1.0.0-alpha.4 - Added new method createDefaultTwigValues          - 2016-04-15 wer
- * - v1.0.0-alpha.3 - Navigation links are now sorted properly          - 2016-04-08 wer
- * - v1.0.0-alpha.2 - Use LogitTraits now                               - 2016-04-01 wer
- *   - Views that use this trait no longer need to 'use' LogitTraits
- *   - May cause some complaints from those that don't fix this.
- * - v1.0.0-alpha.1 - close to working version                          - 2016-03-10 wer
- * - v1.0.0-alpha.0 - inital version                                    - 2016-02-22 wer
+ * - v1.0.0-alpha.4 - Added new method createDefaultTwigValues                          - 2016-04-15 wer
+ * - v1.0.0-alpha.3 - Navigation links are now sorted properly                          - 2016-04-08 wer
+ * - v1.0.0-alpha.2 - Use LogitTraits now                                               - 2016-04-01 wer
+ *                    Views that use this trait no longer need to 'use' LogitTraits
+ *                    May cause some complaints from those that don't fix this.
+ * - v1.0.0-alpha.1 - close to working version                                          - 2016-03-10 wer
+ * - v1.0.0-alpha.0 - inital version                                                    - 2016-02-22 wer
  */
 namespace Ritc\Library\Traits;
 
+use Ritc\Library\Factories\TwigFactory;
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Helper\ViewHelper;
@@ -147,7 +150,8 @@ trait ViewTraits
      */
     public function twigLoader(array $a_paths = [])
     {
-        $o_loader = $this->o_twig->getLoader();
+        $twig_config = $this->o_di->getVar('twigConfig');
+        $o_loader = TwigFactory::getLoader($twig_config);
         foreach ($a_paths as $path => $namespace) {
             try {
                 $o_loader->prependPath($path, $namespace);

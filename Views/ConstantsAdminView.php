@@ -27,6 +27,7 @@ use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
@@ -36,7 +37,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class ConstantsAdminView
 {
-    use ViewTraits;
+    use LogitTraits, ViewTraits;
 
     /** @var \Ritc\Library\Views\LibraryView */
     private $o_manager;

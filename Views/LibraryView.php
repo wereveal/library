@@ -32,7 +32,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class LibraryView
 {
-    use ViewTraits;
+    use LogitTraits, ViewTraits;
 
     /**
      * LibraryView constructor.
@@ -40,10 +40,8 @@ class LibraryView
      */
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
         $this->setupView($o_di);
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-        }
     }
 
     /**

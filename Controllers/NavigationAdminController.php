@@ -18,6 +18,7 @@ use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
+use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\NavigationAdminView;
 
 /**
@@ -27,13 +28,14 @@ use Ritc\Library\Views\NavigationAdminView;
  */
 class NavigationAdminController implements ManagerControllerInterface
 {
-    use ControllerTraits;
+    use ControllerTraits, LogitTraits;
 
     protected $o_model;
     protected $o_view;
 
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
         $this->setupController($o_di);
         $this->o_view = new NavigationAdminView($o_di);
         $this->o_model = new NavComplexModel($this->o_db);

@@ -29,7 +29,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class GroupsAdminView
 {
-    use ViewTraits;
+    use LogitTraits, ViewTraits;
 
     /**
      * @var \Ritc\Library\Models\GroupsModel
@@ -42,10 +42,10 @@ class GroupsAdminView
      */
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
         $this->setupView($o_di);
         $this->o_groups = new GroupsModel($this->o_db);
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
+        if (DEVELOPER_MODE && is_object($this->o_elog)) {
             $this->o_groups->setElog($this->o_elog);
         }
     }

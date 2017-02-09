@@ -85,9 +85,7 @@ class LibraryController implements ControllerInterface
         if (!defined('LIB_TWIG_PREFIX')) {
             define('LIB_TWIG_PREFIX', 'lib_');
         }
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-        }
+        $this->setupElog($o_di);
     }
 
     /**

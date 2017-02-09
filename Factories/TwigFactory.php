@@ -2,14 +2,16 @@
 /**
  * @brief     A Twig Factory.
  * @details   Lets us create a twig object, specific to a configuration
- *           allowing multiple twig objects to render the html
+ *            allowing multiple twig objects to render the html
  * @ingroup   lib_factories
  * @file      Ritc/Library/FactoriesTwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2015-09-01 07:31:00
+ * @version   1.2.0
+ * @date      2017-02-09 16:01:25
  * @note <b>Change Log</b>
+ * - v1.2.0   - changed to allow config file to include a path.                                       - 2017-02-09 wer
+ * - v1.1.0   - added the ability to get the loader used to add additional twig namespaces            - 2017-02-08 wer
  * - v1.0.0   - not sure why this is beta. Removed Base abstract class                                - 09/01/2015 wer
  * - v1.0.0ß2 - moved to the Factories namespace
  * - v1.0.0ß1 - moved to the Services namespace                                                       - 11/15/2014 wer
@@ -20,6 +22,7 @@
  */
 namespace Ritc\Library\Factories;
 
+use Ritc\Library\Helper\LocateFile;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 
@@ -30,6 +33,7 @@ use Twig_Environment;
  */
 class TwigFactory
 {
+    private $o_loader;
     /** @var Twig_Environment */
     private $o_twig;
     /** @var array */
@@ -42,6 +46,7 @@ class TwigFactory
     private function __construct($a_twig_config)
     {
         $o_loader = new Twig_Loader_Filesystem($a_twig_config['default_path']);
+        $this->o_loader = $o_loader;
         foreach ($a_twig_config['additional_paths'] as $path => $namespace ) {
             $o_loader->prependPath($path, $namespace);
         }
@@ -53,15 +58,27 @@ class TwigFactory
      * @param string $config_file
      * @return mixed
      */
-    public static function create($config_file = 'twig_config.php')
+    public static function create($config_file = 'twig_config.php', $namespace = '')
     {
+        $org_config_file = $config_file;
+        if (strpos($config_file, '/') !== false) {
+            $a_parts = explode('/', $config_file);
+            $config_file = $a_parts[count($a_parts) - 1];
+        }
         list($name, $extension) = explode('.', $config_file);
         unset($extension);
         if (!isset(self::$instance[$name])) {
-            $a_twig_config = self::retrieveTwigConfigArray($config_file);
+            $a_twig_config = self::retrieveTwigConfigArray($org_config_file, $namespace = '');
             self::$instance[$name] = new TwigFactory($a_twig_config);
         }
         return self::$instance[$name];
+    }
+
+    public static function getLoader($config_file = 'twig_config.php')
+    {
+       list($name, $extension) = explode('.', $config_file);
+       unset($extension);
+       return self::$instance[$name]->o_loader;
     }
 
     /**
@@ -77,21 +94,26 @@ class TwigFactory
     }
 
     /**
-     * @param $config_file
-     * @return array|mixed
+     * Returns the array from the config file.
+     * @param string $config_file Required Can be a file name or file with path.
+     * @param string $namespace   Optional. If omitted, looks in the APP_CONFIG_PATH.
+     *                            Use namespace format e.g. My\Namespace.
+     * @return array
      */
-    private static function retrieveTwigConfigArray($config_file)
+    private static function retrieveTwigConfigArray($config_file = '', $namespace = '')
     {
-        $config_w_path = APP_PATH . '/config/' . $config_file;
-        if (!file_exists($config_w_path)) {
-            $config_w_path = SITE_PATH . '/config/' . $config_file;
-        }
-        if (!file_exists($config_w_path)) {
-            $a_twig_config = array('default_path' => $_SERVER['DOCUMENT_ROOT'] . '/assets/templates/default');
+        if ($config_file == '') { return []; }
+        if (strpos($config_file, '/') !== false) {
+            $config_w_path = $config_file;
         }
         else {
-            /** @noinspection PhpIncludeInspection */
+            $config_w_path = LocateFile::getConfigWithPath($config_file, $namespace);
+        }
+        if ($config_w_path != '') {
             $a_twig_config = require $config_w_path;
+        }
+        else {
+            $a_twig_config = [];
         }
         return $a_twig_config;
     }

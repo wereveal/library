@@ -52,10 +52,7 @@ class RoutesHelper
      */
     public function __construct(Di $o_di, $request_uri = '')
     {
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-        }
-
+        $this->setupElog($o_di);
         $o_db = $o_di->get('db');
         $this->o_routes = new RoutesModel($o_db);
         $this->o_group = new GroupsModel($o_db);

@@ -45,8 +45,8 @@ interface ModelInterface {
 
     /**
      * Deletes a record based on the id provided.
-     * @param int $id
+     * @param string $id
      * @return bool
      */
-    public function delete($id = -1);
+    public function delete($id);
 }

@@ -46,6 +46,7 @@ class TestsAdminController
      */
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
         $this->o_di     = $o_di;
         $this->o_db     = $o_di->get('db');
         $this->o_router = $o_di->get('router');
@@ -58,10 +59,6 @@ class TestsAdminController
         }
         else {
             $this->test_configs_path = __DIR__;
-        }
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-            $this->o_view->setElog($this->o_elog);
         }
     }
     /**
