@@ -112,7 +112,7 @@ class UrlsModel implements ModelInterface
             'a_fields' => ['url_immutable']
         ];
         $search_results = $this->read($a_search_for, $a_search_params);
-        error_log(var_export($search_results, true));
+        // error_log(var_export($search_results, true));
         if (isset($search_results[0]) && $search_results[0]['url_immutable'] == 1) {
             $this->error_message = 'Sorry, that url can not be deleted.';
             return false;

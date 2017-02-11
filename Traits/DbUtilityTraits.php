@@ -220,9 +220,8 @@ SQL;
         $where = $this->buildSqlWhere($a_search_for, $a_parameters, $a_allowed_keys);
         $sql =<<<SQL
 SELECT {$distinct}{$select_me}
-FROM {$table_name}
+FROM {$table_name} 
 {$where}
-
 SQL;
         $this->logIt("SQL:\n" . $sql, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for, $return_format);
@@ -522,7 +521,6 @@ SQL;
             }
         }
         if ($order_by != '') {
-            $where .= $where == '' ? "\n" : '';
             $where .= "ORDER BY {$order_by} \n";
         }
         if ($limit_to != '') {

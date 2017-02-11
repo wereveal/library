@@ -61,16 +61,16 @@ trait ControllerTraits
 
     protected function setObjects(Di $o_di)
     {
-        if (empty($this->o_di)) {
+        if (!$this->o_di instanceof Di) {
             $this->o_di = $o_di;
         }
-        if (empty($this->o_router)) {
+        if (!$this->o_router instanceof Router) {
             $this->o_router = $o_di->get('router');
         }
-        if (empty($this->o_db)) {
+        if (!$this->o_db instanceof DbModel) {
             $this->o_db = $o_di->get('db');
         }
-        if (empty($this->o_session)) {
+        if (!$this->o_session instanceof Session) {
             $this->o_session = $o_di->get('session');
         }
     }

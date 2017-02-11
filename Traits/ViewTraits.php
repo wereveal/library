@@ -147,6 +147,7 @@ trait ViewTraits
      * Adds additional twig path/namespaces to twig for use.
      * Makes the twig object slightly lazy in implementation.
      * @param array $a_paths in the form of [path => namespace, ...]
+     * @return bool
      */
     public function twigLoader(array $a_paths = [])
     {
@@ -158,8 +159,10 @@ trait ViewTraits
             }
             catch (\Twig_Error_Loader $e) {
                 error_log("Couldn't load path: " . $e->getMessage());
+                return false;
             }
         }
+        return true;
     }
 
     ### SETters and GETters ###

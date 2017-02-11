@@ -71,19 +71,24 @@ class PdoFactory
      */
     public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di)
     {
+        $org_config_file = $config_file;
+        if (strpos($config_file, '/') !== false) {
+            $a_parts = explode('/', $config_file);
+            $config_file = $a_parts[count($a_parts) - 1];
+        }
         list($name, $extension) = explode('.', $config_file);
         if ($extension != 'php' && $extension != 'cfg') { return false; }
         if ($read_type == 'ro') {
             if (!isset(self::$factory_ro_instance[$name])) {
                 self::$factory_ro_instance[$name] = new PdoFactory($o_di);
             }
-            return self::$factory_ro_instance[$name]->createPdo($config_file, $read_type);
+            return self::$factory_ro_instance[$name]->createPdo($org_config_file, $read_type);
         }
         else {
             if (!isset(self::$factory_rw_instance[$name])) {
                 self::$factory_rw_instance[$name] = new PdoFactory($o_di);
             }
-            return self::$factory_rw_instance[$name]->createPdo($config_file, $read_type);
+            return self::$factory_rw_instance[$name]->createPdo($org_config_file, $read_type);
         }
     }
 

@@ -97,7 +97,8 @@ class Elog
             error_log("\n==== End of Logging Session ====\n\n");
         }
         if ($this->custom_log_used) {
-            trigger_error("==== End of Elog ====\n", E_USER_NOTICE);
+            $string = "==== End of Elog ====\n";
+            file_put_contents(LOG_PATH . '/' . $this->elog_file, $string, FILE_APPEND);
         }
     }
 

@@ -48,7 +48,14 @@ class TwigFactory
         $o_loader = new Twig_Loader_Filesystem($a_twig_config['default_path']);
         $this->o_loader = $o_loader;
         foreach ($a_twig_config['additional_paths'] as $path => $namespace ) {
-            $o_loader->prependPath($path, $namespace);
+            try {
+                $o_loader->prependPath($path, $namespace);
+            }
+            catch (\Twig_Error_Loader $e) {
+                error_log("Twig Loader Error: " . $e->getRawMessage());
+                die("Twig Loader Error: " . $e->getMessage());
+            }
+
         }
         $this->o_twig = new Twig_Environment($o_loader, $a_twig_config['environment_options']);
     }
@@ -66,14 +73,21 @@ class TwigFactory
             $config_file = $a_parts[count($a_parts) - 1];
         }
         list($name, $extension) = explode('.', $config_file);
+        // error_log("Name of config: " . $name);
         unset($extension);
         if (!isset(self::$instance[$name])) {
             $a_twig_config = self::retrieveTwigConfigArray($org_config_file, $namespace = '');
+            // error_log("Twig Config: ". var_export($a_twig_config, true));
             self::$instance[$name] = new TwigFactory($a_twig_config);
         }
         return self::$instance[$name];
     }
 
+    /**
+     * Returns the loader for the twig environment instance.
+     * @param string $config_file
+     * @return mixed
+     */
     public static function getLoader($config_file = 'twig_config.php')
     {
        list($name, $extension) = explode('.', $config_file);
