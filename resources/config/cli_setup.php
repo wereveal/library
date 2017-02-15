@@ -3,7 +3,7 @@
  * @brief     This file sets up the App.
  * @details   Required to get the entire framework to work. The only thing
  *           that changes primarily is the defgroup in this comment for Doxygen.
- * @file      /app/src/Ritc/Library/resources/config/setup.php
+ * @file      /src/apps/Ritc/Library/resources/config/setup.php
  * @namespace Ritc
  * @note NOTE:
  * - _path and _PATH indicates a full server path
@@ -21,15 +21,15 @@ use Ritc\Library\Services\Elog;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 
-if (!defined('SITE_PATH')) {
-    define('SITE_PATH', __DIR__);
+if (!defined('PUBLIC_PATH')) {
+    define('PUBLIC_PATH', __DIR__);
 }
 if (!defined('BASE_PATH')) {
-    if (!isset($app_is_in)) {
-        $app_is_in = 'external';
+    if (!isset($src_is_in)) {
+        $src_is_in = 'external';
     }
-    if ($app_is_in == 'site' || $app_is_in == 'htdocs' || $app_is_in == 'html') {
-        define('BASE_PATH', SITE_PATH);
+    if ($src_is_in == 'public' || $src_is_in == 'website') {
+        define('BASE_PATH', PUBLIC_PATH);
     }
     else {
         define('BASE_PATH', dirname(dirname(__FILE__)));
@@ -39,10 +39,10 @@ if (!isset($rodb)) {
     $rodb = false;
 }
 
-require_once BASE_PATH . '/app/config/constants.php';
+require_once BASE_PATH . '/src/config/constants.php';
 
 $loader = require_once VENDOR_PATH . '/autoload.php';
-$my_classmap = require_once APP_PATH . '/config/autoload_classmap.php';
+$my_classmap = require_once SRC_PATH . '/config/autoload_classmap.php';
 $loader->addClassMap($my_classmap);
 
 $o_elog = Elog::start();
@@ -85,7 +85,7 @@ if ($o_pdo !== false) {
 
         if (!ConstantsHelper::start($o_di)) {
             $o_elog->write("Couldn't create the constants\n", LOG_ALWAYS);
-            require_once APP_CONFIG_PATH . '/fallback_constants.php';
+            require_once SRC_CONFIG_PATH . '/fallback_constants.php';
         }
         /*
         $a_constants = get_defined_constants(true);

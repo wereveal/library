@@ -72,17 +72,17 @@ class ConstantsHelper
         $this->created = $this->createConstants();
         if ($this->created === false) {
             $this->logIt("Could not create constants from db.", LOG_ALWAYS, $meth . __LINE__);
-            if (defined('APP_CONFIG_PATH')) {
-                if(file_exists(APP_CONFIG_PATH . '/fallback_constants.php')) {
-                    include_once APP_CONFIG_PATH . '/fallback_constants.php';
+            if (defined('SRC_CONFIG_PATH')) {
+                if(file_exists(SRC_CONFIG_PATH . '/fallback_constants.php')) {
+                    include_once SRC_CONFIG_PATH . '/fallback_constants.php';
                 }
                 else {
-                    $this->logIt("File: " . APP_CONFIG_PATH . '/fallback_constants.php does not exist.', LOG_ALWAYS);
+                    $this->logIt("File: " . SRC_CONFIG_PATH . '/fallback_constants.php does not exist.', LOG_ALWAYS);
                     die ('A fatal error has occured. Please contact your web site administrator.');
                 }
             }
             else {
-                $this->logIt("APP_CONFIG_PATH is not defined.", LOG_ALWAYS, $meth . __LINE__);
+                $this->logIt("SRC_CONFIG_PATH is not defined.", LOG_ALWAYS, $meth . __LINE__);
                 die ('A fatal error has occured. Please contact your web site administrator.');
             }
             $this->o_constants_model->createNewConstants();
@@ -155,8 +155,8 @@ class ConstantsHelper
                     if (file_exists(BASE_PATH . '/' . TMP_DIR_NAME)) {
                         define('TMP_PATH', BASE_PATH . '/' . TMP_DIR_NAME);
                     }
-                    elseif (file_exists(SITE_PATH . '/' . TMP_DIR_NAME)) {
-                        define('TMP_PATH', SITE_PATH . '/' . TMP_DIR_NAME);
+                    elseif (file_exists(PUBLIC_PATH . '/' . TMP_DIR_NAME)) {
+                        define('TMP_PATH', PUBLIC_PATH . '/' . TMP_DIR_NAME);
                     }
                     else {
                         define('TMP_PATH', '/tmp');
@@ -166,8 +166,8 @@ class ConstantsHelper
                     if (file_exists(BASE_PATH . '/' . PRIVATE_DIR_NAME)) {
                         define('PRIVATE_PATH', BASE_PATH . '/' . PRIVATE_DIR_NAME);
                     }
-                    elseif (file_exists(SITE_PATH . '/' . PRIVATE_DIR_NAME)) {
-                        define('PRIVATE_PATH', SITE_PATH . '/' . PRIVATE_DIR_NAME);
+                    elseif (file_exists(PUBLIC_PATH . '/' . PRIVATE_DIR_NAME)) {
+                        define('PRIVATE_PATH', PUBLIC_PATH . '/' . PRIVATE_DIR_NAME);
                     }
                     else {
                         define('PRIVATE_PATH', '');
@@ -177,20 +177,20 @@ class ConstantsHelper
                 if (!defined('PUBLIC_DIR')) { // not sure why this would be true but here just in case
                     define('PUBLIC_DIR', '');
                 }
-                if (!defined('SITE_PATH')) { // not sure why this would be true but here just in case
-                    define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);
+                if (!defined('PUBLIC_PATH')) { // not sure why this would be true but here just in case
+                    define('PUBLIC_PATH', $_SERVER['DOCUMENT_ROOT']);
                 }
                 if (!defined('ADMIN_DIR') && defined('ADMIN_DIR_NAME')) {
                     define('ADMIN_DIR',   PUBLIC_DIR . '/' . ADMIN_DIR_NAME);
                 }
                 if (!defined('ADMIN_PATH') && defined('ADMIN_DIR')) {
-                    define('ADMIN_PATH',  SITE_PATH . ADMIN_DIR);
+                    define('ADMIN_PATH',  PUBLIC_PATH . ADMIN_DIR);
                 }
                 if (!defined('ASSETS_DIR') && defined('ASSETS_DIR_NAME')) {
                     define('ASSETS_DIR',  PUBLIC_DIR . '/' . ASSETS_DIR_NAME);
                 }
                 if (!defined('ASSETS_PATH') && defined('ASSETS_DIR')) {
-                    define('ASSETS_PATH', SITE_PATH . ASSETS_DIR);
+                    define('ASSETS_PATH', PUBLIC_PATH . ASSETS_DIR);
                 }
                 return true;
             }
@@ -266,23 +266,23 @@ class ConstantsHelper
         define('HTML_DIR',   THEME_DIR . '/' . HTML_DIR_NAME);
         define('IMAGE_DIR',  THEME_DIR . '/' . IMAGE_DIR_NAME);
         define('JS_DIR',     THEME_DIR . '/' . JS_DIR_NAME);
-        define('THEME_PATH', SITE_PATH . THEME_DIR);
-        define('CSS_PATH',   SITE_PATH . CSS_DIR);
-        define('FILES_PATH', SITE_PATH . FILES_DIR);
-        define('HTML_PATH',  SITE_PATH . HTML_DIR);
-        define('IMAGE_PATH', SITE_PATH . IMAGE_DIR);
-        define('JS_PATH',    SITE_PATH . JS_DIR);
+        define('THEME_PATH', PUBLIC_PATH . THEME_DIR);
+        define('CSS_PATH',   PUBLIC_PATH . CSS_DIR);
+        define('FILES_PATH', PUBLIC_PATH . FILES_DIR);
+        define('HTML_PATH',  PUBLIC_PATH . HTML_DIR);
+        define('IMAGE_PATH', PUBLIC_PATH . IMAGE_DIR);
+        define('JS_PATH',    PUBLIC_PATH . JS_DIR);
         if (defined('THUMBS_DIR_NAME')) {
             define('THUMBS_DIR', IMAGE_DIR . '/' . THUMBS_DIR_NAME);
-            define('THUMBS_PATH', SITE_PATH . THUMBS_DIR);
+            define('THUMBS_PATH', PUBLIC_PATH . THUMBS_DIR);
         }
         if (defined('STAFF_DIR_NAME')) {
             define('STAFF_DIR', IMAGE_DIR . '/' . STAFF_DIR_NAME);
-            define('STAFF_PATH', SITE_PATH . STAFF_DIR);
+            define('STAFF_PATH', PUBLIC_PATH . STAFF_DIR);
         }
         if (defined('LIBS_DIR_NAME')) {
             define('LIBS_DIR', THEME_DIR . '/' . LIBS_DIR_NAME);
-            define('LIBS_PATH', SITE_PATH . LIBS_DIR);
+            define('LIBS_PATH', PUBLIC_PATH . LIBS_DIR);
         }
     }
 

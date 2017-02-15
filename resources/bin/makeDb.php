@@ -2,7 +2,7 @@
 /**
  * @brief     This file sets up standard stuff for the Framework.
  * @details   This creates the database config and some standard directories.
- *            This should be run from the /app/bin directory of the site.
+ *            This should be run from the /src/bin directory of the site.
  * @file      install.php
  * @namespace Ritc
  * @author    William E Reveal <bill@revealitconsulting.com>
@@ -92,17 +92,17 @@ if ($missing_params != '') {
 }
 
 if (strpos(__DIR__, 'Library') !== false) {
-    die("Please Run this script from the app/bin directory");
+    die("Please Run this script from the src/bin directory");
 }
-$base_path = str_replace('/app/bin', '', __DIR__);
+$base_path = str_replace('/src/bin', '', __DIR__);
 define('DEVELOPER_MODE', true);
 define('BASE_PATH', $base_path);
-define('SITE_PATH', $base_path . '/public');
+define('PUBLIC_PATH', $base_path . '/public');
 
-require_once BASE_PATH . '/app/config/constants.php';
+require_once BASE_PATH . '/src/config/constants.php';
 
-if (!file_exists(SRC_PATH . '/Ritc/Library')) {
-    die("You must clone the Ritc/Library in the src dir first and any other desired apps.\n");
+if (!file_exists(APPS_PATH . '/Ritc/Library')) {
+    die("You must clone the Ritc/Library in the apps dir first and any other desired apps.\n");
 }
 
 ### Setup the database ###
@@ -124,10 +124,10 @@ return array(
 );
 EOT;
 
-file_put_contents(APP_CONFIG_PATH . '/' . $db_config_file, $db_config_file_text);
+file_put_contents(SRC_CONFIG_PATH . '/' . $db_config_file, $db_config_file_text);
 
 $o_loader = require_once VENDOR_PATH . '/autoload.php';
-$my_namespaces = require_once APP_CONFIG_PATH . '/autoload_namespaces.php';
+$my_namespaces = require_once SRC_CONFIG_PATH . '/autoload_namespaces.php';
 foreach ($my_namespaces as $psr4_prefix => $psr0_paths) {
     $o_loader->addPsr4($psr4_prefix, $psr0_paths);
 }

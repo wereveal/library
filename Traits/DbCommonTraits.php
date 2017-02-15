@@ -77,7 +77,7 @@ trait DbCommonTraits
 
     /**
      * Looks for the config file and includes it into an array.
-     * There are several different places the config file could be: APP_PATH, PRIVATE_PATH, SITE_PATH and
+     * There are several different places the config file could be: SRC_PATH, PRIVATE_PATH, PUBLIC_PATH and
      * $_SERVER['DOCUMENT_ROOT'] . /config. The config file name can also include a path to the file
      * not in the standard locations. It it exists it will be used otherwise the path is stripped off
      * and the file name is looked for in the standard places.
@@ -116,16 +116,16 @@ trait DbCommonTraits
         }
         $config_w_apppath  = '';
         $config_w_privpath = '';
-        $config_w_sitepath = '';
+        $config_w_pubpath = '';
         $config_w_path     = $_SERVER['DOCUMENT_ROOT'] . '/config/' . $config_file;
-        if (defined('APP_PATH')) {
-            $config_w_apppath = APP_PATH . '/config/' . $config_file;
+        if (defined('SRC_PATH')) {
+            $config_w_apppath = SRC_PATH . '/config/' . $config_file;
         }
         if (defined('PRIVATE_PATH')) {
             $config_w_privpath = PRIVATE_PATH . '/' . $config_file;
         }
-        if (defined('SITE_PATH')) {
-            $config_w_sitepath = SITE_PATH . '/config/' . $config_file;
+        if (defined('PUBLIC_PATH')) {
+            $config_w_pubpath = PUBLIC_PATH . '/config/' . $config_file;
         }
         if ($config_w_privpath != '' && file_exists($config_w_privpath)) {
             $config_w_path = $config_w_privpath;
@@ -133,8 +133,8 @@ trait DbCommonTraits
         elseif ($config_w_apppath != '' && file_exists($config_w_apppath)) {
             $config_w_path = $config_w_apppath;
         }
-        elseif ($config_w_sitepath != '' && file_exists($config_w_sitepath)) {
-            $config_w_path = $config_w_sitepath;
+        elseif ($config_w_pubpath != '' && file_exists($config_w_pubpath)) {
+            $config_w_path = $config_w_pubpath;
         }
         if (!file_exists($config_w_path)) {
             return [];

@@ -47,7 +47,7 @@ class PageAdminView
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
-        $this->o_model = new PageComplexModel($this->o_db);
+        $this->o_model = new PageComplexModel($this->o_di);
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
             $this->o_model->setElog($this->o_elog);

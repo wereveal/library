@@ -1,5 +1,5 @@
 <?php
-$library_path  = SRC_PATH . '/Ritc/Library/resources/templates';
+$library_path  = APPS_PATH . '/Ritc/Library/resources/templates';
 if (!defined('LIB_TWIG_PREFIX')) {
     define('LIB_TWIG_PREFIX', 'lib_');
 }
@@ -14,7 +14,7 @@ return array(
         $library_path . '/forms'    => LIB_TWIG_PREFIX . 'forms',
     ),
     'environment_options' => array(
-        'cache'       => APP_PATH . '/twig_cache',
+        'cache'       => SRC_PATH . '/twig_cache',
         'auto_reload' => true,
         'debug'       => true
     )

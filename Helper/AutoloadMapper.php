@@ -8,12 +8,13 @@
  * @version   1.2.3
  * @date      2017-01-10 12:26:57
  * @note <b>Change Log</b>
- * - v1.2.3 - bug fix                                     - 2017-01-10 wer
- * - v1.2.2 - bug fix                                     - 02/22/2016 wer
- * - v1.2.1 - refactored var names to be more descriptive - 12/07/2015 wer
- * - v1.2.0 - added code to not include archives          - 11/06/2015 wer
- * - v1.1.0 - added traits                                - 09/01/2015 wer
- * - v1.0.0 - initial version
+ *     v1.3.0 - refactoring of file structure reflected here  - 2017-02-15 wer
+ *     v1.2.3 - bug fix                                       - 2017-01-10 wer
+ *     v1.2.2 - bug fix                                       - 02/22/2016 wer
+ *     v1.2.1 - refactored var names to be more descriptive   - 12/07/2015 wer
+ *     v1.2.0 - added code to not include archives            - 11/06/2015 wer
+ *     v1.1.0 - added traits                                  - 09/01/2015 wer
+ *     v1.0.0 - initial version
  */
 namespace Ritc\Library\Helper;
 
@@ -28,46 +29,46 @@ use \SplFileInfo;
 class AutoloadMapper
 {
     /** @var string */
-    private $app_path;
+    private $src_path;
     /** @var string */
     private $config_path;
     /** @var string */
-    private $src_path;
+    private $apps_path;
 
     /**
      * Constructor for the class.
      * @param array $a_dirs should be <pre>[
-     *     'app_path'    => '/some_path',
+     *     'src_path'    => '/some_path',
      *     'config_path' => '/some_path',
-     *     'src_path'    => '/some_path'
+     *     'apps_path'    => '/some_path'
      * ]
      * </pre>
      */
     public function __construct(array $a_dirs = array())
     {
-        $this->app_path = isset($a_dirs['app_path'])
-            ? $a_dirs['app_path']
-            : '/app';
-        $this->config_path = isset($a_dirs['config_path'])
-            ? $a_dirs['config_path']
-            : '/app/config';
         $this->src_path = isset($a_dirs['src_path'])
             ? $a_dirs['src_path']
-            : '/app/src';
+            : '/src';
+        $this->config_path = isset($a_dirs['config_path'])
+            ? $a_dirs['config_path']
+            : '/src/config';
+        $this->apps_path = isset($a_dirs['apps_path'])
+            ? $a_dirs['apps_path']
+            : '/src/apps';
     }
 
     /**
-     * @param string $src_path
+     * @param string $apps_path
      * @return bool
      */
-    public function generateMapFiles($src_path = '')
+    public function generateMapFiles($apps_path = '')
     {
         $classmap_array_str = '';
         $ns_map_array_str   = '';
-        if ($src_path != '' && file_exists($src_path)) {
-            $this->src_path =  $src_path;
+        if ($apps_path != '' && file_exists($apps_path)) {
+            $this->apps_path =  $apps_path;
         }
-        $o_dir = new DirectoryIterator($this->src_path);
+        $o_dir = new DirectoryIterator($this->apps_path);
         if (!is_object($o_dir)) {
             return false;
         }
@@ -97,7 +98,7 @@ class AutoloadMapper
                     $padding .= ' ';
                 }
             }
-            $value = str_replace($this->app_path . '/', '', $value);
+            $value = str_replace($this->src_path . '/', '', $value);
             $classmap_array_str .= "    '{$key}'{$padding} => __DIR__ . '/../{$value}',\n";
             // echo $key . "\n";
 
@@ -115,7 +116,7 @@ class AutoloadMapper
                     }
                 }
                 $value =
-                $ns_map_array_str   .= "    '{$vendor_name}\\\\'{$v_padding} => __DIR__ . '/../src/{$vendor_name}',\n";
+                $ns_map_array_str   .= "    '{$vendor_name}\\\\'{$v_padding} => __DIR__ . '/../apps/{$vendor_name}',\n";
                 // echo $vendor_name . "\n";
             }
         }
@@ -249,20 +250,20 @@ EOT;
      * Returns the app path.
      * @return string
      */
-    public function getAppPath()
+    public function getSrcPath()
     {
-        return $this->app_path;
+        return $this->src_path;
     }
 
     /**
      * Sets the app path.
      * @param string $value
      */
-    public function setAppPath($value = '')
+    public function setSrcPath($value = '')
     {
-        $this->app_path = $value != ''
+        $this->src_path = $value != ''
             ? $value
-            : $this->app_path;
+            : $this->src_path;
     }
 
     /**
@@ -286,22 +287,22 @@ EOT;
     }
 
     /**
-     * Returns the src path.
+     * Returns the apps path.
      * @return string
      */
-    public function getSrcPath()
+    public function getAppsPath()
     {
-        return $this->src_path;
+        return $this->apps_path;
     }
 
     /**
-     * Sets the src path.
+     * Sets the apps path.
      * @param string $value
      */
-    public function setSrcPath($value = '')
+    public function setAppsPath($value = '')
     {
-        $this->src_path = $value != ''
+        $this->apps_path = $value != ''
             ? $value
-            : $this->src_path;
+            : $this->apps_path;
     }
 }

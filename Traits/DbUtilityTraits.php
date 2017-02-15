@@ -400,7 +400,7 @@ SQL;
             return '';
         }
         $select_me = '';
-        if ($prefix != '') {
+        if ($prefix != '' && strpos($prefix, '.') === false) {
             $prefix .= '.';
         }
         if (Arrays::isAssocArray($a_values)) {

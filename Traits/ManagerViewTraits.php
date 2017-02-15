@@ -6,9 +6,10 @@
  * @file        ManagerViewTraits.php
  * @namespace   Ritc\Library\Traits
  * @author      William E Reveal <bill@revealitconsulting.com>
- * @version     2.0.0
- * @date        2017-02-07 10:48:38
+ * @version     2.0.1
+ * @date        2017-02-11 11:40:46
  * @note <b>Change Log</b>
+ * - v2.0.1 - minor bug fixes                                                       - 2017-02-11 wer
  * - v2.0.0 - changed to use ViewTraits and keep only manager like stuff in here    - 2017-02-07 wer
  * - v1.1.0 - manager links can be in two places.                                   - 12/15/2015 wer
  * - v1.0.2 - bug fix                                                               - 11/24/2015 wer
@@ -32,13 +33,10 @@ trait ManagerViewTraits
     /**
      * Renders login form after resetting session.
      * @param string $login_id
-     * @param string $tpl_type  Optional, defaults to main.
-     *                          Other pre-set options are manager and library.
-     *                          Any other twig_prefix (without the underscore) may be specified.
      * @param array  $a_message Optional e.g. ['message' => '', 'type' => 'info']
      * @return string
      */
-    public function renderLogin($login_id = '', $tpl_type = 'main', array $a_message = [])
+    public function renderLogin($login_id = '', array $a_message = [])
     {
         $meth = __METHOD__ . '.';
         $this->o_session->resetSession();
@@ -53,7 +51,7 @@ trait ManagerViewTraits
         $log_message = 'Page Values ' . var_export($a_page_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-        $a_twig_values = $this->createDefaultTwigValues($tpl_type, $a_message);
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['login_id'] = $login_id;
         $a_twig_values['a_menus'] = [];
 

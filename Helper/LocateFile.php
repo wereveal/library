@@ -42,12 +42,12 @@ class LocateFile
     public static function getConfigWithPath($file_name = '', $namespace = '')
     {
         if ($namespace == '') {
-            $path = APP_CONFIG_PATH;
+            $path = SRC_CONFIG_PATH;
         }
         else {
             $ns_path = str_replace('\\', '/', $namespace);
             $ns_path .= '/resources/config';
-            $path = SRC_PATH . '/' . $ns_path;
+            $path = APPS_PATH . '/' . $ns_path;
         }
         $file_w_path = $path . '/' . $file_name;
         if (file_exists($file_w_path)) {
@@ -63,7 +63,7 @@ class LocateFile
     public static function getCssWithDir($file_name, $namespace = '')
     {
         $file_w_path = self::getCssWithPath($file_name, $namespace);
-        return str_replace(SITE_PATH, '', $file_w_path);
+        return str_replace(PUBLIC_PATH, '', $file_w_path);
     }
 
     /**
@@ -75,18 +75,18 @@ class LocateFile
     {
         if ($namespace == '') {
             $a_optional_paths = [
-                SITE_PATH . '/' . CSS_DIR_NAME . '/' . $file_name,
-                SITE_PATH . '/assets/' . CSS_DIR_NAME . '/' . $file_name,
-                SITE_PATH . '/' . $file_name
+                PUBLIC_PATH . '/' . CSS_DIR_NAME . '/' . $file_name,
+                PUBLIC_PATH . '/assets/' . CSS_DIR_NAME . '/' . $file_name,
+                PUBLIC_PATH . '/' . $file_name
             ];
         }
         else {
             $ns_path = str_replace('\\', '/', $namespace);
             $ns_path .= '/resources/themes';
             $a_optional_paths = [
-                SRC_PATH . '/' . $ns_path . '/' . THEME_NAME . '/' . CSS_DIR_NAME,
-                SRC_PATH . '/' . $ns_path . '/default/' . CSS_DIR_NAME,
-                SRC_PATH . '/' . $ns_path . '/' . CSS_DIR_NAME
+                APPS_PATH . '/' . $ns_path . '/' . THEME_NAME . '/' . CSS_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/default/' . CSS_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/' . CSS_DIR_NAME
             ];
         }
         foreach ($a_optional_paths as $path) {
@@ -106,7 +106,7 @@ class LocateFile
     {
         $file_w_path = self::getFileWithPath($file_name, $namespace);
         if ($file_w_path != '') {
-            return str_replace(SITE_PATH, '', $file_w_path);
+            return str_replace(PUBLIC_PATH, '', $file_w_path);
         }
         return '';
     }
@@ -118,12 +118,12 @@ class LocateFile
     public static function getFileWithPath($file_name = '', $namespace = '')
     {
         if ($namespace == '') {
-            $path = SITE_PATH;
+            $path = PUBLIC_PATH;
         }
         else {
             $ns_path = str_replace('\\', '/', $namespace);
             $ns_path .= '/resources/files';
-            $path = SRC_PATH . '/' . $ns_path;
+            $path = APPS_PATH . '/' . $ns_path;
         }
         $file_w_path = $path . '/' . $file_name;
         if (file_exists($file_w_path)) {
@@ -142,18 +142,18 @@ class LocateFile
     {
         if ($namespace == '') {
             $a_optional_paths = [
-                SITE_PATH . '/' . IMAGE_DIR_NAME  . '/' . $file_name,
-                SITE_PATH . '/assets/' . IMAGE_DIR_NAME  . '/' . $file_name,
-                SITE_PATH . '/' . $file_name
+                PUBLIC_PATH . '/' . IMAGE_DIR_NAME  . '/' . $file_name,
+                PUBLIC_PATH . '/assets/' . IMAGE_DIR_NAME  . '/' . $file_name,
+                PUBLIC_PATH . '/' . $file_name
             ];
         }
         else {
             $ns_path = str_replace('\\', '/', $namespace);
             $ns_path .= '/resources/themes';
             $a_optional_paths = [
-                SRC_PATH . '/' . $ns_path . '/' . THEME_NAME . '/' . IMAGE_DIR_NAME,
-                SRC_PATH . '/' . $ns_path . '/default/' . IMAGE_DIR_NAME,
-                SRC_PATH . '/' . $ns_path . '/' . IMAGE_DIR_NAME
+                APPS_PATH . '/' . $ns_path . '/' . THEME_NAME . '/' . IMAGE_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/default/' . IMAGE_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/' . IMAGE_DIR_NAME
             ];
         }
         foreach ($a_optional_paths as $path) {
@@ -172,7 +172,7 @@ class LocateFile
     public static function getImageWithDir($file_name = '', $namespace = '')
     {
         $file_w_path = self::getImageWithPath($file_name, $namespace);
-        return str_replace(SITE_PATH, '', $file_w_path);
+        return str_replace(PUBLIC_PATH, '', $file_w_path);
     }
 
     /**
@@ -183,18 +183,18 @@ class LocateFile
     {
         if ($namespace == '') {
             $a_optional_paths = [
-                SITE_PATH . '/' . JS_DIR_NAME . '/' . $file_name,
-                SITE_PATH . '/assets/' . JS_DIR_NAME . '/' . $file_name,
-                SITE_PATH . '/' . $file_name
+                PUBLIC_PATH . '/' . JS_DIR_NAME . '/' . $file_name,
+                PUBLIC_PATH . '/assets/' . JS_DIR_NAME . '/' . $file_name,
+                PUBLIC_PATH . '/' . $file_name
             ];
         }
         else {
             $ns_path = str_replace('\\', '/', $namespace);
             $ns_path .= '/resources/themes';
             $a_optional_paths = [
-                SRC_PATH . '/' . $ns_path . '/' . THEME_NAME . '/' . JS_DIR_NAME,
-                SRC_PATH . '/' . $ns_path . '/default/' . JS_DIR_NAME,
-                SRC_PATH . '/' . $ns_path . '/' . JS_DIR_NAME
+                APPS_PATH . '/' . $ns_path . '/' . THEME_NAME . '/' . JS_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/default/' . JS_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/' . JS_DIR_NAME
             ];
         }
         foreach ($a_optional_paths as $path) {
@@ -214,7 +214,7 @@ class LocateFile
     public static function getJsWithDir($file_name = '', $namespace = '')
     {
         $file_w_path = self::getJsWithPath($file_name, $namespace);
-        return str_replace(SITE_PATH, '', $file_w_path);
+        return str_replace(PUBLIC_PATH, '', $file_w_path);
     }
 
     /**
@@ -252,7 +252,7 @@ class LocateFile
     {
         $path = self::getTemplateWithPath($file_name, $namespace, $sub_dir);
         if ($path != '') {
-            return str_replace(SITE_PATH, '', $path);
+            return str_replace(PUBLIC_PATH, '', $path);
         }
         return '';
     }
@@ -264,7 +264,7 @@ class LocateFile
     public static function getTemplateWithPath($file_name = '', $namespace = '', $sub_dir = '')
     {
         if ($file_name == '' || $namespace == '') { return ''; }
-        $path = SRC_PATH . '/';
+        $path = APPS_PATH . '/';
         $path .= str_replace('\\', '/', $namespace);
         $path .= $sub_dir != '' ? '/resources/templates/' . $sub_dir . '/' : '';
         $path .= $path . $file_name;
@@ -280,17 +280,17 @@ class LocateFile
      *   <pre>One of many places:
      *     NOTE: $file_dir_name can be pathlike, e.g. '/assets/css'
      *           $file_name can also be pathlike, e.g. '/assets/css/main.css'
-     *     SITE_PATH/$file_name
-     *     SITE_PATH/$file_dir_name/$file_name
-     *     SITE_PATH/assets/$file_name
-     *     SITE_PATH/assets/$file_dir_name/$file_name
-     *     SITE_PATH/assets/themes/$this->theme_name/$file_dir_name/$file_name
+     *     PUBLIC_PATH/$file_name
+     *     PUBLIC_PATH/$file_dir_name/$file_name
+     *     PUBLIC_PATH/assets/$file_name
+     *     PUBLIC_PATH/assets/$file_dir_name/$file_name
+     *     PUBLIC_PATH/assets/themes/$this->theme_name/$file_dir_name/$file_name
      *     BASE_PATH/$file_name
      *     BASE_PATH/$file_dir_name/$file_name
-     *     APP_DIR/$file_name
-     *     APP_DIR/config/$file_name
-     *     APP_DIR/$file_dir_name/$file_name
-     *     APP_DIR/str_replace('Ritc\', '', $namespace)/$file_name
+     *     PUBLIC_DIR/$file_name
+     *     SRC_PATH/config/$file_name
+     *     SRC_PATH/$file_dir_name/$file_name
+     *     SRC_PATH/str_replace('Ritc\', '', $namespace)/$file_name
          * @param string $file_name required
      * @param string $namespace optional defaults to $this->namespace
      * @param string $file_dir_name optional default to none
@@ -302,12 +302,12 @@ class LocateFile
             return '';
         }
         $namespace    = str_replace('\\', '/', $namespace);
-        $ns_path      = SRC_PATH . '/' . $namespace;
+        $ns_path      = APPS_PATH . '/' . $namespace;
         $a_possible_locations = array(
-            'site_path'             => SITE_PATH,
+            'public_path'           => PUBLIC_PATH,
             'base_path'             => BASE_PATH,
-            'app_path'              => APP_PATH,
-            'config_path'           => APP_CONFIG_PATH,
+            'src_path'              => SRC_PATH,
+            'config_path'           => SRC_CONFIG_PATH,
             'private_path'          => PRIVATE_PATH,
             'ns_path'               => $ns_path,
             'ns_res_path'           => $ns_path . '/resources',
@@ -315,9 +315,9 @@ class LocateFile
             'ns_conf_path'          => $ns_path . '/resources/config',
             'ns_theme_path'         => $ns_path . '/resources/themes/' . $theme_name,
             'ns_default_theme_path' => $ns_path . '/resources/themes/default',
-            'assets_path'           => SITE_PATH . '/assets',
-            'themes_path'           => SITE_PATH . '/assets/themes/' . $theme_name,
-            'default_theme'         => SITE_PATH . '/assets/themes/default',
+            'assets_path'           => PUBLIC_PATH . '/assets',
+            'themes_path'           => PUBLIC_PATH . '/assets/themes/' . $theme_name,
+            'default_theme'         => PUBLIC_PATH . '/assets/themes/default',
             'no_base'               => '',
         );
         $file_w_dir = '/';
@@ -329,7 +329,7 @@ class LocateFile
             if (file_exists($full_path)) {
                 $a_file_paths = [
                     'path' => $full_path,
-                    'dir'  => str_replace(SITE_PATH, '', $full_path)
+                    'dir'  => str_replace(PUBLIC_PATH, '', $full_path)
                 ];
                 return $a_file_paths;
             }

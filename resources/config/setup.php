@@ -3,7 +3,7 @@
  * @brief     This file sets up the App.
  * @details   Required to get the entire framework to work. The only thing
  *            that changes primarily is the defgroup in this comment for Doxygen.
- * @file      /app/src/Ritc/Library/resources/config/setup.php
+ * @file      /src/apps/Ritc/Library/resources/config/setup.php
  * @namespace Ritc
  * @note NOTE:
  * - _path and _PATH indicates a full server path
@@ -21,14 +21,14 @@ use Ritc\Library\Services\Elog;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 
-if (!defined('SITE_PATH')) {
-    define('SITE_PATH', $_SERVER['DOCUMENT_ROOT']);
+if (!defined('PUBLIC_PATH')) {
+    define('PUBLIC_PATH', $_SERVER['DOCUMENT_ROOT']);
 }
 if (!defined('BASE_PATH')) {
     define('BASE_PATH', dirname(dirname(__FILE__)));
 }
 
-require_once BASE_PATH . '/app/config/constants.php';
+require_once BASE_PATH . '/src/config/constants.php';
 
 if (!isset($db_config_file)) {
     $db_config_file = 'db_config.php';
@@ -37,14 +37,14 @@ if (!isset($db_config_file)) {
 $o_loader = require_once VENDOR_PATH . '/autoload.php';
 
 ### PSR-4 autoload method
-$my_namespaces = require_once APP_CONFIG_PATH . '/autoload_namespaces.php';
+$my_namespaces = require_once SRC_CONFIG_PATH . '/autoload_namespaces.php';
 foreach ($my_namespaces as $psr4_prefix => $psr0_paths) {
     $o_loader->addPsr4($psr4_prefix, $psr0_paths);
 }
 ###
 
 ### classmap method of autoload ###
-# $my_classmap = require_once APP_CONFIG_PATH . '/autoload_classmap.php';
+# $my_classmap = require_once SRC_CONFIG_PATH . '/autoload_classmap.php';
 # $o_loader->addClassMap($my_classmap);
 ###
 
@@ -85,7 +85,7 @@ if ($o_pdo !== false) {
 
         if (!ConstantsHelper::start($o_di)) {
             $o_elog->write("Couldn't create the constants\n", LOG_ALWAYS);
-            require_once APP_CONFIG_PATH . '/fallback_constants.php';
+            require_once SRC_CONFIG_PATH . '/fallback_constants.php';
         }
         $o_session->setIdleTime(SESSION_IDLE_TIME);
         $o_router = new Router($o_di);

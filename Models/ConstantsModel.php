@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/ConstantsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.4.0
- * @date      2017-01-27 09:09:10
+ * @version   2.4.1
+ * @date      2017-02-15 15:32:55
  * @note      see ConstantsEntity for database table definition.
  * @note <b>Change Log</b>
+ * - v2.4.1 - Refactoring of file structure reflected here                  - 2017-02-15 wer
  * - v2.4.0 - Implementing more of the DbUtilityTraits                      - 2017-01-27 wer
  * - v2.3.1 - Bug fix in create mysql table                                 - 2017-01-13 wer
  * - v2.3.0 - Refactoring of DbModel reflected here                         - 2016-03-18 wer
@@ -174,7 +175,7 @@ class ConstantsModel implements ModelInterface
     public function createNewConstants()
     {
         // todo ConstantsModel.createNewConstants - need to figure out if this is a bug
-        $a_constants = include APP_CONFIG_PATH . '/fallback_constants_array.php';
+        $a_constants = include SRC_CONFIG_PATH . '/fallback_constants_array.php';
         if ($this->o_db->startTransaction()) {
             if ($this->tableExists() === false) {
                 if ($this->createTable() === false) {

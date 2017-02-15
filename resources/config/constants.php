@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Define Constants that will be used throughout the website.
- * @file      /app/src/Ritc/Library/resources/config/constants.php
+ * @file      /src/apps/Ritc/Library/resources/config/constants.php
  * @note NOTE:
  * - _PATH = Full server path
  * - _DIR  = Path in web site (URI)
@@ -10,7 +10,7 @@
  */
 namespace Ritc;
 
-if (!defined('SITE_PATH')) {
+if (!defined('PUBLIC_PATH')) {
     exit('This file cannot be called directly'); // should be defined in the setup.php file
 }
 if (!defined('BASE_PATH')) {
@@ -19,17 +19,17 @@ if (!defined('BASE_PATH')) {
 if (!defined('PUBLIC_DIR')) {
     define('PUBLIC_DIR', '');
 }
-if (!defined('APP_PATH')) {
-    define('APP_PATH', BASE_PATH . '/app');
+if (!defined('SRC_PATH')) {
+    define('SRC_PATH', BASE_PATH . '/src');
 }
 if (!defined('VENDOR_PATH')) {
     define('VENDOR_PATH', BASE_PATH . '/vendor');
 }
-if (!defined('SRC_PATH')) {
-    define('SRC_PATH', APP_PATH . '/src');
+if (!defined('APPS_PATH')) {
+    define('APPS_PATH', SRC_PATH . '/apps');
 }
-if (!defined('APP_CONFIG_PATH')) {
-    define('APP_CONFIG_PATH', APP_PATH . '/config');
+if (!defined('SRC_CONFIG_PATH')) {
+    define('SRC_CONFIG_PATH', SRC_PATH . '/config');
 }
 if (!defined('SITE_URL')) {
     if (isset($_SERVER['HTTP_HOST'])) {
@@ -46,13 +46,13 @@ if (!defined('RODB')) {
     define('RODB', false);
 }
 if (!defined('LIBRARY_PATH')) {
-    if(file_exists(SRC_PATH . '/Ritc/Library')) {
-        define('LIBRARY_PATH', SRC_PATH . '/Ritc/Library');
+    if(file_exists(APPS_PATH . '/Ritc/Library')) {
+        define('LIBRARY_PATH', APPS_PATH . '/Ritc/Library');
         if (file_exists(LIBRARY_PATH . '/resources/config')) {
             define('LIBRARY_CONFIG_PATH', LIBRARY_PATH . '/resources/config');
         }
         else {
-            define('LIBRARY_CONFIG_PATH', APP_CONFIG_PATH);
+            define('LIBRARY_CONFIG_PATH', SRC_CONFIG_PATH);
         }
     }
     else {

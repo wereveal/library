@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.3
- * @date      2017-02-07 16:59:40
+ * @version   1.0.0-beta.4
+ * @date      2017-02-11 13:40:24
  * @note <b>Change Log</b>
+ * - v1.0.0-beta.4  - removed twigLoader which apparently didn't really work            - 2017-02-11 wer
  * - v1.0.0-beta.3  - removed LogitTraits from this trait, bug fix in twigLoader        - 2017-02-07 wer
  *                    There were times when another trait also used LogitTraits
  *                    and was causing conflicts.
@@ -97,31 +98,29 @@ trait ViewTraits
 
     /**
      * Creates some commonly used values to pass into a twig template.
-     * @param string $tpl_type Optional, defaults to 'main' which uses the default twig prefix.
-     *                         Other pre-set are manager and library for mgr_ and LIB_TWIG_PREFIX.
-     *                         Any twig prefix without underscore may be specified where the
-     *                         navgroup and twig prefix are the same, e.g. fred and fred_ respectively.
      * @param array  $a_message Optional, defaults to []. Allows a message to be passed.
      * @return array
      */
-    public function createDefaultTwigValues($tpl_type = 'main', array $a_message = [])
+    public function createDefaultTwigValues(array $a_message = [])
     {
+        $meth = __METHOD__ . '.';
         $a_page_values = $this->getPageValues();
-        switch ($tpl_type) {
-            case 'manager':
-                $a_menus = $this->retrieveNav('ManagerLinks');
+        $log_message = 'page values ' . var_export($a_page_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
+        $a_menus = $this->retrieveNav($a_page_values['ng_id']);
+        switch ($a_page_values['page_twig']) {
+            case 'Manager':
                 $twig_prefix = 'mgr_';
                 break;
-            case 'library':
-                $a_menus = $this->retrieveNav('ManagerLinks');
+            case 'Library': // uses the templates in Ritc\Library
                 $twig_prefix = LIB_TWIG_PREFIX;
                 break;
-            case 'main':
-                $a_menus = $this->retrieveNav('Main');
+            case 'Main': // uses the templates as defined by TWIG_PREFIX
                 $twig_prefix = TWIG_PREFIX;
                 break;
-            default:
-                $a_menus = $this->retrieveNav($tpl_type);
+            default: // uses the templates as specified.
+                $tpl_type = strtolower($a_page_values['page_twig']);
                 $twig_prefix = $tpl_type . '_';
         }
 
@@ -141,28 +140,6 @@ trait ViewTraits
         );
         $a_values = array_merge($a_page_values, $a_values);
         return $a_values;
-    }
-
-    /**
-     * Adds additional twig path/namespaces to twig for use.
-     * Makes the twig object slightly lazy in implementation.
-     * @param array $a_paths in the form of [path => namespace, ...]
-     * @return bool
-     */
-    public function twigLoader(array $a_paths = [])
-    {
-        $twig_config = $this->o_di->getVar('twigConfig');
-        $o_loader = TwigFactory::getLoader($twig_config);
-        foreach ($a_paths as $path => $namespace) {
-            try {
-                $o_loader->prependPath($path, $namespace);
-            }
-            catch (\Twig_Error_Loader $e) {
-                error_log("Couldn't load path: " . $e->getMessage());
-                return false;
-            }
-        }
-        return true;
     }
 
     ### SETters and GETters ###
@@ -247,31 +224,33 @@ trait ViewTraits
      */
     public function getPageValues()
     {
-        $o_page_model = new PageComplexModel($this->o_db);
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $o_elog = $this->o_di->get('elog');
-            $o_page_model->setElog($o_elog);
-        }
+        $meth = __METHOD__ . '.';
+        $o_page_model = new PageComplexModel($this->o_di);
         $url_id = $this->o_router->getUrlId();
         $a_values = $o_page_model->readPageValuesByUrlId($url_id);
+        $log_message = 'db values:  ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
 
         if (isset($a_values[0])) {
             $a_page_values = $a_values[0];
         }
         else {
             return [
-                'page_id'       => 0,
-                'url_id'        => 0,
-                'url_scheme'    => 'https',
-                'page_url'      => '/',
-                'description'   => '',
-                'title'         => '',
-                'base_url'      => '/',
-                'lang'          => 'en',
-                'charset'       => 'utf-8',
-                'public_dir'    => PUBLIC_DIR,
-                'site_url'      => SITE_URL,
-                'rights_holder' => RIGHTS_HOLDER
+                'page_id'        => 0,
+                'url_id'         => 0,
+                'ng_id'          => 1,
+                'page_twig'      => 'Site',
+                'url_scheme'     => 'https',
+                'page_url'       => '/',
+                'description'    => '',
+                'title'          => '',
+                'base_url'       => '/',
+                'lang'           => 'en',
+                'charset'        => 'utf-8',
+                'public_dir'     => PUBLIC_DIR,
+                'site_url'       => SITE_URL,
+                'rights_holder'  => RIGHTS_HOLDER,
+                'copyright_date' => COPYRIGHT_DATE
             ];
         }
         $base_url = $a_page_values['page_base_url'] == '/'
@@ -282,6 +261,8 @@ trait ViewTraits
             'page_id'       => $a_page_values['page_id'],
             'url_id'        => $a_page_values['url_id'],
             'url_scheme'    => $a_page_values['url_scheme'],
+            'ng_id'         => $a_page_values['ng_id'],
+            'page_twig'     => $a_page_values['page_twig'],
             'page_url'      => $a_page_values['url_text'],
             'description'   => $a_page_values['page_description'],
             'title'         => $a_page_values['page_title'],

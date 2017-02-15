@@ -48,14 +48,14 @@ if ($missing_params != '') {
 }
 define('DEVELOPER_MODE', true);
 define('BASE_PATH', dirname(dirname(__DIR__)));
-define('SITE_PATH', BASE_PATH . '/public');
+define('PUBLIC_PATH', BASE_PATH . '/public');
 
-require_once BASE_PATH . '/app/config/constants.php';
-$app_path = SRC_PATH . '/' . $namespace. '/' . $app_name;
+require_once BASE_PATH . '/src/config/constants.php';
+$app_path = APPS_PATH . '/' . $namespace. '/' . $app_name;
 $a_new_dirs = ['Abstracts', 'Controllers', 'Entities', 'Interfaces', 'Models',
 'Tests', 'Traits', 'Views', 'resources/config', 'resources/sql',
 'resources/templates', 'resources/themes', 'resources/templates/default',
-'resources/templates/elements', 'resources/templates/pages', 
+'resources/templates/elements', 'resources/templates/pages',
 'resources/templates/snippets', 'resources/templates/tests'];
 
 $htaccess_text =<<<EOF

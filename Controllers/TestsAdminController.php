@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Controllers/TestsAdminController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2015-10-23 11:43:13
+ * @version   1.0.0-alpha.1
+ * @date      2017-02-15 15:23:02
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.1 - Refactoring                                   - 2017-02-15 wer
  * - v1.0.0-alpha.0 - Initial version                               - 10/23/2015 wer
  */
 namespace Ritc\Library\Controllers;
@@ -54,8 +55,8 @@ class TestsAdminController
         if (file_exists(LIBRARY_CONFIG_PATH . '/tests')) {
             $this->test_configs_path = LIBRARY_CONFIG_PATH . '/tests';
         }
-        elseif (file_exists(APP_CONFIG_PATH . '/tests')) {
-            $this->test_configs_path = APP_CONFIG_PATH . '/tests';
+        elseif (file_exists(SRC_CONFIG_PATH . '/tests')) {
+            $this->test_configs_path = SRC_CONFIG_PATH . '/tests';
         }
         else {
             $this->test_configs_path = __DIR__;

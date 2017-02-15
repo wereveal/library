@@ -7,8 +7,8 @@
  * @file      Ritc/Library/FactoriesTwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.0
- * @date      2017-02-09 16:01:25
+ * @version   1.2.0+1
+ * @date      2017-02-15 15:25:55
  * @note <b>Change Log</b>
  * - v1.2.0   - changed to allow config file to include a path.                                       - 2017-02-09 wer
  * - v1.1.0   - added the ability to get the loader used to add additional twig namespaces            - 2017-02-08 wer
@@ -110,7 +110,7 @@ class TwigFactory
     /**
      * Returns the array from the config file.
      * @param string $config_file Required Can be a file name or file with path.
-     * @param string $namespace   Optional. If omitted, looks in the APP_CONFIG_PATH.
+     * @param string $namespace   Optional. If omitted, looks in the SRC_CONFIG_PATH.
      *                            Use namespace format e.g. My\Namespace.
      * @return array
      */

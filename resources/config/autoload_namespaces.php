@@ -1,4 +1,4 @@
 <?php
 return array(
-    'Ritc\\'    => APP_PATH . '/src/Ritc'
+    'Ritc\\'    => SRC_PATH . '/apps/Ritc'
 );

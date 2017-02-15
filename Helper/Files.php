@@ -423,17 +423,17 @@ class Files implements LocationInterface
      *   <pre>One of many places:
      *     NOTE: $file_dir_name can be pathlike, e.g. '/assets/css'
      *           $file_name can also be pathlike, e.g. '/assets/css/main.css'
-     *     SITE_PATH/$file_name
-     *     SITE_PATH/$file_dir_name/$file_name
-     *     SITE_PATH/assets/$file_name
-     *     SITE_PATH/assets/$file_dir_name/$file_name
-     *     SITE_PATH/assets/themes/$this->theme_name/$file_dir_name/$file_name
+     *     PUBLIC_PATH/$file_name
+     *     PUBLIC_PATH/$file_dir_name/$file_name
+     *     PUBLIC_PATH/assets/$file_name
+     *     PUBLIC_PATH/assets/$file_dir_name/$file_name
+     *     PUBLIC_PATH/assets/themes/$this->theme_name/$file_dir_name/$file_name
      *     BASE_PATH/$file_name
      *     BASE_PATH/$file_dir_name/$file_name
-     *     APP_DIR/$file_name
-     *     APP_DIR/config/$file_name
-     *     APP_DIR/$file_dir_name/$file_name
-     *     APP_DIR/str_replace('Ritc\', '', $namespace)/$file_name
+     *     SRC_PATH/$file_name
+     *     SRC_PATH/config/$file_name
+     *     SRC_PATH/$file_dir_name/$file_name
+     *     SRC_PATH/str_replace('Ritc\', '', $namespace)/$file_name
          * @param string $file_name required
      * @param string $namespace optional defaults to $this->namespace
      * @param string $file_dir_name optional default to none
@@ -451,20 +451,20 @@ class Files implements LocationInterface
             $file_dir_name = $this->file_dir_name;
         }
         $namespace    = str_replace('\\', '/', $namespace);
-        $ns_path      = SRC_PATH . '/' . $namespace;
+        $ns_path      = APPS_PATH . '/' . $namespace;
         $a_possible_locations = array(
-            'site_path'      => SITE_PATH,
+            'public_path'    => PUBLIC_PATH,
             'base_path'      => BASE_PATH,
-            'app_path'       => APP_PATH,
-            'config_path'    => APP_PATH . '/config',
+            'src_path'       => SRC_PATH,
+            'config_path'    => SRC_PATH . '/config',
             'private_path'   => PRIVATE_PATH,
             'ns_path'        => $ns_path,
             'ns_res_path'    => $ns_path . '/resources',
             'ns_tpl_path'    => $ns_path . '/resources/templates',
             'ns_conf_path'   => $ns_path . '/resources/config',
-            'assets_path'    => SITE_PATH . '/assets',
-            'themes_path'    => SITE_PATH . '/assets/themes/' . $this->theme_name,
-            'default_theme'  => SITE_PATH . '/assets/themes/default',
+            'assets_path'    => PUBLIC_PATH . '/assets',
+            'themes_path'    => PUBLIC_PATH . '/assets/themes/' . $this->theme_name,
+            'default_theme'  => PUBLIC_PATH . '/assets/themes/default',
             'no_base'        => '',
         );
         $file_w_dir = '/';
@@ -545,8 +545,8 @@ class Files implements LocationInterface
             __METHOD__ . '.' . __LINE__
         );
         $found_file = $this->locateFile($this->file_name, $this->namespace, $this->file_dir_name);
-        $file_w_dir = str_replace(SITE_PATH, '', $found_file);
-        if (file_exists(SITE_PATH . '/' . $file_w_dir)) {
+        $file_w_dir = str_replace(PUBLIC_PATH, '', $found_file);
+        if (file_exists(PUBLIC_PATH . '/' . $file_w_dir)) {
             $this->file_w_dir  = $file_w_dir;
         } else {
             $this->file_w_dir = '';

@@ -5,9 +5,10 @@
  * @file      PageComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.2
- * @date      2017-01-27 12:37:11
+ * @version   1.0.0-alpha.3
+ * @date      2017-02-11 12:29:54
  * @note Change Log
+ * - v1.0.0-alpha.3 - bug fixes                     - 2017-02-11 wer
  * - v1.0.0-alpha.2 - refactoring reflected here    - 2017-01-27 wer
  * - v1.0.0-alpha.1 - bug fix                       - 2016-04-28 wer
  * - v1.0.0-alpha.0 - Initial version               - 2016-04-08 wer
@@ -16,6 +17,8 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Elog;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -28,16 +31,34 @@ class PageComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
+    /** @var \Ritc\Library\Services\Di */
+    private $o_di;
+    /** @var \Ritc\Library\Models\PageModel  */
+    private $o_page;
+    /** @var \Ritc\Library\Models\UrlsModel  */
+    private $o_urls;
     /** @var string  */
     private $select_sql = '';
 
     /**
      * PageComplexModel constructor.
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param \Ritc\Library\Services\Di $o_di
      */
-    public function __construct(DbModel $o_db)
+    public function __construct(Di $o_di)
     {
-        $this->setupProperties($o_db, 'page', 'lib');
+        $this->o_di = $o_di;
+        /** @var DbModel $o_db */
+        $o_db = $o_di->get('db');
+        /** @var Elog $o_elog */
+        $o_elog = $o_di->get('elog');
+        $this->o_db = $o_db;
+        $this->o_elog = $o_elog;
+        $this->o_page = new PageModel($o_db);
+        $this->o_urls = new UrlsModel($o_db);
+        if (DEVELOPER_MODE) {
+            $this->o_page->setElog($o_elog);
+            $this->o_urls->setElog($o_elog);
+        }
         $this->setSelectSql();
     }
 
@@ -60,8 +81,8 @@ class PageComplexModel
             $a_search_parameters['where_exists'] = true;
         }
         $sql_where = $this->buildSqlWhere($a_search_for, $a_search_parameters);
-        $sql = $this->select_sql . $sql_where;
-        $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
+        $sql = $this->select_sql . "\n" . $sql_where;
+        $this->logIt("SQL: {$sql}", LOG_ON, $meth . __LINE__);
         $log_message = 'Search Parameters ' . var_export($a_search_for, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
@@ -82,9 +103,10 @@ class PageComplexModel
         $this->setSelectSql();
         $sql =<<<SQL
 {$this->select_sql}
+WHERE p.url_id = u.url_id
 AND p.url_id = :url_id
 SQL;
-        $this->logIt("sql: $sql", LOG_OFF, $meth . __LINE__);
+        $this->logIt("sql: $sql", LOG_ON, $meth . __LINE__);
         return $this->o_db->search($sql, [':url_id' => $url_id]);
 
     }
@@ -121,13 +143,19 @@ SQL;
             $this->select_sql = $the_string;
         }
         else {
-            $this->select_sql =<<<SQL
-SELECT p.page_id, p.page_type, p.page_title, p.page_description, 
-       p.page_base_url, p.page_lang, p.page_charset, p.page_immutable,
-       u.url_id, u.url_host, u.url_text, u.url_scheme, u.url_immutable
-FROM {$this->db_prefix}page as p, {$this->db_prefix}urls as u
-WHERE p.url_id = u.url_id
-SQL;
+            $a_page_fields = $this->o_page->getDbFields();
+            $a_urls_fields = $this->o_urls->getDbFields();
+            $page_prefix = $this->o_page->getDbPrefix();
+            $url_prefix = $this->o_urls->getDbPrefix();
+            $select_fields = $this->buildSqlSelectFields($a_page_fields, 'p');
+            $select_fields .= ', ' . $this->buildSqlSelectFields($a_urls_fields, 'u');
+
+            $this->select_sql = <<<EOT
+SELECT {$select_fields}
+FROM {$page_prefix}page as p, 
+     {$url_prefix}urls as u
+EOT;
         }
     }
 }
+
