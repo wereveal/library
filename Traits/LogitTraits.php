@@ -104,5 +104,8 @@ trait LogitTraits
             }
 
         }
+        else {
+            error_log("DEVELOPER_MODE is false");
+        }
     }
 }

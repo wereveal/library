@@ -235,14 +235,14 @@ JOIN {$this->db_prefix}people_group_map pgm
   ON p.people_id = pgm.people_id
 JOIN {$this->db_prefix}groups as g
   ON (
-        g.group_id = pgm.group_id 
+        g.group_id = pgm.group_id
     AND $group_and
     )
 WHERE p.is_active = :is_active
 SQL;
-        $this->logIt("SQL: " . $sql, LOG_ON, $meth . __LINE__);
+        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
         $log_message = 'values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_results = $this->o_db->search($sql, $a_values);
         if ($a_results === false) {

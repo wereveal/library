@@ -82,7 +82,7 @@ class PageComplexModel
         }
         $sql_where = $this->buildSqlWhere($a_search_for, $a_search_parameters);
         $sql = $this->select_sql . "\n" . $sql_where;
-        $this->logIt("SQL: {$sql}", LOG_ON, $meth . __LINE__);
+        $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
         $log_message = 'Search Parameters ' . var_export($a_search_for, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
@@ -106,7 +106,7 @@ class PageComplexModel
 WHERE p.url_id = u.url_id
 AND p.url_id = :url_id
 SQL;
-        $this->logIt("sql: $sql", LOG_ON, $meth . __LINE__);
+        $this->logIt("sql: $sql", LOG_OFF, $meth . __LINE__);
         return $this->o_db->search($sql, [':url_id' => $url_id]);
 
     }
@@ -152,7 +152,7 @@ SQL;
 
             $this->select_sql = <<<EOT
 SELECT {$select_fields}
-FROM {$page_prefix}page as p, 
+FROM {$page_prefix}page as p,
      {$url_prefix}urls as u
 EOT;
         }

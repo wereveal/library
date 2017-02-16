@@ -106,7 +106,7 @@ trait ViewTraits
         $meth = __METHOD__ . '.';
         $a_page_values = $this->getPageValues();
         $log_message = 'page values ' . var_export($a_page_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_menus = $this->retrieveNav($a_page_values['ng_id']);
         switch ($a_page_values['page_twig']) {
@@ -229,7 +229,7 @@ trait ViewTraits
         $url_id = $this->o_router->getUrlId();
         $a_values = $o_page_model->readPageValuesByUrlId($url_id);
         $log_message = 'db values:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         if (isset($a_values[0])) {
             $a_page_values = $a_values[0];

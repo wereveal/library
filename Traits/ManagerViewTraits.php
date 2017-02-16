@@ -58,7 +58,7 @@ trait ManagerViewTraits
         $a_values = array_merge($a_page_values, $a_twig_values);
 
         $log_message = 'Final Twig Values:  ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $this->o_session->unsetVar('login_id');
         $tpl = '@' . $a_twig_values['twig_prefix'] . 'pages/login_page.twig';
         return $this->o_twig->render($tpl, $a_values);

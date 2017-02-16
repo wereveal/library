@@ -196,7 +196,7 @@ class ConstantsHelper
             }
             else {
                 $log_message = 'Error:  ' . var_export($this->o_constants_model->getErrorMessage(), TRUE);
-                $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
                 return false;
             }
