@@ -96,16 +96,9 @@ trait LogitTraits
     {
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
-            if ($this->o_elog instanceof Elog) {
-                $this->o_elog->write("This is an instance of Elog");
-            }
             if (!$this->o_elog instanceof Elog) {
                 error_log("This is not an instance of Elog");
             }
-
-        }
-        else {
-            error_log("DEVELOPER_MODE is false");
         }
     }
 }
