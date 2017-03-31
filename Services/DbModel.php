@@ -294,7 +294,7 @@ class DbModel
      * @return mixed value of the property
      * @note - this is normally set to private so not to be used
      */
-    protected function getVar($var_name)
+    public function getVar($var_name)
     {
         return $this->$var_name;
     }
