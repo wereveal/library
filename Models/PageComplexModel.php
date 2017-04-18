@@ -71,8 +71,7 @@ class PageComplexModel
     public function readPageValues(array $a_search_for = [], array $a_search_parameters = [])
     {
         $meth = __METHOD__ . '.';
-        $a_allowed_keys = ['url_id', 'url_text', 'page_id', 'page_title'];
-        $a_search_for = Arrays::removeUndesiredPairs($a_search_for, $a_allowed_keys);
+        $a_allowed_keys = ['u.url_id', 'u.url_text', 'p.page_id', 'p.page_title'];
 
         if (!isset($a_search_parameters['order_by'])) {
             $a_search_parameters['order_by'] = 'page_id ASC';
@@ -80,11 +79,11 @@ class PageComplexModel
         if (!isset($a_search_parameters['where_exists'])) {
             $a_search_parameters['where_exists'] = true;
         }
-        $sql_where = $this->buildSqlWhere($a_search_for, $a_search_parameters);
+        $sql_where = $this->buildSqlWhere($a_search_for, $a_search_parameters, $a_allowed_keys);
         $sql = $this->select_sql . "\n" . $sql_where;
-        $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
+        $this->logIt("SQL: {$sql}", LOG_ON, $meth . __LINE__);
         $log_message = 'Search Parameters ' . var_export($a_search_for, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
 
         return $this->o_db->search($sql, $a_search_for);
     }

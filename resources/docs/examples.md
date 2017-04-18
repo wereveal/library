@@ -21,7 +21,7 @@ An array used in the DbUtilityTraits::genericCreate() method with the following 
     - a_psql          => an array providing data to handle postgresql inserts and get the new id
         - table_name  => string
         - column_name => string
-        
+
 ## Generic Read Parameters {#readparams}
 An array used in the DbUtilityTraits::genericRead() method with the following keys
 
@@ -36,4 +36,40 @@ An array used in the DbUtilityTraits::genericRead() method with the following ke
     - 'starting_from'   Which record number to start a limited return
     - 'comparison_type' What kind of comparison operator to use for ALL WHEREs
     - 'where_exists'    Either true or false, If WHERE exists, do not add to returned string
-    - 'select_distinct' Either true or false Add DISTINCT to the SELECT 
+    - 'select_distinct' Either true or false Add DISTINCT to the SELECT
+
+## TwigFactory Parameters {#twigfactory}
+    - config
+      - A string specifying the twig config file to be used, e.g. twig_config.php
+      - An array
+        - a list of config files to use
+            [
+                [
+                    'name'      => 'twig_config.php',
+                    'namespace' => 'Ritc\Library'
+                ],
+                [
+                    'name'      => 'twig_config.php',
+                    'namespace' => 'Ritc\FtpAdmin'
+                ],
+            ]
+        - or an array formatted as needed by the __construct method.
+            [
+                'default_path'      => '/Ritc/Library/resources/templates',
+                'additional_paths'  => [
+                    '/Ritc/Library/resources/templates/default' => 'lib_default',
+                    '/Ritc/Library/resources/templates/pages'   => 'lib_pages',
+                    '/Ritc/Library/resources/templates/stuff'   => 'lib_stuff',
+                ],
+                'environment_options' => [
+                    'cache'       => SRC_PATH . '/twig_cache',
+                    'auto_reload' => true,
+                    'debug'       => true
+            ]
+    - name
+      - namespace to find the config file, when config is a filename
+      - name to give the instance, when config is an array
+    - use_main_twig
+      - Only used withn config is an array of config files to use.
+      - true will start the config using the main site config and then include others
+      - false will only use the configs specified to create the twig environment

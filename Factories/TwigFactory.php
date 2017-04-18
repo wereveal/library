@@ -65,11 +65,44 @@ class TwigFactory
     }
 
     /**
-     * Creates the Twig_Environment object to be used to render pages.
-     * @param string $config_file
+     * Returns the twig environment object which we use to do all the template rendering.
+     * @param string|array $config        Optional but highly recommended. \ref twigfactory
+     * @param string       $name          Optional, defaults to main. Can be the name of the instance or a namespace.
+     * @param bool         $use_main_twig Optional, defaults to true. Only used when self::createMultiSource is used.
+     * @return Twig_Environment
+     */
+    public static function getTwig($config = 'twig_config.php', $name = 'main', $use_main_twig = true)
+    {
+        if (is_array($config)) {
+            if (empty($config)) {
+                $o_tf = self::create('twig_config.php', $name);
+            }
+            elseif (isset($config['default_path'])) {
+                $o_tf = self::createWithArray($config, $name);
+            }
+            else {
+                $o_tf = self::createMultiSource($config, $name, $use_main_twig);
+            }
+        }
+        else {
+            $o_tf = self::create($config, $name);
+        }
+        return $o_tf->o_twig;
+    }
+
+
+    /**
+     * Creates an instance of the class.
+     * Note that this method returns the factory instance and not the Twig_Environment object.
+     * Use self::getTwig() to get the Twig_Environment object.
+     * The instance name will be derived from the config file name.
+     * If the file name is the default name, the instance name will be main.
+     * @param string $config_file Optional, defaults to twig_config.php
+     * @param string $namespace   Optional, defaults to no namespace (looks for the file in all the usual places).
+     *                            If namespace is given, it looks for the file in the namespace.
      * @return mixed
      */
-    public static function create($config_file = 'twig_config.php', $namespace = '')
+    protected static function create($config_file = 'twig_config.php', $namespace = '')
     {
         $org_config_file = $config_file;
         if (strpos($config_file, '/') !== false) {
@@ -79,6 +112,10 @@ class TwigFactory
         list($name, $extension) = explode('.', $config_file);
         // error_log("Name of config: " . $name);
         unset($extension);
+        $name = str_replace('twig_config_', '', $name);
+        if ($name == 'twig_config' || $name == '') {
+            $name = 'main';
+        }
         if (!isset(self::$instance[$name])) {
             $a_twig_config = self::retrieveTwigConfigArray($org_config_file, $namespace = '');
             // error_log("Twig Config: ". var_export($a_twig_config, true));
@@ -88,27 +125,72 @@ class TwigFactory
     }
 
     /**
-     * Returns the loader for the twig environment instance.
-     * @param string $config_file
+     * Creates an instance of the class.
+     * Note that this method returns the factory instance and not the Twig_Environment object.
+     * Use self::getTwig() to get the Twig_Environment object.
+     * @param array $a_config_files Optional but if omitted silly, because it will only return the main twig instance
+     *                              [['name' => 'twig_config.php', 'namespace' => 'Ritc\MyApp']...]
+     * @param string $name          Optional but recommended as it will only return the main twig environment if it has already been defined.
+     * @param bool   $use_main_twig Optional, defaults to true. If set to false, will only use the config files specified.
      * @return mixed
      */
-    public static function getLoader($config_file = 'twig_config.php')
+    protected static function createMultiSource(array $a_config_files = [], $name = 'main', $use_main_twig = true)
     {
-       list($name, $extension) = explode('.', $config_file);
-       unset($extension);
-       return self::$instance[$name]->o_loader;
+        if (!isset(self::$instance[$name])) {
+            if (empty($a_config_files)) {
+                return self::create('twig_config.php');
+            }
+            if ($use_main_twig) {
+                $a_twig_config = self::retrieveTwigConfigArray('twig_config.php');
+            }
+            else {
+                $a_twig_config = self::retrieveTwigConfigArray($a_config_files[0]['name'], $a_config_files[0]['namespace']);
+                unset($a_config_files[0]);
+            }
+            foreach ($a_config_files as $a_config_file) {
+                $config_file = $a_config_file['name'];
+                $namespace = !empty($a_config_file['namespace'])
+                    ? $a_config_file['namespace']
+                    : '';
+                $a_twig_config_next = self::retrieveTwigConfigArray($config_file, $namespace);
+                if (!empty($a_twig_config_next['additional_paths'])) {
+                    $a_twig_config['additional_paths'] = array_merge(
+                        $a_twig_config['additional_paths'],
+                        $a_twig_config_next['additional_paths']
+                    );
+                }
+            }
+            error_log(var_export($a_twig_config, true));
+            self::$instance[$name] = new TwigFactory($a_twig_config);
+        }
+        return self::$instance[$name];
     }
 
     /**
-     * Returns the twig environment object which we use to do all the
-     * template rendering.
-     * @param string $config_file
-     * @return Twig_Environment
+     * Creates an instance of the class.
+     * Note that this method returns the factory instance and not the Twig_Environment object.
+     * Use self::getTwig() to get the Twig_Environment object.
+     * @param array $a_twig_config Required. Array must have three key pairs,
+     *                             default_path        => string
+     *                             additional_paths    => array map of path => twig_name
+     *                             environment_options => array map of twig options, have at least the
+     *                                 cache, debug, and auto_reload options set.
+     * @param string $name         Optional but recommended. Name to give the instance. Defaults to main.
+     * @return mixed
      */
-    public static function getTwig($config_file = 'twig_config.php')
+    protected static function createWithArray(array $a_twig_config = [], $name = 'main')
     {
-        $o_tf = self::create($config_file);
-        return $o_tf->o_twig;
+        if (!isset(self::$instance[$name])) {
+            if (   empty($a_twig_config)
+                || empty($a_twig_config['default_path'])
+                || empty($a_twig_config['additional_paths'])
+                || empty($a_twig_config['environment_options'])
+            ) {
+                return self::create();
+            }
+            self::$instance[$name] = new TwigFactory($a_twig_config);
+        }
+        return self::$instance[$name];
     }
 
     /**
@@ -118,9 +200,8 @@ class TwigFactory
      *                            Use namespace format e.g. My\Namespace.
      * @return array
      */
-    private static function retrieveTwigConfigArray($config_file = '', $namespace = '')
+    private static function retrieveTwigConfigArray($config_file = 'twig_config.php', $namespace = '')
     {
-        if ($config_file == '') { return []; }
         if (strpos($config_file, '/') !== false) {
             $config_w_path = $config_file;
         }

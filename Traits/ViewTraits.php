@@ -5,23 +5,25 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.4
- * @date      2017-02-11 13:40:24
+ * @version   1.0.0-beta.6
+ * @date      2017-03-14 09:03:01
  * @note <b>Change Log</b>
- * - v1.0.0-beta.4  - removed twigLoader which apparently didn't really work            - 2017-02-11 wer
- * - v1.0.0-beta.3  - removed LogitTraits from this trait, bug fix in twigLoader        - 2017-02-07 wer
+ * - v1.0.0-beta.6  - added setTwig method to allow a different twig environment to be used.    - 2017-03-14 wer
+ * - v1.0.0-beta.5  - moved some functionality from getPageValues to createDefaultTwigValues    - 2017-03-13 wer
+ * - v1.0.0-beta.4  - removed twigLoader which apparently didn't really work                    - 2017-02-11 wer
+ * - v1.0.0-beta.3  - removed LogitTraits from this trait, bug fix in twigLoader                - 2017-02-07 wer
  *                    There were times when another trait also used LogitTraits
  *                    and was causing conflicts.
- * - v1.0.0-beta.2  - added lib_prefix for twig prefixes as a default                   - 2017-01-27 wer
- * = v1.0.0-beta.1  - This should have come out of alpha a while back                   - 2017-01-24 wer
+ * - v1.0.0-beta.2  - added lib_prefix for twig prefixes as a default                           - 2017-01-27 wer
+ * = v1.0.0-beta.1  - This should have come out of alpha a while back                           - 2017-01-24 wer
  *                    Added twigLoader method
- * - v1.0.0-alpha.4 - Added new method createDefaultTwigValues                          - 2016-04-15 wer
- * - v1.0.0-alpha.3 - Navigation links are now sorted properly                          - 2016-04-08 wer
- * - v1.0.0-alpha.2 - Use LogitTraits now                                               - 2016-04-01 wer
+ * - v1.0.0-alpha.4 - Added new method createDefaultTwigValues                                  - 2016-04-15 wer
+ * - v1.0.0-alpha.3 - Navigation links are now sorted properly                                  - 2016-04-08 wer
+ * - v1.0.0-alpha.2 - Use LogitTraits now                                                       - 2016-04-01 wer
  *                    Views that use this trait no longer need to 'use' LogitTraits
  *                    May cause some complaints from those that don't fix this.
- * - v1.0.0-alpha.1 - close to working version                                          - 2016-03-10 wer
- * - v1.0.0-alpha.0 - inital version                                                    - 2016-02-22 wer
+ * - v1.0.0-alpha.1 - close to working version                                                  - 2016-03-10 wer
+ * - v1.0.0-alpha.0 - inital version                                                            - 2016-02-22 wer
  */
 namespace Ritc\Library\Traits;
 
@@ -109,34 +111,24 @@ trait ViewTraits
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_menus = $this->retrieveNav($a_page_values['ng_id']);
-        switch ($a_page_values['page_twig']) {
-            case 'Manager':
-                $twig_prefix = 'mgr_';
-                break;
-            case 'Library': // uses the templates in Ritc\Library
-                $twig_prefix = LIB_TWIG_PREFIX;
-                break;
-            case 'Main': // uses the templates as defined by TWIG_PREFIX
-                $twig_prefix = TWIG_PREFIX;
-                break;
-            default: // uses the templates as specified.
-                $tpl_type = strtolower($a_page_values['page_twig']);
-                $twig_prefix = $tpl_type . '_';
-        }
 
         if (count($a_message) != 0) {
             $a_message = ViewHelper::messageProperties($a_message);
         }
 
         $a_values = array(
-            'a_message'   => $a_message,
-            'tolken'      => $_SESSION['token'],
-            'form_ts'     => $_SESSION['idle_timestamp'],
-            'hobbit'      => '',
-            'a_menus'     => $a_menus,
-            'adm_lvl'     => $this->adm_level,
-            'twig_prefix' => $twig_prefix,
-            'lib_prefix'  => LIB_TWIG_PREFIX
+            'a_message'      => $a_message,
+            'tolken'         => $_SESSION['token'],
+            'form_ts'        => $_SESSION['idle_timestamp'],
+            'hobbit'         => '',
+            'a_menus'        => $a_menus,
+            'adm_lvl'        => $this->adm_level,
+            'twig_prefix'    => TWIG_PREFIX,
+            'lib_prefix'     => LIB_TWIG_PREFIX,
+            'public_dir'     => PUBLIC_DIR,
+            'site_url'       => SITE_URL,
+            'rights_holder'  => RIGHTS_HOLDER,
+            'copyright_date' => COPYRIGHT_DATE
         );
         $a_values = array_merge($a_page_values, $a_values);
         return $a_values;
@@ -219,6 +211,23 @@ trait ViewTraits
     }
 
     /**
+     * Creates and sets the o_twig property.
+     * See the TwigFactory::getTwig method for details.
+     * @param string|array $twig_config \ref twigfactory
+     * @param string       $name
+     * @param bool         $use_main
+     */
+    public function setTwig($twig_config = 'twig_config.php', $name = 'main', $use_main = true)
+    {
+        $o_twig = TwigFactory::getTwig($twig_config, $name, $use_main);
+        if (!$o_twig instanceof \Twig_Environment) {
+            die("Could not create a new TwigEnviornment");
+        }
+        $this->o_di->set('twig_' . $name, $o_twig);
+        $this->o_twig = $o_twig;
+    }
+
+    /**
      * Returns an array with the values used primarily in the meta tags of the html.
      * @return array
      */
@@ -239,7 +248,7 @@ trait ViewTraits
                 'page_id'        => 0,
                 'url_id'         => 0,
                 'ng_id'          => 1,
-                'page_twig'      => 'Site',
+                'twig_prefix'    => TWIG_PREFIX,
                 'url_scheme'     => 'https',
                 'page_url'       => '/',
                 'description'    => '',
@@ -247,31 +256,29 @@ trait ViewTraits
                 'base_url'       => '/',
                 'lang'           => 'en',
                 'charset'        => 'utf-8',
-                'public_dir'     => PUBLIC_DIR,
-                'site_url'       => SITE_URL,
-                'rights_holder'  => RIGHTS_HOLDER,
-                'copyright_date' => COPYRIGHT_DATE
             ];
         }
         $base_url = $a_page_values['page_base_url'] == '/'
             ? SITE_URL
             : SITE_URL . $a_page_values['page_base_url'];
 
+        $page_twig = strtolower($a_page_values['page_twig']);
+        if (substr($page_twig, -1) != '_') {
+            $page_twig .= '_';
+        }
+
         return [
             'page_id'       => $a_page_values['page_id'],
             'url_id'        => $a_page_values['url_id'],
             'url_scheme'    => $a_page_values['url_scheme'],
             'ng_id'         => $a_page_values['ng_id'],
-            'page_twig'     => $a_page_values['page_twig'],
             'page_url'      => $a_page_values['url_text'],
             'description'   => $a_page_values['page_description'],
             'title'         => $a_page_values['page_title'],
-            'base_url'      => $base_url,
             'lang'          => $a_page_values['page_lang'],
             'charset'       => $a_page_values['page_charset'],
-            'public_dir'    => PUBLIC_DIR,
-            'site_url'      => SITE_URL,
-            'rights_holder' => RIGHTS_HOLDER
+            'base_url'      => $base_url,
+            'page_twig'     => $page_twig,
         ];
     }
 
