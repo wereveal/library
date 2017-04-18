@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Abstract which extends php Exception class.
- * @ingroup   lib_interfaces
+ * @ingroup   lib_abstracts
  * @file      Ritc/Library/Abstracts/CustomException.php
  * @namespace Ritc\Library\Abstracts
  * @author    William E Reveal <bill@revealitconsulting.com>

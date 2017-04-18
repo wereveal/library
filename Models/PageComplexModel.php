@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Does multi-table queries.
- * @ingroup   ritc_models
+ * @ingroup   lib_models
  * @file      PageComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>

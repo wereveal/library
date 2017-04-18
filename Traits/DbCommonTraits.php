@@ -1,7 +1,7 @@
 <?php
 /**
  * @brief     Common methods for the db traits.
- * @ingroup   ritc_traits
+ * @ingroup   lib_traits
  * @file      DbCommonTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>

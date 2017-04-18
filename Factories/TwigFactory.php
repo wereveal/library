@@ -1,24 +1,28 @@
 <?php
 /**
  * @brief     A Twig Factory.
- * @details   Lets us create a twig object, specific to a configuration
+ * @details   Lets us create a twig object, specific to a configuration(s)
  *            allowing multiple twig objects to render the html
  * @ingroup   lib_factories
- * @file      Ritc/Library/FactoriesTwigFactory.php
+ * @file      Ritc/Library/Factories/TwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.0+1
- * @date      2017-02-15 15:25:55
+ * @version   2.0.0
+ * @date      2017-03-13 11:45:15
  * @note <b>Change Log</b>
- * - v1.2.0   - changed to allow config file to include a path.                                       - 2017-02-09 wer
- * - v1.1.0   - added the ability to get the loader used to add additional twig namespaces            - 2017-02-08 wer
- * - v1.0.0   - not sure why this is beta. Removed Base abstract class                                - 09/01/2015 wer
+ * - v2.0.0   - added 2 new create methods, createMultiSource, createFromArray                          - 2017-03-13 wer
+ *              self::getTwig() rewritten to used the new methods but has backwards
+ *              compatibility with version 1.
+ *              Deleted getLoader as it did not provide any usefulness.
+ * - v1.2.0   - changed to allow config file to include a path.                                         - 2017-02-09 wer
+ * - v1.1.0   - added the ability to get the loader used to add additional twig namespaces              - 2017-02-08 wer
+ * - v1.0.0   - not sure why this is beta. Removed Base abstract class                                  - 09/01/2015 wer
  * - v1.0.0ß2 - moved to the Factories namespace
- * - v1.0.0ß1 - moved to the Services namespace                                                       - 11/15/2014 wer
- * - v0.2.0   - changed the name of the method which is used to create/return the object              - 09/25/2014 wer
+ * - v1.0.0ß1 - moved to the Services namespace                                                         - 11/15/2014 wer
+ * - v0.2.0   - changed the name of the method which is used to create/return the object                - 09/25/2014 wer
  *              and cleaned up some code.
- * - v0.1.1   - changed to implment the changes in Base class                                         - 09/23/2014 wer
- * - v0.1.0   - initial file creation                                                                 - 2013-11-11 wer
+ * - v0.1.1   - changed to implment the changes in Base class                                           - 09/23/2014 wer
+ * - v0.1.0   - initial file creation                                                                   - 2013-11-11 wer
  */
 namespace Ritc\Library\Factories;
 

@@ -3,7 +3,7 @@
  * @brief     A Base Class that all other classes use.
  * @details   Primarily this is used to fix the visibility issue that PHP ignores.
  *            Also establishes the way the error logging can be injected when needed.
- * @ingroup   ritc_library lib_abstracts
+ * @ingroup   lib_abstracts
  * @file      Ritc/Library/Abstracts/Base.php
  * @namespace Ritc\Library\Abstracts
  * @author    William E Reveal <bill@revealitconsulting.com>

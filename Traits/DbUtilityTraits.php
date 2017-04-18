@@ -1,13 +1,17 @@
 <?php
 /**
  * @brief     Common functions that would be used in several database classes.
+ * @detail    Although this is designed to be used for all database classes, it
+ *            does lack some functionality for multi-table operations and needs
+ *            some work there.
  * @ingroup   lib_traits
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.0
- * @date      2017-01-14 17:59:03
+ * @version   1.4.1
+ * @date      2017-03-13 08:29:39
  * @note <b>Change Log</b>
+ * - v1.4.1          - reviewed some functionality and futzed about         - 2017-03-13 wer
  * - v1.4.0          - refactoring elsewhere regarding db_prefix here too   - 2017-01-14 wer
  * - v1.3.0          - added new property lib_prefix, code clean up         - 2017-01-13 wer
  * - v1.2.0          - Refactoring of DbCommonTraits reflected here         - 2016-09-23 wer
@@ -28,6 +32,7 @@
  * - v1.0.0-alpha.2 - modified genericRead to be more complete              - 2016-03-24 wer
  * - v1.0.0-alpha.1 - first hopefully working version                       - 2016-03-23 wer
  * - v1.0.0-alpha.0 - initial version                                       - 2016-03-18 wer
+ * @todo Review to see where multi-table operations can be strenthened.
  */
 namespace Ritc\Library\Traits;
 
@@ -456,12 +461,11 @@ SQL;
      * Builds the WHERE section of a SELECT stmt.
      * Also optionally builds the ORDER BY and LIMIT section of a SELECT stmt.
      * It might be noted that if first two arguments are empty, it returns a blank string.
+     * Also, just so I have this documented, if the where included multiple tables, $a_allowed_keys should be set.
      * @param array $a_search_for        optional assoc array field_name=>field_value
      * @param array $a_search_parameters optional allows one to specify various settings
-     * @param array $a_allowed_keys      optional list array
-     *
+     * @param array $a_allowed_keys      optional list array, specifically use if multiple tables are being used.
      * @ref searchparams For more info on a_search_parameters.
-     *
      * @return string $where
      */
     protected function buildSqlWhere(array $a_search_for = [], array $a_search_parameters = [], array $a_allowed_keys = [])
@@ -595,7 +599,7 @@ SQL;
     protected function prepareListArray(array $array = [])
     {
         foreach ($array as $key => $value) {
-            $array[$key] = strpos($value, ':') === 0
+            $array[$key] = substr($value, 0, 1) === ':'
                 ? $value
                 : ':' . $value;
         }
