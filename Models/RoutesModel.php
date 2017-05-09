@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/RoutesModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.1
- * @date      2017-01-27 12:31:35
+ * @version   1.4.2
+ * @date      2017-05-09 17:37:16
  * @note <b>Change Log</b>
+ * - v1.4.2   - DbUtilityTraits change reflected here                  - 2017-05-09 wer
  * - v1.4.1   - Bug fix caused by change elsewhere                     - 2017-01-27 wer
  * - v1.4.0   - Refactored readWithRequestUri to readByRequestUri      - 2016-04-10 wer
  *              Added readWithUrl to return list of routes with url.
@@ -43,7 +44,7 @@ class RoutesModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'routes', 'lib');
+        $this->setupProperties($o_db, 'routes');
     }
 
     /**

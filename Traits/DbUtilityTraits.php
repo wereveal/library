@@ -8,9 +8,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.1
- * @date      2017-03-13 08:29:39
+ * @version   1.4.2
+ * @date      2017-05-09 17:44:15
  * @note <b>Change Log</b>
+ * - v1.4.2          - removed unused parameter from setupProperties        - 2017-05-09 wer
  * - v1.4.1          - reviewed some functionality and futzed about         - 2017-03-13 wer
  * - v1.4.0          - refactoring elsewhere regarding db_prefix here too   - 2017-01-14 wer
  * - v1.3.0          - added new property lib_prefix, code clean up         - 2017-01-13 wer
@@ -702,7 +703,7 @@ SQL;
      * @param string                         $table_name
      * @return null
      */
-    protected function setupProperties(DbModel $o_db, $table_name = '', $db_prefix = 'db')
+    protected function setupProperties(DbModel $o_db, $table_name = '')
     {
         if ($o_db == '') {
             return null;
@@ -710,7 +711,7 @@ SQL;
         $this->o_db        = $o_db;
         $this->a_db_config = $o_db->getDbConfig();
         $this->a_prefix    = $o_db->getPrefixArray();
-        $this->db_prefix   = $o_db->getDbPrefix($db_prefix);
+        $this->db_prefix   = $o_db->getDbPrefix();
         $this->db_type     = $o_db->getDbType();
         $this->lib_prefix  = $o_db->getLibPrefix();
         if ($table_name != '') {

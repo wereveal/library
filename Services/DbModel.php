@@ -6,9 +6,10 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.2.0
- * @date      2017-01-13 11:43:33
+ * @version   4.3.0
+ * @date      2017-05-09 18:28:08
  * @note <b>Change Log</b>
+ * - v4.3.0 - Added a new method to check if a table exists in the database                 - 2017-05-09 wer
  * - v4.2.0 - Added some debugging code, cleaned up other.                                  - 2017-01-13 wer
  * - v4.1.2 - Bug fix                                                                       - 2016-08-22 wer
  * - v4.1.1 - Bug fixes, the set/create/retrieve sql error message needed clarification     - 2016-03-28 wer
@@ -1256,6 +1257,49 @@ class DbModel
                 $sql = "SHOW TABLES";
                 return $this->search($sql, array(), 'num');
         }
+    }
+
+    /**
+     * Checks to see if the table exists.
+     * @param string $table_name
+     * @return bool
+     */
+    public function tableExists($table_name = '')
+    {
+        switch ($this->db_type) {
+            case 'pgsql':
+                $sql = "
+                    SELECT count(table_name) as count
+                    FROM information_schema.tables 
+                    WHERE table_name = '{$table_name}'
+                    AND table_catalog = '{$this->a_db_config["name"]}'
+                ";
+                break;
+            case 'sqlite':
+                $sql = "
+                    SELECT count(*) as count
+                    FROM sqlite_master
+                    WHERE type='table'
+                    AND name='{$table_name}'
+                ";
+                break;
+            case 'mysql':
+            default:
+                $sql = "
+                    SELECT count(*) as count
+                    FROM information_schema.tables 
+                    WHERE TABLE_SCHEMA = '{$this->a_db_config["name"]}' 
+                    AND TABLE_NAME = '{$table_name}'
+                ";
+        }
+
+        $results = $this->search($sql, [], 'num');
+        if (!empty($results)) {
+            if ($results[0]['count'] > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     ### Magic Method fix ###

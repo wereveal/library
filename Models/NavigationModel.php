@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/NavigationModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2017-01-27 12:38:33
+ * @version   1.0.0-alpha.2
+ * @date      2017-05-09 17:41:45
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here         - 2017-05-09 wer
  * - v1.0.0-alpha.1 - Refactoring in DbUtilityTraits reflected here - 2017-01-27 wer
  * - v1.0.0-alpha.0 - Initial version                               - 02/24/2016 wer
  */
@@ -36,7 +37,7 @@ class NavigationModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'navigation', 'lib');
+        $this->setupProperties($o_db, 'navigation');
         $this->setFieldNames();
     }
 

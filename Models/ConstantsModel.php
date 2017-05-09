@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/ConstantsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.4.1
- * @date      2017-02-15 15:32:55
+ * @version   2.4.2
+ * @date      2017-05-09 17:43:30
  * @note      see ConstantsEntity for database table definition.
  * @note <b>Change Log</b>
+ * - v2.4.2 - DbUtilityTraits change reflected here                         - 2017-05-09 wer
  * - v2.4.1 - Refactoring of file structure reflected here                  - 2017-02-15 wer
  * - v2.4.0 - Implementing more of the DbUtilityTraits                      - 2017-01-27 wer
  * - v2.3.1 - Bug fix in create mysql table                                 - 2017-01-13 wer
@@ -50,7 +51,7 @@ class ConstantsModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'constants', 'lib');
+        $this->setupProperties($o_db, 'constants');
         $this->a_constants = $this->selectConstantsList();
     }
 

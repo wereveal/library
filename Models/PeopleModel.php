@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.2
- * @date      2017-02-07 15:15:26
+ * @version   1.3.3
+ * @date      2017-05-09 17:38:21
  * @note <b>Change Log</b>
+ * - v1.3.3    - DbUtilityTraits change reflected here                       - 2017-05-09 wer
  * - v1.3.2    - Bug fix                                                     - 2017-02-07 wer
  * - v1.3.1    - Bug fix caused by change elsewhere                          - 2017-01-27 wer
  * - v1.3.0    - Moved the multi-table queries to own class                  - 2016-12-08 wer
@@ -54,7 +55,7 @@ class PeopleModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'people', 'lib');
+        $this->setupProperties($o_db, 'people');
     }
 
     ### Basic CRUD commands, required by interface, deals only with the {$this->db_prefix}people table ###
