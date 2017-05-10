@@ -5,9 +5,10 @@
  * @file      ControllerTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.1
- * @date      2017-02-06 15:27:03
+ * @version   1.1.2
+ * @date      2017-05-10 11:51:14
  * @note Change Log
+ * - v1.1.2         - added a commonly used property route_class                - 2017-05-10 wer
  * - v1.1.1         - added a commonly used property                            - 2017-02-06 wer
  * - v1.1.0         - added a commonly used property                            - 2016-09-09 wer
  * - v1.0.0         - added one more commonly used property and out of alpha    - 2016-09-03 wer
@@ -49,6 +50,8 @@ trait ControllerTraits
     /** @var  string */
     protected $route_action;
     /** @var  string */
+    protected $route_class;
+    /** @var  string */
     protected $route_method = '';
     /** @var  string */
     protected $url_action_one = '';
@@ -82,6 +85,7 @@ trait ControllerTraits
         $this->route_action   = $a_router_parts['route_action'];
         $this->a_post         = $a_router_parts['post'];
         $this->form_action    = $a_router_parts['form_action'];
+        $this->route_class    = $a_router_parts['route_class'];
         $this->route_method   = $a_router_parts['route_method'];
         if (isset($a_router_parts['url_actions'][0])) {
             $this->a_url_actions  = $a_router_parts['url_actions'];

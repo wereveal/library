@@ -6,9 +6,10 @@
  * @file        ManagerViewTraits.php
  * @namespace   Ritc\Library\Traits
  * @author      William E Reveal <bill@revealitconsulting.com>
- * @version     2.0.1
- * @date        2017-02-11 11:40:46
+ * @version     2.1.0
+ * @date        2017-05-10 11:54:46
  * @note <b>Change Log</b>
+ * - v2.1.0 - changed method to use the twig value for tpl                          - 2017-05-10 wer
  * - v2.0.1 - minor bug fixes                                                       - 2017-02-11 wer
  * - v2.0.0 - changed to use ViewTraits and keep only manager like stuff in here    - 2017-02-07 wer
  * - v1.1.0 - manager links can be in two places.                                   - 12/15/2015 wer
@@ -54,7 +55,7 @@ trait ManagerViewTraits
         $log_message = 'Final Twig Values:  ' . var_export($a_twig_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $this->o_session->unsetVar('login_id');
-        $tpl = '@' . $a_twig_values['twig_prefix'] . 'pages/login_page.twig';
+        $tpl = '@' . $a_twig_values['twig_prefix'] . 'pages/' . $a_twig_values['tpl'] . '.twig';
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 

@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.6
- * @date      2017-03-14 09:03:01
+ * @version   1.0.0-beta.7
+ * @date      2017-05-10 11:52:54
  * @note <b>Change Log</b>
+ * - v1.0.0-beta.7  - database change to page table reflected here.                             - 2017-05-10 wer
  * - v1.0.0-beta.6  - added setTwig method to allow a different twig environment to be used.    - 2017-03-14 wer
  * - v1.0.0-beta.5  - moved some functionality from getPageValues to createDefaultTwigValues    - 2017-03-13 wer
  * - v1.0.0-beta.4  - removed twigLoader which apparently didn't really work                    - 2017-02-11 wer
@@ -247,38 +248,40 @@ trait ViewTraits
             return [
                 'page_id'        => 0,
                 'url_id'         => 0,
-                'ng_id'          => 1,
-                'twig_prefix'    => TWIG_PREFIX,
                 'url_scheme'     => 'https',
+                'ng_id'          => 1,
                 'page_url'       => '/',
                 'description'    => '',
                 'title'          => '',
-                'base_url'       => '/',
                 'lang'           => 'en',
                 'charset'        => 'utf-8',
+                'twig_prefix'    => TWIG_PREFIX,
+                'tpl'            => 'index',
+                'base_url'       => '/',
             ];
         }
         $base_url = $a_page_values['page_base_url'] == '/'
             ? SITE_URL
             : SITE_URL . $a_page_values['page_base_url'];
 
-        $page_twig = strtolower($a_page_values['page_twig']);
-        if (substr($page_twig, -1) != '_') {
-            $page_twig .= '_';
+        $twig_prefix = strtolower($a_page_values['page_twig_prefix']);
+        if (substr($twig_prefix, -1) != '_') {
+            $twig_prefix .= '_';
         }
 
         return [
-            'page_id'       => $a_page_values['page_id'],
-            'url_id'        => $a_page_values['url_id'],
-            'url_scheme'    => $a_page_values['url_scheme'],
-            'ng_id'         => $a_page_values['ng_id'],
-            'page_url'      => $a_page_values['url_text'],
-            'description'   => $a_page_values['page_description'],
-            'title'         => $a_page_values['page_title'],
-            'lang'          => $a_page_values['page_lang'],
-            'charset'       => $a_page_values['page_charset'],
-            'base_url'      => $base_url,
-            'page_twig'     => $page_twig,
+            'page_id'     => $a_page_values['page_id'],
+            'url_id'      => $a_page_values['url_id'],
+            'url_scheme'  => $a_page_values['url_scheme'],
+            'ng_id'       => $a_page_values['ng_id'],
+            'page_url'    => $a_page_values['url_text'],
+            'description' => $a_page_values['page_description'],
+            'title'       => $a_page_values['page_title'],
+            'lang'        => $a_page_values['page_lang'],
+            'charset'     => $a_page_values['page_charset'],
+            'twig_prefix' => $twig_prefix,
+            'tpl'         => $a_page_values['page_tpl'],
+            'base_url'    => $base_url
         ];
     }
 
