@@ -6,9 +6,10 @@
  * @file      Elog.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version:  3.0.4
- * @date      2017-01-31 10:06:04
+ * @version:  3.1.0
+ * @date      2017-05-12 06:05:26
  * @note <b>Change Log</b>
+ * - v3.1.0 - Added LOG_WARN and LOG_ERROR                                    - 2017-05-12 wer
  * - v3.0.4 - bug fix with JSON logging                                       - 2017-01-31 wer
  * - v3.0.3 - bug fix, clean up code                                          - 2017-01-13 wer
  * - v3.0.2 - bug fixes                                                       - 02/26/2016 wer
@@ -181,16 +182,19 @@ class Elog
                                   "From: error_" . $this->error_email_address
                                   . "\r\nX-Mailer: PHP/" . phpversion());
             case LOG_JSON:
-                $this->json_log_used = true;
                 return trigger_error($the_string, E_USER_NOTICE);
-            /** @noinspection PhpMissingBreakStatementInspection */
-            case LOG_BOTH:
-                error_log($the_string, 1, $this->error_email_address,
-                                 "From: error_" . $this->error_email_address
-                                 . "\r\nX-Mailer: PHP/" . phpversion());
             case LOG_ON:
             case LOG_CUSTOM:
                 return trigger_error($the_string, E_USER_NOTICE);
+            case LOG_WARN:
+                return trigger_error($the_string, E_USER_WARNING);
+            /** @noinspection PhpMissingBreakStatementInspection */
+            case LOG_BOTH:
+                error_log($the_string, 1, $this->error_email_address,
+                    "From: error_" . $this->error_email_address
+                    . "\r\nX-Mailer: PHP/" . phpversion());
+            case LOG_ERROR:
+                return trigger_error($the_string, E_USER_ERROR);
             case LOG_HTML:
                 $this->html_used = true;
                 $this->debug_text .= $this->makeComment($the_string);
@@ -223,6 +227,8 @@ class Elog
         }
         switch ($this->log_method) {
             case LOG_ON:
+            case LOG_WARN:
+            case LOG_ERROR:
             case LOG_CUSTOM:
                 if ($this->custom_log_used === false) {
                     $string = "\n\n\n\n\n\n\n\n\n\n=== Start Elog ===\n" .
@@ -238,12 +244,23 @@ class Elog
                     $string = $error_string . "\n\n";
                 }
                 else {
-                    $string = date("Y-m-d H:i:s") .
-                        " - " .
-                        $this->from_location .
-                        "\n" .
-                        $error_string .
-                        "\n\n";
+                    switch ($this->log_method) {
+                        case LOG_WARN:
+                            $type = 'Warn';
+                            break;
+                        case LOG_ERROR:
+                            $type = 'Error';
+                            break;
+                        case LOG_CUSTOM:
+                            $type = 'Custom';
+                            break;
+                        default:
+                            $type = 'Info';
+                    }
+                    $string = date("Y-m-d H:i:s") . " - " .
+                        $type . ' - ' .
+                        $this->from_location . "\n" .
+                        $error_string . "\n\n";
                 }
 		        return file_put_contents(LOG_PATH . '/' . $this->elog_file, $string, FILE_APPEND);
             case LOG_JSON:
@@ -320,6 +337,8 @@ class Elog
         if (!defined('LOG_DB'))     { define('LOG_DB',     6); }
         if (!defined('LOG_HTML'))   { define('LOG_HTML',   7); }
         if (!defined('LOG_ALWAYS')) { define('LOG_ALWAYS', 8); }
+        if (!defined('LOG_WARN'))   { define('LOG_WARN',   9); }
+        if (!defined('LOG_ERROR'))  { define('LOG_ERROR', 10); }
         if (!defined('LOG_PATH'))   { define('LOG_PATH', BASE_PATH . '/logs'); }
     }
 

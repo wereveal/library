@@ -81,9 +81,9 @@ class PageComplexModel
         }
         $sql_where = $this->buildSqlWhere($a_search_for, $a_search_parameters, $a_allowed_keys);
         $sql = $this->select_sql . "\n" . $sql_where;
-        $this->logIt("SQL: {$sql}", LOG_ON, $meth . __LINE__);
+        $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
         $log_message = 'Search Parameters ' . var_export($a_search_for, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         return $this->o_db->search($sql, $a_search_for);
     }
