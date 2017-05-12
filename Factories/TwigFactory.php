@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Factories/TwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-03-13 11:45:15
+ * @version   2.0.1
+ * @date      2017-05-11 17:10:19
  * @note <b>Change Log</b>
+ * - v2.0.1   - bug fix                                                                                 - 2017-05-11 wer
  * - v2.0.0   - added 2 new create methods, createMultiSource, createFromArray                          - 2017-03-13 wer
  *              self::getTwig() rewritten to used the new methods but has backwards
  *              compatibility with version 1.
@@ -90,7 +91,6 @@ class TwigFactory
         return $o_tf->o_twig;
     }
 
-
     /**
      * Creates an instance of the class.
      * Note that this method returns the factory instance and not the Twig_Environment object.
@@ -110,15 +110,13 @@ class TwigFactory
             $config_file = $a_parts[count($a_parts) - 1];
         }
         list($name, $extension) = explode('.', $config_file);
-        // error_log("Name of config: " . $name);
         unset($extension);
         $name = str_replace('twig_config_', '', $name);
         if ($name == 'twig_config' || $name == '') {
             $name = 'main';
         }
         if (!isset(self::$instance[$name])) {
-            $a_twig_config = self::retrieveTwigConfigArray($org_config_file, $namespace = '');
-            // error_log("Twig Config: ". var_export($a_twig_config, true));
+            $a_twig_config = self::retrieveTwigConfigArray($org_config_file, $namespace);
             self::$instance[$name] = new TwigFactory($a_twig_config);
         }
         return self::$instance[$name];
@@ -160,7 +158,6 @@ class TwigFactory
                     );
                 }
             }
-            error_log(var_export($a_twig_config, true));
             self::$instance[$name] = new TwigFactory($a_twig_config);
         }
         return self::$instance[$name];
