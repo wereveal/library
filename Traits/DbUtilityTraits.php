@@ -8,9 +8,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.2
- * @date      2017-05-09 17:44:15
+ * @version   1.4.3
+ * @date      2017-05-11 17:38:15
  * @note <b>Change Log</b>
+ * - v1.4.3          - bug fix                                              - 2017-05-11 wer
  * - v1.4.2          - removed unused parameter from setupProperties        - 2017-05-09 wer
  * - v1.4.1          - reviewed some functionality and futzed about         - 2017-03-13 wer
  * - v1.4.0          - refactoring elsewhere regarding db_prefix here too   - 2017-01-14 wer
@@ -705,9 +706,6 @@ SQL;
      */
     protected function setupProperties(DbModel $o_db, $table_name = '')
     {
-        if ($o_db == '') {
-            return null;
-        }
         $this->o_db        = $o_db;
         $this->a_db_config = $o_db->getDbConfig();
         $this->a_prefix    = $o_db->getPrefixArray();
@@ -719,7 +717,6 @@ SQL;
             $this->a_db_fields = $o_db->selectDbColumns($this->db_table);
             $this->setPrimaryIndexName();
         }
-        return;
     }
 
     ### Getters and Setters ###
