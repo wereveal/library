@@ -2,8 +2,7 @@
 /**
  * @brief     Controller for Urls admin.
  * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/UrlsAdminController.php
- * @namespace Ritc\Library\Controllers
+ * @file      Ritc/Library/Controllers/UrlsController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0-beta.1
  * @date      2016-04-15 12:44:28
@@ -23,11 +22,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\UrlsView;
 
 /**
- * Class UrlsAdminController.
- * @class   UrlsAdminController
+ * Class UrlsController.
+ * @class   UrlsController
  * @package Ritc\Library\Controller
  */
-class UrlsAdminController implements ManagerControllerInterface
+class UrlsController implements ManagerControllerInterface
 {
     use ControllerTraits, LogitTraits;
 
@@ -35,7 +34,7 @@ class UrlsAdminController implements ManagerControllerInterface
     protected $o_urls_view;
 
     /**
-     * UrlsAdminController constructor.
+     * UrlsController constructor.
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)

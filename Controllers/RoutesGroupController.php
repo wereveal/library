@@ -4,8 +4,7 @@
  * @detail    Allows one to map which routes have specific group access.
  *            If you are not in the group, you can't go there.
  * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/RoutesGroupAdminController.php
- * @namespace Ritc\Library\Controllers
+ * @file      Ritc/Library/Controllers/RoutesGroupController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0-alpha.0
  * @date      2015-08-04 04:25:11
@@ -21,11 +20,11 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 
 /**
- * Class RoutesGroupAdminController.
- * @class   RoutesGroupAdminController
+ * Class RoutesGroupController.
+ * @class   RoutesGroupController
  * @package Ritc\Library\Controllers
  */
-class RoutesGroupAdminController implements ManagerControllerInterface
+class RoutesGroupController implements ManagerControllerInterface
 {
     /**
      * @return string

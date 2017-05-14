@@ -2,8 +2,7 @@
 /**
  * @brief     Controller for the Configuration page.
  * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/PeopleAdminController.php
- * @namespace Ritc\Library\Controllers
+ * @file      Ritc/Library/Controllers/PeopleController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.2+2
  * @date      2016-04-11 08:06:39
@@ -33,11 +32,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PeopleAdminView;
 
 /**
- * Class PeopleAdminController.
- * @class   PeopleAdminController
+ * Class PeopleController.
+ * @class   PeopleController
  * @package Ritc\Library\Controllers
  */
-class PeopleAdminController implements ManagerControllerInterface
+class PeopleController implements ManagerControllerInterface
 {
     use LogitTraits;
 
@@ -59,7 +58,7 @@ class PeopleAdminController implements ManagerControllerInterface
     private $o_view;
 
     /**
-     * PeopleAdminController constructor.
+     * PeopleController constructor.
      * @param Di $o_di
      */
     public function __construct(Di $o_di)

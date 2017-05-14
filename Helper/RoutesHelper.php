@@ -5,8 +5,8 @@
  * @file      Ritc/Library/Helper/RoutesHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2016-09-08 12:15:00
+ * @version   2.0.0+1
+ * @date      2017-05-12 10:23:29
  * @note Change Log
  * - v2.0.0   - Changed to handle inexact request URI (slashes)     - 2016-09-08 wer
  * - v1.1.0   - added method for quick min auth level for a route.  - 02/26/2016 wer
@@ -69,8 +69,8 @@ class RoutesHelper
      * Compare request uri with route path.
      * Determines if the only difference between the request uri and the route path
      * is a missing or unneeded slash at the end or beginning.
-     * @param str $request_uri required
-     * @param str $route_path  required
+     * @param string $request_uri required
+     * @param string $route_path  required
      * @return bool
      */
     public function compareUriToRoute($request_uri = '', $route_path = '')
@@ -209,7 +209,7 @@ class RoutesHelper
             $a_results = $this->o_routes->readByRequestUri($value);
             $log_message = 'For the request uri: ' .
                 $value .
-                ' the readWidthRequestUri results:  '
+                ' the readByRequestUri results:  '
                 . var_export($a_results, TRUE);
             $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             if ($a_results !== false && count($a_results) === 1) {

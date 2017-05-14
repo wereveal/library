@@ -2,14 +2,13 @@
 /**
  * @brief     Main Controller for the Navigation Management.
  * @ingroup   lib_controllers
- * @file      NavigationAdminController.php
- * @namespace Ritc\Library\Controllers
+ * @file      NavigationController * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0-alpha.0
  * @date      2016-04-15 11:53:36
  * @note Change Log
  * - v1.0.0-alpha.0 - Initial version        - 2016-04-15 wer
- * @todo NavigationAdminController.php - Everything
+ * @todo NavigationController- Everything
  */
 namespace Ritc\Library\Controllers;
 
@@ -22,11 +21,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\NavigationAdminView;
 
 /**
- * Class NavigationAdminController.
- * @class   NavigationAdminController
+ * Class NavigationController.
+ * @class   NavigationController
  * @package Ritc\Library\Controllers
  */
-class NavigationAdminController implements ManagerControllerInterface
+class NavigationController implements ManagerControllerInterface
 {
     use ControllerTraits, LogitTraits;
 

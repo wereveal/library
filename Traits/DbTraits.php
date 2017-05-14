@@ -95,7 +95,6 @@ trait DbTraits
         $this->db_type     = $a_db['driver'];
         $this->db_prefix   = $a_prefix['db'];
         $this->a_prefix    = $a_prefix;
-        // error_log(var_export($this->a_db_config, true));
     }
 
     ### General Utilities ###

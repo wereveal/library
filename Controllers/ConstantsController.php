@@ -2,7 +2,7 @@
 /**
  * @brief     Controller for the Configuration page.
  * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/ConstantsAdminController.php
+ * @file      Ritc/Library/Controllers/ConstantsController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.3.2+2
@@ -14,8 +14,8 @@
  * - v1.2.1 - code clean up                                   - 09/25/2015 wer
  * - v1.2.0 - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
  * - v1.1.0 - changed to implement ManagerControllerInterface - 01/16/2015 wer
- *             This class should only be called from the main
- *             manager controller which does session validation.
+ *            This class should only be called from the main
+ *            manager controller which does session validation.
  * - v1.0.2 - changed to use the new Di class                 - 11/17/2014 wer
  * - v1.0.1 - Adjusted to match file name change              - 11/13/2014 wer
  * - v1.0.0 - Initial version                                 - 04/02/2014 wer
@@ -32,11 +32,11 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class ConstantsAdminController
- * @class ConstantsAdminController
+ * Class ConstantsController
+ * @class ConstantsController
  * @package Ritc\Library\Controllers
  */
-class ConstantsAdminController implements ManagerControllerInterface
+class ConstantsController implements ManagerControllerInterface
 {
     use LogitTraits;
 
@@ -52,7 +52,7 @@ class ConstantsAdminController implements ManagerControllerInterface
     private $o_view;
 
     /**
-     * ConstantsAdminController constructor.
+     * ConstantsController constructor.
      * @param Di $o_di
      */
     public function __construct(Di $o_di)

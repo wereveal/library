@@ -155,6 +155,9 @@ ORDER BY u.url_text
 
 EOT;
         $this->logIt("sql: " . $sql, LOG_OFF, $meth . __LINE__);
+        $log_message = 'values: ' . var_export($a_search_params, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         return $this->o_db->search($sql, $a_search_params);
     }
 

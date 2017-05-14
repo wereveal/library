@@ -34,7 +34,6 @@ use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\LibraryView;
-use Ritc\Library\Views\NavigationAdminView;
 
 /**
  * Class LibraryController.
@@ -137,8 +136,8 @@ class LibraryController implements ControllerInterface
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
             $min_auth_level = $this->a_route_parts['min_auth_level'];
             if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_constants_admin = new ConstantsAdminController($this->o_di);
-                return $o_constants_admin->render();
+                $o_constants_admin = new ConstantsController($this->o_di);
+                return $o_constants_admin->route();
             }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
@@ -154,8 +153,8 @@ class LibraryController implements ControllerInterface
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
             $min_auth_level = $this->a_route_parts['min_auth_level'];
             if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_groups_admin = new GroupsAdmimController($this->o_di);
-                return $o_groups_admin->render();
+                $o_groups_admin = new GroupsController($this->o_di);
+                return $o_groups_admin->route();
             }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
@@ -183,8 +182,8 @@ class LibraryController implements ControllerInterface
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
             $min_auth_level = $this->a_route_parts['min_auth_level'];
             if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_nav_admin = new NavigationAdminController($this->o_di);
-                return $o_nav_admin->render();
+                $o_nav_admin = new NavigationController($this->o_di);
+                return $o_nav_admin->route();
             }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
@@ -200,8 +199,8 @@ class LibraryController implements ControllerInterface
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
             $min_auth_level = $this->a_route_parts['min_auth_level'];
             if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_page_admin = new PageAdminController($this->o_di);
-                return $o_page_admin->render();
+                $o_page_admin = new PageController($this->o_di);
+                return $o_page_admin->route();
             }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
@@ -217,8 +216,8 @@ class LibraryController implements ControllerInterface
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
             $min_auth_level = $this->a_route_parts['min_auth_level'];
             if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_people_admin = new PeopleAdminController($this->o_di);
-                return $o_people_admin->render();
+                $o_people_admin = new PeopleController($this->o_di);
+                return $o_people_admin->route();
             }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
@@ -234,8 +233,8 @@ class LibraryController implements ControllerInterface
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
             $min_auth_level = $this->a_route_parts['min_auth_level'];
             if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_router_admin = new RoutesAdminController($this->o_di);
-                return $o_router_admin->render();
+                $o_router_admin = new RoutesController($this->o_di);
+                return $o_router_admin->route();
             }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
@@ -251,8 +250,8 @@ class LibraryController implements ControllerInterface
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
             $min_auth_level = $this->a_route_parts['min_auth_level'];
             if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_tests = new TestsAdminController($this->o_di);
-                return $o_tests->render();
+                $o_tests = new TestsController($this->o_di);
+                return $o_tests->route();
             }
         }
         $a_message = ViewHelper::warningMessage("Access Prohibited");
@@ -268,8 +267,8 @@ class LibraryController implements ControllerInterface
         if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
             $min_auth_level = $this->a_route_parts['min_auth_level'];
             if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_urls_admin = new UrlsAdminController($this->o_di);
-                return $o_urls_admin->render();
+                $o_urls_admin = new UrlsController($this->o_di);
+                return $o_urls_admin->route();
             }
         }
         $a_message = ViewHelper::warningMessage("You need to login with a valid usename and password.");
@@ -278,7 +277,7 @@ class LibraryController implements ControllerInterface
 
     /**
      * Authorizes the person and allows access or kicks them.
-     * @return bool
+     * @return array
      */
     protected function verifyLogin()
     {

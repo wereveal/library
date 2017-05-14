@@ -2,7 +2,7 @@
 /**
  * @brief     Controller for the Groups Admin page.
  * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/GroupsAdmimController.php
+ * @file      Ritc/Library/Controllers/GroupsController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.1
@@ -25,11 +25,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\GroupsAdminView;
 
 /**
- * Class GroupsAdmimController.
- * @class GroupsAdmimController
+ * Class GroupsController.
+ * @class GroupsController
  * @package Ritc\Library\Controllers
  */
-class GroupsAdmimController implements ManagerControllerInterface
+class GroupsController implements ManagerControllerInterface
 {
     use LogitTraits;
 
@@ -47,7 +47,7 @@ class GroupsAdmimController implements ManagerControllerInterface
     private $o_view;
 
     /**
-     * GroupsAdmimController constructor.
+     * GroupsController constructor.
      * @param Di $o_di
      */
     public function __construct(Di $o_di)

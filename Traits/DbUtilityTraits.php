@@ -8,9 +8,13 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.3
- * @date      2017-05-11 17:38:15
+ * @version   1.4.4
+ * @date      2017-05-12 11:28:04
  * @note <b>Change Log</b>
+ * - v1.4.4          - bug fix                                              - 2017-05-12 wer
+ *                     With the introduction of the lib_prefix where it
+ *                     could be different from the db_prefix, wasn't setting
+ *                     the db_table property with the lib_prefix.
  * - v1.4.3          - bug fix                                              - 2017-05-11 wer
  * - v1.4.2          - removed unused parameter from setupProperties        - 2017-05-09 wer
  * - v1.4.1          - reviewed some functionality and futzed about         - 2017-03-13 wer
@@ -20,11 +24,11 @@
  * - v1.1.0          - added a parameter to generic read select_distinct    - 2016-09-09 wer
  * - v1.0.0          - this went live a while back, guess it isn't alpha    - 2016-08-22 wer
  * - v1.0.0-alpha.10 - bug fix                                              - 2016-08-22 wer
- * - v1.0.0-alpha.9 - added functionality to buildSqlSelectFields method    - 2016-05-04 wer
- * - v1.0.0-alpha.8 - potential bug fix in genericDelete                    - 2016-04-20 wer
- * - v1.0.0-alpha.7 - bug fix in buildSqlWhere                              - 2016-04-13 wer
- * - v1.0.0-alpha.6 - bug fix in setupProperties                            - 2016-04-12 wer
- * - v1.0.0-alpha.5 - Added new method, additional refactoring              - 2016-04-01 wer
+ * - v1.0.0-alpha.9  - added functionality to buildSqlSelectFields method   - 2016-05-04 wer
+ * - v1.0.0-alpha.8  - potential bug fix in genericDelete                   - 2016-04-20 wer
+ * - v1.0.0-alpha.7  - bug fix in buildSqlWhere                             - 2016-04-13 wer
+ * - v1.0.0-alpha.6  - bug fix in setupProperties                           - 2016-04-12 wer
+ * - v1.0.0-alpha.5  - Added new method, additional refactoring             - 2016-04-01 wer
  *     - hasRecords
  *     - notEmptyArray
  *     - removed second parameter from genericUpdate, not needed
@@ -713,9 +717,25 @@ SQL;
         $this->db_type     = $o_db->getDbType();
         $this->lib_prefix  = $o_db->getLibPrefix();
         if ($table_name != '') {
-            $this->db_table    = $this->db_prefix . $table_name;
-            $this->a_db_fields = $o_db->selectDbColumns($this->db_table);
-            $this->setPrimaryIndexName();
+            $tname0 = $table_name;
+            $tname1 = $this->db_prefix . $table_name;
+            $tname2 = $this->lib_prefix . $table_name;
+            if ($o_db->tableExists($tname0)) {
+                $this->db_table = $tname0;
+            }
+            elseif ($o_db->tableExists($tname1)) {
+                $this->db_table = $tname1;
+            }
+            elseif ($o_db->tableExists($tname2)) {
+                $this->db_table = $tname2;
+            }
+            else {
+                $this->db_table = '';
+            }
+            if ($this->db_table != '') {
+                $this->a_db_fields = $o_db->selectDbColumns($this->db_table);
+                $this->setPrimaryIndexName();
+            }
         }
     }
 

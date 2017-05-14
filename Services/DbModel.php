@@ -6,9 +6,10 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.3.0
- * @date      2017-05-09 18:28:08
+ * @version   4.3.1
+ * @date      2017-05-14 14:31:20
  * @note <b>Change Log</b>
+ * - v4.3.1 - Bug fix                                                                       - 2017-05-14 wer
  * - v4.3.0 - Added a new method to check if a table exists in the database                 - 2017-05-09 wer
  * - v4.2.0 - Added some debugging code, cleaned up other.                                  - 2017-01-13 wer
  * - v4.1.2 - Bug fix                                                                       - 2016-08-22 wer
@@ -911,7 +912,7 @@ class DbModel
             $this->logIt('The query must not be blank.', LOG_OFF, $meth);
             return false;
         }
-        if ($a_values == array()) {
+        if (empty($a_values)) {
             $this->affected_rows = $this->o_pdo->exec($the_query);
             if ($this->affected_rows === false) {
                 $this->setSqlErrorMessage($this->o_pdo);
@@ -1293,7 +1294,7 @@ class DbModel
                 ";
         }
 
-        $results = $this->search($sql, [], 'num');
+        $results = $this->search($sql, [], 'assoc');
         if (!empty($results)) {
             if ($results[0]['count'] > 0) {
                 return true;

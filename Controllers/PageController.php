@@ -2,8 +2,7 @@
 /**
  * @brief     Controller for the Page Admin page.
  * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/PageAdminController.php
- * @namespace Ritc\Library\Controllers
+ * @file      Ritc/Library/Controllers/PageController * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.1
  * @date      2015-11-27 14:49:00
@@ -25,11 +24,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PageAdminView;
 
 /**
- * Class PageAdminController.
- * @class PageAdminController
+ * Class PageController.
+ * @class PageController
  * @package Ritc\Library\Controllers
  */
-class PageAdminController implements ManagerControllerInterface
+class PageController implements ManagerControllerInterface
 {
     use LogitTraits;
 
@@ -47,7 +46,7 @@ class PageAdminController implements ManagerControllerInterface
     private $o_view;
 
     /**
-     * PageAdminController constructor.
+     * PageController constructor.
      * @param Di $o_di
      */
     public function __construct(Di $o_di)

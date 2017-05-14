@@ -5,7 +5,7 @@
  * @file      Ritc/Library/Helper/Files.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.3.1
+ * @version   4.3.1+1
  * @date      2016-04-21 10:27:57
  * @note The constants with _DIR_NAME should correspond to dir names in
  *     the site theme or namespace (e.g. templates are in namespace). If a directory
@@ -211,7 +211,7 @@ class Files implements LocationInterface
 
     /**
      * @param string $file_name
-     * @return bool
+     * @return bool|string
      */
     public function getFileWithDir($file_name = '')
     {
@@ -229,7 +229,7 @@ class Files implements LocationInterface
 
     /**
      * @param string $file_name
-     * @return bool
+     * @return bool|string
      */
     public function getFileWithPath($file_name = '')
     {

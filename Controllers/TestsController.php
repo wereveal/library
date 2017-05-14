@@ -2,8 +2,7 @@
 /**
  * @brief     Controller for the Test page.
  * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/TestsAdminController.php
- * @namespace Ritc\Library\Controllers
+ * @file      Ritc/Library/Controllers/TestsController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0-alpha.1
  * @date      2017-02-15 15:23:02
@@ -22,11 +21,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\TestsAdminView;
 
 /**
- * Class TestsAdminController
- * @class   TestsAdminController
+ * Class TestsController
+ * @class   TestsController
  * @package Ritc\Library\Controllers
  */
-class TestsAdminController
+class TestsController
 {
     use LogitTraits;
 
@@ -42,7 +41,7 @@ class TestsAdminController
     private $test_configs_path;
 
     /**
-     * TestsAdminController constructor.
+     * TestsController constructor.
      * @param Di $o_di
      */
     public function __construct(Di $o_di)

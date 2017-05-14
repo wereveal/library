@@ -2,8 +2,7 @@
 /**
  * @brief     Controller for the Routes Admin page.
  * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/RoutesAdminController.php
- * @namespace Ritc\Library\Controllers
+ * @file      Ritc/Library/Controllers/RoutesController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   2.2.0
  * @date      2016-04-13 08:52:26
@@ -32,11 +31,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RoutesAdminView;
 
 /**
- * Class RoutesAdminController
- * @class   RoutesAdminController
+ * Class RoutesController
+ * @class   RoutesController
  * @package Ritc\Library\Controllers
  */
-class RoutesAdminController implements ManagerControllerInterface
+class RoutesController implements ManagerControllerInterface
 {
     use LogitTraits;
 
@@ -54,7 +53,7 @@ class RoutesAdminController implements ManagerControllerInterface
     private $o_view;
 
     /**
-     * RoutesAdminController constructor.
+     * RoutesController constructor.
      * @param Di $o_di
      */
     public function __construct(Di $o_di)

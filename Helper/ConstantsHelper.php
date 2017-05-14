@@ -129,14 +129,16 @@ class ConstantsHelper
                     $key = strtoupper($row['const_name']);
                     if (!defined("{$key}")) {
                         switch ($row['const_value']) {
+                            case true:
                             case 'true':
                                 define("{$key}", true);
                                 break;
+                            case false:
                             case 'false':
                                 define("{$key}", false);
                                 break;
-                            case 'null':
                             case null:
+                            case 'null':
                                 define("{$key}", null);
                                 break;
                             default:
