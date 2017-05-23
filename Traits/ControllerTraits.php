@@ -5,8 +5,8 @@
  * @file      ControllerTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.2
- * @date      2017-05-10 11:51:14
+ * @version   1.1.2+1
+ * @date      2017-05-20 11:26:18
  * @note Change Log
  * - v1.1.2         - added a commonly used property route_class                - 2017-05-10 wer
  * - v1.1.1         - added a commonly used property                            - 2017-02-06 wer
@@ -56,12 +56,20 @@ trait ControllerTraits
     /** @var  string */
     protected $url_action_one = '';
 
+    /**
+     * Does the common stuff that is normally done in the __contruct method.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     protected function setupController(Di $o_di)
     {
         $this->setObjects($o_di);
         $this->setProperties();
     }
 
+    /**
+     * Sets the class properties that are objects.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     protected function setObjects(Di $o_di)
     {
         if (!$this->o_di instanceof Di) {
@@ -78,6 +86,9 @@ trait ControllerTraits
         }
     }
 
+    /**
+     * Sets the class properties based on the route parts.
+     */
     protected function setProperties()
     {
         $a_router_parts       = $this->o_router->getRouteParts();
