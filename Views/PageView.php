@@ -2,12 +2,12 @@
 /**
  * @brief     View for the Page Admin page.
  * @ingroup   lib_views
- * @file      PageAdminView.php
- * @namespace Ritc\Library\Views
+ * @file      PageView.phpnamespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2016-04-13 17:50:11
+ * @version   2.0.0
+ * @date      2017-05-14 16:45:01
  * @note <b>Change Log</b>
+ * - v2.0.0   - name refactoring                                                        - 2017-05-14 wer
  * - v1.1.0   - Lot of bug fixes due to the addition of URLs                            - 2016-04-13 wer
  * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
  * - v1.0.2   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
@@ -27,11 +27,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class PageAdminView
- * @class   PageAdminView
+ * Class PageView
+ * @class   PageView
  * @package Ritc\Library\Views
  */
-class PageAdminView
+class PageView
 {
     use LogitTraits, ViewTraits;
 
@@ -41,7 +41,7 @@ class PageAdminView
     private $o_model;
 
     /**
-     * PageAdminView constructor.
+     * PageView constructor.
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -207,7 +207,7 @@ class PageAdminView
             }
             $a_values['a_pages'] = $a_pages;
         }
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/page_admin.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/pages.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 

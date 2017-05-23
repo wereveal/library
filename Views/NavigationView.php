@@ -2,14 +2,14 @@
 /**
  * @brief     The view class for the navigation manager.
  * @ingroup   lib_views
- * @file      NavigationAdminView.php
- * @namespace Ritc\Library\Views
+ * @file      NavigationView.phpnamespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-04-15 12:16:48
+ * @version   1.0.0-alpha.1
+ * @date      2017-05-14 16:43:44
  * @note Change Log
+ * - v1.0.0-alpha.1 - Name refactoring       - 2017-05-14 wer
  * - v1.0.0-alpha.0 - Initial version        - 2016-04-15 wer
- * @todo NavigationAdminView.php - Everything
+ * @todo NavigationView- Everything
  */
 namespace Ritc\Library\Views;
 
@@ -21,11 +21,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class NavigationAdminView.
- * @class   NavigationAdminView
+ * Class NavigationView.
+ * @class   NavigationView
  * @package Ritc\Library\Views
  */
-class NavigationAdminView
+class NavigationView
 {
     use LogitTraits, ViewTraits;
 
@@ -83,7 +83,7 @@ class NavigationAdminView
             'btn_size'     => 'btn-xs',
             'hidden_name'  => 'nav_id'
         ];
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/nav_admin.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/navigation.twig';
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 
@@ -134,7 +134,7 @@ class NavigationAdminView
         $log_message = 'twig values ' . var_export($a_twig_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/nav_admin_form.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/navigation_form.twig';
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 

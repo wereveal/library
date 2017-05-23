@@ -7,12 +7,16 @@
  * @file      Ritc/Library/Factories/TwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.1
- * @date      2017-05-11 17:10:19
+ * @version   3.0.0
+ * @date      2017-05-15 11:06:59
  * @note <b>Change Log</b>
+ * - v3.0.0   - Renamed getTwig to getTwigByFile and rewrote getTwig to use either getTwigByDb          - 2017-05-15 wer
+ *              or getTwigByFile, defaulting to getTwigByFile. getTwigDb was renamed to getTwigByDb
+ *              Theoretically backward compatible but the getTwig method was completely rewritten.
+ * - v2.1.0   - Added method to create a twig object from database config.                              - 2017-05-13 wer
  * - v2.0.1   - bug fix                                                                                 - 2017-05-11 wer
  * - v2.0.0   - added 2 new create methods, createMultiSource, createFromArray                          - 2017-03-13 wer
- *              self::getTwig() rewritten to used the new methods but has backwards
+ *              getTwig() rewritten to used the new methods but has backwards
  *              compatibility with version 1.
  *              Deleted getLoader as it did not provide any usefulness.
  * - v1.2.0   - changed to allow config file to include a path.                                         - 2017-02-09 wer
@@ -28,6 +32,9 @@
 namespace Ritc\Library\Factories;
 
 use Ritc\Library\Helper\LocateFile;
+use Ritc\Library\Helper\UtilityHelper;
+use Ritc\Library\Models\TwigComplexModel;
+use Ritc\Library\Services\Di;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 
@@ -66,27 +73,98 @@ class TwigFactory
     }
 
     /**
-     * Returns the twig environment object which we use to do all the template rendering.
-     * @param string|array $config        Optional but highly recommended. \ref twigfactory
-     * @param string       $name          Optional, defaults to main. Can be the name of the instance or a namespace.
-     * @param bool         $use_main_twig Optional, defaults to true. Only used when self::createMultiSource is used.
-     * @return Twig_Environment
+     * Primary method for the factory. see \ref twigfactory
+     * Created to provide backwards compatibility.
+     * @param string|array|Di $param_one Optional sort of
+     * @param string|bool     $param_two
+     * @return mixed|\Twig_Environment
      */
-    public static function getTwig($config = 'twig_config.php', $name = 'main', $use_main_twig = true)
+    public static function getTwig($param_one = '', $param_two = '')
+    {
+        if ($param_one instanceof Di) {
+            if (!is_bool($param_two)) {
+                $param_two = true;
+            }
+            return self::getTwigByDb($param_one, $param_two);
+        }
+        else {
+            if (is_bool($param_two)) {
+                $param_two = '';
+            }
+            return self::getTwigByFile($param_one, $param_two);
+        }
+    }
+
+    /**
+     * Returns the twig environment instance as configured from database values.
+     * @param \Ritc\Library\Services\Di $o_di
+     * @param bool                      $use_cache
+     * @return mixed|\Twig_Environment
+     */
+    public static function getTwigByDb(Di $o_di, $use_cache = true) {
+        $cache = $use_cache
+            ? SRC_PATH . '/twig_cache'
+            : false;
+        $a_config = [
+            'default_path' => SRC_PATH . '/templates',
+            'additional_paths' => [],
+            'environment_options' => [
+                'cache'       => $cache,
+                'auto_reload' => true,
+                'debug'       => true
+            ]
+        ];
+        $o_tp = new TwigComplexModel($o_di);
+        $results = $o_tp->readTwigConfig();
+        if (empty($results)) {
+            return self::create();
+        }
+        $additional_paths = [];
+        $default_path = '';
+        foreach ($results as $record) {
+            if ($record['tp_default'] === 1 && $default_path == '') {
+                $default_path = $record['twig_path'];
+                $a_config['default_path'] = BASE_PATH . $default_path;
+            }
+            $twig_path = BASE_PATH . $record['twig_path'] . '/' . $record['twig_dir'];
+            $additional_paths[$twig_path] = $record['twig_prefix'] . $record['twig_dir'];
+        }
+        $a_config['additional_paths'] = $additional_paths;
+        $o_tf = self::createWithArray($a_config, 'db');
+        return $o_tf->o_twig;
+    }
+
+    /**
+     * Returns the twig environment object which we use to do all the template rendering.
+     * @param string|array $config    Optional but highly recommended. \ref twigfactory
+     * @param string       $namespace Optional, defaults to ''
+     * @return mixed|\Twig_Environment
+     */
+    public static function getTwigByFile($config = 'twig_config.php', $namespace = '')
     {
         if (is_array($config)) {
             if (empty($config)) {
-                $o_tf = self::create('twig_config.php', $name);
+                $o_tf = self::create('twig_config.php', $namespace);
             }
             elseif (isset($config['default_path'])) {
-                $o_tf = self::createWithArray($config, $name);
+                $o_tf = self::createWithArray($config, 'array');
+            }
+            elseif (!empty($config['twig_files'])) {
+                $a_config_files = $config['twig_files'];
+                $name = empty($config['instance_name'])
+                    ? 'main'
+                    : $config['instance_name'];
+                $use_main_twig = empty($config['use_default'])
+                    ? true
+                    : $config['use_default'];
+                $o_tf = self::createMultiSource($a_config_files, $name, $use_main_twig);
             }
             else {
-                $o_tf = self::createMultiSource($config, $name, $use_main_twig);
+                $o_tf = self::create('twig_config.php', $namespace);
             }
         }
         else {
-            $o_tf = self::create($config, $name);
+            $o_tf = self::create($config, $namespace);
         }
         return $o_tf->o_twig;
     }
@@ -135,16 +213,21 @@ class TwigFactory
     protected static function createMultiSource(array $a_config_files = [], $name = 'main', $use_main_twig = true)
     {
         if (!isset(self::$instance[$name])) {
+            # No config files specified
             if (empty($a_config_files)) {
                 return self::create('twig_config.php');
             }
             if ($use_main_twig) {
+                # Use /src/config/twig_config.php to create the $a_twig_config array
                 $a_twig_config = self::retrieveTwigConfigArray('twig_config.php');
             }
             else {
+                # Use the first key=>value pair in $a_config_files to create the $a_twig_config_array
                 $a_twig_config = self::retrieveTwigConfigArray($a_config_files[0]['name'], $a_config_files[0]['namespace']);
                 unset($a_config_files[0]);
             }
+
+            # Go through the config files specified to create additional paths
             foreach ($a_config_files as $a_config_file) {
                 $config_file = $a_config_file['name'];
                 $namespace = !empty($a_config_file['namespace'])
@@ -203,6 +286,9 @@ class TwigFactory
             $config_w_path = $config_file;
         }
         else {
+            $namespace = UtilityHelper::namespaceExists($namespace)
+                ? $namespace
+                : '';
             $config_w_path = LocateFile::getConfigWithPath($config_file, $namespace);
         }
         if ($config_w_path != '') {

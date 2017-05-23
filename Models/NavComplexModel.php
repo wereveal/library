@@ -97,8 +97,8 @@ SELECT
     n.nav_css as 'css',
     n.nav_level as 'level',
     n.nav_order as 'order'
-FROM {$this->db_prefix}urls as u
-JOIN {$this->db_prefix}navigation as n
+FROM {$this->lib_prefix}urls as u
+JOIN {$this->lib_prefix}navigation as n
     ON u.url_id = n.url_id
 ORDER BY
     n.nav_parent_id ASC,
@@ -355,12 +355,12 @@ SELECT
     n.nav_order as 'order',
     ng.ng_id,
     ng.ng_name
-FROM {$this->db_prefix}urls as u
-JOIN {$this->db_prefix}navigation as n
+FROM {$this->lib_prefix}urls as u
+JOIN {$this->lib_prefix}navigation as n
     ON n.url_id = u.url_id
-JOIN {$this->db_prefix}nav_ng_map as map
+JOIN {$this->lib_prefix}nav_ng_map as map
     ON n.nav_id = map.nav_id
-JOIN {$this->db_prefix}navgroups as ng
+JOIN {$this->lib_prefix}navgroups as ng
     ON ng.ng_id = map.ng_id
 WHERE n.nav_active = 1
 

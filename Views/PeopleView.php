@@ -2,12 +2,12 @@
 /**
  * @brief     View for the User Admin page.
  * @ingroup   lib_views
- * @file      PeopleAdminView.php
- * @namespace Ritc\Library\Views
+ * @file      PeopleView * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.3
- * @date      2016-04-11 13:40:30
+ * @version   2.0.0
+ * @date      2017-05-14 16:45:24
  * @note <b>Change Log</b>
+ * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
  * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
  * - v1.0.2   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
  * - v1.0.1   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
@@ -28,11 +28,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class PeopleAdminView
- * @class   PeopleAdminView
+ * Class PeopleView
+ * @class   PeopleView
  * @package Ritc\Library\Views
  */
-class PeopleAdminView
+class PeopleView
 {
     use ViewTraits, LogitTraits;
 
@@ -46,7 +46,7 @@ class PeopleAdminView
     private $o_pgm_model;
 
     /**
-     * PeopleAdminView constructor.
+     * PeopleView constructor.
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -109,7 +109,7 @@ class PeopleAdminView
         else {
             $a_values['a_message'] = '';
         }
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/people_admin.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/people.twig';
         $html = $this->o_twig->render($tpl, $a_values);
         return $html;
     }

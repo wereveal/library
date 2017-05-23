@@ -1,32 +1,14 @@
 {% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
 {% block body %}
-            {% if a_message.message != '' %}
-            <div class="row">
-                <div class="col-md-12">
-                    {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
-                </div>
+            <div class="container">
+                <ul class="manager-links">
+                    {% for link in links %}
+                        <li>
+                            {% include '@' ~ twig_prefix ~ 'elements/anchor.twig' %} - {{ link.description }}
+                        </li>
+                    {% endfor %}
+                </ul>
             </div>
-            {% endif %}
-            <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12">
-                    <ul class="manager-links">
-                        {% for link in links %}
-                            <li>
-                                {% include '@' ~ twig_prefix ~ 'elements/anchor.twig' %} - {{ link.description }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-{% endblock %}
-{% block footer %}
-<!-- Footer -->
-<div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-12 footer">
-        <p>Copyright &copy;&nbsp;2001-2015 <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved &reg;</p>
-    </div>
-</div>
-<!-- /footer -->
 {% endblock %}
 {#
     expected array

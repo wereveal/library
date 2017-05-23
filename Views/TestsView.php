@@ -5,9 +5,10 @@
  * @file      LibraryView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2015-09-01 08:05:20
+ * @version   2.0.0
+ * @date      2017-05-14 16:47:54
  * @note <b>Change Log</b>
+ * - v2.0.0   - Name refactoring                             - 2017-05-14 wer
  * - v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
  * - v1.0.0   - First stable version                         - 01/16/2015 wer
  * - v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
@@ -21,16 +22,16 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class TestsAdminView
+ * Class TestsView
  * @class   LibraryView
  * @package Ritc\Library\Views
  */
-class TestsAdminView
+class TestsView
 {
     use ViewTraits, LogitTraits;
 
     /**
-     * TestsAdminView constructor.
+     * TestsView constructor.
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)

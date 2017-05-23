@@ -5,9 +5,10 @@
  * @file      PageComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.3
- * @date      2017-02-11 12:29:54
+ * @version   1.0.0-alpha.4
+ * @date      2017-05-16 14:17:53
  * @note Change Log
+ * - v1.0.0-alpha.4 - bug fixes                     - 2017-05-16 wer
  * - v1.0.0-alpha.3 - bug fixes                     - 2017-02-11 wer
  * - v1.0.0-alpha.2 - refactoring reflected here    - 2017-01-27 wer
  * - v1.0.0-alpha.1 - bug fix                       - 2016-04-28 wer
@@ -35,6 +36,8 @@ class PageComplexModel
     private $o_di;
     /** @var \Ritc\Library\Models\PageModel  */
     private $o_page;
+    /** @var \Ritc\Library\Models\TwigComplexModel  */
+    private $o_tpls;
     /** @var \Ritc\Library\Models\UrlsModel  */
     private $o_urls;
     /** @var string  */
@@ -55,6 +58,7 @@ class PageComplexModel
         $this->o_elog = $o_elog;
         $this->o_page = new PageModel($o_db);
         $this->o_urls = new UrlsModel($o_db);
+        $this->o_tpls = new TwigComplexModel($o_di);
         if (DEVELOPER_MODE) {
             $this->o_page->setElog($o_elog);
             $this->o_urls->setElog($o_elog);
@@ -106,8 +110,23 @@ WHERE p.url_id = u.url_id
 AND p.url_id = :url_id
 SQL;
         $this->logIt("sql: $sql", LOG_OFF, $meth . __LINE__);
-        return $this->o_db->search($sql, [':url_id' => $url_id]);
+        $a_values = $this->o_db->search($sql, [':url_id' => $url_id]);
+        foreach ($a_values as $key => $a_record) {
+            $tpl_id = $a_record['tpl_id'];
+            $a_twig_stuff = $this->o_tpls->readTplInfo($tpl_id);
+            $log_message = 'Tpl Info; ' . var_export($a_twig_stuff, TRUE);
+            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
+            if (!empty($a_twig_stuff)) {
+                $a_record = array_merge($a_record, $a_twig_stuff[0]);
+                $a_values[$key] = $a_record;
+            }
+            else {
+                $log_message = 'tpl info error_message ' . var_export($this->o_tpls->getErrorMessage(), TRUE);
+                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+            }
+        }
+        return $a_values;
     }
 
     /**
@@ -137,15 +156,15 @@ SQL;
     private function setSelectSql($the_string = '')
     {
         $meth = __METHOD__ . '.';
-        $this->logIt("db prefix: " . $this->db_prefix, LOG_OFF, $meth . __LINE__);
+        $this->logIt("lib prefix: " . $this->lib_prefix, LOG_OFF, $meth . __LINE__);
         if ($the_string != '') {
             $this->select_sql = $the_string;
         }
         else {
             $a_page_fields = $this->o_page->getDbFields();
             $a_urls_fields = $this->o_urls->getDbFields();
-            $page_prefix = $this->o_page->getDbPrefix();
-            $url_prefix = $this->o_urls->getDbPrefix();
+            $page_prefix = $this->o_page->getLibPrefix();
+            $url_prefix = $this->o_urls->getLibPrefix();
             $select_fields = $this->buildSqlSelectFields($a_page_fields, 'p');
             $select_fields .= ', ' . $this->buildSqlSelectFields($a_urls_fields, 'u');
 

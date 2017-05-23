@@ -5,8 +5,8 @@
  * @file      Ritc/Library/Models/PeopleModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.3
- * @date      2017-05-09 17:38:21
+ * @version   1.3.3+1
+ * @date      2017-05-16 14:18:41
  * @note <b>Change Log</b>
  * - v1.3.3    - DbUtilityTraits change reflected here                       - 2017-05-09 wer
  * - v1.3.2    - Bug fix                                                     - 2017-02-07 wer
@@ -58,7 +58,7 @@ class PeopleModel implements ModelInterface
         $this->setupProperties($o_db, 'people');
     }
 
-    ### Basic CRUD commands, required by interface, deals only with the {$this->db_prefix}people table ###
+    ### Basic CRUD commands, required by interface, deals only with the {$this->lib_prefix}people table ###
     /**
      * Creates new people record(s) in the people table.
      * @param array $a_values required Can be a simple assoc array or array of assoc arrays

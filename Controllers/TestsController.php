@@ -18,7 +18,7 @@ use Ritc\Library\Services\Router;
 use Ritc\Library\Tests\PageModelTester;
 use Ritc\Library\Tests\PeopleModelTester;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Views\TestsAdminView;
+use Ritc\Library\Views\TestsView;
 
 /**
  * Class TestsController
@@ -35,7 +35,7 @@ class TestsController
     private $o_di;
     /** @var Router */
     private $o_router;
-    /** @var TestsAdminView */
+    /** @var TestsView */
     private $o_view;
     /** @var string */
     private $test_configs_path;
@@ -50,7 +50,7 @@ class TestsController
         $this->o_di     = $o_di;
         $this->o_db     = $o_di->get('db');
         $this->o_router = $o_di->get('router');
-        $this->o_view   = new TestsAdminView($o_di);
+        $this->o_view   = new TestsView($o_di);
         if (file_exists(LIBRARY_CONFIG_PATH . '/tests')) {
             $this->test_configs_path = LIBRARY_CONFIG_PATH . '/tests';
         }

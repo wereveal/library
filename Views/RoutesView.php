@@ -2,12 +2,13 @@
 /**
  * @brief     View for the Router Admin page.
  * @ingroup   lib_views
- * @file      RoutesAdminView.php
+ * @file      Ritc/Library/Views/RoutesView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2016-04-13 11:38:50
+ * @version   2.0.0
+ * @date      2017-05-14 16:46:14
  * @note <b>Change Log</b>
+ * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
  * - v1.1.0   - Refactoring elsewhere forced changes here                               - 2016-04-13 wer
  * - v1.0.4   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
  * - v1.0.3   - Change in implementation of LIB_TWIG_PREFIX                             - 2016-04-10 wer
@@ -28,11 +29,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class RoutesAdminView
- * @class   RoutesAdminView
+ * Class RoutesView
+ * @class   RoutesView
  * @package Ritc\Library\Views
  */
-class RoutesAdminView
+class RoutesView
 {
     use LogitTraits, ViewTraits;
 
@@ -40,7 +41,7 @@ class RoutesAdminView
     private $o_model;
 
     /**
-     * RoutesAdminView constructor.
+     * RoutesView constructor.
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -163,7 +164,7 @@ class RoutesAdminView
         $log_message = 'Twig Values: ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/routes_admin.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/routes.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 

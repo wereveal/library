@@ -5,9 +5,10 @@
  * @file      UrlsView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.0
- * @date      2016-04-13 11:35:27
+ * @version   1.0.0-beta.1
+ * @date      2017-05-14 16:49:03
  * @note Change Log
+ * - v1.0.0-beta.1  - Name refactoring          - 2017-05-14 wer
  * - v1.0.0-beta.0  - Initial working version   - 2016-04-13 wer
  * - v1.0.0-alpha.0 - Initial version           - 2016-04-11 wer
  */
@@ -97,7 +98,7 @@ class UrlsView
         $log_message = 'Twig Values:  ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/urls_admin.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/urls.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 

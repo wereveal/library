@@ -8,28 +8,28 @@
  * @version   4.0.2
  * @date      2017-01-27 10:59:55
  * @note <b>Change Log</b>
- *   v4.0.2 - bug fix.                                                   - 2017-01-27 wer
- * - v4.0.1 - bug fix. Wondering if another is still here.               - 02/22/2016 wer
- * - v4.0.0 - renamed to reflect what it was doing. Since it isn't       - 01/17/2015 wer
+ *   v4.0.2 - bug fix.                                                              - 2017-01-27 wer
+ * - v4.0.1 - bug fix. Wondering if another is still here.                          - 02/22/2016 wer
+ * - v4.0.0 - renamed to reflect what it was doing. Since it isn't                  - 01/17/2015 wer
  *              a service, moved it Ritc\Library\Helper namespace.
- * - v3.3.0 - moved some contant definitions into this class             - 12/10/2014 wer
+ * - v3.3.0 - moved some contant definitions into this class                        - 12/10/2014 wer
  *              the constants.php file was doing these definitions but
  *              it seemed that this should be done here. Also, moved a
  *              couple constant names into the database.
- * - v3.2.0 - changed to use DI/IOC                                      - 12/10/2014 wer
- * - v3.1.5 - moved to the Services Namespace in the Library             - 11/15/2014 wer
- * - v3.1.4 - changed to match changes in ConstantsModel                    - 11/13/2014 wer
- * - v3.1.3 - changed to implment the changes in Base class              - 09/23/2014 wer
- * - v3.1.2 - bug fixes                                                  - 09/18/2014 wer
- * - v3.1.1 - made it so the constants table name will be assigned from the - 02/24/2014 wer
+ * - v3.2.0 - changed to use DI/IOC                                                 - 12/10/2014 wer
+ * - v3.1.5 - moved to the Services Namespace in the Library                        - 11/15/2014 wer
+ * - v3.1.4 - changed to match changes in ConstantsModel                            - 11/13/2014 wer
+ * - v3.1.3 - changed to implment the changes in Base class                         - 09/23/2014 wer
+ * - v3.1.2 - bug fixes                                                             - 09/18/2014 wer
+ * - v3.1.1 - made it so the constants table name will be assigned from the         - 02/24/2014 wer
  *              the db_prefix variable set from the db confuration
  *              (created in PdoFactory, passed on to DbModel).
- * - v3.1.0 - made it so it will create the constants table if it does not exist.
- *              Other changes to adjust to not having a theme based app.   - 01/31/2014 wer
- * - v3.0.3 - package change                                             - 12/19/2013 wer
- * - v3.0.2 - bug fixes, minor changes                                   - 2013-11-08 wer
- * - v3.0.1 - refactoring for database class change                      - 2013-11-06 wer
- * - v3.0.0 - Modified for new framework file hierarchy                  - 2013-04-30 wer
+ * - v3.1.0 - made it so it will create the constants table if it does not exist.   - 01/31/2014 wer
+ *            Other changes to adjust to not having a theme based app.
+ * - v3.0.3 - package change                                                        - 12/19/2013 wer
+ * - v3.0.2 - bug fixes, minor changes                                              - 2013-11-08 wer
+ * - v3.0.1 - refactoring for database class change                                 - 2013-11-06 wer
+ * - v3.0.0 - Modified for new framework file hierarchy                             - 2013-04-30 wer
  * - v2.3.0 - mostly changes for FIG-standards
  */
 namespace Ritc\Library\Helper;
@@ -124,16 +124,13 @@ class ConstantsHelper
             $a_constants = $this->o_constants_model->selectConstantsList();
             $this->logIt('Constants List -- ' . var_export($a_constants, TRUE), LOG_OFF, $meth . __LINE__);
             if (!empty($a_constants)) {
-                $this->logIt("List of Configs: " . var_export($a_constants, true), LOG_OFF, $meth . __LINE__);
                 foreach ($a_constants as $row) {
                     $key = strtoupper($row['const_name']);
                     if (!defined("{$key}")) {
                         switch ($row['const_value']) {
-                            case true:
                             case 'true':
                                 define("{$key}", true);
                                 break;
-                            case false:
                             case 'false':
                                 define("{$key}", false);
                                 break;

@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Controllers/LibraryController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   v2.1.0
- * @date      2016-04-11 10:13:40
+ * @version   v2.1.1
+ * @date      2017-05-14 14:35:02
  * @note <b>Change Log</b>
+ * - v2.1.1   - bug fix                               - 2017-05-14 wer
  * - v2.1.0   - Added UrlAdminController              - 2016-04-11 wer
  * - v2.0.0   - Renamed Class to be more specific     - 2016-03-31 wer
  * - v1.0.1   - needed to change private to protected - 12/01/2015 wer

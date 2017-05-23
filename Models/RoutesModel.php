@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/RoutesModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.2
- * @date      2017-05-09 17:37:16
+ * @version   1.4.3
+ * @date      2017-05-16 13:37:01
  * @note <b>Change Log</b>
+ * - v1.4.3   - bug fix                                                - 2017-05-16 wer
  * - v1.4.2   - DbUtilityTraits change reflected here                  - 2017-05-09 wer
  * - v1.4.1   - Bug fix caused by change elsewhere                     - 2017-01-27 wer
  * - v1.4.0   - Refactored readWithRequestUri to readByRequestUri      - 2016-04-10 wer
@@ -148,7 +149,7 @@ class RoutesModel implements ModelInterface
 
 SELECT r.route_id, r.route_class, r.route_method, r.route_action, r.route_immutable,
        u.url_id, u.url_text, u.url_scheme
-FROM {$this->db_prefix}routes as r, {$this->db_prefix}urls as u
+FROM {$this->lib_prefix}routes as r, {$this->lib_prefix}urls as u
 WHERE r.url_id = u.url_id
 AND u.url_text = :url_text
 ORDER BY u.url_text
@@ -172,7 +173,7 @@ EOT;
 
 SELECT r.route_id, r.route_class, r.route_method, r.route_action, r.route_immutable,
        u.url_id, u.url_text, u.url_scheme
-FROM {$this->db_prefix}routes as r, {$this->db_prefix}urls as u
+FROM {$this->lib_prefix}routes as r, {$this->lib_prefix}urls as u
 WHERE r.url_id = u.url_id
 ORDER BY r.route_immutable DESC, u.url_text
 

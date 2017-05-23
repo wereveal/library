@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.2
- * @date      2017-05-09 17:39:39
+ * @version   1.0.0-alpha.3
+ * @date      2017-05-16 14:16:09
  * @note Change Log
+ * - v1.0.0-alpha.3 - Bug fix                                               - 2017-05-16 wer
  * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here                 - 2017-05-09 wer
  * - v1.0.0-alpha.1 - Bug fix                                               - 2017-01-27 wer
  * - v1.0.0-alpha.0 - Initial version                                       - 2016-12-08 wer
@@ -107,12 +108,12 @@ class PeopleComplexModel
             return false;
         }
 
-        $a_people_fields = $this->o_db->selectDbColumns($this->db_prefix . 'people');
+        $a_people_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'people');
         if (empty($a_people_fields)) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
             return false;
         }
-        $a_group_fields = $this->o_db->selectDbColumns($this->db_prefix . 'groups');
+        $a_group_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'groups');
         if (empty($a_group_fields)) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
             return false;
@@ -145,7 +146,7 @@ class PeopleComplexModel
             FROM {$this->db_table} as p
             JOIN {$this->db_table}_group_map as pgm
                 USING (people_id)
-            JOIN {$this->db_prefix}groups as g
+            JOIN {$this->lib_prefix}groups as g
                 USING (group_id)
             WHERE {$where}
             ORDER BY g.group_auth_level DESC, g.group_name ASC
@@ -203,12 +204,12 @@ class PeopleComplexModel
     public function readByGroup($group_id = -1)
     {
         $meth = __METHOD__ . '.';
-        $a_people_fields = $this->o_db->selectDbColumns($this->db_prefix . 'people');
+        $a_people_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'people');
         if (empty($a_people_fields)) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
             return false;
         }
-        $a_group_fields = $this->o_db->selectDbColumns($this->db_prefix . 'groups');
+        $a_group_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'groups');
         if (is_numeric($group_id)) {
             $group_and = 'g.group_id = :group_id';
             $a_values = ['group_id' => $group_id, 'is_active' => 1];
@@ -231,10 +232,10 @@ class PeopleComplexModel
         }
         $sql =<<<SQL
 SELECT $fields
-FROM {$this->db_prefix}people as p
-JOIN {$this->db_prefix}people_group_map pgm
+FROM {$this->lib_prefix}people as p
+JOIN {$this->lib_prefix}people_group_map pgm
   ON p.people_id = pgm.people_id
-JOIN {$this->db_prefix}groups as g
+JOIN {$this->lib_prefix}groups as g
   ON (
         g.group_id = pgm.group_id
     AND $group_and

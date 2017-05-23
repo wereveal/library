@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Controllers/GroupsController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.1
- * @date      2016-03-08 15:14:44
+ * @version   2.0.0
+ * @date      2017-05-14 16:41:01
  * @note <b>Change Log</b>
+ * - v2.0.0   - name refactoring         - 2017-05-14 wer
  * - v1.0.1   - bug fix                  - 2016-03-08 wer
  * - v1.0.0   - First working version    - 11/27/2015 wer
  * - v1.0.0β1 - Initial version          - 01/28/2015 wer
@@ -22,7 +23,7 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Views\GroupsAdminView;
+use Ritc\Library\Views\GroupsView;
 
 /**
  * Class GroupsController.
@@ -43,7 +44,7 @@ class GroupsController implements ManagerControllerInterface
     private $o_router;
     /** @var Session */
     private $o_session;
-    /** @var GroupsAdminView */
+    /** @var GroupsView */
     private $o_view;
 
     /**
@@ -57,7 +58,7 @@ class GroupsController implements ManagerControllerInterface
         $this->o_router  = $o_di->get('router');
         $this->o_session = $o_di->get('session');
         $this->o_model   = new GroupsModel($o_db);
-        $this->o_view    = new GroupsAdminView($o_di);
+        $this->o_view    = new GroupsView($o_di);
         $this->a_post    = $this->o_router->getPost();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');
@@ -141,7 +142,7 @@ class GroupsController implements ManagerControllerInterface
         }
         else {
             $error_msg = $this->o_model->getErrorMessage();
-            $this->o_elog->write("Error_message: " . var_export($error_msg, true));
+            $this->logIt("Error_message: " . var_export($error_msg, true), LOG_OFF, $meth . __LINE__);
             $a_message = ViewHelper::failureMessage($error_msg);
         }
         return $this->o_view->renderList($a_message);

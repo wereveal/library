@@ -29,7 +29,7 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Views\PeopleAdminView;
+use Ritc\Library\Views\PeopleView;
 
 /**
  * Class PeopleController.
@@ -54,7 +54,7 @@ class PeopleController implements ManagerControllerInterface
     private $o_router;
     /** @var Session */
     private $o_session;
-    /** @var PeopleAdminView */
+    /** @var PeopleView */
     private $o_view;
 
     /**
@@ -65,7 +65,7 @@ class PeopleController implements ManagerControllerInterface
     {
         $this->o_di          = $o_di;
         $o_db                = $o_di->get('db');
-        $this->o_view        = new PeopleAdminView($o_di);
+        $this->o_view        = new PeopleView($o_di);
         $this->o_session     = $o_di->get('session');
         $this->o_router      = $o_di->get('router');
         $this->o_people      = new PeopleModel($o_db);

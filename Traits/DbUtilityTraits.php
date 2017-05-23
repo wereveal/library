@@ -68,7 +68,7 @@ trait DbUtilityTraits {
     /** @var  string */
     protected $error_message = '';
     /** @var string */
-    protected $lib_prefix = 'ritc_';
+    protected $lib_prefix = 'lib_';
     /** @var \Ritc\Library\Services\DbModel */
     protected $o_db;
     /** @var  string */
@@ -188,13 +188,22 @@ SQL;
     {
         $meth = __METHOD__ . '.';
         if (!isset($a_parameters['table_name']) && $this->db_table == '') {
-            $this->logIt("The table name must be specified.", LOG_OFF, $meth . __LINE__);
+            $this->error_message = "The table name must be specified.";
             return false;
         }
         elseif (isset($a_parameters['table_name'])) {
             $table_name = $a_parameters['table_name'];
-            if (strpos($table_name, $this->db_prefix) === false) {
-                $table_name = $this->db_prefix . $table_name;
+            if (!$this->o_db->tableExists($table_name)) {
+                if ($this->o_db->tableExists($this->db_prefix . $table_name)) {
+                    $table_name = $this->db_prefix . $table_name;
+                }
+                elseif ($this->o_db->tableExists($this->lib_prefix . $table_name)) {
+                    $table_name = $this->lib_prefix . $table_name;
+                }
+                else {
+                    $this->error_message = "The table specified doesn't exist.";
+                    return false;
+                }
             }
         }
         else {
@@ -229,11 +238,11 @@ SQL;
 
         $select_me = $this->buildSqlSelectFields($a_fields);
         $where = $this->buildSqlWhere($a_search_for, $a_parameters, $a_allowed_keys);
-        $sql =<<<SQL
-SELECT {$distinct}{$select_me}
-FROM {$table_name} 
-{$where}
-SQL;
+        $sql = "
+            SELECT {$distinct}{$select_me}
+            FROM {$table_name} 
+            {$where}
+        ";
         $this->logIt("SQL:\n" . $sql, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for, $return_format);
         if ($results !== false) {
@@ -792,6 +801,15 @@ SQL;
     public function getErrorMessage()
     {
         return $this->error_message;
+    }
+
+    /**
+     * GETter for property lib_prefix.
+     * @return string
+     */
+    public function getLibPrefix()
+    {
+        return $this->lib_prefix;
     }
 
     /**

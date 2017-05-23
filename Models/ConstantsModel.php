@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/ConstantsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.4.2
- * @date      2017-05-09 17:43:30
+ * @version   2.5.0
+ * @date      2017-05-18 13:24:09
  * @note      see ConstantsEntity for database table definition.
  * @note <b>Change Log</b>
+ * - v2.5.0 - Removed unused property and setting of same                   - 2017-05-18 wer
  * - v2.4.2 - DbUtilityTraits change reflected here                         - 2017-05-09 wer
  * - v2.4.1 - Refactoring of file structure reflected here                  - 2017-02-15 wer
  * - v2.4.0 - Implementing more of the DbUtilityTraits                      - 2017-01-27 wer
@@ -42,9 +43,6 @@ class ConstantsModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var array|bool */
-    private $a_constants;
-
     /**
      * ConstantsModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db
@@ -52,7 +50,6 @@ class ConstantsModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'constants');
-        $this->a_constants = $this->selectConstantsList();
     }
 
     ### Database Functions ###
@@ -116,13 +113,20 @@ class ConstantsModel implements ModelInterface
      */
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
+        $meth = __METHOD__ . '.';
         $a_parameters = [
             'table_name'     => $this->db_table,
             'a_search_for'   => $a_search_values,
             'a_allowed_keys' => $this->a_db_fields,
             'order_by'       => $this->primary_index_name . ' ASC'
         ];
+          $log_message = 'a_search_params ' . var_export($a_search_params, TRUE);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+          $log_message = 'a_parameters ' . var_export($a_parameters, TRUE);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_parameters = array_merge($a_parameters, $a_search_params);
+          $log_message = 'Merged Params ' . var_export($a_parameters, TRUE);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $this->genericRead($a_parameters);
     }
 
@@ -312,9 +316,9 @@ class ConstantsModel implements ModelInterface
      */
     public function tableExists()
     {
-        $db_prefix = $this->o_db->getDbPrefix();
+        $lib_prefix = $this->o_db->getLibPrefix();
         $a_tables = $this->o_db->selectDbTables();
-        if (array_search("{$db_prefix}constants", $a_tables, true) === false) {
+        if (array_search("{$lib_prefix}constants", $a_tables, true) === false) {
             return false;
         }
         return true;

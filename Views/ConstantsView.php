@@ -2,12 +2,12 @@
 /**
  * @brief     View for the Configuration page.
  * @ingroup   lib_views
- * @file      ConstantsAdminView.php
- * @namespace Ritc\Library\Views
+ * @file      ConstantsView.phpnamespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.4
- * @date      2016-04-11 08:49:27
+ * @version   2.0.0
+ * @date      2017-05-14 16:41:30
  * @note <b>Change Log</b>
+ * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
  * - v1.2.4   - Bug fix, removed unneeded use statement                                 - 2016-04-11 wer
  *              Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here
  * - v1.2.3   - Bug fix in the implementation of LIB_TWIG_PREFIX                        - 2016-04-10 wer
@@ -31,11 +31,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class ConstantsAdminView
- * @class   ConstantsAdminView
+ * Class ConstantsView
+ * @class   ConstantsView
  * @package Ritc\Library\Views
  */
-class ConstantsAdminView
+class ConstantsView
 {
     use LogitTraits, ViewTraits;
 
@@ -47,7 +47,7 @@ class ConstantsAdminView
     private $o_people;
 
     /**
-     * ConstantsAdminView constructor.
+     * ConstantsView constructor.
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -109,7 +109,7 @@ class ConstantsAdminView
         }
         $a_page_values = $this->getPageValues(); // provided in ManagerViewTraits
         $a_values = array_merge($a_values, $a_page_values);
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/constants_admin.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/constants.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 

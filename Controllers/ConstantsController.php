@@ -27,7 +27,7 @@ use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Router;
-use Ritc\Library\Views\ConstantsAdminView;
+use Ritc\Library\Views\ConstantsView;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -48,7 +48,7 @@ class ConstantsController implements ManagerControllerInterface
     private $o_di;
     /** @var ConstantsModel */
     private $o_model;
-    /** @var ConstantsAdminView */
+    /** @var ConstantsView */
     private $o_view;
 
     /**
@@ -61,7 +61,7 @@ class ConstantsController implements ManagerControllerInterface
         /** @var DbModel $o_db */
         $o_db           = $this->o_di->get('db');
         $this->o_model  = new ConstantsModel($o_db);
-        $this->o_view   = new ConstantsAdminView($this->o_di);
+        $this->o_view   = new ConstantsView($this->o_di);
         /** @var Router $o_router */
         $o_router       = $this->o_di->get('router');
         $a_router_parts = $o_router->getRouteParts();

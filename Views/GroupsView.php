@@ -2,12 +2,12 @@
 /**
  * @brief     View for the Groups Admin page.
  * @ingroup   lib_views
- * @file      GroupsAdminView.php
- * @namespace Ritc\Library\Views
+ * @file      GroupsView.phpnamespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.3
- * @date      2016-04-11 13:30:43
+ * @version   2.0.0
+ * @date      2017-05-14 16:42:34
  * @note <b>Change Log</b>
+ * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
  * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
  * - v1.0.2   - Bug fix to implementation of LIB_TWIG_PREFIX                            - 2016-04-10 wer
  * - v1.0.1   - Implent LIB_TWIG_PREFIX                                                 - 12/12/2015 wer
@@ -23,11 +23,11 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class GroupsAdminView
- * @class   GroupsAdminView
+ * Class GroupsView
+ * @class   GroupsView
  * @package Ritc\Library\Views
  */
-class GroupsAdminView
+class GroupsView
 {
     use LogitTraits, ViewTraits;
 
@@ -37,7 +37,7 @@ class GroupsAdminView
     private $o_groups;
 
     /**
-     * GroupsAdminView constructor.
+     * GroupsView constructor.
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -95,7 +95,7 @@ class GroupsAdminView
         }
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/groups_admin.twig';
+        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/groups.twig';
         return $this->o_twig->render($tpl, $a_values);
     }
 

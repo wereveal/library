@@ -2,14 +2,15 @@
 /**
  * @brief     A class for testing that all other testing classes should extend.
  * @details   Class that extends this class should end with the word Tests or
- *           Tester, e.g. MyClassTester or MyClassTests.
+ *            Tester, e.g. MyClassTester or MyClassTests.
  * @ingroup   lib_basic
  * @file      Ritc/Library/Basic/Tester.php
  * @namespace Ritc\Library\Basic
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.4.0
- * @date      2016-04-20 10:54:20
+ * @version   3.5.0
+ * @date      2017-05-12 09:30:08
  * @note <b>Change log</b>
+ * - v3.5.0 - modified setupTests to create test order from test values                 - 2017-05-12 wer
  * - v3.4.0 - modified setupTests to set a new property class_name                      - 2016-04-20 wer
  * - v3.3.0 - added new method to automate some setup                                   - 2016-03-10 wer
  * - v3.2.1 - bug fix                                                                   - 2016-03-09 wer
@@ -29,6 +30,7 @@
  *          - allows the test results to display individual subtests
  *          - within the method tester
  * - v1.0.1 - updated to match new framework                                            - 2013-04-03 wer
+ * @todo add a todo test type, i.e. a way to say, this method needs to be written so don't run a test, just list it.
  */
 namespace Ritc\Library\Basic;
 
@@ -78,6 +80,7 @@ class Tester
         $this->a_test_order[] = $method_name;
         return true;
     }
+
     /**
      * Adds a single key=>value pair to the a_test_values array
      * @param string $key the key name
@@ -89,6 +92,7 @@ class Tester
         if ($key == '') { return; }
         $this->a_test_values[$key] = $value;
     }
+
     /**
      * @return array
      */
@@ -96,6 +100,7 @@ class Tester
     {
         return $this->failed_test_names;
     }
+
     /**
      * @return array
      */
@@ -103,6 +108,7 @@ class Tester
     {
         return $this->failed_tests;
     }
+
     /**
      * @return int
      */
@@ -110,6 +116,7 @@ class Tester
     {
         return $this->num_o_tests;
     }
+
     /**
      * @return int
      */
@@ -117,6 +124,7 @@ class Tester
     {
         return $this->passed_tests;
     }
+
     /**
      * @return array
      */
@@ -124,6 +132,7 @@ class Tester
     {
         return $this->passed_test_names;
     }
+
     /**
      * @return array
      */
@@ -131,6 +140,7 @@ class Tester
     {
         return $this->a_test_order;
     }
+
     /**
      * Returns an array showing the number and optionally names of tests success and failure
      * @param bool $show_test_names optional defaults to showing names
@@ -174,6 +184,7 @@ class Tester
             );
         }
     }
+
     /**
      * Runs tests where method ends in Test.
      * @param string $class_name  optional, name of the class to be tested - only really needed if
@@ -185,7 +196,7 @@ class Tester
      *                            and won't try to build one from the class methods.
      * @return int number of failed tests.
      */
-    public function runTests($class_name = '', array $a_test_order = array())
+    public function runTests($class_name = '', array $a_test_order = [])
     {
         if ($class_name == '') {
             if ($this->class_name != '') {
@@ -258,6 +269,7 @@ class Tester
         $this->logIt("num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: " . var_export($this->failed_test_names, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $failed_tests;
     }
+
     /**
      * Removes Tester or Test from method name
      * @param  string $method_name defaults to 'Tester'
@@ -270,6 +282,7 @@ class Tester
         }
         return $method_name;
     }
+
     /**
      * Sets three properties, num_o_test++, failed_tests++, and failed test names.
      * @param string $method_name
@@ -280,6 +293,7 @@ class Tester
         $this->failed_tests++;
         $this->failed_test_names[] = $this->shortenName($method_name);
     }
+
     /**
      * Sets failed_subtests
      * @param string $method_name
@@ -298,6 +312,7 @@ class Tester
             $this->failed_subtests[$method_name] = array($test_name);
         }
     }
+
     /**
      * Sets the array a_test_order to the array passed in
      * @param array $a_test_order optional, defaults to an empty array
@@ -307,6 +322,7 @@ class Tester
     {
         $this->a_test_order = $a_test_order;
     }
+
     /**
      * Sets the array a_test_value to the array passed in
      * @param array $a_test_values optional, defaults to an empty array
@@ -316,6 +332,7 @@ class Tester
     {
         $this->a_test_values = $a_test_values;
     }
+
     /**
      * Return the values in $this->a_test_values
      * @param none
@@ -381,14 +398,7 @@ class Tester
             }
         }
         $this->class_name = $class_name;
-        $o_files = new Files($order_file, $extra_dir, $theme, $namespace);
-        $test_order_file = $o_files->getFileWithPath();
-        if ($test_order_file) {
-            $this->a_test_order = include $test_order_file;
-        }
-        else {
-            $this->a_test_order = [];
-        }
+        $o_files = new Files($values_file, $extra_dir, $theme, $namespace);
 
         $o_files->setFileName($values_file);
         $test_values_file = $o_files->getFileWithPath();
@@ -397,6 +407,24 @@ class Tester
         }
         else {
             $this->a_test_values = [];
+        }
+
+        $o_files->setFileName($order_file);
+        $test_order_file = $o_files->getFileWithPath();
+        if ($test_order_file) {
+            $this->a_test_order = include $test_order_file;
+        }
+        else {
+            if (!empty($a_test_values)) {
+                $a_test_order = [];
+                foreach ($a_test_values as $key => $test_values) {
+                    $a_test_order[] = $key;
+                }
+                $this->a_test_order = $a_test_order;
+            }
+            else {
+                $this->a_test_order = [];
+            }
         }
     }
 }

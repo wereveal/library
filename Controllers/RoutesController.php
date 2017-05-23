@@ -28,7 +28,7 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Views\RoutesAdminView;
+use Ritc\Library\Views\RoutesView;
 
 /**
  * Class RoutesController
@@ -49,7 +49,7 @@ class RoutesController implements ManagerControllerInterface
     private $o_router;
     /** @var Session */
     private $o_session;
-    /** @var RoutesAdminView */
+    /** @var RoutesView */
     private $o_view;
 
     /**
@@ -63,7 +63,7 @@ class RoutesController implements ManagerControllerInterface
         $this->o_session = $o_di->get('session');
         $this->o_router  = $o_di->get('router');
         $this->o_model   = new RoutesModel($o_db);
-        $this->o_view    = new RoutesAdminView($o_di);
+        $this->o_view    = new RoutesView($o_di);
         $this->a_post    = $this->o_router->getPost();
         if (DEVELOPER_MODE) {
             $this->o_elog = $o_di->get('elog');

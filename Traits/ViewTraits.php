@@ -131,8 +131,28 @@ trait ViewTraits
             'rights_holder'  => RIGHTS_HOLDER,
             'copyright_date' => COPYRIGHT_DATE
         );
-        $a_values = array_merge($a_page_values, $a_values);
+        $a_values = array_merge($a_values, $a_page_values);
         return $a_values;
+    }
+
+    /**
+     * Creates the template string used by \Twig_Environment::render.
+     * @param array $a_twig_values
+     * @return string
+     */
+    public function createTplString(array $a_twig_values = [])
+    {
+        if (empty($a_twig_values)) { return ''; }
+        $page_prefix = empty($a_twig_values['page_prefix'])
+            ? $a_twig_values['twig_prefix']
+            : $a_twig_values['page_prefix'];
+
+        return '@'
+            . $page_prefix
+            . $a_twig_values['twig_dir']
+            . '/'
+            .  $a_twig_values['tpl']
+            . '.twig';
     }
 
     ### SETters and GETters ###
@@ -238,7 +258,7 @@ trait ViewTraits
         $o_page_model = new PageComplexModel($this->o_di);
         $url_id = $this->o_router->getUrlId();
         $a_values = $o_page_model->readPageValuesByUrlId($url_id);
-        $log_message = 'db values:  ' . var_export($a_values, TRUE);
+        $log_message = 'Page Values By URL Id:  ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         if (isset($a_values[0])) {
@@ -255,7 +275,8 @@ trait ViewTraits
                 'title'          => '',
                 'lang'           => 'en',
                 'charset'        => 'utf-8',
-                'twig_prefix'    => TWIG_PREFIX,
+                'page_prefix'    => TWIG_PREFIX,
+                'twig_dir'       => 'pages',
                 'tpl'            => 'index',
                 'base_url'       => '/',
             ];
@@ -263,11 +284,6 @@ trait ViewTraits
         $base_url = $a_page_values['page_base_url'] == '/'
             ? SITE_URL
             : SITE_URL . $a_page_values['page_base_url'];
-
-        $twig_prefix = strtolower($a_page_values['page_twig_prefix']);
-        if (substr($twig_prefix, -1) != '_') {
-            $twig_prefix .= '_';
-        }
 
         return [
             'page_id'     => $a_page_values['page_id'],
@@ -279,8 +295,9 @@ trait ViewTraits
             'title'       => $a_page_values['page_title'],
             'lang'        => $a_page_values['page_lang'],
             'charset'     => $a_page_values['page_charset'],
-            'twig_prefix' => $twig_prefix,
-            'tpl'         => $a_page_values['page_tpl'],
+            'page_prefix' => $a_page_values['twig_prefix'],
+            'twig_dir'    => $a_page_values['twig_dir'],
+            'tpl'         => $a_page_values['tpl_name'],
             'base_url'    => $base_url
         ];
     }

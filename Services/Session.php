@@ -64,6 +64,12 @@ class Session
             $this->session_id   = session_id();
             $this->session_name = session_name();
             $this->logIt("Session Name in construct: " . session_name(), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            if (empty($_SESSION['token'])) {
+                $this->setToken();
+            }
+            if (empty($_SESSION['idle_timestamp'])) {
+                $this->setIdleTime();
+            }
         }
         else {
             $this->logIt("Session Not Started", LOG_OFF, __METHOD__ . '.' . __LINE__);

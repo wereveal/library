@@ -18,7 +18,7 @@ use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Views\NavigationAdminView;
+use Ritc\Library\Views\NavigationView;
 
 /**
  * Class NavigationController.
@@ -36,7 +36,7 @@ class NavigationController implements ManagerControllerInterface
     {
         $this->setupElog($o_di);
         $this->setupController($o_di);
-        $this->o_view = new NavigationAdminView($o_di);
+        $this->o_view = new NavigationView($o_di);
         $this->o_model = new NavComplexModel($this->o_db);
     }
 
