@@ -17,6 +17,7 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Tests\PageModelTester;
 use Ritc\Library\Tests\PeopleModelTester;
+use Ritc\Library\Tests\UrlsModelTester;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\TestsView;
 
@@ -83,6 +84,9 @@ class TestsController
                 break;
             case 'PageModel':
                 $o_test = new PageModelTester($this->o_di);
+                break;
+            case 'UrlsModel':
+                $o_test = new UrlsModelTester($this->o_di);
                 break;
             case 'ConstantsModel':
             case 'GroupsModel':

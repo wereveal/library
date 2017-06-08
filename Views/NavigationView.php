@@ -15,6 +15,7 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
+use Ritc\Library\Models\NavigationModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -29,18 +30,34 @@ class NavigationView
 {
     use LogitTraits, ViewTraits;
 
+    /**
+     * @var \Ritc\Library\Models\NavComplexModel
+     */
     private $o_nav_complex;
+    /**
+     * @var \Ritc\Library\Models\NavigationModel
+     */
     private $o_nav_model;
+    /**
+     * @var \Ritc\Library\Models\NavgroupsModel
+     */
+    private $o_ng_model;
 
+    /**
+     * NavigationView constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);
         $this->setupView($o_di);
-        $this->o_nav_model = new NavgroupsModel($this->o_db);
+        $this->o_ng_model    = new NavgroupsModel($this->o_db);
+        $this->o_nav_model   = new NavigationModel($this->o_db);
         $this->o_nav_complex = new NavComplexModel($this->o_db);
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_nav_model->setElog($this->o_elog);
             $this->o_nav_complex->setElog($this->o_elog);
+            $this->o_nav_model->setElog($this->o_elog);
+            $this->o_ng_model->setElog($this->o_elog);
         }
     }
 
@@ -52,38 +69,28 @@ class NavigationView
     public function renderList(array $a_message = [])
     {
         $meth = __METHOD__ . '.';
-        $a_twig_values = $this->createDefaultTwigValues('library', $a_message);
-        $a_twig_values['page_title'] = 'Manager for Navigation Values';
+        $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/navigation/');
 
         $a_nav = $this->o_nav_complex->getNavListAll();
         $a_nav = $this->createSubmenu($a_nav);
         $a_nav = $this->sortTopLevel($a_nav);
-
+        $a_nav = $this->createTwigListArray($a_nav);
         $log_message = 'Search Results ' . var_export($a_nav, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_twig_values['a_nav'] = $a_nav;
 
         $a_twig_values['new_btn_form'] = [
-            'form_action'  => PUBLIC_DIR . '/manager/library/navigation/new/',
+            'form_action'  => PUBLIC_DIR . '/manager/config/navigation/',
             'form_class'   => '',
-            'btn_value'    => 'new_page',
-            'btn_label'    => 'New Navigation',
+            'btn_value'    => 'new',
+            'btn_label'    => 'New',
             'btn_color'    => 'btn-primary',
             'btn_size'     => 'btn-xs',
             'hidden_name'  => 'nav_id',
             'hidden_value' => ''
         ];
-        $a_twig_values['modify_btn_form'] = [
-            'form_action'  => PUBLIC_DIR . '/manager/library/navigation/modify/',
-            'form_class'   => '',
-            'btn_value'    => 'modify_nav',
-            'btn_label'    => 'Modify/Delete',
-            'btn_color'    => 'btn-primary',
-            'btn_size'     => 'btn-xs',
-            'hidden_name'  => 'nav_id'
-        ];
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/navigation.twig';
+        $tpl = $this->createTplString($a_twig_values);
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 
@@ -290,5 +297,34 @@ class NavigationView
         }
         $a_select['options'] = $a_options;
         return $a_select;
+    }
+
+    /**
+     * Creates the array used in the twig template to display the list of navigation records.
+     * @param array $a_values
+     * @return array
+     */
+    private function createTwigListArray(array $a_values = [])
+    {
+        $a_twig_nav = [];
+        foreach ($a_values as $nav) {
+            $submenu = [];
+            if (!empty($nav['submenu'])) {
+                $submenu = $this->createTwigListArray($nav['submenu']);
+            }
+            $a_twig_nav[] = [
+                'nav_text'        => $nav['text'],
+                'nav_description' => $nav['description'],
+                'form_action'     => PUBLIC_DIR . '/manger/config/navigation/',
+                'form_class'      => '',
+                'btn_primary'     => 'btn-primary',
+                'btn_danger'      => 'btn-danger',
+                'hidden_name'     => 'nav_id',
+                'hidden_value'    => $nav['nav_id'],
+                'submenu'         => $submenu
+
+            ];
+        }
+        return $a_twig_nav;
     }
 }

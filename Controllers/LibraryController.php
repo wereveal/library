@@ -27,13 +27,11 @@
  */
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Router;
-use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Traits\ManagerControllerTraits;
 use Ritc\Library\Views\LibraryView;
 
 /**
@@ -43,28 +41,10 @@ use Ritc\Library\Views\LibraryView;
  */
 class LibraryController implements ControllerInterface
 {
-    use LogitTraits;
+    use LogitTraits, ManagerControllerTraits;
 
-    /** @var array */
-    protected $a_route_parts;
-    /** @var array */
-    protected $a_post_values;
-    /** @var string */
-    protected $form_action;
-    /** @var AuthHelper */
-    protected $o_auth;
-    /** @var Di */
-    protected $o_di;
     /** @var LibraryView */
-    protected $o_manager_view;
-    /** @var Router */
-    protected $o_router;
-    /** @var Session */
-    protected $o_session;
-    /** @var string */
-    protected $route_method;
-    /** @var string */
-    protected $route_action;
+    protected $o_view;
 
     /**
      * LibraryController constructor.
@@ -72,21 +52,13 @@ class LibraryController implements ControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->o_di           = $o_di;
-        $this->o_router       = $o_di->get('router');
-        $this->o_session      = $o_di->get('session');
-        $this->a_route_parts  = $this->o_router->getRouteParts();
-        $this->route_action   = $this->a_route_parts['route_action'];
-        $this->route_method   = $this->a_route_parts['route_method'];
-        $this->form_action    = $this->a_route_parts['form_action'];
-        $this->a_post_values  = $this->a_route_parts['post'];
-        $this->o_auth         = new AuthHelper($this->o_di);
-        $this->o_manager_view = new LibraryView($this->o_di);
+        $this->setupManagerController($o_di);
+        $this->o_view = new LibraryView($this->o_di);
         if (!defined('LIB_TWIG_PREFIX')) {
             define('LIB_TWIG_PREFIX', 'lib_');
         }
         $this->setupElog($o_di);
-    }
+    }/** @noinspection PhpInconsistentReturnPointsInspection */
 
     /**
      * Default page for the library manager and login.
@@ -94,31 +66,63 @@ class LibraryController implements ControllerInterface
      */
     public function route()
     {
-        $meth = __METHOD__ . '.';
-        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
-            $min_auth_level = $this->a_route_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                switch ($this->route_action) {
-                    case 'logout':
-                        $this->o_auth->logout($_SESSION['login_id']);
-                        header("Location: " . SITE_URL . '/manager/');
-                        break;
-                    default:
-                        $this->logIt('Session: ' . var_export($_SESSION, TRUE), LOG_OFF, $meth . __LINE__);
-                        return $this->o_manager_view->renderLandingPage();
-                }
+        if ($this->loginValid()) {
+            $o_c = '';
+            switch ($this->route_action) {
+                case 'login':
+                    return $this->renderLogin();
+                    break;
+                case 'logout':
+                    $this->o_auth->logout($_SESSION['login_id']);
+                    header("Location: " . SITE_URL . '/manager/');
+                    break;
+                case 'constants':
+                    $o_c = new ConstantsController($this->o_di);
+                    break;
+                case 'groups':
+                    $o_c = new GroupsController($this->o_di);
+                    break;
+                case 'navigation':
+                    $o_c = new NavigationController($this->o_di);
+                    break;
+                case 'pages':
+                    $o_c = new PageController($this->o_di);
+                    break;
+                case 'people':
+                    $o_c = new PeopleController($this->o_di);
+                    break;
+                case 'routes':
+                    $o_c = new RoutesController($this->o_di);
+                    break;
+                case 'tests':
+                    $o_c = new TestsController($this->o_di);
+                    break;
+                case 'twig':
+                    $o_c = new TwigController($this->o_di);
+                    break;
+                case 'urls':
+                    $o_c = new UrlsController($this->o_di);
+                    break;
+                case '':
+                default:
+                    return $this->o_view->renderLandingPage();
             }
-        }
-        if ($this->form_action == 'verifyLogin' || $this->route_action == 'verifyLogin') {
-            $a_message = $this->verifyLogin();
-            $this->logIt('Login Message: ' . var_export($a_message, TRUE), LOG_OFF, $meth . __LINE__);
-            $this->logIt('Session after login: ' . var_export($_SESSION, TRUE), LOG_OFF, $meth . __LINE__);
-            if ($a_message['type'] == 'success') {
-                return $this->o_manager_view->renderLandingPage($a_message);
+            if (is_object($o_c)) {
+                return $o_c->route();
             }
             else {
-                $login_id = isset($this->a_post_values['login_id'])
-                    ? $this->a_post_values['login_id']
+                $a_message = ViewHelper::errorMessage('Could not find the page requested.');
+                return $this->o_view->renderError($a_message);
+            }
+        }
+        elseif ($this->form_action == 'verifyLogin' || $this->route_action == 'verifyLogin') {
+            $a_message = $this->verifyLogin();
+            if ($a_message['type'] == 'success') {
+                return $this->o_view->renderLandingPage($a_message);
+            }
+            else {
+                $login_id = isset($this->a_post['login_id'])
+                    ? $this->a_post['login_id']
                     : '';
                 return $this->renderLogin($login_id, $a_message);
             }
@@ -126,40 +130,6 @@ class LibraryController implements ControllerInterface
         else {
             return $this->renderLogin();
         }
-    }
-
-    /**
-     * Passes control over to the Constants Admin Controller.
-     * @return string
-     */
-    public function renderConstantsAdmin()
-    {
-        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
-            $min_auth_level = $this->a_route_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_constants_admin = new ConstantsController($this->o_di);
-                return $o_constants_admin->route();
-            }
-        }
-        $a_message = ViewHelper::warningMessage("Access Prohibited");
-        return $this->renderLogin('', $a_message);
-    }
-
-    /**
-     * Passes control over to the groups admin controller.
-     * @return string
-     */
-    public function renderGroupsAdmin()
-    {
-        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
-            $min_auth_level = $this->a_route_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_groups_admin = new GroupsController($this->o_di);
-                return $o_groups_admin->route();
-            }
-        }
-        $a_message = ViewHelper::warningMessage("Access Prohibited");
-        return $this->renderLogin('', $a_message);
     }
 
     /**
@@ -171,135 +141,6 @@ class LibraryController implements ControllerInterface
     private function renderLogin($login_id = '', array $a_message = array())
     {
         $this->o_session->resetSession();
-        return $this->o_manager_view->renderLoginForm($login_id, $a_message);
-    }
-
-    /**
-     * Passes over control to the navigation manager controller.
-     * @return string
-     */
-    public function renderNavigationAdmin()
-    {
-        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
-            $min_auth_level = $this->a_route_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_nav_admin = new NavigationController($this->o_di);
-                return $o_nav_admin->route();
-            }
-        }
-        $a_message = ViewHelper::warningMessage("Access Prohibited");
-        return $this->renderLogin('', $a_message);
-    }
-
-    /**
-     * Returns the html for the page admin.
-     * @return string
-     */
-    public function renderPageAdmin()
-    {
-        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
-            $min_auth_level = $this->a_route_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_page_admin = new PageController($this->o_di);
-                return $o_page_admin->route();
-            }
-        }
-        $a_message = ViewHelper::warningMessage("Access Prohibited");
-        return $this->renderLogin('', $a_message);
-    }
-
-    /**
-     * Passes control over to the people admin controller.
-     * @return string
-     */
-    public function renderPeopleAdmin()
-    {
-        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
-            $min_auth_level = $this->a_route_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_people_admin = new PeopleController($this->o_di);
-                return $o_people_admin->route();
-            }
-        }
-        $a_message = ViewHelper::warningMessage("Access Prohibited");
-        return $this->renderLogin('', $a_message);
-    }
-
-    /**
-     * Passes control over to the router admin controller.
-     * @return string
-     */
-    public function renderRoutesAdmin()
-    {
-        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
-            $min_auth_level = $this->a_route_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_router_admin = new RoutesController($this->o_di);
-                return $o_router_admin->route();
-            }
-        }
-        $a_message = ViewHelper::warningMessage("Access Prohibited");
-        return $this->renderLogin('', $a_message);
-    }
-
-    /**
-     * Passes control over to the tests admin controller.
-     * @return string
-     */
-    public function renderTestsAdmin()
-    {
-        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
-            $min_auth_level = $this->a_route_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_tests = new TestsController($this->o_di);
-                return $o_tests->route();
-            }
-        }
-        $a_message = ViewHelper::warningMessage("Access Prohibited");
-        return $this->renderLogin('', $a_message);
-    }
-
-    /**
-     * Passes control over to the url admin controller.
-     * @return string
-     */
-    public function renderUrlsAdmin()
-    {
-        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
-            $min_auth_level = $this->a_route_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
-                $o_urls_admin = new UrlsController($this->o_di);
-                return $o_urls_admin->route();
-            }
-        }
-        $a_message = ViewHelper::warningMessage("You need to login with a valid usename and password.");
-        return $this->renderLogin('', $a_message);
-    }
-
-    /**
-     * Authorizes the person and allows access or kicks them.
-     * @return array
-     */
-    protected function verifyLogin()
-    {
-        $meth = __METHOD__ . '.';
-        $a_results = $this->o_auth->login($this->a_post_values); // authentication part
-        $this->logIt("Login Results: " . var_export($a_results, true), LOG_OFF, $meth . __LINE__);
-        if ($a_results['is_logged_in'] == 1) {
-            $this->o_session->setVar('login_id', $a_results['login_id']);
-            $this->logIt('The Session: ' . var_export($_SESSION, TRUE), LOG_OFF, $meth . __LINE__);
-            $this->logIt('Route Parts: ' . var_export($this->a_route_parts, TRUE), LOG_OFF, $meth . __LINE__);
-            $min_auth_level = $this->a_route_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($a_results['people_id'], $min_auth_level)) { // authorization part
-                return ViewHelper::successMessage('Success, you are now logged in!');
-            }
-        }
-        /* well, apparently they weren't allowed access so kick em to the curb */
-        if ($a_results['is_logged_in'] == 1) {
-            $this->o_auth->logout($a_results['people_id']);
-        }
-        return isset($a_results['message'])
-            ? ViewHelper::failureMessage($a_results['message'])
-            : ViewHelper::failureMessage('Login Id or Password was incorrect. Please Try Again');
+        return $this->o_view->renderLoginForm($login_id, $a_message);
     }
 }

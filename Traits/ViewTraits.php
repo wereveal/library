@@ -5,9 +5,13 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.7
- * @date      2017-05-10 11:52:54
+ * @version   1.0.0-beta.8
+ * @date      2017-05-27 17:57:43
  * @note <b>Change Log</b>
+ * - v1.0.0-beta.9  - modified createDefaultTwigValues and getPageValues to optionally take a   - 2017-05-30 wer
+ *                    url_id to in essence change the page values based on a different url from
+ *                    the one called.
+ * - v1.0.0-beta.8  - added renderError method to render the error page.                        - 2017-05-27 wer
  * - v1.0.0-beta.7  - database change to page table reflected here.                             - 2017-05-10 wer
  * - v1.0.0-beta.6  - added setTwig method to allow a different twig environment to be used.    - 2017-03-14 wer
  * - v1.0.0-beta.5  - moved some functionality from getPageValues to createDefaultTwigValues    - 2017-03-13 wer
@@ -35,6 +39,7 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\PageComplexModel;
+use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
@@ -81,6 +86,19 @@ trait ViewTraits
     }
 
     /**
+     * Renders the error page.
+     * @param array $a_message
+     * @return string
+     */
+    public function renderError(array $a_message = [])
+    {
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['tpl'] = 'error';
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->o_twig->render($tpl, $a_twig_values);
+    }
+
+    /**
      * Retrieves the navigation info for the nav group.
      * Does not set the class property a_nav. Use the setNav method to do that.
      * @param string|int $nav_group Defaults to the default navgroup.
@@ -101,19 +119,22 @@ trait ViewTraits
 
     /**
      * Creates some commonly used values to pass into a twig template.
-     * @param array  $a_message Optional, defaults to []. Allows a message to be passed.
+     * @param array      $a_message Optional, defaults to []. Allows a message to be passed.
+     * @param int|string $url_id    Optional, defaults to -1 which then uses current url_id.
      * @return array
      */
-    public function createDefaultTwigValues(array $a_message = [])
+    public function createDefaultTwigValues(array $a_message = [], $url_id = -1)
     {
         $meth = __METHOD__ . '.';
-        $a_page_values = $this->getPageValues();
+        $a_page_values = $this->getPageValues($url_id);
         $log_message = 'page values ' . var_export($a_page_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_menus = $this->retrieveNav($a_page_values['ng_id']);
-
-        if (count($a_message) != 0) {
+        if (empty($a_message)) {
+            $a_message = ViewHelper::messageProperties(['message' => '']);
+        }
+        else {
             $a_message = ViewHelper::messageProperties($a_message);
         }
 
@@ -238,9 +259,9 @@ trait ViewTraits
      * @param string       $name
      * @param bool         $use_main
      */
-    public function setTwig($twig_config = 'twig_config.php', $name = 'main', $use_main = true)
+    public function setTwig($twig_config = 'twig_config.php', $name = 'main')
     {
-        $o_twig = TwigFactory::getTwig($twig_config, $name, $use_main);
+        $o_twig = TwigFactory::getTwig($twig_config, $name);
         if (!$o_twig instanceof \Twig_Environment) {
             die("Could not create a new TwigEnviornment");
         }
@@ -252,14 +273,23 @@ trait ViewTraits
      * Returns an array with the values used primarily in the meta tags of the html.
      * @return array
      */
-    public function getPageValues()
+    public function getPageValues($url_id = -1)
     {
         $meth = __METHOD__ . '.';
         $o_page_model = new PageComplexModel($this->o_di);
-        $url_id = $this->o_router->getUrlId();
+        $o_url = new UrlsModel($this->o_db);
+        if (is_numeric($url_id)) {
+            if ($url_id < 1) {
+                $url_id = $this->o_router->getUrlId();
+            }
+        }
+        else {
+            $a_urls = $o_url->read(['url_text' => $url_id]);
+            $url_id = $a_urls[0]['url_id'];
+        }
         $a_values = $o_page_model->readPageValuesByUrlId($url_id);
         $log_message = 'Page Values By URL Id:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
 
         if (isset($a_values[0])) {
             $a_page_values = $a_values[0];

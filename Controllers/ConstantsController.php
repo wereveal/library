@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Controllers/ConstantsController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.2+2
- * @date      2016-04-15 11:57:43
+ * @version   1.4.0
+ * @date      2017-06-07 09:53:04
  * @note <b>Change Log</b>
+ * - v1.4.0 - Refactoring elsewhere reflected here.           - 2017-06-07 wer
  * - v1.3.2 - bug fix                                         - 2016-04-11 wer
  * - v1.3.1 - bug fix                                         - 2016-03-08 wer
  * - v1.3.0 - added immutable code                            - 10/07/2015 wer
@@ -25,8 +26,7 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\ConstantsModel;
-use Ritc\Library\Services\DbModel;
-use Ritc\Library\Services\Router;
+use Ritc\Library\Traits\ManagerControllerTraits;
 use Ritc\Library\Views\ConstantsView;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -38,14 +38,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ConstantsController implements ManagerControllerInterface
 {
-    use LogitTraits;
+    use LogitTraits, ManagerControllerTraits;
 
-    /** @var array */
-    private $a_post;
-    /** @var array */
-    private $a_router_parts;
-    /** @var Di */
-    private $o_di;
     /** @var ConstantsModel */
     private $o_model;
     /** @var ConstantsView */
@@ -57,20 +51,11 @@ class ConstantsController implements ManagerControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->o_di     = $o_di;
-        /** @var DbModel $o_db */
-        $o_db           = $this->o_di->get('db');
-        $this->o_model  = new ConstantsModel($o_db);
-        $this->o_view   = new ConstantsView($this->o_di);
-        /** @var Router $o_router */
-        $o_router       = $this->o_di->get('router');
-        $a_router_parts = $o_router->getRouteParts();
-        $this->a_post   = $a_router_parts['post'];
-        $this->a_router_parts = $a_router_parts;
-        if (DEVELOPER_MODE) { // instead of needing the setElog method
-            $this->o_elog = $o_di->get('elog');
-            $this->o_model->setElog($this->o_elog);
-        }
+        $this->setupManagerController($o_di);
+        $this->setupElog($o_di);
+        $this->o_model = new ConstantsModel($this->o_db);
+        $this->o_view  = new ConstantsView($this->o_di);
+        $this->o_model->setElog($this->o_elog);
     }
 
     /**
@@ -79,26 +64,12 @@ class ConstantsController implements ManagerControllerInterface
      */
     public function route()
     {
-        $main_action   = $this->a_router_parts['route_action'];
-        $form_action   = $this->a_router_parts['form_action'];
-        $url_action    = isset($this->a_router_parts['url_actions'][0])
-            ? $this->a_router_parts['url_actions'][0]
-            : '';
-        if ($main_action == '' && $url_action != '') {
-            $main_action = $url_action;
-        }
-        switch ($main_action) {
-            case 'modify':
-                switch ($form_action) {
-                    case 'verify':
-                        return $this->verifyDelete();
-                    case 'update':
-                        return $this->update();
-                    default:
-                        $a_message = ViewHelper::failureMessage('A problem occured. Please try again.');
-                        return $this->o_view->renderList($a_message);
-                }
-            case 'save':
+        switch ($this->form_action) {
+            case 'verify':
+                return $this->verifyDelete();
+            case 'update':
+                return $this->update();
+            case 'save_new':
                 return $this->save();
             case 'delete':
                 return $this->delete();
@@ -180,6 +151,12 @@ class ConstantsController implements ManagerControllerInterface
             return $this->o_view->renderList($a_message);
         }
         $a_results = $this->o_model->delete($const_id);
-        return $this->o_view->renderList($a_results);
+        if ($a_results) {
+            $a_message = ViewHelper::successMessage();
+        }
+        else {
+            $a_message = ViewHelper::failureMessage('The record was not deleted.');
+        }
+        return $this->o_view->renderList($a_message);
     }
 }

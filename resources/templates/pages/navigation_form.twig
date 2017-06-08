@@ -1,15 +1,7 @@
-{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
 {% block body %}
     <div class="container">
-        <h1 class="smaller">Manage Navigation</h1>
-    </div>
-    {% if a_message.message != '' %}
-    <div class="container">
-        {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
-    </div>
-    {% endif %}
-    <div class="container">
-        <form action="{{ public_dir }}/manager/library/navigation/{{ action }}/" method="post" id="nav-form">
+        <form action="{{ public_dir }}/manager/config/navigation/" method="post" id="nav-form">
             <fieldset class="nice-fieldset">
                 <div class="form-group row alt-row">
                     <label class="form-control-label col-md-2 alt-row form-label">URL</label>

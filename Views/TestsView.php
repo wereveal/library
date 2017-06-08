@@ -45,17 +45,25 @@ class TestsView
      */
     public function renderList()
     {
-        $values = [
-            'menus' => $this->a_nav,
-            'links' => [
-                [
-                    'url'    => '/manager/tests/PeopleModel/',
-                    'class'  => '',
-                    'extras' => '',
-                    'text'   => 'People Model Test'
-                ]
-        ]];
-        return $this->o_twig->render('@pages/test.twig', $values);
+        $a_message = ViewHelper::infoMessage('Select which Class you wish to test.');
+        $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/tests/');
+        $a_test = [
+            'PeopleModel' => 'People Model Test',
+            'PageModel'   => 'Page Model Test',
+            'UrlsModel'   => 'Urls Model Test'
+        ];
+        $a_buttons = [];
+        foreach ($a_test as $key => $value) {
+            $a_buttons[] = [
+                'value' => $key,
+                'label' => $value,
+                'test'  => $key
+            ];
+        }
+        $a_twig_values['menus'] = $this->o_nav;
+        $a_twig_values['a_buttons'] = $a_buttons;
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->o_twig->render($tpl, $a_twig_values);
     }
 
     /**

@@ -35,15 +35,15 @@
                 <div class="col-md-12">
                         <div class="row row-inside {{ class }}">
                             <div class="col-md-2">
-                                <span class="inline-block bold w75 aright pad-right-12">LoginID:</span>
+                                <span class="inline-block bold w75 aright pad-right">LoginID:</span>
                                 {{ person.login_id }}
                             </div>
                             <div class="col-md-3">
-                                <span class="inline-block bold w75 aright pad-right-12">Name:</span>
+                                <span class="inline-block bold w75 aright pad-right">Name:</span>
                                 {{ person.real_name }}
                             </div>
                             <div class="col-md-5">
-                                <span class="inline-block bold w100 aright pad-right-12">Description:</span>
+                                <span class="inline-block bold w100 aright pad-right">Description:</span>
                             {% if person.description|length > 45 %}
                                 {{ person.description|slice(0, 45) }}....
                             {% else %}

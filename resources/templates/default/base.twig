@@ -1,70 +1,150 @@
 <!DOCTYPE html>
-<!--[if lt IE 7 ]><html class="ie ie6" lang="{{ lang }}"> <![endif]-->
-<!--[if IE 7 ]><html class="ie ie7" lang="{{ lang }}"> <![endif]-->
-<!--[if IE 8 ]><html class="ie ie8" lang="{{ lang }}"> <![endif]-->
-<!--[if (gte IE 9)|!(IE)]><!--><html lang="{{ lang }}"> <!--<![endif]-->
-    <head>
-        <meta charset="{{ charset }}" />
-        {% block title %}<title>{{ title }}</title>{% endblock %}
-        {% block description %}<meta name="description" content="{{ description }}">{% endblock %}
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        {% block meta %}{% endblock %}
-        <base href="{{ base_url }}">
-
-        {% block stylesheets %}
-        <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css" integrity="sha384-XXXXXXXX" crossorigin="anonymous">
-        <link rel="stylesheet" href="{{ public_dir }}/assets/css/manager.css" media="screen">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-        <link href='https://fonts.googleapis.com/css?family=Lato:400,400italic|Merriweather:400,400italic' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="{{ public_dir }}/assets/css/manager.css" media="screen">
-        {% endblock %}
-
-        <!-- For IE6-8 support of HTML5 elements -->
-        <!--[if lt IE 9]>
-        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
-
-        {% block touchicons %}
-        <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.ico" />
-        <link rel="icon" href="/assets/images/icon.png" type="image/png" >
-        <link rel="apple-touch-icon" href="/assets/images/touch/icon.png">
-        <link rel="apple-touch-icon" sizes="60x60" href="/assets/images/touch/icon_60x60.png">
-        <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/touch/icon_72x72.png">
-        <link rel="apple-touch-icon" sizes="76x76" href="/assets/images/touch/icon_76x76.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="/assets/images/touch/icon_60x60@2x.png">
-        <link rel="apple-touch-icon" sizes="144x144" href="/assets/images/touch/icon_72x72@2x.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="/assets/images/touch/icon_76x76@2x.png">
-        {% endblock %}
-
-        {% block headjavascripts %}
-        <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
-        <script src="{{ public_dir }}/assets/js/jquery.validate.min.js"></script>
-        {% endblock %}
-    </head>
-    <body>
-        <div class="container container-main">
-<!--[if lt IE 7]>
-            <div class="container">
-                <p>You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> to better experience this site.</p>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="{{ charset }}" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="{{ base_url }}">
+{% block title %}
+    <title>{{ title }}</title>
+{% endblock %}
+{% block description %}
+    <meta name="description" content="{{ description }}">
+{% endblock %}
+{% block meta %}{% endblock %}
+{% block vendor_stylesheets %}
+    <script src="https://use.fontawesome.com/1465136e8a.js"></script>
+{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ public_dir }}/assets/css/styles_manager_config.css" media="screen">
+{% endblock %}
+{% block icons %}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ public_dir }}/assets/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="{{ public_dir }}/assets/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{ public_dir }}/assets/images/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="{{ public_dir }}/assets/images/manifest.json">
+    <link rel="mask-icon" href="{{ public_dir }}/assets/images/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="{{ public_dir }}/assets/images/favicon.ico">
+    <meta name="msapplication-config" content="{{ public_dir }}/assets/images/browserconfig.xml">
+{% endblock %}
+{% block vendor_js %}
+    <script src="{{ public_dir }}/assets/vendor/jquery/dist/jquery.min.js"></script>
+{% endblock %}
+{% block head_js %}{% endblock %}
+</head>
+<body>
+    <div class="container container-main">
+{% block header %}
+        <nav class="navbar navbar-toggleable-sm navbar-dark bg-gray" role="navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">
+                <span class="fa fa-bars"></span>
+            </button>
+            <a class="navbar-brand" href="#"><span class="fa fa-book slate"></span></a>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav mr-auto">
+                    {% for menu in a_menus %}
+                        {% if menu.css != '' %}
+                            {% set extra_css %}
+                                {{ ' ' ~ menu.css }}
+                            {% endset %}
+                        {% else %}
+                            {% set extra_css = '' %}
+                        {% endif %}
+                        {% if menu.url == page_url %}
+                            {% set active_url = ' active' %}
+                        {% else %}
+                            {% set active_url = '' %}
+                        {% endif %}
+                        {% if menu.submenu is empty %}
+                            <li class="nav-item">
+                                <a class="nav-link{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ menu.url }}">{{ menu.text }}</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle{{ menu.css }}{{ active_url }}" data-toggle="dropdown" href="{{ public_dir }}{{ menu.url }}" role="button" aria-haspopup="true" aria-expanded="false">{{ menu.text }}</a>
+                                <div class="dropdown-menu">
+                                    {% for child in menu.submenu %}
+                                        {% if child.css != '' %}
+                                            {% set extra_css %}
+                                                {{ ' ' ~ child.css }}
+                                            {% endset %}
+                                        {% else %}
+                                            {% set extra_css = '' %}
+                                        {% endif %}
+                                        {% if child.url == page_url %}
+                                            {% set active_url = ' active' %}
+                                        {% else %}
+                                            {% set active_url = '' %}
+                                        {% endif %}
+                                        <a class="dropdown-item{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ child.url }}">{{ child.text }}</a>
+                                    {% endfor %}
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
             </div>
-<![endif]-->
-        {% block header %}{% include '@' ~ twig_prefix ~ 'snippets/menu.twig' %}{% endblock %}
-        {% block search %}{% endblock %}
-        {% block body %}{% endblock %}
-        {% block footer %}{% endblock %}
-        </div>
+        </nav>
+{% endblock %}
+{% block search %}{% endblock %}
+{% block body_title %}
+    {% if body_title %}
+        <h1>{{ body_title }}</h1>
+    {% else %}
+        <h1>{{ title }}</h1>
+    {% endif %}
 
-        {% block javascripts %}
-        <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js" integrity="sha384-XXXXXXXX" crossorigin="anonymous"></script>
-        {% endblock %}
-    </body>
+{% endblock %}
+{% block message %}
+    {% if a_message.message %}
+        <div class="container container-message">
+            {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
+        </div>
+    {% endif %}
+{% endblock %}
+{% block body %}
+        <div class="container">
+            {{ body_text }}
+        </div>
+{% endblock %}
+{% block footer %}
+        <div class="container footer">
+            <p>Copyright &copy;&nbsp;{{ copyright_date }} <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved</p>
+        </div>
+{% endblock %}
+{% block debug %}
+    {% if debug_text %}
+        <div class="container">
+            <code class="pre">
+                {{ debug_text }}
+            </code>
+        </div>
+    {% endif %}
+        <p class="font-tiny">Library Base Tpl</p>
+{% endblock %}
+    </div>
+{% block bottom_vendor_js %}
+    <script src="{{ public_dir }}/assets/vendor/tether/dist/js/tether.min.js"></script>
+    <script src="{{ public_dir }}/assets/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+{% endblock %}
+{% block bottom_js %}{% endblock %}
+</body>
 </html>
 {# expected array [
     'lang',
     'charset',
     'title',
     'description',
-    'public_dir'
+    'base_url',
+    'page_url',
+    'public_dir',
+    'a_message',
+    'twig_prefix',
+    'a_menus'
+    'body_text',
+    'copyright_date',
+    'site_url',
+    'rights_holder',
+    'debug_text'
     ]
 #}

@@ -4,9 +4,10 @@
  * @ingroup   lib_views
  * @file      ConstantsView.phpnamespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-05-14 16:41:30
+ * @version   2.1.0
+ * @date      2017-06-07 09:54:17
  * @note <b>Change Log</b>
+ * - v2.1.0   - Updated to match ViewTraits and fix misc bugs.                          - 2017-06-07 wer
  * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
  * - v1.2.4   - Bug fix, removed unneeded use statement                                 - 2016-04-11 wer
  *              Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here
@@ -70,47 +71,22 @@ class ConstantsView
      */
     public function renderList(array $a_message = array())
     {
-        $a_values = array(
-            'a_message'   => array(),
-            'a_constants' => array(
-                array(
-                    'const_id'    => '',
-                    'const_name'  => '',
-                    'const_value' => ''
-                )
-            ),
-            'tolken'  => $_SESSION['token'],
-            'form_ts' => $_SESSION['idle_timestamp'],
-            'hobbit'  => '',
-            'adm_lvl' => $this->adm_level,
-            'a_menus' => $this->retrieveNav('ManagerLinks'),
-            'twig_prefix' => LIB_TWIG_PREFIX
-        );
         if (count($a_message) != 0) {
             $a_message['message'] .= "<br><br>Changing configuration values can result in unexpected results. If you are not sure, do not do it.";
-            $a_values['a_message'] = ViewHelper::messageProperties($a_message);
         }
         else {
-            $a_values['a_message'] = ViewHelper::messageProperties(
-                array(
-                    'message' => 'Changing configuration values can result in unexpected results. If you are not sure, do not do it.',
-                    'type'    => 'warning'
-                )
-            );
+            $a_message = ViewHelper::warningMessage('Changing configuration values can result in unexpected results. If you are not sure, do not do it.');
         }
-        $a_constants = $this->o_model->read();
-        $this->logIt(
-            'constants: ' . var_export($a_constants, TRUE),
-            LOG_OFF,
-            __METHOD__ . '.' . __LINE__
-        );
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_constants = $this->o_model->read([], ['order_by' => 'const_name']);
         if ($a_constants !== false && count($a_constants) > 0) {
-            $a_values['a_constants'] = $a_constants;
+            $a_twig_values['a_constants'] = $a_constants;
         }
-        $a_page_values = $this->getPageValues(); // provided in ManagerViewTraits
-        $a_values = array_merge($a_values, $a_page_values);
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/constants.twig';
-        return $this->o_twig->render($tpl, $a_values);
+        else {
+            $a_twig_values['a_constants'] = [];
+        }
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->o_twig->render($tpl, $a_twig_values);
     }
 
     /**

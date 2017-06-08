@@ -8,6 +8,7 @@
  * @version   1.0.0-alpha.6
  * @date      2017-01-27 12:40:56
  * @note <b>Change Log</b>
+ *            Database structure change to navigation table
  * - v1.0.0-alpha.6 - DbUtilityTraits change reflected here         - 2017-05-09 wer
  * - v1.0.0-alpha.5 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
  * - v1.0.0-alpha.4 - added new method save                         - 2016-04-23 wer
@@ -31,7 +32,9 @@ class NavComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var  NavgroupsModel */
+    /** @var \Ritc\Library\Services\Di */
+    private $o_di;
+    /** @var \Ritc\Library\Models\NavgroupsModel */
     private $o_ng;
     /** @var string */
     private $select_sql;
@@ -44,10 +47,12 @@ class NavComplexModel
      */
     public function __construct(DbModel $o_db)
     {
+        $this->o_db = $o_db;
         $this->setupProperties($o_db, 'navigation');
+        $this->o_ng = new NavgroupsModel($this->o_db);
+        $this->o_ng->setElog($this->o_elog);
         $this->setSelectSql();
         $this->setSelectOrderSql();
-        $this->o_ng = new NavgroupsModel($this->o_db);
     }
 
     /**
@@ -96,7 +101,8 @@ SELECT
     n.nav_description as 'description',
     n.nav_css as 'css',
     n.nav_level as 'level',
-    n.nav_order as 'order'
+    n.nav_order as 'order',
+    n.nav_immutable
 FROM {$this->lib_prefix}urls as u
 JOIN {$this->lib_prefix}navigation as n
     ON u.url_id = n.url_id
@@ -353,6 +359,7 @@ SELECT
     n.nav_css as 'css',
     n.nav_level as 'level',
     n.nav_order as 'order',
+    n.nav_immutable,
     ng.ng_id,
     ng.ng_name
 FROM {$this->lib_prefix}urls as u

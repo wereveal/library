@@ -3,7 +3,7 @@
  * @brief     This file sets up standard stuff for the Framework.
  * @details   This creates the database config and some standard directories.
  *            This should be run from the /src/bin directory of the site.
- * @file      install.php
+ * @file      install_files.php
  * @namespace Ritc
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @date      2017-01-13 09:48:15

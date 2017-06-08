@@ -16,8 +16,8 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\ControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Traits\ManagerControllerTraits;
 use Ritc\Library\Views\NavigationView;
 
 /**
@@ -27,7 +27,7 @@ use Ritc\Library\Views\NavigationView;
  */
 class NavigationController implements ManagerControllerInterface
 {
-    use ControllerTraits, LogitTraits;
+    use ManagerControllerTraits, LogitTraits;
 
     protected $o_model;
     protected $o_view;
@@ -35,9 +35,10 @@ class NavigationController implements ManagerControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);
-        $this->setupController($o_di);
+        $this->setupManagerController($o_di);
         $this->o_view = new NavigationView($o_di);
         $this->o_model = new NavComplexModel($this->o_db);
+        $this->o_model->setElog($this->o_elog);
     }
 
     /**
@@ -46,34 +47,31 @@ class NavigationController implements ManagerControllerInterface
      */
     public function route()
     {
-        $meth = __METHOD__ . '.';
-        $log_message = 'route array: ' . var_export($this->a_router_parts, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $this->logIt("main action: " . $this->main_action, LOG_OFF, $meth . __LINE__);
-        switch($this->main_action) {
+        switch($this->form_action) {
             case 'new':
                 return $this->o_view->renderForm();
+            case 'modify':
+                return $this->o_view->renderForm($this->a_post['nav_id']);
+            case 'update':
+                return $this->update();
+            case 'verify_delete':
+                return $this->verifyDelete();
             case 'save':
                 return $this->save();
             case 'delete':
                 return $this->delete();
-            case 'modify':
-                return $this->o_view->renderForm();
-            case 'update':
-                return $this->update();
             default:
                 return $this->o_view->renderList();
         }
     }
 
-    ### Reuqired by Interface ###
+    ### Required by Interface ###
     /**
      * Method for saving data.
      * @return string
      */
     public function save()
     {
-
         return $this->o_view->renderList();
     }
 

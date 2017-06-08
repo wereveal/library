@@ -5,9 +5,10 @@
  * @file      UrlsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.2
- * @date      2017-05-09 17:34:58
+ * @version   1.0.0
+ * @date      2017-06-03 17:18:29
  * @note Change Log
+ * - v1.0.0         - Out of beta                           - 2017-06-03 wer
  * - v1.0.0-beta.2  - Refactoring from DbUtilityTraits      - 2017-05-09 wer
  * - v1.0.0-beta.1  - Bug fix caused by changes elsewhere   - 2017-01-27 wer
  * - v1.0.0-beta.0  - Initial working version               - 2016-04-13 wer

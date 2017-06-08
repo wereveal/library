@@ -275,6 +275,28 @@ class LocateFile
     }
 
     /**
+     * Returns the full path and file name for file.
+     * @param string $file_name
+     * @param string $namespace
+     * @param string $sub_dir
+     * @return string
+     */
+    public static function getTestFileWithPath($file_name = '', $namespace = '', $sub_dir = '')
+    {
+        if ($file_name == '' || $namespace == '') { return ''; }
+        $path = APPS_PATH . '/';
+        $path .= str_replace('\\', '/', $namespace);
+        $path .= $sub_dir != ''
+            ? '/resources/config/tests/' . $sub_dir . '/'
+            : '/resources/config/tests/';
+        $path .= $path . $file_name;
+        if (file_exists($path)) {
+            return $path;
+        }
+        return '';
+    }
+
+    /**
      * Finds the location of the file
      * the possible places a file could exist.
      *   <pre>One of many places:

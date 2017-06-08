@@ -1,0 +1,75 @@
+{% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
+{% block body %}
+    {% set class = 'odd' %}
+    <div class="container">
+        <div class="row {{ class }}">
+            <div class="col-12 col-md-6">
+                Name
+            </div>
+            <div class="col-3 col-md-1">
+                Active
+            </div>
+            <div class="col-3 col-md-1">
+                Default
+            </div>
+            <div class="col-6 col-md-4">
+                &nbsp;
+            </div>
+        </div>
+        <form>
+            <div class="row {{ class }}">
+                <div class="col-12 col-md-6">
+                    <label for="ng_name" class="hidden-md-up pr-1">Name</label>
+                    <input type="text" class="colorful pw100" name="ng_name" id="ng_name" value="">
+                </div>
+                <div class="col-3 col-md-1">
+                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with blank_active %}
+                </div>
+                <div class="col-3 col-md-1">
+                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with blank_default %}
+                </div>
+                <div class="col-6 col-md-4">
+                    {% include '@' ~ lib_prefix ~ 'snippets/new_btn.twig' with blank_new  %}
+                </div>
+            </div>
+        </form>
+    {% for nav in a_nav %}
+        {% set class = class == 'odd' ? 'even' : 'odd' %}
+        <form>
+            <div class="row {{ class }}">
+                <div class="col-12 col-md-6">
+                    <label for="ng_name" class="hidden-md-up pr-1">Name</label>
+                    <input type="text" class="colorful pw100" name="ng_name" id="ng_name" value="{{ nav.name }}">
+                </div>
+                <div class="col-3 col-md-1">
+                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with nav.active_btn %}
+                </div>
+                <div class="col-3 col-md-1">
+                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with nav.default_btn %}
+                </div>
+                <div class="col-6 col-md-4">
+                    {% include '@' ~ lib_prefix ~ 'snippets/modify_delete_btns.twig' with nav.action_btns %}
+                </div>
+            </div>
+        </form>
+    {% endfor %}
+        {% set class = class == 'odd' ? 'even' : 'odd' %}
+        <form>
+            <div class="row {{ class }}">
+                <div class="col-12 col-md-6">
+                    <label for="ng_name" class="hidden-md-up pr-1">Name</label>
+                    <input type="text" class="colorful pw100" name="ng_name" id="ng_name" value="">
+                </div>
+                <div class="col-3 col-md-1">
+                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with blank_active %}
+                </div>
+                <div class="col-3 col-md-1">
+                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with blank_default %}
+                </div>
+                <div class="col-6 col-md-4">
+                    {% include '@' ~ lib_prefix ~ 'snippets/new_btn.twig' with blank_new  %}
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}

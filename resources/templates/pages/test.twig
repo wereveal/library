@@ -1,10 +1,20 @@
-{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% extends '@' ~ lib_prefix ~ 'pages/index.twig' %}
 {% block body %}
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12">
-                {% for link in links %}
-                    {% include '@' ~ twig_prefix ~ 'elements/anchor.twig' %}
-                {% endfor %}
+    {% for button in a_buttons %}
+        {% if loop.index % 4 == 0 %}
+            </div>
+            <div class="row">
+        {% endif %}
+                <div class="col-3">
+                    <form action="/manager/config/tests/" method="post">
+                        <button type="submit" name="submit" value="{{ button.value }}" class="btn btn-primary btn-xs">{{ button.label }}</button>
+                        <input type="hidden" name="tolken" value="{{ tolken }}" />
+                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                        <input type="hidden" name="test" value="{{ button.test }}" />
+                    </form>
                 </div>
+    {% endfor %}
             </div>
 {% endblock %}

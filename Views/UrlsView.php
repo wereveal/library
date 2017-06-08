@@ -5,9 +5,11 @@
  * @file      UrlsView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.1
- * @date      2017-05-14 16:49:03
+ * @version   1.0.0
+ * @date      2017-06-03 17:17:04
  * @note Change Log
+ * - v1.0.0         - Out of beta               - 2017-06-03 wer
+ * - v1.0.0-beta.2  - Change in url display     - 2017-06-02 wer
  * - v1.0.0-beta.1  - Name refactoring          - 2017-05-14 wer
  * - v1.0.0-beta.0  - Initial working version   - 2016-04-13 wer
  * - v1.0.0-alpha.0 - Initial version           - 2016-04-11 wer
@@ -19,7 +21,6 @@ use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ManagerViewTraits;
-use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class UrlsView.
@@ -30,6 +31,7 @@ class UrlsView
 {
     use LogitTraits, ManagerViewTraits;
 
+    /** @var \Ritc\Library\Models\UrlsModel  */
     protected $o_urls_model;
 
     /**
@@ -53,22 +55,18 @@ class UrlsView
      */
     public function renderList(array $a_message = [])
     {
-        $meth = __METHOD__ . '.';
         $a_urls = $this->o_urls_model->read();
-        $log_message = 'URLs returned ' . var_export($a_urls, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         $a_new_urls = [];
         foreach($a_urls as $a_url) {
             if ($a_url['url_host'] == 'self') {
-                $http_host = $_SERVER['HTTP_HOST'];
+                $url = $a_url['url_text'];
             }
             else {
-                $http_host = $a_url['url_host'];
+                $url = $a_url['url_scheme'] . '://' . $a_url['url_host'] . $a_url['url_text'];
             }
             $a_new_urls[] = [
                 'url_id'    => $a_url['url_id'],
-                'url'       => $a_url['url_scheme'] . '://' . $http_host . $a_url['url_text'],
+                'url'       => $url,
                 'immutable' => $a_url['url_immutable'] == 1 ? 'true' : 'false'
             ];
         }
@@ -85,21 +83,10 @@ class UrlsView
             );
         }
 
-        $a_values = [
-            'a_menus'     => $this->retrieveNav('ManagerLinks'),
-            'a_urls'      => $a_new_urls,
-            'a_message'   => $a_message,
-            'tolken'      => $_SESSION['token'],
-            'form_ts'     => $_SESSION['idle_timestamp'],
-            'hobbit'      => '',
-            'adm_lvl'     => $this->adm_level,
-            'twig_prefix' => LIB_TWIG_PREFIX
-        ];
-        $log_message = 'Twig Values:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/urls.twig';
-        return $this->o_twig->render($tpl, $a_values);
+        $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/urls/');
+        $a_twig_values['a_urls'] = $a_new_urls;
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->o_twig->render($tpl, $a_twig_values);
     }
 
     /**
@@ -113,24 +100,14 @@ class UrlsView
             $a_message = ViewHelper::messageProperties(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
             return $this->renderList($a_message);
         }
-        $a_page_values = $this->getPageValues(); // provided in ViewTraits
-        $a_twig_values = [
-            'what'         => 'URL',
-            'name'         => $a_values['url'],
-            'where'        => 'urls',
-            'btn_value'    => 'Url',
-            'hidden_name'  => 'url_id',
-            'hidden_value' => $a_values['url_id'],
-            'tolken'       => $a_values['tolken'],
-            'form_ts'      => $a_values['form_ts'],
-            'a_menus'      => $this->retrieveNav('ManagerLinks'),
-            'twig_prefix'  => LIB_TWIG_PREFIX
-        ];
-        if (isset($a_values['public_dir'])) {
-            $a_twig_values['public_dir'] = $a_values['public_dir'];
-        }
-        $a_twig_values = array_merge($a_twig_values, $a_page_values);
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
+        $a_twig_values = $this->createDefaultTwigValues([], '/manager/config/urls/');
+        $a_twig_values['tpl']          = 'verify_delete';
+        $a_twig_values['what']         = 'URL';
+        $a_twig_values['name']         = $a_values['url'];
+        $a_twig_values['hidden_name']  = 'url_id';
+        $a_twig_values['hidden_value'] = $a_values['url_id'];
+        $a_twig_values['btn_value']    = 'URL';
+        $tpl = $this->createTplString($a_twig_values);
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 }

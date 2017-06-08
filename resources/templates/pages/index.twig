@@ -1,13 +1,25 @@
-{% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
+{% extends '@' ~ page_prefix ~ 'default/base.twig' %}
 {% block body %}
             <div class="container">
-                <ul class="manager-links">
-                    {% for link in links %}
-                        <li>
-                            {% include '@' ~ twig_prefix ~ 'elements/anchor.twig' %} - {{ link.description }}
-                        </li>
-                    {% endfor %}
-                </ul>
+{% for link in links %}
+    {% if link.submenu %}
+        {% for menu in link.submenu %}
+            {% if loop.index is even %}
+                {% set menu_class = menu.class ~ ' alt-row' %}
+            {% else %}
+                {% set menu_class = menu.class ~ ' normal-row' %}
+            {% endif %}
+                <div class="row {{ menu_class }}">
+                    <div class="col-2 aright">
+                        <a href="{{ menu.url }}" class="{{ menu_class }} font-small-caps-bold">{{ menu.text }}</a>
+                    </div>
+                    <div class="col-10">
+                        {{ menu.description }}
+                    </div>
+                </div>
+        {% endfor %}
+    {% endif %}
+{% endfor %}
             </div>
 {% endblock %}
 {#

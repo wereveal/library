@@ -5,8 +5,8 @@
  * @file      Ritc/Library/Helper/RoutesHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0+1
- * @date      2017-05-12 10:23:29
+ * @version   2.0.0+2
+ * @date      2017-05-30 15:18:33
  * @note Change Log
  * - v2.0.0   - Changed to handle inexact request URI (slashes)     - 2016-09-08 wer
  * - v1.1.0   - added method for quick min auth level for a route.  - 02/26/2016 wer
@@ -338,7 +338,6 @@ class RoutesHelper
 
     /**
      * @param string $request_uri
-     * @return null
      */
     public function setRouteParts($request_uri = '')
     {

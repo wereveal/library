@@ -1,0 +1,25 @@
+{% extends '@' ~ page_prefix ~ 'default/base.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ public_dir }}/assets/css/styles_manager_config.css" media="screen">
+{% endblock %}
+{% block vendor_js %}
+{{ parent() }}
+    <script src="{{ public_dir }}/assets/vendor/jquery-validation/dist/jquery.validate.js"></script>
+{% endblock %}
+{% block header %}{% endblock %}
+{% block search %}{% endblock %}
+{% block body_title %}{% endblock %}
+{% block message %}{% endblock %}
+{% block body %}
+    <div class="container">
+        <h1 class="smaller"><i class="fa fa-book fa-2x pr-3"></i>  Welcome! Please Login</h1>
+    </div>
+    {% if a_message.message != '' %}
+        <div class="container">
+            {% include '@' ~ page_prefix ~ 'snippets/message.twig' %}
+        </div>
+    {% endif %}
+    <div class="container">
+        {% include '@' ~ page_prefix ~ 'forms/login_form.twig' %}
+    </div>
+{% endblock %}

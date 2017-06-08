@@ -1,64 +1,59 @@
-{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
 {% block body %}
-    <div class="row">
-        <div class="col-lg-12 col-md-12">
-            <h1>This is a manager for constants used in website.</h1>
+    <div class="container">
+        <div class="row list-header hidden-sm-down">
+            <div class="col-md-4">Name</div>
+            <div class="col-md-4">Value</div>
+            <div class="col-md-1">Immutable</div>
+            <div class="col-md-3">&nbsp;</div>
         </div>
-    </div>
-    {% if a_message.message != '' %}
-    <div class="row">
-        <div class="col-lg-12 col-md-12">
-            {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
-        </div>
-    </div>
-    {% endif %}
-    <div class="row">
-        <div class="col-lg-12 col-md-12">
-        {% set x = -1 %}
-        {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
-            <div class="row {{ class }}">
-                <form action="{{ public_dir }}/manager/library/constants/save/" method= "post">
-                <div class="col-md-4 col-sm-4 col-xs-4">
-                    <label for="constant[const_name]">Constant Name: </label><input type="text" name="constant[const_name]" value="" maxlength="32" class="colorful w200" />
-                </div>
-                <div class="col-md-4 col-sm-4 col-xs-4">
-                    <label for="constant[const_value]">Constant Value: </label><input type="text" name="constant[const_value]" value="" maxlength="32" class="colorful w200"/>
-                </div>
-                <div class="col-md-2 col-sm-2 col-xs-2">
-                    {% if adm_lvl == 10 %}
-                    <label for="constant[const_immutable]">Immutable: </label><input type="checkbox" name="constant[const_immutable]" value="1">
-                    {% else %}
-                        &nbsp;
-                    {% endif %}
-                </div>
-                <div class="col-md-2 col-sm-2 col-xs-2">
-                    <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
-                    <input type="hidden" name="tolken" value="{{ tolken }}" />
-                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                </div>
-                </form>
+        <form action="{{ public_dir }}/manager/config/constants/" method= "post">
+        {% set class = 'even' %}
+        <div class="row {{ class }}">
+            <div class="col-12 col-md-4">
+                <label for="constant[const_name]" class="hidden-md-up bold pr-1">Constant Name</label>
+                <input type="text" id="constant[const_name]" name="constant[const_name]" value="" maxlength="32" class="colorful pw100" />
             </div>
-        {% set x = x * -1 %}
+            <div class="col-12 col-md-4">
+                <label for="constant[const_value]" class="hidden-md-up bold pr-1">Constant Value</label>
+                <input type="text" name="constant[const_value]" id="constant[const_value]" value="" maxlength="32" class="colorful pw100"/>
+            </div>
+            <div class="col-6 col-md-1">
+                {% if adm_lvl == 10 %}
+                <label for="constant[const_immutable]" class="hidden-md-up bold pr-1">Immutable</label>
+                <input type="checkbox" name="constant[const_immutable]" id="constant[const_immutable]" value="1">
+                {% else %}
+                    Immutable
+                {% endif %}
+            </div>
+            <div class="col-6 col-md-3">
+                <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
+                <input type="hidden" name="tolken" value="{{ tolken }}" />
+                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                <label class="hobbit">Humans don't enter anything here.
+                <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                </label>
+            </div>
+        </div>
+        </form>
         {% for row in a_constants %}
-            {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
+            {% set class = class == 'even' ? 'odd' : 'even' %}
+            <form action="{{ public_dir }}/manager/config/constants/" method="post">
             <div class="row {{ class }}">
-            <form action="{{ public_dir }}/manager/library/constants/modify/" method="post">
-                <div class="col-md-4 col-sm-4 col-xs-4">
-                    <label for="constant[const_value]">Constant Name: </label>
+                <div class="col-12 col-md-4">
+                    <label for="constant[const_value]" class="hidden-md-up bold pr-1">Constant Name</label>
                     {% if row.const_immutable == 1 %}
                         <input type="hidden" name="constant[const_name]" id="constant[const_name]" value="{{ row.const_name }}" />{{ row.const_name }}
                     {% else %}
-                        <input type="text" name="constant[const_name]" id="constant[const_name]" value="{{ row.const_name }}" class="colorful w200">
+                        <input type="text" name="constant[const_name]" id="constant[const_name]" value="{{ row.const_name }}" class="colorful pw100">
                     {% endif %}
                 </div>
-                <div class="col-md-4 col-sm-4 col-xs-4">
-                    <label for="constant[const_value]">Constant Value: </label>
-                    <input type="text" name="constant[const_value]" value="{{ row.const_value }}" size="30" maxlength="32" class="colorful w200"/>
-
+                <div class="col-12 col-md-4">
+                    <label for="constant[const_value]" class="hidden-md-up bold pr-1">Constant Value</label>
+                    <input type="text" name="constant[const_value]" id="constant[const_value]" value="{{ row.const_value }}" maxlength="32" class="colorful pw100"/>
                 </div>
-                <div class="col-md-2 col-sm-2 col-xs-2">
-                    <label for="constant[const_immutable]">Immutable: </label>
+                <div class="col-6 col-md-1 col-sm-2 col-xs-2">
+                    <label for="constant[const_immutable]" class="hidden-md-up bold pr-1">Immutable</label>
                     {% if row.const_immutable == 1 and adm_lvl < 10 %}
                         True
                     {% else %}
@@ -77,38 +72,43 @@
                     {% endif %}
                     <input type="hidden" name="tolken" value="{{ tolken }}" />
                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                    <label for="hobbit" class="hobbit">Humans don't enter anything here.
+                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                    </label>
                     <input type="hidden" name="constant[const_id]" value="{{ row.const_id }}" />
                 </div>
-            </form>
             </div>
-            {% set x = x * -1 %}
+            </form>
         {% endfor %}
-        {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
+        {% set class = class == 'even' ? 'odd' : 'even' %}
+        <form action="{{ public_dir }}/manager/config/constants/" method= "post">
             <div class="row {{ class }}">
-                <form action="{{ public_dir }}/manager/library/constants/save/" method= "post">
-                    <div class="col-md-4 col-sm-4 col-xs-4">
-                        <label for="constant[const_name]">Constant Name: </label><input type="text" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful w200" />
+                    <div class="col-12 col-md-4">
+                        <label for="constant[const_name]" class="hidden-md-up bold pr-1">Constant Name</label>
+                        <input type="text" id="constant[const_name]" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful w200" />
                     </div>
-                    <div class="col-md-4 col-sm-4 col-xs-4">
-                        <label for="constant[const_value]">Constant Value: </label><input type="text" name="constant[const_value]" value="" maxlength="32" class="colorful w200"/>
+                    <div class="col-12 col-md-4">
+                        <label for="constant[const_value]" class="hidden-md-up bold pr-1">Constant Value</label>
+                        <input type="text" id="constant[const_value]" name="constant[const_value]" value="" maxlength="32" class="colorful w200"/>
                     </div>
-                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    <div class="col-6 col-md-1">
                         {% if adm_lvl == 10 %}
-                            <label for="constant[const_immutable]">Immutable: </label><input type="checkbox" name="is_immutable" value="1">
+                            <label for="constant[const_immutable]" class="hidden-md-up bold pr-1">Immutable</label>
+                            <input type="checkbox" id="constant[const_immutable]" name="constant[const_immutable]" value="1">
                         {% else %}
                             &nbsp;
                         {% endif %}
                     </div>
-                    <div class="col-md-2 col-sm-2 col-xs-2">
+                    <div class="col-6 col-md-3">
                         <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
                         <input type="hidden" name="tolken" value="{{ tolken }}" />
                         <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                        <label for="hobbit" class="hobbit">Humans don't enter anything here.
+                            <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                        </label>
                     </div>
-                </form>
             </div>
-        </div>
+        </form>
     </div>
 
     <div class="row">

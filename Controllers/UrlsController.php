@@ -4,9 +4,12 @@
  * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/UrlsController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.1
- * @date      2016-04-15 12:44:28
+ * @version   1.0.0
+ * @date      2017-06-03 17:17:30
  * @note Change Log
+ * - v1.0.0         - Out of beta                                       - 2017-06-03 wer
+ * - v1.0.0-beta.2  - Change to splitUrl to allow posted url to not     - 2017-06-02 wer
+ *                    include the current site.
  * - v1.0.0-beta.1  - minor change to ControllerTraits reflected here.  - 2016-04-15 wer
  * - v1.0.0-beta.0  - Initial working version                           - 2016-04-13 wer
  * - v1.0.0-alpha.0 - Initial version                                   - 2016-04-11 wer
@@ -30,7 +33,9 @@ class UrlsController implements ManagerControllerInterface
 {
     use ControllerTraits, LogitTraits;
 
+    /** @var \Ritc\Library\Models\UrlsModel  */
     protected $o_urls_model;
+    /** @var \Ritc\Library\Views\UrlsView  */
     protected $o_urls_view;
 
     /**
@@ -55,18 +60,12 @@ class UrlsController implements ManagerControllerInterface
     public function route()
     {
         $this->setProperties();
-        switch ($this->main_action) {
-            case 'modify':
-                switch ($this->form_action) {
-                    case 'verify':
-                        return $this->verifyDelete();
-                    case 'update':
-                        return $this->update();
-                    default:
-                        $a_message = ViewHelper::failureMessage('A problem occured. Please try again.');
-                        return $this->o_urls_view->renderList($a_message);
-                }
-            case 'save':
+        switch ($this->form_action) {
+            case 'verify_delete':
+                return $this->verifyDelete();
+            case 'update':
+                return $this->update();
+            case 'save_new':
                 return $this->save();
             case 'delete':
                 return $this->delete();
@@ -81,11 +80,12 @@ class UrlsController implements ManagerControllerInterface
      */
     public function save()
     {
-        $meth = __METHOD__ . '.';
         $url = $this->a_post['url'];
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
-            return $this->o_urls_view->renderList($a_message);
+        if (!empty(strpos($url, '://'))) {
+            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+                $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
+                return $this->o_urls_view->renderList($a_message);
+            }
         }
         $a_values  = $this->splitUrl($url);
         $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 1 : 0;
@@ -97,9 +97,6 @@ class UrlsController implements ManagerControllerInterface
         else {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new url could not be saved.');
         }
-        $log_message = 'Message ' . var_export($a_message, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         return $this->o_urls_view->renderList($a_message);
     }
 
@@ -114,9 +111,11 @@ class UrlsController implements ManagerControllerInterface
             return $this->o_urls_view->renderList($a_message);
         }
         $url = $this->a_post['url'];
-        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
-            return $this->o_urls_view->renderList($a_message);
+        if (!empty(strpos($url, '://'))) {
+            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+                $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
+                return $this->o_urls_view->renderList($a_message);
+            }
         }
         $a_values                  = $this->splitUrl($url);
         $a_values['url_id']        = (int) $this->a_post['url_id'];
@@ -153,7 +152,7 @@ class UrlsController implements ManagerControllerInterface
             $a_message = ViewHelper::successMessage();
         }
         else {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new configuration could not be saved.');
+            $a_message = ViewHelper::failureMessage('A Problem Has Occured. ' . $this->o_urls_model->getErrorMessage());
         }
         return $this->o_urls_view->renderList($a_message);
     }
@@ -171,6 +170,7 @@ class UrlsController implements ManagerControllerInterface
             case 'ftp':
             case 'gopher':
             case 'mailto':
+            case 'file':
                 return true;
             default:
                 return false;
@@ -184,18 +184,21 @@ class UrlsController implements ManagerControllerInterface
      */
     private function splitUrl($url = '')
     {
-        list($scheme, $text) = explode('://', $url);
-
-        if (!$this->isValidScheme($scheme)) {
-            $scheme = 'https';
+        if (empty(strpos($url, '://'))) {
+            $scheme = SITE_PROTOCOL;
+            $host   = 'self';
+            $text   = $url;
+        }
+        else {
+            list($scheme, $text) = explode('://', $url);
+            if (!$this->isValidScheme($scheme)) {
+                $scheme = 'https';
+            }
+            $first_slash = strpos($text, '/');
+            $host = substr($text, 0, $first_slash);
+            $text = substr($text, $first_slash);
         }
 
-        $first_slash = strpos($text, '/');
-        $host = substr($text, 0, $first_slash);
-        if ($host == $_SERVER['HTTP_HOST']) {
-            $host = 'self';
-        }
-        $text = substr($text, $first_slash);
         if (substr($text, 0, 1) != '/') {
             $text = '/' . $text;
         }

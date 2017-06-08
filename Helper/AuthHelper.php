@@ -8,9 +8,10 @@
  * @file      Ritc/Library/Helper/AuthHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.2.1
- * @date      2017-02-07 15:22:59
+ * @version   5.2.2
+ * @date      2017-05-27 18:39:17
  * @note <b>Change Log</b>
+ * - v5.2.2 - Code clarification                                    - 2017-05-27 wer
  * - v5.2.1 - Bug fix, not sure why it suddenly appeared            - 2017-02-07 wer
  * - v5.2.0 - Adding DbUtilityTraits only pointed out problems.     - 2016-03-19 wer
  *            - Removed DbUtilityTraits
@@ -375,7 +376,7 @@ class AuthHelper
             return false;
         }
         $a_person = $this->o_complex->readInfo($login_id);
-        if ($a_person !== false && !is_null($a_person)) {
+        if (!empty($a_person)) {
             if ($a_person['is_logged_in'] == 1) {
                 return true;
             }

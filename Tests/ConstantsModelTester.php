@@ -26,35 +26,13 @@ use Ritc\Library\Services\Di;
  */
 class ConstantsModelTester extends Tester
 {
-    /** @var array  */
-    protected $a_test_order;
-    /** @var array  */
-    protected $a_test_values = array();
-    /** @var int  */
-    protected $failed_subtests;
-    /** @var array  */
-    protected $failed_test_names = array();
-    /** @var int */
-    protected $failed_tests = 0;
     /** @var int */
     protected $new_id;
-    /** @var int */
-    protected $num_o_tests = 0;
-    /** @var \Ritc\Library\Services\Elog  */
-    protected $o_elog;
-    /** @var int  */
-    protected $passed_subtests;
-    /** @var array */
-    protected $passed_test_names  = array();
-    /** @var int  */
-    protected $passed_tests = 0;
-    /** @var string */
-    protected $private_properties;
     /** @var ConstantsModel */
     private $o_config;
-    /** @var \Ritc\Library\Service\DbModel */
+    /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
-    /** @var TwigEnvironment */
+    /** @var \Twig_Environment */
     private $o_twig;
 
     /**

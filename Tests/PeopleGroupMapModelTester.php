@@ -2,7 +2,7 @@
 /**
  * @brief     Tests the Group Model Class.
  * @ingroup   lib_tests
- * @file      PeopleGroupMapModelTests.php
+ * @file      PeopleGroupMapModelTester.php
  * @namespace Ritc\Library\Tests
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0-alpha.0
@@ -21,42 +21,23 @@ use Ritc\Library\Services\Elog;
 use Ritc\Library\Models\PeopleGroupMapModel;
 
 /**
- * Class PeopleGroupMapModelTests.
- * @class   PeopleGroupMapModelTests
+ * Class PeopleGroupMapModelTester.
+ * @class   PeopleGroupMapModelTester
  * @package Ritc\Library\Tests
  */
-class PeopleGroupMapModelTests extends Tester
+class PeopleGroupMapModelTester extends Tester
 {
-    /** @var array */
-    protected $a_test_order;
-    /** @var array */
-    protected $a_test_values = array();
-    /** @var int */
-    protected $failed_subtests;
-    /** @var array */
-    protected $failed_test_names = array();
-    /** @var int */
-    protected $failed_tests = 0;
     /** @var int */
     protected $new_id;
-    /** @var int */
-    protected $num_o_tests = 0;
-    /** @var int */
-    protected $passed_subtests;
-    /** @var array */
-    protected $passed_test_names  = array();
-    /** @var int */
-    protected $passed_tests = 0;
     /** @var DbModel */
     private $o_db;
+    /** @var \Ritc\Library\Services\Di  */
     private $o_di;
-    /** @var object */
-    private $o_elog;
     /** @var PeopleGroupMapModel */
     private $o_ugm;
 
     /**
-     * PeopleGroupMapModelTests constructor.
+     * PeopleGroupMapModelTester constructor.
      * @param array $a_test_order
      * @param string $db_config
      */

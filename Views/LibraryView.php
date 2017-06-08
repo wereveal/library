@@ -19,7 +19,6 @@
  */
 namespace Ritc\Library\Views;
 
-use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
@@ -49,24 +48,13 @@ class LibraryView
      * @param array $a_message A message, optional.
      * @return string
      */
-    public function renderLandingPage($a_message = array())
+    public function renderLandingPage(array $a_message = [])
     {
-        $meth = __METHOD__ . '.';
         $this->setAdmLevel($_SESSION['login_id']);
-        $this->setNav();
-        $a_values = $this->getPageValues();
-        $a_values['links'] = $this->a_nav;
-        $a_values['menus'] = $this->a_nav;
-        $a_values['twig_prefix'] = LIB_TWIG_PREFIX;
-        if (is_array($a_message)) {
-            $a_values['a_message'] = ViewHelper::messageProperties($a_message);
-        }
-        else {
-            $a_values['a_message'] = ViewHelper::messageProperties(['message' => '']);
-        }
-        $log_message = 'Final Values for twig: ' . var_export($a_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/index.twig';
+        $a_values = $this->createDefaultTwigValues($a_message, '/manager/config/');
+        $a_nav = $this->retrieveNav('ConfigLinks');
+        $a_values['links'] = $a_nav;
+        $tpl = $this->createTplString($a_values);
         return $this->o_twig->render($tpl, $a_values);
     }
 
@@ -74,8 +62,9 @@ class LibraryView
      * Temp method to test stuff
      * @param array $a_args
      * @return mixed
+     * @todo rewrite for ViewTraits
      */
-    public function renderTempPage(array $a_args)
+    public function renderTempPage(array $a_args = [])
     {
         $a_message = array();
         if (is_array($a_args)) {
@@ -104,37 +93,14 @@ class LibraryView
      * @param array $a_message array with message and type of message.
      * @return string
      */
-    public function renderLoginForm($previous_login_id = '', array $a_message = array())
+    public function renderLoginForm($previous_login_id = '', array $a_message = [])
     {
         /** @var Session $o_sess */
         $o_sess  = $this->o_di->get('session');
-        $tolken  = $o_sess->getVar('token');
-        $idle_ts = $o_sess->getVar('idle_timestamp');
-        if ($tolken == '' || $idle_ts == '') {
-            $o_sess->resetSession();
-            $tolken  = $o_sess->getVar('token');
-            $idle_ts = $o_sess->getVar('idle_timestamp');
-        }
-        if ($a_message != array()) {
-            $a_message = ViewHelper::messageProperties($a_message);
-        }
-        else {
-            $a_message = array();
-        }
-        $a_page_values = $this->getPageValues();
-        $a_values = [
-            'tolken'      => $tolken,
-            'form_ts'     => $idle_ts,
-            'hobbit'      => '',
-            'login_id'    => $previous_login_id,
-            'password'    => '',
-            'a_message'   => $a_message,
-            'a_menus'     => [],
-            'twig_prefix' => LIB_TWIG_PREFIX
-        ];
-        $a_values = array_merge($a_page_values, $a_values);
-        $o_sess->unsetVar('login_id');
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/login_form.twig';
+        $o_sess->resetSession();
+        $a_values = $this->createDefaultTwigValues($a_message, '/manager/config/');
+        $a_values['tpl'] = 'login';
+        $tpl = $this->createTplString($a_values);
         return $this->o_twig->render($tpl, $a_values);
     }
 }

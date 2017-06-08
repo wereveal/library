@@ -209,7 +209,7 @@ class Router
 
     /**
      * Returns the property a_router_parts value.
-     * @return array
+     * @return string
      */
     public function getRoutePath()
     {

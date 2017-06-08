@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Basic/Tester.php
  * @namespace Ritc\Library\Basic
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.5.0
- * @date      2017-05-12 09:30:08
+ * @version   3.5.1
+ * @date      2017-05-30 17:01:29
  * @note <b>Change log</b>
+ * - v3.5.1 - switched setupTests to use LocateFile class                               - 2017-05-30 wer
  * - v3.5.0 - modified setupTests to create test order from test values                 - 2017-05-12 wer
  * - v3.4.0 - modified setupTests to set a new property class_name                      - 2016-04-20 wer
  * - v3.3.0 - added new method to automate some setup                                   - 2016-03-10 wer
@@ -34,7 +35,7 @@
  */
 namespace Ritc\Library\Basic;
 
-use Ritc\Library\Helper\Files;
+use Ritc\Library\Helper\LocateFile;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -47,15 +48,15 @@ class Tester
     use LogitTraits;
 
     /** @var array */
-    protected $a_test_order      = array();
+    protected $a_test_order      = [];
     /** @var array */
-    protected $a_test_values     = array();
+    protected $a_test_values     = [];
     /** @var string  */
     protected $class_name        = '';
     /** @var int */
     protected $failed_subtests   = 0;
     /** @var array */
-    protected $failed_test_names = array();
+    protected $failed_test_names = [];
     /** @var int */
     protected $failed_tests      = 0;
     /** @var string  */
@@ -65,7 +66,7 @@ class Tester
     /** @var int */
     protected $passed_subtests   = 0;
     /** @var array */
-    protected $passed_test_names = array();
+    protected $passed_test_names = [];
     /** @var int */
     protected $passed_tests      = 0;
 
@@ -369,7 +370,7 @@ class Tester
 
     /**
      * Sets up the two main arrays the tests uses.
-     * @param array $a_values ['class_name', 'order_file', 'values_file', 'extra_dir', 'theme', 'namespace']
+     * @param array $a_values ['class_name', 'order_file', 'values_file', 'extra_dir', 'namespace']
      * @return null
      */
     public function setupTests(array $a_values = [])
@@ -378,7 +379,6 @@ class Tester
         $order_file  = 'test_order.php';
         $values_file = 'test_values.php';
         $extra_dir   = '';
-        $theme       = 'default';
         $namespace   = '';
 
         $a_expected_keys = [
@@ -386,7 +386,6 @@ class Tester
             'order_file',
             'values_file',
             'extra_dir',
-            'theme',
             'namespace'
         ];
         foreach ($a_expected_keys as $keyname) {
@@ -398,20 +397,16 @@ class Tester
             }
         }
         $this->class_name = $class_name;
-        $o_files = new Files($values_file, $extra_dir, $theme, $namespace);
 
-        $o_files->setFileName($values_file);
-        $test_values_file = $o_files->getFileWithPath();
-        if ($test_values_file) {
-            $this->a_test_values = include $test_values_file;
+        $test_values_file = LocateFile::getTestFileWithPath($values_file, $namespace, $extra_dir);
+        if (empty($test_values_file)) {
+           $this->a_test_values = [];
         }
         else {
-            $this->a_test_values = [];
+            $this->a_test_values = include $test_values_file;
         }
-
-        $o_files->setFileName($order_file);
-        $test_order_file = $o_files->getFileWithPath();
-        if ($test_order_file) {
+        $test_order_file = LocateFile::getTestFileWithPath($order_file, $namespace, $extra_dir);
+        if (!empty($test_order_file)) {
             $this->a_test_order = include $test_order_file;
         }
         else {
