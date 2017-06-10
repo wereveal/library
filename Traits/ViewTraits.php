@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.8
- * @date      2017-05-27 17:57:43
+ * @version   1.0.0-beta.10
+ * @date      2017-06-10 07:24:32
  * @note <b>Change Log</b>
+ * - v1.0.0-beta.10 - refactoring elsewhere reflected here.                                     - 2017-06-10 wer
  * - v1.0.0-beta.9  - modified createDefaultTwigValues and getPageValues to optionally take a   - 2017-05-30 wer
  *                    url_id to in essence change the page values based on a different url from
  *                    the one called.
@@ -248,7 +249,7 @@ trait ViewTraits
     protected function setNavByNgName($navgroup_name = '')
     {
         $o_ng = new NavgroupsModel($this->o_db);
-        $ng_id = $o_ng->readNavgroupId($navgroup_name);
+        $ng_id = $o_ng->readIdByName($navgroup_name);
         $this->setNav($ng_id);
     }
 
@@ -390,22 +391,23 @@ trait ViewTraits
 
     /**
      * Retrieves the raw nav records for the nav group.
-     * @param string|int $nav_group Defaults to the default navgroup.
-     *                              This can be either the navgroup id or name.
+     * @param string|int $navgroup Defaults to the default navgroup.
+     *                             This can be either the navgroup id or name.
      * @return array
      */
-    protected function readNav($nav_group = '')
+    protected function readNav($navgroup = '')
     {
         $o_ng = new NavgroupsModel($this->o_db);
-        if ($nav_group == '') {
-            $nav_group = $o_ng->retrieveDefaultNavgroup();
+        if (empty($navgroup)) {
+            $navgroup = $o_ng->retrieveDefaultId();
         }
-        if (is_numeric($nav_group)) {
-            return $this->o_nav->getNavList($nav_group);
+        if (!is_numeric($navgroup)) {
+            $navgroup = $o_ng->readIdByName($navgroup);
+            if (empty($navgroup)) {
+                return [];
+            }
         }
-        else {
-            return $this->o_nav->getNavListByName($nav_group);
-        }
+        return $this->o_nav->getNavList($navgroup);
     }
 
     /**

@@ -15,6 +15,7 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
@@ -166,7 +167,7 @@ class ConstantsModelTester extends Tester
         $results4 = $this->o_config->create($this->a_test_values['new_config']);
         if ($results1 === false) {
             $bad_results = true;
-            $this->setSubfailure('create', 'valid config');
+            $this->setSubFailed('create', 'valid config');
         }
         else {
             $this->new_id = $results1;
@@ -174,15 +175,15 @@ class ConstantsModelTester extends Tester
         }
         if ($results2 !== false) {
             $bad_results = true;
-            $this->setSubfailure('create', 'no config');
+            $this->setSubFailed('create', 'no config');
         }
         if ($results3 !== false) {
             $bad_results = true;
-            $this->setSubfailure('create', 'bad config');
+            $this->setSubFailed('create', 'bad config');
         }
         if ($results4 !== false) {
             $bad_results = true;
-            $this->setSubfailure('create', 'duplicate config');
+            $this->setSubFailed('create', 'duplicate config');
         }
         if ($bad_results) {
             return false;
@@ -200,21 +201,21 @@ class ConstantsModelTester extends Tester
         $results2 = $this->o_config->read("SYSTEM_USER_ID");
         $results3 = $this->o_config->read("badValue");
         $results4 = $this->o_config->read(1);
-        if ($results1 === false || $this->compareArrays($this->a_test_values['all_configs'], $results1) === false) {
+        if ($results1 === false || Arrays::compareArrays($this->a_test_values['all_configs'], $results1) === false) {
             $bad_results = true;
-            $this->setSubfailure('read', 'find all configs');
+            $this->setSubFailed('read', 'find all configs');
         }
-        if ($results2 === false || $this->compareArrays($this->a_test_values['single_config'], $results2) === false) {
+        if ($results2 === false || Arrays::compareArrays($this->a_test_values['single_config'], $results2) === false) {
             $bad_results = true;
-            $this->setSubfailure('read', 'find single by name');
+            $this->setSubFailed('read', 'find single by name');
         }
         if ($results3 !== false) {
             $bad_results = true;
-            $this->setSubfailure('read', 'bad config name');
+            $this->setSubFailed('read', 'bad config name');
         }
-        if ($results4 === false || $this->compareArrays($this->a_test_values['single_config'], $results4) === false) {
+        if ($results4 === false || Arrays::compareArrays($this->a_test_values['single_config'], $results4) === false) {
             $bad_results = true;
-            $this->setSubfailure('read', 'find single by id');
+            $this->setSubFailed('read', 'find single by id');
         }
         if ($bad_results) {
             return false;
@@ -233,24 +234,24 @@ class ConstantsModelTester extends Tester
         $results1 = $this->o_config->update($a_config);
         if ($results1 === false) {
             $bad_results = true;
-            $this->setSubfailure('update', 'modify config false');
+            $this->setSubFailed('update', 'modify config false');
         }
         else {
             $return1 = $this->o_config->read($a_config['config_name']);
             if ($return1['config_value'] !== $a_config['config_value']) {
                 $bad_results = true;
-                $this->setSubfailure('update', 'modify config not modified');
+                $this->setSubFailed('update', 'modify config not modified');
             }
         }
         $results2 = $this->o_config->update();
         if ($results2 !== false) {
             $bad_results = true;
-            $this->setSubfailure('update', 'no config returned true');
+            $this->setSubFailed('update', 'no config returned true');
         }
         $results3 = $this->o_config->update(array('bad_config_stuff' => 'bad_config_stuff'));
         if ($results3 !== false) {
             $bad_results = true;
-            $this->setSubfailure('update', 'bad config info returned true');
+            $this->setSubFailed('update', 'bad config info returned true');
         }
         if ($bad_results) {
             return false;
@@ -269,16 +270,16 @@ class ConstantsModelTester extends Tester
         $results3 = $this->o_config->delete(100);
         $bad_results = false;
         if ($results1 !== true) {
-            $this->setSubfailure('delete', 'valid config returned false');
+            $this->setSubFailed('delete', 'valid config returned false');
             $bad_results = true;
         }
         if ($results2 === true) {
             $bad_results = true;
-            $this->setSubfailure('delete', 'blank config returned true');
+            $this->setSubFailed('delete', 'blank config returned true');
         }
         if ($results3 === true) {
             $bad_results = true;
-            $this->setSubfailure('delete', 'invalid config returned true');
+            $this->setSubFailed('delete', 'invalid config returned true');
         }
         if ($bad_results) {
             return false;
@@ -296,15 +297,15 @@ class ConstantsModelTester extends Tester
         $results3 = $this->o_config->makeValidName('My&Name#--23');
         $good_results = true;
         if ($results1 != 'MY_NAME') {
-            $this->setSubfailure('makeValidName', "Test 1 Returned {$results1}");
+            $this->setSubFailed('makeValidName', "Test 1 Returned {$results1}");
             $good_results = false;
         }
         if ($results2 != 'MY_NAME') {
-            $this->setSubfailure('makeValidName', "Test 2 Returned {$results2}");
+            $this->setSubFailed('makeValidName', "Test 2 Returned {$results2}");
             $good_results = false;
         }
         if ($results3 != 'MY_NAME') {
-            $this->setSubfailure('makeValidName', "Test 3 Returned {$results3}");
+            $this->setSubFailed('makeValidName', "Test 3 Returned {$results3}");
             $good_results = false;
         }
         return $good_results;

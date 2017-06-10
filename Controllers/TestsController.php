@@ -12,12 +12,14 @@
  */
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Router;
+use Ritc\Library\Tests\NavgroupsModelTester;
+use Ritc\Library\Tests\NavigationModelTester;
+use Ritc\Library\Tests\NavNgMapModelTester;
 use Ritc\Library\Tests\PageModelTester;
 use Ritc\Library\Tests\PeopleModelTester;
 use Ritc\Library\Tests\UrlsModelTester;
+use Ritc\Library\Traits\ControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\TestsView;
 
@@ -28,14 +30,8 @@ use Ritc\Library\Views\TestsView;
  */
 class TestsController
 {
-    use LogitTraits;
+    use LogitTraits, ControllerTraits;
 
-    /** @var DbModel */
-    private $o_db;
-    /** @var Di */
-    private $o_di;
-    /** @var Router */
-    private $o_router;
     /** @var TestsView */
     private $o_view;
     /** @var string */
@@ -48,20 +44,13 @@ class TestsController
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);
-        $this->o_di     = $o_di;
-        $this->o_db     = $o_di->get('db');
-        $this->o_router = $o_di->get('router');
+        $this->setupController($o_di);
         $this->o_view   = new TestsView($o_di);
         if (file_exists(LIBRARY_CONFIG_PATH . '/tests')) {
             $this->test_configs_path = LIBRARY_CONFIG_PATH . '/tests';
         }
-        elseif (file_exists(SRC_CONFIG_PATH . '/tests')) {
-            $this->test_configs_path = SRC_CONFIG_PATH . '/tests';
-        }
-        else {
-            $this->test_configs_path = __DIR__;
-        }
     }
+
     /**
      * Main method for the controller.
      * Routes everything around from here.
@@ -69,16 +58,7 @@ class TestsController
      */
     public function route()
     {
-        $a_route_parts = $this->o_router->getRouteParts();
-        $main_action   = $a_route_parts['route_action'];
-        $url_actions   = $a_route_parts['url_actions'];
-        $url_action    = isset($url_actions[0])
-            ? $a_route_parts['url_actions'][0]
-            : '';
-        if ($main_action == '' && $url_action != '') {
-            $main_action = $url_action;
-        }
-        switch ($main_action) {
+        switch ($this->form_action) {
             case 'PeopleModel':
                 $o_test = new PeopleModelTester($this->o_di);
                 break;
@@ -88,6 +68,15 @@ class TestsController
             case 'UrlsModel':
                 $o_test = new UrlsModelTester($this->o_di);
                 break;
+            case 'NavgroupsModel':
+                $o_test = new NavgroupsModelTester($this->o_di);
+                break;
+            case 'NavigationModel':
+                $o_test = new NavigationModelTester($this->o_di);
+                break;
+            case 'NavNgMapModel':
+                $o_test = new NavNgMapModelTester($this->o_di);
+                break;
             case 'ConstantsModel':
             case 'GroupsModel':
             case 'Login':
@@ -95,11 +84,8 @@ class TestsController
             default:
                 return $this->o_view->renderList();
         }
-        $a_order  = include $this->test_configs_path . '/' . $main_action . '_test_order.php';
-        $a_values = include $this->test_configs_path . '/' . $main_action . '_test_values.php';
-        $o_test->setTestOrder($a_order);
-        $o_test->setTestValues($a_values);
-        $a_test_results = $o_test->runTests();
+        $o_test->runTests();
+        $a_test_results = $o_test->returnTestResults(true);
         return $this->o_view->renderResults($a_test_results);
     }
 }

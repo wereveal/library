@@ -4,12 +4,13 @@
  * @details   Class that extends this class should end with the word Tests or
  *            Tester, e.g. MyClassTester or MyClassTests.
  * @ingroup   lib_basic
- * @file      Ritc/Library/Basic/Tester.php
- * @namespace Ritc\Library\Basic
+ * @file      Ritc/Library/Traits/TesterTraits.php
+ * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.6.0
- * @date      2017-06-09 12:29:08
+ * @version   4.0.0
+ * @date      2017-06-09 17:19:55
  * @note <b>Change log</b>
+ * - v4.0.0 - Turned the class into a trait to maybe remove a hidden bug                - 2017-06-09 wer
  * - v3.6.1 - Refactoring of subtest methods                                            - 2017-06-09 wer
  * - v3.5.1 - switched setupTests to use LocateFile class                               - 2017-05-30 wer
  * - v3.5.0 - modified setupTests to create test order from test values                 - 2017-05-12 wer
@@ -32,22 +33,18 @@
  *          - allows the test results to display individual subtests
  *          - within the method tester
  * - v1.0.1 - updated to match new framework                                            - 2013-04-03 wer
- * @todo add a todo test type, i.e. a way to say, this method needs to be written so don't run a test, just list it.
  */
-namespace Ritc\Library\Basic;
+namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\LocateFile;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class Tester provides a base class of which one extends specific testers for specific classes.
- * @class Tester
- * @package Ritc\Library\Basic
+ * TesterTraits provides all the basic commands which are extended by specific testers for specific classes.
+ * @class TesterTraits
+ * @package Ritc\Library\Traits
  */
-class Tester
+trait TesterTraits
 {
-    use LogitTraits;
-
     /** @var array */
     protected $a_test_order       = [];
     /** @var array */
@@ -75,78 +72,7 @@ class Tester
     /** @var int  */
     protected $skipped_tests      = 0;
 
-    /**
-     * Adds a method name to the test order.
-     * @param string $method_name
-     * @return bool
-     */
-    public function addMethodToTestOrder($method_name = '')
-    {
-        if ($method_name == '') { return false; }
-        $this->a_test_order[] = $method_name;
-        return true;
-    }
-
-    /**
-     * Adds a single key=>value pair to the a_test_values array
-     * @param string $key the key name
-     * @param mixed $value  the value assigned to the key
-     * @return null
-     */
-    public function addTestValue($key = '', $value = '')
-    {
-        if ($key == '') { return; }
-        $this->a_test_values[$key] = $value;
-    }
-
-    /**
-     * @return array
-     */
-    public function getFailedTestNames()
-    {
-        return $this->failed_test_names;
-    }
-
-    /**
-     * @return array
-     */
-    public function getFailedTests()
-    {
-        return $this->failed_tests;
-    }
-
-    /**
-     * @return int
-     */
-    public function getNumOTests()
-    {
-        return $this->num_o_tests;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPassedTests()
-    {
-        return $this->passed_tests;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPassedTestNames()
-    {
-        return $this->passed_test_names;
-    }
-
-    /**
-     * @return array
-     */
-    public function getTestOrder()
-    {
-        return $this->a_test_order;
-    }
-
+    ### Main Methods for Testing ###
     /**
      * Returns an array showing the number and optionally names of tests success and failure
      * @param bool $show_test_names optional defaults to showing names
@@ -219,9 +145,10 @@ class Tester
                 return 999;
             }
         }
+        $ns_class = $this->namespace . '\\' . $class_name;
         if (count($a_test_order) === 0) {
             if (count($this->a_test_order) === 0) {
-                $o_ref = new \ReflectionClass($class_name);
+                $o_ref = new \ReflectionClass($ns_class);
                 $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
                 foreach ($a_methods as $a_method) {
                     switch($a_method->name) {
@@ -260,10 +187,9 @@ class Tester
                 $tester_name = $method_name . 'Tester';
             }
             $this->logIt("method name: {$method_name} - tester name: {$tester_name}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            if ($this->isPublicMethod($class_name, $tester_name)) {
+            if ($this->isPublicMethod($tester_name)) {
                 $results = $this->$tester_name();
                 switch ($results) {
-                    case true:
                     case 'passed':
                         $this->passed_tests++;
                         $this->passed_test_names[] = $method_name;
@@ -272,7 +198,6 @@ class Tester
                         $this->skipped_tests++;
                         $this->skipped_test_names[] = $method_name;
                         break;
-                    case false:
                     case 'failed':
                     default:
                         $failed_tests++;
@@ -285,6 +210,145 @@ class Tester
         }
         $this->logIt("num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: " . var_export($this->failed_test_names, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $failed_tests;
+    }
+
+    /**
+     * Sets up the two main arrays the tests uses.
+     * @param array $a_values ['namespace', 'class_name', 'order_file', 'values_file', 'extra_dir']
+     */
+    public function setupTests(array $a_values = [])
+    {
+        $namespace   = '';
+        $class_name  = '';
+        $order_file  = 'test_order.php';
+        $values_file = 'test_values.php';
+        $extra_dir   = '';
+        $short_ns    = __NAMESPACE__;
+
+        $a_expected_keys = [
+            'class_name',
+            'order_file',
+            'values_file',
+            'extra_dir',
+            'namespace'
+        ];
+        foreach ($a_expected_keys as $keyname) {
+            if (isset($a_values[$keyname]) && $a_values[$keyname] != '') {
+                $$keyname = $a_values[$keyname];
+            }
+        }
+        if (!empty($namespace)) {
+            $this->namespace = $namespace;
+            $a_ns_part = explode('\\', $namespace);
+            $short_ns = '';
+            for ($i = 0; $i < count($a_ns_part) - 1; $i++) {
+                $short_ns .= empty($short_ns)
+                    ? $a_ns_part[$i]
+                    : '\\' . $a_ns_part[$i];
+            }
+        }
+        if (!empty($class_name)) {
+            $this->class_name = $class_name;
+            $values_file = $class_name . '_values.php';
+            $order_file = $class_name . '_order.php';
+        }
+
+        $test_values_file = LocateFile::getTestFileWithPath($values_file, $short_ns, $extra_dir);
+        if (empty($test_values_file)) {
+            $this->a_test_values = [];
+        }
+        else {
+            $this->a_test_values = include $test_values_file;
+        }
+        $test_order_file = LocateFile::getTestFileWithPath($order_file, $short_ns, $extra_dir);
+        if (!empty($test_order_file)) {
+            $this->a_test_order = include $test_order_file;
+        }
+        else {
+            if (!empty($a_test_values)) {
+                $a_test_order = [];
+                foreach ($a_test_values as $key => $test_values) {
+                    $a_test_order[] = $key;
+                }
+                $this->a_test_order = $a_test_order;
+            }
+            else {
+                $this->a_test_order = [];
+            }
+        }
+    }
+
+    ### All the other methods needed to run tests ###
+
+    /**
+     * Adds a method name to the test order.
+     * @param string $method_name
+     * @return bool
+     */
+    public function addMethodToTestOrder($method_name = '')
+    {
+        if ($method_name == '') { return false; }
+        $this->a_test_order[] = $method_name;
+        return true;
+    }
+
+    /**
+     * Adds a single key=>value pair to the a_test_values array
+     * @param string $key the key name
+     * @param mixed $value  the value assigned to the key
+     */
+    public function addTestValue($key = '', $value = '')
+    {
+        if ($key == '') { return; }
+        $this->a_test_values[$key] = $value;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFailedTestNames()
+    {
+        return $this->failed_test_names;
+    }
+
+    /**
+     * @return int
+     */
+    public function getFailedTests()
+    {
+        return $this->failed_tests;
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumOTests()
+    {
+        return $this->num_o_tests;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPassedTests()
+    {
+        return $this->passed_tests;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPassedTestNames()
+    {
+        return $this->passed_test_names;
+    }
+
+    /**
+     * @return array
+     */
+    public function getTestOrder()
+    {
+        return $this->a_test_order;
     }
 
     /**
@@ -371,7 +435,6 @@ class Tester
     /**
      * Sets the array a_test_order to the array passed in
      * @param array $a_test_order optional, defaults to an empty array
-     * @return null
      */
     public function setTestOrder(array $a_test_order = array())
     {
@@ -381,7 +444,6 @@ class Tester
     /**
      * Sets the array a_test_value to the array passed in
      * @param array $a_test_values optional, defaults to an empty array
-     * @return null
      */
     public function setTestValues(array $a_test_values = array())
     {
@@ -400,80 +462,18 @@ class Tester
 
     ### Utility Methods ###
     /**
-     * Checks to see if a method is public.
-     * Fixes method names that end in Tester.
+     * Checks to see if a method is public in the tester class.
      * @param string $class_name required defaults to ''
      * @param string $method_name required defaults to ''
      * @return bool true or false
      */
-    public function isPublicMethod($class_name = '', $method_name = '')
+    public function isPublicMethod($method_name = '')
     {
         if ($method_name == '') {
             return false;
         }
-        if ($class_name == '' && $this->class_name == '') {
-            return false;
-        }
-        elseif ($class_name == '') {
-            $class_name = $this->class_name;
-        }
-        $o_ref = new \ReflectionClass($class_name);
+        $o_ref = new \ReflectionClass(__CLASS__);
         $o_method = $o_ref->getMethod($method_name);
         return $o_method->isPublic();
-    }
-
-    /**
-     * Sets up the two main arrays the tests uses.
-     * @param array $a_values ['class_name', 'order_file', 'values_file', 'extra_dir', 'namespace']
-     * @return null
-     */
-    public function setupTests(array $a_values = [])
-    {
-        $class_name  = '';
-        $order_file  = 'test_order.php';
-        $values_file = 'test_values.php';
-        $extra_dir   = '';
-        $namespace   = '';
-
-        $a_expected_keys = [
-            'class_name',
-            'order_file',
-            'values_file',
-            'extra_dir',
-            'namespace'
-        ];
-        foreach ($a_expected_keys as $keyname) {
-            if (isset($a_values[$keyname]) && $a_values[$keyname] != '') {
-                $$keyname = $a_values[$keyname];
-                if ($keyname == 'namespace') {
-                    $this->namespace = $a_values[$keyname];
-                }
-            }
-        }
-        $this->class_name = $class_name;
-
-        $test_values_file = LocateFile::getTestFileWithPath($values_file, $namespace, $extra_dir);
-        if (empty($test_values_file)) {
-           $this->a_test_values = [];
-        }
-        else {
-            $this->a_test_values = include $test_values_file;
-        }
-        $test_order_file = LocateFile::getTestFileWithPath($order_file, $namespace, $extra_dir);
-        if (!empty($test_order_file)) {
-            $this->a_test_order = include $test_order_file;
-        }
-        else {
-            if (!empty($a_test_values)) {
-                $a_test_order = [];
-                foreach ($a_test_values as $key => $test_values) {
-                    $a_test_order[] = $key;
-                }
-                $this->a_test_order = $a_test_order;
-            }
-            else {
-                $this->a_test_order = [];
-            }
-        }
     }
 }

@@ -6,10 +6,11 @@
  * @file      Ritc/Library/Helper/LocateFile.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-02-08 16:39:15
+ * @version   1.0.1
+ * @date      2017-06-10 07:22:10
  * @note <b>Change Log</b>
- *       1.0.0  Initial Version                                 - 2017-02-08 wer
+ * - v1.0.1  Bug fix                                         - 2017-06-10 wer
+ * - v1.0.0  Initial Version                                 - 2017-02-08 wer
  */
 namespace Ritc\Library\Helper;
 
@@ -289,7 +290,7 @@ class LocateFile
         $path .= $sub_dir != ''
             ? '/resources/config/tests/' . $sub_dir . '/'
             : '/resources/config/tests/';
-        $path .= $path . $file_name;
+        $path .= $file_name;
         if (file_exists($path)) {
             return $path;
         }

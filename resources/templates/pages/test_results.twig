@@ -1,9 +1,10 @@
-{% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
+{% extends '@' ~ page_prefix ~ 'default/base.twig' %}
 {% block title %}{{ parent() }}: User Tests{% endblock %}
 {% block body %}
     <div class="container">
         <ul class="test-results">
             <li>Number of Failed Tests: <span class="red">{{ failed_tests }}</span></li>
+            <li>Number of Skipped Tests: {{ skipped_tests }}</li>
             <li>Number of Passed Tests: {{ passed_tests }}</li>
             <li>Total Number of Tests: {{ num_o_tests }}</li>
         {% if failed_test_names is not empty %}
@@ -23,6 +24,16 @@
                     {% endif %}
                 {% endfor %}
                 </ul>
+            </li>
+        {% endif %}
+        {% if skipped_test_names %}
+            <li>Skipped Test Names
+                <ul>
+                {% for skipped in skipped_test_names %}
+                    <li>{{ skipped }}</li>
+                {% endfor %}
+                </ul>
+
             </li>
         {% endif %}
         {% if passed_test_names is not empty %}

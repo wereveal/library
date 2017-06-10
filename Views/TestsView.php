@@ -5,9 +5,10 @@
  * @file      LibraryView.php
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-05-14 16:47:54
+ * @version   2.1.0
+ * @date      2017-06-10 07:25:13
  * @note <b>Change Log</b>
+ * - v2.1.0   - Added additional tests, bug fixes            - 2017-06-10 wer
  * - v2.0.0   - Name refactoring                             - 2017-05-14 wer
  * - v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
  * - v1.0.0   - First stable version                         - 01/16/2015 wer
@@ -47,20 +48,15 @@ class TestsView
     {
         $a_message = ViewHelper::infoMessage('Select which Class you wish to test.');
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/tests/');
-        $a_test = [
-            'PeopleModel' => 'People Model Test',
-            'PageModel'   => 'Page Model Test',
-            'UrlsModel'   => 'Urls Model Test'
-        ];
+        $a_test = $this->readNav('ConfigTestLinks');
         $a_buttons = [];
-        foreach ($a_test as $key => $value) {
+        foreach ($a_test as $value) {
             $a_buttons[] = [
-                'value' => $key,
-                'label' => $value,
-                'test'  => $key
+                'value' => $value['text'],
+                'label' => $value['description'],
+                'test'  => $value['text']
             ];
         }
-        $a_twig_values['menus'] = $this->o_nav;
         $a_twig_values['a_buttons'] = $a_buttons;
         $tpl = $this->createTplString($a_twig_values);
         return $this->o_twig->render($tpl, $a_twig_values);
@@ -73,22 +69,14 @@ class TestsView
     public function renderResults(array $a_result_values = array())
     {
         if (count($a_result_values) == 0) {
-            $a_params = [
-                'message' => 'No results were available.',
-                'type'    => 'error'
-            ];
-            $a_message = ViewHelper::messageProperties($a_params);
-            return $this->o_twig->render(
-                '@pages/error.twig',
-                [
-                    'description'   => 'An error has occurred.',
-                    'public_dir'    => '',
-                    'a_message'     => $a_message,
-                    'site_url'      => SITE_URL,
-                    'rights_holder' => RIGHTS_HOLDER
-                ]
-            );
+            $a_message = ViewHelper::failureMessage('No results were available.');
+            $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/tests/');
         }
-        return $this->o_twig->render('@tests/results.twig', $a_result_values);
+        else {
+            $a_message = ViewHelper::infoMessage('Results');
+            $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/tests/results/');
+        }
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->o_twig->render($tpl, $a_twig_values);
     }
 }

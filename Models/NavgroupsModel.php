@@ -39,8 +39,7 @@ class NavgroupsModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'navgroups', 'lib');
-        $this->setFieldNames();
+        $this->setupProperties($o_db, 'navgroups');
     }
 
     /**
@@ -137,11 +136,38 @@ class NavgroupsModel implements ModelInterface
 
     /**
      * Generic deletes a record based on the id provided.
-     * Also delete the relation record(s) in the map table.
+     * Checks to see if a map record exists, if so, returns false;
      * @param int $ng_id
      * @return bool
      */
     public function delete($ng_id = -1)
+    {
+        if ($ng_id == -1) { return false; }
+        $o_map = new NavNgMapModel($this->o_db);
+        $results = $o_map->read(['ng_id' => $ng_id]);
+        if (!empty($results)) {
+            $this->error_message = 'The nav_ng_map record(s) must be deleted first.';
+            return false;
+        }
+        $results = $this->genericDelete($ng_id);
+        $this->logIt(var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        if ($results) {
+            return $this->o_db->commitTransaction();
+        }
+        else {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            $this->o_db->rollbackTransaction();
+            return false;
+        }
+    }
+
+    /**
+     * Deletes a record based on the id provided.
+     * Also delete the relation record(s) in the map table.
+     * @param int $ng_id
+     * @return bool
+     */
+    public function deleteWithMap($ng_id = -1)
     {
         if ($ng_id == -1) { return false; }
         if ($this->o_db->startTransaction()) {
@@ -187,7 +213,7 @@ class NavgroupsModel implements ModelInterface
      * @param string $name
      * @return mixed
      */
-    public function readNavgroupId($name = '')
+    public function readIdByName($name = '')
     {
         $sql = "SELECT ng_id FROM {$this->db_table} WHERE ng_name = :ng_name";
         $a_values = [':ng_name' => $name];
@@ -201,36 +227,10 @@ class NavgroupsModel implements ModelInterface
     }
 
     /**
-     * @return array
-     */
-    public function getFieldNames()
-    {
-        return $this->a_field_names;
-    }
-
-    /**
-     * @param array $a_field_names
-     */
-    public function setFieldNames(array $a_field_names = [])
-    {
-        if (count($a_field_names) > 0) {
-            $this->a_field_names = $a_field_names;
-        }
-        else {
-            $this->a_field_names = [
-                'ng_id',
-                'ng_name',
-                'ng_class',
-                'ng_active'
-            ];
-        }
-    }
-
-    /**
      * Gets the default navgroup by id.
      * @return int
      */
-    public function retrieveDefaultNavgroup()
+    public function retrieveDefaultId()
     {
         $a_search_for = [':ng_default' => 1];
         $a_search_parms = [
@@ -248,7 +248,7 @@ class NavgroupsModel implements ModelInterface
      * Returns the default navgroup by name.
      * @return string
      */
-    public function retrieveDefaultNavgroupName()
+    public function retrieveDefaultName()
     {
         $a_search_for = [':ng_default' => 1];
         $a_search_parms = [

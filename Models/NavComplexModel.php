@@ -64,7 +64,7 @@ class NavComplexModel
     {
         $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
-            $ng_id = $this->o_ng->retrieveDefaultNavgroup();
+            $ng_id = $this->o_ng->retrieveDefaultId();
             if ($ng_id == -1) {
                 return false;
             }
@@ -132,7 +132,7 @@ EOT;
     {
         $meth = __METHOD__ . '.';
         if ($navgroup_name == '') {
-            $navgroup_name = $this->o_ng->retrieveDefaultNavgroupName();
+            $navgroup_name = $this->o_ng->retrieveDefaultName();
         }
         $where = "AND ng.ng_name = :ng_name\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
@@ -286,7 +286,7 @@ EOT;
     {
         $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
-            $ng_id = $this->o_ng->retrieveDefaultNavgroup();
+            $ng_id = $this->o_ng->retrieveDefaultId();
             if ($ng_id == -1) {
                 return false;
             }
