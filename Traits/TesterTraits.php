@@ -83,110 +83,104 @@ trait TesterTraits
         $a_failed_test_names = array();
         $a_passed_test_names = array();
         if ($show_test_names === true) {
-            if (count($this->passed_test_names) > 0) {
-                $a_passed_test_names = $this->passed_test_names;
-            }
-            foreach ($this->failed_test_names as $name) {
-                if (is_array($this->failed_subtests) && isset($this->failed_subtests[$name])) {
-                    $a_subnames = $this->failed_subtests[$name];
+            foreach ($this->passed_test_names as $name) {
+                $a_subnames = [];
+                if (!empty($this->passed_subtests[$name])) {
+                    $a_subnames = $this->passed_subtests[$name];
                 }
-                else {
-                    $a_subnames = array();
-                }
-                $a_failed_test_names[] = array(
+                $a_passed_test_names[] = [
                     'name' => $name,
                     'subtest_names' => $a_subnames
-                );
+                ];
+            }
+            foreach ($this->failed_test_names as $name) {
+                $a_failed = [];
+                $a_success = [];
+                if (!empty($this->failed_subtests[$name])) {
+                    $a_failed = $this->failed_subtests[$name];
+                }
+                if (!empty($this->passed_subtests[$name])) {
+                    $a_success = $this->passed_subtests[$name];
+                }
+                $a_failed_test_names[] = [
+                    'name'            => $name,
+                    'subtest_failed'  => $a_failed,
+                    'subtest_success' => $a_success
+                ];
             }
             return array(
-                'failed_tests'      => $this->failed_tests,
-                'passed_tests'      => $this->passed_tests,
-                'num_o_tests'       => $this->num_o_tests,
-                'failed_test_names' => $a_failed_test_names,
-                'passed_test_names' => $a_passed_test_names
+                'failed_tests'       => $this->failed_tests,
+                'passed_tests'       => $this->passed_tests,
+                'skipped_tests'      => $this->skipped_tests,
+                'num_o_tests'        => $this->num_o_tests,
+                'failed_test_names'  => $a_failed_test_names,
+                'passed_test_names'  => $a_passed_test_names,
+                'skipped_test_names' => $this->skipped_test_names
             );
         }
         else {
             return array(
-                'failed_tests'      => $this->failed_tests,
-                'passed_tests'      => $this->passed_tests,
-                'num_o_tests'       => $this->num_o_tests,
-                'failed_test_names' => '',
-                'passed_test_names' => ''
+                'failed_tests'       => $this->failed_tests,
+                'passed_tests'       => $this->passed_tests,
+                'num_o_tests'        => $this->num_o_tests,
+                'failed_test_names'  => '',
+                'passed_test_names'  => '',
+                'skipped_test_names' => ''
             );
         }
     }
 
     /**
      * Runs tests where method ends in Test.
-     * @param string $class_name  optional, name of the class to be tested - only really needed if
-     *                            the class name doesn't match this class name minus Tester or Tests
-     *                            e.g. MyClass and MyClassTester doesn't require $class_name
-     *                            but MyClass and ThisClassTest requires a valid value for $class_name,
-     *                            i.e., $class_name = MyClass
-     * @param array $a_test_order optional, if provided it ignores the class property $a_test_order
-     *                            and won't try to build one from the class methods.
-     * @return int number of failed tests.
+     * @param bool $return_results optional, defaults to true which also returns test names.
+     * @return array
      */
-    public function runTests($class_name = '', array $a_test_order = [])
+    public function runTests($return_results = true)
     {
-        if ($class_name == '') {
-            if ($this->class_name != '') {
-                $class_name = $this->class_name;
-            }
-            elseif (substr(__CLASS__, -5) == 'Tests') {
-                $class_name = str_replace('Tests','',__CLASS__);
-            }
-            elseif (substr(__CLASS__, -6) == 'Tester') {
-                $class_name = str_replace('Tester','',__CLASS__);
-                $this->class_name = $class_name;
-            }
-            else {
-                return 999;
-            }
+        if ($this->class_name != '') {
+            $class_name = $this->class_name;
+        }
+        elseif (substr(__CLASS__, -5) == 'Tests') {
+            $class_name = str_replace('Tests','',__CLASS__);
+        }
+        elseif (substr(__CLASS__, -6) == 'Tester') {
+            $class_name = str_replace('Tester','',__CLASS__);
+        }
+        else {
+            return [];
         }
         $ns_class = $this->namespace . '\\' . $class_name;
-        if (count($a_test_order) === 0) {
-            if (count($this->a_test_order) === 0) {
-                $o_ref = new \ReflectionClass($ns_class);
-                $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
-                foreach ($a_methods as $a_method) {
-                    switch($a_method->name) {
-                        case '__construct':
-                        case '__set':
-                        case '__get':
-                        case '__isset':
-                        case '__unset':
-                        case '__clone':
-                            break;
-                        default:
-                            if (substr($a_method->name, -6) == 'Tester') {
-                                $a_test_order[] = $a_method->name;
-                            }
-                    }
+        $a_test_order = [];
+        if (count($this->a_test_order) === 0) {
+            $o_ref = new \ReflectionClass($ns_class);
+            $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
+            foreach ($a_methods as $a_method) {
+                switch($a_method->name) {
+                    case '__construct':
+                    case '__set':
+                    case '__get':
+                    case '__isset':
+                    case '__unset':
+                    case '__clone':
+                        break;
+                    default:
+                        if (substr($a_method->name, -6) == 'Tester') {
+                            $a_test_order[] = $a_method->name;
+                        }
                 }
             }
-            else {
-                $a_test_order = $this->a_test_order;
-            }
         }
-        $this->logIt(var_export($a_test_order, true), LOG_OFF, __METHOD__);
-        $message = "Before -- num_o_tests: {$this->num_o_tests}
-            passed tests: {$this->passed_tests}
-            failed tests: {$this->failed_tests}
-            test names: " . var_export($this->failed_test_names, true);
-
-        $this->logIt($message, LOG_OFF, __METHOD__);
+        else {
+            $a_test_order = $this->a_test_order;
+        }
         $failed_tests = 0;
         foreach ($a_test_order as $method_name) {
-            $this->logIt($method_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
             if (substr($method_name, -6) == 'Tester') {
                 $tester_name = $method_name;
                 $method_name = $this->shortenName($method_name);
             } else {
                 $tester_name = $method_name . 'Tester';
             }
-            $this->logIt("method name: {$method_name} - tester name: {$tester_name}", LOG_OFF, __METHOD__ . '.' . __LINE__);
             if ($this->isPublicMethod($tester_name)) {
                 $results = $this->$tester_name();
                 switch ($results) {
@@ -208,8 +202,10 @@ trait TesterTraits
                 $this->num_o_tests++;
             }
         }
-        $this->logIt("num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: " . var_export($this->failed_test_names, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return $failed_tests;
+        if ($return_results) {
+            return $this->returnTestResults($return_results);
+        }
+        return [];
     }
 
     /**

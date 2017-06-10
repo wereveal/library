@@ -1,5 +1,4 @@
 {% extends '@' ~ page_prefix ~ 'default/base.twig' %}
-{% block title %}{{ parent() }}: User Tests{% endblock %}
 {% block body %}
     <div class="container">
         <ul class="test-results">
@@ -8,16 +7,25 @@
             <li>Number of Passed Tests: {{ passed_tests }}</li>
             <li>Total Number of Tests: {{ num_o_tests }}</li>
         {% if failed_test_names is not empty %}
-            <li>Failed Test Names
+            <li>Failed Test Names <i class=" fa fa-thumbs-o-down"></i>
                 <ul>
                 {% for failedTest in failed_test_names %}
-                    {% if failedTest.subtest_names %}
+                    {% if failedTest.subtest_failed %}
                     <li>{{ failedTest.name }}<br />
-                        {% for subname in failedTest.subtest_names %}
+                        <p class="red m-0">Failed Subtests</p>
                         <ul>
+                        {% for subname in failedTest.subtest_failed %}
                             <li>{{ subname }}</li>
-                        </ul>
                         {% endfor %}
+                        </ul>
+                    {% if failedTest.subtest_success %}
+                        <p class="green m-0">Successful Subtests</p>
+                        <ul>
+                        {% for subname in failedTest.subtest_success %}
+                            <li>{{ subname }}</li>
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
                     </li>
                     {% else %}
                     <li>{{ failedTest.name }}</li>
@@ -27,7 +35,7 @@
             </li>
         {% endif %}
         {% if skipped_test_names %}
-            <li>Skipped Test Names
+            <li>Skipped Test Names <i class="fa fa-hand-peace-o"></i>
                 <ul>
                 {% for skipped in skipped_test_names %}
                     <li>{{ skipped }}</li>
@@ -36,14 +44,27 @@
 
             </li>
         {% endif %}
-        {% if passed_test_names is not empty %}
-            <li>Passed Test Names
+        {% if passed_test_names %}
+            <li>Passed Test Names <i class="fa fa-thumbs-o-up"></i>
                 <ul>
-                {% for passedName in passed_test_names %}
-                    <li>{{ passedName }}</li>
+                {% for passedTest in passed_test_names %}
+                    {% if passedTest.subtest_names %}
+                    <li>
+                        {{ passedTest.name }}
+                        <ul>
+                            {% for subname in passedTest.subtest_names %}
+                            <li>{{ subname }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li>{{ passedTest.name }}</li>
+                    {% endif %}
                 {% endfor %}
                 </ul>
             </li>
+        {% else %}
+            <li>No Passed Tests <i class="fa fa-thumbs-o-down"></i></li>
         {% endif %}
         </ul>
     </div>

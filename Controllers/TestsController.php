@@ -84,8 +84,7 @@ class TestsController
             default:
                 return $this->o_view->renderList();
         }
-        $o_test->runTests();
-        $a_test_results = $o_test->returnTestResults(true);
+        $a_test_results = $o_test->runTests();
         return $this->o_view->renderResults($a_test_results);
     }
 }

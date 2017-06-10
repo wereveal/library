@@ -76,6 +76,7 @@ class TestsView
             $a_message = ViewHelper::infoMessage('Results');
             $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/tests/results/');
         }
+        $a_twig_values = array_merge($a_twig_values, $a_result_values);
         $tpl = $this->createTplString($a_twig_values);
         return $this->o_twig->render($tpl, $a_twig_values);
     }
