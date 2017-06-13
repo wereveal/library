@@ -9,6 +9,7 @@
  * @version   4.3.1
  * @date      2017-05-14 14:31:20
  * @note <b>Change Log</b>
+ * - v5.0.0 - Switch to throwing exceptions instead of returning false                      - 2017-06-12 wer
  * - v4.3.1 - Bug fix                                                                       - 2017-05-14 wer
  * - v4.3.0 - Added a new method to check if a table exists in the database                 - 2017-05-09 wer
  * - v4.2.0 - Added some debugging code, cleaned up other.                                  - 2017-01-13 wer
@@ -67,6 +68,7 @@
  */
 namespace Ritc\Library\Services;
 
+use Ritc\Library\Basic\DbException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Traits\DbTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -106,71 +108,90 @@ class DbModel
     }
 
     ### Main Four Commands (CRUD) ###
+
     /**
      * Inserts data into the database.
-     * @param string $the_query the INSERT statement, default is empty.
-     * @param array $a_values     default is empty array
-     *                            If blank, the values are in the INSERT string
-     *                            If array then the INSERT string is for a prepared query
-     * @param array @a_table_info needed only if PostgreSQL is being used, Default array()
+     * @param string $the_query   the INSERT statement, default is empty.
+     * @param array  $a_values     default is empty array
+     *                             If blank, the values are in the INSERT string
+     *                             If array then the INSERT string is for a prepared query
+     * @param array  $a_table_info optional
+     * @return bool
+     * @throws \Ritc\Library\Basic\DbException
+     * @internal param $array @a_table_info needed only if PostgreSQL is being used, Default array()
      *                            ['table_name' => '', 'column_name' => '', 'schema_name' => '']
-     * @return bool
-     * @return bool
      */
     public function insert($the_query = '', array $a_values = [], array $a_table_info = [])
     {
         $meth = __METHOD__ . '.';
-        $this->logIt('Query and values: ' . $the_query . '  ' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
         if ($the_query == '') {
-            $this->logIt('The query must not be blank.', LOG_ALWAYS, $meth . __LINE__);
-            return false;
+            $this->error_message = 'The query must not be blank.';
+            $this->logIt($this->error_message, LOG_ALWAYS, $meth . __LINE__);
+            throw new DbException($this->error_message, 130);
         }
         $sequence_name = '';
-        if ($this->db_type == 'pgsql' && $a_table_info != array()) {
+        if ($this->db_type == 'pgsql' && !empty($a_table_info)) {
             $sequence_name = $this->getPgsqlSequenceName($a_table_info);
         }
-        $this->logIt('Sequence Name: ' . $sequence_name, LOG_OFF, $meth . __LINE__);
         if (count($a_values) == 0) {
-            $this->affected_rows = $this->o_pdo->exec($the_query);
-            if ($this->affected_rows === false) {
-                $this->logIt($this->retrieveFormatedSqlErrorMessage(), LOG_ALWAYS, $meth . __LINE__);
-                return false;
+            try {
+                $this->affected_rows = $this->o_pdo->exec($the_query);
             }
-            elseif ($this->affected_rows == 0) {
-                $this->logIt('The INSERT affected no records.', LOG_ALWAYS, $meth . __LINE__);
-                return false;
+            catch (\PDOException $e) {
+                $this->error_message = $e->getMessage();
+                throw new DbException($this->error_message, 100);
+            }
+            if ($this->affected_rows == 0) {
+                $message = 'The INSERT affected no records.';
+                $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
+                throw new DbException($message, 100);
             }
             else { // note: kind of assumes there was a single record inserted
-                $this->a_new_ids = array($this->o_pdo->lastInsertId($sequence_name));
-                return true;
+                try {
+                    $id = $this->o_pdo->lastInsertId($sequence_name);
+                    $this->a_new_ids = [$id];
+                    return true;
+                }
+                catch (\PDOException $e) {
+                    $message = $e->getMessage();
+                    throw new DbException($message, 100);
+                }
             }
         }
         elseif (count($a_values) > 0) {
-            $o_pdo_stmt = $this->prepare($the_query);
-            if ($o_pdo_stmt === false) {
-                $this->logIt('Could not prepare the statement', LOG_ALWAYS, $meth . __LINE__);
-                return false;
+            try {
+                $o_pdo_stmt = $this->prepare($the_query);
+                try {
+                    return $this->insertPrepared($a_values, $o_pdo_stmt, $a_table_info);
+                }
+                catch (DbException $e) {
+                    $this->error_message = $e->errorMessage();
+                    $code = $e->getCode();
+                    throw new DbException($this->error_message, $code);
+                }
             }
-            else {
-                $this->logIt('Sending to insert Prepared.', LOG_OFF, $meth . __LINE__);
-                return $this->insertPrepared($a_values, $o_pdo_stmt, $a_table_info);
+            catch (DbException $e) {
+                $this->error_message = $e->errorMessage();
+                $code = $e->getCode();
+                throw new DbException($this->error_message, $code);
             }
         }
         else {
-            $this->logIt('The array of values for a prepared insert was empty.', LOG_OFF, $meth . __LINE__);
-            return false;
+            $this->error_message = 'The array of values for a prepared insert was empty.';
+            throw new DbException($this->error_message, 100);
         }
     }
 
     /**
      * Searches the database for records.
      * Can be set up with upto 3 arguments, the first required, the sql
-     * @param string $the_query, required
-     * @param array $a_values associative array, key in named prepared
-     *     format preferred e.g., [':id'=>1, ':name'=>'fred'] but optional.
-     * @param string $type optional, type of results, num, both, assoc which
-     *     specifies the PDO formats, defaults to assoc
+     * @param string $the_query , required
+     * @param array  $a_values  associative array, key in named prepared
+     *                          format preferred e.g., [':id'=>1, ':name'=>'fred'] but optional.
+     * @param string $type      optional, type of results, num, both, assoc which
+     *                          specifies the PDO formats, defaults to assoc
      * @return mixed results of search or false
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function search($the_query = '', array $a_values = [], $type = 'assoc')
     {
@@ -187,51 +208,59 @@ class DbModel
                 $fetch_style = \PDO::FETCH_ASSOC;
         }
         if ($the_query == '') {
-            $this->logIt('The query must not be blank.', LOG_ALWAYS, $meth . __LINE__);
-            return false;
+            $this->error_message = 'The query must not be blank.';
+            $this->logIt($this->error_message, LOG_ALWAYS, $meth . __LINE__);
+            throw new DbException($this->error_message, 220);
         }
         if (count($a_values) == 0) {
-            $o_pdo_stmt = $this->o_pdo->prepare($the_query);
-            if ($o_pdo_stmt === false) {
-                $this->logIt($this->retrieveFormatedSqlErrorMessage($this->o_pdo), LOG_ALWAYS, $meth . __LINE__);
-                return false;
+            try {
+                $o_pdo_stmt = $this->o_pdo->prepare($the_query);
             }
-            if ($o_pdo_stmt->execute()) {
-                $a_results = $o_pdo_stmt->fetchAll($fetch_style);
-                $o_pdo_stmt->closeCursor();
+            catch (\PDOException $e) {
+                $this->error_message = $e->getMessage();
+                throw new DbException($this->error_message, 50);
             }
-            else {
-                $a_error = $o_pdo_stmt->errorInfo();
-                $log_message = 'Error array ' . var_export($a_error, TRUE);
-                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-                return false;
+            try {
+                $o_pdo_stmt->execute();
+                try {
+                    $a_results = $o_pdo_stmt->fetchAll($fetch_style);
+                    $o_pdo_stmt->closeCursor();
+                    return $a_results;
+                }
+                catch (\PDOException $e) {
+                    $this->error_message = $e->getMessage();
+                    throw new DbException($this->error_message, 60);
+                }
+            }
+            catch (\PDOException $e) {
+                $this->error_message = $e->getMessage();
+                throw new DbException($this->error_message, 60);
             }
         }
         elseif (is_array($a_values) && count($a_values) > 0) {
-            $this->logIt("Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-            $this->logIt("The array is " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-
-            $o_pdo_stmt = $this->prepare($the_query);
-            if ($o_pdo_stmt) {
-                $a_results = $this->searchPrepared($a_values, $o_pdo_stmt, $type);
-                if ($a_results === false) {
-                    $this->logIt($this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
-                    return false;
+            try {
+                $o_pdo_stmt = $this->prepare($the_query);
+                try {
+                    $a_results = $this->searchPrepared($a_values, $o_pdo_stmt, $type);
+                    return $a_results;
+                }
+                catch (DbException $e) {
+                    $this->error_message = $e->errorMessage();
+                    $code = $e->getCode();
+                    throw new DbException($e->errorMessage(), $code);
                 }
             }
-            else {
-                $this->logIt("Could not prepare the query " . $the_query, LOG_OFF, $meth . __LINE__);
-                $this->logIt($this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
-                return false;
+            catch (DbException $e) {
+                $this->error_message = $e->errorMessage();
+                $code = $e->getCode();
+                throw new DbException($this->error_message, $code);
             }
         }
         else {
-            $this->logIt("There was a problem with the array", LOG_OFF, $meth . __LINE__);
-            $this->logIt("a_values is: " . var_export($a_values , true), LOG_OFF, $meth . __LINE__);
-            return false;
+            $this->error_message = 'There was a problem with the array.';
+            throw new DbException($this->error_message, 220);
         }
-        return $a_results;
     }
 
     /**
@@ -376,11 +405,9 @@ class DbModel
      */
     public function setPgsqlSequenceName(array $a_table_info = [])
     {
-        if ($a_table_info == array()) {
-            return false;
-        }
-        if (!isset($a_table_info['table_name']) || $a_table_info['table_name'] == '') {
-            return false;
+        if (empty($a_table_info) || empty($a_table_info['table_name'])) {
+            $this->error_message = 'Missing required values.';
+            throw new DbException($this->error_message, 900);
         }
         if (!isset($a_table_info['column_name']) || $a_table_info['column_name'] == '') {
             $a_table_info['column_name'] = 'id';
@@ -388,22 +415,24 @@ class DbModel
         if (!isset($a_table_info['schema']) || $a_table_info['schema'] == '') {
             $a_table_info['schema'] = 'public';
         }
-        $query = "
+        $query = /** @lang pgsql */
+        "
             SELECT column_default
             FROM information_schema.columns
             WHERE table_schema = :schema
             AND table_name = :table_name
-            AND column_name = :column_name";
-        $results = $this->search($query, $a_table_info);
-        if ($results) {
-            $this->logIt("Results: " . var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+            AND column_name = :column_name
+        ";
+        try {
+            $results = $this->search($query, $a_table_info);
             $column_default = $results[0]['column_default'];
             $this->pgsql_sequence_name = preg_replace("/nextval\('(.*)'(.*)\)/i", '$1', $column_default);
-            $this->logIt("pgsql_sequence_name: " . $this->pgsql_sequence_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
             return true;
         }
-        else {
-            return false;
+        catch (DbException $e) {
+            $this->error_message = $e->errorMessage() . ' Unable to set the PgsqlSequenceName';
+            $code = $e->getCode();
+            throw new DbException($this->error_message, $code);
         }
     }
 
@@ -474,38 +503,41 @@ class DbModel
      */
     public function bindValues(array $a_values = [], \PDOStatement $o_pdo_stmt)
     {
-        $meth = __METHOD__ . '.';
-        $this->logIt("bind array: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         if (Arrays::isAssocArray($a_values)) {
             $a_values = $this->prepareKeys($a_values);
-            $this->logIt("prepared array: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
             foreach ($a_values as $key => $value) {
-                if (is_array($key) || is_array($value)) { return false; }
-                if ($o_pdo_stmt->bindValue($key, $value) === false) {
+                if (is_array($key) || is_array($value)) {
+                    $this->error_message = "Missing Values";
+                    throw new DbException($this->error_message, 900);
+                }
+                try {
+                    $o_pdo_stmt->bindValue($key, $value);
+                }
+                catch (\PDOException $e) {
                     $a_error = $o_pdo_stmt->errorInfo();
-                    $this->logIt($a_error[2], LOG_OFF, $meth . __LINE__);
-                    return false;
+                    $this->error_message = $a_error[2];
+                    throw new DbException($this->error_message, 60);
                 }
             }
             return true;
         }
         elseif (count($a_values) > 0) {
-            $this->logIt('binding a basic array', LOG_OFF, $meth . __LINE__);
-            $this->logIt($a_values[0], LOG_OFF, $meth . __LINE__);
             $x = 1;
             foreach ($a_values as $value) {
-                if ($o_pdo_stmt->bindValue($x++, $value) === false) {
-                    $a_error = $o_pdo_stmt->errorInfo();
-                    $this->logIt($a_error[2], LOG_OFF, $meth . __LINE__);
-                    return false;
+                try {
+                    $o_pdo_stmt->bindValue($x++, $value);
                 }
-                $this->logIt("Successful Binding of {$value}", LOG_OFF, $meth . __LINE__);
+                catch (\PDOException $e) {
+                    $a_error = $o_pdo_stmt->errorInfo();
+                    $this->error_message = $a_error[2];
+                    throw new DbException($this->error_message, 60);
+                }
             }
             return true;
        }
         else {
-            $this->logIt('The value passed into bindValues must be an array.', LOG_OFF, $meth . __LINE__);
-            return false;
+            $this->error_message = 'The value passed into bindValues must be an array.';
+            throw new DbException($this->error_message, 70);
         }
     }
 
@@ -540,44 +572,63 @@ class DbModel
      */
     public function execute(array $a_values = [], \PDOStatement $o_pdo_stmt)
     {
-        $meth = __METHOD__ . '.';
-        $this->logIt('Array: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         if (count($a_values) > 0) {
             if (Arrays::isAssocArray($a_values)) { // for a query with bind values
                 $a_values = $this->prepareKeys($a_values);
-                $this->logIt('Fixed Array: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-
-                if ($this->bindValues($a_values, $o_pdo_stmt) === false) {
-                    $this->logIt("Could not bind the values.", LOG_OFF, $meth . __LINE__);
-                    return false;
+                try {
+                    $this->bindValues($a_values, $o_pdo_stmt);
                 }
-                return $o_pdo_stmt->execute();
+                catch (DbException $e) {
+                    $message = $e->errorMessage();
+                    $code = $e->getCode();
+                    throw new DbException($message, $code);
+                }
+                try {
+                    return $o_pdo_stmt->execute();
+                }
+                catch (\PDOException $e) {
+                    $message = 'Unable to execute the sql.';
+                    throw new DbException($message, 60, $e);
+                }
             }
             elseif (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays
-                $this->logIt('The array cannot be an array of array.', LOG_ALWAYS, $meth . __LINE__);
-                return false;
+                $message = 'The array cannot be an array of array.';
+                throw new DbException($message, 80);
             }
             else { // $array is for question mark place holders prepared statement
-                $this->logIt("Attempting to execute a question mark place prepared statement", LOG_OFF, $meth . __LINE__);
-                if ($this->bindValues($a_values, $o_pdo_stmt) === false) {
-                    return false;
+                try {
+                    $this->bindValues($a_values, $o_pdo_stmt);
                 }
-                return $o_pdo_stmt->execute();
+                catch (DbException $e) {
+                    throw new DbException($e->errorMessage(), $e->getCode());
+                }
+                try {
+                    return $o_pdo_stmt->execute();
+                }
+                catch (\PDOException $e) {
+                    $message = 'Unable to execute the sql.';
+                    throw new DbException($message, 60, $e);
+                }
             }
         }
-        else {
-            $this->logIt('Executing a query with pre-bound values', LOG_OFF, $meth . __LINE__);
-            return $o_pdo_stmt->execute(); // values have been bound elsewhere
+        else { // stmt prepared elsewhere
+            try {
+                return $o_pdo_stmt->execute();
+            }
+            catch (\PDOException $e) {
+                $message = 'Unable to execute the sql.';
+                throw new DbException($message, 60, $e);
+            }
         }
     }
 
     /**
      * Executes the pdo fetch method
-     *
+     * @see \PDOStatment::fetch
      * @param object|\PDOStatement $o_pdo_stmt     a \PDOStatement object
      * @param array                $a_fetch_config array('fetch_style'=>'ASSOC', 'cursor_orientation'=>'', 'cursor_offset'=>0)
-     *
-     * @return mixed - depends on fetch_style, always return false on failure - @see \PDOStatment::fetch
+     * @return array
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function fetchRow(\PDOStatement $o_pdo_stmt, array $a_fetch_config = [])
     {
@@ -599,29 +650,36 @@ class DbModel
         }
         switch ($fetch_style) {
             case 'BOTH':
-                return $o_pdo_stmt->fetch(\PDO::FETCH_BOTH, $cursor_orientation, $cursor_offset);
+                $fetch_style = \PDO::FETCH_BOTH;
                 break;
             case 'BOUND':
-                return $o_pdo_stmt->fetch(\PDO::FETCH_BOUND, $cursor_orientation, $cursor_offset);
+                $fetch_style = \PDO::FETCH_BOUND;
                 break;
             case 'CLASS':
-                return $o_pdo_stmt->fetch(\PDO::FETCH_CLASS, $cursor_orientation, $cursor_offset);
+                $fetch_style = \PDO::FETCH_CLASS;
                 break;
             case 'INTO':
-                return $o_pdo_stmt->fetch(\PDO::FETCH_INTO, $cursor_orientation, $cursor_offset);
+                $fetch_style = \PDO::FETCH_INTO;
                 break;
             case 'LAZY':
-                return $o_pdo_stmt->fetch(\PDO::FETCH_LAZY, $cursor_orientation, $cursor_offset);
+                $fetch_style = \PDO::FETCH_LAZY;
                 break;
             case 'NUM':
-                return $o_pdo_stmt->fetch(\PDO::FETCH_NUM, $cursor_orientation, $cursor_offset);
+                $fetch_style = \PDO::FETCH_NUM;
                 break;
             case 'OBJ':
-                return $o_pdo_stmt->fetch(\PDO::FETCH_OBJ, $cursor_orientation, $cursor_offset);
+                $fetch_style = \PDO::FETCH_OBJ;
                 break;
             case 'ASSOC':
             default:
-                return $o_pdo_stmt->fetch(\PDO::FETCH_ASSOC, $cursor_orientation, $cursor_offset);
+                $fetch_style = \PDO::FETCH_ASSOC;
+        }
+        try {
+            return $o_pdo_stmt->fetch($fetch_style, $cursor_orientation, $cursor_offset);
+        }
+        catch (\PDOException $e) {
+            $this->error_message = 'Unable to fetch the record(s).';
+            throw new DbException($this->error_message, 60, $e);
         }
     }
 
@@ -637,68 +695,80 @@ class DbModel
     {
         switch ($fetch_style) {
             case 'BOTH':
-                return $o_pdo_stmt->fetchAll(\PDO::FETCH_BOTH);
+                $fetch_style = \PDO::FETCH_BOTH;
                 break;
             case 'BOUND':
-                return $o_pdo_stmt->fetchAll(\PDO::FETCH_BOUND);
+                $fetch_style = \PDO::FETCH_BOUND;
                 break;
             case 'CLASS':
-                return $o_pdo_stmt->fetchAll(\PDO::FETCH_CLASS);
+                $fetch_style = \PDO::FETCH_CLASS;
                 break;
             case 'INTO':
-                return $o_pdo_stmt->fetchAll(\PDO::FETCH_INTO);
+                $fetch_style = \PDO::FETCH_INTO;
                 break;
             case 'LAZY':
-                return $o_pdo_stmt->fetchAll(\PDO::FETCH_LAZY);
+                $fetch_style = \PDO::FETCH_LAZY;
                 break;
             case 'NUM':
-                return $o_pdo_stmt->fetchAll(\PDO::FETCH_NUM);
+                $fetch_style = \PDO::FETCH_NUM;
                 break;
             case 'OBJ':
-                return $o_pdo_stmt->fetchAll(\PDO::FETCH_OBJ);
+                $fetch_style = \PDO::FETCH_OBJ;
                 break;
             case 'ASSOC':
             default:
-                return $o_pdo_stmt->fetchAll(\PDO::FETCH_ASSOC);
+                $fetch_style = \PDO::FETCH_ASSOC;
+        }
+        try {
+            return $o_pdo_stmt->fetchAll($fetch_style);
+        }
+        catch (\PDOException $e) {
+            $this->error_message = 'Unable to fetch the record(s).';
+            throw new DbException($this->error_message, 60, $e);
         }
     }
 
     /**
      * @param string $the_query
      * @param string $cursor
-     * @return bool|\PDOStatement
+     * @return \PDOStatement
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function prepare($the_query = '', $cursor = '')
     {
-        $this->logIt("Query passed in: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($the_query != '') {
             switch ($cursor) {
                 case 'SCROLL':
-                    $o_pdo_stmt = $this->o_pdo->prepare($the_query, array(\PDO::ATTR_CURSOR =>  \PDO::CURSOR_SCROLL));
+                    try {
+                        $o_pdo_stmt = $this->o_pdo->prepare($the_query, array(\PDO::ATTR_CURSOR =>  \PDO::CURSOR_SCROLL));
+                    }
+                    catch (\PDOException $e) {
+                        $this->error_message = 'Unable to prepare the statement.';
+                        throw new DbException($this->error_message, 50, $e);
+                    }
                     break;
                 case 'FWDONLY':
                 default:
-                    $o_pdo_stmt = $this->o_pdo->prepare($the_query, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+                    try {
+                        $o_pdo_stmt = $this->o_pdo->prepare($the_query, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+                    }
+                    catch (\PDOException $e) {
+                        $this->error_message = 'Unable to prepare the statement.';
+                        throw new DbException($this->error_message, 50, $e);
+                    }
             }
-            if ($o_pdo_stmt !== false) {
-                $this->logIt('Success for prepare.', LOG_OFF, __METHOD__ . '.' . __LINE__);
-                $this->logIt('o pdo stmt: ' . var_export($o_pdo_stmt, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                return $o_pdo_stmt;
-            }
-            else {
-                $this->logIt('Failure for prepare.', LOG_OFF, __METHOD__ . '.' . __LINE__);
-                return false;
-            }
+            return $o_pdo_stmt;
         }
         else {
-            $this->logIt('The query must not be blank.', LOG_OFF);
-            return false;
+            $this->error_message = 'The query must not be blank.';
+            throw new DbException($this->error_message, 50);
         }
     }
 
     /**
      * Rolls back a PDO transaction.
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function rollbackTransaction()
     {
@@ -709,19 +779,31 @@ class DbModel
      * Executes PDOStatement::rowCount().
      * @param \PDOStatement $o_pdo_stmt
      * @return int
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function rowCount(\PDOStatement $o_pdo_stmt)
     {
-        return $o_pdo_stmt->rowCount();
+        try {
+            return $o_pdo_stmt->rowCount();
+        }
+        catch (\PDOException $e) {
+            throw new DbException('Unable to get the row count.', 60, $e);
+        }
     }
 
     /**
      * Starts a PDO transaction.
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function startTransaction()
     {
-        return $this->o_pdo->beginTransaction();
+        try {
+            return $this->o_pdo->beginTransaction();
+        }
+        catch (\PDOException $e) {
+            throw new DbException('Unable to start the transaction.', 30, $e);
+        }
     }
 
     ### Complete Transaction in a single command
@@ -731,35 +813,36 @@ class DbModel
      * @param array  $a_values
      * @param string $table_name
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function insertTransaction($the_query = '', array $a_values = [], $table_name = '')
     {
         if ($the_query == '') {
-            $this->logIt('The Query was blank.', LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return false;
+            $this->error_message = 'The Query was blank.';
+            throw new DbException($this->error_message, 70);
         }
-        if ($this->o_pdo->beginTransaction()) {
-            $results = $this->insert($the_query, $a_values, $table_name);
-            if ($results) {
-                if ($this->o_pdo->commit() === false) {
-                    $message = 'Could Not Commit the Transaction.';
-                }
-                else {
-                    return true;
-                }
+        try {
+            $this->o_pdo->beginTransaction();
+        }
+        catch (\PDOException $e) {
+            throw new DbException('Unable to start the transaction.', 30, $e);
+        }
+        try {
+            $this->insert($the_query, $a_values, $table_name);
+            try {
+                $this->o_pdo->commit();
+                return true;
             }
-            else {
-                $message = 'Could Not Successfully Do the Insert.';
+            catch (\PDOException $e) {
+                $this->error_message = 'Could Not Commit the Transaction.';
+                throw new DbException($this->error_message, 40, $e);
             }
         }
-        else {
-            $message = 'Could not start transaction so we could not execute the insert, Please Try Again.';
+        catch (DbException $e) {
+            $this->o_pdo->rollBack();
+            $this->error_message = "Unable to insert the record.";
+            throw new DbException($this->error_message, 100, $e);
         }
-        $this->setSqlErrorMessage($this->o_pdo);
-        $this->logIt($this->getSqlErrorMessage(), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $this->o_pdo->rollBack();
-        $this->logIt($message);
-        return false;
     }
 
     /**
@@ -768,31 +851,33 @@ class DbModel
      * @param array  $the_array
      * @param bool   $single_record
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function queryTransaction($the_query = '', array $the_array = [], $single_record = true)
     {
-        $this->logIt("The Query is: {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
-        if ($this->o_pdo->beginTransaction()) {
-            $results = $this->mdQuery($the_query, $the_array, $single_record);
-            if ($results) {
-                if ($this->o_pdo->commit() === false) {
-                    $message = 'Could Not Commit the Transaction.';
-                }
-                else {
-                    return true;
-                }
+        try {
+            $this->o_pdo->beginTransaction();
+        }
+        catch (\PDOException $e) {
+            $this->error_message = 'Could not start transaction so we could not execute the query, Please Try Again.';
+            throw new DbException($this->error_message, 30, $e);
+        }
+        try {
+            $this->mdQuery($the_query, $the_array, $single_record);
+            try {
+                $this->o_pdo->commit();
+                return true;
             }
-            else {
-                $message = 'Could Not Successfully Do the Query.';
+            catch (\PDOException $e) {
+                $this->error_message = 'Could Not Commit the Transaction.';
+                throw new DbException($this->error_message, 30, $e);
+
             }
         }
-        else {
-            $message = 'Could not start transaction so we could not execute the query, Please Try Again.';
+        catch (DbException $e) {
+            $this->error_message = 'Could Not Successfully Do the Query.';
+            throw new DbException($this->error_message, 10, $e);
         }
-        $this->setSqlErrorMessage($this->o_pdo);
-        $this->logIt($message . ' ==> ' . $this->getSqlErrorMessage(), LOG_OFF);
-        $this->rollbackTransaction();
-        return false;
     }
 
     /**
@@ -801,15 +886,17 @@ class DbModel
      * @param array  $the_array
      * @param bool   $single_record
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function updateTransaction($the_query = '', array $the_array = [], $single_record = true)
     {
-        $this->logIt("The query coming in is: $the_query", LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $results = $this->queryTransaction($the_query, $the_array, $single_record);
-        if ($results === false) {
-            $this->logIt("Could not modify the record(s) - query was {$the_query}", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        try {
+            return $this->queryTransaction($the_query, $the_array, $single_record);
         }
-        return $results;
+        catch (DbException $e) {
+            $this->error_message = "Could not update the record(s)";
+            throw new DbException($this->error_message, 300, $e);
+        }
     }
 
     /**
@@ -818,23 +905,28 @@ class DbModel
      * @param array  $the_array
      * @param bool   $single_record
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function deleteTransaction($the_query = '', array $the_array = [], $single_record = true)
     {
-        $results = $this->queryTransaction($the_query, $the_array, $single_record);
-        if ($results === false) {
-            $this->logIt("Could not delete the record(s)", LOG_OFF, __METHOD__ . '.' . __LINE__);
+        try {
+            return $this->queryTransaction($the_query, $the_array, $single_record);
         }
-        return $results;
+        catch (DbException $e) {
+            $this->error_message = "Could not delete the record(s)";
+            throw new DbException($this->error_message, 300, $e);
+        }
     }
 
     ### Complex Commands
+
     /**
      * Does an insert based on a prepared query.
-     * @param array          $a_values   the values to be insert
-     * @param \PDOStatement  $o_pdo_stmt the object pointing to the prepared statement
-     * @param array          $a_table_info
+     * @param array         $a_values   the values to be insert
+     * @param \PDOStatement $o_pdo_stmt the object pointing to the prepared statement
+     * @param array         $a_table_info
      * @return bool success or failure
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function insertPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt, array $a_table_info = [])
     {
@@ -842,110 +934,133 @@ class DbModel
         if (count($a_values) > 0) {
             $this->logIt("" . var_export($a_values , true), LOG_OFF, $meth . __LINE__);
             $this->resetNewIds();
-            $results = $this->executeInsert($a_values, $o_pdo_stmt, $a_table_info);
-            if ($results === false) {
-                $this->logIt('Execute Failure', LOG_OFF, $meth . __LINE__);
-                $this->logIt('PDO: ' . $this->retrieveFormatedSqlErrorMessage($this->o_pdo), LOG_OFF, $meth . __LINE__);
-                $this->logIt('PDO_Statement: ' . $this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
-                $this->resetNewIds();
-                return false;
+            try {
+                $this->executeInsert($a_values, $o_pdo_stmt, $a_table_info);
+                return true;
             }
-            return true;
+            catch (DbException $e) {
+                throw new DbException($e->errorMessage(), $e->getCode(), $e);
+            }
         }
         else {
-            $this->logIt('The array of values for a prepared insert was empty.', LOG_ALWAYS, $meth . __LINE__);
+            $this->error_message = 'The array of values for a prepared insert was empty.';
             $this->resetNewIds();
-            return false;
+            throw new DbException($this->error_message, 120);
         }
     }
 
     /**
      * Specialized version of execute which retains ids of each insert.
      *
-     * @param array $a_values see $this->execute for details
+     * @param array         $a_values see $this->execute for details
      * @param \PDOStatement $o_pdo_stmt
-     * @param array $a_table_info
-     *
+     * @param array         $a_table_info
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function executeInsert(array $a_values = [], \PDOStatement $o_pdo_stmt, array $a_table_info = [])
     {
         $meth = __METHOD__ . '.';
         if (count($a_values) > 0) {
-            $sequence_name = $this->db_type == 'pgsql' && $a_table_info != array()
-                ? $this->getPgsqlSequenceName($a_table_info)
-                : '' ;
-            $this->logIt('Sequence Name: ' . $sequence_name, LOG_OFF, $meth . __LINE__);
+            $sequence_name = '';
+            if ($this->db_type == 'pgsql' && !empty($a_table_info)) {
+                try {
+                    $sequence_name = $this->getPgsqlSequenceName($a_table_info);
+                }
+                catch (DbException $e) {
+                    throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                }
+            }
             if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays, can not be mixed
                 foreach ($a_values as $a_stuph) {
-                    if ($this->executeInsert($a_stuph, $o_pdo_stmt, $a_table_info) === false) {
-                        $this->logIt($this->o_pdo->errorInfo(), LOG_ALWAYS, $meth . __LINE__);
-                        return false;
+                    try {
+                        $this->executeInsert($a_stuph, $o_pdo_stmt, $a_table_info);
+                    }
+                    catch (DbException $e) {
+                        $message = $this->o_pdo->errorInfo();
+                        throw new DbException($message, $e->getCode(), $e);
                     }
                 }
             }
             else { // should be a single record insert
-                if ($this->execute($a_values, $o_pdo_stmt) === false) {
-                    return false;
+                try {
+                    $this->execute($a_values, $o_pdo_stmt);
+                    try {
+                        $this->a_new_ids[] = $this->o_pdo->lastInsertId($sequence_name);
+                        return true;
+                    }
+                    catch (\PDOException $e) {
+                        $this->error_message = $e->getMessage();
+                        throw new DbException($this->error_message, 100, $e);
+                    }
                 }
-                $this->a_new_ids[] = $this->o_pdo->lastInsertId($sequence_name);
+                catch (DbException $e) {
+                    $message = $this->o_pdo->errorInfo();
+                    throw new DbException($message, $e->getCode(), $e);
+                }
             }
-            return true;
         }
         else {
-            $this->logIt('A non-empty array for its first parameter.', LOG_ALWAYS, $meth . __LINE__);
-            return false;
+            $this->error_message = 'A non-empty array for its first parameter.';
+            throw new DbException($this->error_message, 120);
         }
     }
 
     /**
      * Used for both modifying and deleting record(s)
-     * @param string $the_query - the sql statement, required, default is ''
-     * @param array $a_values - formated values for a prepared sql statement - optional, default is ''
-     * @param $single_record - if only a single record should be changed/deleted - optional, default is true
-     * @return bool - success or failure
+     * @param string $the_query     required, the sql statement, default is ''
+     * @param array  $a_values      optional, formated values for a prepared sql statement, default is ''
+     * @param bool   $single_record optional, if only a single record should be changed/deleted, default is true
+     * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function mdQuery($the_query = '', array $a_values = [], $single_record = true)
     {
-        $meth = __METHOD__ . '.';
         if ($the_query == '') {
-            $this->logIt('The query must not be blank.', LOG_OFF, $meth);
-            return false;
+            $this->error_message = 'The query must not be blank.';
+            throw new DbException($this->error_message, 70);
         }
         if (empty($a_values)) {
-            $this->affected_rows = $this->o_pdo->exec($the_query);
-            if ($this->affected_rows === false) {
+            try {
+                $this->affected_rows = $this->o_pdo->exec($the_query);
+                if ($single_record && $this->affected_rows > 1) {
+                    $this->error_message = 'The query affected multiple records instead of a single one.';
+                    throw new DbException($this->error_message, 10);
+                }
+                elseif ($this->affected_rows == 0) {
+                    $this->error_message = 'The query affected no records.';
+                    throw new DbException($this->error_message, 10);
+                }
+                else {
+                    return true;
+                }
+            }
+            catch (\PDOException $e) {
                 $this->setSqlErrorMessage($this->o_pdo);
-                $this->logIt($this->getSqlErrorMessage(), LOG_OFF, $meth . __LINE__);
-                return false;
-            }
-            elseif ($single_record && $this->affected_rows > 1) {
-                $this->logIt('The query affected multiple records instead of a single one.', LOG_OFF, $meth);
-                $this->sql_error_message = 'The query affected multiple records instead of a single one.';
-                return false;
-            }
-            elseif ($this->affected_rows == 0) {
-                $this->logIt('The query affected no records.', LOG_OFF, $meth);
-                $this->sql_error_message = 'The query affected no records.';
-                return false;
-            }
-            else {
-                return true;
+                $message = $this->getSqlErrorMessage();
+                throw new DbException($message, 10, $e);
             }
         }
         elseif (count($a_values) > 0) {
-            $o_pdo_stmt = $this->prepare($the_query);
-            if (is_object($o_pdo_stmt) === false) {
-                $this->logIt('Could not prepare the query: ' . $this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
-                return false;
+            try {
+                $o_pdo_stmt = $this->prepare($the_query);
+                try {
+                    return $this->mdQueryPrepared($a_values, $single_record, $o_pdo_stmt);
+                }
+                catch (DbException $e) {
+                    $this->error_message = $e->errorMessage();
+                    throw new DbException($e->getMessage(), $e->getCode(), $e);
+                }
+
             }
-            else {
-                return $this->mdQueryPrepared($a_values, $single_record, $o_pdo_stmt);
+            catch (DbException $e) {
+                $this->error_message = $e->errorMessage();
+                throw new DbException($e->getMessage(), $e->getCode(), $e);
             }
         }
         else {
-            $this->logIt('The array of values for a prepared query was empty.', LOG_OFF, $meth);
-            return false;
+            $this->error_message = 'The array of values for a prepared query was empty.';
+            throw new DbException($this->error_message, 70);
         }
     }
 
@@ -957,60 +1072,58 @@ class DbModel
      * @param bool          $single_record
      * @param \PDOStatement $o_pdo_stmt
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function mdQueryPrepared(array $a_values = [], $single_record = true, \PDOStatement $o_pdo_stmt)
     {
-        $meth = __METHOD__ . '.';
-        if ($a_values == array()) {
-            return false;
+        if (empty($a_values)) {
+            throw new DbException("Missing array values", 70);
         }
-        if (count($a_values) > 0) {
-            if (isset($a_values[0]) && is_array($a_values[0])) { // array of arrays
-                foreach ($a_values as $row) {
-                    $results = $this->mdQueryPrepared($row, $single_record, $o_pdo_stmt);
-                    if ($results === false) {
-                        $this->logIt("Could not execute the query: {$this->retrieveFormatedSqlErrorMessage($o_pdo_stmt)}", LOG_OFF, $meth . __LINE__);
-                        $this->logIt('The array was: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-                        return false;
-                    }
+
+        if (isset($a_values[0]) && is_array($a_values[0])) { // array of arrays
+            foreach ($a_values as $row) {
+                try {
+                    $this->mdQueryPrepared($row, $single_record, $o_pdo_stmt);
                 }
-                return true;
-            }
-            else {
-                $results = $this->execute($a_values, $o_pdo_stmt);
-                if ($results === false) {
-                    $this->logIt("Could not execute the query: {$this->retrieveFormatedSqlErrorMessage($o_pdo_stmt)}", LOG_OFF, $meth . __LINE__);
-                    $this->logIt('The array was: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-                    return false;
+                catch (DbException $e) {
+                    throw new DbException($e->errorMessage(), 10, $e);
                 }
-                return true;
             }
+            return true;
         }
         else {
-            $this->logIt('The array of values for a prepared query was empty.', LOG_OFF, $meth . __LINE__);
-            return false;
+            try {
+                $this->execute($a_values, $o_pdo_stmt);
+                return true;
+            }
+            catch (DbException $e) {
+                $this->error_message = "Could not execute the query: {$this->retrieveFormatedSqlErrorMessage($o_pdo_stmt)}";
+                throw new DbException($this->error_message, 10, $e);
+            }
         }
     }
 
     /**
      * Do a query.
      * Has two params. The first is required. The second is required if the first param doesn't include a valid sql statement.
-     * @param $query_params (array) = default is empty str.  - required<pre>
-     *     Should correspond to something like
-     *     array('type'=>'search', 'table_name'=>'test_table', 'single_record'=>false, 'sql'=>'')</pre>
-     * @param $data (mixed)<pre>
-     *     array(field_name => value) - data to be insert or modified
-     *     'id, name, date' (str) - a string of fields to be returned in a search</pre>
-     * @param $where_values (array), array(field_name => value) - paramaters used to find records for search or modify
+     * @param string $query_params (array) = default is empty str.  - required<pre>
+     *                             Should correspond to something like
+     *                             array('type'=>'search', 'table_name'=>'test_table', 'single_record'=>false, 'sql'=>'')</pre>
+     * @param string $data         (mixed)<pre>
+     *                             array(field_name => value) - data to be insert or modified
+     *                             'id, name, date' (str) - a string of fields to be returned in a search</pre>
+     * @param        $where_values (array), array(field_name => value) - paramaters used to find records for search or modify
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function query($query_params = '', $data = '', $where_values)
     {
         $default_params = array(
-            'type'=>'',
-            'table_name'=>'',
-            'single_record'=>false,
-            'sql' => '');
+            'type'          => '',
+            'table_name'    => '',
+            'single_record' => false,
+            'sql'           => ''
+        );
         if ($query_params == '') {
             $query_params = $default_params;
         }
@@ -1020,12 +1133,16 @@ class DbModel
         switch($query_params['type']) {
             case 'search': // can not build a JOIN so only complete sql statements as part of $query_params can do joins here
                 if ($query_params['sql'] != '') {
-                    return $this->search($query_params['sql'], $where_values);
+                    try {
+                        return $this->search($query_params['sql'], $where_values);
+                    }
+                    catch (DbException $e) {
+                        throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                    }
                 }
                 $query = "
                     SELECT {$data} FROM {$query_params['table_name']}
                     WHERE ";
-                $this->logIt("Where Params in method: " . var_export($where_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
                 $where = '';
                 $a_where = [];
                 foreach ($where_values as $values) {
@@ -1034,12 +1151,20 @@ class DbModel
                     $a_where = array_merge($a_where, array($values['field_name'] =>$values['field_value']));
                 }
                 $query .= $where;
-                $this->logIt("a where is: " . var_export($a_where, true),  LOG_OFF, __METHOD__ . '.' . __LINE__);
-                $this->logIt("Query is: $query", LOG_OFF, __METHOD__ . '.' . __LINE__);
-                return $this->search($query, $a_where);
+                try {
+                    return $this->search($query, $a_where);
+                }
+                catch (DbException $e) {
+                    throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                }
             case 'add':
                 if ($query_params['sql'] != '') {
-                    return $this->insert($query_params['sql'], $data, $query_params['table_name']);
+                    try {
+                        return $this->insert($query_params['sql'], $data, $query_params['table_name']);
+                    }
+                    catch (DbException $e) {
+                        throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                    }
                 }
                 $query = "INSERT INTO {$query_params['table_name']} ";
                 $field_names = '(';
@@ -1055,10 +1180,20 @@ class DbModel
                 $values .= ')';
                 $query = $query . $field_names . ' VALUES ' . $values;
                 $a_data = $this->prepareKeys($data);
-                return $this->insert($query, $a_data, $query_params['table_name']);
+                try {
+                    return $this->insert($query, $a_data, $query_params['table_name']);
+                }
+                catch (DbException $e) {
+                    throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                }
             case 'modify':
                 if ($query_params['sql'] != '') {
-                    return $this->update($query_params['sql'], $data, $query_params['single_record']);
+                    try {
+                        return $this->update($query_params['sql'], $data, $query_params['single_record']);
+                    }
+                    catch (DbException $e) {
+                        throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                    }
                 }
                 $query = "UPDATE {$query_params['table_name']} ";
                 $set_lines = '';
@@ -1074,10 +1209,20 @@ class DbModel
                     $where_lines .= $values['field_name'] . $values['operator'] . $values['field_value'];
                 }
                 $query .= $set_lines . $where_lines;
-                return $this->update($query, $data, $query_params['single_record']);
+                try {
+                    return $this->update($query, $data, $query_params['single_record']);
+                }
+                catch (DbException $e) {
+                    throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                }
             case 'delete':
                 if ($query_params['sql'] != '') {
-                    return $this->delete($query_params['sql'], $data, $query_params['single_record']);
+                    try {
+                        return $this->delete($query_params['sql'], $data, $query_params['single_record']);
+                    }
+                    catch (DbException $e) {
+                        throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                    }
                 }
                 $query = "DELETE FROM {$query_params['table_name']} ";
                 $where_names = $this->prepareValues($where_values);
@@ -1086,9 +1231,14 @@ class DbModel
                     $where_lines .= $where_lines != '' ? ' AND ' : ' WHERE ';
                     $where_lines .= $field_name . ' = ' . $value;
                 }
-                return $this->delete($query . $where_lines, $data, $query_params['single_record']);
+                try {
+                    return $this->delete($query . $where_lines, $data, $query_params['single_record']);
+                }
+                catch (DbException $e) {
+                    throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                }
             default:
-                return false;
+                throw new DbException('Missing Query Type', 70);
         }
     }
 
@@ -1096,11 +1246,11 @@ class DbModel
      * @param array         $a_values
      * @param \PDOStatement $o_pdo_stmt
      * @param string        $type
-     * @return array|bool
+     * @return array
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function searchPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt, $type = 'assoc')
     {
-        $meth = __METHOD__ . '.';
         switch ($type) {
             case 'num':
                 $fetch_style = \PDO::FETCH_NUM;
@@ -1113,40 +1263,42 @@ class DbModel
                 $fetch_style = \PDO::FETCH_ASSOC;
         }
         if (count($a_values) > 0) {
-            $this->logIt("Array: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
+            $a_results = [];
             if (isset($a_values[0]) && is_array($a_values[0])) {
-                $a_results = [];
                 foreach ($a_values as $row) {
-                    if ($this->execute($row, $o_pdo_stmt)) {
-                        $fetched = $o_pdo_stmt->fetchAll($fetch_style);
-                        $a_results[] = $fetched;
+                    try {
+                        $this->execute($row, $o_pdo_stmt);
+                        try {
+                            $a_results[] = $o_pdo_stmt->fetchAll($fetch_style);
+                        }
+                        catch (\PDOException $e) {
+                            throw new DbException($e->getMessage(), 200, $e);
+                        }
                     }
-                    else {
-                        return false;
+                    catch (DbException $e) {
+                        throw new DbException($e->errorMessage(), $e->getCode(), $e);
                     }
                 }
             }
             else {
-                if ($this->execute($a_values, $o_pdo_stmt)) {
-                    $a_results = $o_pdo_stmt->fetchAll($fetch_style);
-                    if ($a_results === false) {
-                        $this->logIt($this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
+                try {
+                    $this->execute($a_values, $o_pdo_stmt);
+                    try {
+                        $a_results = $o_pdo_stmt->fetchAll($fetch_style);
+                    }
+                    catch (\PDOException $e) {
+                        throw new DbException("Unable to fetch the records.", 240, $e);
                     }
                 }
-                else {
-                    $this->logIt("Could not execute the query", LOG_OFF, $meth . __LINE__);
-                    $message = $o_pdo_stmt->errorCode();
-                    $this->logIt("Error Code: " . $message, LOG_OFF, $meth . __LINE__);
-                    $this->logIt($this->retrieveFormatedSqlErrorMessage($o_pdo_stmt), LOG_OFF, $meth . __LINE__);
-                    return false;
+                catch (DbException $e) {
+                    throw new DbException('Unable to execute the search.', 240, $e);
                 }
             }
             return $a_results;
         }
         else {
-            $this->logIt('There was a problem with the array');
-            $this->logIt("a_values: " . var_export($a_values , true), LOG_OFF, $meth . __LINE__);
-            return false;
+            $this->error_message = 'There was a problem with the array';
+            throw new DbException($this->error_message, 70);
         }
     }
 
@@ -1177,16 +1329,23 @@ class DbModel
      * @see \PDO::quote
      * @param $value (str)
      * @return string - quoted string
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function quoteString($value)
     {
-        return $this->o_pdo->quote($value);
+        try {
+            return $this->o_pdo->quote($value);
+        }
+        catch (\PDOException $e) {
+            throw new DbException($e->getMessage(), 65);
+        }
     }
 
     /**
      * Returns a list of the columns from a database table.
-     * @param string $table_name name of the table
-     * @return array|bool - field names
+     * @param string $table_name required name of the table
+     * @return array             field names
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function selectDbColumns($table_name = '')
     {
@@ -1199,27 +1358,40 @@ class DbModel
                         FROM information_schema.columns
                         WHERE table_name ='{$table_name}'
                     ";
-                    $results = $this->search($sql);
-                    foreach ($results as $row) {
-                        $a_column_names[] = $row['column_name'];
+                    try {
+                        $results = $this->search($sql);
+                        foreach ($results as $row) {
+                            $a_column_names[] = $row['column_name'];
+                        }
+
                     }
-                    return $a_column_names;
+                    catch (DbException $e) {
+                        throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                    }
                     break;
                 case 'sqlite':
                     $sql = "PRAGMA table_info({$table_name})";
-                    $results = $this->search($sql);
-                    foreach ($results as $row) {
-                        $a_column_names[] = $row['Field'];
+                    try {
+                        $results = $this->search($sql);
+                        foreach ($results as $row) {
+                            $a_column_names[] = $row['Field'];
+                        }
+                    }
+                    catch (DbException $e) {
+                        throw new DbException($e->errorMessage(), $e->getCode(), $e);
                     }
                     break;
                 case 'mysql':
                 default:
                     $sql = "SHOW COLUMNS FROM {$table_name}";
-                    $results = $this->search($sql);
-                    if (!empty($results)) {
+                    try {
+                        $results = $this->search($sql);
                         foreach ($results as $row) {
                             $a_column_names[] = $row['Field'];
                         }
+                    }
+                    catch (DbException $e) {
+                        throw new DbException($e->errorMessage(), $e->getCode(), $e);
                     }
                 // end both mysql and default
             }
@@ -1227,8 +1399,8 @@ class DbModel
 
         }
         else {
-            $this->logIt('You must specify a table name for this to work.', LOG_OFF, __METHOD__);
-            return false;
+            $this->error_message = 'You must specify a table name for this to work.';
+            throw new DbException($this->error_message, 70);
         }
     }
 
@@ -1244,7 +1416,7 @@ class DbModel
                     SELECT table_name
                     FROM information_schema.tables
                 ";
-                return $this->search($sql, array(), 'num');
+                break;
             case 'sqlite':
                 $sql = "
                     SELECT name
@@ -1252,11 +1424,16 @@ class DbModel
                     WHERE type='table'
                     ORDER BY name
                 ";
-                return $this->search($sql, array(), 'num');
+                break;
             case 'mysql':
             default:
                 $sql = "SHOW TABLES";
-                return $this->search($sql, array(), 'num');
+        }
+        try {
+            return $this->search($sql, array(), 'num');
+        }
+        catch (DbException $e) {
+            throw new DbException("Unable to retrieve tables.", 200, $e);
         }
     }
 
@@ -1294,13 +1471,16 @@ class DbModel
                 ";
         }
 
-        $results = $this->search($sql, [], 'assoc');
-        if (!empty($results)) {
+        try {
+            $results = $this->search($sql, [], 'assoc');
             if ($results[0]['count'] > 0) {
                 return true;
             }
+            return false;
         }
-        return false;
+        catch (DbException $e) {
+            return false;
+        }
     }
 
     ### Magic Method fix ###

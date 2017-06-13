@@ -14,6 +14,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Basic\DbException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Elog;
@@ -38,6 +39,7 @@ class TwigPrefixModel implements ModelInterface
      * Create a record using the values provided.
      * @param array $a_values
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function create(array $a_values = [])
     {
@@ -57,10 +59,17 @@ class TwigPrefixModel implements ModelInterface
         if (!empty($a_values['tp_default']) && $a_values['tp_default'] == 1) {
             if (!$this->clearDefaultPrefix()) {
                 $this->error_message = "Could not set other prefix as not default.";
-                return false;
+                throw new DbException($this->error_message, 100);
             }
         }
-        return $this->genericCreate($a_values, $a_params);
+        try {
+            return $this->genericCreate($a_values, $a_params);
+        }
+        catch (DbException $exception) {
+            $message = $exception->errorMessage();
+            $code = $exception->getCode();
+            throw new DbException($message, $code);
+        }
     }
 
     /**

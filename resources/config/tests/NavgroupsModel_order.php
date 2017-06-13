@@ -5,6 +5,7 @@ return [
     'update',
     'delete',
     'deleteWithMap',
+    'readById',
     'readByName',
     'readIdByName',
     'retrieveDefaultId',

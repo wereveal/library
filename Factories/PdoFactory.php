@@ -6,9 +6,10 @@
  * @file      Ritc/Library/Factories/PdoFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.1.0
- * @date      2017-01-25 14:16:51
+ * @version   3.0.0
+ * @date      2017-06-13 12:17:42
  * @note <b>Change Log</b>
+ * - v3.0.0 - Changed to set the \PDO::ATTR_ERRMODE, defaults to \PDO::ERRMODE_EXCEPTION                - 2017-06-13 wer
  * - v2.1.0 - Simplified the Factory                                                                    - 2017-01-25 wer
  * - v2.0.2 - fixed potential bug                                                                       - 2017-01-13 wer
  * - v2.0.1 - refactoring of DbTraits reflected here (caused strict standards error).                   - 2016-03-19 wer
@@ -110,18 +111,38 @@ class PdoFactory
             return false;
         }
         $a_db['dsn'] = $this->createDsn($a_db);
+        switch ($a_db['errmode']) {
+            case 'silent':
+                $errmode = \PDO::ERRMODE_SILENT;
+                break;
+            case 'warning':
+                $errmode = \PDO::ERRMODE_WARNING;
+                break;
+            case 'exception':
+            default:
+                $errmode = \PDO::ERRMODE_EXCEPTION;
+                break;
+        }
         try {
             $this->o_db = $read_type == 'ro'
                 ? new \PDO(
                     $a_db['dsn'],
                     $a_db['userro'],
                     $a_db['passro'],
-                    array(\PDO::ATTR_PERSISTENT => $a_db['persist']))
+                    [
+                        \PDO::ATTR_PERSISTENT => $a_db['persist'],
+                        \PDO::ATTR_ERRMODE    => $errmode
+                    ]
+                )
                 : new \PDO(
                     $a_db['dsn'],
                     $a_db['user'],
                     $a_db['password'],
-                    array(\PDO::ATTR_PERSISTENT => $a_db['persist']));
+                    [
+                        \PDO::ATTR_PERSISTENT => $a_db['persist'],
+                        \PDO::ATTR_ERRMODE    => $errmode
+                    ]
+                );
             $this->logIt("The dsn is: {$a_db['dsn']}", LOG_OFF, $meth . __LINE__);
             $this->logIt('Connect to db success.', LOG_OFF, $meth . __LINE__);
             $this->a_db_config = $a_db;

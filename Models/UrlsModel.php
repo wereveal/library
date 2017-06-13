@@ -16,6 +16,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Basic\DbException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -38,7 +39,8 @@ class UrlsModel implements ModelInterface
     /**
      * Create a record using the values provided.
      * @param array $a_values
-     * @return bool|int
+     * @return int
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function create(array $a_values = [])
     {
@@ -57,8 +59,14 @@ class UrlsModel implements ModelInterface
         ];
         $log_message = 'Values: ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        return $this->genericCreate($a_values, $a_params);
+        try {
+            return $this->genericCreate($a_values, $a_params);
+        }
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            $code = $e->getCode();
+            throw new DbException($message, $code);
+        }
     }
 
     /**

@@ -15,6 +15,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Basic\DbException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
@@ -30,9 +31,6 @@ class NavgroupsModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var string */
-    private $a_field_names;
-
     /**
      * NavgroupsModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db
@@ -46,48 +44,52 @@ class NavgroupsModel implements ModelInterface
      * Generic create record(s) using the values provided.
      * @param array $a_values
      * @return bool
+     * @throws DbException
      */
-    public function create(array $a_values)
+    public function create(array $a_values = [])
     {
-        $error_message = '';
         if ($a_values == []) {
-            $error_message .= "Values must be there to create a record\n";
+            throw new DbException('Values must be there to create a record', 130);
         }
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
-                if ($this->hasRecords(['ng_name' => $a_record['ng_name']])) {
-                    $error_message .= "The record already exists for {$a_record['ng_name']}";
+                if (empty($a_record['ng_name'])) {
+                    throw new DbException('The navgroup requires a name.', 130);
+                }
+                else {
+                    if ($this->hasRecords(['ng_name' => $a_record['ng_name']])) {
+                        throw new DbException("The record already exists for {$a_record['ng_name']}", 110);
+                    }
                 }
             }
         }
         else {
-            if ($this->hasRecords(['ng_name' => $a_values['ng_name']])) {
-                $error_message .= "The record already exists for {$a_values['ng_name']}";
+            if (empty($a_values['ng_name'])) {
+                throw new DbException('The navgroup requires a name.', 130);
+            }
+            else {
+                if ($this->hasRecords(['ng_name' => $a_values['ng_name']])) {
+                    throw new DbException("The record already exists for {$a_values['ng_name']}", 110);
+                }
             }
         }
 
-        $a_resulting_ids = [];
-        if ($error_message == '') {
-            $a_parameters = [
-                'a_required_keys' => ['ng_name'],
-                'a_field_names'   => $this->a_db_fields,
-                'a_psql'          => [
-                    'table_name'  => $this->db_table,
-                    'column_name' => $this->primary_index_name
-                ]
-            ];
+        $a_parameters = [
+            'a_required_keys' => ['ng_name'],
+            'a_field_names'   => $this->a_db_fields,
+            'a_psql'          => [
+                'table_name'  => $this->db_table,
+                'column_name' => $this->primary_index_name
+            ]
+        ];
+        try {
             $a_resulting_ids = $this->genericCreate($a_values, $a_parameters);
-            if ($a_resulting_ids === false) {
-                $error_message .= "The navigation group record could not be saved.";
-            }
         }
-        if ($error_message == '') {
-            return $a_resulting_ids;
+        catch (DbException $exception) {
+            $message = $exception->errorMessage();
+            throw new DbException($message, $exception->getCode());
         }
-        else {
-            $this->error_message .= "\n" . $error_message;
-            return false;
-        }
+        return $a_resulting_ids;
     }
 
     /**
@@ -98,7 +100,6 @@ class NavgroupsModel implements ModelInterface
      */
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
-        $meth = __METHOD__ . '.';
         $a_parameters = [
             'table_name' => $this->db_table,
             'a_search_for' => $a_search_values
@@ -110,9 +111,6 @@ class NavgroupsModel implements ModelInterface
             $a_parameters = array_merge($a_parameters, $a_search_params);
         }
         $results = $this->genericRead($a_parameters);
-        $log_message = 'Return Values ' . var_export($results, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         return $results;
     }
 
@@ -128,8 +126,7 @@ class NavgroupsModel implements ModelInterface
             || $a_values['ng_id'] == ''
             || (is_string($a_values['ng_id']) && !is_numeric($a_values['ng_id']))
         ) {
-            $this->error_message = 'The Navgroup id was not supplied.';
-            return false;
+            throw new DbException('The Navgroup id was not supplied.');
         }
         return $this->genericUpdate($a_values);
     }
@@ -139,62 +136,45 @@ class NavgroupsModel implements ModelInterface
      * Checks to see if a map record exists, if so, returns false;
      * @param int $ng_id
      * @return bool
+     * @throws DbException
      */
     public function delete($ng_id = -1)
     {
-        if ($ng_id == -1) { return false; }
+        if ($ng_id == -1) {
+            throw new DbException('The navgroup id was not provided');
+        }
         $o_map = new NavNgMapModel($this->o_db);
         $results = $o_map->read(['ng_id' => $ng_id]);
         if (!empty($results)) {
-            $this->error_message = 'The nav_ng_map record(s) must be deleted first.';
-            return false;
+            throw new DbException('The nav_ng_map record(s) must be deleted first.');
+        }
+        $results = $this->retrieveDefaultId();
+        if ($results == $ng_id) {
+            throw new DbException('This is the default navgroup. Change a different record to be default and try again.');
         }
         $results = $this->genericDelete($ng_id);
         $this->logIt(var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         if ($results) {
-            return $this->o_db->commitTransaction();
+            return true;
         }
         else {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            $this->o_db->rollbackTransaction();
-            return false;
+            $message = $this->o_db->getSqlErrorMessage();
+            throw new DbException($message);
         }
     }
 
     /**
-     * Deletes a record based on the id provided.
-     * Also delete the relation record(s) in the map table.
-     * @param int $ng_id
-     * @return bool
+     * Returns a record based on the record id.
+     * @param int $id
+     * @return array|bool
      */
-    public function deleteWithMap($ng_id = -1)
+    public function readById($id = -1)
     {
-        if ($ng_id == -1) { return false; }
-        if ($this->o_db->startTransaction()) {
-            $o_map = new NavNgMapModel($this->o_db);
-            $results = $o_map->delete($ng_id);
-            if (!$results) {
-                $this->error_message = $o_map->getErrorMessage();
-                $this->o_db->rollbackTransaction();
-                return false;
-            }
-            else {
-                $results = $this->genericDelete($ng_id);
-                $this->logIt(var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                if ($results) {
-                    return $this->o_db->commitTransaction();
-                }
-                else {
-                    $this->error_message = $this->o_db->getSqlErrorMessage();
-                    $this->o_db->rollbackTransaction();
-                    return false;
-                }
-            }
+        if ($id < 1) {
+            throw new DbException('A record id must be provided.');
         }
-        else {
-            $this->error_message = "Could not start transaction.";
-            return false;
-        }
+        $a_search_values = ['ng_id' => $id];
+        return $this->read($a_search_values);
     }
 
     /**
@@ -211,55 +191,65 @@ class NavgroupsModel implements ModelInterface
     /**
      * Returns the navgroup id based on navgroup name.
      * @param string $name
-     * @return mixed
+     * @return int
+     * @throws DbException
      */
     public function readIdByName($name = '')
     {
-        $sql = "SELECT ng_id FROM {$this->db_table} WHERE ng_name = :ng_name";
         $a_values = [':ng_name' => $name];
-        $results = $this->o_db->search($sql, $a_values);
-        if ($results) {
+        $a_search_parms = [
+            'order_by' => 'ng_id',
+            'a_fields' => ['ng_id']
+        ];
+        $results = $this->read($a_values, $a_search_parms);
+        if (!empty($results[0])) {
             return $results[0]['ng_id'];
         }
         else {
-            return false;
+            throw new DbException('No record found');
         }
     }
 
     /**
      * Gets the default navgroup by id.
      * @return int
+     * @throws DbException
      */
     public function retrieveDefaultId()
     {
         $a_search_for = [':ng_default' => 1];
         $a_search_parms = [
             'order_by' => 'ng_id',
-            'a_fields' => 'ng_id'
+            'a_fields' => ['ng_id']
         ];
         $results = $this->read($a_search_for, $a_search_parms);
-        if ($results !== false && count($results) > 0) {
+        if (!empty($results[0])) {
             return $results[0]['ng_id'];
         }
-        return -1;
+        else {
+            throw new DbException('No record found');
+        }
     }
 
     /**
      * Returns the default navgroup by name.
      * @return string
+     * @throws DbException
      */
     public function retrieveDefaultName()
     {
         $a_search_for = [':ng_default' => 1];
         $a_search_parms = [
             'order_by' => 'ng_name',
-            'a_fields' => 'ng_name'
+            'a_fields' => ['ng_name']
         ];
         $results = $this->read($a_search_for, $a_search_parms);
-        if ($results !== false && count($results) > 0) {
+        if (!empty($results[0])) {
             return $results[0]['ng_name'];
         }
-        return '';
+        else {
+            throw new DbException('No record found');
+        }
     }
 
 }

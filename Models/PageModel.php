@@ -17,6 +17,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Basic\DbException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
@@ -45,23 +46,22 @@ class PageModel implements ModelInterface
      * Create a record using the values provided.
      * @param array $a_values key=>value pairs of url_id=>value and page_title=>value required.
      * @return string|bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function create(array $a_values = [])
     {
-        $error_message = '';
-
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
                 if ($this->hasRecords(['url_id' => $a_record['url_id']])) {
                     $this->error_message = "A record already exists using the url id {$a_record['url_id']} for {$a_record['page_title']}";
-                    return false;
+                    throw new DbException($this->error_message, 120);
                 }
             }
         }
         else {
             if ($this->hasRecords(['url_id' => $a_values['url_id']])) {
-                $this->error_message = "A record already exists using the url id {$a_record['url_id']} for {$a_record['page_title']}";
-                return false;
+                $this->error_message = "A record already exists using the url id {$a_values['url_id']} for {$a_values['page_title']}";
+                throw new DbException($this->error_message, 120);
             }
         }
 
@@ -74,13 +74,13 @@ class PageModel implements ModelInterface
             ]
         ];
 
-        $a_results = $this->genericCreate($a_values, $a_parameters);
-        if ($a_results === false) {
-            $error_message .= 'Could not create a new page record.';
+        try {
+            $a_results = $this->genericCreate($a_values, $a_parameters);
         }
-        if ($error_message != '' || $this->error_message != '') {
-            $this->error_message .= $error_message;
-            return false;
+        catch (DbException $exception) {
+            $this->error_message = $exception->errorMessage();
+            $code = $exception->getCode();
+            throw new DbException($this->error_message, $code);
         }
         return $a_results;
     }

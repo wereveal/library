@@ -27,6 +27,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Basic\DbException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
@@ -57,52 +58,28 @@ class ConstantsModel implements ModelInterface
     /**
      * Generic create a record using the values provided.
      * @param array $a_values
-     * @return bool|int
+     * @return int
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function create(array $a_values)
     {
-        $meth = __METHOD__ . '.';
-        $this->logIt(var_export($a_values, true), LOG_OFF, $meth);
-        $a_required_keys = array(
+        $a_required_keys = [
             'const_name',
             'const_value'
-        );
-        if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays
-            foreach ($a_values as $key => $a_record) {
-                if (!Arrays::hasRequiredKeys($a_record, $a_required_keys)) {
-                    return false;
-                }
-                $a_values[$key]['const_name'] = $this->makeValidName($a_values[$key]['const_name']);
-                $a_values[$key]['const_value'] = $this->makeValidValue($a_values[$key]['const_value']);
-                $a_values[$key] = Arrays::createRequiredPairs($a_values[$key], ['const_name', 'const_value', 'const_immutable'], true);
-            }
-        }
-        else {
-            if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-                return false;
-            }
-            $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
-            $a_values['const_value'] = $this->makeValidValue($a_values['const_value']);
-            $a_values = Arrays::createRequiredPairs($a_values, ['const_name', 'const_value', 'const_immutable'], true);
-        }
-        $sql = "
-            INSERT INTO {$this->db_table} (const_name, const_value, const_immutable)
-            VALUES (:const_name, :const_value, :const_immutable)
-        ";
-        $this->logIt(var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-        $a_table_info = [
-            'table_name'  => $this->db_table,
-            'column_name' => 'const_id'
         ];
-        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
-            $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
-            return $ids[0];
+        if (Arrays::hasBlankValues($a_values, $a_required_keys)) {
+            throw new DbException('Missing Required Values', 130);
         }
-        else {
-            $this->logIt("Error Message: " . $this->o_db->getSqlErrorMessage(), LOG_OFF, $meth . __LINE__);
-            return false;
-        }
+        $a_psql = [
+            'table_name'  => $this->db_table,
+            'column_name' => $this->primary_index_name
+        ];
+        $a_params = [
+            'a_required_keys' => $a_required_keys,
+            'a_field_names'   => $this->a_db_fields,
+            'a_psql'          => $a_psql
+        ];
+        return $this->genericCreate($a_values, $a_params);
     }
 
     /**
@@ -113,20 +90,13 @@ class ConstantsModel implements ModelInterface
      */
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
-        $meth = __METHOD__ . '.';
         $a_parameters = [
             'table_name'     => $this->db_table,
             'a_search_for'   => $a_search_values,
             'a_allowed_keys' => $this->a_db_fields,
             'order_by'       => $this->primary_index_name . ' ASC'
         ];
-          $log_message = 'a_search_params ' . var_export($a_search_params, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-          $log_message = 'a_parameters ' . var_export($a_parameters, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_parameters = array_merge($a_parameters, $a_search_params);
-          $log_message = 'Merged Params ' . var_export($a_parameters, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $this->genericRead($a_parameters);
     }
 
@@ -137,15 +107,21 @@ class ConstantsModel implements ModelInterface
      */
     public function update(array $a_values)
     {
-        $meth = __METHOD__ . '.';
-        $log_message = 'Values Passed In:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         if (!isset($a_values[$this->primary_index_name])
             || $a_values[$this->primary_index_name] == ''
             || (!is_numeric($a_values[$this->primary_index_name]))
         ) {
-
+            $this->error_message = 'Required values missing';
+            throw new DbException($this->error_message, 320);
+        }
+        try {
+            $results = $this->read([$this->primary_index_name => $a_values[$this->primary_index_name]]);
+            if ($results[0]['const_immutable'] == 1) {
+                unset($a_values['const_name']);
+            }
+        }
+        catch (DbException $e) {
+            $this->error_message = $e->errorMessage();
             return false;
         }
         return $this->genericUpdate($a_values);
@@ -162,13 +138,9 @@ class ConstantsModel implements ModelInterface
         $search_results = $this->read([$this->primary_index_name => $const_id], ['a_fields' => ['const_immutable']]);
         if (isset($search_results[0]) && $search_results[0]['const_immutable'] == 1) {
             $this->error_message = 'Sorry, that constant can not be deleted.';
-            return false;
+            throw new DbException($this->error_message, 430);
         }
-        $results = $this->genericDelete($const_id);
-        if ($results === false) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-        }
-        return $results;
+        return $this->genericDelete($const_id);
     }
 
     # Specialized CRUD methods #
@@ -180,30 +152,38 @@ class ConstantsModel implements ModelInterface
     public function createNewConstants()
     {
         // todo ConstantsModel.createNewConstants - need to figure out if this is a bug
+        $meth = __METHOD__ . '.';
         $a_constants = include SRC_CONFIG_PATH . '/fallback_constants_array.php';
         if ($this->o_db->startTransaction()) {
             if ($this->tableExists() === false) {
                 if ($this->createTable() === false) {
                     $this->o_db->rollbackTransaction();
-                    return false;
+                    throw new DbException('Unable to create the table', 560);
                 }
             }
             if ($this->createConstantRecords($a_constants) === true) {
-                if ($this->o_db->commitTransaction() === false) {
-                    $this->logIt("Could not commit new constants", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                if ($this->o_db->commitTransaction()) {
+                    return true;
                 }
-                return true;
-
+                else {
+                    $message = "Could not commit new constants";
+                    $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
+                    $this->o_db->rollbackTransaction();
+                    throw new DbException($message, 40);
+                }
             }
             else {
                 $this->o_db->rollbackTransaction();
-                $this->logIt("Could not Insert new constants", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+                $message = "Could not Insert new constants";
+                $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
+                throw new DbException($message, 100);
             }
         }
         else {
-            $this->logIt("Could not start transaction.", LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            $message = "Could not start transaction.";
+            $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
+            throw new DbException($message, 30);
         }
-        return false;
     }
 
     /**
@@ -334,6 +314,7 @@ class ConstantsModel implements ModelInterface
     {
         $const_name = Strings::removeTagsWithDecode($const_name, ENT_QUOTES);
         $const_name = preg_replace("/[^a-zA-Z_ ]/", '', $const_name);
+        $const_name = trim($const_name);
         $const_name = preg_replace('/(\s+)/i', '_', $const_name);
         return strtoupper($const_name);
     }

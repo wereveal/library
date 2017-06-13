@@ -29,6 +29,8 @@ class NavgroupsModelTester
 
     /** @var \Ritc\Library\Models\NavgroupsModel  */
     private $o_model;
+    /** @var int  */
+    private $created_id = -1;
 
     public function __construct(Di $o_di)
     {
@@ -50,10 +52,34 @@ class NavgroupsModelTester
      */
     public function createTester()
     {
-        if (empty($this->a_test_values['create'])) {
+        $test_name = $this->shortenName(__METHOD__);
+        if (empty($this->a_test_values[$test_name])) {
             return 'skipped';
         }
-        return 'failed';
+        $failed = 0;
+        foreach ($this->a_test_values[$test_name] as $key => $a_values) {
+            $subtest_name = $key;
+            $expected_results = $a_values['expected_results'];
+            $a_results = $this->o_model->$test_name($a_values['test_values']);
+            $results = empty($a_results)
+                ? false
+                : true;
+            if ($results === $expected_results) {
+                $this->setSubPassed($test_name, $subtest_name);
+                if ($subtest_name == 'valid_values') {
+                    $_SESSION['created_id'] = $a_results[0];
+                    $this->created_id = $a_results[0];
+                }
+            }
+            else {
+                $this->setSubFailed($test_name, $subtest_name);
+                $failed++;
+            }
+        }
+        if ($failed > 0) {
+            return 'failed';
+        }
+        return 'passed';
     }
 
     /**
@@ -62,28 +88,33 @@ class NavgroupsModelTester
      */
     public function readTester()
     {
-        if (empty($this->a_test_values['read'])) {
+        $test_name = $this->shortenName(__METHOD__);
+        if (empty($this->a_test_values[$test_name])) {
             return 'skipped';
         }
         $failed = 0;
-        foreach ($this->a_test_values['read'] as $key => $a_values) {
+        foreach ($this->a_test_values[$test_name] as $key => $a_values) {
             $subtest_name = $key;
-            if (strpos($key, '_id') !== false) {
+            if (strpos($key, '_id')) {
                 $test_value = ['ng_id' => $a_values['test_value']];
             }
-            else {
+            elseif (strpos($key, '_name')) {
                 $test_value = ['ng_name' => $a_values['test_value']];
             }
+            else {
+                $test_value = [];
+            }
             $expected_results = $a_values['expected_results'];
-            $results = empty($this->o_model->read($test_value))
+            $a_results = $this->o_model->$test_name($test_value);
+            $results = empty($a_results)
                 ? false
                 : true
             ;
-            if ($results && $expected_results) {
-                $this->setSubPassed('read', $subtest_name);
+            if ($results === $expected_results) {
+                $this->setSubPassed($test_name, $subtest_name);
             }
             else {
-                $this->setSubFailed('read', $subtest_name);
+                $this->setSubFailed($test_name, $subtest_name);
                 $failed++;
             }
         }
@@ -99,10 +130,48 @@ class NavgroupsModelTester
      */
     public function updateTester()
     {
-        if (empty($this->a_test_values['update'])) {
+        $test_name = $this->shortenName(__METHOD__);
+        if (empty($this->a_test_values[$test_name])) {
             return 'skipped';
         }
-        return 'failed';
+        if ($this->created_id < 1) {
+            if (empty($_SESSION['created_id'])) {
+                $this->setSubFailed($test_name, 'Missing Created ID');
+                return 'failed';
+            }
+            else {
+                $created_id = $_SESSION['created_id'];
+            }
+        }
+        else {
+            $created_id = $this->created_id;
+        }
+        $failed = 0;
+        foreach ($this->a_test_values[$test_name] as $key => $a_values) {
+            $test_values = $a_values['test_values'];
+            if ($key == 'valid_values') {
+                $test_values['ng_id'] = $created_id;
+            }
+            if ($key == 'duplicate_name') {
+                $test_values['ng_id'] = $created_id;
+            }
+            if ($key == 'missing_name') {
+                $test_values['ng_id'] = $created_id;
+            }
+            $expected_results = $a_values['expected_results'];
+            $a_results = $this->o_model->$test_name($test_values);
+            if ($a_results == $expected_results) {
+                $this->setSubPassed($test_name, $key);
+            }
+            else {
+                $this->setSubFailed($test_name, $key);
+                $failed++;
+            }
+        }
+        if ($failed > 0) {
+            return 'failed';
+        }
+        return 'passed';
     }
 
     /**
@@ -111,10 +180,52 @@ class NavgroupsModelTester
      */
     public function deleteTester()
     {
-        if (empty($this->a_test_values['delete'])) {
+        $test_name = $this->shortenName(__METHOD__);
+        if (empty($this->a_test_values[$test_name])) {
             return 'skipped';
         }
-        return 'failed';
+        if ($this->created_id < 1) {
+            if (empty($_SESSION['created_id'])) {
+                $this->setSubFailed($test_name, 'Missing Created ID');
+                return 'failed';
+            }
+            else {
+                $created_id = $_SESSION['created_id'];
+            }
+        }
+        else {
+            $created_id = $this->created_id;
+        }
+        $default_ng_id = $this->o_model->retrieveDefaultId();
+        if (empty($default_ng_id) || $default_ng_id < 1) {
+            $this->setSubFailed($test_name, "Unknown error: could not retrieve default id.");
+            return 'failed';
+        }
+        $failed = 0;
+        foreach ($this->a_test_values[$test_name] as $key => $a_values) {
+            $ng_id = $a_values['test_values']['ng_id'];
+            if ($ng_id == 'created') {
+                $ng_id = $created_id;
+            }
+            if ($ng_id === 'default') {
+                $ng_id = $default_ng_id;
+            }
+            if ($ng_id == 'immutable') {
+                $ng_id = $default_ng_id;
+            }
+            $results = $this->o_model->delete($ng_id);
+            if ($results === $a_values['expected_results']) {
+                $this->setSubPassed($test_name, $key);
+            }
+            else {
+                $this->setSubFailed($test_name, $key);
+                $failed++;
+            }
+        }
+        if ($failed > 0) {
+            return 'failed';
+        }
+        return 'passed';
     }
 
     /**
@@ -123,10 +234,54 @@ class NavgroupsModelTester
      */
     public function deleteWithMapTester()
     {
-        if (empty($this->a_test_values['deleteWithMap'])) {
+        $test_name = $this->shortenName(__METHOD__);
+        if (empty($this->a_test_values[$test_name])) {
             return 'skipped';
         }
         return 'failed';
+    }
+
+    /**
+     * Tests the method readById.
+     * @return string
+     */
+    public function readByIdTester()
+    {
+        $test_name = $this->shortenname(__method__);
+        if (empty($this->a_test_values[$test_name])) {
+            return 'skipped';
+        }
+        $failed = 0;
+        foreach ($this->a_test_values[$test_name] as $key => $a_values) {
+            $subtest_name = $key;
+            if (strpos($key, '_id')) {
+                $test_value = $a_values['test_value'];
+            }
+            elseif (strpos($key, '_name')) {
+                $test_value = $a_values['test_value'];
+            }
+            else {
+                $test_value = '';
+            }
+            $expected_results = $a_values['expected_results'];
+            $a_results = $this->o_model->$test_name($test_value);
+            $results = empty($a_results)
+                ? false
+                : true
+            ;
+            if ($results === $expected_results) {
+                $this->setsubpassed($test_name, $subtest_name);
+            }
+            else {
+                $this->setsubfailed($test_name, $subtest_name);
+                $failed++;
+            }
+        }
+        if ($failed > 0) {
+            return 'failed';
+        }
+        return 'passed';
+
     }
 
     /**
@@ -135,10 +290,40 @@ class NavgroupsModelTester
      */
     public function readByNameTester()
     {
-        if (empty($this->a_test_values['readByName'])) {
+        $test_name = $this->shortenname(__method__);
+        if (empty($this->a_test_values[$test_name])) {
             return 'skipped';
         }
-        return 'failed';
+        $failed = 0;
+        foreach ($this->a_test_values[$test_name] as $key => $a_values) {
+            $subtest_name = $key;
+            if (strpos($key, '_id')) {
+                $test_value = $a_values['test_value'];
+            }
+            elseif (strpos($key, '_name')) {
+                $test_value = $a_values['test_value'];
+            }
+            else {
+                $test_value = '';
+            }
+            $expected_results = $a_values['expected_results'];
+            $a_results = $this->o_model->$test_name($test_value);
+            $results = empty($a_results)
+                ? false
+                : true
+            ;
+            if ($results === $expected_results) {
+                $this->setsubpassed($test_name, $subtest_name);
+            }
+            else {
+                $this->setsubfailed($test_name, $subtest_name);
+                $failed++;
+            }
+        }
+        if ($failed > 0) {
+            return 'failed';
+        }
+        return 'passed';
     }
 
     /**
@@ -147,10 +332,40 @@ class NavgroupsModelTester
      */
     public function readIdByNameTester()
     {
-        if (empty($this->a_test_values['readIdByName'])) {
+        $test_name = $this->shortenName(__METHOD__);
+        if (empty($this->a_test_values[$test_name])) {
             return 'skipped';
         }
-        return 'failed';
+        $failed = 0;
+        foreach ($this->a_test_values[$test_name] as $key => $a_values) {
+            $subtest_name = $key;
+            if (strpos($key, '_id')) {
+                $test_value = $a_values['test_value'];
+            }
+            elseif (strpos($key, '_name')) {
+                $test_value = $a_values['test_value'];
+            }
+            else {
+                $test_value = '';
+            }
+            $expected_results = $a_values['expected_results'];
+            $a_results = $this->o_model->$test_name($test_value);
+            $results = empty($a_results)
+                ? false
+                : true
+            ;
+            if ($results === $expected_results) {
+                $this->setSubPassed($test_name, $subtest_name);
+            }
+            else {
+                $this->setSubFailed($test_name, $subtest_name);
+                $failed++;
+            }
+        }
+        if ($failed > 0) {
+            return 'failed';
+        }
+        return 'passed';
     }
 
     /**
@@ -159,10 +374,20 @@ class NavgroupsModelTester
      */
     public function retrieveDefaultIdTester()
     {
-        if (empty($this->a_test_values['retrieveDefaultId'])) {
+        $test_name = $this->shortenName(__METHOD__);
+        if (empty($this->a_test_values[$test_name])) {
             return 'skipped';
         }
-        return 'failed';
+        $expected_results = $this->a_test_values[$test_name]['expected_results'];
+        $results = $this->o_model->$test_name();
+        $results = $results == -1
+            ? false
+            : true
+        ;
+        if ($results !== $expected_results) {
+            return 'failed';
+        }
+        return 'passed';
     }
 
     /**
@@ -171,9 +396,19 @@ class NavgroupsModelTester
      */
     public function retrieveDefaultNameTester()
     {
-        if (empty($this->a_test_values['retrieveDefaultName'])) {
+        $test_name = $this->shortenName(__METHOD__);
+        if (empty($this->a_test_values[$test_name])) {
             return 'skipped';
         }
-        return 'failed';
+        $expected_results = $this->a_test_values[$test_name]['expected_results'];
+        $results = $this->o_model->$test_name();
+        $results = empty($results)
+            ? false
+            : true
+        ;
+        if ($results !== $expected_results) {
+            return 'failed';
+        }
+        return 'passed';
     }
 }

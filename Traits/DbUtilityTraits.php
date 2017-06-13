@@ -8,9 +8,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.4
- * @date      2017-05-12 11:28:04
+ * @version   2.0.0
+ * @date      2017-06-11 16:06:33
  * @note <b>Change Log</b>
+ * - v2.0.0          - updated to use DbException                           - 2017-06-11 wer
  * - v1.4.4          - bug fix                                              - 2017-05-12 wer
  *                     With the introduction of the lib_prefix where it
  *                     could be different from the db_prefix, wasn't setting
@@ -39,9 +40,11 @@
  * - v1.0.0-alpha.1 - first hopefully working version                       - 2016-03-23 wer
  * - v1.0.0-alpha.0 - initial version                                       - 2016-03-18 wer
  * @todo Review to see where multi-table operations can be strenthened.
+ * @todo Modify to use Exceptions
  */
 namespace Ritc\Library\Traits;
 
+use Ritc\Library\Basic\DbException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Services\DbModel;
 
@@ -75,34 +78,40 @@ trait DbUtilityTraits {
     protected $primary_index_name = '';
 
     #### Generic CRUD calls ####
+
     /**
      * Generic method to create a new record in a table.
      * Requires both parameters to be complete to work.
      * This method assumes that if $a_values is an array of assoc arrays
      * then each assoc array has the same keys. It will blow up otherwise.
-     * @param array $a_values      The values to be saved in a new record.
-     * @param array $a_parameters  \code
+     * @param array $a_values     The values to be saved in a new record.
+     * @param array $a_parameters \code
      * ['a_required_keys' => [],
-     *  'a_field_names'   => [],
-     *  'a_psql'          => [
-     *      'table_name'  => string,
-     *      'column_name' => string
-     * ]] \endcode
-     * @see \ref createparams
+     *     'a_field_names'   => [],
+     *     'a_psql'          => [
+     *         'table_name'  => string,
+     *         'column_name' => string
+     *     ]
+     * ] \endcode
      * @return array|bool
+     * @throws \Ritc\Library\Basic\DbException
+     * @see  \ref createparams
      * @todo Ritc\Library\Traits\DbUtilityTraits::genericCreate - modify to create multiple records if data provided
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = [])
     {
-        $meth = __METHOD__ . '.';
         $a_values = $this->o_db->prepareKeys($a_values);
-
-        $db_table = $this->db_table != ''
-            ? $this->db_table
-            : isset($a_parameters['a_psql']['table_name'])
-                ? $a_parameters['a_psql']['table_name']
-                : '';
-
+        if (empty($a_parameters['a_psql'])) {
+            $a_psql = [
+                'table_name'  => $this->db_table,
+                'column_name' => $this->primary_index_name
+            ];
+            $db_table = $this->db_table;
+        }
+        else {
+            $a_psql = $a_parameters['a_psql'];
+            $db_table = $a_psql['table_name'];
+        }
         $a_required_keys = isset($a_parameters['a_required_keys'])
             ? $this->prepareListArray($a_parameters['a_required_keys'])
             : [];
@@ -114,21 +123,16 @@ trait DbUtilityTraits {
                 : [];
         // If a_field_names is empty, the sql cannot be built. Return false.
         if ($a_field_names == []) {
-            return false;
+            $this->error_message = 'Missing required values';
+            throw new DbException($this->error_message, 130);
         }
-        $log_message = 'Field Names ' . var_export($a_field_names, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        $a_psql = isset($a_parameters['a_psql'])
-            ? $a_parameters['a_psql']
-            : ['table_name' => $this->db_table];
 
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_value) {
                 if (!Arrays::hasRequiredKeys($a_value, $a_required_keys)) {
                     $a_missing_keys = Arrays::findMissingKeys($a_required_keys, $a_value);
                     $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
-                    return false;
+                    throw new DbException($this->error_message, 130);
                 }
             }
             $sql_set = $this->buildSqlInsert($a_values[0], $a_field_names);
@@ -137,7 +141,7 @@ trait DbUtilityTraits {
             if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
                 $a_missing_keys = Arrays::findMissingKeys($a_required_keys, $a_values);
                 $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
-                return false;
+                throw new DbException($this->error_message, 130);
             }
             $sql_set = $this->buildSqlInsert($a_values, $a_field_names);
         }
@@ -148,22 +152,18 @@ INSERT INTO {$db_table} (
 )
 
 SQL;
-        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
-        $log_message = 'Create Values:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        $results = $this->o_db->insert($sql, $a_values, $a_psql);
-        if ($results) {
+        try {
+            $this->o_db->insert($sql, $a_values, $a_psql);
             $a_new_ids = $this->o_db->getNewIds();
             if (count($a_new_ids) < 1) {
                 $this->error_message = 'No New Ids were returned in the create.';
-                return false;
+                throw new DbException($this->error_message, 100);
             }
             return $a_new_ids;
         }
-        else {
+        catch (DbException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            return false;
+            throw new DbException($this->error_message);
         }
     }
 
@@ -183,13 +183,13 @@ SQL;
      * 'comparison_type' What kind of comparison operator to use for ALL WHEREs
      * 'where_exists'    Either true or false \endverbatim
      * @return bool|array
+     * @throws \Ritc\Library\Basic\DbException
      */
     protected function genericRead(array $a_parameters = [])
     {
-        $meth = __METHOD__ . '.';
         if (!isset($a_parameters['table_name']) && $this->db_table == '') {
             $this->error_message = "The table name must be specified.";
-            return false;
+            throw new DbException($this->error_message, 220);
         }
         elseif (isset($a_parameters['table_name'])) {
             $table_name = $a_parameters['table_name'];
@@ -202,7 +202,7 @@ SQL;
                 }
                 else {
                     $this->error_message = "The table specified doesn't exist.";
-                    return false;
+                    throw new DbException($this->error_message, 230);
                 }
             }
         }
@@ -224,17 +224,12 @@ SQL;
         $distinct = isset($a_parameters['select_distinct'])
             ? $a_parameters['select_distinct'] === true ? 'DISTINCT ' : ''
             : '';
-        $log_message = 'Parameters before unset:  ' . var_export($a_parameters, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         unset($a_parameters['table_name']);
         unset($a_parameters['a_search_for']);
         unset($a_parameters['return_format']);
         unset($a_parameters['a_allowed_keys']);
         unset($a_parameters['select_distinct']);
-
-        $log_message = 'Search For Values:  ' . var_export($a_search_for, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $select_me = $this->buildSqlSelectFields($a_fields);
         $where = $this->buildSqlWhere($a_search_for, $a_parameters, $a_allowed_keys);
@@ -243,14 +238,13 @@ SQL;
             FROM {$table_name} 
             {$where}
         ";
-        $this->logIt("SQL:\n" . $sql, LOG_OFF, $meth . __LINE__);
         $results = $this->o_db->search($sql, $a_search_for, $return_format);
         if ($results !== false) {
             return $results;
         }
         else {
             $this->setErrorMessage();
-            return false;
+            throw new DbException($this->error_message, 200);
         }
     }
 
@@ -260,18 +254,20 @@ SQL;
      * be in the $a_values. It only updates record(s) WHERE the primary index = primary index value.
      * @param array  $a_values           Required
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      * @todo Ritc\Library\Traits\DbUtilityTraits::genericUpdate - modify to update multiple records if provided
      */
     protected function genericUpdate(array $a_values = [])
     {
         if ($a_values == []) {
-            return false;
+            $this->error_message = 'No values provided to update.';
+            throw new DbException($this->error_message, 320);
         }
         $primary_index_name = $this->primary_index_name;
         $a_required_keys = array($primary_index_name);
         if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
             $this->error_message = "The array must have the primary key in it.";
-            return false;
+            throw new DbException($this->error_message, 320);
         }
         $a_allowed_keys = $this->prepareListArray($this->a_db_fields);
         $set_sql = $this->buildSqlSet($a_values, $a_required_keys, $a_allowed_keys);
@@ -288,7 +284,7 @@ SQL;
         }
         else {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            return false;
+            throw new DbException($this->error_message, 300);
         }
     }
 
@@ -300,19 +296,22 @@ SQL;
      *                          If array, it passes the values to the genericDeleteMultiple. This provided backwards
      *                          compatibility when genericDelete only allowed int.
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     protected function genericDelete($record_ids = -1)
     {
         if (is_array($record_ids)) {
            if (empty($record_ids)) {
-               return false;
+               $this->error_message = 'No record ids were provided.';
+               throw new DbException($this->error_message, 410);
            }
            else {
                return $this->genericDeleteMultiple($record_ids);
            }
         }
         elseif (is_numeric($record_ids) && $record_ids < 1) {
-           return false;
+            $this->error_message = 'No valid record ids were provided.';
+            throw new DbException($this->error_message, 410);
         }
         $piname = $this->primary_index_name;
         $sql =<<<SQL
@@ -325,7 +324,7 @@ SQL;
         }
         else {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            return false;
+            throw new DbException($this->error_message, 400);
         }
     }
 
@@ -333,11 +332,13 @@ SQL;
      * Deletes a multiple records based on the primary index value.
      * @param array $a_record_ids Required
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     protected function genericDeleteMultiple(array $a_record_ids = [])
     {
         if (empty($a_record_ids)) {
-            return false;
+            $this->error_message = 'No record ids were provided.';
+            throw new DbException($this->error_message, 410);
         }
         $piname = $this->primary_index_name;
         $sql =<<<SQL
@@ -354,7 +355,7 @@ SQL;
         }
         else {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            return false;
+            throw new DbException($this->error_message, 400);
         }
     }
 

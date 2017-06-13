@@ -13,6 +13,7 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Services\Di;
+use Ritc\Library\Tests\ConstantsModelTester;
 use Ritc\Library\Tests\NavgroupsModelTester;
 use Ritc\Library\Tests\NavigationModelTester;
 use Ritc\Library\Tests\NavNgMapModelTester;
@@ -59,14 +60,8 @@ class TestsController
     public function route()
     {
         switch ($this->form_action) {
-            case 'PeopleModel':
-                $o_test = new PeopleModelTester($this->o_di);
-                break;
-            case 'PageModel':
-                $o_test = new PageModelTester($this->o_di);
-                break;
-            case 'UrlsModel':
-                $o_test = new UrlsModelTester($this->o_di);
+            case 'ConstantsModel':
+                $o_test = new ConstantsModelTester($this->o_di);
                 break;
             case 'NavgroupsModel':
                 $o_test = new NavgroupsModelTester($this->o_di);
@@ -77,7 +72,15 @@ class TestsController
             case 'NavNgMapModel':
                 $o_test = new NavNgMapModelTester($this->o_di);
                 break;
-            case 'ConstantsModel':
+            case 'PageModel':
+                $o_test = new PageModelTester($this->o_di);
+                break;
+            case 'PeopleModel':
+                $o_test = new PeopleModelTester($this->o_di);
+                break;
+            case 'UrlsModel':
+                $o_test = new UrlsModelTester($this->o_di);
+                break;
             case 'GroupsModel':
             case 'Login':
             case 'RoutesModel':

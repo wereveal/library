@@ -14,6 +14,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Basic\DbException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -45,6 +46,7 @@ class NavigationModel implements ModelInterface
      * Generic create a record using the values provided.
      * @param array $a_values
      * @return string|bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function create(array $a_values)
     {
@@ -65,15 +67,20 @@ class NavigationModel implements ModelInterface
             'a_field_names'   => $this->a_db_fields,
             'a_psql'          => $a_psql
         ];
-
-        $results = $this->genericCreate($a_values, $a_params);
-
-        if ($results) {
+        try {
+            $results = $this->genericCreate($a_values, $a_params);
+        }
+        catch (DbException $exception) {
+            $message = $exception->errorMessage();
+            $code = $exception->getCode();
+            throw new DbException($message, $code, $exception);
+        }
+        if (!empty($results)) {
             return $results[0];
         }
         else {
-            $this->error_message = 'The nav could not be saved.';
-            return false;
+            $message = "A new record could not be created.";
+            throw new DbException($message, 100);
         }
     }
 

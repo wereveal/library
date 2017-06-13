@@ -1,77 +1,73 @@
 <?php
 return [
     'makeValidName' => [
-        'test1' => [
+        'tag' => [
             'test_value'       => '<a href="http://go.to.bad.place/">my name</a>',
             'expected_results' => 'MY_NAME'
         ],
-        'test2' => [
+        'spaces' => [
             'test_value'       => 'My Name 123',
             'expected_results' => 'MY_NAME'
         ],
-        'test3' => [
-            'test_value'       => 'My&Name#--23',
+        'bad_characters' => [
+            'test_value'       => 'My &Name#--23',
             'expected_results' => 'MY_NAME'
         ],
-        'test4' => [
+        'mixed_case' => [
+            'test_value'       => 'mY_nAmE',
+            'expected_results' => 'MY_NAME'
+        ],
+        'empty' => [
             'test_value'       => '',
             'expected_results' => ''
         ]
     ],
     'read' => [
-        'test1' => [
-            'test_value'       => '',
-            'expected_results' => ''
+        'good_name' => [
+            'test_values'      => ['const_name' => 'DISPLAY_DATE_FORMAT'],
+            'expected_results' => true
         ],
-        'test2' => [
-            'test_value'       => '',
-            'expected_results' => ''
+        'bad_name' => [
+            'test_values'      => ['const_name' => 'BAD_NAME'],
+            'expected_results' => false
         ],
-        'test3' => [
-            'test_value'       => '',
-            'expected_results' => ''
+        'missing_name' => [
+            'test_values'      => [],
+            'expected_results' => true
+        ],
+        'good_id' => [
+            'test_values'      => ['const_id' => 1],
+            'expected_results' => true
+        ],
+        'bad_id' => [
+            'test_values'      => ['const_id' => 'fred'],
+            'expected_results' => false
         ]
     ],
     'create' => [
-        'test1' => [
-            'test_value'       => '',
-            'expected_results' => ''
+        'good_values' => [
+            'test_values' => [
+                'const_name'      => 'FRED',
+                'const_value'     => 'Fred Flinstone',
+                'const_immutable' => 1
+            ],
+            'expected_results' => true
         ],
-        'test2' => [
-            'test_value'       => '',
-            'expected_results' => ''
+        'bad_values' => [
+            'test_values' => [
+                'const_name'      => '',
+                'const_value'     => '',
+                'const_immutable' => 'o'
+            ],
+            'expected_results' => false
         ],
-        'test3' => [
-            'test_value'       => '',
-            'expected_results' => ''
+        'no_values' => [
+            'test_values'      => [],
+            'expected_results' => false
         ]
     ],
     'update' => [
-        'test1' => [
-            'test_value'       => '',
-            'expected_results' => ''
-        ],
-        'test2' => [
-            'test_value'       => '',
-            'expected_results' => ''
-        ],
-        'test3' => [
-            'test_value'       => '',
-            'expected_results' => ''
-        ]
     ],
     'delete' => [
-        'test1' => [
-            'test_value'       => '',
-            'expected_results' => ''
-        ],
-        'test2' => [
-            'test_value'       => '',
-            'expected_results' => ''
-        ],
-        'test3' => [
-            'test_value'       => '',
-            'expected_results' => ''
-        ]
     ]
 ];

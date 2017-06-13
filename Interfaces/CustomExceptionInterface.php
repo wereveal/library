@@ -29,4 +29,8 @@ interface CustomExceptionInterface
 
     /* Overrides methods inherited from Exception class */
     public function __toString();                 // formated string for display
-    public function __construct($message = null, $code = 0);}
+
+    /* Adds methods to the Exception class */
+    public function errorMessage();               // error message with additional information
+    public function getCodeText();                // associate text with a code
+}

@@ -13,7 +13,6 @@
 namespace Ritc\Library\Abstracts;
 
 use Ritc\Library\Interfaces\CustomExceptionInterface;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class CustomException.
@@ -22,16 +21,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 abstract class CustomException extends \Exception implements CustomExceptionInterface
 {
-    use LogitTraits;
-
-    public function __construct($message = '', $code = 0)
-    {
-        if ($message == '') {
-            throw new $this('No Message Provided for ' . get_class($this));
-        }
-        parent::__construct($message, $code);
-    }
-
     public function __toString()
     {
         return get_class($this) .
@@ -39,4 +28,22 @@ abstract class CustomException extends \Exception implements CustomExceptionInte
         $this->getTraceAsString();
     }
 
+    public function errorMessage()
+    {
+        $error_message = $this->getMessage() . ' -- ' . $this->getFile() . '.' . $this->getLine();
+        return $error_message;
+    }
+
+    public function getCodeText($code = -1)
+    {
+        switch ($code) {
+            default:
+                return 'Unspecified error';
+        }
+    }
+
+    public function getClass()
+    {
+        return get_class($this);
+    }
 }

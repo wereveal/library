@@ -36,6 +36,7 @@
  */
 namespace Ritc\Library\Traits;
 
+use Ritc\Library\Basic\DbException;
 use Ritc\Library\Helper\LocateFile;
 
 /**
@@ -59,6 +60,8 @@ trait TesterTraits
     protected $failed_tests       = 0;
     /** @var string  */
     protected $namespace          = '';
+    /** @var int  */
+    protected $new_id             = -1;
     /** @var int */
     protected $num_o_tests        = 0;
     /** @var array  */
@@ -274,6 +277,103 @@ trait TesterTraits
         }
     }
 
+    /**
+     * Generic Test comparing returned value(s) and expected value(s).
+     * @param string $class
+     * @param string $test_name
+     * @param array  $a_test_values
+     * @return string
+     */
+    private function genericTest($class = '', $test_name = '', array $a_test_values = [])
+    {
+        if (empty($class) || empty($test_name) || empty($a_test_values)) {
+            return 'skipped';
+        }
+        $bad_results = false;
+        foreach ($a_test_values as $key => $a_values) {
+            $expected_results = $a_values['expected_results'];
+            try {
+                if (isset($a_values['test_values'])) {
+                    $test_this = $a_values['test_values'];
+                }
+                elseif (isset($a_values['test_value'])) {
+                    $test_this = $a_values['test_value'];
+                }
+                else {
+                    $test_this = '';
+                }
+                $results = $this->$class->$test_name($test_this);
+                if ($results == $expected_results) {
+                    $this->setSubPassed($test_name, $key);
+                }
+                else {
+                    $this->setSubFailed($test_name, $key);
+                    $bad_results = true;
+                }
+            }
+            catch (\Exception $e) {
+                $this->setSubFailed($test_name, $key);
+                $bad_results = true;
+            }
+        }
+        if ($bad_results) {
+            return 'failed';
+        }
+        return 'passed';
+    }
+
+    /**
+     * Generic Test for Database operations.
+     * @param string $test_name
+     * @param array  $a_test_values
+     * @return string
+     */
+    private function genericDbTest($test_name = '', array $a_test_values = [])
+    {
+        if (empty($test_name) || empty($a_test_values)) {
+            return 'skipped';
+        }
+        $bad_results = false;
+        foreach ($a_test_values as $key => $a_values) {
+            $expected_results = $a_values['expected_results'];
+            if (isset($a_values['test_values'])) {
+                $test_this = $a_values['test_values'];
+            }
+            elseif (isset($a_values['test_value'])) {
+                $test_this = $a_values['test_value'];
+            }
+            else {
+                $test_this = '';
+            }
+            try {
+                $a_results = $this->o_model->$test_name($test_this);
+                $results = empty($a_results)
+                    ? false
+                    : true;
+                if ($results == $expected_results) {
+                    $this->setSubPassed($test_name, $key);
+                    if ($key == 'valid_create_values') {
+                        $_SESSION['created_id'] = $a_results[0];
+                        $this->new_id = $a_results[0];
+                    }
+                }
+                else {
+                    $this->setSubFailed($test_name, $key);
+                    $bad_results = true;
+                }
+            }
+            catch (DbException $e) {
+                $this->setSubFailed($test_name, $key);
+                $bad_results = true;
+            }
+        }
+        if ($bad_results) {
+            return 'failed';
+        }
+        return 'passed';
+
+    }
+
     ### All the other methods needed to run tests ###
 
     /**
@@ -354,8 +454,15 @@ trait TesterTraits
      */
     public function shortenName($method_name = 'Tester')
     {
+        if (strpos($method_name, '::')) {
+            $a_parts = explode('::', $method_name);
+            $method_name = $a_parts[1];
+        }
         if (substr($method_name, -6) == 'Tester') {
             return substr($method_name, 0, -6);
+        }
+        if (substr($method_name, -5) == 'Tests') {
+            return substr($method_name, 0, -5);
         }
         return $method_name;
     }
@@ -448,7 +555,6 @@ trait TesterTraits
 
     /**
      * Return the values in $this->a_test_values
-     * @param none
      * @return array $a_test_values
      */
     public function getTestValues()
@@ -459,7 +565,6 @@ trait TesterTraits
     ### Utility Methods ###
     /**
      * Checks to see if a method is public in the tester class.
-     * @param string $class_name required defaults to ''
      * @param string $method_name required defaults to ''
      * @return bool true or false
      */

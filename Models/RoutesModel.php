@@ -25,6 +25,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Basic\DbException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -52,6 +53,7 @@ class RoutesModel implements ModelInterface
      * Create a record using the values provided.
      * @param array $a_values
      * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function create(array $a_values)
     {
@@ -71,7 +73,13 @@ class RoutesModel implements ModelInterface
             'a_field_names'   => $this->a_db_fields,
             'a_psql'          => $a_psql
         ];
-        return $this->genericCreate($a_values, $a_params);
+        try {
+            return $this->genericCreate($a_values, $a_params);
+        }
+        catch (DbException $exception) {
+            $message = $exception->errorMessage();
+            throw new DbException($message, $exception->getCode());
+        }
     }
 
     /**
