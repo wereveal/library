@@ -174,7 +174,8 @@ trait DbTraits
 
     /**
      * Allows one to set a db prefix without it being in the db_config file.
-     * @param array $a_value
+     * @param string $name
+     * @param string $value
      */
     protected function setDbPrefix($name = 'db' , $value = 'ritc_')
     {

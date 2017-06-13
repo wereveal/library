@@ -83,6 +83,8 @@ class DbException extends CustomException
                 return 'Unable to create a new record: missing a required value.';
             case 130:
                 return 'Unable to create a new record: unique key value exists.';
+            case 140:
+                return 'Unable to create a new record: see previous message.';
             # Read codes
             case 200:
                 return 'Unable to read the record(s): unspecified reason.';

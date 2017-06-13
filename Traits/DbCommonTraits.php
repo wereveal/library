@@ -102,6 +102,7 @@ trait DbCommonTraits
     {
         if (strpos($config_file, '/') !== false) {
             if (file_exists($config_file)) {
+                /** @noinspection PhpIncludeInspection */
                 $a_db = include $config_file;
                 if (is_array($a_db)) {
                     return $a_db;
@@ -139,6 +140,7 @@ trait DbCommonTraits
         if (!file_exists($config_w_path)) {
             return [];
         }
+        /** @noinspection PhpIncludeInspection */
         $a_db = include $config_w_path;
         if (is_array($a_db)) {
             return $a_db;

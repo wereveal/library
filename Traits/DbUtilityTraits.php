@@ -40,7 +40,6 @@
  * - v1.0.0-alpha.1 - first hopefully working version                       - 2016-03-23 wer
  * - v1.0.0-alpha.0 - initial version                                       - 2016-03-18 wer
  * @todo Review to see where multi-table operations can be strenthened.
- * @todo Modify to use Exceptions
  */
 namespace Ritc\Library\Traits;
 
@@ -163,7 +162,7 @@ SQL;
         }
         catch (DbException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new DbException($this->error_message);
+            throw new DbException($this->error_message, 140, $e);
         }
     }
 
@@ -238,13 +237,12 @@ SQL;
             FROM {$table_name} 
             {$where}
         ";
-        $results = $this->o_db->search($sql, $a_search_for, $return_format);
-        if ($results !== false) {
-            return $results;
+        try {
+            return $this->o_db->search($sql, $a_search_for, $return_format);
         }
-        else {
+        catch (DbException $e) {
             $this->setErrorMessage();
-            throw new DbException($this->error_message, 200);
+            throw new DbException($this->error_message, 200, $e);
         }
     }
 
@@ -278,13 +276,12 @@ UPDATE {$this->db_table}
 WHERE {$primary_index_name} = :{$primary_index_name}
 
 SQL;
-        $results = $this->o_db->update($sql, $a_values, true);
-        if ($results) {
-            return true;
+        try {
+            return $this->o_db->update($sql, $a_values, true);
         }
-        else {
+        catch (DbException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new DbException($this->error_message, 300);
+            throw new DbException($this->error_message, 300, $e);
         }
     }
 
@@ -318,13 +315,12 @@ SQL;
 DELETE FROM {$this->db_table}
 WHERE {$piname} = :{$piname}
 SQL;
-        $results = $this->o_db->delete($sql, [':' . $piname => $record_ids], true);
-        if ($results) {
-            return true;
+        try {
+            return $this->o_db->delete($sql, [':' . $piname => $record_ids], true);
         }
-        else {
+        catch (DbException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new DbException($this->error_message, 400);
+            throw new DbException($this->error_message, 400, $e);
         }
     }
 
@@ -349,13 +345,12 @@ SQL;
         foreach ($a_record_ids as $record_id) {
            $a_delete_these[] = [':' . $piname => $record_id];
         }
-        $results = $this->o_db->delete($sql, $a_delete_these, true);
-        if ($results) {
-            return true;
+        try {
+            return $this->o_db->delete($sql, $a_delete_these, true);
         }
-        else {
+        catch (DbException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new DbException($this->error_message, 400);
+            throw new DbException($this->error_message, 400, $e);
         }
     }
 
@@ -373,15 +368,9 @@ SQL;
      */
     protected function buildSqlInsert(array $a_values = [], array $a_allowed_keys = [])
     {
-        $meth = __METHOD__ . '.';
         if (count($a_values) === 0 || count($a_allowed_keys) === 0) {
             return '';
         }
-        $log_message = 'A Values:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $log_message = 'a_allowed_keys ' . var_export($a_allowed_keys, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         $a_values = $this->o_db->prepareKeys($a_values);
         $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
         $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
@@ -486,7 +475,6 @@ SQL;
      */
     protected function buildSqlWhere(array $a_search_for = [], array $a_search_parameters = [], array $a_allowed_keys = [])
     {
-        $meth = __METHOD__ . '.';
         $search_type = 'AND';
         $comparison_type = '=';
         $starting_from = '';
@@ -523,8 +511,6 @@ SQL;
         }
         /* after all that, if there are still pairs, go for it */
         if (count($a_search_for) > 0) {
-            $message = 'search pairs prepared: ' . var_export($a_search_for, true);
-            $this->logIt($message, LOG_OFF, $meth . __LINE__);
             foreach ($a_search_for as $key => $value) {
                 $field_name = preg_replace('/^:/', '', $key);
                 if (strpos($key, '.') !== false) {
@@ -566,15 +552,25 @@ SQL;
     {
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
-                $results = $this->read($a_record);
-                if (!is_array($results) || count($results) < 1) {
+                try {
+                    $results = $this->read($a_record);
+                }
+                catch (DbException $e) {
+                    return false;
+                }
+                if (empty($results)) {
                     return false;
                 }
             }
         }
         else {
-            $results = $this->read($a_values);
-            if (!is_array($results) || count($results) < 1) {
+            try {
+                $results = $this->read($a_values);
+            }
+            catch (DbException $e) {
+                return false;
+            }
+            if (empty($results)) {
                 return false;
             }
         }
@@ -662,51 +658,65 @@ SQL;
     {
         switch($this->db_type) {
             case 'pgsql':
-                $query =<<<SQL
-SELECT a.attname as pKeyName, format_type(a.atttypid, a.atttypmod) AS data_type
-FROM   pg_index i
-JOIN   pg_attribute a ON a.attrelid = i.indrelid
-       AND a.attnum = ANY(i.indkey)
-WHERE  i.indrelid = '{$this->db_table}'::regclass
-AND    i.indisprimary;
-SQL;
-                $results = $this->o_db->rawQuery($query);
-                if (!empty($results)) {
-                    $this->primary_index_name = $results[0]['pKeyName'];
-                }
-                else {
-                    $this->primary_index_name = '';
-                }
-                return null;
-            case 'sqlite':
-                $query = "PRAGMA table_info({$this->db_table})";
-                $results = $this->o_db->rawQuery($query);
-                if (!empty($results)) {
-                    foreach ($results as $a_row) {
-                        if ($a_row['pk'] === 1) {
-                            $this->primary_index_name = $a_row['name'];
-                            return null;
-                        }
+                /** @noinspection SqlResolve */
+                $query = "
+                    SELECT a.attname as pKeyName, format_type(a.atttypid, a.atttypmod) AS data_type
+                    FROM   pg_index i
+                    JOIN   pg_attribute a ON a.attrelid = i.indrelid
+                           AND a.attnum = ANY(i.indkey)
+                    WHERE  i.indrelid = '{$this->db_table}'::regclass
+                    AND    i.indisprimary;
+                ";
+                try {
+                    $results = $this->o_db->rawQuery($query);
+                    if (!empty($results)) {
+                        $this->primary_index_name = $results[0]['pKeyName'];
+                    }
+                    else {
+                        $this->primary_index_name = '';
                     }
                 }
-                else {
-                    $this->primary_index_name = '';
+                catch (DbException $e) {
+                    $this->setErrorMessage('Could not set primary index name' . $e->errorMessage());
+                }
+                break;
+            case 'sqlite':
+                $query = "PRAGMA table_info({$this->db_table})";
+                try {
+                    $results = $this->o_db->rawQuery($query);
+                    if (!empty($results)) {
+                        foreach ($results as $a_row) {
+                            if ($a_row['pk'] === 1) {
+                                $this->primary_index_name = $a_row['name'];
+                            }
+                        }
+                    }
+                    else {
+                        $this->primary_index_name = '';
+                    }
+                }
+                catch (DbException $e) {
+                    $this->setErrorMessage('Could not set primary index name' . $e->errorMessage());
                 }
                 break;
             case 'mysql':
             default:
                 $query = "SHOW index FROM {$this->db_table}";
-                $results = $this->o_db->rawQuery($query);
-                if (!empty($results)) {
-                    foreach ($results as $a_index) {
-                        if ($a_index['Key_name'] == 'PRIMARY') {
-                            $this->primary_index_name = $a_index['Column_name'];
-                            return null;
+                try {
+                    $results = $this->o_db->rawQuery($query);
+                    if (!empty($results)) {
+                        foreach ($results as $a_index) {
+                            if ($a_index['Key_name'] == 'PRIMARY') {
+                                $this->primary_index_name = $a_index['Column_name'];
+                            }
                         }
                     }
+                    else {
+                        $this->primary_index_name = '';
+                    }
                 }
-                else {
-                    $this->primary_index_name = '';
+                catch (DbException $e) {
+                    $this->setErrorMessage('Could not set primary index name' . $e->errorMessage());
                 }
             // end 'mysql' and default;
         }
@@ -716,7 +726,6 @@ SQL;
      * Sets up the standard properties.
      * @param \Ritc\Library\Services\DbModel $o_db
      * @param string                         $table_name
-     * @return null
      */
     protected function setupProperties(DbModel $o_db, $table_name = '')
     {
@@ -743,7 +752,12 @@ SQL;
                 $this->db_table = '';
             }
             if ($this->db_table != '') {
-                $this->a_db_fields = $o_db->selectDbColumns($this->db_table);
+                try {
+                    $this->a_db_fields = $o_db->selectDbColumns($this->db_table);
+                }
+                catch (DbException $e) {
+                    $this->setErrorMessage($e->errorMessage());
+                }
                 $this->setPrimaryIndexName();
             }
         }

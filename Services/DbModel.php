@@ -396,12 +396,13 @@ class DbModel
 
     /**
      * Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
-     * @param array $a_table_info  ['table_name', 'column_name', 'schema']
-     * @note \verbatim
-     * 'table_name'  value required,
-     * 'column_name' value optional but recommended, defaults to 'id'
-     * 'schema'      value optional, defaults to 'public' \endverbatim
+     * @param array $a_table_info ['table_name', 'column_name', 'schema']
      * @return bool success or failure
+     * @throws \Ritc\Library\Basic\DbException
+     * @note \verbatim
+     *                            'table_name'  value required,
+     *                            'column_name' value optional but recommended, defaults to 'id'
+     *                            'schema'      value optional, defaults to 'public' \endverbatim
      */
     public function setPgsqlSequenceName(array $a_table_info = [])
     {
@@ -415,7 +416,8 @@ class DbModel
         if (!isset($a_table_info['schema']) || $a_table_info['schema'] == '') {
             $a_table_info['schema'] = 'public';
         }
-        $query = /** @lang pgsql */
+        /** @noinspection SqlResolve */
+        $query =
         "
             SELECT column_default
             FROM information_schema.columns
@@ -495,11 +497,13 @@ class DbModel
     }
 
     ### Basic Commands - The basic building blocks for doing db work
+
     /**
      * Bind values from an assoc array to a prepared query.
-     * @param array                $a_values    Keys must match the prepared query
+     * @param array                $a_values Keys must match the prepared query
      * @param object|\PDOStatement $o_pdo_stmt
-     * @return bool - success or failure
+     * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function bindValues(array $a_values = [], \PDOStatement $o_pdo_stmt)
     {
@@ -562,13 +566,14 @@ class DbModel
 
     /**
      * Executes a prepared query
-     * @param array $a_values <pre>
-     *       $a_values could be:
-     *       array("test", "brains") for question mark place holders prepared statement
-     *       array(":test"=>"test", ":food"=>"brains") for named parameters prepared statement
-     *       '' when the values have been bound before calling this method
+     * @param array                $a_values   <pre>
+     *                                         $a_values could be:
+     *                                         array("test", "brains") for question mark place holders prepared statement
+     *                                         array(":test"=>"test", ":food"=>"brains") for named parameters prepared statement
+     *                                         '' when the values have been bound before calling this method
      * @param object|\PDOStatement $o_pdo_stmt - the object created from the prepare
-     * @return bool - success or failure
+     * @return bool
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function execute(array $a_values = [], \PDOStatement $o_pdo_stmt)
     {
@@ -688,8 +693,8 @@ class DbModel
      *
      * @param object|\PDOStatement $o_pdo_stmt  a \PDOStatement object
      * @param string               $fetch_style @see \PDO (optional)
-     *
-     * @return array if successful, else false
+     * @return array
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function fetch_all(\PDOStatement $o_pdo_stmt, $fetch_style = 'ASSOC')
     {
@@ -960,7 +965,6 @@ class DbModel
      */
     public function executeInsert(array $a_values = [], \PDOStatement $o_pdo_stmt, array $a_table_info = [])
     {
-        $meth = __METHOD__ . '.';
         if (count($a_values) > 0) {
             $sequence_name = '';
             if ($this->db_type == 'pgsql' && !empty($a_table_info)) {
@@ -987,7 +991,6 @@ class DbModel
                     $this->execute($a_values, $o_pdo_stmt);
                     try {
                         $this->a_new_ids[] = $this->o_pdo->lastInsertId($sequence_name);
-                        return true;
                     }
                     catch (\PDOException $e) {
                         $this->error_message = $e->getMessage();
@@ -1004,6 +1007,7 @@ class DbModel
             $this->error_message = 'A non-empty array for its first parameter.';
             throw new DbException($this->error_message, 120);
         }
+        return true;
     }
 
     /**
@@ -1353,6 +1357,7 @@ class DbModel
             $a_column_names = [];
             switch ($this->db_type) {
                 case 'pgsql':
+                    /** @noinspection SqlResolve */
                     $sql = "
                         SELECT column_name
                         FROM information_schema.columns
@@ -1407,17 +1412,20 @@ class DbModel
     /**
      * Selects the table names from the database.
      * @return array $a_table_names
+     * @throws \Ritc\Library\Basic\DbException
      */
     public function selectDbTables()
     {
         switch ($this->db_type) {
             case 'pgsql':
+                /** @noinspection SqlResolve */
                 $sql = "
                     SELECT table_name
                     FROM information_schema.tables
                 ";
                 break;
             case 'sqlite':
+                /** @noinspection SqlResolve */
                 $sql = "
                     SELECT name
                     FROM sqlite_master
@@ -1446,7 +1454,9 @@ class DbModel
     {
         switch ($this->db_type) {
             case 'pgsql':
-                $sql = "
+                /** @noinspection SqlResolve */
+                $sql =
+                    "
                     SELECT count(table_name) as count
                     FROM information_schema.tables 
                     WHERE table_name = '{$table_name}'
@@ -1454,7 +1464,9 @@ class DbModel
                 ";
                 break;
             case 'sqlite':
-                $sql = "
+                /** @noinspection SqlResolve */
+                $sql =
+                    "
                     SELECT count(*) as count
                     FROM sqlite_master
                     WHERE type='table'
@@ -1463,7 +1475,9 @@ class DbModel
                 break;
             case 'mysql':
             default:
-                $sql = "
+                /** @noinspection SqlResolve */
+                $sql =
+                    "
                     SELECT count(*) as count
                     FROM information_schema.tables 
                     WHERE TABLE_SCHEMA = '{$this->a_db_config["name"]}' 
