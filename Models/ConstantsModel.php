@@ -68,7 +68,7 @@ class ConstantsModel implements ModelInterface
             'const_value'
         ];
         if (Arrays::hasBlankValues($a_values, $a_required_keys)) {
-            throw new DbException('Missing Required Values', 130);
+            throw new DbException('Missing Required Values', 120);
         }
         $a_psql = [
             'table_name'  => $this->db_table,
@@ -154,35 +154,37 @@ class ConstantsModel implements ModelInterface
         // todo ConstantsModel.createNewConstants - need to figure out if this is a bug
         $meth = __METHOD__ . '.';
         $a_constants = include SRC_CONFIG_PATH . '/fallback_constants_array.php';
-        if ($this->o_db->startTransaction()) {
-            if ($this->tableExists() === false) {
-                if ($this->createTable() === false) {
-                    $this->o_db->rollbackTransaction();
-                    throw new DbException('Unable to create the table', 560);
-                }
-            }
-            if ($this->createConstantRecords($a_constants) === true) {
-                if ($this->o_db->commitTransaction()) {
-                    return true;
-                }
-                else {
-                    $message = "Could not commit new constants";
-                    $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
-                    $this->o_db->rollbackTransaction();
-                    throw new DbException($message, 40);
-                }
-            }
-            else {
-                $this->o_db->rollbackTransaction();
-                $message = "Could not Insert new constants";
-                $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
-                throw new DbException($message, 100);
-            }
+        try {
+            $this->o_db->startTransaction();
         }
-        else {
+        catch (DbException $e) {
             $message = "Could not start transaction.";
             $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
-            throw new DbException($message, 30);
+            throw new DbException($message, 30, $e);
+        }
+        if ($this->tableExists() === false) {
+            try {
+                $this->createTable();
+            }
+            catch (DbException $e) {
+                $this->o_db->rollbackTransaction();
+                throw new DbException('Unable to create the table', 560, $e);
+            }
+        }
+        try {
+            $this->createConstantRecords($a_constants);
+            try {
+                $this->o_db->commitTransaction();
+                return true;
+            }
+            catch (DbException $e) {
+                $this->error_message = 'Unable to commit the transaction';
+                throw new DbException($this->error_message, $e->getCode(), $e);
+            }
+        }
+        catch (DbException $e) {
+            $this->error_message = "Unable to create the records.";
+            throw new DbException($this->error_message, $e->getCode(), $e);
         }
     }
 
@@ -211,14 +213,19 @@ class ConstantsModel implements ModelInterface
                         NO MAXVALUE
                         CACHE 1
                     ";
-                $results = $this->o_db->rawExec($sql_sequence);
-                if ($results !== false) {
-                    $results2 = $this->o_db->rawExec($sql_table);
-                    if ($results2 === false) {
-                        return false;
+                try {
+                    $this->o_db->rawExec($sql_sequence);
+                    try {
+                        $this->o_db->rawExec($sql_table);
+                        return true;
+                    }
+                    catch (DbException $e) {
+                        throw new DbException($e->errorMessage(), $e->getCode(), $e);
                     }
                 }
-                return true;
+                catch (DbException $e) {
+                    throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                }
             case 'sqlite':
                 $sql = "
                     CREATE TABLE IF NOT EXISTS {$this->db_table} (
@@ -228,11 +235,13 @@ class ConstantsModel implements ModelInterface
                         const_immutable INTEGER
                     )
                 ";
-                $results = $this->o_db->rawExec($sql);
-                if ($results === false) {
-                    return false;
+                try {
+                    $this->o_db->rawExec($sql);
+                    return true;
                 }
-                return true;
+                catch (DbException $e) {
+                    throw new DbException('Unable to create table in sqlite', $e->getCode(), $e);
+                }
             case 'mysql':
             default:
                 $sql = "
@@ -245,11 +254,13 @@ class ConstantsModel implements ModelInterface
                         UNIQUE KEY `const_key` (`const_name`)
                     ) ENGINE=InnoDB  AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
                 ";
-                $results = $this->o_db->rawExec($sql);
-                if ($results === false) {
-                    return false;
+                try {
+                    $this->o_db->rawExec($sql);
+                    return true;
                 }
-                return true;
+                catch (DbException $e) {
+                    throw new DbException('Unable to create table in mysql', $e->getCode(), $e);
+                }
             // end default
         }
     }
@@ -271,14 +282,22 @@ class ConstantsModel implements ModelInterface
      *     ]
      * ]</code>
      * @return bool
+     * @throws Ritc\Library\Exceptions\DbException
      */
     public function createConstantRecords(array $a_constants = array())
     {
-        if ($a_constants == array()) { return false; }
+        if ($a_constants == array()) { 
+            throw new DbException('Missing values', 70); 
+        }
         $query = "
             INSERT INTO {$this->db_table} (const_name, const_value, const_immutable)
             VALUES (?, ?, ?)";
-        return $this->o_db->insert($query, $a_constants, "{$this->db_table}");
+        try {
+            return $this->o_db->insert($query, $a_constants, "{$this->db_table}");
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode(), $e);    
+        }        
     }
 
     /**
@@ -287,7 +306,12 @@ class ConstantsModel implements ModelInterface
      */
     public function selectConstantsList()
     {
-        return $this->read();
+        try {
+            return $this->read();
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage, $e->code, $e);
+        }
     }
 
     /**

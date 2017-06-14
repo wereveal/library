@@ -5,23 +5,25 @@
  * @file      Ritc/Library/Models/GroupsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.2
- * @date      2017-05-09 17:42:55
+ * @version   2.0.0
+ * @date      2017-06-10 17:42:55
  * @note <b>Change Log</b>
- * - v1.1.2   - DbUtilityTraits change reflected here                        - 2017-05-09 wer
- * - v1.1.1   - Bug fix caused by slight change elsewhere                    - 2017-01-27 wer
- * - v1.1.0   - Bug fix and changes due to refactoring of DbModel            - 2016-03-19 wer
- * - v1.0.0   - First working version                                        - 11/27/2015 wer
- * - v1.0.0β5 - refactoring to provide postgresql compatibility              - 11/22/2015 wer
- * - v1.0.0β4 - added group_immutable field in db and changed code to match  - 10/08/2015 wer
- * - v1.0.0ß3 - removed abstract class Base, used LogitTraits                - 09/01/2015 wer
- * - v1.0.0ß2 - changed to use IOC (Inversion of Control)                    - 11/15/2014 wer
- * - v1.0.0β1 - extends the Base class, injects the DbModel, clean up        - 09/23/2014 wer
- * - v1.0.0β0 - First live version                                           - 09/15/2014 wer
- * - v0.1.0β  - Initial version                                              - 01/18/2014 wer
+ * - v2.0.0   - Refactored to use Exceptions (DbException) and DbUtilityTraits  - 2017-06-10 wer
+ * - v1.1.2   - DbUtilityTraits change reflected here                           - 2017-05-09 wer
+ * - v1.1.1   - Bug fix caused by slight change elsewhere                       - 2017-01-27 wer
+ * - v1.1.0   - Bug fix and changes due to refactoring of DbModel               - 2016-03-19 wer
+ * - v1.0.0   - First working version                                           - 11/27/2015 wer
+ * - v1.0.0β5 - refactoring to provide postgresql compatibility                 - 11/22/2015 wer
+ * - v1.0.0β4 - added group_immutable field in db and changed code to match     - 10/08/2015 wer
+ * - v1.0.0ß3 - removed abstract class Base, used LogitTraits                   - 09/01/2015 wer
+ * - v1.0.0ß2 - changed to use IOC (Inversion of Control)                       - 11/15/2014 wer
+ * - v1.0.0β1 - extends the Base class, injects the DbModel, clean up           - 09/23/2014 wer
+ * - v1.0.0β0 - First live version                                              - 09/15/2014 wer
+ * - v0.1.0β  - Initial version                                                 - 01/18/2014 wer
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Exceptions\DbException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
@@ -50,6 +52,9 @@ class GroupsModel implements ModelInterface
      * Generic create function to create a single record.
      * @param array $a_values required
      * @return bool
+     * @throws Ritc\Library\Exceptions\DbException
+     * @todo switch to use genericCreate
+     * @todo switch to use DbException
      */
     public function create(array $a_values = array())
     {
@@ -110,6 +115,9 @@ class GroupsModel implements ModelInterface
      * @param array $a_search_values
      * @param array $a_search_params
      * @return mixed
+     * @throws Ritc\Library\Exceptions\DbException
+     * @todo switch to use genericRead 
+     * @todo switch to use DbException
      */
     public function read(array $a_search_values = array(), array $a_search_params = array())
     {
@@ -144,6 +152,9 @@ class GroupsModel implements ModelInterface
      * Updates the group record
      * @param array $a_values
      * @return bool
+     * @throws Ritc\Library\Exceptions\DbException
+     * @todo switch to use genericUpdate
+     * @todo switch to use DbException
      */
     public function update(array $a_values = array())
     {
@@ -184,6 +195,9 @@ class GroupsModel implements ModelInterface
      * deleteWithRelated method.
      * @param int $group_id
      * @return bool
+     * @throws Ritc\Library\Exceptions\DbException
+     * @todo switch to use genericDelete
+     * @todo switch to use DbException
      */
     public function delete($group_id = -1)
     {
@@ -199,6 +213,9 @@ class GroupsModel implements ModelInterface
      * Deletes related records as well as main group record.
      * @param int $group_id
      * @return bool
+     * @throws Ritc\Library\Exceptions\DbException
+     * @todo switch to use genericDelete
+     * @todo switch to use DbException
      */
     public function deleteWithRelated($group_id = -1)
     {
@@ -228,44 +245,71 @@ class GroupsModel implements ModelInterface
      * Returns a record of the group specified by id.
      * @param int $group_id
      * @return array|bool
+     * @throws Ritc\Library\Exceptions\DbException
+     * @todo switch to use DbException
      */
     public function readById($group_id = -1)
     {
-        if ($group_id == -1) { return false; }
-        if (!is_numeric($group_id)) { return false; }
-        $results = $this->read(array('group_id' => $group_id));
-        if (count($results[0]) > 0) {
+        if (is_numeric($group_id) && $group_id > 0) {
+            try {
+            }
+            catch () {
+            }
+            $results = $this->read(array('group_id' => $group_id));
+            if (empty($results[0])) {
+                $this->error_message = "Unable to find a group with the group id {$group_id}";
+            }
             return $results[0];
+
         }
-        return false;
+        else {
+            throw new DbException('Missing group id', 220); 
+        }
     }
 
     /**
      * Returns a record of the group specified by name.
      * @param string $group_name
      * @return array|bool
+     * @throws Ritc\Library\Exceptions\DbException
      */
     public function readByName($group_name = '')
     {
-        if ($group_name == '') { return false; }
-        $results = $this->read(array('group_name' => $group_name));
-        if (count($results[0]) > 0) {
-            return $results[0];
+        if ($group_name == '') { 
+            throw new DbException('Missing group name', 220); 
         }
-        return false;
+        try {
+            $results = $this->read(array('group_name' => $group_name));
+            if (!empty($results[0])) {
+                return $results[0];
+            }
+            $this->error_message = 'Unable to read the group by ' . $group_name;
+            throw new DbException($this-error_message, 200);
+        }
+        catch (DbException $e) {
+            $this->error_message = 'Unable to read the group by ' . $group_name;
+            throw new DbException($this-error_message, 200);
+        } 
+        
     }
 
     /**
      * Checks to see if the id is a valid group id.
-     * @param int $group_id
-     * @return bool true or false
+     * @param int $group_id required
+     * @return bool 
       */
     public function isValidGroupId($group_id = -1)
     {
-        if ($group_id == -1) { return false; }
-        if (!is_numeric($group_id)) { return false; }
-        if (is_array($this->read(array('group_id' => $group_id)))) {
-            return true;
+        if (is_numeric($group_id) && $group_id > 0) {
+            try {
+                $a_results = $this->read(array('group_id' => $group_id)));
+                if (!empty($a_results)) {
+                    return true;        
+                }
+            }
+            catch (DbException $e) {
+                $this->error_message = "Could not do the read operation.";
+            }
         }
         return false;
     }
