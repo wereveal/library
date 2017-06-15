@@ -1,17 +1,16 @@
 <?php
 /**
  * @brief     Exceptions specific to database operations.
- * @details
- * @ingroup   lib_basic
- * @file      Ritc/Library/Basic/DbException.php
- * @namespace Ritc\Library\Basic
+ * @ingroup   lib_exceptions
+ * @file      Ritc/Library/Exceptions/DbException.php
+ * @namespace Ritc\Library\Exceptions
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0-alpha.0
  * @date      2017-06-11 14:24:36
  * @note Change Log
  * - v1.0.0-alpha.0 - Initial version        - 2017-06-11 wer
  */
-namespace Ritc\Library\Basic;
+namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomException;
 
@@ -63,9 +62,9 @@ class DbException extends CustomException
             case 50:
                 return 'Unable to prepare the statement.';
             case 60:
-                return 'Unable to do a PDOStatement operation.';
-            case 65:
                 return 'Unable to do a PDO operation.';
+            case 65:
+                return 'Unable to do a PDOStatement operation.';
             case 70:
                 return 'Missing required values';
             case 80:

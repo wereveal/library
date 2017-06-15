@@ -16,7 +16,7 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Basic\DbException;
+use Ritc\Library\Exceptions\DbException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -31,6 +31,10 @@ class UrlsModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
+    /**
+     * UrlsModel constructor.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'urls');
@@ -40,11 +44,10 @@ class UrlsModel implements ModelInterface
      * Create a record using the values provided.
      * @param array $a_values
      * @return int
-     * @throws \Ritc\Library\Basic\DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function create(array $a_values = [])
     {
-        $meth = __METHOD__ . '.';
         $a_required_keys = [
             'url_text'
         ];
@@ -57,8 +60,6 @@ class UrlsModel implements ModelInterface
             'a_field_names'   => $this->a_db_fields,
             'a_psql'          => $a_psql
         ];
-        $log_message = 'Values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         try {
             return $this->genericCreate($a_values, $a_params);
         }
@@ -74,10 +75,10 @@ class UrlsModel implements ModelInterface
      * @param array $a_search_for    key pairs of field name => field value
      * @param array $a_search_params \ref searchparams \ref readparams
      * @return array
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function read(array $a_search_for = [], array $a_search_params = [])
     {
-        $meth = __METHOD__ . '.';
         $a_parameters = [
             'table_name'     => $this->db_table,
             'a_search_for'   => $a_search_for,
@@ -85,16 +86,21 @@ class UrlsModel implements ModelInterface
             'order_by'       => 'url_text ASC'
         ];
         $a_parameters = array_merge($a_parameters, $a_search_params);
-        $log_message = 'Parameters ' . var_export($a_parameters, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        return $this->genericRead($a_parameters);
+        try {
+            return $this->genericRead($a_parameters);
+        }
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            $code = $e->getCode();
+            throw new DbException($message, $code);
+        }
     }
 
     /**
      * Update for a record using the values provided.
      * @param array $a_values
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function update(array $a_values = [])
     {
@@ -102,9 +108,16 @@ class UrlsModel implements ModelInterface
             || $a_values[$this->primary_index_name] == ''
             || (!is_numeric($a_values[$this->primary_index_name]))
         ) {
-            return false;
+            throw new DbException('Missing required values.', 320);
         }
-        return $this->genericUpdate($a_values);
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            $code = $e->getCode();
+            throw new DbException($message, $code);
+        }
     }
 
     /**
@@ -112,44 +125,91 @@ class UrlsModel implements ModelInterface
      * Checks to see if there are any other tables with relations.
      * @param int $id
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function delete($id = -1)
     {
-        if ($id == -1) { return false; }
+        if ($id == -1) {
+            throw new DbException('Missing the id of the record to delete.', 420);
+        }
         $a_search_for = [$this->primary_index_name => $id];
         $a_search_params = [
             'order_by' => 'url_id',
             'a_fields' => ['url_immutable']
         ];
-        $search_results = $this->read($a_search_for, $a_search_params);
-        // error_log(var_export($search_results, true));
+        try {
+            $search_results = $this->read($a_search_for, $a_search_params);
+        }
+        catch (DbException $e) {
+            $message = 'Can not determine if the record is deletable.';
+            throw new DbException($message, 420);
+        }
         if (isset($search_results[0]) && $search_results[0]['url_immutable'] == 1) {
             $this->error_message = 'Sorry, that url can not be deleted.';
-            return false;
+            throw new DbException($this->error_message, 440);
         }
         $a_search_for = ['url_id' => $id];
-        $o_routes = new RoutesModel($this->o_db);
-        $search_results = $o_routes->read($a_search_for);
-        if (isset($search_results[0])) {
-            $this->error_message = 'Please change/delete the route that refers to this url first.';
-            return false;
+        try {
+            $o_routes = new RoutesModel($this->o_db);
+            try {
+                $search_results = $o_routes->read($a_search_for);
+                if (isset($search_results[0])) {
+                    $this->error_message = 'Please change/delete the route that refers to this url first.';
+                    throw new DbException($this->error_message, 440);
+                }
+            }
+            catch (DbException $e) {
+                $this->error_message = 'Please change/delete the route that refers to this url first.';
+                throw new DbException($this->error_message, 440);
+            }
         }
-        $o_pages  = new PageModel($this->o_db);
-        $search_results = $o_pages->read($a_search_for);
-        if (isset($search_results[0])) {
-            $this->error_message = 'Please change/delete the Page that refers to this url first.';
-            return false;
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            throw new DbException($message, 400);
         }
-        $o_nav    = new NavigationModel($this->o_db);
-        $search_results = $o_nav->read($a_search_for);
-        if (isset($search_results[0])) {
-            $this->error_message = 'Please change/delete the Navigation record that refers to this url first.';
-            return false;
+        try {
+            $o_pages = new PageModel($this->o_db);
+            try {
+                $search_results = $o_pages->read($a_search_for);
+                if (isset($search_results[0])) {
+                    $this->error_message = 'Please change/delete the Page that refers to this url first.';
+                    throw new DbException($this->error_message, 440);
+                }
+            }
+            catch (DbException $e) {
+                $message = $e->errorMessage();
+                throw new DbException($message, 400);
+            }
         }
-        $results = $this->genericDelete($id);
-        if ($results === false) {
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            throw new DbException($message, 400);
+        }
+        try {
+            $o_nav = new NavigationModel($this->o_db);
+            try {
+                $search_results = $o_nav->read($a_search_for);
+                if (isset($search_results[0])) {
+                    $this->error_message = 'Please change/delete the Navigation record that refers to this url first.';
+                    throw new DbException($this->error_message, 440);
+                }
+            }
+            catch (DbException $e) {
+                $message = $e->errorMessage();
+                throw new DbException($message, 400);
+            }
+        }
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            throw new DbException($message, 400);
+        }
+        try {
+            $results = $this->genericDelete($id);
+            return $results;
+        }
+        catch (DbException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            throw new DbException($this->error_message, 400);
         }
-        return $results;
     }
 }

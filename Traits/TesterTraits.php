@@ -36,7 +36,7 @@
  */
 namespace Ritc\Library\Traits;
 
-use Ritc\Library\Basic\DbException;
+use Ritc\Library\Exceptions\DbException;
 use Ritc\Library\Helper\LocateFile;
 
 /**
@@ -52,12 +52,16 @@ trait TesterTraits
     protected $a_test_values      = [];
     /** @var string  */
     protected $class_name         = '';
+    /** @var bool  */
+    protected $show_passed_subs   = false;
     /** @var int */
     protected $failed_subtests    = [];
     /** @var array */
     protected $failed_test_names  = [];
     /** @var int */
     protected $failed_tests       = 0;
+    /** @var  string */
+    protected $instance_name      = '';
     /** @var string  */
     protected $namespace          = '';
     /** @var int  */
@@ -76,63 +80,6 @@ trait TesterTraits
     protected $skipped_tests      = 0;
 
     ### Main Methods for Testing ###
-    /**
-     * Returns an array showing the number and optionally names of tests success and failure
-     * @param bool $show_test_names optional defaults to showing names
-     * @return array
-     */
-    public function returnTestResults($show_test_names = true)
-    {
-        $a_failed_test_names = array();
-        $a_passed_test_names = array();
-        if ($show_test_names === true) {
-            foreach ($this->passed_test_names as $name) {
-                $a_subnames = [];
-                if (!empty($this->passed_subtests[$name])) {
-                    $a_subnames = $this->passed_subtests[$name];
-                }
-                $a_passed_test_names[] = [
-                    'name' => $name,
-                    'subtest_names' => $a_subnames
-                ];
-            }
-            foreach ($this->failed_test_names as $name) {
-                $a_failed = [];
-                $a_success = [];
-                if (!empty($this->failed_subtests[$name])) {
-                    $a_failed = $this->failed_subtests[$name];
-                }
-                if (!empty($this->passed_subtests[$name])) {
-                    $a_success = $this->passed_subtests[$name];
-                }
-                $a_failed_test_names[] = [
-                    'name'            => $name,
-                    'subtest_failed'  => $a_failed,
-                    'subtest_success' => $a_success
-                ];
-            }
-            return array(
-                'failed_tests'       => $this->failed_tests,
-                'passed_tests'       => $this->passed_tests,
-                'skipped_tests'      => $this->skipped_tests,
-                'num_o_tests'        => $this->num_o_tests,
-                'failed_test_names'  => $a_failed_test_names,
-                'passed_test_names'  => $a_passed_test_names,
-                'skipped_test_names' => $this->skipped_test_names
-            );
-        }
-        else {
-            return array(
-                'failed_tests'       => $this->failed_tests,
-                'passed_tests'       => $this->passed_tests,
-                'num_o_tests'        => $this->num_o_tests,
-                'failed_test_names'  => '',
-                'passed_test_names'  => '',
-                'skipped_test_names' => ''
-            );
-        }
-    }
-
     /**
      * Runs tests where method ends in Test.
      * @param bool $return_results optional, defaults to true which also returns test names.
@@ -217,24 +164,31 @@ trait TesterTraits
      */
     public function setupTests(array $a_values = [])
     {
-        $namespace   = '';
-        $class_name  = '';
-        $order_file  = 'test_order.php';
-        $values_file = 'test_values.php';
-        $extra_dir   = '';
-        $short_ns    = __NAMESPACE__;
+        $namespace     = '';
+        $class_name    = '';
+        $instance_name = '';
+        $order_file    = 'test_order.php';
+        $values_file   = 'test_values.php';
+        $extra_dir     = '';
+        $short_ns      = __NAMESPACE__;
+        $passed_subs   = false;
 
         $a_expected_keys = [
+            'namespace',
             'class_name',
+            'instance_name',
             'order_file',
             'values_file',
             'extra_dir',
-            'namespace'
+            'passed_subs'
         ];
         foreach ($a_expected_keys as $keyname) {
-            if (isset($a_values[$keyname]) && $a_values[$keyname] != '') {
+            if (isset($a_values[$keyname])) {
                 $$keyname = $a_values[$keyname];
             }
+        }
+        if ($passed_subs) {
+            $this->show_passed_subs = $passed_subs;
         }
         if (!empty($namespace)) {
             $this->namespace = $namespace;
@@ -251,7 +205,9 @@ trait TesterTraits
             $values_file = $class_name . '_values.php';
             $order_file = $class_name . '_order.php';
         }
-
+        if (!empty($instance_name)) {
+            $this->instance_name = $instance_name;
+        }
         $test_values_file = LocateFile::getTestFileWithPath($values_file, $short_ns, $extra_dir);
         if (empty($test_values_file)) {
             $this->a_test_values = [];
@@ -278,64 +234,76 @@ trait TesterTraits
     }
 
     /**
+     * Deletes a test record if the id exists.
+     * @param string $instance
+     * @throws \Ritc\Library\Exceptions\DbException
+     */
+    public function cleanupDbTests($instance = '') {
+        if ($this->new_id > 0) {
+            $new_id = $this->new_id;
+        }
+        elseif (isset($_SESSION['created_id'])) {
+            $new_id = $_SESSION['created_id'];
+        }
+        else {
+            $new_id = -1;
+        }
+        if ($instance == '') {
+            $instance = $this->instance_name;
+        }
+        if ($new_id > 0) {
+            try {
+                $this->$instance->delete($new_id);
+                $_SESSION['created_id'] = -1;
+                $this->new_id = -1;
+            }
+            catch (DbException $e) {
+                $_SESSION['created_id'] = -1;
+                $this->new_id = -1;
+            }
+        }
+    }
+
+    ### Generic Tests - usually called by the main tester class ###
+    /**
      * Generic Test comparing returned value(s) and expected value(s).
-     * @param string $class
-     * @param string $test_name
-     * @param array  $a_test_values
+     * @param array $a_names
+     * @param array $a_test_values
      * @return string
      */
-    private function genericTest($class = '', $test_name = '', array $a_test_values = [])
+    private function genericTest(array $a_names = [], array $a_test_values = [])
     {
-        if (empty($class) || empty($test_name) || empty($a_test_values)) {
+        if (empty($a_test_values) || empty($a_names) || empty($a_names['instance']) || empty($a_names['test'])) {
             return 'skipped';
         }
-        $bad_results = false;
-        foreach ($a_test_values as $key => $a_values) {
-            $expected_results = $a_values['expected_results'];
-            try {
-                if (isset($a_values['test_values'])) {
-                    $test_this = $a_values['test_values'];
-                }
-                elseif (isset($a_values['test_value'])) {
-                    $test_this = $a_values['test_value'];
-                }
-                else {
-                    $test_this = '';
-                }
-                $results = $this->$class->$test_name($test_this);
-                if ($results == $expected_results) {
-                    $this->setSubPassed($test_name, $key);
-                }
-                else {
-                    $this->setSubFailed($test_name, $key);
-                    $bad_results = true;
-                }
-            }
-            catch (\Exception $e) {
-                $this->setSubFailed($test_name, $key);
-                $bad_results = true;
-            }
+        $good_results = true;
+        foreach ($a_test_values as $subtest => $a_values) {
+            $a_names['subtest'] = $subtest;
+            $results = $this->genericSubtest($a_names, $a_values);
+            $good_results = $good_results && $results;
         }
-        if ($bad_results) {
-            return 'failed';
+        if ($good_results) {
+            return 'passed';
         }
-        return 'passed';
+        return 'failed';
     }
 
     /**
-     * Generic Test for Database operations.
-     * @param string $test_name
-     * @param array  $a_test_values
-     * @return string
+     * Runs a single subtest.
+     * @param array  $a_values
+     * @return bool
      */
-    private function genericDbTest($test_name = '', array $a_test_values = [])
+    public function genericSubtest(array $a_names = [], array $a_values = [])
     {
-        if (empty($test_name) || empty($a_test_values)) {
-            return 'skipped';
+        if (empty($a_names) || empty($a_names['instance']) || empty($a_names['test']) || empty($a_names['subtest'])) {
+            return false;
         }
-        $bad_results = false;
-        foreach ($a_test_values as $key => $a_values) {
-            $expected_results = $a_values['expected_results'];
+        $o_name  = $a_names['instance'];
+        $test    = $a_names['test'];
+        $subtest = $a_names['subtest'];
+        $good_results = true;
+        $expected_results = $a_values['expected_results'];
+        try {
             if (isset($a_values['test_values'])) {
                 $test_this = $a_values['test_values'];
             }
@@ -345,36 +313,220 @@ trait TesterTraits
             else {
                 $test_this = '';
             }
-            try {
-                $a_results = $this->o_model->$test_name($test_this);
-                $results = empty($a_results)
-                    ? false
-                    : true;
-                if ($results == $expected_results) {
-                    $this->setSubPassed($test_name, $key);
-                    if ($key == 'valid_create_values') {
+            $results = $this->$o_name->$test($test_this);
+            if ($results == $expected_results) {
+                $this->setSubPassed($test, $subtest);
+            }
+            else {
+                $this->setSubFailed($test, $subtest);
+                $good_results = false;
+            }
+        }
+        catch (\Exception $e) {
+            $this->setSubFailed($test, $subtest);
+            $good_results = false;
+        }
+        return $good_results;
+    }
+
+    /**
+     * Generic Test for Database operations.
+     * @param array $a_names
+     * @param array $a_test_values
+     * @return string
+     */
+    private function genericDbTest(array $a_names = [], array $a_test_values = [])
+    {
+        if (empty($a_test_values) || empty($a_names)) {
+            return 'skipped';
+        }
+        $good_results = true;
+        foreach ($a_test_values as $subtest => $a_values) {
+            $a_names['subtest'] = $subtest;
+            $results = $this->genericDbSubTest($a_names, $a_values);
+            $good_results = $good_results && $results;
+        }
+        if ($good_results) {
+            return 'passed';
+        }
+        return 'failed';
+    }
+
+    /**
+     * Runs a subtest.
+     * @param array $a_names
+     * @param array $a_values
+     * @return bool
+     */
+    public function genericDbSubTest(array $a_names = [], array $a_values = [])
+    {
+        if (empty($a_names['test']) || empty($a_names['subtest'])) {
+            return false;
+        }
+        $instance = empty($a_names['instance'])
+            ? 'o_model'
+            : $a_names['instance'];
+        $test    = $a_names['test'];
+        $subtest = $a_names['subtest'];
+        $good_results = true;
+        $expected_results = $a_values['expected_results'];
+        if (isset($a_values['test_values'])) {
+            $test_this = $a_values['test_values'];
+        }
+        elseif (isset($a_values['test_value'])) {
+            $test_this = $a_values['test_value'];
+        }
+        else {
+            $test_this = '';
+        }
+        try {
+            $a_results = $this->$instance->$test($test_this);
+            $results = empty($a_results)
+                ? false
+                : true;
+            if ($results == $expected_results) {
+                $this->setSubPassed($test, $subtest);
+                if ($test == 'create') {
+                    if ($subtest == 'valid_create_values' || $subtest == 'good_values') {
                         $_SESSION['created_id'] = $a_results[0];
                         $this->new_id = $a_results[0];
                     }
                 }
-                else {
-                    $this->setSubFailed($test_name, $key);
-                    $bad_results = true;
-                }
             }
-            catch (DbException $e) {
-                $this->setSubFailed($test_name, $key);
-                $bad_results = true;
+            else {
+                $this->setSubFailed($test, $subtest);
+                $good_results = false;
             }
         }
-        if ($bad_results) {
+        catch (DbException $e) {
+            if ($expected_results == false) {
+                $this->setSubPassed($test, $subtest);
+            }
+            else {
+                $this->setSubFailed($test, $subtest);
+                $good_results = false;
+            }
+        }
+        return $good_results;
+    }
+
+    /**
+     * Runs a single generic test.
+     * @param array $a_names
+     * @param array $a_test_values
+     * @return string
+     */
+    public function genericSingleTest(array $a_names = [], array $a_test_values)
+    {
+        if (empty($a_names) || empty($a_test_values)) {
+            return 'skipped';
+        }
+        $instance = $a_names['instance'];
+        $test = $a_names['test'];
+        $expected_results = $a_test_values['expected_results'];
+        $test_this = $a_test_values['test_values'];
+        $results = $this->$instance->$test($test_this);
+        if ($results == $expected_results) {
+            return 'passed';
+        }
+        else {
             return 'failed';
         }
-        return 'passed';
+    }
 
+    /**
+     * Runs a single database test.
+     * @param array $a_names
+     * @param array $a_test_values
+     * @return string
+     */
+    public function genericDbSingleTest(array $a_names = [], array $a_test_values)
+    {
+        if (empty($a_names) || empty($a_test_values)) {
+            return 'skipped';
+        }
+        $test = $a_names['test'];
+        $instance = $a_names['instance'];
+        $expected_results = $a_test_values['expected_results'];
+        $test_this = $a_test_values['test_values'];
+        try {
+            $a_results = $this->$instance->$test($test_this);
+            $results = empty($a_results)
+                ? false
+                : true;
+            if ($results == $expected_results) {
+                return 'passed';
+            }
+            else {
+                return 'failed';
+            }
+        }
+        catch (DbException $e) {
+            return $expected_results
+                ? 'failed'
+                : 'passed';
+        }
     }
 
     ### All the other methods needed to run tests ###
+    /**
+     * Returns an array showing the number and optionally names of tests success and failure
+     * @param bool $show_test_names optional defaults to showing names
+     * @return array
+     */
+    public function returnTestResults($show_test_names = true)
+    {
+        $a_failed_test_names = array();
+        $a_passed_test_names = array();
+        if ($show_test_names === true) {
+            foreach ($this->passed_test_names as $name) {
+                $a_subnames = [];
+                if ($this->show_passed_subs) {
+                    if (!empty($this->passed_subtests[$name])) {
+                        $a_subnames = $this->passed_subtests[$name];
+                    }
+                }
+                $a_passed_test_names[] = [
+                    'name' => $name,
+                    'subtest_names' => $a_subnames
+                ];
+            }
+            foreach ($this->failed_test_names as $name) {
+                $a_failed = [];
+                $a_success = [];
+                if (!empty($this->failed_subtests[$name])) {
+                    $a_failed = $this->failed_subtests[$name];
+                }
+                if (!empty($this->passed_subtests[$name])) {
+                    $a_success = $this->passed_subtests[$name];
+                }
+                $a_failed_test_names[] = [
+                    'name'            => $name,
+                    'subtest_failed'  => $a_failed,
+                    'subtest_success' => $a_success
+                ];
+            }
+            return array(
+                'failed_tests'       => $this->failed_tests,
+                'passed_tests'       => $this->passed_tests,
+                'skipped_tests'      => $this->skipped_tests,
+                'num_o_tests'        => $this->num_o_tests,
+                'failed_test_names'  => $a_failed_test_names,
+                'passed_test_names'  => $a_passed_test_names,
+                'skipped_test_names' => $this->skipped_test_names
+            );
+        }
+        else {
+            return array(
+                'failed_tests'       => $this->failed_tests,
+                'passed_tests'       => $this->passed_tests,
+                'num_o_tests'        => $this->num_o_tests,
+                'failed_test_names'  => '',
+                'passed_test_names'  => '',
+                'skipped_test_names' => ''
+            );
+        }
+    }
 
     /**
      * Adds a method name to the test order.
@@ -523,15 +675,14 @@ trait TesterTraits
      */
     public function setSubPassed($method_name = '', $test_name = '')
     {
-        if ($method_name == '' || $test_name == '') {
-            return;
-        }
-        $method_name = $this->shortenName($method_name);
-        if (array_key_exists($method_name, $this->passed_subtests)) {
-            $this->passed_subtests[$method_name][] = $test_name;
-        }
-        else {
-            $this->passed_subtests[$method_name] = array($test_name);
+        if ($method_name != '' && $test_name != '') {
+            $method_name = $this->shortenName($method_name);
+            if (array_key_exists($method_name, $this->passed_subtests)) {
+                $this->passed_subtests[$method_name][] = $test_name;
+            }
+            else {
+                $this->passed_subtests[$method_name] = array($test_name);
+            }
         }
     }
 

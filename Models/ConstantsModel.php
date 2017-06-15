@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/ConstantsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.5.0
- * @date      2017-05-18 13:24:09
+ * @version   3.0.0
+ * @date      2017-06-14 08:26:16
  * @note      see ConstantsEntity for database table definition.
  * @note <b>Change Log</b>
+ * - v3.0.0 - Refactored to use DbException and bug fixes                   - 2017-06-14 wer
  * - v2.5.0 - Removed unused property and setting of same                   - 2017-05-18 wer
  * - v2.4.2 - DbUtilityTraits change reflected here                         - 2017-05-09 wer
  * - v2.4.1 - Refactoring of file structure reflected here                  - 2017-02-15 wer
@@ -27,7 +28,7 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Basic\DbException;
+use Ritc\Library\Exceptions\DbException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
@@ -59,13 +60,12 @@ class ConstantsModel implements ModelInterface
      * Generic create a record using the values provided.
      * @param array $a_values
      * @return int
-     * @throws \Ritc\Library\Basic\DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function create(array $a_values)
     {
         $a_required_keys = [
-            'const_name',
-            'const_value'
+            'const_name'
         ];
         if (Arrays::hasBlankValues($a_values, $a_required_keys)) {
             throw new DbException('Missing Required Values', 120);
@@ -79,7 +79,12 @@ class ConstantsModel implements ModelInterface
             'a_field_names'   => $this->a_db_fields,
             'a_psql'          => $a_psql
         ];
-        return $this->genericCreate($a_values, $a_params);
+        try {
+            return $this->genericCreate($a_values, $a_params);
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
@@ -87,6 +92,7 @@ class ConstantsModel implements ModelInterface
      * @param array $a_search_values optional, returns all records if not provided
      * @param array $a_search_params optional, defaults to ['order_by' => 'const_name']
      * @return array|bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
@@ -97,57 +103,113 @@ class ConstantsModel implements ModelInterface
             'order_by'       => $this->primary_index_name . ' ASC'
         ];
         $a_parameters = array_merge($a_parameters, $a_search_params);
-        return $this->genericRead($a_parameters);
+        try {
+            return $this->genericRead($a_parameters);
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Generic update for a record using the values provided.
      * @param array $a_values
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function update(array $a_values)
     {
         if (!isset($a_values[$this->primary_index_name])
-            || $a_values[$this->primary_index_name] == ''
             || (!is_numeric($a_values[$this->primary_index_name]))
+            || $a_values[$this->primary_index_name] < 1
         ) {
             $this->error_message = 'Required values missing';
             throw new DbException($this->error_message, 320);
         }
+        if (isset($a_values['const_name']) && $a_values['const_name'] == '') {
+            unset($a_values['const_name']);
+        }
+        if (isset($a_values['const_immutable']) && !is_numeric($a_values['const_immutable'])) {
+            unset($a_values['const_immutable']);
+        }
         try {
             $results = $this->read([$this->primary_index_name => $a_values[$this->primary_index_name]]);
-            if ($results[0]['const_immutable'] == 1) {
-                unset($a_values['const_name']);
-            }
         }
         catch (DbException $e) {
             $this->error_message = $e->errorMessage();
-            return false;
+            throw new DbException($this->error_message, 300, $e);
         }
-        return $this->genericUpdate($a_values);
+        if ($results[0]['const_immutable'] == 1) {
+            unset($a_values['const_name']);
+            unset($a_values['const_value']);
+            if (isset($a_values['const_immutable'])) {
+                switch ($a_values['const_immutable']) {
+                    case 0:
+                    case 1:
+                        break;
+                    default:
+                        $this->error_message = 'You must change the record to not immutable to change other values.';
+                        throw new DbException($this->error_message, 320);
+
+                }
+            }
+        }
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Generic deletes a record based on the id provided.
      * @param int $const_id
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function delete($const_id = -1)
     {
-        if ($const_id == -1) { return false; }
-        $search_results = $this->read([$this->primary_index_name => $const_id], ['a_fields' => ['const_immutable']]);
-        if (isset($search_results[0]) && $search_results[0]['const_immutable'] == 1) {
-            $this->error_message = 'Sorry, that constant can not be deleted.';
-            throw new DbException($this->error_message, 430);
+        if ($const_id == -1) {
+            throw new DbException('Missing the id to delete.', 420);
         }
-        return $this->genericDelete($const_id);
+        $find_this = [$this->primary_index_name => $const_id];
+        $a_params  = ['a_fields' => ['const_immutable']];
+        try {
+            $search_results = $this->read($find_this, $a_params);
+        }
+        catch (DbException $e) {
+            throw new DbException('Unable to find that record', 410, $e);
+        }
+        if (empty($search_results)) {
+            $this->error_message = 'That record does not exist';
+            throw new DbException($this->error_message, 410);
+        }
+        if (!isset($search_results[0]['const_immutable'])) {
+            $this->error_message = 'It can not be determined if the constant is immutable.';
+            throw new DbException($this->error_message, 440);
+        }
+        if ($search_results[0]['const_immutable'] == 0) {
+            try {
+                return $this->genericDelete($const_id);
+            }
+            catch (DbException $e) {
+                throw new DbException($e->errorMessage(), $e->getCode());
+            }
+        }
+        else {
+            $this->error_message = 'Sorry, that constant can not be deleted.';
+            throw new DbException($this->error_message, 440);
+        }
     }
 
     # Specialized CRUD methods #
+
     /**
      * Creates all the constants based on the fallback constants file.
      * @pre the fallback_constants_array.php file exists and has the desired constants.
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function createNewConstants()
     {
@@ -191,6 +253,7 @@ class ConstantsModel implements ModelInterface
     /**
      * Creates the database table to store the constants.
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function createTable()
     {
@@ -268,26 +331,26 @@ class ConstantsModel implements ModelInterface
     /**
      * Create the records in the constants table.
      * @param array $a_constants must have at least one record.
-     * array is in the form of<code>
-     * [
-     *     [
-     *         'const_name_value,
-     *         'const_value_value',
-     *         'const_immutable_value'
-     *     ],
-     *     [
-     *         'const_name_value,
-     *         'const_value_value',
-     *         'const_immutable_value'
-     *     ]
-     * ]</code>
+     *                           array is in the form of<code>
+     *                           [
+     *                           [
+     *                           'const_name_value,
+     *                           'const_value_value',
+     *                           'const_immutable_value'
+     *                           ],
+     *                           [
+     *                           'const_name_value,
+     *                           'const_value_value',
+     *                           'const_immutable_value'
+     *                           ]
+     *                           ]</code>
      * @return bool
-     * @throws Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function createConstantRecords(array $a_constants = array())
     {
-        if ($a_constants == array()) { 
-            throw new DbException('Missing values', 70); 
+        if ($a_constants == array()) {
+            throw new DbException('Missing values', 70);
         }
         $query = "
             INSERT INTO {$this->db_table} (const_name, const_value, const_immutable)
@@ -296,13 +359,14 @@ class ConstantsModel implements ModelInterface
             return $this->o_db->insert($query, $a_constants, "{$this->db_table}");
         }
         catch (DbException $e) {
-            throw new DbException($e->errorMessage(), $e->getCode(), $e);    
-        }        
+            throw new DbException($e->errorMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
      * Selects the constants records.
      * @return array|bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function selectConstantsList()
     {
@@ -310,7 +374,7 @@ class ConstantsModel implements ModelInterface
             return $this->read();
         }
         catch (DbException $e) {
-            throw new DbException($e->errorMessage, $e->code, $e);
+            throw new DbException($e->errorMessage(), $e->getCode(), $e);
         }
     }
 

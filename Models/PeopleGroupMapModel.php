@@ -23,7 +23,7 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Exceptions\DbException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -56,46 +56,31 @@ class PeopleGroupMapModel implements ModelInterface
      *                        [['people_id' => 1, 'group_id' => 1], ['people_id' => 2, 'group_id' => 1]]
      * @return array|bool
      */
-    public function create(array $a_values = array())
+    public function create(array $a_values = [])
     {
-        if ($a_values == array()) { return false; }
-        $a_required_keys = array(
+        if (empty($a_values)) {
+            throw new DbException('Missing required values.', 120);
+        }
+        $a_required_keys = [
             'people_id',
             'group_id'
-        );
-        if (Arrays::isArrayOfAssocArrays($a_values)) {
-            foreach ($a_values as $key => $a_pgm) {
-                if (!Arrays::hasRequiredKeys($a_pgm, $a_required_keys)) {
-                    return false;
-                }
-                else {
-                    $a_values[$key] = Arrays::removeUndesiredPairs($a_pgm, $a_required_keys);
-                }
-            }
-        }
-        else {
-            if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-                return false;
-            }
-            else {
-                $a_values = Arrays::removeUndesiredPairs($a_values, $a_required_keys);
-            }
-        }
-        $sql = "
-            INSERT INTO {$this->db_table} (people_id, group_id)
-            VALUES (:people_id, :group_id)
-        ";
-        $a_table_info = [
-            'table_name'  => $this->db_table,
-            'column_name' => 'pgm_id'
         ];
-        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
-            $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return $ids;
+        $a_psql = [
+            'table_name'  => $this->db_table,
+            'column_name' => $this->primary_index_name
+        ];
+        $a_params = [
+            'a_required_keys' => $a_required_keys,
+            'a_field_names'   => $this->a_db_fields,
+            'a_psql'          => $a_psql
+        ];
+        try {
+            return $this->genericCreate($a_values, $a_params);
         }
-        else {
-            return false;
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            $code = $e->getCode();
+            throw new DbException($message, $code);
         }
     }
 
@@ -193,13 +178,4 @@ class PeopleGroupMapModel implements ModelInterface
         return $this->o_db->delete($sql, array(':people_id' => $people_id), true);
     }
 
-    /**
-     * Returns error message.
-     * Overrides the trait method.
-     * @return string
-     */
-    public function getErrorMessage()
-    {
-        return $this->o_db->retrieveFormatedSqlErrorMessage();
-    }
 }

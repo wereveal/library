@@ -43,7 +43,7 @@
  */
 namespace Ritc\Library\Traits;
 
-use Ritc\Library\Basic\DbException;
+use Ritc\Library\Exceptions\DbException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Services\DbModel;
 
@@ -293,7 +293,6 @@ SQL;
      *                          If array, it passes the values to the genericDeleteMultiple. This provided backwards
      *                          compatibility when genericDelete only allowed int.
      * @return bool
-     * @throws \Ritc\Library\Basic\DbException
      */
     protected function genericDelete($record_ids = -1)
     {
@@ -315,8 +314,9 @@ SQL;
 DELETE FROM {$this->db_table}
 WHERE {$piname} = :{$piname}
 SQL;
+        $delete_this = [':' . $piname => $record_ids];
         try {
-            return $this->o_db->delete($sql, [':' . $piname => $record_ids], true);
+            return $this->o_db->delete($sql, $delete_this, true);
         }
         catch (DbException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
@@ -541,6 +541,50 @@ SQL;
             }
         }
         return $where;
+    }
+
+    /**
+     * Massages values used to update record(s).
+     * @param array $a_values
+     * @return array|bool
+     */
+    private function fixUpdateValues(array $a_values = [], $immutable_field = '', array $a_immutable_fields = [])
+    {
+        if (Arrays::isArrayOfAssocArrays($a_values)) {
+            foreach ($a_values as $key => $a_record) {
+                $results = $this->fixUpdateValues($a_record);
+                if ($results === false) {
+                    return false;
+                }
+                $a_values[$key] = $results;
+            }
+        }
+        else {
+            if (
+                !isset($a_values[$this->primary_index_name])
+                || $a_values[$this->primary_index_name] == ''
+                || (!is_numeric($a_values[$this->primary_index_name]))
+            ) {
+                return false;
+            }
+            else {
+                $primary_id = $a_values[$this->primary_index_name];
+                try {
+                    $a_results = $this->readById($primary_id);
+                    if (isset($a_results[0][$immutable_field]) && $a_results[0][$immutable_field] == 1) {
+                        foreach ($a_immutable_fields as $field) {
+                            unset($a_values[$field]);
+                        }
+                    }
+                }
+                catch (DbException $e) {
+                    $this->error_message = $e->errorMessage();
+                    return false;
+                }
+
+            }
+        }
+        return $a_values;
     }
 
     /**

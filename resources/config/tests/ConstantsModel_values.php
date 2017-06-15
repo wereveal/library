@@ -67,7 +67,62 @@ return [
         ]
     ],
     'update' => [
+        'no_values' => [
+            'test_values'      => [],
+            'expected_results' => false
+        ],
+        'const_immutable_alpha' => [
+            'test_values' => [
+                'const_name'      => 'FRED',
+                'const_immutable' => 'will this work?'
+            ],
+            'expected_results' => false
+        ],
+        'name_immutable' => [
+            'test_values' => [
+                'const_name'      => 'PHREDRIK',
+                'const_value'     => '',
+            ],
+            'expected_results' => false
+        ],
+        'immutable_change_false' => [
+            'test_values' => [
+                'const_name'      => 'phred',
+                'const_value'     => 'phred phlinstone',
+                'const_immutable' => 0
+            ],
+            'expected_results' => true
+        ],
+        'name_value_change' => [
+            'test_values' => [
+                'const_name'      => 'PHREDRICK',
+                'const_value'     => 'Phredrick Flinstone'
+            ],
+            'expected_results' => true
+        ],
+        'immutable_change_true' => [
+            'test_values' => [
+                'const_immutable' => 1
+            ],
+            'expected_results' => true
+        ]
     ],
     'delete' => [
+        'still_immutable' => [
+            'test_value'       => 999,
+            'expected_results' => false
+        ],
+        'invalid_id' => [
+            'test_value'       => 999,
+            'expected_results' => false
+        ],
+        'no_values' => [
+            'test_value'       => 999,
+            'expected_results' => false
+        ],
+        'not_immutable' => [
+            'test_value'       => 999,
+            'expected_results' => true
+        ]
     ]
 ];

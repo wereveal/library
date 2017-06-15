@@ -1,57 +1,121 @@
 <?php
 return [
     'read' => [
-        'test1' => [
+        'good_values' => [
             'test_values' => [],
-            'expected_results' => []
+            'expected_results' => true
         ],
-        'test2' => [
+        'empty_values' => [
             'test_values' => [],
-            'expected_results' => []
+            'expected_results' => true
         ],
-        'test3' => [
+        'bad_values' => [
             'test_values' => [],
-            'expected_results' => []
+            'expected_results' => false
         ]
     ],
     'create' => [
-        'test1' => [
+        'missing_values' => [
             'test_values' => [],
-            'expected_results' => []
+            'expected_results' => false
         ],
-        'test2' => [
+        'bad_values' => [
             'test_values' => [],
-            'expected_results' => []
+            'expected_results' => false
         ],
-        'test3' => [
+        'good_values' => [
             'test_values' => [],
-            'expected_results' => []
+            'expected_results' => true
+        ],
+        'duplicate_values' => [
+            'test_values' => [],
+            'expected_results' => false
+        ],
+    ],
+    'readById' => [
+        'good_values' => [
+            'test_values' => [],
+            'expected_results' => true
+        ],
+        'empty_values' => [
+            'test_values' => [],
+            'expected_results' => true
+        ],
+        'bad_values' => [
+            'test_values' => [],
+            'expected_results' => false
+        ]
+    ],
+    'readByName' => [
+        'good_values' => [
+            'test_values' => [],
+            'expected_results' => true
+        ],
+        'empty_values' => [
+            'test_values' => [],
+            'expected_results' => true
+        ],
+        'bad_values' => [
+            'test_values' => [],
+            'expected_results' => false
         ]
     ],
     'update' => [
-        'test1' => [
+        'immutable_on' => [
             'test_values' => [],
             'expected_results' => []
         ],
-        'test2' => [
+        'immutable_off' => [
             'test_values' => [],
             'expected_results' => []
         ],
-        'test3' => [
+        'missing_values' => [
             'test_values' => [],
             'expected_results' => []
         ]
     ],
+    'isValidGroupId' => [
+        'valid_id' => [
+            'test_value' => 1,
+            'expected_results' => true
+        ],
+        'invalid_id' => [
+            'test_value' => 999,
+            'expected_results' => false
+        ]
+    ],
     'delete' => [
-        'test1' => [
+        'immutable_on' => [
             'test_values' => [],
             'expected_results' => []
         ],
-        'test2' => [
+        'missing_id' => [
             'test_values' => [],
             'expected_results' => []
         ],
-        'test3' => [
+        'bad_id' => [
+            'test_values' => [],
+            'expected_results' => []
+        ],
+        'immutable_off' => [
+            'test_values' => [],
+            'expected_results' => []
+        ]
+    ],
+    'deleteWithRelated' => [
+        'immutable_on' => [
+            'test_values' => [],
+            'expected_results' => []
+        ],
+        'missing_id' => [
+            'test_values' => [],
+            'expected_results' => []
+        ],
+        'bad_id' => [
+            'test_values' => [],
+            'expected_results' => []
+        ],
+        'immutable_off' => [
             'test_values' => [],
             'expected_results' => []
         ]

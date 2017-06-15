@@ -6,14 +6,16 @@
  * @file      ConstantsModelTester.php
  * @namespace Ritc\Library\Tests
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-03-05 10:44:05
+ * @version   1.0.0
+ * @date      2017-06-14 16:27:15
  * @note Change Log
+ * - v1.0.0         - Initial working version        - 2017-06-14 wer
  * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
  * - v0.1.0         - Initial version                - unknown wer
  */
 namespace Ritc\Library\Tests;
 
+use Ritc\Library\Exceptions\DbException;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -38,8 +40,9 @@ class ConstantsModelTester
     {
         $this->setupElog($o_di);
         $a_test_params = [
-            'namespace'  => 'Ritc\Library\Models',
-            'class_name' => 'ConstantsModel'
+            'namespace'     => 'Ritc\Library\Models',
+            'class_name'    => 'ConstantsModel',
+            'instance_name' => 'o_model'
         ];
         $this->setupTests($a_test_params);
         /** @var \Ritc\Library\Services\DbModel $o_db */
@@ -55,7 +58,11 @@ class ConstantsModelTester
     public function createTester()
     {
         $test_name = $this->shortenName(__METHOD__);
-        return $this->genericDbTest($test_name, $this->a_test_values[$test_name]);
+        $a_names = [
+            'instance' => 'o_model',
+            'test'     => $test_name
+        ];
+        return $this->genericDbTest($a_names, $this->a_test_values[$test_name]);
     }
 
     /**
@@ -64,7 +71,11 @@ class ConstantsModelTester
     public function readTester()
     {
         $test_name = $this->shortenName(__METHOD__);
-        return $this->genericDbTest($test_name, $this->a_test_values[$test_name]);
+        $a_names = [
+            'instance' => 'o_model',
+            'test'     => $test_name
+        ];
+        return $this->genericDbTest($a_names, $this->a_test_values[$test_name]);
     }
 
     /**
@@ -73,7 +84,21 @@ class ConstantsModelTester
     public function updateTester()
     {
         $test_name = $this->shortenName(__METHOD__);
-        return $this->genericDbTest($test_name, $this->a_test_values[$test_name]);
+        if (empty($this->new_id)) {
+            return 'failed';
+        }
+        else {
+            $a_values = [];
+            foreach ($this->a_test_values[$test_name] as $key => $a_test_values) {
+                $a_test_values['test_values']['const_id'] = $this->new_id;
+                $a_values[$key] = $a_test_values;
+            }
+        }
+        $a_names = [
+            'instance' => 'o_model',
+            'test'     => $test_name
+        ];
+        return $this->genericDbTest($a_names, $a_values);
     }
 
     /**
@@ -82,7 +107,69 @@ class ConstantsModelTester
     public function deleteTester()
     {
         $test_name = $this->shortenName(__METHOD__);
-        return $this->genericDbTest($test_name, $this->a_test_values[$test_name]);
+        if (empty($this->a_test_values[$test_name])) {
+            return 'skipped';
+        }
+        $a_names = [
+            'instance' => 'o_model',
+            'test'     => $test_name
+        ];
+        $good_results = true;
+        if (empty($this->new_id)) {
+            if (empty($_SESSION['created_id'])) {
+                return 'failed';
+            }
+            else {
+                $new_id = $_SESSION['created_id'];
+            }
+        }
+        else {
+            $new_id = $this->new_id;
+        }
+        foreach ($this->a_test_values[$test_name] as $subtest => $a_test_values) {
+            $a_names['subtest'] = $subtest;
+            switch ($subtest) {
+                case 'no_values':
+                    $a_test_values['test_value'] = '';
+                    break;
+                case 'still_immutable':
+                case 'not_immutable':
+                    $a_test_values['test_value'] = $new_id;
+                    break;
+                case 'invalid_id':
+                default:
+                    // use the given test value.
+            }
+            if ($subtest == 'not_immutable') {
+                try {
+                    $results = $this->o_model->update(['const_id' => $new_id, 'const_immutable' => 0]);
+                }
+                catch (DbException $e) {
+                    $results = false;
+                }
+                if ($results !== false) {
+                    try {
+                        $results = $this->genericDbSubTest($a_names, $a_test_values);
+                        if ($results) {
+                            $_SESSION['created_id'] = -1;
+                            $this->new_id = -1;
+                        }
+                    }
+                    catch (DbException $e) {
+                        $results = false;
+                    }
+
+                }
+            }
+            else {
+                $results = $this->genericDbSubTest($a_names, $a_test_values);
+            }
+            $good_results = $good_results && $results;
+        }
+        if ($good_results) {
+            return 'passed';
+        }
+        return 'failed';
     }
 
     /**
@@ -91,6 +178,10 @@ class ConstantsModelTester
     public function makeValidNameTester()
     {
         $test_name = $this->shortenName(__METHOD__);
-        return $this->genericTest('o_model', $test_name, $this->a_test_values[$test_name]);
+        $a_names = [
+            'instance' => 'o_model',
+            'test'     => $test_name
+        ];
+        return $this->genericTest($a_names, $this->a_test_values[$test_name]);
     }
 }

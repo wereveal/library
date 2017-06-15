@@ -24,7 +24,6 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\DbException;
-use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -52,140 +51,80 @@ class GroupsModel implements ModelInterface
      * Generic create function to create a single record.
      * @param array $a_values required
      * @return bool
-     * @throws Ritc\Library\Exceptions\DbException
-     * @todo switch to use genericCreate
-     * @todo switch to use DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function create(array $a_values = array())
     {
-        $a_required_keys = array(
+        $a_required_keys = [
             'group_name',
             'group_description',
             'group_auth_level',
             'group_immutable'
-        );
-        $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, true);
-        if (isset($a_values['group_auth_level']) && ($a_values['group_auth_level'] == '' || $a_values['group_auth_level'] > 10)) {
-            $a_values['group_auth_level'] = 0;
-        }
-        if (!isset($a_values['group_immutable']) || $a_values['group_immutable'] == '' || $a_values['group_immutable'] > 1) {
-            $a_values['group_immutable'] = 0;
-        }
-        $a_required_keys = ['group_name', 'group_description'];
-        if (Arrays::hasBlankValues($a_values, $a_required_keys)) {
-            $missing_info = '';
-            foreach ($a_required_keys as $key_name) {
-                if ($a_values[$key_name] == '') {
-                    switch ($key_name) {
-                        case 'group_name':
-                            $missing_info .= " Name";
-                            break;
-                        case 'group_description':
-                            $missing_info .= " Description";
-                            break;
-                        default:
-                            $missing_info .= ' Unknown Error';
-                    }
-                }
-            }
-            $this->error_message = 'Missing required information:' . $missing_info;
-            return false;
-        }
-        $sql = "
-            INSERT INTO {$this->db_table}
-                (group_name, group_description, group_auth_level, group_immutable)
-            VALUES
-                (:group_name, :group_description, :group_auth_level, :group_immutable)
-        ";
-        $a_table_info = [
-            'table_name'  => $this->db_table,
-            'column_name' => 'group_id'
         ];
-        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
-            $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            return $ids[0];
+        $a_psql = [
+            'table_name'  => $this->db_table,
+            'column_name' => $this->primary_index_name
+        ];
+        $a_params = [
+            'a_required_keys' => $a_required_keys,
+            'a_field_names'   => $this->a_db_fields,
+            'a_psql'          => $a_psql
+        ];
+        try {
+            return $this->genericCreate($a_values, $a_params);
         }
-        else {
-            return false;
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            $code = $e->getCode();
+            throw new DbException($message, $code);
         }
     }
 
     /**
-     * @param array $a_search_values
+     * @param array $a_search_for
      * @param array $a_search_params
      * @return mixed
-     * @throws Ritc\Library\Exceptions\DbException
-     * @todo switch to use genericRead 
-     * @todo switch to use DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
-    public function read(array $a_search_values = array(), array $a_search_params = array())
+    public function read(array $a_search_for = array(), array $a_search_params = array())
     {
-        if (count($a_search_values) > 0) {
-            $a_search_params = $a_search_params == array()
-                ? array('order_by' => 'group_name')
-                : $a_search_params;
-            $a_allowed_keys = array(
-                'group_id',
-                'group_name',
-                'group_auth_level',
-                'group_immutable'
-            );
-            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
+        $a_parameters = [
+            'table_name'     => $this->db_table,
+            'a_search_for'   => $a_search_for,
+            'a_allowed_keys' => $this->a_db_fields,
+            'order_by'       => 'group_name ASC'
+        ];
+        $a_parameters = array_merge($a_parameters, $a_search_params);
+        try {
+            return $this->genericRead($a_parameters);
         }
-        elseif (count($a_search_params) > 0) {
-            $where = $this->buildSqlWhere(array(), $a_search_params);
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            $code = $e->getCode();
+            throw new DbException($message, $code);
         }
-        else {
-            $where = " ORDER BY group_name";
-        }
-        $sql = "
-            SELECT group_id, group_name, group_description, group_auth_level, group_immutable
-            FROM {$this->db_table}
-            {$where}
-        ";
-        return $this->o_db->search($sql, $a_search_values);
     }
 
     /**
      * Updates the group record
      * @param array $a_values
      * @return bool
-     * @throws Ritc\Library\Exceptions\DbException
-     * @todo switch to use genericUpdate
-     * @todo switch to use DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function update(array $a_values = array())
     {
-        $a_required_keys = ['group_id'];
-        $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, false);
-        if (!isset($a_values['group_immutable']) || $a_values['group_immutable'] == '' || $a_values['group_immutable'] > 1 ) {
-            $a_values['group_immutable'] = 0;
+        $a_values = $this->fixUpdateValues($a_values, 'group_immutable', ['group_name']);
+        if ($a_values === false) {
+            throw new DbException('Missing Values', 320);
         }
-        if (Arrays::hasBlankValues($a_values, $a_required_keys)) {
-            $missing_info = '';
-            foreach ($a_required_keys as $key_name) {
-                if ($a_values[$key_name] == '') {
-                    $missing_info = ' ' . $key_name;
-                }
-            }
-            $this->error_message = 'Missing required information:' . $missing_info;
-            return false;
+        try {
+            return $this->genericUpdate($a_values);
         }
-        if ($a_values['group_name'] == '') {
-            unset($a_values['group_name']);
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            $code = $e->getCode();
+            throw new DbException($message, $code);
         }
-        if ($a_values['group_description'] == '') {
-            unset($a_values['group_description']);
-        }
-        $set_sql = $this->buildSqlSet($a_values, ['group_id']);
-        $sql = "
-            UPDATE {$this->db_table}
-            {$set_sql}
-            WHERE group_id = :group_id
-        ";
-        return $this->o_db->update($sql, $a_values, true);
     }
 
     /**
@@ -193,51 +132,107 @@ class GroupsModel implements ModelInterface
      * NOTE: this could leave orphaned records in the user_group_map table and group_role_map table
      * if the database isn't set up for relations. If not sure, or want more control, use the
      * deleteWithRelated method.
-     * @param int $group_id
+     * @param int|array $group_id
      * @return bool
-     * @throws Ritc\Library\Exceptions\DbException
-     * @todo switch to use genericDelete
-     * @todo switch to use DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function delete($group_id = -1)
     {
-        if ($group_id == -1) { return false; }
-        $sql = "
-            DELETE FROM {$this->db_table}
-            WHERE group_id = :group_id
-        ";
-        return $this->o_db->delete($sql, array(':group_id' => $group_id), true);
+        if ($group_id == -1) {
+            throw new DbException('Missing required value.', 420);
+        }
+        if (is_array($group_id)) {
+            $a_ids = $group_id;
+        }
+        else {
+            $a_ids = [$group_id];
+        }
+        try {
+            return $this->genericDeleteMultiple($a_ids);
+        }
+        catch (DbException $e) {
+            throw new DbException('Unable to delete the record', 400);
+        }
     }
 
     /**
      * Deletes related records as well as main group record.
-     * @param int $group_id
+     * @param int|array $group_id
      * @return bool
-     * @throws Ritc\Library\Exceptions\DbException
-     * @todo switch to use genericDelete
-     * @todo switch to use DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function deleteWithRelated($group_id = -1)
     {
-        if ($group_id == -1) { return false; }
+        if ($group_id == -1 || empty($group_id)) {
+            throw new DbException('Missing required value(s)', 420);
+        }
+        try {
+            $this->o_db->startTransaction();
+        }
+        catch (DbException $e) {
+            throw new DbException('Unable to start the transaction.', 30, $e);
+        }
         $o_ugm = new PeopleGroupMapModel($this->o_db);
-        if ($this->o_db->startTransaction()) {
-            if ($o_ugm->deleteByGroupId($group_id)) {
-               if ($this->delete($group_id)) {
-                    if ($this->o_db->commitTransaction() === false) {
-                        $this->o_db->rollbackTransaction();
-                        $this->error_message = $this->o_db->getSqlErrorMessage();
-                        return false;
-                    }
-                    else {
-                        return true;
-                    }
-                }
+        $o_people = new PeopleModel($this->o_db);
+        if (is_array($group_id)) {
+            try {
+                $results = $o_ugm->read($group_id);
+            }
+            catch (DbException $e) {
+                throw new DbException('Could not read the map records', 400);
             }
         }
-        $this->error_message = $this->o_db->getSqlErrorMessage();
-        $this->o_db->rollbackTransaction();
-        return false;
+        else {
+            try {
+                $results = $o_ugm->read(['group_id' => $group_id]);
+            }
+            catch (DbException $e) {
+                throw new DbException('Could not read the map records.', 400);
+            }
+        }
+        $a_people_ids = [];
+        $a_map_ids = [];
+        foreach ($results as $a_record) {
+            $a_people_ids[] = $a_record['people_id'];
+            $a_map_ids[] = $a_record['pgm_id'];
+        }
+        try {
+            $results = $o_people->delete($a_people_ids);
+            if (!$results) {
+                throw new DbException('Could not delete the people records.', 400);
+            }
+            try {
+                $results = $o_ugm->delete($a_map_ids);
+                if (!$results) {
+                    throw new DbException('Could not delete the people group map records.', 400);
+                }
+                try {
+                    $results = $this->delete($group_id);
+                    if ($results) {
+                        try {
+                            $this->o_db->commitTransaction();
+                        }
+                        catch (DbException $e) {
+                            $this->o_db->rollbackTransaction();
+                            $this->error_message = $this->o_db->getSqlErrorMessage();
+                            throw new DbException($this->error_message, 400);
+                        }
+                    }
+                }
+                catch (DbException $e) {
+                    throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                }
+            }
+            catch (DbException $e) {
+                throw new DbException($e->errorMessage(), $e->getCode(), $e);
+            }
+        }
+        catch (DbException $e) {
+            $this->o_db->rollbackTransaction();
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            throw new DbException($this->error_message, 400);
+        }
+        return true;
     }
 
     ### Shortcuts ###
@@ -245,25 +240,22 @@ class GroupsModel implements ModelInterface
      * Returns a record of the group specified by id.
      * @param int $group_id
      * @return array|bool
-     * @throws Ritc\Library\Exceptions\DbException
-     * @todo switch to use DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function readById($group_id = -1)
     {
         if (is_numeric($group_id) && $group_id > 0) {
             try {
+                $results = $this->read(array('group_id' => $group_id));
+                return $results[0];
             }
-            catch () {
-            }
-            $results = $this->read(array('group_id' => $group_id));
-            if (empty($results[0])) {
+            catch (DbException $e) {
                 $this->error_message = "Unable to find a group with the group id {$group_id}";
+                throw new DbException($this->error_message,210, $e);
             }
-            return $results[0];
-
         }
         else {
-            throw new DbException('Missing group id', 220); 
+            throw new DbException('Missing group id', 220);
         }
     }
 
@@ -271,12 +263,12 @@ class GroupsModel implements ModelInterface
      * Returns a record of the group specified by name.
      * @param string $group_name
      * @return array|bool
-     * @throws Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function readByName($group_name = '')
     {
-        if ($group_name == '') { 
-            throw new DbException('Missing group name', 220); 
+        if ($group_name == '') {
+            throw new DbException('Missing group name', 220);
         }
         try {
             $results = $this->read(array('group_name' => $group_name));
@@ -284,27 +276,27 @@ class GroupsModel implements ModelInterface
                 return $results[0];
             }
             $this->error_message = 'Unable to read the group by ' . $group_name;
-            throw new DbException($this-error_message, 200);
+            throw new DbException($this->error_message, 200);
         }
         catch (DbException $e) {
             $this->error_message = 'Unable to read the group by ' . $group_name;
-            throw new DbException($this-error_message, 200);
-        } 
-        
+            throw new DbException($this->error_message, 200);
+        }
+
     }
 
     /**
      * Checks to see if the id is a valid group id.
      * @param int $group_id required
-     * @return bool 
-      */
+     * @return bool
+     */
     public function isValidGroupId($group_id = -1)
     {
         if (is_numeric($group_id) && $group_id > 0) {
             try {
-                $a_results = $this->read(array('group_id' => $group_id)));
+                $a_results = $this->read(array('group_id' => $group_id));
                 if (!empty($a_results)) {
-                    return true;        
+                    return true;
                 }
             }
             catch (DbException $e) {

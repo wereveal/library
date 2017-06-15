@@ -17,6 +17,8 @@
  *    @ingroup ritc_library
  *    @defgroup lib_entities    Entities    - Defines the tables in the database.
  *    @ingroup ritc_library
+ *    @defgroup lib_exceptions  Exceptions  - Defines classes that extend the \Exception class
+ *    @ingroup ritc_library
  *    @defgroup lib_factories   Factories   - Classes that create objects.
  *    @ingroup ritc_library
  *    @defgroup lib_helper      Helpers     - Classes that do helper things.

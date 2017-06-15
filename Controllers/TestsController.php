@@ -62,32 +62,43 @@ class TestsController
         switch ($this->form_action) {
             case 'ConstantsModel':
                 $o_test = new ConstantsModelTester($this->o_di);
-                break;
-            case 'NavgroupsModel':
-                $o_test = new NavgroupsModelTester($this->o_di);
-                break;
-            case 'NavigationModel':
-                $o_test = new NavigationModelTester($this->o_di);
-                break;
-            case 'NavNgMapModel':
-                $o_test = new NavNgMapModelTester($this->o_di);
-                break;
-            case 'PageModel':
-                $o_test = new PageModelTester($this->o_di);
-                break;
-            case 'PeopleModel':
-                $o_test = new PeopleModelTester($this->o_di);
+                $clean_up_db = true;
                 break;
             case 'UrlsModel':
                 $o_test = new UrlsModelTester($this->o_di);
+                $clean_up_db = true;
+                break;
+            case 'NavgroupsModel':
+                $o_test = new NavgroupsModelTester($this->o_di);
+                $clean_up_db = true;
+                break;
+            case 'NavigationModel':
+                $o_test = new NavigationModelTester($this->o_di);
+                $clean_up_db = true;
+                break;
+            case 'NavNgMapModel':
+                $o_test = new NavNgMapModelTester($this->o_di);
+                $clean_up_db = true;
+                break;
+            case 'PageModel':
+                $o_test = new PageModelTester($this->o_di);
+                $clean_up_db = true;
+                break;
+            case 'PeopleModel':
+                $o_test = new PeopleModelTester($this->o_di);
+                $clean_up_db = true;
                 break;
             case 'GroupsModel':
             case 'Login':
             case 'RoutesModel':
             default:
+                $clean_up_db = false;
                 return $this->o_view->renderList();
         }
         $a_test_results = $o_test->runTests();
+        if ($clean_up_db) {
+            $o_test->cleanupDbTests();
+        }
         return $this->o_view->renderResults($a_test_results);
     }
 }
