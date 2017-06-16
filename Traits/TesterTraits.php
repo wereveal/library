@@ -36,7 +36,7 @@
  */
 namespace Ritc\Library\Traits;
 
-use Ritc\Library\Exceptions\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\LocateFile;
 
 /**
@@ -236,7 +236,7 @@ trait TesterTraits
     /**
      * Deletes a test record if the id exists.
      * @param string $instance
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function cleanupDbTests($instance = '') {
         if ($this->new_id > 0) {
@@ -257,7 +257,7 @@ trait TesterTraits
                 $_SESSION['created_id'] = -1;
                 $this->new_id = -1;
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $_SESSION['created_id'] = -1;
                 $this->new_id = -1;
             }
@@ -398,7 +398,7 @@ trait TesterTraits
                 $good_results = false;
             }
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             if ($expected_results == false) {
                 $this->setSubPassed($test, $subtest);
             }
@@ -461,7 +461,7 @@ trait TesterTraits
                 return 'failed';
             }
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             return $expected_results
                 ? 'failed'
                 : 'passed';

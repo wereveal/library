@@ -14,7 +14,7 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Basic\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Elog;
@@ -39,7 +39,7 @@ class TwigDirsModel implements ModelInterface
      * Create a record using the values provided.
      * @param array $a_values
      * @return bool
-     * @throws \Ritc\Library\Basic\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function create(array $a_values = [])
     {
@@ -59,10 +59,10 @@ class TwigDirsModel implements ModelInterface
         try {
             return $this->genericCreate($a_values, $a_params);
         }
-        catch (DbException $exception) {
+        catch (ModelException $exception) {
             $message = $exception->errorMessage();
             $code = $exception->getCode();
-            throw new DbException($message, $code);
+            throw new ModelException($message, $code);
         }
     }
 
@@ -128,7 +128,7 @@ class TwigDirsModel implements ModelInterface
      * Sets the records that are specified as default to not default.
      * @return bool
      */
-    private function clearDefaultPrefix()
+    public function clearDefaultPrefix()
     {
         $sql = "
             UPDATE {$this->db_table}

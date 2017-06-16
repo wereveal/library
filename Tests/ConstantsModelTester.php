@@ -15,7 +15,7 @@
  */
 namespace Ritc\Library\Tests;
 
-use Ritc\Library\Exceptions\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -144,7 +144,7 @@ class ConstantsModelTester
                 try {
                     $results = $this->o_model->update(['const_id' => $new_id, 'const_immutable' => 0]);
                 }
-                catch (DbException $e) {
+                catch (ModelException $e) {
                     $results = false;
                 }
                 if ($results !== false) {
@@ -155,7 +155,7 @@ class ConstantsModelTester
                             $this->new_id = -1;
                         }
                     }
-                    catch (DbException $e) {
+                    catch (ModelException $e) {
                         $results = false;
                     }
 

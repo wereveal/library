@@ -1,8 +1,8 @@
 <?php
 /**
- * @brief     Exceptions specific to database operations.
+ * @brief     Exceptions specific to database, application rules and business logic operations.
  * @ingroup   lib_exceptions
- * @file      Ritc/Library/Exceptions/DbException.php
+ * @file      Ritc/Library/Exceptions/ModelException.php
  * @namespace Ritc\Library\Exceptions
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0-alpha.0
@@ -15,11 +15,11 @@ namespace Ritc\Library\Exceptions;
 use Ritc\Library\Abstracts\CustomException;
 
 /**
- * Class DbException.
- * @class   DbException
+ * Class ModelException.
+ * @class   ModelException
  * @package Ritc\Library\Basic
  */
-class DbException extends CustomException
+class ModelException extends CustomException
 {
     /**
      * @return string
@@ -50,7 +50,7 @@ class DbException extends CustomException
     public function getCodeText($code = -1)
     {
         switch ($code) {
-            # Generic failures
+            # Generic Database failures
             case 10:
                 return 'Unable to do the database operation';
             case 20:
@@ -71,10 +71,6 @@ class DbException extends CustomException
                 return 'Missing required values';
             case 80:
                 return 'Invalid values.';
-            case 900:
-                return 'General Error, see error message';
-            case 999:
-                return 'Unknown Error.';
             # Create Codes
             case 100:
                 return 'Unable to create a new record: unspecified reason.';
@@ -109,7 +105,7 @@ class DbException extends CustomException
             case 340:
                 return 'Unable to update the record: a field being changed is immutable';
             case 350:
-                return 'Update not permitted.'
+                return 'Update not permitted.';
             # Delete codes
             case 400:
                 return 'Unable to delete the record.';
@@ -176,6 +172,17 @@ class DbException extends CustomException
                 return 'Unable to ALTER the view.';
             case 582:
                 return 'Unable to DROP the view.';
+            ### Business Logic Errors ###
+            case 600:
+                return 'General Business Logic Error.';
+            ### Application Rule Errors ###
+            case 700:
+                return 'General Application Rule Error.';
+            ### Generic Errors ###
+            case 900:
+                return 'General Error, see error message';
+            case 999:
+                return 'Unknown Error.';
             default:
                 return parent::getCodeText($code);
 

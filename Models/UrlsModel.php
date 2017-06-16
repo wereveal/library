@@ -16,7 +16,7 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Exceptions\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -44,7 +44,7 @@ class UrlsModel implements ModelInterface
      * Create a record using the values provided.
      * @param array $a_values
      * @return int
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function create(array $a_values = [])
     {
@@ -63,10 +63,10 @@ class UrlsModel implements ModelInterface
         try {
             return $this->genericCreate($a_values, $a_params);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
             $code = $e->getCode();
-            throw new DbException($message, $code);
+            throw new ModelException($message, $code);
         }
     }
 
@@ -75,7 +75,7 @@ class UrlsModel implements ModelInterface
      * @param array $a_search_for    key pairs of field name => field value
      * @param array $a_search_params \ref searchparams \ref readparams
      * @return array
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function read(array $a_search_for = [], array $a_search_params = [])
     {
@@ -89,10 +89,10 @@ class UrlsModel implements ModelInterface
         try {
             return $this->genericRead($a_parameters);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
             $code = $e->getCode();
-            throw new DbException($message, $code);
+            throw new ModelException($message, $code);
         }
     }
 
@@ -100,7 +100,7 @@ class UrlsModel implements ModelInterface
      * Update for a record using the values provided.
      * @param array $a_values
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update(array $a_values = [])
     {
@@ -108,15 +108,15 @@ class UrlsModel implements ModelInterface
             || $a_values[$this->primary_index_name] == ''
             || (!is_numeric($a_values[$this->primary_index_name]))
         ) {
-            throw new DbException('Missing required values.', 320);
+            throw new ModelException('Missing required values.', 320);
         }
         try {
             return $this->genericUpdate($a_values);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
             $code = $e->getCode();
-            throw new DbException($message, $code);
+            throw new ModelException($message, $code);
         }
     }
 
@@ -125,12 +125,12 @@ class UrlsModel implements ModelInterface
      * Checks to see if there are any other tables with relations.
      * @param int $id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($id = -1)
     {
         if ($id == -1) {
-            throw new DbException('Missing the id of the record to delete.', 420);
+            throw new ModelException('Missing the id of the record to delete.', 420);
         }
         $a_search_for = [$this->primary_index_name => $id];
         $a_search_params = [
@@ -140,13 +140,13 @@ class UrlsModel implements ModelInterface
         try {
             $search_results = $this->read($a_search_for, $a_search_params);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = 'Can not determine if the record is deletable.';
-            throw new DbException($message, 420);
+            throw new ModelException($message, 420);
         }
         if (isset($search_results[0]) && $search_results[0]['url_immutable'] == 1) {
             $this->error_message = 'Sorry, that url can not be deleted.';
-            throw new DbException($this->error_message, 440);
+            throw new ModelException($this->error_message, 440);
         }
         $a_search_for = ['url_id' => $id];
         try {
@@ -155,17 +155,17 @@ class UrlsModel implements ModelInterface
                 $search_results = $o_routes->read($a_search_for);
                 if (isset($search_results[0])) {
                     $this->error_message = 'Please change/delete the route that refers to this url first.';
-                    throw new DbException($this->error_message, 440);
+                    throw new ModelException($this->error_message, 440);
                 }
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $this->error_message = 'Please change/delete the route that refers to this url first.';
-                throw new DbException($this->error_message, 440);
+                throw new ModelException($this->error_message, 440);
             }
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
-            throw new DbException($message, 400);
+            throw new ModelException($message, 400);
         }
         try {
             $o_pages = new PageModel($this->o_db);
@@ -173,17 +173,17 @@ class UrlsModel implements ModelInterface
                 $search_results = $o_pages->read($a_search_for);
                 if (isset($search_results[0])) {
                     $this->error_message = 'Please change/delete the Page that refers to this url first.';
-                    throw new DbException($this->error_message, 440);
+                    throw new ModelException($this->error_message, 440);
                 }
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $message = $e->errorMessage();
-                throw new DbException($message, 400);
+                throw new ModelException($message, 400);
             }
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
-            throw new DbException($message, 400);
+            throw new ModelException($message, 400);
         }
         try {
             $o_nav = new NavigationModel($this->o_db);
@@ -191,25 +191,25 @@ class UrlsModel implements ModelInterface
                 $search_results = $o_nav->read($a_search_for);
                 if (isset($search_results[0])) {
                     $this->error_message = 'Please change/delete the Navigation record that refers to this url first.';
-                    throw new DbException($this->error_message, 440);
+                    throw new ModelException($this->error_message, 440);
                 }
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $message = $e->errorMessage();
-                throw new DbException($message, 400);
+                throw new ModelException($message, 400);
             }
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
-            throw new DbException($message, 400);
+            throw new ModelException($message, 400);
         }
         try {
             $results = $this->genericDelete($id);
             return $results;
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new DbException($this->error_message, 400);
+            throw new ModelException($this->error_message, 400);
         }
     }
 }

@@ -13,7 +13,7 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Basic\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -37,7 +37,7 @@ class TwigTemplatesModel implements ModelInterface
      * Create a record using the values provided.
      * @param array $a_values
      * @return bool
-     * @throws \Ritc\Library\Basic\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function create(array $a_values = [])
     {
@@ -57,10 +57,10 @@ class TwigTemplatesModel implements ModelInterface
         try {
             return $this->genericCreate($a_values, $a_params);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
             $code = $e->getCode();
-            throw new DbException($message, $code);
+            throw new ModelException($message, $code);
         }
 
     }

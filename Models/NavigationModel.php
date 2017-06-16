@@ -8,14 +8,14 @@
  * @version   1.0.0-alpha.3
  * @date      2017-06-15 16:06:48
  * @note <b>Change Log</b>
- * - v1.0.0-alpha.3 - Refactored to use DbException                 - 2017-06-15 wer
+ * - v1.0.0-alpha.3 - Refactored to use ModelException              - 2017-06-15 wer
  * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here         - 2017-05-09 wer
  * - v1.0.0-alpha.1 - Refactoring in DbUtilityTraits reflected here - 2017-01-27 wer
  * - v1.0.0-alpha.0 - Initial version                               - 02/24/2016 wer
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Exceptions\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -43,7 +43,7 @@ class NavigationModel implements ModelInterface
      * Generic create a record using the values provided.
      * @param array $a_values
      * @return string|bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function create(array $a_values)
     {
@@ -67,17 +67,17 @@ class NavigationModel implements ModelInterface
         try {
             $results = $this->genericCreate($a_values, $a_params);
         }
-        catch (DbException $exception) {
+        catch (ModelException $exception) {
             $message = $exception->errorMessage();
             $code = $exception->getCode();
-            throw new DbException($message, $code, $exception);
+            throw new ModelException($message, $code, $exception);
         }
         if (!empty($results)) {
             return $results[0];
         }
         else {
             $message = "A new record could not be created.";
-            throw new DbException($message, 100);
+            throw new ModelException($message, 100);
         }
     }
 
@@ -86,7 +86,7 @@ class NavigationModel implements ModelInterface
      * @param array $a_search_values optional, defaults to returning all records
      * @param array $a_search_params optional, defaults to ['order_by' => 'nav_parent_id ASC, nav_order ASC, nav_name ASC']
      * @return array
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
@@ -100,8 +100,8 @@ class NavigationModel implements ModelInterface
         try {
             return $this->genericRead($a_parameters);
         }
-        catch (DbException $e) {
-            throw new DbException($e->errorMessage(), $e->getCode());
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
     }
 
@@ -109,19 +109,19 @@ class NavigationModel implements ModelInterface
      * Generic update for a record using the values provided.
      * @param array $a_values Required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update(array $a_values = [])
     {
         if ($a_values == []) {
             $this->error_message = "No values supplied to update the record.";
-            throw new DbException($this->error_message, 320);
+            throw new ModelException($this->error_message, 320);
         }
         try {
             return $this->genericUpdate($a_values);
         }
-        catch (DbException $e) {
-            throw new DbException($e->errorMessage(), $e->getCode());
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
     }
 
@@ -129,19 +129,19 @@ class NavigationModel implements ModelInterface
      * Deletes a record based on the id provided.
      * @param int $nav_id Required.
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($nav_id = -1)
     {
         if ($nav_id == -1) {
             $this->error_message = 'Missing required nav id.';
-            throw new DbException($this->error_message, 420);
+            throw new ModelException($this->error_message, 420);
         }
         try {
             return $this->genericDelete($nav_id);
         }
-        catch (DbException $e) {
-            throw new DbException($e->errorMessage(), $e->getCode());
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
     }
 
@@ -150,48 +150,48 @@ class NavigationModel implements ModelInterface
      * It also deletes the relational records in the nav navgroup map table.
      * @param int $nav_id Required.
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function deleteWithMap($nav_id = -1)
     {
         if ($nav_id == -1) {
             $this->error_message = 'Missing required nav id.';
-            throw new DbException($this->error_message, 420);
+            throw new ModelException($this->error_message, 420);
         }
         /* Going to assume that the map isn't set for relations */
         $o_map = new NavNgMapModel($this->o_db);
         try {
             $this->o_db->startTransaction();
         }
-        catch (DbException $e) {
-            throw new DbException($e->errorMessage(), $e->getCode());
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
         try {
             $o_map->delete(-1, $nav_id); // -1 specifies delete all map records with the nav_id
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = $o_map->getErrorMessage();
             $this->o_db->rollbackTransaction();
-            throw new DbException($this->error_message, 400);
+            throw new ModelException($this->error_message, 400);
         }
         try {
             $this->genericDelete($nav_id);
             try {
                 $this->o_db->commitTransaction();
             }
-            catch (DbException $e) {
-                throw new DbException($e->errorMessage(), $e->getCode());
+            catch (ModelException $e) {
+                throw new ModelException($e->errorMessage(), $e->getCode());
             }
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
             try {
                 $this->o_db->rollbackTransaction();
-                throw new DbException($this->error_message, $e->getCode());
+                throw new ModelException($this->error_message, $e->getCode());
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $this->error_message = $e->errorMessage();
-                throw new DbException($e->errorMessage(), $e->getCode());
+                throw new ModelException($e->errorMessage(), $e->getCode());
             }
         }
         return true;
@@ -221,7 +221,7 @@ class NavigationModel implements ModelInterface
                 return true;
             }
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
         }
         return false;

@@ -8,14 +8,14 @@
  * @version   1.0.0-alpha.3
  * @date      2017-06-15 16:34:42
  * @note <b>Change Log</b>
- * - v1.0.0-alpha.3 - Refactored to use DbException                - 2017-06-15 wer
+ * - v1.0.0-alpha.3 - Refactored to use ModelException             - 2017-06-15 wer
  * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here        - 2017-05-09 wer
  * - v1.0.0-alpha.1 - Refactoring reflected here                   - 2017-01-27 wer
  * - v1.0.0-alpha.0 - Initial version                              - 02/25/2016 wer
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Exceptions\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -43,7 +43,7 @@ class NavNgMapModel implements ModelInterface
      * General create a record using the values provided.
      * @param array $a_values required assoc array or array of assoc array
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function create(array $a_values = [])
     {
@@ -61,8 +61,8 @@ class NavNgMapModel implements ModelInterface
         try {
             return $this->genericCreate($a_values, $a_params);
         }
-        catch (DbException $e) {
-            throw new DbException($e->errorMessage(), $e->getCode());
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
     }
 
@@ -72,7 +72,7 @@ class NavNgMapModel implements ModelInterface
      * @param array $a_search_values optional
      * @param array $a_search_params optional
      * @return array
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
@@ -86,8 +86,8 @@ class NavNgMapModel implements ModelInterface
         try {
             return $this->genericRead($a_parameters);
         }
-        catch (DbException $e) {
-            throw new DbException($e->errorMessage(), $e->getCode());
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
     }
 
@@ -98,11 +98,11 @@ class NavNgMapModel implements ModelInterface
      * To change, an INSERT/DELETE thing has to be done.
      * @param array $a_values
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update(array $a_values)
     {
-        throw new DbException('Update not allowed.', 350);
+        throw new ModelException('Update not allowed.', 350);
     }
 
     /**
@@ -112,7 +112,7 @@ class NavNgMapModel implements ModelInterface
      * @note The obvious needs to be noted. If only one param is provided, all the records
      *       for that id will be deleted. This may be an unwanted consequence.
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($ng_id = -1, $nav_id = -1)
     {
@@ -137,9 +137,9 @@ class NavNgMapModel implements ModelInterface
         try {
             return $this->o_db->delete($sql, $a_values, true);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = 'Unable to delete the record: ' . $this->o_db->getSqlErrorMessage();
-            throw new DbException($this->error_message, 400, $e);
+            throw new ModelException($this->error_message, 400, $e);
         }
     }
 
@@ -163,7 +163,7 @@ class NavNgMapModel implements ModelInterface
                     return true;
                 }
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $this->error_message = "The Navigation record does not exist.";
                 return true;
             }
@@ -177,7 +177,7 @@ class NavNgMapModel implements ModelInterface
                     return true;
                 }
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $this->error_message = "The Navgroup record does not exist.";
                 return true;
             }

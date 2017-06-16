@@ -11,7 +11,7 @@
  * @version   2.0.0
  * @date      2017-06-11 16:06:33
  * @note <b>Change Log</b>
- * - v2.0.0          - updated to use DbException                           - 2017-06-11 wer
+ * - v2.0.0          - updated to use ModelException                           - 2017-06-11 wer
  * - v1.4.4          - bug fix                                              - 2017-05-12 wer
  *                     With the introduction of the lib_prefix where it
  *                     could be different from the db_prefix, wasn't setting
@@ -43,7 +43,7 @@
  */
 namespace Ritc\Library\Traits;
 
-use Ritc\Library\Exceptions\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Services\DbModel;
 
@@ -92,7 +92,7 @@ trait DbUtilityTraits {
      *  ]
      * ] \endcode
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      * @see  \ref createparams
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = [])
@@ -121,7 +121,7 @@ trait DbUtilityTraits {
         // If a_field_names is empty, the sql cannot be built. Return false.
         if ($a_field_names == []) {
             $this->error_message = 'Missing required values';
-            throw new DbException($this->error_message, 130);
+            throw new ModelException($this->error_message, 130);
         }
 
         if (Arrays::isArrayOfAssocArrays($a_values)) {
@@ -129,7 +129,7 @@ trait DbUtilityTraits {
                 if (!Arrays::hasRequiredKeys($a_value, $a_required_keys)) {
                     $a_missing_keys = Arrays::findMissingKeys($a_required_keys, $a_value);
                     $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
-                    throw new DbException($this->error_message, 130);
+                    throw new ModelException($this->error_message, 130);
                 }
             }
             $sql_set = $this->buildSqlInsert($a_values[0], $a_field_names);
@@ -138,7 +138,7 @@ trait DbUtilityTraits {
             if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
                 $a_missing_keys = Arrays::findMissingKeys($a_required_keys, $a_values);
                 $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
-                throw new DbException($this->error_message, 130);
+                throw new ModelException($this->error_message, 130);
             }
             $sql_set = $this->buildSqlInsert($a_values, $a_field_names);
         }
@@ -154,13 +154,13 @@ SQL;
             $a_new_ids = $this->o_db->getNewIds();
             if (count($a_new_ids) < 1) {
                 $this->error_message = 'No New Ids were returned in the create.';
-                throw new DbException($this->error_message, 100);
+                throw new ModelException($this->error_message, 100);
             }
             return $a_new_ids;
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new DbException($this->error_message, 140, $e);
+            throw new ModelException($this->error_message, 140, $e);
         }
     }
 
@@ -180,13 +180,13 @@ SQL;
      * 'comparison_type' What kind of comparison operator to use for ALL WHEREs
      * 'where_exists'    Either true or false \endverbatim
      * @return bool|array
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     protected function genericRead(array $a_parameters = [])
     {
         if (!isset($a_parameters['table_name']) && $this->db_table == '') {
             $this->error_message = "The table name must be specified.";
-            throw new DbException($this->error_message, 220);
+            throw new ModelException($this->error_message, 220);
         }
         elseif (isset($a_parameters['table_name'])) {
             $table_name = $a_parameters['table_name'];
@@ -199,7 +199,7 @@ SQL;
                 }
                 else {
                     $this->error_message = "The table specified doesn't exist.";
-                    throw new DbException($this->error_message, 230);
+                    throw new ModelException($this->error_message, 230);
                 }
             }
         }
@@ -238,9 +238,9 @@ SQL;
         try {
             return $this->o_db->search($sql, $a_search_for, $return_format);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->setErrorMessage();
-            throw new DbException($this->error_message, 200, $e);
+            throw new ModelException($this->error_message, 200, $e);
         }
     }
 
@@ -250,13 +250,13 @@ SQL;
      * be in the $a_values. It only updates record(s) WHERE the primary index = primary index value.
      * @param array  $a_values Required may be be assoc array or an array of assoc arrays
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     protected function genericUpdate(array $a_values = [])
     {
         if ($a_values == []) {
             $this->error_message = 'No values provided to update.';
-            throw new DbException($this->error_message, 320);
+            throw new ModelException($this->error_message, 320);
         }
         $primary_index_name = $this->primary_index_name;
         $a_required_keys = array($primary_index_name);
@@ -267,7 +267,7 @@ SQL;
             foreach ($a_values as $a_thing) {
                 if (!Arrays::hasRequiredKeys($a_thing, $a_required_keys)) {
                     $this->error_message = "The array must have the primary key in it.";
-                    throw new DbException($this->error_message, 320);
+                    throw new ModelException($this->error_message, 320);
                 }
                 if ($x == 1) {
                     $set_sql = $this->buildSqlSet($a_thing, $a_required_keys, $a_allowed_keys);
@@ -278,7 +278,7 @@ SQL;
         else {
             if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
                 $this->error_message = "The array must have the primary key in it.";
-                throw new DbException($this->error_message, 320);
+                throw new ModelException($this->error_message, 320);
             }
             $set_sql = $this->buildSqlSet($a_values, $a_required_keys, $a_allowed_keys);
         }
@@ -291,9 +291,9 @@ SQL;
         try {
             return $this->o_db->update($sql, $a_values, true);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new DbException($this->error_message, 300, $e);
+            throw new ModelException($this->error_message, 300, $e);
         }
     }
 
@@ -305,14 +305,14 @@ SQL;
      *                          If array, it passes the values to the genericDeleteMultiple. This provided backwards
      *                          compatibility when genericDelete only allowed int.
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     protected function genericDelete($record_ids = -1)
     {
         if (is_array($record_ids)) {
            if (empty($record_ids)) {
                $this->error_message = 'No record ids were provided.';
-               throw new DbException($this->error_message, 410);
+               throw new ModelException($this->error_message, 410);
            }
            else {
                return $this->genericDeleteMultiple($record_ids);
@@ -320,7 +320,7 @@ SQL;
         }
         elseif (is_numeric($record_ids) && $record_ids < 1) {
             $this->error_message = 'No valid record ids were provided.';
-            throw new DbException($this->error_message, 410);
+            throw new ModelException($this->error_message, 410);
         }
         $piname = $this->primary_index_name;
         $sql =<<<SQL
@@ -331,9 +331,9 @@ SQL;
         try {
             return $this->o_db->delete($sql, $delete_this, true);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new DbException($this->error_message, 400, $e);
+            throw new ModelException($this->error_message, 400, $e);
         }
     }
 
@@ -341,13 +341,13 @@ SQL;
      * Deletes a multiple records based on the primary index value.
      * @param array $a_record_ids Required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     protected function genericDeleteMultiple(array $a_record_ids = [])
     {
         if (empty($a_record_ids)) {
             $this->error_message = 'No record ids were provided.';
-            throw new DbException($this->error_message, 410);
+            throw new ModelException($this->error_message, 410);
         }
         $piname = $this->primary_index_name;
         $sql =<<<SQL
@@ -361,9 +361,9 @@ SQL;
         try {
             return $this->o_db->delete($sql, $a_delete_these, true);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new DbException($this->error_message, 400, $e);
+            throw new ModelException($this->error_message, 400, $e);
         }
     }
 
@@ -592,7 +592,7 @@ SQL;
                         }
                     }
                 }
-                catch (DbException $e) {
+                catch (ModelException $e) {
                     $this->error_message = $e->errorMessage();
                     return false;
                 }
@@ -614,7 +614,7 @@ SQL;
                 try {
                     $results = $this->read($a_record);
                 }
-                catch (DbException $e) {
+                catch (ModelException $e) {
                     return false;
                 }
                 if (empty($results)) {
@@ -626,7 +626,7 @@ SQL;
             try {
                 $results = $this->read($a_values);
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 return false;
             }
             if (empty($results)) {
@@ -735,7 +735,7 @@ SQL;
                         $this->primary_index_name = '';
                     }
                 }
-                catch (DbException $e) {
+                catch (ModelException $e) {
                     $this->setErrorMessage('Could not set primary index name' . $e->errorMessage());
                 }
                 break;
@@ -754,7 +754,7 @@ SQL;
                         $this->primary_index_name = '';
                     }
                 }
-                catch (DbException $e) {
+                catch (ModelException $e) {
                     $this->setErrorMessage('Could not set primary index name' . $e->errorMessage());
                 }
                 break;
@@ -774,7 +774,7 @@ SQL;
                         $this->primary_index_name = '';
                     }
                 }
-                catch (DbException $e) {
+                catch (ModelException $e) {
                     $this->setErrorMessage('Could not set primary index name' . $e->errorMessage());
                 }
             // end 'mysql' and default;
@@ -814,7 +814,7 @@ SQL;
                 try {
                     $this->a_db_fields = $o_db->selectDbColumns($this->db_table);
                 }
-                catch (DbException $e) {
+                catch (ModelException $e) {
                     $this->setErrorMessage($e->errorMessage());
                 }
                 $this->setPrimaryIndexName();

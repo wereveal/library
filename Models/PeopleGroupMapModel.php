@@ -23,7 +23,7 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Exceptions\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -55,12 +55,12 @@ class PeopleGroupMapModel implements ModelInterface
      *                        array of assoc arrays
      *                        [['people_id' => 1, 'group_id' => 1], ['people_id' => 2, 'group_id' => 1]]
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function create(array $a_values = [])
     {
         if (empty($a_values)) {
-            throw new DbException('Missing required values.', 120);
+            throw new ModelException('Missing required values.', 120);
         }
         $a_required_keys = [
             'people_id',
@@ -78,10 +78,10 @@ class PeopleGroupMapModel implements ModelInterface
         try {
             return $this->genericCreate($a_values, $a_params);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
             $code = $e->getCode();
-            throw new DbException($message, $code);
+            throw new ModelException($message, $code);
         }
     }
 
@@ -90,7 +90,7 @@ class PeopleGroupMapModel implements ModelInterface
      * @param array $a_search_values
      * @param array $a_search_parameters
      * @return mixed
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function read(array $a_search_values = [], array $a_search_parameters = [])
     {
@@ -113,10 +113,10 @@ class PeopleGroupMapModel implements ModelInterface
         try {
             return $this->genericRead($a_search_parameters);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
             $code = $e->getCode();
-            throw new DbException($message, $code);
+            throw new ModelException($message, $code);
         }
     }
 
@@ -129,29 +129,29 @@ class PeopleGroupMapModel implements ModelInterface
      *     a new one added.
      * @param array $a_values
      * @return bool|void
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update(array $a_values = array())
     {
-        throw new DbException('Operation not permitted', 350);
+        throw new ModelException('Operation not permitted', 350);
     }
 
     /**
      * Deletes map record(s).
      * @param int|array $pgm_id required either '1' or ['1', '2', '3'].
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($pgm_id = -1)
     {
         if ($pgm_id == -1) {
-            throw new DbException('Missing required value: id', 420);
+            throw new ModelException('Missing required value: id', 420);
         }
         try {
             return $this->genericDelete($pgm_id);
         }
-        catch (DbException $e) {
-            throw new DbException($e->errorMessage(), $e->getCode());
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
     }
 
@@ -159,7 +159,7 @@ class PeopleGroupMapModel implements ModelInterface
      * Deletes the record(s) in table based on group id(s).
      * @param int|array $group_id either '1' or ['1', '2', '3']
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function deleteByGroupId($group_id = -1)
     {
@@ -179,8 +179,8 @@ class PeopleGroupMapModel implements ModelInterface
         try {
             return $this->o_db->delete($sql, $a_values, false);
         }
-        catch (DbException $e) {
-            throw new DbException('Unable to delete the pgm record(s) by group id.', 300, $e);
+        catch (ModelException $e) {
+            throw new ModelException('Unable to delete the pgm record(s) by group id.', 300, $e);
         }
     }
 
@@ -188,7 +188,7 @@ class PeopleGroupMapModel implements ModelInterface
      * Deletes the records based on people id.
      * @param int $people_id required either '1' or ['1', '2', '3']
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function deleteByPeopleId($people_id = -1)
     {
@@ -208,8 +208,8 @@ class PeopleGroupMapModel implements ModelInterface
         try {
             return $this->o_db->delete($sql, $a_values, false);
         }
-        catch (DbException $e) {
-            throw new DbException('Could not delete the pgm record(s) by people id.', 400, $e);
+        catch (ModelException $e) {
+            throw new ModelException('Could not delete the pgm record(s) by people id.', 400, $e);
         }
     }
 
@@ -217,19 +217,19 @@ class PeopleGroupMapModel implements ModelInterface
      * Reads the record(s) by group id.
      * @param int $group_id
      * @return mixed
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readByGroupId($group_id = -1)
     {
         if ($group_id == -1) {
-            throw new DbException('Missing required value.', 220);
+            throw new ModelException('Missing required value.', 220);
         }
         $a_search_for = ['group_id' => $group_id];
         try {
             return $this->read($a_search_for);
         }
-        catch (DbException $e) {
-            throw new DbException('Unable to read the records by group id.', 200, $e);
+        catch (ModelException $e) {
+            throw new ModelException('Unable to read the records by group id.', 200, $e);
         }
     }
 
@@ -237,19 +237,19 @@ class PeopleGroupMapModel implements ModelInterface
      * Reads the record(s) by people id.
      * @param int $people_id
      * @return mixed
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readByPeopleId($people_id = -1)
     {
         if ($people_id == -1) {
-            throw new DbException('Missing required value.', 220);
+            throw new ModelException('Missing required value.', 220);
         }
         $a_search_for = ['people_id' => $people_id];
         try {
             return $this->read($a_search_for);
         }
-        catch (DbException $e) {
-            throw new DbException('Unable to read the records by people id.', 200, $e);
+        catch (ModelException $e) {
+            throw new ModelException('Unable to read the records by people id.', 200, $e);
         }
     }
 }

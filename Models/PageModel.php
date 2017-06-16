@@ -17,7 +17,6 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Basic\DbException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;

@@ -12,7 +12,7 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Exceptions\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -43,20 +43,20 @@ class NavgroupsComplexModel
      * Also delete the relation record(s) in the map table.
      * @param int $ng_id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function deleteWithMap($ng_id = -1)
     {
         if ($ng_id == -1) {
             $this->error_message = 'Missing Navgroup id.';
-            throw new DbException($this->error_message, 420);
+            throw new ModelException($this->error_message, 420);
         }
         try {
             $this->o_db->startTransaction();
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = "Could not start transaction.";
-            throw new DbException($this->error_message, 30);
+            throw new ModelException($this->error_message, 30);
         }
         $o_map = new NavNgMapModel($this->o_db);
         $o_ng  = new NavgroupsModel($this->o_db);
@@ -67,32 +67,32 @@ class NavgroupsComplexModel
                 try {
                     $this->o_db->commitTransaction();
                 }
-                catch (DbException $e) {
+                catch (ModelException $e) {
                     $this->error_message = 'Unable to commit the transaction.';
-                    throw new DbException($this->error_message, 40, $e);
+                    throw new ModelException($this->error_message, 40, $e);
                 }
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $this->error_message = 'Unable to delete the map record: ' . $o_ng->getErrorMessage();
                 try {
                     $this->o_db->rollbackTransaction();
-                    throw new DbException($this->error_message, 400, $e);
+                    throw new ModelException($this->error_message, 400, $e);
                 }
-                catch (DbException $e) {
+                catch (ModelException $e) {
                     $this->error_message .= 'Unable to rollback the transaction.';
-                    throw new DbException($this->error_message, 45, $e);
+                    throw new ModelException($this->error_message, 45, $e);
                 }
             }
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = 'Unable to delete the map record: ' . $o_map->getErrorMessage();
             try {
                 $this->o_db->rollbackTransaction();
-                throw new DbException($this->error_message, 400, $e);
+                throw new ModelException($this->error_message, 400, $e);
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $this->error_message .= 'Unable to rollback the transaction.';
-                throw new DbException($this->error_message, 45, $e);
+                throw new ModelException($this->error_message, 45, $e);
             }
         }
         return true;

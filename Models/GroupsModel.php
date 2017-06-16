@@ -8,7 +8,7 @@
  * @version   2.0.0
  * @date      2017-06-10 17:42:55
  * @note <b>Change Log</b>
- * - v2.0.0   - Refactored to use Exceptions (DbException) and DbUtilityTraits  - 2017-06-10 wer
+ * - v2.0.0   - Refactored to use ModelException and DbUtilityTraits            - 2017-06-10 wer
  * - v1.1.2   - DbUtilityTraits change reflected here                           - 2017-05-09 wer
  * - v1.1.1   - Bug fix caused by slight change elsewhere                       - 2017-01-27 wer
  * - v1.1.0   - Bug fix and changes due to refactoring of DbModel               - 2016-03-19 wer
@@ -23,7 +23,7 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Exceptions\DbException;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -51,7 +51,7 @@ class GroupsModel implements ModelInterface
      * Generic create function to create a single record.
      * @param array $a_values required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function create(array $a_values = array())
     {
@@ -73,10 +73,10 @@ class GroupsModel implements ModelInterface
         try {
             return $this->genericCreate($a_values, $a_params);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
             $code = $e->getCode();
-            throw new DbException($message, $code);
+            throw new ModelException($message, $code);
         }
     }
 
@@ -84,7 +84,7 @@ class GroupsModel implements ModelInterface
      * @param array $a_search_for
      * @param array $a_search_params
      * @return mixed
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function read(array $a_search_for = array(), array $a_search_params = array())
     {
@@ -98,10 +98,10 @@ class GroupsModel implements ModelInterface
         try {
             return $this->genericRead($a_parameters);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
             $code = $e->getCode();
-            throw new DbException($message, $code);
+            throw new ModelException($message, $code);
         }
     }
 
@@ -109,21 +109,21 @@ class GroupsModel implements ModelInterface
      * Updates the group record
      * @param array $a_values
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update(array $a_values = array())
     {
         $a_values = $this->fixUpdateValues($a_values, 'group_immutable', ['group_name']);
         if ($a_values === false) {
-            throw new DbException('Missing Values', 320);
+            throw new ModelException('Missing Values', 320);
         }
         try {
             return $this->genericUpdate($a_values);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $message = $e->errorMessage();
             $code = $e->getCode();
-            throw new DbException($message, $code);
+            throw new ModelException($message, $code);
         }
     }
 
@@ -134,12 +134,12 @@ class GroupsModel implements ModelInterface
      * deleteWithRelated method.
      * @param int|array $group_id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($group_id = -1)
     {
         if ($group_id == -1) {
-            throw new DbException('Missing required value.', 420);
+            throw new ModelException('Missing required value.', 420);
         }
         if (is_array($group_id)) {
             $a_ids = $group_id;
@@ -150,8 +150,8 @@ class GroupsModel implements ModelInterface
         try {
             return $this->genericDeleteMultiple($a_ids);
         }
-        catch (DbException $e) {
-            throw new DbException('Unable to delete the record', 400);
+        catch (ModelException $e) {
+            throw new ModelException('Unable to delete the record', 400);
         }
     }
 
@@ -159,18 +159,18 @@ class GroupsModel implements ModelInterface
      * Deletes related records as well as main group record.
      * @param int|array $group_id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function deleteWithRelated($group_id = -1)
     {
         if ($group_id == -1 || empty($group_id)) {
-            throw new DbException('Missing required value(s)', 420);
+            throw new ModelException('Missing required value(s)', 420);
         }
         try {
             $this->o_db->startTransaction();
         }
-        catch (DbException $e) {
-            throw new DbException('Unable to start the transaction.', 30, $e);
+        catch (ModelException $e) {
+            throw new ModelException('Unable to start the transaction.', 30, $e);
         }
         $o_ugm = new PeopleGroupMapModel($this->o_db);
         $o_people = new PeopleModel($this->o_db);
@@ -178,16 +178,16 @@ class GroupsModel implements ModelInterface
             try {
                 $results = $o_ugm->read($group_id);
             }
-            catch (DbException $e) {
-                throw new DbException('Could not read the map records', 400);
+            catch (ModelException $e) {
+                throw new ModelException('Could not read the map records', 400);
             }
         }
         else {
             try {
                 $results = $o_ugm->read(['group_id' => $group_id]);
             }
-            catch (DbException $e) {
-                throw new DbException('Could not read the map records.', 400);
+            catch (ModelException $e) {
+                throw new ModelException('Could not read the map records.', 400);
             }
         }
         $a_people_ids = [];
@@ -199,12 +199,12 @@ class GroupsModel implements ModelInterface
         try {
             $results = $o_people->delete($a_people_ids);
             if (!$results) {
-                throw new DbException('Could not delete the people records.', 400);
+                throw new ModelException('Could not delete the people records.', 400);
             }
             try {
                 $results = $o_ugm->delete($a_map_ids);
                 if (!$results) {
-                    throw new DbException('Could not delete the people group map records.', 400);
+                    throw new ModelException('Could not delete the people group map records.', 400);
                 }
                 try {
                     $results = $this->delete($group_id);
@@ -212,25 +212,25 @@ class GroupsModel implements ModelInterface
                         try {
                             $this->o_db->commitTransaction();
                         }
-                        catch (DbException $e) {
+                        catch (ModelException $e) {
                             $this->o_db->rollbackTransaction();
                             $this->error_message = $this->o_db->getSqlErrorMessage();
-                            throw new DbException($this->error_message, 400);
+                            throw new ModelException($this->error_message, 400);
                         }
                     }
                 }
-                catch (DbException $e) {
-                    throw new DbException($e->errorMessage(), $e->getCode(), $e);
+                catch (ModelException $e) {
+                    throw new ModelException($e->errorMessage(), $e->getCode(), $e);
                 }
             }
-            catch (DbException $e) {
-                throw new DbException($e->errorMessage(), $e->getCode(), $e);
+            catch (ModelException $e) {
+                throw new ModelException($e->errorMessage(), $e->getCode(), $e);
             }
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->o_db->rollbackTransaction();
             $this->error_message = $this->o_db->getSqlErrorMessage();
-            throw new DbException($this->error_message, 400);
+            throw new ModelException($this->error_message, 400);
         }
         return true;
     }
@@ -240,7 +240,7 @@ class GroupsModel implements ModelInterface
      * Returns a record of the group specified by id.
      * @param int $group_id
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readById($group_id = -1)
     {
@@ -249,13 +249,13 @@ class GroupsModel implements ModelInterface
                 $results = $this->read(array('group_id' => $group_id));
                 return $results[0];
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $this->error_message = "Unable to find a group with the group id {$group_id}";
-                throw new DbException($this->error_message,210, $e);
+                throw new ModelException($this->error_message,210, $e);
             }
         }
         else {
-            throw new DbException('Missing group id', 220);
+            throw new ModelException('Missing group id', 220);
         }
     }
 
@@ -263,12 +263,12 @@ class GroupsModel implements ModelInterface
      * Returns a record of the group specified by name.
      * @param string $group_name
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readByName($group_name = '')
     {
         if ($group_name == '') {
-            throw new DbException('Missing group name', 220);
+            throw new ModelException('Missing group name', 220);
         }
         try {
             $results = $this->read(array('group_name' => $group_name));
@@ -276,11 +276,11 @@ class GroupsModel implements ModelInterface
                 return $results[0];
             }
             $this->error_message = 'Unable to read the group by ' . $group_name;
-            throw new DbException($this->error_message, 200);
+            throw new ModelException($this->error_message, 200);
         }
-        catch (DbException $e) {
+        catch (ModelException $e) {
             $this->error_message = 'Unable to read the group by ' . $group_name;
-            throw new DbException($this->error_message, 200);
+            throw new ModelException($this->error_message, 200);
         }
 
     }
@@ -299,7 +299,7 @@ class GroupsModel implements ModelInterface
                     return true;
                 }
             }
-            catch (DbException $e) {
+            catch (ModelException $e) {
                 $this->error_message = "Could not do the read operation.";
             }
         }
