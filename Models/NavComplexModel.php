@@ -5,10 +5,10 @@
  * @file      Ritc/Library/Models/NavComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.6
- * @date      2017-01-27 12:40:56
+ * @version   1.0.0-alpha.7
+ * @date      2017-06-15 16:05:14
  * @note <b>Change Log</b>
- *            Database structure change to navigation table
+ * - v1.0.0-alpha.7 - Refactored to use DbException                 - 2017-06-15 wer
  * - v1.0.0-alpha.6 - DbUtilityTraits change reflected here         - 2017-05-09 wer
  * - v1.0.0-alpha.5 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
  * - v1.0.0-alpha.4 - added new method save                         - 2016-04-23 wer
@@ -19,6 +19,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Exceptions\DbException;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -32,8 +33,6 @@ class NavComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var \Ritc\Library\Services\Di */
-    private $o_di;
     /** @var \Ritc\Library\Models\NavgroupsModel */
     private $o_ng;
     /** @var string */
@@ -58,158 +57,152 @@ class NavComplexModel
     /**
      * Returns the search results for all nav records for a navgroup.
      * @param int $ng_id Optional, will use the default navgroup if not provided.
-     * @return array|false
+     * @return array
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function getNavList($ng_id = -1)
     {
-        $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
-            $ng_id = $this->o_ng->retrieveDefaultId();
-            if ($ng_id == -1) {
-                return false;
+            try {
+                $ng_id = $this->o_ng->retrieveDefaultId();
+            }
+            catch (DbException $e) {
+                throw new DbException('Missing required navgroup id.', 220, $e);
             }
         }
         $where = "AND ng.ng_id = :ng_id\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
         $a_search_for = [':ng_id' => $ng_id];
-        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
-        $results = $this->o_db->search($sql, $a_search_for);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
+        try {
+            return $this->o_db->search($sql, $a_search_for);
         }
-        else {
-            return $results;
+        catch (DbException $e) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            throw new DbException($this->error_message, 200, $e);
         }
     }
 
     /**
      * Gets all the navigation records with related values.
-     * @return bool|array
+     * @return array
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function getNavListAll()
     {
-        $meth = __METHOD__ . '.';
-        $select_sql =<<<EOT
-SELECT
-    n.nav_id as 'nav_id',
-    n.nav_parent_id as 'parent_id',
-    n.url_id as 'url_id',
-    u.url_text as 'url',
-    n.nav_name as 'name',
-    n.nav_text as 'text',
-    n.nav_description as 'description',
-    n.nav_css as 'css',
-    n.nav_level as 'level',
-    n.nav_order as 'order',
-    n.nav_immutable
-FROM {$this->lib_prefix}urls as u
-JOIN {$this->lib_prefix}navigation as n
-    ON u.url_id = n.url_id
-ORDER BY
-    n.nav_parent_id ASC,
-    n.nav_level ASC,
-    n.nav_order ASC,
-    n.nav_name ASC
-EOT;
-        $this->logIt("SQL: {$select_sql}", LOG_OFF, $meth . __LINE__);
-        $results = $this->o_db->search($select_sql);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
+        $select_sql = "
+            SELECT
+                n.nav_id as 'nav_id',
+                n.nav_parent_id as 'parent_id',
+                u.url_id as 'url_id',
+                u.url_text as 'url',
+                n.nav_name as 'name',
+                n.nav_text as 'text',
+                n.nav_description as 'description',
+                n.nav_css as 'css',
+                n.nav_level as 'level',
+                n.nav_order as 'order',
+                n.nav_immutable
+            FROM {$this->lib_prefix}urls as u
+            JOIN {$this->lib_prefix}navigation as n
+                ON u.url_id = n.url_id
+            ORDER BY
+                n.nav_parent_id ASC,
+                n.nav_level ASC,
+                n.nav_order ASC,
+                n.nav_name ASC
+        ";
+        try {
+            return $this->o_db->search($select_sql);
         }
-        else {
-            return $results;
+        catch (DbException $e) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            throw new DbException($this->error_message, 200, $e);
         }
     }
 
     /**
      * Returns the Navigation list by navgroup name.
      * @param string $navgroup_name Optional, will use default navgroup if not supplied.
-     * @return bool|mixed
+     * @return array|bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function getNavListByName($navgroup_name = '')
     {
-        $meth = __METHOD__ . '.';
         if ($navgroup_name == '') {
-            $navgroup_name = $this->o_ng->retrieveDefaultName();
+            try {
+                $navgroup_name = $this->o_ng->retrieveDefaultName();
+            }
+            catch (DbException $e) {
+
+            }
         }
         $where = "AND ng.ng_name = :ng_name\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
         $a_search_for = [':ng_name' => $navgroup_name];
-        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
-        $results = $this->o_db->search($sql, $a_search_for);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
+        try {
+            $results = $this->o_db->search($sql, $a_search_for);
         }
-        else {
-            return $results;
+        catch (DbException $e) {
+            $this->error_message = 'Could not find the record: ' . $this->o_db->getSqlErrorMessage();
+            throw new DbException($this->error_message, 200, $e);
         }
+        return $results;
     }
 
     /**
      * Returns an array of nav items based on parent nav id.
      * @param int $parent_id Required. Parent id of the navigation record.
      * @param int $ng_id     Required. Id of the navigation group it belongs in.
-     * @return bool|mixed
+     * @return bool|array
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function getNavListByParent($parent_id = -1, $ng_id = -1) {
-        $meth = __METHOD__ . '.';
         if ($parent_id == -1 || $ng_id == -1) {
             return false;
         }
-        $where =<<<EOT
-AND n.nav_parent_id = :parent_id
-AND n.nav_id != :parent_nav_id
-AND map.ng_id = :map_ng_id
-
-EOT;
+        $where = "
+            AND n.nav_parent_id = :parent_id
+            AND n.nav_id != :parent_nav_id
+            AND map.ng_id = :map_ng_id
+        ";
         $sql = $this->select_sql . $where . $this->select_order_sql;
         $a_search_for = [
             ':parent_id'     => $parent_id,
             ':parent_nav_id' => $parent_id,
             ':map_ng_id'     => $ng_id
         ];
-        $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
-        $log_message = 'search for ' . var_export($a_search_for, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $results = $this->o_db->search($sql, $a_search_for);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
+        try {
+            $results = $this->o_db->search($sql, $a_search_for);
         }
-        else {
-            return $results;
+        catch (DbException $e) {
+            $this->error_message = 'Could not get Nav list by parent';
+            throw new DbException($this->error_message, 200, $e);
         }
+        return $results;
     }
 
     /**
      * Returns a single nav record by nav_id with the url_text.
      * @param int $nav_id
-     * @return bool|array
+     * @return array|bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function getNavRecord($nav_id = -1)
     {
-        $meth = __METHOD__ . '.';
         if ($nav_id == -1) {
             return false;
         }
-        $sql_and =<<<EOT
-AND n.nav_id = :nav_id
-
-EOT;
+        $sql_and = "AND n.nav_id = :nav_id\n";
         $sql = $this->select_sql . $sql_and . $this->select_order_sql;
-        $this->logIt("SQL:\n{$sql}", LOG_OFF, $meth . __LINE__);
         $a_search_for = [':nav_id' => $nav_id];
-        $results = $this->o_db->search($sql, $a_search_for);
-        if ($results === false || !isset($results[0])) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
+        try {
+            $results = $this->o_db->search($sql, $a_search_for);
         }
-        else {
-            return $results[0];
+        catch (DbException $e) {
+            $this->error_message = 'Unable to get the nav record.';
+            throw new DbException($this->error_message, 200, $e);
         }
+        return $results[0];
     }
 
     /**
@@ -217,21 +210,29 @@ EOT;
      * @param int $parent_id Required. Parent id of the navigation record.
      * @param int $ng_id     Required. Id of the navigation group it belongs in.
      * @return array
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function getChildrenRecursive($parent_id = -1, $ng_id = -1)
     {
-        $meth = __METHOD__ . '.';
         if ($parent_id == -1 || $ng_id == -1) {
-            return false;
+            throw new DbException('Missing required value.', 220);
         }
-        $a_new_list = array();
-        $a_results = $this->getNavListByParent($parent_id, $ng_id);
-        $log_message = 'Parent Values ' . var_export($a_results, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $a_new_list = [];
+        try {
+            $a_results = $this->getNavListByParent($parent_id, $ng_id);
+        }
+        catch (DbException $e) {
+            throw new DbException('Unable to get the nav list.', 200, $e);
+        }
 
-        if ($a_results !== false && count($a_results) > 0) {
+        if (count($a_results) > 0) {
             foreach ($a_results as $a_nav) {
-                $a_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
+                try {
+                    $a_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
+                }
+                catch (DbException $e) {
+                    throw new DbException('A problem getting the children.', 200, $e);
+                }
                 $a_new_list[] = [
                     'id'          => $a_nav['nav_id'],
                     'name'        => $a_nav['name'],
@@ -254,53 +255,57 @@ EOT;
     /**
      * Returns array of the top level nav items for a navgroup.
      * @param int $ng_id
-     * @return bool|array
+     * @return array|bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function getTopLevelNavList($ng_id = -1)
     {
-        $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
-            return false;
+            throw new DbException('Missing required id.', 220);
         }
         $where = "AND ng.ng_id = :ng_id\nAND n.nav_level = :nav_level\n";
         $sql = $this->select_sql . $where . $this->select_order_sql;
         $a_search_for = [':ng_id' => $ng_id, ':nav_level' => 1];
-        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
-        $results = $this->o_db->search($sql, $a_search_for);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
+        try {
+            $results = $this->o_db->search($sql, $a_search_for);
         }
-        else {
-            return $results;
+        catch (DbException $e) {
+            $this->error_message = 'Could not get the record: ' . $this->o_db->getSqlErrorMessage();
+            throw new DbException($this->error_message, 200, $e);
         }
-
+        return $results;
     }
 
     /**
      * Creates the array used to build a nav
      * @param int $ng_id
-     * @return array|false
+     * @return array
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function createNavArray($ng_id = -1)
     {
-        $meth = __METHOD__ . '.';
         if ($ng_id == -1) {
             $ng_id = $this->o_ng->retrieveDefaultId();
             if ($ng_id == -1) {
-                return false;
+                throw new DbException('Missing required id.', 220);
             }
         }
         $a_new_list = array();
-        $a_top_list = $this->getTopLevelNavList($ng_id);
-        $this->logIt("top level nav: " . var_export($a_top_list, true), LOG_OFF, $meth . __LINE__);
-        if ($a_top_list === false) { return false; }
+        try {
+            $a_top_list = $this->getTopLevelNavList($ng_id);
+        }
+        catch (DbException $e) {
+            $this->error_message = 'Could not get the nav list: ' . $this->o_db->getSqlErrorMessage();
+            throw new DbException($this->error_message, 10, $e);
+        }
         foreach ($a_top_list as $a_nav) {
-            $this->logIt(var_export($a_nav, true), LOG_OFF, $meth . __LINE__);
-            $a_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
-            $log_message = 'Recursive Results ' . var_export($a_results, TRUE);
-            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
+            try {
+                $a_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
+            }
+            catch (DbException $e) {
+                $this->error_message = 'Unable to get nav list: ' . $this->o_db->getSqlErrorMessage();
+                throw new DbException($this->error_message, 200, $e);
+            }
             $a_new_list[] = [
                 'id'          => $a_nav['nav_id'],
                 'name'        => $a_nav['name'],
@@ -409,13 +414,13 @@ EOT;
      * This handles both new records and updating old ones.
      * @param array $a_post
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function save(array $a_post = [])
     {
-        $meth = __METHOD__ . '.';
         if ($a_post == []) {
             $this->error_message = "An array with the save values was not supplied.";
-            return false;
+            throw new DbException($this->error_message, 120);
         }
         $a_possible_keys = [
             'nav_id',
@@ -483,57 +488,100 @@ EOT;
             }
         }
         if ($action == 'error' || $action == '') {
-            return false;
+            throw new DbException($this->error_message, 120);
         }
         $o_nav = new NavigationModel($this->o_db);
         $o_map = new NavNgMapModel($this->o_db);
         $old_ng_id = false;
         if ($action == 'update') {
-            $old_record = $this->getNavRecord($a_post['nav_id']);
-            $log_message = 'Old Nav Record ' . var_export($old_record, TRUE);
-            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-            if ($old_record === false) {
-                $this->error_message .= 'Could not retrieve old navigation record. ';
-                return false;
+            try {
+                $old_record = $this->getNavRecord($a_post['nav_id']);
+            }
+            catch (DbException $e) {
+                $this->error_message = 'Not able to get the old nav record: ' . $this->o_db->getSqlErrorMessage();
+                throw new DbException($this->error_message, 200, $e);
             }
             $old_ng_id = $old_record['ng_id'] != $a_post['ng_id']
                 ? $old_record['ng_id']
                 : false;
         }
-        $this->o_db->startTransaction();
+        try {
+            $this->o_db->startTransaction();
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode());
+        }
         if ($action = 'create') {
-            $results = $o_nav->create($a_post);
+            try {
+                $results = $o_nav->create($a_post);
+            }
+            catch (DbException $e) {
+                $this->error_message = 'Unable to create the navigation record: ' . $this->o_db->getSqlErrorMessage();
+                throw new DbException($this->error_message, 100, $e);
+            }
             if ($results) {
                 $a_values = [
                     'ng_id'  => $a_post['ng_id'],
                     'nav_id' => $a_post['nav_id']
                 ];
-                $results = $o_map->create($a_values);
+                try {
+                    $results = $o_map->create($a_values);
+                }
+                catch (DbException $e) {
+                    $this->error_message = 'Unable to create the map: ' . $this->o_db->getSqlErrorMessage();
+                    throw new DbException($this->error_message, 100, $e);
+                }
             }
         }
         else {
-            $results = $o_nav->update($a_post);
+            try {
+                $results = $o_nav->update($a_post);
+            }
+            catch (DbException $e) {
+                throw new DbException('Unable to update the navigation record', 300, $e);
+            }
             if ($results) {
                 if ($old_ng_id) {
-                    $results = $o_map->delete($old_ng_id, $a_post['nav_id']);
+                    try {
+                        $results = $o_map->delete($old_ng_id, $a_post['nav_id']);
+                    }
+                    catch (DbException $e) {
+                        $this->error_message = 'Unable to delete the old map record: ' . $this->o_db->getSqlErrorMessage();
+                        throw new DbException($this->error_message, 10, $e);
+                    }
                     if ($results) {
                         $a_values = [
                             'ng_id'  => $a_post['ng_id'],
                             'nav_id' => $a_post['nav_id']
                         ];
-                        $results = $o_map->create($a_values);
+                        try {
+                            $results = $o_map->create($a_values);
+                        }
+                        catch (DbException $e) {
+                            throw new DbException('Unable to create a new map record.', 100, $e);
+                        }
                     }
                 }
             }
         }
         if ($results) {
-            return $this->o_db->commitTransaction();
+            try {
+                return $this->o_db->commitTransaction();
+            }
+            catch (DbException $e) {
+                $this->error_message = 'Unable to commit the transaction.';
+                throw new DbException($this->error_message, 40, $e);
+            }
         }
         else {
             $this->error_message .= $this->o_db->retrieveFormatedSqlErrorMessage();
-            $this->o_db->rollbackTransaction();
-            return false;
+            try {
+                $this->o_db->rollbackTransaction();
+                throw new DbException($this->error_message, 10);
+            }
+            catch (DbException $e) {
+                throw new DbException('Unable to do the operation', 60);
+            }
         }
     }
 }

@@ -77,7 +77,6 @@ trait DbUtilityTraits {
     protected $primary_index_name = '';
 
     #### Generic CRUD calls ####
-
     /**
      * Generic method to create a new record in a table.
      * Requires both parameters to be complete to work.
@@ -86,16 +85,15 @@ trait DbUtilityTraits {
      * @param array $a_values     The values to be saved in a new record.
      * @param array $a_parameters \code
      * ['a_required_keys' => [],
-     *     'a_field_names'   => [],
-     *     'a_psql'          => [
-     *         'table_name'  => string,
-     *         'column_name' => string
-     *     ]
+     *  'a_field_names'   => [],
+     *  'a_psql'          => [
+     *      'table_name'  => string,
+     *      'column_name' => string
+     *  ]
      * ] \endcode
      * @return array|bool
-     * @throws \Ritc\Library\Basic\DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      * @see  \ref createparams
-     * @todo Ritc\Library\Traits\DbUtilityTraits::genericCreate - modify to create multiple records if data provided
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = [])
     {
@@ -182,7 +180,7 @@ SQL;
      * 'comparison_type' What kind of comparison operator to use for ALL WHEREs
      * 'where_exists'    Either true or false \endverbatim
      * @return bool|array
-     * @throws \Ritc\Library\Basic\DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     protected function genericRead(array $a_parameters = [])
     {
@@ -250,10 +248,9 @@ SQL;
      * Generic method to update values in a table WHERE primary index is as supplied.
      * Needs the primary index name. The primary index value also needs to
      * be in the $a_values. It only updates record(s) WHERE the primary index = primary index value.
-     * @param array  $a_values           Required
+     * @param array  $a_values Required may be be assoc array or an array of assoc arrays
      * @return bool
-     * @throws \Ritc\Library\Basic\DbException
-     * @todo Ritc\Library\Traits\DbUtilityTraits::genericUpdate - modify to update multiple records if provided
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     protected function genericUpdate(array $a_values = [])
     {
@@ -263,19 +260,34 @@ SQL;
         }
         $primary_index_name = $this->primary_index_name;
         $a_required_keys = array($primary_index_name);
-        if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-            $this->error_message = "The array must have the primary key in it.";
-            throw new DbException($this->error_message, 320);
-        }
         $a_allowed_keys = $this->prepareListArray($this->a_db_fields);
-        $set_sql = $this->buildSqlSet($a_values, $a_required_keys, $a_allowed_keys);
+        $set_sql = '';
+        if (Arrays::isArrayOfAssocArrays($a_values)) {
+            $x = 1;
+            foreach ($a_values as $a_thing) {
+                if (!Arrays::hasRequiredKeys($a_thing, $a_required_keys)) {
+                    $this->error_message = "The array must have the primary key in it.";
+                    throw new DbException($this->error_message, 320);
+                }
+                if ($x == 1) {
+                    $set_sql = $this->buildSqlSet($a_thing, $a_required_keys, $a_allowed_keys);
+                }
+                $x++;
+            }
+        }
+        else {
+            if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
+                $this->error_message = "The array must have the primary key in it.";
+                throw new DbException($this->error_message, 320);
+            }
+            $set_sql = $this->buildSqlSet($a_values, $a_required_keys, $a_allowed_keys);
+        }
 
-        $sql =<<<SQL
-UPDATE {$this->db_table}
-{$set_sql}
-WHERE {$primary_index_name} = :{$primary_index_name}
-
-SQL;
+        $sql = "
+            UPDATE {$this->db_table}
+            {$set_sql}
+            WHERE {$primary_index_name} = :{$primary_index_name}
+        ";
         try {
             return $this->o_db->update($sql, $a_values, true);
         }
@@ -293,6 +305,7 @@ SQL;
      *                          If array, it passes the values to the genericDeleteMultiple. This provided backwards
      *                          compatibility when genericDelete only allowed int.
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     protected function genericDelete($record_ids = -1)
     {
@@ -328,7 +341,7 @@ SQL;
      * Deletes a multiple records based on the primary index value.
      * @param array $a_record_ids Required
      * @return bool
-     * @throws \Ritc\Library\Basic\DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     protected function genericDeleteMultiple(array $a_record_ids = [])
     {
@@ -545,7 +558,9 @@ SQL;
 
     /**
      * Massages values used to update record(s).
-     * @param array $a_values
+     * @param array  $a_values
+     * @param string $immutable_field
+     * @param array  $a_immutable_fields
      * @return array|bool
      */
     private function fixUpdateValues(array $a_values = [], $immutable_field = '', array $a_immutable_fields = [])

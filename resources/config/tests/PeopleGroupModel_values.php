@@ -1,48 +1,89 @@
 <?php
 return [
     'read' => [
-        'test1' => [
+        'empty_values' => [
             'test_values' => [],
-            'expected_results' => []
+            'expected_results' => true
         ],
-        'test2' => [
-            'test_values' => [],
-            'expected_results' => []
+        'bad_values' => [
+            'test_values' => ['pgm_id' => 999],
+            'expected_results' => false
         ],
-        'test3' => [
-            'test_values' => [],
-            'expected_results' => []
+        'bad_keys' => [
+            'test_values' => ['fred' => 'fred'],
+            'expected_results' => false
+        ],
+        'good_values_id' => [
+            'test_values' => ['pgm_id' => 1],
+            'expected_results' => true
+        ],
+        'good_values_group' => [
+            'test_values' => ['group_id' => 1],
+            'expected_results' => true
+        ],
+        'good_values_people' => [
+            'test_values' => ['people_id' => 1],
+            'expected_results' => true
         ]
     ],
     'create' => [
-        'test1' => [
-            'test_values' => [],
-            'expected_results' => []
-        ],
-        'test2' => [
-            'test_values' => [],
-            'expected_results' => []
-        ],
-        'test3' => [
-            'test_values' => [],
-            'expected_results' => []
-        ]
+        /*
+         * 'missing_value'
+         * 'bad_value'
+         * 'good_value'
+         * 'good_value_array'
+         */
     ],
     'update' => [
-        'test1' => [
-            'test_values' => [],
-            'expected_results' => []
-        ],
-        'test2' => [
-            'test_values' => [],
-            'expected_results' => []
-        ],
-        'test3' => [
-            'test_values' => [],
-            'expected_results' => []
-        ]
+        /*
+         * 'missing_value'
+         * 'bad_value'
+         * 'good_value'
+         * 'good_value_array'
+         */
     ],
     'delete' => [
+        /*
+         * 'missing_value'
+         * 'bad_value'
+         * 'good_value'
+         * 'good_value_array'
+         */
+    ],
+    'deleteByGroupId' => [
+        /*
+         * 'missing_value'
+         * 'bad_value'
+         * 'good_value'
+         * 'good_value_array'
+         */
+    ],
+    'deleteByPeopleId' => [
+        /*
+         * 'missing_value'
+         * 'bad_value'
+         * 'good_value'
+         * 'good_value_array'
+         */
+    ],
+    'readByGroupId' => [
+        /*
+         * 'missing_value'
+         * 'bad_value'
+         * 'good_value'
+         * 'good_value_array'
+         */
+    ],
+    'readByPeopleId' => [
+        /*
+         * 'missing_value'
+         * 'bad_value'
+         * 'good_value'
+         * 'good_value_array'
+         */
+    ]
+    /* Example
+    'example' => [
         'test1' => [
             'test_values' => [],
             'expected_results' => []
@@ -56,4 +97,5 @@ return [
             'expected_results' => []
         ]
     ]
+    */
 ];

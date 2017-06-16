@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/NavgroupsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.3
- * @date      2017-01-27 12:39:36
+ * @version   1.0.0-alpha.4
+ * @date      2017-06-15 16:04:24
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.4 - Refactored to use DbException                 - 2017-06-15 wer
  * - v1.0.0-alpha.3 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
  * - v1.0.0-alpha.2 - Added two methods to get default ng           - 2016-04-18 wer
  * - v1.0.0-alpha.1 - Updated to use DbUtilityTraits                - 2016-03-31 wer
@@ -15,7 +16,7 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Basic\DbException;
+use Ritc\Library\Exceptions\DbException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
@@ -44,7 +45,7 @@ class NavgroupsModel implements ModelInterface
      * Generic create record(s) using the values provided.
      * @param array $a_values
      * @return bool
-     * @throws DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function create(array $a_values = [])
     {
@@ -97,6 +98,7 @@ class NavgroupsModel implements ModelInterface
      * @param array $a_search_values optional, defaults to returning all records
      * @param array $a_search_params optional, defaults to ['order_by' => 'ng_name ASC']
      * @return array
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
@@ -110,7 +112,13 @@ class NavgroupsModel implements ModelInterface
         else {
             $a_parameters = array_merge($a_parameters, $a_search_params);
         }
-        $results = $this->genericRead($a_parameters);
+        try {
+            $results = $this->genericRead($a_parameters);
+        }
+        catch (DbException $e) {
+            $this->error_message = 'Unable to read the record.';
+            throw new DbException($this->error_message, 200, $e);
+        }
         return $results;
     }
 
@@ -119,6 +127,7 @@ class NavgroupsModel implements ModelInterface
      * Only the name and active setting may be changed.
      * @param array $a_values
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function update(array $a_values = [])
     {
@@ -126,9 +135,16 @@ class NavgroupsModel implements ModelInterface
             || $a_values['ng_id'] == ''
             || (is_string($a_values['ng_id']) && !is_numeric($a_values['ng_id']))
         ) {
-            throw new DbException('The Navgroup id was not supplied.');
+            $this->error_message = 'The Navgroup id was not supplied.';
+            throw new DbException($this->error_message, 320);
         }
-        return $this->genericUpdate($a_values);
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (DbException $e) {
+            $this->error_message = 'Unable to update the record.';
+            throw new DbException($this->error_message, 300, $e);
+        }
     }
 
     /**
@@ -136,7 +152,7 @@ class NavgroupsModel implements ModelInterface
      * Checks to see if a map record exists, if so, returns false;
      * @param int $ng_id
      * @return bool
-     * @throws DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function delete($ng_id = -1)
     {
@@ -146,53 +162,75 @@ class NavgroupsModel implements ModelInterface
         $o_map = new NavNgMapModel($this->o_db);
         $results = $o_map->read(['ng_id' => $ng_id]);
         if (!empty($results)) {
-            throw new DbException('The nav_ng_map record(s) must be deleted first.');
+            $this->error_message = 'The nav_ng_map record(s) must be deleted first.';
+            throw new DbException($this->error_message, 430);
         }
-        $results = $this->retrieveDefaultId();
+        try {
+            $results = $this->retrieveDefaultId();
+        }
+        catch (DbException $e) {
+            $this->error_message = 'Unable to retrieve the default record.';
+            throw new DbException($this->error_message, 200, $e);
+        }
         if ($results == $ng_id) {
-            throw new DbException('This is the default navgroup. Change a different record to be default and try again.');
+            $this->error_message = 'This is the default navgroup. Change a different record to be default and try again.';
+            throw new DbException($this->error_message, 440);
         }
-        $results = $this->genericDelete($ng_id);
-        $this->logIt(var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        if ($results) {
-            return true;
+        try {
+            $this->genericDelete($ng_id);
         }
-        else {
+        catch (DbException $e) {
             $message = $this->o_db->getSqlErrorMessage();
-            throw new DbException($message);
+            throw new DbException($message, 400, $e);
         }
+        return true;
     }
 
     /**
      * Returns a record based on the record id.
      * @param int $id
      * @return array|bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function readById($id = -1)
     {
         if ($id < 1) {
-            throw new DbException('A record id must be provided.');
+            throw new DbException('A record id must be provided.', 220);
         }
         $a_search_values = ['ng_id' => $id];
-        return $this->read($a_search_values);
+        try {
+            return $this->read($a_search_values);
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
      * Returns the whole record base on name.
      * @param string $name
      * @return array
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function readByName($name = '')
     {
+        if ($name == '') {
+            throw new DbException('A record name must be provided.', 220);
+        }
         $a_search_values = ['ng_name' => $name];
-        return $this->read($a_search_values);
+        try {
+            return $this->read($a_search_values);
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
      * Returns the navgroup id based on navgroup name.
      * @param string $name
      * @return int
-     * @throws DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function readIdByName($name = '')
     {
@@ -201,19 +239,24 @@ class NavgroupsModel implements ModelInterface
             'order_by' => 'ng_id',
             'a_fields' => ['ng_id']
         ];
-        $results = $this->read($a_values, $a_search_parms);
-        if (!empty($results[0])) {
-            return $results[0]['ng_id'];
+        try {
+            $results = $this->read($a_values, $a_search_parms);
+            if (!empty($results[0])) {
+                return $results[0]['ng_id'];
+            }
+            else {
+                throw new DbException('No record found', 210);
+            }
         }
-        else {
-            throw new DbException('No record found');
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode(), $e);
         }
     }
 
     /**
      * Gets the default navgroup by id.
      * @return int
-     * @throws DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function retrieveDefaultId()
     {
@@ -222,19 +265,24 @@ class NavgroupsModel implements ModelInterface
             'order_by' => 'ng_id',
             'a_fields' => ['ng_id']
         ];
-        $results = $this->read($a_search_for, $a_search_parms);
-        if (!empty($results[0])) {
-            return $results[0]['ng_id'];
+        try {
+            $results = $this->read($a_search_for, $a_search_parms);
+            if (!empty($results[0])) {
+                return $results[0]['ng_id'];
+            }
+            else {
+                throw new DbException('No record found', 210);
+            }
         }
-        else {
-            throw new DbException('No record found');
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode());
         }
     }
 
     /**
      * Returns the default navgroup by name.
      * @return string
-     * @throws DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function retrieveDefaultName()
     {
@@ -243,12 +291,17 @@ class NavgroupsModel implements ModelInterface
             'order_by' => 'ng_name',
             'a_fields' => ['ng_name']
         ];
-        $results = $this->read($a_search_for, $a_search_parms);
-        if (!empty($results[0])) {
-            return $results[0]['ng_name'];
+        try {
+            $results = $this->read($a_search_for, $a_search_parms);
+            if (!empty($results[0])) {
+                return $results[0]['ng_name'];
+            }
+            else {
+                throw new DbException('No record found', 210);
+            }
         }
-        else {
-            throw new DbException('No record found');
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode(), $e);
         }
     }
 

@@ -5,9 +5,10 @@
  * @file      DbCommonTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.1
+ * @version   1.0.0-beta.2
  * @date      2017-01-25 14:12:15
  * @note Change Log
+ * - v1.0.0-beta.2  - Cleared up that they work with array of assoc arrays      - 2017-06-16 wer
  * - v1.0.0-beta.1  - Moved method from DbTraits to here and moved into beta    - 2017-01-25 wer
  * - v1.0.0-alpha.0 - Initial version                                           - 2016-03-19 wer
  */
@@ -24,7 +25,7 @@ trait DbCommonTraits
 {
     /**
      * Changes array keys to be compatible with prepared statements.
-     * @param array $array required associative array, named keys
+     * @param array $array required associative array or list of assoc arrays.
      * @return array fixed key names
      */
     public function prepareKeys(array $array = array())
@@ -37,7 +38,7 @@ trait DbCommonTraits
             }
             return $a_new;
         }
-        elseif (Arrays::isAssocArray($array[0])) {
+        elseif (Arrays::isArrayOfAssocArrays($array)) {
             foreach ($array as $a_keys) {
                 $results = $this->prepareKeys($a_keys);
                 if ($results === false) {
@@ -54,7 +55,7 @@ trait DbCommonTraits
 
     /**
      * Changes array values to help build a prepared statement primarily the WHERE.
-     * @param array $array key/value pairs to fix
+     * @param array $array key/value pairs to fix, assoc array or array of assoc arrays.
      * @return array fixed where needed
      */
     public function prepareValues(array $array)
@@ -67,7 +68,7 @@ trait DbCommonTraits
             }
             return $a_new;
         }
-        elseif (Arrays::isAssocArray($array[0])) {
+        elseif (Arrays::isArrayOfAssocArrays($array)) {
             return $this->prepareValues($array[0]);
         }
         else {
@@ -92,6 +93,7 @@ trait DbCommonTraits
      * 'userro'     => 'example_read_only_user', (required only if db is set to ro)
      * 'passro'     => 'letmein', (required only if db is set to ro)
      * 'persist'    => false, (debate over if persist should be true)
+     * 'errmode'    => 'exception', (one of three types of PDO error modes)
      * 'prefix'     => 'app_' (prefix to the database tables)
      * 'db_prefix'  => same as 'prefix'
      * 'lib_prefix' => 'ritc_' (prefix to the database tables that are specific to the Ritc\Library

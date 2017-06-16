@@ -833,7 +833,12 @@ class DbModel
      */
     public function rollbackTransaction()
     {
-        return $this->o_pdo->rollBack();
+        try {
+            return $this->o_pdo->rollBack();
+        }
+        catch (\PDOException $e) {
+            throw new DbException($e->getMessage(), 60);
+        }
     }
 
     /**

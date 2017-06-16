@@ -3,5 +3,9 @@ return [
     'read',
     'create',
     'update',
-    'delete'
+    'delete',
+    'deleteByGroupId',
+    'deleteByPeopleId',
+    'readByGroupId',
+    'readByPeopleId'
 ];

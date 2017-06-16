@@ -298,8 +298,8 @@ class Arrays
 
     /**
      * Verifies an associate array has the necessary keys.
-     * @param array $a_required_keys required to have at least one value
-     * @param array $a_pairs required, must be associative array.
+     * @param array $a_pairs         required, must be associative array or array of assoc arrays.
+     * @param array $a_required_keys required to have at least one value.
      * @return bool
      */
     public static function hasRequiredKeys(array $a_pairs = [], array $a_required_keys = [])
@@ -307,12 +307,21 @@ class Arrays
         if (count($a_required_keys) === 0 || count($a_pairs) === 0) {
             return false;
         }
-        if (!self::isAssocArray($a_pairs)) {
+        if (self::isArrayOfAssocArrays($a_pairs)) {
+            foreach ($a_pairs as $a_values) {
+                if (!self::hasRequiredKeys($a_values)) {
+                    return false;
+                }
+            }
+        }
+        elseif (!self::isAssocArray($a_pairs)) {
             return false;
         }
-        foreach ($a_required_keys as $key) {
-            if (!array_key_exists($key, $a_pairs)) {
-                return false;
+        else {
+            foreach ($a_required_keys as $key) {
+                if (!array_key_exists($key, $a_pairs)) {
+                    return false;
+                }
             }
         }
         return true;
@@ -320,8 +329,8 @@ class Arrays
 
     /**
      * Checks array for blank values and missing key=>value pairs.
-     * @param array $a_pairs
-     * @param array $a_keys_to_check
+     * @param array $a_pairs         required, assoc array or array of assoc arrays
+     * @param array $a_keys_to_check required
      * @return bool
      */
     public static function hasBlankValues(array $a_pairs = [], array $a_keys_to_check = [])
@@ -329,24 +338,34 @@ class Arrays
         if ($a_pairs == []) {
             return true;
         }
-        if (!self::hasRequiredKeys($a_pairs, $a_keys_to_check)) {
-            return true;
-        }
-        foreach ($a_pairs as $key => $value) {
-            if (is_array($value)) {
-                $results = self::hasBlankValues($value, $a_keys_to_check);
-                if ($results === true) {
+        if (self::isArrayOfAssocArrays($a_pairs)) {
+            foreach ($a_pairs as $a_values) {
+                $results = self::hasBlankValues($a_values);
+                if ($results) {
                     return true;
                 }
             }
-            elseif ($value == '') {
-                if ($a_keys_to_check != []) {
-                    if (in_array($key, $a_keys_to_check)) {
+        }
+        else {
+            if (!self::hasRequiredKeys($a_pairs, $a_keys_to_check)) {
+                return true;
+            }
+            foreach ($a_pairs as $key => $value) {
+                if (is_array($value)) {
+                    $results = self::hasBlankValues($value, $a_keys_to_check);
+                    if ($results === true) {
                         return true;
                     }
                 }
-                else {
-                   return true;
+                elseif ($value == '') {
+                    if ($a_keys_to_check != []) {
+                        if (in_array($key, $a_keys_to_check)) {
+                            return true;
+                        }
+                    }
+                    else {
+                        return true;
+                    }
                 }
             }
         }

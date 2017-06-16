@@ -29,7 +29,6 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\DbException;
-use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
@@ -67,9 +66,6 @@ class ConstantsModel implements ModelInterface
         $a_required_keys = [
             'const_name'
         ];
-        if (Arrays::hasBlankValues($a_values, $a_required_keys)) {
-            throw new DbException('Missing Required Values', 120);
-        }
         $a_psql = [
             'table_name'  => $this->db_table,
             'column_name' => $this->primary_index_name

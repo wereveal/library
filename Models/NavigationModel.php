@@ -5,16 +5,17 @@
  * @file      Ritc/Library/Models/NavigationModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.2
- * @date      2017-05-09 17:41:45
+ * @version   1.0.0-alpha.3
+ * @date      2017-06-15 16:06:48
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.3 - Refactored to use DbException                 - 2017-06-15 wer
  * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here         - 2017-05-09 wer
  * - v1.0.0-alpha.1 - Refactoring in DbUtilityTraits reflected here - 2017-01-27 wer
  * - v1.0.0-alpha.0 - Initial version                               - 02/24/2016 wer
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Basic\DbException;
+use Ritc\Library\Exceptions\DbException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -29,9 +30,6 @@ class NavigationModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var array */
-    private $a_field_names = array();
-
     /**
      * PageModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db
@@ -39,14 +37,13 @@ class NavigationModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'navigation');
-        $this->setFieldNames();
     }
 
     /**
      * Generic create a record using the values provided.
      * @param array $a_values
      * @return string|bool
-     * @throws \Ritc\Library\Basic\DbException
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function create(array $a_values)
     {
@@ -89,10 +86,10 @@ class NavigationModel implements ModelInterface
      * @param array $a_search_values optional, defaults to returning all records
      * @param array $a_search_params optional, defaults to ['order_by' => 'nav_parent_id ASC, nav_order ASC, nav_name ASC']
      * @return array
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
-        $meth = __METHOD__ . '.';
         $a_parameters = [
             'table_name'     => $this->db_table,
             'a_search_for'   => $a_search_values,
@@ -100,23 +97,52 @@ class NavigationModel implements ModelInterface
             'order_by'       => 'nav_parent_id ASC, nav_order ASC, nav_name ASC'
         ];
         $a_parameters = array_merge($a_parameters, $a_search_params);
-        $results = $this->genericRead($a_parameters);
-        $this->logIt("Nav Search results:\n" . var_export($results, true), LOG_OFF, $meth . __LINE__);
-        return $results;
+        try {
+            return $this->genericRead($a_parameters);
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Generic update for a record using the values provided.
      * @param array $a_values Required
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function update(array $a_values = [])
     {
         if ($a_values == []) {
             $this->error_message = "No values supplied to update the record.";
-            return false;
+            throw new DbException($this->error_message, 320);
         }
-        return $this->genericUpdate($a_values);
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * Deletes a record based on the id provided.
+     * @param int $nav_id Required.
+     * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
+     */
+    public function delete($nav_id = -1)
+    {
+        if ($nav_id == -1) {
+            $this->error_message = 'Missing required nav id.';
+            throw new DbException($this->error_message, 420);
+        }
+        try {
+            return $this->genericDelete($nav_id);
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
@@ -124,32 +150,51 @@ class NavigationModel implements ModelInterface
      * It also deletes the relational records in the nav navgroup map table.
      * @param int $nav_id Required.
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
-    public function delete($nav_id = -1)
+    public function deleteWithMap($nav_id = -1)
     {
-        if ($nav_id == -1) { return false; }
-
+        if ($nav_id == -1) {
+            $this->error_message = 'Missing required nav id.';
+            throw new DbException($this->error_message, 420);
+        }
         /* Going to assume that the map isn't set for relations */
         $o_map = new NavNgMapModel($this->o_db);
-        $this->o_db->startTransaction();
-        $results = $o_map->delete(-1,$nav_id);
-        if (!$results) {
+        try {
+            $this->o_db->startTransaction();
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode());
+        }
+        try {
+            $o_map->delete(-1, $nav_id); // -1 specifies delete all map records with the nav_id
+        }
+        catch (DbException $e) {
             $this->error_message = $o_map->getErrorMessage();
             $this->o_db->rollbackTransaction();
-            return false;
+            throw new DbException($this->error_message, 400);
         }
-        else {
-            $results = $this->genericDelete($nav_id);
-            $this->logIt(var_export($results, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-            if ($results) {
-                return $this->o_db->commitTransaction();
+        try {
+            $this->genericDelete($nav_id);
+            try {
+                $this->o_db->commitTransaction();
             }
-            else {
-                $this->error_message = $this->o_db->getSqlErrorMessage();
+            catch (DbException $e) {
+                throw new DbException($e->errorMessage(), $e->getCode());
+            }
+        }
+        catch (DbException $e) {
+            $this->error_message = $this->o_db->getSqlErrorMessage();
+            try {
                 $this->o_db->rollbackTransaction();
-                return false;
+                throw new DbException($this->error_message, $e->getCode());
+            }
+            catch (DbException $e) {
+                $this->error_message = $e->errorMessage();
+                throw new DbException($e->errorMessage(), $e->getCode());
             }
         }
+        return true;
     }
 
     /**
@@ -160,60 +205,25 @@ class NavigationModel implements ModelInterface
     public function navHasChildren($nav_id = -1)
     {
         if ($nav_id == -1) {
+            $this->error_message = 'Missing required nav id';
             return false;
         }
-        $sql =<<<EOT
-SELECT DISTINCT nav_level
-FROM {$this->db_table}
-WHERE nav_parent_id = :nav_parent_id
-AND nav_id != nav_parent_id
-EOT;
+        $sql = "
+            SELECT DISTINCT nav_level
+            FROM {$this->db_table}
+            WHERE nav_parent_id = :nav_parent_id
+            AND nav_id != nav_parent_id
+        ";
         $a_search_values = [':nav_parent_id' => $nav_id, ];
-        $results = $this->o_db->search($sql, $a_search_values);
-        if ($results !== false && count($results) > 0) {
-            return true;
+        try {
+            $results = $this->o_db->search($sql, $a_search_values);
+            if (count($results) > 0) {
+                return true;
+            }
+        }
+        catch (DbException $e) {
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
         }
         return false;
-    }
-
-    /**
-     * @return array
-     */
-    public function getFieldNames()
-    {
-        return $this->a_field_names;
-    }
-
-    /**
-     * Sets the field names used by many of the sql statements.
-     * Removes duplication of definition. Allows them to be changed on the fly.
-     * @param array $a_field_names
-     */
-    public function setFieldNames(array $a_field_names = [])
-    {
-        if (count($a_field_names) > 0) {
-            $this->a_field_names = $a_field_names;
-        }
-        else {
-            $this->a_field_names = [
-                'nav_id',
-                'nav_page_id',
-                'nav_parent_id',
-                'nav_name',
-                'nav_css',
-                'nav_level',
-                'nav_order',
-                'nav_active'
-            ];
-        }
-    }
-
-    /**
-     * Implements the ModelInterface method, getErrorMessage.
-     * return string
-     */
-    public function getErrorMessage()
-    {
-        return $this->error_message;
     }
 }

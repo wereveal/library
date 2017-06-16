@@ -55,6 +55,7 @@ class PeopleGroupMapModel implements ModelInterface
      *                        array of assoc arrays
      *                        [['people_id' => 1, 'group_id' => 1], ['people_id' => 2, 'group_id' => 1]]
      * @return array|bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function create(array $a_values = [])
     {
@@ -87,7 +88,9 @@ class PeopleGroupMapModel implements ModelInterface
     /**
      * Returns record(s) from the library_people_group_map table
      * @param array $a_search_values
+     * @param array $a_search_parameters
      * @return mixed
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function read(array $a_search_values = [], array $a_search_parameters = [])
     {
@@ -107,7 +110,14 @@ class PeopleGroupMapModel implements ModelInterface
         }
         $a_search_parameters['a_search_for'] = $a_search_values;
         $a_search_parameters['table_name'] = $this->db_table;
-        return $this->genericRead($a_search_parameters);
+        try {
+            return $this->genericRead($a_search_parameters);
+        }
+        catch (DbException $e) {
+            $message = $e->errorMessage();
+            $code = $e->getCode();
+            throw new DbException($message, $code);
+        }
     }
 
     /**
@@ -118,33 +128,38 @@ class PeopleGroupMapModel implements ModelInterface
      *     they should not be modified. The record should always be deleted and
      *     a new one added.
      * @param array $a_values
-     * @return bool
+     * @return bool|void
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function update(array $a_values = array())
     {
-        return false;
+        throw new DbException('Operation not permitted', 350);
     }
 
     /**
-     * Deletes a single record.
-     * @param int $pgm_id required
+     * Deletes map record(s).
+     * @param int|array $pgm_id required either '1' or ['1', '2', '3'].
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function delete($pgm_id = -1)
     {
-        if ($pgm_id == -1) { return false; }
-        if (!ctype_digit($pgm_id)) { return false; }
-        $sql = "
-            DELETE FROM {$this->db_table}
-            WHERE pgm_id = :pgm_id
-        ";
-        return $this->o_db->delete($sql, array(':pgm_id' => $pgm_id), true);
+        if ($pgm_id == -1) {
+            throw new DbException('Missing required value: id', 420);
+        }
+        try {
+            return $this->genericDelete($pgm_id);
+        }
+        catch (DbException $e) {
+            throw new DbException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Deletes the record(s) in table based on group id(s).
      * @param int|array $group_id either '1' or ['1', '2', '3']
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function deleteByGroupId($group_id = -1)
     {
@@ -161,13 +176,19 @@ class PeopleGroupMapModel implements ModelInterface
         else {
             $a_values = [':group_id' => $group_id];
         }
-        return $this->o_db->delete($sql, $a_values, true);
+        try {
+            return $this->o_db->delete($sql, $a_values, false);
+        }
+        catch (DbException $e) {
+            throw new DbException('Unable to delete the pgm record(s) by group id.', 300, $e);
+        }
     }
 
     /**
      * Deletes the records based on people id.
-     * @param int $people_id
+     * @param int $people_id required either '1' or ['1', '2', '3']
      * @return bool
+     * @throws \Ritc\Library\Exceptions\DbException
      */
     public function deleteByPeopleId($people_id = -1)
     {
@@ -175,7 +196,60 @@ class PeopleGroupMapModel implements ModelInterface
             DELETE FROM {$this->db_table}
             WHERE people_id = :people_id
         ";
-        return $this->o_db->delete($sql, array(':people_id' => $people_id), true);
+        $a_values = [];
+        if (is_array($people_id)) {
+            foreach ($people_id as $id) {
+                $a_values[] = [':people_id' => $id];
+            }
+        }
+        else {
+            $a_values = [':people_id' => $people_id];
+        }
+        try {
+            return $this->o_db->delete($sql, $a_values, false);
+        }
+        catch (DbException $e) {
+            throw new DbException('Could not delete the pgm record(s) by people id.', 400, $e);
+        }
     }
 
+    /**
+     * Reads the record(s) by group id.
+     * @param int $group_id
+     * @return mixed
+     * @throws \Ritc\Library\Exceptions\DbException
+     */
+    public function readByGroupId($group_id = -1)
+    {
+        if ($group_id == -1) {
+            throw new DbException('Missing required value.', 220);
+        }
+        $a_search_for = ['group_id' => $group_id];
+        try {
+            return $this->read($a_search_for);
+        }
+        catch (DbException $e) {
+            throw new DbException('Unable to read the records by group id.', 200, $e);
+        }
+    }
+
+    /**
+     * Reads the record(s) by people id.
+     * @param int $people_id
+     * @return mixed
+     * @throws \Ritc\Library\Exceptions\DbException
+     */
+    public function readByPeopleId($people_id = -1)
+    {
+        if ($people_id == -1) {
+            throw new DbException('Missing required value.', 220);
+        }
+        $a_search_for = ['people_id' => $people_id];
+        try {
+            return $this->read($a_search_for);
+        }
+        catch (DbException $e) {
+            throw new DbException('Unable to read the records by people id.', 200, $e);
+        }
+    }
 }

@@ -16,7 +16,6 @@
  */
 namespace Ritc\Library\Models;
 
-use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Elog;

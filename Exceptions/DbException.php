@@ -59,6 +59,8 @@ class DbException extends CustomException
                 return 'Unable to start a transaction.';
             case 40:
                 return 'Unable to commit a transaction.';
+            case 45:
+                return 'Unable to rollback a transaction.';
             case 50:
                 return 'Unable to prepare the statement.';
             case 60:
@@ -106,6 +108,8 @@ class DbException extends CustomException
                 return 'Unable to update the record: a field given does not exist in the database.';
             case 340:
                 return 'Unable to update the record: a field being changed is immutable';
+            case 350:
+                return 'Update not permitted.'
             # Delete codes
             case 400:
                 return 'Unable to delete the record.';
