@@ -5,17 +5,18 @@
  * @file      Ritc/Library/Models/PeopleComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.3
- * @date      2017-05-16 14:16:09
+ * @version   1.0.0-alpha.4
+ * @date      2017-06-17 13:14:14
  * @note Change Log
+ * - v1.0.0-alpha.4 - Refactored to use ModelException                      - 2017-06-17 wer
  * - v1.0.0-alpha.3 - Bug fix                                               - 2017-05-16 wer
  * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here                 - 2017-05-09 wer
  * - v1.0.0-alpha.1 - Bug fix                                               - 2017-01-27 wer
  * - v1.0.0-alpha.0 - Initial version                                       - 2016-12-08 wer
- * @todo Ritc/Library/Models/PeopleComplexModel.php - Test
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -64,59 +65,67 @@ class PeopleComplexModel
      * Deletes the person and related records.
      * @param int $people_id
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function deletePerson($people_id = -1)
     {
         if ($people_id == -1) {
-            return false;
+            throw new ModelException('Missing required people id', 420);
         }
-        if ($this->o_db->startTransaction()) {
-            if ($this->o_pgm->deleteByPeopleId($people_id)) {
-                if ($this->o_people->delete($people_id)) {
-                    if ($this->o_db->commitTransaction()) {
-                        return true;
-                    }
-                    else {
-                        $this->error_message = "Could not commit the transaction.";
-                    }
+        try {
+            $this->o_db->startTransaction();
+        }
+        catch (ModelException $e) {
+            throw new ModelException('Unable to start transaction', 30);
+        }
+        try {
+            $this->o_pgm->deleteByPeopleId($people_id);
+            try {
+                $this->o_people->delete($people_id);
+                try {
+                    $this->o_db->commitTransaction();
+                    return true;
                 }
-                else {
-                    $this->error_message = $this->o_db->getSqlErrorMessage();
+                catch (ModelException $e) {
+                    $this->error_message = "Could not commit the transaction.";
+                    $error_code = 40;
                 }
             }
-            else {
-                $this->error_message = $this->o_pgm->getErrorMessage();
+            catch (ModelException $e) {
+                $this->error_message = 'Unable to delete the people record: ' . $this->o_db->getSqlErrorMessage();
+                $error_code = $e->getCode();
             }
-            $this->o_db->rollbackTransaction();
         }
-        else {
-            $this->error_message = "Could not start transaction.";
+        catch (ModelException $e) {
+            $this->error_message = 'Unable to delete the pgm record'.  $this->o_pgm->getErrorMessage();
+            $error_code = $e->getCode();
         }
-        return false;
+        $this->o_db->rollbackTransaction();
+        throw new ModelException($this->error_message, $error_code, $e);
     }
 
     /**
      * Gets the user values based on login_id or people_id.
      * @param int|string $people_id the people_id or login_id (as defined in the db)
-     * @return array|bool the records for the person
+     * @return array the records for the person
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readInfo($people_id = '')
     {
-        $meth = __METHOD__ . '.';
         if ($people_id == '') {
             $this->error_message = 'People ID not provided.';
-            return false;
+            throw new ModelException($this->error_message, 220);
         }
 
         $a_people_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'people');
         if (empty($a_people_fields)) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            return false;
+            throw new ModelException($this->error_message, 220);
         }
         $a_group_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'groups');
         if (empty($a_group_fields)) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            return false;
+            throw new ModelException($this->error_message, 220);
         }
 
         $fields = '';
@@ -151,11 +160,13 @@ class PeopleComplexModel
             WHERE {$where}
             ORDER BY g.group_auth_level DESC, g.group_name ASC
         ";
-
-        $this->logIt("Select User: {$sql}", LOG_OFF, $meth . __LINE__);
-        $this->logIt("a_where_values: " . var_export($a_where_values, true), LOG_OFF, $meth . __LINE__);
-        $a_people = $this->o_db->search($sql, $a_where_values);
-        $this->logIt("a_people: " . var_export($a_people, true), LOG_OFF, $meth);
+        try {
+            $a_people = $this->o_db->search($sql, $a_where_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
+        $a_person = [];
         if (isset($a_people[0]) && is_array($a_people[0])) {
             if (($a_people[0]['people_id'] == $people_id) || ($a_people[0]['login_id'] == $people_id)) {
                 $a_groups = array();
@@ -186,30 +197,36 @@ class PeopleComplexModel
                 unset($a_person['group_description']);
                 unset($a_person['group_auth_level']);
                 $a_person['groups'] = $a_groups;
-                $this->logIt("Found Person: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
-                return $a_person;
             }
         }
         else {
-            $this->logIt("Did not find person. {$sql}", LOG_OFF, $meth);
+            throw new ModelException('Unable to find the person specified.', 210);
         }
-        return array();
+        return $a_person;
     }
 
     /**
      * Reads the people in the group provided.
      * @param int $group_id
      * @return bool|mixed
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readByGroup($group_id = -1)
     {
-        $meth = __METHOD__ . '.';
-        $a_people_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'people');
-        if (empty($a_people_fields)) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            return false;
+        try {
+            $a_people_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'people');
+            try {
+                $a_group_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'groups');
+            }
+            catch (ModelException $e) {
+                $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+                throw new ModelException($this->error_message, 220);
+            }
         }
-        $a_group_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'groups');
+        catch (ModelException $e) {
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            throw new ModelException($this->error_message, 220);
+        }
         if (is_numeric($group_id)) {
             $group_and = 'g.group_id = :group_id';
             $a_values = ['group_id' => $group_id, 'is_active' => 1];
@@ -230,25 +247,25 @@ class PeopleComplexModel
         foreach ($a_group_fields as $field_name) {
             $fields .= ', g.' . $field_name;
         }
-        $sql =<<<SQL
-SELECT $fields
-FROM {$this->lib_prefix}people as p
-JOIN {$this->lib_prefix}people_group_map pgm
-  ON p.people_id = pgm.people_id
-JOIN {$this->lib_prefix}groups as g
-  ON (
-        g.group_id = pgm.group_id
-    AND $group_and
-    )
-WHERE p.is_active = :is_active
-SQL;
-        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
-        $log_message = 'values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        $a_results = $this->o_db->search($sql, $a_values);
-        if ($a_results === false) {
+        $sql = "
+            SELECT $fields
+            FROM {$this->lib_prefix}people as p
+            JOIN {$this->lib_prefix}people_group_map pgm
+              ON p.people_id = pgm.people_id
+            JOIN {$this->lib_prefix}groups as g
+              ON (
+                    g.group_id = pgm.group_id
+                AND $group_and
+                 )
+            WHERE p.is_active = :is_active
+        ";
+        try {
+            $a_results = $this->o_db->search($sql, $a_values);
+        }
+        catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message .= "\n" . $sql . "\n" . var_export($a_values, true);
+            throw new ModelException($this->error_message, 200, $e);
         }
         return $a_results;
     }
@@ -258,12 +275,13 @@ SQL;
      * If the values contain a value of people_id, person is updated
      * Else it is a new person.
      * @param array $a_person values to save
-     * @return mixed, people_id or false
+     * @return bool|int people_id
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function savePerson(array $a_person = array())
     {
         if (!Arrays::hasRequiredKeys($a_person, ['login_id', 'password'])) {
-            return false;
+            throw new ModelException('Missing required values.', 70);
         }
         if (!isset($a_person['people_id']) || $a_person['people_id'] == '') { // New User
             $a_required_keys = array(
@@ -287,22 +305,43 @@ SQL;
             }
             $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
             $a_groups = $this->makeGroupIdArray($a_person['groups']);
-            if ($this->o_db->startTransaction()) {
-                $a_ids = $this->o_people->create($a_person);
-                if ($a_ids !== false) {
-                    $new_people_id = $a_ids[0];
-                    $a_pgm_values = $this->makePgmArray($new_people_id, $a_groups);
-                    if ($a_pgm_values != array()) {
-                        if ($this->o_pgm->create($a_pgm_values)) {
-                            if ($this->o_db->commitTransaction()) {
-                                return $new_people_id;
-                            }
-                        }
-                    }
-                } // new user created
-                $this->error_message = $this->o_db->getSqlErrorMessage();
-                $this->o_db->rollbackTransaction();
+            try {
+                $this->o_db->startTransaction();
             }
+            catch (ModelException $e) {
+                throw new ModelException('Could not start the transaction', 30);
+            }
+            try {
+                $a_ids = $this->o_people->create($a_person);
+                $new_people_id = $a_ids[0];
+                $a_pgm_values = $this->makePgmArray($new_people_id, $a_groups);
+                if (empty($a_pgm_values)) {
+                    $this->error_message = 'Unable to create the required values.';
+                    $this->o_db->rollbackTransaction();
+                    throw new ModelException($this->error_message, 70);
+                }
+                try {
+                    $this->o_pgm->create($a_pgm_values);
+                    try {
+                        $this->o_db->commitTransaction();
+                        return $new_people_id;
+                    }
+                    catch (ModelException $e) {
+                        $this->error_message = 'Unable to commit the transaction: ' . $e->errorMessage();
+                        $error_code = 40;
+                    }
+                }
+                catch (ModelException $e) {
+                    $this->error_message = 'Unable to create the people group map record:' . $e->errorMessage();
+                    $error_code = $e->getCode();
+                }
+            }
+            catch (ModelException $e) {
+                $this->error_message = 'Unable to create the person record: ' . $e->errorMessage();
+                $error_code = $e->getCode();
+            }
+            $this->o_db->rollbackTransaction();
+            throw new ModelException($this->error_message, $error_code);
         }
         else { // Existing User
             $a_required_keys = array(
@@ -330,22 +369,47 @@ SQL;
             $a_groups = $this->makeGroupIdArray($a_person['groups']);
             $a_pg_values = $this->makePgmArray($a_person['people_id'], $a_groups);
             if ($a_pg_values != array()) {
-                if ($this->o_db->startTransaction()) {
-                    if ($this->o_people->update($a_person)) {
-                        if ($this->o_pgm->deleteByPeopleId($a_person['people_id'])) {
-                            if ($this->o_pgm->create($a_pg_values)) {
-                                if ($this->o_db->commitTransaction()) {
-                                    return true;
-                                }
+                try {
+                    $this->o_db->startTransaction();
+                }
+                catch (ModelException $e) {
+                    $this->error_message = 'Unable to start the transaction: ' . $e->errorMessage();
+                    throw new ModelException($this->error_message, 30);
+                }
+                try {
+                    $this->o_people->update($a_person);
+                    try {
+                        $this->o_pgm->deleteByPeopleId($a_person['people_id']);
+                        try {
+                            $this->o_pgm->create($a_pg_values);
+                            try {
+                                $this->o_db->commitTransaction();
+                                return true;
+                            }
+                            catch (ModelException $e) {
+                                $this->error_message = 'Unable to commit the transaction: ' . $e->errorMessage();
+                                $error_code = 40;
                             }
                         }
+                        catch (ModelException $e) {
+                            $this->error_message = 'Unable to create the people group map record: '. $e->errorMessage();
+                            $error_code = $e->getCode();
+                        }
                     }
-                    $this->error_message = $this->o_db->getSqlErrorMessage();
-                    $this->o_db->rollbackTransaction();
+                    catch (ModelException $e) {
+                        $this->error_message = 'Unable to delete old people group map record: '. $e->errorMessage();
+                        $error_code = $e->getCode();
+                    }
                 }
+                catch (ModelException $e) {
+                    $this->error_message = 'Unable to update the person: '. $e->errorMessage();
+                    $error_code = $e->getCode();
+                }
+                $this->o_db->rollbackTransaction();
+                throw new ModelException($this->error_message, $error_code);
             }
         }
-        return false;
+        throw new ModelException('Unable to save the person. ' . $this->error_message, 100);
     }
 
     ### Utility Functions ###
@@ -361,24 +425,38 @@ SQL;
             $a_group_ids = $group_id;
         }
         elseif ($group_id != '') {
-            $a_group_ids = $this->o_group->isValidGroupId($group_id)
-                ? array($group_id)
-                : array();
+            try {
+               $results = $this->o_group->isValidGroupId($group_id);
+               $a_group_ids = $results
+                   ? array($group_id)
+                   : array();
+
+            }
+            catch (ModelException $e) {
+                $a_group_ids = array();
+            }
         }
         else {
             $a_group_ids = array();
         }
-        if ($a_group_ids == array() && $group_name != '') {
-            $a_group = $this->o_group->readByName($group_name);
-            if ($a_group !== false && count($a_group) > 0) {
-                $a_group_ids = array($a_group[0]['group_id']);
+        if (empty($a_group_ids) && !empty($group_name)) {
+            try {
+                $a_group = $this->o_group->readByName($group_name);
+                if (!empty($a_group)) {
+                    $a_group_ids = array($a_group[0]['group_id']);
+                }
             }
-            else {
-                $a_found_groups = $this->o_group->readByName('Registered');
-                $use_id = $a_found_groups !== false && count($a_found_groups) > 0
-                    ? $a_found_groups[0]['group_id']
-                    : 5;
-                $a_group_ids = array($use_id);
+            catch (ModelException $e) {
+                try {
+                    $a_found_groups = $this->o_group->readByName('Registered');
+                    $use_id = $a_found_groups !== false && count($a_found_groups) > 0
+                        ? $a_found_groups[0]['group_id']
+                        : 5;
+                    $a_group_ids = array($use_id);
+                }
+                catch (ModelException $e) {
+                    $a_group_ids = array();
+                }
             }
         }
         return $a_group_ids;

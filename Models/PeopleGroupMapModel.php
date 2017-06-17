@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleGroupMapModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.3
- * @date      2017-05-09 17:38:53
+ * @version   2.0.0
+ * @date      2017-06-17 13:16:31
  * @note <b>Change Log</b>
+ * - v2.0.0   - Refactored to use ModelException                       - 2017-06-17 wer
  * - v1.1.3   - DbUtilityTraits change reflected here                  - 2017-05-09 wer
  * - v1.1.2   - refactoring of trait reflected here                    - 2017-01-27 wer
  * - v1.1.1   - bug fix of read method, did not match interface        - 2016-03-24 wer

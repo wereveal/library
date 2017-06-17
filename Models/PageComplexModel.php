@@ -5,17 +5,19 @@
  * @file      PageComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.4
- * @date      2017-05-16 14:17:53
+ * @version   1.0.0-alpha.5
+ * @date      2017-06-17 12:12:02
  * @note Change Log
- * - v1.0.0-alpha.4 - bug fixes                     - 2017-05-16 wer
- * - v1.0.0-alpha.3 - bug fixes                     - 2017-02-11 wer
- * - v1.0.0-alpha.2 - refactoring reflected here    - 2017-01-27 wer
- * - v1.0.0-alpha.1 - bug fix                       - 2016-04-28 wer
- * - v1.0.0-alpha.0 - Initial version               - 2016-04-08 wer
+ * - v1.0.0-alpha.5 - refactored to use ModelException  - 2017-06-17 wer
+ * - v1.0.0-alpha.4 - bug fixes                         - 2017-05-16 wer
+ * - v1.0.0-alpha.3 - bug fixes                         - 2017-02-11 wer
+ * - v1.0.0-alpha.2 - refactoring reflected here        - 2017-01-27 wer
+ * - v1.0.0-alpha.1 - bug fix                           - 2016-04-28 wer
+ * - v1.0.0-alpha.0 - Initial version                   - 2016-04-08 wer
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Elog;
@@ -69,13 +71,12 @@ class PageComplexModel
      * @param array $a_search_for        Optional, defaults to returning all records
      *                                   Allowed search keys ['url_id', 'url_text', 'page_id', 'page_title']
      * @param array $a_search_parameters Optional, defaults to ['order_by' => 'page_id ASC']
-     * @return bool|array
+     * @return array|bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readPageValues(array $a_search_for = [], array $a_search_parameters = [])
     {
-        $meth = __METHOD__ . '.';
         $a_allowed_keys = ['u.url_id', 'u.url_text', 'p.page_id', 'p.page_title'];
-
         if (!isset($a_search_parameters['order_by'])) {
             $a_search_parameters['order_by'] = 'page_id ASC';
         }
@@ -84,21 +85,22 @@ class PageComplexModel
         }
         $sql_where = $this->buildSqlWhere($a_search_for, $a_search_parameters, $a_allowed_keys);
         $sql = $this->select_sql . "\n" . $sql_where;
-        $this->logIt("SQL: {$sql}", LOG_OFF, $meth . __LINE__);
-        $log_message = 'Search Parameters ' . var_export($a_search_for, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        return $this->o_db->search($sql, $a_search_for);
+        try {
+            return $this->o_db->search($sql, $a_search_for);
+        }
+        catch (ModelException $e) {
+            throw new ModelException('Unable to read the page values.', 140, $e);
+        }
     }
 
     /**
      * Returns records from the join of the page and urls tables based on url id.
      * @param int $url_id Required
      * @return array|bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readPageValuesByUrlId($url_id = -1)
     {
-        $meth = __METHOD__ . '.';
         if ($url_id == -1) {
             return false;
         }
@@ -108,21 +110,23 @@ class PageComplexModel
 WHERE p.url_id = u.url_id
 AND p.url_id = :url_id
 SQL;
-        $this->logIt("sql: $sql", LOG_OFF, $meth . __LINE__);
-        $a_values = $this->o_db->search($sql, [':url_id' => $url_id]);
+        try {
+            $a_values = $this->o_db->search($sql, [':url_id' => $url_id]);
+        }
+        catch (ModelException $e) {
+            throw new ModelException('Unable to get the page values', 140, $e);
+        }
         foreach ($a_values as $key => $a_record) {
             $tpl_id = $a_record['tpl_id'];
-            $a_twig_stuff = $this->o_tpls->readTplInfo($tpl_id);
-            $log_message = 'Tpl Info; ' . var_export($a_twig_stuff, TRUE);
-            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-            if (!empty($a_twig_stuff)) {
+            try {
+                $a_twig_stuff = $this->o_tpls->readTplInfo($tpl_id);
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Unable to get the template values', 140, $e);
+            }
+            if (!empty($a_twig_stuff[0])) {
                 $a_record = array_merge($a_record, $a_twig_stuff[0]);
                 $a_values[$key] = $a_record;
-            }
-            else {
-                $log_message = 'tpl info error_message ' . var_export($this->o_tpls->getErrorMessage(), TRUE);
-                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             }
         }
         return $a_values;
@@ -131,7 +135,8 @@ SQL;
     /**
      * Returns one or more records based on the url ordered by the url text.
      * @param string $url_text Required
-     * @return bool|array
+     * @return array|bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readPageValuesByUrlText($url_text = '')
     {
@@ -145,7 +150,12 @@ WHERE u.url_text = :url_text
 AND p.url_id = u.url_id
 ORDER By u.url_text
 SQL;
-        return $this->o_db->search($sql, [':url_text' => $url_text]);
+        try {
+            return $this->o_db->search($sql, [':url_text' => $url_text]);
+        }
+        catch (ModelException $e) {
+            throw new ModelException('Unable to read the page values.', 140, $e);
+        }
     }
 
     /**
@@ -154,8 +164,6 @@ SQL;
      */
     private function setSelectSql($the_string = '')
     {
-        $meth = __METHOD__ . '.';
-        $this->logIt("lib prefix: " . $this->lib_prefix, LOG_OFF, $meth . __LINE__);
         if ($the_string != '') {
             $this->select_sql = $the_string;
         }
@@ -166,12 +174,10 @@ SQL;
             $url_prefix = $this->o_urls->getLibPrefix();
             $select_fields = $this->buildSqlSelectFields($a_page_fields, 'p');
             $select_fields .= ', ' . $this->buildSqlSelectFields($a_urls_fields, 'u');
-
-            $this->select_sql = <<<EOT
-SELECT {$select_fields}
-FROM {$page_prefix}page as p,
-     {$url_prefix}urls as u
-EOT;
+            $this->select_sql = "
+                SELECT {$select_fields}
+                FROM {$page_prefix}page as p,
+                {$url_prefix}urls as u";
         }
     }
 }
