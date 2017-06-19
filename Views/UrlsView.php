@@ -16,6 +16,7 @@
  */
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
@@ -55,7 +56,13 @@ class UrlsView
      */
     public function renderList(array $a_message = [])
     {
-        $a_urls = $this->o_urls_model->read();
+        try {
+            $a_urls = $this->o_urls_model->read();
+        }
+        catch (ModelException $e) {
+            $a_urls = [];
+            $a_message['message'] .= 'Error occurred reading the url list: ' . $e->errorMessage();
+        }
         $a_new_urls = [];
         foreach($a_urls as $a_url) {
             if ($a_url['url_host'] == 'self') {
@@ -70,7 +77,7 @@ class UrlsView
                 'immutable' => $a_url['url_immutable'] == 1 ? 'true' : 'false'
             ];
         }
-        if (count($a_message) != 0) {
+        if (!empty($a_message['message'])) {
             $a_message['message'] .= "<br>Changing the URL can result in unexpected results. If you are not sure, do not do it.";
             $a_message = ViewHelper::messageProperties($a_message);
         }

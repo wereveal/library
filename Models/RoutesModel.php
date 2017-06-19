@@ -5,9 +5,11 @@
  * @file      Ritc/Library/Models/RoutesModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.3
- * @date      2017-05-16 13:37:01
+ * @version   2.0.0
+ * @date      2017-06-18 14:42:07
  * @note <b>Change Log</b>
+ * - v2.0.0   - Refactored to use ModelException and moved a couple    - 2017-06-18 wer
+ *              methods to RoutesComplexModel.
  * - v1.4.3   - bug fix                                                - 2017-05-16 wer
  * - v1.4.2   - DbUtilityTraits change reflected here                  - 2017-05-09 wer
  * - v1.4.1   - Bug fix caused by change elsewhere                     - 2017-01-27 wer
@@ -25,6 +27,8 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -52,12 +56,13 @@ class RoutesModel implements ModelInterface
      * Create a record using the values provided.
      * @param array $a_values
      * @return bool
-     * @throws \Ritc\Library\Basic\DbException
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function create(array $a_values)
     {
-        if ($a_values == array()) { return false; }
-        $this->logIt(var_export($a_values, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        if ($a_values == array()) {
+            throw new ModelException('Missing required values.', 120);
+        }
         $a_required_keys = [
             'url_id',
             'route_class',
@@ -75,9 +80,8 @@ class RoutesModel implements ModelInterface
         try {
             return $this->genericCreate($a_values, $a_params);
         }
-        catch (DbException $exception) {
-            $message = $exception->errorMessage();
-            throw new DbException($message, $exception->getCode());
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
     }
 
@@ -86,8 +90,9 @@ class RoutesModel implements ModelInterface
      * @param array $a_search_values optional, defaults to returning all records
      * @param array $a_search_params optional, defaults to ['order_by' => 'route_path']
      * @return array
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function read(array $a_search_values = array(), array $a_search_params = array())
+    public function read(array $a_search_values = [], array $a_search_params = [])
     {
         $a_parameters = [
             'table_name'     => $this->db_table,
@@ -96,7 +101,12 @@ class RoutesModel implements ModelInterface
             'order_by'       => $this->primary_index_name . ' ASC'
         ];
         $a_parameters = array_merge($a_parameters, $a_search_params);
-        return $this->genericRead($a_parameters);
+        try {
+            return $this->genericRead($a_parameters);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
@@ -106,95 +116,52 @@ class RoutesModel implements ModelInterface
      */
     public function update(array $a_values = [])
     {
-        $meth = __METHOD__ . '.';
-        $log_message = 'Values Passed In:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        if (!isset($a_values[$this->primary_index_name])
-            || $a_values[$this->primary_index_name] == ''
-            || (!is_numeric($a_values[$this->primary_index_name]))
-        ) {
-
-            return false;
+        try {
+            return $this->genericUpdate($a_values);
         }
-        return $this->genericUpdate($a_values);
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Deletes a record based on the id provided.
-     * @param int $route_id
+     * @param int|array $route_id required may be a single id or list array of ids.
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($route_id = -1)
     {
-        if ($route_id == -1) { return false; }
-        $search_results = $this->read([$this->primary_index_name => $route_id], ['a_fields' => ['route_immutable']]);
-        if (isset($search_results[0]) && $search_results[0]['route_immutable'] == 1) {
-            $this->error_message = 'Sorry, that route can not be deleted.';
-            return false;
+        if ($route_id == -1 || empty($route_id)) {
+            throw new ModelException('Missing required value(s), route id', 420);
         }
-        $results = $this->genericDelete($route_id);
-        if ($results === false) {
+        if (Arrays::isArrayOfAssocArrays($route_id)) {
+            $a_ids = [];
+            foreach ($route_id as $id) {
+                $a_ids[] =  [$this->primary_index_name => $id];
+            }
+        }
+        else {
+            $a_ids[] =  [$this->primary_index_name => $route_id];
+        }
+        try {
+            $search_results = $this->read($a_ids, ['a_fields' => ['route_immutable']]);
+            foreach ($search_results as $a_result) {
+                if (isset($a_result['route_immutable']) && $a_result['route_immutable'] == 1) {
+                    $this->error_message = 'Sorry, that route can not be deleted.';
+                    throw new ModelException($this->error_message, 440);
+                }
+            }
+        }
+        catch (ModelException $e) {
+            throw new ModelException('Unable to determine if the record(s) is immutable.', 445);
+        }
+        try {
+            return $this->genericDelete($route_id);
+        }
+        catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            throw new ModelException($this->error_message, 400);
         }
-        return $results;
-    }
-
-    /**
-     * Reads the route with the request uri.
-     * @param string $request_uri normally obtained from $_SERVER['REQUEST_URI']
-     * @return mixed
-     */
-    public function readByRequestUri($request_uri = '')
-    {
-        $meth = __METHOD__ . '.';
-        if ($request_uri == '') {
-            return false;
-        }
-        $a_search_params = [':url_text' => $request_uri];
-        $sql =<<<EOT
-
-SELECT r.route_id, r.route_class, r.route_method, r.route_action, r.route_immutable,
-       u.url_id, u.url_text, u.url_scheme
-FROM {$this->lib_prefix}routes as r, {$this->lib_prefix}urls as u
-WHERE r.url_id = u.url_id
-AND u.url_text = :url_text
-ORDER BY u.url_text
-
-EOT;
-        $this->logIt("sql: " . $sql, LOG_OFF, $meth . __LINE__);
-        $log_message = 'values: ' . var_export($a_search_params, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        return $this->o_db->search($sql, $a_search_params);
-    }
-
-    /**
-     * Returns the list of all the routes with the url.
-     * A join between routes and urls tables.
-     * @return bool|array
-     */
-    public function readAllWithUrl()
-    {
-        $sql =<<<EOT
-
-SELECT r.route_id, r.route_class, r.route_method, r.route_action, r.route_immutable,
-       u.url_id, u.url_text, u.url_scheme
-FROM {$this->lib_prefix}routes as r, {$this->lib_prefix}urls as u
-WHERE r.url_id = u.url_id
-ORDER BY r.route_immutable DESC, u.url_text
-
-EOT;
-        return $this->o_db->search($sql);
-    }
-
-    /**
-     * Returns the sql error message.
-     * Overrides method in DbUtilityTraits.
-     * return string
-     */
-    public function getErrorMessage()
-    {
-        return $this->o_db->retrieveFormatedSqlErrorMessage();
     }
 }

@@ -14,10 +14,12 @@
  * - v1.0.0β3 - bug fix                                             - 11/24/2015 wer
  * - v1.0.0β2 - logic change                                        - 10/30/2015 wer
  * - v1.0.0β1 - intial file                                         - 09/26/2015 wer
+ * @TODO refactor to match model refactoring using ModelExceptions
  */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Models\GroupsModel;
+use Ritc\Library\Models\RoutesComplexModel;
 use Ritc\Library\Models\RoutesGroupMapModel;
 use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
@@ -36,7 +38,7 @@ class RoutesHelper
     private $a_route_parts;
     /** @var \Ritc\Library\Models\GroupsModel */
     private $o_group;
-    /** @var \Ritc\Library\Models\RoutesModel */
+    /** @var \Ritc\Library\Models\RoutesComplexModel */
     private $o_routes;
     /** @var \Ritc\Library\Models\RoutesGroupMapModel */
     private $o_rgm;
@@ -54,15 +56,12 @@ class RoutesHelper
     {
         $this->setupElog($o_di);
         $o_db = $o_di->get('db');
-        $this->o_routes = new RoutesModel($o_db);
+        $this->o_routes = new RoutesComplexModel($o_di);
         $this->o_group = new GroupsModel($o_db);
         $this->o_rgm   = new RoutesGroupMapModel($o_db);
         $this->route_path = $request_uri;
-
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_routes->setElog($this->o_elog);
-            $this->o_group->setElog($this->o_elog);
-        }
+        $this->o_group->setElog($this->o_elog);
+        $this->o_rgm->setElog($this->o_elog);
     }
 
     /**

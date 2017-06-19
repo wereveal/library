@@ -4,15 +4,17 @@
  * @ingroup   lib_views
  * @file      NavigationView.phpnamespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2017-05-14 16:43:44
+ * @version   1.0.0-alpha.2
+ * @date      2017-06-19 13:11:34
  * @note Change Log
+ * - v1.0.0-alpha.2 - refactoring in model   - 2017-06-19 wer
  * - v1.0.0-alpha.1 - Name refactoring       - 2017-05-14 wer
  * - v1.0.0-alpha.0 - Initial version        - 2016-04-15 wer
  * @todo NavigationView- Everything
  */
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\NavigationModel;
@@ -184,27 +186,32 @@ class NavigationView
             'options'     => []
         ];
         $o_urls = new UrlsModel($this->o_db);
-        $a_results = $o_urls->read();
-        $a_options = [[
-            'value'       => 0,
-            'label'       => '--Select Url--',
-            'other_stuph' => $url_id == -1 ? ' selected' : ''
-        ]];
-        foreach ($a_results as $url) {
-            $a_temp = [
-                'value'       => $url['url_id'],
-                'label'       => $url['url_text'],
-                'other_stuph' => ''
-            ];
-            if ($url['url_id'] == $url_id) {
-                $a_temp['other_stuph'] = ' selected';
+        try {
+            $a_results = $o_urls->read();
+            $a_options = [[
+                'value'       => 0,
+                'label'       => '--Select Url--',
+                'other_stuph' => $url_id == -1 ? ' selected' : ''
+            ]];
+            foreach ($a_results as $url) {
+                $a_temp = [
+                    'value'       => $url['url_id'],
+                    'label'       => $url['url_text'],
+                    'other_stuph' => ''
+                ];
+                if ($url['url_id'] == $url_id) {
+                    $a_temp['other_stuph'] = ' selected';
+                }
+                if ($a_temp['value'] != '') {
+                    $a_options[] = $a_temp;
+                }
             }
-            if ($a_temp['value'] != '') {
-                $a_options[] = $a_temp;
-            }
+            $a_select['options'] = $a_options;
+            return $a_select;
         }
-        $a_select['options'] = $a_options;
-        return $a_select;
+        catch (ModelException $e) {
+            return [];
+        }
     }
 
     /**

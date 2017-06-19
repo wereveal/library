@@ -14,6 +14,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -28,6 +29,10 @@ class TwigTemplatesModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
+    /**
+     * TwigTemplatesModel constructor.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'twig_prefix');
@@ -70,6 +75,7 @@ class TwigTemplatesModel implements ModelInterface
      * @param array $a_search_for    key pairs of field name => field value
      * @param array $a_search_params \ref searchparams \ref readparams
      * @return array
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function read(array $a_search_for = [], array $a_search_params = [])
     {
@@ -80,42 +86,107 @@ class TwigTemplatesModel implements ModelInterface
             'order_by'       => $this->primary_index_name . ' ASC'
         ];
         $a_parameters = array_merge($a_parameters, $a_search_params);
-        return $this->genericRead($a_parameters);
+        try {
+            return $this->genericRead($a_parameters);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Update for a record using the values provided.
      * @param array $a_values
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update(array $a_values = [])
     {
-        if (!isset($a_values[$this->primary_index_name])
-            || $a_values[$this->primary_index_name] == ''
-            || (!is_numeric($a_values[$this->primary_index_name]))
-        ) {
-            return false;
+        if ($this->isImmutable($a_values)) {
+            if (Arrays::isArrayOfAssocArrays($a_values)) {
+                foreach ($a_values as $key => $a_record) {
+                    unset($a_values[$key]['td_id']);
+                    unset($a_values[$key]['tpl_name']);
+                }
+            }
+            else {
+                unset($a_values['td_id']);
+                unset($a_values['tpl_name']);
+            }
         }
-        return $this->genericUpdate($a_values);
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Deletes a record based on the id provided.
-     * @param int $id
+     * @param int|array $id
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($id = -1)
     {
-        if ($id == -1) { return false; }
-        $search_results = $this->read([$this->primary_index_name => $id], ['a_fields' => ['tpl_immutable']]);
-        if (isset($search_results[0]) && $search_results[0]['tpl_immutable'] == 1) {
-            $this->error_message = 'Sorry, that template can not be deleted.';
-            return false;
+        $pim = $this->primary_index_name;
+        if (is_array($id)) {
+            $ids = [];
+            foreach ($id as $the_id) {
+               $ids[] = [$pim => $the_id];
+            }
         }
-        $results = $this->genericDelete($id);
-        if ($results === false) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+        else {
+            $ids = [$pim => $id];
         }
-        return $results;
+        if ($this->isImmutable($ids)) {
+            throw new ModelException('The record(s) is immutable', 440);
+        }
+        try {
+            return $this->genericDelete($id);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * Checks to see if the record is immutable.
+     * Obviously only works on existing records.
+     * @param $values
+     * @return bool
+     */
+    public function isImmutable($values)
+    {
+        $pim = $this->primary_index_name;
+        if (Arrays::isArrayOfAssocArrays($values)) {
+            foreach ($values as $a_record) {
+                $id = $a_record[$pim];
+                try {
+                    $search_results = $this->read([$pim => $id], ['a_fields' => ['tpl_immutable']]);
+                    if (isset($search_results[0]) && $search_results[0]['tpl_immutable'] == 1) {
+                        return true;
+                    }
+                }
+                catch (ModelException $e) {
+                    return true;
+                }
+
+            }
+        }
+        else {
+            $id = $values[$pim];
+            try {
+                $search_results = $this->read([$pim => $id], ['a_fields' => ['tpl_immutable']]);
+                if (isset($search_results[0]) && $search_results[0]['tpl_immutable'] == 1) {
+                    return true;
+                }
+            }
+            catch (ModelException $e) {
+                return true;
+            }
+        }
+        return false;
     }
 }

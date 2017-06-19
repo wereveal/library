@@ -15,6 +15,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Elog;
@@ -37,6 +38,7 @@ class TwigPrefixModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'twig_prefix');
+        $this->o_db = $o_db;
     }
 
     /**
@@ -60,11 +62,11 @@ class TwigPrefixModel implements ModelInterface
             'a_field_names'   => $this->a_db_fields,
             'a_psql'          => $a_psql
         ];
-        if (!empty($a_values['tp_default']) && $a_values['tp_default'] == 1) {
-            if (!$this->clearDefaultPrefix()) {
-                $this->error_message = "Could not set other prefix as not default.";
-                throw new ModelException($this->error_message, 100);
-            }
+        try {
+            $a_values = $this->clearDefaultPrefix($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), 150);
         }
         try {
             return $this->genericCreate($a_values, $a_params);
@@ -98,16 +100,23 @@ class TwigPrefixModel implements ModelInterface
      * Update for a record using the values provided.
      * @param array $a_values
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update(array $a_values = [])
     {
-        if (!isset($a_values[$this->primary_index_name])
-            || $a_values[$this->primary_index_name] == ''
-            || (!is_numeric($a_values[$this->primary_index_name]))
-        ) {
-            return false;
+        try {
+            $a_values = $this->clearDefaultPrefix($a_values);
         }
-        return $this->genericUpdate($a_values);
+        catch (ModelException $e) {
+            throw new ModelException('Update canceled', 300, $e);
+        }
+
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
@@ -137,14 +146,69 @@ class TwigPrefixModel implements ModelInterface
     /**
      * Sets the records that are specified as default to not default.
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
-    private function clearDefaultPrefix()
+    private function updateDefaultPrefixOff()
     {
         $sql = "
             UPDATE {$this->db_table}
             SET tp_default = 0 
             WHERE tp_default = 1
         ";
-        return $this->o_db->update($sql);
+        try {
+            return $this->o_db->update($sql);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * Checks the values to see if they are trying to set the record to be saved/updated to be the default prefix.
+     * @param array $a_values
+     * @return array
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    private function clearDefaultPrefix(array $a_values = [])
+    {
+        $is_default = 0;
+        if (Arrays::isArrayOfAssocArrays($a_values)) {
+            foreach ($a_values as $key => $a_record) {
+                if (!empty($a_record['tp_default']) && $a_record['tp_default'] == 1) {
+                    if ($is_default === 0) {
+                        $is_default = 1;
+                        try {
+                            if (!$this->updateDefaultPrefixOff()) {
+                                $this->error_message = "Could not set other prefix as not default.";
+                                throw new ModelException($this->error_message, 100);
+                            }
+                        }
+                        catch (ModelException $e) {
+                            $this->error_message = "Could not set other prefix as not default.";
+                            throw new ModelException($this->error_message, 100);
+                        }
+                    }
+                    else {
+                        $a_values[$key]['tp_default'] = 0; // only one can be default.
+                    }
+                }
+            }
+
+        }
+        else {
+            if (!empty($a_values['tp_default']) && $a_values['tp_default'] == 1) {
+                try {
+                    if (!$this->updateDefaultPrefixOff()) {
+                        $this->error_message = "Could not set other prefix as not default.";
+                        throw new ModelException($this->error_message, 100);
+                    }
+                }
+                catch (ModelException $e) {
+                    $this->error_message = "Could not set other prefix as not default.";
+                    throw new ModelException($this->error_message, 100);
+                }
+            }
+        }
+        return $a_values;
     }
 }

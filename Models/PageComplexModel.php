@@ -105,11 +105,11 @@ class PageComplexModel
             return false;
         }
         $this->setSelectSql();
-        $sql =<<<SQL
-{$this->select_sql}
-WHERE p.url_id = u.url_id
-AND p.url_id = :url_id
-SQL;
+        $sql = "
+            {$this->select_sql}
+            WHERE p.url_id = u.url_id
+            AND p.url_id = :url_id
+        ";
         try {
             $a_values = $this->o_db->search($sql, [':url_id' => $url_id]);
         }

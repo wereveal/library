@@ -34,6 +34,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
@@ -59,23 +60,24 @@ class PeopleModel implements ModelInterface
     }
 
     ### Basic CRUD commands, required by interface, deals only with the {$this->lib_prefix}people table ###
+
     /**
      * Creates new people record(s) in the people table.
-     * @param array $a_values required Can be a simple assoc array or array of assoc arrays
-     *                        e.g. ['login_id' => 'fred', 'real_name' => 'Fred', 'password' => 'letmein']
-     *                        or
-     *                        [
-     *                            ['login_id' => 'fred',   'real_name' => 'Fred',   'password' => 'letmein'],
-     *                            ['login_id' => 'barney', 'real_name' => 'Barney', 'password' => 'lethimin']
-     *                        ].
-     *                        Optional key=>values 'short_name',
+     * @param array $a_values                      required Can be a simple assoc array or array of assoc arrays
+     *                                             e.g. ['login_id' => 'fred', 'real_name' => 'Fred', 'password' => 'letmein']
+     *                                             or
+     *                                             [
+     *                                             ['login_id' => 'fred',   'real_name' => 'Fred',   'password' => 'letmein'],
+     *                                             ['login_id' => 'barney', 'real_name' => 'Barney', 'password' => 'lethimin']
+     *                                             ].
+     *                                             Optional key=>values 'short_name',
      *                                             'description', 'is_logged_in',
      *                                             'is_active' & 'is_immutable'
      * @return array|bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function create(array $a_values = [])
     {
-        $meth = __METHOD__ . '.';
         $a_required_keys = [
             'login_id',
             'real_name',
@@ -86,47 +88,20 @@ class PeopleModel implements ModelInterface
             'is_active',
             'is_immutable'
         ];
-        if (Arrays::isArrayOfAssocArrays($a_values)) {
-            foreach ($a_values as $key => $a_record) {
-                $a_record = Arrays::createRequiredPairs($a_record, $a_required_keys, true);
-                if (Arrays::hasBlankValues($a_record, ['login_id', 'password'])) {
-                    $this->error_message = "The array was missing required login_id and/or password";
-                    return false;
-                }
-                $a_values[$key] = $a_record;
-            }
-        }
-        else {
-            $a_values = Arrays::createRequiredPairs($a_values, $a_required_keys, true);
-            if (Arrays::hasBlankValues($a_values, ['login_id', 'password'])) {
-                $this->error_message = "The array was missing required login_id and/or password";
-                return false;
-            }
-        }
-        $log_message = 'Values:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        $sql = "
-            INSERT INTO {$this->db_table}
-                (login_id, real_name, short_name, password, description, is_logged_in, is_active, is_immutable)
-            VALUES
-                (:login_id, :real_name, :short_name, :password, :description, :is_logged_in, :is_active, :is_immutable)
-        ";
-        $log_message = "SQL: {$sql}";
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        $a_table_info = [
-            'table_name'  => "{$this->db_table}",
-            'column_name' => 'people_id'
+        $a_psql = [
+            'table_name'  => $this->db_table,
+            'column_name' => $this->primary_index_name
         ];
-        if ($this->o_db->insert($sql, $a_values, $a_table_info)) {
-            $ids = $this->o_db->getNewIds();
-            $this->logIt("New Ids: " . var_export($ids , true), LOG_OFF, $meth . __LINE__);
-            return $ids;
+        $a_params = [
+            'a_required_keys' => $a_required_keys,
+            'a_field_names'   => $this->a_db_fields,
+            'a_psql'          => $a_psql
+        ];
+        try {
+            return $this->genericCreate($a_values, $a_params);
         }
-        else {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            return false;
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
     }
 
@@ -135,152 +110,214 @@ class PeopleModel implements ModelInterface
      * @param array $a_search_values
      * @param array $a_search_params
      * @return array|bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function read(array $a_search_values = [], array $a_search_params = [])
     {
-        if (count($a_search_values) > 0) {
-            $a_search_params = count($a_search_params) == 0
-                ? array('order_by' => 'login_id')
-                : $a_search_params;
-            $a_allowed_keys = array(
-                'people_id',
-                'login_id',
-                'real_name',
-                'short_name',
-                'is_immutable',
-                'is_active'
-            );
-            $a_search_values = $this->removeBadKeys($a_allowed_keys, $a_search_values);
-            $where = $this->buildSqlWhere($a_search_values, $a_search_params);
+        $a_parameters = [
+            'table_name'     => $this->db_table,
+            'a_search_for'   => $a_search_values,
+            'a_allowed_keys' => $this->a_db_fields,
+            'order_by'       => 'login_id ASC'
+        ];
+        $a_parameters = array_merge($a_parameters, $a_search_params);
+        try {
+            return $this->genericRead($a_parameters);
         }
-        elseif (count($a_search_params) > 0) {
-            $where = $this->buildSqlWhere([], $a_search_params);
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
-        else {
-            $where = " ORDER BY login_id";
-        }
-        $sql = "
-            SELECT people_id,
-                login_id,
-                real_name,
-                short_name,
-                password,
-                description,
-                is_logged_in,
-                bad_login_count,
-                bad_login_ts,
-                is_active,
-                is_immutable,
-                created_on
-            FROM {$this->db_table}
-            {$where}
-        ";
-        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $results = $this->o_db->search($sql, $a_search_values);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-        }
-        return $results;
     }
 
     /**
-     * Updates a single {$this->db_table} record.
+     * Updates the people record(s).
+     * Enforces immutable app rule.
      * @param array $a_values required $a_values['people_id'] || $a_values['login_id']
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update(array $a_values = [])
     {
-        /* the following keys in $a_values must have a value other than ''.
-         * As such, they get removed from the sql
-         * if they are trying to update the values to ''
-         */
-        $a_possible_keys = array(
-            'people_id',
-            'login_id',
-            'password'
-        );
-        if (Arrays::hasBlankValues($a_values, $a_possible_keys)) {
-            foreach ($a_possible_keys as $key_name) {
-                if (array_key_exists($key_name, $a_values)) {
-                    if ($a_values[$key_name] == '') {
-                        unset($a_values[$key_name]);
+        $pin = $this->primary_index_name;
+        if (Arrays::isArrayOfAssocArrays($a_values)) {
+            $people_ids = [];
+            foreach ($a_values as $key => $a_record) {
+                $people_ids[] = $a_record[$pin];
+            }
+            try {
+                $results = $this->readById($people_ids);
+                foreach ($results as $key => $record) {
+                    if ($record['is_immutable']) {
+                        unset($a_values[$key]['login_id']);
                     }
                 }
             }
+            catch (ModelException $e) {
+                throw new ModelException('Unable to delete the record.', 445, $e);
+            }
         }
-        if (!isset($a_values['people_id']) && !isset($a_values['login_id'])) {
-            return false;
+        else {
+            try {
+                $results = $this->readById($a_values[$pin]);
+                if ($results[0]['is_immutable']) {
+                    unset($a_values['login_id']);
+                }
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Unable to delete the record.', 445, $e);
+            }
         }
-        $a_allowed_keys = [
-            'people_id',
-            'login_id',
-            'real_name',
-            'short_name',
-            'password',
-            'description',
-            'is_logged_in',
-            'bad_login_count',
-            'bad_login_ts',
-            'is_active',
-            'is_immutable'
-        ];
-        $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
-        if ($a_values['is_immutable'] == 1 && isset($a_values['login_id'])) {
-            unset($a_values['login_id']);
+        try {
+            return $this->genericUpdate($a_values);
         }
-        $sql_set = $this->buildSqlSet($a_values, ['people_id']);
-        if ($sql_set == '') {
-            return false;
+        catch (ModelException $e) {
+            $message = $e->errorMessage();
+            $code = $e->getCode();
+            throw new ModelException($message, $code);
         }
-        $sql = "
-            UPDATE {$this->db_table}
-            {$sql_set}
-            WHERE people_id = :people_id
-        ";
-        $this->logIt($sql, LOG_OFF, __METHOD__ . '.' . __LINE__);
-        $results = $this->o_db->update($sql, $a_values, true);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-        }
-        return $results;
     }
 
     /**
      * Deletes a {$this->db_table} record based on id.
-     * @param int $people_id required
+     * @param int|array $people_id required
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($people_id = -1)
     {
-        if ($people_id == -1 || !ctype_digit($people_id)) { return false; }
-        $sql = "
-            DELETE FROM {$this->db_table}
-            WHERE people_id = :people_id
-        ";
-        $results = $this->o_db->delete($sql, array(':people_id' => $people_id), true);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
+        $pin = $this->primary_index_name;
+        if (Arrays::isArrayOfAssocArrays($people_id)) {
+            $people_ids = [];
+            foreach ($people_id as $key => $a_record) {
+                $people_ids[] = $a_record[$pin];
+            }
+            try {
+                $results = $this->readById($people_ids);
+                if (empty($results)) {
+                    throw new ModelException('Unable to determine if the record is immutable.', 445);
+                }
+                foreach ($results as $key => $record) {
+                    if ($record['is_immutable']) {
+                        throw new ModelException('Unable to delete the record: record is immutable.', 440);
+                    }
+                }
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Unable to determine if the record is immutable.', 445, $e);
+            }
         }
-        return $results;
+        else {
+            try {
+                $results = $this->readById($people_id);
+                if (empty($results)) {
+                    throw new ModelException('Unable to determine if the record is immutable.', 445);
+                }
+                if ($results[0]['is_immutable']) {
+                    throw new ModelException('Unable to delete the record: record is immutable.', 440);
+                }
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Unable to determine if the record is immutable.', 445, $e);
+            }
+        }
+        try {
+            return $this->genericDelete($people_id);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+        }
+    }
+
+    ### Potentially multiple user methods ###
+    /**
+     * Read the people record(s) by people_id.
+     * @param int|array $people_id required may be a single id or a list of ids (array).
+     * @return array|bool
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    public function readById($people_id = -1)
+    {
+        if (is_array($people_id)) {
+            $a_search_for = [];
+            foreach ($people_id as $id) {
+                if ($id < 1) {
+                    throw new ModelException("Missing people_id value.", 220);
+                }
+                $a_search_for[] = ['people_id' => $people_id];
+            }
+        }
+        elseif ($people_id < 1) {
+            throw new ModelException("Missing people_id value.", 220);
+        }
+        else {
+            $a_search_for = ['people_id' => $people_id];
+        }
+        try {
+            $results = $this->read($a_search_for);
+            return $results;
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Reads the people record(s) by login_id.
+     * @param string $login_id
+     * @return array|bool
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    public function readByLoginId($login_id = '')
+    {
+        if (is_array($login_id)) {
+            $a_search_for = [];
+            foreach ($login_id as $id) {
+                if ($id == '') {
+                    throw new ModelException('Missing login id value.', 220);
+                }
+                $a_search_for[] = ['login_id' => $id];
+            }
+        }
+        elseif ($login_id == '') {
+            throw new ModelException("Missing login_id value.", 220);
+        }
+        else {
+            $a_search_for = ['login_id' => $login_id];
+        }
+        try {
+            $results = $this->read($a_search_for);
+            return $results;
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+        }
     }
 
     ### Single User Methods ###
+
     /**
      * Gets the people_id (primary record key) for a specific login_id.
      * @param string $login_id required
-     * @return int|bool $people_id
+     * @return bool|int $people_id
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function getPeopleId($login_id = '')
     {
-        if ($login_id == '') { return false; }
-        $a_results = $this->read(array('login_id' => $login_id));
-        if ($a_results !== false) {
-            if (isset($a_results[0]) && $a_results[0] != []) {
+        if ($login_id == '') {
+            throw new ModelException('Missing required login_id.');
+        }
+        try {
+            $a_results = $this->read(array('login_id' => $login_id));
+            if (!empty($a_results[0])) {
                 return $a_results[0]['people_id'];
             }
+            else {
+                throw new ModelException('No records were returned.', 210);
+            }
         }
-        $this->error_message = $this->o_db->getSqlErrorMessage();
-        return false;
+        catch (ModelException $e) {
+            throw new ModelException('Unable to get the records.', 200);
+        }
     }
 
     /**
@@ -304,38 +341,53 @@ class PeopleModel implements ModelInterface
      * Increments the bad_login_ts record by one minute
      * @param int $people_id required
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function incrementBadLoginTimestamp($people_id = -1)
     {
-        if ($people_id == -1) { return false; }
-        $sql = "
-            UPDATE {$this->db_table}
-            SET bad_login_ts = bad_login_ts + 60
-            WHERE people_id = :people_id
-        ";
-        $a_values = array(':people_id' => $people_id);
-        return $this->o_db->update($sql, $a_values, true);
+        if ($people_id == -1) {
+            throw new ModelException('Missing required people id.', 320);
+        }
+        $a_values = [
+            'people_id'    => $people_id,
+            'bad_login_ts' => 'bad_login_ts + 60'
+        ];
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
      * Returns the user record.
      * @param int|string $user either user id or user name
      * @return array
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readPeopleRecord($user = '')
     {
-        if ($user == '') { return []; }
+        if ($user == '') {
+            throw new ModelException('Missing required value.', 220);
+        }
         if (is_numeric($user)) {
             $a_search_by = ['people_id' => $user];
         }
         else {
             $a_search_by = ['login_id' => $user];
         }
-        $a_records = $this->read($a_search_by);
-        if (isset($a_records[0]) && is_array($a_records[0])) {
-            return $a_records[0];
-        } else {
-            return [];
+        try {
+            $a_records = $this->read($a_search_by);
+            if (isset($a_records[0]) && is_array($a_records[0])) {
+                return $a_records[0];
+            }
+            else {
+                return [];
+            }
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
         }
     }
 
@@ -343,116 +395,153 @@ class PeopleModel implements ModelInterface
      * Resets the bad_login_count to 0
      * @param int $people_id required
      * @return bool
-      */
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
     public function resetBadLoginCount($people_id = -1)
     {
-        if ($people_id == -1) { return false; }
-        $sql = "
-            UPDATE {$this->db_table}
-            SET bad_login_count = 0
-            WHERE people_id = :people_id
-        ";
-        $a_values = array(':people_id' => $people_id);
-        return $this->o_db->update($sql, $a_values, true);
+        if ($people_id == -1) {
+            throw new ModelException('Missing required value: people_id', 320);
+        }
+        $a_values = [
+            'people_id'       => $people_id,
+            'bad_login_count' => 0
+        ];
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Resets the timestamp to 0
      * @param int $people_id required
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function resetBadLoginTimestamp($people_id = -1)
     {
-        if ($people_id == -1) { return false; }
-        $update_sql = "
-            UPDATE {$this->db_table}
-            SET bad_login_ts = 0
-            WHERE people_id = :people_id
-        ";
-        $a_values = array(':people_id' => $people_id);
-        $results = $this->o_db->update($update_sql, $a_values, true);
-        return $results;
+        if ($people_id == -1) {
+            throw new ModelException('Missing required value: people_id', 320);
+        }
+        $a_values = [
+            'people_id'    => $people_id,
+            'bad_login_ts' => 0
+        ];
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Sets the bad login timestamp for the user.
      * @param int $people_id required
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function setBadLoginTimestamp($people_id = -1)
     {
-        if ($people_id == -1) { return false; }
-        $sql = "
-            UPDATE {$this->db_table}
-            SET bad_login_ts = :timestamp
-            WHERE people_id = :people_id
-        ";
-        $a_values = array(':people_id' => $people_id, ':timestamp' => time());
-        $results = $this->o_db->update($sql, $a_values, true);
-        return $results;
+        if ($people_id == -1) {
+            throw new ModelException('Missing required value: people_id', 320);
+        }
+        $a_values = [
+            'people_id'    => $people_id,
+            'bad_login_ts' => time()
+        ];
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Sets the user record to be logged in.
      * @param int $people_id
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function setLoggedIn($people_id = -1)
     {
-        if ($people_id == -1) { return false; }
-        $sql = "
-            UPDATE {$this->db_table}
-            SET is_logged_in = 1
-            WHERE people_id = :people_id
-        ";
-        $a_values = array(':people_id' => $people_id);
-        return $this->o_db->update($sql, $a_values, true);
+        if ($people_id == -1) {
+            throw new ModelException('Missing required value: people_id', 320);
+        }
+        $a_values = [
+            'people_id'    => $people_id,
+            'is_logged_in' => 1
+        ];
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Sets the user record to be logged out.
      * @param int $people_id
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function setLoggedOut($people_id = -1)
     {
-        if ($people_id == -1) { return false; }
-        $sql = "
-            UPDATE {$this->db_table}
-            SET is_logged_in = 0
-            WHERE people_id = :people_id
-        ";
-        $a_values = array(':people_id' => $people_id);
-        return $this->o_db->update($sql, $a_values, true);
+        if ($people_id == -1) {
+            throw new ModelException('Missing required value: people_id', 320);
+        }
+        $a_values = [
+            'people_id'    => $people_id,
+            'is_logged_in' => 0
+        ];
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Updates the user record with a new password
      * @param int    $people_id required
-     * @param string $password required
-     * @return bool success or failure
+     * @param string $password  required
+     * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function updatePassword($people_id = -1, $password = '')
     {
-        if ($people_id == -1 || $password == '') { return false; }
-        $sql = "
-            UPDATE {$this->db_table}
-            SET password = :password
-            WHERE id = :people_id
-        ";
-        $a_values = [':people_id' => $people_id, ':password' => $password];
-        return $this->o_db->update($sql, $a_values, true);
+        if ($people_id == -1 || $password == '') {
+            throw new ModelException('Missing required value.', 320);
+        }
+        $a_values = [
+            'people_id' => $people_id,
+            'password'  => $password
+        ];
+        try {
+            return $this->genericUpdate($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Updates the user record to be make the user active or inactive, normally inactive.
-     * @param int $people_id   required id of a user
+     * @param int $people_id required id of a user
      * @param int $is_active optional defaults to inactive (0)
      * @return bool success or failure
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function updateActive($people_id = -1, $is_active = 0)
     {
-        if ($people_id == -1) { return false; }
+        if ($people_id == -1) {
+            throw new ModelException('Missing required value.', 320);
+        }
         $is_active = (int) $is_active;
         if ($is_active > 1) {
             $is_active = 1;
@@ -460,17 +549,15 @@ class PeopleModel implements ModelInterface
         if ($is_active == '') {
             $is_active = 0;
         }
-        $sql = "
-            UPDATE {$this->db_table}
-            SET is_active = :is_active
-            WHERE people_id = :people_id
-        ";
-        $a_values = [':people_id' => $people_id, ':is_active' => $is_active];
-        $results = $this->o_db->update($sql, $a_values, true);
-        if ($results === false) {
-            $this->error_message = $this->o_db->getSqlErrorMessage();
+        $a_values = [
+            'people_id' => $people_id,
+            'is_active' => $is_active];
+        try {
+            return $this->genericUpdate($a_values);
         }
-        return $results;
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     ### Utility methods ###
@@ -496,10 +583,16 @@ class PeopleModel implements ModelInterface
      */
     public function isExistingLoginId($login_id = '')
     {
-        if ($this->readPeopleRecord($login_id) == []) {
+        try {
+            $results = $this->readByLoginId($login_id);
+            if (!empty($results[0]['people_id'])) {
+                return true;
+            }
             return false;
         }
-        return true;
+        catch (ModelException $e) {
+            return false;
+        }
     }
 
     /**
@@ -508,10 +601,15 @@ class PeopleModel implements ModelInterface
      */
     public function isExistingShortName($short_name = '')
     {
-        $a_results = $this->read(['short_name' => $short_name]);
-        if (isset($a_results[0]['short_name']) && $a_results[0]['short_name'] == $short_name) {
-            return true;
+        try {
+            $a_results = $this->read(['short_name' => $short_name]);
+            if (isset($a_results[0]['short_name']) && $a_results[0]['short_name'] == $short_name) {
+                return true;
+            }
+            return false;
         }
-        return false;
+        catch (ModelException $e) {
+            return false;
+        }
     }
 }

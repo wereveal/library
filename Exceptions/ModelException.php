@@ -63,6 +63,8 @@ class ModelException extends CustomException
                 return 'Unable to rollback a transaction.';
             case 50:
                 return 'Unable to prepare the statement.';
+            case 55:
+                return 'Unable to execute the prepared statement.';
             case 60:
                 return 'Unable to do a PDO operation.';
             case 65:
@@ -82,6 +84,8 @@ class ModelException extends CustomException
                 return 'Unable to create a new record: unique key value exists.';
             case 140:
                 return 'Unable to create a new record: see previous message.';
+            case 150:
+                return 'Unable to create  new record: invalid value provided.';
             # Read codes
             case 200:
                 return 'Unable to read the record(s): unspecified reason.';
@@ -117,6 +121,8 @@ class ModelException extends CustomException
                 return 'Unable to delete the record: has child records.';
             case 440;
                 return 'Unable to delete the record: may not be deleted.';
+            case 445:
+                return 'Unable to delete the record: unable to determine if the record is immutable.';
             # Database Definition code
             case 500:
                 return 'Unable to change the structure of the database.';

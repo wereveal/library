@@ -20,7 +20,9 @@
  */
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Models\RoutesComplexModel;
 use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\UrlsModel;
@@ -48,11 +50,7 @@ class RoutesView
     {
         $this->setupElog($o_di);
         $this->setupView($o_di);
-        $this->o_model = new RoutesModel($this->o_db);
-        if (DEVELOPER_MODE && is_object($this->o_elog)) {
-            $this->o_model->setElog($this->o_elog);
-        }
-
+        $this->o_model = new RoutesComplexModel($o_di);
     }
 
     /**
@@ -62,7 +60,6 @@ class RoutesView
      */
     public function renderList(array $a_message = array())
     {
-        $meth = __METHOD__ . '.';
         $a_page_values = $this->getPageValues();
         $a_values = array(
             'a_message' => array(),
@@ -84,8 +81,6 @@ class RoutesView
             'twig_prefix' => LIB_TWIG_PREFIX
         );
         $a_values = array_merge($a_page_values, $a_values);
-        $log_message = 'a_values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         if (count($a_message) != 0) {
             $a_values['a_message'] = ViewHelper::messageProperties($a_message);
@@ -96,18 +91,23 @@ class RoutesView
                 ViewHelper::warningMessage($message)
             );
         }
-
-        $a_routes = $this->o_model->readAllWithUrl();
-        $log_message = 'a_routes: ' . var_export($a_routes, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
+        $error_message = '';
+        try {
+            $a_routes = $this->o_model->readAllWithUrl();
+        }
+        catch (ModelException $e) {
+            $a_routes = false;
+            $error_message .= $e->errorMessage();
+        }
         $o_urls = new UrlsModel($this->o_db);
-        $a_urls = $o_urls->read();
-        $log_message = 'URLs:  ' . var_export($a_urls, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
+        try {
+            $a_urls = $o_urls->read();
+        }
+        catch (ModelException $e) {
+            $a_urls = false;
+            $error_message .= $e->errorMessage();
+        }
         if ($a_urls === false || $a_routes === false) {
-            $error_message = 'A problem has occured. Please try reloading the page.';
             $a_values['a_message'] = ViewHelper::failureMessage($error_message);
         }
         else {
@@ -161,9 +161,6 @@ class RoutesView
 
         }
         $a_values['a_routes'] = $a_routes;
-        $log_message = 'Twig Values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/routes.twig';
         return $this->o_twig->render($tpl, $a_values);
     }

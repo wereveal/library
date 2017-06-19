@@ -4,9 +4,10 @@
  * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/UrlsController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
+ * @version   1.1.0
  * @date      2017-06-03 17:17:30
  * @note Change Log
+ * - v1.1.0-beta.1  - Refactored to match refactoring of model          - 2017-06-19 wer
  * - v1.0.0         - Out of beta                                       - 2017-06-03 wer
  * - v1.0.0-beta.2  - Change to splitUrl to allow posted url to not     - 2017-06-02 wer
  *                    include the current site.
@@ -16,6 +17,7 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\UrlsModel;
@@ -90,11 +92,11 @@ class UrlsController implements ManagerControllerInterface
         $a_values  = $this->splitUrl($url);
         $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 1 : 0;
 
-        $results = $this->o_urls_model->create($a_values);
-        if ($results !== false) {
+        try {
+            $this->o_urls_model->create($a_values);
             $a_message = ViewHelper::successMessage();
         }
-        else {
+        catch (ModelException $e) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new url could not be saved.');
         }
         return $this->o_urls_view->renderList($a_message);
@@ -121,11 +123,11 @@ class UrlsController implements ManagerControllerInterface
         $a_values['url_id']        = (int) $this->a_post['url_id'];
         $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 1 : 0;
 
-        $results = $this->o_urls_model->update($a_values);
-        if ($results !== false) {
+        try {
+            $this->o_urls_model->update($a_values);
             $a_message = ViewHelper::successMessage();
         }
-        else {
+        catch (ModelException $e) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The url could not be updated.');
         }
         return $this->o_urls_view->renderList($a_message);
@@ -147,12 +149,12 @@ class UrlsController implements ManagerControllerInterface
     public function delete()
     {
         $url_id = isset($this->a_post['url_id']) ? $this->a_post['url_id'] : -1;
-        $results = $this->o_urls_model->delete($url_id);
-        if ($results !== false) {
+        try {
+            $this->o_urls_model->delete($url_id);
             $a_message = ViewHelper::successMessage();
         }
-        else {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. ' . $this->o_urls_model->getErrorMessage());
+        catch (ModelException $e) {
+            $a_message = ViewHelper::failureMessage('A Problem Has Occured. ' . $e->errorMessage());
         }
         return $this->o_urls_view->renderList($a_message);
     }

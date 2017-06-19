@@ -15,9 +15,9 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
-use Ritc\Library\Services\Elog;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -30,6 +30,10 @@ class TwigDirsModel implements ModelInterface
 {
     use LogitTraits, DbUtilityTraits;
 
+    /**
+     * TwigDirsModel constructor.
+     * @param \Ritc\Library\Services\DbModel $o_db
+     */
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'twig_prefix');
@@ -59,10 +63,8 @@ class TwigDirsModel implements ModelInterface
         try {
             return $this->genericCreate($a_values, $a_params);
         }
-        catch (ModelException $exception) {
-            $message = $exception->errorMessage();
-            $code = $exception->getCode();
-            throw new ModelException($message, $code);
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
     }
 
@@ -71,6 +73,7 @@ class TwigDirsModel implements ModelInterface
      * @param array $a_search_for    key pairs of field name => field value
      * @param array $a_search_params \ref searchparams \ref readparams
      * @return array
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function read(array $a_search_for = [], array $a_search_params = [])
     {
@@ -81,60 +84,71 @@ class TwigDirsModel implements ModelInterface
             'order_by'       => $this->primary_index_name . ' ASC'
         ];
         $a_parameters = array_merge($a_parameters, $a_search_params);
-        return $this->genericRead($a_parameters);
+        try {
+            return $this->genericRead($a_parameters);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Update for a record using the values provided.
      * @param array $a_values
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update(array $a_values = [])
     {
-        if (!isset($a_values[$this->primary_index_name])
-            || $a_values[$this->primary_index_name] == ''
-            || (!is_numeric($a_values[$this->primary_index_name]))
-        ) {
-            return false;
+        try {
+            return $this->genericUpdate($a_values);
         }
-        return $this->genericUpdate($a_values);
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
      * Deletes a record based on the id provided.
-     * @param int $id
+     * @param int|array $id required, can be single id or array(list) of ids
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($id = -1)
     {
-        if ($id == -1) { return false; }
         $o_tpl = new TwigTemplatesModel($this->o_db);
-        if ($this->o_elog instanceof Elog) {
-            $o_tpl->setElog($this->o_elog);
+        $o_tpl->setElog($this->o_elog);
+        if (Arrays::isArrayOfAssocArrays($id)) {
+            foreach ($id as $dir_id) {
+                try {
+                    $results = $o_tpl->read(['td_id' => $dir_id]);
+                    if (!empty($results)) {
+                        $this->error_message = "A template exists that uses this directory";
+                        throw new ModelException($this->error_message, 430);
+                    }
+                }
+                catch (ModelException $e) {
+                    throw new ModelException($e->errorMessage(), 430);
+                }
+            }
         }
-        $results = $o_tpl->read(['td_id' => $id]);
-        if (!empty($results)) {
-            $this->error_message = "A template exists that uses this directory";
-            return false;
+        else {
+            try {
+                $results = $o_tpl->read(['td_id' => $id]);
+                if (!empty($results)) {
+                    $this->error_message = "A template exists that uses this directory";
+                    throw new ModelException($this->error_message, 430);
+                }
+            }
+            catch (ModelException $e) {
+                throw new ModelException($e->errorMessage(), 430);
+            }
         }
-        $results = $this->genericDelete($id);
-        if ($results === false) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+        try {
+            return $this->genericDelete($id);
         }
-        return $results;
-    }
-
-    /**
-     * Sets the records that are specified as default to not default.
-     * @return bool
-     */
-    public function clearDefaultPrefix()
-    {
-        $sql = "
-            UPDATE {$this->db_table}
-            SET tp_default = 0 
-            WHERE tp_default = 1
-        ";
-        return $this->o_db->update($sql);
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 }

@@ -5,9 +5,10 @@
  * @file      UrlsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-06-03 17:18:29
+ * @version   1.1.0
+ * @date      2017-06-19 13:08:38
  * @note Change Log
+ * - v1.1.0         - should have stayed in beta            - 2017-06-19 wer
  * - v1.0.0         - Out of beta                           - 2017-06-03 wer
  * - v1.0.0-beta.2  - Refactoring from DbUtilityTraits      - 2017-05-09 wer
  * - v1.0.0-beta.1  - Bug fix caused by changes elsewhere   - 2017-01-27 wer
@@ -17,6 +18,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -104,11 +106,25 @@ class UrlsModel implements ModelInterface
      */
     public function update(array $a_values = [])
     {
-        if (!isset($a_values[$this->primary_index_name])
-            || $a_values[$this->primary_index_name] == ''
-            || (!is_numeric($a_values[$this->primary_index_name]))
-        ) {
-            throw new ModelException('Missing required values.', 320);
+        if (Arrays::isArrayOfAssocArrays($a_values)) {
+            foreach ($a_values as $key => $a_record) {
+                if ($this->validId($a_record['url_id'])) {
+                    if ($this->isImmutable($a_record['url_id'])) {
+                        unset($a_values[$key]['url_text']);
+                    }
+                }
+                else {
+                    throw new ModelException('Invalid Primary Index.', 310);
+                }
+            }
+        }
+        else {
+            if ($this->validId($a_values['url_id'])) {
+                unset($a_values['url_text']);
+            }
+            else {
+                throw new ModelException('Invalid Primary Index.', 310);
+            }
         }
         try {
             return $this->genericUpdate($a_values);
@@ -123,80 +139,55 @@ class UrlsModel implements ModelInterface
     /**
      * Deletes a record based on the id provided.
      * Checks to see if there are any other tables with relations.
-     * @param int $id
+     * @param int|array $id
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($id = -1)
     {
-        if ($id == -1) {
-            throw new ModelException('Missing the id of the record to delete.', 420);
-        }
-        $a_search_for = [$this->primary_index_name => $id];
-        $a_search_params = [
-            'order_by' => 'url_id',
-            'a_fields' => ['url_immutable']
-        ];
-        try {
-            $search_results = $this->read($a_search_for, $a_search_params);
-        }
-        catch (ModelException $e) {
-            $message = 'Can not determine if the record is deletable.';
-            throw new ModelException($message, 420);
-        }
-        if (isset($search_results[0]) && $search_results[0]['url_immutable'] == 1) {
-            $this->error_message = 'Sorry, that url can not be deleted.';
-            throw new ModelException($this->error_message, 440);
-        }
-        $a_search_for = ['url_id' => $id];
-        try {
-            $o_routes = new RoutesModel($this->o_db);
-            try {
-                $search_results = $o_routes->read($a_search_for);
-                if (isset($search_results[0])) {
-                    $this->error_message = 'Please change/delete the route that refers to this url first.';
-                    throw new ModelException($this->error_message, 440);
+        if (Arrays::isArrayOfAssocArrays($id)) {
+            $a_search_for_route = [];
+            foreach ($id as $key => $a_record) {
+                if ($this->validId($a_record['url_id'])) {
+                    if ($this->isImmutable($a_record['url_id'])) {
+                        throw new ModelException('Immutable record may not be deleted.', 440);
+                    }
+                    $a_search_for_route[] = ['url_id' => $a_record['url_id']];
+                }
+                else {
+                    throw new ModelException('Invalid Primary Index.', 410);
                 }
             }
-            catch (ModelException $e) {
+        }
+        else {
+            if ($this->validId($id)) {
+                if ($this->isImmutable($id)) {
+                    throw new ModelException('Immutable record may not be deleted.', 440);
+                }
+                $a_search_for_route = ['url_id' => $id];
+            }
+            else {
+                throw new ModelException('Invalid Primary Index.', 410);
+            }
+        }
+        $o_routes = new RoutesModel($this->o_db);
+        try {
+            $search_results = $o_routes->read($a_search_for_route);
+            if (isset($search_results[0])) {
                 $this->error_message = 'Please change/delete the route that refers to this url first.';
                 throw new ModelException($this->error_message, 440);
             }
         }
         catch (ModelException $e) {
-            $message = $e->errorMessage();
-            throw new ModelException($message, 400);
+            $this->error_message = 'Unable to determine if a route uses this url.';
+            throw new ModelException($this->error_message, 400);
         }
+        $o_nav = new NavigationModel($this->o_db);
         try {
-            $o_pages = new PageModel($this->o_db);
-            try {
-                $search_results = $o_pages->read($a_search_for);
-                if (isset($search_results[0])) {
-                    $this->error_message = 'Please change/delete the Page that refers to this url first.';
-                    throw new ModelException($this->error_message, 440);
-                }
-            }
-            catch (ModelException $e) {
-                $message = $e->errorMessage();
-                throw new ModelException($message, 400);
-            }
-        }
-        catch (ModelException $e) {
-            $message = $e->errorMessage();
-            throw new ModelException($message, 400);
-        }
-        try {
-            $o_nav = new NavigationModel($this->o_db);
-            try {
-                $search_results = $o_nav->read($a_search_for);
-                if (isset($search_results[0])) {
-                    $this->error_message = 'Please change/delete the Navigation record that refers to this url first.';
-                    throw new ModelException($this->error_message, 440);
-                }
-            }
-            catch (ModelException $e) {
-                $message = $e->errorMessage();
-                throw new ModelException($message, 400);
+            $search_results = $o_nav->read($a_search_for_route);
+            if (isset($search_results[0])) {
+                $this->error_message = 'Please change/delete the Navigation record that refers to this url first.';
+                throw new ModelException($this->error_message, 440);
             }
         }
         catch (ModelException $e) {
@@ -211,5 +202,50 @@ class UrlsModel implements ModelInterface
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
             throw new ModelException($this->error_message, 400);
         }
+    }
+
+    /**
+     * Checks to see if the record is immutable.
+     * @param string $id
+     * @return bool
+     */
+    public function isImmutable($id = '')
+    {
+        if (empty($id)) {
+            false;
+        }
+        try {
+            $results = $this->read(['url_id' => $id]);
+            if (!empty($results[0]['url_immutable']) && $results[0]['url_immutable'] === 1) {
+                return true;
+            }
+            return false;
+        }
+        catch (ModelException $e) {
+            return true;
+        }
+    }
+
+    /**
+     * Checks to see if the id is valid.
+     * @param string $id
+     * @return bool
+     */
+    public function validId($id = '')
+    {
+        if (empty($id)) {
+            false;
+        }
+        try {
+            $results = $this->read(['url_id' => $id]);
+            if (!empty($results[0]['url_id']) && $results[0]['url_id'] === $id) {
+                return true;
+            }
+            return false;
+        }
+        catch (ModelException $e) {
+            return false;
+        }
+
     }
 }

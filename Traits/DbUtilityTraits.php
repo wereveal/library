@@ -323,11 +323,11 @@ SQL;
             throw new ModelException($this->error_message, 410);
         }
         $piname = $this->primary_index_name;
-        $sql =<<<SQL
-DELETE FROM {$this->db_table}
-WHERE {$piname} = :{$piname}
-SQL;
-        $delete_this = [':' . $piname => $record_ids];
+        $sql = "
+          DELETE FROM {$this->db_table}
+          WHERE {$piname} = :{$piname}
+        ";
+        $delete_this = [$piname => $record_ids];
         try {
             return $this->o_db->delete($sql, $delete_this, true);
         }
@@ -356,7 +356,7 @@ WHERE {$piname} = :{$piname}
 SQL;
         $a_delete_these = [];
         foreach ($a_record_ids as $record_id) {
-           $a_delete_these[] = [':' . $piname => $record_id];
+           $a_delete_these[] = [$piname => $record_id];
         }
         try {
             return $this->o_db->delete($sql, $a_delete_these, true);
@@ -600,6 +600,20 @@ SQL;
             }
         }
         return $a_values;
+    }
+
+    /**
+     * Checks to see if the array(s) has key specified.
+     * @param array  $a_values
+     * @param string $primary_index_name
+     * @return bool
+     */
+    private function hasPrimaryId(array $a_values = [], $primary_index_name = '')
+    {
+        if (empty($a_values[$primary_index_name]) || (!is_numeric($a_values[$primary_index_name]))) {
+            return false;
+        }
+        return true;
     }
 
     /**
