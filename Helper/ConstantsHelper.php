@@ -63,13 +63,14 @@ class ConstantsHelper
         $meth = __METHOD__ . '.';
         $o_db = $o_di->get('db');
         $this->o_constants_model = new ConstantsModel($o_db);
-        if (defined('DEVELOPER_MODE')) {
-            if (DEVELOPER_MODE) {
-                $this->o_elog = $o_di->get('elog');
-                $this->o_constants_model->setElog($this->o_elog);
-            }
+        $this->o_elog = $o_di->get('elog');
+        $this->o_constants_model->setElog($this->o_elog);
+        try {
+            $this->created = $this->createConstants();
         }
-        $this->created = $this->createConstants();
+        catch () {
+            $this->created = false;
+        }
         if ($this->created === false) {
             $this->logIt("Could not create constants from db.", LOG_ALWAYS, $meth . __LINE__);
             if (defined('SRC_CONFIG_PATH')) {
@@ -85,7 +86,12 @@ class ConstantsHelper
                 $this->logIt("SRC_CONFIG_PATH is not defined.", LOG_ALWAYS, $meth . __LINE__);
                 die ('A fatal error has occured. Please contact your web site administrator.');
             }
-            $this->o_constants_model->createNewConstants();
+            try {
+                $this->o_constants_model->createNewConstants();
+            }
+            catch (ModelException $e) {
+                $this->logit('Unable to create new constants: ' . $e->errorMessage(), LOG_ALWAYS, __CLASS__);
+            }
         }
         $this->createThemeConstants();
     }
@@ -121,8 +127,15 @@ class ConstantsHelper
     {
         $meth = __METHOD__ . '.';
         if ($this->created === false) {
-            $a_constants = $this->o_constants_model->selectConstantsList();
-            $this->logIt('Constants List -- ' . var_export($a_constants, TRUE), LOG_OFF, $meth . __LINE__);
+            try {
+                $a_constants = $this->o_constants_model->selectConstantsList();
+            }
+            catch (ModelException $e) {
+                $log_message = 'Error:  ' . $e->errorMessage();
+                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+                return false;
+
+            }
             if (!empty($a_constants)) {
                 foreach ($a_constants as $row) {
                     $key = strtoupper($row['const_name']);
@@ -194,12 +207,12 @@ class ConstantsHelper
                 return true;
             }
             else {
-                $log_message = 'Error:  ' . var_export($this->o_constants_model->getErrorMessage(), TRUE);
+                $log_message = 'Error: Unable to retrievet the list of constants.';
                 $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
                 return false;
             }
-        } else {
+        } 
+        else {
             return true;
         }
     }

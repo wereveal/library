@@ -17,6 +17,7 @@
  * - v1.0.1 - changed property name                                                 - 10/16/2015 wer
  * - v1.0.0 - think it is working now                                               - 10/05/2015 wer
  * - v0.1.0 - initial version                                                       - 10/01/2015 wer
+ * @todo rename to ConfigViewTraits
  */
 namespace Ritc\Library\Traits;
 

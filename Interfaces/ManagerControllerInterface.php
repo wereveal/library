@@ -10,6 +10,7 @@
  * @note <b>Change Log</b>
  * - v2.0.0 - changed name of method render to route to reflect intended purpose    - 2017-01-14 wer
  * - v1.0.0 - initial version                                                       - 01/11/2015 wer
+ * @todo refactor - rename interface to LibraryControllerInterface or ConfigControllerInterface
  */
 namespace Ritc\Library\Interfaces;
 

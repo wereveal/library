@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Controllers/ConstantsController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.0
- * @date      2017-06-07 09:53:04
+ * @version   1.5.0
+ * @date      2017-06-19 16:15:04
  * @note <b>Change Log</b>
+ * - v1.5.0 - Refactoring of model reflected here             - 2017-06-19 wer
  * - v1.4.0 - Refactoring elsewhere reflected here.           - 2017-06-07 wer
  * - v1.3.2 - bug fix                                         - 2016-04-11 wer
  * - v1.3.1 - bug fix                                         - 2016-03-08 wer
@@ -93,11 +94,11 @@ class ConstantsController implements ManagerControllerInterface
         if (!isset($a_constants['const_immutable'])) {
             $a_constants['const_immutable'] = 0;
         }
-        $results = $this->o_model->create($a_constants);
-        if ($results !== false) {
+        try {
+            $results = $this->o_model->create($a_constants);
             $a_message = ViewHelper::successMessage();
         }
-        else {
+        catch (ModelExceptions $e) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new constant could not be saved.');
         }
         return $this->o_view->renderList($a_message);
@@ -109,17 +110,15 @@ class ConstantsController implements ManagerControllerInterface
      */
     public function update()
     {
-        $meth = __METHOD__ . '.';
         $a_constants = $this->a_post['constant'];
         if (!isset($a_constants['const_immutable'])) {
             $a_constants['const_immutable'] = 0;
         }
-        $this->logIt('' . var_export($a_constants, TRUE), LOG_OFF, $meth . __LINE__);
-        $results = $this->o_model->update($a_constants);
-        if ($results !== false) {
+        try {
+            $this->o_model->update($a_constants);
             $a_message = ViewHelper::successMessage();
         }
-        else {
+        catch (ModelException $e) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The constant could not be updated.');
         }
         return $this->o_view->renderList($a_message);
@@ -150,11 +149,11 @@ class ConstantsController implements ManagerControllerInterface
             $a_message = ViewHelper::errorMessage('An Error Has Occured. The config record id was not provided.');
             return $this->o_view->renderList($a_message);
         }
-        $a_results = $this->o_model->delete($const_id);
-        if ($a_results) {
+        try {
+            $a_results = $this->o_model->delete($const_id);
             $a_message = ViewHelper::successMessage();
         }
-        else {
+        catch (ModelException $e) {
             $a_message = ViewHelper::failureMessage('The record was not deleted.');
         }
         return $this->o_view->renderList($a_message);

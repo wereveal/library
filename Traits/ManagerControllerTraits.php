@@ -9,7 +9,8 @@
  * @version   1.0.0-alpha.0
  * @date      2017-05-10 10:55:02
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version                                                                   - 2017-05-10 wer
+ * - v1.0.0-alpha.0 - Initial version                                                     - 2017-05-10 wer
+ * @todo Rename to ConfigControllerTraits
  */
 namespace Ritc\Library\Traits;
 
