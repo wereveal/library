@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.10
- * @date      2017-06-10 07:24:32
+ * @version   1.0.0-beta.11
+ * @date      2017-06-20 11:42:28
  * @note <b>Change Log</b>
+ * - v1.0.0-beta.11 - refactoring elsewhere reflected here.                                     - 2017-06-20 wer
  * - v1.0.0-beta.10 - refactoring elsewhere reflected here.                                     - 2017-06-10 wer
  * - v1.0.0-beta.9  - modified createDefaultTwigValues and getPageValues to optionally take a   - 2017-05-30 wer
  *                    url_id to in essence change the page values based on a different url from
@@ -33,6 +34,7 @@
  */
 namespace Ritc\Library\Traits;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Factories\TwigFactory;
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\RoutesHelper;
@@ -133,10 +135,10 @@ trait ViewTraits
 
         $a_menus = $this->retrieveNav($a_page_values['ng_id']);
         if (empty($a_message)) {
-            $a_message = ViewHelper::messageProperties(['message' => '']);
+            $a_message = ViewHelper::fullMessage(['message' => '']);
         }
         else {
-            $a_message = ViewHelper::messageProperties($a_message);
+            $a_message = ViewHelper::fullMessage($a_message);
         }
 
         $a_values = array(
@@ -249,7 +251,12 @@ trait ViewTraits
     protected function setNavByNgName($navgroup_name = '')
     {
         $o_ng = new NavgroupsModel($this->o_db);
-        $ng_id = $o_ng->readIdByName($navgroup_name);
+        try {
+            $ng_id = $o_ng->readIdByName($navgroup_name);
+        }
+        catch (ModelException $e) {
+            $ng_id = 1;
+        }
         $this->setNav($ng_id);
     }
 
@@ -276,7 +283,6 @@ trait ViewTraits
      */
     public function getPageValues($url_id = -1)
     {
-        $meth = __METHOD__ . '.';
         $o_page_model = new PageComplexModel($this->o_di);
         $o_url = new UrlsModel($this->o_db);
         if (is_numeric($url_id)) {
@@ -285,17 +291,27 @@ trait ViewTraits
             }
         }
         else {
-            $a_urls = $o_url->read(['url_text' => $url_id]);
-            $url_id = $a_urls[0]['url_id'];
+            try {
+                $a_urls = $o_url->read(['url_text' => $url_id]);
+                $url_id = $a_urls[0]['url_id'];
+                try {
+                    $a_values = $o_page_model->readPageValuesByUrlId($url_id);
+                    if (isset($a_values[0])) {
+                        $a_page_values = $a_values[0];
+                    }
+                    else {
+                        $a_page_values = [];
+                    }
+                }
+                catch (ModelException $e) {
+                    $a_page_values = [];
+                }
+            }
+            catch (ModelException $e) {
+                $a_page_values = [];
+            }
         }
-        $a_values = $o_page_model->readPageValuesByUrlId($url_id);
-        $log_message = 'Page Values By URL Id:  ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-
-        if (isset($a_values[0])) {
-            $a_page_values = $a_values[0];
-        }
-        else {
+        if (empty($a_page_values)) {
             return [
                 'page_id'        => 0,
                 'url_id'         => 0,
@@ -315,7 +331,6 @@ trait ViewTraits
         $base_url = $a_page_values['page_base_url'] == '/'
             ? SITE_URL
             : SITE_URL . $a_page_values['page_base_url'];
-
         return [
             'page_id'     => $a_page_values['page_id'],
             'url_id'      => $a_page_values['url_id'],
@@ -399,7 +414,12 @@ trait ViewTraits
     {
         $o_ng = new NavgroupsModel($this->o_db);
         if (empty($navgroup)) {
-            $navgroup = $o_ng->retrieveDefaultId();
+            try {
+                $navgroup = $o_ng->retrieveDefaultId();
+            }
+            catch (ModelException $e) {
+                return [];
+            }
         }
         if (!is_numeric($navgroup)) {
             $navgroup = $o_ng->readIdByName($navgroup);
@@ -407,7 +427,12 @@ trait ViewTraits
                 return [];
             }
         }
-        return $this->o_nav->getNavList($navgroup);
+        try {
+            return $this->o_nav->getNavList($navgroup);
+        }
+        catch (ModelException $e) {
+            return [];
+        }
     }
 
     /**

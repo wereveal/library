@@ -17,7 +17,7 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerViewTraits;
+use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class TwigView.
@@ -26,7 +26,7 @@ use Ritc\Library\Traits\ManagerViewTraits;
  */
 class TwigView implements ViewInterface
 {
-    use ManagerViewTraits, LogitTraits;
+    use ViewTraits, LogitTraits;
 
     public function __construct(Di $o_di)
     {

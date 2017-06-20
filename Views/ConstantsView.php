@@ -4,9 +4,10 @@
  * @ingroup   lib_views
  * @file      ConstantsView.phpnamespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.1.0
- * @date      2017-06-07 09:54:17
+ * @version   2.2.0
+ * @date      2017-06-20 11:43:56
  * @note <b>Change Log</b>
+ * - v2.2.0   - refactoring elsewhere made changes here.                                - 2017-06-20 wer
  * - v2.1.0   - Updated to match ViewTraits and fix misc bugs.                          - 2017-06-07 wer
  * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
  * - v1.2.4   - Bug fix, removed unneeded use statement                                 - 2016-04-11 wer
@@ -23,10 +24,9 @@
  */
 namespace Ritc\Library\Views;
 
-use Ritc\Library\Helper\AuthHelper;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
@@ -41,11 +41,7 @@ class ConstantsView
     use LogitTraits, ViewTraits;
 
     /** @var \Ritc\Library\Views\LibraryView */
-    private $o_manager;
-    /** @var \Ritc\Library\Models\ConstantsModel */
-    private $o_model;
-    /** @var \Ritc\Library\Models\PeopleModel */
-    private $o_people;
+    private $o_view;
 
     /**
      * ConstantsView constructor.
@@ -53,15 +49,9 @@ class ConstantsView
      */
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
         $this->setupView($o_di);
-        $this->o_manager = new LibraryView($o_di);
-        $this->o_model   = new ConstantsModel($o_di->get('db'));
-        $this->o_people  = new PeopleModel($o_di->get('db'));
-        $this->o_auth    = new AuthHelper($o_di);
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-            $this->o_model->setElog($this->o_elog);
-        }
+        $this->o_view = new LibraryView($o_di);
     }
 
     /**
@@ -71,6 +61,9 @@ class ConstantsView
      */
     public function renderList(array $a_message = array())
     {
+        $o_const = new ConstantsModel($this->o_di->get('db'));
+        $o_const->setElog($this->o_elog);
+
         if (count($a_message) != 0) {
             $a_message['message'] .= "<br><br>Changing configuration values can result in unexpected results. If you are not sure, do not do it.";
         }
@@ -78,11 +71,16 @@ class ConstantsView
             $a_message = ViewHelper::warningMessage('Changing configuration values can result in unexpected results. If you are not sure, do not do it.');
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message);
-        $a_constants = $this->o_model->read([], ['order_by' => 'const_name']);
-        if ($a_constants !== false && count($a_constants) > 0) {
-            $a_twig_values['a_constants'] = $a_constants;
+        try {
+            $a_constants = $o_const->read([], ['order_by' => 'const_name']);
+            if (!empty($a_constants)) {
+                $a_twig_values['a_constants'] = $a_constants;
+            }
+            else {
+                $a_twig_values['a_constants'] = [];
+            }
         }
-        else {
+        catch (ModelException $e) {
             $a_twig_values['a_constants'] = [];
         }
         $tpl = $this->createTplString($a_twig_values);
@@ -97,27 +95,21 @@ class ConstantsView
     public function renderVerify(array $a_values = array())
     {
         if ($a_values === array()) {
-            $a_message = ViewHelper::messageProperties(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
+            $a_message = ViewHelper::fullMessage(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
             return $this->renderList($a_message);
         }
-        $a_page_values = $this->getPageValues(); // provided in ViewTraits
-        $a_twig_values = [
+
+        $a_twig_values = $this->createDefaultTwigValues(); // provided in ViewTraits
+        $a_page_values = [
             'what'         => 'constant',
             'name'         => $a_values['constant']['const_name'],
             'where'        => 'constants',
             'btn_value'    => 'Constant',
             'hidden_name'  => 'const_id',
             'hidden_value' => $a_values['constant']['const_id'],
-            'tolken'       => $a_values['tolken'],
-            'form_ts'      => $a_values['form_ts'],
-            'a_menus'      => $this->retrieveNav('ManagerLinks'),
-            'twig_prefix'  => LIB_TWIG_PREFIX
         ];
-        if (isset($a_values['public_dir'])) {
-            $a_twig_values['public_dir'] = $a_values['public_dir'];
-        }
         $a_twig_values = array_merge($a_twig_values, $a_page_values);
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
+        $tpl = $this->createTplString($a_twig_values);
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 }

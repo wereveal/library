@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Helper/ViewHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.1
- * @date      2015-11-05 14:29:45
+ * @version   2.0.0
+ * @date      2017-06-20 11:56:21
  * @note Change Log
+ * - v2.0.0 - Renamed 'the' method          - 2017-06-20 wer
  * - v1.1.1 - little sanitization of values - 11/05/2015 wer
  * - v1.1.0 - added lazy man's methods      - 09/25/2015 wer
  * - v1.0.1 - changed function to static    - 09/25/2014 wer
@@ -37,7 +38,7 @@ class ViewHelper
 	 *	)</pre>
 	 * @return array values for the template.
 	 */
-	public static function messageProperties(array $a_message_params = array())
+	public static function fullMessage(array $a_message_params = array())
 	{
 	    if ($a_message_params == array()) {
 	        $a_message_params = ['type' => '', 'message' => ''];
@@ -133,7 +134,7 @@ class ViewHelper
 	}
 
     /**
-     * Lazy man's way of creating array used by self::messageProperties method.
+     * Lazy man's way of creating array used by self::fullMessage method.
      * @param string $message
      * @return array
      */
@@ -149,7 +150,7 @@ class ViewHelper
     }
 
     /**
-     * Lazy man's way of creating array used by self::messageProperties method.
+     * Lazy man's way of creating array used by self::fullMessage method.
      * @param string $message
      * @return array
      */
@@ -165,7 +166,7 @@ class ViewHelper
     }
 
 	/**
-	 * Lazy man's way of creating array used by self::messageProperties method.
+	 * Lazy man's way of creating array used by self::fullMessage method.
 	 * @param string $message
 	 * @return array
 	 */
@@ -181,7 +182,7 @@ class ViewHelper
 	}
 
     /**
-     * Lazy man's way of creating array used by self::messageProperties method.
+     * Lazy man's way of creating array used by self::fullMessage method.
      * @param string $message
      * @return array
      */
@@ -197,7 +198,7 @@ class ViewHelper
     }
 
 	/**
-	 * Lazy man's way of creating array used by self::messageProperties method.
+	 * Lazy man's way of creating array used by self::fullMessage method.
 	 * @param string $message
 	 * @return array
 	 */
@@ -213,7 +214,7 @@ class ViewHelper
 	}
 
     /**
-     * Lazy man's way of creating array used by self::messageProperties method.
+     * Lazy man's way of creating array used by self::fullMessage method.
      * @param string $message
      * @return array
      */

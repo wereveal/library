@@ -13,7 +13,7 @@
  * - v1.0.0   - First working version    - 11/27/2015 wer
  * - v1.0.0β1 - Initial version          - 01/28/2015 wer
  * @todo Refactor to match model refactoring
- * @todo Refactor to use ControlerTraits or ManagerControllerTraits
+ * @todo Refactor to use ControlerTraits or ConfigControllerTraits
  */
 namespace Ritc\Library\Controllers;
 

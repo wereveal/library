@@ -8,6 +8,8 @@
  * @version   2.0.0
  * @date      2017-05-14 16:46:14
  * @note <b>Change Log</b>
+ * - v2.1.0   - two changes, switch to using RoutesComplexModel and method in           - 2017-06-20 wer
+ *              ViewHelper refactored so updated here.
  * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
  * - v1.1.0   - Refactoring elsewhere forced changes here                               - 2016-04-13 wer
  * - v1.0.4   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
@@ -23,7 +25,6 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Models\RoutesComplexModel;
-use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
@@ -39,7 +40,7 @@ class RoutesView
 {
     use LogitTraits, ViewTraits;
 
-    /** @var \Ritc\Library\Models\RoutesModel */
+    /** @var \Ritc\Library\Models\RoutesComplexModel */
     private $o_model;
 
     /**
@@ -83,11 +84,11 @@ class RoutesView
         $a_values = array_merge($a_page_values, $a_values);
 
         if (count($a_message) != 0) {
-            $a_values['a_message'] = ViewHelper::messageProperties($a_message);
+            $a_values['a_message'] = ViewHelper::fullMessage($a_message);
         }
         else {
             $message = 'Changing router values can result in unexpected results. If you are not sure, do not do it.';
-            $a_values['a_message'] = ViewHelper::messageProperties(
+            $a_values['a_message'] = ViewHelper::fullMessage(
                 ViewHelper::warningMessage($message)
             );
         }

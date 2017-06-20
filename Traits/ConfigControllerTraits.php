@@ -3,14 +3,14 @@
  * @brief     Commonly used functions used in Manager Controllers.
  * @details   Commonly used functions used in Manager Controllers. Expands on Controller Traits.
  * @ingroup   lib_traits
- * @file      Ritc/Library/Traits/ManagerControllerTraits.php
+ * @file      Ritc/Library/Traits/ConfigControllerTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-05-10 10:55:02
+ * @version   1.0.0-alpha.1
+ * @date      2017-06-20 12:31:30
  * @note Change Log
+ * - v1.0.0-alpha.1 - Renamed Trait                                                       - 2017-06-20 wer
  * - v1.0.0-alpha.0 - Initial version                                                     - 2017-05-10 wer
- * @todo Rename to ConfigControllerTraits
  */
 namespace Ritc\Library\Traits;
 
@@ -18,11 +18,11 @@ use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\ViewHelper;
 
 /**
- * Class ManagerControllerTraits.
- * @class   ManagerControllerTraits
+ * Class ConfigControllerTraits.
+ * @class   ConfigControllerTraits
  * @package Ritc\Library\Traits
  */
-trait ManagerControllerTraits
+trait ConfigControllerTraits
 {
     use ControllerTraits;
 

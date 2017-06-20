@@ -5,25 +5,26 @@
  * @file      Ritc/Library/Helper/ConstantsHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.0.2
- * @date      2017-01-27 10:59:55
+ * @version   4.1.0
+ * @date      2017-06-20 11:29:24
  * @note <b>Change Log</b>
- *   v4.0.2 - bug fix.                                                              - 2017-01-27 wer
+ * - v4.1.0 - Refactor based on refactoring of ConstantsModel                       - 2017-06-20 wer
+ * - v4.0.2 - bug fix.                                                              - 2017-01-27 wer
  * - v4.0.1 - bug fix. Wondering if another is still here.                          - 02/22/2016 wer
  * - v4.0.0 - renamed to reflect what it was doing. Since it isn't                  - 01/17/2015 wer
- *              a service, moved it Ritc\Library\Helper namespace.
+ *            a service, moved it Ritc\Library\Helper namespace.
  * - v3.3.0 - moved some contant definitions into this class                        - 12/10/2014 wer
- *              the constants.php file was doing these definitions but
- *              it seemed that this should be done here. Also, moved a
- *              couple constant names into the database.
+ *            the constants.php file was doing these definitions but
+ *            it seemed that this should be done here. Also, moved a
+ *            couple constant names into the database.
  * - v3.2.0 - changed to use DI/IOC                                                 - 12/10/2014 wer
  * - v3.1.5 - moved to the Services Namespace in the Library                        - 11/15/2014 wer
  * - v3.1.4 - changed to match changes in ConstantsModel                            - 11/13/2014 wer
  * - v3.1.3 - changed to implment the changes in Base class                         - 09/23/2014 wer
  * - v3.1.2 - bug fixes                                                             - 09/18/2014 wer
  * - v3.1.1 - made it so the constants table name will be assigned from the         - 02/24/2014 wer
- *              the db_prefix variable set from the db confuration
- *              (created in PdoFactory, passed on to DbModel).
+ *            the db_prefix variable set from the db confuration
+ *            (created in PdoFactory, passed on to DbModel).
  * - v3.1.0 - made it so it will create the constants table if it does not exist.   - 01/31/2014 wer
  *            Other changes to adjust to not having a theme based app.
  * - v3.0.3 - package change                                                        - 12/19/2013 wer
@@ -34,6 +35,7 @@
  */
 namespace Ritc\Library\Helper;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -61,6 +63,7 @@ class ConstantsHelper
     private function __construct(Di $o_di)
     {
         $meth = __METHOD__ . '.';
+        /** @var \Ritc\Library\Services\DbModel $o_db */
         $o_db = $o_di->get('db');
         $this->o_constants_model = new ConstantsModel($o_db);
         $this->o_elog = $o_di->get('elog');
@@ -68,7 +71,7 @@ class ConstantsHelper
         try {
             $this->created = $this->createConstants();
         }
-        catch () {
+        catch (ModelException $e) {
             $this->created = false;
         }
         if ($this->created === false) {
@@ -90,7 +93,7 @@ class ConstantsHelper
                 $this->o_constants_model->createNewConstants();
             }
             catch (ModelException $e) {
-                $this->logit('Unable to create new constants: ' . $e->errorMessage(), LOG_ALWAYS, __CLASS__);
+                die ('A fatal error has occured. Please contact your web site administrator.');
             }
         }
         $this->createThemeConstants();
@@ -211,7 +214,7 @@ class ConstantsHelper
                 $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
                 return false;
             }
-        } 
+        }
         else {
             return true;
         }

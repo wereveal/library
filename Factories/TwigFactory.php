@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Factories/TwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.0.0
- * @date      2017-05-15 11:06:59
+ * @version   3.1.0
+ * @date      2017-06-20 12:02:43
  * @note <b>Change Log</b>
+ * - v3.1.0   - Refactoring of TwigModel created the need for changes here.                             - 2017-06-20 wer
  * - v3.0.0   - Renamed getTwig to getTwigByFile and rewrote getTwig to use either getTwigByDb          - 2017-05-15 wer
  *              or getTwigByFile, defaulting to getTwigByFile. getTwigDb was renamed to getTwigByDb
  *              Theoretically backward compatible but the getTwig method was completely rewritten.
@@ -31,6 +32,7 @@
  */
 namespace Ritc\Library\Factories;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\LocateFile;
 use Ritc\Library\Helper\UtilityHelper;
 use Ritc\Library\Models\TwigComplexModel;
@@ -115,8 +117,13 @@ class TwigFactory
             ]
         ];
         $o_tp = new TwigComplexModel($o_di);
-        $results = $o_tp->readTwigConfig();
-        if (empty($results)) {
+        try {
+            $results = $o_tp->readTwigConfig();
+            if (empty($results)) {
+                return self::create();
+            }
+        }
+        catch (ModelException $e) {
             return self::create();
         }
         $additional_paths = [];

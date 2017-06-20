@@ -4,9 +4,11 @@
  * @ingroup   lib_views
  * @file      PageView.phpnamespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-05-14 16:45:01
+ * @version   2.1.0
+ * @date      2017-06-20 11:46:05
  * @note <b>Change Log</b>
+ * - v2.1.0   - method name changed elsewhere changed here                              - 2017-06-20 wer
+ *              ModelException handling added
  * - v2.0.0   - name refactoring                                                        - 2017-05-14 wer
  * - v1.1.0   - Lot of bug fixes due to the addition of URLs                            - 2016-04-13 wer
  * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
@@ -17,6 +19,7 @@
  */
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ViewHelper;
@@ -73,9 +76,19 @@ class PageView
             ? 'save'
             : 'update';
         $o_urls = new UrlsModel($this->o_db);
-        $a_urls = $o_urls->read();
+        try {
+            $a_urls = $o_urls->read();
+        }
+        catch (ModelException $e) {
+            $a_urls = [];
+        }
         $o_page = new PageModel($this->o_db);
-        $a_page_list = $o_page->read();
+        try {
+            $a_page_list = $o_page->read();
+        }
+        catch (ModelException $e) {
+            $a_page_list = [];
+        }
         $a_options = [
             [
                 'value'       => '0',
@@ -125,11 +138,14 @@ class PageView
 
         ### If we are trying to modify an existing page, grab its data and shove it into the form ###
         if ($action == 'update') {
-            $a_pages = $this->o_model->readPageValues(
-                ['page_id' => $this->o_router->getPost('page_id')]
-            );
-            $log_message = 'Page Values:  ' . var_export($a_pages, TRUE);
-            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+            try {
+                $a_pages = $this->o_model->readPageValues(
+                    ['page_id' => $this->o_router->getPost('page_id')]
+                );
+            }
+            catch (ModelException $e) {
+                $a_pages = [];
+            }
 
             if (isset($a_pages[0])) {
                 $a_page = $a_pages[0];
@@ -149,8 +165,6 @@ class PageView
             else {
                 $this->logIt("Could not get the page values!", LOG_OFF, $meth . __LINE__);
             }
-            $log_message = 'a_values in the update: ' . var_export($a_values, TRUE);
-            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         }
 
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/page_form.twig';
@@ -164,7 +178,6 @@ class PageView
      */
     public function renderList(array $a_message = array())
     {
-        $meth = __METHOD__ . '.';
         $a_page_values = $this->getPageValues();
         $a_values = array(
             'page_title' => 'Manager for Page Meta Values, mostly',
@@ -186,27 +199,31 @@ class PageView
         );
         $a_values = array_merge($a_page_values, $a_values);
         if (count($a_message) != 0) {
-            $a_values['a_message'] = ViewHelper::messageProperties($a_message);
+            $a_values['a_message'] = ViewHelper::fullMessage($a_message);
         }
         else {
             $a_values['a_message'] = '';
         }
         $a_search_for = [];
         $a_search_params = ['order_by' => 'page_immutable DESC, url_text ASC'];
-        $a_pages = $this->o_model->readPageValues($a_search_for, $a_search_params);
-        $message = 'a_page: ' . var_export($a_pages, TRUE);
-        $this->logIt($message, LOG_OFF, $meth . __LINE__);
-        if ($a_pages !== false && count($a_pages) > 0) {
-            foreach($a_pages as $key => $a_page) {
-                if ($a_page['url_host'] == 'self') {
-                    $a_pages[$key]['page_url'] = $a_page['url_text'];
-                }
-                else {
-                    $a_pages[$key]['page_url'] = $a_page['url_scheme'] . '://' . $a_page['url_host'] .  $a_page['url_text'];
-                }
+        try {
+            $a_pages = $this->o_model->readPageValues($a_search_for, $a_search_params);
+            if (empty($a_pages)) {
+                $a_pages = [];
             }
-            $a_values['a_pages'] = $a_pages;
         }
+        catch (ModelException $e) {
+            $a_pages = [];
+        }
+        foreach($a_pages as $key => $a_page) {
+            if ($a_page['url_host'] == 'self') {
+                $a_pages[$key]['page_url'] = $a_page['url_text'];
+            }
+            else {
+                $a_pages[$key]['page_url'] = $a_page['url_scheme'] . '://' . $a_page['url_host'] .  $a_page['url_text'];
+            }
+        }
+        $a_values['a_pages'] = $a_pages;
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/pages.twig';
         return $this->o_twig->render($tpl, $a_values);
     }

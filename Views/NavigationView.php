@@ -17,7 +17,6 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
-use Ritc\Library\Models\NavigationModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -36,14 +35,6 @@ class NavigationView
      * @var \Ritc\Library\Models\NavComplexModel
      */
     private $o_nav_complex;
-    /**
-     * @var \Ritc\Library\Models\NavigationModel
-     */
-    private $o_nav_model;
-    /**
-     * @var \Ritc\Library\Models\NavgroupsModel
-     */
-    private $o_ng_model;
 
     /**
      * NavigationView constructor.
@@ -53,14 +44,8 @@ class NavigationView
     {
         $this->setupElog($o_di);
         $this->setupView($o_di);
-        $this->o_ng_model    = new NavgroupsModel($this->o_db);
-        $this->o_nav_model   = new NavigationModel($this->o_db);
         $this->o_nav_complex = new NavComplexModel($this->o_db);
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_nav_complex->setElog($this->o_elog);
-            $this->o_nav_model->setElog($this->o_elog);
-            $this->o_ng_model->setElog($this->o_elog);
-        }
+        $this->o_nav_complex->setElog($this->o_elog);
     }
 
     /**
@@ -70,15 +55,17 @@ class NavigationView
      */
     public function renderList(array $a_message = [])
     {
-        $meth = __METHOD__ . '.';
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/navigation/');
 
-        $a_nav = $this->o_nav_complex->getNavListAll();
+        try {
+            $a_nav = $this->o_nav_complex->getNavListAll();
+        }
+        catch (ModelException $e) {
+            $a_nav = [];
+        }
         $a_nav = $this->createSubmenu($a_nav);
         $a_nav = $this->sortTopLevel($a_nav);
         $a_nav = $this->createTwigListArray($a_nav);
-        $log_message = 'Search Results ' . var_export($a_nav, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_twig_values['a_nav'] = $a_nav;
 
@@ -119,7 +106,12 @@ class NavigationView
             $a_twig_values['selected0'] = ' selected';
         }
         else {
-            $results = $this->o_nav_complex->getNavRecord($nav_id);
+            try {
+                $results = $this->o_nav_complex->getNavRecord($nav_id);
+            }
+            catch (ModelException $e) {
+                $results = [];
+            }
             foreach ($results as $nav_label => $nav_value) {
                 switch ($nav_label) {
                     case 'nav_active':
@@ -221,10 +213,12 @@ class NavigationView
      */
     private function createNavSelect($nav_id = -1)
     {
-        $meth = __METHOD__ . '.';
-        $a_nav = $this->o_nav_complex->getNavListAll();
-        $log_message = 'nav array: ' . var_export($a_nav, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        try {
+            $a_nav = $this->o_nav_complex->getNavListAll();
+        }
+        catch (ModelException $e) {
+            $a_nav = [];
+        }
 
         $a_select = [
             'label_for'   => '',
@@ -271,11 +265,13 @@ class NavigationView
      */
     private function createNgSelect($parent_ng_id = -1)
     {
-        $meth = __METHOD__ . '.';
         $o_ng = new NavgroupsModel($this->o_db);
-        $results = $o_ng->read();
-        $log_message = 'navgroups ' . var_export($results, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        try {
+            $results = $o_ng->read();
+        }
+        catch (ModelException $e) {
+            $results = [];
+        }
 
         $a_select = [
             'label_for'   => '',

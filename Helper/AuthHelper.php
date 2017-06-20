@@ -8,9 +8,10 @@
  * @file      Ritc/Library/Helper/AuthHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.2.2
- * @date      2017-05-27 18:39:17
+ * @version   5.3.0
+ * @date      2017-06-20 11:32:28
  * @note <b>Change Log</b>
+ * - v5.3.0 - Refactored due to refactoring of models               - 2017-06-20 wer
  * - v5.2.2 - Code clarification                                    - 2017-05-27 wer
  * - v5.2.1 - Bug fix, not sure why it suddenly appeared            - 2017-02-07 wer
  * - v5.2.0 - Adding DbUtilityTraits only pointed out problems.     - 2016-03-19 wer
@@ -63,6 +64,7 @@
  */
 namespace Ritc\Library\Helper;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\PeopleModel;
@@ -102,15 +104,13 @@ class AuthHelper
         $o_db            = $o_di->get('db');
         $this->o_session = $o_di->get('session');
         $this->o_router  = $o_di->get('router');
+        $this->o_elog    = $o_di->get('elog');
         $this->o_people  = new PeopleModel($o_db);
         $this->o_groups  = new GroupsModel($o_db);
         $this->o_complex = new PeopleComplexModel($o_db);
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-            $this->o_people->setElog($this->o_elog);
-            $this->o_groups->setElog($this->o_elog);
-            $this->o_complex->setElog($this->o_elog);
-        }
+        $this->o_people->setElog($this->o_elog);
+        $this->o_groups->setElog($this->o_elog);
+        $this->o_complex->setElog($this->o_elog);
     }
 
     #### Actions ####
@@ -168,11 +168,13 @@ class AuthHelper
 
         }
         if ($this->o_session->isValidSession($a_person_post, true)) {
-            $a_person = $this->o_people->readPeopleRecord($a_person_post['login_id']);
-            $this->logIt("Posted Values: " . var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
-            $this->logIt("User Values: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
-            if ($a_person == [] || !is_array($a_person)) {
-                $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
+            try {
+                $a_person = $this->o_people->readPeopleRecord($a_person_post['login_id']);
+            }
+            catch (ModelException $e) {
+                $a_person = [];
+            }
+            if (empty($a_person)) {
                 return [
                     'login_id'     => '',
                     'is_logged_in' => 0,
@@ -180,66 +182,73 @@ class AuthHelper
                 ];
             }
             if ($a_person['is_active'] < 1) {
-                $this->o_people->incrementBadLoginTimestamp($a_person['people_id']);
-                $this->o_people->incrementBadLoginCount($a_person['people_id']);
-                $this->o_people->setLoggedOut($a_person['people_id']);
+                $message = $this->o_people->makeBadLoginAttempt($a_person['people_id']);
                 $a_person_post['password']     = '';
                 $a_person_post['is_logged_in'] = 0;
-                $a_person_post['message']      = 'The login id is inactive.';
+                $a_person_post['message']      = $message == ''
+                    ? 'The login id is inactive.'
+                    : 'The login id is inactive. ' . $message;
                 return $a_person_post;
             }
             if ($a_person['bad_login_count'] > 5 && $a_person['bad_login_ts'] >= (time() - (60 * 5))) {
-                $this->o_people->incrementBadLoginTimestamp($a_person['people_id']);
-                $this->o_people->setLoggedOut($a_person['people_id']);
+                $message = $this->o_people->makeBadLoginAttempt($a_person['people_id']);
                 $a_person_post['password']     = '';
                 $a_person_post['is_logged_in'] = 0;
                 $a_person_post['login_id']     = '';
-                $a_person_post['message']      = 'The login id is locked out. Please wait 5 minutes and try again.';
+                $a_person_post['message']      = $message == ''
+                    ? 'The login id is locked out. Please wait 5 minutes and try again.'
+                    : 'The login id is locked out. Please wait 5 minutes and try again. ' . $message;
                 return $a_person_post;
             }
             // simple anti-spambot thing... if the form has it.
             if (isset($a_person_post['hobbit']) && $a_person_post['hobbit'] != '') {
-                $this->o_people->setLoggedOut($a_person['people_id']);
-                $this->o_people->setBadLoginTimestamp($a_person['people_id']);
-                $this->o_people->incrementBadLoginCount($a_person['people_id']);
+                $message = $this->o_people->makeBadLoginAttempt($a_person['people_id']);
                 return [
                     'login_id'     => '',
                     'is_logged_in' => 0,
-                    'message'      => 'A problem has occured. Please try again.'
+                    'message'      => 'A problem has occured. Please try again. ' . $message
                 ];
             }
             $a_person_post['created_on'] = $a_person['created_on'];
             $a_person_post['people_id']  = $a_person['people_id'];
 
             if (password_verify($a_person_post['password'], $a_person['password'])) {
-                $this->o_people->resetBadLoginCount($a_person['people_id']);
-                $this->o_people->resetBadLoginTimestamp($a_person['people_id']);
-                $this->o_people->setLoggedIn($a_person['people_id']);
+                $this->o_people->makeGoodLoginAttempt($a_person['people_id']);
                 $a_person['is_logged_in']    = 1;
                 $a_person['message']         = 'Success!';
                 $a_person['password']        = '';
                 $a_person['bad_login_count'] = 0;
                 $a_person['bad_login_ts']    = 0;
-                $this->logIt("After password check: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
                 return $a_person;
             } else {
-                $this->o_people->setBadLoginTimestamp($a_person['people_id']);
-                $this->o_people->incrementBadLoginCount($a_person['people_id']);
-                $this->o_people->setLoggedOut($a_person['people_id']);
+                $message = $this->o_people->makeBadLoginAttempt($a_person['people_id']);
                 return [
                     'login_id'     => $a_person_post['login_id'],
                     'is_logged_in' => 0,
                     'password'     => '',
-                    'message'      => 'The password was incorrect. Please try again.'
+                    'message'      => 'The password was incorrect. Please try again. ' . $message
                 ];
             }
         }
         else {
             $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
+            $message = 'Your session has timed out. Please login again.';
+            try {
+                $a_person = $this->o_people->readPeopleRecord($a_person_post['login_id']);
+                try {
+                    $this->o_people->setLoggedOut($a_person['people_id']);
+                }
+                catch (ModelException $e) {
+                    $message .= ' ' . $e->errorMessage();
+                }
+            }
+            catch (ModelException $e) {
+                $message .= ' ' . $e->errorMessage();
+            }
             return [
                 'login_id'     => '',
                 'is_logged_in' => 0,
-                'message'      => 'Please try again. Your session has timed out.'
+                'message'      => $message
             ];
         }
     }
@@ -253,9 +262,19 @@ class AuthHelper
     {
         if ($people_id != '') {
             if (!ctype_digit($people_id)) {
-                $people_id = $this->o_people->getPeopleId($people_id);
+                try {
+                    $people_id = $this->o_people->getPeopleId($people_id);
+                }
+                catch (ModelException $e) {
+                    $this->logIt("ModelException: " . $e->errorMessage(), LOG_OFF, __METHOD__);
+                }
             }
-            $this->o_people->setLoggedOut($people_id);
+            try {
+                $this->o_people->setLoggedOut($people_id);
+            }
+            catch (ModelException $e) {
+                $this->logIt("ModelException: " . $e->errorMessage(), LOG_OFF, __METHOD__);
+            }
         }
         $this->o_session->resetSession();
         return [
@@ -274,17 +293,23 @@ class AuthHelper
      */
     public function getHighestAuthLevel($people_id = '')
     {
+        $meth = __METHOD__ . '.';
         if ($people_id == '') {
             return 0;
         }
         $auth_level = 0;
-        $a_person = $this->o_complex->readInfo($people_id);
-        if (is_array($a_person) && count($a_person) > 0) {
-            foreach($a_person['groups'] as $a_group) {
-                $auth_level = $a_group['group_auth_level'] > $auth_level
-                    ? $a_group['group_auth_level']
-                    : $auth_level;
+        try {
+            $a_person = $this->o_complex->readInfo($people_id);
+            if (!empty($a_person)) {
+                foreach($a_person['groups'] as $a_group) {
+                    $auth_level = $a_group['group_auth_level'] > $auth_level
+                        ? $a_group['group_auth_level']
+                        : $auth_level;
+                }
             }
+        }
+        catch (ModelException $e) {
+            $this->logIt("DB Error: " . $e->errorMessage(), LOG_OFF, $meth . __LINE__);
         }
         return $auth_level;
     }
@@ -353,11 +378,17 @@ class AuthHelper
         if ($person == -1) {
             return false;
         }
-        $a_person = $this->o_complex->readInfo($person);
-        if (isset($a_person['is_immutable'])) {
-            if ($a_person['is_immutable'] == 1) {
-                return true;
+        try {
+            $a_person = $this->o_complex->readInfo($person);
+            if (isset($a_person['is_immutable'])) {
+                if ($a_person['is_immutable'] == 1) {
+                    return true;
+                }
             }
+        }
+        catch (ModelException $e) {
+            $meth = __METHOD__ . '.' . __LINE__;
+            $this->logIt("Db Error: " . $e->errorMessage(), LOG_OFF, $meth);
         }
         return false;
     }
@@ -375,11 +406,16 @@ class AuthHelper
         if ($login_id == '') {
             return false;
         }
-        $a_person = $this->o_complex->readInfo($login_id);
-        if (!empty($a_person)) {
-            if ($a_person['is_logged_in'] == 1) {
-                return true;
+        try {
+            $a_person = $this->o_complex->readInfo($login_id);
+            if (!empty($a_person)) {
+                if ($a_person['is_logged_in'] == 1) {
+                    return true;
+                }
             }
+        }
+        catch (ModelException $e) {
+            $this->logIt("Db Error: " . $e->errorMessage(), LOG_OFF, __METHOD__);
         }
         return false;
     }
@@ -393,18 +429,26 @@ class AuthHelper
     {
         if ($people_id == -1 || $people_id == '') { return false; }
         $meth = __METHOD__ . '.';
-        $a_person = $this->o_complex->readInfo($people_id);
-        $this->logIt('Person: ' . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
-        if ($a_person !== false) {
-            $a_allowed_groups = $this->o_router->getAllowedGroups();
-            $this->logIt(var_export($a_allowed_groups, true), LOG_OFF, $meth . __LINE__);
-            foreach($a_person['groups'] as $a_group) {
-                foreach ($a_allowed_groups as $a_allowed_group) {
-                    if ($a_group['group_id'] == $a_allowed_group) {
-                        return true;
+        try {
+            $a_person = $this->o_complex->readInfo($people_id);
+            if (!empty($a_person)) {
+                try {
+                    $a_allowed_groups = $this->o_router->getAllowedGroups();
+                    foreach($a_person['groups'] as $a_group) {
+                        foreach ($a_allowed_groups as $a_allowed_group) {
+                            if ($a_group['group_id'] == $a_allowed_group) {
+                                return true;
+                            }
+                        }
                     }
                 }
+                catch (ModelException $e) {
+                    $this->logIt("Db Exception: " . $e->errorMessage(), LOG_OFF, $meth . __LINE__);
+                }
             }
+        }
+        catch (ModelException $e) {
+            $this->logIt("Db Exception: " . $e->errorMessage(), LOG_OFF, $meth . __LINE__);
         }
         return false;
     }
@@ -419,9 +463,18 @@ class AuthHelper
         if ($people_id == '') {
             return false;
         }
-        $a_super_admin = $this->o_groups->readById(1);
+        $sa_level = 10;
+        try {
+            $a_super_admin = $this->o_groups->readById(1);
+            if (!empty($a_super_admin['group_auth_level'])) {
+                $sa_level = $a_super_admin['group_auth_level'];
+            }
+        }
+        catch (ModelException $e) {
+            $this->logIt("Model Exception: " . $e->errorMessage(), LOG_OFF, __METHOD__);
+        }
         $auth_level = $this->getHighestAuthLevel($people_id);
-        if ($auth_level == $a_super_admin['group_auth_level']) {
+        if ($auth_level == $sa_level) {
             return true;
         }
         return false;
@@ -441,8 +494,14 @@ class AuthHelper
         else {
             $a_search_by = ['group_name' => $group];
         }
-        if (is_array($this->o_groups->read($a_search_by))) {
-            return true;
+        try {
+            $results = $this->o_groups->read($a_search_by);
+            if (!empty($results)) {
+                return true;
+            }
+        }
+        catch (ModelException $e) {
+            $this->logIt("ModelException: " . $e->errorMessage(), LOG_OFF, __METHOD__);
         }
         return false;
     }
@@ -469,9 +528,14 @@ class AuthHelper
     public function isValidPerson($person = '')
     {
         if ($person == '') { return false; }
-        $a_people = $this->o_complex->readInfo($person);
-        if (isset($a_people['people_id'])) {
-            return true;
+        try {
+            $a_people = $this->o_complex->readInfo($person);
+            if (isset($a_people['people_id'])) {
+                return true;
+            }
+        }
+        catch (ModelException $e) {
+            $this->logIt("Db Exception: " . $e->errorMessage(), LOG_OFF, __METHOD__);
         }
         return false;
     }
@@ -499,9 +563,13 @@ class AuthHelper
     public function peopleIdExists($people_id = -1)
     {
         if (ctype_digit($people_id) && $people_id != -1) {
-            $results = $this->o_people->read(['people_id' => $people_id]);
-            $a_person = $results[0];
-            if (isset($a_person['people_id']) && $a_person['people_id'] == $people_id) {
+            try {
+                $results = $this->o_people->read(['people_id' => $people_id]);
+            }
+            catch (ModelException $e) {
+                return false;
+            }
+            if (!empty($results[0]['people_id']) && $results[0]['people_id'] == $people_id) {
                 return true;
             }
         }
@@ -519,8 +587,13 @@ class AuthHelper
         if ($person == -1 || $group == '') {
             return false;
         }
-        $a_people = $this->o_complex->readInfo($person);
-        if (isset($a_people['groups']) && count($a_people['groups']) > 0) {
+        try {
+            $a_people = $this->o_complex->readInfo($person);
+        }
+        catch (ModelException $e) {
+            $a_people = [];
+        }
+        if (!empty($a_people['groups'])) {
             foreach ($a_people['groups'] as $a_group) {
                 if ($a_group['group_id'] == $group || $a_group['group_name'] == $group) {
                     return true;
@@ -538,8 +611,13 @@ class AuthHelper
     public function loginIdExists($login_id = '')
     {
         if ($login_id == '') { return false; }
-        $results = $this->o_people->read(array('login_id' => $login_id));
-        if (isset($results['login_id']) && $results['login_id'] == $login_id) {
+        try {
+            $results = $this->o_people->read(array('login_id' => $login_id));
+        }
+        catch (ModelException $e) {
+            $results = false;
+        }
+        if (!empty($results['login_id']) && $results['login_id'] == $login_id) {
             return true;
         }
         return false;
@@ -567,9 +645,14 @@ class AuthHelper
         else {
             $a_find_this = ['login_id' => $a_person['login_id']];
         }
-        $a_results = $this->o_people->read($a_find_this);
-        if (isset($a_results[0])) {
-            return password_verify($a_person['password'], $a_results[0]['password']);
+        try {
+            $a_results = $this->o_people->read($a_find_this);
+            if (!empty($a_results[0]['password'])) {
+                return password_verify($a_person['password'], $a_results[0]['password']);
+            }
+        }
+        catch (ModelException $e) {
+            $this->logIt("ModelException: " . $e->errorMessage(), LOG_OFF, __METHOD__);
         }
         return false;
     }

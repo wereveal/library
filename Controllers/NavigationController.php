@@ -17,7 +17,7 @@ use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerControllerTraits;
+use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\NavigationView;
 
 /**
@@ -27,7 +27,7 @@ use Ritc\Library\Views\NavigationView;
  */
 class NavigationController implements ManagerControllerInterface
 {
-    use ManagerControllerTraits, LogitTraits;
+    use ConfigControllerTraits, LogitTraits;
 
     protected $o_model;
     protected $o_view;

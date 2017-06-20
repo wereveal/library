@@ -361,6 +361,64 @@ class PeopleModel implements ModelInterface
     }
 
     /**
+     * Does the normal things to indicate the login attempt was bad.
+     * @param int $people_id
+     * @return string
+     */
+    public function makeBadLoginAttempt($people_id = -1)
+    {
+        $message = '';
+        try {
+            $this->incrementBadLoginTimestamp($people_id);
+            try {
+                $this->incrementBadLoginCount($people_id);
+                try {
+                    $this->setLoggedOut($people_id);
+                }
+                catch (ModelException $e) {
+                    $message .= 'Model Exception for setLoggedOut: ' . $e->errorMessage();
+                }
+            }
+            catch (ModelException $e) {
+                $message .= 'Model exception for incrementBadLoginCount: ' . $e->errorMessage();
+            }
+        }
+        catch (ModelException $e) {
+            $message .= 'Model exception for incrementBadLoginTimestamp: ' . $e->errorMessage();
+        }
+        return $message;
+    }
+
+    /**
+     * Does the normal things to indicate the person is logged in.
+     * @param $people_id
+     * @return bool
+     */
+    public function makeGoodLoginAttempt($people_id)
+    {
+        $is_good = true;
+        try {
+            $this->resetBadLoginCount($people_id);
+        }
+        catch (ModelException $e) {
+            $is_good = false;
+        }
+        try {
+            $this->resetBadLoginTimestamp($people_id);
+        }
+        catch (ModelException $e) {
+            $is_good = false;
+        }
+        try {
+            $this->setLoggedIn($people_id);
+        }
+        catch (ModelException $e) {
+            $is_good = false;
+        }
+        return $is_good;
+    }
+
+    /**
      * Returns the user record.
      * @param int|string $user either user id or user name
      * @return array

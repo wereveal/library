@@ -5,29 +5,30 @@
  * @file      Ritc/Library/Controllers/ConstantsController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.5.0
- * @date      2017-06-19 16:15:04
+ * @version   1.4.0-beta.3
+ * @date      2017-06-20 12:28:03
  * @note <b>Change Log</b>
- * - v1.5.0 - Refactoring of model reflected here             - 2017-06-19 wer
- * - v1.4.0 - Refactoring elsewhere reflected here.           - 2017-06-07 wer
- * - v1.3.2 - bug fix                                         - 2016-04-11 wer
- * - v1.3.1 - bug fix                                         - 2016-03-08 wer
- * - v1.3.0 - added immutable code                            - 10/07/2015 wer
- * - v1.2.1 - code clean up                                   - 09/25/2015 wer
- * - v1.2.0 - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
- * - v1.1.0 - changed to implement ManagerControllerInterface - 01/16/2015 wer
- *            This class should only be called from the main
- *            manager controller which does session validation.
- * - v1.0.2 - changed to use the new Di class                 - 11/17/2014 wer
- * - v1.0.1 - Adjusted to match file name change              - 11/13/2014 wer
- * - v1.0.0 - Initial version                                 - 04/02/2014 wer
+ * - v1.4.0-beta.3 - Name change of Trait.                           - 2017-06-20 wer
+ * - v1.4.0-beta.2 - Refactoring of model reflected here             - 2017-06-19 wer
+ * - v1.4.0-beta.1 - Refactoring elsewhere reflected here.           - 2017-06-07 wer
+ * - v1.3.2        - bug fix                                         - 2016-04-11 wer
+ * - v1.3.1        - bug fix                                         - 2016-03-08 wer
+ * - v1.3.0        - added immutable code                            - 10/07/2015 wer
+ * - v1.2.1        - code clean up                                   - 09/25/2015 wer
+ * - v1.2.0        - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
+ * - v1.1.0        - changed to implement ManagerControllerInterface - 01/16/2015 wer
+ *                   This class should only be called from the main
+ *                   manager controller which does session validation.
+ * - v1.0.2        - changed to use the new Di class                 - 11/17/2014 wer
+ * - v1.0.1        - Adjusted to match file name change              - 11/13/2014 wer
+ * - v1.0.0        - Initial version                                 - 04/02/2014 wer
  */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\ConstantsModel;
-use Ritc\Library\Traits\ManagerControllerTraits;
+use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\ConstantsView;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -39,7 +40,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ConstantsController implements ManagerControllerInterface
 {
-    use LogitTraits, ManagerControllerTraits;
+    use LogitTraits, ConfigControllerTraits;
 
     /** @var ConstantsModel */
     private $o_model;

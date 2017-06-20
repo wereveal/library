@@ -11,7 +11,7 @@
  * @version   2.0.0
  * @date      2017-06-11 16:06:33
  * @note <b>Change Log</b>
- * - v2.0.0          - updated to use ModelException                           - 2017-06-11 wer
+ * - v2.0.0          - updated to use ModelException                        - 2017-06-11 wer
  * - v1.4.4          - bug fix                                              - 2017-05-12 wer
  *                     With the introduction of the lib_prefix where it
  *                     could be different from the db_prefix, wasn't setting

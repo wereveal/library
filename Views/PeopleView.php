@@ -2,11 +2,14 @@
 /**
  * @brief     View for the User Admin page.
  * @ingroup   lib_views
- * @file      PeopleView * @namespace Ritc\Library\Views
+ * @file      PeopleView
+ * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-05-14 16:45:24
+ * @version   2.1.0
+ * @date      2017-06-20 11:47:18
  * @note <b>Change Log</b>
+ * - v2.1.0   - method name changed elsewhere forced change here.                       - 2017-06-20 wer
+ *              ModelException handling added.
  * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
  * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
  * - v1.0.2   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
@@ -14,9 +17,11 @@
  * - v1.0.0   - Initial non-beta version                                                - 11/12/2015 wer
  * - v1.0.0β2 - Changed to use DI/IOC                                                   - 11/15/2014 wer
  * - v1.0.0β1 - Initial version                                                         - 11/13/2014 wer
+ * @todo refactor to use ViewTraits or ConfigViewTraits
  */
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleComplexModel;
@@ -52,17 +57,15 @@ class PeopleView
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
+        $this->setupElog($o_di);
         $this->o_people_model   = new PeopleModel($this->o_db);
         $this->o_group_model    = new GroupsModel($this->o_db);
         $this->o_pgm_model      = new PeopleGroupMapModel($this->o_db);
         $this->o_people_complex = new PeopleComplexModel($this->o_db);
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-            $this->o_people_model->setElog($this->o_elog);
-            $this->o_group_model->setElog($this->o_elog);
-            $this->o_pgm_model->setElog($this->o_elog);
-            $this->o_people_complex->setElog($this->o_elog);
-        }
+        $this->o_people_model->setElog($this->o_elog);
+        $this->o_group_model->setElog($this->o_elog);
+        $this->o_pgm_model->setElog($this->o_elog);
+        $this->o_people_complex->setElog($this->o_elog);
     }
 
     /**
@@ -95,7 +98,20 @@ class PeopleView
         $log_message = 'a_values: ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-        $a_people = $this->o_people_model->read();
+        try {
+            $a_people = $this->o_people_model->read();
+        }
+        catch (ModelException $e) {
+            $a_people = [];
+            $message = 'A problem occurred and the list could not be retrieved.';
+            if (empty($a_message)) {
+                $a_message = ViewHelper::errorMessage($message);
+            }
+            else {
+                $a_message['message'] .= ' ' . $message;
+                $a_message['type'] = 'error';
+            }
+        }
         if ($a_people !== false) {
             foreach($a_people as $key => $a_person) {
                 $highest_auth_level = $this->o_auth->getHighestAuthLevel($a_person['people_id']);
@@ -104,7 +120,7 @@ class PeopleView
             $a_values['a_people'] = $a_people;
         }
         if (count($a_message) != 0) {
-            $a_values['a_message'] = ViewHelper::messageProperties($a_message);
+            $a_values['a_message'] = ViewHelper::fullMessage($a_message);
         }
         else {
             $a_values['a_message'] = '';

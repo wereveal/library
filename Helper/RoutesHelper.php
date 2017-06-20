@@ -5,23 +5,23 @@
  * @file      Ritc/Library/Helper/RoutesHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0+2
- * @date      2017-05-30 15:18:33
+ * @version   2.1.0
+ * @date      2017-06-20 10:09:37
  * @note Change Log
+ * - v2.1.0   - Changed to handle ModelExceptions                   - 2017-06-20 wer
  * - v2.0.0   - Changed to handle inexact request URI (slashes)     - 2016-09-08 wer
  * - v1.1.0   - added method for quick min auth level for a route.  - 02/26/2016 wer
  * - v1.0.0   - took out of beta                                    - 11/27/2015 wer
  * - v1.0.0β3 - bug fix                                             - 11/24/2015 wer
  * - v1.0.0β2 - logic change                                        - 10/30/2015 wer
  * - v1.0.0β1 - intial file                                         - 09/26/2015 wer
- * @TODO refactor to match model refactoring using ModelExceptions
  */
 namespace Ritc\Library\Helper;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RoutesComplexModel;
 use Ritc\Library\Models\RoutesGroupMapModel;
-use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -36,12 +36,10 @@ class RoutesHelper
 
     /** @var array */
     private $a_route_parts;
-    /** @var \Ritc\Library\Models\GroupsModel */
-    private $o_group;
-    /** @var \Ritc\Library\Models\RoutesComplexModel */
-    private $o_routes;
-    /** @var \Ritc\Library\Models\RoutesGroupMapModel */
-    private $o_rgm;
+    /** @var \Ritc\Library\Services\DbModel  */
+    private $o_db;
+    /** @var \Ritc\Library\Services\Di  */
+    private $o_di;
     /** @var string */
     private $route_path;
     /** @var string */
@@ -55,13 +53,9 @@ class RoutesHelper
     public function __construct(Di $o_di, $request_uri = '')
     {
         $this->setupElog($o_di);
-        $o_db = $o_di->get('db');
-        $this->o_routes = new RoutesComplexModel($o_di);
-        $this->o_group = new GroupsModel($o_db);
-        $this->o_rgm   = new RoutesGroupMapModel($o_db);
+        $this->o_di = $o_di;
+        $this->o_db = $o_di->get('db');
         $this->route_path = $request_uri;
-        $this->o_group->setElog($this->o_elog);
-        $this->o_rgm->setElog($this->o_elog);
     }
 
     /**
@@ -198,32 +192,26 @@ class RoutesHelper
      */
     public function findValidRoute($request_uri = '')
     {
-        $meth = __METHOD__ . '.';
-
+        $o_routes = new RoutesComplexModel($this->o_di);
         $a_search_for = $this->createComparisonUri($request_uri);
-        $log_message = 'Uri Comparison Array:  ' . var_export($a_search_for, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         foreach ($a_search_for as $key => $value) {
-            $a_results = $this->o_routes->readByRequestUri($value);
-            $log_message = 'For the request uri: ' .
-                $value .
-                ' the readByRequestUri results:  '
-                . var_export($a_results, TRUE);
-            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-            if ($a_results !== false && count($a_results) === 1) {
-                return $a_results[0];
+            try {
+                $a_results = $o_routes->readByRequestUri($value);
+                if (!empty($a_results)) {
+                    return $a_results[0];
+                }
             }
-        }
-
-        if ($request_uri == '/') {
-            return false;
+            catch (ModelException $e) {
+                if ($request_uri == '/') {
+                    return false;
+                }
+            }
         }
 
         /* Well, looks like the uri doesn't exist as is so check to see if a part of the uri is a route */
         $uri = $a_search_for['none'];
         $a_uri_parts = explode('/', $uri);
-        $last = array_pop($a_uri_parts);
+        array_pop($a_uri_parts);
         $new_request_uri = '/' . implode('/', $a_uri_parts) . '/';
         if (strrpos($new_request_uri, '//') !== false) {
             $new_request_uri = substr($new_request_uri, 0, strlen($new_request_uri) - 1);
@@ -270,14 +258,22 @@ class RoutesHelper
     public function getGroups($route_id = -1)
     {
         if ($route_id == -1) { return []; }
-        $a_groups = array();
-        $a_rgm_results = $this->o_rgm->read(['route_id' => $route_id]);
-        if ($a_rgm_results !== false && count($a_rgm_results) > 0) {
-            foreach ($a_rgm_results as $a_rgm) {
-                $a_groups[] = $a_rgm['group_id'];
+        $o_rgm = new RoutesGroupMapModel($this->o_db);
+        $o_rgm->setElog($this->o_elog);
+        try {
+            $a_rgm_results = $o_rgm->read(['route_id' => $route_id]);
+            if (!empty($a_rgm_results)) {
+                $a_groups = [];
+                foreach ($a_rgm_results as $a_rgm) {
+                    $a_groups[] = $a_rgm['group_id'];
+                }
+                return $a_groups;
             }
+            return [];
         }
-        return $a_groups;
+        catch (ModelException $e) {
+            return [];
+        }
     }
 
     /**
@@ -289,11 +285,18 @@ class RoutesHelper
      */
     public function getMinAuthLevel(array $a_groups = array())
     {
+        $meth = __METHOD__ . '.';
         $min_auth_level = 0;
+        $o_group = new GroupsModel($this->o_db);
         foreach ($a_groups as $group_id) {
-            $results = $this->o_group->readById($group_id);
-            if (!is_null($results) && $results['group_auth_level'] >= $min_auth_level) {
-                $min_auth_level = $results['group_auth_level'];
+            try {
+                $results = $o_group->readById($group_id);
+                if (!empty($results) && $results['group_auth_level'] >= $min_auth_level) {
+                    $min_auth_level = $results['group_auth_level'];
+                }
+            }
+            catch (ModelException $e) {
+                $this->logIt("DB problem: " . $e->errorMessage(), LOG_ALWAYS, $meth . __LINE__);
             }
         }
         return $min_auth_level;

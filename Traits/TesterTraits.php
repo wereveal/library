@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Traits/TesterTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.0.0
- * @date      2017-06-09 17:19:55
+ * @version   4.1.0
+ * @date      2017-06-20 12:25:41
  * @note <b>Change log</b>
+ * - v4.1.0 - Added new methods specific to model testing                               - 2017-06-20 wer
  * - v4.0.0 - Turned the class into a trait to maybe remove a hidden bug                - 2017-06-09 wer
  * - v3.6.1 - Refactoring of subtest methods                                            - 2017-06-09 wer
  * - v3.5.1 - switched setupTests to use LocateFile class                               - 2017-05-30 wer

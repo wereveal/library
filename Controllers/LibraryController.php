@@ -31,7 +31,7 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ManagerControllerTraits;
+use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\LibraryView;
 
 /**
@@ -41,7 +41,7 @@ use Ritc\Library\Views\LibraryView;
  */
 class LibraryController implements ControllerInterface
 {
-    use LogitTraits, ManagerControllerTraits;
+    use LogitTraits, ConfigControllerTraits;
 
     /** @var LibraryView */
     protected $o_view;
