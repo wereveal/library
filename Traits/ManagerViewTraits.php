@@ -3,13 +3,13 @@
  * @brief       Common functions for the manager views.
  * @details     Extends the ViewTraits to include functions used only in manager like situations.
  * @ingroup     lib_traits
- * @file        ConfigViewTraits.php
+ * @file        ManagerViewTraits.php
  * @namespace   Ritc\Library\Traits
  * @author      William E Reveal <bill@revealitconsulting.com>
  * @version     3.1.0
- * @date        2017-07-04 13:37:38
+ * @date        2017-07-04 13:35:33
  * @note <b>Change Log</b>
- * - v3.1.0 - Forked this so ManagerViewTraits becomes primary                      - 2017-07-04 wer
+ * - v3.1.0 - Reverted name back to ManagerViewTraits                               - 2017-07-04 wer
  * - v3.0.0 - Renamed trait                                                         - 2017-06-20 wer
  * - v2.1.0 - changed method to use the twig value for tpl                          - 2017-05-10 wer
  * - v2.0.1 - minor bug fixes                                                       - 2017-02-11 wer
@@ -25,24 +25,24 @@ namespace Ritc\Library\Traits;
 use Ritc\Library\Helper\ViewHelper;
 
 /**
- * Class ConfigViewTraits
- * @class   ConfigViewTraits
+ * Class ManagerViewTraits
+ * @class   ManagerViewTraits
  * @package Ritc\Library\Traits
  */
-trait ConfigViewTraits
+trait ManagerViewTraits
 {
-    use ManagerViewTraits;
+    use ViewTraits;
 
     /**
      * Renders login form after resetting session.
-     * @param array $a_values optional default values ['tpl' => 'login', 'location' => '/manager/config/', 'a_message' => [], 'login_id' => '']
+     * @param array $a_values optional default values ['tpl' => 'login', 'location' => '/manager/', 'a_message' => [], 'login_id' => '']
      * @return string
      */
     public function renderLogin(array $a_values = [])
     {
         $this->o_session->resetSession();
         $location = empty($a_values['location'])
-            ? '/manager/config/'
+            ? '/manager/'
             : $a_values['location'];
         $a_message = empty($a_values['a_message'])
             ? []
@@ -67,7 +67,7 @@ trait ConfigViewTraits
     {
         if (empty($a_values)) {
             $fallback_method = empty($a_options['fallback'])
-                ? 'renderList'
+                ? 'render'
                 : $a_options['fallback']
             ;
             $a_message = ViewHelper::errorMessage('Values required were missing.');
@@ -77,7 +77,7 @@ trait ConfigViewTraits
             ? []
             : $a_options['a_message'];
         $location = empty($a_options['location'])
-            ? '/manager/config/'
+            ? '/manager/'
             : $a_options['location'];
         $a_twig_values = $this->createDefaultTwigValues($a_message, $location);
         $a_twig_values['tpl'] = empty($a_options['tpl'])
