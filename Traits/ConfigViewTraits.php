@@ -41,20 +41,17 @@ trait ConfigViewTraits
     public function renderLogin($login_id = '', array $a_message = [])
     {
         $this->o_session->resetSession();
-        if (!empty($a_message)) {
-            $a_message = ViewHelper::fullMessage($a_message);
-        }
-        else {
-            $a_message = [];
-        }
-
-        $a_twig_values = $this->createDefaultTwigValues($a_message);
-        $a_twig_values['login_id'] = $login_id;
-        $a_twig_values['a_menus'] = [];
-        $tpl = '@' . $a_twig_values['twig_prefix'] . 'pages/' . $a_twig_values['tpl'] . '.twig';
+        $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/');
+        $a_twig_values['tpl'] = 'login';
+        $tpl = $this->createTplString($a_twig_values);
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 
+    /**
+     * @param array  $a_values        required \see #verifydelete
+     * @param string $fallback_method optional
+     * @return string
+     */
     public function renderVerifyDelete(array $a_values = [], $fallback_method = 'renderList')
     {
         if (empty($a_values)) {
@@ -63,6 +60,8 @@ trait ConfigViewTraits
         }
         $a_twig_values = $this->createDefaultTwigValues();
         $a_twig_values['tpl'] = 'verify_delete';
+
+        $a_twig_values = array_merge($a_twig_values, $a_values);
         $tpl = $this->createTplString($a_twig_values);
         return $this->o_twig->render($tpl, $a_twig_values);
     }

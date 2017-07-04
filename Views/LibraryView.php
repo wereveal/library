@@ -21,6 +21,7 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Session;
+use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
@@ -31,7 +32,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class LibraryView
 {
-    use LogitTraits, ViewTraits;
+    use LogitTraits, ConfigViewTraits;
 
     /**
      * LibraryView constructor.
@@ -83,24 +84,6 @@ class LibraryView
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/list_logins.twig';
-        return $this->o_twig->render($tpl, $a_values);
-    }
-
-    /**
-     * Creates the html that displays the login form to access the app.
-     * Sometimes this will have been handled already elsewhere.
-     * @param string $previous_login_id optional, allows the user_login_id to be used over.
-     * @param array $a_message array with message and type of message.
-     * @return string
-     */
-    public function renderLoginForm($previous_login_id = '', array $a_message = [])
-    {
-        /** @var Session $o_sess */
-        $o_sess  = $this->o_di->get('session');
-        $o_sess->resetSession();
-        $a_values = $this->createDefaultTwigValues($a_message, '/manager/config/');
-        $a_values['tpl'] = 'login';
-        $tpl = $this->createTplString($a_values);
         return $this->o_twig->render($tpl, $a_values);
     }
 }

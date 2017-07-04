@@ -38,6 +38,7 @@
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\LocateFile;
 
 /**
@@ -291,7 +292,8 @@ trait TesterTraits
 
     /**
      * Runs a single subtest.
-     * @param array  $a_values
+     * @param array $a_names
+     * @param array $a_values
      * @return bool
      */
     public function genericSubtest(array $a_names = [], array $a_values = [])
@@ -341,14 +343,19 @@ trait TesterTraits
         if (empty($a_test_values) || empty($a_names)) {
             return 'skipped';
         }
-        $good_results = true;
-        foreach ($a_test_values as $subtest => $a_values) {
-            $a_names['subtest'] = $subtest;
-            $results = $this->genericDbSubTest($a_names, $a_values);
-            $good_results = $good_results && $results;
+        if (Arrays::isArrayOfAssocArrays($a_test_values)) {
+            $good_results = true;
+            foreach ($a_test_values as $subtest => $a_values) {
+                $a_names['subtest'] = $subtest;
+                $results = $this->genericDbSubTest($a_names, $a_values);
+                $good_results = $good_results && $results;
+            }
+            if ($good_results) {
+                return 'passed';
+            }
         }
-        if ($good_results) {
-            return 'passed';
+        else {
+            return $this->genericSingleTest($a_names, $a_test_values);
         }
         return 'failed';
     }

@@ -144,7 +144,7 @@ class AuthHelper
         }
         $a_required = ['login_id', 'password', 'tolken', 'form_ts'];
         if (!Arrays::hasRequiredKeys($a_person_post, $a_required)) {
-            $a_missing_keys = Arrays::findMissingKeys($a_required, $a_person_post);
+            $a_missing_keys = Arrays::findMissingKeys($a_person_post, $a_required);
             $missing_info = '';
             foreach ($a_missing_keys as $key) {
                switch ($key) {
@@ -232,11 +232,12 @@ class AuthHelper
         }
         else {
             $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
-            $message = 'Your session has timed out. Please login again.';
+            $message = 'Please try again.';
             try {
                 $a_person = $this->o_people->readPeopleRecord($a_person_post['login_id']);
                 try {
                     $this->o_people->setLoggedOut($a_person['people_id']);
+                    $this->o_session->resetSession();
                 }
                 catch (ModelException $e) {
                     $message .= ' ' . $e->errorMessage();

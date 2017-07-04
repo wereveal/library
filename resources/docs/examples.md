@@ -77,3 +77,20 @@ An array used in the DbUtilityTraits::genericRead() method with the following ke
             ]
       - param_two is the namespace for the config file. May be blank
         if the config file is the default, /src/config/twig_config.php
+
+## Verify Delete values {#verifydelete}
+```
+verifyDelete has two paramaters, a_values and fallback_method.
+a_values is an assoc array and provides the needed values for the twig template.
+   [
+    'tpl'          => 'template name, defaults to verify_delete'
+    'what'         => 'What Is Being Deleted, constant',
+    'name'         => 'Something to help one know which one, e.g. myConstant',
+    'where'        => 'which config is being deleted, e.g. constants',
+    'btn_value'    => 'What the Button says, e.g. Constants',
+    'hidden_name'  => 'primary id name, e.g., const_id',
+    'hidden_value' => 'primary id, e.g. 1',
+   ]
+fallback_method is optional and provides a fallback if something goes
+wrong. Defaults to renderList.
+```

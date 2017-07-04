@@ -8,9 +8,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-06-11 16:06:33
+ * @version   2.0.1
+ * @date      2017-06-23 12:51:41
  * @note <b>Change Log</b>
+ * - v2.0.1          - bug fix, logic error fix                             - 2017-06-23 wer
  * - v2.0.0          - updated to use ModelException                        - 2017-06-11 wer
  * - v1.4.4          - bug fix                                              - 2017-05-12 wer
  *                     With the introduction of the lib_prefix where it
@@ -97,7 +98,6 @@ trait DbUtilityTraits {
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = [])
     {
-        $a_values = $this->o_db->prepareKeys($a_values);
         if (empty($a_parameters['a_psql'])) {
             $a_psql = [
                 'table_name'  => $this->db_table,
@@ -110,13 +110,13 @@ trait DbUtilityTraits {
             $db_table = $a_psql['table_name'];
         }
         $a_required_keys = isset($a_parameters['a_required_keys'])
-            ? $this->prepareListArray($a_parameters['a_required_keys'])
+            ? $a_parameters['a_required_keys']
             : [];
 
         $a_field_names = isset($a_parameters['a_field_names'])
-            ? $this->prepareListArray($a_parameters['a_field_names'])
+            ? $a_parameters['a_field_names']
             : $this->a_db_fields != []
-                ? $this->prepareListArray($this->a_db_fields)
+                ? $this->a_db_fields
                 : [];
         // If a_field_names is empty, the sql cannot be built. Return false.
         if ($a_field_names == []) {
@@ -126,19 +126,23 @@ trait DbUtilityTraits {
 
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_value) {
-                if (!Arrays::hasRequiredKeys($a_value, $a_required_keys)) {
-                    $a_missing_keys = Arrays::findMissingKeys($a_required_keys, $a_value);
-                    $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
-                    throw new ModelException($this->error_message, 130);
+                if (!empty($a_required_keys)) {
+                    $a_missing_values = Arrays::findMissingValues($a_value, $a_required_keys);
+                    if (!empty($a_missing_values)) {
+                        $this->error_message = "Missing required keys: " . json_encode($a_missing_values);
+                        throw new ModelException($this->error_message, 130);
+                    }
                 }
             }
             $sql_set = $this->buildSqlInsert($a_values[0], $a_field_names);
         }
         else {
-            if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
-                $a_missing_keys = Arrays::findMissingKeys($a_required_keys, $a_values);
-                $this->error_message = "Missing required values: " . json_encode($a_missing_keys);
-                throw new ModelException($this->error_message, 130);
+            if (!empty($a_required_keys)) {
+                $a_missing_values = Arrays::findMissingValues($a_values, $a_required_keys);
+                if (!empty($a_missing_values)) {
+                    $this->error_message = "Missing required keys: " . json_encode($a_missing_values);
+                    throw new ModelException($this->error_message, 130);
+                }
             }
             $sql_set = $this->buildSqlInsert($a_values, $a_field_names);
         }
@@ -646,17 +650,6 @@ SQL;
             if (empty($results)) {
                 return false;
             }
-        }
-        return true;
-    }
-
-    /**
-     * @param $a_values
-     * @return bool
-     */
-    protected function notEmptyArray($a_values) {
-        if (!is_array($a_values) || count($a_values) < 1) {
-            return false;
         }
         return true;
     }

@@ -28,8 +28,8 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class ConstantsView
@@ -38,7 +38,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class ConstantsView
 {
-    use LogitTraits, ViewTraits;
+    use LogitTraits, ConfigViewTraits;
 
     /** @var \Ritc\Library\Views\LibraryView */
     private $o_view;
@@ -83,32 +83,6 @@ class ConstantsView
         catch (ModelException $e) {
             $a_twig_values['a_constants'] = [];
         }
-        $tpl = $this->createTplString($a_twig_values);
-        return $this->o_twig->render($tpl, $a_twig_values);
-    }
-
-    /**
-     * Returns HTML verify form to delete.
-     * @param array $a_values
-     * @return string
-     */
-    public function renderVerify(array $a_values = array())
-    {
-        if ($a_values === array()) {
-            $a_message = ViewHelper::fullMessage(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
-            return $this->renderList($a_message);
-        }
-
-        $a_twig_values = $this->createDefaultTwigValues(); // provided in ViewTraits
-        $a_page_values = [
-            'what'         => 'constant',
-            'name'         => $a_values['constant']['const_name'],
-            'where'        => 'constants',
-            'btn_value'    => 'Constant',
-            'hidden_name'  => 'const_id',
-            'hidden_value' => $a_values['constant']['const_id'],
-        ];
-        $a_twig_values = array_merge($a_twig_values, $a_page_values);
         $tpl = $this->createTplString($a_twig_values);
         return $this->o_twig->render($tpl, $a_twig_values);
     }

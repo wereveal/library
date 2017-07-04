@@ -132,7 +132,16 @@ class ConstantsController implements ManagerControllerInterface
      */
     public function verifyDelete()
     {
-        return $this->o_view->renderVerify($this->a_post);
+        $a_values = [
+            'tpl'          => 'verify_delete',
+            'what'         => 'constant',
+            'name'         => $this->a_post['constant']['const_name'],
+            'where'        => 'constants',
+            'btn_value'    => 'Constants',
+            'hidden_name'  => 'const_id',
+            'hidden_value' => $this->a_post['constant']['const_id'],
+        ];
+        return $this->o_view->renderVerifyDelete($a_values, 'renderList');
     }
 
     /**

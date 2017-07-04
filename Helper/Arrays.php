@@ -240,17 +240,17 @@ class Arrays
      * @param array $a_check_values required
      * @return array $a_missing_keys
      */
-    public static function findMissingKeys(array $a_required_keys = [], array $a_check_values = [])
+    public static function findMissingKeys(array $a_pairs = [], array $a_required_keys = [])
     {
-        if (empty($a_required_keys) || empty($a_check_values)) { return []; }
+        if (empty($a_required_keys) || empty($a_pairs)) { return []; }
         $a_missing_keys = [];
         foreach ($a_required_keys as $key) {
             if (
-                array_key_exists($key, $a_check_values)
+                array_key_exists($key, $a_pairs)
                 ||
-                array_key_exists(':' . $key, $a_check_values)
+                array_key_exists(':' . $key, $a_pairs)
                 ||
-                array_key_exists(str_replace(':', '', $key), $a_check_values)
+                array_key_exists(str_replace(':', '', $key), $a_pairs)
             ) {
                 // we are happy
             }
@@ -267,7 +267,7 @@ class Arrays
      * @param array $a_pairs
      * @return array $a_keys list of the the keys that are missing values
      */
-    public static function findMissingValues(array $a_required_keys = [], array $a_pairs = [])
+    public static function findMissingValues(array $a_pairs = [], array $a_required_keys = [])
     {
         if (empty($a_pairs) && !empty($a_required_keys)) {
             return $a_required_keys;
@@ -309,7 +309,7 @@ class Arrays
         }
         if (self::isArrayOfAssocArrays($a_pairs)) {
             foreach ($a_pairs as $a_values) {
-                if (!self::hasRequiredKeys($a_values)) {
+                if (!self::hasRequiredKeys($a_values, $a_required_keys)) {
                     return false;
                 }
             }

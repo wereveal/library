@@ -52,12 +52,12 @@ class LibraryController implements ControllerInterface
      */
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
         $this->setupManagerController($o_di);
         $this->o_view = new LibraryView($this->o_di);
         if (!defined('LIB_TWIG_PREFIX')) {
             define('LIB_TWIG_PREFIX', 'lib_');
         }
-        $this->setupElog($o_di);
     }/** @noinspection PhpInconsistentReturnPointsInspection */
 
     /**
@@ -70,7 +70,7 @@ class LibraryController implements ControllerInterface
             $o_c = '';
             switch ($this->route_action) {
                 case 'login':
-                    return $this->renderLogin();
+                    return $this->o_view->renderLogin();
                     break;
                 case 'logout':
                     $this->o_auth->logout($_SESSION['login_id']);
@@ -124,23 +124,11 @@ class LibraryController implements ControllerInterface
                 $login_id = isset($this->a_post['login_id'])
                     ? $this->a_post['login_id']
                     : '';
-                return $this->renderLogin($login_id, $a_message);
+                return $this->o_view->renderLogin($login_id, $a_message);
             }
         }
         else {
-            return $this->renderLogin();
+            return $this->o_view->renderLogin();
         }
-    }
-
-    /**
-     * Renders login form after resetting session.
-     * @param string $login_id
-     * @param array  $a_message optional e.g. ['message' => '', 'type' => 'info']
-     * @return string
-     */
-    private function renderLogin($login_id = '', array $a_message = array())
-    {
-        $this->o_session->resetSession();
-        return $this->o_view->renderLoginForm($login_id, $a_message);
     }
 }
