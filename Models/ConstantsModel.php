@@ -256,14 +256,14 @@ class ConstantsModel implements ModelInterface
         $db_type = $this->o_db->getDbType();
         switch ($db_type) {
             case 'pgsql':
-                $sql_table = "
+                $sql_table = <<<SQL
                     CREATE TABLE IF NOT EXISTS {$this->db_table} (
                         const_id integer NOT NULL DEFAULT nextval('const_id_seq'::regclass),
                         const_name character varying(64) NOT NULL,
                         const_value character varying(64) NOT NULL,
                         const_immutable integer NOT NULL DEFAULT 0
                     )
-                ";
+SQL;
                 $sql_sequence = "
                     CREATE SEQUENCE const_id_seq
                         START WITH 1
@@ -286,14 +286,14 @@ class ConstantsModel implements ModelInterface
                     throw new ModelException($e->errorMessage(), $e->getCode(), $e);
                 }
             case 'sqlite':
-                $sql = "
+                $sql = <<<SQL
                     CREATE TABLE IF NOT EXISTS {$this->db_table} (
                         const_id INTEGER PRIMARY KEY ASC,
                         const_name TEXT,
                         const_value TEXT,
                         const_immutable INTEGER
                     )
-                ";
+SQL;
                 try {
                     $this->o_db->rawExec($sql);
                     return true;
@@ -303,7 +303,7 @@ class ConstantsModel implements ModelInterface
                 }
             case 'mysql':
             default:
-                $sql = "
+                $sql = <<<SQL
                     CREATE TABLE IF NOT EXISTS `{$this->db_table}` (
                         `const_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                         `const_name` varchar(64) NOT NULL,
@@ -312,7 +312,7 @@ class ConstantsModel implements ModelInterface
                         PRIMARY KEY (`const_id`),
                         UNIQUE KEY `const_key` (`const_name`)
                     ) ENGINE=InnoDB  AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
-                ";
+SQL;
                 try {
                     $this->o_db->rawExec($sql);
                     return true;

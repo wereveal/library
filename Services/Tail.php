@@ -235,7 +235,7 @@ class Tail
     }
 
     /**
-     * @return null
+     * Not sure what this is doing after so long.
      */
     private function openFile()
     {
@@ -244,7 +244,7 @@ class Tail
     }
 
     /**
-     * @return null
+     * Sets a couple properties.
      */
     private function updateStats()
     {

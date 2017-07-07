@@ -25,6 +25,7 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\ConstantsModel;
@@ -97,9 +98,14 @@ class ConstantsController implements ManagerControllerInterface
         }
         try {
             $results = $this->o_model->create($a_constants);
-            $a_message = ViewHelper::successMessage();
+            if (empty($results)) {
+                $a_message = ViewHelper::errorMessage('Create did not return valid new record id(s).');
+            }
+            else {
+                $a_message = ViewHelper::successMessage();
+            }
         }
-        catch (ModelExceptions $e) {
+        catch (ModelException $e) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new constant could not be saved.');
         }
         return $this->o_view->renderList($a_message);
@@ -160,8 +166,13 @@ class ConstantsController implements ManagerControllerInterface
             return $this->o_view->renderList($a_message);
         }
         try {
-            $a_results = $this->o_model->delete($const_id);
-            $a_message = ViewHelper::successMessage();
+            if ($this->o_model->delete($const_id)) {
+                $a_message = ViewHelper::successMessage();
+            }
+            else {
+                $message = 'Unable to delete the record: ' . $this->o_model->getErrorMessage();
+                $a_message = ViewHelper::failureMessage($message);
+            }
         }
         catch (ModelException $e) {
             $a_message = ViewHelper::failureMessage('The record was not deleted.');

@@ -7,8 +7,8 @@
  * @file      Ritc/Library/Basic/Tester.php
  * @namespace Ritc\Library\Basic
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.6.0
- * @date      2017-06-09 12:29:08
+ * @version   3.6.0+1
+ * @date      2017-07-06 21:19:24
  * @note <b>Change log</b>
  * - v3.6.1 - Refactoring of subtest methods                                            - 2017-06-09 wer
  * - v3.5.1 - switched setupTests to use LocateFile class                               - 2017-05-30 wer
@@ -91,7 +91,6 @@ class Tester
      * Adds a single key=>value pair to the a_test_values array
      * @param string $key the key name
      * @param mixed $value  the value assigned to the key
-     * @return null
      */
     public function addTestValue($key = '', $value = '')
     {
@@ -108,7 +107,7 @@ class Tester
     }
 
     /**
-     * @return array
+     * @return int
      */
     public function getFailedTests()
     {
@@ -371,7 +370,6 @@ class Tester
     /**
      * Sets the array a_test_order to the array passed in
      * @param array $a_test_order optional, defaults to an empty array
-     * @return null
      */
     public function setTestOrder(array $a_test_order = array())
     {
@@ -381,7 +379,6 @@ class Tester
     /**
      * Sets the array a_test_value to the array passed in
      * @param array $a_test_values optional, defaults to an empty array
-     * @return null
      */
     public function setTestValues(array $a_test_values = array())
     {
@@ -425,7 +422,6 @@ class Tester
     /**
      * Sets up the two main arrays the tests uses.
      * @param array $a_values ['class_name', 'order_file', 'values_file', 'extra_dir', 'namespace']
-     * @return null
      */
     public function setupTests(array $a_values = [])
     {

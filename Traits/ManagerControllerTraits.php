@@ -81,4 +81,20 @@ trait ManagerControllerTraits
             ? ViewHelper::failureMessage($a_results['message'])
             : ViewHelper::failureMessage('Login Id or Password was incorrect. Please Try Again');
     }
+
+    /**
+     * @return \Ritc\Library\Helper\AuthHelper
+     */
+    public function getOAuth()
+    {
+        return $this->o_auth;
+    }
+
+    /**
+     * @param \Ritc\Library\Helper\AuthHelper $o_auth
+     */
+    public function setOAuth($o_auth)
+    {
+        $this->o_auth = $o_auth;
+    }
 }

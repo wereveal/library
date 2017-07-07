@@ -113,6 +113,7 @@ class RoutesModel implements ModelInterface
      * Update a record using the values provided.
      * @param array $a_values Required.
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update(array $a_values = [])
     {

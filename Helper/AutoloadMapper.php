@@ -115,7 +115,6 @@ class AutoloadMapper
                         $v_padding .= ' ';
                     }
                 }
-                $value =
                 $ns_map_array_str   .= "    '{$vendor_name}\\\\'{$v_padding} => __DIR__ . '/../apps/{$vendor_name}',\n";
                 // echo $vendor_name . "\n";
             }

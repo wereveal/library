@@ -6,9 +6,10 @@
  * @file      Ritc/Library/Helper/LocateFile.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.1
- * @date      2017-06-10 07:22:10
+ * @version   1.0.2
+ * @date      2017-07-06 22:25:44
  * @note <b>Change Log</b>
+ * - v1.0.2  Bug fix                                         - 2017-07-06 wer
  * - v1.0.1  Bug fix                                         - 2017-06-10 wer
  * - v1.0.0  Initial Version                                 - 2017-02-08 wer
  */
@@ -22,6 +23,7 @@ namespace Ritc\Library\Helper;
 class LocateFile
 {
     /**
+     * Return config filename with path within the server document root.
      * @param string $file_name
      * @param string $namespace
      * @return string
@@ -36,6 +38,7 @@ class LocateFile
     }
 
     /**
+     * Return filename with server file path.
      * @param string $file_name
      * @param string $namespace
      * @return string
@@ -58,16 +61,19 @@ class LocateFile
     }
 
     /**
-     * @param $file_name
-     * @return bool
+     * Return css filename with path within the server document root.
+     * @param string $file_name
+     * @param string $namespace
+     * @return string
      */
-    public static function getCssWithDir($file_name, $namespace = '')
+    public static function getCssWithDir($file_name = '', $namespace = '')
     {
         $file_w_path = self::getCssWithPath($file_name, $namespace);
         return str_replace(PUBLIC_PATH, '', $file_w_path);
     }
 
     /**
+     * Return css filename with path within the server document root.
      * @param string $file_name
      * @param string $namespace
      * @return string
@@ -100,8 +106,10 @@ class LocateFile
     }
 
     /**
+     * Return a file in the files directory, filename with path within the server document root.
      * @param string $file_name
-     * @return bool
+     * @param string $namespace
+     * @return string
      */
     public static function getFileWithDir($file_name = '', $namespace = '')
     {
@@ -113,8 +121,10 @@ class LocateFile
     }
 
     /**
+     * Returns filename and path within the server document root for a file in the files directory.
      * @param string $file_name
-     * @return bool
+     * @param string $namespace
+     * @return string
      */
     public static function getFileWithPath($file_name = '', $namespace = '')
     {
@@ -167,8 +177,10 @@ class LocateFile
     }
 
     /**
-     * @param $file_name
-     * @return bool
+     * Return image filename with path within the server document root.
+     * @param string $namespace
+     * @param string $file_name
+     * @return string
      */
     public static function getImageWithDir($file_name = '', $namespace = '')
     {
@@ -177,8 +189,10 @@ class LocateFile
     }
 
     /**
-     * @param $file_name
-     * @return bool
+     * Returns a javascript file with server path.
+     * @param string $file_name
+     * @param string $namespace
+     * @return string
      */
     public static function getJsWithPath($file_name = '', $namespace = '')
     {
@@ -208,9 +222,10 @@ class LocateFile
     }
 
     /**
+     * Return config filename with path within the server document root.
      * @param string $file_name
      * @param string $namespace
-     * @return mixed
+     * @return string
      */
     public static function getJsWithDir($file_name = '', $namespace = '')
     {
@@ -219,8 +234,9 @@ class LocateFile
     }
 
     /**
+     * Returns the filename with path of a file in the private directory.
      * @param string $file_name
-     * @return bool|string
+     * @return string
      */
     public static function getPrivateFile($file_name = '')
     {
@@ -233,8 +249,9 @@ class LocateFile
     }
 
     /**
+     * Returns the filename and path of a file in the tmp directory.
      * @param string $file_name
-     * @return bool|string
+     * @return string
      */
     public static function getTmpFile($file_name = '')
     {
@@ -246,8 +263,11 @@ class LocateFile
     }
 
     /**
-     * @param $file_name
-     * @return bool
+     * Return template filename with path within the server document root.
+     * @param string $file_name
+     * @param string $namespace
+     * @param string $sub_dir
+     * @return string
      */
     public static function getTemplateWithDir($file_name = '', $namespace = '', $sub_dir = '')
     {
@@ -259,8 +279,11 @@ class LocateFile
     }
 
     /**
-     * @param $file_name
-     * @return bool
+     * Returns filename with path of a template file.
+     * @param string $file_name
+     * @param string $namespace
+     * @param string $sub_dir
+     * @return string
      */
     public static function getTemplateWithPath($file_name = '', $namespace = '', $sub_dir = '')
     {
@@ -298,8 +321,8 @@ class LocateFile
     }
 
     /**
-     * Finds the location of the file
-     * the possible places a file could exist.
+     * Finds the location of the file in a bunch of different places.
+     * The possible places a file could exist.
      *   <pre>One of many places:
      *     NOTE: $file_dir_name can be pathlike, e.g. '/assets/css'
      *           $file_name can also be pathlike, e.g. '/assets/css/main.css'
@@ -314,35 +337,51 @@ class LocateFile
      *     SRC_PATH/config/$file_name
      *     SRC_PATH/$file_dir_name/$file_name
      *     SRC_PATH/str_replace('Ritc\', '', $namespace)/$file_name
-         * @param string $file_name required
-     * @param string $namespace optional defaults to $this->namespace
+     * @param string $file_name     required
+     * @param string $namespace     optional defaults to Ritc/Library
      * @param string $file_dir_name optional default to none
-     * @return mixed str $path_of_file or false
+     * @param string $theme_name    optional
+     * @return array
      */
     public static function locateFile($file_name = '', $namespace = '', $file_dir_name = '', $theme_name = 'default')
     {
         if ($file_name == '') {
-            return '';
+            return ['path' => '', 'dir' => ''];
         }
-        $namespace    = str_replace('\\', '/', $namespace);
-        $ns_path      = APPS_PATH . '/' . $namespace;
         $a_possible_locations = array(
             'public_path'           => PUBLIC_PATH,
             'base_path'             => BASE_PATH,
             'src_path'              => SRC_PATH,
             'config_path'           => SRC_CONFIG_PATH,
             'private_path'          => PRIVATE_PATH,
-            'ns_path'               => $ns_path,
-            'ns_res_path'           => $ns_path . '/resources',
-            'ns_tpl_path'           => $ns_path . '/resources/templates',
-            'ns_conf_path'          => $ns_path . '/resources/config',
-            'ns_theme_path'         => $ns_path . '/resources/themes/' . $theme_name,
-            'ns_default_theme_path' => $ns_path . '/resources/themes/default',
             'assets_path'           => PUBLIC_PATH . '/assets',
+            'images_path'           => PUBLIC_PATH . '/images',
+            'js_path'               => PUBLIC_PATH . '/js',
+            'css_path'              => PUBLIC_PATH . '/css',
+            'files_path'            => PUBLIC_PATH . '/files',
+            'fonts_path'            => PUBLIC_PATH . 'fonts',
             'themes_path'           => PUBLIC_PATH . '/assets/themes/' . $theme_name,
             'default_theme'         => PUBLIC_PATH . '/assets/themes/default',
             'no_base'               => '',
         );
+        if ($namespace == '') {
+            $a_possible_locations['ns_path']               = SRC_PATH;
+            $a_possible_locations['ns_res_path']           = SRC_PATH . '/resources';
+            $a_possible_locations['ns_tpl_path']           = SRC_PATH . '/templates';
+            $a_possible_locations['ns_conf_path']          = SRC_PATH . '/config';
+            $a_possible_locations['ns_theme_path']         = SRC_PATH . '/themes/' . $theme_name;
+            $a_possible_locations['ns_default_theme_path'] = SRC_PATH . '/themes/default';
+        }
+        else {
+            $namespace = str_replace('\\', '/', $namespace);
+            $ns_path   = APPS_PATH . '/' . $namespace;
+            $a_possible_locations['ns_path']               = $ns_path;
+            $a_possible_locations['ns_res_path']           = $ns_path . '/resources';
+            $a_possible_locations['ns_tpl_path']           = $ns_path . '/resources/templates';
+            $a_possible_locations['ns_conf_path']          = $ns_path . '/resources/config';
+            $a_possible_locations['ns_theme_path']         = $ns_path . '/resources/themes/' . $theme_name;
+            $a_possible_locations['ns_default_theme_path'] = $ns_path . '/resources/themes/default';
+        }
         $file_w_dir = '/';
         $file_w_dir .= $file_dir_name != '' ? $file_dir_name . '/' : '';
         $file_w_dir .= $file_name;
@@ -350,13 +389,19 @@ class LocateFile
             $full_path = $location . $file_w_dir;
             $full_path = str_replace('//', '/', $full_path);
             if (file_exists($full_path)) {
+                if (strpos($full_path, PUBLIC_PATH) !== false) {
+                    $dir = str_replace(PUBLIC_PATH, '', $full_path);
+                }
+                else {
+                    $dir = '';
+                }
                 $a_file_paths = [
                     'path' => $full_path,
-                    'dir'  => str_replace(PUBLIC_PATH, '', $full_path)
+                    'dir'  => $dir
                 ];
                 return $a_file_paths;
             }
         }
-        return false;
+        return ['path' => '', 'dir' => ''];
     }
 }

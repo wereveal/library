@@ -5,8 +5,8 @@
  * @file      Ritc/Library/Helper/Arrays.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.1.1
- * @date      2017-02-16 11:47:10
+ * @version   3.1.1+1
+ * @date      2017-07-06 21:24:52
  * @note <b>Change Log</b>
  *     v3.1.1 - Bug fix Arrays::findMissingValues()                                       - 2017-02-16 wer
  *     v3.1.0 - Moved a couple methods from DbCommonTraits to Arrays                      - 2016-09-23 wer
@@ -236,8 +236,8 @@ class Arrays
 
     /**
      * Determines if any required keys are missing
-     * @param array $a_required_keys required
-     * @param array $a_check_values required
+     * @param  array $a_pairs
+     * @param  array $a_required_keys required
      * @return array $a_missing_keys
      */
     public static function findMissingKeys(array $a_pairs = [], array $a_required_keys = [])

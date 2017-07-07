@@ -5,9 +5,10 @@
  * @file      Session.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.1
- * @date      2015-10-06 14:42:18
+ * @version   1.3.2
+ * @date      2017-07-06 21:13:04
  * @note <b>Change Log</b>
+ * - v1.3.2 - bug fix                                               - 2017-07-06 wer
  * - v1.3.1 - added the ability to use the global constant          - 10/06/2015 wer
  *            SESSION_IDLE_TIME if it is set.
  * - v1.3.0 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
@@ -319,9 +320,7 @@ class Session
 
     /**
      * Sets basic session vars for form validation.
-     *
      * @param array $a_values valid array()
-     * @return bool
      */
     public function setSessionVars(array $a_values = array())
     {
@@ -355,16 +354,12 @@ class Session
     /**
      * Sets $_SESSION vars specified in the array.
      * Any number session vars can be set/created with this function.
-     *
      * @pre If the $a_vars array is from a POST or GET it is assumed in this
      *      method that the values have been put through some sort of data
      *      cleaner. In other words, you should not put a raw $_POST or $_GET
      *      through this.
-     *
      * @param array $a_vars
      * @param array $a_allowed_keys
-     *
-     * @return null
      */
     public function setVarsFromArray(array $a_vars = array(), array $a_allowed_keys = array())
     {
@@ -451,7 +446,6 @@ class Session
 
     /**
      * Sets the session variable 'token' which is used in a bunch of places.
-     * @return null
      */
     public function setToken()
     {

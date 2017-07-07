@@ -124,7 +124,13 @@ class LibraryController implements ControllerInterface
                 $login_id = isset($this->a_post['login_id'])
                     ? $this->a_post['login_id']
                     : '';
-                return $this->o_view->renderLogin($login_id, $a_message);
+                $a_values = [
+                    'tpl'       => 'login',
+                    'location'  => '/manager/config/',
+                    'login_id'  => $login_id,
+                    'a_message' => $a_message
+                ];
+                return $this->o_view->renderLogin($a_values);
             }
         }
         else {

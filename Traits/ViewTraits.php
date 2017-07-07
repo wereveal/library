@@ -265,7 +265,6 @@ trait ViewTraits
      * See the TwigFactory::getTwig method for details.
      * @param string|array $twig_config \ref twigfactory
      * @param string       $name
-     * @param bool         $use_main
      */
     public function setTwig($twig_config = 'twig_config.php', $name = 'main')
     {
@@ -279,6 +278,7 @@ trait ViewTraits
 
     /**
      * Returns an array with the values used primarily in the meta tags of the html.
+     * @param int|string $url_id
      * @return array
      */
     public function getPageValues($url_id = -1)
@@ -294,22 +294,22 @@ trait ViewTraits
             try {
                 $a_urls = $o_url->read(['url_text' => $url_id]);
                 $url_id = $a_urls[0]['url_id'];
-                try {
-                    $a_values = $o_page_model->readPageValuesByUrlId($url_id);
-                    if (isset($a_values[0])) {
-                        $a_page_values = $a_values[0];
-                    }
-                    else {
-                        $a_page_values = [];
-                    }
-                }
-                catch (ModelException $e) {
-                    $a_page_values = [];
-                }
             }
             catch (ModelException $e) {
+                $url_id = $this->o_router->getUrlId();
+            }
+        }
+        try {
+            $a_values = $o_page_model->readPageValuesByUrlId($url_id);
+            if (isset($a_values[0])) {
+                $a_page_values = $a_values[0];
+            }
+            else {
                 $a_page_values = [];
             }
+        }
+        catch (ModelException $e) {
+            $a_page_values = [];
         }
         if (empty($a_page_values)) {
             return [

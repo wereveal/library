@@ -20,10 +20,8 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class LibraryView

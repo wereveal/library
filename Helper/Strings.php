@@ -9,9 +9,10 @@
  * @file      Ritc/Library/Helper/Strings.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   6.4.0
- * @date      2016-09-08 12:13:30
+ * @version   6.4.1
+ * @date      2017-07-06 22:32:38
  * @note <b>Change Log</b>
+ * - v6.4.1 - bug fix                                                           - 2017-07-06 wer
  * - v6.4.0 - added new method to trim slashes from front and back of string    - 2016-09-08 wer
  * - v6.3.0 - added new method to translate a digit to an English word          - 02/24/2016 wer
  * - v6.2.0 - added new method to strip tags from htmlentites coded string      - 11/25/2015 wer
@@ -61,6 +62,8 @@ class Strings
                 return 'eight';
             case 9;
                 return 'nine';
+            default:
+                return '';
         }
     }
 

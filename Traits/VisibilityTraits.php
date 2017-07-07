@@ -31,7 +31,6 @@ trait VisibilityTraits {
      * Creates an array that lists the protected and private properties.
      * Used by the magic methods __set, __get, __isset, __unset to keep those
      * properties protected and private
-     * @return NULL
      */
     protected function setPrivateProperties()
     {
@@ -133,7 +132,6 @@ trait VisibilityTraits {
      * $this->private_properties has to be set via setPrivateProperties()
      * for this to be effective.
      * @param string $var name of property being unset
-     * @return null
      */
     public function __unset($var)
     {

@@ -567,7 +567,7 @@ SQL;
      * @param array  $a_immutable_fields
      * @return array|bool
      */
-    private function fixUpdateValues(array $a_values = [], $immutable_field = '', array $a_immutable_fields = [])
+    protected function fixUpdateValues(array $a_values = [], $immutable_field = '', array $a_immutable_fields = [])
     {
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
@@ -612,7 +612,7 @@ SQL;
      * @param string $primary_index_name
      * @return bool
      */
-    private function hasPrimaryId(array $a_values = [], $primary_index_name = '')
+    protected function hasPrimaryId(array $a_values = [], $primary_index_name = '')
     {
         if (empty($a_values[$primary_index_name]) || (!is_numeric($a_values[$primary_index_name]))) {
             return false;

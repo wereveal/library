@@ -6,8 +6,8 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.3.1
- * @date      2017-05-14 14:31:20
+ * @version   5.0.0
+ * @date      2017-06-12 14:31:20
  * @note <b>Change Log</b>
  * - v5.0.0 - Switch to throwing exceptions instead of returning false                      - 2017-06-12 wer
  * - v4.3.1 - Bug fix                                                                       - 2017-05-14 wer
@@ -1169,14 +1169,14 @@ class DbModel
 
     /**
      * Do a query.
-     * Has two params. The first is required. The second is required if the first param doesn't include a valid sql statement.
-     * @param string $query_params (array) = default is empty str.  - required<pre>
-     *                             Should correspond to something like
-     *                             array('type'=>'search', 'table_name'=>'test_table', 'single_record'=>false, 'sql'=>'')</pre>
-     * @param string $data         (mixed)<pre>
-     *                             array(field_name => value) - data to be insert or modified
-     *                             'id, name, date' (str) - a string of fields to be returned in a search</pre>
-     * @param        $where_values (array), array(field_name => value) - paramaters used to find records for search or modify
+     * Has three params. The first is required. The second is required if the first param doesn't include a valid sql statement.
+     * @param string|array $query_params default is empty str.  - required
+     *                                   Should correspond to something like
+     *                                   ['type'=>'search', 'table_name'=>'test_table', 'single_record'=>false, 'sql'=>'']
+     * @param string|array $data         <pre>
+     *                                   array(field_name => value) - data to be insert or modified
+     *                                   'id, name, date' (str) - a string of fields to be returned in a search</pre>
+     * @param  array       $where_values array(field_name => value) - paramaters used to find records for search or modify
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */

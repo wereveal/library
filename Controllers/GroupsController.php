@@ -56,6 +56,7 @@ class GroupsController implements ManagerControllerInterface
     public function __construct(Di $o_di)
     {
         $this->o_di      = $o_di;
+        /** @var \Ritc\Library\Services\DbModel $o_db */
         $o_db            = $o_di->get('db');
         $this->o_router  = $o_di->get('router');
         $this->o_session = $o_di->get('session');

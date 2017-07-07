@@ -30,6 +30,7 @@ class RoutesComplexModel
 
     public function __construct(Di $o_di)
     {
+        /** @var \Ritc\Library\Services\DbModel $o_db */
         $o_db = $o_di->get('db');
         $this->setupElog($o_di);
         $this->setupProperties($o_db);

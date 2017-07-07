@@ -24,7 +24,6 @@
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Factories\TwigFactory;
-use Twig_Environment;
 
 /**
  * Class Tpl that is basically a stub for the TwigFactory.
