@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/ConstantsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.0.0
- * @date      2017-06-14 08:26:16
+ * @version   3.0.1
+ * @date      2017-07-12 14:49:21
  * @note      see ConstantsEntity for database table definition.
  * @note <b>Change Log</b>
+ * - v3.0.1 - Bug fixes                                                     - 2017-07-12 wer
  * - v3.0.0 - Refactored to use ModelException and bug fixes                - 2017-06-14 wer
  * - v2.5.0 - Removed unused property and setting of same                   - 2017-05-18 wer
  * - v2.4.2 - DbUtilityTraits change reflected here                         - 2017-05-09 wer
@@ -61,8 +62,11 @@ class ConstantsModel implements ModelInterface
      * @return int
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function create(array $a_values)
+    public function create(array $a_values = [])
     {
+        if (empty($a_values)) {
+            throw new ModelException('No values provided to save.', 120);
+        }
         $a_required_keys = [
             'const_name'
         ];
@@ -209,15 +213,13 @@ class ConstantsModel implements ModelInterface
      */
     public function createNewConstants()
     {
-        // todo ConstantsModel.createNewConstants - need to figure out if this is a bug
-        $meth = __METHOD__ . '.';
+        // todo ConstantsModel.createNewConstants - need to add to tests
         $a_constants = include SRC_CONFIG_PATH . '/fallback_constants_array.php';
         try {
             $this->o_db->startTransaction();
         }
         catch (ModelException $e) {
             $message = "Could not start transaction.";
-            $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
             throw new ModelException($message, 30, $e);
         }
         if ($this->tableExists() === false) {
@@ -253,6 +255,7 @@ class ConstantsModel implements ModelInterface
      */
     public function createTable()
     {
+        // todo ConstantsModel.createTable - need to add to tests
         $db_type = $this->o_db->getDbType();
         switch ($db_type) {
             case 'pgsql':
@@ -345,6 +348,7 @@ SQL;
      */
     public function createConstantRecords(array $a_constants = array())
     {
+        // todo ConstantsModel.createConstantRecords - need to add to tests
         if ($a_constants == array()) {
             throw new ModelException('Missing values', 70);
         }
@@ -366,6 +370,7 @@ SQL;
      */
     public function selectConstantsList()
     {
+        // todo ConstantsModel.selectConstantsList - need to add to tests
         try {
             return $this->read();
         }
@@ -380,6 +385,7 @@ SQL;
      */
     public function tableExists()
     {
+        // todo ConstantsModel.tableExists - need to add to tests
         $lib_prefix = $this->o_db->getLibPrefix();
         $a_tables = $this->o_db->selectDbTables();
         if (array_search("{$lib_prefix}constants", $a_tables, true) === false) {
@@ -410,6 +416,7 @@ SQL;
      */
     public function makeValidValue($const_value = '')
     {
+        // todo ConstantsModel.makeValidValue - need to add to tests
         $const_value = Strings::removeTagsWithDecode($const_value, ENT_QUOTES);
         return htmlentities($const_value,  ENT_QUOTES);
     }

@@ -61,7 +61,9 @@ class ConstantsView
      */
     public function renderList(array $a_message = array())
     {
-        $o_const = new ConstantsModel($this->o_di->get('db'));
+        /** @var \Ritc\Library\Services\DbModel $o_db */
+        $o_db = $this->o_di->get('db');
+        $o_const = new ConstantsModel($o_db);
         $o_const->setElog($this->o_elog);
 
         if (count($a_message) != 0) {

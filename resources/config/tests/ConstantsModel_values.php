@@ -53,6 +53,14 @@ return [
             ],
             'expected_results' => true
         ],
+        'duplicate_values' => [
+            'test_values' => [
+                'const_name'      => 'FRED',
+                'const_value'     => 'Fred Flinstone',
+                'const_immutable' => 1
+            ],
+            'expected_results' => false
+        ],
         'bad_values' => [
             'test_values' => [
                 'const_name'      => '',
@@ -61,8 +69,12 @@ return [
             ],
             'expected_results' => false
         ],
-        'no_values' => [
+        'empty_values' => [
             'test_values'      => [],
+            'expected_results' => false
+        ],
+        'no_values' => [
+            'test_values'      => '',
             'expected_results' => false
         ]
     ],
