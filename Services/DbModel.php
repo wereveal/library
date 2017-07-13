@@ -6,9 +6,10 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.0.0
- * @date      2017-06-12 14:31:20
+ * @version   5.0.1
+ * @date      2017-07-13 12:59:35 
  * @note <b>Change Log</b>
+ * - v5.0.1 - Bug fixes                                                                     - 2017-07-13 wer
  * - v5.0.0 - Switch to throwing exceptions instead of returning false                      - 2017-06-12 wer
  * - v4.3.1 - Bug fix                                                                       - 2017-05-14 wer
  * - v4.3.0 - Added a new method to check if a table exists in the database                 - 2017-05-09 wer
@@ -165,13 +166,13 @@ class DbModel
                     return $this->insertPrepared($a_values, $o_pdo_stmt, $a_table_info);
                 }
                 catch (ModelException $e) {
-                    $this->error_message = $e->errorMessage();
+                    $this->error_message = 'Could not insertPrepared. ' . $e->errorMessage();
                     $code = $e->getCode();
                     throw new ModelException($this->error_message, $code);
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = $e->errorMessage();
+                $this->error_message = 'Could not prepare the query. ' . $e->errorMessage();
                 $code = $e->getCode();
                 throw new ModelException($this->error_message, $code);
             }
@@ -430,9 +431,9 @@ class DbModel
      * @return bool success or failure
      * @throws \Ritc\Library\Exceptions\ModelException
      * @note \verbatim
-     *                            'table_name'  value required,
-     *                            'column_name' value optional but recommended, defaults to 'id'
-     *                            'schema'      value optional, defaults to 'public' \endverbatim
+     *     'table_name'  value required,
+     *     'column_name' value optional but recommended, defaults to 'id'
+     *     'schema'      value optional, defaults to 'public' \endverbatim
      */
     public function setPgsqlSequenceName(array $a_table_info = [])
     {
@@ -447,8 +448,7 @@ class DbModel
             $a_table_info['schema'] = 'public';
         }
         /** @noinspection SqlResolve */
-        $query =
-        "
+        $query = "
             SELECT column_default
             FROM information_schema.columns
             WHERE table_schema = :schema
@@ -995,16 +995,14 @@ class DbModel
      */
     public function insertPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt, array $a_table_info = [])
     {
-        $meth = __METHOD__ . '.';
         if (count($a_values) > 0) {
-            $this->logIt("" . var_export($a_values , true), LOG_OFF, $meth . __LINE__);
             $this->resetNewIds();
             try {
                 $this->executeInsert($a_values, $o_pdo_stmt, $a_table_info);
                 return true;
             }
             catch (ModelException $e) {
-                throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+                throw new ModelException('Could not executeInsert. ' . $e->errorMessage(), $e->getCode(), $e);
             }
         }
         else {
@@ -1026,22 +1024,13 @@ class DbModel
     public function executeInsert(array $a_values = [], \PDOStatement $o_pdo_stmt, array $a_table_info = [])
     {
         if (count($a_values) > 0) {
-            $sequence_name = '';
-            if ($this->db_type == 'pgsql' && !empty($a_table_info)) {
-                try {
-                    $sequence_name = $this->getPgsqlSequenceName($a_table_info);
-                }
-                catch (ModelException $e) {
-                    throw new ModelException($e->errorMessage(), $e->getCode(), $e);
-                }
-            }
             if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays, can not be mixed
                 foreach ($a_values as $a_stuph) {
                     try {
                         $this->executeInsert($a_stuph, $o_pdo_stmt, $a_table_info);
                     }
                     catch (ModelException $e) {
-                        $message = $this->o_pdo->errorInfo();
+                        $message = 'Could not executeInsert ' . $this->o_pdo->errorInfo();
                         throw new ModelException($message, $e->getCode(), $e);
                     }
                 }
@@ -1050,15 +1039,24 @@ class DbModel
                 try {
                     $this->execute($a_values, $o_pdo_stmt);
                     try {
+		                $sequence_name = '';
+		                if ($this->db_type == 'pgsql' && !empty($a_table_info)) {
+		                    try {
+		                        $sequence_name = $this->getPgsqlSequenceName($a_table_info);
+		                    }
+		                    catch (ModelException $e) {
+		                        throw new ModelException('Could not getPsqlSequenceName. ' . $e->errorMessage(), $e->getCode(), $e);
+		                    }
+		                }
                         $this->a_new_ids[] = $this->o_pdo->lastInsertId($sequence_name);
                     }
                     catch (\PDOException $e) {
-                        $this->error_message = $e->getMessage();
+                        $this->error_message = 'Could not get pdo->lastInsertId. Sequence Name: ' . $sequence_name . ' ' . $e->getMessage();
                         throw new ModelException($this->error_message, 100, $e);
                     }
                 }
                 catch (ModelException $e) {
-                    $message = $e->errorMessage();
+                    $message = 'Could not execute the sql. ' . $e->errorMessage();
                     throw new ModelException($message, $e->getCode(), $e);
                 }
             }
