@@ -29,6 +29,7 @@
  */
 namespace Ritc\Library\Factories;
 
+use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbCommonTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -78,18 +79,40 @@ class PdoFactory
             $config_file = $a_parts[count($a_parts) - 1];
         }
         list($name, $extension) = explode('.', $config_file);
-        if ($extension != 'php' && $extension != 'cfg') { return false; }
+        if ($extension != 'php' && $extension != 'cfg') {
+            throw new FactoryException('Invalid file type for configuration.', 30);
+        }
         if ($read_type == 'ro') {
             if (!isset(self::$factory_ro_instance[$name])) {
-                self::$factory_ro_instance[$name] = new PdoFactory($o_di);
+                try {
+                    self::$factory_ro_instance[$name] = new PdoFactory($o_di);
+                }
+                catch (\Error $e) {
+                    throw new FactoryException($e->getMessage(), 10, $e);
+                }
             }
-            return self::$factory_ro_instance[$name]->createPdo($org_config_file, $read_type);
+            try {
+                return self::$factory_ro_instance[$name]->createPdo($org_config_file, $read_type);
+            }
+            catch (FactoryException $e) {
+                throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
+            }
         }
         else {
             if (!isset(self::$factory_rw_instance[$name])) {
-                self::$factory_rw_instance[$name] = new PdoFactory($o_di);
+                try {
+                    self::$factory_rw_instance[$name] = new PdoFactory($o_di);
+                }
+                catch (\Error $e) {
+                    throw new FactoryException($e->getMessage(), 10, $e);
+                }
             }
-            return self::$factory_rw_instance[$name]->createPdo($org_config_file, $read_type);
+            try {
+                return self::$factory_rw_instance[$name]->createPdo($org_config_file, $read_type);
+            }
+            catch (FactoryException $e) {
+                throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
+            }
         }
     }
 
@@ -99,16 +122,14 @@ class PdoFactory
      */
     private function createPdo($config_file = 'db_config.php', $read_type = 'rw')
     {
-        $meth = __METHOD__ . '.';
         if (is_object($this->o_db)) {
-            $this->logIt('The database is already connected.', LOG_OFF);
             return $this->o_db;
         }
         /** @var array $a_db */
         $a_db = $this->retrieveDbConfig($config_file);
         if (empty($a_db)) {
-            $this->logIt("Could not retrieve the db config file.");
-            return false;
+            $message = "Could not retrieve the db config file.";
+            throw new FactoryException($message, 40);
         }
         $a_db['dsn'] = $this->createDsn($a_db);
         switch ($a_db['errmode']) {
@@ -143,15 +164,11 @@ class PdoFactory
                         \PDO::ATTR_ERRMODE    => $errmode
                     ]
                 );
-            $this->logIt("The dsn is: {$a_db['dsn']}", LOG_OFF, $meth . __LINE__);
-            $this->logIt('Connect to db success.', LOG_OFF, $meth . __LINE__);
             $this->a_db_config = $a_db;
             return $this->o_db;
         }
         catch(\PDOException $e) {
-            $this->logIt('Error! Could not connect to database: ' . $e->getMessage(), LOG_ALWAYS);
-            $this->logIt(var_export($a_db, true), LOG_ALWAYS, $meth . __LINE__);
-            return false;
+            throw new FactoryException('Error! Could not connect to database: ' . $e->getMessage(), 100);
         }
     }
 
@@ -187,7 +204,7 @@ class PdoFactory
      */
     public function __clone()
     {
-        trigger_error('Clone is not allowed.', E_USER_ERROR);
+        throw new FactoryException('Clone is not allowed.', 20);
     }
 
     /**

@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Exceptions/ModelException.php
  * @namespace Ritc\Library\Exceptions
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-06-11 14:24:36
+ * @version   1.0.0-alpha.1
+ * @date      2017-07-15 12:40:41
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-06-11 wer
+ * - v1.0.0-alpha.1 - CustomException change reflected here.    - 2017-07-15 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2017-06-11 wer
  */
 namespace Ritc\Library\Exceptions;
 
@@ -21,28 +22,6 @@ use Ritc\Library\Abstracts\CustomException;
  */
 class ModelException extends CustomException
 {
-    /**
-     * @return string
-     */
-    public function errorMessage()
-    {
-        $error_message = $this->getMessage();
-        if (empty($error_message)) {
-            $error_message = $this->getCodeText($this->getCode());
-        }
-        $error_message .= ' -- ' . $this->getClass() . '.' . $this->getLine();
-
-        $previous = $this->getPrevious();
-        if ($previous) {
-            $msg  = $previous->getMessage();
-            $code = $previous->getCode();
-            $line = $previous->getLine();
-            $file = $previous->getFile();
-            $error_message .= ' - Previous: ' . $msg . ' -- ' . $file . '.' . $line . '(code: ' . $code . ')';
-        }
-        return $error_message;
-    }
-
     /**
      * @param int $code
      * @return string
@@ -178,17 +157,6 @@ class ModelException extends CustomException
                 return 'Unable to ALTER the view.';
             case 582:
                 return 'Unable to DROP the view.';
-            ### Business Logic Errors ###
-            case 600:
-                return 'General Business Logic Error.';
-            ### Application Rule Errors ###
-            case 700:
-                return 'General Application Rule Error.';
-            ### Generic Errors ###
-            case 900:
-                return 'General Error, see error message';
-            case 999:
-                return 'Unknown Error.';
             default:
                 return parent::getCodeText($code);
 

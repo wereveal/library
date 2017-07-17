@@ -12,7 +12,7 @@
 */
 namespace Ritc;
 
-use Ritc\Library\Helper\ConstantsHelper;
+use Ritc\Library\Helper\ConstantsCreator;
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Factories\TwigFactory;
 use Ritc\Library\Services\DbModel;
@@ -83,7 +83,7 @@ if ($o_pdo !== false) {
             }
         }
 
-        if (!ConstantsHelper::start($o_di)) {
+        if (!ConstantsCreator::start($o_di)) {
             $o_elog->write("Couldn't create the constants\n", LOG_ALWAYS);
             require_once SRC_CONFIG_PATH . '/fallback_constants.php';
         }

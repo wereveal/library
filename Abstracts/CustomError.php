@@ -2,25 +2,22 @@
 /**
  * @brief     Abstract which extends php Exception class.
  * @ingroup   lib_abstracts
- * @file      Ritc/Library/Abstracts/CustomException.php
+ * @file      Ritc/Library/Abstracts/CustomError.php
  * @namespace Ritc\Library\Abstracts
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
+ * @version   1.0.0-alpha.0
  * @date      2017-07-15 12:42:53
  * @note Change Log
- * - v1.0.0-alpha.1 - expanded errorMessage and getCode                                                 - 2017-07-15 wer
- * - v1.0.0-alpha.0 - Initial version                                                                   - 2016-10-17 wer
+ * - v1.0.0-alpha.0 - Initial version                                                                   - 2017-07-15 wer
  */
 namespace Ritc\Library\Abstracts;
 
-use Ritc\Library\Interfaces\CustomExceptionInterface;
-
 /**
- * Class CustomException.
- * @class   CustomException
+ * Class CustomError.
+ * @class   CustomError
  * @package Ritc\Library\Abstracts
  */
-abstract class CustomException extends \Exception implements CustomExceptionInterface
+abstract class CustomError extends \ErrorException
 {
     public function __toString()
     {
@@ -58,8 +55,6 @@ abstract class CustomException extends \Exception implements CustomExceptionInte
             case 700:
                 return 'General Application Rule Error.';
             ### Generic Errors ###
-            case 800:
-                return 'Unable to create the instance';
             case 900:
                 return 'General Error, see error message';
             case 999:

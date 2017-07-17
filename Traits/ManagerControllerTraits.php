@@ -6,9 +6,10 @@
  * @file      Ritc/Library/Traits/ManagerControllerTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.2
- * @date      2017-07-04 13:36:39
+ * @version   1.0.0-alpha.3
+ * @date      2017-07-13 11:40:17
  * @note Change Log
+ * - v1.0.0-alpha.3 - Removed SetOAuth and renamed getOAuth to getAuth.                   - 2017-07-13 wer
  * - v1.0.0-alpha.2 - Reverted back to ManagerControllerTraits                            - 2017-07-04 wer
  * - v1.0.0-alpha.1 - Renamed Trait                                                       - 2017-06-20 wer
  * - v1.0.0-alpha.0 - Initial version                                                     - 2017-05-10 wer
@@ -83,18 +84,11 @@ trait ManagerControllerTraits
     }
 
     /**
+     * Gets the o_auth property.
      * @return \Ritc\Library\Helper\AuthHelper
      */
-    public function getOAuth()
+    public function getAuth()
     {
         return $this->o_auth;
-    }
-
-    /**
-     * @param \Ritc\Library\Helper\AuthHelper $o_auth
-     */
-    public function setOAuth($o_auth)
-    {
-        $this->o_auth = $o_auth;
     }
 }

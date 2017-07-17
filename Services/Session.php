@@ -23,6 +23,7 @@
  */
 namespace Ritc\Library\Services;
 
+use Ritc\Library\Exceptions\ServiceException;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -61,10 +62,8 @@ class Session
         }
         $this->session_started = session_start();
         if ($this->session_started) {
-            $this->logIt("Session ID in construct: " . session_id(), LOG_OFF, __METHOD__ . '.' . __LINE__);
             $this->session_id   = session_id();
             $this->session_name = session_name();
-            $this->logIt("Session Name in construct: " . session_name(), LOG_OFF, __METHOD__ . '.' . __LINE__);
             if (empty($_SESSION['token'])) {
                 $this->setToken();
             }
@@ -73,21 +72,26 @@ class Session
             }
         }
         else {
-            $this->logIt("Session Not Started", LOG_OFF, __METHOD__ . '.' . __LINE__);
+            throw new ServiceException('Unable to start the session.', 10);
         }
-
     }
 
     /**
      * Returns the instance of the Session class.
      * @param string $session_id
      * @param string $session_name
-     * @return Session
+     * @return \Ritc\Library\Services\Session
+     * @throws \Ritc\Library\Exceptions\ServiceException
      */
     public static function start($session_id = "", $session_name = "")
     {
         if (!isset(self::$instance)) {
-            self::$instance = new Session($session_id, $session_name);
+            try {
+                self::$instance = new Session($session_id, $session_name);
+            }
+            catch (ServiceException $e) {
+                throw new ServiceException($e->errorMessage(), $e->getCode(), $e->getPrevious());
+            }
         }
         return self::$instance;
     }
@@ -466,6 +470,6 @@ class Session
      */
     public function __clone()
     {
-        trigger_error("Clone is not allowed.", E_USER_ERROR);
+        throw new ServiceException('Clone is not allowed for this service.', 20);
     }
 }

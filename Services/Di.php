@@ -28,11 +28,6 @@ namespace Ritc\Library\Services;
  * @class   Di
  * @package Ritc\Library\Services
  */
-/**
- * Class Di
- * @class Di
- * @package Ritc\Library\Services
- */
 class Di
 {
     /** @var array */

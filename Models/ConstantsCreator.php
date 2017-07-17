@@ -2,12 +2,13 @@
 /**
  * @brief     Create Constants from the constants database
  * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/ConstantsHelper.php
- * @namespace Ritc\Library\Helper
+ * @file      Ritc/Library/Models/ConstantsCreator.php
+ * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.1.0
- * @date      2017-06-20 11:29:24
+ * @version   5.0.0
+ * @date      2017-07-16 09:35:25
  * @note <b>Change Log</b>
+ * - v5.0.0 - Renamed, moved, and added ModelException throwing.                    - 2017-07-16 wer
  * - v4.1.0 - Refactor based on refactoring of ConstantsModel                       - 2017-06-20 wer
  * - v4.0.2 - bug fix.                                                              - 2017-01-27 wer
  * - v4.0.1 - bug fix. Wondering if another is still here.                          - 02/22/2016 wer
@@ -33,31 +34,30 @@
  * - v3.0.0 - Modified for new framework file hierarchy                             - 2013-04-30 wer
  * - v2.3.0 - mostly changes for FIG-standards
  */
-namespace Ritc\Library\Helper;
+namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class ConstantsHelper
- * @class   ConstantsHelper
+ * Class ConstantsCreator
+ * @class   ConstantsCreator
  * @package Ritc\Library\Helper
  */
-class ConstantsHelper
+class ConstantsCreator
 {
     use LogitTraits;
 
     /** @var bool */
     private $created = false;
-    /** @var ConstantsHelper */
+    /** @var ConstantsCreator */
     private static $instance;
     /** @var \Ritc\Library\Models\ConstantsModel */
     private $o_constants_model;
 
     /**
-     * ConstantsHelper constructor.
+     * ConstantsCreator constructor.
      * @param \Ritc\Library\Services\Di $o_di
      */
     private function __construct(Di $o_di)
@@ -65,7 +65,14 @@ class ConstantsHelper
         $meth = __METHOD__ . '.';
         /** @var \Ritc\Library\Services\DbModel $o_db */
         $o_db = $o_di->get('db');
-        $this->o_constants_model = new ConstantsModel($o_db);
+        try {
+            $this->o_constants_model = new ConstantsModel($o_db);
+        }
+        catch (\Error $e) {
+            $message = 'Unable to create an instance of the ConstantsModel: ' . $e->getMessage();
+            $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
+            throw new ModelException($message, 800);
+        }
         $this->o_elog = $o_di->get('elog');
         $this->o_constants_model->setElog($this->o_elog);
         try {
@@ -75,25 +82,25 @@ class ConstantsHelper
             $this->created = false;
         }
         if ($this->created === false) {
-            $this->logIt("Could not create constants from db.", LOG_ALWAYS, $meth . __LINE__);
             if (defined('SRC_CONFIG_PATH')) {
                 if(file_exists(SRC_CONFIG_PATH . '/fallback_constants.php')) {
                     include_once SRC_CONFIG_PATH . '/fallback_constants.php';
                 }
                 else {
                     $this->logIt("File: " . SRC_CONFIG_PATH . '/fallback_constants.php does not exist.', LOG_ALWAYS);
-                    die ('A fatal error has occured. Please contact your web site administrator.');
+                    throw new ModelException('A fatal error has occured. Please contact your web site administrator.');
                 }
             }
             else {
                 $this->logIt("SRC_CONFIG_PATH is not defined.", LOG_ALWAYS, $meth . __LINE__);
-                die ('A fatal error has occured. Please contact your web site administrator.');
+                throw new ModelException('A fatal error has occured. Please contact your web site administrator.');
             }
             try {
                 $this->o_constants_model->createNewConstants();
             }
             catch (ModelException $e) {
-                die ('A fatal error has occured. Please contact your web site administrator.');
+                $this->logIt($e->errorMessage(), LOG_ALWAYS, $meth . __LINE__);
+                throw new ModelException('A fatal error has occured. Please contact your web site administrator.');
             }
         }
         $this->createThemeConstants();
@@ -110,7 +117,12 @@ class ConstantsHelper
     public static function start(Di $o_di)
     {
         if (!isset(self::$instance)) {
-            self::$instance = new ConstantsHelper($o_di);
+            try {
+                self::$instance = new ConstantsCreator($o_di);
+            }
+            catch (\Error $e) {
+                throw new ModelException('Unable to create an instance of ConstantsCreator: ' . $e->getMessage());
+            }
         }
         return self::$instance;
     }

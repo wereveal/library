@@ -6,9 +6,10 @@
  * @file      Elog.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version:  3.1.0
- * @date      2017-05-12 06:05:26
+ * @version:  3.2.0
+ * @date      2017-07-16 07:57:42
  * @note <b>Change Log</b>
+ * - v3.2.0 - Added additional LOG_x types, rearranged some code              - 2017-07-16 wer
  * - v3.1.0 - Added LOG_WARN and LOG_ERROR                                    - 2017-05-12 wer
  * - v3.0.4 - bug fix with JSON logging                                       - 2017-01-31 wer
  * - v3.0.3 - bug fix, clean up code                                          - 2017-01-13 wer
@@ -25,6 +26,8 @@
  * - v2.5.0 - FIG standards (mostly)
  */
 namespace Ritc\Library\Services;
+
+use Ritc\Library\Exceptions\ServiceException;
 
 /**
  * Class Elog does some basic logging.
@@ -82,7 +85,7 @@ class Elog
     private function __construct()
     {
         $this->setElogConstants();
-        $this->log_method = LOG_CUSTOM;
+        $this->log_method = LOG_ON;
         $this->debug_text = "<!-- Start of Debug Text -->\n";
     }
 
@@ -112,7 +115,12 @@ class Elog
     {
         if (!isset(self::$instance)) {
             $c = __CLASS__;
-            self::$instance = new $c;
+            try {
+                self::$instance = new $c;
+            }
+            catch (\Error $e) {
+                throw new ServiceException('Unable to start the service.', 10, $e);
+            }
         }
         return self::$instance;
     }
@@ -130,10 +138,13 @@ class Elog
      */
     public function write($the_string = '', $log_method = LOG_OFF, $manual_from = '')
     {
-        if ($the_string == '') {
+        if ($this->ignore_log_off && $log_method == LOG_OFF) {
+            $log_method = LOG_ON;
+        }
+        if ($the_string == '' || $log_method === LOG_OFF) {
             return true;
         }
-        $this->last_message = $the_string;
+        $this->log_method = $log_method;
         if ($manual_from != '') {
             $this->from_location = $manual_from;
             $from = $log_method != LOG_JSON
@@ -161,26 +172,19 @@ class Elog
             $this->from_location = '';
         }
         $the_string = $the_string . $from;
-        if ($this->ignore_log_off && $log_method == LOG_OFF) {
-            $log_method = LOG_ON;
-        }
-        $this->log_method = $log_method;
+        $this->last_message = $the_string;
         switch ($log_method) {
             case LOG_OFF:
                 return true;
-            case LOG_ALWAYS:
-                if ($this->php_log_used === false) {
-                    $the_string = "\n=== Start logging session "
-                        . date('Y/m/d H:i:s')
-                        . " ===\n\n"
-                        . $the_string;
-                    $this->php_log_used    = true;
-                }
-                return error_log($the_string, 0);
             case LOG_EMAIL:
                 return error_log($the_string, 1, $this->error_email_address,
                                   "From: error_" . $this->error_email_address
                                   . "\r\nX-Mailer: PHP/" . phpversion());
+            /** @noinspection PhpMissingBreakStatementInspection */
+            case LOG_BOTH:
+                error_log($the_string, 1, $this->error_email_address,
+                    "From: error_" . $this->error_email_address
+                    . "\r\nX-Mailer: PHP/" . phpversion());
             case LOG_JSON:
                 return trigger_error($the_string, E_USER_NOTICE);
             case LOG_ON:
@@ -188,13 +192,11 @@ class Elog
                 return trigger_error($the_string, E_USER_NOTICE);
             case LOG_WARN:
                 return trigger_error($the_string, E_USER_WARNING);
-            /** @noinspection PhpMissingBreakStatementInspection */
-            case LOG_BOTH:
-                error_log($the_string, 1, $this->error_email_address,
-                    "From: error_" . $this->error_email_address
-                    . "\r\nX-Mailer: PHP/" . phpversion());
+            case LOG_ALWAYS:
             case LOG_ERROR:
                 return trigger_error($the_string, E_USER_ERROR);
+            case LOG_DEPRECATED:
+                return trigger_error($the_string, E_USER_DEPRECATED);
             case LOG_HTML:
                 $this->html_used = true;
                 $this->debug_text .= $this->makeComment($the_string);
@@ -208,61 +210,44 @@ class Elog
                         . date('Y/m/d H:i:s')
                         . " ===\n\n"
                         . $the_string;
-                    $this->php_log_used    = true;
+                    $this->php_log_used = true;
                 }
                 return error_log($the_string, 0);
         }
     }
 
     /**
-     * The function that is for custom logging with trigger_error.
-     * @param $error_number
-     * @param $error_string
+     * The function that is for custom logging with trigger_error and fallback to error_log().
+     * @param int    $error_number required
+     * @param string $error_string required
      * @return bool|int
      */
     public function errorHandler($error_number, $error_string)
     {
         if (!(error_reporting() & $error_number)) { // Error code not valid
-            return null;
+            return false;
+        }
+        if (empty($error_string)) {
+            return error_log('Unspecified error - ' . $this->from_location, 0);
         }
         switch ($this->log_method) {
-            case LOG_ON:
-            case LOG_WARN:
+            case LOG_DB:
+            case LOG_HTML:
+            case LOG_OFF:
+                return true;
+            case LOG_ALWAYS:
             case LOG_ERROR:
+                return $this->writeToFile($error_string, 'User Error');
             case LOG_CUSTOM:
-                if ($this->custom_log_used === false) {
-                    $string = "\n\n\n\n\n\n\n\n\n\n=== Start Elog ===\n" .
-                        date("Y-m-d H:i:s") .
-                        " - " .
-                        $this->from_location .
-                        "\n" .
-                        $error_string .
-                        "\n\n";
-                    $this->custom_log_used = true;
-                }
-                elseif (strpos($error_string, 'End of Elog') !== false) {
-                    $string = $error_string . "\n\n";
-                }
-                else {
-                    switch ($this->log_method) {
-                        case LOG_WARN:
-                            $type = 'Warn';
-                            break;
-                        case LOG_ERROR:
-                            $type = 'Error';
-                            break;
-                        case LOG_CUSTOM:
-                            $type = 'Custom';
-                            break;
-                        default:
-                            $type = 'Info';
-                    }
-                    $string = date("Y-m-d H:i:s") . " - " .
-                        $type . ' - ' .
-                        $this->from_location . "\n" .
-                        $error_string . "\n\n";
-                }
-		        return file_put_contents(LOG_PATH . '/' . $this->elog_file, $string, FILE_APPEND);
+                return $this->writeToFile($error_string, 'User Custom');
+            case LOG_DEPRECATED:
+                return $this->writeToFile($error_string, 'User Deprecated');
+            case LOG_NOTICE:
+                return $this->writeToFile($error_string, 'User Notice');
+            case LOG_ON:
+                return $this->writeToFile($error_string, 'User Info');
+            case LOG_WARN:
+                return $this->writeToFile($error_string, 'User Warn');
             case LOG_JSON:
                 $this->json_log_used = true;
 		        $error_string = str_replace("\n", '', $error_string);
@@ -274,19 +259,16 @@ class Elog
 		        $string .= "\n";
 		        return file_put_contents(LOG_PATH . '/' . $this->json_file, $string, FILE_APPEND);
             default:
-                return false;
+                $error_string = $this->from_location . ' - ' . $error_string;
+                if ($this->php_log_used === false) {
+                    $error_string = "\n=== Start Logging Session "
+                        . date('Y/m/d H:i:s')
+                        . " ===\n\n"
+                        . $error_string;
+                    $this->php_log_used = true;
+                }
+                return error_log($error_string, 0);
         }
-    }
-
-    /**
-     * Returns the exception handler - what???
-     * @param $exception
-     * @return null
-     * @todo exceptionHandler - this makes no sense as it stands.
-     */
-    public function exceptionHandler($exception)
-    {
-        return $exception;
     }
 
     /**
@@ -327,23 +309,26 @@ class Elog
      */
     private function setElogConstants()
     {
-        if (!defined('LOG_OFF'))    { define('LOG_OFF',    0); }
-        if (!defined('LOG_PHP'))    { define('LOG_PHP',    1); }
-        if (!defined('LOG_BOTH'))   { define('LOG_BOTH',   2); }
-        if (!defined('LOG_EMAIL'))  { define('LOG_EMAIL',  3); }
-        if (!defined('LOG_ON'))     { define('LOG_ON',     4); }
-        if (!defined('LOG_CUSTOM')) { define('LOG_CUSTOM', 4); }
-        if (!defined('LOG_JSON'))   { define('LOG_JSON',   5); }
-        if (!defined('LOG_DB'))     { define('LOG_DB',     6); }
-        if (!defined('LOG_HTML'))   { define('LOG_HTML',   7); }
-        if (!defined('LOG_ALWAYS')) { define('LOG_ALWAYS', 8); }
-        if (!defined('LOG_WARN'))   { define('LOG_WARN',   9); }
-        if (!defined('LOG_ERROR'))  { define('LOG_ERROR', 10); }
-        if (!defined('LOG_PATH'))   { define('LOG_PATH', BASE_PATH . '/logs'); }
+        if (!defined('LOG_OFF'))        { define('LOG_OFF',         0); }
+        if (!defined('LOG_PHP'))        { define('LOG_PHP',         1); }
+        if (!defined('LOG_BOTH'))       { define('LOG_BOTH',        2); }
+        if (!defined('LOG_EMAIL'))      { define('LOG_EMAIL',       3); }
+        if (!defined('LOG_ON'))         { define('LOG_ON',          4); }
+        if (!defined('LOG_CUSTOM'))     { define('LOG_CUSTOM',      4); }
+        if (!defined('LOG_JSON'))       { define('LOG_JSON',        5); }
+        if (!defined('LOG_DB'))         { define('LOG_DB',          6); }
+        if (!defined('LOG_HTML'))       { define('LOG_HTML',        7); }
+        if (!defined('LOG_ALWAYS'))     { define('LOG_ALWAYS',      8); }
+        if (!defined('LOG_WARN'))       { define('LOG_WARN',        9); }
+        if (!defined('LOG_ERROR'))      { define('LOG_ERROR',      10); }
+        if (!defined('LOG_NOTICE'))     { define('LOG_NOTICE',     11); }
+        if (!defined('LOG_DEPRECATED')) { define('LOG_DEPRECATED', 12); }
+        if (!defined('LOG_PATH'))       { define('LOG_PATH', BASE_PATH . '/logs'); }
     }
 
     /**
-     * @param int $error_types
+     * This sets the error_handler to custom.
+     * @param int $error_types optional, defaults to user-generated errors.
      */
     public function setErrorHandler($error_types = -2)
     {
@@ -466,5 +451,38 @@ class Elog
     {
         return $not_visible ? "<!-- {$the_string} -->\n"
                             : "COMMENT: {$the_string}<br />\n";
+    }
+
+    /**
+     * Writes the error_message to the elog file.
+     * @param string $error_string required to log anything.
+     * @param string $error_type   optional, defaults to
+     * @return bool|int
+     */
+    private function writeToFile($error_string = '', $error_type = 'Unspecified')
+    {
+        if (empty($error_string)) {
+            $error_string = 'Unspecified Error';
+        }
+        if ($this->custom_log_used === false) {
+            $string = "\n\n\n\n\n\n\n\n\n\n=== Start Elog ===\n" .
+                date("Y-m-d H:i:s") .
+                " - " .
+                $this->from_location .
+                "\n" .
+                $error_string .
+                "\n\n";
+            $this->custom_log_used = true;
+        }
+        elseif (strpos($error_string, 'End of Elog') !== false) {
+            $string = $error_string . "\n\n";
+        }
+        else {
+            $string = date("Y-m-d H:i:s") . " - " .
+                $error_type . ' - ' .
+                $this->from_location . "\n" .
+                $error_string . "\n\n";
+        }
+        return file_put_contents(LOG_PATH . '/' . $this->elog_file, $string, FILE_APPEND);
     }
 }

@@ -55,6 +55,7 @@ trait ManagerViewTraits
             ? 'login'
             : $a_values['tpl'];
         $tpl = $this->createTplString($a_twig_values);
+
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 
