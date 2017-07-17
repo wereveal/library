@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Traits/TesterTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.1.0
- * @date      2017-06-20 12:25:41
+ * @version   4.1.1
+ * @date      2017-07-12 15:24:06
  * @note <b>Change log</b>
+ * - v4.1.1 - Bug fix - handle errors better                                            - 2017-07-12 wer
  * - v4.1.0 - Added new methods specific to model testing                               - 2017-06-20 wer
  * - v4.0.0 - Turned the class into a trait to maybe remove a hidden bug                - 2017-06-09 wer
  * - v3.6.1 - Refactoring of subtest methods                                            - 2017-06-09 wer
@@ -415,6 +416,33 @@ trait TesterTraits
                 $good_results = false;
             }
         }
+        catch (\TypeError $e) {
+            if ($expected_results == false) {
+                $this->setSubPassed($test, $subtest);
+            }
+            else {
+                $this->setSubFailed($test, $subtest);
+                $good_results = false;
+            }
+        }
+        catch (\Exception $e) {
+            if ($expected_results == false) {
+                $this->setSubPassed($test, $subtest);
+            }
+            else {
+                $this->setSubFailed($test, $subtest);
+                $good_results = false;
+            }
+        }
+        catch (\Error $e) {
+            if ($expected_results == false) {
+                $this->setSubPassed($test, $subtest);
+            }
+            else {
+                $this->setSubFailed($test, $subtest);
+                $good_results = false;
+            }
+        }
         return $good_results;
     }
 
@@ -560,6 +588,7 @@ trait TesterTraits
     }
 
     /**
+     * Getter
      * @return array
      */
     public function getFailedTestNames()
@@ -568,6 +597,7 @@ trait TesterTraits
     }
 
     /**
+     * Getter
      * @return int
      */
     public function getFailedTests()
@@ -576,6 +606,7 @@ trait TesterTraits
     }
 
     /**
+     * Getter
      * @return int
      */
     public function getNumOTests()
@@ -584,6 +615,7 @@ trait TesterTraits
     }
 
     /**
+     * Getter
      * @return int
      */
     public function getPassedTests()
@@ -592,6 +624,7 @@ trait TesterTraits
     }
 
     /**
+     * Getter
      * @return array
      */
     public function getPassedTestNames()
@@ -600,6 +633,7 @@ trait TesterTraits
     }
 
     /**
+     * Getter
      * @return array
      */
     public function getTestOrder()

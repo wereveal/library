@@ -143,11 +143,14 @@ class ConstantsController implements ManagerControllerInterface
             'what'         => 'constant',
             'name'         => $this->a_post['constant']['const_name'],
             'where'        => 'constants',
-            'btn_value'    => 'Constants',
+            'btn_value'    => 'Constant',
             'hidden_name'  => 'const_id',
             'hidden_value' => $this->a_post['constant']['const_id'],
         ];
-        return $this->o_view->renderVerifyDelete($a_values, 'renderList');
+        $a_options = [
+            'location' => '/manager/config/constants/'
+        ];
+        return $this->o_view->renderVerifyDelete($a_values, $a_options);
     }
 
     /**
