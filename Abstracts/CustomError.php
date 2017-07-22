@@ -55,6 +55,8 @@ abstract class CustomError extends \ErrorException
             case 700:
                 return 'General Application Rule Error.';
             ### Generic Errors ###
+            case 800:
+                return 'Unable to create the instance';
             case 900:
                 return 'General Error, see error message';
             case 999:

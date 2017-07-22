@@ -31,6 +31,8 @@
  */
 namespace Ritc\Library\Services;
 
+use Ritc\Library\Exceptions\HelperException;
+use Ritc\Library\Exceptions\ServiceException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Traits\LogitTraits;
@@ -74,7 +76,12 @@ class Router
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);
-        $this->o_routes_helper = new RoutesHelper($o_di);
+        try {
+            $this->o_routes_helper = new RoutesHelper($o_di);
+        }
+        catch (HelperException $e) {
+            throw new ServiceException("Could not create RoutesHelper", 800);
+        }
         $this->setRouteParts();
     }
 

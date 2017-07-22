@@ -3,25 +3,25 @@
  * @brief     Custom Exceptions for Services.
  * @details   Handles custom exceptions for services.
  * @ingroup   lib_exceptions
- * @file      Ritc/Library/Exceptions/ServiceException.php
+ * @file      Ritc/Library/Exceptions/HelperException.php
  * @namespace Ritc\Library\Exceptions
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.0.0-alpha.0
  * @date      2017-07-16 08:18:12
  * @note Change Log
  * - v1.0.0-alpha.0 - Initial version        - 2017-07-16 wer
- * @todo Ritc/Library/Exceptions/ServiceException.php - Everything
+ * @todo Ritc/Library/Exceptions/HelperException.php - Everything
  */
 namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomException;
 
 /**
- * Class ServiceException.
- * @class   ServiceException
+ * Class HelperException.
+ * @class   HelperException
  * @package Ritc\Library\Exceptions
  */
-class ServiceException extends CustomException
+class HelperException extends CustomException
 {
     public function __construct($message = "", $code = 0, \Throwable $previous = null)
     {
@@ -32,7 +32,7 @@ class ServiceException extends CustomException
     {
         switch ($code) {
             case 10:
-                return 'Unable to start the service.';
+                return 'Unable to start the helper.';
             case 20:
                 return '__clone not allowed for this service.';
             default:

@@ -192,7 +192,15 @@ class RoutesHelper
      */
     public function findValidRoute($request_uri = '')
     {
-        $o_routes = new RoutesComplexModel($this->o_di);
+        try {
+            $o_routes = new RoutesComplexModel($this->o_di);
+        }
+        catch (ModelException $e) {
+            return false;
+        }
+        catch (\Error $e) {
+            return false;
+        }
         $a_search_for = $this->createComparisonUri($request_uri);
         foreach ($a_search_for as $key => $value) {
             try {
