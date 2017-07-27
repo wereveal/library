@@ -8,9 +8,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.1
- * @date      2017-06-23 12:51:41
+ * @version   2.0.2
+ * @date      2017-07-27 11:45:42 
  * @note <b>Change Log</b>
+ * - v2.0.2          - bug fix                                              - 2017-07-27 wer
  * - v2.0.1          - bug fix, logic error fix                             - 2017-06-23 wer
  * - v2.0.0          - updated to use ModelException                        - 2017-06-11 wer
  * - v1.4.4          - bug fix                                              - 2017-05-12 wer
@@ -726,7 +727,7 @@ SQL;
             case 'pgsql':
                 /** @noinspection SqlResolve */
                 $query = "
-                    SELECT a.attname as pKeyName, format_type(a.atttypid, a.atttypmod) AS data_type
+                    SELECT a.attname as pkeyname, format_type(a.atttypid, a.atttypmod) AS data_type
                     FROM   pg_index i
                     JOIN   pg_attribute a ON a.attrelid = i.indrelid
                            AND a.attnum = ANY(i.indkey)
@@ -735,8 +736,9 @@ SQL;
                 ";
                 try {
                     $results = $this->o_db->rawQuery($query);
+                    error_log(var_export($results, true));
                     if (!empty($results)) {
-                        $this->primary_index_name = $results[0]['pKeyName'];
+                        $this->primary_index_name = $results[0]['pkeyname'];
                     }
                     else {
                         $this->primary_index_name = '';
