@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/NavComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.7
- * @date      2017-06-15 16:05:14
+ * @version   1.0.0-alpha.8
+ * @date      2017-08-02 17:47:17 
  * @note <b>Change Log</b>
+ * - v1.0.0-alpha.8 - Bug fix                                       - 2017-08-02 wer
  * - v1.0.0-alpha.7 - Refactored to use ModelException              - 2017-06-15 wer
  * - v1.0.0-alpha.6 - DbUtilityTraits change reflected here         - 2017-05-09 wer
  * - v1.0.0-alpha.5 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
@@ -91,16 +92,16 @@ class NavComplexModel
     {
         $select_sql = "
             SELECT
-                n.nav_id as 'nav_id',
-                n.nav_parent_id as 'parent_id',
-                u.url_id as 'url_id',
-                u.url_text as 'url',
-                n.nav_name as 'name',
-                n.nav_text as 'text',
-                n.nav_description as 'description',
-                n.nav_css as 'css',
-                n.nav_level as 'level',
-                n.nav_order as 'order',
+                n.nav_id as nav_id,
+                n.nav_parent_id as parent_id,
+                u.url_id as url_id,
+                u.url_text as url,
+                n.nav_name as name,
+                n.nav_text as text,
+                n.nav_description as description,
+                n.nav_css as css,
+                n.nav_level as level,
+                n.nav_order as order,
                 n.nav_immutable
             FROM {$this->lib_prefix}urls as u
             JOIN {$this->lib_prefix}navigation as n

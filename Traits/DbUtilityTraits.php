@@ -736,7 +736,6 @@ SQL;
                 ";
                 try {
                     $results = $this->o_db->rawQuery($query);
-                    error_log(var_export($results, true));
                     if (!empty($results)) {
                         $this->primary_index_name = $results[0]['pkeyname'];
                     }

@@ -56,7 +56,6 @@ class NavigationView
     public function renderList(array $a_message = [])
     {
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/navigation/');
-
         try {
             $a_nav = $this->o_nav_complex->getNavListAll();
         }
@@ -80,6 +79,8 @@ class NavigationView
             'hidden_value' => ''
         ];
         $tpl = $this->createTplString($a_twig_values);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         return $this->o_twig->render($tpl, $a_twig_values);
     }
 
