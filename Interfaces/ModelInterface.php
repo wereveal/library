@@ -1,6 +1,6 @@
 <?php
 /**
- * @brief     Class used to set up model classes.
+ * @brief     Interface used to set up model classes.
  * @ingroup   lib_interfaces
  * @file      Ritc/Library/Interfaces/ModelInterface.php
  * @namespace Ritc\Library\Interfaces
