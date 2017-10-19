@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Traits/TesterTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.1.1
- * @date      2017-07-12 15:24:06
+ * @version   4.2.0
+ * @date      2017-10-19 14:03:18
  * @note <b>Change log</b>
+ * - v4.2.0 - updated setValues and setOrder to not use an empty parameter              - 2017-10-19 wer
  * - v4.1.1 - Bug fix - handle errors better                                            - 2017-07-12 wer
  * - v4.1.0 - Added new methods specific to model testing                               - 2017-06-20 wer
  * - v4.0.0 - Turned the class into a trait to maybe remove a hidden bug                - 2017-06-09 wer
@@ -71,6 +72,8 @@ trait TesterTraits
     protected $new_id             = -1;
     /** @var int */
     protected $num_o_tests        = 0;
+    /** @var string  */
+    protected $order_file         = 'test_order.php';
     /** @var array  */
     protected $passed_subtests    = [];
     /** @var array */
@@ -81,6 +84,8 @@ trait TesterTraits
     protected $skipped_test_names = [];
     /** @var int  */
     protected $skipped_tests      = 0;
+    /** @var string  */
+    protected $values_file        = 'test_values.php';
 
     ### Main Methods for Testing ###
     /**
@@ -216,10 +221,12 @@ trait TesterTraits
             $this->a_test_values = [];
         }
         else {
+            $this->values_file = $test_values_file;
             $this->a_test_values = include $test_values_file;
         }
         $test_order_file = LocateFile::getTestFileWithPath($order_file, $short_ns, $extra_dir);
         if (!empty($test_order_file)) {
+            $this->order_file = $test_order_file;
             $this->a_test_order = include $test_order_file;
         }
         else {
@@ -734,6 +741,9 @@ trait TesterTraits
      */
     public function setTestOrder(array $a_test_order = array())
     {
+        if (empty($a_test_order)) {
+            $a_test_order = include $this->order_file;
+        }
         $this->a_test_order = $a_test_order;
     }
 
@@ -743,6 +753,9 @@ trait TesterTraits
      */
     public function setTestValues(array $a_test_values = array())
     {
+        if (empty($a_test_values)) {
+            $a_test_values = include $this->values_file;
+        }
         $this->a_test_values = $a_test_values;
     }
 
