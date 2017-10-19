@@ -6,9 +6,10 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.0.1
- * @date      2017-07-13 12:59:35 
+ * @version   5.1.0
+ * @date      2017-10-18 21:31:28 
  * @note <b>Change Log</b>
+ * - v5.1.0 - Method name change to match standard for method names							- 2017-10-18 wer
  * - v5.0.1 - Bug fixes                                                                     - 2017-07-13 wer
  * - v5.0.0 - Switch to throwing exceptions instead of returning false                      - 2017-06-12 wer
  * - v4.3.1 - Bug fix                                                                       - 2017-05-14 wer
@@ -746,13 +747,12 @@ class DbModel
 
     /**
      * Prepares a sql statement for execution
-     *
      * @param object|\PDOStatement $o_pdo_stmt  a \PDOStatement object
      * @param string               $fetch_style @see \PDO (optional)
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function fetch_all(\PDOStatement $o_pdo_stmt, $fetch_style = 'ASSOC')
+    public function fetchAll(\PDOStatement $o_pdo_stmt, $fetch_style = 'ASSOC')
     {
         switch ($fetch_style) {
             case 'BOTH':
