@@ -19,6 +19,12 @@ namespace Ritc\Library\Helper;
  */
 class MimeTypeHelper
 {
+    /**
+     * Gets the extensions that are associated with a mime type.
+     * Since multiple extensions can be associated with a mime type, must return an array.
+     * @param string $mime_type
+     * @return array|mixed
+     */
     public static function getExtensionFromMime($mime_type = '')
     {
         if ($mime_type == '') {
@@ -31,6 +37,12 @@ class MimeTypeHelper
         return [];
     }
 
+    /**
+     * Gets the mimetype of a physical file.
+     * File must exist and be in the path.
+     * @param string $file_with_path
+     * @return mixed|string
+     */
     public static function getMimeFromFile($file_with_path = '')
     {
         if (file_exists($file_with_path)) {
@@ -40,6 +52,11 @@ class MimeTypeHelper
         return '';
     }
 
+    /**
+     * Returns the mimetype based on the extension.
+     * @param $ext
+     * @return int|string
+     */
     public static function getMimeFromExtension($ext) {
         if ($ext == '') {
             return '';
@@ -53,7 +70,13 @@ class MimeTypeHelper
         return '';
     }
 
-    public static function isMimeForExtenstion($mime_type = '', $ext = '')
+    /**
+     * Determines if the extension matches the mime type.
+     * @param string $mime_type
+     * @param string $ext
+     * @return bool
+     */
+    public static function isMimeForExtension($mime_type = '', $ext = '')
     {
         if ($mime_type == '' || $ext == '') {
             return false;
@@ -65,6 +88,12 @@ class MimeTypeHelper
         return false;
     }
 
+    /**
+     * Determines if the extension has the mime type.
+     * @param string $mime_type
+     * @param string $ext
+     * @return bool
+     */
     public static function isExtensionForMime($mime_type = '', $ext = '')
     {
         if ($mime_type == '' || $ext == '') {
@@ -76,6 +105,10 @@ class MimeTypeHelper
         return false;
     }
 
+    /**
+     * Reads a file of mime types and puts them into an array.
+     * @return array
+     */
     public static function mapMimeToExtension()
     {
         $mime_type_path = PUBLIC_PATH . '/assets/vendor/jquery-ui/node_modules/testswarm/node_modules/request/node_modules/mime/types/mime.types';

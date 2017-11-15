@@ -30,7 +30,6 @@ class UploadHelper
             throw new \UnexpectedValueException('Required Values not provided.');
         }
 
-        error_log(var_export($_FILES, true));
         $final_filename = $a_values['final_file_name'];
         $form_filename  = $a_values['form_file_name'];
         $file_path      = $a_values['file_path'];
@@ -64,7 +63,6 @@ class UploadHelper
             throw new \RuntimeException($error);
         }
 
-        error_log($_FILES[$form_filename]['size'] . ' == ' . ini_get('upload_max_filesize'));
         $max_filesize = ini_get('upload_max_filesize');
         if (strpos($max_filesize, 'M') !== false) {
             $max_filesize = str_replace('M', '000000', $max_filesize);
@@ -72,7 +70,6 @@ class UploadHelper
         elseif (strpos($max_filesize, 'K') !== false) {
             $max_filesize = str_replace('K', '000', $max_filesize);
         }
-        error_log($_FILES[$form_filename]['size'] . ' == ' . $max_filesize);
         // May be redundant since $_FILES should have already spotted the error.
         if ($_FILES[$form_filename]['size'] >= $max_filesize) {
             throw new \RuntimeException("The uploaded file exceeds the max filesize: " . ini_get('upload_max_filesize'));
@@ -85,6 +82,11 @@ class UploadHelper
         return true;
     }
 
+    /**
+     * Returns the $_FILES error.
+     * @param string $filename
+     * @return string
+     */
     public static function getError($filename = '')
     {
         if ($filename == '') {
@@ -113,6 +115,11 @@ class UploadHelper
 
     }
 
+    /**
+     * Looks to see if the extension is "semi-safe".
+     * @param string $ext
+     * @return bool
+     */
     public static function isSortOfSafeExtension($ext = '')
     {
         switch ($ext) {
