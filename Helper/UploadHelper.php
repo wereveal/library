@@ -30,6 +30,7 @@ class UploadHelper
             throw new \UnexpectedValueException('Required Values not provided.');
         }
 
+        error_log(var_export($_FILES, true));
         $final_filename = $a_values['final_file_name'];
         $form_filename  = $a_values['form_file_name'];
         $file_path      = $a_values['file_path'];
@@ -58,17 +59,22 @@ class UploadHelper
             }
         }
 
-        if (empty($_FILES[$form_filename]['error'])) {
-            throw new \RuntimeException('Unknown error.');
-        }
-
         $error = self::getError($form_filename);
         if ($error != 'OK') {
             throw new \RuntimeException($error);
         }
 
+        error_log($_FILES[$form_filename]['size'] . ' == ' . ini_get('upload_max_filesize'));
+        $max_filesize = ini_get('upload_max_filesize');
+        if (strpos($max_filesize, 'M') !== false) {
+            $max_filesize = str_replace('M', '000000', $max_filesize);
+        }
+        elseif (strpos($max_filesize, 'K') !== false) {
+            $max_filesize = str_replace('K', '000', $max_filesize);
+        }
+        error_log($_FILES[$form_filename]['size'] . ' == ' . $max_filesize);
         // May be redundant since $_FILES should have already spotted the error.
-        if ($_FILES[$form_filename]['size'] >= ini_get('upload_max_filesize')) {
+        if ($_FILES[$form_filename]['size'] >= $max_filesize) {
             throw new \RuntimeException("The uploaded file exceeds the max filesize: " . ini_get('upload_max_filesize'));
         }
 
