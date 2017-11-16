@@ -53,6 +53,23 @@ class MimeTypeHelper
     }
 
     /**
+     * Returns what the mime type should be for the given file name.
+     * It should be noted that just because a file has a particular
+     * extension, doesn't mean it is the mime type associated with
+     * the extension.
+     * @param string $filename
+     * @return int|string
+     */
+    public static function getMimeFromFilename($filename = '')
+    {
+        if ($filename == '') {
+            return '';
+        }
+        $parts = explode('.', $filename);
+        return self::getMimeFromExtension($parts[count($parts) - 1]);
+    }
+
+    /**
      * Returns the mimetype based on the extension.
      * @param $ext
      * @return int|string
