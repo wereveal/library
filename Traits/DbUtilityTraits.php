@@ -155,6 +155,7 @@ INSERT INTO {$db_table} (
 
 SQL;
         try {
+            error_log("SQL: " . $sql);
             $this->o_db->insert($sql, $a_values, $a_psql);
             $a_new_ids = $this->o_db->getNewIds();
             if (count($a_new_ids) < 1) {
