@@ -54,7 +54,8 @@ use Ritc\Library\Services\DbModel;
  * @class DbUtilityTraits
  * @package Ritc\Library\Traits
  */
-trait DbUtilityTraits {
+trait DbUtilityTraits 
+{
     use DbCommonTraits;
 
     /** @var array */
