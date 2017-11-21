@@ -293,7 +293,9 @@ trait ViewTraits
         else {
             try {
                 $a_urls = $o_url->read(['url_text' => $url_id]);
-                $url_id = $a_urls[0]['url_id'];
+                $url_id = empty($a_urls[0]['url_id'])
+                    ? $this->o_router->getUrlId()
+                    : $a_urls[0]['url_id'];
             }
             catch (ModelException $e) {
                 $url_id = $this->o_router->getUrlId();

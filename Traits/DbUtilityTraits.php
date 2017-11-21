@@ -9,7 +9,7 @@
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   2.0.2
- * @date      2017-07-27 11:45:42 
+ * @date      2017-07-27 11:45:42
  * @note <b>Change Log</b>
  * - v2.0.2          - bug fix                                              - 2017-07-27 wer
  * - v2.0.1          - bug fix, logic error fix                             - 2017-06-23 wer
@@ -54,7 +54,7 @@ use Ritc\Library\Services\DbModel;
  * @class DbUtilityTraits
  * @package Ritc\Library\Traits
  */
-trait DbUtilityTraits 
+trait DbUtilityTraits
 {
     use DbCommonTraits;
 
@@ -156,7 +156,6 @@ INSERT INTO {$db_table} (
 
 SQL;
         try {
-            error_log("SQL: " . $sql);
             $this->o_db->insert($sql, $a_values, $a_psql);
             $a_new_ids = $this->o_db->getNewIds();
             if (count($a_new_ids) < 1) {
