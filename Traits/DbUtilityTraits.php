@@ -9,7 +9,7 @@
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   2.0.2
- * @date      2017-07-27 11:45:42 
+ * @date      2017-07-27 11:45:42
  * @note <b>Change Log</b>
  * - v2.0.2          - bug fix                                              - 2017-07-27 wer
  * - v2.0.1          - bug fix, logic error fix                             - 2017-06-23 wer
@@ -54,7 +54,8 @@ use Ritc\Library\Services\DbModel;
  * @class DbUtilityTraits
  * @package Ritc\Library\Traits
  */
-trait DbUtilityTraits {
+trait DbUtilityTraits
+{
     use DbCommonTraits;
 
     /** @var array */

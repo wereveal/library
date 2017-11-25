@@ -72,7 +72,6 @@ class TwigFactory
                 $o_loader->prependPath($path, $namespace);
             }
             catch (\Twig_Error_Loader $e) {
-                error_log("Twig Loader Error: " . $e->getRawMessage());
                 throw new FactoryException("Twig Loader Error: " . $e->getMessage(), 110);
             }
 

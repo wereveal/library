@@ -6,9 +6,10 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.1.0
- * @date      2017-10-18 21:31:28 
+ * @version   5.1.1
+ * @date      2017-11-16 14:17:46  
  * @note <b>Change Log</b>
+ * - v5.1.1 - Bug fix                                                                       - 2017-11-16 wer
  * - v5.1.0 - Method name change to match standard for method names							- 2017-10-18 wer
  * - v5.0.1 - Bug fixes                                                                     - 2017-07-13 wer
  * - v5.0.0 - Switch to throwing exceptions instead of returning false                      - 2017-06-12 wer
@@ -1030,7 +1031,8 @@ class DbModel
                         $this->executeInsert($a_stuph, $o_pdo_stmt, $a_table_info);
                     }
                     catch (ModelException $e) {
-                        $message = 'Could not executeInsert ' . $this->o_pdo->errorInfo();
+                        $a_pdo_info = $this->o_pdo->errorInfo();
+                        $message = 'Could not executeInsert ' . $a_pdo_info[2];
                         throw new ModelException($message, $e->getCode(), $e);
                     }
                 }
