@@ -4,9 +4,10 @@
  * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/PeopleController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.2+2
- * @date      2016-04-11 08:06:39
+ * @version   1.1.0
+ * @date      2017-11-28 13:29:25
  * @note <b>Change Log</b>
+ * - v1.1.0   - updated to use ConfigControllerTraits            - 2017-11-28 wer
  * - v1.0.2   - bug fix                                          - 2016-03-08 wer
  * - v1.0.1   - bug fixes                                        - 11/27/2015 wer
  * - v1.0.0   - initial working version                          - 11/12/2015 wer
@@ -28,6 +29,7 @@ use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
+use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PeopleView;
 
@@ -38,22 +40,12 @@ use Ritc\Library\Views\PeopleView;
  */
 class PeopleController implements ManagerControllerInterface
 {
-    use LogitTraits;
+    use LogitTraits, ConfigControllerTraits;
 
-    /** @var array */
-    private $a_route_parts;
-    /** @var array */
-    private $a_post_values;
     /** @var \Ritc\Library\Models\PeopleComplexModel */
     private $o_complex;
-    /** @var Di */
-    private $o_di;
     /** @var PeopleModel */
     private $o_people;
-    /** @var Router */
-    private $o_router;
-    /** @var Session */
-    private $o_session;
     /** @var PeopleView */
     private $o_view;
 
@@ -63,17 +55,12 @@ class PeopleController implements ManagerControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->o_di          = $o_di;
-        $o_db                = $o_di->get('db');
+        $this->setupManagerController($o_di);
+        $this->setupElog($o_di);
         $this->o_view        = new PeopleView($o_di);
-        $this->o_session     = $o_di->get('session');
-        $this->o_router      = $o_di->get('router');
-        $this->o_people      = new PeopleModel($o_db);
-        $this->o_complex     = new PeopleComplexModel($o_db);
-        $this->a_route_parts = $this->o_router->getRouteParts();
-        $this->a_post_values = $this->a_route_parts['post'];
+        $this->o_people      = new PeopleModel($this->o_db);
+        $this->o_complex     = new PeopleComplexModel($this->o_db);
         if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
             $this->o_complex->setElog($this->o_elog);
             $this->o_people->setElog($this->o_elog);
             $this->o_view->setElog($this->o_elog);
@@ -87,8 +74,8 @@ class PeopleController implements ManagerControllerInterface
     public function route()
     {
         $meth = __METHOD__ . '.';
-        $a_route_parts = $this->a_route_parts;
-        $a_post        = $this->a_post_values;
+        $a_route_parts = $this->a_router_parts;
+        $a_post        = $this->a_post;
         $main_action   = $a_route_parts['route_action'];
         $form_action   = $a_route_parts['form_action'];
         $url_action    = isset($a_route_parts['url_actions'][0])
@@ -98,7 +85,7 @@ class PeopleController implements ManagerControllerInterface
             $main_action = $url_action;
         }
         if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
-            if ($this->o_session->isNotValidSession($this->a_post_values, true)) {
+            if ($this->o_session->isNotValidSession($this->a_post, true)) {
                 header("Location: " . SITE_URL . '/manager/login/');
             }
         }
@@ -141,7 +128,7 @@ class PeopleController implements ManagerControllerInterface
     public function save()
     {
         $meth = __METHOD__ . '.';
-        $a_person = $this->a_post_values['person'];
+        $a_person = $this->a_post['person'];
         $a_person = $this->setPersonValues($a_person);
         if ($a_person === false) {
             return ViewHelper::failureMessage("Opps, the person was not saved -- missing information, either Login ID or Name.");
@@ -152,10 +139,10 @@ class PeopleController implements ManagerControllerInterface
         if ($this->o_people->isExistingShortName($a_person['short_name'])) {
             $a_person['short_name'] = $this->createShortName($a_person['short_name']);
         }
-        if (!isset($this->a_post_values['groups']) || count($this->a_post_values['groups']) < 1) {
+        if (!isset($this->a_post['groups']) || count($this->a_post['groups']) < 1) {
             return ViewHelper::failureMessage("Opps, the person was not saved. The person must be assigned to at least one group.");
         }
-        $a_person['groups'] = $this->a_post_values['groups'];
+        $a_person['groups'] = $this->a_post['groups'];
         $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
         if ($this->o_complex->savePerson($a_person) !== false) {
             return ViewHelper::successMessage("Success! The person was saved.");
@@ -170,7 +157,7 @@ class PeopleController implements ManagerControllerInterface
     public function update()
     {
         $meth = __METHOD__ . '.';
-        $a_person = $this->a_post_values['person'];
+        $a_person = $this->a_post['person'];
         $a_person = $this->setPersonValues($a_person);
         $addendum = '';
         if ($a_person === false) {
@@ -189,10 +176,10 @@ class PeopleController implements ManagerControllerInterface
                 $addendum .= '<br>The alias was not changed because the new value aleady existed for someone else.';
             }
         }
-        if (!isset($this->a_post_values['groups']) || count($this->a_post_values['groups']) < 1) {
+        if (!isset($this->a_post['groups']) || count($this->a_post['groups']) < 1) {
             return ViewHelper::failureMessage("Opps, the person was not saved. The person must be assigned to at least one group.");
         }
-        $a_person['groups'] = $this->a_post_values['groups'];
+        $a_person['groups'] = $this->a_post['groups'];
         $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
         if ($this->o_complex->savePerson($a_person) !== false) {
             if ($addendum != '') {
@@ -209,7 +196,7 @@ class PeopleController implements ManagerControllerInterface
      */
     public function verifyDelete()
     {
-        return $this->o_view->renderVerifyDelete($this->a_post_values);
+        return $this->o_view->renderVerifyDelete($this->a_post);
     }
 
     /**
@@ -218,7 +205,7 @@ class PeopleController implements ManagerControllerInterface
      */
     public function delete()
     {
-        if ($this->o_complex->deletePerson($this->a_post_values['people_id'])) {
+        if ($this->o_complex->deletePerson($this->a_post['people_id'])) {
             return ViewHelper::successMessage();
         }
         return ViewHelper::failureMessage($this->o_people->getErrorMessage());
