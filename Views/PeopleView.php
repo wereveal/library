@@ -75,7 +75,6 @@ class PeopleView
      */
     public function renderList(array $a_message = array())
     {
-        $meth = __METHOD__ . '.';
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         try {
             $a_people = $this->o_people_model->read();

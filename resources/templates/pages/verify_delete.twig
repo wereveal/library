@@ -1,24 +1,41 @@
-{% extends '@' ~ page_prefix ~ 'default/base.twig' %}
+{% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ public_dir }}/assets/css/styles_manager.css" media="screen" />
+{% endblock %}
 {% block body %}
     <div class="container">
         <h1 class="smaller red">Please Verify</h1>
         <p class="alert alert-danger" role="alert">Please verify you wish to delete the {{ what }} '{{ name }}'.</p>
-        <form action="{{ public_dir }}{{ page_url }}" method="post" id="delete-form" class="pad-bottom">
+    {% if extra_message %}
+        <p class="alert alert-info" role="alert">{{ extra_message }}</p>
+    {% endif %}
+        <form action="{{ public_dir }}/manager/{% if where %}{{ where }}/{% endif %}" method="post" id="delete-form" class="col-sm-6 pad-bottom">
             <button type="submit" name="submit" value="delete" class="btn btn-danger btn-sm">Delete {{ btn_value }}</button>
-            <button type="submit" name="submit" value="cancel" class="btn btn-primary btn-sm">Cancel</button>
             <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
             <input type="hidden" name="tolken" value="{{ tolken }}" />
             <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-            <input type="text" name="hobbit" value="" class="hobbit" size="2" maxlength="2" />
+            <label for="hobbit" class="hobbit">Humans leave the following blank.</label>
+            <input type="text" id="hobbit" name="hobbit" value="" class="hobbit" size="2" maxlength="2" />
+        </form>
+        <form action="{{ public_dir }}/manager/{% if where %}{{ where }}/{% endif %}" method="post" class="col-sm-6 pad-bottom">
+            <button type="submit" name="submit" value="cancel" class="btn btn-primary btn-sm">Go Back, Don't Delete</button>
+            <input type="hidden" name="tolken" value="{{ tolken }}" />
+            <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+            <label for="hobbit" class="hobbit">Humans leave the following blank.</label>
+            <input type="text" id="hobbit" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+            <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
         </form>
     </div>
 {% endblock %}
+{# version 2.0 - added ability to go back to thing being deleted without deleting #}
 {# expected array
     [what,
      name,
+     extra_message
      public_dir,
      where,
      btn_value,
+     form_extras,
      hidden_name,
      hidden_value,
      tolken,

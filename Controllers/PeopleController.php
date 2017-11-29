@@ -27,8 +27,6 @@ use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Router;
-use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PeopleView;
@@ -81,7 +79,10 @@ class PeopleController implements ManagerControllerInterface
         $url_action    = isset($a_route_parts['url_actions'][0])
             ? $a_route_parts['url_actions'][0]
             : '';
-        if ($main_action == '' && $url_action != '') {
+        if ($main_action == '' && $form_action != '') {
+            $main_action = $form_action;
+        }
+        elseif ($main_action == '' && $url_action != '') {
             $main_action = $url_action;
         }
         if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
@@ -91,14 +92,20 @@ class PeopleController implements ManagerControllerInterface
         }
         $this->logIt('Post: ' . var_export($a_post, TRUE), LOG_OFF, $meth . __LINE__);
         switch ($main_action) {
+            case 'create':
             case 'new':
                 return $this->o_view->renderNew();
             case 'save':
                 $a_message = $this->save();
                 break;
             case 'modify':
-                $people_id = $a_post['people_id'];
-                return $this->o_view->renderModify($people_id);
+                if (!empty($a_post['people_id'])) {
+                    $people_id = $a_post['people_id'];
+                    return $this->o_view->renderModify($people_id);
+                }
+                break;
+            case 'verify':
+                return $this->verifyDelete();
             case 'update':
                 if ($form_action == 'verify') {
                     return $this->verifyDelete();
@@ -196,7 +203,7 @@ class PeopleController implements ManagerControllerInterface
      */
     public function verifyDelete()
     {
-        return $this->o_view->renderVerifyDelete($this->a_post);
+        return $this->o_view->renderVerifyDelete($this->a_post, $this->a_router_parts['request_uri']);
     }
 
     /**

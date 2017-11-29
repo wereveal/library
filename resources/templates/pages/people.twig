@@ -16,7 +16,7 @@
         <div class="col-md-12">
             <div class="row {{ class }}">
                 <div class="col-md-12">
-                <form action="{{ public_dir }}/manager/config/people/new/" method= "post">
+                <form action="{{ public_dir }}/manager/config/people/" method= "post">
                     <div class="row row-inside">
                         <div class="col-md-3 offset-md-9">
                             <button type="submit" name="submit" value="create" class="btn btn-primary btn-xs">Create New Person</button>
@@ -52,7 +52,7 @@
                             </div>
                             <div class="col-md-2">
                                 {% if adm_lvl >= person.auth_level %}
-                                <form action="{{ public_dir }}/manager/people/modify/" method="post">
+                                <form action="{{ public_dir }}/manager/people/" method="post">
                                     <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Modify</button>
                                     <input type="hidden" name="tolken" value="{{ tolken }}" />
                                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
