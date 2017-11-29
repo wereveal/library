@@ -5,11 +5,12 @@
  * @file      Ritc/Library/Helper/DatesTimes.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.0.2
- * @date      2016-02-22 15:08:38
+ * @version   3.1.0
+ * @date      2017-11-28 16:14:44
  * @note <b>Change Log</b>
- * - v3.0.2 - bug fix                                - 02/22/2016 wer
- * - v3.0.1 - moved to Ritc\Library\Helper namespace - 11/15/2014 wer
+ * - v3.1.0 - new method to convert timestamp to Y-m-d  - 2017-11-28 wer
+ * - v3.0.2 - bug fix                                   - 02/22/2016 wer
+ * - v3.0.1 - moved to Ritc\Library\Helper namespace    - 11/15/2014 wer
  * - v3.0.0 - FIG standards (mostly)
  */
 namespace Ritc\Library\Helper;
@@ -594,7 +595,18 @@ class DatesTimes
     }
 
     /**
-     * Convert timestamp to sql formated timestamp.
+     * Converts the date/timestamp to sql formatted date (Y-m-d).
+     * @param string $timestamp
+     * @return false|string
+     */
+    public static function convertToSqlDate($timestamp = '')
+    {
+        $timestamp = DatesTimes::convertToUnixTimestamp($timestamp);
+        return date("Y-m-d", (int) $timestamp);
+    }
+
+    /**
+     * Convert timestamp to sql formatted timestamp.
      * @param string $timestamp
      * @return bool|string
      */

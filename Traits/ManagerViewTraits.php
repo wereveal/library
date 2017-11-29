@@ -6,9 +6,10 @@
  * @file        ManagerViewTraits.php
  * @namespace   Ritc\Library\Traits
  * @author      William E Reveal <bill@revealitconsulting.com>
- * @version     3.1.0
- * @date        2017-07-04 13:35:33
+ * @version     3.2.0
+ * @date        2017-11-28 14:43:52
  * @note <b>Change Log</b>
+ * - v3.2.0 - trying to make this more generic                                      - 2017-11-28 wer
  * - v3.1.0 - Reverted name back to ManagerViewTraits                               - 2017-07-04 wer
  * - v3.0.0 - Renamed trait                                                         - 2017-06-20 wer
  * - v2.1.0 - changed method to use the twig value for tpl                          - 2017-05-10 wer
@@ -77,15 +78,16 @@ trait ManagerViewTraits
         $a_message = empty($a_options['a_message'])
             ? []
             : $a_options['a_message'];
-        $location = empty($a_options['location'])
-            ? '/manager/'
-            : $a_options['location'];
+        $location = !empty($a_options['location'])
+            ? $a_options['location']
+            : '';
         $a_twig_values = $this->createDefaultTwigValues($a_message, $location);
+        $a_twig_values['where'] = empty($a_options['where'])
+            ? empty($a_twig_values['where']) ? '' : $a_twig_values['where']
+            : $a_options['where'];
         $a_twig_values['tpl'] = empty($a_options['tpl'])
-            ? 'verify_delete'
+            ? empty($a_twig_values['tpl']) ? '' : $a_twig_values['tpl']
             : $a_options['tpl'];
-
-        $a_twig_values = array_merge($a_twig_values, $a_values);
         $tpl = $this->createTplString($a_twig_values);
         return $this->o_twig->render($tpl, $a_twig_values);
     }
