@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-beta.11
- * @date      2017-06-20 11:42:28
+ * @version   1.0.0
+ * @date      2017-11-29 21:03:14
  * @note <b>Change Log</b>
+ * - v1.0.0         - added method to handle TWIG exceptions (took out of beta finally)         - 2017-11-29 wer
  * - v1.0.0-beta.11 - refactoring elsewhere reflected here.                                     - 2017-06-20 wer
  * - v1.0.0-beta.10 - refactoring elsewhere reflected here.                                     - 2017-06-10 wer
  * - v1.0.0-beta.9  - modified createDefaultTwigValues and getPageValues to optionally take a   - 2017-05-30 wer
@@ -89,6 +90,43 @@ trait ViewTraits
     }
 
     /**
+     * The generic method to actually do the Twig rendering.
+     * @param $tpl
+     * @param $a_twig_values
+     * @return string
+     */
+    public function renderIt($tpl, $a_twig_values)
+    {
+        try {
+            return $this->o_twig->render($tpl, $a_twig_values);
+        }
+        catch (\Twig_Error_Loader $e) {
+            if (DEVELOPER_MODE) {
+                return 'Error: ' . $e->getMessage();
+            }
+            else {
+                return '';
+            }
+        }
+        catch(\Twig_Error_Syntax $e) {
+            if (DEVELOPER_MODE) {
+                return 'Error: ' . $e->getMessage();
+            }
+            else {
+                return '';
+            }
+        }
+        catch(\Twig_Error_Runtime $e) {
+            if (DEVELOPER_MODE) {
+                return 'Error: ' . $e->getMessage();
+            }
+            else {
+                return '';
+            }
+        }
+    }
+
+    /**
      * Renders the error page.
      * @param array $a_message
      * @return string
@@ -98,7 +136,7 @@ trait ViewTraits
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['tpl'] = 'error';
         $tpl = $this->createTplString($a_twig_values);
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
