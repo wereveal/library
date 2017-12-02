@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-11-29 21:03:14
+ * @version   1.0.1
+ * @date      2017-12-02 09:22:20
  * @note <b>Change Log</b>
+ * - v1.0.1         - bug fix, missed an exception handler for ModelException                   - 2017-12-02 wer
  * - v1.0.0         - added method to handle TWIG exceptions (took out of beta finally)         - 2017-11-29 wer
  * - v1.0.0-beta.11 - refactoring elsewhere reflected here.                                     - 2017-06-20 wer
  * - v1.0.0-beta.10 - refactoring elsewhere reflected here.                                     - 2017-06-10 wer
@@ -462,8 +463,13 @@ trait ViewTraits
             }
         }
         if (!is_numeric($navgroup)) {
-            $navgroup = $o_ng->readIdByName($navgroup);
-            if (empty($navgroup)) {
+            try {
+                $navgroup = $o_ng->readIdByName($navgroup);
+                if (empty($navgroup)) {
+                    return [];
+                }
+            }
+            catch (ModelException $e) {
                 return [];
             }
         }

@@ -6,9 +6,10 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.1.1
- * @date      2017-11-16 14:17:46  
+ * @version   5.1.2
+ * @date      2017-12-02 08:20:42
  * @note <b>Change Log</b>
+ * - v5.1.2 - bug fixes - better exception handling.                                        - 2017-12-02 wer
  * - v5.1.1 - Bug fix                                                                       - 2017-11-16 wer
  * - v5.1.0 - Method name change to match standard for method names							- 2017-10-18 wer
  * - v5.0.1 - Bug fixes                                                                     - 2017-07-13 wer
@@ -615,7 +616,12 @@ class DbModel
     public function commitTransaction()
     {
         try {
-            return $this->o_pdo->commit();
+            if ($this->o_pdo->commit()) {
+                return true;
+            }
+            else {
+                throw new ModelException('Unable to commit the transaction.', 40);
+            }
         }
         catch (\PDOException $e) {
             throw new ModelException($e->getMessage(), 60, $e);
@@ -835,7 +841,12 @@ class DbModel
     public function rollbackTransaction()
     {
         try {
-            return $this->o_pdo->rollBack();
+            if ($this->o_pdo->rollBack()) {
+                return true;
+            }
+            else {
+                throw new ModelException("Could not rollback the transaction.", 45);
+            }
         }
         catch (\PDOException $e) {
             throw new ModelException($e->getMessage(), 60);
@@ -866,10 +877,15 @@ class DbModel
     public function startTransaction()
     {
         try {
-            return $this->o_pdo->beginTransaction();
+            if ($this->o_pdo->beginTransaction()) {
+                return true;
+            }
+            else {
+                throw new ModelException('Unable to start the transaction.', 30);
+            }
         }
         catch (\PDOException $e) {
-            throw new ModelException('Unable to start the transaction.', 30, $e);
+            throw new ModelException('Unable to start the transaction.', 60, $e);
         }
     }
 

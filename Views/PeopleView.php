@@ -5,9 +5,11 @@
  * @file      PeopleView
  * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.1.0
- * @date      2017-06-20 11:47:18
+ * @version   3.0.0
+ * @date      2017-12-02 09:15:58
  * @note <b>Change Log</b>
+ * - v3.0.0   - major changes to utilize the ConfigViewTraits                           - 2017-12-02 wer
+ *              This should make the view more portable.
  * - v2.1.0   - method name changed elsewhere forced change here.                       - 2017-06-20 wer
  *              ModelException handling added.
  * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
@@ -17,7 +19,6 @@
  * - v1.0.0   - Initial non-beta version                                                - 11/12/2015 wer
  * - v1.0.0β2 - Changed to use DI/IOC                                                   - 11/15/2014 wer
  * - v1.0.0β1 - Initial version                                                         - 11/13/2014 wer
- * @todo refactor to use ViewTraits or ConfigViewTraits
  */
 namespace Ritc\Library\Views;
 
@@ -62,10 +63,12 @@ class PeopleView
         $this->o_group_model    = new GroupsModel($this->o_db);
         $this->o_pgm_model      = new PeopleGroupMapModel($this->o_db);
         $this->o_people_complex = new PeopleComplexModel($this->o_db);
-        $this->o_people_model->setElog($this->o_elog);
-        $this->o_group_model->setElog($this->o_elog);
-        $this->o_pgm_model->setElog($this->o_elog);
-        $this->o_people_complex->setElog($this->o_elog);
+        if (DEVELOPER_MODE) {
+            $this->o_people_model->setElog($this->o_elog);
+            $this->o_group_model->setElog($this->o_elog);
+            $this->o_pgm_model->setElog($this->o_elog);
+            $this->o_people_complex->setElog($this->o_elog);
+        }
     }
 
     /**
@@ -90,7 +93,7 @@ class PeopleView
                 $a_message['type'] = 'error';
             }
         }
-        if ($a_people !== false) {
+        if (!empty($a_people)) {
             foreach($a_people as $key => $a_person) {
                 $highest_auth_level = $this->o_auth->getHighestAuthLevel($a_person['people_id']);
                 $a_people[$key]['auth_level'] = $highest_auth_level;
@@ -106,8 +109,7 @@ class PeopleView
             $a_twig_values['a_message'] = ViewHelper::fullMessage($a_message);
         }
         $tpl = $this->createTplString($a_twig_values);
-        $html = $this->o_twig->render($tpl, $a_twig_values);
-        return $html;
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
@@ -117,8 +119,25 @@ class PeopleView
     public function renderNew()
     {
         $meth = __METHOD__ . '.';
-        $a_route_values = $this->a_router_parts;
-        $a_twig_values = $this-createDefaultTwigValues();
+        $a_message = [];
+        $a_groups = [];
+        try {
+            $a_groups = $this->o_group_model->read();
+            if (empty($a_groups)) {
+                $a_message = ViewHelper::errorMessage('A problem occurred. Please try again.');
+            }
+            else {
+                $log_message = 'A group values: ' . var_export($a_groups, true);
+                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+                foreach ($a_groups as $key => $a_group) {
+                    $a_groups[$key]['checked'] = '';
+                }
+            }
+        }
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage('A problem occurred. Please try again.');
+        }
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['person'] = [
             'people_id'    => '',
             'login_id'     => '',
@@ -133,17 +152,11 @@ class PeopleView
             'highest_role' => 0
         ];
 
-        $a_groups = $this->o_group_model->read();
-        $log_message = 'A group values: ' . var_export($a_groups, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        foreach ($a_groups as $key => $a_group) {
-            $a_groups[$key]['checked'] = '';
-        }
         $a_twig_values['person']['groups'] = $a_groups;
         $log_message = 'A person values: ' . var_export($a_twig_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
-        return $this->o_twig->render($tpl, $a_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
@@ -155,44 +168,32 @@ class PeopleView
     {
         $meth = __METHOD__ . '.';
         if ($people_id == -1) {
-            return $this->renderList(['message' => 'A Problem Has Occured. Please Try Again.', 'type' => 'error']);
+            $a_message = ViewHelper::errorMessage('A Problem Has Occured. Please Try Again.');
+            return $this->renderList($a_message);
         }
-        $a_page_values = $this->getPageValues();
-        $a_values = [
-            'a_message'   => [],
-            'person'      => [
-                [
-                    'people_id'    => '',
-                    'login_id'     => '',
-                    'real_name'    => '',
-                    'short_name'   => '',
-                    'description'  => '',
-                    'password'     => '',
-                    'is_active'    => 0,
-                    'is_immutable' => 0,
-                    'created_on'   => date('Y-m-d H:i:s'),
-                    'groups'       => [],
-                    'highest_role' => 0
-                ]
-            ],
-            'action'      => 'update',
-            'tolken'      => $_SESSION['token'],
-            'form_ts'     => $_SESSION['idle_timestamp'],
-            'hobbit'      => '',
-            'adm_lvl'     => $this->adm_level,
-            'a_menus'     => $this->a_nav,
-            'twig_prefix' => LIB_TWIG_PREFIX
-        ];
-        $a_values = array_merge($a_page_values, $a_values);
-
-        $log_message = 'a_values: ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        $a_person = $this->o_people_complex->readInfo($people_id);
-        if ($a_person == array()) {
-            return $this->renderList(['message' => 'The person was not found. Please Try Again.', 'type' => 'error']);
+        try {
+            $a_person = $this->o_people_complex->readInfo($people_id);
+            if (empty($a_person)) {
+                $a_message = ViewHelper::errorMessage('The person was not found. Please Try Again.');
+                return $this->renderList($a_message);
+            }
         }
-        $a_default_groups = $this->o_group_model->read();
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage('The person was not found. Please Try Again.');
+            $this->logIt("Exception Error: " . $e->errorMessage(), LOG_OFF, $meth . __LINE__);
+            return $this->renderList($a_message);
+        }
+        try {
+            $a_default_groups = $this->o_group_model->read();
+            if (empty($a_default_groups)) {
+                $a_message = ViewHelper::errorMessage('An error occurred, please try again.');
+                return $this->renderList($a_message);
+            }
+        }
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage('An error occurred, please try again.');
+            return $this->renderList($a_message);
+        }
         foreach ($a_default_groups as $key => $a_group) {
             $a_default_groups[$key]['checked'] = '';
         }
@@ -209,9 +210,10 @@ class PeopleView
         $a_person['groups'] = $a_default_groups;
         $a_person['password'] = '************';
         $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, __METHOD__);
-        $a_values['person'] = $a_person;
-        $this->logIt('twig values' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/person_form.twig';
-        return $this->o_twig->render($tpl, $a_values);
+        $a_twig_values = $this->createDefaultTwigValues();
+        $a_twig_values['person'] = $a_person;
+        $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_OFF, $meth . __LINE__);
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 }

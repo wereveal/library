@@ -20,8 +20,7 @@
  */
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Helper\Arrays;
-use Ritc\Library\Helper\Strings;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\PeopleComplexModel;
@@ -71,27 +70,10 @@ class PeopleController implements ManagerControllerInterface
      */
     public function route()
     {
-        $meth = __METHOD__ . '.';
-        $a_route_parts = $this->a_router_parts;
         $a_post        = $this->a_post;
-        $main_action   = $a_route_parts['route_action'];
-        $form_action   = $a_route_parts['form_action'];
-        $url_action    = isset($a_route_parts['url_actions'][0])
-            ? $a_route_parts['url_actions'][0]
-            : '';
-        if ($main_action == '' && $form_action != '') {
-            $main_action = $form_action;
-        }
-        elseif ($main_action == '' && $url_action != '') {
-            $main_action = $url_action;
-        }
-        if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
-            if ($this->o_session->isNotValidSession($this->a_post, true)) {
-                header("Location: " . SITE_URL . '/manager/login/');
-            }
-        }
-        $this->logIt('Post: ' . var_export($a_post, TRUE), LOG_OFF, $meth . __LINE__);
-        switch ($main_action) {
+        $form_action   = $this->form_action;
+        $this->logIt('Post: ' . var_export($a_post, TRUE), LOG_OFF, __METHOD__);
+        switch ($form_action) {
             case 'create':
             case 'new':
                 return $this->o_view->renderNew();
@@ -100,22 +82,14 @@ class PeopleController implements ManagerControllerInterface
                 break;
             case 'modify':
                 if (!empty($a_post['people_id'])) {
-                    $people_id = $a_post['people_id'];
-                    return $this->o_view->renderModify($people_id);
+                    return $this->o_view->renderModify($a_post['people_id']);
                 }
+                $a_message = ViewHelper::failureMessage('An error occurred and the person could not be modified.');
                 break;
             case 'verify':
                 return $this->verifyDelete();
             case 'update':
-                if ($form_action == 'verify') {
-                    return $this->verifyDelete();
-                }
-                elseif ($form_action == 'update') {
-                    $a_message = $this->update();
-                }
-                else {
-                    $a_message = ViewHelper::failureMessage('A problem has occured. Could not determine action');
-                }
+                $a_message = $this->update();
                 break;
             case 'delete':
                 $a_message = $this->delete();
@@ -134,7 +108,7 @@ class PeopleController implements ManagerControllerInterface
      */
     public function save()
     {
-        $a_person = $this->o_complex->createPersonArray($this->a_post);
+        $a_person = $this->o_complex->createNewPersonArray($this->a_post);
         switch ($a_person) {
             case 'login-missing':
                 return ViewHelper::failureMessage("Opps, the person was not saved -- missing Login ID.");
@@ -155,6 +129,7 @@ class PeopleController implements ManagerControllerInterface
                     if ($results === false) {
                         return ViewHelper::failureMessage("Opps, the person was not saved.");
                     }
+                    return ViewHelper::successMessage("Success, the person was saved.");
                 }
                 catch (ModelException $e) {
                     return ViewHelper::failureMessage("Opps, the person was not saved." . $e->errorMessage());
@@ -170,12 +145,20 @@ class PeopleController implements ManagerControllerInterface
     {
         $meth = __METHOD__ . '.';
         $a_person = $this->a_post['person'];
-        $a_person = $this->setPersonValues($a_person);
+        $a_person = $this->o_complex->setPersonValues($a_person);
         $addendum = '';
-        if ($a_person === false) {
-            return ViewHelper::failureMessage("Opps, the person was not updated.");
+        if ($a_person == 'login-missing') {
+            return ViewHelper::failureMessage("Opps, the person was not saved -- missing Login ID.");
         }
-        $a_previous_values = $this->o_people->read(['people_id' => $a_person['people_id']]);
+        elseif ($a_person == 'password-missing') {
+            return ViewHelper::failureMessage("Opps, the person was not saved -- missing password.");
+        }
+        try {
+            $a_previous_values = $this->o_people->read(['people_id' => $a_person['people_id']]);
+        }
+        catch (ModelException $e) {
+            return ViewHelper::failureMessage("The person could not be found in the database.");
+        }
         if ($a_previous_values[0]['login_id'] !== $a_person['login_id']) {
             if ($this->o_people->isExistingLoginId($a_person['login_id'])) {
                 $a_person['login_id'] = $a_previous_values[0]['login_id'];
@@ -193,13 +176,19 @@ class PeopleController implements ManagerControllerInterface
         }
         $a_person['groups'] = $this->a_post['groups'];
         $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
-        if ($this->o_complex->savePerson($a_person) !== false) {
-            if ($addendum != '') {
-                $addendum = '<br><b class="red">However' . $addendum . '</b>';
+        try {
+            $results = $this->o_complex->savePerson($a_person);
+            if ($results !== false) {
+                if ($addendum != '') {
+                    $addendum = '<br><b class="red">However' . $addendum . '</b>';
+                }
+                return ViewHelper::successMessage("Success! The person was updated." . $addendum);
             }
-            return ViewHelper::successMessage("Success! The person was updated." . $addendum);
+            return ViewHelper::failureMessage("Opps, the person was not updated.");
         }
-        return ViewHelper::failureMessage("Opps, the person was not updated.");
+        catch (ModelException $e) {
+            return ViewHelper::failureMessage("Opps, the person was not updated.");
+        }
     }
 
     /**
@@ -217,91 +206,14 @@ class PeopleController implements ManagerControllerInterface
      */
     public function delete()
     {
-        if ($this->o_complex->deletePerson($this->a_post['people_id'])) {
-            return ViewHelper::successMessage();
-        }
-        return ViewHelper::failureMessage($this->o_people->getErrorMessage());
-    }
-
-    ### Utility Methods ###
-    /**
-     * Creates a short name/alias if none is provided
-     * @param  string $long_name
-     * @return string the short name.
-     */
-    private function createShortName($long_name = '')
-    {
-        if (strpos($long_name, ' ') !== false) {
-            $a_real_name = explode(' ', $long_name);
-            $short_name = '';
-            foreach($a_real_name as $name) {
-                $short_name .= strtoupper(substr($name, 0, 1));
+        try {
+            if ($this->o_complex->deletePerson($this->a_post['people_id'])) {
+                return ViewHelper::successMessage();
             }
+            return ViewHelper::failureMessage($this->o_people->getErrorMessage());
         }
-        else {
-            $short_name = strtoupper(substr($long_name, 0, 8));
+        catch (ModelException $e) {
+            return ViewHelper::failureMessage($e->errorMessage());
         }
-        if ($this->o_people->isExistingShortName($short_name)) {
-            $short_name = $this->createShortName(substr($short_name, 0, 6) . rand(0,99));
-        }
-        return $short_name;
-    }
-
-    /**
-     * Returns an array to be used to create or update a people record.
-     * @param array $a_person
-     * @return array|bool
-     */
-    private function setPersonValues(array $a_person = array())
-    {
-        $a_required_keys = array(
-            'login_id',
-            'password'
-        );
-        if (Arrays::hasBlankValues($a_person, $a_required_keys)) {
-            return false;
-        }
-        $a_fix_these = ['login_id', 'real_name', 'short_name', 'description'];
-        foreach ($a_fix_these as $key) {
-            if (isset($a_person[$key])) {
-                $a_person[$key] = Strings::removeTagsWithDecode($a_person[$key], ENT_QUOTES);
-                if ($key == 'short_name') {
-                    $a_person[$key] = Strings::makeAlphanumeric($a_person[$key]);
-                }
-            }
-        }
-        $a_person['login_id'] = Strings::makeAlphanumericPlus($a_person['login_id']);
-
-        $a_allowed_keys   = $a_required_keys;
-        $a_allowed_keys[] = 'real_name';
-        $a_allowed_keys[] = 'people_id';
-        $a_allowed_keys[] = 'short_name';
-        $a_allowed_keys[] = 'description';
-        $a_allowed_keys[] = 'is_logged_in';
-        $a_allowed_keys[] = 'is_active';
-        $a_allowed_keys[] = 'is_immutable';
-        $a_person = Arrays::createRequiredPairs($a_person, $a_allowed_keys, true);
-        if ($a_person['real_name'] == '') {
-            $a_person['real_name'] = $a_person['login_id'];
-        }
-        if ($a_person['short_name'] == '' || !isset($a_person['short_name'])) {
-            $a_person['short_name'] = $this->createShortName($a_person['real_name']);
-        }
-        $a_person['is_logged_in'] = isset($a_person['is_logged_in']) && $a_person['is_logged_in'] == 'true'
-            ? 1
-            : 0;
-        $a_person['is_active'] = isset($a_person['is_active']) && $a_person['is_active'] == 'true'
-            ? 1
-            : 0;
-        $a_person['is_immutable'] = isset($a_person['is_immutable']) && $a_person['is_immutable'] == 'true'
-            ? 1
-            : 0;
-        if ($a_person['people_id'] == '') {
-            unset($a_person['people_id']); // this must be a new person.
-        }
-        if (!isset($a_person['people_id']) && $a_person['login_id'] == '') {
-            return false;
-        }
-        return $a_person;
     }
 }

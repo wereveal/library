@@ -5,9 +5,10 @@
  * @file      ControllerTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.2+1
- * @date      2017-05-20 11:26:18
+ * @version   1.1.3
+ * @date      2017-12-02 08:51:44
  * @note Change Log
+ * - v1.1.3         - cleaned up some code, no functional changes               - 2017-12-02 wer
  * - v1.1.2         - added a commonly used property route_class                - 2017-05-10 wer
  * - v1.1.1         - added a commonly used property                            - 2017-02-06 wer
  * - v1.1.0         - added a commonly used property                            - 2016-09-09 wer
@@ -102,7 +103,7 @@ trait ControllerTraits
             $this->a_url_actions  = $a_router_parts['url_actions'];
             $this->url_action_one = $a_router_parts['url_actions'][0];
         }
-        if ($a_router_parts['route_action'] != '') {
+        if ($this->route_action != '') {
             $this->main_action = $a_router_parts['route_action'];
         }
         elseif ($this->url_action_one != '') {

@@ -6,9 +6,10 @@
  * @file        ManagerViewTraits.php
  * @namespace   Ritc\Library\Traits
  * @author      William E Reveal <bill@revealitconsulting.com>
- * @version     3.2.0
- * @date        2017-11-28 14:43:52
+ * @version     3.2.1
+ * @date        2017-12-02 09:19:53
  * @note <b>Change Log</b>
+ * - v3.2.1 - bug fix for TwigExceptions now handled by new method in ViewTraits    - 2017-12-02 wer
  * - v3.2.0 - trying to make this more generic                                      - 2017-11-28 wer
  * - v3.1.0 - Reverted name back to ManagerViewTraits                               - 2017-07-04 wer
  * - v3.0.0 - Renamed trait                                                         - 2017-06-20 wer
@@ -57,7 +58,7 @@ trait ManagerViewTraits
             : $a_values['tpl'];
         $tpl = $this->createTplString($a_twig_values);
 
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
@@ -89,6 +90,6 @@ trait ManagerViewTraits
             ? empty($a_twig_values['tpl']) ? '' : $a_twig_values['tpl']
             : $a_options['tpl'];
         $tpl = $this->createTplString($a_twig_values);
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 }

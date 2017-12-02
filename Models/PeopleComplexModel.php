@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.4
- * @date      2017-06-17 13:14:14
+ * @version   1.0.0-alpha.5
+ * @date      2017-12-02 08:23:31
  * @note Change Log
+ * - v1.0.0-alpha.5 - Moved some business logic from controller to here     - 2017-12-02 wer
  * - v1.0.0-alpha.4 - Refactored to use ModelException                      - 2017-06-17 wer
  * - v1.0.0-alpha.3 - Bug fix                                               - 2017-05-16 wer
  * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here                 - 2017-05-09 wer
@@ -77,7 +78,7 @@ class PeopleComplexModel
             $this->o_db->startTransaction();
         }
         catch (ModelException $e) {
-            throw new ModelException('Unable to start transaction', 30);
+            throw new ModelException('Unable to start transaction', $e->getCode(), $e);
         }
         try {
             $this->o_pgm->deleteByPeopleId($people_id);
@@ -85,24 +86,24 @@ class PeopleComplexModel
                 $this->o_people->delete($people_id);
                 try {
                     $this->o_db->commitTransaction();
-                    return true;
                 }
                 catch (ModelException $e) {
-                    $this->error_message = "Could not commit the transaction.";
-                    $error_code = 40;
+                    $this->o_db->rollbackTransaction();
+                    throw new ModelException($e->errorMessage(), $e->getCode(), $e);
                 }
             }
             catch (ModelException $e) {
                 $this->error_message = 'Unable to delete the people record: ' . $this->o_db->getSqlErrorMessage();
-                $error_code = $e->getCode();
+                $this->o_db->rollbackTransaction();
+                throw new ModelException($this->error_message, $e->getCode(), $e);
             }
         }
         catch (ModelException $e) {
             $this->error_message = 'Unable to delete the pgm record'.  $this->o_pgm->getErrorMessage();
-            $error_code = $e->getCode();
+            $this->o_db->rollbackTransaction();
+            throw new ModelException($this->error_message, $e->getCode(), $e);
         }
-        $this->o_db->rollbackTransaction();
-        throw new ModelException($this->error_message, $error_code, $e);
+        return true;
     }
 
     /**
@@ -314,6 +315,9 @@ class PeopleComplexModel
             }
             try {
                 $a_ids = $this->o_people->create($a_person);
+                if (empty($a_ids[0])) {
+                    throw new ModelException('Unable to save the new person, unknown error.');
+                }
                 $new_people_id = $a_ids[0];
                 $a_pgm_values = $this->makePgmArray($new_people_id, $a_groups);
                 if (empty($a_pgm_values)) {
@@ -355,8 +359,13 @@ class PeopleComplexModel
                 if ($a_person[$key_name] == '') {
                     switch ($key_name) {
                         case 'people_id':
+                            $this->error_message = 'Missing people_id.';
+                            return false;
                         case 'login_id':
+                            $this->error_message = 'Missing login id.';
+                            return false;
                         case 'password':
+                            $this->error_message = 'Missing password.';
                             return false;
                         case 'real_name':
                             $a_person['real_name'] = $a_person['login_id'];
@@ -413,13 +422,19 @@ class PeopleComplexModel
         throw new ModelException('Unable to save the person. ' . $this->error_message, 100);
     }
 
-    ### Business Logic Part ###
-    public function createPersonArray(array $a_values = [])
+    ### Business Logic & Utilities ###
+    /**
+     * Creates the array used to save a new person to the database.
+     * Values passed in are normally from a POSTed form that have been sanitized.
+     * @param array $a_values
+     * @return array|bool|mixed|string
+     */
+    public function createNewPersonArray(array $a_values = [])
     {
         $meth = __METHOD__ . '.';
-        $a_person = $this->a_values['person'];
+        $a_person = $a_values['person'];
         $a_person = $this->setPersonValues($a_person);
-        if (!is_array($a_person)) {
+        if (!is_array($a_person)) { // then it should be a string describing the error from setPersonValues.
             return $a_person;
         }
         if ($this->o_people->isExistingLoginId($a_person['login_id'])) {
@@ -431,21 +446,20 @@ class PeopleComplexModel
         else {
             $a_person['short_name'] = $this->createShortName($a_person['short_name']);
         }
-        if (!isset($this->a_values['groups']) || count($this->a_values['groups']) < 1) {
+        if (!isset($a_values['groups']) || count($a_values['groups']) < 1) {
             return 'group-missing';
         }
-        $a_person['groups'] = $this->a_values['groups'];
+        $a_person['groups'] = $a_values['groups'];
         $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
         return $a_person;
     }
-    
-    ### Utility Functions ###
+
     /**
      * Creates a short name/alias if none is provided
      * @param  string $long_name
      * @return string the short name.
      */
-    private function createShortName($long_name = '')
+    public function createShortName($long_name = '')
     {
         if (strpos($long_name, ' ') !== false) {
             $a_real_name = explode(' ', $long_name);
@@ -475,16 +489,10 @@ class PeopleComplexModel
             $a_group_ids = $group_id;
         }
         elseif ($group_id != '') {
-            try {
-               $results = $this->o_group->isValidGroupId($group_id);
-               $a_group_ids = $results
-                   ? array($group_id)
-                   : array();
-
-            }
-            catch (ModelException $e) {
-                $a_group_ids = array();
-            }
+           $results = $this->o_group->isValidGroupId($group_id);
+           $a_group_ids = $results
+               ? array($group_id)
+               : array();
         }
         else {
             $a_group_ids = array();
@@ -532,8 +540,9 @@ class PeopleComplexModel
 
     /**
      * Returns an array to be used to create or update a people record.
+     * Values in are normally from a POSTed form.
      * @param array $a_person
-     * @return array|bool
+     * @return array|string
      */
     public function setPersonValues(array $a_person = array())
     {
@@ -545,7 +554,7 @@ class PeopleComplexModel
             if (empty($a_person['login_id'])) {
                 return 'login-missing';
             }
-            return return 'password-missing';
+            return 'password-missing';
         }
         $a_fix_these = ['login_id', 'real_name', 'short_name', 'description'];
         foreach ($a_fix_these as $key) {
@@ -590,5 +599,4 @@ class PeopleComplexModel
         }
         return $a_person;
     }
-
 }
