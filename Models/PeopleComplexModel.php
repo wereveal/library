@@ -18,6 +18,7 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -412,7 +413,56 @@ class PeopleComplexModel
         throw new ModelException('Unable to save the person. ' . $this->error_message, 100);
     }
 
+    ### Business Logic Part ###
+    public function createPersonArray(array $a_values = [])
+    {
+        $meth = __METHOD__ . '.';
+        $a_person = $this->a_values['person'];
+        $a_person = $this->setPersonValues($a_person);
+        if (!is_array($a_person)) {
+            return $a_person;
+        }
+        if ($this->o_people->isExistingLoginId($a_person['login_id'])) {
+            return 'login-exists';
+        }
+        if ($this->o_people->isExistingShortName($a_person['short_name'])) {
+            return 'short-exists';
+        }
+        else {
+            $a_person['short_name'] = $this->createShortName($a_person['short_name']);
+        }
+        if (!isset($this->a_values['groups']) || count($this->a_values['groups']) < 1) {
+            return 'group-missing';
+        }
+        $a_person['groups'] = $this->a_values['groups'];
+        $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
+        return $a_person;
+    }
+    
     ### Utility Functions ###
+    /**
+     * Creates a short name/alias if none is provided
+     * @param  string $long_name
+     * @return string the short name.
+     */
+    private function createShortName($long_name = '')
+    {
+        if (strpos($long_name, ' ') !== false) {
+            $a_real_name = explode(' ', $long_name);
+            $short_name = '';
+            foreach($a_real_name as $name) {
+                $short_name .= strtoupper(substr($name, 0, 1));
+            }
+        }
+        else {
+            $short_name = strtoupper(substr($long_name, 0, 8));
+        }
+        if ($this->o_people->isExistingShortName($short_name)) {
+            $short_name = $this->createShortName(substr($short_name, 0, 6) . rand(0,99));
+        }
+        return $short_name;
+    }
+
     /**
      * Returns an array used in the creation of people group map records.
      * @param array $group_id
@@ -478,6 +528,67 @@ class PeopleComplexModel
             $a_return_map[] = ['people_id' => $people_id, 'group_id' => $group_id];
         }
         return $a_return_map;
+    }
+
+    /**
+     * Returns an array to be used to create or update a people record.
+     * @param array $a_person
+     * @return array|bool
+     */
+    public function setPersonValues(array $a_person = array())
+    {
+        $a_required_keys = array(
+            'login_id',
+            'password'
+        );
+        if (Arrays::hasBlankValues($a_person, $a_required_keys)) {
+            if (empty($a_person['login_id'])) {
+                return 'login-missing';
+            }
+            return return 'password-missing';
+        }
+        $a_fix_these = ['login_id', 'real_name', 'short_name', 'description'];
+        foreach ($a_fix_these as $key) {
+            if (isset($a_person[$key])) {
+                $a_person[$key] = Strings::removeTagsWithDecode($a_person[$key], ENT_QUOTES);
+                if ($key == 'short_name') {
+                    $a_person[$key] = Strings::makeAlphanumeric($a_person[$key]);
+                }
+            }
+        }
+        $a_person['login_id'] = Strings::makeAlphanumericPlus($a_person['login_id']);
+
+        $a_allowed_keys   = $a_required_keys;
+        $a_allowed_keys[] = 'real_name';
+        $a_allowed_keys[] = 'people_id';
+        $a_allowed_keys[] = 'short_name';
+        $a_allowed_keys[] = 'description';
+        $a_allowed_keys[] = 'is_logged_in';
+        $a_allowed_keys[] = 'is_active';
+        $a_allowed_keys[] = 'is_immutable';
+        $a_person = Arrays::createRequiredPairs($a_person, $a_allowed_keys, true);
+        if ($a_person['real_name'] == '') {
+            $a_person['real_name'] = $a_person['login_id'];
+        }
+        if ($a_person['short_name'] == '' || !isset($a_person['short_name'])) {
+            $a_person['short_name'] = $this->createShortName($a_person['real_name']);
+        }
+        $a_person['is_logged_in'] = isset($a_person['is_logged_in']) && $a_person['is_logged_in'] == 'true'
+            ? 1
+            : 0;
+        $a_person['is_active'] = isset($a_person['is_active']) && $a_person['is_active'] == 'true'
+            ? 1
+            : 0;
+        $a_person['is_immutable'] = isset($a_person['is_immutable']) && $a_person['is_immutable'] == 'true'
+            ? 1
+            : 0;
+        if ($a_person['people_id'] == '') {
+            unset($a_person['people_id']); // this must be a new person.
+        }
+        if (!isset($a_person['people_id']) && $a_person['login_id'] == '') {
+            return 'login-missing';
+        }
+        return $a_person;
     }
 
 }

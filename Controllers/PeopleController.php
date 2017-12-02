@@ -134,27 +134,32 @@ class PeopleController implements ManagerControllerInterface
      */
     public function save()
     {
-        $meth = __METHOD__ . '.';
-        $a_person = $this->a_post['person'];
-        $a_person = $this->setPersonValues($a_person);
-        if ($a_person === false) {
-            return ViewHelper::failureMessage("Opps, the person was not saved -- missing information, either Login ID or Name.");
+        $a_person = $this->o_complex->createPersonArray($this->a_post);
+        switch ($a_person) {
+            case 'login-missing':
+                return ViewHelper::failureMessage("Opps, the person was not saved -- missing Login ID.");
+            case 'name-missing':
+                return ViewHelper::failureMessage("Opps, the person was not saved -- missing Name.");
+            case 'password-missing':
+                return ViewHelper::failureMessage("Opps, the person was not saved -- missing password.");
+            case 'login-exists':
+                return ViewHelper::failureMessage("Opps, the person was not saved -- the login id already exists.");
+            case 'short-exists':
+                return ViewHelper::failureMessage("Opps, the person was not saved -- the short name already exists.");
+            case 'group-missing':
+                return ViewHelper::failureMessage("Opps, the person was not saved -- missing at least one group.");
+            case true:
+            default:
+                try {
+                    $results = $this->o_complex->savePerson($a_person);
+                    if ($results === false) {
+                        return ViewHelper::failureMessage("Opps, the person was not saved.");
+                    }
+                }
+                catch (ModelException $e) {
+                    return ViewHelper::failureMessage("Opps, the person was not saved." . $e->errorMessage());
+                }
         }
-        if ($this->o_people->isExistingLoginId($a_person['login_id'])) {
-            return ViewHelper::failureMessage("Opps, the Login ID already exists.");
-        }
-        if ($this->o_people->isExistingShortName($a_person['short_name'])) {
-            $a_person['short_name'] = $this->createShortName($a_person['short_name']);
-        }
-        if (!isset($this->a_post['groups']) || count($this->a_post['groups']) < 1) {
-            return ViewHelper::failureMessage("Opps, the person was not saved. The person must be assigned to at least one group.");
-        }
-        $a_person['groups'] = $this->a_post['groups'];
-        $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
-        if ($this->o_complex->savePerson($a_person) !== false) {
-            return ViewHelper::successMessage("Success! The person was saved.");
-        }
-        return ViewHelper::failureMessage("Opps, the person was not saved.");
     }
 
     /**
