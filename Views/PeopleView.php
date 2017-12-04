@@ -151,7 +151,7 @@ class PeopleView
             'groups'       => [],
             'highest_role' => 0
         ];
-
+        $a_twig_values['action'] = 'create';
         $a_twig_values['person']['groups'] = $a_groups;
         $log_message = 'A person values: ' . var_export($a_twig_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
@@ -212,6 +212,7 @@ class PeopleView
         $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, __METHOD__);
         $a_twig_values = $this->createDefaultTwigValues();
         $a_twig_values['person'] = $a_person;
+        $a_twig_values['action'] = 'update';
         $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
