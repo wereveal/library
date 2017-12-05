@@ -1,214 +1,206 @@
-{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
+{% block current_date %}{% endblock %}
 {% block body %}
-<div class="row border-radius-top-right">
-    <div class="col-md-12">
-        <h1>Add/Modify a Person</h1>
-    </div>
-</div>
-    {% if a_message.message != '' %}
-    <div class="row">
-        <div class="col-md-12">
-    {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
-        </div>
-    </div>
-    {% endif %}
-<div class="row border-radius-bottom-right">
-    <div class="col-md-12">
-        <form action="{{ public_dir }}/manager/config/people/{{ action }}/" method="post" id="people-form"><fieldset>
-
-        <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2 aright">
-                <label for="login_id">Login ID: </label>
-            </div>
-    {% if person.is_immutable == 1 %}
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                {{ person.login_id }}<input type="hidden" id="login_id" name="person[login_id]" value="{{ person.login_id }}">
-            </div>
-    {% else %}
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="login_id" name="person[login_id]" class="colorful" maxlength="64" value="{{ person.login_id }}">
-            </div>
-    {% endif %}
-        </div>
-        <div class="row alt-row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="real_name">Name: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="real_name" name="person[real_name]" class="colorful" maxlength="64" value="{{ person.real_name }}">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="short_name">Alias: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="short_name" name="person[short_name]" class="colorful" maxlength="64" value="{{ person.short_name }}">
-            </div>
-        </div>
-        <div class="row alt-row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="password">Password: </label>
-            </div>
-    {% if person.is_immutable == 1 %} {# password can only be changed a select few #}
-        {% if adm_level <= person.highest_role %} {# the admin's auth level can only change people of same or lower auth (lower meaning higher number) #}
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="password" name="person[password]" class="colorful" maxlength="64" value="{{ person.password }}">
-            </div>
-        {% else %} {# else whoever it is, they can't change the password #}
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                {{ person.password }}
-            </div>
-        {% endif %}
-    {% else %}
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="password" name="person[password]" class="colorful" maxlength="64" value="{{ person.password }}">
-            </div>
-    {% endif %}
-        </div>
-        <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="description">Description: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                <input type="text" id="description" name="person[description]" class="colorful description" maxlength="250" value="{{ person.description }}">
-            </div>
-        </div>
-        <div class="row alt-row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="is_active">Active: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-    {% if person.is_active == 1 %}
-        {% set checked = ' checked' %}
-    {% else %}
-        {% set checked = '' %}
-    {% endif %}
-    {% if person.immutable != 1 or adm_level <= person.highest_role %}
-                <input type="checkbox" name="person[is_active]" id="is_active" class="colorful" value="true" {{ checked }} />
-    {% else %}
-        {% if checked == 'true' %}
-            True
-        {% else %}
-            False
-        {% endif %}
-    {% endif %}
-            </div>
-        </div>
-    {% if adm_lvl == 10 and action == 'update' %}
-        <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label>Created On:</label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-                {{ person.created_on }}
-            </div>
-        </div>
-        <div class="row alt-row">
-            <div class="col-md-2 col-sm-2 col-xs-2  aright">
-                <label for="is_logged_in">Is Logged In: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-    {% if person.is_logged_in == 1 %}
-        {% set is_checked = " checked" %}
-    {% else %}
-        {% set is_checked = "" %}
-    {% endif %}
-                <input type="checkbox" name="person[is_logged_in]" id="is_logged_in" class="colorful" value="true"{{ is_checked }} />
-            </div>
-        </div>
-    {% endif %}
-        <div class="row">
-            <div class="col-md-2 col-sm-2 col-xs-2 aright">
-                <label for="is_immutable">Is Immutable: </label>
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-    {% if person.is_immutable == 1 and adm_level <= person.highest_role %}
-                <input type="checkbox" name="person[is_immutable]" checked="checked" id="is_immutable" class="colorful" value="true" />
-    {% elseif person.is_immutable == 1 %}
-                True
-    {% elseif adm_level <= person.highest_role %}
-                <input type="checkbox" name="person[is_immutable]" id="is_immutable" class="colorful" value="true" />
-    {% else %}
-                False
-    {% endif %}
-            </div>
-        </div>
-        <div class="row alt-row bold">
+    <div class="container">
+        {% include '@' ~ twig_prefix ~ 'snippets/title_instructions.twig' %}
+        <div class="row border-radius-bottom-right">
             <div class="col-md-12">
-                Groups:
-            </div>
-        </div>
-        <div class="row">
-    {% for group in person.groups %}
-        {% if loop.index0 % 3 == 0 %}
-        </div>
-        <div class="row">
-        {% endif %}
-            <div class="col-md-1 col-sm-1 col-xs-1 aright">
-        {% if person.is_immutable == 1 %}
-            {% if adm_level <= person.highest_role %}
-                <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />
+                <form action="{{ public_dir }}/manager/people/" method="post" id="people-form">
+                <fieldset>
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 col-xs-2 aright">
+                        <label for="login_id">Login ID: </label>
+                    </div>
+            {% if person.is_immutable == 1 %}
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+                        {{ person.login_id }}<input type="hidden" id="login_id" name="person[login_id]" value="{{ person.login_id }}">
+                    </div>
             {% else %}
-                <i class="fa fa-check-square-o"></i>
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+                        <input type="text" id="login_id" name="person[login_id]" class="colorful" maxlength="64" value="{{ person.login_id }}">
+                    </div>
             {% endif %}
-        {% else %}
-                <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />
-        {% endif %}
-            </div>
-            <div class="col-md-2 col-sm-2 col-xs-2">
-                <label for="groups{{ group.group_id }}">{{ group.group_name }} </label>
-            </div>
-    {% endfor %}
-        </div>
-        <div class="row">
-            <div class="col-md-3 col-sm-3 col-xs-3 aright">
-    {% if action == 'save' %}
-                <button type="submit" name="submit" value="create" class="btn btn-primary btn-sm">Create New Person</button>
-    {% else %}
-                <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Update Person</button>
-        {% if person.is_immutable == 0 %}
-                <button type="submit" name="submit" value="verify" class="btn btn-warning btn-sm">Delete</button>
-        {% endif %}
-    {% endif %}
-            </div>
-            <div class="col-md-10 col-sm-10 col-xs-10">
-                <input type="hidden" id="tolken" name="tolken" value="{{ tolken }}">
-                <input type="hidden" id="form_ts" name="form_ts" value="{{ form_ts }}">
-                {% if person.people_id != '' %}
-                <input type="hidden" id="people_id" name="person[people_id]" value="{{ person.people_id }}">
+                </div>
+                <div class="row alt-row">
+                    <div class="col-md-2 col-sm-2 col-xs-2  aright">
+                        <label for="real_name">Name: </label>
+                    </div>
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+                        <input type="text" id="real_name" name="person[real_name]" class="colorful" maxlength="64" value="{{ person.real_name }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 col-xs-2  aright">
+                        <label for="short_name">Alias: </label>
+                    </div>
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+                        <input type="text" id="short_name" name="person[short_name]" class="colorful" maxlength="64" value="{{ person.short_name }}">
+                    </div>
+                </div>
+                <div class="row alt-row">
+                    <div class="col-md-2 col-sm-2 col-xs-2  aright">
+                        <label for="password">Password: </label>
+                    </div>
+            {% if person.is_immutable == 1 %} {# password can only be changed a select few #}
+                {% if adm_level <= person.highest_role %} {# the admin's auth level can only change people of same or lower auth (lower meaning higher number) #}
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+                        <input type="text" id="password" name="person[password]" class="colorful" maxlength="64" value="{{ person.password }}">
+                    </div>
+                {% else %} {# else whoever it is, they can't change the password #}
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+                        {{ person.password }}
+                    </div>
                 {% endif %}
-                <label class="hobbit" for="hobbit">Enter Age</label><input type="text" id="hobbit" name="hobbit" value="" class="hobbit">
-            </div>
-        </div>
+            {% else %}
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+                        <input type="text" id="password" name="person[password]" class="colorful" maxlength="64" value="{{ person.password }}">
+                    </div>
+            {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 col-xs-2  aright">
+                        <label for="description">Description: </label>
+                    </div>
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+                        <input type="text" id="description" name="person[description]" class="colorful description" maxlength="250" value="{{ person.description }}">
+                    </div>
+                </div>
+                <div class="row alt-row">
+                    <div class="col-md-2 col-sm-2 col-xs-2  aright">
+                        <label for="is_active">Active: </label>
+                    </div>
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+            {% if person.is_active == 1 %}
+                {% set checked = ' checked' %}
+            {% else %}
+                {% set checked = '' %}
+            {% endif %}
+            {% if person.immutable != 1 or adm_level <= person.highest_role %}
+                        <input type="checkbox" name="person[is_active]" id="is_active" class="colorful" value="true" {{ checked }} />
+            {% else %}
+                {% if checked == 'true' %}
+                    True
+                {% else %}
+                    False
+                {% endif %}
+            {% endif %}
+                    </div>
+                </div>
+            {% if adm_lvl == 10 and action == 'update' %}
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 col-xs-2  aright">
+                        <label>Created On:</label>
+                    </div>
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+                        {{ person.created_on }}
+                    </div>
+                </div>
+                <div class="row alt-row">
+                    <div class="col-md-2 col-sm-2 col-xs-2  aright">
+                        <label for="is_logged_in">Is Logged In: </label>
+                    </div>
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+            {% if person.is_logged_in == 1 %}
+                {% set is_checked = " checked" %}
+            {% else %}
+                {% set is_checked = "" %}
+            {% endif %}
+                        <input type="checkbox" name="person[is_logged_in]" id="is_logged_in" class="colorful" value="true"{{ is_checked }} />
+                    </div>
+                </div>
+            {% endif %}
+                <div class="row">
+                    <div class="col-md-2 col-sm-2 col-xs-2 aright">
+                        <label for="is_immutable">Is Immutable: </label>
+                    </div>
+                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+            {% if person.is_immutable == 1 and adm_level <= person.highest_role %}
+                        <input type="checkbox" name="person[is_immutable]" checked="checked" id="is_immutable" class="colorful" value="true" />
+            {% elseif person.is_immutable == 1 %}
+                        True
+            {% elseif adm_level <= person.highest_role %}
+                        <input type="checkbox" name="person[is_immutable]" id="is_immutable" class="colorful" value="true" />
+            {% else %}
+                        False
+            {% endif %}
+                    </div>
+                </div>
+                <div class="row alt-row bold">
+                    <div class="col-md-12">
+                        Groups:
+                    </div>
+                </div>
+                <div class="row">
+            {% for group in person.groups %}
+                {% if loop.index0 % 3 == 0 %}
+                </div>
+                <div class="row">
+                {% endif %}
+                    <div class="col-md-1 col-sm-1 col-xs-1 aright">
+                {% if person.is_immutable == 1 %}
+                    {% if adm_level <= person.highest_role %}
+                        <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />
+                    {% else %}
+                        <i class="fa fa-check-square-o"></i>
+                    {% endif %}
+                {% else %}
+                        <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />
+                {% endif %}
+                    </div>
+                    <div class="col-md-2 col-sm-2 col-xs-2">
+                        <label for="groups{{ group.group_id }}">{{ group.group_name }} </label>
+                    </div>
+            {% endfor %}
+                </div>
+                <div class="row">
+                    <div class="col-md-3 col-sm-3 col-xs-3 aright">
+            {% if action == 'create' %}
+                        <button type="submit" name="submit" value="save" class="btn btn-primary btn-sm">Create New Person</button>
+            {% else %}
+                        <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Update Person</button>
+                {% if person.is_immutable == 0 %}
+                        <button type="submit" name="submit" value="verify" class="btn btn-warning btn-sm">Delete</button>
+                {% endif %}
+            {% endif %}
+                    </div>
+                    <div class="col-md-10 col-sm-10 col-xs-10">
+                        <input type="hidden" id="tolken" name="tolken" value="{{ tolken }}">
+                        <input type="hidden" id="form_ts" name="form_ts" value="{{ form_ts }}">
+                        {% if person.people_id != '' %}
+                        <input type="hidden" id="people_id" name="person[people_id]" value="{{ person.people_id }}">
+                        {% endif %}
+                        <label class="hobbit" for="hobbit">Enter Age</label><input type="text" id="hobbit" name="hobbit" value="" class="hobbit">
+                    </div>
+                </div>
 
-        </fieldset></form>
-        <div class="row">
-            <div class="col-md-12">
-                <h3>Instructions:</h3>
-                <ul>
-                    <li>Login ID is required. It is what is used for authentication and access. Immutable Login IDs are locked and should never be changed.</li>
-                    <li>Name is required. It can be anything. It is used for display. If left blank it will be set to the Login ID.</li>
-                    <li>Alias can be anything that is 8 characters or less and may be used in some views. Can be blank, it will be automagically created from Name.</li>
-                    <li>Password:
+                </fieldset></form>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3>Instructions:</h3>
                         <ul>
-                            <li>Is required</li>
-                            <li>Is Encrypted and cannot be recovered, only replaced.</li>
-                            <li>Must be at least 8 characters long.</li>
-                            <li>Recommendation: It be at least 12 random or psuedo-random characters, upper and lower alpha, numeric and characters such as @% etc.</li>
-                            <li>Recommendation: It not be a single dictionary word, name, or personal information.</li>
-                            <li>Optionally a good practice would be to use 3 or 4 non-associated words of at least 4 characters long, e.g., 'Television river Banana' which allows one to remember the password while being difficult for a malicious attacker guess.</li>
-                            <li>password and 12345678 are not good passwords. Come on! You don't want to be responsible for someone maliciously accessing this site and deface it.</li>
+                            <li>Login ID is required. It is what is used for authentication and access. Immutable Login IDs are locked and should never be changed.</li>
+                            <li>Name is required. It can be anything. It is used for display. If left blank it will be set to the Login ID.</li>
+                            <li>Alias can be anything that is 8 characters or less and may be used in some views. Can be blank, it will be automagically created from Name.</li>
+                            <li>Password:
+                                <ul>
+                                    <li>Is required</li>
+                                    <li>Is Encrypted and cannot be recovered, only replaced.</li>
+                                    <li>Must be at least 8 characters long.</li>
+                                    <li>Recommendation: It be at least 12 random or psuedo-random characters, upper and lower alpha, numeric and characters such as @% etc.</li>
+                                    <li>Recommendation: It not be a single dictionary word, name, or personal information.</li>
+                                    <li>Optionally a good practice would be to use 3 or 4 non-associated words of at least 4 characters long, e.g., 'Television river Banana' which allows one to remember the password while being difficult for a malicious attacker guess.</li>
+                                    <li>password and 12345678 are not good passwords. Come on! You don't want to be responsible for someone maliciously accessing this site and deface it.</li>
+                                </ul>
+                            </li>
+                            <li>Description can be anything and is optional.</li>
+                            <li>Active determines if the person is allowed to log in. Allows for historical data, keeping the person in the database but preventing one from logging in again.</li>
+                            <li>Groups allow the person to access the materials that group can access. A person can be assigned to multiple groups. Some groups are inclusive of other groups.</li>
                         </ul>
-                    </li>
-                    <li>Description can be anything and is optional.</li>
-                    <li>Active determines if the person is allowed to log in. Allows for historical data, keeping the person in the database but preventing one from logging in again.</li>
-                    <li>Groups allow the person to access the materials that group can access. A person can be assigned to multiple groups. Some groups are inclusive of other groups.</li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
 {# expected array
     [

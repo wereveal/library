@@ -5,7 +5,7 @@
  * @file      Ritc/Library/Controllers/PeopleController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   1.1.1
- * @date      2017-12-05 10:33:59 
+ * @date      2017-12-05 10:33:59
  * @note <b>Change Log</b>
  * - v1.1.1   - bug fix                                          - 2017-12-05 wer
  * - v1.1.0   - updated to use ConfigControllerTraits            - 2017-11-28 wer
@@ -145,13 +145,10 @@ class PeopleController implements ManagerControllerInterface
     {
         $meth = __METHOD__ . '.';
         $a_person = $this->a_post['person'];
-        $a_person = $this->o_complex->setPersonValues($a_person);
+        $a_person = $this->o_people->setPersonValues($a_person);
         $addendum = '';
-        if ($a_person == 'login-missing') {
-            return ViewHelper::failureMessage("Opps, the person was not saved -- missing Login ID.");
-        }
-        elseif ($a_person == 'password-missing') {
-            return ViewHelper::failureMessage("Opps, the person was not saved -- missing password.");
+        if (empty($a_person['people_id'])) {
+            return ViewHelper::errorMessage('An unexpected error occurred, please try again.');
         }
         try {
             $a_previous_values = $this->o_people->read(['people_id' => $a_person['people_id']]);
@@ -159,13 +156,13 @@ class PeopleController implements ManagerControllerInterface
         catch (ModelException $e) {
             return ViewHelper::failureMessage("The person could not be found in the database.");
         }
-        if ($a_previous_values[0]['login_id'] !== $a_person['login_id']) {
+        if (!empty($a_person['login_id']) && $a_previous_values[0]['login_id'] !== $a_person['login_id']) {
             if ($this->o_people->isExistingLoginId($a_person['login_id'])) {
                 $a_person['login_id'] = $a_previous_values[0]['login_id'];
                 $addendum .= '<br>The login id was not changed because the new value aleady existed for someone else.';
             }
         }
-        if ($a_previous_values[0]['short_name'] !== $a_person['short_name']) {
+        if (!empty($a_person['short_name']) && $a_previous_values[0]['short_name'] !== $a_person['short_name']) {
             if ($this->o_people->isExistingShortName($a_person['short_name'])) {
                 $a_person['short_name'] = $a_previous_values[0]['short_name'];
                 $addendum .= '<br>The alias was not changed because the new value aleady existed for someone else.';
@@ -175,7 +172,7 @@ class PeopleController implements ManagerControllerInterface
             return ViewHelper::failureMessage("Opps, the person was not saved. The person must be assigned to at least one group.");
         }
         $a_person['groups'] = $this->a_post['groups'];
-        $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
+        $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_ON, $meth . __LINE__);
         try {
             $results = $this->o_complex->savePerson($a_person);
             if ($results !== false) {

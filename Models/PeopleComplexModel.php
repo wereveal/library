@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.5
- * @date      2017-12-02 08:23:31
+ * @version   1.0.0-alpha.6
+ * @date      2017-12-05 11:26:12
  * @note Change Log
+ * - v1.0.0-alpha.6 - Moved some methods from here to PeopleModel           - 2017-12-05 wer
  * - v1.0.0-alpha.5 - Moved some business logic from controller to here     - 2017-12-02 wer
  * - v1.0.0-alpha.4 - Refactored to use ModelException                      - 2017-06-17 wer
  * - v1.0.0-alpha.3 - Bug fix                                               - 2017-05-16 wer
@@ -276,11 +277,8 @@ class PeopleComplexModel
      * @return bool|int people_id
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function savePerson(array $a_person = array())
+    public function savePerson(array $a_person = [])
     {
-        if (!Arrays::hasRequiredKeys($a_person, ['login_id', 'password'])) {
-            throw new ModelException('Missing required values.', 70);
-        }
         if (!isset($a_person['people_id']) || $a_person['people_id'] == '') { // New User
             $a_required_keys = array(
                 'login_id',
@@ -291,8 +289,9 @@ class PeopleComplexModel
                 if ($a_person[$key_name] == '') {
                     switch ($key_name) {
                         case 'login_id':
+                            throw new ModelException('Missing login_id', 70);
                         case 'password':
-                            return false;
+                            throw new ModelException('Missing password', 70);
                         case 'real_name':
                             $a_person['real_name'] = $a_person['login_id'];
                             break;
@@ -301,7 +300,6 @@ class PeopleComplexModel
                     }
                 }
             }
-            $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
             $a_groups = $this->makeGroupIdArray($a_person['groups']);
             try {
                 $this->o_db->startTransaction();
@@ -351,27 +349,25 @@ class PeopleComplexModel
                 'real_name',
                 'password'
             );
+            if (isset($a_person['password'])) {
+                $a_person['password'] = $this->o_people->hashPass($a_person['password']);
+            }
             foreach($a_required_keys as $key_name) {
-                if ($a_person[$key_name] == '') {
+                if (empty($a_person[$key_name])) {
                     switch ($key_name) {
                         case 'people_id':
                             $this->error_message = 'Missing people_id.';
-                            return false;
+                            throw new ModelException($this->error_message, 70);
                         case 'login_id':
-                            $this->error_message = 'Missing login id.';
-                            return false;
                         case 'password':
-                            $this->error_message = 'Missing password.';
-                            return false;
                         case 'real_name':
-                            $a_person['real_name'] = $a_person['login_id'];
+                            unset($a_person[$key_name]);
                             break;
                         default:
                             break;
                     }
                 }
             }
-            $a_person['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
             $a_groups = $this->makeGroupIdArray($a_person['groups']);
             $a_pg_values = $this->makePgmArray($a_person['people_id'], $a_groups);
             if ($a_pg_values != array()) {
@@ -429,18 +425,9 @@ class PeopleComplexModel
     {
         $meth = __METHOD__ . '.';
         $a_person = $a_values['person'];
-        $a_person = $this->setPersonValues($a_person);
+        $a_person = $this->o_people->setPersonValues($a_person);
         if (!is_array($a_person)) { // then it should be a string describing the error from setPersonValues.
             return $a_person;
-        }
-        if ($this->o_people->isExistingLoginId($a_person['login_id'])) {
-            return 'login-exists';
-        }
-        if ($this->o_people->isExistingShortName($a_person['short_name'])) {
-            return 'short-exists';
-        }
-        else {
-            $a_person['short_name'] = $this->createShortName($a_person['short_name']);
         }
         if (!isset($a_values['groups']) || count($a_values['groups']) < 1) {
             return 'group-missing';
@@ -448,29 +435,6 @@ class PeopleComplexModel
         $a_person['groups'] = $a_values['groups'];
         $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
         return $a_person;
-    }
-
-    /**
-     * Creates a short name/alias if none is provided
-     * @param  string $long_name
-     * @return string the short name.
-     */
-    public function createShortName($long_name = '')
-    {
-        if (strpos($long_name, ' ') !== false) {
-            $a_real_name = explode(' ', $long_name);
-            $short_name = '';
-            foreach($a_real_name as $name) {
-                $short_name .= strtoupper(substr($name, 0, 1));
-            }
-        }
-        else {
-            $short_name = strtoupper(substr($long_name, 0, 8));
-        }
-        if ($this->o_people->isExistingShortName($short_name)) {
-            $short_name = $this->createShortName(substr($short_name, 0, 6) . rand(0,99));
-        }
-        return $short_name;
     }
 
     /**
@@ -534,65 +498,4 @@ class PeopleComplexModel
         return $a_return_map;
     }
 
-    /**
-     * Returns an array to be used to create or update a people record.
-     * Values in are normally from a POSTed form.
-     * @param array $a_person
-     * @return array|string
-     */
-    public function setPersonValues(array $a_person = array())
-    {
-        $a_required_keys = array(
-            'login_id',
-            'password'
-        );
-        if (Arrays::hasBlankValues($a_person, $a_required_keys)) {
-            if (empty($a_person['login_id'])) {
-                return 'login-missing';
-            }
-            return 'password-missing';
-        }
-        $a_fix_these = ['login_id', 'real_name', 'short_name', 'description'];
-        foreach ($a_fix_these as $key) {
-            if (isset($a_person[$key])) {
-                $a_person[$key] = Strings::removeTagsWithDecode($a_person[$key], ENT_QUOTES);
-                if ($key == 'short_name') {
-                    $a_person[$key] = Strings::makeAlphanumeric($a_person[$key]);
-                }
-            }
-        }
-        $a_person['login_id'] = Strings::makeAlphanumericPlus($a_person['login_id']);
-
-        $a_allowed_keys   = $a_required_keys;
-        $a_allowed_keys[] = 'real_name';
-        $a_allowed_keys[] = 'people_id';
-        $a_allowed_keys[] = 'short_name';
-        $a_allowed_keys[] = 'description';
-        $a_allowed_keys[] = 'is_logged_in';
-        $a_allowed_keys[] = 'is_active';
-        $a_allowed_keys[] = 'is_immutable';
-        $a_person = Arrays::createRequiredPairs($a_person, $a_allowed_keys, true);
-        if ($a_person['real_name'] == '') {
-            $a_person['real_name'] = $a_person['login_id'];
-        }
-        if ($a_person['short_name'] == '' || !isset($a_person['short_name'])) {
-            $a_person['short_name'] = $this->createShortName($a_person['real_name']);
-        }
-        $a_person['is_logged_in'] = isset($a_person['is_logged_in']) && $a_person['is_logged_in'] == 'true'
-            ? 1
-            : 0;
-        $a_person['is_active'] = isset($a_person['is_active']) && $a_person['is_active'] == 'true'
-            ? 1
-            : 0;
-        $a_person['is_immutable'] = isset($a_person['is_immutable']) && $a_person['is_immutable'] == 'true'
-            ? 1
-            : 0;
-        if ($a_person['people_id'] == '') {
-            unset($a_person['people_id']); // this must be a new person.
-        }
-        if (!isset($a_person['people_id']) && $a_person['login_id'] == '') {
-            return 'login-missing';
-        }
-        return $a_person;
-    }
 }

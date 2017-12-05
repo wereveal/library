@@ -5,9 +5,11 @@
  * @file      Ritc/Library/Models/PeopleModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.3+1
- * @date      2017-05-16 14:18:41
+ * @version   1.4.0
+ * @date      2017-12-05 11:24:02
  * @note <b>Change Log</b>
+ * - v1.4.0    - moved some methods from PeopleComplex to here               - 2017-12-05 wer
+ *               bug fixes too.
  * - v1.3.3    - DbUtilityTraits change reflected here                       - 2017-05-09 wer
  * - v1.3.2    - Bug fix                                                     - 2017-02-07 wer
  * - v1.3.1    - Bug fix caused by change elsewhere                          - 2017-01-27 wer
@@ -36,6 +38,7 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -324,7 +327,8 @@ class PeopleModel implements ModelInterface
      * Updates the bad_login_count field for the user by one
      * @param int $people_id
      * @return bool
-      */
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
     public function incrementBadLoginCount($people_id = -1)
     {
         if ($people_id == -1) { return false; }
@@ -334,7 +338,18 @@ class PeopleModel implements ModelInterface
             WHERE people_id = :people_id
         ";
         $a_values = array(':people_id' => $people_id);
-        return $this->o_db->update($sql, $a_values, true);
+        try {
+            $results = $this->o_db->update($sql, $a_values, true);
+            if ($results) {
+                return true;
+            }
+            else {
+                throw new ModelException('Unable to update bad_login_count in the people record', 300);
+            }
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
@@ -619,6 +634,30 @@ class PeopleModel implements ModelInterface
     }
 
     ### Utility methods ###
+
+    /**
+     * Creates a short name/alias if none is provided
+     * @param  string $long_name
+     * @return string the short name.
+     */
+    public function createShortName($long_name = '')
+    {
+        if (strpos($long_name, ' ') !== false) {
+            $a_real_name = explode(' ', $long_name);
+            $short_name = '';
+            foreach($a_real_name as $name) {
+                $short_name .= strtoupper(substr($name, 0, 1));
+            }
+        }
+        else {
+            $short_name = strtoupper(substr($long_name, 0, 8));
+        }
+        if ($this->isExistingShortName($short_name)) {
+            $short_name = $this->createShortName(substr($short_name, 0, 6) . rand(0,99));
+        }
+        return $short_name;
+    }
+
     /**
      * @param int $people_id
      * @return bool
@@ -627,9 +666,15 @@ class PeopleModel implements ModelInterface
     {
         if (ctype_digit($people_id) && $people_id != -1) {
             $a_where_values = ['people_id' => $people_id];
-            $results = $this->read($a_where_values);
-            if (isset($results[0]['people_id']) && $results[0]['people_id'] == $people_id) {
-                return true;
+            try {
+                $results = $this->read($a_where_values);
+                if (isset($results[0]['people_id']) && $results[0]['people_id'] == $people_id) {
+                    return true;
+                }
+                return false;
+            }
+            catch (ModelException $e) {
+                return false;
             }
         }
         return false;
@@ -669,5 +714,116 @@ class PeopleModel implements ModelInterface
         catch (ModelException $e) {
             return false;
         }
+    }
+
+    /**
+     * Returns an array to be used to create or update a people record.
+     * Values in are normally from a POSTed form.
+     * @param array $a_person
+     * @return array|string
+     */
+    public function setPersonValues(array $a_person = array())
+    {
+        $new_person = empty($a_person['people_id'])
+            ? true
+            : false;
+        $a_person['password'] = $this->hashPass($a_person['password']);
+        $a_fix_these = ['login_id', 'real_name', 'short_name', 'description'];
+        foreach ($a_fix_these as $key) {
+            if (isset($a_person[$key])) {
+                $a_person[$key] = Strings::removeTagsWithDecode($a_person[$key], ENT_QUOTES);
+                if ($key == 'short_name') {
+                    $a_person[$key] = Strings::makeAlphanumeric($a_person[$key]);
+                }
+                if ($key == 'login_id') {
+                    $a_person['login_id'] = Strings::makeAlphanumericPlus($a_person['login_id']);
+                }
+            }
+        }
+        if ($new_person) {
+            if (empty($a_person['password'])) {
+                return 'password-missing';
+            }
+            if (empty($a_person['login_id'])) {
+                return 'login-missing';
+            }
+            if ($this->isExistingLoginId($a_person['login_id'])) {
+                return 'login-exists';
+            }
+            $a_allowed_keys   = [
+                'login_id',
+                'password',
+                'real_name',
+                'short_name',
+                'description',
+                'is_logged_in',
+                'is_active',
+                'is_immutable'
+            ];
+            $a_person = Arrays::createRequiredPairs($a_person, $a_allowed_keys, true);
+            if ($a_person['real_name'] == '') {
+                $a_person['real_name'] = $a_person['login_id'];
+            }
+            if ($a_person['short_name'] == '') {
+                $a_person['short_name'] = $this->createShortName($a_person['real_name']);
+            }
+            else {
+                $a_person['short_name'] = $this->createShortName($a_person['short_name']);
+            }
+            $a_person['description'] = empty($a_person['description'])
+                ? $a_person['real_name']
+                : $a_person['description'];
+            $a_person['is_logged_in'] = 0;
+        }
+        else {
+            $a_allowed_keys   = [
+                'people_id',
+                'login_id',
+                'real_name',
+                'short_name',
+                'password',
+                'description',
+                'is_logged_in',
+                'is_active',
+                'is_immutable'
+            ];
+            $a_person = Arrays::removeBlankPairs($a_person, $a_allowed_keys, true);
+        }
+        $a_person['is_logged_in'] = isset($a_person['is_logged_in']) && $a_person['is_logged_in'] == 'true'
+            ? 1
+            : 0;
+        $a_person['is_active'] = isset($a_person['is_active']) && $a_person['is_active'] == 'true'
+            ? 1
+            : 0;
+        $a_person['is_immutable'] = isset($a_person['is_immutable']) && $a_person['is_immutable'] == 'true'
+            ? 1
+            : 0;
+        return $a_person;
+    }
+
+    /**
+     * Hashes the password if it isn't already hashed.
+     * Also verifies that it isn't a starred out password (value hidden).
+     * @param string $password
+     * @return bool|string
+     */
+    public function hashPass($password = '')
+    {
+        if (empty($password)) {
+            return '';
+        }
+        if (substr($password, 0, 3) == '***') {
+            return '';
+        }
+        $pass_info = password_get_info($password);
+        if ($pass_info['algo'] === 0) {
+            if (defined('PASSWORD_ARGON2I')) {
+                $password = password_hash($password, PASSWORD_ARGON2I);
+            }
+            else {
+                $password = password_hash($password, PASSWORD_DEFAULT);
+            }
+        }
+        return $password;
     }
 }

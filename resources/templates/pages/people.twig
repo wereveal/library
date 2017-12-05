@@ -1,73 +1,63 @@
-{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
+{% block current_date %}{% endblock %}
 {% block body %}
-    <div class="row">
-        <div class="col-md-12">
-            <h1>The manager for people</h1>
+    <div class="container">
+        {% include '@' ~ twig_prefix ~ 'snippets/title_instructions.twig' %}
+        <div class="row {{ class }}">
+            <div class="col-md-12">
+            <form action="{{ public_dir }}/manager/people/details/" method= "post">
+                <div class="row row-inside">
+                    <div class="col-md-3 offset-md-9">
+                        <button type="submit" name="submit" value="new" class="btn btn-primary btn-xs">Create New Person</button>
+                        <input type="hidden" name="tolken" value="{{ tolken }}" />
+                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                    </div>
+                </div>
+            </form>
+            </div>
         </div>
-    </div>
-    {% if a_message.message != '' %}
-    <div class="row">
-        <div class="col-md-12">
-            {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
-        </div>
-    </div>
-    {% endif %}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="row {{ class }}">
-                <div class="col-md-12">
-                <form action="{{ public_dir }}/manager/config/people/" method= "post">
-                    <div class="row row-inside">
-                        <div class="col-md-3 offset-md-9">
-                            <button type="submit" name="submit" value="create" class="btn btn-primary btn-xs">Create New Person</button>
-                            <input type="hidden" name="tolken" value="{{ tolken }}" />
-                            <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                            <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+    {% set x = -1 %}
+    {% for person in a_people %}
+        {% if adm_lvl >= person.auth_level %}
+        {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
+        <div class="row {{ class }}">
+            <div class="col-md-12">
+                    <div class="row row-inside {{ class }}">
+                        <div class="col-md-2">
+                            <span class="inline-block bold w75 aright pad-right">LoginID:</span>
+                            {{ person.login_id }}
+                        </div>
+                        <div class="col-md-3">
+                            <span class="inline-block bold w75 aright pad-right">Name:</span>
+                            {{ person.real_name }}
+                        </div>
+                        <div class="col-md-5">
+                            <span class="inline-block bold w100 aright pad-right">Description:</span>
+                        {% if person.description|length > 45 %}
+                            {{ person.description|slice(0, 45) }}....
+                        {% else %}
+                            {{ person.description }}
+                        {% endif %}
+                        </div>
+                        <div class="col-md-2">
+                            {% if adm_lvl >= person.auth_level %}
+                            <form action="{{ public_dir }}/manager/people/details/" method="post">
+                                <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Modify</button>
+                                <input type="hidden" name="tolken" value="{{ tolken }}" />
+                                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                                <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                                <input type="hidden" name="people_id" value="{{ person.people_id }}" />
+                            </form>
+                            {% else %}
+                            &nbsp;
+                            {% endif %}
                         </div>
                     </div>
-                </form>
-                </div>
             </div>
-        {% set x = -1 %}
-        {% for person in a_people %}
-            {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
-            <div class="row {{ class }}">
-                <div class="col-md-12">
-                        <div class="row row-inside {{ class }}">
-                            <div class="col-md-2">
-                                <span class="inline-block bold w75 aright pad-right">LoginID:</span>
-                                {{ person.login_id }}
-                            </div>
-                            <div class="col-md-3">
-                                <span class="inline-block bold w75 aright pad-right">Name:</span>
-                                {{ person.real_name }}
-                            </div>
-                            <div class="col-md-5">
-                                <span class="inline-block bold w100 aright pad-right">Description:</span>
-                            {% if person.description|length > 45 %}
-                                {{ person.description|slice(0, 45) }}....
-                            {% else %}
-                                {{ person.description }}
-                            {% endif %}
-                            </div>
-                            <div class="col-md-2">
-                                {% if adm_lvl >= person.auth_level %}
-                                <form action="{{ public_dir }}/manager/people/" method="post">
-                                    <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Modify</button>
-                                    <input type="hidden" name="tolken" value="{{ tolken }}" />
-                                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                                    <input type="hidden" name="people_id" value="{{ person.people_id }}" />
-                                </form>
-                                {% else %}
-                                &nbsp;
-                                {% endif %}
-                            </div>
-                        </div>
-                </div>
-            </div>
-            {% set x = x * -1 %}
-        {% endfor %}
         </div>
+        {% endif %}
+        {% set x = x * -1 %}
+    {% endfor %}
     </div>
 {% endblock %}
