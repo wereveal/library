@@ -5,11 +5,13 @@
  * @file      LogitTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.1
- * @date      2016-02-26 12:17:41
+ * @version   1.3.0
+ * @date      2017-12-05 10:35:41 
  * @note      this is derived from the abstract class Base and may end up replacing
  *            the abstract class or used in classes that don't use the abstract class.
  * @note <b>Change Log</b>
+ * - v1.3.0 - added method and property to set elog for multiple object      - 2017-12-05 wer
+ *            based on the names of the objects saved in the property
  * - v1.2.0 - setElog now allows anything to pass into it and then checks    - 2017-02-07 wer
  *            to see if it is an instanceof Elog. That way, it doesn't
  *            generate errors.
@@ -30,18 +32,20 @@ use Ritc\Library\Services\Elog;
  */
 trait LogitTraits
 {
+    /** @var array */
+    protected $a_object_names = [];
     /** @var Elog */
-    protected $o_elog;
+    protected $o_elog = '';
 
     /**
-     * @return object|null
+     * @return object|string
      */
     public function getElog()
     {
         if (is_object($this->o_elog)) {
             return $this->o_elog;
         }
-        return null;
+        return '';
     }
 
     /**
@@ -85,9 +89,27 @@ trait LogitTraits
     {
         if ($o_elog instanceof Elog) {
             $this->o_elog = $o_elog;
+            $this->setElogForObjects();
         }
     }
 
+    /**
+     * Sets the elog for objects in the object list.
+     * Normally a part of a complex model class.
+     */
+    public function setElogForObjects()
+    {
+        if ($this->o_elog instanceof Elog) {
+            if (!empty($this->a_object_names)) {
+                foreach ($this->a_object_names as $object) {
+                    if (is_object($this->$object)) {
+                        $this->$object->setElog($this->o_elog);
+                    }
+                }
+            }    
+        }
+    }
+    
     /**
      * Quick Stub for a commonly called thing.
      * @param \Ritc\Library\Services\Di $o_di
@@ -95,10 +117,17 @@ trait LogitTraits
     public function setupElog(Di $o_di)
     {
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-            if (!$this->o_elog instanceof Elog) {
-                error_log("This is not an instance of Elog");
-            }
+            $o_elog = $o_di->get('elog');
+            $this->setElog($o_elog);
         }
+    }
+    
+    /**
+     * Standard SETter for protected class property.
+     * @param array $a_object_names
+     */
+    protected function setObjectNames(array $a_object_names = [])
+    {
+        $this->a_object_names = $a_object_names;
     }
 }

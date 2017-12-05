@@ -4,9 +4,10 @@
  * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/PeopleController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2017-11-28 13:29:25
+ * @version   1.1.1
+ * @date      2017-12-05 10:33:59 
  * @note <b>Change Log</b>
+ * - v1.1.1   - bug fix                                          - 2017-12-05 wer
  * - v1.1.0   - updated to use ConfigControllerTraits            - 2017-11-28 wer
  * - v1.0.2   - bug fix                                          - 2016-03-08 wer
  * - v1.0.1   - bug fixes                                        - 11/27/2015 wer
@@ -52,8 +53,8 @@ class PeopleController implements ManagerControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->setupManagerController($o_di);
         $this->setupElog($o_di);
+        $this->setupManagerController($o_di);
         $this->o_view        = new PeopleView($o_di);
         $this->o_people      = new PeopleModel($this->o_db);
         $this->o_complex     = new PeopleComplexModel($this->o_db);
@@ -74,12 +75,8 @@ class PeopleController implements ManagerControllerInterface
         $form_action   = $this->form_action;
         $this->logIt('Post: ' . var_export($a_post, TRUE), LOG_OFF, __METHOD__);
         switch ($form_action) {
-            case 'create':
             case 'new':
                 return $this->o_view->renderNew();
-            case 'save':
-                $a_message = $this->save();
-                break;
             case 'modify':
                 if (!empty($a_post['people_id'])) {
                     return $this->o_view->renderModify($a_post['people_id']);
@@ -88,6 +85,9 @@ class PeopleController implements ManagerControllerInterface
                 break;
             case 'verify':
                 return $this->verifyDelete();
+            case 'save':
+                $a_message = $this->save();
+                break;
             case 'update':
                 $a_message = $this->update();
                 break;

@@ -56,11 +56,7 @@ class PeopleComplexModel
         $this->o_people = new PeopleModel($o_db);
         $this->o_group  = new GroupsModel($o_db);
         $this->o_pgm    = new PeopleGroupMapModel($o_db);
-        if (defined(DEVELOPER_MODE) && DEVELOPER_MODE) {
-            $this->o_people->setElog($this->o_elog);
-            $this->o_group->setElog($this->o_elog);
-            $this->o_pgm->setElog($this->o_elog);
-        }
+        $this->setObjectNames(['o_people', 'o_group', 'o_pgm']);
     }
 
     /**
