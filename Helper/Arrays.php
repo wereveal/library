@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Helper/Arrays.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.1.1+1
- * @date      2017-07-06 21:24:52
+ * @version   3.2.0
+ * @date      2017-12-05 12:57:42
  * @note <b>Change Log</b>
+ *     v3.2.0 - New method to removed key/value pairs where value is empty                - 2017-12-05 wer
  *     v3.1.1 - Bug fix Arrays::findMissingValues()                                       - 2017-02-16 wer
  *     v3.1.0 - Moved a couple methods from DbCommonTraits to Arrays                      - 2016-09-23 wer
  *     v3.0.1 - Bug Fix                                                                   - 2016-09-23 wer
@@ -469,6 +470,30 @@ class Arrays
             }
         }
         return true;
+    }
+
+    /**
+     * Removes any key/value pair that has empty value.
+     * Optionally will remove any pairs that don't have a key match to allowed keys.
+     * @param array $a_pairs        key/value pairs to check to see if the value is blank.
+     * @param array $a_allowed_keys key names to check for blank values
+     * @param bool  $strict         default: true, removes any pair which doesn't have a key found in allowed_keys.
+     * @return array
+     */
+    public static function removeBlankPairs(array $a_pairs = [], array $a_allowed_keys, $strict = true)
+    {
+        if ($a_pairs == [] || $a_allowed_keys == []) {
+            return [];
+        }
+        if ($strict) {
+            $a_pairs = self::removeUndesiredPairs($a_pairs, $a_allowed_keys);
+        }
+        foreach ($a_allowed_keys as $key) {
+            if (isset($a_pairs[$key]) && empty($a_pairs[$key])) {
+                unset($a_pairs[$key]);
+            }
+        }
+        return $a_pairs;
     }
 
     /**
