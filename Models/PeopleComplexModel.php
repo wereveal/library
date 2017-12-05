@@ -279,6 +279,9 @@ class PeopleComplexModel
      */
     public function savePerson(array $a_person = [])
     {
+        $log_message = 'person to save ' . var_export($a_person, TRUE);
+        $this->logIt($log_message, LOG_OFF, __METHOD__);
+
         if (!isset($a_person['people_id']) || $a_person['people_id'] == '') { // New User
             $a_required_keys = array(
                 'login_id',
@@ -301,6 +304,7 @@ class PeopleComplexModel
                 }
             }
             $a_groups = $this->makeGroupIdArray($a_person['groups']);
+            unset($a_person['groups']);
             try {
                 $this->o_db->startTransaction();
             }

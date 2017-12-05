@@ -100,6 +100,7 @@ trait DbUtilityTraits
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = [])
     {
+        $meth = __METHOD__ . '.';
         if (empty($a_parameters['a_psql'])) {
             $a_psql = [
                 'table_name'  => $this->db_table,
@@ -155,6 +156,8 @@ INSERT INTO {$db_table} (
 )
 
 SQL;
+        $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
+        $this->logIt("Values: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         try {
             $this->o_db->insert($sql, $a_values, $a_psql);
             $a_new_ids = $this->o_db->getNewIds();

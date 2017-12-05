@@ -109,30 +109,34 @@ class PeopleController implements ManagerControllerInterface
     public function save()
     {
         $a_person = $this->o_complex->createNewPersonArray($this->a_post);
+        $error_message = "Opps, the person was not saved.";
         switch ($a_person) {
             case 'login-missing':
-                return ViewHelper::failureMessage("Opps, the person was not saved -- missing Login ID.");
+                return ViewHelper::failureMessage($error_message . " -- missing Login ID.");
             case 'name-missing':
-                return ViewHelper::failureMessage("Opps, the person was not saved -- missing Name.");
+                return ViewHelper::failureMessage($error_message . " -- missing Name.");
             case 'password-missing':
-                return ViewHelper::failureMessage("Opps, the person was not saved -- missing password.");
+                return ViewHelper::failureMessage($error_message . " -- missing password.");
             case 'login-exists':
-                return ViewHelper::failureMessage("Opps, the person was not saved -- the login id already exists.");
+                return ViewHelper::failureMessage($error_message . " -- the login id already exists.");
             case 'short-exists':
-                return ViewHelper::failureMessage("Opps, the person was not saved -- the short name already exists.");
+                return ViewHelper::failureMessage($error_message . " -- the short name already exists.");
             case 'group-missing':
-                return ViewHelper::failureMessage("Opps, the person was not saved -- missing at least one group.");
+                return ViewHelper::failureMessage($error_message . " -- missing at least one group.");
             case true:
             default:
                 try {
                     $results = $this->o_complex->savePerson($a_person);
                     if ($results === false) {
-                        return ViewHelper::failureMessage("Opps, the person was not saved.");
+                        return ViewHelper::failureMessage($error_message);
                     }
                     return ViewHelper::successMessage("Success, the person was saved.");
                 }
                 catch (ModelException $e) {
-                    return ViewHelper::failureMessage("Opps, the person was not saved." . $e->errorMessage());
+                    if (DEVELOPER_MODE) {
+                        $error_message .= " " . $e->errorMessage();
+                    }
+                    return ViewHelper::failureMessage($error_message);
                 }
         }
     }

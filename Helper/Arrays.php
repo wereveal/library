@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Helper/Arrays.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.2.0
- * @date      2017-12-05 12:57:42
+ * @version   3.2.1
+ * @date      2017-12-05 14:00:23 
  * @note <b>Change Log</b>
+ *     v3.2.1 - bug fix 0 == '' is true but 0 === '' is false so bugs                     - 2017-12-05 wer
  *     v3.2.0 - New method to removed key/value pairs where value is empty                - 2017-12-05 wer
  *     v3.1.1 - Bug fix Arrays::findMissingValues()                                       - 2017-02-16 wer
  *     v3.1.0 - Moved a couple methods from DbCommonTraits to Arrays                      - 2016-09-23 wer
@@ -286,7 +287,7 @@ class Arrays
                 array_key_exists(str_replace(':', '', $key), $a_pairs)
             )
             {
-                if ($a_pairs[$key] == '' || is_null($a_pairs[$key])) {
+                if ($a_pairs[$key] === '' || is_null($a_pairs[$key])) {
                     $a_keys[] = $key;
                 }
             }
@@ -358,7 +359,7 @@ class Arrays
                         return true;
                     }
                 }
-                elseif ($value == '') {
+                elseif ($value === '') {
                     if ($a_keys_to_check != []) {
                         if (in_array($key, $a_keys_to_check)) {
                             return true;
@@ -383,7 +384,7 @@ class Arrays
      */
     public static function inAssocArrayRecursive($key_name = '', $needle = '', array $a_haystack, $strict = false)
     {
-        if ($key_name == '' || $needle == '' || $a_haystack == []) {
+        if ($key_name === '' || $needle === '' || $a_haystack === []) {
             return false;
         }
         if (!self::isArrayOfAssocArrays($a_haystack) && !self::isAssocArray($a_haystack)) {
@@ -419,7 +420,7 @@ class Arrays
      */
     public static function inArrayRecursive($needle = '', array $a_haystack, $strict = false)
     {
-        if ($needle == '' || $a_haystack == []) {
+        if ($needle === '' || $a_haystack === []) {
             return false;
         }
         foreach ($a_haystack as $key => $item) {
