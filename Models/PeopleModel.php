@@ -774,6 +774,12 @@ class PeopleModel implements ModelInterface
                 ? $a_person['real_name']
                 : $a_person['description'];
             $a_person['is_logged_in'] = 0;
+            $a_person['is_active'] = isset($a_person['is_active']) && $a_person['is_active'] == 'true'
+                ? 1
+                : 0;
+            $a_person['is_immutable'] = isset($a_person['is_immutable']) && $a_person['is_immutable'] == 'true'
+                ? 1
+                : 0;
         }
         else {
             $a_allowed_keys   = [
@@ -788,16 +794,46 @@ class PeopleModel implements ModelInterface
                 'is_immutable'
             ];
             $a_person = Arrays::removeBlankPairs($a_person, $a_allowed_keys, true);
+            if (!Arrays::hasRequiredKeys($a_person, ['people_id'])) {
+                return 'people_id-missing';
+            }
+            try {
+                $a_previous_values = $this->read(['people_id' => $a_person['people_id']]);
+                if (empty($a_previous_values)) {
+                    return 'people_id-invalid';
+                }
+            }
+            catch (ModelException $e) {
+                return 'people_id-invalid';
+            }
+            foreach ($a_allowed_keys as $key) {
+                if ($key !== 'people_id' && isset($a_person[$key])) {
+                    $old_value = $a_previous_values[$key];
+                    $new_value = $a_person[$key];
+                    if ($key === 'is_logged_in' || $key === 'is_active' || $key === 'is_immutable') {
+                        $old_value = $old_value === 0 ? 'false' : 'true';
+                    }
+                    if ($key === 'login_id' && ($new_value !== $old_value)) {
+                        if ($this->isExistingLoginId($a_person['login_id'])) {
+                            return 'login-exists';
+                        }
+                    }
+                    if ($key === 'short_name' && ($new_value !== $old_value)) {
+                        if ($this->isExistingShortName($a_person['short_name'])) {
+                            return 'short_name-exists';
+                        }
+                    }
+
+                    if ($new_value === $old_value) {
+                        unset($a_person[$key]);
+                    }
+                }
+            }
+            if (count($a_person) < 2) {
+                return 'nothing-to-update';
+            }
+
         }
-        $a_person['is_logged_in'] = isset($a_person['is_logged_in']) && $a_person['is_logged_in'] == 'true'
-            ? 1
-            : 0;
-        $a_person['is_active'] = isset($a_person['is_active']) && $a_person['is_active'] == 'true'
-            ? 1
-            : 0;
-        $a_person['is_immutable'] = isset($a_person['is_immutable']) && $a_person['is_immutable'] == 'true'
-            ? 1
-            : 0;
         return $a_person;
     }
 

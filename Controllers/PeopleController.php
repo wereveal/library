@@ -148,47 +148,48 @@ class PeopleController implements ManagerControllerInterface
     public function update()
     {
         $meth = __METHOD__ . '.';
+        $error_message = "Opps, the person was not updated.";
         $a_person = $this->a_post['person'];
+        if (!isset($this->a_post['groups']) || count($this->a_post['groups']) < 1) {
+            return ViewHelper::failureMessage($error_message . " The person must be assigned to at least one group.");
+        }
         $a_person = $this->o_people->setPersonValues($a_person);
         $addendum = '';
-        if (empty($a_person['people_id'])) {
-            return ViewHelper::errorMessage('An unexpected error occurred, please try again.');
-        }
-        try {
-            $a_previous_values = $this->o_people->read(['people_id' => $a_person['people_id']]);
-        }
-        catch (ModelException $e) {
-            return ViewHelper::failureMessage("The person could not be found in the database.");
-        }
-        if (!empty($a_person['login_id']) && $a_previous_values[0]['login_id'] !== $a_person['login_id']) {
-            if ($this->o_people->isExistingLoginId($a_person['login_id'])) {
-                $a_person['login_id'] = $a_previous_values[0]['login_id'];
-                $addendum .= '<br>The login id was not changed because the new value aleady existed for someone else.';
-            }
-        }
-        if (!empty($a_person['short_name']) && $a_previous_values[0]['short_name'] !== $a_person['short_name']) {
-            if ($this->o_people->isExistingShortName($a_person['short_name'])) {
-                $a_person['short_name'] = $a_previous_values[0]['short_name'];
-                $addendum .= '<br>The alias was not changed because the new value aleady existed for someone else.';
-            }
-        }
-        if (!isset($this->a_post['groups']) || count($this->a_post['groups']) < 1) {
-            return ViewHelper::failureMessage("Opps, the person was not saved. The person must be assigned to at least one group.");
+        switch ($a_person) {
+            case 'people_id-missing':
+                return ViewHelper::failureMessage($error_message . " -- record id missing.");
+            case 'people_id-invalid':
+                return ViewHelper::failureMessage($error_message . " -- record id invalid.");
+            case 'password-missing':
+                return ViewHelper::failureMessage($error_message . " -- missing password.");
+            case 'login-exists':
+                $addendum .= '<br>The login id was not changed because the new value already existed for someone else.';
+                break;
+            case 'short_name-exists':
+                $addendum .= '<br>The alias was not changed because the new value alrady existed for someone else.';
+                break;
+            case 'nothing-to-update':
+                return ViewHelper::successMessage("No values changed.");
+            case true:
+            default:
+                // try to save the record.
         }
         $a_person['groups'] = $this->a_post['groups'];
-        $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_ON, $meth . __LINE__);
         try {
+              $log_message = 'Person to update ' . var_export($a_person, TRUE);
+              $this->logIt($log_message, LOG_ON, $meth . __LINE__);
             $results = $this->o_complex->savePerson($a_person);
-            if ($results !== false) {
-                if ($addendum != '') {
-                    $addendum = '<br><b class="red">However' . $addendum . '</b>';
-                }
-                return ViewHelper::successMessage("Success! The person was updated." . $addendum);
+            if ($results === false) {
+                return ViewHelper::failureMessage($error_message);
             }
-            return ViewHelper::failureMessage("Opps, the person was not updated.");
+            $message = "Success, the person was saved." . $addendum;
+            return ViewHelper::successMessage($message);
         }
         catch (ModelException $e) {
-            return ViewHelper::failureMessage("Opps, the person was not updated.");
+            if (DEVELOPER_MODE) {
+                $error_message .= " " . $e->errorMessage();
+            }
+            return ViewHelper::failureMessage($error_message);
         }
     }
 
