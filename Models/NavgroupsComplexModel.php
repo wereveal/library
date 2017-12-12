@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/NavgroupsComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-06-11 08:20:26
+ * @version   1.0.0
+ * @date      2017-12-12 10:07:24
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-06-11 wer
+ * - v1.0.0         - taking it into production     - 2017-12-12 wer
+ * - v1.0.0-alpha.0 - Initial version               - 2017-06-11 wer
  */
 namespace Ritc\Library\Models;
 
@@ -56,7 +57,7 @@ class NavgroupsComplexModel
         }
         catch (ModelException $e) {
             $this->error_message = "Could not start transaction.";
-            throw new ModelException($this->error_message, 30);
+            throw new ModelException($this->error_message, 12);
         }
         $o_map = new NavNgMapModel($this->o_db);
         $o_ng  = new NavgroupsModel($this->o_db);
@@ -69,18 +70,18 @@ class NavgroupsComplexModel
                 }
                 catch (ModelException $e) {
                     $this->error_message = 'Unable to commit the transaction.';
-                    throw new ModelException($this->error_message, 40, $e);
+                    throw new ModelException($this->error_message, 13, $e);
                 }
             }
             catch (ModelException $e) {
                 $this->error_message = 'Unable to delete the map record: ' . $o_ng->getErrorMessage();
                 try {
                     $this->o_db->rollbackTransaction();
-                    throw new ModelException($this->error_message, 400, $e);
+                    throw new ModelException($this->error_message, 410, $e);
                 }
                 catch (ModelException $e) {
                     $this->error_message .= 'Unable to rollback the transaction.';
-                    throw new ModelException($this->error_message, 45, $e);
+                    throw new ModelException($this->error_message, 14, $e);
                 }
             }
         }
@@ -88,11 +89,11 @@ class NavgroupsComplexModel
             $this->error_message = 'Unable to delete the map record: ' . $o_map->getErrorMessage();
             try {
                 $this->o_db->rollbackTransaction();
-                throw new ModelException($this->error_message, 400, $e);
+                throw new ModelException($this->error_message, 410, $e);
             }
             catch (ModelException $e) {
                 $this->error_message .= 'Unable to rollback the transaction.';
-                throw new ModelException($this->error_message, 45, $e);
+                throw new ModelException($this->error_message, 14, $e);
             }
         }
         return true;

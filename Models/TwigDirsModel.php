@@ -124,11 +124,11 @@ class TwigDirsModel implements ModelInterface
                     $results = $o_tpl->read(['td_id' => $dir_id]);
                     if (!empty($results)) {
                         $this->error_message = "A template exists that uses this directory";
-                        throw new ModelException($this->error_message, 430);
+                        throw new ModelException($this->error_message, 436);
                     }
                 }
                 catch (ModelException $e) {
-                    throw new ModelException($e->errorMessage(), 430);
+                    throw new ModelException($e->errorMessage(), $e->getCode());
                 }
             }
         }
@@ -137,11 +137,11 @@ class TwigDirsModel implements ModelInterface
                 $results = $o_tpl->read(['td_id' => $id]);
                 if (!empty($results)) {
                     $this->error_message = "A template exists that uses this directory";
-                    throw new ModelException($this->error_message, 430);
+                    throw new ModelException($this->error_message, 436);
                 }
             }
             catch (ModelException $e) {
-                throw new ModelException($e->errorMessage(), 430);
+                throw new ModelException($e->errorMessage(), $e->getCode());
             }
         }
         try {

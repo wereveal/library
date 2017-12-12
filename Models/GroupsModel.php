@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/GroupsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-06-10 17:42:55
+ * @version   2.0.1
+ * @date      2017-12-12 11:42:21
  * @note <b>Change Log</b>
+ * - v2.0.1   - ModelException changes reflected here                           - 2017-12-12 wer
  * - v2.0.0   - Refactored to use ModelException and DbUtilityTraits            - 2017-06-10 wer
  * - v1.1.2   - DbUtilityTraits change reflected here                           - 2017-05-09 wer
  * - v1.1.1   - Bug fix caused by slight change elsewhere                       - 2017-01-27 wer
@@ -151,7 +152,7 @@ class GroupsModel implements ModelInterface
             return $this->genericDeleteMultiple($a_ids);
         }
         catch (ModelException $e) {
-            throw new ModelException('Unable to delete the record', 400);
+            throw new ModelException('Unable to delete the record', 410);
         }
     }
 
@@ -170,7 +171,7 @@ class GroupsModel implements ModelInterface
             $this->o_db->startTransaction();
         }
         catch (ModelException $e) {
-            throw new ModelException('Unable to start the transaction.', 30, $e);
+            throw new ModelException('Unable to start the transaction.', 12, $e);
         }
         $o_ugm = new PeopleGroupMapModel($this->o_db);
         $o_people = new PeopleModel($this->o_db);
@@ -179,7 +180,7 @@ class GroupsModel implements ModelInterface
                 $results = $o_ugm->read($group_id);
             }
             catch (ModelException $e) {
-                throw new ModelException('Could not read the map records', 400);
+                throw new ModelException('Could not read the map records', 410);
             }
         }
         else {
@@ -187,7 +188,7 @@ class GroupsModel implements ModelInterface
                 $results = $o_ugm->read(['group_id' => $group_id]);
             }
             catch (ModelException $e) {
-                throw new ModelException('Could not read the map records.', 400);
+                throw new ModelException('Could not read the map records.', 410);
             }
         }
         $a_people_ids = [];
@@ -199,12 +200,12 @@ class GroupsModel implements ModelInterface
         try {
             $results = $o_people->delete($a_people_ids);
             if (!$results) {
-                throw new ModelException('Could not delete the people records.', 400);
+                throw new ModelException('Could not delete the people records.', 410);
             }
             try {
                 $results = $o_ugm->delete($a_map_ids);
                 if (!$results) {
-                    throw new ModelException('Could not delete the people group map records.', 400);
+                    throw new ModelException('Could not delete the people group map records.', 410);
                 }
                 try {
                     $results = $this->delete($group_id);
@@ -215,7 +216,7 @@ class GroupsModel implements ModelInterface
                         catch (ModelException $e) {
                             $this->o_db->rollbackTransaction();
                             $this->error_message = $this->o_db->getSqlErrorMessage();
-                            throw new ModelException($this->error_message, 400);
+                            throw new ModelException($this->error_message, 410);
                         }
                     }
                 }
@@ -230,7 +231,7 @@ class GroupsModel implements ModelInterface
         catch (ModelException $e) {
             $this->o_db->rollbackTransaction();
             $this->error_message = $this->o_db->getSqlErrorMessage();
-            throw new ModelException($this->error_message, 400);
+            throw new ModelException($this->error_message, 410);
         }
         return true;
     }
@@ -276,11 +277,11 @@ class GroupsModel implements ModelInterface
                 return $results[0];
             }
             $this->error_message = 'Unable to read the group by ' . $group_name;
-            throw new ModelException($this->error_message, 200);
+            throw new ModelException($this->error_message, 210);
         }
         catch (ModelException $e) {
             $this->error_message = 'Unable to read the group by ' . $group_name;
-            throw new ModelException($this->error_message, 200);
+            throw new ModelException($this->error_message, 210);
         }
 
     }

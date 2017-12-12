@@ -6,15 +6,17 @@
  * @file      Ritc/Library/Exceptions/FactoryException.php
  * @namespace Ritc\Library\Exceptions
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-07-16 08:18:12
+ * @version   1.0.0-alpha.1
+ * @date      2017-12-12 14:57:04
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-07-16 wer
+ * - v1.0.0-alpha.1 - implements ExceptionHelper            - 2017-12-12 wer
+ * - v1.0.0-alpha.0 - Initial version                       - 2017-07-16 wer
  * @todo Ritc/Library/Exceptions/FactoryException.php - Everything
  */
 namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomException;
+use Ritc\Library\Helper\ExceptionHelper;
 use Throwable;
 
 /**
@@ -31,21 +33,6 @@ class FactoryException extends CustomException
 
     public function getCodeText($code = -1)
     {
-        switch ($code) {
-            case 10:
-                return 'Unable to start the factory.';
-            case 20:
-                return '__clone not allowed for this factory.';
-            case 30:
-                return 'Invalid file type for configuration.';
-            case 40:
-                return 'Unable to get configuration for factory.';
-            case 100:
-                return 'Factory unable to create the object instance.';
-            case 110:
-                return 'Factory unable to create an object needed to create the object instance.';
-            default:
-                return parent::getCodeText($code);
-        }
+        return ExceptionHelper::getCodeTextFactory($code);
     }
 }

@@ -210,7 +210,7 @@ class PeopleGroupMapModel implements ModelInterface
             return $this->o_db->delete($sql, $a_values, false);
         }
         catch (ModelException $e) {
-            throw new ModelException('Could not delete the pgm record(s) by people id.', 400, $e);
+            throw new ModelException('Could not delete the pgm record(s) by people id.', 410, $e);
         }
     }
 

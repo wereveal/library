@@ -6,10 +6,11 @@
  * @file      Ritc/Library/Models/TwigPrefixModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-05-13 09:14:11
+ * @version   1.0.0
+ * @date      2017-12-12 11:36:48
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-05-13 wer
+ * - v1.0.0         - Initial production version    - 2017-12-12 wer
+ * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
  * @todo Ritc/Library/Models/TwigPrefixModel.php - Everything
  */
 namespace Ritc\Library\Models;
@@ -66,7 +67,7 @@ class TwigPrefixModel implements ModelInterface
             $a_values = $this->clearDefaultPrefix($a_values);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), 150);
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
         try {
             return $this->genericCreate($a_values, $a_params);
@@ -152,7 +153,7 @@ class TwigPrefixModel implements ModelInterface
     {
         $sql = "
             UPDATE {$this->db_table}
-            SET tp_default = 0 
+            SET tp_default = 0
             WHERE tp_default = 1
         ";
         try {
@@ -180,12 +181,12 @@ class TwigPrefixModel implements ModelInterface
                         try {
                             if (!$this->updateDefaultPrefixOff()) {
                                 $this->error_message = "Could not set other prefix as not default.";
-                                throw new ModelException($this->error_message, 100);
+                                throw new ModelException($this->error_message, 110);
                             }
                         }
                         catch (ModelException $e) {
                             $this->error_message = "Could not set other prefix as not default.";
-                            throw new ModelException($this->error_message, 100);
+                            throw new ModelException($this->error_message, 110);
                         }
                     }
                     else {
@@ -200,12 +201,12 @@ class TwigPrefixModel implements ModelInterface
                 try {
                     if (!$this->updateDefaultPrefixOff()) {
                         $this->error_message = "Could not set other prefix as not default.";
-                        throw new ModelException($this->error_message, 100);
+                        throw new ModelException($this->error_message, 110);
                     }
                 }
                 catch (ModelException $e) {
                     $this->error_message = "Could not set other prefix as not default.";
-                    throw new ModelException($this->error_message, 100);
+                    throw new ModelException($this->error_message, 110);
                 }
             }
         }

@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/NavigationModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.3
- * @date      2017-06-15 16:06:48
+ * @version   1.0.0
+ * @date      2017-12-12 11:44:37
  * @note <b>Change Log</b>
+ * - v1.0.0         - Initial production version                    - 2017-12-12 wer
  * - v1.0.0-alpha.3 - Refactored to use ModelException              - 2017-06-15 wer
  * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here         - 2017-05-09 wer
  * - v1.0.0-alpha.1 - Refactoring in DbUtilityTraits reflected here - 2017-01-27 wer
@@ -77,7 +78,7 @@ class NavigationModel implements ModelInterface
         }
         else {
             $message = "A new record could not be created.";
-            throw new ModelException($message, 100);
+            throw new ModelException($message, 110);
         }
     }
 
@@ -172,7 +173,7 @@ class NavigationModel implements ModelInterface
         catch (ModelException $e) {
             $this->error_message = $o_map->getErrorMessage();
             $this->o_db->rollbackTransaction();
-            throw new ModelException($this->error_message, 400);
+            throw new ModelException($this->error_message, 410);
         }
         try {
             $this->genericDelete($nav_id);

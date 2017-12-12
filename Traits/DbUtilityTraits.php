@@ -8,9 +8,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.2
- * @date      2017-07-27 11:45:42
+ * @version   2.0.3
+ * @date      2017-12-12 11:43:33
  * @note <b>Change Log</b>
+ * - v2.0.3          - Changes to ModelException reflected here             - 2017-12-12 wer
  * - v2.0.2          - bug fix                                              - 2017-07-27 wer
  * - v2.0.1          - bug fix, logic error fix                             - 2017-06-23 wer
  * - v2.0.0          - updated to use ModelException                        - 2017-06-11 wer
@@ -124,7 +125,7 @@ trait DbUtilityTraits
         // If a_field_names is empty, the sql cannot be built. Return false.
         if ($a_field_names == []) {
             $this->error_message = 'Missing required values';
-            throw new ModelException($this->error_message, 130);
+            throw new ModelException($this->error_message, 120);
         }
 
         if (Arrays::isArrayOfAssocArrays($a_values)) {
@@ -133,7 +134,7 @@ trait DbUtilityTraits
                     $a_missing_values = Arrays::findMissingValues($a_value, $a_required_keys);
                     if (!empty($a_missing_values)) {
                         $this->error_message = "Missing required keys: " . json_encode($a_missing_values);
-                        throw new ModelException($this->error_message, 130);
+                        throw new ModelException($this->error_message, 120);
                     }
                 }
             }
@@ -144,7 +145,7 @@ trait DbUtilityTraits
                 $a_missing_values = Arrays::findMissingValues($a_values, $a_required_keys);
                 if (!empty($a_missing_values)) {
                     $this->error_message = "Missing required keys: " . json_encode($a_missing_values);
-                    throw new ModelException($this->error_message, 130);
+                    throw new ModelException($this->error_message, 120);
                 }
             }
             $sql_set = $this->buildSqlInsert($a_values, $a_field_names);
@@ -163,13 +164,13 @@ SQL;
             $a_new_ids = $this->o_db->getNewIds();
             if (count($a_new_ids) < 1) {
                 $this->error_message = 'No New Ids were returned in the create.';
-                throw new ModelException($this->error_message, 100);
+                throw new ModelException($this->error_message, 110);
             }
             return $a_new_ids;
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new ModelException($this->error_message, 140, $e);
+            throw new ModelException($this->error_message, $e->getCode(), $e);
         }
     }
 
@@ -208,7 +209,7 @@ SQL;
                 }
                 else {
                     $this->error_message = "The table specified doesn't exist.";
-                    throw new ModelException($this->error_message, 230);
+                    throw new ModelException($this->error_message, 19);
                 }
             }
         }
@@ -241,7 +242,7 @@ SQL;
         $where = $this->buildSqlWhere($a_search_for, $a_parameters, $a_allowed_keys);
         $sql = "
             SELECT {$distinct}{$select_me}
-            FROM {$table_name} 
+            FROM {$table_name}
             {$where}
         ";
         try {
@@ -321,7 +322,7 @@ SQL;
         if (is_array($record_ids)) {
            if (empty($record_ids)) {
                $this->error_message = 'No record ids were provided.';
-               throw new ModelException($this->error_message, 410);
+               throw new ModelException($message, 430);
            }
            else {
                return $this->genericDeleteMultiple($record_ids);
@@ -329,7 +330,7 @@ SQL;
         }
         elseif (is_numeric($record_ids) && $record_ids < 1) {
             $this->error_message = 'No valid record ids were provided.';
-            throw new ModelException($this->error_message, 410);
+            throw new ModelException($this->error_message, 430);
         }
         $piname = $this->primary_index_name;
         $sql = "
@@ -342,7 +343,7 @@ SQL;
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new ModelException($this->error_message, 400, $e);
+            throw new ModelException($this->error_message, 410, $e);
         }
     }
 
@@ -356,7 +357,7 @@ SQL;
     {
         if (empty($a_record_ids)) {
             $this->error_message = 'No record ids were provided.';
-            throw new ModelException($this->error_message, 410);
+            throw new ModelException($this->error_message, 430);
         }
         $piname = $this->primary_index_name;
         $sql =<<<SQL
@@ -372,7 +373,7 @@ SQL;
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new ModelException($this->error_message, 400, $e);
+            throw new ModelException($this->error_message, 410, $e);
         }
     }
 

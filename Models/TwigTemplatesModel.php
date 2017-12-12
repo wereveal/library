@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/TwigTemplatesModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-05-13 09:14:11
+ * @version   1.0.0
+ * @date      2017-12-12 11:36:26
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-05-13 wer
+ * - v1.0.0         - Initial production version    - 2017-12-12 wer
+ * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
  * @todo Ritc/Library/Models/TwigTemplatesModel.php - Everything
  */
 namespace Ritc\Library\Models;
@@ -141,7 +142,7 @@ class TwigTemplatesModel implements ModelInterface
             $ids = [$pim => $id];
         }
         if ($this->isImmutable($ids)) {
-            throw new ModelException('The record(s) is immutable', 440);
+            throw new ModelException('The record(s) is immutable', 434);
         }
         try {
             return $this->genericDelete($id);

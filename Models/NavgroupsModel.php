@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/NavgroupsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.4
- * @date      2017-06-15 16:04:24
+ * @version   1.0.0
+ * @date      2017-12-12 11:43:01
  * @note <b>Change Log</b>
+ * - v1.0.0         - initial production version                    - 2017-12-12 wer
  * - v1.0.0-alpha.4 - Refactored to use ModelException              - 2017-06-15 wer
  * - v1.0.0-alpha.3 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
  * - v1.0.0-alpha.2 - Added two methods to get default ng           - 2016-04-18 wer
@@ -50,27 +51,27 @@ class NavgroupsModel implements ModelInterface
     public function create(array $a_values = [])
     {
         if ($a_values == []) {
-            throw new ModelException('Values must be there to create a record', 130);
+            throw new ModelException('Values must be there to create a record', 120);
         }
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
                 if (empty($a_record['ng_name'])) {
-                    throw new ModelException('The navgroup requires a name.', 130);
+                    throw new ModelException('The navgroup requires a name.', 120);
                 }
                 else {
                     if ($this->hasRecords(['ng_name' => $a_record['ng_name']])) {
-                        throw new ModelException("The record already exists for {$a_record['ng_name']}", 110);
+                        throw new ModelException("The record already exists for {$a_record['ng_name']}", 132);
                     }
                 }
             }
         }
         else {
             if (empty($a_values['ng_name'])) {
-                throw new ModelException('The navgroup requires a name.', 130);
+                throw new ModelException('The navgroup requires a name.', 120);
             }
             else {
                 if ($this->hasRecords(['ng_name' => $a_values['ng_name']])) {
-                    throw new ModelException("The record already exists for {$a_values['ng_name']}", 110);
+                    throw new ModelException("The record already exists for {$a_values['ng_name']}", 132);
                 }
             }
         }
@@ -163,7 +164,7 @@ class NavgroupsModel implements ModelInterface
         $results = $o_map->read(['ng_id' => $ng_id]);
         if (!empty($results)) {
             $this->error_message = 'The nav_ng_map record(s) must be deleted first.';
-            throw new ModelException($this->error_message, 430);
+            throw new ModelException($this->error_message, 436);
         }
         try {
             $results = $this->retrieveDefaultId();
@@ -174,14 +175,14 @@ class NavgroupsModel implements ModelInterface
         }
         if ($results == $ng_id) {
             $this->error_message = 'This is the default navgroup. Change a different record to be default and try again.';
-            throw new ModelException($this->error_message, 440);
+            throw new ModelException($this->error_message, 450);
         }
         try {
             $this->genericDelete($ng_id);
         }
         catch (ModelException $e) {
             $message = $this->o_db->getSqlErrorMessage();
-            throw new ModelException($message, 400, $e);
+            throw new ModelException($message, 410, $e);
         }
         return true;
     }
@@ -245,7 +246,7 @@ class NavgroupsModel implements ModelInterface
                 return $results[0]['ng_id'];
             }
             else {
-                throw new ModelException('No record found', 210);
+                throw new ModelException('No record found', 230);
             }
         }
         catch (ModelException $e) {
@@ -271,7 +272,7 @@ class NavgroupsModel implements ModelInterface
                 return $results[0]['ng_id'];
             }
             else {
-                throw new ModelException('No record found', 210);
+                throw new ModelException('No record found', 230);
             }
         }
         catch (ModelException $e) {
@@ -297,7 +298,7 @@ class NavgroupsModel implements ModelInterface
                 return $results[0]['ng_name'];
             }
             else {
-                throw new ModelException('No record found', 210);
+                throw new ModelException('No record found', 230);
             }
         }
         catch (ModelException $e) {

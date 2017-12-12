@@ -5,14 +5,15 @@
  * @file      Ritc/Library/Models/RoutesGroupMapModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.4
- * @date      2017-06-18 14:46:29
+ * @version   1.0.0
+ * @date      2017-12-12 11:39:25
  * @note <b>Change Log</b>
- * - v1.0.0-alpha.4 - Refactored to use ModelException                              - 2017-06-18 wer
- * - v1.0.0-alpha.3 - DbUtilityTraits change reflected here                         - 2017-05-09 wer
- * - v1.0.0-alpha.2 - Bug fix                                                       - 2017-01-27 wer
- * - v1.0.0-alpha.1 - Bug Fix to read method to match interface                     - 2016-03-24 wer
- * - v1.0.0-alpha.0 - Initial version                                               - 08/01/2015 wer
+ * - v1.0.0         - Initial production version                - 2017-12-12 wer
+ * - v1.0.0-alpha.4 - Refactored to use ModelException          - 2017-06-18 wer
+ * - v1.0.0-alpha.3 - DbUtilityTraits change reflected here     - 2017-05-09 wer
+ * - v1.0.0-alpha.2 - Bug fix                                   - 2017-01-27 wer
+ * - v1.0.0-alpha.1 - Bug Fix to read method to match interface - 2016-03-24 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 08/01/2015 wer
  */
 namespace Ritc\Library\Models;
 
@@ -68,7 +69,7 @@ class RoutesGroupMapModel implements ModelInterface
             return $this->genericCreate($a_values, $a_params);
         }
         catch (ModelException $e) {
-            throw new ModelException('Could not create new record(s)', 100);
+            throw new ModelException('Could not create new record(s)', 110);
         }
     }
 

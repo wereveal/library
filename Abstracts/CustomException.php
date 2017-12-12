@@ -13,6 +13,7 @@
  */
 namespace Ritc\Library\Abstracts;
 
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Interfaces\CustomExceptionInterface;
 
 /**
@@ -50,23 +51,7 @@ abstract class CustomException extends \Exception implements CustomExceptionInte
 
     public function getCodeText($code = -1)
     {
-        switch ($code) {
-            ### Business Logic Errors ###
-            case 600:
-                return 'General Business Logic Error.';
-            ### Application Rule Errors ###
-            case 700:
-                return 'General Application Rule Error.';
-            ### Generic Errors ###
-            case 800:
-                return 'Unable to create the instance';
-            case 900:
-                return 'General Error, see error message';
-            case 999:
-                return 'Unspecified Error.';
-            default:
-                return 'Unspecified error';
-        }
+        return ExceptionHelper::getCodeText($code);
     }
 
     public function getClass()

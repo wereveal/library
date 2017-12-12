@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PageModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-06-17 12:20:18
+ * @version   2.0.1
+ * @date      2017-12-12 11:41:25
  * @note <b>Change Log</b>
+ * - v2.0.1   - ModelException changes reflected here                   - 2017-12-12 wer
  * - v2.0.0   - Refactored to use ModelException                        - 2017-06-17 wer
  * - v1.2.2   - DbUtilityTraits change reflected here                   - 2017-05-09 wer
  * - v1.2.1   - refactoring in DbUtiltity traits reflected here         - 2017-01-27 wer
@@ -155,7 +156,7 @@ class PageModel implements ModelInterface
         }
         if ($search_results[0]['page_immutable'] == 1) {
             $this->error_message = 'Sorry, that page can not be deleted.';
-            throw new ModelException($this->error_message, 440);
+            throw new ModelException($this->error_message, 450);
         }
         try {
             return $this->genericDelete($page_id);

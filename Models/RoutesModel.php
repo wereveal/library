@@ -5,25 +5,26 @@
  * @file      Ritc/Library/Models/RoutesModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-06-18 14:42:07
+ * @version   2.0.1
+ * @date      2017-12-12 11:37:32
  * @note <b>Change Log</b>
- * - v2.0.0   - Refactored to use ModelException and moved a couple    - 2017-06-18 wer
+ * - v2.0.1   - ModelException changes reflected here                   - 2017-12-12 wer
+ * - v2.0.0   - Refactored to use ModelException and moved a couple     - 2017-06-18 wer
  *              methods to RoutesComplexModel.
- * - v1.4.3   - bug fix                                                - 2017-05-16 wer
- * - v1.4.2   - DbUtilityTraits change reflected here                  - 2017-05-09 wer
- * - v1.4.1   - Bug fix caused by change elsewhere                     - 2017-01-27 wer
- * - v1.4.0   - Refactored readWithRequestUri to readByRequestUri      - 2016-04-10 wer
+ * - v1.4.3   - bug fix                                                 - 2017-05-16 wer
+ * - v1.4.2   - DbUtilityTraits change reflected here                   - 2017-05-09 wer
+ * - v1.4.1   - Bug fix caused by change elsewhere                      - 2017-01-27 wer
+ * - v1.4.0   - Refactored readWithRequestUri to readByRequestUri       - 2016-04-10 wer
  *              Added readWithUrl to return list of routes with url.
- * - v1.3.0   - updated to use more of the DbUtilityTraits             - 2016-04-01 wer
- * - v1.2.0   - Database structure change reflected here.              - 2016-03-11 wer
+ * - v1.3.0   - updated to use more of the DbUtilityTraits              - 2016-04-01 wer
+ * - v1.2.0   - Database structure change reflected here.               - 2016-03-11 wer
  *              Required new method to duplicate old functionality.
- * - v1.1.0   - refactoring to provide better postgresql compatibility - 11/22/2015 wer
- * - v1.0.2   - Database structure change reflected here.              - 09/03/2015 wer
- * - v1.0.1   - Refactoring elsewhere necessitated changes here        - 07/31/2015 wer
- * - v1.0.0   - first working version                                  - 01/28/2015 wer
- * - v1.0.0β2 - Changed to match some namespace changes, and bug fix   - 11/15/2014 wer
- * - v1.0.0β1 - First live version                                     - 11/11/2014 wer
+ * - v1.1.0   - refactoring to provide better postgresql compatibility  - 11/22/2015 wer
+ * - v1.0.2   - Database structure change reflected here.               - 09/03/2015 wer
+ * - v1.0.1   - Refactoring elsewhere necessitated changes here         - 07/31/2015 wer
+ * - v1.0.0   - first working version                                   - 01/28/2015 wer
+ * - v1.0.0β2 - Changed to match some namespace changes, and bug fix    - 11/15/2014 wer
+ * - v1.0.0β1 - First live version                                      - 11/11/2014 wer
  */
 namespace Ritc\Library\Models;
 
@@ -150,7 +151,7 @@ class RoutesModel implements ModelInterface
             foreach ($search_results as $a_result) {
                 if (isset($a_result['route_immutable']) && $a_result['route_immutable'] == 1) {
                     $this->error_message = 'Sorry, that route can not be deleted.';
-                    throw new ModelException($this->error_message, 440);
+                    throw new ModelException($this->error_message, 450);
                 }
             }
         }
@@ -162,7 +163,7 @@ class RoutesModel implements ModelInterface
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new ModelException($this->error_message, 400);
+            throw new ModelException($this->error_message, 410);
         }
     }
 }

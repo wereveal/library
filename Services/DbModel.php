@@ -6,9 +6,10 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.1.2
- * @date      2017-12-02 08:20:42
+ * @version   5.1.3
+ * @date      2017-12-12 11:34:41
  * @note <b>Change Log</b>
+ * - v5.1.3 - ModelException changes reflected here                                         - 2017-12-12 wer
  * - v5.1.2 - bug fixes - better exception handling.                                        - 2017-12-02 wer
  * - v5.1.1 - Bug fix                                                                       - 2017-11-16 wer
  * - v5.1.0 - Method name change to match standard for method names							- 2017-10-18 wer
@@ -131,7 +132,7 @@ class DbModel
         if ($the_query == '') {
             $this->error_message = 'The query must not be blank.';
             $this->logIt($this->error_message, LOG_ALWAYS, $meth . __LINE__);
-            throw new ModelException($this->error_message, 130);
+            throw new ModelException($this->error_message, 120);
         }
         $sequence_name = '';
         if ($this->db_type == 'pgsql' && !empty($a_table_info)) {
@@ -143,12 +144,12 @@ class DbModel
             }
             catch (\PDOException $e) {
                 $this->error_message = $e->getMessage();
-                throw new ModelException($this->error_message, 100);
+                throw new ModelException($this->error_message, 110);
             }
             if ($this->affected_rows == 0) {
                 $message = 'The INSERT affected no records.';
                 $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
-                throw new ModelException($message, 100);
+                throw new ModelException($message, 110);
             }
             else { // note: kind of assumes there was a single record inserted
                 try {
@@ -158,7 +159,7 @@ class DbModel
                 }
                 catch (\PDOException $e) {
                     $message = $e->getMessage();
-                    throw new ModelException($message, 100);
+                    throw new ModelException($message, 110);
                 }
             }
         }
@@ -182,7 +183,7 @@ class DbModel
         }
         else {
             $this->error_message = 'The array of values for a prepared insert was empty.';
-            throw new ModelException($this->error_message, 100);
+            throw new ModelException($this->error_message, 110);
         }
     }
 
@@ -222,7 +223,7 @@ class DbModel
             }
             catch (\PDOException $e) {
                 $this->error_message = $e->getMessage();
-                throw new ModelException($this->error_message, 50);
+                throw new ModelException($this->error_message, 15);
             }
 
             try {
@@ -234,12 +235,12 @@ class DbModel
                 }
                 catch (\PDOException $e) {
                     $this->error_message = $e->getMessage();
-                    throw new ModelException($this->error_message, 65);
+                    throw new ModelException($this->error_message, 18);
                 }
             }
             catch (\PDOException $e) {
                 $this->error_message = $e->getMessage();
-                throw new ModelException($this->error_message, 65);
+                throw new ModelException($this->error_message, 18);
             }
         }
         elseif (is_array($a_values) && count($a_values) > 0) {
@@ -320,7 +321,7 @@ class DbModel
         }
         catch (\PDOException $e) {
             $this->error_message = 'Could not execute a PDO::exec operation.';
-            throw new ModelException($this->error_message, 60, $e);
+            throw new ModelException($this->error_message, 17, $e);
         }
     }
 
@@ -335,7 +336,7 @@ class DbModel
     {
         if ($the_query == '') {
             $this->error_message = 'Missing the query to query.';
-            throw new ModelException($this->error_message, 70);
+            throw new ModelException($this->error_message, 20);
         }
         try {
             $pdo_stmt = $this->o_pdo->query($the_query);
@@ -344,12 +345,12 @@ class DbModel
             }
             catch (\PDOException $e) {
                 $this->error_message = 'Unable to do a PDO::fetchAll operation.';
-                throw new ModelException($this->error_message, 65, $e);
+                throw new ModelException($this->error_message, 18, $e);
             }
         }
         catch (\PDOException $e) {
             $this->error_message = 'Unable to do a PDO::query';
-            throw new ModelException($this->error_message, 65, $e);
+            throw new ModelException($this->error_message, 18, $e);
         }
     }
 
@@ -519,7 +520,7 @@ class DbModel
             }
             catch (\PDOException $e) {
                 $this->error_message = 'Could not get pdo::errorInfo';
-                throw new ModelException($this->error_message, 60, $e);
+                throw new ModelException($this->error_message, 17, $e);
             }
         }
         else {
@@ -528,7 +529,7 @@ class DbModel
             }
             catch (\PDOException $e) {
                 $this->error_message = 'Could not get pdo::errorInfo';
-                throw new ModelException($this->error_message, 60, $e);
+                throw new ModelException($this->error_message, 17, $e);
             }
         }
     }
@@ -566,7 +567,7 @@ class DbModel
                 catch (\PDOException $e) {
                     $a_error = $o_pdo_stmt->errorInfo();
                     $this->error_message = $a_error[2];
-                    throw new ModelException($this->error_message, 65);
+                    throw new ModelException($this->error_message, 18);
                 }
             }
             return true;
@@ -580,14 +581,14 @@ class DbModel
                 catch (\PDOException $e) {
                     $a_error = $o_pdo_stmt->errorInfo();
                     $this->error_message = $a_error[2];
-                    throw new ModelException($this->error_message, 65);
+                    throw new ModelException($this->error_message, 18);
                 }
             }
             return true;
        }
         else {
             $this->error_message = 'The value passed into bindValues must be an array.';
-            throw new ModelException($this->error_message, 70);
+            throw new ModelException($this->error_message, 20);
         }
     }
 
@@ -604,7 +605,7 @@ class DbModel
         }
         catch (\PDOException $e) {
             $this->error_message = 'Unable to close the pdo cursor';
-            throw new ModelException($this->error_message, 65, $e);
+            throw new ModelException($this->error_message, 18, $e);
         }
     }
 
@@ -620,11 +621,11 @@ class DbModel
                 return true;
             }
             else {
-                throw new ModelException('Unable to commit the transaction.', 40);
+                throw new ModelException('Unable to commit the transaction.', 13);
             }
         }
         catch (\PDOException $e) {
-            throw new ModelException($e->getMessage(), 60, $e);
+            throw new ModelException($e->getMessage(), 17, $e);
         }
     }
 
@@ -657,12 +658,12 @@ class DbModel
                 }
                 catch (\PDOException $e) {
                     $message = 'Unable to execute the sql.';
-                    throw new ModelException($message, 65, $e);
+                    throw new ModelException($message, 18, $e);
                 }
             }
             elseif (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays
                 $message = 'The array cannot be an array of array.';
-                throw new ModelException($message, 80);
+                throw new ModelException($message, 22);
             }
             else { // $array is for question mark place holders prepared statement
                 try {
@@ -676,7 +677,7 @@ class DbModel
                 }
                 catch (\PDOException $e) {
                     $message = 'Unable to execute the sql.';
-                    throw new ModelException($message, 65, $e);
+                    throw new ModelException($message, 18, $e);
                 }
             }
         }
@@ -686,7 +687,7 @@ class DbModel
             }
             catch (\PDOException $e) {
                 $message = 'Unable to execute the sql.';
-                throw new ModelException($message, 65, $e);
+                throw new ModelException($message, 18, $e);
             }
         }
     }
@@ -748,7 +749,7 @@ class DbModel
         }
         catch (\PDOException $e) {
             $this->error_message = 'Unable to fetch the record(s).';
-            throw new ModelException($this->error_message, 65, $e);
+            throw new ModelException($this->error_message, 18, $e);
         }
     }
 
@@ -792,7 +793,7 @@ class DbModel
         }
         catch (\PDOException $e) {
             $this->error_message = 'Unable to fetch the record(s).';
-            throw new ModelException($this->error_message, 65, $e);
+            throw new ModelException($this->error_message, 18, $e);
         }
     }
 
@@ -812,7 +813,7 @@ class DbModel
                     }
                     catch (\PDOException $e) {
                         $this->error_message = 'Unable to prepare the statement.';
-                        throw new ModelException($this->error_message, 50, $e);
+                        throw new ModelException($this->error_message, 15, $e);
                     }
                     break;
                 case 'FWDONLY':
@@ -822,14 +823,14 @@ class DbModel
                     }
                     catch (\PDOException $e) {
                         $this->error_message = 'Unable to prepare the statement.';
-                        throw new ModelException($this->error_message, 50, $e);
+                        throw new ModelException($this->error_message, 15, $e);
                     }
             }
             return $o_pdo_stmt;
         }
         else {
             $this->error_message = 'The query must not be blank.';
-            throw new ModelException($this->error_message, 50);
+            throw new ModelException($this->error_message, 15);
         }
     }
 
@@ -845,11 +846,11 @@ class DbModel
                 return true;
             }
             else {
-                throw new ModelException("Could not rollback the transaction.", 45);
+                throw new ModelException("Could not rollback the transaction.", 14);
             }
         }
         catch (\PDOException $e) {
-            throw new ModelException($e->getMessage(), 60);
+            throw new ModelException($e->getMessage(), 17);
         }
     }
 
@@ -865,7 +866,7 @@ class DbModel
             return $o_pdo_stmt->rowCount();
         }
         catch (\PDOException $e) {
-            throw new ModelException('Unable to get the row count.', 65, $e);
+            throw new ModelException('Unable to get the row count.', 18, $e);
         }
     }
 
@@ -881,11 +882,11 @@ class DbModel
                 return true;
             }
             else {
-                throw new ModelException('Unable to start the transaction.', 30);
+                throw new ModelException('Unable to start the transaction.', 12);
             }
         }
         catch (\PDOException $e) {
-            throw new ModelException('Unable to start the transaction.', 60, $e);
+            throw new ModelException('Unable to start the transaction.', 17, $e);
         }
     }
 
@@ -902,13 +903,13 @@ class DbModel
     {
         if ($the_query == '') {
             $this->error_message = 'The Query was blank.';
-            throw new ModelException($this->error_message, 70);
+            throw new ModelException($this->error_message, 20);
         }
         try {
             $this->o_pdo->beginTransaction();
         }
         catch (\PDOException $e) {
-            throw new ModelException('Unable to start the transaction.', 30, $e);
+            throw new ModelException('Unable to start the transaction.', 12, $e);
         }
         try {
             $this->insert($the_query, $a_values, $table_name);
@@ -918,13 +919,13 @@ class DbModel
             }
             catch (\PDOException $e) {
                 $this->error_message = 'Could Not Commit the Transaction.';
-                throw new ModelException($this->error_message, 40, $e);
+                throw new ModelException($this->error_message, 13, $e);
             }
         }
         catch (ModelException $e) {
             $this->o_pdo->rollBack();
             $this->error_message = "Unable to insert the record.";
-            throw new ModelException($this->error_message, 100, $e);
+            throw new ModelException($this->error_message, 110, $e);
         }
     }
 
@@ -943,7 +944,7 @@ class DbModel
         }
         catch (\PDOException $e) {
             $this->error_message = 'Could not start transaction so we could not execute the query, Please Try Again.';
-            throw new ModelException($this->error_message, 30, $e);
+            throw new ModelException($this->error_message, 12, $e);
         }
         try {
             $this->mdQuery($the_query, $the_array, $single_record);
@@ -953,7 +954,7 @@ class DbModel
             }
             catch (\PDOException $e) {
                 $this->error_message = 'Could Not Commit the Transaction.';
-                throw new ModelException($this->error_message, 30, $e);
+                throw new ModelException($this->error_message, 12, $e);
 
             }
         }
@@ -1070,7 +1071,7 @@ class DbModel
                     }
                     catch (\PDOException $e) {
                         $this->error_message = 'Could not get pdo->lastInsertId. Sequence Name: ' . $sequence_name . ' ' . $e->getMessage();
-                        throw new ModelException($this->error_message, 100, $e);
+                        throw new ModelException($this->error_message, 110, $e);
                     }
                 }
                 catch (ModelException $e) {
@@ -1098,7 +1099,7 @@ class DbModel
     {
         if ($the_query == '') {
             $this->error_message = 'The query must not be blank.';
-            throw new ModelException($this->error_message, 70);
+            throw new ModelException($this->error_message, 20);
         }
         if (empty($a_values)) {
             try {
@@ -1140,7 +1141,7 @@ class DbModel
         }
         else {
             $this->error_message = 'The array of values for a prepared query was empty.';
-            throw new ModelException($this->error_message, 70);
+            throw new ModelException($this->error_message, 20);
         }
     }
 
@@ -1157,7 +1158,7 @@ class DbModel
     public function mdQueryPrepared(array $a_values = [], $single_record = true, \PDOStatement $o_pdo_stmt)
     {
         if (empty($a_values)) {
-            throw new ModelException("Missing array values", 70);
+            throw new ModelException("Missing array values", 20);
         }
 
         if (isset($a_values[0]) && is_array($a_values[0])) { // array of arrays
@@ -1318,7 +1319,7 @@ class DbModel
                     throw new ModelException($e->errorMessage(), $e->getCode(), $e);
                 }
             default:
-                throw new ModelException('Missing Query Type', 70);
+                throw new ModelException('Missing Query Type', 20);
         }
     }
 
@@ -1367,18 +1368,18 @@ class DbModel
                         $a_results = $o_pdo_stmt->fetchAll($fetch_style);
                     }
                     catch (\PDOException $e) {
-                        throw new ModelException("Unable to fetch the records.", 240, $e);
+                        throw new ModelException("Unable to fetch the records.", 299, $e);
                     }
                 }
                 catch (ModelException $e) {
-                    throw new ModelException('Unable to execute the search.', 240, $e);
+                    throw new ModelException('Unable to execute the search.', 299, $e);
                 }
             }
             return $a_results;
         }
         else {
             $this->error_message = 'There was a problem with the array';
-            throw new ModelException($this->error_message, 70);
+            throw new ModelException($this->error_message, 20);
         }
     }
 
@@ -1417,7 +1418,7 @@ class DbModel
             return $this->o_pdo->quote($value);
         }
         catch (\PDOException $e) {
-            throw new ModelException($e->getMessage(), 60);
+            throw new ModelException($e->getMessage(), 17);
         }
     }
 
@@ -1481,7 +1482,7 @@ class DbModel
         }
         else {
             $this->error_message = 'You must specify a table name for this to work.';
-            throw new ModelException($this->error_message, 70);
+            throw new ModelException($this->error_message, 20);
         }
     }
 
@@ -1534,7 +1535,7 @@ class DbModel
                 $sql =
                     "
                     SELECT count(table_name) as count
-                    FROM information_schema.tables 
+                    FROM information_schema.tables
                     WHERE table_name = '{$table_name}'
                     AND table_catalog = '{$this->a_db_config["name"]}'
                 ";
@@ -1555,8 +1556,8 @@ class DbModel
                 $sql =
                     "
                     SELECT count(*) as count
-                    FROM information_schema.tables 
-                    WHERE TABLE_SCHEMA = '{$this->a_db_config["name"]}' 
+                    FROM information_schema.tables
+                    WHERE TABLE_SCHEMA = '{$this->a_db_config["name"]}'
                     AND TABLE_NAME = '{$table_name}'
                 ";
         }

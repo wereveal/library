@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/ConstantsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.0.1
- * @date      2017-07-12 14:49:21
+ * @version   3.0.2
+ * @date      2017-12-12 11:33:45
  * @note      see ConstantsEntity for database table definition.
  * @note <b>Change Log</b>
+ * - v3.0.2 - ModelException changes reflected here                         - 2017-12-12 wer
  * - v3.0.1 - Bug fixes                                                     - 2017-07-12 wer
  * - v3.0.0 - Refactored to use ModelException and bug fixes                - 2017-06-14 wer
  * - v2.5.0 - Removed unused property and setting of same                   - 2017-05-18 wer
@@ -137,7 +138,7 @@ class ConstantsModel implements ModelInterface
         }
         catch (ModelException $e) {
             $this->error_message = $e->errorMessage();
-            throw new ModelException($this->error_message, 300, $e);
+            throw new ModelException($this->error_message, $e->getCode(), $e);
         }
         if ($results[0]['const_immutable'] == 1) {
             unset($a_values['const_name']);
@@ -179,15 +180,15 @@ class ConstantsModel implements ModelInterface
             $search_results = $this->read($find_this, $a_params);
         }
         catch (ModelException $e) {
-            throw new ModelException('Unable to find that record', 410, $e);
+            throw new ModelException($e->getCodeText(435), 435, $e);
         }
         if (empty($search_results)) {
             $this->error_message = 'That record does not exist';
-            throw new ModelException($this->error_message, 410);
+            throw new ModelException($this->error_message, 435);
         }
         if (!isset($search_results[0]['const_immutable'])) {
             $this->error_message = 'It can not be determined if the constant is immutable.';
-            throw new ModelException($this->error_message, 440);
+            throw new ModelException($this->error_message, 435);
         }
         if ($search_results[0]['const_immutable'] == 0) {
             try {
@@ -199,7 +200,7 @@ class ConstantsModel implements ModelInterface
         }
         else {
             $this->error_message = 'Sorry, that constant can not be deleted.';
-            throw new ModelException($this->error_message, 440);
+            throw new ModelException($this->error_message, 450);
         }
     }
 
@@ -220,7 +221,7 @@ class ConstantsModel implements ModelInterface
         }
         catch (ModelException $e) {
             $message = "Could not start transaction.";
-            throw new ModelException($message, 30, $e);
+            throw new ModelException($message, 12, $e);
         }
         if ($this->tableExists() === false) {
             try {
@@ -350,7 +351,7 @@ SQL;
     {
         // todo ConstantsModel.createConstantRecords - need to add to tests
         if ($a_constants == array()) {
-            throw new ModelException('Missing values', 70);
+            throw new ModelException('Missing values', 120);
         }
         $query = "
             INSERT INTO {$this->db_table} (const_name, const_value, const_immutable)

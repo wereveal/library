@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.6
- * @date      2017-12-05 11:26:12
+ * @version   1.0.0-alpha.7
+ * @date      2017-12-12 10:08:19
  * @note Change Log
+ * - v1.0.0-alpha.7 - ModelException change reflected here                  - 2017-12-12 wer
  * - v1.0.0-alpha.6 - Moved some methods from here to PeopleModel           - 2017-12-05 wer
  * - v1.0.0-alpha.5 - Moved some business logic from controller to here     - 2017-12-02 wer
  * - v1.0.0-alpha.4 - Refactored to use ModelException                      - 2017-06-17 wer
@@ -199,7 +200,7 @@ class PeopleComplexModel
             }
         }
         else {
-            throw new ModelException('Unable to find the person specified.', 210);
+            throw new ModelException('Unable to find the person specified.', 230);
         }
         return $a_person;
     }
@@ -291,9 +292,9 @@ class PeopleComplexModel
                 if ($a_person[$key_name] == '') {
                     switch ($key_name) {
                         case 'login_id':
-                            throw new ModelException('Missing login_id', 70);
+                            throw new ModelException('Missing login_id', 20);
                         case 'password':
-                            throw new ModelException('Missing password', 70);
+                            throw new ModelException('Missing password', 20);
                         case 'real_name':
                             $a_person['real_name'] = $a_person['login_id'];
                             break;
@@ -308,7 +309,7 @@ class PeopleComplexModel
                 $this->o_db->startTransaction();
             }
             catch (ModelException $e) {
-                throw new ModelException('Could not start the transaction', 30);
+                throw new ModelException('Could not start the transaction', 12);
             }
             try {
                 $a_ids = $this->o_people->create($a_person);
@@ -320,7 +321,7 @@ class PeopleComplexModel
                 if (empty($a_pgm_values)) {
                     $this->error_message = 'Unable to create the required values.';
                     $this->o_db->rollbackTransaction();
-                    throw new ModelException($this->error_message, 70);
+                    throw new ModelException($this->error_message, 20);
                 }
                 try {
                     $this->o_pgm->create($a_pgm_values);
@@ -370,7 +371,7 @@ class PeopleComplexModel
                     switch ($key_name) {
                         case 'people_id':
                             $this->error_message = 'Missing people_id.';
-                            throw new ModelException($this->error_message, 70);
+                            throw new ModelException($this->error_message, 20);
                         case 'login_id':
                         case 'password':
                         case 'real_name':
@@ -387,7 +388,7 @@ class PeopleComplexModel
                 }
                 catch (ModelException $e) {
                     $this->error_message = 'Unable to start the transaction: ' . $e->errorMessage();
-                    throw new ModelException($this->error_message, 30);
+                    throw new ModelException($this->error_message, 12);
                 }
                 try {
                     $this->o_people->update($a_person);
@@ -431,7 +432,7 @@ class PeopleComplexModel
                 throw new ModelException($this->error_message, $error_code);
             }
         }
-        throw new ModelException('Unable to save the person. ' . $this->error_message, 100);
+        throw new ModelException('Unable to save the person. ' . $this->error_message, 110);
     }
 
     ### Business Logic & Utilities ###

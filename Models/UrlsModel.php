@@ -5,9 +5,10 @@
  * @file      UrlsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2017-06-19 13:08:38
+ * @version   1.1.1
+ * @date      2017-12-12 11:35:42
  * @note Change Log
+ * - v1.1.1         - ModelException changes reflected here - 2017-12-12 wer
  * - v1.1.0         - should have stayed in beta            - 2017-06-19 wer
  * - v1.0.0         - Out of beta                           - 2017-06-03 wer
  * - v1.0.0-beta.2  - Refactoring from DbUtilityTraits      - 2017-05-09 wer
@@ -114,7 +115,7 @@ class UrlsModel implements ModelInterface
                     }
                 }
                 else {
-                    throw new ModelException('Invalid Primary Index.', 310);
+                    throw new ModelException('Invalid Primary Index.', 330);
                 }
             }
         }
@@ -123,7 +124,7 @@ class UrlsModel implements ModelInterface
                 unset($a_values['url_text']);
             }
             else {
-                throw new ModelException('Invalid Primary Index.', 310);
+                throw new ModelException('Invalid Primary Index.', 330);
             }
         }
         try {
@@ -150,24 +151,24 @@ class UrlsModel implements ModelInterface
             foreach ($id as $key => $a_record) {
                 if ($this->validId($a_record['url_id'])) {
                     if ($this->isImmutable($a_record['url_id'])) {
-                        throw new ModelException('Immutable record may not be deleted.', 440);
+                        throw new ModelException('Immutable record may not be deleted.', 434);
                     }
                     $a_search_for_route[] = ['url_id' => $a_record['url_id']];
                 }
                 else {
-                    throw new ModelException('Invalid Primary Index.', 410);
+                    throw new ModelException('Invalid Primary Index.', 430);
                 }
             }
         }
         else {
             if ($this->validId($id)) {
                 if ($this->isImmutable($id)) {
-                    throw new ModelException('Immutable record may not be deleted.', 440);
+                    throw new ModelException('Immutable record may not be deleted.', 434);
                 }
                 $a_search_for_route = ['url_id' => $id];
             }
             else {
-                throw new ModelException('Invalid Primary Index.', 410);
+                throw new ModelException('Invalid Primary Index.', 430);
             }
         }
         $o_routes = new RoutesModel($this->o_db);
@@ -175,24 +176,24 @@ class UrlsModel implements ModelInterface
             $search_results = $o_routes->read($a_search_for_route);
             if (isset($search_results[0])) {
                 $this->error_message = 'Please change/delete the route that refers to this url first.';
-                throw new ModelException($this->error_message, 440);
+                throw new ModelException($this->error_message, 436);
             }
         }
         catch (ModelException $e) {
             $this->error_message = 'Unable to determine if a route uses this url.';
-            throw new ModelException($this->error_message, 400);
+            throw new ModelException($this->error_message, 410);
         }
         $o_nav = new NavigationModel($this->o_db);
         try {
             $search_results = $o_nav->read($a_search_for_route);
             if (isset($search_results[0])) {
                 $this->error_message = 'Please change/delete the Navigation record that refers to this url first.';
-                throw new ModelException($this->error_message, 440);
+                throw new ModelException($this->error_message, 436);
             }
         }
         catch (ModelException $e) {
             $message = $e->errorMessage();
-            throw new ModelException($message, 400);
+            throw new ModelException($message, 410);
         }
         try {
             $results = $this->genericDelete($id);
@@ -200,7 +201,7 @@ class UrlsModel implements ModelInterface
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new ModelException($this->error_message, 400);
+            throw new ModelException($this->error_message, 410);
         }
     }
 

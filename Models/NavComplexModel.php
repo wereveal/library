@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/NavComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.8
- * @date      2017-08-02 17:47:17 
+ * @version   1.0.0
+ * @date      2017-12-12 11:41:47
  * @note <b>Change Log</b>
+ * - v1.0.0         - initial production version                    - 2017-12-12 wer
  * - v1.0.0-alpha.8 - Bug fix                                       - 2017-08-02 wer
  * - v1.0.0-alpha.7 - Refactored to use ModelException              - 2017-06-15 wer
  * - v1.0.0-alpha.6 - DbUtilityTraits change reflected here         - 2017-05-09 wer
@@ -79,7 +80,7 @@ class NavComplexModel
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
-            throw new ModelException($this->error_message, 200, $e);
+            throw new ModelException($this->error_message, 210, $e);
         }
     }
 
@@ -117,7 +118,7 @@ class NavComplexModel
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
-            throw new ModelException($this->error_message, 200, $e);
+            throw new ModelException($this->error_message, 210, $e);
         }
     }
 
@@ -145,7 +146,7 @@ class NavComplexModel
         }
         catch (ModelException $e) {
             $this->error_message = 'Could not find the record: ' . $this->o_db->getSqlErrorMessage();
-            throw new ModelException($this->error_message, 200, $e);
+            throw new ModelException($this->error_message, 210, $e);
         }
         return $results;
     }
@@ -177,7 +178,7 @@ class NavComplexModel
         }
         catch (ModelException $e) {
             $this->error_message = 'Could not get Nav list by parent';
-            throw new ModelException($this->error_message, 200, $e);
+            throw new ModelException($this->error_message, 210, $e);
         }
         return $results;
     }
@@ -201,7 +202,7 @@ class NavComplexModel
         }
         catch (ModelException $e) {
             $this->error_message = 'Unable to get the nav record.';
-            throw new ModelException($this->error_message, 200, $e);
+            throw new ModelException($this->error_message, 210, $e);
         }
         return $results[0];
     }
@@ -223,7 +224,7 @@ class NavComplexModel
             $a_results = $this->getNavListByParent($parent_id, $ng_id);
         }
         catch (ModelException $e) {
-            throw new ModelException('Unable to get the nav list.', 200, $e);
+            throw new ModelException('Unable to get the nav list.', 210, $e);
         }
 
         if (count($a_results) > 0) {
@@ -232,7 +233,7 @@ class NavComplexModel
                     $a_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
                 }
                 catch (ModelException $e) {
-                    throw new ModelException('A problem getting the children.', 200, $e);
+                    throw new ModelException('A problem getting the children.', 210, $e);
                 }
                 $a_new_list[] = [
                     'id'          => $a_nav['nav_id'],
@@ -272,7 +273,7 @@ class NavComplexModel
         }
         catch (ModelException $e) {
             $this->error_message = 'Could not get the record: ' . $this->o_db->getSqlErrorMessage();
-            throw new ModelException($this->error_message, 200, $e);
+            throw new ModelException($this->error_message, 210, $e);
         }
         return $results;
     }
@@ -305,7 +306,7 @@ class NavComplexModel
             }
             catch (ModelException $e) {
                 $this->error_message = 'Unable to get nav list: ' . $this->o_db->getSqlErrorMessage();
-                throw new ModelException($this->error_message, 200, $e);
+                throw new ModelException($this->error_message, 210, $e);
             }
             $a_new_list[] = [
                 'id'          => $a_nav['nav_id'],
@@ -500,7 +501,7 @@ EOT;
             }
             catch (ModelException $e) {
                 $this->error_message = 'Not able to get the old nav record: ' . $this->o_db->getSqlErrorMessage();
-                throw new ModelException($this->error_message, 200, $e);
+                throw new ModelException($this->error_message, 210, $e);
             }
             $old_ng_id = $old_record['ng_id'] != $a_post['ng_id']
                 ? $old_record['ng_id']
@@ -518,7 +519,7 @@ EOT;
             }
             catch (ModelException $e) {
                 $this->error_message = 'Unable to create the navigation record: ' . $this->o_db->getSqlErrorMessage();
-                throw new ModelException($this->error_message, 100, $e);
+                throw new ModelException($this->error_message, 110, $e);
             }
             if ($results) {
                 $a_values = [
@@ -530,7 +531,7 @@ EOT;
                 }
                 catch (ModelException $e) {
                     $this->error_message = 'Unable to create the map: ' . $this->o_db->getSqlErrorMessage();
-                    throw new ModelException($this->error_message, 100, $e);
+                    throw new ModelException($this->error_message, 110, $e);
                 }
             }
         }
@@ -559,7 +560,7 @@ EOT;
                             $results = $o_map->create($a_values);
                         }
                         catch (ModelException $e) {
-                            throw new ModelException('Unable to create a new map record.', 100, $e);
+                            throw new ModelException('Unable to create a new map record.', 110, $e);
                         }
                     }
                 }
@@ -571,7 +572,7 @@ EOT;
             }
             catch (ModelException $e) {
                 $this->error_message = 'Unable to commit the transaction.';
-                throw new ModelException($this->error_message, 40, $e);
+                throw new ModelException($this->error_message, 13, $e);
             }
         }
         else {
@@ -581,7 +582,7 @@ EOT;
                 throw new ModelException($this->error_message, 10);
             }
             catch (ModelException $e) {
-                throw new ModelException('Unable to do the operation', 60);
+                throw new ModelException('Unable to do the operation', 17);
             }
         }
     }

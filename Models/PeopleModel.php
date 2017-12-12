@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.0
- * @date      2017-12-05 11:24:02
+ * @version   1.4.1
+ * @date      2017-12-12 11:38:33
  * @note <b>Change Log</b>
+ * - v1.4.1    - ModelException changes reflected here                       - 2017-12-12 wer
  * - v1.4.0    - moved some methods from PeopleComplex to here               - 2017-12-05 wer
  *               bug fixes too.
  * - v1.3.3    - DbUtilityTraits change reflected here                       - 2017-05-09 wer
@@ -156,7 +157,7 @@ class PeopleModel implements ModelInterface
                 }
             }
             catch (ModelException $e) {
-                throw new ModelException('Unable to delete the record.', 445, $e);
+                throw new ModelException($e->getCodeText(435), 435, $e);
             }
         }
         else {
@@ -167,7 +168,7 @@ class PeopleModel implements ModelInterface
                 }
             }
             catch (ModelException $e) {
-                throw new ModelException('Unable to delete the record.', 445, $e);
+                throw new ModelException($e->getCodeText(435), 435, $e);
             }
         }
         try {
@@ -197,30 +198,30 @@ class PeopleModel implements ModelInterface
             try {
                 $results = $this->readById($people_ids);
                 if (empty($results)) {
-                    throw new ModelException('Unable to determine if the record is immutable.', 445);
+                    throw new ModelException('Unable to determine if the record is immutable.', 435);
                 }
                 foreach ($results as $key => $record) {
                     if ($record['is_immutable']) {
-                        throw new ModelException('Unable to delete the record: record is immutable.', 440);
+                        throw new ModelException('Unable to delete the record: record is immutable.', 450);
                     }
                 }
             }
             catch (ModelException $e) {
-                throw new ModelException('Unable to determine if the record is immutable.', 445, $e);
+                throw new ModelException('Unable to determine if the record is immutable.', 435, $e);
             }
         }
         else {
             try {
                 $results = $this->readById($people_id);
                 if (empty($results)) {
-                    throw new ModelException('Unable to determine if the record is immutable.', 445);
+                    throw new ModelException('Unable to determine if the record is immutable.', 435);
                 }
                 if ($results[0]['is_immutable']) {
-                    throw new ModelException('Unable to delete the record: record is immutable.', 440);
+                    throw new ModelException('Unable to delete the record: record is immutable.', 450);
                 }
             }
             catch (ModelException $e) {
-                throw new ModelException('Unable to determine if the record is immutable.', 445, $e);
+                throw new ModelException('Unable to determine if the record is immutable.', 435, $e);
             }
         }
         try {
@@ -315,7 +316,7 @@ class PeopleModel implements ModelInterface
                 return $a_results[0]['people_id'];
             }
             else {
-                throw new ModelException('No records were returned.', 210);
+                throw new ModelException('No records were returned.', 230);
             }
         }
         catch (ModelException $e) {

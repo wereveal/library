@@ -139,7 +139,7 @@ class NavNgMapModel implements ModelInterface
         }
         catch (ModelException $e) {
             $this->error_message = 'Unable to delete the record: ' . $this->o_db->getSqlErrorMessage();
-            throw new ModelException($this->error_message, 400, $e);
+            throw new ModelException($this->error_message, 410, $e);
         }
     }
 

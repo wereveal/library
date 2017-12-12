@@ -5,15 +5,17 @@
  * @file      Ritc/Library/Exceptions/ModelException.php
  * @namespace Ritc\Library\Exceptions
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2017-07-15 12:40:41
+ * @version   1.0.0-alpha.2
+ * @date      2017-12-12 11:32:33
  * @note Change Log
+ * - v1.0.0-alpha.2 - Renumbered codes to be more consistent    - 2017-12-12 wer
  * - v1.0.0-alpha.1 - CustomException change reflected here.    - 2017-07-15 wer
  * - v1.0.0-alpha.0 - Initial version                           - 2017-06-11 wer
  */
 namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomException;
+use Ritc\Library\Helper\ExceptionHelper;
 
 /**
  * Class ModelException.
@@ -22,145 +24,18 @@ use Ritc\Library\Abstracts\CustomException;
  */
 class ModelException extends CustomException
 {
+    public function __construct($message = "", $code = 0, \Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
+
     /**
+     * Returns the text that is associated with the error code.
      * @param int $code
      * @return string
      */
     public function getCodeText($code = -1)
     {
-        switch ($code) {
-            # Generic Database failures
-            case 10:
-                return 'Unable to do the database operation';
-            case 20:
-                return 'Unable to connect to the database';
-            case 30:
-                return 'Unable to start a transaction.';
-            case 40:
-                return 'Unable to commit a transaction.';
-            case 45:
-                return 'Unable to rollback a transaction.';
-            case 50:
-                return 'Unable to prepare the statement.';
-            case 55:
-                return 'Unable to execute the prepared statement.';
-            case 60:
-                return 'Unable to do a PDO operation.';
-            case 65:
-                return 'Unable to do a PDOStatement operation.';
-            case 70:
-                return 'Missing required values';
-            case 80:
-                return 'Invalid values.';
-            # Create Codes
-            case 100:
-                return 'Unable to create a new record: unspecified reason.';
-            case 110:
-                return 'Unable to create a new record: The record already exists.';
-            case 120:
-                return 'Unable to create a new record: missing a required value.';
-            case 130:
-                return 'Unable to create a new record: unique key value exists.';
-            case 140:
-                return 'Unable to create a new record: see previous message.';
-            case 150:
-                return 'Unable to create  new record: invalid value provided.';
-            # Read codes
-            case 200:
-                return 'Unable to read the record(s): unspecified reason.';
-            case 210:
-                return 'Unable to read the record(s): No record exists with values given.';
-            case 220:
-                return 'Unable to read the record(s): a required field is missing.';
-            case 230:
-                return 'unable to read the record(s): invalid search term provided.';
-            case 240:
-                return 'Unable to read the record(s): see the previous exception message.';
-            # Update Codes
-            case 300:
-                return 'Unable to update the record';
-            case 310:
-                return 'Unable to update the record: no record with that id exists.';
-            case 320:
-                return 'Unable to update the record: a required field is missing from the values';
-            case 330:
-                return 'Unable to update the record: a field given does not exist in the database.';
-            case 340:
-                return 'Unable to update the record: a field being changed is immutable';
-            case 350:
-                return 'Update not permitted.';
-            # Delete codes
-            case 400:
-                return 'Unable to delete the record.';
-            case 410:
-                return 'Unable to delete the record: no record with that id exists.';
-            case 420:
-                return 'Unable to delete the record: missing the record primary id';
-            case 430:
-                return 'Unable to delete the record: has child records.';
-            case 440;
-                return 'Unable to delete the record: may not be deleted.';
-            case 445:
-                return 'Unable to delete the record: unable to determine if the record is immutable.';
-            # Database Definition code
-            case 500:
-                return 'Unable to change the structure of the database.';
-            case 510:
-                return 'Unable to CREATE the database.';
-            case 511:
-                return 'Unable to ALTER the database.';
-            case 512:
-                return 'Unable to DROP the database.';
-            case 520:
-                return 'Unable to CREATE the event.';
-            case 521:
-                return 'Unable to ALTER the event.';
-            case 522:
-                return 'Unable to DROP the event.';
-            case 530:
-                return 'Unable to CREATE the function or procedure.';
-            case 531:
-                return 'Unable to ALTER the function or procedure.';
-            case 532:
-                return 'Unable to DROP the function or procedure.';
-            case 540:
-                return 'Unable to CREATE the index.';
-            case 541:
-                return 'Invalid error code';
-            case 542:
-                return 'Unable to DROP the index.';
-            case 550:
-                return 'Unable to CREATE the logfile group.';
-            case 551:
-                return 'Unable to ALTER the logfile group.';
-            case 552:
-                return 'Unable to DROP the logfile group.';
-            case 560:
-                return 'Unable to CREATE the table.';
-            case 561:
-                return 'Unable to ALTER the table.';
-            case 562:
-                return 'Unable to DROP the table.';
-            case 564:
-                return 'Unable to RENAME the table.';
-            case 565:
-                return 'Unable to TRUNCATE the table.';
-            case 570:
-                return 'Unable to CREATE the trigger.';
-            case 571:
-                return 'Unable to ALTER the trigger.';
-            case 572:
-                return 'Unable to DROP the trigger.';
-            case 580:
-                return 'Unable to CREATE the view.';
-            case 581:
-                return 'Unable to ALTER the view.';
-            case 582:
-                return 'Unable to DROP the view.';
-            default:
-                return parent::getCodeText($code);
-
-        }
+        return ExceptionHelper::getCodeTextModel($code);
     }
-
 }
