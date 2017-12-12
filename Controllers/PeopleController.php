@@ -149,6 +149,9 @@ class PeopleController implements ManagerControllerInterface
     {
         $meth = __METHOD__ . '.';
         $error_message = "Opps, the person was not updated.";
+          $log_message = 'Post ' . var_export($this->a_post, TRUE);
+          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         $a_person = $this->a_post['person'];
         if (!isset($this->a_post['groups']) || count($this->a_post['groups']) < 1) {
             return ViewHelper::failureMessage($error_message . " The person must be assigned to at least one group.");
@@ -163,11 +166,9 @@ class PeopleController implements ManagerControllerInterface
             case 'password-missing':
                 return ViewHelper::failureMessage($error_message . " -- missing password.");
             case 'login-exists':
-                $addendum .= '<br>The login id was not changed because the new value already existed for someone else.';
-                break;
+                return ViewHelper::failureMessage($error_message . ' -- the new login id already exists.');
             case 'short_name-exists':
-                $addendum .= '<br>The alias was not changed because the new value alrady existed for someone else.';
-                break;
+                return ViewHelper::failureMessage($error_message . ' -- the new short name already exists.');
             case 'nothing-to-update':
                 return ViewHelper::successMessage("No values changed.");
             case true:

@@ -279,9 +279,8 @@ class PeopleComplexModel
      */
     public function savePerson(array $a_person = [])
     {
-        $log_message = 'person to save ' . var_export($a_person, TRUE);
-        $this->logIt($log_message, LOG_OFF, __METHOD__);
-
+          $log_message = 'person to save ' . var_export($a_person, TRUE);
+          $this->logIt($log_message, LOG_OFF, __METHOD__);
         if (!isset($a_person['people_id']) || $a_person['people_id'] == '') { // New User
             $a_required_keys = array(
                 'login_id',
@@ -347,16 +346,26 @@ class PeopleComplexModel
             throw new ModelException($this->error_message, $error_code);
         }
         else { // Existing User
-            $a_required_keys = array(
+            if (isset($a_person['groups'])) {
+                $a_groups = $this->makeGroupIdArray($a_person['groups']);
+                $a_pg_values = $this->makePgmArray($a_person['people_id'], $a_groups);
+                unset($a_person['groups']);
+            }
+            $a_possible_keys = array(
                 'people_id',
                 'login_id',
                 'real_name',
-                'password'
+                'password',
+                'short_name',
+                'description',
+                'is_logged_in',
+                'is_active',
+                'is_immutable'
             );
             if (isset($a_person['password'])) {
                 $a_person['password'] = $this->o_people->hashPass($a_person['password']);
             }
-            foreach($a_required_keys as $key_name) {
+            foreach($a_possible_keys as $key_name) {
                 if (empty($a_person[$key_name])) {
                     switch ($key_name) {
                         case 'people_id':
@@ -372,9 +381,7 @@ class PeopleComplexModel
                     }
                 }
             }
-            $a_groups = $this->makeGroupIdArray($a_person['groups']);
-            $a_pg_values = $this->makePgmArray($a_person['people_id'], $a_groups);
-            if ($a_pg_values != array()) {
+            if (!empty($a_pg_values)) {
                 try {
                     $this->o_db->startTransaction();
                 }
@@ -393,17 +400,26 @@ class PeopleComplexModel
                                 return true;
                             }
                             catch (ModelException $e) {
-                                $this->error_message = 'Unable to commit the transaction: ' . $e->errorMessage();
+                                $this->error_message = 'Unable to commit the transaction';
+                                if (DEVELOPER_MODE) {
+                                    $this->error_message .= ' ' . $e->errorMessage();
+                                }
                                 $error_code = 40;
                             }
                         }
                         catch (ModelException $e) {
-                            $this->error_message = 'Unable to create the people group map record: '. $e->errorMessage();
+                            $this->error_message = 'Unable to create the people group map record.';
+                            if (DEVELOPER_MODE) {
+                                $this->error_message .= ' ' . $e->errorMessage();
+                            }
                             $error_code = $e->getCode();
                         }
                     }
                     catch (ModelException $e) {
-                        $this->error_message = 'Unable to delete old people group map record: '. $e->errorMessage();
+                        $this->error_message = 'Unable to delete old people group map record.';
+                        if (DEVELOPER_MODE) {
+                            $this->error_message .= ' ' . $e->errorMessage();
+                        }
                         $error_code = $e->getCode();
                     }
                 }
@@ -443,11 +459,11 @@ class PeopleComplexModel
 
     /**
      * Returns an array used in the creation of people group map records.
-     * @param array $group_id
-     * @param       $group_name
+     * @param string|array $group_id   Optional, if $group_name is empty then Registered group is assigned.
+     * @param string       $group_name Optional, used if $group_id is empty
      * @return array
      */
-    public function makeGroupIdArray($group_id = array(), $group_name = '')
+    public function makeGroupIdArray($group_id = '', $group_name = '')
     {
         if (is_array($group_id)) {
             $a_group_ids = $group_id;
@@ -455,11 +471,11 @@ class PeopleComplexModel
         elseif ($group_id != '') {
            $results = $this->o_group->isValidGroupId($group_id);
            $a_group_ids = $results
-               ? array($group_id)
-               : array();
+               ? [$group_id]
+               : [];
         }
         else {
-            $a_group_ids = array();
+            $a_group_ids = [];
         }
         if (empty($a_group_ids) && !empty($group_name)) {
             try {
@@ -469,16 +485,19 @@ class PeopleComplexModel
                 }
             }
             catch (ModelException $e) {
-                try {
-                    $a_found_groups = $this->o_group->readByName('Registered');
-                    $use_id = $a_found_groups !== false && count($a_found_groups) > 0
-                        ? $a_found_groups[0]['group_id']
-                        : 5;
-                    $a_group_ids = array($use_id);
-                }
-                catch (ModelException $e) {
-                    $a_group_ids = array();
-                }
+                $a_group_ids = [];
+            }
+        }
+        if (empty($a_group_ids)) {
+            try {
+                $a_found_groups = $this->o_group->readByName('Registered');
+                $use_id = $a_found_groups !== false && count($a_found_groups) > 0
+                    ? $a_found_groups[0]['group_id']
+                    : 5;
+                $a_group_ids = [$use_id];
+            }
+            catch (ModelException $e) {
+                $a_group_ids = ['5'];
             }
         }
         return $a_group_ids;

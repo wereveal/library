@@ -724,6 +724,7 @@ class PeopleModel implements ModelInterface
      */
     public function setPersonValues(array $a_person = array())
     {
+        $meth = __METHOD__ . '.';
         $new_person = empty($a_person['people_id'])
             ? true
             : false;
@@ -802,30 +803,37 @@ class PeopleModel implements ModelInterface
                 if (empty($a_previous_values)) {
                     return 'people_id-invalid';
                 }
+                $a_old_person = $a_previous_values[0];
             }
             catch (ModelException $e) {
                 return 'people_id-invalid';
             }
+              $log_message = 'New Person ' . var_export($a_person, TRUE);
+              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+              $log_message = 'Old Person ' . var_export($a_old_person, TRUE);
+              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             foreach ($a_allowed_keys as $key) {
-                if ($key !== 'people_id' && isset($a_person[$key])) {
-                    $old_value = $a_previous_values[$key];
-                    $new_value = $a_person[$key];
-                    if ($key === 'is_logged_in' || $key === 'is_active' || $key === 'is_immutable') {
-                        $old_value = $old_value === 0 ? 'false' : 'true';
-                    }
-                    if ($key === 'login_id' && ($new_value !== $old_value)) {
-                        if ($this->isExistingLoginId($a_person['login_id'])) {
-                            return 'login-exists';
+                if ($key !== 'people_id') {
+                    if (isset($a_person[$key])) {
+                        $old_value = $a_old_person[$key];
+                        $new_value = $a_person[$key];
+                        if ($key === 'is_logged_in' || $key === 'is_active' || $key === 'is_immutable') {
+                            $new_value = $new_value === 'true' ? 1 : 0;
+                            $a_person[$key] = $new_value;
                         }
-                    }
-                    if ($key === 'short_name' && ($new_value !== $old_value)) {
-                        if ($this->isExistingShortName($a_person['short_name'])) {
-                            return 'short_name-exists';
+                        if ($key === 'login_id' && ($new_value !== $old_value)) {
+                            if ($this->isExistingLoginId($a_person['login_id'])) {
+                                return 'login-exists';
+                            }
                         }
-                    }
-
-                    if ($new_value === $old_value) {
-                        unset($a_person[$key]);
+                        if ($key === 'short_name' && ($new_value !== $old_value)) {
+                            if ($this->isExistingShortName($a_person['short_name'])) {
+                                return 'short_name-exists';
+                            }
+                        }
+                        if ($new_value === $old_value) {
+                            unset($a_person[$key]);
+                        }
                     }
                 }
             }
@@ -834,6 +842,8 @@ class PeopleModel implements ModelInterface
             }
 
         }
+          $log_message = 'Person modified ' . var_export($a_person, TRUE);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $a_person;
     }
 

@@ -173,6 +173,8 @@ class PeopleView
         }
         try {
             $a_person = $this->o_people_complex->readInfo($people_id);
+              $log_message = 'person ' . var_export($a_person, TRUE);
+              $this->logIt($log_message, LOG_ON, $meth . __LINE__);
             if (empty($a_person)) {
                 $a_message = ViewHelper::errorMessage('The person was not found. Please Try Again.');
                 return $this->renderList($a_message);
@@ -184,7 +186,9 @@ class PeopleView
             return $this->renderList($a_message);
         }
         try {
-            $a_default_groups = $this->o_group_model->read();
+            $a_default_groups = $this->o_group_model->read([], ['order_by' => 'group_auth_level DESC']);
+              $log_message = 'Groups:  ' . var_export($a_default_groups, TRUE);
+              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             if (empty($a_default_groups)) {
                 $a_message = ViewHelper::errorMessage('An error occurred, please try again.');
                 return $this->renderList($a_message);
@@ -194,17 +198,15 @@ class PeopleView
             $a_message = ViewHelper::errorMessage('An error occurred, please try again.');
             return $this->renderList($a_message);
         }
-        foreach ($a_default_groups as $key => $a_group) {
-            $a_default_groups[$key]['checked'] = '';
-        }
-        $a_person_groups = $a_person['groups'];
 
-        foreach ($a_person_groups as $a_group) {
-            $found_location = Arrays::inArrayRecursive($a_group['group_id'], $a_default_groups);
-            if ($found_location) {
-                $a_found_location = explode('.', $found_location);
-                $main_key = $a_found_location[0];
-                $a_default_groups[$main_key]['checked'] = ' checked';
+        foreach ($a_person['groups'] as $a_person_group) {
+            foreach ($a_default_groups as $key => $a_group) {
+                if ($a_person_group['group_id'] === $a_group['group_id']) {
+                    $a_default_groups[$key]['checked'] = ' checked';
+                }
+                else {
+                    $a_default_groups[$key]['checked'] = '';
+                }
             }
         }
         $a_person['groups'] = $a_default_groups;
