@@ -145,8 +145,9 @@ class PeopleView
             'short_name'   => '',
             'description'  => '',
             'password'     => '',
-            'is_active'    => 0,
-            'is_immutable' => 0,
+            'is_active'    => 'false',
+            'is_immutable' => 'false',
+            'is_logged_in' => 'false',
             'created_on'   => date('Y-m-d H:i:s'),
             'groups'       => [],
             'highest_role' => 0
@@ -174,7 +175,7 @@ class PeopleView
         try {
             $a_person = $this->o_people_complex->readInfo($people_id);
               $log_message = 'person ' . var_export($a_person, TRUE);
-              $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             if (empty($a_person)) {
                 $a_message = ViewHelper::errorMessage('The person was not found. Please Try Again.');
                 return $this->renderList($a_message);
@@ -198,24 +199,21 @@ class PeopleView
             $a_message = ViewHelper::errorMessage('An error occurred, please try again.');
             return $this->renderList($a_message);
         }
-
-        foreach ($a_person['groups'] as $a_person_group) {
-            foreach ($a_default_groups as $key => $a_group) {
-                if ($a_person_group['group_id'] === $a_group['group_id']) {
+        foreach ($a_default_groups as $key => $a_group) {
+            $a_default_groups[$key]['checked'] = '';
+            foreach ($a_person['groups'] as $a_person_group) {
+                if ($a_person_group['group_id'] === $a_default_groups[$key]['group_id']) {
                     $a_default_groups[$key]['checked'] = ' checked';
-                }
-                else {
-                    $a_default_groups[$key]['checked'] = '';
-                }
+                }                
             }
         }
         $a_person['groups'] = $a_default_groups;
         $a_person['password'] = '************';
-        $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, __METHOD__);
+          $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
         $a_twig_values = $this->createDefaultTwigValues();
         $a_twig_values['person'] = $a_person;
         $a_twig_values['action'] = 'update';
-        $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_OFF, $meth . __LINE__);
+          $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }

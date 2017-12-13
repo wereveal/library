@@ -229,11 +229,11 @@ class PeopleComplexModel
         }
         if (is_numeric($group_id)) {
             $group_and = 'g.group_id = :group_id';
-            $a_values = ['group_id' => $group_id, 'is_active' => 1];
+            $a_values = ['group_id' => $group_id, 'is_active' => 'true'];
         }
         else {
             $group_and = 'g.group_name = :group_name';
-            $a_values = ['group_name' => $group_id, 'is_active' => 1];
+            $a_values = ['group_name' => $group_id, 'is_active' => 'true'];
         }
         $fields = '';
         foreach ($a_people_fields as $field_name) {
@@ -281,7 +281,7 @@ class PeopleComplexModel
     public function savePerson(array $a_person = [])
     {
           $log_message = 'person to save ' . var_export($a_person, TRUE);
-          $this->logIt($log_message, LOG_OFF, __METHOD__);
+          $this->logIt($log_message, LOG_ON, __METHOD__);
         if (!isset($a_person['people_id']) || $a_person['people_id'] == '') { // New User
             $a_required_keys = array(
                 'login_id',
@@ -376,6 +376,11 @@ class PeopleComplexModel
                         case 'password':
                         case 'real_name':
                             unset($a_person[$key_name]);
+                            break;
+                        case 'is_logged_in':
+                        case 'is_active':
+                        case 'is_immutable':
+                            $a_person[$key_name] = 'false';
                             break;
                         default:
                             break;

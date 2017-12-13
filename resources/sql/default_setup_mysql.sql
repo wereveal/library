@@ -185,11 +185,11 @@ CREATE TABLE `{$dbPrefix}people` (
   `short_name` varchar(8) NOT NULL,
   `password` varchar(128) NOT NULL,
   `description` varchar(250) NOT NULL DEFAULT '',
-  `is_logged_in` tinyint(2) NOT NULL DEFAULT '0',
+  `is_logged_in` varchar(10) NOT NULL DEFAULT 'false',
   `bad_login_count` int(11) NOT NULL DEFAULT '0',
   `bad_login_ts` int(11) NOT NULL DEFAULT '0',
-  `is_active` tinyint(4) NOT NULL DEFAULT '1',
-  `is_immutable` tinyint(1) NOT NULL DEFAULT '0',
+  `is_active` varchar(10) NOT NULL DEFAULT 'true',
+  `is_immutable` varchar(10) NOT NULL DEFAULT 'false',
   `created_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`people_id`),
   UNIQUE KEY `loginid` (`login_id`),
@@ -202,8 +202,8 @@ LOCK TABLES `{$dbPrefix}people` WRITE;
 INSERT INTO `{$dbPrefix}people`
     (`people_id`, `login_id`, `real_name`, `short_name`, `password`, `description`, `is_logged_in`, `bad_login_count`, `bad_login_ts`, `is_active`, `is_immutable`, `created_on`)
 VALUES
-	(1,'SuperAdmin','Super Admin','GSA','$2y$10$mAQZrjwnPDkfpdhmdfqxFuBJwY7w5HeCli2qs2H2Kg69w0MooNsJW','The all powerful Admin',0,0,0,1,1,'2012-08-12 02:55:28'),
-	(2,'Admin','Admin','ADM','$2y$10$mAQZrjwnPDkfpdhmdfqxFuBJwY7w5HeCli2qs2H2Kg69w0MooNsJW','Allowed to admin the backend.',1,0,0,1,1,'2015-09-04 13:15:55');
+	(1,'SuperAdmin','Super Admin','GSA','$2y$10$mAQZrjwnPDkfpdhmdfqxFuBJwY7w5HeCli2qs2H2Kg69w0MooNsJW','The all powerful Admin','false',0,0,'true','true','2012-08-12 02:55:28'),
+	(2,'Admin','Admin','ADM','$2y$10$mAQZrjwnPDkfpdhmdfqxFuBJwY7w5HeCli2qs2H2Kg69w0MooNsJW','Allowed to admin the backend.','false',0,0,'true','true','2015-09-04 13:15:55');
 
 /*!40000 ALTER TABLE `{$dbPrefix}people` ENABLE KEYS */;
 UNLOCK TABLES;

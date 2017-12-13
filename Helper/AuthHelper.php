@@ -138,7 +138,7 @@ class AuthHelper
         if ($a_person_post == []) {
             return [
                 'login_id'     => '',
-                'is_logged_in' => 0,
+                'is_logged_in' => 'false',
                 'message'      => 'Please try again. No information provided.'
             ];
         }
@@ -162,7 +162,7 @@ class AuthHelper
                 'login_id' => isset($a_person_post['login_id'])
                     ? $a_person_post['login_id']
                     : '',
-                'is_logged_in' => 0,
+                'is_logged_in' => 'false',
                 'message' => 'Please try again. Missing info: ' . $missing_info
             ];
 
@@ -177,14 +177,14 @@ class AuthHelper
             if (empty($a_person)) {
                 return [
                     'login_id'     => '',
-                    'is_logged_in' => 0,
+                    'is_logged_in' => 'false',
                     'message'      => 'Please try again. The login id was not found.'
                 ];
             }
-            if ($a_person['is_active'] < 1) {
+            if ($a_person['is_active'] !== 'true') {
                 $message = $this->o_people->makeBadLoginAttempt($a_person['people_id']);
                 $a_person_post['password']     = '';
-                $a_person_post['is_logged_in'] = 0;
+                $a_person_post['is_logged_in'] = 'false';
                 $a_person_post['message']      = $message == ''
                     ? 'The login id is inactive.'
                     : 'The login id is inactive. ' . $message;
@@ -193,7 +193,7 @@ class AuthHelper
             if ($a_person['bad_login_count'] > 5 && $a_person['bad_login_ts'] >= (time() - (60 * 5))) {
                 $message = $this->o_people->makeBadLoginAttempt($a_person['people_id']);
                 $a_person_post['password']     = '';
-                $a_person_post['is_logged_in'] = 0;
+                $a_person_post['is_logged_in'] = 'false';
                 $a_person_post['login_id']     = '';
                 $a_person_post['message']      = $message == ''
                     ? 'The login id is locked out. Please wait 5 minutes and try again.'
@@ -205,7 +205,7 @@ class AuthHelper
                 $message = $this->o_people->makeBadLoginAttempt($a_person['people_id']);
                 return [
                     'login_id'     => '',
-                    'is_logged_in' => 0,
+                    'is_logged_in' => 'false',
                     'message'      => 'A problem has occured. Please try again. ' . $message
                 ];
             }
@@ -214,7 +214,7 @@ class AuthHelper
 
             if (password_verify($a_person_post['password'], $a_person['password'])) {
                 $this->o_people->makeGoodLoginAttempt($a_person['people_id']);
-                $a_person['is_logged_in']    = 1;
+                $a_person['is_logged_in']    = 'true';
                 $a_person['message']         = 'Success!';
                 $a_person['password']        = '';
                 $a_person['bad_login_count'] = 0;
@@ -224,7 +224,7 @@ class AuthHelper
                 $message = $this->o_people->makeBadLoginAttempt($a_person['people_id']);
                 return [
                     'login_id'     => $a_person_post['login_id'],
-                    'is_logged_in' => 0,
+                    'is_logged_in' => 'false',
                     'password'     => '',
                     'message'      => 'The password was incorrect. Please try again. ' . $message
                 ];
@@ -248,7 +248,7 @@ class AuthHelper
             }
             return [
                 'login_id'     => '',
-                'is_logged_in' => 0,
+                'is_logged_in' => 'false',
                 'message'      => $message
             ];
         }
@@ -280,7 +280,7 @@ class AuthHelper
         $this->o_session->resetSession();
         return [
             'login_id'     => '',
-            'is_logged_in' => 0,
+            'is_logged_in' => 'false',
             'message'      => 'Logged Out.'
         ];
     }
@@ -382,7 +382,7 @@ class AuthHelper
         try {
             $a_person = $this->o_complex->readInfo($person);
             if (isset($a_person['is_immutable'])) {
-                if ($a_person['is_immutable'] == 1) {
+                if ($a_person['is_immutable'] === 'true') {
                     return true;
                 }
             }
@@ -410,7 +410,7 @@ class AuthHelper
         try {
             $a_person = $this->o_complex->readInfo($login_id);
             if (!empty($a_person)) {
-                if ($a_person['is_logged_in'] == 1) {
+                if ($a_person['is_logged_in'] === 'true') {
                     return true;
                 }
             }

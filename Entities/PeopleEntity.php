@@ -8,13 +8,14 @@
  * @file      PRitc/Library/Entities/eopleEntity.php
  * @namespace Ritc\Library\Entities
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2015-09-03 15:31:12
+ * @version   2.0.0
+ * @date      2017-12-13 16:42:22
  * @note  <b>SQL for table<b>
  * - MySQL      - resources/sql/mysql/page_mysql.sql
  * - PostgreSQL - resources/sql/postgresql/page_pg.sql
  * @note <b>Change Log</b>
- * - v1.1.0 - changed is_default to is_immutable to be more descriptive - 09/03/2015 wer
+ * - v2.0.0 - changed values of is_active, is_logged_in, is_immutable to string     - 2017-12-13 wer
+ * - v1.1.0 - changed is_default to is_immutable to be more descriptive             - 09/03/2015 wer
  * - v1.0.0 - finalized       - 07/29/2015 wer
  * - v0.1.0 - Initial version - 09/11/2014 wer
  */
@@ -40,15 +41,15 @@ class PeopleEntity implements EntityInterface
     /** @var string */
     private $password = '';
     /** @var int */
-    private $is_logged_in = 0;
+    private $is_logged_in = 'false';
     /** @var int */
     private $bad_login_count = 0;
     /** @var int */
     private $bad_login_ts = 0;
     /** @var int */
-    private $is_active = 0;
+    private $is_active = 'false';
     /** @var int */
-    private $is_immutable = 0;
+    private $is_immutable = 'false';
     /** @var int */
     private $created_on = 0;
 
@@ -86,11 +87,11 @@ class PeopleEntity implements EntityInterface
             'real_name'       => '',
             'short_name'      => '',
             'password'        => '',
-            'is_logged_in'    => 0,
+            'is_logged_in'    => 'false',
             'bad_login_count' => -1,
             'bad_login_ts'    => 0,
-            'is_active'       => 0,
-            'is_immutable'      => 0,
+            'is_active'       => 'false',
+            'is_immutable'    => 'false',
             'created_on'      => 0,
         );
         foreach ($a_needed_keys as $key_name => $default_value) {

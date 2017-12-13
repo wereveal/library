@@ -195,11 +195,11 @@ $a_people = [
 	    'short_name'      => "GSA",
 	    'password'        => "letGSAin",
 	    'description'     => "The all powerful Admin",
-	    'is_logged_in'    => 0,
+	    'is_logged_in'    => 'false',
 	    'bad_login_count' => 0,
 	    'bad_login_ts'    => 0,
-	    'is_active'       => 1,
-	    'is_immutable'    => 1,
+	    'is_active'       => 'true',
+	    'is_immutable'    => 'true',
 	    'created_on'      => "2012-08-12 02:55:28"
 	],
 	'admin' => [
@@ -208,11 +208,11 @@ $a_people = [
 	    'short_name'      => "ADM",
 	    'password'        => "letADMin",
 	    'description'     => "Allowed to admin to site",
-	    'is_logged_in'    => 0,
+	    'is_logged_in'    => 'false',
 	    'bad_login_count' => 0,
 	    'bad_login_ts'    => 0,
-	    'is_active'       => 1,
-	    'is_immutable'    => 1,
+	    'is_active'       => 'true',
+	    'is_immutable'    => 'true',
 	    'created_on'      => "2012-08-12 02:55:28"
 	],
 	'manager' => [
@@ -221,11 +221,11 @@ $a_people = [
         'short_name'      => "MAN",
         'password'        => "letMANin",
         'description'     => "Allowed to manage non-critical aspects of site",
-        'is_logged_in'    => 0,
+        'is_logged_in'    => 'false',
         'bad_login_count' => 0,
         'bad_login_ts'    => 0,
-        'is_active'       => 1,
-        'is_immutable'    => 1,
+        'is_active'       => 'true',
+        'is_immutable'    => 'true',
         'created_on'      => "2012-08-12 02:55:28"
     ]
 ];

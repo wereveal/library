@@ -151,7 +151,7 @@ class PeopleModel implements ModelInterface
             try {
                 $results = $this->readById($people_ids);
                 foreach ($results as $key => $record) {
-                    if ($record['is_immutable']) {
+                    if ($record['is_immutable'] === 'true') {
                         unset($a_values[$key]['login_id']);
                     }
                 }
@@ -163,7 +163,7 @@ class PeopleModel implements ModelInterface
         else {
             try {
                 $results = $this->readById($a_values[$pin]);
-                if ($results[0]['is_immutable']) {
+                if ($results[0]['is_immutable'] === 'true') {
                     unset($a_values['login_id']);
                 }
             }
@@ -201,7 +201,7 @@ class PeopleModel implements ModelInterface
                     throw new ModelException('Unable to determine if the record is immutable.', 435);
                 }
                 foreach ($results as $key => $record) {
-                    if ($record['is_immutable']) {
+                    if ($record['is_immutable'] === 'true') {
                         throw new ModelException('Unable to delete the record: record is immutable.', 450);
                     }
                 }
@@ -216,7 +216,7 @@ class PeopleModel implements ModelInterface
                 if (empty($results)) {
                     throw new ModelException('Unable to determine if the record is immutable.', 435);
                 }
-                if ($results[0]['is_immutable']) {
+                if ($results[0]['is_immutable'] === 'true') {
                     throw new ModelException('Unable to delete the record: record is immutable.', 450);
                 }
             }
@@ -547,7 +547,7 @@ class PeopleModel implements ModelInterface
         }
         $a_values = [
             'people_id'    => $people_id,
-            'is_logged_in' => 1
+            'is_logged_in' => 'true'
         ];
         try {
             return $this->genericUpdate($a_values);
@@ -570,7 +570,7 @@ class PeopleModel implements ModelInterface
         }
         $a_values = [
             'people_id'    => $people_id,
-            'is_logged_in' => 0
+            'is_logged_in' => 'false'
         ];
         try {
             return $this->genericUpdate($a_values);
@@ -606,26 +606,20 @@ class PeopleModel implements ModelInterface
 
     /**
      * Updates the user record to be make the user active or inactive, normally inactive.
-     * @param int $people_id required id of a user
-     * @param int $is_active optional defaults to inactive (0)
+     * @param int    $people_id required id of a user
+     * @param string $is_active optional defaults to inactive (false)
      * @return bool success or failure
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function updateActive($people_id = -1, $is_active = 0)
+    public function updateActive($people_id = -1, $is_active = 'false')
     {
         if ($people_id == -1) {
             throw new ModelException('Missing required value.', 320);
         }
-        $is_active = (int) $is_active;
-        if ($is_active > 1) {
-            $is_active = 1;
-        }
-        if ($is_active == '') {
-            $is_active = 0;
-        }
         $a_values = [
             'people_id' => $people_id,
-            'is_active' => $is_active];
+            'is_active' => $is_active
+        ];
         try {
             return $this->genericUpdate($a_values);
         }
@@ -742,6 +736,8 @@ class PeopleModel implements ModelInterface
                 }
             }
         }
+        $a_person = $this->fixCheckBoxes($a_person);
+
         if ($new_person) {
             if (empty($a_person['password'])) {
                 return 'password-missing';
@@ -775,13 +771,6 @@ class PeopleModel implements ModelInterface
             $a_person['description'] = empty($a_person['description'])
                 ? $a_person['real_name']
                 : $a_person['description'];
-            $a_person['is_logged_in'] = 0;
-            $a_person['is_active'] = isset($a_person['is_active']) && $a_person['is_active'] == 'true'
-                ? 1
-                : 0;
-            $a_person['is_immutable'] = isset($a_person['is_immutable']) && $a_person['is_immutable'] == 'true'
-                ? 1
-                : 0;
         }
         else {
             $a_allowed_keys   = [
@@ -818,10 +807,6 @@ class PeopleModel implements ModelInterface
                     if (isset($a_person[$key])) {
                         $old_value = $a_old_person[$key];
                         $new_value = $a_person[$key];
-                        if ($key === 'is_logged_in' || $key === 'is_active' || $key === 'is_immutable') {
-                            $new_value = $new_value === 'true' ? 1 : 0;
-                            $a_person[$key] = $new_value;
-                        }
                         if ($key === 'login_id' && ($new_value !== $old_value)) {
                             if ($this->isExistingLoginId($a_person['login_id'])) {
                                 return 'login-exists';
@@ -844,10 +829,20 @@ class PeopleModel implements ModelInterface
 
         }
           $log_message = 'Person modified ' . var_export($a_person, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
         return $a_person;
     }
 
+    private function fixCheckBoxes(array $a_person = [])
+    {
+          $this->logIt(var_export($a_person, true), LOG_ON, __METHOD__);
+        $a_person['is_logged_in'] = isset($a_person['is_logged_in']) ? 'true' : 'false';
+        $a_person['is_active']    = isset($a_person['is_active'])    ? 'true' : 'false';
+        $a_person['is_immutable'] = isset($a_person['is_immutable']) ? 'true' : 'false';
+          $this->logIt(var_export($a_person, true), LOG_ON, __METHOD__);
+        return $a_person;
+    }
+    
     /**
      * Hashes the password if it isn't already hashed.
      * Also verifies that it isn't a starred out password (value hidden).
