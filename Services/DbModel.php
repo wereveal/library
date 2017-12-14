@@ -6,9 +6,10 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.1.3
- * @date      2017-12-12 11:34:41
+ * @version   5.2.0
+ * @date      2017-12-14 13:37:46
  * @note <b>Change Log</b>
+ * - v5.2.0 - Method added to get the pdo object                                            - 2017-12-14 wer
  * - v5.1.3 - ModelException changes reflected here                                         - 2017-12-12 wer
  * - v5.1.2 - bug fixes - better exception handling.                                        - 2017-12-02 wer
  * - v5.1.1 - Bug fix                                                                       - 2017-11-16 wer
@@ -384,6 +385,15 @@ class DbModel
         return $this->a_new_ids;
     }
 
+    /**
+     * Standard GETter for private property for the class.
+     * @return \PDO
+     */
+    public function getPDO()
+    {
+        return $this->o_pdo;
+    }
+    
     /**
      * GETter for the class property pgsql_sequence_name.
      * Also sets the class property if array is provided.
