@@ -6,9 +6,10 @@
  * @file        ConfigViewTraits.php
  * @namespace   Ritc\Library\Traits
  * @author      William E Reveal <bill@revealitconsulting.com>
- * @version     3.1.1
- * @date        2017-12-02 09:18:37
+ * @version     3.1.2
+ * @date        2017-12-13 18:12:19
  * @note <b>Change Log</b>
+ * - v3.1.2 - bug fix                                                               - 2017-12-13 wer
  * - v3.1.1 - bug fix for TwigExceptions now handled by new method in ViewTraits    - 2017-12-02 wer
  * - v3.1.0 - Forked this so ManagerViewTraits becomes primary                      - 2017-07-04 wer
  * - v3.0.0 - Renamed trait                                                         - 2017-06-20 wer
@@ -58,9 +59,9 @@ trait ConfigViewTraits
             : $a_values['tpl'];
         $tpl = $this->createTplString($a_twig_values);
           $log_message = 'twig values:  ' . var_export($a_twig_values, TRUE);
-          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
           $log_message = 'Session:  ' . var_export($_SESSION, TRUE);
-          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
@@ -86,6 +87,9 @@ trait ConfigViewTraits
             ? '/manager/config/'
             : $a_options['location'];
         $a_twig_values = $this->createDefaultTwigValues($a_message, $location);
+        $a_twig_values['where'] = empty($a_options['where'])
+            ? empty($a_twig_values['where']) ? '' : $a_twig_values['where']
+            : $a_options['where'];
         $a_twig_values['tpl'] = empty($a_options['tpl'])
             ? 'verify_delete'
             : $a_options['tpl'];

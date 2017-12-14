@@ -369,7 +369,7 @@ SQL;
            $a_delete_these[] = [$piname => $record_id];
         }
         try {
-            return $this->o_db->delete($sql, $a_delete_these, true);
+            return $this->o_db->delete($sql, $a_delete_these, false);
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();

@@ -6,9 +6,10 @@
  * @file        ManagerViewTraits.php
  * @namespace   Ritc\Library\Traits
  * @author      William E Reveal <bill@revealitconsulting.com>
- * @version     3.2.1
- * @date        2017-12-02 09:19:53
+ * @version     3.2.2
+ * @date        2017-12-13 18:12:06
  * @note <b>Change Log</b>
+ * - v3.2.2 - bug fix                                                               - 2017-12-13 wer
  * - v3.2.1 - bug fix for TwigExceptions now handled by new method in ViewTraits    - 2017-12-02 wer
  * - v3.2.0 - trying to make this more generic                                      - 2017-11-28 wer
  * - v3.1.0 - Reverted name back to ManagerViewTraits                               - 2017-07-04 wer
@@ -89,6 +90,7 @@ trait ManagerViewTraits
         $a_twig_values['tpl'] = empty($a_options['tpl'])
             ? empty($a_twig_values['tpl']) ? '' : $a_twig_values['tpl']
             : $a_options['tpl'];
+        $a_twig_values = array_merge($a_twig_values, $a_values);
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }
