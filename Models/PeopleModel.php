@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/PeopleModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.1
- * @date      2017-12-12 11:38:33
+ * @version   1.4.2
+ * @date      2017-12-14 13:14:00
  * @note <b>Change Log</b>
+ * - v1.4.2.   - bug fixCheckBoxes                                           - 2017-12-14 wer
  * - v1.4.1    - ModelException changes reflected here                       - 2017-12-12 wer
  * - v1.4.0    - moved some methods from PeopleComplex to here               - 2017-12-05 wer
  *               bug fixes too.
@@ -190,39 +191,49 @@ class PeopleModel implements ModelInterface
     public function delete($people_id = -1)
     {
         $pin = $this->primary_index_name;
+        $o_pdo = $this->o_db->getPDO();
+        $this->logIt("In delete, in Transaction: " . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
         if (Arrays::isArrayOfAssocArrays($people_id)) {
             $people_ids = [];
             foreach ($people_id as $key => $a_record) {
                 $people_ids[] = $a_record[$pin];
             }
-            try {
-                $results = $this->readById($people_ids);
-                if (empty($results)) {
-                    throw new ModelException('Unable to determine if the record is immutable.', 435);
-                }
-                foreach ($results as $key => $record) {
-                    if ($record['is_immutable'] === 'true') {
-                        throw new ModelException('Unable to delete the record: record is immutable.', 450);
-                    }
-                }
+        }
+        elseif (Arrays::isAssocArray($people_id)) {
+            if (empty($people_id[$pin])) {
+                throw new ModelException('Unable to determine if the record is immutable. People ID not provided.', 435);
             }
-            catch (ModelException $e) {
-                throw new ModelException('Unable to determine if the record is immutable.', 435, $e);
-            }
+            $people_ids = [$people_id[$pin]];
+        }
+        elseif (is_array($people_id)) {
+            $people_ids = $people_id;
         }
         else {
-            try {
-                $results = $this->readById($people_id);
-                if (empty($results)) {
-                    throw new ModelException('Unable to determine if the record is immutable.', 435);
-                }
-                if ($results[0]['is_immutable'] === 'true') {
+            $people_ids = [$people_id];
+        }
+          $log_message = 'people_ids ' . var_export($people_ids, TRUE);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        try {
+            $results = $this->readById($people_ids);
+          $log_message = 'people results ' . var_export($results, TRUE);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+            if (empty($results)) {
+                throw new ModelException('Unable to determine if the record is immutable. Could not find existing record.', 435);
+            }
+            foreach ($results as $key => $record) {
+                if ($record['is_immutable'] === 'true') {
                     throw new ModelException('Unable to delete the record: record is immutable.', 450);
                 }
             }
-            catch (ModelException $e) {
-                throw new ModelException('Unable to determine if the record is immutable.', 435, $e);
-            }
+        }
+        catch (ModelException $e) {
+            $message = 'Unable to determine if the record is immutable.';
+            $message .= DEVELOPER_MODE
+                ? $e->errorMessage()
+                : $e->getMessage();
+            throw new ModelException($message, 435, $e);
         }
         try {
             return $this->genericDelete($people_id);
@@ -247,7 +258,7 @@ class PeopleModel implements ModelInterface
                 if ($id < 1) {
                     throw new ModelException("Missing people_id value.", 220);
                 }
-                $a_search_for[] = ['people_id' => $people_id];
+                $a_search_for[] = ['people_id' => $id];
             }
         }
         elseif ($people_id < 1) {
@@ -256,6 +267,9 @@ class PeopleModel implements ModelInterface
         else {
             $a_search_for = ['people_id' => $people_id];
         }
+          $log_message = 'a search for ' . var_export($a_search_for, TRUE);
+          $this->logIt($log_message, LOG_OFF, __METHOD__);
+
         try {
             $results = $this->read($a_search_for);
             return $results;
@@ -829,17 +843,17 @@ class PeopleModel implements ModelInterface
 
         }
           $log_message = 'Person modified ' . var_export($a_person, TRUE);
-          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $a_person;
     }
 
     private function fixCheckBoxes(array $a_person = [])
     {
-          $this->logIt(var_export($a_person, true), LOG_ON, __METHOD__);
+          $this->logIt(var_export($a_person, true), LOG_OFF, __METHOD__);
         $a_person['is_logged_in'] = isset($a_person['is_logged_in']) ? 'true' : 'false';
         $a_person['is_active']    = isset($a_person['is_active'])    ? 'true' : 'false';
         $a_person['is_immutable'] = isset($a_person['is_immutable']) ? 'true' : 'false';
-          $this->logIt(var_export($a_person, true), LOG_ON, __METHOD__);
+          $this->logIt(var_export($a_person, true), LOG_OFF, __METHOD__);
         return $a_person;
     }
     

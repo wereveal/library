@@ -73,7 +73,8 @@ class PeopleController implements ManagerControllerInterface
     {
         $a_post        = $this->a_post;
         $form_action   = $this->form_action;
-        $this->logIt('Post: ' . var_export($a_post, TRUE), LOG_OFF, __METHOD__);
+          $this->logIt('Post: ' . var_export($a_post, TRUE), LOG_OFF, __METHOD__);
+          $this->logIt('form action: ' . $form_action, LOG_OFF, __METHOD__);
         switch ($form_action) {
             case 'new':
                 return $this->o_view->renderNew();
@@ -150,7 +151,7 @@ class PeopleController implements ManagerControllerInterface
         $meth = __METHOD__ . '.';
         $error_message = "Opps, the person was not updated.";
           $log_message = 'Post ' . var_export($this->a_post, TRUE);
-          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_person = $this->a_post['person'];
         if (!isset($this->a_post['groups']) || count($this->a_post['groups']) < 1) {
@@ -178,7 +179,7 @@ class PeopleController implements ManagerControllerInterface
         $a_person['groups'] = $this->a_post['groups'];
         try {
               $log_message = 'Person to update ' . var_export($a_person, TRUE);
-              $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             $results = $this->o_complex->savePerson($a_person);
             if ($results === false) {
                 return ViewHelper::failureMessage($error_message);
@@ -200,7 +201,47 @@ class PeopleController implements ManagerControllerInterface
      */
     public function verifyDelete()
     {
-        return $this->o_view->renderVerifyDelete($this->a_post, $this->a_router_parts['request_uri']);
+        if (isset($this->a_post['people_id'])) {
+            $people_id = $this->a_post['people_id'];
+        }
+        elseif (isset($this->a_post['person']['people_id'])) {
+            $people_id = $this->a_post['person']['people_id'];
+        }
+        else {
+            $a_message = ViewHelper::errorMessage('An error has occurred and the person was not deleted. Please try again.');
+            return $this->o_view->renderList($a_message);
+        }
+        try {
+            $a_person = $this->o_people->read(['people_id' => $people_id]);
+            $real_name = !empty($a_person[0]['real_name'])
+                ? $a_person[0]['real_name']
+                : 'Problem Child';
+            $login_id = !empty($a_person[0]['login_id']) 
+                ? $a_person[0]['login_id'] 
+                : 'Problem Child';
+        }
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage('An error occurred and the person was not deleted.');
+            return $this->o_view->renderList($a_message);
+        }
+        $a_values = [
+            'what'          => 'Person',
+            'name'          => $real_name,
+            'extra_message' => '',
+            'public_dir'    => PUBLIC_DIR,
+            'where'         => str_replace('/manager/', '', $this->a_router_parts['request_uri']),
+            'btn_value'     => $login_id,
+            'form_extras'   => '',
+            'hidden_name'   => 'people_id',
+            'hidden_value'  => $people_id
+        ];
+        $a_options = [
+            'tpl'       => 'verify_delete',
+            'a_message' => [],
+            'fallback'  => 'renderList',
+            'location'  => $this->a_router_parts['request_uri']
+        ];
+        return $this->o_view->renderVerifyDelete($a_values, $a_options);
     }
 
     /**

@@ -76,9 +76,8 @@ class PeopleView
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = array())
+    public function renderList(array $a_message = [])
     {
-        $a_twig_values = $this->createDefaultTwigValues($a_message);
         try {
             $a_people = $this->o_people_model->read();
         }
@@ -98,16 +97,9 @@ class PeopleView
                 $highest_auth_level = $this->o_auth->getHighestAuthLevel($a_person['people_id']);
                 $a_people[$key]['auth_level'] = $highest_auth_level;
             }
-            $a_twig_values['a_people'] = $a_people;
         }
-        if (!empty($a_message)) {
-            if (!empty($a_twig_values['a_message'])) {
-                $a_message['message'] = $a_twig_values['a_message']['message']
-                    . '<br>'
-                    . $a_message['message'];
-            }
-            $a_twig_values['a_message'] = ViewHelper::fullMessage($a_message);
-        }
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['a_people'] = $a_people;
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }

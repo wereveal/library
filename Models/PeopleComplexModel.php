@@ -69,6 +69,7 @@ class PeopleComplexModel
      */
     public function deletePerson($people_id = -1)
     {
+        $meth = __METHOD__ . '.';
         if ($people_id == -1) {
             throw new ModelException('Missing required people id', 420);
         }
@@ -78,20 +79,31 @@ class PeopleComplexModel
         catch (ModelException $e) {
             throw new ModelException('Unable to start transaction', $e->getCode(), $e);
         }
+        $o_pdo = $this->o_db->getPDO();
+          $this->logIt("In Transaction 1: " . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
         try {
             $this->o_pgm->deleteByPeopleId($people_id);
+              $this->logIt("In Transaction 2: " . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
             try {
                 $this->o_people->delete($people_id);
+                  $this->logIt("In Transaction 3: " . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
                 try {
                     $this->o_db->commitTransaction();
                 }
                 catch (ModelException $e) {
                     $this->o_db->rollbackTransaction();
-                    throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+                    $errror_message = DEVELOPER_MODE 
+                        ? $e->errorMessage() 
+                        : $e->getMessage();
+                    throw new ModelException($error_message, $e->getCode(), $e);
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = 'Unable to delete the people record: ' . $this->o_db->getSqlErrorMessage();
+                $this->error_message = 'Unable to delete the people record(s): ';
+                $this->error_message .= DEVELOPER_MODE
+                    ? $e->errorMessage()
+                    : $e->getMessage();
+                $this->logIt($this->error_message, LOG_OFF, $meth . __LINE__);
                 $this->o_db->rollbackTransaction();
                 throw new ModelException($this->error_message, $e->getCode(), $e);
             }
@@ -281,7 +293,7 @@ class PeopleComplexModel
     public function savePerson(array $a_person = [])
     {
           $log_message = 'person to save ' . var_export($a_person, TRUE);
-          $this->logIt($log_message, LOG_ON, __METHOD__);
+          $this->logIt($log_message, LOG_OFF, __METHOD__);
         if (!isset($a_person['people_id']) || $a_person['people_id'] == '') { // New User
             $a_required_keys = array(
                 'login_id',
