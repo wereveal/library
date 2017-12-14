@@ -5,43 +5,44 @@
  * @file      Ritc/Library/Helper/Arrays.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.2.1
- * @date      2017-12-05 14:00:23 
+ * @version   3.2.2
+ * @date      2017-12-14 12:55:24 
  * @note <b>Change Log</b>
- *     v3.2.1 - bug fix 0 == '' is true but 0 === '' is false so bugs                     - 2017-12-05 wer
- *     v3.2.0 - New method to removed key/value pairs where value is empty                - 2017-12-05 wer
- *     v3.1.1 - Bug fix Arrays::findMissingValues()                                       - 2017-02-16 wer
- *     v3.1.0 - Moved a couple methods from DbCommonTraits to Arrays                      - 2016-09-23 wer
- *     v3.0.1 - Bug Fix                                                                   - 2016-09-23 wer
- *     v3.0.0 - Depreciated clearArrayValues in favor of two new methods.                 - 2016-09-19 wer
- *              Arrays::cleanValues() by default removes php and mysql commands from
- *              the values in the array. Optionally it can call Arrays::encodeValues().
- *              Arrays::encodeValues() encodes the values of the array using filter_var
- *              and with the FILTER_SANITIZE_STRING filter and optional flags.
- *     v2.8.0 - Added new method inAssocArrayRecursive()                                  - 2016-04-12 wer
- *     v2.7.0 - Changed entity coding/decoding to be definable via parameter.             - 11/25/2015 wer
- *              Defaults to ENT_QUOTES.
- *     v2.6.1 - bug fix, stripTags -- logic error                                         - 11/12/2015 wer
- *     v2.6.0 - new method, moved from Tester class, can be more generic.                 - 11/02/2015 wer
- *     v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs              - 10/22/2015 wer
- *     v2.5.1 - bug fix, inArrayRecursive                                                 - 10/20/2015 wer
- *     v2.5.0 - new method, createRequiredPairs                                           - 10/06/2015 wer
- *     v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                      - 09/12/2015 wer
- *     v2.3.0 - New method, inArrayRecursive                                              - 09/10/2015 wer
- *     v2.2.0 - Removed use of abstract class Base                                        - 09/03/2015 wer
- *     v2.1.0 - After looking at the inconsistency, changed to be more consistent         - 07/31/2015 wer
- *              Also changed variable name to be more descriptive than array.
- *     v2.0.1 - oops, missed one to be static, changed its name                           - 07/31/2015 wer
- *     v2.0.0 - changed methods to be static                                              - 01/27/2015 wer
- *     v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it       - 12/05/2014 wer
- *     v1.2.1 - moved to the Helper namespace                                             - 11/15/2014 wer
- *     v1.2.1 - clean up                                                                  - 09/23/2014 wer
- *     v1.2.0 - new method added                                                          - 12/30/2013 wer
- *     v1.1.1 - match package change                                                      - 12/19/2013 wer
- *     v1.1.0 - namespace changes                                                         - 07/30/2013 wer
- *     v1.0.3 - moved array methods from class Strings to here                            - 03/27/2013 wer
- *     v1.0.2 - added new method
- *     v1.0.1 - new namespace, FIG standards (mostly)
+ * - v3.2.2 - bug fix                                                                     - 2017-12-14 wer
+ * - v3.2.1 - bug fix 0 == '' is true but 0 === '' is false so bugs                       - 2017-12-05 wer
+ * - v3.2.0 - New method to removed key/value pairs where value is empty                  - 2017-12-05 wer
+ * - v3.1.1 - Bug fix Arrays::findMissingValues()                                         - 2017-02-16 wer
+ * - v3.1.0 - Moved a couple methods from DbCommonTraits to Arrays                        - 2016-09-23 wer
+ * - v3.0.1 - Bug Fix                                                                     - 2016-09-23 wer
+ * - v3.0.0 - Depreciated clearArrayValues in favor of two new methods.                   - 2016-09-19 wer
+ * -          Arrays::cleanValues() by default removes php and mysql commands from  
+ * -          the values in the array. Optionally it can call Arrays::encodeValues().  
+ * -          Arrays::encodeValues() encodes the values of the array using filter_var  
+ * -          and with the FILTER_SANITIZE_STRING filter and optional flags.  
+ * - v2.8.0 - Added new method inAssocArrayRecursive()                                    - 2016-04-12 wer
+ * - v2.7.0 - Changed entity coding/decoding to be definable via parameter.               - 11/25/2015 wer
+ * -          Defaults to ENT_QUOTES.  
+ * - v2.6.1 - bug fix, stripTags -- logic error                                           - 11/12/2015 wer
+ * - v2.6.0 - new method, moved from Tester class, can be more generic.                   - 11/02/2015 wer
+ * - v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs                - 10/22/2015 wer
+ * - v2.5.1 - bug fix, inArrayRecursive                                                   - 10/20/2015 wer
+ * - v2.5.0 - new method, createRequiredPairs                                             - 10/06/2015 wer
+ * - v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                        - 09/12/2015 wer
+ * - v2.3.0 - New method, inArrayRecursive                                                - 09/10/2015 wer
+ * - v2.2.0 - Removed use of abstract class Base                                          - 09/03/2015 wer
+ * - v2.1.0 - After looking at the inconsistency, changed to be more consistent           - 07/31/2015 wer
+ * -          Also changed variable name to be more descriptive than array.  
+ * - v2.0.1 - oops, missed one to be static, changed its name                             - 07/31/2015 wer
+ * - v2.0.0 - changed methods to be static                                                - 01/27/2015 wer
+ * - v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it         - 12/05/2014 wer
+ * - v1.2.1 - moved to the Helper namespace                                               - 11/15/2014 wer
+ * - v1.2.1 - clean up                                                                    - 09/23/2014 wer
+ * - v1.2.0 - new method added                                                            - 12/30/2013 wer
+ * - v1.1.1 - match package change                                                        - 12/19/2013 wer
+ * - v1.1.0 - namespace changes                                                           - 07/30/2013 wer
+ * - v1.0.3 - moved array methods from class Strings to here                              - 03/27/2013 wer
+ * - v1.0.2 - added new method  
+ * - v1.0.1 - new namespace, FIG standards (mostly)
  */
 namespace Ritc\Library\Helper;
 
@@ -444,7 +445,7 @@ class Arrays
     /**
      * Determines that the value passed in is an associative array with all non-numeric keys.
      * Also determines that the array is not empty.
-     * @param array $a_pairs
+     * @param mixed $a_pairs
      * @return bool
      */
     public static function isAssocArray($a_pairs = [])
@@ -460,11 +461,14 @@ class Arrays
 
     /**
      * Sees if the array passed in is an array of assoc arrays.
-     * @param array
+     * @param mixed
      * @return bool
      */
-    public static function isArrayOfAssocArrays(array $a_arrays = [])
+    public static function isArrayOfAssocArrays($a_arrays = [])
     {
+        if (!is_array($a_arrays) || empty($a_arrays)) {
+            return false;
+        }
         foreach ($a_arrays as $a_array) {
             if (!self::isAssocArray($a_array)) {
                 return false;
