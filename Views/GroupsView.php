@@ -65,7 +65,7 @@ class GroupsView
                     'group_id'          => '',
                     'group_name'        => '',
                     'group_description' => '',
-                    'group_immutable'   => 0
+                    'group_immutable'   => 'false'
                 ]
             ),
             'a_menus'     => $this->a_nav,

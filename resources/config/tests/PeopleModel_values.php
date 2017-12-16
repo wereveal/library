@@ -15,7 +15,7 @@ return [
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
                     'is_active'       => 1,
-                    'is_immutable'    => 1,
+                    'is_immutable'    => 'true',
                     'created_on'      => '2012-08-12 02:55:28'
                 ],
                 [
@@ -29,7 +29,7 @@ return [
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
                     'is_active'       => 1,
-                    'is_immutable'    => 1,
+                    'is_immutable'    => 'true',
                     'created_on'      => '2015-09-04 13:15:55'
                 ],
                 [
@@ -43,7 +43,7 @@ return [
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
                     'is_active'       => 1,
-                    'is_immutable'    => 1,
+                    'is_immutable'    => 'true',
                     'created_on'      => '2015-08-04 11:11:04'
                 ]
             ]
@@ -62,7 +62,7 @@ return [
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
                     'is_active'       => 1,
-                    'is_immutable'    => 1,
+                    'is_immutable'    => 'true',
                     'created_on'      => '2015-08-04 11:11:04'
                 ]
             ]
@@ -82,7 +82,7 @@ return [
                 'description'  => 'A Test Person',
                 'is_logged_in' => 0,
                 'is_active'    => 1,
-                'is_immutable' => 0,
+                'is_immutable' => 'false',
             ],
             'expected_results' => [
                 [
@@ -96,7 +96,7 @@ return [
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
                     'is_active'       => 1,
-                    'is_immutable'    => 0
+                    'is_immutable'    => 'false'
                 ]
             ]
         ],
@@ -118,7 +118,7 @@ return [
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
                     'is_active'       => 1,
-                    'is_immutable'    => 0
+                    'is_immutable'    => 'false'
                 ]
             ]
         ],

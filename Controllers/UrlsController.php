@@ -90,7 +90,7 @@ class UrlsController implements ManagerControllerInterface
             }
         }
         $a_values  = $this->splitUrl($url);
-        $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 1 : 0;
+        $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 'true' : 'false';
 
         try {
             $this->o_urls_model->create($a_values);
@@ -121,7 +121,7 @@ class UrlsController implements ManagerControllerInterface
         }
         $a_values                  = $this->splitUrl($url);
         $a_values['url_id']        = (int) $this->a_post['url_id'];
-        $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 1 : 0;
+        $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 'true' : 'false';
 
         try {
             $this->o_urls_model->update($a_values);

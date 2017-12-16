@@ -124,7 +124,7 @@ class PageView
                 'page_type'        => 'text/html',
                 'page_lang'        => 'en',
                 'page_charset'     => 'utf8',
-                'page_immutable'   => 0,
+                'page_immutable'   => 'false',
             ],
             'select'      => $a_select,
             'action'      => $action,
@@ -187,7 +187,7 @@ class PageView
                     'page_id'        => '',
                     'page_url'       => '',
                     'page_title'     => '',
-                    'page_immutable' => 1
+                    'page_immutable' => 'true'
                 ]
             ],
             'tolken'      => $_SESSION['token'],

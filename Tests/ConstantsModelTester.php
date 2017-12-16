@@ -142,7 +142,7 @@ class ConstantsModelTester
             }
             if ($subtest == 'not_immutable') {
                 try {
-                    $results = $this->o_model->update(['const_id' => $new_id, 'const_immutable' => 0]);
+                    $results = $this->o_model->update(['const_id' => $new_id, 'const_immutable' => 'false']);
                 }
                 catch (ModelException $e) {
                     $results = false;

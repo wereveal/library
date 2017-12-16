@@ -13,7 +13,7 @@
         <fieldset class="nice-fieldset">
         <div class="form-group row alt-row">
             <label for="page_url" class="col-md-2 form-control-label alt-row form-label">Page URL: </label>
-        {% if adm_lvl < 9 and a_page.page_immutable == 1 %}
+        {% if adm_lvl < 9 and a_page.page_immutable == 'true' %}
             <div class="col-md-10 alt-row aleft">
                 <input type="text" value="{{ a_page.url_text }}" class="form-control" disabled>
             </div>
@@ -62,9 +62,9 @@
         <div class="form-group row normal-row">
             <label for="page_immutable" class="col-md-2 form-control-label normal-row form-label">Immutable: </label>
             <div class="col-md-10 aleft">
-    {% if adm_lvl >= 10 and a_page.page_immutable == 1 %}
+    {% if adm_lvl >= 10 and a_page.page_immutable == 'true' %}
                 <input type="checkbox" name="page[page_immutable]" checked="checked" id="page_immutable" class="colorful normal-row" value="1" />
-    {% elseif a_page.page_immutable == 1 %}
+    {% elseif a_page.page_immutable == 'true' %}
                 True <input type="hidden" name="page[page_immutable]" checked="checked" id="page_immutable" value="1"/>
     {% elseif adm_lvl >= 9 %}
                 <input type="checkbox" name="page[page_immutable]" id="page_immutable" class="form-control normal-row colorful" value="1" />
@@ -80,7 +80,7 @@
                 <button type="submit" name="submit" value="save" class="btn btn-primary btn-sm">Create New Page</button>
     {% else %}
                 <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Update Page</button>
-        {% if a_page.page_immutable == 0 %}
+        {% if a_page.page_immutable == 'false' %}
                 <button type="submit" name="submit" value="verify" class="btn btn-danger btn-sm">Delete</button>
         {% endif %}
     {% endif %}
@@ -124,7 +124,7 @@
                 'page_type'        => 'text/html',
                 'page_lang'        => 'en',
                 'page_charset'     => 'utf8',
-                'page_immutable'   => 0
+                'page_immutable'   => 'false'
             ]
         ),
         'action'  => 'update',

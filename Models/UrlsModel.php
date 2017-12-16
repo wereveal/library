@@ -217,7 +217,7 @@ class UrlsModel implements ModelInterface
         }
         try {
             $results = $this->read(['url_id' => $id]);
-            if (!empty($results[0]['url_immutable']) && $results[0]['url_immutable'] === 1) {
+            if (!empty($results[0]['url_immutable']) && $results[0]['url_immutable'] === 'true') {
                 return true;
             }
             return false;

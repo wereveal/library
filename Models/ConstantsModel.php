@@ -130,9 +130,6 @@ class ConstantsModel implements ModelInterface
         if (isset($a_values['const_name']) && $a_values['const_name'] == '') {
             unset($a_values['const_name']);
         }
-        if (isset($a_values['const_immutable']) && !is_numeric($a_values['const_immutable'])) {
-            unset($a_values['const_immutable']);
-        }
         try {
             $results = $this->read([$this->primary_index_name => $a_values[$this->primary_index_name]]);
         }
@@ -140,14 +137,14 @@ class ConstantsModel implements ModelInterface
             $this->error_message = $e->errorMessage();
             throw new ModelException($this->error_message, $e->getCode(), $e);
         }
-        if ($results[0]['const_immutable'] == 1) {
+        if ($results[0]['const_immutable'] == 'true') {
             unset($a_values['const_name']);
             unset($a_values['const_value']);
             if (isset($a_values['const_immutable'])) {
                 switch ($a_values['const_immutable']) {
-                    case 0:
-                    case 1:
+                    case 'false':
                         break;
+                    case 'true':
                     default:
                         $this->error_message = 'You must change the record to not immutable to change other values.';
                         throw new ModelException($this->error_message, 320);
@@ -190,7 +187,7 @@ class ConstantsModel implements ModelInterface
             $this->error_message = 'It can not be determined if the constant is immutable.';
             throw new ModelException($this->error_message, 435);
         }
-        if ($search_results[0]['const_immutable'] == 0) {
+        if ($search_results[0]['const_immutable'] == 'false') {
             try {
                 return $this->genericDelete($const_id);
             }
@@ -265,7 +262,7 @@ class ConstantsModel implements ModelInterface
                         const_id integer NOT NULL DEFAULT nextval('const_id_seq'::regclass),
                         const_name character varying(64) NOT NULL,
                         const_value character varying(64) NOT NULL,
-                        const_immutable integer NOT NULL DEFAULT 0
+                        const_immutable character varying(10) NOT NULL DEFAULT 'false'::character varying
                     )
 SQL;
                 $sql_sequence = "
@@ -295,7 +292,7 @@ SQL;
                         const_id INTEGER PRIMARY KEY ASC,
                         const_name TEXT,
                         const_value TEXT,
-                        const_immutable INTEGER
+                        const_immutable TEXT
                     )
 SQL;
                 try {
@@ -312,7 +309,7 @@ SQL;
                         `const_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                         `const_name` varchar(64) NOT NULL,
                         `const_value` varchar(64) NOT NULL,
-                        `const_immutable` int(1) NOT NULL DEFAULT 0
+                        `const_immutable` varchar(10) NOT NULL DEFAULT 'false'
                         PRIMARY KEY (`const_id`),
                         UNIQUE KEY `const_key` (`const_name`)
                     ) ENGINE=InnoDB  AUTO_INCREMENT=1 DEFAULT CHARSET=utf8

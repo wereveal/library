@@ -94,7 +94,7 @@ class ConstantsController implements ManagerControllerInterface
         }
         $a_constants = $this->a_post['constant'];
         if (!isset($a_constants['const_immutable'])) {
-            $a_constants['const_immutable'] = 0;
+            $a_constants['const_immutable'] = 'false';
         }
         try {
             $results = $this->o_model->create($a_constants);
@@ -119,7 +119,7 @@ class ConstantsController implements ManagerControllerInterface
     {
         $a_constants = $this->a_post['constant'];
         if (!isset($a_constants['const_immutable'])) {
-            $a_constants['const_immutable'] = 0;
+            $a_constants['const_immutable'] = 'false';
         }
         try {
             $this->o_model->update($a_constants);

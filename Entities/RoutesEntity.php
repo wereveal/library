@@ -60,12 +60,12 @@ class RoutesEntity implements EntityInterface
     public function setAllProperties(array $a_entity = array())
     {
         $a_default_values = [
-            'route_id'       => 0,
-            'route_path'     => '',
-            'route_class'    => '',
-            'route_method'   => '',
-            'route_action'   => '',
-            'route_immutable' => 1
+            'route_id'        => 0,
+            'route_path'      => '',
+            'route_class'     => '',
+            'route_method'    => '',
+            'route_action'    => '',
+            'route_immutable' => 'true'
         ];
         foreach ($a_default_values as $key_name => $default_value) {
             if (array_key_exists($key_name, $a_entity)) {

@@ -596,7 +596,7 @@ SQL;
                 $primary_id = $a_values[$this->primary_index_name];
                 try {
                     $a_results = $this->readById($primary_id);
-                    if (isset($a_results[0][$immutable_field]) && $a_results[0][$immutable_field] == 1) {
+                    if (isset($a_results[0][$immutable_field]) && $a_results[0][$immutable_field] == 'true') {
                         foreach ($a_immutable_fields as $field) {
                             unset($a_values[$field]);
                         }

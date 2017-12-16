@@ -149,7 +149,7 @@ class RoutesModel implements ModelInterface
         try {
             $search_results = $this->read($a_ids, ['a_fields' => ['route_immutable']]);
             foreach ($search_results as $a_result) {
-                if (isset($a_result['route_immutable']) && $a_result['route_immutable'] == 1) {
+                if (isset($a_result['route_immutable']) && $a_result['route_immutable'] == 'true') {
                     $this->error_message = 'Sorry, that route can not be deleted.';
                     throw new ModelException($this->error_message, 450);
                 }

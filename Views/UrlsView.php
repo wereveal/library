@@ -76,7 +76,7 @@ class UrlsView
             $a_new_urls[] = [
                 'url_id'    => $a_url['url_id'],
                 'url'       => $url,
-                'immutable' => $a_url['url_immutable'] == 1 ? 'true' : 'false'
+                'immutable' => $a_url['url_immutable'] == 'true' ? 'true' : 'false'
             ];
         }
         if (!empty($a_message['message'])) {

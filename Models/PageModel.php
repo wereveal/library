@@ -154,7 +154,7 @@ class PageModel implements ModelInterface
         catch (ModelException $e) {
             throw new ModelException('Page not available to be deleted.', 410);
         }
-        if ($search_results[0]['page_immutable'] == 1) {
+        if ($search_results[0]['page_immutable'] == 'true') {
             $this->error_message = 'Sorry, that page can not be deleted.';
             throw new ModelException($this->error_message, 450);
         }

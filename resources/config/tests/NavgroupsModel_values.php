@@ -40,7 +40,7 @@ return [
                 'ng_name'      => 'Test',
                 'ng_active'    => 1,
                 'ng_default'   => 1,
-                'ng_immutable' => 1
+                'ng_immutable' => 'true'
             ],
             'expected_results' => true
         ],
@@ -48,7 +48,7 @@ return [
             'test_values'      => [
                 'ng_active'    => 1,
                 'ng_default'   => 1,
-                'ng_immutable' => 1
+                'ng_immutable' => 'true'
             ],
             'expected_results' => false
         ]
@@ -64,7 +64,7 @@ return [
                 'ng_name'      => 'Testing',
                 'ng_active'    => 0,
                 'ng_default'   => 0,
-                'ng_immutable' => 0
+                'ng_immutable' => 'false'
             ],
             'expected_results' => true
         ],
@@ -83,7 +83,7 @@ return [
                 'ng_name'      => '',
                 'ng_active'    => 0,
                 'ng_default'   => 0,
-                'ng_immutable' => 0
+                'ng_immutable' => 'false'
             ],
             'expected_results' => false
         ],
@@ -93,7 +93,7 @@ return [
                 'ng_name'      => '',
                 'ng_active'    => 0,
                 'ng_default'   => 0,
-                'ng_immutable' => 0
+                'ng_immutable' => 'false'
             ],
             'expected_results' => false
         ],
@@ -103,7 +103,7 @@ return [
                 'ng_name'      => 'Main',
                 'ng_active'    => 0,
                 'ng_default'   => 0,
-                'ng_immutable' => 0
+                'ng_immutable' => 'false'
             ],
             'expected_results' => false
         ]

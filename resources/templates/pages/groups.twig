@@ -54,7 +54,7 @@
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-2">
                             <label class="w100 aright" for="groups[group_immutable]">Immutable: </label>
-                            <input type="checkbox" name="groups[group_immutable]" value="1"/>
+                            <input type="checkbox" name="groups[group_immutable]" value="true"/>
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-2">
                             <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Group</button>
@@ -75,7 +75,7 @@
                         <div class="row row-inside {{ class }}">
                             <div class="col-md-2 col-sm-2 col-xs-2">
                                 <label class="visible-sm-inline-block visible-xs-inline-block w100 aright" for="groups[group_name]">Name: </label>
-                            {% if group.group_immutable == 1 %}
+                            {% if group.group_immutable == 'true' %}
                                 {{ group.group_name }}
                                 <input type="hidden" name="groups[group_name]" value="{{ group.group_name }}"/>
                             {% else %}
@@ -106,17 +106,17 @@
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-2">
                                 <label class="w100 aright" for="groups[group_immutable]">Immutable: </label>
-                            {% if group.group_immutable == 1 and adm_lvl < 10 %}
+                            {% if group.group_immutable == 'true' and adm_lvl < 10 %}
                                 True
-                            {% elseif group.group_immutable == 1 %}
-                                <input type="checkbox" name="groups[group_immutable]" value="1" checked />
+                            {% elseif group.group_immutable == 'true' %}
+                                <input type="checkbox" name="groups[group_immutable]" value="true" checked />
                             {% else %}
-                                <input type="checkbox" name="groups[group_immutable]" value="1" />
+                                <input type="checkbox" name="groups[group_immutable]" value="true" />
                             {% endif %}
                             </div>
                             <div class="col-md-2">
                                 <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
-                            {% if group.group_immutable != 1 %}
+                            {% if group.group_immutable != 'true' %}
                                 <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs hidden-sm hidden-xs">Delete</button>
                             {% endif %}
                                 <input type="hidden" name="tolken" value="{{ tolken }}" />
@@ -163,7 +163,7 @@
                         </div>
                         <div class="col-md-2 col-sm-2 col-xs-2 {{ class }}">
                             <label for="groups[group_immutable]" class="w100 aright">Immutable: </label>
-                            <input type="checkbox" name="groups[group_immutable]" value="1"/>
+                            <input type="checkbox" name="groups[group_immutable]" value="true"/>
                         </div>
                         <div class="col-md-2 {{ class }}">
                             <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Group</button>
@@ -208,7 +208,7 @@
                 'group_name'        => '',
                 'group_description' => '',
                 'group_auth_level'  => 0,
-                'group_immutable'   => 0
+                'group_immutable'   => 'true'
             ]
         ),
         'tolken'  => $_SESSION['token'],

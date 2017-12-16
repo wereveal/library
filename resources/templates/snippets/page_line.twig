@@ -8,7 +8,7 @@
                 {{ page.page_url }}
             </div>
             <div class="col-md-1">
-                {% if page.page_immutable != 1 or adm_lvl >= 9 %}
+                {% if page.page_immutable != 'true' or adm_lvl >= 9 %}
                     <form action="{{ public_dir }}/manager/library/pages/modify/" method="post">
                         <button type="submit" name="submit" value="modify_page" class="btn btn-primary btn-xs">Modify/Delete</button>
                         <input type="hidden" name="tolken" value="{{ tolken }}" />

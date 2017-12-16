@@ -44,7 +44,7 @@
         {% for row in a_routes %}
             {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
             <div class="row {{ class }}">
-            {% if row.route_immutable == 0 %}
+            {% if row.route_immutable == 'false' %}
             <form action="{{ public_dir }}/manager/library/routes/update/" method="post">
                 <div class="col-md-3">
                     <label class="hidden-sm-up" for="route[url_id]">URL: </label>

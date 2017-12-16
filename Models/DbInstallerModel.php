@@ -134,14 +134,14 @@ class DbInstallerModel
             $a_constants['twig_prefix'] = [
                 'const_name'      => 'TWIG_PREFIX',
                 'const_value'     => $this->a_install_config['twig_prefix'],
-                'const_immutable' => 1
+                'const_immutable' => 'true'
             ];
         }
         else if (empty($a_constants['twig_prefix']['const_value'])) {
             $a_constants['twig_prefix'] = [
                 'const_name'      => 'TWIG_PREFIX',
                 'const_value'     => 'site_',
-                'const_immutable' => 1
+                'const_immutable' => 'true'
             ];
         }
         if (!empty($this->a_install_config['lib_twig_prefix']) && isset($a_constants['lib_twig_prefix']['const_value'])) {
@@ -151,14 +151,14 @@ class DbInstallerModel
             $a_constants['lib_twig_prefix'] = [
                 'const_name'      => 'LIB_TWIG_PREFIX',
                 'const_value'     => $this->a_install_config['lib_twig_prefix'],
-                'const_immutable' => 1
+                'const_immutable' => 'true'
             ];
         }
         else if (empty($a_constants['lib_twig_prefix']['const_value'])) {
             $a_constants['lib_twig_prefix'] = [
                 'const_name'      => 'LIB_TWIG_PREFIX',
                 'const_value'     => 'lib_',
-                'const_immutable' => 1
+                'const_immutable' => 'true'
             ];
         }
 
@@ -824,7 +824,7 @@ class DbInstallerModel
                 $this->a_data['tp_templates'][$app_twig_prefix . 'index'] = [
                     'td_id'         => $app_twig_prefix . 'pages',
                     'tpl_name'      => 'index',
-                    'tpl_immutable' => 0
+                    'tpl_immutable' => 'false'
                 ];
             }
         }

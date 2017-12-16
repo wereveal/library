@@ -165,7 +165,7 @@ class PageController implements ManagerControllerInterface
         $a_page = $this->a_post['page'];
         $this->logIt('Posted Page: ' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
         if (!isset($a_page['page_immutable'])) {
-            $a_page['page_immutable'] = 0;
+            $a_page['page_immutable'] = 'false';
         }
         $results = $this->o_model->update($a_page);
         if ($results) {

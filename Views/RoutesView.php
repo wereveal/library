@@ -71,7 +71,7 @@ class RoutesView
                     'route_class'     => '',
                     'route_method'    => '',
                     'route_action'    => '',
-                    'route_immutable' => 1
+                    'route_immutable' => 'true'
                 ]
             ),
             'tolken'  => $_SESSION['token'],

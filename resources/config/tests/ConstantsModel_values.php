@@ -49,7 +49,7 @@ return [
             'test_values' => [
                 'const_name'      => 'FRED',
                 'const_value'     => 'Fred Flinstone',
-                'const_immutable' => 1
+                'const_immutable' => 'true'
             ],
             'expected_results' => true
         ],
@@ -57,7 +57,7 @@ return [
             'test_values' => [
                 'const_name'      => 'FRED',
                 'const_value'     => 'Fred Flinstone',
-                'const_immutable' => 1
+                'const_immutable' => 'true'
             ],
             'expected_results' => false
         ],
@@ -101,7 +101,7 @@ return [
             'test_values' => [
                 'const_name'      => 'phred',
                 'const_value'     => 'phred phlinstone',
-                'const_immutable' => 0
+                'const_immutable' => 'false'
             ],
             'expected_results' => true
         ],
@@ -114,7 +114,7 @@ return [
         ],
         'immutable_change_true' => [
             'test_values' => [
-                'const_immutable' => 1
+                'const_immutable' => 'true'
             ],
             'expected_results' => true
         ]

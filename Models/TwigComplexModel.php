@@ -103,11 +103,11 @@ class TwigComplexModel
                 }
                 $dir_id = $results[0];
                 $new_templates = [
-                    ['td_id' => $dir_id, 'tpl_name' => 'index', 'tpl_immutable' => 0],
-                    ['td_id' => $dir_id, 'tpl_name' => 'home', 'tpl_immutable' => 0],
-                    ['td_id' => $dir_id, 'tpl_name' => 'manager', 'tpl_immutable' => 0],
-                    ['td_id' => $dir_id, 'tpl_name' => 'error', 'tpl_immutable' => 0],
-                    ['td_id' => $dir_id, 'tpl_name' => 'text', 'tpl_immutable' => 0]
+                    ['td_id' => $dir_id, 'tpl_name' => 'index', 'tpl_immutable' => 'false'],
+                    ['td_id' => $dir_id, 'tpl_name' => 'home', 'tpl_immutable' => 'false'],
+                    ['td_id' => $dir_id, 'tpl_name' => 'manager', 'tpl_immutable' => 'false'],
+                    ['td_id' => $dir_id, 'tpl_name' => 'error', 'tpl_immutable' => 'false'],
+                    ['td_id' => $dir_id, 'tpl_name' => 'text', 'tpl_immutable' => 'false']
                 ];
                 try {
                     $results = $this->o_tpls->create($new_templates);

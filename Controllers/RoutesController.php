@@ -198,7 +198,7 @@ class RoutesController implements ManagerControllerInterface
                 'route_class'     => '',
                 'route_method'    => '',
                 'route_action'    => '',
-                'route_immutable' => 0,
+                'route_immutable'=> 'false',
                 'route_id'        => 0
             ];
         }

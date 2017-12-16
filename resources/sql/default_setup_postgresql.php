@@ -4,7 +4,7 @@ return [
   const_id serial NOT NULL,
   const_name character varying(64) NOT NULL UNIQUE,
   const_value character varying(64) NOT NULL,
-  const_immutable smallint NOT NULL DEFAULT 0,
+  const_immutable character varying(10) NOT NULL DEFAULT 'false'::character varying,
   PRIMARY KEY (const_id)
 )",
 
@@ -13,7 +13,7 @@ return [
   group_name character varying(40) NOT NULL UNIQUE,
   group_description character varying(128) NOT NULL,
   group_auth_level integer NOT NULL DEFAULT 0,
-  group_immutable smallint NOT NULL DEFAULT 0,
+  group_immutable character varying(10) NOT NULL DEFAULT 'false'::character varying,
   PRIMARY KEY (group_id)
 )",
 
@@ -26,7 +26,7 @@ return [
   page_base_url character varying(50) NOT NULL DEFAULT '/'::character varying,
   page_lang character varying(50) NOT NULL DEFAULT 'en'::character varying,
   page_charset character varying(100) NOT NULL DEFAULT 'utf-8'::character varying,
-  page_immutable smallint NOT NULL DEFAULT 0,
+  page_immutable character varying(10) NOT NULL DEFAULT 'false'::character varying,
   PRIMARY KEY (page_id),
   UNIQUE (page_url)
 )",
@@ -70,7 +70,7 @@ return [
   route_class character varying(64) NOT NULL,
   route_method character varying(64) NOT NULL,
   route_action character varying(255) NOT NULL,
-  route_immutable smallint NOT NULL DEFAULT 0::smallint,
+  route_immutable character varying(10) NOT NULL DEFAULT 'false'::character varying,
   PRIMARY KEY (route_id)
 )",
 "CREATE UNIQUE INDEX route_path_idx ON {$dbPrefix}routes (route_path)",
