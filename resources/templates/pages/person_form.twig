@@ -11,7 +11,7 @@
                     <div class="col-md-2 col-sm-2 col-xs-2 aright">
                         <label for="login_id">Login ID: </label>
                     </div>
-            {% if person.is_immutable == 1 %}
+            {% if person.is_immutable == 'true' %}
                     <div class="col-md-10 col-sm-10 col-xs-10 aleft">
                         {{ person.login_id }}<input type="hidden" id="login_id" name="person[login_id]" value="{{ person.login_id }}">
                     </div>
@@ -41,7 +41,7 @@
                     <div class="col-md-2 col-sm-2 col-xs-2  aright">
                         <label for="password">Password: </label>
                     </div>
-            {% if person.is_immutable == 1 %} {# password can only be changed a select few #}
+            {% if person.is_immutable == 'true' %} {# password can only be changed a select few #}
                 {% if adm_level <= person.highest_role %} {# the admin's auth level can only change people of same or lower auth (lower meaning higher number) #}
                     <div class="col-md-10 col-sm-10 col-xs-10 aleft">
                         <input type="text" id="password" name="person[password]" class="colorful" maxlength="64" value="{{ person.password }}">
@@ -70,12 +70,12 @@
                         <label for="is_active">Active: </label>
                     </div>
                     <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-            {% if person.is_active == 1 %}
+            {% if person.is_active == 'true' %}
                 {% set checked = ' checked' %}
             {% else %}
                 {% set checked = '' %}
             {% endif %}
-            {% if person.immutable != 1 or adm_level <= person.highest_role %}
+            {% if person.immutable != 'true' or adm_level <= person.highest_role %}
                         <input type="checkbox" name="person[is_active]" id="is_active" class="colorful" value="true" {{ checked }} />
             {% else %}
                 {% if checked == 'true' %}
@@ -100,7 +100,7 @@
                         <label for="is_logged_in">Is Logged In: </label>
                     </div>
                     <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-            {% if person.is_logged_in == 1 %}
+            {% if person.is_logged_in == 'true' %}
                 {% set is_checked = " checked" %}
             {% else %}
                 {% set is_checked = "" %}
@@ -114,9 +114,9 @@
                         <label for="is_immutable">Is Immutable: </label>
                     </div>
                     <div class="col-md-10 col-sm-10 col-xs-10 aleft">
-            {% if person.is_immutable == 1 and adm_level <= person.highest_role %}
+            {% if person.is_immutable == 'true' and adm_level <= person.highest_role %}
                         <input type="checkbox" name="person[is_immutable]" checked="checked" id="is_immutable" class="colorful" value="true" />
-            {% elseif person.is_immutable == 1 %}
+            {% elseif person.is_immutable == 'true' %}
                         True
             {% elseif adm_level <= person.highest_role %}
                         <input type="checkbox" name="person[is_immutable]" id="is_immutable" class="colorful" value="true" />
@@ -137,7 +137,7 @@
                 <div class="row">
                 {% endif %}
                     <div class="col-md-1 col-sm-1 col-xs-1 aright">
-                {% if person.is_immutable == 1 %}
+                {% if person.is_immutable == 'true' %}
                     {% if adm_level <= person.highest_role %}
                         <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />
                     {% else %}
@@ -158,7 +158,7 @@
                         <button type="submit" name="submit" value="save" class="btn btn-primary btn-sm">Create New Person</button>
             {% else %}
                         <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Update Person</button>
-                {% if person.is_immutable == 0 %}
+                {% if person.is_immutable == 'false' %}
                         <button type="submit" name="submit" value="verify" class="btn btn-warning btn-sm">Delete</button>
                 {% endif %}
             {% endif %}
@@ -222,8 +222,9 @@
                 'short_name'   => '',
                 'description'  => '',
                 'password'     => '',
-                'is_active'    => 0,
-                'is_immutable' => 0,
+                'is_active'    => 'false',
+                'is_immutable' => 'false',
+                'is_logged_in' => 'false,
                 'created_on'   => date('Y-m-d H:i:s'),
                 'groups'       => [],
                 'highest_role' => 0

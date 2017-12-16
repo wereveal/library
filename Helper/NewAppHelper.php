@@ -6,14 +6,16 @@
  * @file      Ritc/Library/Helper/NewAppHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-11-24 17:21:43
+ * @version   1.0.0
+ * @date      2017-12-15 22:51:31
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-11-24 wer
- * @todo Ritc/Library/Helper/NewAppHelper.php - Everything
+ * - v1.0.0         - Initial Production version                - 2017-12-15 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2017-11-24 wer
  */
 namespace Ritc\Library\Helper;
 
+use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -36,12 +38,19 @@ class NewAppHelper
     private $htaccess_text;
     /** @var  string */
     private $keep_me_text;
+    /** @var \Ritc\Library\Services\Di */
+    private $o_di;
     /** @var  string */
     private $tpl_text;
 
+    /**
+     * NewAppHelper constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
-        $this->a_config = $o_di->getVar('a_install_config');
+        $this->o_di = $o_di;
+        $this->setConfig($o_di->getVar('a_install_config'));
         $this->setupProperties();
     }
 
@@ -73,6 +82,28 @@ class NewAppHelper
      */
     public function createDefaultFiles()
     {
+        if (empty($this->a_new_dirs)
+            || empty($this->app_path)
+            || empty($this->htaccess_text)
+            || empty($this->tpl_text)
+            || empty($this->a_config)
+            || empty($this->a_config['namespace'])
+            || empty($this->a_config['app_name'])
+        ) {
+            return false;
+        }
+        if (!isset($this->a_config['author'])) {
+            $this->a_config['author'] = '';
+        }
+        if (!isset($this->a_config['short_author'])) {
+            $this->a_config['short_author'] = '';
+        }
+        if (!isset($this->a_config['email'])) {
+            $this->a_config['email'] = '';
+        }
+        if (!isset($this->a_config['app_twig_prefix'])) {
+            $this->a_config['app_twig_prefix'] = 'main_';
+        }
         if (file_exists($this->app_path)) {
             if (file_put_contents($this->app_path . '/.htaccess', $this->htaccess_text)) {
                 foreach ($this->a_new_dirs as $dir) {
@@ -122,7 +153,7 @@ class NewAppHelper
                 $this->a_config['email'],
                 date('Y-m-d H:i:s'),
                 date('Y-m-d'),
-                $this->a_config['twig_prefix']
+                $this->a_config['app_twig_prefix']
             ];
 
             ### Create the main controller for the app ###
@@ -257,17 +288,21 @@ class NewAppHelper
             $base_path = empty($this->a_config['base_path'])
                 ? 'dirname(PUBLIC_PATH)'
                 : $this->a_config['base_path'];
-            $developer_mode = $this->a_config['developer_mode'] == 'true'
+            $developer_mode = isset($this->a_config['developer_mode']) && $this->a_config['developer_mode'] == 'true'
                 ? 'true'
                 : 'false';
-            $http_host = $this->a_config['http_host'];
+            $http_host = empty($this->a_config['http_host'])
+                ? ''
+                : $this->a_config['http_host'];
             $domain = empty($this->a_config['domain'])
                 ? ''
                 : $this->a_config['domain'];
             $tld = empty($this->a_config['tld'])
                 ? 'com'
                 : $this->a_config['tld'];
-
+            $specific_host = empty($this->a_config['specific_host'])
+                ? ''
+                : $this->a_config['specific_host'];
             $a_find = [
                 '{db_config_file}',
                 '{public_path}',
@@ -286,53 +321,92 @@ class NewAppHelper
                 $http_host,
                 $domain,
                 $tld,
-                ''
+                $specific_host
             ];
             if (!empty($http_host)) {
-                $host_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/specific_host.snippet');
+                $host_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/http_host.snippet');
                 $host_text = str_replace($a_find, $a_replace, $host_text);
                 $a_replace[7] = $host_text;
             }
             $setup_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/setup.php.txt');
             $setup_text = str_replace($a_find, $a_replace, $setup_text);
             file_put_contents(PUBLIC_PATH . '/setup.php', $setup_text);
-
             return true;
         }
         return false;
     }
 
     /**
-     * Sets the class properties that are needed.
+     * @return bool|string
      */
-    private function setupProperties()
+    public function createDbRecords()
     {
-        $this->app_path = APPS_PATH
-                          . '/'
-                          . $this->a_config['namespace']
-                          . '/'
-                          . $this->a_config['app_name'];
-        $this->a_new_dirs = [
-            'Abstracts',
-            'Controllers',
-            'Entities',
-            'Interfaces',
-            'Models',
-            'Tests',
-            'Traits',
-            'Views',
-            'resources',
-            'resources/config',
-            'resources/sql',
-            'resources/templates',
-            'resources/templates/default',
-            'resources/templates/elements',
-            'resources/templates/pages',
-            'resources/templates/forms',
-            'resources/templates/snippets',
-            'resources/templates/tests'
+        $o_tcm = new TwigComplexModel($this->o_di);
+        try {
+            return $o_tcm->createTwigForApp($this->a_config['app_twig_prefix'], $this->app_path);
+        }
+        catch (ModelException $e) {
+            return $e->errorMessage();
+        }
+    }
+
+    /**
+     * Standard class property SETter, app_path.
+     * @param string $value
+     */
+    public function setAppPath($value = '')
+    {
+        if ($value === '') {
+            $value = APPS_PATH
+                   . '/'
+                   . $this->a_config['namespace']
+                   . '/'
+                   . $this->a_config['app_name'];
+        }
+        $this->app_path = $value;
+    }
+
+    /**
+     * Standard class property SETter for a_values.
+     * @param array $a_values Optional, defaults to a preset bunch of values.
+     */
+    public function setConfig(array $a_values = [])
+    {
+        $a_default = [
+            'app_name'        => 'Main',                          // specify the primary app to which generates the home page
+            'namespace'       => 'Ritc',                          // specify the root namespace the app will be in
+            'author'          => 'William E Reveal',              // specify the author of the app
+            'short_author'    => 'wer',                           // abbreviation for the author
+            'email'           => '<bill@revealitconsulting.com>', // email of the author
+            'public_path'     => '',                              // leave blank for default setting
+            'base_path'       => '',                              // leave blank for default setting
+            'http_host'       => '',                              // $_SERVER['HTTP_HOST'] results or leave blank for default
+            'domain'          => 'revealitconsulting',            // domain name of site
+            'tld'             => 'com',                           // top level domain, e.g., com, net, org
+            'specific_host'   => '',                              // e.g. www, test
+            'developer_mode'  => 'false',                         // affects debugging messages
+            'app_twig_prefix' => 'main_'
         ];
-        $this->htaccess_text =<<<EOF
+
+        if (empty($a_values)) {
+            $a_values = $a_default;
+        }
+        foreach ($a_default as $key => $value) {
+            if (!isset($a_values[$key])) {
+                $a_values[$key] = $a_default[$key];
+            }
+        }
+        $this->a_config = $a_values;
+    }
+
+    /**
+     * Standard class property SETter, htaccess_text.
+     * @param string $value
+     */
+    public function setHtaccessText($value = '')
+    {
+        if ($value === '') {
+            $value =<<<EOF
 <IfModule mod_authz_core.c>
     Require all denied
 </IfModule>
@@ -341,7 +415,75 @@ class NewAppHelper
     Deny from all
 </IfModule>
 EOF;
-        $this->keep_me_text = "Place Holder";
-        $this->tpl_text = "<h3>An Error Has Occurred</h3>";
+        }
+        $this->htaccess_text = $value;
+    }
+
+    /**
+     * Standard class property SETter, keepme_text.
+     * @param string $value
+     */
+    public function setKeepMeText($value = '')
+    {
+        if ($value === '') {
+            $value = 'Place Holder';
+        }
+        $this->keep_me_text = $value;
+    }
+
+    /**
+     * Standard class property SETter, a_new_dirs.
+     * @param array $a_values
+     */
+    public function setNewDirs(array $a_values = [])
+    {
+        if (empty($a_values)) {
+            $a_values = [
+                'Abstracts',
+                'Controllers',
+                'Entities',
+                'Interfaces',
+                'Models',
+                'Tests',
+                'Traits',
+                'Views',
+                'resources',
+                'resources/config',
+                'resources/sql',
+                'resources/templates',
+                'resources/templates/default',
+                'resources/templates/elements',
+                'resources/templates/pages',
+                'resources/templates/forms',
+                'resources/templates/snippets',
+                'resources/templates/tests'
+            ];
+        }
+        $this->a_new_dirs = $a_values;
+    }
+
+    /**
+     * Standard class property SETter, tpl_text.
+     * @param string $value
+     */
+    public function setTplText($value = '')
+    {
+        if ($value === '') {
+            $value = "<h3>An Error Has Occurred</h3>";
+        }
+        $this->tpl_text = $value;
+    }
+
+    /**
+     * Sets the class properties that are needed.
+     */
+    private function setupProperties()
+    {
+
+        $this->setAppPath();
+        $this->setNewDirs();
+        $this->setHtaccessText();
+        $this->setKeepMeText();
+        $this->setTplText();
     }
 }

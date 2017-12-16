@@ -6,9 +6,10 @@
  * @file      DbModel.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.2.0
- * @date      2017-12-14 13:37:46
+ * @version   5.2.1
+ * @date      2017-12-15 13:51:15
  * @note <b>Change Log</b>
+ * - v5.2.1 - Bug fixes                                                                     - 2017-12-15 wer
  * - v5.2.0 - Method added to get the pdo object                                            - 2017-12-14 wer
  * - v5.1.3 - ModelException changes reflected here                                         - 2017-12-12 wer
  * - v5.1.2 - bug fixes - better exception handling.                                        - 2017-12-02 wer
@@ -156,7 +157,6 @@ class DbModel
                 try {
                     $id = $this->o_pdo->lastInsertId($sequence_name);
                     $this->a_new_ids = [$id];
-                    return true;
                 }
                 catch (\PDOException $e) {
                     $message = $e->getMessage();
@@ -168,7 +168,10 @@ class DbModel
             try {
                 $o_pdo_stmt = $this->prepare($the_query);
                 try {
-                    return $this->insertPrepared($a_values, $o_pdo_stmt, $a_table_info);
+                    $results = $this->insertPrepared($a_values, $o_pdo_stmt, $a_table_info);
+                    if (!$results) {
+                        throw new ModelException("Unable to insert record", 110);
+                    }
                 }
                 catch (ModelException $e) {
                     $this->error_message = 'Could not insertPrepared. ' . $e->errorMessage();
@@ -186,6 +189,7 @@ class DbModel
             $this->error_message = 'The array of values for a prepared insert was empty.';
             throw new ModelException($this->error_message, 110);
         }
+        return true;
     }
 
     /**
@@ -403,7 +407,13 @@ class DbModel
     public function getPgsqlSequenceName(array $a_table_info = [])
     {
         if ($a_table_info != array()) {
-            $this->setPgsqlSequenceName($a_table_info);
+            try {
+                $this->setPgsqlSequenceName($a_table_info);
+            }
+            catch (ModelException $e) {
+                $this->logIt('ModelException: ' . $e->errorMessage(), LOG_OFF, __METHOD__);
+                return '';
+            }
         }
         return $this->pgsql_sequence_name;
     }
@@ -1070,12 +1080,7 @@ class DbModel
                     try {
 		                $sequence_name = '';
 		                if ($this->db_type == 'pgsql' && !empty($a_table_info)) {
-		                    try {
-		                        $sequence_name = $this->getPgsqlSequenceName($a_table_info);
-		                    }
-		                    catch (ModelException $e) {
-		                        throw new ModelException('Could not getPsqlSequenceName. ' . $e->errorMessage(), $e->getCode(), $e);
-		                    }
+                            $sequence_name = $this->getPgsqlSequenceName($a_table_info);
 		                }
                         $this->a_new_ids[] = $this->o_pdo->lastInsertId($sequence_name);
                     }
@@ -1122,9 +1127,6 @@ class DbModel
                     $this->error_message = 'The query affected no records.';
                     throw new ModelException($this->error_message, 10);
                 }
-                else {
-                    return true;
-                }
             }
             catch (\PDOException $e) {
                 $this->setSqlErrorMessage($this->o_pdo);
@@ -1136,7 +1138,10 @@ class DbModel
             try {
                 $o_pdo_stmt = $this->prepare($the_query);
                 try {
-                    return $this->mdQueryPrepared($a_values, $single_record, $o_pdo_stmt);
+                    $results = $this->mdQueryPrepared($a_values, $single_record, $o_pdo_stmt);
+                    if (!$results) {
+                        throw new ModelException($this->error_message, 10);
+                    }
                 }
                 catch (ModelException $e) {
                     $this->error_message = $e->errorMessage();
@@ -1153,6 +1158,7 @@ class DbModel
             $this->error_message = 'The array of values for a prepared query was empty.';
             throw new ModelException($this->error_message, 20);
         }
+        return true;
     }
 
     /**

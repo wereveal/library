@@ -10,7 +10,6 @@
  * @note Change Log
  * - v1.0.0         - Initial production version    - 2017-12-12 wer
  * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
- * @todo Ritc/Library/Models/TwigTemplatesModel.php - Everything
  */
 namespace Ritc\Library\Models;
 
@@ -36,7 +35,7 @@ class TwigTemplatesModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'twig_prefix');
+        $this->setupProperties($o_db, 'twig_templates');
     }
 
     /**

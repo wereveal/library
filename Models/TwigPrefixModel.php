@@ -11,7 +11,6 @@
  * @note Change Log
  * - v1.0.0         - Initial production version    - 2017-12-12 wer
  * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
- * @todo Ritc/Library/Models/TwigPrefixModel.php - Everything
  */
 namespace Ritc\Library\Models;
 
@@ -84,6 +83,7 @@ class TwigPrefixModel implements ModelInterface
      * @param array $a_search_for    key pairs of field name => field value
      * @param array $a_search_params \ref searchparams \ref readparams
      * @return array
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function read(array $a_search_for = [], array $a_search_params = [])
     {
@@ -94,7 +94,12 @@ class TwigPrefixModel implements ModelInterface
             'order_by'       => $this->primary_index_name . ' ASC'
         ];
         $a_parameters = array_merge($a_parameters, $a_search_params);
-        return $this->genericRead($a_parameters);
+        try {
+            return $this->genericRead($a_parameters);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**
@@ -124,6 +129,7 @@ class TwigPrefixModel implements ModelInterface
      * Deletes a record based on the id provided.
      * @param int $id
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function delete($id = -1)
     {
@@ -132,16 +138,27 @@ class TwigPrefixModel implements ModelInterface
         if ($this->o_elog instanceof Elog) {
             $o_tpl->setElog($this->o_elog);
         }
-        $results = $o_tpl->read(['td_id' => $id]);
-        if (!empty($results)) {
-            $this->error_message = "A template exists that uses this prefix";
-            return false;
+        try {
+            $results = $o_tpl->read(['td_id' => $id]);
+            if (!empty($results)) {
+                $this->error_message = "A template exists that uses this prefix";
+                throw new ModelException($this->error_message, 10);
+            }
         }
-        $results = $this->genericDelete($id);
-        if ($results === false) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
         }
-        return $results;
+        try {
+            $results = $this->genericDelete($id);
+            if ($results === false) {
+                $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+                throw new ModelException($this->error_message, 410);
+            }
+            return $results;
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
     }
 
     /**

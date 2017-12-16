@@ -6,11 +6,10 @@
  * @file      Ritc/Library/Helper/ExceptionHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
+ * @version   1.0.0
  * @date      2017-12-12 14:00:56
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-12-12 wer
- * @todo Ritc/Library/Helper/ExceptionHelper.php - Everything
+ * - v1.0.0         - Initial version                                                           - 2017-12-12 wer
  */
 namespace Ritc\Library\Helper;
 
@@ -135,7 +134,7 @@ class ExceptionHelper
             case 'see_previous':
                 return 99;
             default:
-                return $this->getCode($failure_string);
+                return self::getCodeNumber($failure_string);
         }
     }
 

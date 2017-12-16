@@ -1,16 +1,15 @@
 <?php
 /**
  * @brief     Does database operations on the twig_prefix table.
- * @details
  * @ingroup   lib_models
  * @file      Ritc/Library/Models/TwigDirsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-05-13 09:14:11
+ * @version   1.0.0
+ * @date      2017-12-15 22:49:00
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-05-13 wer
- * @todo Ritc/Library/Models/TwigDirsModel.php - Everything
+ * - v1.0.0         - Initial Production version    - 2017-12-15 wer
+ * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
  */
 namespace Ritc\Library\Models;
 
@@ -36,7 +35,7 @@ class TwigDirsModel implements ModelInterface
      */
     public function __construct(DbModel $o_db)
     {
-        $this->setupProperties($o_db, 'twig_prefix');
+        $this->setupProperties($o_db, 'twig_dirs');
     }
 
     /**
@@ -146,6 +145,33 @@ class TwigDirsModel implements ModelInterface
         }
         try {
             return $this->genericDelete($id);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * Creates the records for default directories for the prefix id.
+     * @param int $prefix_id Required.
+     * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    public function createDefaultDirs($prefix_id = -1)
+    {
+        if ($prefix_id < 1) {
+            throw new ModelException('Prefix record id not provided', 20);
+        }
+        $a_dirs = [
+            ['tp_id' => $prefix_id, 'td_name' => 'default'],
+            ['tp_id' => $prefix_id, 'td_name' => 'elements'],
+            ['tp_id' => $prefix_id, 'td_name' => 'forms'],
+            ['tp_id' => $prefix_id, 'td_name' => 'pages'],
+            ['tp_id' => $prefix_id, 'td_name' => 'snippets'],
+            ['tp_id' => $prefix_id, 'td_name' => 'tests']
+        ];
+        try {
+            return $this->create($a_dirs);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode());

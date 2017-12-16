@@ -322,7 +322,7 @@ SQL;
         if (is_array($record_ids)) {
            if (empty($record_ids)) {
                $this->error_message = 'No record ids were provided.';
-               throw new ModelException($message, 430);
+               throw new ModelException($this->error_message, 430);
            }
            else {
                return $this->genericDeleteMultiple($record_ids);
@@ -730,7 +730,6 @@ SQL;
     {
         switch($this->db_type) {
             case 'pgsql':
-                /** @noinspection SqlResolve */
                 $query = "
                     SELECT a.attname as pkeyname, format_type(a.atttypid, a.atttypmod) AS data_type
                     FROM   pg_index i

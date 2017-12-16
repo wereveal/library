@@ -5,11 +5,11 @@
  * @file      Ritc/Library/Models/DbInstallerModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-11-23 11:06:37
+ * @version   1.0.0
+ * @date      2017-12-15 14:02:55
  * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-11-23 wer
- * @todo Ritc/Library/Models/DbInstallerModel.php - Everything
+ * - v1.0.0         - Initial Production version    - 2017-12-15 wer
+ * - v1.0.0-alpha.0 - Initial version               - 2017-11-23 wer
  */
 namespace Ritc\Library\Models;
 
@@ -257,9 +257,15 @@ class DbInstallerModel
             UPDATE {$table_name}
             SET nav_parent_id = :nav_parent_id
             WHERE nav_id = :nav_id";
-        $o_nav_stmt    = $this->o_db->prepare($nav_sql);
-        $o_parent_stmt = $this->o_db->prepare($parent_sql);
-        $o_update_stmt = $this->o_db->prepare($update_sql);
+        try {
+            $o_nav_stmt    = $this->o_db->prepare($nav_sql);
+            $o_parent_stmt = $this->o_db->prepare($parent_sql);
+            $o_update_stmt = $this->o_db->prepare($update_sql);
+        }
+        catch (ModelException $e) {
+            $this->error_message = "Unable to prepare the sql statement(s)" . $e->errorMessage();
+            return false;
+        }
         foreach ($a_navigation as $key => $a_record) {
             $a_record['url_id']        = $this->a_urls[$a_record['url_id']]['url_id'];
             $a_record['nav_parent_id'] = 0;
@@ -330,7 +336,13 @@ class DbInstallerModel
             VALUES
                 ({$a_strings['values']})
         ";
-        $o_pdo_stmt = $this->o_db->prepare($nnm_sql);
+        try {
+            $o_pdo_stmt = $this->o_db->prepare($nnm_sql);
+        }
+        catch (ModelException $e) {
+            $this->error_message = $e->errorMessage();
+            return false;
+        }
         foreach ($a_nnm as $key => $a_record) {
             $a_new_values = [
                 'ng_id'  => $this->a_navgroups[$a_record['ng_id']]['ng_id'],
@@ -378,7 +390,13 @@ class DbInstallerModel
             VALUES 
               ({$a_strings['values']})
         ";
-        $o_pdo_stmt = $this->o_db->prepare($sql);
+        try {
+            $o_pdo_stmt = $this->o_db->prepare($sql);
+        }
+        catch (ModelException $e) {
+            $this->error_message = $e->errorMessage();
+            return false;
+        }
         foreach ($a_page as $key => $a_record) {
             $a_record['url_id'] = $this->a_data['urls'][$a_record['url_id']]['url_id'];
             $a_record['tpl_id'] = $this->a_data['tp_templates'][$a_record['tpl_id']]['tpl_id'];
@@ -553,7 +571,13 @@ class DbInstallerModel
             VALUES 
                 ({$a_strings['values']})
         ";
-        $o_pdo_stmt = $this->o_db->prepare($sql);
+        try {
+            $o_pdo_stmt = $this->o_db->prepare($sql);
+        }
+        catch (ModelException $e) {
+            $this->error_message = $e->errorMessage();
+            return false;
+        }
         foreach ($a_tp_dirs as $key => $a_record) {
             $tp_id                    = $a_tp_prefix[$a_record['tp_id']]['tp_id'];
             $a_tp_dirs[$key]['tp_id'] = $tp_id;
@@ -600,7 +624,13 @@ class DbInstallerModel
             VALUES
               ({$a_strings['values']})
         ";
-        $o_pdo_stmt = $this->o_db->prepare($sql);
+        try {
+            $o_pdo_stmt = $this->o_db->prepare($sql);
+        }
+        catch (ModelException $e) {
+            $this->error_message = $e->errorMessage();
+            return false;
+        }
         foreach ($a_tp_prefix as $key => $a_record) {
             try {
                 $results = $this->o_db->execute($a_record, $o_pdo_stmt);
@@ -641,7 +671,13 @@ class DbInstallerModel
             VALUES
               ({$a_strings['values']})
         ";
-        $o_pdo_stmt = $this->o_db->prepare($sql);
+        try {
+            $o_pdo_stmt = $this->o_db->prepare($sql);
+        }
+        catch (ModelException $e) {
+            $this->error_message = $e->errorMessage();
+            return false;
+        }
         foreach ($a_tp_tpls as $key => $a_record) {
             $td_id                    = $a_tp_dirs[$a_record['td_id']]['td_id'];
             $a_tp_tpls[$key]['td_id'] = $td_id;

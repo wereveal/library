@@ -190,6 +190,7 @@ class PeopleModel implements ModelInterface
      */
     public function delete($people_id = -1)
     {
+        $meth = __METHOD__ . '.';
         $pin = $this->primary_index_name;
         $o_pdo = $this->o_db->getPDO();
         $this->logIt("In delete, in Transaction: " . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);

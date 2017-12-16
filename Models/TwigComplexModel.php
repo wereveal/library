@@ -6,9 +6,10 @@
  * @file      Ritc/Library/Models/TwigComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-05-13 11:52:41
+ * @version   1.0.0-alpha.1
+ * @date      2017-12-15 22:47:39
  * @note Change Log
+ * - v1.0.0-alpha.1 - lots of changes        - 2017-12-15 wer
  * - v1.0.0-alpha.0 - Initial version        - 2017-05-13 wer
  */
 namespace Ritc\Library\Models;
@@ -49,6 +50,83 @@ class TwigComplexModel
         $o_db = $this->o_di->get('db');
         $this->setupProperties($o_db);
         $this->setupDbs($o_db);
+    }
+
+    /**
+     * @param string $app_twig_prefix
+     * @param string $a_app_path
+     * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    public function createTwigForApp($app_twig_prefix = 'main_', $a_app_path = '')
+    {
+        try {
+            $results = $this->o_prefix->read(['tp_prefix' => $app_twig_prefix]);
+            if (!empty($results)) {
+                $tp_prefix_id = $results[0]['tp_id'];
+            }
+            else {
+                $a_values = [
+                    'tp_prefix'  => $app_twig_prefix,
+                    'tp_path'    => $a_app_path,
+                    'tp_active'  => 1,
+                    'tp_default' => 0
+                ];
+                try {
+                    $results = $this->o_prefix->create($a_values);
+                    if (empty($results)) {
+                        throw new ModelException('Unable to create the twig_prefix record.', 110);
+                    }
+                    $tp_prefix_id = $results[0];
+                }
+                catch (ModelException $e) {
+                    throw new ModelException('Unable to create the twig_prefix record', $e->getCode());
+                }
+            }
+            try {
+                $results = $this->o_dirs->createDefaultDirs($tp_prefix_id);
+                if (empty($results)) {
+                    throw new ModelException('Unable to create the default dir records.', 110);
+                }
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Unable to create the default dir records.', $e->getCode());
+            }
+            try {
+                $read_values = [
+                    'a_search_for' =>  ['tp_id' => $tp_prefix_id, 'td_name' => 'pages'],
+                    'search_type' => 'AND'
+                ];
+                $results = $this->o_dirs->read($read_values);
+                if (empty($results)) {
+                    throw new ModelException('Unable to get the pages directory id', 210);
+                }
+                $dir_id = $results[0];
+                $new_templates = [
+                    ['td_id' => $dir_id, 'tpl_name' => 'index', 'tpl_immutable' => 0],
+                    ['td_id' => $dir_id, 'tpl_name' => 'home', 'tpl_immutable' => 0],
+                    ['td_id' => $dir_id, 'tpl_name' => 'manager', 'tpl_immutable' => 0],
+                    ['td_id' => $dir_id, 'tpl_name' => 'error', 'tpl_immutable' => 0],
+                    ['td_id' => $dir_id, 'tpl_name' => 'text', 'tpl_immutable' => 0]
+                ];
+                try {
+                    $results = $this->o_tpls->create($new_templates);
+                    if (empty($results)) {
+                        throw new ModelException('Could not create the template records.', 110);
+                    }
+                }
+                catch (ModelException $e) {
+                    throw new ModelException('Could not create the template records.', $e->getCode(), $e);
+                }
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Unable to get the pages directory id', 210);
+            }
+        }
+        catch (ModelException $e) {
+            throw new ModelException('Unable to determine if the prefix exists', 10);
+        }
+        return true;
     }
 
     /**
