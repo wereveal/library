@@ -62,69 +62,89 @@ class TwigComplexModel
     {
         try {
             $results = $this->o_prefix->read(['tp_prefix' => $app_twig_prefix]);
-            if (!empty($results)) {
-                $tp_prefix_id = $results[0]['tp_id'];
-            }
-            else {
-                $a_values = [
-                    'tp_prefix'  => $app_twig_prefix,
-                    'tp_path'    => $a_app_path,
-                    'tp_active'  => 1,
-                    'tp_default' => 0
-                ];
-                try {
-                    $results = $this->o_prefix->create($a_values);
-                    if (empty($results)) {
-                        throw new ModelException('Unable to create the twig_prefix record.', 110);
-                    }
-                    $tp_prefix_id = $results[0];
-                }
-                catch (ModelException $e) {
-                    throw new ModelException('Unable to create the twig_prefix record', $e->getCode());
-                }
-            }
+        }
+        catch (ModelException $e) {
+            $message = 'Unable to determine if the prefix exists. ' . $e->getMessage();
+            $message .= DEVELOPER_MODE
+                ? ' ' . $e->errorMessage()
+                : '';
+            throw new ModelException($message, 10);
+        }
+        if (!empty($results)) {
+            $tp_prefix_id = $results[0]['tp_id'];
+        }
+        else {
+            $a_values = [
+                'tp_prefix'  => $app_twig_prefix,
+                'tp_path'    => $a_app_path,
+                'tp_active'  => 1,
+                'tp_default' => 0
+            ];
             try {
-                $results = $this->o_dirs->createDefaultDirs($tp_prefix_id);
+                $results = $this->o_prefix->create($a_values);
                 if (empty($results)) {
-                    throw new ModelException('Unable to create the default dir records.', 110);
+                    throw new ModelException('Unable to create the twig_prefix record.', 110);
                 }
+                $tp_prefix_id = $results[0];
             }
             catch (ModelException $e) {
-                throw new ModelException('Unable to create the default dir records.', $e->getCode());
+                throw new ModelException('Unable to create the twig_prefix record', $e->getCode());
             }
-            try {
-                $read_values = [
-                    'a_search_for' =>  ['tp_id' => $tp_prefix_id, 'td_name' => 'pages'],
-                    'search_type' => 'AND'
-                ];
-                $results = $this->o_dirs->read($read_values);
-                if (empty($results)) {
-                    throw new ModelException('Unable to get the pages directory id', 210);
-                }
-                $dir_id = $results[0];
-                $new_templates = [
-                    ['td_id' => $dir_id, 'tpl_name' => 'index', 'tpl_immutable' => 'false'],
-                    ['td_id' => $dir_id, 'tpl_name' => 'home', 'tpl_immutable' => 'false'],
-                    ['td_id' => $dir_id, 'tpl_name' => 'manager', 'tpl_immutable' => 'false'],
-                    ['td_id' => $dir_id, 'tpl_name' => 'error', 'tpl_immutable' => 'false'],
-                    ['td_id' => $dir_id, 'tpl_name' => 'text', 'tpl_immutable' => 'false']
-                ];
-                try {
-                    $results = $this->o_tpls->create($new_templates);
-                    if (empty($results)) {
-                        throw new ModelException('Could not create the template records.', 110);
-                    }
-                }
-                catch (ModelException $e) {
-                    throw new ModelException('Could not create the template records.', $e->getCode(), $e);
-                }
-            }
-            catch (ModelException $e) {
-                throw new ModelException('Unable to get the pages directory id', 210);
+        }
+        try {
+            $results = $this->o_dirs->createDefaultDirs($tp_prefix_id);
+            if (empty($results)) {
+                throw new ModelException('Unable to create the default dir records. No results.', 110);
             }
         }
         catch (ModelException $e) {
-            throw new ModelException('Unable to determine if the prefix exists', 10);
+            throw new ModelException('Unable to create the default dir records. ' . $e->getMessage(), $e->getCode());
+        }
+        try {
+            $a_search_for = ['tp_id' => $tp_prefix_id, 'td_name' => 'pages'];
+            $a_params = ['search_type' => 'AND'];
+            $results = $this->o_dirs->read($a_search_for, $a_params);
+        }
+        catch (ModelException $e) {
+            $message = 'Unable to get the pages directory id';
+            $message .= DEVELOPER_MODE
+                ? ' ' . $e->errorMessage()
+                : ' ' . $e->getMessage();
+            throw new ModelException($message, 210);
+        }
+        if (empty($results)) {
+            throw new ModelException('Unable to get the pages directory id', 210);
+        }
+        $dir_id = $results[0]['td_id'];
+        $new_templates = [
+            ['td_id' => $dir_id, 'tpl_name' => 'index',   'tpl_immutable' => 'false'],
+            ['td_id' => $dir_id, 'tpl_name' => 'home',    'tpl_immutable' => 'false'],
+            ['td_id' => $dir_id, 'tpl_name' => 'manager', 'tpl_immutable' => 'false'],
+            ['td_id' => $dir_id, 'tpl_name' => 'error',   'tpl_immutable' => 'false'],
+            ['td_id' => $dir_id, 'tpl_name' => 'text',    'tpl_immutable' => 'false']
+        ];
+        foreach ($new_templates as $key => $a_template) {
+            try {
+                $results = $this->o_tpls->read($a_template, ['search_type' => 'AND']);
+                if (!empty($results)) {
+                    unset($new_templates[$key]);
+                }
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Error trying to read the templates.', 210);
+            }
+        }
+        if (!empty($new_templates)) {
+            sort($new_templates);
+            try {
+                $results = $this->o_tpls->create($new_templates);
+                if (empty($results)) {
+                    throw new ModelException('Could not create the template records. Empty Results.', 110);
+                }
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Could not create the template records. ', $e->getCode(), $e);
+            }
         }
         return true;
     }

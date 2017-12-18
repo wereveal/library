@@ -39,6 +39,8 @@ class DbInstallerModel
     /** @var  array */
     private $a_nnm;
     /** @var  array */
+    private $a_page;
+    /** @var  array */
     private $a_people;
     /** @var  array */
     private $a_pgm;
@@ -48,6 +50,12 @@ class DbInstallerModel
     private $a_routes;
     /** @var array */
     private $a_sql;
+    /** @var  array */
+    private $a_twig_dirs;
+    /** @var  array */
+    private $a_twig_prefix;
+    /** @var  array */
+    private $a_twig_tpls;
     /** @var  array */
     private $a_urls;
     /** @var string  */
@@ -245,7 +253,7 @@ class DbInstallerModel
         $a_strings = $this->createStrings($a_navigation);
 
         $nav_sql = "
-            INSERT INTO {$table_name}_
+            INSERT INTO {$table_name}
                 ({$a_strings['fields']})
             VALUES
                 ({$a_strings['values']})";
@@ -257,6 +265,10 @@ class DbInstallerModel
             UPDATE {$table_name}
             SET nav_parent_id = :nav_parent_id
             WHERE nav_id = :nav_id";
+        $a_nav_table_info = [
+            'table_name'  => $table_name,
+            'column_name' => 'nav_id'
+        ];
         try {
             $o_nav_stmt    = $this->o_db->prepare($nav_sql);
             $o_parent_stmt = $this->o_db->prepare($parent_sql);
@@ -270,7 +282,8 @@ class DbInstallerModel
             $a_record['url_id']        = $this->a_urls[$a_record['url_id']]['url_id'];
             $a_record['nav_parent_id'] = 0;
             try {
-                $results = $this->o_db->execute($a_record, $o_nav_stmt);
+                $this->o_db->resetNewIds();
+                $results = $this->o_db->executeInsert($a_record, $o_nav_stmt, $a_nav_table_info);
                 if ($results) {
                     $ids = $this->o_db->getNewIds();
                     $a_navigation[$key]['nav_id'] = $ids[0];
@@ -322,11 +335,11 @@ class DbInstallerModel
     public function insertNNM(array $a_nnm = [])
     {
         if (empty($a_nnm)) {
-            if (empty($this->a_data['a_nnm'])) {
+            if (empty($this->a_data['nav_ng_map'])) {
                 $this->error_message = 'Nav Navgroup Map values not provided.';
                 return false;
             }
-            $a_nnm = $this->a_data['a_nnm'];
+            $a_nnm = $this->a_data['nav_ng_map'];
         }
         $table_name = $this->db_prefix . 'nav_ng_map';
         $a_strings = $this->createStrings($a_nnm);
@@ -336,6 +349,10 @@ class DbInstallerModel
             VALUES
                 ({$a_strings['values']})
         ";
+        $a_table_info = [
+            'table_name'  => $table_name,
+            'column_name' => 'nnm_id'
+        ];
         try {
             $o_pdo_stmt = $this->o_db->prepare($nnm_sql);
         }
@@ -349,18 +366,19 @@ class DbInstallerModel
                 'nav_id' => $this->a_navigation[$a_record['nav_id']]['nav_id']
             ];
             try {
-                $results = $this->o_db->execute($a_new_values, $o_pdo_stmt);
+                $this->o_db->resetNewIds();
+                $results = $this->o_db->executeInsert($a_new_values, $o_pdo_stmt, $a_table_info);
                 if ($results) {
                     $ids = $this->o_db->getNewIds();
                     $a_nnm[$key]['nnm_id'] = $ids[0];
                 }
                 else {
-                    $this->error_message = 'Could not insert new nav ng map.';
+                    $this->error_message = 'Could not insert new nav ng map. Empty results';
                     return false;
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = 'Could not insert new nav ng map.';
+                $this->error_message = 'Could not insert new nav ng map. ' . $e->errorMessage();
                 return false;
             }
         }
@@ -398,8 +416,8 @@ class DbInstallerModel
             return false;
         }
         foreach ($a_page as $key => $a_record) {
-            $a_record['url_id'] = $this->a_data['urls'][$a_record['url_id']]['url_id'];
-            $a_record['tpl_id'] = $this->a_data['tp_templates'][$a_record['tpl_id']]['tpl_id'];
+            $a_record['url_id'] = $this->a_urls[$a_record['url_id']]['url_id'];
+            $a_record['tpl_id'] = $this->a_twig_tpls[$a_record['tpl_id']]['tpl_id'];
             try {
                 $results = $this->o_db->execute($a_record, $o_pdo_stmt);
                 if ($results) {
@@ -416,7 +434,7 @@ class DbInstallerModel
                 return false;
             }
         }
-        $this->a_data['page'] = $a_page;
+        $this->a_page = $a_page;
         return true;
     }
 
@@ -497,7 +515,7 @@ class DbInstallerModel
                 $this->error_message = 'Routes Group values not provided.';
                 return false;
             }
-            $a_rgm = $this->a_data['people'];
+            $a_rgm = $this->a_data['routes_group_map'];
         }
         $a_table_info = [
             'table_name'  => $this->db_prefix . 'routes_group_map',
@@ -550,27 +568,31 @@ class DbInstallerModel
 
     /**
      * Inserts the twig_dirs data into the table.
-     * @param array $a_tp_dirs optional, if not given takes values from class property $a_data.
+     * @param array $a_twig_dirs optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertTwigDirs(array $a_tp_dirs = [])
+    public function insertTwigDirs(array $a_twig_dirs = [])
     {
-        if (empty($a_tp_dirs)) {
+        if (empty($a_twig_dirs)) {
             if (empty($this->a_data['tp_dirs'])) {
                 $this->error_message = 'Data for tp_dirs not provided.';
                 return false;
             }
-            $a_tp_dirs = $this->a_data['tp_dirs'];
+            $a_twig_dirs = $this->a_data['tp_dirs'];
         }
         $table_name = $this->db_prefix . 'twig_dirs';
-        $a_strings = $this->createStrings($a_tp_dirs);
-        $a_tp_prefix = $this->a_data['tp_prefix'];
+        $a_strings = $this->createStrings($a_twig_dirs);
+        $a_twig_prefix = $this->a_twig_prefix;
         $sql = "
             INSERT INTO {$table_name}
                 ({$a_strings['fields']})
             VALUES 
                 ({$a_strings['values']})
         ";
+        $a_table_info = [
+            'table_name' => $table_name,
+            'column_name' => 'td_id'
+        ];
         try {
             $o_pdo_stmt = $this->o_db->prepare($sql);
         }
@@ -578,15 +600,16 @@ class DbInstallerModel
             $this->error_message = $e->errorMessage();
             return false;
         }
-        foreach ($a_tp_dirs as $key => $a_record) {
-            $tp_id                    = $a_tp_prefix[$a_record['tp_id']]['tp_id'];
-            $a_tp_dirs[$key]['tp_id'] = $tp_id;
+        foreach ($a_twig_dirs as $key => $a_record) {
+            $tp_id                    = $a_twig_prefix[$a_record['tp_id']]['tp_id'];
+            $a_twig_dirs[$key]['tp_id'] = $tp_id;
             $a_record['tp_id']        = $tp_id;
             try {
-                $results = $this->o_db->execute($a_record, $o_pdo_stmt);
+                $this->o_db->resetNewIds();
+                $results = $this->o_db->executeInsert($a_record, $o_pdo_stmt, $a_table_info);
                 if ($results) {
                     $ids = $this->o_db->getNewIds();
-                    $a_tp_dirs[$key]['td_id'] = $ids[0];
+                    $a_twig_dirs[$key]['td_id'] = $ids[0];
                 }
                 else {
                     $this->error_message = 'Could not insert tp dir record.';
@@ -598,7 +621,7 @@ class DbInstallerModel
                 return false;
             }
         }
-        $this->a_data['tp_dirs'] = $a_tp_dirs;
+        $this->a_twig_dirs = $a_twig_dirs;
         return true;
     }
 
@@ -624,6 +647,10 @@ class DbInstallerModel
             VALUES
               ({$a_strings['values']})
         ";
+        $a_table_info = [
+            'table_name'  => $table_name,
+            'column_name' => 'tp_id'
+        ];
         try {
             $o_pdo_stmt = $this->o_db->prepare($sql);
         }
@@ -633,7 +660,8 @@ class DbInstallerModel
         }
         foreach ($a_tp_prefix as $key => $a_record) {
             try {
-                $results = $this->o_db->execute($a_record, $o_pdo_stmt);
+                $this->o_db->resetNewIds();
+                $results = $this->o_db->executeInsert($a_record, $o_pdo_stmt, $a_table_info);
                 if ($results) {
                     $ids = $this->o_db->getNewIds();
                     $a_tp_prefix[$key]['tp_id'] = $ids[0];
@@ -644,7 +672,7 @@ class DbInstallerModel
                 return false;
             }
         }
-        $this->a_data['tp_prefix'] = $a_tp_prefix;
+        $this->a_twig_prefix = $a_tp_prefix;
         return true;
     }
 
@@ -653,24 +681,28 @@ class DbInstallerModel
      * @param array $a_tp_tpls optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertTwigTemplates(array $a_tp_tpls = [])
+    public function insertTwigTemplates(array $a_twig_tpls = [])
     {
-        if (empty($a_tp_tpls)) {
+        if (empty($a_twig_tpls)) {
             if (empty($this->a_data['tp_templates'])) {
                 $this->error_message = 'Data missing for the tp_templates';
                 return false;
             }
-            $a_tp_tpls = $this->a_data['tp_templates'];
+            $a_twig_tpls = $this->a_data['tp_templates'];
         }
-        $a_tp_dirs = $this->a_data['tp_dirs'];
+        $a_twig_dirs = $this->a_twig_dirs;
         $table_name = $this->db_prefix . 'twig_templates';
-        $a_strings = $this->createStrings($a_tp_tpls);
+        $a_strings = $this->createStrings($a_twig_tpls);
         $sql = "
             INSERT INTO {$table_name}
               ({$a_strings['fields']})
             VALUES
               ({$a_strings['values']})
         ";
+        $a_table_info = [
+            'table_name'  => $table_name,
+            'column_name' => 'tpl_id'
+        ];
         try {
             $o_pdo_stmt = $this->o_db->prepare($sql);
         }
@@ -678,15 +710,16 @@ class DbInstallerModel
             $this->error_message = $e->errorMessage();
             return false;
         }
-        foreach ($a_tp_tpls as $key => $a_record) {
-            $td_id                    = $a_tp_dirs[$a_record['td_id']]['td_id'];
-            $a_tp_tpls[$key]['td_id'] = $td_id;
-            $a_record['td_id']        = $td_id;
+        foreach ($a_twig_tpls as $key => $a_record) {
+            $td_id                      = $a_twig_dirs[$a_record['td_id']]['td_id'];
+            $a_twig_tpls[$key]['td_id'] = $td_id;
+            $a_record['td_id']          = $td_id;
             try {
-                $results = $this->o_db->execute($a_record, $o_pdo_stmt);
+                $this->o_db->resetNewIds();
+                $results = $this->o_db->executeInsert($a_record, $o_pdo_stmt, $a_table_info);
                 if ($results) {
                     $ids = $this->o_db->getNewIds();
-                    $a_tp_tpls[$key]['tpl_id'] = $ids[0];
+                    $a_twig_tpls[$key]['tpl_id'] = $ids[0];
                 }
                 else {
                     $this->error_message = 'Could not insert a new twig template record';
@@ -698,7 +731,7 @@ class DbInstallerModel
                 return false;
             }
         }
-        $this->a_data['tp_templates'] = $a_tp_tpls;
+        $this->a_twig_tpls = $a_twig_tpls;
         return true;
     }
 
@@ -744,7 +777,7 @@ class DbInstallerModel
         }
         $a_strings = $this->createStrings($a_values_list);
         $sql = "
-            INSERT INTO {$a_table_info['table_name']};
+            INSERT INTO {$a_table_info['table_name']}
               ({$a_strings['fields']})
             VALUES
               ({$a_strings['values']})
@@ -762,7 +795,7 @@ class DbInstallerModel
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = "Could not insert contants data. " . $this->o_db->retrieveFormatedSqlErrorMessage() . ' ' . $e->errorMessage();
+                $this->error_message = "Could not insert constants data. " . $e->errorMessage() . "\n\n" . $this->o_db->retrieveFormatedSqlErrorMessage() . "\n\n" . $sql;
                 return false;
             }
         }

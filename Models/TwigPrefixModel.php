@@ -94,11 +94,13 @@ class TwigPrefixModel implements ModelInterface
             'order_by'       => $this->primary_index_name . ' ASC'
         ];
         $a_parameters = array_merge($a_parameters, $a_search_params);
+          $log_message = 'parameters ' . var_export($a_parameters, true);
+          $this->logIt($log_message, LOG_OFF, __METHOD__);
         try {
             return $this->genericRead($a_parameters);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->getMessage(), $e->getCode());
         }
     }
 

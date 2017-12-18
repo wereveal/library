@@ -63,7 +63,7 @@ class TwigDirsModel implements ModelInterface
             return $this->genericCreate($a_values, $a_params);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
         }
     }
 
@@ -170,11 +170,34 @@ class TwigDirsModel implements ModelInterface
             ['tp_id' => $prefix_id, 'td_name' => 'snippets'],
             ['tp_id' => $prefix_id, 'td_name' => 'tests']
         ];
-        try {
-            return $this->create($a_dirs);
+        foreach ($a_dirs as $a_dir) {
+            try {
+                $a_results = $this->read($a_dir, ['search_type' => 'AND']);
+                if (empty($a_results)) {
+                    try {
+                        $results = $this->create($a_dir);
+                        if (empty($results)) {
+                            $message = "Unable to create the default dir {$a_dir['td_name']}";
+                            throw new ModelException($message, 110);
+                        }
+                    }
+                    catch (ModelException $e) {
+                        $message = "Unable to create the default dirs for {$prefix_id}. ";
+                        $message .= DEVELOPER_MODE
+                            ? $e->errorMessage()
+                            : $e->getMessage();
+                        throw new ModelException($message, $e->getCode(), $e);
+                    }
+                }
+            }
+            catch (ModelException $e) {
+                $message = "Unable to determine if the default dir exists. ";
+                $message .= DEVELOPER_MODE
+                    ? $e->errorMessage()
+                    : $e->getMessage();
+                throw new ModelException($message, 110);
+            }
         }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
-        }
+        return true;
     }
 }
