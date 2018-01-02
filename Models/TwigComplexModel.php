@@ -77,8 +77,8 @@ class TwigComplexModel
             $a_values = [
                 'tp_prefix'  => $app_twig_prefix,
                 'tp_path'    => $a_app_path,
-                'tp_active'  => 1,
-                'tp_default' => 0
+                'tp_active'  => 'true',
+                'tp_default' => 'false'
             ];
             try {
                 $results = $this->o_prefix->create($a_values);
@@ -201,7 +201,7 @@ class TwigComplexModel
             FROM {$tp_prefix}twig_prefix as p
             JOIN {$td_prefix}twig_dirs as d
               ON d.tp_id = p.tp_id
-            WHERE p.tp_active = 1
+            WHERE p.tp_active = 'true'
             ORDER BY p.tp_default DESC, p.tp_id ASC
         ";
         try {

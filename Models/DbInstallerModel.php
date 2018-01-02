@@ -840,8 +840,8 @@ class DbInstallerModel
                 $this->a_data['tp_prefix'][$key_name] = [
                     'tp_prefix'  => $app_twig_prefix,
                     'tp_path'    => $tp_path,
-                    'tp_active'  => 1,
-                    'tp_default' => 0
+                    'tp_active'  => 'true',
+                    'tp_default' => 'false'
                 ];
             }
             $a_dir_names = $this->a_data['tp_default_dirs'];

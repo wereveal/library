@@ -14,7 +14,7 @@ return [
                     'is_logged_in'    => 1,
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
-                    'is_active'       => 1,
+                    'is_active'       => 'true',
                     'is_immutable'    => 'true',
                     'created_on'      => '2012-08-12 02:55:28'
                 ],
@@ -28,7 +28,7 @@ return [
                     'is_logged_in'    => 1,
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
-                    'is_active'       => 1,
+                    'is_active'       => 'true',
                     'is_immutable'    => 'true',
                     'created_on'      => '2015-09-04 13:15:55'
                 ],
@@ -42,7 +42,7 @@ return [
                     'is_logged_in'    => 0,
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
-                    'is_active'       => 1,
+                    'is_active'       => 'true',
                     'is_immutable'    => 'true',
                     'created_on'      => '2015-08-04 11:11:04'
                 ]
@@ -61,7 +61,7 @@ return [
                     'is_logged_in'    => 0,
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
-                    'is_active'       => 1,
+                    'is_active'       => 'true',
                     'is_immutable'    => 'true',
                     'created_on'      => '2015-08-04 11:11:04'
                 ]
@@ -95,7 +95,7 @@ return [
                     'is_logged_in'    => 0,
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
-                    'is_active'       => 1,
+                    'is_active'       => 'true',
                     'is_immutable'    => 'false'
                 ]
             ]
@@ -117,7 +117,7 @@ return [
                     'is_logged_in'    => 0,
                     'bad_login_count' => 0,
                     'bad_login_ts'    => 0,
-                    'is_active'       => 1,
+                    'is_active'       => 'true',
                     'is_immutable'    => 'false'
                 ]
             ]

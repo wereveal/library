@@ -376,7 +376,7 @@ JOIN {$this->lib_prefix}nav_ng_map as map
     ON n.nav_id = map.nav_id
 JOIN {$this->lib_prefix}navgroups as ng
     ON ng.ng_id = map.ng_id
-WHERE n.nav_active = 1
+WHERE n.nav_active = 'true'
 
 EOT;
         }
@@ -478,9 +478,13 @@ EOT;
                         $a_post[$key_name] = $a_post['nav_name'];
                     }
                     break;
+                case 'nav_active':
+                    if (!isset($a_post[$key_name]) || $a_post[$key_name] == 'false') {
+                        $a_post[$key_name] = 'true';
+                    }
+                    break;
                 case 'nav_level':
                 case 'nav_order':
-                case 'nav_active':
                     if (!isset($a_post[$key_name]) || intval($a_post[$key_name]) == 0) {
                         $a_post[$key_name] = 1;
                     }

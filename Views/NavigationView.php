@@ -116,7 +116,7 @@ class NavigationView
             foreach ($results as $nav_label => $nav_value) {
                 switch ($nav_label) {
                     case 'nav_active':
-                        $a_twig_values['active_checked'] = $nav_value == 1 ? ' checked' : '';
+                        $a_twig_values['active_checked'] = $nav_value == 'true' ? ' checked' : '';
                         break;
                     case 'url_id':
                         $a_twig_values['a_url_select']['select'] = $this->createUrlSelect($nav_value);

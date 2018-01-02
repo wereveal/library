@@ -38,16 +38,16 @@ return [
         'valid_values' => [
             'test_values'      => [
                 'ng_name'      => 'Test',
-                'ng_active'    => 1,
-                'ng_default'   => 1,
+                'ng_active'    => 'true',
+                'ng_default'   => 'true',
                 'ng_immutable' => 'true'
             ],
             'expected_results' => true
         ],
         'missing_required' => [
             'test_values'      => [
-                'ng_active'    => 1,
-                'ng_default'   => 1,
+                'ng_active'    => 'true',
+                'ng_default'   => 'true',
                 'ng_immutable' => 'true'
             ],
             'expected_results' => false
@@ -62,8 +62,8 @@ return [
             'test_values'      => [
                 'ng_id'        => 'Replace in script',
                 'ng_name'      => 'Testing',
-                'ng_active'    => 0,
-                'ng_default'   => 0,
+                'ng_active'    => 'false',
+                'ng_default'   => 'false',
                 'ng_immutable' => 'false'
             ],
             'expected_results' => true
@@ -73,7 +73,7 @@ return [
                 'ng_id'        => -1,
                 'ng_name'      => '',
                 'ng_active'    => false,
-                'ng_default'   => 111,
+                'ng_default'   => true,
                 'ng_immutable' => 'a11'
             ],
             'expected_results' => false
@@ -81,8 +81,8 @@ return [
         'missing_id' => [
             'test_values'      => [
                 'ng_name'      => '',
-                'ng_active'    => 0,
-                'ng_default'   => 0,
+                'ng_active'    => 'false',
+                'ng_default'   => 'false',
                 'ng_immutable' => 'false'
             ],
             'expected_results' => false
@@ -91,8 +91,8 @@ return [
             'test_values'      => [
                 'ng_id'        => -1,
                 'ng_name'      => '',
-                'ng_active'    => 0,
-                'ng_default'   => 0,
+                'ng_active'    => 'false',
+                'ng_default'   => 'false',
                 'ng_immutable' => 'false'
             ],
             'expected_results' => false
@@ -101,8 +101,8 @@ return [
             'test_values'      => [
                 'ng_id'        => -1,
                 'ng_name'      => 'Main',
-                'ng_active'    => 0,
-                'ng_default'   => 0,
+                'ng_active'    => 'false',
+                'ng_default'   => 'false',
                 'ng_immutable' => 'false'
             ],
             'expected_results' => false
