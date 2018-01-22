@@ -334,6 +334,8 @@ class DbInstallerModel
      */
     public function insertNNM(array $a_nnm = [])
     {
+        $meth = __METHOD__ . '.';
+        print "In insertNNM\n";
         if (empty($a_nnm)) {
             if (empty($this->a_data['nav_ng_map'])) {
                 $this->error_message = 'Nav Navgroup Map values not provided.';
@@ -358,17 +360,49 @@ class DbInstallerModel
         }
         catch (ModelException $e) {
             $this->error_message = $e->errorMessage();
+              $log_message = 'Couldn’t prepare statement ' . var_export($e->errorMessage(), TRUE);
+              print $log_message;
             return false;
         }
+        $a_new_nnm = [];
+        foreach ($a_nnm as $key => $a_record) {
+            $a_new_nnm[] = [
+                'ng_id'  => $this->a_navgroups[$a_record['ng_id']]['ng_id'],
+                'nav_id' => $this->a_navigation[$a_record['nav_id']]['nav_id']
+            ];
+        }
+        try {
+            $results = $this->o_db->executeInsert($a_new_nnm, $o_pdo_stmt, $a_table_info);
+            print "New NNM results: " . var_export($results, true) . "\n";
+            if ($results) {
+                $ids = $this->o_db->getNewIds();
+                foreach ($a_new_nnm as $key => $a_record) {
+                    $a_new_nnm[$key]['nnm_id'] = $ids[$key];
+                }
+                print_r($a_new_nnm, true);
+            }
+            else {
+                $this->error_message = 'Could not insert new nav ng map. Empty results';
+                return false;
+            }
+        }
+        catch (ModelException $e) {
+            $this->error_message = "Could not insert new nav ng map.\n" . $nnm_sql . "\n" . var_export($a_new_nnm, true) . "\n" . $e->errorMessage();
+            return false;
+        }
+        /*
         foreach ($a_nnm as $key => $a_record) {
             $a_new_values = [
                 'ng_id'  => $this->a_navgroups[$a_record['ng_id']]['ng_id'],
                 'nav_id' => $this->a_navigation[$a_record['nav_id']]['nav_id']
             ];
+            $log_message = 'new values:  ' . var_export($a_new_values, TRUE);
+            print $log_message;
+            $new_a_nnm[] = $a_new_values;
+            $this->o_db->resetNewIds();
             try {
-                $this->o_db->resetNewIds();
                 $results = $this->o_db->executeInsert($a_new_values, $o_pdo_stmt, $a_table_info);
-                if ($results) {
+                if (empty($results)) {
                     $ids = $this->o_db->getNewIds();
                     $a_nnm[$key]['nnm_id'] = $ids[0];
                 }
@@ -378,11 +412,12 @@ class DbInstallerModel
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = 'Could not insert new nav ng map. ' . $e->errorMessage();
+                $this->error_message = "Could not insert new nav ng map.\n" . $nnm_sql . "\n" . var_export($new_a_nnm, true) . "\n" . $e->errorMessage();
                 return false;
             }
         }
-        $this->a_nnm = $a_nnm;
+        */
+        $this->a_nnm = $a_new_nnm;
         return true;
     }
 
@@ -405,7 +440,7 @@ class DbInstallerModel
         $sql = "
             INSERT INTO {$table_name}
               ({$a_strings['fields']})
-            VALUES 
+            VALUES
               ({$a_strings['values']})
         ";
         try {
@@ -586,7 +621,7 @@ class DbInstallerModel
         $sql = "
             INSERT INTO {$table_name}
                 ({$a_strings['fields']})
-            VALUES 
+            VALUES
                 ({$a_strings['values']})
         ";
         $a_table_info = [
