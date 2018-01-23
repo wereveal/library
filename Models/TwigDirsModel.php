@@ -154,7 +154,7 @@ class TwigDirsModel implements ModelInterface
     /**
      * Creates the records for default directories for the prefix id.
      * @param int $prefix_id Required.
-     * @return bool
+     * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function createDefaultDirs($prefix_id = -1)
@@ -170,6 +170,7 @@ class TwigDirsModel implements ModelInterface
             ['tp_id' => $prefix_id, 'td_name' => 'snippets'],
             ['tp_id' => $prefix_id, 'td_name' => 'tests']
         ];
+        $a_new_ids = [];
         foreach ($a_dirs as $a_dir) {
             try {
                 $a_results = $this->read($a_dir, ['search_type' => 'AND']);
@@ -180,6 +181,7 @@ class TwigDirsModel implements ModelInterface
                             $message = "Unable to create the default dir {$a_dir['td_name']}";
                             throw new ModelException($message, 110);
                         }
+                        $a_new_ids[] = $results[0];
                     }
                     catch (ModelException $e) {
                         $message = "Unable to create the default dirs for {$prefix_id}. ";
@@ -198,6 +200,6 @@ class TwigDirsModel implements ModelInterface
                 throw new ModelException($message, 110);
             }
         }
-        return true;
+        return $a_new_ids;
     }
 }

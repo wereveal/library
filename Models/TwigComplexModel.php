@@ -92,7 +92,7 @@ class TwigComplexModel
             }
         }
         try {
-            $results = $this->o_dirs->createDefaultDirs($tp_prefix_id);
+            $a_dir_ids = $this->o_dirs->createDefaultDirs($tp_prefix_id);
             if (empty($results)) {
                 throw new ModelException('Unable to create the default dir records. No results.', 110);
             }
@@ -123,10 +123,12 @@ class TwigComplexModel
             ['td_id' => $dir_id, 'tpl_name' => 'error',   'tpl_immutable' => 'false'],
             ['td_id' => $dir_id, 'tpl_name' => 'text',    'tpl_immutable' => 'false']
         ];
+        $a_existing_tpls = [];
         foreach ($new_templates as $key => $a_template) {
             try {
                 $results = $this->o_tpls->read($a_template, ['search_type' => 'AND']);
                 if (!empty($results)) {
+                    $a_existing_tpls[] = $results[0]['tpl_id'];
                     unset($new_templates[$key]);
                 }
             }
@@ -134,10 +136,11 @@ class TwigComplexModel
                 throw new ModelException('Error trying to read the templates.', 210);
             }
         }
+        $a_tpl_ids = [];
         if (!empty($new_templates)) {
             sort($new_templates);
             try {
-                $results = $this->o_tpls->create($new_templates);
+                $a_tpl_ids = $this->o_tpls->create($new_templates);
                 if (empty($results)) {
                     throw new ModelException('Could not create the template records. Empty Results.', 110);
                 }
@@ -146,9 +149,11 @@ class TwigComplexModel
                 throw new ModelException('Could not create the template records. ', $e->getCode(), $e);
             }
         }
+        $a_tpl_ids = array_merge($a_existing_tpls, $a_tpl_ids);
         $a_return_this = [
-            'tp_id' => $tp_prefix_id,
-            ''
+            'tp_id'   => $tp_prefix_id,
+            'td_ids'  => $a_dir_ids,
+            'tpl_ids' => $a_tpl_ids
         ];
         return $a_return_this;
     }
