@@ -337,9 +337,9 @@ class NewAppHelper
     }
 
     /**
-     * @return bool|string
+     * @return array|string
      */
-    public function createDbRecords()
+    public function createTwigDbRecords()
     {
         $o_tcm = new TwigComplexModel($this->o_di);
         try {

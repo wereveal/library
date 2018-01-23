@@ -55,7 +55,7 @@ class TwigComplexModel
     /**
      * @param string $app_twig_prefix
      * @param string $a_app_path
-     * @return bool
+     * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function createTwigForApp($app_twig_prefix = 'main_', $a_app_path = '')
@@ -146,7 +146,11 @@ class TwigComplexModel
                 throw new ModelException('Could not create the template records. ', $e->getCode(), $e);
             }
         }
-        return true;
+        $a_return_this = [
+            'tp_id' => $tp_prefix_id,
+            ''
+        ];
+        return $a_return_this;
     }
 
     /**
