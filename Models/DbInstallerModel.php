@@ -334,7 +334,6 @@ class DbInstallerModel
      */
     public function insertNNM(array $a_nnm = [])
     {
-        $meth = __METHOD__ . '.';
         print "In insertNNM\n";
         if (empty($a_nnm)) {
             if (empty($this->a_data['nav_ng_map'])) {
@@ -609,11 +608,11 @@ class DbInstallerModel
     public function insertTwigDirs(array $a_twig_dirs = [])
     {
         if (empty($a_twig_dirs)) {
-            if (empty($this->a_data['tp_dirs'])) {
-                $this->error_message = 'Data for tp_dirs not provided.';
+            if (empty($this->a_data['twig_dirs'])) {
+                $this->error_message = 'Data for twig_dirs not provided.';
                 return false;
             }
-            $a_twig_dirs = $this->a_data['tp_dirs'];
+            $a_twig_dirs = $this->a_data['twig_dirs'];
         }
         $table_name = $this->db_prefix . 'twig_dirs';
         $a_strings = $this->createStrings($a_twig_dirs);
@@ -662,19 +661,19 @@ class DbInstallerModel
 
     /**
      * Inserts the twig prefixes data into the table.
-     * @param array $a_tp_prefix optional, if not given takes values from class property $a_data.
+     * @param array $a_twig_prefix optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertTwigPrefixes(array $a_tp_prefix = [])
+    public function insertTwigPrefixes(array $a_twig_prefix = [])
     {
-        if (empty($a_tp_prefix)) {
-            if (empty($this->a_data['tp_prefix'])) {
-                $this->error_message = 'TP_Prefix data not provided for the method.';
+        if (empty($a_twig_prefix)) {
+            if (empty($this->a_data['twig_prefix'])) {
+                $this->error_message = 'twig_prefix data not provided for the method.';
                 return false;
             }
-            $a_tp_prefix = $this->a_data['tp_prefix'];
+            $a_twig_prefix = $this->a_data['twig_prefix'];
         }
-        $a_strings = $this->createStrings($a_tp_prefix);
+        $a_strings = $this->createStrings($a_twig_prefix);
         $table_name = $this->db_prefix . 'twig_prefix';
         $sql = "
             INSERT INTO {$table_name}
@@ -693,13 +692,13 @@ class DbInstallerModel
             $this->error_message = $e->errorMessage();
             return false;
         }
-        foreach ($a_tp_prefix as $key => $a_record) {
+        foreach ($a_twig_prefix as $key => $a_record) {
             try {
                 $this->o_db->resetNewIds();
                 $results = $this->o_db->executeInsert($a_record, $o_pdo_stmt, $a_table_info);
                 if ($results) {
                     $ids = $this->o_db->getNewIds();
-                    $a_tp_prefix[$key]['tp_id'] = $ids[0];
+                    $a_twig_prefix[$key]['tp_id'] = $ids[0];
                 }
             }
             catch (ModelException $e) {
@@ -707,23 +706,23 @@ class DbInstallerModel
                 return false;
             }
         }
-        $this->a_twig_prefix = $a_tp_prefix;
+        $this->a_twig_prefix = $a_twig_prefix;
         return true;
     }
 
     /**
      * Inserts data into the twig_templates table.
-     * @param array $a_tp_tpls optional, if not given takes values from class property $a_data.
+     * @param array $a_twig_tpls optional, if not given takes values from class property $a_data.
      * @return bool
      */
     public function insertTwigTemplates(array $a_twig_tpls = [])
     {
         if (empty($a_twig_tpls)) {
-            if (empty($this->a_data['tp_templates'])) {
-                $this->error_message = 'Data missing for the tp_templates';
+            if (empty($this->a_data['twig_templates'])) {
+                $this->error_message = 'Data missing for the twig_templates';
                 return false;
             }
-            $a_twig_tpls = $this->a_data['tp_templates'];
+            $a_twig_tpls = $this->a_data['twig_templates'];
         }
         $a_twig_dirs = $this->a_twig_dirs;
         $table_name = $this->db_prefix . 'twig_templates';
@@ -866,30 +865,30 @@ class DbInstallerModel
         if (!empty($this->a_install_config['app_twig_prefix'])) {
             $app_twig_prefix = $this->a_install_config['app_twig_prefix'];
             $key_name = str_replace('_', '', $app_twig_prefix);
-            if (!isset($this->a_data['tp_prefix'][$key_name])) {
+            if (!isset($this->a_data['twig_prefix'][$key_name])) {
                 $tp_path = '/src/apps'
                     . $this->a_install_config['namespace']
                     . '/'
                     . $this->a_install_config['app_name']
                     . '/resources/templates';
-                $this->a_data['tp_prefix'][$key_name] = [
+                $this->a_data['twig_prefix'][$key_name] = [
                     'tp_prefix'  => $app_twig_prefix,
                     'tp_path'    => $tp_path,
                     'tp_active'  => 'true',
                     'tp_default' => 'false'
                 ];
             }
-            $a_dir_names = $this->a_data['tp_default_dirs'];
+            $a_dir_names = $this->a_data['twig_default_dirs'];
             foreach ($a_dir_names as $name) {
-                if (!isset($this->a_data['tp_dirs'][$app_twig_prefix . $name])) {
-                    $this->a_data['tp_dirs'][$app_twig_prefix . $name] = [
+                if (!isset($this->a_data['twig_dirs'][$app_twig_prefix . $name])) {
+                    $this->a_data['twig_dirs'][$app_twig_prefix . $name] = [
                         'tp_id'   => $key_name,
                         'td_name' => $name
                     ];
                 }
             }
-            if (!isset($this->a_data['tp_templates'][$app_twig_prefix . 'index'])) {
-                $this->a_data['tp_templates'][$app_twig_prefix . 'index'] = [
+            if (!isset($this->a_data['twig_templates'][$app_twig_prefix . 'index'])) {
+                $this->a_data['twig_templates'][$app_twig_prefix . 'index'] = [
                     'td_id'         => $app_twig_prefix . 'pages',
                     'tpl_name'      => 'index',
                     'tpl_immutable' => 'false'

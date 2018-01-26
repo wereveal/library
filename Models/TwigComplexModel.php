@@ -53,13 +53,18 @@ class TwigComplexModel
     }
 
     /**
-     * @param string $app_twig_prefix
-     * @param string $a_app_path
-     * @return array
+     * Creates default records for the app in the three twig tables.
+     * @param string $app_twig_prefix Optional, defaults to 'main_'
+     * @param string $a_app_path      Required
+     * @return array                  ['tp_id', 'td_ids', 'tpl_ids']
      * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function createTwigForApp($app_twig_prefix = 'main_', $a_app_path = '')
     {
+        if ($a_app_path == '') {
+            $message = 'The app path is required.';
+            throw new ModelException($message, 10);
+        }
         try {
             $results = $this->o_prefix->read(['tp_prefix' => $app_twig_prefix]);
         }
@@ -128,7 +133,7 @@ class TwigComplexModel
             try {
                 $results = $this->o_tpls->read($a_template, ['search_type' => 'AND']);
                 if (!empty($results)) {
-                    $a_existing_tpls[] = $results[0]['tpl_id'];
+                    $a_existing_tpls[] = $results[0];
                     unset($new_templates[$key]);
                 }
             }
