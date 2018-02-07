@@ -46,6 +46,7 @@ class TwigDirsModel implements ModelInterface
      */
     public function create(array $a_values = [])
     {
+        $meth = ' — ' . __METHOD__;
         $a_required_keys = [
             'tp_id',
             'td_name'
@@ -63,7 +64,7 @@ class TwigDirsModel implements ModelInterface
             return $this->genericCreate($a_values, $a_params);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+            throw new ModelException($e->errorMessage() . $meth, $e->getCode(), $e);
         }
     }
 
@@ -76,6 +77,7 @@ class TwigDirsModel implements ModelInterface
      */
     public function read(array $a_search_for = [], array $a_search_params = [])
     {
+        $meth = ' — ' . __METHOD__;
         $a_parameters = [
             'table_name'     => $this->db_table,
             'a_search_for'   => $a_search_for,
@@ -87,7 +89,7 @@ class TwigDirsModel implements ModelInterface
             return $this->genericRead($a_parameters);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
         }
     }
 
@@ -99,11 +101,12 @@ class TwigDirsModel implements ModelInterface
      */
     public function update(array $a_values = [])
     {
+        $meth = ' — ' . __METHOD__;
         try {
             return $this->genericUpdate($a_values);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
         }
     }
 
@@ -115,6 +118,7 @@ class TwigDirsModel implements ModelInterface
      */
     public function delete($id = -1)
     {
+        $meth = ' — ' . __METHOD__;
         $o_tpl = new TwigTemplatesModel($this->o_db);
         $o_tpl->setElog($this->o_elog);
         if (Arrays::isArrayOfAssocArrays($id)) {
@@ -123,11 +127,11 @@ class TwigDirsModel implements ModelInterface
                     $results = $o_tpl->read(['td_id' => $dir_id]);
                     if (!empty($results)) {
                         $this->error_message = "A template exists that uses this directory";
-                        throw new ModelException($this->error_message, 436);
+                        throw new ModelException($this->error_message . $meth, 436);
                     }
                 }
                 catch (ModelException $e) {
-                    throw new ModelException($e->errorMessage(), $e->getCode());
+                    throw new ModelException($e->errorMessage() . $meth, $e->getCode());
                 }
             }
         }
@@ -136,18 +140,18 @@ class TwigDirsModel implements ModelInterface
                 $results = $o_tpl->read(['td_id' => $id]);
                 if (!empty($results)) {
                     $this->error_message = "A template exists that uses this directory";
-                    throw new ModelException($this->error_message, 436);
+                    throw new ModelException($this->error_message . $meth, 436);
                 }
             }
             catch (ModelException $e) {
-                throw new ModelException($e->errorMessage(), $e->getCode());
+                throw new ModelException($e->errorMessage() . $meth, $e->getCode());
             }
         }
         try {
             return $this->genericDelete($id);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
         }
     }
 
@@ -159,8 +163,9 @@ class TwigDirsModel implements ModelInterface
      */
     public function createDefaultDirs($prefix_id = -1)
     {
+        $meth = ' — ' . __METHOD__;
         if ($prefix_id < 1) {
-            throw new ModelException('Prefix record id not provided', 20);
+            throw new ModelException('Prefix record id not provided' . $meth, 20);
         }
         $a_dirs = [
             ['tp_id' => $prefix_id, 'td_name' => 'default'],
@@ -179,7 +184,7 @@ class TwigDirsModel implements ModelInterface
                         $results = $this->create($a_dir);
                         if (empty($results)) {
                             $message = "Unable to create the default dir {$a_dir['td_name']}";
-                            throw new ModelException($message, 110);
+                            throw new ModelException($message . $meth, 110);
                         }
                         $a_new_ids[] = $results[0];
                     }
@@ -188,7 +193,7 @@ class TwigDirsModel implements ModelInterface
                         $message .= DEVELOPER_MODE
                             ? $e->errorMessage()
                             : $e->getMessage();
-                        throw new ModelException($message, $e->getCode(), $e);
+                        throw new ModelException($message . $meth, $e->getCode(), $e);
                     }
                 }
             }
@@ -197,7 +202,7 @@ class TwigDirsModel implements ModelInterface
                 $message .= DEVELOPER_MODE
                     ? $e->errorMessage()
                     : $e->getMessage();
-                throw new ModelException($message, 110);
+                throw new ModelException($message . $meth, 110);
             }
         }
         return $a_new_ids;
