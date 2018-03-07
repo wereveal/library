@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Interfaces/CustomExceptionInterface.php
  * @namespace Ritc\Library\Interfaces
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-10-17 11:20:07
+ * @version   1.0.0
+ * @date      2018-03-07 08:50:58
  * @note <b>Change Log</b>
+ * - v1.0.0         Production, no changes had taken place since initial                                - 2018-03-07 wer
  * - v1.0.0.alpha-0 initial version                                                                     - 2016-10-17 wer
  */
 namespace Ritc\Library\Interfaces;
