@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.1
- * @date      2017-12-02 09:22:20
+ * @version   1.0.2
+ * @date      2018-03-12 14:51:11
  * @note <b>Change Log</b>
+ * - v1.0.2         - more bug fixes for missed exception handlers                              - 2018-03-12 wer
  * - v1.0.1         - bug fix, missed an exception handler for ModelException                   - 2017-12-02 wer
  * - v1.0.0         - added method to handle TWIG exceptions (took out of beta finally)         - 2017-11-29 wer
  * - v1.0.0-beta.11 - refactoring elsewhere reflected here.                                     - 2017-06-20 wer
@@ -36,9 +37,11 @@
  */
 namespace Ritc\Library\Traits;
 
+use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Factories\TwigFactory;
 use Ritc\Library\Helper\AuthHelper;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\NavComplexModel;
@@ -98,32 +101,37 @@ trait ViewTraits
      */
     public function renderIt($tpl, $a_twig_values)
     {
-        try {
-            return $this->o_twig->render($tpl, $a_twig_values);
+        if ($this->o_twig instanceof \Twig_Environment) {
+            try {
+                return $this->o_twig->render($tpl, $a_twig_values);
+            }
+            catch (\Twig_Error_Loader $e) {
+                if (DEVELOPER_MODE) {
+                    return 'Error: ' . $e->getMessage();
+                }
+                else {
+                    return '';
+                }
+            }
+            catch(\Twig_Error_Syntax $e) {
+                if (DEVELOPER_MODE) {
+                    return 'Error: ' . $e->getMessage();
+                }
+                else {
+                    return '';
+                }
+            }
+            catch(\Twig_Error_Runtime $e) {
+                if (DEVELOPER_MODE) {
+                    return 'Error: ' . $e->getMessage();
+                }
+                else {
+                    return '';
+                }
+            }
         }
-        catch (\Twig_Error_Loader $e) {
-            if (DEVELOPER_MODE) {
-                return 'Error: ' . $e->getMessage();
-            }
-            else {
-                return '';
-            }
-        }
-        catch(\Twig_Error_Syntax $e) {
-            if (DEVELOPER_MODE) {
-                return 'Error: ' . $e->getMessage();
-            }
-            else {
-                return '';
-            }
-        }
-        catch(\Twig_Error_Runtime $e) {
-            if (DEVELOPER_MODE) {
-                return 'Error: ' . $e->getMessage();
-            }
-            else {
-                return '';
-            }
+        else {
+            return 'Error: instance of Twig not created.';
         }
     }
 
@@ -304,12 +312,18 @@ trait ViewTraits
      * See the TwigFactory::getTwig method for details.
      * @param string|array $twig_config \ref twigfactory
      * @param string       $name
+     * @throws \Ritc\Library\Exceptions\FactoryException
      */
     public function setTwig($twig_config = 'twig_config.php', $name = 'main')
     {
-        $o_twig = TwigFactory::getTwig($twig_config, $name);
+        try {
+            $o_twig = TwigFactory::getTwig($twig_config, $name);
+        }
+        catch (FactoryException $e) {
+            throw new FactoryException($e->errorMessage(), $e->getCode());
+        }
         if (!$o_twig instanceof \Twig_Environment) {
-            die("Could not create a new TwigEnviornment");
+            throw new FactoryException('Could not create twig object', ExceptionHelper::getCodeNumberFactory('start'));
         }
         $this->o_di->set('twig_' . $name, $o_twig);
         $this->o_twig = $o_twig;

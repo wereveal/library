@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Factories/TwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.1.0
- * @date      2017-06-20 12:02:43
+ * @version   3.1.1
+ * @date      2018-03-12 12:10:16
  * @note <b>Change Log</b>
+ * - v3.1.1   - bug fixes                                                                               - 2018-03-12 wer
  * - v3.1.0   - Refactoring of TwigModel created the need for changes here.                             - 2017-06-20 wer
  * - v3.0.0   - Renamed getTwig to getTwigByFile and rewrote getTwig to use either getTwigByDb          - 2017-05-15 wer
  *              or getTwigByFile, defaulting to getTwigByFile. getTwigDb was renamed to getTwigByDb
@@ -60,27 +61,35 @@ class TwigFactory
      */
     private function __construct($a_twig_config)
     {
+        $meth = __METHOD__ . '.';
         try {
             $o_loader = new Twig_Loader_Filesystem($a_twig_config['default_path']);
-        }
-        catch (\Error $e) {
-            throw new FactoryException('Twig Loader Error: ' . $e->getMessage());
-        }
-        $this->o_loader = $o_loader;
-        foreach ($a_twig_config['additional_paths'] as $path => $namespace ) {
-            try {
-                $o_loader->prependPath($path, $namespace);
-            }
-            catch (\Twig_Error_Loader $e) {
-                throw new FactoryException("Twig Loader Error: " . $e->getMessage(), 110);
-            }
+            if (is_object($o_loader)) {
+                $this->o_loader = $o_loader;
+                $continue = true;
+                foreach ($a_twig_config['additional_paths'] as $path => $namespace ) {
+                    try {
+                        $o_loader->prependPath($path, $namespace);
+                    }
+                    catch (\Twig_Error_Loader $e) {
+                        error_log('Unable to load paths with Twig Loader: ' . $meth);
+                        $continue = false;
+                        break;
+                    }
 
-        }
-        try {
-            $this->o_twig = new Twig_Environment($o_loader, $a_twig_config['environment_options']);
+                }
+                if ($continue) {
+                    try {
+                        $this->o_twig = new Twig_Environment($o_loader, $a_twig_config['environment_options']);
+                    }
+                    catch (\Error $e) {
+                        error_log("Twig Environment Error: " . $e->getMessage() . ' -- ' . $meth);
+                    }
+                }
+            }
         }
         catch (\Error $e) {
-            throw new FactoryException("Twig Environment Error: " . $e->getMessage());
+            error_log('Unable to create Twig Loader: ' . $meth);
         }
     }
 
@@ -90,6 +99,7 @@ class TwigFactory
      * @param string|array|Di $param_one Optional sort of
      * @param string|bool     $param_two
      * @return mixed|\Twig_Environment
+     * @throws \Ritc\Library\Exceptions\FactoryException
      */
     public static function getTwig($param_one = '', $param_two = '')
     {
@@ -97,7 +107,13 @@ class TwigFactory
             if (!is_bool($param_two)) {
                 $param_two = true;
             }
-            return self::getTwigByDb($param_one, $param_two);
+            try {
+                $o_te = self::getTwigByDb($param_one, $param_two);
+                return $o_te;
+            }
+            catch (FactoryException $e) {
+                throw new FactoryException($e->errorMessage(), $e->getCode());
+            }
         }
         else {
             if (is_bool($param_two)) {
@@ -112,6 +128,7 @@ class TwigFactory
      * @param \Ritc\Library\Services\Di $o_di
      * @param bool                      $use_cache
      * @return mixed|\Twig_Environment
+     * @throws \Ritc\Library\Exceptions\FactoryException
      */
     public static function getTwigByDb(Di $o_di, $use_cache = true) {
         $cache = $use_cache
@@ -175,6 +192,7 @@ class TwigFactory
      * @param string|array $config    Optional but highly recommended. \ref twigfactory
      * @param string       $namespace Optional, defaults to ''
      * @return \Twig_Environment
+     * @throws \Ritc\Library\Exceptions\FactoryException
      */
     public static function getTwigByFile($config = 'twig_config.php', $namespace = '')
     {
@@ -236,9 +254,6 @@ class TwigFactory
             try {
                 self::$instance[$name] = new TwigFactory($a_twig_config);
             }
-            catch (FactoryException $e) {
-                throw new FactoryException('Unable to create a new TwigFactory: ' . $e->errorMessage(), 100, $e);
-            }
             catch (\Error $e) {
                 throw new FactoryException('Unable to create a new TwigFactory: ' . $e->getMessage(), 100, $e);
             }
@@ -291,9 +306,6 @@ class TwigFactory
             try {
                 self::$instance[$name] = new TwigFactory($a_twig_config);
             }
-            catch (FactoryException $e) {
-                throw new FactoryException('Unable to create a new TwigFactory: ' . $e->errorMessage(), 100, $e);
-            }
             catch (\Error $e) {
                 throw new FactoryException('Unable to create a new TwigFactory: ' . $e->getMessage(), 100, $e);
             }
@@ -327,9 +339,6 @@ class TwigFactory
             try {
                 self::$instance[$name] = new TwigFactory($a_twig_config);
             }
-            catch (FactoryException $e) {
-                throw new FactoryException('Unable to create a new TwigFactory: ' . $e->errorMessage(), 100, $e);
-            }
             catch (\Error $e) {
                 throw new FactoryException('Unable to create a new TwigFactory: ' . $e->getMessage(), 100, $e);
             }
@@ -355,12 +364,8 @@ class TwigFactory
                 : '';
             $config_w_path = LocateFile::getConfigWithPath($config_file, $namespace);
         }
-        if ($config_w_path != '') {
-            $a_twig_config = require $config_w_path;
-        }
-        else {
-            $a_twig_config = [];
-        }
+        /** @noinspection PhpIncludeInspection */
+        $a_twig_config = $config_w_path != '' ? require $config_w_path : [];
         return $a_twig_config;
     }
 }
