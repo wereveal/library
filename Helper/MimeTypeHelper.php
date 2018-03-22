@@ -128,7 +128,7 @@ class MimeTypeHelper
      */
     public static function mapMimeToExtension()
     {
-        $mime_type_path = PUBLIC_PATH . '/assets/vendor/jquery-ui/node_modules/testswarm/node_modules/request/node_modules/mime/types/mime.types';
+        $mime_type_path = SITE_PATH . '/assets/vendor/jquery-ui/node_modules/testswarm/node_modules/request/node_modules/mime/types/mime.types';
         if (file_exists($mime_type_path)) {
             $r_file = fopen($mime_type_path, "r");
             $a_map = [];
@@ -143,6 +143,7 @@ class MimeTypeHelper
             return $a_map;
         }
         else {
+            error_log($mime_type_path);
             return [];
         }
     }
