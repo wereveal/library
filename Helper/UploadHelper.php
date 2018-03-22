@@ -85,7 +85,8 @@ class UploadHelper
             throw new \RuntimeException("The uploaded file exceeds the max filesize: " . ini_get('upload_max_filesize'));
         }
 
-        if (!move_uploaded_file($a_values['tmp_name'], $a_values['save_path'] . '/' . $a_values['final_filename'])) {
+        $save_to = $a_values['save_path'] . '/' . $a_values['final_file_name'];
+        if (!move_uploaded_file($a_values['tmp_name'], $save_to)) {
             throw new \RuntimeException("The file was not able to be uploaded.");
         }
         return true;
@@ -185,7 +186,7 @@ class UploadHelper
             $org_filename = $a_upload_values['name'];
             $filename_ext = substr(strrchr($org_filename,'.'),1);
             if ($filename_ext != $real_ext) {
-                $final_filename = str_replace($filename_ext, '', $org_filename) . $real_ext;
+                $final_filename = trim(str_replace($filename_ext, '', $org_filename) . $real_ext);
             }
             else {
                 $final_filename = $org_filename;
