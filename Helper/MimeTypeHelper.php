@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Helper/MimeTypeHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-11-10 11:12:26
+ * @version   1.0.1
+ * @date      2018-03-23 07:38:54
  * @note Change Log
+ * - v1.0.1 - bug fix                - 2018-03-23 wer
  * - v1.0.0 - Initial version        - 2017-11-10 wer
  */
 namespace Ritc\Library\Helper;
@@ -143,7 +144,6 @@ class MimeTypeHelper
             return $a_map;
         }
         else {
-            error_log($mime_type_path);
             return [];
         }
     }

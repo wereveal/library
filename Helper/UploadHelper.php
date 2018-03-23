@@ -5,10 +5,12 @@
  * @file      Ritc/Library/Helper/UploadHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-11-10 11:12:26
+ * @version   2.0.0
+ * @date      2018-03-23 07:34:55
  * @note Change Log
- * - v1.0.0 - Initial version        - 2017-11-10 wer
+ * - v2.0.0 - major rewrite to accommodate multiple files   - 2018-03-23 wer
+ *            Backwards compatibility questionable.
+ * - v1.0.0 - Initial version                               - 2017-11-10 wer
  */
 namespace Ritc\Library\Helper;
 
