@@ -77,7 +77,7 @@ trait LogitTraits
 
     /**
      * Injectes the Elog object into the class.
-     * @param  string $o_elog
+     * @param  object|string $o_elog
      * @return null
      */
     public function setElog($o_elog = '')
