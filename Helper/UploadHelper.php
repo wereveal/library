@@ -5,9 +5,13 @@
  * @file      Ritc/Library/Helper/UploadHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2018-03-23 07:34:55
+ * @version   2.1.0
+ * @date      2018-03-29 14:13:03
  * @note Change Log
+ * - v2.1.0 - added new methods to handle file types not    - 2018-03-29 wer
+ *            specified in the sort of safe method. Changed
+ *            default check for safe file types to new
+ *            method, depreciating sortOfSafe method.
  * - v2.0.0 - major rewrite to accommodate multiple files   - 2018-03-23 wer
  *            Backwards compatibility questionable.
  * - v1.0.0 - Initial version                               - 2017-11-10 wer
@@ -21,6 +25,9 @@ namespace Ritc\Library\Helper;
  */
 class UploadHelper
 {
+    /** @var array  */
+    private static $a_allowed_file_types = [];
+
     /**
      * Does all the stuff that is required to upload a single file.
      * @param array $a_values required $a_values = [
@@ -32,7 +39,7 @@ class UploadHelper
      *                        'final_file_name' => '',
      *                        'save_path'       => ''
      *                        ]
-     * @param bool  $only_safe optional, defaults to true. Only allow safe, per self::isSortOfSafeExtension
+     * @param bool  $only_safe optional, defaults to true. Only allow safe, per self::isAllowedFileType
      * @return bool
      */
     public static function uploadFile(array $a_values = [], $only_safe = true)
@@ -57,7 +64,7 @@ class UploadHelper
         if ($only_safe) {
             $r_finfo = finfo_open(FILEINFO_MIME_TYPE);
             if (!empty($a_values['real_type'])) {
-                if (!self::isSortOfSafeExtension($a_values['real_type'])) {
+                if (!self::isAllowedFileType($a_values['real_type'])) {
                     throw new \UnexpectedValueException("The file type may not be safe.");
                 }
             }
@@ -69,7 +76,7 @@ class UploadHelper
             }
             else {
                 $file_mime_type = finfo_file($r_finfo, $a_values['tmp_name']);
-                if (!self::isSortOfSafeExtension($file_mime_type)) {
+                if (!self::isAllowedFileType($file_mime_type)) {
                     throw new \UnexpectedValueException("The file type may not be safe.");
                 }
             }
@@ -125,13 +132,29 @@ class UploadHelper
     }
 
     /**
-     * Looks to see if the extension is "semi-safe".
-     * @param string $ext
+     * Checks to see if the file type is allowed for uploading.
+     * @param string $file_type
      * @return bool
      */
-    public static function isSortOfSafeExtension($ext = '')
+    public static function isAllowedFileType($file_type = '')
     {
-        switch ($ext) {
+        if (empty(self::$a_allowed_file_types)) {
+            self::setAllowedFileTypes();
+        }
+        if (in_array($file_type, self::$a_allowed_file_types)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Looks to see if the extension is "semi-safe".
+     * @param string $file_type
+     * @return bool
+     */
+    public static function isSortOfSafeFileType($file_type = '')
+    {
+        switch ($file_type) {
             case 'image/jpg':
             case 'image/jpeg':
             case 'image/png':
@@ -179,8 +202,10 @@ class UploadHelper
         if ($error === 'OK') {
             $uploaded_mime_type = MimeTypeHelper::getMimeFromFile($a_upload_values['tmp_name']);
             if ($only_safe) {
-                if (!self::isSortOfSafeExtension($uploaded_mime_type)) {
-                    return ViewHelper::errorMessage('The file type is not allowed.');
+                if (self::isAllowedFileType($uploaded_mime_type)) {
+                    if (false) {
+                        return ViewHelper::errorMessage('The file type is not allowed.');
+                    }
                 }
             }
             $a_extensions = MimeTypeHelper::getExtensionFromMime($uploaded_mime_type);
@@ -265,5 +290,51 @@ class UploadHelper
             }
         }
         return $a_reorg_files;
+    }
+
+    /**
+     * Adds an additional extension to the class property a_allowed_file_types.
+     * @param string $value
+     */
+    public static function addAllowedFileType($value = '')
+    {
+        if (!empty($value)) {
+            if (!isset(self::$a_allowed_file_types['value'])) {
+                self::$a_allowed_file_types[] = $value;
+            }
+        }
+    }
+
+    /**
+     * Standard setter for class property a_allowed_file_types.
+     * @param array $a_values
+     */
+    public static function setAllowedFileTypes(array $a_values = [])
+    {
+        if (empty($a_values)) {
+            $a_values = [
+                'image/jpg',
+                'image/jpg',
+                'image/jpeg',
+                'image/png',
+                'image/gif',
+                'audio/mp3',
+                'text/plain',
+                'audio/wav',
+                'image/tif',
+                'image/tiff',
+                'application/pdf'
+            ];
+        }
+        self::$a_allowed_file_types = $a_values;
+    }
+
+    /**
+     * Standard getter for class property a_allowed_file_types;
+     * @return array
+     */
+    public static function getAllowedFileTypes()
+    {
+        return self::$a_allowed_file_types;
     }
 }
