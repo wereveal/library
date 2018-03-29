@@ -5,11 +5,12 @@
  * @file      LogitTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.1
- * @date      2016-02-26 12:17:41
+ * @version   1.1.2
+ * @date      2018-03-29 16:15:00
  * @note      this is derived from the abstract class Base and may end up replacing
  *            the abstract class or used in classes that don't use the abstract class.
  * @note <b>Change Log</b>
+ * - v1.1.2 - bug fixes                                                      - 2018-03-29 wer
  * - v1.1.1 - bug fixes                                                      - 02/26/2016 wer
  * - v1.1.0 - added code to utilize the custom logging capabilities          - 11/20/2015 wer
  * - v1.0.1 - checked to see if we want to even bother with calling o_elog.  - 11/03/2015 wer
@@ -50,7 +51,7 @@ trait LogitTraits
      */
     protected function logIt($message = '', $log_type = LOG_OFF, $location = '')
     {
-        if (is_object($this->o_elog)
+        if ($this->o_elog instanceof Elog
             && is_int($log_type)
             && $log_type <= LOG_ALWAYS
             && $log_type > LOG_OFF
@@ -76,11 +77,13 @@ trait LogitTraits
 
     /**
      * Injectes the Elog object into the class.
-     * @param  Elog $o_elog
+     * @param  string $o_elog
      * @return null
      */
-    public function setElog(Elog $o_elog)
+    public function setElog($o_elog = '')
     {
-        $this->o_elog = $o_elog;
+        if ($o_elog instanceof Elog) {
+            $this->o_elog = $o_elog;
+        }
     }
 }
