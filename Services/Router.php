@@ -5,9 +5,10 @@
  * @file      Router.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2016-04-01 09:44:34
+ * @version   1.2.1
+ * @date      2018-03-30 15:51:43
  * @note <b>Change Log</b>
+ * - v1.2.1    - bug fix, comment change                                     - 2018-03-30 wer
  * - v1.2.0    - Changed Router::setPost() and Router::setGet to use the     - 2016-09-19 wer
  *               new Arrays::cleanValues() method. By default, they do
  *               no create entities in the strings now.
@@ -31,8 +32,6 @@
  */
 namespace Ritc\Library\Services;
 
-use Ritc\Library\Exceptions\HelperException;
-use Ritc\Library\Exceptions\ServiceException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Traits\LogitTraits;
@@ -76,12 +75,7 @@ class Router
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);
-        try {
-            $this->o_routes_helper = new RoutesHelper($o_di);
-        }
-        catch (HelperException $e) {
-            throw new ServiceException("Could not create RoutesHelper", 800);
-        }
+        $this->o_routes_helper = new RoutesHelper($o_di);
         $this->setRouteParts();
     }
 

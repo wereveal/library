@@ -6,26 +6,27 @@
  * @file      Ritc/Library/Factories/PdoFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.0.0
+ * @version   3.0.0+01
  * @date      2017-06-13 12:17:42
  * @note <b>Change Log</b>
- * - v3.0.0 - Changed to set the \PDO::ATTR_ERRMODE, defaults to \PDO::ERRMODE_EXCEPTION                - 2017-06-13 wer
- * - v2.1.0 - Simplified the Factory                                                                    - 2017-01-25 wer
- * - v2.0.2 - fixed potential bug                                                                       - 2017-01-13 wer
- * - v2.0.1 - refactoring of DbTraits reflected here (caused strict standards error).                   - 2016-03-19 wer
- * - v2.0.0 - realized a stupid error in thinking, this should produce                                  - 08/28/2015 wer
- *              an instance of the PDO not an instance of the factory itself duh!
- *              I believe this was a result of not thinking how to do it correctly.
- *              Renamed class to match what the factory produces.
- * - v1.6.0 - no longer extends Base class, uses DbTraits and LogitTraits                               - 08/19/2015 wer
- * - v1.5.3 - moved to the Factories namespace                                                          - 01/27/2015 wer
- * - v1.5.2 - moved to Services namespace                                                               - 11/15/2014 wer
- * - v1.5.1 - changed to implement the changes to the Base class                                        - 09/23/2014 wer
- * - v1.5.0 - massive change to the factory, cutting out the fat                                        - 03/25/2014 wer
- * - v1.0.0 - figured it was time to take this out of beta, with one addition.                          - 02/24/2014 wer
- * - v0.1.2 - minor package change required minor modification                                          - 12/19/2013 wer
- * - v0.1.1 - added two additional places the config files can exist                                    - 2013-11-08 wer
- * - v0.1.0 - initial file creation                                                                     - 2013-11-06 wer
+ * - v3.0.0+01 - primarily dealing with PhpStorm inspections                                            - 2018-03-30 wer
+ * - v3.0.0+00 - Changed to set the \PDO::ATTR_ERRMODE, defaults to \PDO::ERRMODE_EXCEPTION             - 2017-06-13 wer
+ * - v2.1.0    - Simplified the Factory                                                                 - 2017-01-25 wer
+ * - v2.0.2    - fixed potential bug                                                                    - 2017-01-13 wer
+ * - v2.0.1    - refactoring of DbTraits reflected here (caused strict standards error).                - 2016-03-19 wer
+ * - v2.0.0    - realized a stupid error in thinking, this should produce                               - 08/28/2015 wer
+ *               an instance of the PDO not an instance of the factory itself duh!
+ *               I believe this was a result of not thinking how to do it correctly.
+ *               Renamed class to match what the factory produces.
+ * - v1.6.0    - no longer extends Base class, uses DbTraits and LogitTraits                            - 08/19/2015 wer
+ * - v1.5.3    - moved to the Factories namespace                                                       - 01/27/2015 wer
+ * - v1.5.2    - moved to Services namespace                                                            - 11/15/2014 wer
+ * - v1.5.1    - changed to implement the changes to the Base class                                     - 09/23/2014 wer
+ * - v1.5.0    - massive change to the factory, cutting out the fat                                     - 03/25/2014 wer
+ * - v1.0.0    - figured it was time to take this out of beta, with one addition.                       - 02/24/2014 wer
+ * - v0.1.2    - minor package change required minor modification                                       - 12/19/2013 wer
+ * - v0.1.1    - added two additional places the config files can exist                                 - 2013-11-08 wer
+ * - v0.1.0    - initial file creation                                                                  - 2013-11-06 wer
  */
 namespace Ritc\Library\Factories;
 
@@ -43,6 +44,8 @@ class PdoFactory
 {
     use DbCommonTraits, LogitTraits;
 
+    /** @var array */
+    private $a_db_config;
     /** @var array */
     private static $factory_rw_instance = array();
     /** @var array */
@@ -67,9 +70,10 @@ class PdoFactory
      * be used to create all kinds of database connections - even if
      * to the same database simply by using different config file name.
      * @param string $config_file default 'db_config.php'
-     * @param string $read_type Default rw
+     * @param string $read_type   Default rw
      * @param Di     $o_di
      * @return object|bool PDO object
+     * @throws \Ritc\Library\Exceptions\FactoryException
      */
     public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di)
     {
@@ -94,6 +98,7 @@ class PdoFactory
             try {
                 return self::$factory_ro_instance[$name]->createPdo($org_config_file, $read_type);
             }
+                /** @noinspection PhpRedundantCatchClauseInspection */
             catch (FactoryException $e) {
                 throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
             }
@@ -110,15 +115,20 @@ class PdoFactory
             try {
                 return self::$factory_rw_instance[$name]->createPdo($org_config_file, $read_type);
             }
+                /** @noinspection PhpRedundantCatchClauseInspection */
             catch (FactoryException $e) {
                 throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
             }
         }
     }
 
+    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * Creates the \PDO instance
+     * @param string $config_file
+     * @param string $read_type
      * @return \PDO|bool
+     * @throws \Ritc\Library\Exceptions\FactoryException
      */
     private function createPdo($config_file = 'db_config.php', $read_type = 'rw')
     {
@@ -201,6 +211,7 @@ class PdoFactory
     ### Magic Method fixes
     /**
      * Magic Method Fix
+     * @throws \Ritc\Library\Exceptions\FactoryException
      */
     public function __clone()
     {
