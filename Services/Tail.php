@@ -15,6 +15,8 @@
  */
 namespace Ritc\Library\Services;
 
+use Ritc\Library\Traits\ViewTraits;
+
 /**
  * Class Tail - tails a log file.
  * @class Tail
@@ -22,12 +24,14 @@ namespace Ritc\Library\Services;
  */
 class Tail
 {
+    use ViewTraits;
+
     /** @var int */
     private $timestamp           = 0;
     /** @var int */
     private $file_size           = 0;
     /** @var string */
-    private $file_name           = ""; // requires full path
+    private $file_name           = ''; // requires full path
     /** @var array */
     private $a_lines             = array();
     /** @var int */
@@ -35,9 +39,9 @@ class Tail
     /** @var int */
     private $show_lines          = 10;
     /** @var string */
-    private $search_string       = "";
+    private $search_string       = '';
     /** @var string */
-    private $search_string_regex = "";
+    private $search_string_regex = '';
     /** @var bool */
     private $changed             = false;
     /** @var string */
@@ -47,31 +51,59 @@ class Tail
     /** @var bool */
     private $newest_first        = true;
     /** @var string */
-    private $output_format       = "BR";
+    private $output_format       = 'BR';
     /** @var string */
-    private $pre_output          = "";
+    private $pre_output          = '';
     /** @var string */
-    private $post_output         = "";
+    private $post_output         = '';
+    /** @var string  */
+    private $tpl                 = '';
 
     /**
      * Tail constructor.
-     * @param $file_name
+     * @param \Ritc\Library\Services\Di $o_di
      */
-    public function __construct($file_name)
+    public function __construct(Di $o_di)
     {
+        $this->setupView($o_di);
+        $file_name = $o_di->getVar('file_name');
         if (file_exists($file_name)) {
-            $this->file_name = $file_name;
-            $this->updateStats();
-        } else {
-            return null;
+            $this->show_lines   = $o_di->getVar('show_lines');
+            $this->newest_first = $o_di->getVar('newest_first');
+            $this->tpl          = $o_di->getVar('tpl');
+            $this->file_name    = $file_name;
+        }
+        else {
+            die("elog file does not exist.");
         }
     }
 
+    ### Public Methods ###
     /**
      * @return bool|string
      */
     public function output()
     {
+        $this->updateStats();
+        $a_twig_values = [
+            'content'        => '',
+            'lang'           => 'en',
+            'charset'        => 'utf8',
+            'title'          => 'Tail Log File',
+            'description'    => 'Tails a log file.',
+            'a_message'      => [],
+            'tolken'         => '',
+            'form_ts'        => '',
+            'hobbit'         => '',
+            'a_menus'        => [],
+            'adm_lvl'        => 10,
+            'twig_prefix'    => TWIG_PREFIX,
+            'lib_prefix'     => LIB_TWIG_PREFIX,
+            'public_dir'     => PUBLIC_DIR,
+            'site_url'       => SITE_URL,
+            'rights_holder'  => RIGHTS_HOLDER,
+            'copyright_date' => COPYRIGHT_DATE
+        ];
         if ($this->changed) {
             $pre_output = '';
             $post_output = '';
@@ -110,8 +142,8 @@ class Tail
 
             $output = $pre_output;
             if ($this->newest_first === TRUE) {
-                for ($i = $this->lines - 1; $i >= $this->lines - $this->show_lines; $i--) {
-                    if (isset($this->a_lines[$i])) {
+                for ($i = (count($this->a_lines) - 1); $i < 0; $i--) {
+                    if (!empty($this->a_lines[$i])) {
                         $output .= $pre_line;
                         if (($this->search_string == "") && ($this->search_string_regex == "")) {
                             $output .= $this->a_lines[$i];
@@ -131,8 +163,8 @@ class Tail
                 }
             }
             else {
-                for ($i = $this->lines - $this->show_lines; $i<$this->lines; $i++){
-                    if (isset($this->a_lines[$i])) {
+                for ($i = 0; $i <= count($this->a_lines) - 1; $i++){
+                    if (!empty($this->a_lines[$i])) {
                         $output .= $pre_line;
                         if (($this->search_string == "") && ($this->search_string_regex == "")) {
                             $output .= $this->a_lines[$i];
@@ -152,11 +184,117 @@ class Tail
                 }
             }
             $output .= $post_output;
-            return $output;
+            $a_twig_values['content'] = $output;
+            return $this->renderIt($this->tpl, $a_twig_values);
         }
         else {
-            return FALSE;
+            $a_twig_values['content'] = 'No changes.<br>';
+            return $this->renderIt($this->tpl, $a_twig_values);
         }
+    }
+
+    ### GETters and SETters ###
+    /**
+     * @return string
+     */
+    public function getHighlightCode()
+    {
+        return htmlentities($this->pre_highlight) . " && " . htmlentities($this->post_highlight);
+    }
+
+    /**
+     * Standard getter.
+     * @return string
+     */
+    public function getOutputFormat()
+    {
+        return $this->output_format;
+    }
+
+    /**
+     * Standard getter.
+     * @return string
+     */
+    public function getPostHighlight()
+    {
+        return $this->post_highlight;
+    }
+
+    /**
+     * Standard getter.
+     * @return string
+     */
+    public function getPostOutput()
+    {
+        return $this->post_output;
+    }
+
+    /**
+     * Standard getter.
+     * @return string
+     */
+    public function getPreHighlight()
+    {
+        return $this->pre_highlight;
+    }
+
+    /**
+     * @param string $string
+     */
+    public function setHighlightCode($string="<b>")
+    {
+        $this->pre_highlight = $string;
+        $a_string = explode(" ",$string);
+        $this->post_highlight = "</" . str_replace("<","",$a_string[0]) . ">";
+    }
+
+    /**
+     * Sets the lines from the log file to be displayed.
+     * @param int $num_of_lines
+     */
+    public function setLines($num_of_lines = 0)
+    {
+        $show_lines = $num_of_lines == 0
+            ? $this->show_lines
+            : $num_of_lines;
+        $r_file = fopen($this->file_name, 'r');
+        $line_count = 0;
+        while(($line = fgets($r_file)) !== false) {
+            if (!empty(trim($line))) {
+                $line_count++;
+            }
+        }
+        $starting_line = $line_count - $show_lines;
+        rewind($r_file);
+        $line_count = 0;
+        $a_lines = [];
+        while(($line = fgets($r_file)) !== false) {
+            if (!empty(trim($line))) {
+                $line_count++;
+                if ($line_count >= $starting_line) {
+                    $a_lines[] = $line;
+                }
+            }
+        }
+        $this->a_lines = $a_lines;
+        $this->lines = count($a_lines);
+    }
+
+    /**
+     * @param bool $value
+     */
+    public function setNewestFirst($value=TRUE)
+    {
+        $this->newest_first = $value == FALSE ? FALSE : TRUE;
+    }
+
+    /**
+     * @param int $lines
+     */
+    public function setNumberOfLines($lines=20)
+    {
+        $this->show_lines = $lines;
+        $this->setLines();
     }
 
     /**
@@ -170,17 +308,17 @@ class Tail
     /**
      * @param string $value
      */
-    public function setPreOutput($value = "")
+    public function setPostOutput($value = "")
     {
-        $this->pre_output = $value;
+        $this->post_output = $value;
     }
 
     /**
      * @param string $value
      */
-    public function setPostOutput($value = "")
+    public function setPreOutput($value = "")
     {
-        $this->post_output = $value;
+        $this->pre_output = $value;
     }
 
     /**
@@ -201,47 +339,27 @@ class Tail
     }
 
     /**
-     * @param string $string
+     * SETs the class property tpl.
+     * @param string $tpl
      */
-    public function setHighlightCode($string="<b>")
+    public function setTpl($tpl = '')
     {
-        $this->pre_highlight = $string;
-        $a_string = explode(" ",$string);
-        $this->post_highlight = "</" . str_replace("<","",$a_string[0]) . ">";
+            $this->tpl = $tpl != ''
+                ? $tpl
+                : '@' . TWIG_PREFIX . 'pages/tail.tpl';
     }
 
+    ### Private Functions ###
     /**
-     * @return string
-     */
-    public function getHighlightCode()
-    {
-        return htmlentities($this->pre_highlight) . " && " . htmlentities($this->post_highlight);
-    }
-
-    /**
-     * @param int $lines
-     */
-    public function setNumberOfLines($lines=20)
-    {
-        $this->show_lines = $lines;
-    }
-
-    /**
-     * @param bool $value
-     */
-    public function setNewestFirst($value=TRUE)
-    {
-        $this->newest_first = $value == FALSE ? FALSE : TRUE;
-    }
-
-    /**
-     * Not sure what this is doing after so long.
-     */
+     * Reads a log file into an array and sets the number of lines in the file.
+     * Not used anymore, legacy.
+     *
     private function openFile()
     {
         $this->a_lines = file($this->file_name,FILE_SKIP_EMPTY_LINES);
         $this->lines = count($this->a_lines);
     }
+     */
 
     /**
      * Sets a couple properties.
@@ -252,7 +370,8 @@ class Tail
         // check for change
         if ($new_timestamp > $this->timestamp){
             $this->file_size = filesize($this->file_name);
-            $this->openFile();
+            // $this->openFile();
+            $this->setLines();
             $this->timestamp = $new_timestamp;
             $this->changed = TRUE;
         }

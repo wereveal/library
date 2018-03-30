@@ -5,11 +5,11 @@
  * @file      LogitTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.0
- * @date      2017-12-05 10:35:41 
- * @note      this is derived from the abstract class Base and may end up replacing
- *            the abstract class or used in classes that don't use the abstract class.
+ * @version   1.3.1
+ * @date      2018-03-29 15:44:43
+ * @note      this is derived from the abstract class Base which it replaced.
  * @note <b>Change Log</b>
+ * - v1.3.1 - bug fix                                                        - 2018-03-29 wer
  * - v1.3.0 - added method and property to set elog for multiple object      - 2017-12-05 wer
  *            based on the names of the objects saved in the property
  * - v1.2.0 - setElog now allows anything to pass into it and then checks    - 2017-02-07 wer
@@ -42,7 +42,7 @@ trait LogitTraits
      */
     public function getElog()
     {
-        if (is_object($this->o_elog)) {
+        if ($this->o_elog instanceof Elog) {
             return $this->o_elog;
         }
         return '';
@@ -57,7 +57,7 @@ trait LogitTraits
      */
     protected function logIt($message = '', $log_type = LOG_OFF, $location = '')
     {
-        if (is_object($this->o_elog)
+        if ($this->o_elog instanceof Elog
             && is_int($log_type)
             && $log_type <= LOG_ALWAYS
             && $log_type > LOG_OFF
@@ -106,10 +106,10 @@ trait LogitTraits
                         $this->$object->setElog($this->o_elog);
                     }
                 }
-            }    
+            }
         }
     }
-    
+
     /**
      * Quick Stub for a commonly called thing.
      * @param \Ritc\Library\Services\Di $o_di
@@ -118,10 +118,12 @@ trait LogitTraits
     {
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $o_elog = $o_di->get('elog');
-            $this->setElog($o_elog);
+            if ($o_elog instanceof Elog) {
+                $this->setElog($o_elog);
+            }
         }
     }
-    
+
     /**
      * Standard SETter for protected class property.
      * @param array $a_object_names

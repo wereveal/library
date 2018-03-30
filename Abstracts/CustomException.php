@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Abstracts/CustomException.php
  * @namespace Ritc\Library\Abstracts
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2017-07-15 12:42:53
+ * @version   1.0.0
+ * @date      2018-03-07 08:48:27
  * @note Change Log
+ * - v1.0.0         - changed to production, added phpDoc                                               - 2018-03-07 wer
  * - v1.0.0-alpha.1 - expanded errorMessage and getCode                                                 - 2017-07-15 wer
  * - v1.0.0-alpha.0 - Initial version                                                                   - 2016-10-17 wer
  */
@@ -23,6 +24,10 @@ use Ritc\Library\Interfaces\CustomExceptionInterface;
  */
 abstract class CustomException extends \Exception implements CustomExceptionInterface
 {
+    /**
+     * Overrides \Exception
+     * @return string
+     */
     public function __toString()
     {
         return get_class($this) .
@@ -30,6 +35,10 @@ abstract class CustomException extends \Exception implements CustomExceptionInte
         $this->getTraceAsString();
     }
 
+    /**
+     * Required by Interface.
+     * @return string
+     */
     public function errorMessage()
     {
         $error_message = $this->getMessage();
@@ -49,11 +58,20 @@ abstract class CustomException extends \Exception implements CustomExceptionInte
         return $error_message;
     }
 
+    /**
+     * Required by Interface.
+     * @param int $code
+     * @return string
+     */
     public function getCodeText($code = -1)
     {
         return ExceptionHelper::getCodeText($code);
     }
 
+    /**
+     * Gets the name of the custom exception.
+     * @return string
+     */
     public function getClass()
     {
         return get_class($this);

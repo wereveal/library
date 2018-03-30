@@ -9,9 +9,10 @@
  * @file      Ritc/Library/Helper/Strings.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   6.4.1
- * @date      2017-07-06 22:32:38
+ * @version   6.5.0
+ * @date      2018-03-06 13:36:15
  * @note <b>Change Log</b>
+ * - v6.5.0 - add new method to convert column number to Excel column letters   - 2018-03-06 wer
  * - v6.4.1 - bug fix                                                           - 2017-07-06 wer
  * - v6.4.0 - added new method to trim slashes from front and back of string    - 2016-09-08 wer
  * - v6.3.0 - added new method to translate a digit to an English word          - 02/24/2016 wer
@@ -334,6 +335,26 @@ class Strings
             $this_string = $that_string;
         }
         return trim($this_string);
+    }
+
+    /**
+     * Changes column numbers to column letters compatible with excel.
+     * @param int  $var
+     * @param bool $start_w_zero
+     * @return string
+     */
+    public static function numberToExcelColumn($var = 0, $start_w_zero = true)
+    {
+        if ($start_w_zero) {
+            $var++;
+        }
+        if ($var > 26) {
+            $letter = chr((int)($var/26) + 64) . chr(($var % 26) + 64);
+        }
+        else {
+            $letter = chr($var + 64);
+        }
+        return $letter;
     }
 
     /**

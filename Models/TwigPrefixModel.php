@@ -49,6 +49,7 @@ class TwigPrefixModel implements ModelInterface
      */
     public function create(array $a_values = [])
     {
+        $meth = ' -- ' . __METHOD__;
         $a_required_keys = [
             'twig_prefix',
             'twig_path'
@@ -66,13 +67,14 @@ class TwigPrefixModel implements ModelInterface
             $a_values = $this->clearDefaultPrefix($a_values);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            $message = $e->errorMessage() . $meth; 
+            throw new ModelException($message, $e->getCode());
         }
         try {
             return $this->genericCreate($a_values, $a_params);
         }
         catch (ModelException $exception) {
-            $message = $exception->errorMessage();
+            $message = $exception->errorMessage() . $meth;
             $code = $exception->getCode();
             throw new ModelException($message, $code);
         }
@@ -87,6 +89,7 @@ class TwigPrefixModel implements ModelInterface
      */
     public function read(array $a_search_for = [], array $a_search_params = [])
     {
+        $meth = ' -- ' . __METHOD__;
         $a_parameters = [
             'table_name'     => $this->db_table,
             'a_search_for'   => $a_search_for,
@@ -100,7 +103,7 @@ class TwigPrefixModel implements ModelInterface
             return $this->genericRead($a_parameters);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->getMessage(), $e->getCode());
+            throw new ModelException($e->getMessage() . $meth, $e->getCode());
         }
     }
 
@@ -112,18 +115,19 @@ class TwigPrefixModel implements ModelInterface
      */
     public function update(array $a_values = [])
     {
+        $meth = ' -- ' . __METHOD__;
         try {
             $a_values = $this->clearDefaultPrefix($a_values);
         }
         catch (ModelException $e) {
-            throw new ModelException('Update canceled', 300, $e);
+            throw new ModelException('Update canceled' . $meth, 300, $e);
         }
 
         try {
             return $this->genericUpdate($a_values);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
         }
     }
 
@@ -135,6 +139,7 @@ class TwigPrefixModel implements ModelInterface
      */
     public function delete($id = -1)
     {
+        $meth = ' -- ' . __METHOD__;
         if ($id == -1) { return false; }
         $o_tpl = new TwigTemplatesModel($this->o_db);
         if ($this->o_elog instanceof Elog) {
@@ -143,23 +148,23 @@ class TwigPrefixModel implements ModelInterface
         try {
             $results = $o_tpl->read(['td_id' => $id]);
             if (!empty($results)) {
-                $this->error_message = "A template exists that uses this prefix";
+                $this->error_message = "A template exists that uses this prefix" . $meth;
                 throw new ModelException($this->error_message, 10);
             }
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
         }
         try {
             $results = $this->genericDelete($id);
             if ($results === false) {
                 $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-                throw new ModelException($this->error_message, 410);
+                throw new ModelException($this->error_message . $meth, 410);
             }
             return $results;
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
         }
     }
 
@@ -170,6 +175,7 @@ class TwigPrefixModel implements ModelInterface
      */
     private function updateDefaultPrefixOff()
     {
+        $meth = ' -- ' . __METHOD__;
         $sql = "
             UPDATE {$this->db_table}
             SET tp_default = 0
@@ -179,7 +185,7 @@ class TwigPrefixModel implements ModelInterface
             return $this->o_db->update($sql);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
         }
     }
 
@@ -191,6 +197,7 @@ class TwigPrefixModel implements ModelInterface
      */
     private function clearDefaultPrefix(array $a_values = [])
     {
+        $meth = ' -- ' . __METHOD__;
         $is_default = 0;
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
@@ -200,12 +207,12 @@ class TwigPrefixModel implements ModelInterface
                         try {
                             if (!$this->updateDefaultPrefixOff()) {
                                 $this->error_message = "Could not set other prefix as not default.";
-                                throw new ModelException($this->error_message, 110);
+                                throw new ModelException($this->error_message . $meth, 110);
                             }
                         }
                         catch (ModelException $e) {
                             $this->error_message = "Could not set other prefix as not default.";
-                            throw new ModelException($this->error_message, 110);
+                            throw new ModelException($this->error_message . $meth, 110);
                         }
                     }
                     else {
@@ -220,12 +227,12 @@ class TwigPrefixModel implements ModelInterface
                 try {
                     if (!$this->updateDefaultPrefixOff()) {
                         $this->error_message = "Could not set other prefix as not default.";
-                        throw new ModelException($this->error_message, 110);
+                        throw new ModelException($this->error_message . $meth, 110);
                     }
                 }
                 catch (ModelException $e) {
                     $this->error_message = "Could not set other prefix as not default.";
-                    throw new ModelException($this->error_message, 110);
+                    throw new ModelException($this->error_message . $meth, 110);
                 }
             }
         }
