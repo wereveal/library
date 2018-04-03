@@ -1,14 +1,14 @@
 <?php
 /**
  * @brief     Helps developer with exception error codes.
- * @details
  * @ingroup   lib_helper
  * @file      Ritc/Library/Helper/ExceptionHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-12-12 14:00:56
+ * @version   1.1.0
+ * @date      2018-04-03 13:49:32
  * @note Change Log
+ * - v1.1.0         - additional error code and message                                         - 2018-04-03 wer
  * - v1.0.0         - Initial version                                                           - 2017-12-12 wer
  */
 namespace Ritc\Library\Helper;
@@ -115,6 +115,8 @@ class ExceptionHelper
                 return 27;
             case 'record_not_found':
                 return 30;
+            case 'records_not_found':
+                return 31;
             case 'record_exists':
                 return 32;
             case 'record_immutable':
@@ -228,6 +230,8 @@ class ExceptionHelper
                 return 'Unique key value exists';
             case 30:
                 return 'Record(s) not found';
+            case 31:
+                return 'Records not found';
             case 32:
                 return 'Record already exits';
             case 34:

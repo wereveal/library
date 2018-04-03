@@ -1,17 +1,18 @@
 <?php
 /**
  * @brief     Does database operations on the twig_prefix table.
- * @details
  * @ingroup   lib_models
  * @file      Ritc/Library/Models/TwigPrefixModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-12-12 11:36:48
- * @note Change Log
+ * @version   1.0.1
+ * @date      2018-04-03 17:26:11
+ * @note      Change Log
+ * - v1.0.1         - bug fixes                     - 2018-04-03 wer
  * - v1.0.0         - Initial production version    - 2017-12-12 wer
  * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
  */
+
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -49,16 +50,16 @@ class TwigPrefixModel implements ModelInterface
      */
     public function create(array $a_values = [])
     {
-        $meth = ' -- ' . __METHOD__;
+        $meth            = ' -- ' . __METHOD__;
         $a_required_keys = [
             'twig_prefix',
             'twig_path'
         ];
-        $a_psql = [
+        $a_psql          = [
             'table_name'  => $this->db_table,
             'column_name' => $this->primary_index_name
         ];
-        $a_params = [
+        $a_params        = [
             'a_required_keys' => $a_required_keys,
             'a_field_names'   => $this->a_db_fields,
             'a_psql'          => $a_psql
@@ -67,7 +68,7 @@ class TwigPrefixModel implements ModelInterface
             $a_values = $this->clearDefaultPrefix($a_values);
         }
         catch (ModelException $e) {
-            $message = $e->errorMessage() . $meth; 
+            $message = $e->errorMessage() . $meth;
             throw new ModelException($message, $e->getCode());
         }
         try {
@@ -75,7 +76,7 @@ class TwigPrefixModel implements ModelInterface
         }
         catch (ModelException $exception) {
             $message = $exception->errorMessage() . $meth;
-            $code = $exception->getCode();
+            $code    = $exception->getCode();
             throw new ModelException($message, $code);
         }
     }
@@ -89,7 +90,7 @@ class TwigPrefixModel implements ModelInterface
      */
     public function read(array $a_search_for = [], array $a_search_params = [])
     {
-        $meth = ' -- ' . __METHOD__;
+        $meth         = ' -- ' . __METHOD__;
         $a_parameters = [
             'table_name'     => $this->db_table,
             'a_search_for'   => $a_search_for,
@@ -97,8 +98,8 @@ class TwigPrefixModel implements ModelInterface
             'order_by'       => $this->primary_index_name . ' ASC'
         ];
         $a_parameters = array_merge($a_parameters, $a_search_params);
-          $log_message = 'parameters ' . var_export($a_parameters, true);
-          $this->logIt($log_message, LOG_OFF, __METHOD__);
+        $log_message  = 'parameters ' . var_export($a_parameters, true);
+        $this->logIt($log_message, LOG_OFF, __METHOD__);
         try {
             return $this->genericRead($a_parameters);
         }
@@ -140,13 +141,16 @@ class TwigPrefixModel implements ModelInterface
     public function delete($id = -1)
     {
         $meth = ' -- ' . __METHOD__;
-        if ($id == -1) { return false; }
+        if ($id == -1) {
+            return false;
+        }
         $o_tpl = new TwigTemplatesModel($this->o_db);
         if ($this->o_elog instanceof Elog) {
             $o_tpl->setElog($this->o_elog);
         }
+        $tpl_pin = $o_tpl->getPrimaryIndexName();
         try {
-            $results = $o_tpl->read(['td_id' => $id]);
+            $results = $o_tpl->read([$tpl_pin => $id]);
             if (!empty($results)) {
                 $this->error_message = "A template exists that uses this prefix" . $meth;
                 throw new ModelException($this->error_message, 10);
@@ -176,11 +180,7 @@ class TwigPrefixModel implements ModelInterface
     private function updateDefaultPrefixOff()
     {
         $meth = ' -- ' . __METHOD__;
-        $sql = "
-            UPDATE {$this->db_table}
-            SET tp_default = 0
-            WHERE tp_default = 1
-        ";
+        $sql = "UPDATE {$this->db_table} SET tp_default = 'false' WHERE tp_default = 'true'";
         try {
             return $this->o_db->update($sql);
         }
@@ -197,13 +197,13 @@ class TwigPrefixModel implements ModelInterface
      */
     private function clearDefaultPrefix(array $a_values = [])
     {
-        $meth = ' -- ' . __METHOD__;
-        $is_default = 0;
+        $meth       = ' -- ' . __METHOD__;
+        $is_default = 'false';
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
-                if (!empty($a_record['tp_default']) && $a_record['tp_default'] == 1) {
-                    if ($is_default === 0) {
-                        $is_default = 1;
+                if (!empty($a_record['tp_default']) && $a_record['tp_default'] == 'true') {
+                    if ($is_default === 'false') {
+                        $is_default = 'true';
                         try {
                             if (!$this->updateDefaultPrefixOff()) {
                                 $this->error_message = "Could not set other prefix as not default.";
@@ -216,14 +216,14 @@ class TwigPrefixModel implements ModelInterface
                         }
                     }
                     else {
-                        $a_values[$key]['tp_default'] = 0; // only one can be default.
+                        $a_values[$key]['tp_default'] = 'false'; // only one can be default.
                     }
                 }
             }
 
         }
         else {
-            if (!empty($a_values['tp_default']) && $a_values['tp_default'] == 1) {
+            if (!empty($a_values['tp_default']) && $a_values['tp_default'] == 'true') {
                 try {
                     if (!$this->updateDefaultPrefixOff()) {
                         $this->error_message = "Could not set other prefix as not default.";

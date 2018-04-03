@@ -5,9 +5,12 @@
  * @file      Ritc/Library/Models/ConstantsCreator.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.0.0
- * @date      2017-07-16 09:35:25
+ * @version   5.1.0
+ * @date      2018-04-03 14:46:49
  * @note <b>Change Log</b>
+ * - v5.1.0 - Bug fixes, added additional constants for Lib and Admin               - 2018-04-03 wer
+ *            Added method to build TWIG_PREFIXES on the fly from the
+ *            twig_prefix table
  * - v5.0.0 - Renamed, moved, and added ModelException throwing.                    - 2017-07-16 wer
  * - v4.1.0 - Refactor based on refactoring of ConstantsModel                       - 2017-06-20 wer
  * - v4.0.2 - bug fix.                                                              - 2017-01-27 wer
@@ -37,6 +40,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -53,8 +57,8 @@ class ConstantsCreator
     private $created = false;
     /** @var ConstantsCreator */
     private static $instance;
-    /** @var \Ritc\Library\Models\ConstantsModel */
-    private $o_constants_model;
+    /** @var \Ritc\Library\Services\DbModel $o_db */
+    private $o_db;
 
     /**
      * ConstantsCreator constructor.
@@ -62,57 +66,17 @@ class ConstantsCreator
      */
     private function __construct(Di $o_di)
     {
-        $meth = __METHOD__ . '.';
-        /** @var \Ritc\Library\Services\DbModel $o_db */
-        $o_db = $o_di->get('db');
-        try {
-            $this->o_constants_model = new ConstantsModel($o_db);
-        }
-        catch (\Error $e) {
-            $message = 'Unable to create an instance of the ConstantsModel: ' . $e->getMessage();
-            $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
-            throw new ModelException($message, 800);
-        }
+        $this->o_db = $o_di->get('db');
         $this->o_elog = $o_di->get('elog');
-        $this->o_constants_model->setElog($this->o_elog);
-        try {
-            $this->created = $this->createConstants();
-        }
-        catch (ModelException $e) {
-            $this->created = false;
-        }
-        if ($this->created === false) {
-            if (defined('SRC_CONFIG_PATH')) {
-                if(file_exists(SRC_CONFIG_PATH . '/fallback_constants.php')) {
-                    include_once SRC_CONFIG_PATH . '/fallback_constants.php';
-                }
-                else {
-                    $this->logIt("File: " . SRC_CONFIG_PATH . '/fallback_constants.php does not exist.', LOG_ALWAYS);
-                    throw new ModelException('A fatal error has occured. Please contact your web site administrator.');
-                }
-            }
-            else {
-                $this->logIt("SRC_CONFIG_PATH is not defined.", LOG_ALWAYS, $meth . __LINE__);
-                throw new ModelException('A fatal error has occured. Please contact your web site administrator.');
-            }
-            try {
-                $this->o_constants_model->createNewConstants();
-            }
-            catch (ModelException $e) {
-                $this->logIt($e->errorMessage(), LOG_ALWAYS, $meth . __LINE__);
-                throw new ModelException('A fatal error has occured. Please contact your web site administrator.');
-            }
-        }
-        $this->createThemeConstants();
     }
 
     /**
      * Constants class is a singleton and this gets it started.
      * This is in my mind a legit use of a singleton as
      * Never should more than one instance of the constants ever be allowed to be created
-     *
      * @param Di $o_di
      * @return object - instance of Constants
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public static function start(Di $o_di)
     {
@@ -128,6 +92,56 @@ class ConstantsCreator
     }
 
     /**
+     * Public function to create the constants.
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    public function defineConstants()
+    {
+        $meth = __METHOD__ . '.';
+        try {
+            $results = $this->createConstants();
+            if ($results) {
+                $this->createThemeConstants();
+                $this->createTwigConstants();
+            }
+            else {
+                if (defined('SRC_CONFIG_PATH')) {
+                    if(file_exists(SRC_CONFIG_PATH . '/fallback_constants.php')) {
+                        include_once SRC_CONFIG_PATH . '/fallback_constants.php';
+                    }
+                    else {
+                        $this->logIt("File: " . SRC_CONFIG_PATH . '/fallback_constants.php does not exist.', LOG_ALWAYS);
+                        throw new ModelException('A fatal error has occured. Please contact your web site administrator.');
+                    }
+                }
+                else {
+                    $this->logIt("SRC_CONFIG_PATH is not defined.", LOG_ALWAYS, $meth . __LINE__);
+                    throw new ModelException('A fatal error has occured. Please contact your web site administrator.');
+                }
+                try {
+                    $o_const_model = new ConstantsModel($this->o_db);
+                }
+                catch (\Error $e) {
+                    $message = 'Unable to create an instance of the ConstantsModel: ' . $e->getMessage();
+                    $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
+                    throw new ModelException($message, 800);
+                }
+                try {
+                    $o_const_model->createNewConstants();
+                    $this->createThemeConstants();
+                }
+                catch (ModelException $e) {
+                    $this->logIt($e->errorMessage(), LOG_ALWAYS, $meth . __LINE__);
+                    throw new ModelException('A fatal error has occurred. Please contact your web site administrator.');
+                }
+            }
+        }
+        catch (ModelException $e) {
+            throw new ModelException('Unable to create constants' . $e->errorMessage(), 10);
+        }
+    }
+
+    /**
      * @return bool
      */
     public function getSuccess()
@@ -136,19 +150,36 @@ class ConstantsCreator
     }
 
     /**
+     * Creates the constants used throughout the website based on database values.
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     private function createConstants()
     {
         $meth = __METHOD__ . '.';
+        if (!defined('BASE_PATH')) {
+            throw new ModelException('BASE_PATH is not defined', ExceptionHelper::getCodeNumberModel('missing value'));
+        }
+        if (!defined('PUBLIC_PATH')) { // not sure why this would be true but here just in case
+            throw new ModelException('PUBLIC_PATH is not defined', ExceptionHelper::getCodeNumberModel('missing value'));
+        }
+        try {
+            $o_const_model = new ConstantsModel($this->o_db);
+        }
+        catch (\Error $e) {
+            $message = 'Unable to create an instance of the ConstantsModel: ' . $e->getMessage();
+            $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
+            throw new ModelException($message, 800);
+        }
+        $o_const_model->setElog($this->o_elog);
         if ($this->created === false) {
             try {
-                $a_constants = $this->o_constants_model->selectConstantsList();
+                $a_constants = $o_const_model->selectConstantsList();
             }
             catch (ModelException $e) {
                 $log_message = 'Error:  ' . $e->errorMessage();
                 $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-                return false;
+                throw new ModelException($log_message, ExceptionHelper::getCodeNumberModel('records_not_found'));
 
             }
             if (!empty($a_constants)) {
@@ -171,6 +202,9 @@ class ConstantsCreator
                                 define("{$key}", "{$value}");
                         }
                     }
+                }
+                if (!defined('PUBLIC_DIR')) { // not sure why this would be true but here just in case
+                    define('PUBLIC_DIR', '');
                 }
                 if (!defined('PRIVATE_DIR_NAME')) {
                     define('PRIVATE_DIR_NAME', 'private');
@@ -200,13 +234,6 @@ class ConstantsCreator
                         define('PRIVATE_PATH', '');
                     }
                 }
-
-                if (!defined('PUBLIC_DIR')) { // not sure why this would be true but here just in case
-                    define('PUBLIC_DIR', '');
-                }
-                if (!defined('PUBLIC_PATH')) { // not sure why this would be true but here just in case
-                    define('PUBLIC_PATH', $_SERVER['DOCUMENT_ROOT']);
-                }
                 if (!defined('ADMIN_DIR') && defined('ADMIN_DIR_NAME')) {
                     define('ADMIN_DIR',   PUBLIC_DIR . '/' . ADMIN_DIR_NAME);
                 }
@@ -222,9 +249,9 @@ class ConstantsCreator
                 return true;
             }
             else {
-                $log_message = 'Error: Unable to retrievet the list of constants.';
+                $log_message = 'Error: Unable to retrieve the list of constants.';
                 $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-                return false;
+                throw new ModelException($log_message, ExceptionHelper::getCodeNumberModel('records_not_found'));
             }
         }
         else {
@@ -307,9 +334,68 @@ class ConstantsCreator
             define('STAFF_DIR', IMAGE_DIR . '/' . STAFF_DIR_NAME);
             define('STAFF_PATH', PUBLIC_PATH . STAFF_DIR);
         }
-        if (defined('LIBS_DIR_NAME')) {
-            define('LIBS_DIR', THEME_DIR . '/' . LIBS_DIR_NAME);
-            define('LIBS_PATH', PUBLIC_PATH . LIBS_DIR);
+        if (defined('LIB_THEME_NAME')) {
+            if (LIB_THEME_NAME != '') {
+                define('LIB_THEME_DIR',  THEME_DIR     . '/' . LIB_THEME_NAME);
+                define('LIB_CSS_DIR',    LIB_THEME_DIR . '/' . CSS_DIR_NAME);
+                define('LIB_JS_DIR',     LIB_THEME_DIR . '/' . JS_DIR_NAME);
+                define('LIB_FILES_DIR',  LIB_THEME_DIR . '/' . FILES_DIR_NAME);
+                define('LIB_IMAGE_DIR',  LIB_THEME_DIR . '/' . IMAGE_DIR_NAME);
+                define('LIB_HTML_DIR',   LIB_THEME_DIR . '/' . HTML_DIR_NAME);
+                define('LIB_THEME_PATH', PUBLIC_PATH   . LIB_THEME_DIR);
+                define('LIB_CSS_PATH',   PUBLIC_PATH   . LIB_CSS_DIR);
+                define('LIB_JS_PATH',    PUBLIC_PATH   . LIB_JS_DIR);
+                define('LIB_FILES_PATH', PUBLIC_PATH   . LIB_FILES_DIR);
+                define('LIB_IMAGE_PATH', PUBLIC_PATH   . LIB_IMAGE_DIR);
+                define('LIB_HTML_PATH',  PUBLIC_PATH   . LIB_HTML_DIR);
+            }
+        }
+        if (defined('ADMIN_THEME_NAME')) {
+            if (ADMIN_THEME_NAME != '') {
+                define('ADMIN_THEME_DIR',  THEME_DIR       . '/' . ADMIN_THEME_NAME);
+                define('ADMIN_CSS_DIR',    ADMIN_THEME_DIR . '/' . CSS_DIR_NAME);
+                define('ADMIN_JS_DIR',     ADMIN_THEME_DIR . '/' . JS_DIR_NAME);
+                define('ADMIN_FILES_DIR',  ADMIN_THEME_DIR . '/' . FILES_DIR_NAME);
+                define('ADMIN_IMAGE_DIR',  ADMIN_THEME_DIR . '/' . IMAGE_DIR_NAME);
+                define('ADMIN_HTML_DIR',   ADMIN_THEME_DIR . '/' . HTML_DIR_NAME);
+                define('ADMIN_THEME_PATH', PUBLIC_PATH     . ADMIN_THEME_DIR);
+                define('ADMIN_CSS_PATH',   PUBLIC_PATH     . ADMIN_CSS_DIR);
+                define('ADMIN_JS_PATH',    PUBLIC_PATH     . ADMIN_JS_DIR);
+                define('ADMIN_FILES_PATH', PUBLIC_PATH     . ADMIN_FILES_DIR);
+                define('ADMIN_IMAGE_PATH', PUBLIC_PATH     . ADMIN_IMAGE_DIR);
+                define('ADMIN_HTML_PATH',  PUBLIC_PATH     . ADMIN_HTML_DIR);
+            }
+        }
+    }
+
+    /**
+     * Creates the global constants for twig prefixes used in rendering templates.
+     */
+    private function createTwigConstants()
+    {
+        $o_twig_prefix = new TwigPrefixModel($this->o_db);
+        $default_twig_prefix = 'site_';
+        try {
+            $a_results = $o_twig_prefix->read();
+        }
+        catch (ModelException $e) {
+            error_log('Unable to create TwigPrefixModel instance.');
+        }
+        if (!empty($a_results)) {
+            foreach ($a_results as $a_record) {
+                $twig_prefix = $a_record['tp_prefix'];
+                $const_name = strtoupper($a_record['tp_prefix']) . 'TWIG_PREFIX';
+                define($const_name, $twig_prefix);
+                if ($a_record['tp_default'] == 'true') {
+                    $default_twig_prefix = $twig_prefix;
+                }
+            }
+        }
+        if (!defined('TWIG_PREFIX')) {
+            define('TWIG_PREFIX', $default_twig_prefix);
+        }
+        if (!defined('LIB_TWIG_PREFIX')) {
+            define('LIB_TWIG_PREFIX', 'lib_');
         }
     }
 

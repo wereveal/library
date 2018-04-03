@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/ConstantsModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.0.2
- * @date      2017-12-12 11:33:45
+ * @version   3.0.3
+ * @date      2018-04-03 15:55:17
  * @note      see ConstantsEntity for database table definition.
  * @note <b>Change Log</b>
+ * - v3.0.3 - bug fixes, cleaned up code                                    - 2018-04-03 wer
  * - v3.0.2 - ModelException changes reflected here                         - 2017-12-12 wer
  * - v3.0.1 - Bug fixes                                                     - 2017-07-12 wer
  * - v3.0.0 - Refactored to use ModelException and bug fixes                - 2017-06-14 wer
@@ -31,6 +32,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
@@ -211,16 +213,27 @@ class ConstantsModel implements ModelInterface
      */
     public function createNewConstants()
     {
-        // todo ConstantsModel.createNewConstants - need to add to tests
-        $a_constants = include SRC_CONFIG_PATH . '/fallback_constants_array.php';
+        $file_w_path = SRC_CONFIG_PATH . '/fallback_constants_array.php';
+        if (file_exists($file_w_path)) {
+            $a_constants = include $file_w_path;
+        }
+        else {
+            throw new ModelException("Values not available", ExceptionHelper::getCodeNumberModel('missing values'));
+        }
         try {
             $this->o_db->startTransaction();
         }
         catch (ModelException $e) {
             $message = "Could not start transaction.";
-            throw new ModelException($message, 12, $e);
+            throw new ModelException($message, ExceptionHelper::getCodeNumberModel('transaction start'), $e);
         }
-        if ($this->tableExists() === false) {
+        try {
+            $table_exists = $this->tableExists();
+        }
+        catch (ModelException $e) {
+            $table_exists = false;
+        }
+        if ($table_exists === false) {
             try {
                 $this->createTable();
             }
@@ -253,7 +266,6 @@ class ConstantsModel implements ModelInterface
      */
     public function createTable()
     {
-        // todo ConstantsModel.createTable - need to add to tests
         $db_type = $this->o_db->getDbType();
         switch ($db_type) {
             case 'pgsql':
@@ -309,7 +321,7 @@ SQL;
                         `const_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                         `const_name` varchar(64) NOT NULL,
                         `const_value` varchar(64) NOT NULL,
-                        `const_immutable` varchar(10) NOT NULL DEFAULT 'false'
+                        `const_immutable` varchar(10) NOT NULL DEFAULT 'false',
                         PRIMARY KEY (`const_id`),
                         UNIQUE KEY `const_key` (`const_name`)
                     ) ENGINE=InnoDB  AUTO_INCREMENT=1 DEFAULT CHARSET=utf8
@@ -380,14 +392,19 @@ SQL;
     /**
      * Checks to see if the table exists.
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function tableExists()
     {
-        // todo ConstantsModel.tableExists - need to add to tests
         $lib_prefix = $this->o_db->getLibPrefix();
-        $a_tables = $this->o_db->selectDbTables();
+        try {
+            $a_tables = $this->o_db->selectDbTables();
+        }
+        catch (ModelException $e) {
+            throw new ModelException('Unable to select Db tables', 10);
+        }
         if (array_search("{$lib_prefix}constants", $a_tables, true) === false) {
-            return false;
+            throw new ModelException('Unable to select Db tables', 10);
         }
         return true;
     }
