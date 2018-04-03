@@ -601,7 +601,7 @@ SQL;
                             unset($a_values[$field]);
                         }
                     }
-                }
+                } /** @noinspection PhpRedundantCatchClauseInspection */
                 catch (ModelException $e) {
                     $this->error_message = $e->errorMessage();
                     return false;
@@ -637,7 +637,7 @@ SQL;
             foreach ($a_values as $key => $a_record) {
                 try {
                     $results = $this->read($a_record);
-                }
+                } /** @noinspection PhpRedundantCatchClauseInspection */
                 catch (ModelException $e) {
                     return false;
                 }
@@ -649,7 +649,7 @@ SQL;
         else {
             try {
                 $results = $this->read($a_values);
-            }
+            } /** @noinspection PhpRedundantCatchClauseInspection */
             catch (ModelException $e) {
                 return false;
             }
@@ -730,6 +730,7 @@ SQL;
     {
         switch($this->db_type) {
             case 'pgsql':
+                /** @noinspection SyntaxError */
                 $query = "
                     SELECT a.attname as pkeyname, format_type(a.atttypid, a.atttypmod) AS data_type
                     FROM   pg_index i
