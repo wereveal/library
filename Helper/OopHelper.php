@@ -1,24 +1,19 @@
 <?php
 /**
- * @brief     Utility methods that don’t belong elsewhere.
- * @details   A tool box of disparate methods.
+ * @brief     Utility methods for Object Oriented Programming.
  * @ingroup   lib_helpers
- * @file      Ritc/Library/Helper/UtilityHelper.php
+ * @file      Ritc/Library/Helper/OopHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-05-15 11:46:59
+ * @version   1.0.0-alpha.0
+ * @date      2018-04-04 10:02:07
  * @note Change Log
- * - v1.0.0 - Initial version        - 2017-05-15 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2018-04-04 wer
  */
+
 namespace Ritc\Library\Helper;
 
-/**
- * Class UtilityHelper.
- * @class   UtilityHelper
- * @package Ritc\Library\Helper
- */
-class UtilityHelper
+class OopHelper
 {
     /**
      * Determines if a namespace has been declared.
@@ -37,4 +32,5 @@ class UtilityHelper
         }
         return false;
     }
+
 }

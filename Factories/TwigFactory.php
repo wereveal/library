@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Factories/TwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.1.1
- * @date      2018-03-12 12:10:16
+ * @version   3.1.2
+ * @date      2018-04-04 10:06:12
  * @note <b>Change Log</b>
+ * - v3.1.2   - Class renamed elsewhere reflected here                                                  - 2018-04-04 wer
  * - v3.1.1   - bug fixes                                                                               - 2018-03-12 wer
  * - v3.1.0   - Refactoring of TwigModel created the need for changes here.                             - 2017-06-20 wer
  * - v3.0.0   - Renamed getTwig to getTwigByFile and rewrote getTwig to use either getTwigByDb          - 2017-05-15 wer
@@ -36,7 +37,7 @@ namespace Ritc\Library\Factories;
 use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\LocateFile;
-use Ritc\Library\Helper\UtilityHelper;
+use Ritc\Library\Helper\OopHelper;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Services\Di;
 use Twig_Loader_Filesystem;
@@ -359,7 +360,7 @@ class TwigFactory
             $config_w_path = $config_file;
         }
         else {
-            $namespace = UtilityHelper::namespaceExists($namespace)
+            $namespace = OopHelper::namespaceExists($namespace)
                 ? $namespace
                 : '';
             $config_w_path = LocateFile::getConfigWithPath($config_file, $namespace);
