@@ -5,10 +5,11 @@
  * @file      Ritc/Library/Models/PeopleModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.2
- * @date      2017-12-14 13:14:00
+ * @version   1.4.3
+ * @date      2018-04-05 10:40:48
  * @note <b>Change Log</b>
- * - v1.4.2.   - bug fixCheckBoxes                                           - 2017-12-14 wer
+ * - v1.4.3    - bug fix in timestamp increment                              - 2018-04-05 wer
+ * - v1.4.2    - bug fixCheckBoxes                                           - 2017-12-14 wer
  * - v1.4.1    - ModelException changes reflected here                       - 2017-12-12 wer
  * - v1.4.0    - moved some methods from PeopleComplex to here               - 2017-12-05 wer
  *               bug fixes too.
@@ -381,7 +382,7 @@ class PeopleModel implements ModelInterface
         }
         $a_values = [
             'people_id'    => $people_id,
-            'bad_login_ts' => 'bad_login_ts + 60'
+            'bad_login_ts' => time() + 60
         ];
         try {
             return $this->genericUpdate($a_values);
@@ -407,15 +408,21 @@ class PeopleModel implements ModelInterface
                     $this->setLoggedOut($people_id);
                 }
                 catch (ModelException $e) {
-                    $message .= 'Model Exception for setLoggedOut: ' . $e->errorMessage();
+                    if (DEVELOPER_MODE) {
+                        $message .= '<br>Model Exception for setLoggedOut: ' . $e->errorMessage();
+                    }
                 }
             }
             catch (ModelException $e) {
-                $message .= 'Model exception for incrementBadLoginCount: ' . $e->errorMessage();
+                if (DEVELOPER_MODE) {
+                    $message .= '<br>Model exception for incrementBadLoginCount: ' . $e->errorMessage();
+                }
             }
         }
         catch (ModelException $e) {
-            $message .= 'Model exception for incrementBadLoginTimestamp: ' . $e->errorMessage();
+            if (DEVELOPER_MODE) {
+                $message .= '<br>Model exception for incrementBadLoginTimestamp: ' . $e->errorMessage();
+            }
         }
         return $message;
     }
@@ -561,8 +568,9 @@ class PeopleModel implements ModelInterface
             throw new ModelException('Missing required value: people_id', 320);
         }
         $a_values = [
-            'people_id'    => $people_id,
-            'is_logged_in' => 'true'
+            'people_id'      => $people_id,
+            'is_logged_in'   => 'true',
+            'last_logged_in' => date('Y-m-d')
         ];
         try {
             return $this->genericUpdate($a_values);
@@ -848,6 +856,11 @@ class PeopleModel implements ModelInterface
         return $a_person;
     }
 
+    /**
+     * Sets values from form to valid values for database.
+     * @param array $a_person
+     * @return array
+     */
     private function fixCheckBoxes(array $a_person = [])
     {
           $this->logIt(var_export($a_person, true), LOG_OFF, __METHOD__);
@@ -857,7 +870,7 @@ class PeopleModel implements ModelInterface
           $this->logIt(var_export($a_person, true), LOG_OFF, __METHOD__);
         return $a_person;
     }
-    
+
     /**
      * Hashes the password if it isn't already hashed.
      * Also verifies that it isn't a starred out password (value hidden).

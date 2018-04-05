@@ -105,7 +105,8 @@
             {% else %}
                 {% set is_checked = "" %}
             {% endif %}
-                        <input type="checkbox" name="person[is_logged_in]" id="is_logged_in" class="colorful" value="true"{{ is_checked }} />
+                        <input type="checkbox" name="person[is_logged_in]" id="is_logged_in" class="colorful" value="true"{{ is_checked }} />&nbsp;
+                        {% if person.last_logged_in != '1000-01-01' and person.last_logged_in %}{{ person.last_logged_in }}
                     </div>
                 </div>
             {% endif %}
