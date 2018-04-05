@@ -131,18 +131,19 @@ class PeopleView
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['person'] = [
-            'people_id'    => '',
-            'login_id'     => '',
-            'real_name'    => '',
-            'short_name'   => '',
-            'description'  => '',
-            'password'     => '',
-            'is_active'    => 'false',
-            'is_immutable' => 'false',
-            'is_logged_in' => 'false',
-            'created_on'   => date('Y-m-d H:i:s'),
-            'groups'       => [],
-            'highest_role' => 0
+            'people_id'      => '',
+            'login_id'       => '',
+            'real_name'      => '',
+            'short_name'     => '',
+            'description'    => '',
+            'password'       => '',
+            'is_active'      => 'false',
+            'is_immutable'   => 'false',
+            'is_logged_in'   => 'false',
+            'last_logged_in' => '1000-01-01',
+            'created_on'     => date('Y-m-d H:i:s'),
+            'groups'         => [],
+            'highest_role'   => 0
         ];
         $a_twig_values['action'] = 'create';
         $a_twig_values['person']['groups'] = $a_groups;
@@ -167,7 +168,7 @@ class PeopleView
         try {
             $a_person = $this->o_people_complex->readInfo($people_id);
               $log_message = 'person ' . var_export($a_person, TRUE);
-              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+              $this->logIt($log_message, LOG_ON, $meth . __LINE__);
             if (empty($a_person)) {
                 $a_message = ViewHelper::errorMessage('The person was not found. Please Try Again.');
                 return $this->renderList($a_message);
@@ -196,7 +197,7 @@ class PeopleView
             foreach ($a_person['groups'] as $a_person_group) {
                 if ($a_person_group['group_id'] === $a_default_groups[$key]['group_id']) {
                     $a_default_groups[$key]['checked'] = ' checked';
-                }                
+                }
             }
         }
         $a_person['groups'] = $a_default_groups;

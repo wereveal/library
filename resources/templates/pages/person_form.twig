@@ -99,15 +99,22 @@
                     <div class="col-md-2 col-sm-2 col-xs-2  aright">
                         <label for="is_logged_in">Is Logged In: </label>
                     </div>
-                    <div class="col-md-10 col-sm-10 col-xs-10 aleft">
+                    <div class="col-md-4 col-sm-4 col-xs-4 aleft">
             {% if person.is_logged_in == 'true' %}
                 {% set is_checked = " checked" %}
             {% else %}
                 {% set is_checked = "" %}
             {% endif %}
                         <input type="checkbox" name="person[is_logged_in]" id="is_logged_in" class="colorful" value="true"{{ is_checked }} />&nbsp;
-                        {% if person.last_logged_in != '1000-01-01' and person.last_logged_in %}{{ person.last_logged_in }}
                     </div>
+                {% if person.last_logged_in and person.last_logged_in != '1000-01-01' %}
+                    <div class="col-md-2 col-sm-2 col-xs-2 aright font-smaller italic">
+                        Last Logged In:
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-4 aleft font-smaller italic">
+                        {{ person.last_logged_in }}
+                    </div>
+                {% endif %}
                 </div>
             {% endif %}
                 <div class="row">
