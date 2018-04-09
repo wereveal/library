@@ -1,8 +1,8 @@
-{% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
+{% extends '@' ~ page_prefix ~ 'default/base.twig' %}
 {% block current_date %}{% endblock %}
 {% block body %}
     <div class="container">
-        {% include '@' ~ twig_prefix ~ 'snippets/title_instructions.twig' %}
+        {% include '@' ~ page_prefix ~ 'snippets/title_instructions.twig' %}
         <div class="row border-radius-bottom-right">
             <div class="col-md-12">
                 <form action="{{ public_dir }}/manager/people/" method="post" id="people-form">
@@ -149,7 +149,7 @@
                     {% if adm_level <= person.highest_role %}
                         <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />
                     {% else %}
-                        <i class="fa fa-check-square-o"></i>
+                        <i class="far fa-check-square-o"></i>
                     {% endif %}
                 {% else %}
                         <input type="checkbox" value="{{ group.group_id }}" name="groups[]" id="groups{{ group.group_id }}"{{ group.checked }} />

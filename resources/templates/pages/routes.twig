@@ -1,4 +1,4 @@
-{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
 {% block body %}
     <div class="row">
         <div class="col-md-12">
@@ -8,7 +8,7 @@
     {% if a_message.message != '' %}
     <div class="row">
         <div class="col-md-12">
-            {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
+            {% include '@' ~ page_prefix ~ 'snippets/message.twig' %}
         </div>
     </div>
     {% endif %}
@@ -27,7 +27,7 @@
                 <form action="{{ public_dir }}/manager/library/routes/save/" method= "post">
                     <div class="col-md-3">
                         <label class="hidden-sm-up" for="route[url_id]">URL: </label>
-                        {% include '@' ~ twig_prefix ~ 'elements/select.twig' %}
+                        {% include '@' ~ page_prefix ~ 'elements/select.twig' %}
                     </div>
                     <div class="col-md-3"><label class="hidden-sm-up" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="" maxlength="32" class="colorful w250"/></div>
                     <div class="col-md-2"><label class="hidden-sm-up" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="" maxlength="32" class="colorful w150"/></div>
@@ -48,7 +48,7 @@
             <form action="{{ public_dir }}/manager/library/routes/update/" method="post">
                 <div class="col-md-3">
                     <label class="hidden-sm-up" for="route[url_id]">URL: </label>
-                    {% include '@' ~ twig_prefix ~ 'elements/select.twig' with row only %}
+                    {% include '@' ~ page_prefix ~ 'elements/select.twig' with row only %}
                 </div>
                 <div class="col-md-3"><label class="hidden-sm-up" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="{{ row.route_class }}" maxlength="32" class="colorful w250"/></div>
                 <div class="col-md-2"><label class="hidden-sm-up" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="{{ row.route_method }}" maxlength="32" class="colorful w150"/></div>
@@ -79,7 +79,7 @@
                 <form action="{{ public_dir }}/manager/library/routes/save/" method= "post">
                     <div class="col-md-3">
                         <label class="hidden-sm-up" for="route[url_id]">URL: </label>
-                        {% include '@' ~ twig_prefix ~ 'elements/select.twig' %}
+                        {% include '@' ~ page_prefix ~ 'elements/select.twig' %}
                     </div>
                     <div class="col-md-3"><label class="hidden-sm-up" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="" maxlength="32" class="colorful w250"/></div>
                     <div class="col-md-2"><label class="hidden-sm-up" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="" maxlength="32" class="colorful w150"/></div>

@@ -59,7 +59,7 @@ class TestsView
         }
         $a_twig_values['a_buttons'] = $a_buttons;
         $tpl = $this->createTplString($a_twig_values);
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
@@ -78,6 +78,6 @@ class TestsView
         }
         $a_twig_values = array_merge($a_twig_values, $a_result_values);
         $tpl = $this->createTplString($a_twig_values);
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 }

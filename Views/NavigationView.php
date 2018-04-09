@@ -79,9 +79,7 @@ class NavigationView
             'hidden_value' => ''
         ];
         $tpl = $this->createTplString($a_twig_values);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
@@ -137,7 +135,7 @@ class NavigationView
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/navigation_form.twig';
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
@@ -159,7 +157,7 @@ class NavigationView
         );
         $a_twig_values = array_merge($a_twig_values, $a_values);
         $tpl = '@' . LIB_TWIG_PREFIX . 'page/verify_delete.twig';
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**

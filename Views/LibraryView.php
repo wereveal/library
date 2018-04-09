@@ -49,12 +49,16 @@ class LibraryView
      */
     public function renderLandingPage(array $a_message = [])
     {
+        $meth = __METHOD__ . '.';
         $this->setAdmLevel($_SESSION['login_id']);
         $a_values = $this->createDefaultTwigValues($a_message, '/manager/config/');
         $a_nav = $this->retrieveNav('ConfigLinks');
         $a_values['links'] = $a_nav;
         $tpl = $this->createTplString($a_values);
-        return $this->o_twig->render($tpl, $a_values);
+        $log_message = 'twig values ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $this->logIt("Template: " . $tpl, LOG_OFF, $meth . __LINE__);
+        return $this->renderIt($tpl, $a_values);
     }
 
     /**
@@ -78,10 +82,10 @@ class LibraryView
             'title'       => 'This is a Temp Page',
             'a_message'   => $a_message,
             'body_text'   => $body_text,
-            'twig_prefix' => LIB_TWIG_PREFIX
+            'page_prefix' => LIB_TWIG_PREFIX
         ];
         $a_values = array_merge($a_page_values, $a_values);
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/list_logins.twig';
-        return $this->o_twig->render($tpl, $a_values);
+        return $this->renderIt($tpl, $a_values);
     }
 }

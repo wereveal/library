@@ -1,8 +1,8 @@
-{% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
+{% extends '@' ~ page_prefix ~ 'default/base.twig' %}
 {% block current_date %}{% endblock %}
 {% block body %}
     <div class="container">
-        {% include '@' ~ twig_prefix ~ 'snippets/title_instructions.twig' %}
+        {% include '@' ~ page_prefix ~ 'snippets/title_instructions.twig' %}
         <div class="row {{ class }}">
             <div class="col-md-12">
             <form action="{{ public_dir }}/manager/people/details/" method= "post">

@@ -23,7 +23,6 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\PeopleModel;
@@ -168,7 +167,7 @@ class PeopleView
         try {
             $a_person = $this->o_people_complex->readInfo($people_id);
               $log_message = 'person ' . var_export($a_person, TRUE);
-              $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             if (empty($a_person)) {
                 $a_message = ViewHelper::errorMessage('The person was not found. Please Try Again.');
                 return $this->renderList($a_message);

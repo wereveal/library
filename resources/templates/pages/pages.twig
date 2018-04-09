@@ -1,11 +1,11 @@
-{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
 {% block body %}
     <div class="container">
         <h1 class="smaller">{{ page_title }}</h1>
     </div>
     {% if a_message.message != '' %}
     <div class="container">
-        {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
+        {% include '@' ~ page_prefix ~ 'snippets/message.twig' %}
     </div>
     {% endif %}
     <div class="container">
@@ -22,10 +22,10 @@
 {% for page in a_pages %}
     {% if 'library' not in page.page_url %}
         {% set class = loop.index % 2 == 0 ? 'normal-row' : 'alt-row' %}
-        {% include '@' ~ twig_prefix ~ 'snippets/page_line.twig' %}
+        {% include '@' ~ page_prefix ~ 'snippets/page_line.twig' %}
     {% elseif adm_lvl == 10 %}
         {% set class = loop.index % 2 == 0 ? 'normal-row' : 'alt-row' %}
-        {% include '@' ~ twig_prefix ~ 'snippets/page_line.twig' %}
+        {% include '@' ~ page_prefix ~ 'snippets/page_line.twig' %}
     {% endif %}
 {% endfor %}
     </div>

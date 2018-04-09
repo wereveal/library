@@ -132,7 +132,7 @@ class PageView
             'form_ts'     => $_SESSION['idle_timestamp'],
             'hobbit'      => '',
             'a_menus'     => $this->retrieveNav('ManagerLinks'),
-            'twig_prefix' => LIB_TWIG_PREFIX
+            'page_prefix' => LIB_TWIG_PREFIX
         ];
         $a_values = array_merge($a_page_values, $a_values);
 
@@ -168,7 +168,7 @@ class PageView
         }
 
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/page_form.twig';
-        return $this->o_twig->render($tpl, $a_values);
+        return $this->renderIt($tpl, $a_values);
     }
 
     /**
@@ -195,7 +195,7 @@ class PageView
             'hobbit'      => '',
             'a_menus'     => $this->retrieveNav('ManagerLinks'),
             'adm_lvl'     => $this->adm_level,
-            'twig_prefix' => LIB_TWIG_PREFIX
+            'page_prefix' => LIB_TWIG_PREFIX
         );
         $a_values = array_merge($a_page_values, $a_values);
         if (count($a_message) != 0) {
@@ -225,7 +225,7 @@ class PageView
         }
         $a_values['a_pages'] = $a_pages;
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/pages.twig';
-        return $this->o_twig->render($tpl, $a_values);
+        return $this->renderIt($tpl, $a_values);
     }
 
     /**
@@ -254,11 +254,11 @@ class PageView
             'hobbit'       => '',
             'a_menus'      => $this->retrieveNav('ManagerLinks'),
             'adm_lvl'      => $this->adm_level,
-            'twig_prefix'  => LIB_TWIG_PREFIX
+            'page_prefix'  => LIB_TWIG_PREFIX
         );
         $a_values = array_merge($a_values, $a_page_values);
         $this->logIt('Twig Values: ' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
-        return $this->o_twig->render($tpl, $a_values);
+        return $this->renderIt($tpl, $a_values);
     }
 }

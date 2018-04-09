@@ -1,11 +1,11 @@
-{% extends '@' ~ twig_prefix ~ 'pages/index.twig' %}
+{% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
 {% block body %}
     <div class="container">
         <h1 class="smaller">Manage a Page</h1>
     </div>
     {% if a_message.message != '' %}
     <div class="container">
-    {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
+    {% include '@' ~ page_prefix ~ 'snippets/message.twig' %}
     </div>
     {% endif %}
     <div class="container">
@@ -19,7 +19,7 @@
             </div>
         {% else %}
             <div class="col-md-10 alt-row aleft">
-                {% include '@' ~ twig_prefix ~ 'elements/select.twig' with select %}
+                {% include '@' ~ page_prefix ~ 'elements/select.twig' with select %}
             </div>
         {% endif %}
         </div>

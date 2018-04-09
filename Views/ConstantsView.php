@@ -86,6 +86,6 @@ class ConstantsView
             $a_twig_values['a_constants'] = [];
         }
         $tpl = $this->createTplString($a_twig_values);
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 }

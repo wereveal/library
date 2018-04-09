@@ -86,7 +86,7 @@ class GroupsView
             $a_values['a_groups'] = $a_groups;
         }
         $tpl = $this->createTplString($a_values);
-        return $this->o_twig->render($tpl, $a_values);
+        return $this->renderIt($tpl, $a_values);
     }
 
     /**
@@ -111,6 +111,6 @@ class GroupsView
         ];
         $a_twig_values = array_merge($a_twig_values, $a_values);
         $tpl = $this->createTplString($a_twig_values);
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 }

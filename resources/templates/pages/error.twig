@@ -1,9 +1,9 @@
-{% extends '@' ~ twig_prefix ~ 'default/base.twig' %}
+{% extends '@' ~ page_prefix ~ 'default/base.twig' %}
 {% block title %}{{ parent() }}: Error{% endblock %}
 {% block body %}
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
-            {% include '@' ~ twig_prefix ~ 'snippets/message.twig' %}
+            {% include '@' ~ page_prefix ~ 'snippets/message.twig' %}
         </div>
     </div>
 {% endblock %}

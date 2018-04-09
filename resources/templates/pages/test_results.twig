@@ -7,7 +7,7 @@
             <li>Skipped: {{ skipped_tests }}</li>
             <li class="bold">Total Tests: {{ num_o_tests }}</li>
         {% if passed_test_names %}
-            <li><span class="green">Passed Test Names <i class="fa fa-thumbs-o-up"></i></span>
+            <li><span class="green">Passed Test Names <i class="far fa-thumbs-o-up"></i></span>
                 <ul>
                     {% for passedTest in passed_test_names %}
                         {% if passedTest.subtest_names %}
@@ -26,10 +26,10 @@
                 </ul>
             </li>
         {% else %}
-            <li>No Passed Tests <i class="fa fa-thumbs-o-down"></i></li>
+            <li>No Passed Tests <i class="far fa-thumbs-o-down"></i></li>
         {% endif %}
         {% if failed_test_names is not empty %}
-            <li><span class="red">Failed Test Names <i class=" fa fa-thumbs-o-down"></i></span>
+            <li><span class="red">Failed Test Names <i class=" far fa-thumbs-o-down"></i></span>
                 <ul>
                 {% for failedTest in failed_test_names %}
                     {% if failedTest.subtest_failed %}
@@ -57,7 +57,7 @@
             </li>
         {% endif %}
         {% if skipped_test_names %}
-            <li>Skipped Test Names <i class="fa fa-hand-peace-o"></i>
+            <li>Skipped Test Names <i class="far fa-hand-peace-o"></i>
                 <ul>
                 {% for skipped in skipped_test_names %}
                     <li>{{ skipped }}</li>

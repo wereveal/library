@@ -95,7 +95,7 @@ class UrlsView
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/urls/');
         $a_twig_values['a_urls'] = $a_new_urls;
         $tpl = $this->createTplString($a_twig_values);
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
@@ -117,6 +117,6 @@ class UrlsView
         $a_twig_values['hidden_value'] = $a_values['url_id'];
         $a_twig_values['btn_value']    = 'URL';
         $tpl = $this->createTplString($a_twig_values);
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 }

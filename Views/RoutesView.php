@@ -79,7 +79,7 @@ class RoutesView
             'hobbit'  => '',
             'a_menus' => $this->retrieveNav('ManagerLinks'),
             'adm_lvl' => $this->adm_level,
-            'twig_prefix' => LIB_TWIG_PREFIX
+            'page_prefix' => LIB_TWIG_PREFIX
         );
         $a_values = array_merge($a_page_values, $a_values);
 
@@ -157,13 +157,13 @@ class RoutesView
                     'class'   => 'form-control w200',
                     'options' => $a_option
                 ];
-                $a_routes[$key]['twig_prefix'] = LIB_TWIG_PREFIX;
+                $a_routes[$key]['page_prefix'] = LIB_TWIG_PREFIX;
             }
 
         }
         $a_values['a_routes'] = $a_routes;
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/routes.twig';
-        return $this->o_twig->render($tpl, $a_values);
+        return $this->renderIt($tpl, $a_values);
     }
 
     /**
@@ -191,13 +191,13 @@ class RoutesView
             'hidden_value' => $a_values['route']['route_id'],
             'tolken'       => $a_values['tolken'],
             'form_ts'      => $a_values['form_ts'],
-            'twig_prefix'  => LIB_TWIG_PREFIX
+            'page_prefix'  => LIB_TWIG_PREFIX
         ];
         $a_twig_values = array_merge($a_twig_values, $a_more_values);
         $log_message = 'Twig Values: ' . var_export($a_twig_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
-        return $this->o_twig->render($tpl, $a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 }
