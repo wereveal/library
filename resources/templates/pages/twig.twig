@@ -1,0 +1,23 @@
+{% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
+{% block body %}
+<div class="container">
+    {% for tpl in a_tpls %}
+        {{ tpl.tpl_id }}|{{ tpl.td_id }}|{{ tpl.tpl_name }}<br>
+    {% endfor %}
+</div>
+<div class="container">
+    {% for dir in a_dirs %}
+        {{ dir.td_id }}|{{ dir.tp_id }}|{{ dir.td_name }}<br>
+    {% endfor %}
+</div>
+<div class="container">
+    {% for prefix in a_prefix %}
+       {{ prefix.tp_id }}|{{ prefix.tp_prefix }}|{{ prefix.tp_path }}<br>
+    {% endfor %}
+</div>
+<div class="container">
+    <h3>Instructions</h3>
+    <ul>
+    </ul>
+</div>
+{% endblock %}

@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Models/ConstantsCreator.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.1.0
- * @date      2018-04-03 14:46:49
+ * @version   5.1.1
+ * @date      2018-04-09 10:45:22
  * @note <b>Change Log</b>
+ * - v5.1.1 - Bug fix                                                               - 2018-04-09 wer
  * - v5.1.0 - Bug fixes, added additional constants for Lib and Admin               - 2018-04-03 wer
  *            Added method to build TWIG_PREFIXES on the fly from the
  *            twig_prefix table
@@ -385,7 +386,9 @@ class ConstantsCreator
             foreach ($a_results as $a_record) {
                 $twig_prefix = $a_record['tp_prefix'];
                 $const_name = strtoupper($a_record['tp_prefix']) . 'TWIG_PREFIX';
-                define($const_name, $twig_prefix);
+                if (!defined($const_name)) {
+                    define($const_name, $twig_prefix);
+                }
                 if ($a_record['tp_default'] == 'true') {
                     $default_twig_prefix = $twig_prefix;
                 }

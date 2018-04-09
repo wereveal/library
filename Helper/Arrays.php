@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Helper/Arrays.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.2.2
- * @date      2017-12-14 12:55:24 
+ * @version   3.3.0
+ * @date      2018-04-09 13:49:00
  * @note <b>Change Log</b>
+ * - v3.3.0 - Added new method to do muliple sort on database array                       - 2018-04-09 wer
  * - v3.2.2 - bug fix                                                                     - 2017-12-14 wer
  * - v3.2.1 - bug fix 0 == '' is true but 0 === '' is false so bugs                       - 2017-12-05 wer
  * - v3.2.0 - New method to removed key/value pairs where value is empty                  - 2017-12-05 wer
@@ -15,13 +16,13 @@
  * - v3.1.0 - Moved a couple methods from DbCommonTraits to Arrays                        - 2016-09-23 wer
  * - v3.0.1 - Bug Fix                                                                     - 2016-09-23 wer
  * - v3.0.0 - Depreciated clearArrayValues in favor of two new methods.                   - 2016-09-19 wer
- * -          Arrays::cleanValues() by default removes php and mysql commands from  
- * -          the values in the array. Optionally it can call Arrays::encodeValues().  
- * -          Arrays::encodeValues() encodes the values of the array using filter_var  
- * -          and with the FILTER_SANITIZE_STRING filter and optional flags.  
+ * -          Arrays::cleanValues() by default removes php and mysql commands from
+ * -          the values in the array. Optionally it can call Arrays::encodeValues().
+ * -          Arrays::encodeValues() encodes the values of the array using filter_var
+ * -          and with the FILTER_SANITIZE_STRING filter and optional flags.
  * - v2.8.0 - Added new method inAssocArrayRecursive()                                    - 2016-04-12 wer
  * - v2.7.0 - Changed entity coding/decoding to be definable via parameter.               - 11/25/2015 wer
- * -          Defaults to ENT_QUOTES.  
+ * -          Defaults to ENT_QUOTES.
  * - v2.6.1 - bug fix, stripTags -- logic error                                           - 11/12/2015 wer
  * - v2.6.0 - new method, moved from Tester class, can be more generic.                   - 11/02/2015 wer
  * - v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs                - 10/22/2015 wer
@@ -31,7 +32,7 @@
  * - v2.3.0 - New method, inArrayRecursive                                                - 09/10/2015 wer
  * - v2.2.0 - Removed use of abstract class Base                                          - 09/03/2015 wer
  * - v2.1.0 - After looking at the inconsistency, changed to be more consistent           - 07/31/2015 wer
- * -          Also changed variable name to be more descriptive than array.  
+ * -          Also changed variable name to be more descriptive than array.
  * - v2.0.1 - oops, missed one to be static, changed its name                             - 07/31/2015 wer
  * - v2.0.0 - changed methods to be static                                                - 01/27/2015 wer
  * - v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it         - 12/05/2014 wer
@@ -41,7 +42,7 @@
  * - v1.1.1 - match package change                                                        - 12/19/2013 wer
  * - v1.1.0 - namespace changes                                                           - 07/30/2013 wer
  * - v1.0.3 - moved array methods from class Strings to here                              - 03/27/2013 wer
- * - v1.0.2 - added new method  
+ * - v1.0.2 - added new method
  * - v1.0.1 - new namespace, FIG standards (mostly)
  */
 namespace Ritc\Library\Helper;
@@ -475,6 +476,44 @@ class Arrays
             }
         }
         return true;
+    }
+
+    /**
+     * Tries to do a multi array sort from database data.
+     * @param array $a_data
+     * @param array $a_criteria
+     * @return array|mixed
+     */
+    public static function multiSort(array $a_data = [], array $a_criteria = [])
+    {
+        if (empty($a_data) || empty($a_criteria)) {
+            return $a_data;
+        }
+        $a_columns = [];
+        foreach ($a_data[0] as $column => $value) {
+            $a_columns[$column] = [];
+        }
+        foreach ($a_data as $key => $row) {
+            foreach ($a_columns as $col_name => $col_value) {
+                $a_columns[$col_name][$key] = $row[$col_name];
+            }
+        }
+        $eval_statement = 'array_multisort(';
+        $next = false;
+        foreach ($a_criteria as $column_name => $sort_criteria) {
+            if ($next) {
+                $eval_statement .= ', ';
+            }
+            else {
+                $next = true;
+            }
+            $this_criteria = $sort_criteria = 'ASC'
+                ? SORT_ASC
+                : SORT_DESC;
+            $eval_statement .= '$a_columns[' . $column_name . '], ' . $this_criteria;
+        }
+        $eval_statement .= ', $a_data); return $a_data;';
+        return eval($eval_statement);
     }
 
     /**

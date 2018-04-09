@@ -16,6 +16,7 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
+use Ritc\Library\Views\TwigView;
 
 /**
  * Class TwigController.
@@ -41,10 +42,10 @@ class TwigController implements ControllerInterface
      */
     public function route()
     {
+        $o_view = new TwigView($this->o_di);
         switch ($this->main_action) {
             default:
-
+                return $o_view->render();
         }
-        return '';
     }
 }
