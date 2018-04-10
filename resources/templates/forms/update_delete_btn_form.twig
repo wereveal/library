@@ -1,6 +1,6 @@
 <form action="{{ form_action }}" method="post"{% if form_class != '' %} class="{{ form_class }}{% endif %}">
-    <button type="submit" name="submit" value="modify" class="btn {{ btn_primary }} {{ btn_size }}">Update</button>
-    <button type="submit" name="submit" value="verify_delete" class="btn {{ btn_danger }} {{ btn_size }}">Delete</button>
+    <button type="submit" name="submit" value="modify" class="btn {{ btn_update }} {{ btn_size }}">Update</button>
+    <button type="submit" name="submit" value="verify_delete" class="btn {{ btn_delete }} {{ btn_size }}">Delete</button>
     <input type="hidden" name="tolken" value="{{ tolken }}" />
     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
     <label for="hobbit" class="hobbit">Humans don't fill this in

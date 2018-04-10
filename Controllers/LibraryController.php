@@ -76,6 +76,9 @@ class LibraryController implements ControllerInterface
                     $this->o_auth->logout($_SESSION['login_id']);
                     header("Location: " . SITE_URL . '/manager/');
                     break;
+                case 'ajax':
+                    $o_c = new AjaxController($this->o_di);
+                    break;
                 case 'constants':
                     $o_c = new ConstantsController($this->o_di);
                     break;

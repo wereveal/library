@@ -1,0 +1,168 @@
+{% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
+{% block body %}
+<div class="container">
+    <div class="row list-header">
+        <div class="col">Template Name</div>
+        <div class="col">Directory Name</div>
+        <div class="col">Prefix</div>
+        <div class="col">Immutable</div>
+        <div class="col">Actions</div>
+    </div>
+    <form action="{{ public_dir }}/manager/config/twig/" method="post" class="">
+    <div class="row list-stripped even">
+        <div class="col even">
+            <label for="template0"></label>
+            <input type="text" id="template0" name="template0">
+        </div>
+        <div class="col even">
+            <label for="prefix0"></label>
+            <select id="prefix0" name="prefix0" onchange="changeTwigDirs(this)">
+                <option value="" selected>Twig Prefixes</option>
+            {% for tp in a_prefix %}
+                <option value="{{ tp.tp_id }}">{{ tp.tp_prefix }}</option>
+            {% endfor %}
+            </select>
+        </div>
+        <div class="col">
+            <label for="directory0"></label>
+            <select id="directory0" name="directory0">
+                <option value="" selected>Select Prefix First</option>
+            </select>
+        </div>
+        <div class="col">
+            <input class="form-check-input" id="immutable0" name="immutable" type="checkbox" value="true" checked>
+            <label class="form-check-label" for="immutable0">Immutable</label>
+        </div>
+        <div class="col">
+            <button type="submit" name="submit" value="" class="btn btn-green btn-xs">New</button>
+            <input type="hidden" id="tp_id0" name="tp_id0" value="">
+            {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+        </div>
+    </div>
+    </form>
+{% for tpl in a_tpls %}
+    {% if loop.index is even %}
+        {% set class='even' %}
+    {% else %}
+        {% set class='odd' %}
+    {% endif %}
+    {% set this_tpl_id = 'tpl_id' ~ loop.index %}
+    {% set this_tpl_id = 'template' ~ loop.index %}
+    {% set this_tp_id = 'tp_id' ~ loop.index %}
+    {% set this_prefix = 'prefix' ~ loop.index %}
+    {% set this_directory = 'directory' ~ loop.index %}
+    {% set this_checkbox = 'immutable' ~ loop.index %}
+    <form action="{{ public_dir }}/manager/config/twig/" method="post" class="">
+    <div class="row list-stripped {{ class }}">
+    {% if tpl.tpl_immutable == 'true' %}
+        <div class="col {{ class }}">{{ tpl.tpl_name }}</div>
+        <div class="col {{ class }}">{{ tpl.twig_dir }}</div>
+        <div class="col {{ class }}">{{ tpl.twig_prefix }}</div>
+        {% if adm_lvl >= 9 %}
+        <div class="col {{ class }}">
+            <input class="form-check-input" id="{{ this_checkbox }}" name="immutable" type="checkbox" value="true" checked>
+            <label class="form-check-label" for="{{ this_checkbox }}">Immutable</label>
+        </div>
+        <div class="col {{ class }}">
+            <button type="submit" name="submit" value="update" class="btn btn-green btn-xs">Update</button>
+            <input type="hidden" id="{{ this_tpl_id }}" name="tp_id" value="{{ tpl.tpl_id }}">
+            {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+        </div>
+        {% else %}
+        <div class="col {{ class }}">&nbsp;</div>
+        <div class="col {{ class }}">Unable to Change</div>
+        {% endif %}
+    {% else %}
+        <div class="col {{ class }}">
+            <label for="{{ this_tpl }}"></label>
+            <input type="text" id="{{ this_tpl }}" name="tpl_name" value="{{ tpl.tpl_name }}">
+        </div>
+        <div class="col {{ class }}">
+            <label for="{{ this_tp_id }}"></label>
+            <select id="{{ this_tp_id }}" name="tp_id" onchange="changeTwigDirs(this)">
+                <option value="" selected>Twig Prefixes</option>
+                {% for tp in a_prefix %}
+                    <option value="{{ tp.tp_id }}">{{ tp.tp_prefix }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col {{ class }}">
+            <label for="{{ this_directory }}"></label>
+            <select id="{{ this_directory }}" name="{{ this_directory }}">
+                <option value="" selected>Select Prefix First</option>
+            </select>
+        </div>
+        <div class="col {{ class }}">
+            {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with checkbox_values only %}
+        </div>
+        <div class="col {{ class }}">
+            <button type="submit" name="submit" value="modify" class="btn btn-green btn-xs">Update</button>
+            <button type="submit" name="submit" value="verify_delete" class="btn btn-outline-danger btn-xs">Delete</button>
+            {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+            <input type="hidden" id="{{ this_tpl_id }}" name="tp_id" value="{{ tpl.tpl_id }}">
+        </div>
+    {% endif %}
+    </div>
+    </form>
+{% endfor %}
+</div>
+<div class="container">
+    <div class="row list-header">
+        <div class="col">Directory Name</div>
+        <div class="col">Prefix</div>
+        <div class="col">Actions</div>
+    </div>
+{% for dir in a_dirs %}
+    {% if loop.index is even %}
+        {% set class = 'even' %}
+    {% else %}
+        {% set class = 'odd' %}
+    {% endif %}
+    {% set td_name = 'td_name' ~ loop.index %}
+    {% set tp_id = 'tp_id' ~ loop.index %}
+    {% set td_id = 'td_id' ~ loop.index %}
+    <form action="{{ public_dir }}/manager/config/twig/" method="post" class="huh">
+        <div class="row list-stripped {{ class }}">
+            <div class="col {{ class }}">
+                <label for="{{ td_name }}"></label>
+                <input type="text" id="{{ td_name }}" name="td_name" value="{{ dir.td_name }}" class="colorful">
+            </div>
+            <div class="col {{ class }}">
+                <label for="{{ tp_id }}"></label>
+                <select id="{{ tp_id }}" name="tp_id">
+                    <option value="">Select Prefix</option>
+                {% for tdp in a_prefix %}
+                {% if dir.tp_id == tdp.tp_id %}
+                    {% set selected = ' selected' %}
+                {% else %}
+                    {% set selected = '' %}
+                {% endif %}
+                    <option value="{{ tpd.tp_id }}"{{ selected }}>{{ tpd.tp_prefix }}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <div class="col {{ class }}">
+                <button type="submit" name="submit" value="modify" class="btn btn-green btn-xs">Update</button>
+                <button type="submit" name="submit" value="verify_delete" class="btn btn-outline-danger btn-xs">Delete</button>
+                <input type="hidden" id="{{ td_id }}" name="td_id" value="{{ dir.td_id }}">
+                {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+            </div>
+        </div>
+    </form>
+{% endfor %}
+</div>
+<div class="container">
+    {% for prefix in a_prefix %}
+       {{ prefix.tp_id }}|{{ prefix.tp_prefix }}|{{ prefix.tp_path }}<br>
+    {% endfor %}
+</div>
+<div class="container">
+    <h3>Instructions</h3>
+    <ul>
+    </ul>
+</div>
+{% endblock %}
+{% block bottom_js %}
+    {{ parent() }}
+    <script src="{{ public_dir }}/assets/js/config.js"></script>
+{% endblock %}

@@ -510,7 +510,7 @@ class Arrays
             $this_criteria = $sort_criteria = 'ASC'
                 ? SORT_ASC
                 : SORT_DESC;
-            $eval_statement .= '$a_columns[' . $column_name . '], ' . $this_criteria;
+            $eval_statement .= '$a_columns[' . "'" . $column_name . "'], " . $this_criteria;
         }
         $eval_statement .= ', $a_data); return $a_data;';
         return eval($eval_statement);

@@ -1,65 +1,70 @@
 {% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
 {% block body %}
-<div class="container">
-    <div class="row list-header">
-        <div class="col">Template Name</div>
-        <div class="col">Directory Name</div>
-        <div class="col">Prefix</div>
-        <div class="col">Actions</div>
+    <div class="container">
+        <div class="row list-header">
+            <div class="col">Template Name</div>
+            <div class="col">Directory Name</div>
+            <div class="col">Prefix</div>
+            <div class="col">Immutable</div>
+            <div class="col">Actions</div>
+        </div>
+        <form action="{{ public_dir }}/manager/config/twig/" method="post" class="">
+            <div class="row list-stripped even">
+                <div class="col even">
+                    <label for="template0"></label>
+                    <input type="text" id="template0" name="template0">
+                </div>
+                <div class="col even">
+                    <label for="prefix0"></label>
+                    <select id="prefix0" name="prefix0" onchange="changeTwigDirs(this)">
+                        <option value="" selected>Twig Prefixes</option>
+                        {% for tp in a_prefix %}
+                            <option value="{{ tp.tp_id }}">{{ tp.tp_prefix }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="directory0"></label>
+                    <select id="directory0" name="directory0">
+                        <option value="" selected>Select Prefix First</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <input class="form-check-input" id="immutable0" name="immutable" type="checkbox" value="true" checked>
+                    <label class="form-check-label" for="immutable0">Immutable</label>
+                </div>
+                <div class="col">
+                    <button type="submit" name="submit" value="new_tpl" class="btn btn-green btn-xs">New</button>
+                    <input type="hidden" id="tp_id0" name="tp_id" value="">
+                    {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                </div>
+            </div>
+        </form>
+        {% for tpl in a_tpls %}
+        {% if loop.index is even %}
+            {% set class='even' %}
+        {% else %}
+            {% set class='odd' %}
+        {% endif %}
+        {% set this_tpl_id = 'tpl_id' ~ loop.index %}
+        {% set this_tpl_name = 'template' ~ loop.index %}
+        {% set this_tp_id = 'tp_id' ~ loop.index %}
+        {% set this_prefix = 'prefix' ~ loop.index %}
+        {% set this_directory = 'directory' ~ loop.index %}
+        {% set this_checkbox = 'immutable' ~ loop.index %}
+        <div class="container">
+            Class: {{ class }}<br>
+            this_tpl_id: {{ this_tpl_id }} -- {{ tpl.tpl_id }}<br>
+            this_tpl_name: {{ this_tpl_name }} -- {{ tpl.tpl_name }}<br>
+            this_tp_id: {{ this_tp_id }} -- {{ tpl.tp_id }}<br>
+            this_prefix: {{ this_prefix }} -- {{ tpl.twig_prefix }}<br>
+            this_directory: {{ this_directory }} -- {{ tpl.td_id }}: {{ tpl.twig_dir }}<br>
+            this_checkbox: {{ this_checkbox }} -- {{ tpl.tpl_immutable }}<br>
+        </div>
+        {% endfor %}
     </div>
-    <form action="{{ public_dir }}/manager/config/twig/" method="post">
-    <div class="row list-stripped even">
-        <div class="col even">
-            <input type="text" id="new-tpl" name="new-tpl">
-        </div>
-        <div class="col even">
-            <select id="prefix-new-tpl" name="prefix">
-                <option value="" selected>Twig Prefixes</option>
-            {% for tp in a_prefix %}
-                <option value="{{ tp.tp_id }}">{{ tp.tp_prefix }}</option>
-            {% endfor %}
-            </select>
-        {% for prefix in a_prefix %}
-        </div>
-        <div class="col">
-            <select id="directory" name="directory">
-                <option value="" selected>Select Prefix First</option>
-            </select>
-        </div>
-        <div class="col">
-            {% include '@' ~ page_prefix ~ 'forms/single_button_form.twig' %}
-        </div>
-    </div>
-    </form>
-{% for tpl in a_tpls %}
-    {% if loop.index is even %}
-        {% set class='even' %}
-    {% else %}
-        {% set class='odd' %}
-    {% endif %}
-    <div class="row list-stripped {{ class }}">
-        <div class="col {{ class }}">{{ tpl.tpl_name }}</div>
-        <div class="col {{ class }}">{{ tpl.td_name }}</div>
-        <div class="col {{ class }}">{{ tpl.tpl_prefix }}</div>
-        <div class="col {{ class }}">
-            {% include '@' ~ page_prefix ~ 'forms/update_delete_btn_form.twig' %}
-        </div>
-    </div>
-{% endfor %}
-</div>
-<div class="container">
-    {% for dir in a_dirs %}
-        {{ dir.td_id }}|{{ dir.tp_id }}|{{ dir.td_name }}<br>
-    {% endfor %}
-</div>
-<div class="container">
-    {% for prefix in a_prefix %}
-       {{ prefix.tp_id }}|{{ prefix.tp_prefix }}|{{ prefix.tp_path }}<br>
-    {% endfor %}
-</div>
-<div class="container">
-    <h3>Instructions</h3>
-    <ul>
-    </ul>
-</div>
+{% endblock %}
+{% block bottom_js %}
+    {{ parent() }}
+    <script src="{{ public_dir }}/assets/js/config.js"></script>
 {% endblock %}
