@@ -1,9 +1,51 @@
 {% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
 {% block body %}
 <div class="container">
-    {% for tpl in a_tpls %}
-        {{ tpl.tpl_id }}|{{ tpl.td_id }}|{{ tpl.tpl_name }}<br>
-    {% endfor %}
+    <div class="row list-header">
+        <div class="col">Template Name</div>
+        <div class="col">Directory Name</div>
+        <div class="col">Prefix</div>
+        <div class="col">Actions</div>
+    </div>
+    <form action="{{ public_dir }}/manager/config/twig/" method="post">
+    <div class="row list-stripped even">
+        <div class="col even">
+            <input type="text" id="new-tpl" name="new-tpl">
+        </div>
+        <div class="col even">
+            <select id="prefix-new-tpl" name="prefix">
+                <option value="" selected>Twig Prefixes</option>
+            {% for tp in a_prefix %}
+                <option value="{{ tp.tp_id }}">{{ tp.tp_prefix }}</option>
+            {% endfor %}
+            </select>
+        {% for prefix in a_prefix %}
+        </div>
+        <div class="col">
+            <select id="directory" name="directory">
+                <option value="" selected>Select Prefix First</option>
+            </select>
+        </div>
+        <div class="col">
+            {% include '@' ~ page_prefix ~ 'forms/single_button_form.twig' %}
+        </div>
+    </div>
+    </form>
+{% for tpl in a_tpls %}
+    {% if loop.index is even %}
+        {% set class='even' %}
+    {% else %}
+        {% set class='odd' %}
+    {% endif %}
+    <div class="row list-stripped {{ class }}">
+        <div class="col {{ class }}">{{ tpl.tpl_name }}</div>
+        <div class="col {{ class }}">{{ tpl.td_name }}</div>
+        <div class="col {{ class }}">{{ tpl.tpl_prefix }}</div>
+        <div class="col {{ class }}">
+            {% include '@' ~ page_prefix ~ 'forms/update_delete_btn_form.twig' %}
+        </div>
+    </div>
+{% endfor %}
 </div>
 <div class="container">
     {% for dir in a_dirs %}
