@@ -1,46 +1,48 @@
 {% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
 {% block body %}
-    <div class="container">
-        <div class="row list-header">
+    <div class="container container-bordered-square">
+        <div class="row list-header d-none d-lg-flex">
             <div class="col">Template Name</div>
-            <div class="col">Directory Name</div>
             <div class="col">Prefix</div>
+            <div class="col">Directory Name</div>
             <div class="col">Immutable</div>
             <div class="col">Actions</div>
         </div>
         <form action="{{ public_dir }}/manager/config/twig/" method="post" class="">
             <div class="row list-stripped even">
-                <div class="col even">
-                    <label for="template0"></label>
+                <div class="col-lg even">
+                    <label for="template0" class="d-lg-none pr-h">Template Name:</label>
                     <input type="text" id="template0" name="template0">
                 </div>
-                <div class="col even">
-                    <label for="prefix0"></label>
-                    <select id="prefix0" name="prefix0" onchange="changeTwigDirs(this)">
+                <div class="col-md even">
+                    <label for="prefix0" class="d-none">Twig Prefixes</label>
+                    <select id="prefix0" name="tp_id" onchange="changeTwigDirs(this)">
                         <option value="" selected>Twig Prefixes</option>
                         {% for tp in a_prefix %}
                             <option value="{{ tp.tp_id }}">{{ tp.tp_prefix }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col">
-                    <label for="directory0"></label>
-                    <select id="directory0" name="directory0">
+                <div class="col-md even">
+                    <label for="directory0" class="d-none">Directory</label>
+                    <select id="directory0" name="td_id">
                         <option value="" selected>Select Prefix First</option>
                     </select>
                 </div>
-                <div class="col">
-                    <input class="form-check-input" id="immutable0" name="immutable" type="checkbox" value="true" checked>
-                    <label class="form-check-label" for="immutable0">Immutable</label>
+                <div class="col-lg even">
+                    <div class="colorful-checkbox">
+                        <input id="immutable0" name="tpl_immutable" type="checkbox" value="true" checked>
+                        <label for="immutable0"><span>Immutable</span></label>
+                    </div>
                 </div>
-                <div class="col">
+                <div class="col-lg even">
                     <button type="submit" name="submit" value="new_tpl" class="btn btn-green btn-xs">New</button>
                     <input type="hidden" id="tp_id0" name="tp_id" value="">
                     {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
                 </div>
             </div>
         </form>
-        {% for tpl in a_tpls %}
+    {% for tpl in a_tpls %}
         {% if loop.index is even %}
             {% set class='even' %}
         {% else %}
@@ -51,17 +53,87 @@
         {% set this_tp_id = 'tp_id' ~ loop.index %}
         {% set this_prefix = 'prefix' ~ loop.index %}
         {% set this_directory = 'directory' ~ loop.index %}
-        {% set this_checkbox = 'immutable' ~ loop.index %}
-        <div class="container">
-            Class: {{ class }}<br>
-            this_tpl_id: {{ this_tpl_id }} -- {{ tpl.tpl_id }}<br>
-            this_tpl_name: {{ this_tpl_name }} -- {{ tpl.tpl_name }}<br>
-            this_tp_id: {{ this_tp_id }} -- {{ tpl.tp_id }}<br>
-            this_prefix: {{ this_prefix }} -- {{ tpl.twig_prefix }}<br>
-            this_directory: {{ this_directory }} -- {{ tpl.td_id }}: {{ tpl.twig_dir }}<br>
-            this_checkbox: {{ this_checkbox }} -- {{ tpl.tpl_immutable }}<br>
+        {% set this_immutable = 'immutable' ~ loop.index %}
+        <form action="{{ public_dir }}/manager/config/twig/" method="post">
+        <div class="row {{ class }}">
+            {% if adm_lvl >= 9 or tpl.tpl_immutable == 'false' %}
+                <div class="col-lg {{ class }}">
+                    <label for="{{ this_tpl_id }}" class="d-md-none pr-h">Template Name:</label>
+                    <input type="text" id="{{ this_tpl_id }}" name="tpl_name" value="{{ tpl.tpl_name }}">
+                </div>
+                <div class="col-md {{ class }}">
+                    <label for="{{ this_tp_id }}" class="d-none">Twig Prefixes</label>
+                    <select id="{{ this_tp_id }}" name="tp_id" onchange="changeTwigDirs(this)">
+                        <option value="">Twig Prefixes</option>
+                    {% for tp in a_prefix %}
+                        {% if tp.tp_id == tpl.tp_id %}
+                            {% set this_selected = ' selected' %}
+                        {% else %}
+                            {% set this_selected = '' %}
+                        {% endif %}
+                        <option value="{{ tp.tp_id }}"{{ this_selected }}>{{ tp.tp_prefix }}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md {{ class }}">
+                    <label for="{{ this_directory }}"></label>
+                    <select id="{{ this_directory }}" name="td_id">
+                {% for dir in a_dirs %}
+                    {% if dir.tp_id == tpl.tp_id  %}
+                        {% if dir.td_id == tpl.td_id %}
+                            {% set dir_selected = ' selected' %}
+                        {% else %}
+                            {% set dir_selected = '' %}
+                        {% endif %}
+                        <option value="{{ dir.td_id }}"{{ dir_selected }}>{{ dir.td_name }}</option>
+                    {% endif %}
+                {% endfor %}
+                    </select>
+                </div>
+                <div class="col-lg {{ class }}">
+                    {% if tpl.tpl_immutable == 'true' %}
+                        {% set is_checked = ' checked' %}
+                    {% else %}
+                        {% set is_checked = '' %}
+                    {% endif %}
+                    {% set cb_values = {'id':this_immutable,'name':'tpl_immutable','value':tpl.tpl_immutable,'checked':is_checked,'label':'Immutable'} %}
+                    {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+                </div>
+                <div class="col-lg {{ class }}">
+                    <button type="submit" name="submit" value="update" class="btn btn-green btn-xs">Update</button>
+                    <button type="submit" name="submit" value="verify-delete" class="btn btn-outline-red btn-xs">Delete</button>
+                    {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    <input type="hidden" name="tpl_id" value="{{ tpl.tpl_id }}">
+                </div>
+            {% else %}
+                <div class="col-lg {{ class }}">
+                    <span class="d-md-none pr-h">Template Name:</span>
+                    {{ tpl.tpl_name }}
+                </div>
+                <div class="col-lg {{ class }}">
+                    <span class="d-md-none pr-h">Prefix:</span>
+                    {{ tpl.twig_prefix }}
+                </div>
+                <div class="col-lg {{ class }}">
+                    <span class="d-md-none pr-h">Directory:</span>
+                    {{ tpl.twig_dir }}
+                </div>
+                <div class="col-lg {{ class }}">
+                    &nbsp;
+                </div>
+                <div class="col-lg {{ class }}">
+                    Immutable
+                </div>
+            {% endif %}
         </div>
+        </form>
         {% endfor %}
+    </div>
+    <div class="container container-bordered-square">
+        prefixes
+    </div>
+    <div class="container container-bordered-square">
+        directories
     </div>
 {% endblock %}
 {% block bottom_js %}

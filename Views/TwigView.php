@@ -78,39 +78,29 @@ class TwigView implements ViewInterface
             foreach ($a_tt_results as $key => $a_tt) {
                 try {
                     $a_tc_results = $o_tc->readTplInfo($a_tt['tpl_id']);
-                    $log_message = 'readTplInfo ' . var_export($a_tc_results, true);
-                    $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
                     $a_tt_results[$key]['twig_dir']    = $a_tc_results[0]['twig_dir'];
                     $a_tt_results[$key]['twig_prefix'] = $a_tc_results[0]['twig_prefix'];
                     $a_tt_results[$key]['tp_id']       = $a_tc_results[0]['tp_id'];
-                    $a_sort_order = [
-                        'tp_id'    => 'ASC',
-                        'td_id'    => 'ASC',
-                        'tpl_name' => 'ASC'
-                    ];
                 }
                 catch (ModelException $e) {
                     $a_message = ViewHelper::failureMessage('Unable to read the template information');
+                    $continue = false;
                     break;
                 }
             }
-            $a_tt_resorted = Arrays::multiSort($a_tt_results, $a_sort_order);
-            $log_message = 'a_tt_resorted ' . var_export($a_tt_resorted, true);
-            $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-
+            if ($continue) {
+                $a_sort_order = [
+                    'tp_id'    => 'ASC',
+                    'td_id'    => 'ASC',
+                    'tpl_name' => 'ASC'
+                ];
+                $a_tt_results = Arrays::multiSort($a_tt_results, $a_sort_order);
+                $log_message = 'a_tt_results ' . var_export($a_tt_results, true);
+                $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+            }
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/twig/');
-        foreach ($a_tt_resorted as $key => $a_tt) {
-            $a_tt_resorted[$key]['form_action']  = '/manager/config/twig/';
-            $a_tt_resorted[$key]['btn_update']   = 'btn-green';
-            $a_tt_resorted[$key]['btn_delete']   = 'btn-outline-red';
-            $a_tt_resorted[$key]['btn_size']     = 'btn-xs';
-            $a_tt_resorted[$key]['tolken']       = $a_twig_values['tolken'];
-            $a_tt_resorted[$key]['form_ts']      = $a_twig_values['form_ts'];
-            $a_tt_resorted[$key]['hidden_name']  = 'tpl_id';
-            $a_tt_resorted[$key]['hidden_value'] = $a_tt['tpl_id'];
-        }
-        $a_twig_values['a_tpls']   = $a_tt_resorted;
+        $a_twig_values['a_tpls']   = $a_tt_results;
         $a_twig_values['a_dirs']   = $a_td_results;
         $a_twig_values['a_prefix'] = $a_tp_results;
 
