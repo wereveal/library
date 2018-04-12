@@ -5,15 +5,17 @@
  * @file      PageComplexModel.php
  * @namespace Ritc\Library\Models
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.5
+ * @version   1.0.0-alpha.6
  * @date      2017-06-17 12:12:02
  * @note Change Log
+ * - v1.0.0-alpha.6 - variable name clarification       - 2018-04-12 wer
  * - v1.0.0-alpha.5 - refactored to use ModelException  - 2017-06-17 wer
  * - v1.0.0-alpha.4 - bug fixes                         - 2017-05-16 wer
  * - v1.0.0-alpha.3 - bug fixes                         - 2017-02-11 wer
  * - v1.0.0-alpha.2 - refactoring reflected here        - 2017-01-27 wer
  * - v1.0.0-alpha.1 - bug fix                           - 2016-04-28 wer
  * - v1.0.0-alpha.0 - Initial version                   - 2016-04-08 wer
+ * - TODO take out of alpha
  */
 namespace Ritc\Library\Models;
 
@@ -168,16 +170,16 @@ SQL;
             $this->select_sql = $the_string;
         }
         else {
-            $a_page_fields = $this->o_page->getDbFields();
-            $a_urls_fields = $this->o_urls->getDbFields();
-            $page_prefix = $this->o_page->getLibPrefix();
-            $url_prefix = $this->o_urls->getLibPrefix();
-            $select_fields = $this->buildSqlSelectFields($a_page_fields, 'p');
+            $a_page_fields  = $this->o_page->getDbFields();
+            $a_urls_fields  = $this->o_urls->getDbFields();
+            $page_db_prefix = $this->o_page->getLibPrefix();
+            $url_db_prefix  = $this->o_urls->getLibPrefix();
+            $select_fields  = $this->buildSqlSelectFields($a_page_fields, 'p');
             $select_fields .= ', ' . $this->buildSqlSelectFields($a_urls_fields, 'u');
             $this->select_sql = "
                 SELECT {$select_fields}
-                FROM {$page_prefix}page as p,
-                {$url_prefix}urls as u";
+                FROM {$page_db_prefix}page as p,
+                {$url_db_prefix}urls as u";
         }
     }
 }
