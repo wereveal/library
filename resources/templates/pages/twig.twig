@@ -38,7 +38,7 @@
                 <div class="col-lg even">
                     <button type="submit" name="submit" value="new_tpl" class="btn btn-green btn-xs">New</button>
                     <input type="hidden" id="tp_id0" name="tp_id" value="">
-                    {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
                 </div>
             </div>
         </form>
@@ -102,7 +102,7 @@
                 <div class="col-lg {{ class }}">
                     <button type="submit" name="submit" value="update" class="btn btn-green btn-xs">Update</button>
                     <button type="submit" name="submit" value="verify-delete" class="btn btn-outline-red btn-xs">Delete</button>
-                    {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
                     <input type="hidden" name="tpl_id" value="{{ tpl.tpl_id }}">
                 </div>
             {% else %}

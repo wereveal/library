@@ -36,7 +36,7 @@
         <div class="col">
             <button type="submit" name="submit" value="" class="btn btn-green btn-xs">New</button>
             <input type="hidden" id="tp_id0" name="tp_id0" value="">
-            {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+            {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
         </div>
     </div>
     </form>
@@ -66,7 +66,7 @@
         <div class="col {{ class }}">
             <button type="submit" name="submit" value="update" class="btn btn-green btn-xs">Update</button>
             <input type="hidden" id="{{ this_tpl_id }}" name="tp_id" value="{{ tpl.tpl_id }}">
-            {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+            {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
         </div>
         {% else %}
         <div class="col {{ class }}">&nbsp;</div>
@@ -98,7 +98,7 @@
         <div class="col {{ class }}">
             <button type="submit" name="submit" value="modify" class="btn btn-green btn-xs">Update</button>
             <button type="submit" name="submit" value="verify_delete" class="btn btn-outline-danger btn-xs">Delete</button>
-            {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+            {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
             <input type="hidden" id="{{ this_tpl_id }}" name="tp_id" value="{{ tpl.tpl_id }}">
         </div>
     {% endif %}
@@ -145,7 +145,7 @@
                 <button type="submit" name="submit" value="modify" class="btn btn-green btn-xs">Update</button>
                 <button type="submit" name="submit" value="verify_delete" class="btn btn-outline-danger btn-xs">Delete</button>
                 <input type="hidden" id="{{ td_id }}" name="td_id" value="{{ dir.td_id }}">
-                {% include '@' ~ page_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
             </div>
         </div>
     </form>

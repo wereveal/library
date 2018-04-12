@@ -1,10 +1,11 @@
-<!DOCTYPE html>
+{% block start %}<!DOCTYPE html>
 <html lang="{{ lang }}">
 <head>
     <meta charset="{{ charset }}" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="{{ base_url }}">
+{% endblock %}
 {% block title %}
     <title>{{ title }}</title>
 {% endblock %}
@@ -13,34 +14,39 @@
 {% endblock %}
 {% block meta %}{% endblock %}
 {% block vendor_stylesheets %}
-    <link href="{{ public_dir }}/assets/fonts/fontawesome/css/fa-svg-with-js.css">
+    <link href="{{ fonts_dir }}/fontawesome/css/fa-svg-with-js.css">
 {% endblock %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ public_dir }}/assets/css/styles_manager_config.css" media="screen">
+    <link rel="stylesheet" href="{{ css_dir }}/styles_library.css" media="screen">
 {% endblock %}
 {% block icons %}
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ public_dir }}/assets/images/apple-touch-icon.png">
-    <link rel="icon" type="image/png" href="{{ public_dir }}/assets/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="{{ public_dir }}/assets/images/favicon-16x16.png" sizes="16x16">
-    <link rel="manifest" href="{{ public_dir }}/assets/images/manifest.json">
-    <link rel="mask-icon" href="{{ public_dir }}/assets/images/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="shortcut icon" href="{{ public_dir }}/assets/images/favicon.ico">
-    <meta name="msapplication-config" content="{{ public_dir }}/assets/images/browserconfig.xml">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ images_dir }}/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="{{ images_dir }}/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{ images_dir }}/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="{{ images_dir }}/manifest.json">
+    <link rel="mask-icon" href="{{ images_dir }}/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="{{ images_dir }}/favicon.ico">
+    <meta name="msapplication-config" content="{{ images_dir }}/browserconfig.xml">
 {% endblock %}
 {% block vendor_js %}
-    <script src="{{ public_dir }}/assets/vendor/jquery/dist/jquery.min.js"></script>
-    <script src="{{ public_dir }}/assets/fonts/fontawesome/js/fontawesome-all.min.js"></script>
+    <script src="{{ vendor_dir }}/jquery/dist/jquery.min.js"></script>
+    <script src="{{ fonts_dir }}/fontawesome/js/fontawesome-all.min.js"></script>
 {% endblock %}
 {% block head_js %}{% endblock %}
+{% block mainContainer %}
 </head>
 <body>
     <div class="container container-main">
+{% endblock %}
 {% block header %}
+        {% block navbar %}
         <nav class="navbar navbar-expand-md navbar-dark bg-gray no-margin" role="navigation">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">
                 <span class="far fa-bars"></span>
             </button>
+            {% block navbarBrand %}
             <a class="navbar-brand" href="#"><span class="far fa-cog fa-2x slate"></span></a>
+            {% endblock %}
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav mr-auto">
                     {% for menu in a_menus %}
@@ -86,20 +92,21 @@
                 </ul>
             </div>
         </nav>
+        {% endblock %}
+    {% block otherHeader %}{% endblock %}
 {% endblock %}
 {% block search %}{% endblock %}
 {% block body_title %}
     {% if body_title %}
         <h1>{{ body_title }}</h1>
-    {% else %}
+    {% elseif title %}
         <h1>{{ title }}</h1>
     {% endif %}
-
 {% endblock %}
 {% block message %}
     {% if a_message.message %}
         <div class="container container-message">
-            {% include '@' ~ page_prefix ~ 'snippets/message.twig' %}
+            {% include '@' ~ lib_prefix ~ 'snippets/message.twig' %}
         </div>
     {% endif %}
 {% endblock %}
@@ -123,14 +130,18 @@
     {% endif %}
         <p class="font-tiny">Library Base Tpl</p>
 {% endblock %}
+{% block endMain %}
     </div>
+{% endblock %}
 {% block bottom_vendor_js %}
-    <script src="{{ public_dir }}/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ public_dir }}/assets/vendor/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="{{ vendor_dir }}/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ vendor_dir }}/jquery-validation/dist/jquery.validate.min.js"></script>
 {% endblock %}
 {% block bottom_js %}{% endblock %}
+{% block finally %}
 </body>
 </html>
+{% endblock %}
 {# expected array [
     'lang',
     'charset',
@@ -139,6 +150,11 @@
     'base_url',
     'page_url',
     'public_dir',
+    'css_dir',
+    'fonts_dir',
+    'images_dir',
+    'js_dir',
+    'vendor_dir',
     'a_message',
     'page_prefix',
     'a_menus'

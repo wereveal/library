@@ -10,7 +10,7 @@
             </div>
             <div class="col-md-1">
                 {% set hidden_value = nav.nav_id %}
-                {% include '@' ~ page_prefix ~ 'forms/single_button_form.twig' with modify_btn_form %}
+                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with modify_btn_form %}
             </div>
         </div>
 {% else %}
@@ -27,7 +27,7 @@
                     </div>
                     <div class="col-md-1">
                         {% set hidden_value = nav.nav_id %}
-                        {% include '@' ~ page_prefix ~ 'forms/single_button_form.twig' with modify_btn_form %}
+                        {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with modify_btn_form %}
                     </div>
                 </div>
             {% for child in nav.submenu %}
@@ -42,7 +42,7 @@
                     </div>
                     <div class="col-md-1">
                         {% set hidden_value = child.nav_id %}
-                        {% include '@' ~ page_prefix ~ 'forms/single_button_form.twig' with modify_btn_form %}
+                        {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with modify_btn_form %}
                     </div>
                 </div>
             {% endfor %}

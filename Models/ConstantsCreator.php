@@ -102,7 +102,7 @@ class ConstantsCreator
         try {
             $results = $this->createConstants();
             if ($results) {
-                $this->createThemeConstants();
+                $this->createAssetsConstants();
                 $this->createTwigConstants();
             }
             else {
@@ -129,7 +129,7 @@ class ConstantsCreator
                 }
                 try {
                     $o_const_model->createNewConstants();
-                    $this->createThemeConstants();
+                    $this->createAssetsConstants();
                 }
                 catch (ModelException $e) {
                     $this->logIt($e->errorMessage(), LOG_ALWAYS, $meth . __LINE__);
@@ -266,67 +266,50 @@ class ConstantsCreator
      *     assets directory for everything. If there is a defined THEMES_DIR,
      *     that overrides the assets directory e.g. /themes
      */
-    private function createThemeConstants()
+    private function createAssetsConstants()
     {
         if (!defined('ASSETS_DIR')) {
             return;
         }
-        if (!defined('THEMES_DIR')) {
-            define('THEMES_DIR', ASSETS_DIR);
-        }
-        if (defined('THEME_NAME')) {
-            if (THEME_NAME == '') {
-                if (THEMES_DIR == '') {
-                    define('THEME_DIR', ASSETS_DIR);
-                }
-                else {
-                    define('THEME_DIR', THEMES_DIR);
-                }
-            }
-            else {
-                if (THEMES_DIR == '') {
-                    define('THEME_DIR', ASSETS_DIR . '/themes/' . THEME_NAME);
-                }
-                else {
-                    define('THEME_DIR', THEMES_DIR . '/' . THEME_NAME);
-                }
-            }
-        }
-        else {
-            define('THEME_NAME', '');
-            if (THEMES_DIR == '') {
-                define('THEME_DIR', ASSETS_DIR);
-            }
-            else {
-                define('THEME_DIR', THEMES_DIR);
-            }
-        }
         if (!defined('CSS_DIR_NAME')) {
             define('CSS_DIR_NAME', 'css');
-        }
-        if (!defined('HTML_DIR_NAME')) {
-            define('HTML_DIR_NAME', 'html');
-        }
-        if (!defined('JS_DIR_NAME')) {
-            define('JS_DIR_NAME', 'js');
-        }
-        if (!defined('IMAGE_DIR_NAME')) {
-            define('IMAGE_DIR_NAME', 'images');
         }
         if (!defined('FILES_DIR_NAME')) {
             define('FILES_DIR_NAME', 'files');
         }
-        define('CSS_DIR',    THEME_DIR . '/' . CSS_DIR_NAME);
-        define('FILES_DIR',  THEME_DIR . '/' . FILES_DIR_NAME);
-        define('HTML_DIR',   THEME_DIR . '/' . HTML_DIR_NAME);
-        define('IMAGE_DIR',  THEME_DIR . '/' . IMAGE_DIR_NAME);
-        define('JS_DIR',     THEME_DIR . '/' . JS_DIR_NAME);
-        define('THEME_PATH', PUBLIC_PATH . THEME_DIR);
+        if (!defined('FONTS_DIR_NAME')) {
+            define('FONTS_DIR_NAME', 'fonts');
+        }
+        if (!defined('HTML_DIR_NAME')) {
+            define('HTML_DIR_NAME', 'html');
+        }
+        if (!defined('IMAGE_DIR_NAME')) {
+            define('IMAGE_DIR_NAME', 'images');
+        }
+        if (!defined('JS_DIR_NAME')) {
+            define('JS_DIR_NAME', 'js');
+        }
+        if (!defined('SCSS_DIR_NAME')) {
+            define('SCSS_DIR_NAME', 'scss');
+        }
+        if (!defined('VENDOR_DIR_NAME')) {
+            define('VENDOR_DIR_NAME', 'vendor');
+        }
+        define('CSS_DIR',       ASSETS_DIR . '/' . CSS_DIR_NAME);
+        define('FILES_DIR',     ASSETS_DIR . '/' . FILES_DIR_NAME);
+        define('FONTS_DIR',     ASSETS_DIR . '/' . FONTS_DIR_NAME);
+        define('HTML_DIR',      ASSETS_DIR . '/' . HTML_DIR_NAME);
+        define('IMAGE_DIR',     ASSETS_DIR . '/' . IMAGE_DIR_NAME);
+        define('JS_DIR',        ASSETS_DIR . '/' . JS_DIR_NAME);
+        define('SCSS_DIR',      ASSETS_DIR . '/' . SCSS_DIR_NAME);
+        define('VENDOR_ASSETS', ASSETS_DIR . '/' . VENDOR_DIR_NAME);
         define('CSS_PATH',   PUBLIC_PATH . CSS_DIR);
         define('FILES_PATH', PUBLIC_PATH . FILES_DIR);
+        define('FONTS_PATH', PUBLIC_PATH . FONTS_DIR);
         define('HTML_PATH',  PUBLIC_PATH . HTML_DIR);
         define('IMAGE_PATH', PUBLIC_PATH . IMAGE_DIR);
         define('JS_PATH',    PUBLIC_PATH . JS_DIR);
+        define('SCSS_PATH',  PUBLIC_PATH . SCSS_DIR);
         if (defined('THUMBS_DIR_NAME')) {
             define('THUMBS_DIR', IMAGE_DIR . '/' . THUMBS_DIR_NAME);
             define('THUMBS_PATH', PUBLIC_PATH . THUMBS_DIR);
@@ -334,38 +317,6 @@ class ConstantsCreator
         if (defined('STAFF_DIR_NAME')) {
             define('STAFF_DIR', IMAGE_DIR . '/' . STAFF_DIR_NAME);
             define('STAFF_PATH', PUBLIC_PATH . STAFF_DIR);
-        }
-        if (defined('LIB_THEME_NAME')) {
-            if (LIB_THEME_NAME != '') {
-                define('LIB_THEME_DIR',  THEME_DIR     . '/' . LIB_THEME_NAME);
-                define('LIB_CSS_DIR',    LIB_THEME_DIR . '/' . CSS_DIR_NAME);
-                define('LIB_JS_DIR',     LIB_THEME_DIR . '/' . JS_DIR_NAME);
-                define('LIB_FILES_DIR',  LIB_THEME_DIR . '/' . FILES_DIR_NAME);
-                define('LIB_IMAGE_DIR',  LIB_THEME_DIR . '/' . IMAGE_DIR_NAME);
-                define('LIB_HTML_DIR',   LIB_THEME_DIR . '/' . HTML_DIR_NAME);
-                define('LIB_THEME_PATH', PUBLIC_PATH   . LIB_THEME_DIR);
-                define('LIB_CSS_PATH',   PUBLIC_PATH   . LIB_CSS_DIR);
-                define('LIB_JS_PATH',    PUBLIC_PATH   . LIB_JS_DIR);
-                define('LIB_FILES_PATH', PUBLIC_PATH   . LIB_FILES_DIR);
-                define('LIB_IMAGE_PATH', PUBLIC_PATH   . LIB_IMAGE_DIR);
-                define('LIB_HTML_PATH',  PUBLIC_PATH   . LIB_HTML_DIR);
-            }
-        }
-        if (defined('ADMIN_THEME_NAME')) {
-            if (ADMIN_THEME_NAME != '') {
-                define('ADMIN_THEME_DIR',  THEME_DIR       . '/' . ADMIN_THEME_NAME);
-                define('ADMIN_CSS_DIR',    ADMIN_THEME_DIR . '/' . CSS_DIR_NAME);
-                define('ADMIN_JS_DIR',     ADMIN_THEME_DIR . '/' . JS_DIR_NAME);
-                define('ADMIN_FILES_DIR',  ADMIN_THEME_DIR . '/' . FILES_DIR_NAME);
-                define('ADMIN_IMAGE_DIR',  ADMIN_THEME_DIR . '/' . IMAGE_DIR_NAME);
-                define('ADMIN_HTML_DIR',   ADMIN_THEME_DIR . '/' . HTML_DIR_NAME);
-                define('ADMIN_THEME_PATH', PUBLIC_PATH     . ADMIN_THEME_DIR);
-                define('ADMIN_CSS_PATH',   PUBLIC_PATH     . ADMIN_CSS_DIR);
-                define('ADMIN_JS_PATH',    PUBLIC_PATH     . ADMIN_JS_DIR);
-                define('ADMIN_FILES_PATH', PUBLIC_PATH     . ADMIN_FILES_DIR);
-                define('ADMIN_IMAGE_PATH', PUBLIC_PATH     . ADMIN_IMAGE_DIR);
-                define('ADMIN_HTML_PATH',  PUBLIC_PATH     . ADMIN_HTML_DIR);
-            }
         }
     }
 

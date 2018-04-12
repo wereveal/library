@@ -1,12 +1,12 @@
 {% extends '@' ~ page_prefix ~ 'pages/index.twig' %}
 {% block body %}
     <div class="container">
-        {% include '@' ~ page_prefix ~ 'forms/single_button_form.twig' with navgroups_btn %}
+        {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with navgroups_btn %}
     </div>
     <div class="container">
         <div class="row">
             <div class="col-md-1 offset-md-11">
-                {% include '@' ~ page_prefix ~ 'forms/single_button_form.twig' with new_btn_form %}
+                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with new_btn_form %}
             </div>
         </div>
         <div class="row list-header hidden-sm-down">
@@ -30,7 +30,7 @@
                 {{ nav.nav_description }}
             </div>
             <div class="col-12 col-md-3">
-                {% include '@' ~ page_prefix ~ 'forms/update_delete_btn_form.twig' with nav %}
+                {% include '@' ~ lib_prefix ~ 'forms/update_delete_btn_form.twig' with nav %}
             </div>
         </div>
         {% if nav.submenu %}
@@ -43,7 +43,7 @@
                     {{ sub.nav_description }}
                 </div>
                 <div class="col-12 col-md-3">
-                    {% include '@' ~ page_prefix ~ 'forms/update_delete_btn_form.twig' with sub %}
+                    {% include '@' ~ lib_prefix ~ 'forms/update_delete_btn_form.twig' with sub %}
                 </div>
             </div>
             {% endfor %}
@@ -51,7 +51,7 @@
     {% endfor %}
         <div class="row">
             <div class="col-md-1 offset-md-11">
-                {% include '@' ~ page_prefix ~ 'forms/single_button_form.twig' with new_btn_form %}
+                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with new_btn_form %}
             </div>
         </div>
     </div>

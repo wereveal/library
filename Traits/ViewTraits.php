@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.2
- * @date      2018-03-12 14:51:11
+ * @version   1.1.0
+ * @date      2018-04-12 12:07:51
  * @note <b>Change Log</b>
+ * - v1.1.0         - added new default twig values for asset dirs                              - 2018-04-12 wer
  * - v1.0.2         - more bug fixes for missed exception handlers                              - 2018-03-12 wer
  * - v1.0.1         - bug fix, missed an exception handler for ModelException                   - 2017-12-02 wer
  * - v1.0.0         - added method to handle TWIG exceptions (took out of beta finally)         - 2017-11-29 wer
@@ -188,7 +189,7 @@ trait ViewTraits
             $a_message = ViewHelper::fullMessage($a_message);
         }
 
-        $a_values = array(
+        $a_values = [
             'a_message'      => $a_message,
             'tolken'         => $_SESSION['token'],
             'form_ts'        => $_SESSION['idle_timestamp'],
@@ -197,11 +198,18 @@ trait ViewTraits
             'adm_lvl'        => $this->adm_level,
             'twig_prefix'    => TWIG_PREFIX,
             'lib_prefix'     => LIB_TWIG_PREFIX,
+            'assets_dir'     => ASSETS_DIR,
+            'css_dir'        => CSS_DIR,
+            'files_dir'      => FILES_DIR,
+            'fonts_dir'      => FONTS_DIR,
+            'images_dir'     => IMAGES_DIR,
+            'js_dir'         => JS_DIR,
+            'vendor_dir'     => VENDOR_ASSETS,
             'public_dir'     => PUBLIC_DIR,
             'site_url'       => SITE_URL,
             'rights_holder'  => RIGHTS_HOLDER,
             'copyright_date' => COPYRIGHT_DATE
-        );
+        ];
         $a_values = array_merge($a_values, $a_page_values);
         return $a_values;
     }

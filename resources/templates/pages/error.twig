@@ -3,7 +3,7 @@
 {% block body %}
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
-            {% include '@' ~ page_prefix ~ 'snippets/message.twig' %}
+            {% include '@' ~ lib_prefix ~ 'snippets/message.twig' %}
         </div>
     </div>
 {% endblock %}
@@ -16,19 +16,3 @@
     </div>
     <!-- /footer -->
 {% endblock %}
-{#
-    Expected array [
-        'description' => '',
-        'public_dir'  => '',
-        'a_message' => [
-            'message'       => '',
-            'message_class' => '',
-            'image_src'     => '',
-            'alt_text'      => '',
-            'image_class'   => '',
-            'extras'        => ''
-        ]
-        'site_url' => '',
-        'rights_holder' => ''
-    ]
-#}

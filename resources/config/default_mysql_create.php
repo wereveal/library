@@ -22,7 +22,7 @@ return [
   `const_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `const_name` varchar(64) NOT NULL DEFAULT '',
   `const_value` varchar(64) NOT NULL DEFAULT '',
-  `const_immutable` varchar(10) NOT NULL DEFAULT 'false',
+  `const_immutable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`const_id`),
   UNIQUE KEY `config_key` (`const_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4",
@@ -32,7 +32,7 @@ return [
   `group_name` varchar(40) NOT NULL,
   `group_description` varchar(128) NOT NULL DEFAULT '',
   `group_auth_level` int(11) NOT NULL DEFAULT '0',
-  `group_immutable` varchar(10) NOT NULL DEFAULT 'false',
+  `group_immutable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`group_id`),
   UNIQUE KEY `group_name` (`group_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4",
@@ -42,7 +42,7 @@ return [
   `url_host` varchar(150) NOT NULL DEFAULT 'self',
   `url_text` varchar(150) NOT NULL DEFAULT '',
   `url_scheme` enum('http','https','ftp','gopher','mailto', 'file') NOT NULL DEFAULT 'https',
-  `url_immutable` varchar(10) NOT NULL DEFAULT 'false',
+  `url_immutable` tinyint(2) NOT NULL DEFAULT '0',
   PRIMARY KEY (`url_id`),
   UNIQUE KEY `urls_url` (`url_scheme`,`url_host`,`url_text`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4",
@@ -53,7 +53,7 @@ return [
   `route_class` varchar(64) NOT NULL,
   `route_method` varchar(64) NOT NULL,
   `route_action` varchar(100) NOT NULL,
-  `route_immutable` varchar(10) NOT NULL DEFAULT 'false',
+  `route_immutable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`route_id`),
   UNIQUE KEY `url_id` (`url_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4",
@@ -69,7 +69,7 @@ return [
   `page_base_url` varchar(50) NOT NULL DEFAULT '/',
   `page_lang` varchar(50) NOT NULL DEFAULT 'en',
   `page_charset` varchar(100) NOT NULL DEFAULT 'utf-8',
-  `page_immutable` varchar(10) NOT NULL DEFAULT 'false',
+  `page_immutable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`page_id`),
   KEY (`url_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4",
@@ -95,9 +95,9 @@ return [
 "CREATE TABLE `{dbPrefix}navgroups` (
   `ng_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `ng_name` varchar(128) NOT NULL DEFAULT 'Main',
-  `ng_active` varchar(10) NOT NULL DEFAULT 'true',
-  `ng_default` varchar(10) NOT NULL DEFAULT 'false',
-  `ng_immutable` varchar(10) NOT NULL DEFAULT 'false',
+  `ng_active` tinyint(1) NOT NULL DEFAULT '1',
+  `ng_default` tinyint(1) NOT NULL DEFAULT '0',
+  `ng_immutable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ng_id`),
   UNIQUE KEY `ng_name` (`ng_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4",
@@ -112,8 +112,8 @@ return [
   `nav_css` varchar(64) NOT NULL DEFAULT 'menu-item',
   `nav_level` int(11) NOT NULL DEFAULT '1',
   `nav_order` int(11) NOT NULL DEFAULT '0',
-  `nav_active` varchar(10) NOT NULL DEFAULT 'true',
-  `nav_immutable` varchar(10) NOT NULL DEFAULT 'false',
+  `nav_active` tinyint(1) NOT NULL DEFAULT '1',
+  `nav_immutable` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`nav_id`),
   KEY `url_id` (`url_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4",
@@ -170,7 +170,7 @@ return [
   `tpl_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `td_id` int(11) unsigned NOT NULL,
   `tpl_name` varchar(128) NOT NULL DEFAULT '',
-  `tpl_immutable` varchar(10) NOT NULL DEFAULT 'false',
+  `tpl_immutable` int(2) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`tpl_id`),
   UNIQUE KEY `td_id_tpl_name` (`td_id`,`tpl_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4",

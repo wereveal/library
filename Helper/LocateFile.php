@@ -6,12 +6,13 @@
  * @file      Ritc/Library/Helper/LocateFile.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.2
- * @date      2017-07-06 22:25:44
+ * @version   1.1.0
+ * @date      2018-04-12 11:32:47
  * @note <b>Change Log</b>
- * - v1.0.2  Bug fix                                         - 2017-07-06 wer
- * - v1.0.1  Bug fix                                         - 2017-06-10 wer
- * - v1.0.0  Initial Version                                 - 2017-02-08 wer
+ * - v1.1.0 - Removed references to constants of THEME variations   - 2018-04-12 wer
+ * - v1.0.2 - Bug fix                                               - 2017-07-06 wer
+ * - v1.0.1 - Bug fix                                               - 2017-06-10 wer
+ * - v1.0.0 - Initial Version                                       - 2017-02-08 wer
  */
 namespace Ritc\Library\Helper;
 
@@ -89,11 +90,11 @@ class LocateFile
         }
         else {
             $ns_path = str_replace('\\', '/', $namespace);
-            $ns_path .= '/resources/themes';
+            $ns_path .= '/resources';
             $a_optional_paths = [
-                APPS_PATH . '/' . $ns_path . '/' . THEME_NAME . '/' . CSS_DIR_NAME,
-                APPS_PATH . '/' . $ns_path . '/default/' . CSS_DIR_NAME,
-                APPS_PATH . '/' . $ns_path . '/' . CSS_DIR_NAME
+                APPS_PATH . '/' . $ns_path . '/assets/' . CSS_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/' . CSS_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/'
             ];
         }
         foreach ($a_optional_paths as $path) {
@@ -160,11 +161,11 @@ class LocateFile
         }
         else {
             $ns_path = str_replace('\\', '/', $namespace);
-            $ns_path .= '/resources/themes';
+            $ns_path .= '/resources';
             $a_optional_paths = [
-                APPS_PATH . '/' . $ns_path . '/' . THEME_NAME . '/' . IMAGE_DIR_NAME,
-                APPS_PATH . '/' . $ns_path . '/default/' . IMAGE_DIR_NAME,
-                APPS_PATH . '/' . $ns_path . '/' . IMAGE_DIR_NAME
+                APPS_PATH . '/' . $ns_path . '/assets/' . IMAGE_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/' . IMAGE_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/'
             ];
         }
         foreach ($a_optional_paths as $path) {
@@ -205,11 +206,11 @@ class LocateFile
         }
         else {
             $ns_path = str_replace('\\', '/', $namespace);
-            $ns_path .= '/resources/themes';
+            $ns_path .= '/resources';
             $a_optional_paths = [
-                APPS_PATH . '/' . $ns_path . '/' . THEME_NAME . '/' . JS_DIR_NAME,
-                APPS_PATH . '/' . $ns_path . '/default/' . JS_DIR_NAME,
-                APPS_PATH . '/' . $ns_path . '/' . JS_DIR_NAME
+                APPS_PATH . '/' . $ns_path . '/assets/' . JS_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/' . JS_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/'
             ];
         }
         foreach ($a_optional_paths as $path) {
