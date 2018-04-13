@@ -451,12 +451,12 @@ EOF;
                 'resources/config',
                 'resources/sql',
                 'resources/templates',
-                'resources/templates/default',
                 'resources/templates/elements',
                 'resources/templates/pages',
                 'resources/templates/forms',
                 'resources/templates/snippets',
-                'resources/templates/tests'
+                'resources/templates/tests',
+                'resources/templates/themes'
             ];
         }
         $this->a_new_dirs = $a_values;
