@@ -44,7 +44,7 @@ class ViewHelper
 	        $a_message_params = ['type' => '', 'message' => ''];
 	    }
 	    $alt_text    = '';
-		$image_dir   = IMAGE_DIR . '/icons';
+		$image_dir   = IMAGES_DIR . '/icons';
 		$image_class = 'icon';
 		$image_src   = '';
 		$message     = '';

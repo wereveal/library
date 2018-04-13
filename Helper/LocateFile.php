@@ -154,8 +154,8 @@ class LocateFile
     {
         if ($namespace == '') {
             $a_optional_paths = [
-                PUBLIC_PATH . '/' . IMAGE_DIR_NAME  . '/' . $file_name,
-                PUBLIC_PATH . '/assets/' . IMAGE_DIR_NAME  . '/' . $file_name,
+                PUBLIC_PATH . '/' . IMAGES_DIR_NAME  . '/' . $file_name,
+                PUBLIC_PATH . '/assets/' . IMAGES_DIR_NAME  . '/' . $file_name,
                 PUBLIC_PATH . '/' . $file_name
             ];
         }
@@ -163,8 +163,8 @@ class LocateFile
             $ns_path = str_replace('\\', '/', $namespace);
             $ns_path .= '/resources';
             $a_optional_paths = [
-                APPS_PATH . '/' . $ns_path . '/assets/' . IMAGE_DIR_NAME,
-                APPS_PATH . '/' . $ns_path . '/' . IMAGE_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/assets/' . IMAGES_DIR_NAME,
+                APPS_PATH . '/' . $ns_path . '/' . IMAGES_DIR_NAME,
                 APPS_PATH . '/' . $ns_path . '/'
             ];
         }

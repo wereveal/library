@@ -12,7 +12,7 @@ return array(
     ['CSS_DIR_NAME', 'css', 1],
     ['HTML_DIR_NAME', 'html', 1],
     ['JS_DIR_NAME', 'js', 1],
-    ['IMAGE_DIR_NAME', 'images', 1],
+    ['IMAGES_DIR_NAME', 'images', 1],
     ['ADMIN_DIR_NAME', 'manager', 1],
     ['ASSETS_DIR_NAME', 'assets', 1],
     ['FILES_DIR_NAME', 'files', 1],

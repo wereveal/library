@@ -22,7 +22,7 @@ define('LIB_TWIG_PREFIX', 'lib_');
 define('CSS_DIR_NAME', 'css');
 define('HTML_DIR_NAME', 'html');
 define('JS_DIR_NAME', 'js');
-define('IMAGE_DIR_NAME', 'images');
+define('IMAGES_DIR_NAME', 'images');
 define('ADMIN_DIR_NAME', 'manager');
 define('ASSETS_DIR_NAME', 'assets');
 define('FILES_DIR_NAME', 'files');

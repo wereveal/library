@@ -70,7 +70,7 @@ $a_constants = [
         'const_immutable' => 1
     ],
     'image_dir_name' => [
-        'const_name'      => 'IMAGE_DIR_NAME',
+        'const_name'      => 'IMAGES_DIR_NAME',
         'const_value'     => 'images',
         'const_immutable' => 1
     ],

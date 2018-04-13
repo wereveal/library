@@ -283,8 +283,8 @@ class ConstantsCreator
         if (!defined('HTML_DIR_NAME')) {
             define('HTML_DIR_NAME', 'html');
         }
-        if (!defined('IMAGE_DIR_NAME')) {
-            define('IMAGE_DIR_NAME', 'images');
+        if (!defined('IMAGES_DIR_NAME')) {
+            define('IMAGES_DIR_NAME', 'images');
         }
         if (!defined('JS_DIR_NAME')) {
             define('JS_DIR_NAME', 'js');
@@ -299,23 +299,23 @@ class ConstantsCreator
         define('FILES_DIR',     ASSETS_DIR . '/' . FILES_DIR_NAME);
         define('FONTS_DIR',     ASSETS_DIR . '/' . FONTS_DIR_NAME);
         define('HTML_DIR',      ASSETS_DIR . '/' . HTML_DIR_NAME);
-        define('IMAGE_DIR',     ASSETS_DIR . '/' . IMAGE_DIR_NAME);
+        define('IMAGES_DIR',    ASSETS_DIR . '/' . IMAGES_DIR_NAME);
         define('JS_DIR',        ASSETS_DIR . '/' . JS_DIR_NAME);
         define('SCSS_DIR',      ASSETS_DIR . '/' . SCSS_DIR_NAME);
         define('VENDOR_ASSETS', ASSETS_DIR . '/' . VENDOR_DIR_NAME);
-        define('CSS_PATH',   PUBLIC_PATH . CSS_DIR);
-        define('FILES_PATH', PUBLIC_PATH . FILES_DIR);
-        define('FONTS_PATH', PUBLIC_PATH . FONTS_DIR);
-        define('HTML_PATH',  PUBLIC_PATH . HTML_DIR);
-        define('IMAGE_PATH', PUBLIC_PATH . IMAGE_DIR);
-        define('JS_PATH',    PUBLIC_PATH . JS_DIR);
-        define('SCSS_PATH',  PUBLIC_PATH . SCSS_DIR);
+        define('CSS_PATH',    PUBLIC_PATH . CSS_DIR);
+        define('FILES_PATH',  PUBLIC_PATH . FILES_DIR);
+        define('FONTS_PATH',  PUBLIC_PATH . FONTS_DIR);
+        define('HTML_PATH',   PUBLIC_PATH . HTML_DIR);
+        define('IMAGES_PATH', PUBLIC_PATH . IMAGES_DIR);
+        define('JS_PATH',     PUBLIC_PATH . JS_DIR);
+        define('SCSS_PATH',   PUBLIC_PATH . SCSS_DIR);
         if (defined('THUMBS_DIR_NAME')) {
-            define('THUMBS_DIR', IMAGE_DIR . '/' . THUMBS_DIR_NAME);
+            define('THUMBS_DIR', IMAGES_DIR . '/' . THUMBS_DIR_NAME);
             define('THUMBS_PATH', PUBLIC_PATH . THUMBS_DIR);
         }
         if (defined('STAFF_DIR_NAME')) {
-            define('STAFF_DIR', IMAGE_DIR . '/' . STAFF_DIR_NAME);
+            define('STAFF_DIR', IMAGES_DIR . '/' . STAFF_DIR_NAME);
             define('STAFF_PATH', PUBLIC_PATH . STAFF_DIR);
         }
     }

@@ -47,7 +47,7 @@ class Files implements LocationInterface
     const CONFIG_DIR_NAME    = 'config';
     const CSS_DIR_NAME       = 'css';
     const HTML_DIR_NAME      = 'html';
-    const IMAGE_DIR_NAME     = 'images';
+    const IMAGES_DIR_NAME    = 'images';
     const JS_DIR_NAME        = 'js';
     const LIBS_DIR_NAME      = 'library';
     const PRIVATE_DIR_NAME   = 'private';
@@ -275,9 +275,9 @@ class Files implements LocationInterface
      */
     public function getImageWithDir($file_name)
     {
-        $this->file_dir_name = defined('IMAGE_DIR_NAME')
-            ? IMAGE_DIR_NAME
-            : self::IMAGE_DIR_NAME;
+        $this->file_dir_name = defined('IMAGES_DIR_NAME')
+            ? IMAGES_DIR_NAME
+            : self::IMAGES_DIR_NAME;
         return $this->getFileWithDir($file_name);
     }
 
@@ -287,9 +287,9 @@ class Files implements LocationInterface
      */
     public function getImageWithPath($file_name)
     {
-        $this->file_dir_name = defined('IMAGE_DIR_NAME')
-            ? IMAGE_DIR_NAME
-            : self::IMAGE_DIR_NAME;
+        $this->file_dir_name = defined('IMAGES_DIR_NAME')
+            ? IMAGES_DIR_NAME
+            : self::IMAGES_DIR_NAME;
         return $this->getFileWithPath($file_name);
     }
 
