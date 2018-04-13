@@ -242,7 +242,7 @@ class NewAppHelper
             }
 
             ### Copy two main twig files ###
-            $base_twig = '/templates/default/base.twig';
+            $base_twig = '/templates/themes/base.twig';
             $resource_path = $this->app_path . '/resources';
             $twig_text = file_get_contents(SRC_PATH . $base_twig);
             if ($twig_text) {

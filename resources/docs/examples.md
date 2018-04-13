@@ -66,9 +66,9 @@ An array used in the DbUtilityTraits::genericRead() method with the following ke
           [
             'default_path'      => '/Ritc/Library/resources/templates',
             'additional_paths'  => [
-              '/Ritc/Library/resources/templates/default' => 'lib_default',
-              '/Ritc/Library/resources/templates/pages'   => 'lib_pages',
-              '/Ritc/Library/resources/templates/stuff'   => 'lib_stuff',
+              '/Ritc/Library/resources/templates/themes' => 'lib_themes',
+              '/Ritc/Library/resources/templates/pages'  => 'lib_pages',
+              '/Ritc/Library/resources/templates/stuff'  => 'lib_stuff',
             ],
             'environment_options' => [
               'cache'       => SRC_PATH . '/twig_cache',
