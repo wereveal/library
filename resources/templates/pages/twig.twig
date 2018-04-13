@@ -2,17 +2,17 @@
 {% block body %}
     <div class="container container-bordered-square">
         <div class="row list-header d-none d-lg-flex">
-            <div class="col">Template Name</div>
-            <div class="col">Prefix</div>
-            <div class="col">Directory Name</div>
-            <div class="col">Immutable</div>
-            <div class="col">Actions</div>
+            <div class="col-lg">Template Name</div>
+            <div class="col-lg">Prefix</div>
+            <div class="col-lg">Directory Name</div>
+            <div class="col-lg">Immutable</div>
+            <div class="col-lg">Actions</div>
         </div>
         <form action="{{ public_dir }}/manager/config/twig/" method="post" class="">
             <div class="row list-stripped even">
                 <div class="col-lg even">
                     <label for="template0" class="d-lg-none pr-h">Template Name:</label>
-                    <input type="text" id="template0" name="template0">
+                    <input type="text" id="template0" name="template0" class="colorful flexible">
                 </div>
                 <div class="col-md even">
                     <label for="prefix0" class="d-none">Twig Prefixes</label>
@@ -59,7 +59,7 @@
             {% if adm_lvl >= 9 or tpl.tpl_immutable == 'false' %}
                 <div class="col-lg {{ class }}">
                     <label for="{{ this_tpl_id }}" class="d-md-none pr-h">Template Name:</label>
-                    <input type="text" id="{{ this_tpl_id }}" name="tpl_name" value="{{ tpl.tpl_name }}">
+                    <input type="text" id="{{ this_tpl_id }}" name="tpl_name" value="{{ tpl.tpl_name }}" class="colorful flexible">
                 </div>
                 <div class="col-md {{ class }}">
                     <label for="{{ this_tp_id }}" class="d-none">Twig Prefixes</label>
@@ -130,10 +130,90 @@
         {% endfor %}
     </div>
     <div class="container container-bordered-square">
-        prefixes
+        <div class="row list-header d-none d-lg-flex">
+            <div class="col-lg-2">Prefix</div>
+            <div class="col-lg-4">Path</div>
+            <div class="col-lg-2">Immutable</div>
+            <div class="col-lg-2">Default</div>
+            <div class="col-lg-2">Actions</div>
+        </div>
+    {% for prefix in a_prefix %}
+        {% if loop.index is even %}
+            {% set class='even' %}
+        {% else %}
+            {% set class='odd' %}
+        {% endif %}
+        {% set this_tp_id = 'tp_id' ~ loop.index %}
+        {% set this_prefix = 'tp_prefix' ~ loop.index %}
+        {% set this_path = 'tp_path' ~ loop.index %}
+        {% set this_active = 'tp_active' ~ loop.index %}
+        {% set this_default = 'tp_default' ~ loop.index %}
+        <form action="{{ public_dir }}/manager/config/twig/" method="post">
+        <div class="row {{ class }}">
+            <div class="col-lg-2">
+                <label for="{{ this_prefix }}" class="d-md-none pr-h">Prefix</label>
+                <input type="text" id="{{ this_prefix }}" name="tp_prefix" value="{{ prefix.tp_prefix }}" class="colorful flexible">
+            </div>
+            <div class="col-lg-4">
+                <label for="{{ this_path }}" class="d-md-none pr-h">Path</label>
+                <input type="text" id="{{ this_path }}" name="tp_path" value="{{ prefix.tp_path }}" class="colorful flexible">
+            </div>
+            <div class="col-lg-2">
+                {% if prefix.tp_active == 'true' %}
+                    {% set is_checked = ' checked' %}
+                {% else %}
+                    {% set is_checked = '' %}
+                {% endif %}
+                {% set cb_values = {'id':this_active,'name':'tp_active','value':prefix.tp_active,'checked':is_checked,'label':'Immutable'} %}
+                {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+            </div>
+            <div class="col-lg-2">
+                {% if prefix.tp_default == 'true' %}
+                    {% set is_checked = ' checked' %}
+                {% else %}
+                    {% set is_checked = '' %}
+                {% endif %}
+                {% set cb_values = {'id':this_default,'name':'tp_default','value':prefix.tp_default,'checked':is_checked,'label':'Default'} %}
+                {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+            </div>
+            <div class="col-lg-2">
+                <button type="submit" name="submit" value="update" class="btn btn-green btn-xs">Update</button>
+                <button type="submit" name="submit" value="verify-delete" class="btn btn-outline-red btn-xs">Delete</button>
+                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                <input type="hidden" name="tp_id" value="{{ prefix.tp_id }}">
+            </div>
+        </div>
+        </form>
+    {% endfor %}
     </div>
     <div class="container container-bordered-square">
-        directories
+        Directories
+        <div class="row list-header">
+            <div class="col-lg">
+                <label for="prefixes" class="d-none">Twig Prefixes</label>
+                <select id="prefixes" name="tp_id">
+                    <option value="" selected>Twig Prefixes</option>
+                    {% for tp in a_prefix %}
+                        <option value="{{ tp.tp_id }}">{{ tp.tp_prefix }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg">
+                <label for="directory_name" class="d-md-none pr-h">Directory Name</label>
+                <input type="text" id="directory_name" name="td_name" value="">
+            </div>
+            <div class="col-lg">
+                <button type="submit" name="submit" value="new_directory" class="btn btn-green btn-xs">New</button>
+                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+
+            </div>
+        </div>
+    {#
+        New Directory line
+        foreach prefix
+            list the directories with tp_id and td_id hidden and if not used by a template delete button
+    #}
+
     </div>
 {% endblock %}
 {% block bottom_js %}
