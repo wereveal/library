@@ -6,11 +6,12 @@
  * @file      Ritc/Library/Helper/NewAppHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-12-15 22:51:31
+ * @version   1.1.0
+ * @date      2018-04-14 17:31:00
  * @note Change Log
- * - v1.0.0         - Initial Production version                - 2017-12-15 wer
- * - v1.0.0-alpha.0 - Initial version                           - 2017-11-24 wer
+ * - v1.0.0         - Create Default Files changed to use over all site variable    - 2018-04-14 wer
+ * - v1.0.0         - Initial Production version                                    - 2017-12-15 wer
+ * - v1.0.0-alpha.0 - Initial version                                               - 2017-11-24 wer
  */
 namespace Ritc\Library\Helper;
 
@@ -78,9 +79,10 @@ class NewAppHelper
 
     /**
      * Creates the default files for the app.
+     * @param bool $is_site optional, defaults to false
      * @return bool
      */
-    public function createDefaultFiles()
+    public function createDefaultFiles($is_site = false)
     {
         if (empty($this->a_new_dirs)
             || empty($this->app_path)
@@ -159,7 +161,12 @@ class NewAppHelper
             ### Create the main controller for the app ###
             $a_replace[4] = 'Main';
             $a_replace[5] = file_get_contents(SRC_CONFIG_PATH . '/install_files/main_controller.snippet');
-            $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/controller.php.txt');
+            if ($is_site) {
+                $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/site_controller.php.txt');
+            }
+            else {
+                $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/controller.php.txt');
+            }
             $controller_text = str_replace($a_find, $a_replace, $controller_text);
             if (!file_put_contents($this->app_path . "/Controllers/MainController.php", $controller_text)) {
                 return false;
