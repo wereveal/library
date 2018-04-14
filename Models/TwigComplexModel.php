@@ -164,6 +164,37 @@ class TwigComplexModel
     }
 
     /**
+     * Reads the records for the given prefix_id.
+     * @param int $prefix_id Required
+     * @return array
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    public function readDirsForPrefix($prefix_id = -1)
+    {
+        if ($prefix_id < 1) {
+            return [];
+        }
+        $tp_prefix  = $this->o_prefix->getLibPrefix();
+        $td_prefix  = $this->o_dirs->getLibPrefix();
+        $sql = "
+            SELECT p.tp_id, p.tp_prefix, d.td_id, d.td_name from {$tp_prefix}twig_prefix as p
+            JOIN {$td_prefix}twig_dirs as d 
+              ON p.tp_id = d.tp_id
+            WHERE p.tp_active = 'true'
+            AND p.tp_id = :tp_id
+            ORDER BY d.td_name ASC;
+        ";
+        $a_values = [':tp_id' => $prefix_id];
+        try {
+            return $this->o_db->search($sql, $a_values);
+        }
+        catch (ModelException $e) {
+            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            throw new ModelException($this->error_message, $e->getCode());
+        }
+    }
+
+    /**
      * Returns complete information regarding a template.
      * @param int $tpl_id
      * @return array|bool
@@ -202,24 +233,30 @@ class TwigComplexModel
 
     /**
      * Returns all active records for the twig configuration.
+     * @param string $is_active
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readTwigConfig()
+    public function readTwigConfig($is_active = 'true')
     {
         $tp_prefix = $this->o_tpls->getLibPrefix();
         $td_prefix = $this->o_dirs->getLibPrefix();
+        $is_active = $is_active != 'false'
+            ? 'true'
+            : 'false';
+        $a_values = [':tp_active' => $is_active];
+        $order_by = 'p.tp_default DESC, p.tp_id ASC';
         $sql = "
             SELECT p.tp_id, p.tp_prefix as twig_prefix, p.tp_path as twig_path, p.tp_active, p.tp_default,
               d.td_id, d.td_name as twig_dir
             FROM {$tp_prefix}twig_prefix as p
             JOIN {$td_prefix}twig_dirs as d
               ON d.tp_id = p.tp_id
-            WHERE p.tp_active = 'true'
-            ORDER BY p.tp_default DESC, p.tp_id ASC
+            WHERE p.tp_active = :tp_active 
+            ORDER BY $order_by 
         ";
         try {
-            return $this->o_db->search($sql);
+            return $this->o_db->search($sql, $a_values);
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();

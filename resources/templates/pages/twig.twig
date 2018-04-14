@@ -137,6 +137,31 @@
             <div class="col-lg-2">Default</div>
             <div class="col-lg-2">Actions</div>
         </div>
+        <form action="{{ public_dir }}/manager/config/twig/" method="post">
+        <div class="row even">
+            <div class="col-lg-2">
+                <label for="tp_prefix0" class="d-md-none pr-h">Prefix</label>
+                <input type="text" id="tp_prefix0" name="tp_prefix" value="" class="colorful flexible">
+            </div>
+            <div class="col-lg-4">
+                <label for="tp_path0" class="d-md-none pr-h">Path</label>
+                <input type="text" id="tp_path0" name="tp_path" value="" class="colorful flexible">
+            </div>
+            <div class="col-lg-2">
+                {% set cb_values = {'id':'tp_active0','name':'tp_active','value':'true','checked':'','label':'Active'} %}
+                {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+            </div>
+            <div class="col-lg-2">
+                {% set cb_values = {'id':'tp_default0','name':'tp_default','value':'true','checked':'','label':'Default'} %}
+                {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+            </div>
+            <div class="col-lg-2">
+                <button type="submit" name="submit" value="new" class="btn btn-green btn-xs">New</button>
+                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                <input type="hidden" name="tp_id" value="">
+            </div>
+        </div>
+        </form>
     {% for prefix in a_prefix %}
         {% if loop.index is even %}
             {% set class='even' %}
@@ -164,7 +189,7 @@
                 {% else %}
                     {% set is_checked = '' %}
                 {% endif %}
-                {% set cb_values = {'id':this_active,'name':'tp_active','value':prefix.tp_active,'checked':is_checked,'label':'Immutable'} %}
+                {% set cb_values = {'id':this_active,'name':'tp_active','value':'true','checked':is_checked,'label':'Active'} %}
                 {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
             </div>
             <div class="col-lg-2">
@@ -173,7 +198,7 @@
                 {% else %}
                     {% set is_checked = '' %}
                 {% endif %}
-                {% set cb_values = {'id':this_default,'name':'tp_default','value':prefix.tp_default,'checked':is_checked,'label':'Default'} %}
+                {% set cb_values = {'id':this_default,'name':'tp_default','value':'true','checked':is_checked,'label':'Default'} %}
                 {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
             </div>
             <div class="col-lg-2">
@@ -187,9 +212,24 @@
     {% endfor %}
     </div>
     <div class="container container-bordered-square">
-        Directories
         <div class="row list-header">
-            <div class="col-lg">
+            <div class="col-lg-4">
+                <label for="prefixes" class="d-none">Twig Prefixes</label>
+                <select id="prefixes" name="tp_id" onclick="displayDirectories(this)">
+                    <option value="" selected>Select Prefix to Display Directories</option>
+                    {% for tp in a_prefix %}
+                        <option value="{{ tp.tp_id }}">{{ tp.tp_prefix }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row list-header d-none d-lg-flex">
+            <div class="col-lg-2">Prefix</div>
+            <div class="col-lg-2">Directory Name</div>
+            <div class="col-lg-2 offset-lg-6">Actions</div>
+        </div>
+        <div class="row even">
+            <div class="col-lg-2">
                 <label for="prefixes" class="d-none">Twig Prefixes</label>
                 <select id="prefixes" name="tp_id">
                     <option value="" selected>Twig Prefixes</option>
@@ -198,15 +238,18 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-lg">
+            <div class="col-lg-2">
                 <label for="directory_name" class="d-md-none pr-h">Directory Name</label>
-                <input type="text" id="directory_name" name="td_name" value="">
+                <input type="text" id="directory_name" name="td_name" value="" class="colorful flexible">
             </div>
-            <div class="col-lg">
+            <div class="col-lg-2 offset-lg-6">
                 <button type="submit" name="submit" value="new_directory" class="btn btn-green btn-xs">New</button>
                 {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
 
             </div>
+        </div>
+        <div id="forDirectories">
+            stuff
         </div>
     {#
         New Directory line
