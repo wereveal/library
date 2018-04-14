@@ -8,9 +8,10 @@
  * @file      Ritc/Library/Helper/AuthHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.3.0
- * @date      2017-06-20 11:32:28
+ * @version   5.3.1
+ * @date      2018-04-14 15:06:36
  * @note <b>Change Log</b>
+ * - v5.3.1 - Bug fix                                               - 2018-04-14 wer
  * - v5.3.0 - Refactored due to refactoring of models               - 2017-06-20 wer
  * - v5.2.2 - Code clarification                                    - 2017-05-27 wer
  * - v5.2.1 - Bug fix, not sure why it suddenly appeared            - 2017-02-07 wer
@@ -433,18 +434,13 @@ class AuthHelper
         try {
             $a_person = $this->o_complex->readInfo($people_id);
             if (!empty($a_person)) {
-                try {
-                    $a_allowed_groups = $this->o_router->getAllowedGroups();
-                    foreach($a_person['groups'] as $a_group) {
-                        foreach ($a_allowed_groups as $a_allowed_group) {
-                            if ($a_group['group_id'] == $a_allowed_group) {
-                                return true;
-                            }
+                $a_allowed_groups = $this->o_router->getAllowedGroups();
+                foreach($a_person['groups'] as $a_group) {
+                    foreach ($a_allowed_groups as $a_allowed_group) {
+                        if ($a_group['group_id'] == $a_allowed_group) {
+                            return true;
                         }
                     }
-                }
-                catch (ModelException $e) {
-                    $this->logIt("Db Exception: " . $e->errorMessage(), LOG_OFF, $meth . __LINE__);
                 }
             }
         }

@@ -41,14 +41,18 @@ class TwigView implements ViewInterface
         $this->setupView($o_di);
     }
 
-    public function render()
+    /**
+     * Renders the list of the twig prefixes, directories, and templates.
+     * @param array $a_message
+     * @return string
+     */
+    public function render(array $a_message = [])
     {
         $meth = __METHOD__ . '.';
         $o_tp = new TwigPrefixModel($this->o_db);
         $o_td = new TwigDirsModel($this->o_db);
         $o_tt = new TwigTemplatesModel($this->o_db);
         $o_tc = new TwigComplexModel($this->o_di);
-        $a_message = [];
         $continue = true;
         $a_tt_results = [];
         $a_td_results = [];
@@ -61,17 +65,32 @@ class TwigView implements ViewInterface
                     $a_tp_results = $o_tp->read();
                 }
                 catch (ModelException $e) {
-                    $a_message = ViewHelper::failureMessage("Unable to retrieve the Twig prefix records");
+                    $message = "Unable to retrieve the Twig prefix records";
+                    $message = empty($a_message['message'])
+                        ? $message
+                        : $a_message['message'] . ' -- ' . $message;
+                    ;
+                    $a_message = ViewHelper::failureMessage($message);
                     $continue = false;
                 }
             }
             catch (ModelException $e) {
-                $a_message = ViewHelper::failureMessage("Unable to retrieve the Twig dir records");
+                $message = "Unable to retrieve the Twig dir records";
+                $message = empty($a_message['message'])
+                    ? $message
+                    : $a_message['message'] . ' -- ' . $message;
+                ;
+                $a_message = ViewHelper::failureMessage($message);
                 $continue = false;
             }
         }
         catch (ModelException $e) {
-            $a_message = ViewHelper::failureMessage("Unable to retrieve the Twig tpl records");
+            $message = "Unable to retrieve the Twig tpl records";
+            $message = empty($a_message['message'])
+                ? $message
+                : $a_message['message'] . ' -- ' . $message;
+            ;
+            $a_message = ViewHelper::failureMessage($message);
             $continue = false;
         }
         if ($continue) {
@@ -83,7 +102,12 @@ class TwigView implements ViewInterface
                     $a_tt_results[$key]['tp_id']       = $a_tc_results[0]['tp_id'];
                 }
                 catch (ModelException $e) {
-                    $a_message = ViewHelper::failureMessage('Unable to read the template information');
+                    $message = 'Unable to read the template information';
+                    $message = empty($a_message['message'])
+                        ? $message
+                        : $a_message['message'] . ' -- ' . $message;
+                    ;
+                    $a_message = ViewHelper::failureMessage($message);
                     $continue = false;
                     break;
                 }
@@ -96,7 +120,7 @@ class TwigView implements ViewInterface
                 ];
                 $a_tt_results = Arrays::multiSort($a_tt_results, $a_sort_order);
                 $log_message = 'a_tt_results ' . var_export($a_tt_results, true);
-                $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             }
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/twig/');
@@ -106,8 +130,49 @@ class TwigView implements ViewInterface
 
         $tpl = $this->createTplString($a_twig_values);
         $log_message = 'twig values ' . var_export($a_twig_values, true);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-        $this->logIt('TPL: ' . $tpl, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $this->logIt('TPL: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
+
+    public function renderDeleteTpl($tpl_id = -1)
+    {
+        $a_router_parts = $this->o_router->getRouteParts();
+        $o_tpl = new TwigTemplatesModel($this->o_db);
+        $tpl_id = $this->o_router->getPost('tpl_id');
+        try {
+            $a_tpl = $o_tpl->read(['tpl_id' => $tpl_id]);
+        }
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage("Unable to delete the template");
+            return $this->render($a_message);
+        }
+        $a_values = [
+            'what'         => '',
+            'name'         => '',
+            'where'        => '',
+            'submit_value' => '',
+            'btn_value'    => '',
+            'hidden_name'  => '',
+            'hidden_value' => ''
+        ];
+        $a_options = [
+            'tpl'       => 'verify_delete',
+            'a_message' => [],
+            'fallback'  => 'render',
+            'location'  => $a_router_parts['route_path']
+        ];
+        return $this->renderVerifyDelete($a_values, $a_options);
+    }
+
+    public function renderDeleteTp($tp_id = -1)
+    {
+        return '';
+    }
+
+    public function renderDeleteDir($td_id = -1)
+    {
+        return '';
+    }
 }
+

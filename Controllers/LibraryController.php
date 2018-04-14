@@ -58,7 +58,7 @@ class LibraryController implements ControllerInterface
         if (!defined('LIB_TWIG_PREFIX')) {
             define('LIB_TWIG_PREFIX', 'lib_');
         }
-    }/** @noinspection PhpInconsistentReturnPointsInspection */
+    }
 
     /**
      * Default page for the library manager and login.

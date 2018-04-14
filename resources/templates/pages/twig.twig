@@ -100,8 +100,8 @@
                     {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
                 </div>
                 <div class="col-lg {{ class }}">
-                    <button type="submit" name="submit" value="update" class="btn btn-green btn-xs">Update</button>
-                    <button type="submit" name="submit" value="verify-delete" class="btn btn-outline-red btn-xs">Delete</button>
+                    <button type="submit" name="submit" value="update_tpl" class="btn btn-green btn-xs">Update</button>
+                    <button type="submit" name="submit" value="verify_delete_tpl" class="btn btn-outline-red btn-xs">Delete</button>
                     {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
                     <input type="hidden" name="tpl_id" value="{{ tpl.tpl_id }}">
                 </div>
@@ -156,7 +156,7 @@
                 {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
             </div>
             <div class="col-lg-2">
-                <button type="submit" name="submit" value="new" class="btn btn-green btn-xs">New</button>
+                <button type="submit" name="submit" value="new_tp" class="btn btn-green btn-xs">New</button>
                 {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
                 <input type="hidden" name="tp_id" value="">
             </div>
@@ -202,8 +202,8 @@
                 {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
             </div>
             <div class="col-lg-2">
-                <button type="submit" name="submit" value="update" class="btn btn-green btn-xs">Update</button>
-                <button type="submit" name="submit" value="verify-delete" class="btn btn-outline-red btn-xs">Delete</button>
+                <button type="submit" name="submit" value="update_tp" class="btn btn-green btn-xs">Update</button>
+                <button type="submit" name="submit" value="verify_delete_tp" class="btn btn-outline-red btn-xs">Delete</button>
                 {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
                 <input type="hidden" name="tp_id" value="{{ prefix.tp_id }}">
             </div>
@@ -228,6 +228,7 @@
             <div class="col-lg-2">Directory Name</div>
             <div class="col-lg-2 offset-lg-6">Actions</div>
         </div>
+        <form action="{{ public_dir }}/manager/config/twig/" method="post">
         <div class="row even">
             <div class="col-lg-2">
                 <label for="prefixes" class="d-none">Twig Prefixes</label>
@@ -243,20 +244,15 @@
                 <input type="text" id="directory_name" name="td_name" value="" class="colorful flexible">
             </div>
             <div class="col-lg-2 offset-lg-6">
-                <button type="submit" name="submit" value="new_directory" class="btn btn-green btn-xs">New</button>
+                <button type="submit" name="submit" value="new_dir" class="btn btn-green btn-xs">New</button>
                 {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
 
             </div>
         </div>
+        </form>
         <div id="forDirectories">
             stuff
         </div>
-    {#
-        New Directory line
-        foreach prefix
-            list the directories with tp_id and td_id hidden and if not used by a template delete button
-    #}
-
     </div>
 {% endblock %}
 {% block bottom_js %}

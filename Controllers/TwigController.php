@@ -13,9 +13,10 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\ControllerTraits;
+use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\TwigView;
 
 /**
@@ -25,7 +26,10 @@ use Ritc\Library\Views\TwigView;
  */
 class TwigController implements ControllerInterface
 {
-    use ControllerTraits;
+    use ConfigControllerTraits;
+
+    /** @var \Ritc\Library\Views\TwigView  */
+    private $o_view;
 
     /**
      * TwigController constructor.
@@ -33,7 +37,8 @@ class TwigController implements ControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->setupController($o_di);
+        $this->setupManagerController($o_di);
+        $this->o_view = new TwigView($this->o_di);
     }
 
     /**
@@ -42,10 +47,77 @@ class TwigController implements ControllerInterface
      */
     public function route()
     {
-        $o_view = new TwigView($this->o_di);
-        switch ($this->main_action) {
+        $a_message = [];
+        $action = empty($this->form_action)
+            ? 'renderList'
+            : $this->form_action;
+        if ($this->o_session->isNotValidSession($this->a_post, true)) {
+            $this->o_auth->logout($_SESSION['login_id']);
+            $o_main = $this->o_di->get('mainController');
+            if (is_object($o_main)) {
+                /** @noinspection PhpUndefinedMethodInspection */
+                $o_main->route();
+            }
+        }
+        switch ($action) {
+            case 'new_tpl':
+                break;
+            case 'new_tp':
+                break;
+            case 'new_dir':
+                break;
+            case 'update_tpl':
+                break;
+            case 'update_tp':
+                break;
+            case 'update_dir':
+                break;
+            case 'verify_delete_tpl':
+                return $this->verifyDelete('tpl');
+                break;
+            case 'verify_delete_tp':
+                break;
+            case 'verify_delete_dir':
+                break;
+            case 'delete_tpl':
+                break;
+            case 'delete_tp':
+                break;
+            case 'delete_dir':
+                break;
+            case 'renderList':
             default:
-                return $o_view->render();
+                // just render the list
+        }
+        return $this->o_view->render($a_message);
+    }
+
+    private function verifyDelete($which_one = '')
+    {
+        if (empty($which_one)) {
+            $a_message = ViewHelper::errorMessage('Could not perform the delete. Missing a required value.');
+            return $this->o_view->render($a_message);
+        }
+        switch ($which_one) {
+            case 'tpl':
+                if (empty($this->a_post['tpl_id'])) {
+                    return $this->o_view->render(ViewHelper::errorMessage('Could not delete the template.'));
+                }
+                return $this->o_view->renderDeleteTpl($this->a_post['tpl_id']);
+            case 'tp':
+                if (empty($this->a_post['tp_id'])) {
+                    return $this->o_view->render(ViewHelper::errorMessage('Could not delete the twig prefix.'));
+                }
+                return $this->o_view->renderDeleteTp($this->a_post['tp_id']);
+                break;
+            case 'dir':
+                if (empty($this->a_post['td_id'])) {
+                    return $this->o_view->render(ViewHelper::errorMessage('Could not delete the twig prefix.'));
+                }
+                return $this->o_view->renderDeleteDir($this->a_post['td_id']);
+                break;
+            default:
+                return ViewHelper::errorMessage('Missing a valid value.');
         }
     }
 }

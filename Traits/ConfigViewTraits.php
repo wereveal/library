@@ -6,9 +6,10 @@
  * @file        ConfigViewTraits.php
  * @namespace   Ritc\Library\Traits
  * @author      William E Reveal <bill@revealitconsulting.com>
- * @version     3.1.2
- * @date        2017-12-13 18:12:19
+ * @version     3.1.3
+ * @date        2018-04-14 15:23:19
  * @note <b>Change Log</b>
+ * - v3.1.3 - bug fix (some variables seemed to be confused)                        - 2018-04-14 wer
  * - v3.1.2 - bug fix                                                               - 2017-12-13 wer
  * - v3.1.1 - bug fix for TwigExceptions now handled by new method in ViewTraits    - 2017-12-02 wer
  * - v3.1.0 - Forked this so ManagerViewTraits becomes primary                      - 2017-07-04 wer
@@ -87,9 +88,9 @@ trait ConfigViewTraits
             ? '/manager/config/'
             : $a_options['location'];
         $a_twig_values = $this->createDefaultTwigValues($a_message, $location);
-        $a_twig_values['where'] = empty($a_options['where'])
+        $a_twig_values['location'] = empty($a_options['location'])
             ? empty($a_twig_values['where']) ? '' : $a_twig_values['where']
-            : $a_options['where'];
+            : $a_options['location'];
         $a_twig_values['tpl'] = empty($a_options['tpl'])
             ? 'verify_delete'
             : $a_options['tpl'];

@@ -86,6 +86,7 @@ a_values is an assoc array and provides the needed values for the twig template.
     'what'         => 'What Is Being Deleted, constant',
     'name'         => 'Something to help one know which one, e.g. myConstant',
     'where'        => 'which config is being deleted, e.g. constants',
+    'submit_value' => 'value that is being submitted by button, defaults to delete',
     'btn_value'    => 'What the Button says, e.g. Constants',
     'hidden_name'  => 'primary id name, e.g., const_id',
     'hidden_value' => 'primary id, e.g. 1',
