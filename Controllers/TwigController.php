@@ -74,11 +74,10 @@ class TwigController implements ControllerInterface
                 break;
             case 'verify_delete_tpl':
                 return $this->verifyDelete('tpl');
-                break;
             case 'verify_delete_tp':
-                break;
+                return $this->verifyDelete('tp');
             case 'verify_delete_dir':
-                break;
+                return $this->verifyDelete('dir');
             case 'delete_tpl':
                 break;
             case 'delete_tp':
@@ -109,13 +108,11 @@ class TwigController implements ControllerInterface
                     return $this->o_view->render(ViewHelper::errorMessage('Could not delete the twig prefix.'));
                 }
                 return $this->o_view->renderDeleteTp($this->a_post['tp_id']);
-                break;
             case 'dir':
                 if (empty($this->a_post['td_id'])) {
                     return $this->o_view->render(ViewHelper::errorMessage('Could not delete the twig prefix.'));
                 }
                 return $this->o_view->renderDeleteDir($this->a_post['td_id']);
-                break;
             default:
                 return ViewHelper::errorMessage('Missing a valid value.');
         }

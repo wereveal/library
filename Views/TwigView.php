@@ -135,26 +135,43 @@ class TwigView implements ViewInterface
         return $this->renderIt($tpl, $a_twig_values);
     }
 
-    public function renderDeleteTpl($tpl_id = -1)
+    /**
+     * Returns the verify delete form with directory values.
+     * @param int $td_id
+     * @return string
+     */
+    public function renderDeleteDir($td_id = -1)
     {
+        if ($td_id == -1) {
+            $a_message = ViewHelper::warningMessage('Unable to delete the directory: a directory must be specified by id.');
+            return $this->render($a_message);
+        }
         $a_router_parts = $this->o_router->getRouteParts();
-        $o_tpl = new TwigTemplatesModel($this->o_db);
-        $tpl_id = $this->o_router->getPost('tpl_id');
+        $o_tc = new TwigComplexModel($this->o_di);
+        if (!$o_tc->canBeDeleted('td', $td_id)) {
+            $a_message = ViewHelper::warningMessage('Unable to delete the directory: a template may still use it.');
+            return $this->render($a_message);
+        }
+        $o_dir = new TwigDirsModel($this->o_db);
         try {
-            $a_tpl = $o_tpl->read(['tpl_id' => $tpl_id]);
+            $a_results = $o_dir->read(['td_id' => $td_id]);
+            if (empty($a_results)) {
+                $a_message = ViewHelper::errorMessage('Unable to delete the directory: an error occurred.');
+                return $this->render($a_message);
+            }
         }
         catch (ModelException $e) {
-            $a_message = ViewHelper::errorMessage("Unable to delete the template");
+            $a_message = ViewHelper::errorMessage('Unable to delete the directory: an error occurred.');
             return $this->render($a_message);
         }
         $a_values = [
-            'what'         => '',
-            'name'         => '',
-            'where'        => '',
-            'submit_value' => '',
-            'btn_value'    => '',
-            'hidden_name'  => '',
-            'hidden_value' => ''
+            'what'         => 'Directory',
+            'name'         => $a_results[0]['td_name'],
+            'where'        => '/manager/config/twig/',
+            'submit_value' => 'delete_dir',
+            'btn_value'    => 'Delete',
+            'hidden_name'  => 'td_id',
+            'hidden_value' => $a_results[0]['td_id']
         ];
         $a_options = [
             'tpl'       => 'verify_delete',
@@ -165,14 +182,112 @@ class TwigView implements ViewInterface
         return $this->renderVerifyDelete($a_values, $a_options);
     }
 
+    /**
+     * Returns the verify delete form with prefix values.
+     * @param int $tp_id
+     * @return string
+     */
     public function renderDeleteTp($tp_id = -1)
     {
-        return '';
+        if ($tp_id == -1) {
+            $a_message = ViewHelper::warningMessage('Unable to delete the twig prefix: it must be specified by id.');
+            return $this->render($a_message);
+        }
+        $a_router_parts = $this->o_router->getRouteParts();
+        $o_tc = new TwigComplexModel($this->o_di);
+        if (!$o_tc->canBeDeleted('tp', $tp_id)) {
+            $a_message = ViewHelper::errorMessage("Unable to delete the twig prefix: directories which use it may still exist.");
+            return $this->render($a_message);
+        }
+        $o_tp = new TwigPrefixModel($this->o_db);
+        try {
+            $a_results = $o_tp->read(['tp_id' => $tp_id]);
+            if (!empty($a_results)) {
+                $a_tp = $a_results[0];
+            }
+            else {
+                $a_message = ViewHelper::warningMessage("Unable to delete the twig prefix: the prefix values were not available.");
+                return $this->render($a_message);
+            }
+        }
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage("Unable to delete the twig prefix: an error has occurred.");
+            return $this->render($a_message);
+        }
+        /* if a directory still uses this twig prefix, don't allow delete */
+        $a_values = [
+            'what'         => 'Twig Prefix',
+            'name'         => $a_tp['tp_prefix'],
+            'where'        => '/manager/config/twig/',
+            'submit_value' => 'delete_tp',
+            'btn_value'    => 'Delete',
+            'hidden_name'  => 'tp_id',
+            'hidden_value' => $a_tp['tp_id']
+        ];
+        $a_options = [
+            'tpl'       => 'verify_delete',
+            'a_message' => [],
+            'fallback'  => 'render',
+            'location'  => $a_router_parts['route_path']
+        ];
+        return $this->renderVerifyDelete($a_values, $a_options);
     }
 
-    public function renderDeleteDir($td_id = -1)
+    /**
+     * Renders the verify delete form with template variables.
+     * @param int $tpl_id
+     * @return string
+     */
+    public function renderDeleteTpl($tpl_id = -1)
     {
-        return '';
+        if ($tpl_id == -1) {
+            $a_message = ViewHelper::warningMessage('Unable to delete the template: it must be specified by id.');
+            return $this->render($a_message);
+        }
+        $a_router_parts = $this->o_router->getRouteParts();
+        // first make sure no pages still use this template
+        $o_tc = new TwigComplexModel($this->o_di);
+        if (!$o_tc->canBeDeleted('tpl', $tpl_id)) {
+            $a_message = ViewHelper::warningMessage("Unable to delete the template: a page may still use it.");
+            return $this->render($a_message);
+        }
+        $o_tpl  = new TwigTemplatesModel($this->o_db);
+        try {
+            $a_results = $o_tpl->read(['tpl_id' => $tpl_id]);
+            if (count($a_results) > 0) {
+                $a_tpl = $a_results[0];
+            }
+            else {
+                $a_message = ViewHelper::warningMessage("Unable to delete the template: the template values were not available.");
+                return $this->render($a_message);
+            }
+        }
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage("Unable to delete the template: could not find it.");
+            return $this->render($a_message);
+        }
+        $login_id = $this->o_session->getVar('login_id');
+        if ($a_tpl['tpl_immutable'] == 'true' && $this->o_auth->hasMinimumAuthLevel($login_id, 9)) {
+            $a_message = ViewHelper::warningMessage("Unable to delete the template: the template is immutable.");
+            return $this->render($a_message);
+        }
+        $a_values = [
+            'what'         => 'Template',
+            'name'         => $a_tpl['tpl_name'],
+            'where'        => '/manager/config/twig/',
+            'submit_value' => 'delete_tpl',
+            'btn_value'    => 'Delete',
+            'hidden_name'  => 'tpl_id',
+            'hidden_value' => $a_tpl['tpl_id']
+        ];
+        $a_options = [
+            'tpl'       => 'verify_delete',
+            'a_message' => [],
+            'fallback'  => 'render',
+            'location'  => $a_router_parts['route_path']
+        ];
+        return $this->renderVerifyDelete($a_values, $a_options);
     }
+
 }
 

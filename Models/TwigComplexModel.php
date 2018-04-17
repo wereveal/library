@@ -33,6 +33,8 @@ class TwigComplexModel
     private $o_di;
     /** @var  \Ritc\Library\Models\TwigDirsModel */
     private $o_dirs;
+    /** @var \Ritc\Library\Models\PageModel */
+    private $o_page;
     /** @var  \Ritc\Library\Models\TwigPrefixModel */
     private $o_prefix;
     /** @var  \Ritc\Library\Models\TwigTemplatesModel */
@@ -50,6 +52,63 @@ class TwigComplexModel
         $o_db = $this->o_di->get('db');
         $this->setupProperties($o_db);
         $this->setupDbs($o_db);
+    }
+
+    /**
+     * Determines if the database record can be deleted based on its children.
+     * If it has children, then don't delete.
+     * @param string $which_one
+     * @param int    $id
+     * @return bool
+     */
+    public function canBeDeleted($which_one = '', $id = -1)
+    {
+        if (empty($which_one) || $id < 1) {
+            return false;
+        }
+        switch ($which_one) {
+            case 'tp':
+            case 'prefix':
+                try {
+                    $a_results = $this->o_dirs->read(['tp_id' => $id]);
+                    if (empty($a_results)) {
+                        return true;
+                    }
+                    return false;
+                }
+                catch (ModelException $e) {
+                    return false;
+                }
+            case 'td':
+            case 'dir':
+            case 'directory':
+                try {
+                    $a_results = $this->o_tpls->read(['td_id' => $id]);
+                    if (empty($a_results)) {
+                        return true;
+                    }
+                    return false;
+                }
+                catch (ModelException $e) {
+                    return false;
+                }
+                break;
+            case 'tpl':
+            case 'template':
+                try {
+                    $a_results = $this->o_page->read(['tpl_id' => $id]);
+                    if (empty($a_results)) {
+                        return true;
+                    }
+                    return false;
+                }
+                catch (ModelException $e) {
+                    return false;
+                }
+                break;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -206,24 +265,28 @@ class TwigComplexModel
             $this->error_message = 'Must supply a template id';
             return false;
         }
-        $tpl_prefix = $this->o_tpls->getLibPrefix();
-        $tp_prefix  = $this->o_prefix->getLibPrefix();
-        $td_prefix  = $this->o_dirs->getLibPrefix();
+        $lib_prefix = $this->o_db->getLibPrefix();
 
         $a_values = [':tpl_id' => $tpl_id];
         $sql = "
             SELECT t.tpl_id, t.tpl_name, t.tpl_immutable,
               p.tp_id, p.tp_prefix as twig_prefix, p.tp_path as twig_path, p.tp_active, p.tp_default,
               d.td_id, d.td_name as twig_dir
-            FROM {$tpl_prefix}twig_templates as t
-            JOIN {$td_prefix}twig_dirs as d
+            FROM {$lib_prefix}twig_templates as t
+            JOIN {$lib_prefix}twig_dirs as d
               ON t.td_id = d.td_id
-            JOIN {$tp_prefix}twig_prefix as p
+            JOIN {$lib_prefix}twig_prefix as p
               ON d.tp_id = p.tp_id
             WHERE t.tpl_id = :tpl_id
         ";
         try {
-            return $this->o_db->search($sql, $a_values);
+            $a_tpl_info = $this->o_db->search($sql, $a_values);
+            if (empty($a_tpl_info)) {
+                return [];
+            }
+            else {
+                return $a_tpl_info[0];
+            }
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
@@ -274,8 +337,10 @@ class TwigComplexModel
         $this->o_dirs   = new TwigDirsModel($o_db);
         $this->o_prefix = new TwigPrefixModel($o_db);
         $this->o_tpls   = new TwigTemplatesModel($o_db);
+        $this->o_page   = new PageModel($o_db);
         $this->o_dirs->setElog($this->o_elog);
         $this->o_prefix->setElog($this->o_elog);
         $this->o_tpls->setElog($this->o_elog);
+        $this->o_page->setElog($this->o_elog);
     }
 }

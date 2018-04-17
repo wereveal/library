@@ -8,6 +8,7 @@
  * @version   1.0.0-alpha.6
  * @date      2017-06-17 12:12:02
  * @note Change Log
+ * - v1.0.0-alpha.7 - bug fix                           - 2018-04-17 wer
  * - v1.0.0-alpha.6 - variable name clarification       - 2018-04-12 wer
  * - v1.0.0-alpha.5 - refactored to use ModelException  - 2017-06-17 wer
  * - v1.0.0-alpha.4 - bug fixes                         - 2017-05-16 wer
@@ -126,8 +127,8 @@ class PageComplexModel
             catch (ModelException $e) {
                 throw new ModelException('Unable to get the template values', 140, $e);
             }
-            if (!empty($a_twig_stuff[0])) {
-                $a_record = array_merge($a_record, $a_twig_stuff[0]);
+            if (!empty($a_twig_stuff)) {
+                $a_record = array_merge($a_record, $a_twig_stuff);
                 $a_values[$key] = $a_record;
             }
         }
@@ -146,12 +147,10 @@ class PageComplexModel
             return false;
         }
         $url_text = str_replace(SITE_URL, '', $url_text);
-        $sql =<<<SQL
-{$this->select_sql}
-WHERE u.url_text = :url_text
-AND p.url_id = u.url_id
-ORDER By u.url_text
-SQL;
+        $sql = $this->select_sql . '
+            WHERE u.url_text = :url_text
+            AND p.url_id = u.url_id
+            ORDER By u.url_text';
         try {
             return $this->o_db->search($sql, [':url_text' => $url_text]);
         }
