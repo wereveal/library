@@ -15,6 +15,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -98,6 +99,13 @@ class TwigComplexModel
                 try {
                     $a_results = $this->o_page->read(['tpl_id' => $id]);
                     if (empty($a_results)) {
+                        if ($this->o_tpls->isImmutable([$id])) {
+                            $o_auth = new AuthHelper($this->o_di);
+                            $login_id = $_SESSION['login_id'];
+                            if (!$o_auth->hasMinimumAuthLevel($login_id, 9)) {
+                                return false;
+                            }
+                        }
                         return true;
                     }
                     return false;

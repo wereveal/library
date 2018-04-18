@@ -91,6 +91,11 @@ class TwigController implements ControllerInterface
         return $this->o_view->render($a_message);
     }
 
+    /**
+     * Routes to the correct verifyDelete form.
+     * @param string $which_one
+     * @return array|string
+     */
     private function verifyDelete($which_one = '')
     {
         if (empty($which_one)) {
