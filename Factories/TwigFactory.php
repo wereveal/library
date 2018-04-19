@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Factories/TwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.1.2
- * @date      2018-04-04 10:06:12
+ * @version   3.1.3
+ * @date      2018-04-19 09:53:41
  * @note <b>Change Log</b>
+ * - v3.1.3   - Minor change in testing                                                                 - 2018-04-19 wer
  * - v3.1.2   - Class renamed elsewhere reflected here                                                  - 2018-04-04 wer
  * - v3.1.1   - bug fixes                                                                               - 2018-03-12 wer
  * - v3.1.0   - Refactoring of TwigModel created the need for changes here.                             - 2017-06-20 wer
@@ -65,7 +66,7 @@ class TwigFactory
         $meth = __METHOD__ . '.';
         try {
             $o_loader = new Twig_Loader_Filesystem($a_twig_config['default_path']);
-            if (is_object($o_loader)) {
+            if ($o_loader instanceof Twig_Loader_Filesystem) {
                 $this->o_loader = $o_loader;
                 $continue = true;
                 foreach ($a_twig_config['additional_paths'] as $path => $namespace ) {
