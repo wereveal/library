@@ -1,0 +1,29 @@
+                <nav aria-label="Record Navigation">
+                    <ul class="pagination">
+                    {% if a_pager.previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ a_pager.previous }}" aria-label="Previous">
+                                <span aria-hidden="true"><i class="far fa-angle-double-left"></i></span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% for link in a_pager.links %}
+                        <li class="page-item">
+                        {% if link.href %}
+                            <a class="page-link" href="link.href">{{ link.text }}</a>
+                        {% else %}
+                            {{ link.text }}
+                        {% endif %}
+                        </li>
+                    {% endfor %}
+                    {% if a_pager.next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ a_pager.next }}" aria-label="Next">
+                                <span aria-hidden="true"><i class="far fa-angle-double-right"></i></span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    </ul>
+                </nav>

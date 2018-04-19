@@ -8,9 +8,10 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.3
- * @date      2017-12-12 11:43:33
+ * @version   2.1.0
+ * @date      2018-04-19 15:47:46
  * @note <b>Change Log</b>
+ * - v2.1.0          - Added new method to get count of a table             - 2018-04-19 wer
  * - v2.0.3          - Changes to ModelException reflected here             - 2017-12-12 wer
  * - v2.0.2          - bug fix                                              - 2017-07-27 wer
  * - v2.0.1          - bug fix, logic error fix                             - 2017-06-23 wer
@@ -688,6 +689,23 @@ SQL;
                 : ':' . $value;
         }
         return $array;
+    }
+
+    /**
+     * Returns the number of records in the table.
+     * @return int
+     */
+    public function readCount()
+    {
+        $sql = "SELECT count(*) as 'count' FROM " . $this->db_table;
+        try {
+            $results = $this->o_db->search($sql);
+            error_log("results to select count: " . var_export($results, true));
+            return $results[0]['count'];
+        }
+        catch (ModelException $e) {
+            return 0;
+        }
     }
 
     /**

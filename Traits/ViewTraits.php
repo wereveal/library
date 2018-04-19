@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2018-04-12 12:07:51
+ * @version   1.1.1
+ * @date      2018-04-19 14:43:20
  * @note <b>Change Log</b>
+ * - v1.1.1         - bug fix                                                                   - 2018-04-19 wer
  * - v1.1.0         - added new default twig values for asset dirs                              - 2018-04-12 wer
  * - v1.0.2         - more bug fixes for missed exception handlers                              - 2018-03-12 wer
  * - v1.0.1         - bug fix, missed an exception handler for ModelException                   - 2017-12-02 wer
@@ -535,7 +536,9 @@ trait ViewTraits
         $a_used_order = [];
         $a_new_nav = [];
         foreach ($a_nav as $key => $a_link) {
-            $order_number = (int) $a_link['order'];
+            $order_number = !empty($a_link['order'])
+                ? (int)$a_link['order']
+                : 99;
             if (array_search($order_number, $a_used_order) !== false) {
                 $new_order_number = (int) $this->createNewOrderNumber($a_used_order, $order_number);
                 $a_used_order[] = $new_order_number;
