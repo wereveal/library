@@ -700,7 +700,6 @@ SQL;
         $sql = "SELECT count(*) as 'count' FROM " . $this->db_table;
         try {
             $results = $this->o_db->search($sql);
-            error_log("results to select count: " . var_export($results, true));
             return $results[0]['count'];
         }
         catch (ModelException $e) {

@@ -39,15 +39,20 @@
     <div class="container container-main">
 {% endblock %}
 {% block header %}
-        {% block navbar %}
+    {% block navbar %}
+        {% if mainNavName is empty %}
+            {% set mainNavName = 'mainNav' %}
+        {% endif %}
         <nav class="navbar navbar-expand-md navbar-dark bg-gray no-margin" role="navigation">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">
-                <span class="far fa-bars"></span>
+            {% block navbarToggler %}
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#{{ mainNavName }}">
+                <span class="far fa-bars slate"></span>
             </button>
+            {% endblock %}
             {% block navbarBrand %}
             <a class="navbar-brand" href="#"><span class="far fa-cog fa-2x slate"></span></a>
             {% endblock %}
-            <div class="collapse navbar-collapse" id="mainNav">
+            <div class="collapse navbar-collapse" id="{{ mainNavName }}">
                 <ul class="navbar-nav mr-auto">
                     {% for menu in a_menus %}
                         {% if menu.css != '' %}
@@ -92,7 +97,7 @@
                 </ul>
             </div>
         </nav>
-        {% endblock %}
+    {% endblock %}
     {% block otherHeader %}{% endblock %}
 {% endblock %}
 {% block search %}{% endblock %}

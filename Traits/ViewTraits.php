@@ -5,9 +5,10 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.1
- * @date      2018-04-19 14:43:20
+ * @version   1.2.0
+ * @date      2018-04-20 10:06:17
  * @note <b>Change Log</b>
+ * - v1.2.0         - added method to create values needed for pager template.                  - 2018-04-20 wer
  * - v1.1.1         - bug fix                                                                   - 2018-04-19 wer
  * - v1.1.0         - added new default twig values for asset dirs                              - 2018-04-12 wer
  * - v1.0.2         - more bug fixes for missed exception handlers                              - 2018-03-12 wer
@@ -443,6 +444,65 @@ trait ViewTraits
     }
 
     /**
+     * Creates the values needed for the pager template.
+     * @param array $a_parameters
+     * @return array
+     */
+    protected function createNumericPagerValues($a_parameters = [])
+    {
+        if (empty($a_parameters['start_record'])
+            || empty($a_parameters['records_to_display'])
+            || empty($a_parameters['total_records'])
+            || empty($a_parameters['href'])
+        ) {
+            return [];
+        }
+
+        $a_pager            = [];
+        $start_record       = $a_parameters['start_record'];
+        $records_to_display = $a_parameters['records_to_display'];
+        $total_records      = $a_parameters['total_records'];
+        $href               = $a_parameters['href'];
+        $previous_value     = $start_record == 1 || $start_record - $records_to_display < 1
+            ? 1
+            : $start_record - $records_to_display;
+        $next_value         = $start_record > 1
+            ? $start_record + $records_to_display
+            : $records_to_display
+        ;
+        $a_pager['previous'] = $href . '/' . $previous_value . '/';
+        $a_pager['next']     = $href . '/' . $next_value . '/';
+        $a_pager['links']    = [];
+        if ($start_record == 1) {
+            $a_pager['previous'] = '';
+        }
+        elseif ($start_record == $records_to_display) {
+            $a_pager['previous'] = $href . '/1/';
+        }
+        elseif ($next_value > $total_records) {
+            $a_pager['next'] = '';
+        }
+        for ($i = 0; $i <= $total_records; $i += $records_to_display) {
+            if ($i === 0) {
+                $link = $href . '/1/';
+                $text = 1;
+            }
+            else {
+                $link = $href . '/' . $i . '/';
+                $text = $i;
+            }
+            if ($i == $start_record || ($start_record == 1 && $i == 0)) {
+                $link = '';
+            }
+            $a_pager['links'][] = [
+                'href' => $link,
+                'text' => $text
+            ];
+        }
+        return $a_pager;
+    }
+
+    /**
      * Turns a flat db result into a multi-dimensional array for navigation.
      * @param array $a_nav
      * @return array
@@ -577,5 +637,4 @@ trait ViewTraits
         }
         return $a_nav;
     }
-
 }
