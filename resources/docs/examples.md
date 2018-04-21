@@ -79,28 +79,40 @@ An array used in the DbUtilityTraits::genericRead() method with the following ke
         if the config file is the default, /src/config/twig_config.php
 
 ## Verify Delete values {#verifydelete}
-verifyDelete has two paramaters, a_values and fallback_method.
-a_values is an assoc array and provides the needed values for the twig template.
+### verifyDelete has two paramaters, a_values and a_options
+#### a_values is an assoc array 
+and provides the needed values for the twig template.
 ```
 [
-    'what'         => 'What Is Being Deleted, constant',
-    'name'         => 'Something to help one know which one, e.g. myConstant',
-    'where'        => 'which config is being deleted, e.g. constants',
-    'submit_value' => 'value that is being submitted by button, defaults to delete',
-    'btn_value'    => 'What the Button says, e.g. Constants',
-    'hidden_name'  => 'primary id name, e.g., const_id',
-    'hidden_value' => 'primary id, e.g. 1',
+    'what'          => 'What Is Being Deleted, constant',
+    'name'          => 'Something to help one know which one, e.g. myConstant',
+    'extra_message' => '',
+    'submit_value'  => 'value that is being submitted by button, defaults to delete',
+    'form_action'   => 'the url, e.g. /manger/config/constants/',
+    'cancel_action' => 'the url for canceling the delete if different from form action',
+    'btn_value'     => 'What the Button says, e.g. Constants',
+    'hidden_name'   => 'primary id name, e.g., const_id',
+    'hidden_value'  => 'primary id, e.g. 1',
 ]
 ```
-a_options is an assoc array with the following default
-- tpl is the twig template name
+#### a_options is an assoc array
+```
+[
+    'tpl'         => 'verify_delete',
+    'page_prefix' => 'site_',
+    'location'    => '/manager/' || 12
+    'a_message'   => [],
+    'fallback'    => 'render',
+]
+
+- tpl is the twig template name, will default to 'verify_delete'
+- page_prefix is the twig prefix to use for the template defaults to page_prefix
+- location is the page url to use to determine twig values. 
 - a_message is a message
 - fallback is the fallback method to use if something is wrong.
-```
-[
-    'tpl'       => 'verify_delete',
-    'a_message' => [],
-    'fallback'  => 'render',
-    'location'  => '/manager/'
-]
+
+if location is given, tpl and page prefix will be ignored.
+if location and tpl and page_prefix are empty route uri will be used.
+if tpl is only provided, page prefix will be determined by route uri 
+ 
 ```

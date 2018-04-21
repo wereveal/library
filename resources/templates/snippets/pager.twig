@@ -1,5 +1,5 @@
                 <nav aria-label="Record Navigation">
-                    <ul class="pagination pagination-sm">
+                    <ul class="pagination pagination-sm d-none d-lg-inline-flex">
                     {% if a_pager.previous is not empty %}
                         <li class="page-item">
                             <a class="page-link" href="{{ a_pager.previous }}" aria-label="Previous">
@@ -11,7 +11,7 @@
                     {% for link in a_pager.links %}
                     {% if loop.index is divisible by(20) %}
                     </ul>
-                    <ul class="pagination pagination-sm">
+                    <ul class="pagination pagination-sm d-none d-lg-inline-flex">
                     {% endif %}
                         <li class="page-item">
                         {% if link.href is not empty %}
@@ -29,5 +29,21 @@
                             </a>
                         </li>
                     {% endif %}
+                    </ul>
+                    <ul class="pagination pagination-sm d-lg-none">
+                        {% if a_pager.previous is not empty %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ a_pager.previous }}" aria-label="Previous">
+                                    <span aria-hidden="true"><i class="far fa-angle-double-left"></i>&nbsp;Previous</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if a_pager.next is not empty %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ a_pager.next }}" aria-label="Next">
+                                    <span aria-hidden="true">Next&nbsp;<i class="far fa-angle-double-right"></i></span>
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </nav>

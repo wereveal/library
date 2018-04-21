@@ -1,6 +1,6 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ css_dir }}/styles_library.css">
+    <link rel="stylesheet" href="{{ css_dir }}/styles_manager.css">
 {% endblock %}
 {% block body %}
     <div class="container">
@@ -9,16 +9,13 @@
     {% if extra_message %}
         <p class="alert alert-info" role="alert">{{ extra_message }}</p>
     {% endif %}
-    {% if submit_value is empty %}
-        {% set submit_value = 'delete' %}
-    {% endif %}
-        <form action="{{ public_dir }}{{ location }}" method="post" id="delete-form" class="col-sm-6 pad-bottom">
-            <button type="submit" name="submit" value="{{ submit_value }}" class="btn btn-red btn-sm">Delete {{ btn_value }}</button>
+        <form action="{{ public_dir }}/manager/{% if where %}{{ where }}/{% endif %}" method="post" id="delete-form" class="col-sm-6 pad-bottom">
+            <button type="submit" name="submit" value="delete" class="btn btn-danger btn-sm">Delete {{ btn_value }}</button>
             <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
             {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
         </form>
-        <form action="{{ public_dir }}{{ location }}" method="post" class="col-sm-6 pad-bottom">
-            <button type="submit" name="submit" value="cancel" class="btn btn-outline-blue btn-sm">Go Back, Don't Delete</button>
+        <form action="{{ public_dir }}/manager/{% if where %}{{ where }}/{% endif %}" method="post" class="col-sm-6 pad-bottom">
+            <button type="submit" name="submit" value="cancel" class="btn btn-primary btn-sm">Go Back, Don't Delete</button>
             {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
             <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
         </form>

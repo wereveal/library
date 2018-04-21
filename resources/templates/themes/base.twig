@@ -13,7 +13,7 @@
     <meta name="description" content="{{ description }}">
 {% endblock %}
 {% block meta %}{% endblock %}
-{% block vendor_stylesheets %}
+{% block vendorStylesheets %}
     <link href="{{ fonts_dir }}/fontawesome/css/fa-svg-with-js.css">
 {% endblock %}
 {% block stylesheets %}
@@ -28,11 +28,11 @@
     <link rel="shortcut icon" href="{{ images_dir }}/favicon.ico">
     <meta name="msapplication-config" content="{{ images_dir }}/browserconfig.xml">
 {% endblock %}
-{% block vendor_js %}
+{% block vendorJs %}
     <script src="{{ vendor_dir }}/jquery/dist/jquery.min.js"></script>
     <script src="{{ fonts_dir }}/fontawesome/js/fontawesome-all.min.js"></script>
 {% endblock %}
-{% block head_js %}{% endblock %}
+{% block headJs %}{% endblock %}
 {% block mainContainer %}
 </head>
 <body>
@@ -101,7 +101,7 @@
     {% block otherHeader %}{% endblock %}
 {% endblock %}
 {% block search %}{% endblock %}
-{% block body_title %}
+{% block bodyTitle %}
     {% if body_title %}
         <h1>{{ body_title }}</h1>
     {% elseif title %}
@@ -138,11 +138,11 @@
 {% block endMain %}
     </div>
 {% endblock %}
-{% block bottom_vendor_js %}
+{% block bottomVendorJs %}
     <script src="{{ vendor_dir }}/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ vendor_dir }}/jquery-validation/dist/jquery.validate.min.js"></script>
 {% endblock %}
-{% block bottom_js %}{% endblock %}
+{% block bottomJs %}{% endblock %}
 {% block finally %}
 </body>
 </html>
