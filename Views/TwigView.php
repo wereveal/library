@@ -167,7 +167,7 @@ class TwigView implements ViewInterface
         $a_values = [
             'what'         => 'Directory',
             'name'         => $a_results[0]['td_name'],
-            'where'        => '/manager/config/twig/',
+            'form_action'  => '/manager/config/twig/',
             'submit_value' => 'delete_dir',
             'btn_value'    => 'Delete',
             'hidden_name'  => 'td_id',
@@ -218,7 +218,7 @@ class TwigView implements ViewInterface
         $a_values = [
             'what'         => 'Twig Prefix',
             'name'         => $a_tp['tp_prefix'],
-            'where'        => '/manager/config/twig/',
+            'form_action'  => '/manager/config/twig/',
             'submit_value' => 'delete_tp',
             'btn_value'    => 'Delete',
             'hidden_name'  => 'tp_id',
@@ -274,7 +274,7 @@ class TwigView implements ViewInterface
         $a_values = [
             'what'         => 'Template',
             'name'         => $a_tpl['tpl_name'],
-            'where'        => '/manager/config/twig/',
+            'form_action'  => '/manager/config/twig/',
             'submit_value' => 'delete_tpl',
             'btn_value'    => 'Delete',
             'hidden_name'  => 'tpl_id',

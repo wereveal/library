@@ -4,9 +4,10 @@
  * @ingroup   lib_controllers
  * @file      Ritc/Library/Controllers/PeopleController.phpnamespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.1
- * @date      2017-12-05 10:33:59
+ * @version   1.1.2
+ * @date      2018-04-21 13:29:13
  * @note <b>Change Log</b>
+ * - v1.1.2   - trait change reflected here                      - 2018-04-21 wer
  * - v1.1.1   - bug fix                                          - 2017-12-05 wer
  * - v1.1.0   - updated to use ConfigControllerTraits            - 2017-11-28 wer
  * - v1.0.2   - bug fix                                          - 2016-03-08 wer
@@ -216,8 +217,8 @@ class PeopleController implements ManagerControllerInterface
             $real_name = !empty($a_person[0]['real_name'])
                 ? $a_person[0]['real_name']
                 : 'Problem Child';
-            $login_id = !empty($a_person[0]['login_id']) 
-                ? $a_person[0]['login_id'] 
+            $login_id = !empty($a_person[0]['login_id'])
+                ? $a_person[0]['login_id']
                 : 'Problem Child';
         }
         catch (ModelException $e) {
@@ -228,10 +229,8 @@ class PeopleController implements ManagerControllerInterface
             'what'          => 'Person',
             'name'          => $real_name,
             'extra_message' => '',
-            'public_dir'    => PUBLIC_DIR,
-            'where'         => str_replace('/manager/', '', $this->a_router_parts['request_uri']),
+            'form_action'   => $this->a_router_parts['request_uri'],
             'btn_value'     => $login_id,
-            'form_extras'   => '',
             'hidden_name'   => 'people_id',
             'hidden_value'  => $people_id
         ];

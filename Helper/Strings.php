@@ -9,7 +9,7 @@
  * @file      Ritc/Library/Helper/Strings.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   6.5.0
+ * @version   6.5.0+1
  * @date      2018-03-06 13:36:15
  * @note <b>Change Log</b>
  * - v6.5.0 - add new method to convert column number to Excel column letters   - 2018-03-06 wer
@@ -194,7 +194,7 @@ class Strings
 
     /**
      * Removes everything except letters, numbers, -, and _.
-     * Removes html and php tags first, replaces spaces with undersHelpers,
+     * Removes html and php tags first, replaces spaces with underline,
      * then finally removes all other characters
      * @param string $the_string
      * @return string

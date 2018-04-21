@@ -64,7 +64,7 @@ trait ManagerViewTraits
 
     /**
      * @param array $a_values required \see #verifydelete
-     * @param array $a_options optional \see #verifydelete
+     * @param array $a_options optional but recommended \see #verifydelete
      * @return string
      */
     public function renderVerifyDelete(array $a_values = [], array $a_options = [])
@@ -84,12 +84,22 @@ trait ManagerViewTraits
             ? $a_options['location']
             : '';
         $a_twig_values = $this->createDefaultTwigValues($a_message, $location);
-        $a_twig_values['where'] = empty($a_options['where'])
-            ? empty($a_twig_values['where']) ? '' : $a_twig_values['where']
-            : $a_options['where'];
-        $a_twig_values['tpl'] = empty($a_options['tpl'])
-            ? empty($a_twig_values['tpl']) ? '' : $a_twig_values['tpl']
-            : $a_options['tpl'];
+        $a_twig_values['form_action'] = empty($a_options['form_action'])
+            ? empty($a_twig_values['page_url'])
+                ? ''
+                : $a_twig_values['page_url']
+            : $a_options['form_action'];
+        if (empty($location)) {
+            if (!empty($a_options['tpl'])) {
+                $a_twig_values['tpl'] = $a_options['tpl'];
+            }
+            else {
+                $a_twig_values['tpl'] = 'verify_delete';
+            }
+            if (!empty($a_options['page_prefix'])) {
+                $a_twig_values['page_prefix'] = $a_options['page_prefix'];
+            }
+        }
         $a_twig_values = array_merge($a_twig_values, $a_values);
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);

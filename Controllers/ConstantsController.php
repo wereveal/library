@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Controllers/ConstantsController.php
  * @namespace Ritc\Library\Controllers
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.0-beta.3
- * @date      2017-06-20 12:28:03
+ * @version   1.4.0-beta.4
+ * @date      2018-04-21 13:26:46
  * @note <b>Change Log</b>
+ * - v1.4.0-beta.4 - Refactoring of Trait reflected here             - 2018-04-21 wer
  * - v1.4.0-beta.3 - Name change of Trait.                           - 2017-06-20 wer
  * - v1.4.0-beta.2 - Refactoring of model reflected here             - 2017-06-19 wer
  * - v1.4.0-beta.1 - Refactoring elsewhere reflected here.           - 2017-06-07 wer
@@ -139,15 +140,15 @@ class ConstantsController implements ManagerControllerInterface
     public function verifyDelete()
     {
         $a_values = [
-            'tpl'          => 'verify_delete',
             'what'         => 'constant',
             'name'         => $this->a_post['constant']['const_name'],
-            'where'        => 'constants',
+            'form_action'  => '/manager/config/constants/',
             'btn_value'    => 'Constant',
             'hidden_name'  => 'const_id',
             'hidden_value' => $this->a_post['constant']['const_id'],
         ];
         $a_options = [
+            'tpl'      => 'verify_delete',
             'location' => '/manager/config/constants/'
         ];
         return $this->o_view->renderVerifyDelete($a_values, $a_options);
