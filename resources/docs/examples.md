@@ -79,8 +79,8 @@ An array used in the DbUtilityTraits::genericRead() method with the following ke
         if the config file is the default, /src/config/twig_config.php
 
 ## Verify Delete values {#verifydelete}
-### verifyDelete has two paramaters, a_values and a_options
-#### a_values is an assoc array 
+verifyDelete(array $a_values, array $a_options)
+### a_values is an assoc array 
 and provides the needed values for the twig template.
 ```
 [
@@ -95,7 +95,7 @@ and provides the needed values for the twig template.
     'hidden_value'  => 'primary id, e.g. 1',
 ]
 ```
-#### a_options is an assoc array
+### a_options is an assoc array
 ```
 [
     'tpl'         => 'verify_delete',
