@@ -5,11 +5,12 @@
  * @file      Ritc/Library/Helper/ExceptionHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2018-04-03 13:49:32
+ * @version   1.2.0
+ * @date      2018-04-26 07:01:46
  * @note Change Log
- * - v1.1.0         - additional error code and message                                         - 2018-04-03 wer
- * - v1.0.0         - Initial version                                                           - 2017-12-12 wer
+ * - v1.2.0 additional message to code                                                - 2018-04-26 wer
+ * - v1.1.0 additional error code and message                                         - 2018-04-03 wer
+ * - v1.0.0 Initial version                                                           - 2017-12-12 wer
  */
 namespace Ritc\Library\Helper;
 
@@ -135,6 +136,131 @@ class ExceptionHelper
                 return 50;
             case 'see_previous':
                 return 99;
+            # Create Codes
+            case 'create_unspecified':
+                return 110;
+            case 'create_missing_value':
+            case 'create_missing_values':
+                return 120;
+            case 'create_invalid_value':
+                return 122;
+            case 'create_unique_key_exists':
+                return 127;
+            case 'create_record_not_created':
+                return 130;
+            case 'create_record_exists':
+                return 132;
+            case 'create_not_permitted':
+                return 150;
+            case 'create_see_previous':
+                return 199;
+            # Read codes
+            case 'read_unspecified':
+                return 210;
+            case 'read_missing_value':
+            case 'read_missing_values':
+                return 220;
+            case 'read_invalid_value':
+                return 222;
+            case 'read_no_records':
+                return 230;
+            case 'read_not_permitted':
+                return 250;
+            case 'read_see_previous':
+                return 299;
+            # Update codes
+            case 'update_unspecified':
+                return 310;
+            case 'update_invalid_field':
+                return 319;
+            case 'update_missing_value':
+            case 'update_missing_values':
+                return 320;
+            case 'update_no_records':
+                return 330;
+            case 'update_immutable':
+                return 344;
+            case 'update_not_permitted':
+                return 350;
+            case 'update_see_previous':
+                return 399;
+            # delete codes
+            case 'delete_unspecified':
+                return 410;
+            case 'delete_missing_value':
+                return 420;
+            case 'delete_missing_primary':
+                return 425;
+            case 'delete_no_record':
+                return 430;
+            case 'delete_immutable':
+                return 434;
+            case 'delete_immutable_unknown':
+                return 435;
+            case 'delete_has_children':
+                return 436;
+            case 'delete_not_permitted':
+                return 450;
+            case 'delete_see_previous':
+                return 499;
+            # Definition Codes
+            case 'definition_change_structure_failure':
+                return 500;
+            case 'definition_create_database':
+                return 510;
+            case 'definition_alter_database':
+                return 511;
+            case 'definition_drop_database':
+                return 512;
+            case 'definition_create_event':
+                return 520;
+            case 'definition_alter_event':
+                return 521;
+            case 'definition_drop_event':
+                return 522;
+            case 'definition_create_function':
+            case 'definition_create_procedure':
+                return 530;
+            case 'definition_alter_function':
+            case 'definition_alter_procedure':
+                return 531;
+            case 'definition_drop_function':
+            case 'definition_drop_procedure':
+                return 532;
+            case 'definition_create_index':
+                return 540;
+            case 'definition_alter_index':
+                return 541;
+            case 'definition_drop_index':
+                return 542;
+            case 'definition_create_logfile':
+                return 550;
+            case 'definition_alter_logfile':
+                return 551;
+            case 'definition_drop_logfile':
+                return 552;
+            case 'definition_create_table':
+                return 560;
+            case 'definition_alter_table':
+                return 561;
+            case 'definition_drop_table':
+                return 562;
+            case 'definition_rename_table':
+                return 564;
+            case 'definition_truncate_table':
+                return 565;
+            case 'definition_create_trigger':
+                return 570;
+            case 'definition_alter_trigger':
+                return 571;
+            case 'definition_drop_trigger':
+                return 572;
+            case 'definition_create_view':
+                return 580;
+            case 'definition_alter_view':
+                return 581;
+            case 'definition_drop_view':
+                return 582;
             default:
                 return self::getCodeNumber($failure_string);
         }
@@ -255,6 +381,8 @@ class ExceptionHelper
                 return 'Unable to create a new record: invalid value provided.';
             case 127:
                 return 'Unable to create a new record: unique key value exists.';
+            case 130:
+                return 'Unable to create a new record: did not create a new primary index.';
             case 132:
                 return 'Unable to create a new record: The record already exists.';
             case 150:

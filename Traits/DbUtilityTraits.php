@@ -8,9 +8,13 @@
  * @file      DbUtilityTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.1.0
- * @date      2018-04-19 15:47:46
+ * @version   2.2.0
+ * @date      2018-04-26 08:38:57
  * @note <b>Change Log</b>
+ * - v2.2.0          - New methods for new property a_required_keys         - 2018-04-26 wer
+ *                     Modified generic methods to use ExceptionHelper
+ *                     Modified generic methods slightly to ensure required
+ *                     values are provided.
  * - v2.1.0          - Added new method to get count of a table             - 2018-04-19 wer
  * - v2.0.3          - Changes to ModelException reflected here             - 2017-12-12 wer
  * - v2.0.2          - bug fix                                              - 2017-07-27 wer
@@ -49,6 +53,7 @@ namespace Ritc\Library\Traits;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 
 /**
@@ -66,6 +71,8 @@ trait DbUtilityTraits
     protected $a_db_fields = [];
     /** @var array  */
     protected $a_prefix = [];
+    /** @var array  */
+    protected $a_required_keys = [];
     /** @var string */
     protected $db_prefix = '';
     /** @var  string */
@@ -87,7 +94,7 @@ trait DbUtilityTraits
      * Requires both parameters to be complete to work.
      * This method assumes that if $a_values is an array of assoc arrays
      * then each assoc array has the same keys. It will blow up otherwise.
-     * @param array $a_values     The values to be saved in a new record.
+     * @param array $a_values     Required, the values to be saved in a new record.
      * @param array $a_parameters \code
      * ['a_required_keys' => [],
      *  'a_field_names'   => [],
@@ -103,6 +110,11 @@ trait DbUtilityTraits
     protected function genericCreate(array $a_values = [], array $a_parameters = [])
     {
         $meth = __METHOD__ . '.';
+        if (empty($a_values)) {
+            $this->error_message = 'No Values Provided';
+            $error_code = ExceptionHelper::getCodeNumberModel('create missing values');
+            throw new ModelException($this->error_message, $error_code);
+        }
         if (empty($a_parameters['a_psql'])) {
             $a_psql = [
                 'table_name'  => $this->db_table,
@@ -126,7 +138,8 @@ trait DbUtilityTraits
         // If a_field_names is empty, the sql cannot be built. Return false.
         if ($a_field_names == []) {
             $this->error_message = 'Missing required values';
-            throw new ModelException($this->error_message, 120);
+            $error_code = ExceptionHelper::getCodeNumberModel('create_missing_values');
+            throw new ModelException($this->error_message, $error_code);
         }
 
         if (Arrays::isArrayOfAssocArrays($a_values)) {
@@ -135,7 +148,8 @@ trait DbUtilityTraits
                     $a_missing_values = Arrays::findMissingValues($a_value, $a_required_keys);
                     if (!empty($a_missing_values)) {
                         $this->error_message = "Missing required keys: " . json_encode($a_missing_values);
-                        throw new ModelException($this->error_message, 120);
+                        $error_code = ExceptionHelper::getCodeNumberModel('create_missing_values');
+                        throw new ModelException($this->error_message, $error_code);
                     }
                 }
             }
@@ -146,7 +160,8 @@ trait DbUtilityTraits
                 $a_missing_values = Arrays::findMissingValues($a_values, $a_required_keys);
                 if (!empty($a_missing_values)) {
                     $this->error_message = "Missing required keys: " . json_encode($a_missing_values);
-                    throw new ModelException($this->error_message, 120);
+                    $error_code = ExceptionHelper::getCodeNumberModel('create_missing_values');
+                    throw new ModelException($this->error_message, $error_code);
                 }
             }
             $sql_set = $this->buildSqlInsert($a_values, $a_field_names);
@@ -160,12 +175,16 @@ INSERT INTO {$db_table} (
 SQL;
         $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
         $this->logIt("Values: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
+        print "SQL: " . $sql;
+        print '<br>';
+        print_r($a_values);
         try {
             $this->o_db->insert($sql, $a_values, $a_psql);
             $a_new_ids = $this->o_db->getNewIds();
             if (count($a_new_ids) < 1) {
                 $this->error_message = 'No New Ids were returned in the create.';
-                throw new ModelException($this->error_message, 110);
+                $error_code = ExceptionHelper::getCodeNumberModel('create_unspecified');
+                throw new ModelException($this->error_message, $error_code);
             }
             return $a_new_ids;
         }
@@ -197,7 +216,8 @@ SQL;
     {
         if (!isset($a_parameters['table_name']) && $this->db_table == '') {
             $this->error_message = "The table name must be specified.";
-            throw new ModelException($this->error_message, 220);
+            $error_code = ExceptionHelper::getCodeNumberModel('read_missing_values');
+            throw new ModelException($this->error_message, $error_code);
         }
         elseif (isset($a_parameters['table_name'])) {
             $table_name = $a_parameters['table_name'];
@@ -210,7 +230,8 @@ SQL;
                 }
                 else {
                     $this->error_message = "The table specified doesn't exist.";
-                    throw new ModelException($this->error_message, 19);
+                    $error_code = ExceptionHelper::getCodeNumberModel('structure');
+                    throw new ModelException($this->error_message, $error_code);
                 }
             }
         }
@@ -267,7 +288,8 @@ SQL;
     {
         if ($a_values == []) {
             $this->error_message = 'No values provided to update.';
-            throw new ModelException($this->error_message, 320);
+            $error_code = ExceptionHelper::getCodeNumberModel('update_missing_values');
+            throw new ModelException($this->error_message, $error_code);
         }
         $primary_index_name = $this->primary_index_name;
         $a_required_keys = array($primary_index_name);
@@ -278,7 +300,8 @@ SQL;
             foreach ($a_values as $a_thing) {
                 if (!Arrays::hasRequiredKeys($a_thing, $a_required_keys)) {
                     $this->error_message = "The array must have the primary key in it.";
-                    throw new ModelException($this->error_message, 320);
+                    $error_code = ExceptionHelper::getCodeNumberModel('update_missing_values');
+                    throw new ModelException($this->error_message, $error_code);
                 }
                 if ($x == 1) {
                     $set_sql = $this->buildSqlSet($a_thing, $a_required_keys, $a_allowed_keys);
@@ -289,7 +312,8 @@ SQL;
         else {
             if (!Arrays::hasRequiredKeys($a_values, $a_required_keys)) {
                 $this->error_message = "The array must have the primary key in it.";
-                throw new ModelException($this->error_message, 320);
+                $error_code = ExceptionHelper::getCodeNumberModel('update_missing_values');
+                throw new ModelException($this->error_message, $error_code);
             }
             $set_sql = $this->buildSqlSet($a_values, $a_required_keys, $a_allowed_keys);
         }
@@ -304,7 +328,8 @@ SQL;
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new ModelException($this->error_message, 300, $e);
+            $error_code = ExceptionHelper::getCodeNumberModel('update_unspecified');
+            throw new ModelException($this->error_message, $error_code, $e);
         }
     }
 
@@ -323,7 +348,8 @@ SQL;
         if (is_array($record_ids)) {
            if (empty($record_ids)) {
                $this->error_message = 'No record ids were provided.';
-               throw new ModelException($this->error_message, 430);
+               $error_code = ExceptionHelper::getCodeNumberModel('delete_missing_primary');
+               throw new ModelException($this->error_message, $error_code);
            }
            else {
                return $this->genericDeleteMultiple($record_ids);
@@ -331,7 +357,8 @@ SQL;
         }
         elseif (is_numeric($record_ids) && $record_ids < 1) {
             $this->error_message = 'No valid record ids were provided.';
-            throw new ModelException($this->error_message, 430);
+            $error_code = ExceptionHelper::getCodeNumberModel('delete_missing_primary');
+            throw new ModelException($this->error_message, $error_code);
         }
         $piname = $this->primary_index_name;
         $sql = "
@@ -358,7 +385,8 @@ SQL;
     {
         if (empty($a_record_ids)) {
             $this->error_message = 'No record ids were provided.';
-            throw new ModelException($this->error_message, 430);
+            $error_code = ExceptionHelper::getCodeNumberModel('delete_missing_primary');
+            throw new ModelException($this->error_message, $error_code);
         }
         $piname = $this->primary_index_name;
         $sql =<<<SQL
@@ -374,7 +402,8 @@ SQL;
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
-            throw new ModelException($this->error_message, 410, $e);
+            $error_code = ExceptionHelper::getCodeNumberModel('delete_unspecified');
+            throw new ModelException($this->error_message, $error_code);
         }
     }
 
@@ -395,9 +424,19 @@ SQL;
         if (count($a_values) === 0 || count($a_allowed_keys) === 0) {
             return '';
         }
+        print "<pre>Before<br>";
+        print_r($a_values);
+        print '<br>';
+        print_r($a_allowed_keys);
+        print '<br>';
         $a_values = $this->o_db->prepareKeys($a_values);
         $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
+        print 'prepared:<br>';
+        print_r($a_values);
+        print_r($a_allowed_keys);
         $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
+        print 'final:<br>';
+        print_r($a_values);
         $insert_names = '';
         $value_names  = '';
         foreach ($a_values as $key => $value) {
@@ -659,6 +698,30 @@ SQL;
             }
         }
         return true;
+    }
+
+    /**
+     * Creates an array of required keys to do db opperations.
+     * By default, returns all fields except the primary index name.
+     * @param array $a_exclude   Optional, defaults to empty
+     * @param bool  $exclude_pin Optional, defaults to true
+     * @return array
+     */
+    protected function makeRequiredKeys(array $a_exclude = [], $exclude_pin = true)
+    {
+        $a_field_names = $this->a_db_fields;
+        if ($exclude_pin) {
+            $pin = $this->primary_index_name;
+            $key = array_search($pin, $a_field_names);
+            unset($a_field_names[$key]);
+        }
+        if (!empty($a_exclude)) {
+            foreach ($a_exclude as $value) {
+                $key = array_search($value, $a_field_names);
+                unset($a_field_names[$key]);
+            }
+        }
+        $this->a_required_keys = $a_field_names;
     }
 
     /**
@@ -925,5 +988,35 @@ SQL;
         return $this->primary_index_name;
     }
 
+    /**
+     * GETter for class property a_required_keys.
+     * @return array
+     */
+    public function getRequiredKeys()
+    {
+        return $this->a_required_keys;
+    }
+
+    /**
+     * Adds a new key name to the class property a_required_keys, if it doesn't exist.
+     * @param string $key_name
+     */
+    public function setRequiredKey($key_name = '')
+    {
+        if ($key_name !== '') {
+            if (!array_key_exists($key_name, $this->a_required_keys)) {
+                $this->a_required_keys[] = $key_name;
+            }
+        }
+    }
+
+    /**
+     * SETter for class property a_required_keys.
+     * @param array $a_required_keys
+     */
+    public function setRequiredKeys(array $a_required_keys = [])
+    {
+        $this->a_required_keys = $a_required_keys;
+    }
 }
 
