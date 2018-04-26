@@ -2,9 +2,9 @@
 <label for="{{ select.label_for }}"{% if select.label_class != '' %} class="{{ select.label_class }}"{% endif %}>{{ select.label_text }}</label>
 {% endif %}
 {% if select.name != '' %}
-<select name="{{ select.name }}"{% if select.id %} id="{{ select.id }}"{% endif %}{% if select.class != '' %} class="{{ select.class }}"{% endif %}{{ select.other_stuph }}>
+<select name="{{ select.name }}"{% if select.id %} id="{{ select.id }}"{% endif %}{% if select.class != '' %} class="{{ select.class }}"{% endif %}{{ select.other_stuph | raw }}>
     {% for option in select.options %}
-        {% include "@" ~ lib_prefix ~ "elements/select_options.twig" %}
+        <option value="{{ option.value }}"{{ option.other_stuph }}>{{ option.label }}</option>
     {% endfor %}
 </select>
 {% endif %}
