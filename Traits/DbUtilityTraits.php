@@ -175,9 +175,6 @@ INSERT INTO {$db_table} (
 SQL;
         $this->logIt("SQL: " . $sql, LOG_OFF, $meth . __LINE__);
         $this->logIt("Values: " . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
-        print "SQL: " . $sql;
-        print '<br>';
-        print_r($a_values);
         try {
             $this->o_db->insert($sql, $a_values, $a_psql);
             $a_new_ids = $this->o_db->getNewIds();
@@ -424,19 +421,9 @@ SQL;
         if (count($a_values) === 0 || count($a_allowed_keys) === 0) {
             return '';
         }
-        print "<pre>Before<br>";
-        print_r($a_values);
-        print '<br>';
-        print_r($a_allowed_keys);
-        print '<br>';
         $a_values = $this->o_db->prepareKeys($a_values);
         $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
-        print 'prepared:<br>';
-        print_r($a_values);
-        print_r($a_allowed_keys);
         $a_values = Arrays::removeUndesiredPairs($a_values, $a_allowed_keys);
-        print 'final:<br>';
-        print_r($a_values);
         $insert_names = '';
         $value_names  = '';
         foreach ($a_values as $key => $value) {
@@ -756,13 +743,17 @@ SQL;
 
     /**
      * Returns the number of records in the table.
+     * @param string $where the where values string if desired, e.g. 'fred' LIKE 'barney'.
      * @return int
      */
-    public function readCount()
+    public function readCount($where = '', array $a_where_values = [])
     {
         $sql = "SELECT count(*) as 'count' FROM " . $this->db_table;
+        if (!empty($where) && !empty($a_where_values)) {
+            $sql .= ' ' . $where;
+        }
         try {
-            $results = $this->o_db->search($sql);
+            $results = $this->o_db->search($sql, $a_where_values);
             return $results[0]['count'];
         }
         catch (ModelException $e) {

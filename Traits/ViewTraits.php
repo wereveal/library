@@ -463,6 +463,21 @@ trait ViewTraits
         $records_to_display = $a_parameters['records_to_display'];
         $total_records      = $a_parameters['total_records'];
         $href               = $a_parameters['href'];
+        if ($records_to_display >= $total_records) {
+            return [];
+        }
+        $get_stuff = '';
+        if (!empty($a_parameters['get_params'])) {
+            foreach($a_parameters['get_params'] as $key => $value) {
+                $get_stuff .= $get_stuff == ''
+                    ? '?' . $key . '=' . $value
+                    : '&' . $key . '=' . $value;
+
+            }
+        }
+        $use_page_numbers   = !empty($a_parameters['use_page_numbers'])
+            ? $a_parameters['use_page_numbers']
+            : true;
         $previous_value     = $start_record == 1 || $start_record - $records_to_display < 1
             ? 1
             : $start_record - $records_to_display;
@@ -470,26 +485,63 @@ trait ViewTraits
             ? $start_record + $records_to_display
             : $records_to_display
         ;
-        $a_pager['previous'] = $href . '/' . $previous_value . '/';
-        $a_pager['next']     = $href . '/' . $next_value . '/';
+        $number_of_pages     = round($total_records / $records_to_display);
+        $this_page           = round($start_record / $records_to_display) + 1;
+        $before_this_page = $this_page - 4;
+        if ($before_this_page <= 0) {
+            $i_start = 1;
+        }
+        else {
+            $i_start = $before_this_page;
+        }
+        $a_pager['first']    = $href . "/1/" . $get_stuff;
+        $a_pager['previous'] = $href . '/' . $previous_value . '/' . $get_stuff;
+        $a_pager['next']     = $href . '/' . $next_value . '/' . $get_stuff;
         $a_pager['links']    = [];
+        $a_pager['last']     = $href . '/' . (($number_of_pages - 1) * $records_to_display) . '/' . $get_stuff;
+        $display_links = !empty($a_parameters['display_links'])
+            ? $a_parameters['display_links'] == 'all'
+                ? $number_of_pages
+                : $a_parameters['display_links']
+            : 11;
         if ($start_record == 1) {
             $a_pager['previous'] = '';
+            $a_pager['first'] = '';
         }
-        elseif ($start_record == $records_to_display) {
-            $a_pager['previous'] = $href . '/1/';
+        if ($start_record == $records_to_display) {
+            $a_pager['previous'] = $href . '/1/' . $get_stuff;
         }
-        elseif ($next_value > $total_records) {
-            $a_pager['next'] = '';
+        $i_end = $i_start + $display_links;
+        if ($i_end > $number_of_pages) {
+            $i_start = $number_of_pages - 10 < 1
+                ? 1
+                : $number_of_pages - 10;
+            $i_end = $number_of_pages;
+            if ($i_end == $this_page) {
+                $a_pager['next'] = '';
+                $a_pager['last'] = '';
+            }
         }
-        for ($i = 0; $i <= $total_records; $i += $records_to_display) {
-            if ($i === 0) {
-                $link = $href . '/1/';
-                $text = 1;
+        for ($i = $i_start; $i <= $i_end; $i++) {
+            if ($use_page_numbers) {
+                $text = $i;
             }
             else {
-                $link = $href . '/' . $i . '/';
-                $text = $i;
+                if ($i == 1) {
+                    $text = 1;
+                }
+                else {
+                    $text = ($i - 1) * $records_to_display;
+                }
+            }
+            if ($i === 1) {
+                $link = $href . "/{$i}/" . $get_stuff;
+            }
+            elseif ($this_page == $i) {
+                $link = '';
+            }
+            else {
+                $link = $href . '/' . (($i - 1) * $records_to_display) . '/' . $get_stuff;
             }
             if ($i == $start_record || ($start_record == 1 && $i == 0)) {
                 $link = '';

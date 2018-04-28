@@ -1,5 +1,13 @@
                 <nav aria-label="Record Navigation">
                     <ul class="pagination pagination-sm d-none d-lg-inline-flex">
+                    {% if a_pager.first is not empty %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ a_pager.first }}" aria-label="First">
+                                <span aria-hidden="true"><i class="far fa-angle-double-left"></i><i class="far fa-angle-double-left"></i></span>
+                                <span class="sr-only">First</span>
+                            </a>
+                        </li>
+                    {% endif %}
                     {% if a_pager.previous is not empty %}
                         <li class="page-item">
                             <a class="page-link" href="{{ a_pager.previous }}" aria-label="Previous">
@@ -29,21 +37,45 @@
                             </a>
                         </li>
                     {% endif %}
+                    {% if a_pager.last is not empty %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ a_pager.last }}" aria-label="Last">
+                                <span aria-hidden="true"><i class="far fa-angle-double-right"></i><i class="far fa-angle-double-right"></i></span>
+                                <span class="sr-only">Last</span>
+                            </a>
+                        </li>
+                    {% endif %}
                     </ul>
                     <ul class="pagination pagination-sm d-lg-none">
-                        {% if a_pager.previous is not empty %}
-                            <li class="page-item">
-                                <a class="page-link" href="{{ a_pager.previous }}" aria-label="Previous">
-                                    <span aria-hidden="true"><i class="far fa-angle-double-left"></i>&nbsp;Previous</span>
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if a_pager.next is not empty %}
-                            <li class="page-item">
-                                <a class="page-link" href="{{ a_pager.next }}" aria-label="Next">
-                                    <span aria-hidden="true">Next&nbsp;<i class="far fa-angle-double-right"></i></span>
-                                </a>
-                            </li>
-                        {% endif %}
+                    {% if a_pager.first is not empty %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ a_pager.first }}" aria-label="First">
+                                <span aria-hidden="true"><i class="far fa-angle-double-left"></i><i class="far fa-angle-double-left"></i></span>
+                                <span class="sr-only">First</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if a_pager.previous is not empty %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ a_pager.previous }}" aria-label="Previous">
+                                <span aria-hidden="true"><i class="far fa-angle-double-left"></i>&nbsp;Previous</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if a_pager.next is not empty %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ a_pager.next }}" aria-label="Next">
+                                <span aria-hidden="true">Next&nbsp;<i class="far fa-angle-double-right"></i></span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if a_pager.last is not empty %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ a_pager.last }}" aria-label="Last">
+                                <span aria-hidden="true"><i class="far fa-angle-double-right"></i><i class="far fa-angle-double-right"></i></span>
+                                <span class="sr-only">Last</span>
+                            </a>
+                        </li>
+                    {% endif %}
                     </ul>
                 </nav>
