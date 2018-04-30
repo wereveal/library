@@ -445,7 +445,16 @@ trait ViewTraits
 
     /**
      * Creates the values needed for the pager template.
-     * @param array $a_parameters
+     * @param array $a_parameters Required in part```
+     *                            [
+     *                              'start_record'       => required
+     *                              'records_to_display' => required
+     *                              'total_records'      => required
+     *                              'href'               => required
+     *                              'get_params'         => optional - adds get params to the href
+     *                              'use_to_display'     => optional - adds the number to display to the href
+     *                              'use_page_numbers'   => optional - defaults to true, else uses record numbers
+     *                            ]```
      * @return array
      */
     protected function createNumericPagerValues($a_parameters = [])
@@ -475,6 +484,10 @@ trait ViewTraits
 
             }
         }
+        $use_to_display = '';
+        if (isset($a_parameters['use_to_display']) && $a_parameters['use_to_display']) {
+            $use_to_display = '/' . $records_to_display;
+        }
         $use_page_numbers   = !empty($a_parameters['use_page_numbers'])
             ? $a_parameters['use_page_numbers']
             : true;
@@ -494,11 +507,24 @@ trait ViewTraits
         else {
             $i_start = $before_this_page;
         }
-        $a_pager['first']    = $href . "/1/" . $get_stuff;
-        $a_pager['previous'] = $href . '/' . $previous_value . '/' . $get_stuff;
-        $a_pager['next']     = $href . '/' . $next_value . '/' . $get_stuff;
+        $a_pager['first']    = $href
+                               . "/1"
+                               . $use_to_display
+                               . '/'
+                               . $get_stuff;
+        $a_pager['previous'] = $href
+                               . '/' . $previous_value
+                               . $use_to_display
+                               . '/' . $get_stuff;
+        $a_pager['next']     = $href
+                               . '/' . $next_value
+                               . $use_to_display
+                               . '/' . $get_stuff;
         $a_pager['links']    = [];
-        $a_pager['last']     = $href . '/' . (($number_of_pages - 1) * $records_to_display) . '/' . $get_stuff;
+        $a_pager['last']     = $href
+                               . '/' . (($number_of_pages - 1) * $records_to_display)
+                               . $use_to_display
+                               . '/' . $get_stuff;
         $display_links = !empty($a_parameters['display_links'])
             ? $a_parameters['display_links'] == 'all'
                 ? $number_of_pages
@@ -509,7 +535,10 @@ trait ViewTraits
             $a_pager['first'] = '';
         }
         if ($start_record == $records_to_display) {
-            $a_pager['previous'] = $href . '/1/' . $get_stuff;
+            $a_pager['previous'] = $href
+                                   . '/1'
+                                   . $use_to_display
+                                   . '/' . $get_stuff;
         }
         $i_end = $i_start + $display_links;
         if ($i_end > $number_of_pages) {
@@ -535,13 +564,20 @@ trait ViewTraits
                 }
             }
             if ($i === 1) {
-                $link = $href . "/{$i}/" . $get_stuff;
+                $link = $href
+                        . '/' . $i
+                        . $use_to_display
+                        . '/' . $get_stuff;
             }
             elseif ($this_page == $i) {
                 $link = '';
             }
             else {
-                $link = $href . '/' . (($i - 1) * $records_to_display) . '/' . $get_stuff;
+                $link = $href
+                        . '/'
+                        . (($i - 1) * $records_to_display)
+                        . $use_to_display
+                        . '/' . $get_stuff;
             }
             if ($i == $start_record || ($start_record == 1 && $i == 0)) {
                 $link = '';
