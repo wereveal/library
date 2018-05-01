@@ -7,9 +7,10 @@
  * @file      Ritc/Library/Factories/TwigFactory.php
  * @namespace Ritc\Library\Factories
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.1.3
- * @date      2018-04-19 09:53:41
+ * @version   3.2.0
+ * @date      2018-05-01 15:18:58
  * @note <b>Change Log</b>
+ * - v3.2.0   - added a twig test to the factory - ondisk which tests to see if the file exists         - 2018-05-01 wer
  * - v3.1.3   - Minor change in testing                                                                 - 2018-04-19 wer
  * - v3.1.2   - Class renamed elsewhere reflected here                                                  - 2018-04-04 wer
  * - v3.1.1   - bug fixes                                                                               - 2018-03-12 wer
@@ -83,6 +84,16 @@ class TwigFactory
                 if ($continue) {
                     try {
                         $this->o_twig = new Twig_Environment($o_loader, $a_twig_config['environment_options']);
+                        $ondisk_test = new \Twig_Test('ondisk', function($value) {
+                            $file_w_path = PUBLIC_PATH . $value;
+                            if (file_exists($file_w_path)) {
+                                return true;
+                            }
+                            else {
+                                return false;
+                            }
+                        });
+                        $this->o_twig->addTest($ondisk_test);
                     }
                     catch (\Error $e) {
                         error_log("Twig Environment Error: " . $e->getMessage() . ' -- ' . $meth);
