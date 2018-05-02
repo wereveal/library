@@ -223,7 +223,7 @@ class NavigationModel implements ModelInterface
             }
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
         }
         return false;
     }

@@ -451,6 +451,6 @@ SQL;
      */
     public function getErrorMessage()
     {
-        return $this->o_db->retrieveFormatedSqlErrorMessage();
+        return $this->o_db->retrieveFormattedSqlErrorMessage();
     }
 }

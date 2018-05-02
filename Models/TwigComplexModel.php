@@ -256,7 +256,7 @@ class TwigComplexModel
             return $this->o_db->search($sql, $a_values);
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             throw new ModelException($this->error_message, $e->getCode());
         }
     }
@@ -297,7 +297,7 @@ class TwigComplexModel
             }
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             throw new ModelException($this->error_message, $e->getCode());
         }
     }
@@ -330,7 +330,7 @@ class TwigComplexModel
             return $this->o_db->search($sql, $a_values);
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             throw new ModelException($this->error_message, $e->getCode());
         }
 

@@ -88,18 +88,21 @@ class Router
      *      - wilma represents a variable that the controller understands.
      *      - For example wilma could be an blog id or blog name 'blog_id'
      *      - for which a blog controller would search in the blog db by blog_id.
+     * @param string $request_uri Optional, normally NOT used.
+     *                            Defaults to '' which turns into $_SERVER['REQUEST_URI']
+     *                            in the setRequestUri method.
      */
-    public function setRouteParts()
+    public function setRouteParts($request_uri = '')
     {
         $meth = __METHOD__ . '.';
-        $this->setRequestUri();
+        $this->setRequestUri($request_uri);
         $this->setGet();
         $this->setPost();
         $this->setFormAction();
         $this->logIt("Request URI: " . $this->request_uri, LOG_OFF, $meth . __LINE__);
         $a_router_parts = $this->o_routes_helper->createRouteParts($this->request_uri);
         $log_message = 'a_router_parts ' . var_export($a_router_parts, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
         $a_router_parts['get']         = $this->a_get;
         $a_router_parts['post']        = $this->a_post;
         $a_router_parts['form_action'] = $this->form_action;

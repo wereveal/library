@@ -200,7 +200,7 @@ class UrlsModel implements ModelInterface
             return $results;
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             throw new ModelException($this->error_message, 410);
         }
     }

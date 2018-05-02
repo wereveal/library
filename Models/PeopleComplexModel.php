@@ -92,8 +92,8 @@ class PeopleComplexModel
                 }
                 catch (ModelException $e) {
                     $this->o_db->rollbackTransaction();
-                    $errror_message = DEVELOPER_MODE 
-                        ? $e->errorMessage() 
+                    $errror_message = DEVELOPER_MODE
+                        ? $e->errorMessage()
                         : $e->getMessage();
                     throw new ModelException($error_message, $e->getCode(), $e);
                 }
@@ -131,12 +131,12 @@ class PeopleComplexModel
 
         $a_people_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'people');
         if (empty($a_people_fields)) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             throw new ModelException($this->error_message, 220);
         }
         $a_group_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'groups');
         if (empty($a_group_fields)) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             throw new ModelException($this->error_message, 220);
         }
 
@@ -231,12 +231,12 @@ class PeopleComplexModel
                 $a_group_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'groups');
             }
             catch (ModelException $e) {
-                $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+                $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
                 throw new ModelException($this->error_message, 220);
             }
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             throw new ModelException($this->error_message, 220);
         }
         if (is_numeric($group_id)) {
@@ -275,7 +275,7 @@ class PeopleComplexModel
             $a_results = $this->o_db->search($sql, $a_values);
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             $this->error_message .= "\n" . $sql . "\n" . var_export($a_values, true);
             throw new ModelException($this->error_message, 200, $e);
         }

@@ -186,7 +186,7 @@ SQL;
             return $a_new_ids;
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             throw new ModelException($this->error_message, $e->getCode(), $e);
         }
     }
@@ -324,7 +324,7 @@ SQL;
             return $this->o_db->update($sql, $a_values, true);
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             $error_code = ExceptionHelper::getCodeNumberModel('update_unspecified');
             throw new ModelException($this->error_message, $error_code, $e);
         }
@@ -367,7 +367,7 @@ SQL;
             return $this->o_db->delete($sql, $delete_this, true);
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             throw new ModelException($this->error_message, 410, $e);
         }
     }
@@ -398,7 +398,7 @@ SQL;
             return $this->o_db->delete($sql, $a_delete_these, false);
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             $error_code = ExceptionHelper::getCodeNumberModel('delete_unspecified');
             throw new ModelException($this->error_message, $error_code);
         }
@@ -789,7 +789,7 @@ SQL;
     public function setErrorMessage($value = '')
     {
         if ($value == '') {
-            $value = $this->o_db->retrieveFormatedSqlErrorMessage();
+            $value = $this->o_db->retrieveFormattedSqlErrorMessage();
         }
         $this->error_message = $value;
     }

@@ -162,7 +162,7 @@ class TwigPrefixModel implements ModelInterface
         try {
             $results = $this->genericDelete($id);
             if ($results === false) {
-                $this->error_message = $this->o_db->retrieveFormatedSqlErrorMessage();
+                $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
                 throw new ModelException($this->error_message . $meth, 410);
             }
             return $results;

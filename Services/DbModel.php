@@ -397,7 +397,7 @@ class DbModel
     {
         return $this->o_pdo;
     }
-    
+
     /**
      * GETter for the class property pgsql_sequence_name.
      * Also sets the class property if array is provided.
@@ -514,7 +514,7 @@ class DbModel
      * @param $pdo null|\PDO|\PDOStatement
      * @return string
      */
-    public function retrieveFormatedSqlErrorMessage($pdo = null)
+    public function retrieveFormattedSqlErrorMessage($pdo = null)
     {
         if (!is_null($pdo)) {
             $this->setSqlErrorMessage($pdo);
@@ -1194,7 +1194,7 @@ class DbModel
                 return true;
             }
             catch (ModelException $e) {
-                $this->error_message = "Could not execute the query: {$this->retrieveFormatedSqlErrorMessage($o_pdo_stmt)}";
+                $this->error_message = "Could not execute the query: {$this->retrieveFormattedSqlErrorMessage($o_pdo_stmt)}";
                 throw new ModelException($this->error_message, 10, $e);
             }
         }

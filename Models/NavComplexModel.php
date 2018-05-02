@@ -580,7 +580,7 @@ EOT;
             }
         }
         else {
-            $this->error_message .= $this->o_db->retrieveFormatedSqlErrorMessage();
+            $this->error_message .= $this->o_db->retrieveFormattedSqlErrorMessage();
             try {
                 $this->o_db->rollbackTransaction();
                 throw new ModelException($this->error_message, 10);

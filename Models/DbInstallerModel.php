@@ -829,7 +829,7 @@ class DbInstallerModel
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = "Could not insert constants data. " . $e->errorMessage() . "\n\n" . $this->o_db->retrieveFormatedSqlErrorMessage() . "\n\n" . $sql;
+                $this->error_message = "Could not insert constants data. " . $e->errorMessage() . "\n\n" . $this->o_db->retrieveFormattedSqlErrorMessage() . "\n\n" . $sql;
                 return false;
             }
         }
