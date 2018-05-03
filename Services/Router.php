@@ -102,7 +102,7 @@ class Router
         $this->logIt("Request URI: " . $this->request_uri, LOG_OFF, $meth . __LINE__);
         $a_router_parts = $this->o_routes_helper->createRouteParts($this->request_uri);
         $log_message = 'a_router_parts ' . var_export($a_router_parts, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_router_parts['get']         = $this->a_get;
         $a_router_parts['post']        = $this->a_post;
         $a_router_parts['form_action'] = $this->form_action;
