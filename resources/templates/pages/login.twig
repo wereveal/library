@@ -1,10 +1,10 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ public_dir }}/assets/css/styles_manager_config.css" media="screen">
+    <link rel="stylesheet" href="{{ css_dir }}/styles_manager_config.css" media="screen">
 {% endblock %}
 {% block vendorJs %}
 {{ parent() }}
-    <script src="{{ public_dir }}/assets/vendor/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="{{ vendor_assets }}/jquery-validation/dist/jquery.validate.js"></script>
 {% endblock %}
 {% block header %}{% endblock %}
 {% block search %}{% endblock %}
