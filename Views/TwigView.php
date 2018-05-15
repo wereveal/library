@@ -10,7 +10,8 @@
  * @date      2017-05-14 16:49:48
  * @note Change Log
  * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
- * @todo Ritc/Library/Views/TwigView.php - Everything
+ * @todo Ritc/Library/Views/TwigView.php - Display proper options
+ * @todo Ritc/Library/Views/TwigView.php - Write the Javascript to make changes for dirs based on prefix.
  */
 namespace Ritc\Library\Views;
 
@@ -97,9 +98,9 @@ class TwigView implements ViewInterface
             foreach ($a_tt_results as $key => $a_tt) {
                 try {
                     $a_tc_results = $o_tc->readTplInfo($a_tt['tpl_id']);
-                    $a_tt_results[$key]['twig_dir']    = $a_tc_results[0]['twig_dir'];
-                    $a_tt_results[$key]['twig_prefix'] = $a_tc_results[0]['twig_prefix'];
-                    $a_tt_results[$key]['tp_id']       = $a_tc_results[0]['tp_id'];
+                    $a_tt_results[$key]['twig_dir']    = $a_tc_results['twig_dir'];
+                    $a_tt_results[$key]['twig_prefix'] = $a_tc_results['twig_prefix'];
+                    $a_tt_results[$key]['tp_id']       = $a_tc_results['tp_id'];
                 }
                 catch (ModelException $e) {
                     $message = 'Unable to read the template information';
