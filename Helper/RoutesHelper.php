@@ -5,9 +5,10 @@
  * @file      Ritc/Library/Helper/RoutesHelper.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.1.0
- * @date      2017-06-20 10:09:37
+ * @version   3.0.0
+ * @date      2018-05-14 19:52:39
  * @note Change Log
+ * - v3.0.0   - Changed to use cache for some database values       - 2018-05-14 wer
  * - v2.1.0   - Changed to handle ModelExceptions                   - 2017-06-20 wer
  * - v2.0.0   - Changed to handle inexact request URI (slashes)     - 2016-09-08 wer
  * - v1.1.0   - added method for quick min auth level for a route.  - 02/26/2016 wer
@@ -36,6 +37,8 @@ class RoutesHelper
 
     /** @var array */
     private $a_route_parts;
+    /** @var object a cache instance */
+    private $o_cache = NULL;
     /** @var \Ritc\Library\Services\DbModel  */
     private $o_db;
     /** @var \Ritc\Library\Services\Di  */
@@ -44,6 +47,8 @@ class RoutesHelper
     private $route_path;
     /** @var string */
     private $request_uri;
+    /** @var bool  */
+    private $use_cache = false;
 
     /**
      * RoutesHelper constructor.
@@ -55,6 +60,13 @@ class RoutesHelper
         $this->setupElog($o_di);
         $this->o_di = $o_di;
         $this->o_db = $o_di->get('db');
+        if (USE_CACHE) {
+            $o_cache = $o_di->get('cache');
+            if (is_object($o_cache)) {
+                $this->o_cache = $o_cache;
+                $this->use_cache = true;
+            }
+        }
         $this->route_path = $request_uri;
     }
 
@@ -188,30 +200,34 @@ class RoutesHelper
      * could return the route for /fred/flinstone/ if there is no
      * /fred/flinstone/barney/rubble/ request_uri based route.
      * @param string $request_uri
-     * @return array|bool
+     * @return array
      */
     public function findValidRoute($request_uri = '')
     {
-        try {
-            $o_routes = new RoutesComplexModel($this->o_di);
+        $cache_key = 'route.valid.by.request_uri.';
+        $fixed_uri = str_replace('/', '_', $request_uri);
+        $cache_key .= Strings::makeAlphanumericPlus($fixed_uri);
+        if ($this->use_cache) {
+            $valid_route = $this->o_cache->get($cache_key);
+            if (!empty($valid_route)) {
+                return $valid_route;
+            }
         }
-        catch (ModelException $e) {
-            return false;
-        }
-        catch (\Error $e) {
-            return false;
-        }
+        $o_routes = new RoutesComplexModel($this->o_di);
         $a_search_for = $this->createComparisonUri($request_uri);
         foreach ($a_search_for as $key => $value) {
             try {
                 $a_results = $o_routes->readByRequestUri($value);
                 if (!empty($a_results)) {
+                    if ($this->use_cache) {
+                        $this->o_cache->set($cache_key, $a_results[0]);
+                    }
                     return $a_results[0];
                 }
             }
             catch (ModelException $e) {
                 if ($request_uri == '/') {
-                    return false;
+                    return [];
                 }
             }
         }
@@ -266,6 +282,14 @@ class RoutesHelper
     public function getGroups($route_id = -1)
     {
         if ($route_id == -1) { return []; }
+        $cache_key = 'groups.for.route.' . $route_id;
+        $use_cache = USE_CACHE && is_object($this->o_cache);
+        if ($use_cache) {
+            $a_groups = $this->o_cache->get($cache_key);
+            if (!empty($a_groups)) {
+                return $a_groups;
+            }
+        }
         $o_rgm = new RoutesGroupMapModel($this->o_db);
         $o_rgm->setElog($this->o_elog);
         try {
@@ -274,6 +298,9 @@ class RoutesHelper
                 $a_groups = [];
                 foreach ($a_rgm_results as $a_rgm) {
                     $a_groups[] = $a_rgm['group_id'];
+                }
+                if ($use_cache) {
+                    $this->o_cache->set($cache_key, $a_groups);
                 }
                 return $a_groups;
             }
@@ -347,6 +374,8 @@ class RoutesHelper
     }
 
     /**
+     * Sets the class property a_route_parts.
+     * a_route_parts provides a lot of information regarding the route/page to be displayed.
      * @param string $request_uri
      */
     public function setRouteParts($request_uri = '')
@@ -371,9 +400,16 @@ class RoutesHelper
                 $request_uri = $_SERVER["REQUEST_URI"];
             }
         }
+        $cache_key = 'route_parts.for.' . $request_uri;
+        if ($this->use_cache) {
+            $a_route_parts = $this->o_cache->get($cache_key);
+            if (!empty($a_route_parts)) {
+                $this->a_route_parts = $a_route_parts;
+            }
+        }
 
         $a_route = $this->findValidRoute($request_uri);
-        if ($a_route !== false) {
+        if (!empty($a_route)) {
             $a_route_parts = $a_route;
         }
         $log_message = 'Route Found:  ' . var_export($a_route, TRUE);
@@ -399,7 +435,9 @@ class RoutesHelper
 
         $log_message = 'Route parts:  ' . var_export($a_route_parts, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
+        if ($this->use_cache) {
+            $this->o_cache->set($cache_key, $a_route_parts);
+        }
         $this->a_route_parts = $a_route_parts;
     }
 

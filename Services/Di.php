@@ -11,7 +11,7 @@
  * @file      Di.php
  * @namespace Ritc\Library\Services
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.0
+ * @version   1.2.0+1
  * @date      2017-02-08 09:04:05
  * @note <b>Change Log</b>
  * - v1.2.0   - added functions to save variable values        - 2017-02-08 wer
@@ -51,7 +51,7 @@ class Di
 
     /**
      * @param string $object_name
-     * @return bool
+     * @return bool|object
      */
     public function get($object_name = '')
     {

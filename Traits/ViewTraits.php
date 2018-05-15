@@ -5,9 +5,12 @@
  * @file      ViewTraits.php
  * @namespace Ritc\Library\Traits
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.0
- * @date      2018-04-20 10:06:17
+ * @version   2.0.0
+ * @date      2018-05-14 17:38:51
  * @note <b>Change Log</b>
+ * - v2.0.0         - Added caching of some data that is used commonly in a view.
+ *                    Added a new method for setting the url_id based on record id
+ *                    which fixes a bug.
  * - v1.2.0         - added method to create values needed for pager template.                  - 2018-04-20 wer
  * - v1.1.1         - bug fix                                                                   - 2018-04-19 wer
  * - v1.1.0         - added new default twig values for asset dirs                              - 2018-04-12 wer
@@ -69,6 +72,8 @@ trait ViewTraits
     protected $adm_level;
     /** @var AuthHelper */
     protected $o_auth;
+    /** @var object */
+    protected $o_cache;
     /** @var DbModel */
     protected $o_db;
     /** @var Di */
@@ -83,6 +88,8 @@ trait ViewTraits
     protected $o_session;
     /** @var \Twig_Environment */
     protected $o_twig;
+    /** @var bool */
+    private $use_cache = false;
 
     ### Main Public Methods ###
     /**
@@ -160,13 +167,25 @@ trait ViewTraits
      */
     public function retrieveNav($nav_group = '')
     {
-        if ($this->adm_level == '') {
-            $this->setAdmLevel();
+        $cache_key = 'nav_values.id.' . $nav_group;
+        if ($this->use_cache) {
+            $a_nav = $this->o_cache->get($cache_key);
         }
-        $a_nav = $this->readNav($nav_group);
-        $a_nav = $this->removeUnauthorizedLinks($a_nav);
-        $a_nav = $this->createSubmenu($a_nav);
-        $a_nav = $this->sortTopLevel($a_nav);
+        else {
+            $a_nav = [];
+        }
+        if (!is_array($a_nav) || empty($a_nav)) {
+            if ($this->adm_level == '') {
+                $this->setAdmLevel();
+            }
+            $a_nav = $this->readNav($nav_group);
+            $a_nav = $this->removeUnauthorizedLinks($a_nav);
+            $a_nav = $this->createSubmenu($a_nav);
+            $a_nav = $this->sortTopLevel($a_nav);
+            if ($this->use_cache) {
+                $this->o_cache->set($cache_key, $a_nav);
+            }
+        }
         return $a_nav;
     }
 
@@ -179,10 +198,22 @@ trait ViewTraits
     public function createDefaultTwigValues(array $a_message = [], $url_id = -1)
     {
         $meth = __METHOD__ . '.';
-        $a_page_values = $this->getPageValues($url_id);
-        $log_message = 'page values ' . var_export($a_page_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
+        $url_id = $this->urlId($url_id);
+        $cache_key = 'page_values.id.' . $url_id;
+        if ($this->use_cache) {
+            $a_page_values = $this->o_cache->get($cache_key);
+        }
+        else {
+            $a_page_values = [];
+        }
+        if (!is_array($a_page_values) || empty($a_page_values)) {
+            $a_page_values = $this->getPageValues($url_id);
+            if ($this->use_cache) {
+                $this->o_cache->set($cache_key, $a_page_values);
+            }
+        }
+          $log_message = 'page values ' . var_export($a_page_values, TRUE);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_menus = $this->retrieveNav($a_page_values['ng_id']);
         if (empty($a_message)) {
             $a_message = ViewHelper::fullMessage(['message' => '']);
@@ -267,6 +298,13 @@ trait ViewTraits
         if (empty($this->o_routes_helper)) {
             $this->o_routes_helper = new RoutesHelper($o_di);
         }
+        if (empty($this->o_cache) && USE_CACHE) {
+            $o_cache = $o_di->get('cache');
+            if (is_object($o_cache)) {
+                $this->o_cache = $o_cache;
+                $this->use_cache = true;
+            }
+        }
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $o_elog = $o_di->get('elog');
             $this->o_nav->setElog($o_elog);
@@ -307,12 +345,22 @@ trait ViewTraits
      */
     protected function setNavByNgName($navgroup_name = '')
     {
-        $o_ng = new NavgroupsModel($this->o_db);
-        try {
-            $ng_id = $o_ng->readIdByName($navgroup_name);
+        $ng_id = -1;
+        $cache_key = 'navgroup.id.by.' . $navgroup_name;
+        if (USE_CACHE && is_object($this->o_cache)) {
+            $ng_id = $this->o_cache->get($cache_key);
         }
-        catch (ModelException $e) {
-            $ng_id = 1;
+        if ($ng_id < 1) {
+            $o_ng = new NavgroupsModel($this->o_db);
+            try {
+                $ng_id = $o_ng->readIdByName($navgroup_name);
+            }
+            catch (ModelException $e) {
+                $ng_id = 1;
+            }
+            if (USE_CACHE) {
+                $this->o_cache->set($cache_key, $ng_id);
+            }
         }
         $this->setNav($ng_id);
     }
@@ -347,23 +395,7 @@ trait ViewTraits
     public function getPageValues($url_id = -1)
     {
         $o_page_model = new PageComplexModel($this->o_di);
-        $o_url = new UrlsModel($this->o_db);
-        if (is_numeric($url_id)) {
-            if ($url_id < 1) {
-                $url_id = $this->o_router->getUrlId();
-            }
-        }
-        else {
-            try {
-                $a_urls = $o_url->read(['url_text' => $url_id]);
-                $url_id = empty($a_urls[0]['url_id'])
-                    ? $this->o_router->getUrlId()
-                    : $a_urls[0]['url_id'];
-            }
-            catch (ModelException $e) {
-                $url_id = $this->o_router->getUrlId();
-            }
-        }
+        $url_id = $this->urlId($url_id);
         try {
             $a_values = $o_page_model->readPageValuesByUrlId($url_id);
             if (isset($a_values[0])) {
@@ -459,20 +491,32 @@ trait ViewTraits
      */
     protected function createNumericPagerValues($a_parameters = [])
     {
+        $a_pager = [];
+        $pager_key = 'pager.values.for.' . md5(json_encode($a_parameters));
         if (empty($a_parameters['start_record'])
             || empty($a_parameters['records_to_display'])
             || empty($a_parameters['total_records'])
             || empty($a_parameters['href'])
         ) {
+            if ($this->use_cache) {
+                $this->o_cache->set($pager_key, []);
+            }
             return [];
         }
-
-        $a_pager            = [];
+        if ($this->use_cache) {
+            $a_pager = $this->o_cache->get($pager_key);
+        }
+        if (!empty($a_pager)) {
+            return $a_pager;
+        }
         $start_record       = $a_parameters['start_record'];
         $records_to_display = $a_parameters['records_to_display'];
         $total_records      = $a_parameters['total_records'];
         $href               = $a_parameters['href'];
         if ($records_to_display >= $total_records) {
+            if ($this->use_cache) {
+                $this->o_cache->set($pager_key, []);
+            }
             return [];
         }
         $get_stuff = '';
@@ -586,6 +630,9 @@ trait ViewTraits
                 'href' => $link,
                 'text' => $text
             ];
+        }
+        if ($this->use_cache) {
+            $this->o_cache->set($pager_key, $a_pager);
         }
         return $a_pager;
     }
@@ -724,5 +771,44 @@ trait ViewTraits
             }
         }
         return $a_nav;
+    }
+
+    /**
+     * Makes sure the url_id is the actual record id.
+     * If a string is given, looks up the url for the string.
+     * Returns the record id for the url.
+     * @param int|string $url_id Optional, if not provided will return the
+     *                           url id as specified by o_router.
+     * @return int
+     */
+    public function urlId($url_id = -1)
+    {
+        $o_url = new UrlsModel($this->o_db);
+        if (is_numeric($url_id)) {
+            if ($url_id < 1) {
+                $url_id = $this->o_router->getUrlId();
+            }
+            try {
+                $a_urls = $o_url->read(['url_id' => $url_id]);
+                $url_id = empty($a_urls[0]['url_id'])
+                    ? -1
+                    : $a_urls[0]['url_id'];
+            }
+            catch (ModelException $e) {
+                $url_id = -1;
+            }
+        }
+        else {
+            try {
+                $a_urls = $o_url->read(['url_text' => $url_id]);
+                $url_id = empty($a_urls[0]['url_id'])
+                    ? $this->o_router->getUrlId()
+                    : $a_urls[0]['url_id'];
+            }
+            catch (ModelException $e) {
+                $url_id = $this->o_router->getUrlId();
+            }
+        }
+        return $url_id;
     }
 }
