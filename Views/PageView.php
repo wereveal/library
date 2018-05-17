@@ -22,12 +22,11 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Helper\Arrays;
-use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Class PageView
@@ -36,7 +35,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class PageView
 {
-    use LogitTraits, ViewTraits;
+    use LogitTraits, ConfigViewTraits;
 
     /**
      * @var \Ritc\Library\Models\PageComplexModel
@@ -51,10 +50,8 @@ class PageView
     {
         $this->setupView($o_di);
         $this->o_model = new PageComplexModel($this->o_di);
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-            $this->o_model->setElog($this->o_elog);
-        }
+        $this->setupElog($o_di);
+        $this->o_model->setElog($this->o_elog);
     }
 
     /**
@@ -65,7 +62,6 @@ class PageView
     public function renderForm(array $a_message = array())
     {
         $meth = __METHOD__ . '.';
-        $a_page_values = $this->getPageValues();
         /**
          * Because I couldn't remember, documenting this here.
          * Coming to this method, there are two possible form actions, 'new_page' or 'modify_page'.
@@ -112,31 +108,22 @@ class PageView
             'other_stuff'  => '',
             'options'      => $a_options
         ];
-        $a_values = [
-            'adm_lvl' => $this->adm_level,
-            'a_message' => $a_message,
-            'a_page'    => [
-                'page_id'          => '',
-                'url_id'           => '',
-                'page_title'       => '',
-                'page_description' => '',
-                'page_base_url'    => '/',
-                'page_type'        => 'text/html',
-                'page_lang'        => 'en',
-                'page_charset'     => 'utf8',
-                'page_immutable'   => 'false',
-            ],
-            'select'      => $a_select,
-            'action'      => $action,
-            'tolken'      => $_SESSION['token'],
-            'form_ts'     => $_SESSION['idle_timestamp'],
-            'hobbit'      => '',
-            'a_menus'     => $this->retrieveNav('ManagerLinks'),
-            'page_prefix' => LIB_TWIG_PREFIX
+        $a_page = [
+            'page_id'          => '',
+            'url_id'           => '',
+            'page_title'       => '',
+            'page_description' => '',
+            'page_base_url'    => '/',
+            'page_type'        => 'text/html',
+            'page_lang'        => 'en',
+            'page_charset'     => 'utf8',
+            'page_immutable'   => 'false',
         ];
-        $a_values = array_merge($a_page_values, $a_values);
-
         ### If we are trying to modify an existing page, grab its data and shove it into the form ###
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['select'] = $a_select;
+        $a_twig_values['action'] = $action;
+        $a_twig_values['a_page'] = $a_page;
         if ($action == 'update') {
             try {
                 $a_pages = $this->o_model->readPageValues(
@@ -147,70 +134,41 @@ class PageView
                 $a_pages = [];
             }
 
-            if (isset($a_pages[0])) {
+            if (!empty($a_pages[0])) {
                 $a_page = $a_pages[0];
-                $a_values['a_page'] = $a_page;
+                $a_twig_values['a_page'] = $a_page;
 
                 $label = $a_page['url_host'] == 'self'
                     ? $a_page['url_text']
                     : $a_page['url_host'] . $a_page['url_text'];
 
-                $a_values['select']['options'][] = [
+                $a_twig_values['select']['options'][] = [
                     'value'       => $a_page['url_id'],
                     'label'       => $label,
                     'other_stuph' => ' selected'
                 ];
-                $a_values['select']['options'][0]['other_stuph'] = ''; // this should be the default --Select-- option
+                $a_twig_values['select']['options'][0]['other_stuph'] = ''; // this should be the default --Select--
             }
             else {
                 $this->logIt("Could not get the page values!", LOG_OFF, $meth . __LINE__);
             }
         }
-
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/page_form.twig';
-        return $this->renderIt($tpl, $a_values);
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
      * Returns the list of pages in html.
-     * @param array $a_message
+     * @param array $a_message Optional
      * @return string
      */
-    public function renderList(array $a_message = array())
+    public function renderList(array $a_message = [])
     {
-        $a_page_values = $this->getPageValues();
-        $a_values = array(
-            'page_title' => 'Manager for Page Meta Values, mostly',
-            'a_message'  => [],
-            'a_pages'    => [
-                [
-                    'page_id'        => '',
-                    'page_url'       => '',
-                    'page_title'     => '',
-                    'page_immutable' => 'true'
-                ]
-            ],
-            'tolken'      => $_SESSION['token'],
-            'form_ts'     => $_SESSION['idle_timestamp'],
-            'hobbit'      => '',
-            'a_menus'     => $this->retrieveNav('ManagerLinks'),
-            'adm_lvl'     => $this->adm_level,
-            'page_prefix' => LIB_TWIG_PREFIX
-        );
-        $a_values = array_merge($a_page_values, $a_values);
-        if (count($a_message) != 0) {
-            $a_values['a_message'] = ViewHelper::fullMessage($a_message);
-        }
-        else {
-            $a_values['a_message'] = '';
-        }
+        $meth = __METHOD__ . '.';
         $a_search_for = [];
         $a_search_params = ['order_by' => 'page_immutable DESC, url_text ASC'];
         try {
             $a_pages = $this->o_model->readPageValues($a_search_for, $a_search_params);
-            if (empty($a_pages)) {
-                $a_pages = [];
-            }
         }
         catch (ModelException $e) {
             $a_pages = [];
@@ -223,9 +181,14 @@ class PageView
                 $a_pages[$key]['page_url'] = $a_page['url_scheme'] . '://' . $a_page['url_host'] .  $a_page['url_text'];
             }
         }
-        $a_values['a_pages'] = $a_pages;
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/pages.twig';
-        return $this->renderIt($tpl, $a_values);
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['a_pages'] = $a_pages;
+        $a_twig_values['a_message'] = $a_message;
+        $tpl = $this->createTplString($a_twig_values);
+        $log_message = 'Twig Values ' . var_export($a_twig_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt("tpl: " . $tpl, LOG_ON, $meth . __LINE__);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
@@ -237,10 +200,10 @@ class PageView
         $meth = __METHOD__ . '.';
         $a_post_values = $this->o_router->getPost();
         $a_page = $a_post_values['page'];
-        $log_message = 'Post Values ' . var_export($a_post_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+          $log_message = 'Post Values ' . var_export($a_post_values, TRUE);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-        $a_page_values = $this->getPageValues();
+        $a_twig_values = $this->createDefaultTwigValues();
         $a_values = array(
             'what'         => 'Page ',
             'name'         => $a_page['page_title'],
@@ -248,17 +211,11 @@ class PageView
             'btn_value'    => 'Page',
             'hidden_name'  => 'page_id',
             'hidden_value' => $a_page['page_id'],
-            'public_dir'   => PUBLIC_DIR,
-            'tolken'       => $_SESSION['token'],
-            'form_ts'      => $_SESSION['idle_timestamp'],
-            'hobbit'       => '',
-            'a_menus'      => $this->retrieveNav('ManagerLinks'),
-            'adm_lvl'      => $this->adm_level,
-            'page_prefix'  => LIB_TWIG_PREFIX
         );
-        $a_values = array_merge($a_values, $a_page_values);
-        $this->logIt('Twig Values: ' . var_export($a_values, TRUE), LOG_OFF, $meth . __LINE__);
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/verify_delete.twig';
-        return $this->renderIt($tpl, $a_values);
+        $a_twig_values = array_merge($a_twig_values, $a_values);
+        $message = 'Twig Values: ' . var_export($a_twig_values, TRUE);
+        $this->logIt($message, LOG_OFF, $meth . __LINE__);
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 }

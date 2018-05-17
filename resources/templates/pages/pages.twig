@@ -1,17 +1,9 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block body %}
-    <div class="container">
-        <h1 class="smaller">{{ page_title }}</h1>
-    </div>
-    {% if a_message.message != '' %}
-    <div class="container">
-        {% include '@' ~ lib_prefix ~ 'snippets/message.twig' %}
-    </div>
-    {% endif %}
-    <div class="container">
+    <div class="container container-bordered-square">
         <div class="row">
-            <div class="col-md-1 offset-md-11">
-                <form action="{{ public_dir }}/manager/library/pages/new/" method= "post">
+            <div class="col-md-1 offset-md-10">
+                <form action="{{ public_dir }}/manager/config/pages/" method= "post">
                     <button type="submit" name="submit" value="new_page" class="btn btn-primary btn-xs">New Page</button>
                     <input type="hidden" name="tolken" value="{{ tolken }}" />
                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
@@ -19,13 +11,18 @@
                 </form>
             </div>
         </div>
+        <div class="row list-header d-none d-lg-flex sticky-top">
+            <div class="col-4 xtra-bold">Title</div>
+            <div class="col-6 xtra-bold">URL</div>
+            <div class="col-2 xtra-bold">Action</div>
+        </div>
 {% for page in a_pages %}
     {% if 'library' not in page.page_url %}
-        {% set class = loop.index % 2 == 0 ? 'normal-row' : 'alt-row' %}
-        {% include '@' ~ page_prefix ~ 'snippets/page_line.twig' %}
+        {% set class = loop.index is even ? 'even' : 'odd' %}
+        {% include '@' ~ lib_prefix ~ 'snippets/page_line.twig' %}
     {% elseif adm_lvl == 10 %}
-        {% set class = loop.index % 2 == 0 ? 'normal-row' : 'alt-row' %}
-        {% include '@' ~ page_prefix ~ 'snippets/page_line.twig' %}
+        {% set class = loop.index is even ? 'even' : 'odd' %}
+        {% include '@' ~ lib_prefix ~ 'snippets/page_line.twig' %}
     {% endif %}
 {% endfor %}
     </div>

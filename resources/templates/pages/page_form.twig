@@ -9,7 +9,7 @@
     </div>
     {% endif %}
     <div class="container">
-        <form action="{{ public_dir }}/manager/library/pages/{{ action }}/" method="post" id="page-form">
+        <form action="{{ public_dir }}/manager/config/pages/" method="post" id="page-form">
         <fieldset class="nice-fieldset">
         <div class="form-group row alt-row">
             <label for="page_url" class="col-md-2 form-control-label alt-row form-label">Page URL: </label>
@@ -98,7 +98,7 @@
         <h3>Instructions:</h3>
         <ul>
             <li>Most values are used in the HTML meta tags, used in the head.
-            <li>The Page Url is unique per page. Only unused URLs are available. If you need a new url, you need to create it first <a href="/manager/library/urls/">Here</a> and normally then a new route <a href="/manager/library/routes/">here</a></li>
+            <li>The Page Url is unique per page. Only unused URLs are available. If you need a new url, you need to create it first <a href="/manager/config/urls/">Here</a> and normally then a new route <a href="/manager/config/routes/">here</a></li>
             <li>Page Title is used in the meta data but may also be used in a &lt;h1&gt;. If not specified, a default value may be used.</li>
             <li>Page Description can be pretty much any text. Can be blank. If not specified, a default value may be used. Per SEO, the descriptions should be no more than 150 characters.</li>
             <li>Base URL is a meta tag value. The default '/' is normally fine - the base site url will be used then.</li>
