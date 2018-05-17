@@ -249,4 +249,26 @@ class UrlsModel implements ModelInterface
         }
 
     }
+
+    /**
+     * Finds Urls that are not assigned to a route.
+     * @return mixed
+     * @throws ModelException
+     */
+    public function readNoRoute()
+    {
+        $sql = "
+            SELECT * from {$this->lib_prefix}urls as u
+            WHERE NOT EXISTS (
+              SELECT * from {$this->lib_prefix}routes as r
+              WHERE r.url_id = u.url_id 
+            )
+        ";
+        try {
+            return $this->o_db->search($sql);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
 }

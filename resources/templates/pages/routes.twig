@@ -1,118 +1,120 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block body %}
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="smaller">Manage the routes.</h1>
+    <div class="container">
+        <div class="row d-none d-md-flex list-header">
+            <div class="col-md-4 list-header">Route Path</div>
+            <div class="col-md-2 list-header">Route Class</div>
+            <div class="col-md-2 list-header">Route Method</div>
+            <div class="col-md-2 list-header">Route Action</div>
+            <div class="col-md-2 list-header">&nbsp;</div>
         </div>
-    </div>
-    {% if a_message.message != '' %}
-    <div class="row">
-        <div class="col-md-12">
-            {% include '@' ~ lib_prefix ~ 'snippets/message.twig' %}
+    {% set class = 'odd' %}
+        <form action="{{ public_dir }}/manager/library/routes/save/" method= "post">
+        <div class="row {{ class }}">
+            <div class="col-md-4">
+                {% set this_select = {'select':a_urls_select}  %}
+                {% include '@' ~ lib_prefix ~ 'elements/select.twig' with this_select %}
+            </div>
+            <div class="col-md-2">
+                <label class="d-md-none" for="route[route_class]">Route Class: </label>
+                <input type="text" id="route[route_class]" name="route[route_class]" value="" maxlength="32" class="flexible colorful"/>
+            </div>
+            <div class="col-md-2">
+                <label class="d-md-none" for="route[route_method]">Route Method: </label>
+                <input type="text" id="route[route_method]" name="route[route_method]" value="" maxlength="32" class="flexible colorful"/>
+            </div>
+            <div class="col-md-2">
+                <label class="d-md-none" for="route[route_action]">Route Action: </label>
+                <input type="text" id="route[route_action]" name="route[route_action]" value="" maxlength="32" class="flexible colorful"/>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Route</button>
+                <input type="hidden" name="tolken" value="{{ tolken }}" />
+                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                <input type="hidden" name="route[route_id]" value="">
+                <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+            </div>
         </div>
-    </div>
-    {% endif %}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="row hidden-md-down list-header">
-                <div class="col-md-4 list-header">Route Path</div>
-                <div class="col-md-2 list-header">Route Class</div>
-                <div class="col-md-2 list-header">Route Method</div>
-                <div class="col-md-2 list-header">Route Action</div>
-                <div class="col-md-2 list-header">&nbsp;</div>
+        </form>
+    {% for row in a_routes %}
+        {% set class = loop.index is even ? 'even' : 'odd' %}
+        {% if row.route_immutable == 'false' %}
+        <form action="{{ public_dir }}/manager/library/routes/update/" method="post">
+        <div class="row {{ class }}">
+            <div class="col-md-4">
+                <label class="d-md-none" for="route[url_text]">URL: </label>
+                {% set select = {'select':row.a_urls} %}
+                {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select only %}
             </div>
-        {% set x = -1 %}
-        {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
-            <div class="row {{ class }}">
-                <form action="{{ public_dir }}/manager/library/routes/save/" method= "post">
-                    <div class="col-md-3">
-                        <label class="hidden-sm-up" for="route[url_id]">URL: </label>
-                        {% include '@' ~ page_prefix ~ 'elements/select.twig' %}
-                    </div>
-                    <div class="col-md-3"><label class="hidden-sm-up" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="" maxlength="32" class="colorful w250"/></div>
-                    <div class="col-md-2"><label class="hidden-sm-up" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="" maxlength="32" class="colorful w150"/></div>
-                    <div class="col-md-2"><label class="hidden-sm-up" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="" maxlength="32" class="colorful w150"/></div>
-                    <div class="col-md-2">
-                        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Route</button>
-                        <input type="hidden" name="tolken" value="{{ tolken }}" />
-                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                    </div>
-                </form>
+            <div class="col-md-2">
+                <label class="d-md-none" for="route[route_class]">Route Class: </label>
+                <input type="text" name="route[route_class]" value="{{ row.route_class }}" maxlength="32" class="flexible colorful"/>
             </div>
-        {% set x = x * -1 %}
-        {% for row in a_routes %}
-            {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
-            <div class="row {{ class }}">
-            {% if row.route_immutable == 'false' %}
-            <form action="{{ public_dir }}/manager/library/routes/update/" method="post">
-                <div class="col-md-3">
-                    <label class="hidden-sm-up" for="route[url_id]">URL: </label>
-                    {% include '@' ~ page_prefix ~ 'elements/select.twig' with row only %}
+            <div class="col-md-2">
+                <label class="d-md-none" for="route[route_method]">Route Method: </label>
+                <input type="text" name="route[route_method]" value="{{ row.route_method }}" maxlength="32" class="flexible colorful"/>
+            </div>
+            <div class="col-md-2">
+                <label class="d-md-none" for="route[route_action]">Route Action: </label>
+                <input type="text" name="route[route_action]" value="{{ row.route_action }}" maxlength="32" class="flexible colorful"/>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
+                <button type="submit" name="submit" value="verify" class="btn btn-danger btn-xs">Delete</button>
+                <input type="hidden" name="tolken" value="{{ tolken }}" />
+                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                <input type="hidden" name="route[route_id]" value="{{ row.route_id }}" />
+            </div>
+        </div>
+        </form>
+        {% endif %}
+    {% endfor %}
+    {% set class = class == 'odd' ? 'even' : 'odd' %}
+        <form action="{{ public_dir }}/manager/library/routes/save/" method= "post">
+        <div class="row {{ class }}">
+                <div class="col-md-4">
+                    {% set select = {'select':a_urls_select_bottom} %}
+                    {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select only %}
                 </div>
-                <div class="col-md-3"><label class="hidden-sm-up" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="{{ row.route_class }}" maxlength="32" class="colorful w250"/></div>
-                <div class="col-md-2"><label class="hidden-sm-up" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="{{ row.route_method }}" maxlength="32" class="colorful w150"/></div>
-                <div class="col-md-2"><label class="hidden-sm-up" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="{{ row.route_action }}" maxlength="32" class="colorful w150"/></div>
                 <div class="col-md-2">
-                    <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
-                    <button type="submit" name="submit" value="verify" class="btn btn-danger btn-xs">Delete</button>
+                    <label class="d-md-none" for="route[route_class]">Route Class: </label>
+                    <input type="text" name="route[route_class]" value="" maxlength="32" class="flexible colorful"/>
+                </div>
+                <div class="col-md-2">
+                    <label class="d-md-none" for="route[route_method]">Route Method: </label>
+                    <input type="text" name="route[route_method]" value="" maxlength="32" class="flexible colorful"/>
+                </div>
+                <div class="col-md-2">
+                    <label class="d-md-none" for="route[route_action]">Route Action: </label>
+                    <input type="text" name="route[route_action]" value="" maxlength="32" class="flexible colorful"/>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Route</button>
                     <input type="hidden" name="tolken" value="{{ tolken }}" />
                     <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                    <input type="hidden" name="route[route_id]" value="" />
                     <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                    <input type="hidden" name="route[route_id]" value="{{ row.route_id }}" />
                 </div>
-            </form>
-            {% else %}
-                {# Disabled so the list is shorter and easier to use, don't want the non-editable records being accidently edited.
-                <div class="col-md-4"><span class="hidden-sm-up">URL: </span>{{ row.route_path }}</div>
-                <div class="col-md-2"><span class="hidden-sm-up">Route Class: </span>{{ row.route_class }}</div>
-                <div class="col-md-2"><span class="hidden-sm-up">Route Method: </span>{{ row.route_method }}</div>
-                <div class="col-md-2"><span class="hidden-sm-up">Route Action: </span>{{ row.route_action }}</div>
-                <div class="col-md-2">&nbsp;</div>
-                #}
-            {% endif %}
-            </div>
-            {% set x = x * -1 %}
-        {% endfor %}
-        {% set class = x == 1 ? 'alt-row' : 'normal-row' %}
-            <div class="row {{ class }}">
-                <form action="{{ public_dir }}/manager/library/routes/save/" method= "post">
-                    <div class="col-md-3">
-                        <label class="hidden-sm-up" for="route[url_id]">URL: </label>
-                        {% include '@' ~ page_prefix ~ 'elements/select.twig' %}
-                    </div>
-                    <div class="col-md-3"><label class="hidden-sm-up" for="route[route_class]">Route Class: </label><input type="text" name="route[route_class]" value="" maxlength="32" class="colorful w250"/></div>
-                    <div class="col-md-2"><label class="hidden-sm-up" for="route[route_method]">Route Method: </label><input type="text" name="route[route_method]" value="" maxlength="32" class="colorful w150"/></div>
-                    <div class="col-md-2"><label class="hidden-sm-up" for="route[route_action]">Route Action: </label><input type="text" name="route[route_action]" value="" maxlength="32" class="colorful w150"/></div>
-                    <div class="col-md-2">
-                        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Route</button>
-                        <input type="hidden" name="tolken" value="{{ tolken }}" />
-                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                    </div>
-                </form>
-            </div>
         </div>
+        </form>
     </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Instructions</h3>
-            <ul>
-                <li>Routes maps the url to a class, method, and action.
-                    Certain routes are fixed so that the app will work. They are not visible.
-                </li>
-                <li>Route Path is what appears in the browser address bar, e.g., '/about/charlie/' and is taken from the URL manager.</li>
-                <li>Route Class is the name of the class associated with the path, e.g., MainController.
-                    The class is required and must match the class name exactly.
-                    The class is normally a controller.
-                </li>
-                <li>The method is the name of the method to be used. The method is required.
-                    The method must match the method name exactly.
-                </li>
-                <li>The action is normally an argument that is used in the method. This is optional.</li>
-            </ul>
-        </div>
+    <div class="container">
+        <h3>Instructions</h3>
+        <ul>
+            <li>Routes maps the url to a class, method, and action.
+                Certain routes are fixed so that the app will work. They are not visible.
+            </li>
+            <li>Route Path is what appears in the browser address bar, e.g., '/about/charlie/' and is taken from the URL manager.</li>
+            <li>Route Class is the name of the class associated with the path, e.g., MainController.
+                The class is required and must match the class name exactly.
+                The class is normally a controller.
+            </li>
+            <li>The method is the name of the method to be used. The method is required.
+                The method must match the method name exactly.
+            </li>
+            <li>The action is normally an argument that is used in the method. This is optional.</li>
+        </ul>
     </div>
 {% endblock %}
 {# Expected values

@@ -1,7 +1,7 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block body %}
     <div class="container">
-        <div class="row list-header hidden-sm-down">
+        <div class="row list-header d-none d-md-flex">
             <div class="col-md-6">Url</div>
             <div class="col-md-3">Cannot be Deleted</div>
             <div class="col-md-3">Action</div>
@@ -11,12 +11,12 @@
         <form action="{{ public_id }}/manager/config/urls/" method="post" id="{{ "url#{y}" }}">
         <div class="row odd">
             <div class="col-12 col-md-6">
-                <label for="url" class="hidden-md-up bold pr-1">Url</label>
-                <input type="text" name="url" class="colorful pw100" value="" required>
+                <label for="url" class="form-label d-md-none bold mb-0">Url</label>
+                <input type="text" name="url" class="flexible colorful" value="" required>
             </div>
             <div class="col-12 col-md-3">
-                <label for="immutable" class="hidden-md-up bold pr-1">Cannot Be Deleted</label>
-                <input type="checkbox" name="immutable" value="1">
+                {% set cb_values = {'id':'immutable','name':'immutable','value':'true','checked':'','label':'Immutable'} %}
+                {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
             </div>
             <div class="col-12 col-md-3">
                 <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
@@ -36,9 +36,8 @@
         <form action="{{ public_id }}/manager/config/urls/" method="post" id="{{ 'url' ~ y }}">
             <div class="row {{ class }}">
                 <div class="col-12 col-md-6">
-                    <span class="hidden-md-up bold">URL: </span>
-                    <label for="url" class="sr-only">Url</label>
-                    <input type="text" name="url" class="colorful pw100" value="{{ row.url }}" required>
+                    <label for="url" class="form-label d-md-none bold mb-0">Url</label>
+                    <input type="text" name="url" class="flexible colorful" value="{{ row.url }}" required>
                 </div>
                 <div class="col-12 col-md-3">
                 {% if row.immutable == 'true' and adm_lvl < 10 %}
@@ -50,8 +49,8 @@
                     {% else %}
                         {% set checked = '' %}
                     {% endif %}
-                    <label for="immutable" class="hidden-md-up bold pr-1">Cannot Be Deleted</label>
-                    <input type="checkbox" name="immutable" value="1"{{ checked }}>
+                    {% set cb_values = {'id':'immutable','name':'immutable','value':'true','checked':checked,'label':'Immutable'} %}
+                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
                 {% endif %}
                 </div>
                 <div class="col-12 col-md-3">
@@ -75,12 +74,12 @@
         <form action="{{ public_id }}/manager/config/urls/" method="post" id="{{ "url#{y}" }}">
             <div class="row {{ class }}">
                 <div class="col-12 col-md-6">
-                    <label for="url" class="hidden-md-up bold pr-1">Url</label>
-                    <input type="text" name="url" class="colorful pw100" value="" required>
+                    <label for="url" class="form-label d-md-none bold mb-0">Url</label>
+                    <input type="text" name="url" class="flexible colorful" value="" required>
                 </div>
                 <div class="col-12 col-md-3">
-                    <label for="immutable" class="hidden-md-up bold pr-1">Cannot Be Deleted</label>
-                    <input type="checkbox" name="immutable" value="1">
+                    {% set cb_values = {'id':'immutable','name':'immutable','value':'true','checked':'','label':'Immutable'} %}
+                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
                 </div>
                 <div class="col-12 col-md-3">
                     <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
