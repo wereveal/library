@@ -2,19 +2,17 @@
 /**
  * @brief     View for the Configuration page.
  * @ingroup   lib_views
- * @file      ConstantsView.phpnamespace Ritc\Library\Views
+ * @file      ConstantsView.php
+ * @namespace Ritc\Library\Views
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.2.0
+ * @version   2.2.0+
  * @date      2017-06-20 11:43:56
  * @note <b>Change Log</b>
  * - v2.2.0   - refactoring elsewhere made changes here.                                - 2017-06-20 wer
  * - v2.1.0   - Updated to match ViewTraits and fix misc bugs.                          - 2017-06-07 wer
  * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
- * - v1.2.4   - Bug fix, removed unneeded use statement                                 - 2016-04-11 wer
- *              Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here
- * - v1.2.3   - Bug fix in the implementation of LIB_TWIG_PREFIX                        - 2016-04-10 wer
+ * - v1.2.4   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
  * - v1.2.2   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.2.1   - Bug Fix                                                                 - 11/07/2015 wer
  * - v1.2.0   - Immutable code added                                                    - 10/07/2015 wer
  * - v1.1.0   - removed abstract class Base, added LogitTraits                          - 09/01/2015 wer
  * - v1.0.0   - first fully working version                                             - 01/28/2015 wer

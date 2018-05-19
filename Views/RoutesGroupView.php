@@ -1,7 +1,6 @@
 <?php
 /**
  * @brief     View for Route Group mapping admin.
- * @details
  * @ingroup   lib_views
  * @file      Ritc/Library/Views/RoutesGroupView.php
  * @namespace Ritc\Library\Views

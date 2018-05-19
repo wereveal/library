@@ -5,16 +5,13 @@
  * @file      Ritc/Library/Helper/Arrays.php
  * @namespace Ritc\Library\Helper
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.3.0
- * @date      2018-04-09 13:49:00
+ * @version   3.4.0
+ * @date      2018-05-18 13:45:25
  * @note <b>Change Log</b>
+ * - v3.4.0 - Changed method to remove blank pairs to not required allowed_keys           - 2018-05-18 wer
  * - v3.3.0 - Added new method to do muliple sort on database array                       - 2018-04-09 wer
- * - v3.2.2 - bug fix                                                                     - 2017-12-14 wer
- * - v3.2.1 - bug fix 0 == '' is true but 0 === '' is false so bugs                       - 2017-12-05 wer
  * - v3.2.0 - New method to removed key/value pairs where value is empty                  - 2017-12-05 wer
- * - v3.1.1 - Bug fix Arrays::findMissingValues()                                         - 2017-02-16 wer
  * - v3.1.0 - Moved a couple methods from DbCommonTraits to Arrays                        - 2016-09-23 wer
- * - v3.0.1 - Bug Fix                                                                     - 2016-09-23 wer
  * - v3.0.0 - Depreciated clearArrayValues in favor of two new methods.                   - 2016-09-19 wer
  * -          Arrays::cleanValues() by default removes php and mysql commands from
  * -          the values in the array. Optionally it can call Arrays::encodeValues().
@@ -23,27 +20,18 @@
  * - v2.8.0 - Added new method inAssocArrayRecursive()                                    - 2016-04-12 wer
  * - v2.7.0 - Changed entity coding/decoding to be definable via parameter.               - 11/25/2015 wer
  * -          Defaults to ENT_QUOTES.
- * - v2.6.1 - bug fix, stripTags -- logic error                                           - 11/12/2015 wer
  * - v2.6.0 - new method, moved from Tester class, can be more generic.                   - 11/02/2015 wer
- * - v2.5.2 - bug fix, hasBlankValues -- needed to check for missing pairs                - 10/22/2015 wer
- * - v2.5.1 - bug fix, inArrayRecursive                                                   - 10/20/2015 wer
  * - v2.5.0 - new method, createRequiredPairs                                             - 10/06/2015 wer
  * - v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                        - 09/12/2015 wer
  * - v2.3.0 - New method, inArrayRecursive                                                - 09/10/2015 wer
  * - v2.2.0 - Removed use of abstract class Base                                          - 09/03/2015 wer
  * - v2.1.0 - After looking at the inconsistency, changed to be more consistent           - 07/31/2015 wer
  * -          Also changed variable name to be more descriptive than array.
- * - v2.0.1 - oops, missed one to be static, changed its name                             - 07/31/2015 wer
  * - v2.0.0 - changed methods to be static                                                - 01/27/2015 wer
  * - v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it         - 12/05/2014 wer
- * - v1.2.1 - moved to the Helper namespace                                               - 11/15/2014 wer
- * - v1.2.1 - clean up                                                                    - 09/23/2014 wer
  * - v1.2.0 - new method added                                                            - 12/30/2013 wer
- * - v1.1.1 - match package change                                                        - 12/19/2013 wer
  * - v1.1.0 - namespace changes                                                           - 07/30/2013 wer
- * - v1.0.3 - moved array methods from class Strings to here                              - 03/27/2013 wer
- * - v1.0.2 - added new method
- * - v1.0.1 - new namespace, FIG standards (mostly)
+ * - v1.0.0 - moved array methods from class Strings to here                              - 03/27/2013 wer
  */
 namespace Ritc\Library\Helper;
 
@@ -519,22 +507,37 @@ class Arrays
     /**
      * Removes any key/value pair that has empty value.
      * Optionally will remove any pairs that don't have a key match to allowed keys.
-     * @param array $a_pairs        key/value pairs to check to see if the value is blank.
-     * @param array $a_allowed_keys key names to check for blank values
-     * @param bool  $strict         default: true, removes any pair which doesn't have a key found in allowed_keys.
+     * @param array $a_pairs        Required.          key/value pairs to check to see if the value is blank.
+     * @param array $a_allowed_keys Optional/Required. key names to check for blank values, required if strict
+     * @param bool  $strict         Optional.          default: true, removes any pair which doesn't have a key
+     *                                                 found in allowed_keys.
      * @return array
      */
-    public static function removeBlankPairs(array $a_pairs = [], array $a_allowed_keys, $strict = true)
+    public static function removeBlankPairs(array $a_pairs = [], array $a_allowed_keys = [], $strict = true)
     {
-        if ($a_pairs == [] || $a_allowed_keys == []) {
+        if ($a_pairs == [] || (empty($a_allowed_keys) && $strict)) {
             return [];
         }
         if ($strict) {
             $a_pairs = self::removeUndesiredPairs($a_pairs, $a_allowed_keys);
+            foreach ($a_allowed_keys as $key) {
+                if (isset($a_pairs[$key]) && empty($a_pairs[$key])) {
+                    unset($a_pairs[$key]);
+                }
+            }
         }
-        foreach ($a_allowed_keys as $key) {
-            if (isset($a_pairs[$key]) && empty($a_pairs[$key])) {
-                unset($a_pairs[$key]);
+        elseif (!empty($a_allowed_keys)) { // rare: it would allow non-allowed keys to be blank.
+            foreach ($a_allowed_keys as $key) {
+                if (isset($a_pairs[$key]) && empty($a_pairs[$key])) {
+                    unset($a_pairs[$key]);
+                }
+            }
+        }
+        else {
+            foreach ($a_pairs as $key => $value) {
+                if (empty($value)) {
+                    unset($a_pairs[$key]);
+                }
             }
         }
         return $a_pairs;
