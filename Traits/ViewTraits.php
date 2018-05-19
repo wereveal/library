@@ -510,7 +510,7 @@ trait ViewTraits
             || empty($a_parameters['href'])
         ) {
             if ($this->use_cache) {
-                $this->o_cache->set($pager_key, []);
+                $this->o_cache->deleteItem($pager_key);
             }
             return [];
         }
