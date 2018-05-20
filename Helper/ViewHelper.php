@@ -6,9 +6,10 @@ namespace Ritc\Library\Helper;
  *
  * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
- * @date    2017-06-20 11:56:21
+ * @version 2.1.0
+ * @date    2018-05-16 19:37:35
  * ## Change Log
+ * - v2.1.0 - Added addMessage method       - 2018-05-16 wer
  * - v2.0.0 - Renamed 'the' method          - 2017-06-20 wer
  * - v1.1.1 - little sanitization of values - 11/05/2015 wer
  * - v1.1.0 - added lazy man's methods      - 09/25/2015 wer
@@ -18,6 +19,39 @@ namespace Ritc\Library\Helper;
  */
 class ViewHelper
 {
+    /**
+     * Adds a message string to a message array.
+     * @param array  $a_message
+     * @param string $message
+     * @param string $message_type
+     * @return array
+     */
+    public static function addMessage(array $a_message = [], $message = '', $message_type = '')
+    {
+        if (empty($a_message) || empty($message)) {
+            return $a_message;
+        }
+        $message_type = empty($message_type)
+            ? $a_message['type']
+            : $message_type
+        ;
+        $new_message = $a_message['message'] . '<br>' . $message;
+        switch ($message_type) {
+            case 'success':
+                return self::successMessage($new_message);
+            case 'info':
+                return self::infoMessage($new_message);
+            case 'warning':
+                return self::warningMessage($new_message);
+            case 'error':
+                return self::errorMessage($new_message);
+            case 'failure':
+                return self::failureMessage($new_message);
+            case 'code':
+                return self::codeMessage($new_message);
+        }
+    }
+
     /**
 	 * Returns a message variables needed for a twig template.
 	 * @param array $a_message_params <pre>array(
@@ -33,7 +67,7 @@ class ViewHelper
 	 */
 	public static function fullMessage(array $a_message_params = array())
 	{
-	    if ($a_message_params == array()) {
+	    if (empty($a_message_params)) {
 	        $a_message_params = ['type' => '', 'message' => ''];
 	    }
 	    $alt_text    = '';

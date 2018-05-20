@@ -98,12 +98,15 @@ trait ViewTraits
 
     /**
      * The generic method to actually do the Twig rendering.
-     * @param $tpl
-     * @param $a_twig_values
+     * @param string $tpl
+     * @param array  $a_twig_values
      * @return string
      */
-    public function renderIt($tpl, $a_twig_values)
+    public function renderIt($tpl = '', array $a_twig_values = [])
     {
+        if (empty($tpl) || empty($a_twig_values)) {
+            return 'Error: missing values.';
+        }
         if ($this->o_twig instanceof \Twig_Environment) {
             try {
                 return $this->o_twig->render($tpl, $a_twig_values);
@@ -125,6 +128,14 @@ trait ViewTraits
                 }
             }
             catch(\Twig_Error_Runtime $e) {
+                if (DEVELOPER_MODE) {
+                    return 'Error: ' . $e->getMessage();
+                }
+                else {
+                    return '';
+                }
+            }
+            catch(\TypeError $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
@@ -492,7 +503,7 @@ trait ViewTraits
             || empty($a_parameters['href'])
         ) {
             if ($this->use_cache) {
-                $this->o_cache->set($pager_key, []);
+                $this->o_cache->deleteItem($pager_key);
             }
             return [];
         }

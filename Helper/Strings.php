@@ -2,7 +2,7 @@
 namespace Ritc\Library\Helper;
 
 /**
- * Class Strings - Modifies strings.
+ * Modifies strings.
  * Methods which start with make return a modified version
  * of the value passed into the method, usually indicated by
  * the name of the method.
@@ -10,9 +10,10 @@ namespace Ritc\Library\Helper;
  *
  * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v6.5.0+1
- * @date    2018-03-06 13:36:15
+ * @version 6.6.0
+ * @date    2018-05-15 16:00:30
  * ## Change Log
+ * - v6.6.0 - added new method to convert url to cache compatible string        - 2018-05-15 wer
  * - v6.5.0 - add new method to convert column number to Excel column letters   - 2018-03-06 wer
  * - v6.4.0 - added new method to trim slashes from front and back of string    - 2016-09-08 wer
  * - v6.3.0 - added new method to translate a digit to an English word          - 02/24/2016 wer
@@ -423,4 +424,16 @@ class Strings
         return $value;
     }
 
+    /**
+     * Changes a uri to a string compatible to setting a cache key.
+     * @param string $value
+     * @return string
+     */
+    public static function uriToCache($value = '')
+    {
+        $value = self::removeTags($value);
+        $value = str_replace('/', ' ', $value);
+        $value = trim($value);
+        return self::makeAlphanumericPlus($value);
+    }
 }

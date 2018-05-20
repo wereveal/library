@@ -9,13 +9,12 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the Manager page.
  * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.1
+ * @version v2.1.0
  * @date    2016-04-10 14:49:43
  * ## Change Log
- * - v2.0.2   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v2.0.1   - Bug fix with implementation of LIB_TWIG_PREFIX                          - 2016-04-10 wer
+ * - v2.1.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
  * - v2.0.0   - Refactored - name change.                                               - 2016-03-31 wer
- * - v1.1.1   - Implent LIB_TWIG_PREFIX                                                 - 12/12/2015 wer
+ * - v1.2.0   - Implement LIB_TWIG_PREFIX                                                 - 12/12/2015 wer
  * - v1.1.0   - removed abstract class Base, use LogitTraits                            - 09/01/2015 wer
  * - v1.0.0   - First stable version                                                    - 01/16/2015 wer
  * - v1.0.0β2 - changed to match DI/IOC                                                 - 11/15/2014 wer

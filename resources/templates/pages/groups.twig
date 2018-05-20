@@ -14,11 +14,10 @@
     {% endif %}
     <div class="row">
         <div class="col-md-12">
-            <div class="row hidden-sm hidden-xs list-header">
-                <div class="col-md-2 col-sm-2 col-xs-2 list-header">Group Name</div>
-                <div class="col-md-4 col-sm-4 col-xs-4 list-header">Group Description</div>
-                <div class="col-md-2 col-sm-2 col-xs-2 list-header">&nbsp;</div>
-                <div class="col-md-2 col-sm-2 col-xs-2 list-header">Group Auth Level</div>
+            <div class="row d-none d-lg-flex list-header sticky-top">
+                <div class="col-2">Group Name</div>
+                <div class="col-4">Group Description</div>
+                <div class="col-2 offset-2">Group Auth Level</div>
             </div>
         {% set x = -1 %}
         {% set class = x == 1 ? 'alt-row' : 'normal-row' %}

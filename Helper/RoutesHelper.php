@@ -392,7 +392,11 @@ class RoutesHelper
                 $request_uri = $_SERVER["REQUEST_URI"];
             }
         }
-        $cache_key = 'route_parts.for.' . $request_uri;
+        $cache_key = 'route_parts.for.';
+
+        $cache_key .= $request_uri != '/'
+            ? Strings::uriToCache($request_uri)
+            : 'home';
         if ($this->use_cache) {
             $a_route_parts = $this->o_cache->get($cache_key);
             if (!empty($a_route_parts)) {

@@ -101,9 +101,7 @@ class PageComplexModel
         $this->setSelectSql();
         $sql = "
             {$this->select_sql}
-            WHERE p.url_id = u.url_id
-            AND p.url_id = :url_id
-        ";
+            WHERE p.url_id = :url_id";
         try {
             $a_values = $this->o_db->search($sql, [':url_id' => $url_id]);
         }
@@ -168,8 +166,9 @@ class PageComplexModel
             $select_fields .= ', ' . $this->buildSqlSelectFields($a_urls_fields, 'u');
             $this->select_sql = "
                 SELECT {$select_fields}
-                FROM {$page_db_prefix}page as p,
-                {$url_db_prefix}urls as u";
+                FROM {$page_db_prefix}page as p
+                JOIN {$url_db_prefix}urls as u
+                ON p.url_id = u.url_id";
         }
     }
 }

@@ -111,9 +111,7 @@ trait LogitTraits
     {
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $o_elog = $o_di->get('elog');
-            if ($o_elog instanceof Elog) {
-                $this->setElog($o_elog);
-            }
+            $this->setElog($o_elog);
         }
     }
 

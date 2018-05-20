@@ -15,11 +15,13 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the Twig manager.
+ *
  * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2017-05-14 16:49:48
+ * @version v1.0.0-alpha.1
+ * @date    2018-05-20 14:59:17
  * ## Change Log
+ * - v1.0.0-alpha.1 - Bug fix                - 2018-05-20 wer
  * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
  * @todo Ritc/Library/Views/TwigView.php - Everything
  */
@@ -89,9 +91,9 @@ class TwigView implements ViewInterface
             foreach ($a_tt_results as $key => $a_tt) {
                 try {
                     $a_tc_results = $o_tc->readTplInfo($a_tt['tpl_id']);
-                    $a_tt_results[$key]['twig_dir']    = $a_tc_results[0]['twig_dir'];
-                    $a_tt_results[$key]['twig_prefix'] = $a_tc_results[0]['twig_prefix'];
-                    $a_tt_results[$key]['tp_id']       = $a_tc_results[0]['tp_id'];
+                    $a_tt_results[$key]['twig_dir']    = $a_tc_results['twig_dir'];
+                    $a_tt_results[$key]['twig_prefix'] = $a_tc_results['twig_prefix'];
+                    $a_tt_results[$key]['tp_id']       = $a_tc_results['tp_id'];
                 }
                 catch (ModelException $e) {
                     $message = 'Unable to read the template information';
