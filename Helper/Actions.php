@@ -1,15 +1,18 @@
 <?php
+namespace Ritc\Library\Helper;
+
+use Ritc\Library\Traits\LogitTraits;
+
 /**
- * @brief     Extracts the action to use for the page.
- * @details   Can get the action from the URL - htaccess required
- *           or from a form element with a few select id names
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/Actions.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.2.7
- * @date      2015-01-27 15:15:06
- * @note <b>Change Log</b>
+ * Class Actions - Extracts the action to use for the page.
+ * @details Can get the action from the URL - htaccess required
+ *          or from a form element with a few select id names
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.2.7
+ * @date    2015-01-27 15:15:06
+ * ## Change Log
  * - 2.2.7 - match refactoring of Strings and Arrays to static methods  - 01/27/2015 wer
  *
  * - 2.2.6 - moved file into Helper area                                - 11/15/2014 wer
@@ -18,17 +21,8 @@
  * - 2.2.3 - Changed to namespace reorge
  * - 2.2.2 - changed to new namespace                                   - 03/27/2013 wer
  * - 2.2.1 - added a bit more sanitation to uri actions,
- *          renamed action to form_action to be clearer what it was
+ *           renamed action to form_action to be clearer what it was
  * - 2.2.0 - refactored to be closer to FIG standards
- */
-namespace Ritc\Library\Helper;
-
-use Ritc\Library\Traits\LogitTraits;
-
-/**
- * Class Actions
- * @class   Actions
- * @package Ritc\Library\Helper
  */
 class Actions
 {

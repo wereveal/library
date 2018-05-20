@@ -1,22 +1,4 @@
 <?php
-/**
- * @brief     Provides data using more complex sql for the people and groups.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/PeopleComplexModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.7
- * @date      2017-12-12 10:08:19
- * @note Change Log
- * - v1.0.0-alpha.7 - ModelException change reflected here                  - 2017-12-12 wer
- * - v1.0.0-alpha.6 - Moved some methods from here to PeopleModel           - 2017-12-05 wer
- * - v1.0.0-alpha.5 - Moved some business logic from controller to here     - 2017-12-02 wer
- * - v1.0.0-alpha.4 - Refactored to use ModelException                      - 2017-06-17 wer
- * - v1.0.0-alpha.3 - Bug fix                                               - 2017-05-16 wer
- * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here                 - 2017-05-09 wer
- * - v1.0.0-alpha.1 - Bug fix                                               - 2017-01-27 wer
- * - v1.0.0-alpha.0 - Initial version                                       - 2016-12-08 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -27,9 +9,19 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class PeopleComplexModel.
- * @class   PeopleComplexModel
- * @package Ritc\Library\Models
+ * Does all the Model expected operations, database CRUD and business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.7
+ * @date    2017-12-12 10:08:19
+ * ## Change Log
+ * - v1.0.0-alpha.7 - ModelException change reflected here                  - 2017-12-12 wer
+ * - v1.0.0-alpha.6 - Moved some methods from here to PeopleModel           - 2017-12-05 wer
+ * - v1.0.0-alpha.5 - Moved some business logic from controller to here     - 2017-12-02 wer
+ * - v1.0.0-alpha.4 - Refactored to use ModelException                      - 2017-06-17 wer
+ * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here                 - 2017-05-09 wer
+ * - v1.0.0-alpha.0 - Initial version                                       - 2016-12-08 wer
  */
 class PeopleComplexModel
 {

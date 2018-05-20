@@ -1,24 +1,4 @@
 <?php
-/**
- * @brief     Does all the complex database CRUD stuff for the navigation.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/NavComplexModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-12-12 11:41:47
- * @note <b>Change Log</b>
- * - v1.0.0         - initial production version                    - 2017-12-12 wer
- * - v1.0.0-alpha.8 - Bug fix                                       - 2017-08-02 wer
- * - v1.0.0-alpha.7 - Refactored to use ModelException              - 2017-06-15 wer
- * - v1.0.0-alpha.6 - DbUtilityTraits change reflected here         - 2017-05-09 wer
- * - v1.0.0-alpha.5 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
- * - v1.0.0-alpha.4 - added new method save                         - 2016-04-23 wer
- * - v1.0.0-alpha.3 - Changed sql, removed redundant methods        - 2016-04-18 wer
- * - v1.0.0-alpha.2 - Added new method getNavListAll                - 2016-04-15 wer
- * - v1.0.0-alpha.1 - Refactoring changes                           - 2016-03-19 wer
- * - v1.0.0-alpha.0 - Initial version                               - 2016-02-25 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -28,8 +8,22 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class NavComplexModel.
- * @class   NavComplexModel
- * @package Ritc\Library\Models
+ * Does all the database CRUD stuff for the page table plus other app/business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2017-12-12 11:41:47
+ * ## Change Log
+ * - v1.0.0         - initial production version                    - 2017-12-12 wer
+ * - v1.0.0-alpha.7 - Refactored to use ModelException              - 2017-06-15 wer
+ * - v1.0.0-alpha.6 - DbUtilityTraits change reflected here         - 2017-05-09 wer
+ * - v1.0.0-alpha.5 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
+ * - v1.0.0-alpha.4 - added new method save                         - 2016-04-23 wer
+ * - v1.0.0-alpha.3 - Changed sql, removed redundant methods        - 2016-04-18 wer
+ * - v1.0.0-alpha.2 - Added new method getNavListAll                - 2016-04-15 wer
+ * - v1.0.0-alpha.1 - Refactoring changes                           - 2016-03-19 wer
+ * - v1.0.0-alpha.0 - Initial version                               - 2016-02-25 wer
  */
 class NavComplexModel
 {

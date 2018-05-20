@@ -1,35 +1,4 @@
 <?php
-/**
- * @brief     Determines the controller and method to use based on URI.
- * @ingroup   lib_services
- * @file      Router.php
- * @namespace Ritc\Library\Services
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.1
- * @date      2018-03-30 15:51:43
- * @note <b>Change Log</b>
- * - v1.2.1    - bug fix, comment change                                     - 2018-03-30 wer
- * - v1.2.0    - Changed Router::setPost() and Router::setGet to use the     - 2016-09-19 wer
- *               new Arrays::cleanValues() method. By default, they do
- *               no create entities in the strings now.
- * - v1.1.0    - Added property and methods for url_id                       - 2016-04-01 wer
- * - v1.0.1    - clean up of code.                                           - 2016-02-22 wer
- * - v1.0.0    - take out of beta                                            - 11/27/2015 wer
- * - v1.0.0β10 - Bug fix to fix logic error with route path                  - 11/24/2015 wer
- * - v1.0.0β9  - Bug fixes to fix logic error in actionable data             - 09/22/2015 wer
- * - v1.0.0β8  - Changed to allow route path to include additional           - 09/14/2015 wer
- *                 actionable data.
- * - v1.0.0β7  - Added Allowed Groups to the class.                          - 09/03/2015 wer
- *                 Groups can now be mapped to the route.
- * - v1.0.0β6  - Removed abstract class Base, added LogitTraits              - 09/01/2015 wer
- * - v1.0.0β5  - changed several properties to be static (just in case)      - 01/06/2015 wer
- * - v1.0.0β4  - changed to use Di class for DI/IOC.                         - 12/10/2014 wer
- * - v1.0.0β3  - added form_action class property.                           - 12/05/2014 wer
- *                 Added setter and getters for form_action class property.
- * - v1.0.0β2  - moved to Services namespace                                 - 11/15/2014 wer
- * - v1.0.0β1  - bug fixes                                                   - 11/14/2014 wer
- * - v1.0.0β0  - initial attempt to make this                                - 09/25/2014 wer
- */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Helper\Arrays;
@@ -37,9 +6,21 @@ use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class Router figures out the routes and route parts.
- * @class Router
- * @package Ritc\Library\Services
+ * Figures out the routes and route parts.
+ * Determines the controller and method to use based on URI.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.2.1
+ * @date    2018-03-30 15:51:43
+ * ## Change Log
+ * - v1.2.1    - bug fix, comment change                                     - 2018-03-30 wer
+ * - v1.2.0    - Changed Router::setPost() and Router::setGet to use the     - 2016-09-19 wer
+ *               new Arrays::cleanValues() method. By default, they do
+ *               no create entities in the strings now.
+ * - v1.1.0    - Added property and methods for url_id                       - 2016-04-01 wer
+ * - v1.0.0    - take out of beta                                            - 11/27/2015 wer
+ * - v1.0.0β10 - Bug fix to fix logic error with route path                  - 11/24/2015 wer
+ * - v1.0.0β0  - initial attempt to make this                                - 09/25/2014 wer
  */
 class Router
 {

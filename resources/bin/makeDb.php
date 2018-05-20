@@ -1,13 +1,13 @@
 <?php
 /**
- * @brief     This file sets up standard stuff for the Framework.
- * @details   This creates the database config and some standard directories.
- *            This should be run from the /src/bin directory of the site.
- * @file      install_files.php
- * @namespace Ritc
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @date      2017-01-13 09:48:15
- * @version   2.0.0
+ * This file sets up standard stuff for the Framework.
+ * This creates the database config and some standard directories.
+ * This should be run from the /src/bin directory of the site.
+ * @file    makeDb.php
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @date    2017-01-13 09:48:15
+ * @version v2.0.0
  * @note   <b>Change Log</b><pre>
  *  v2.0.0 - bug fixes and rewrite of the database insert stuff   - 2017-01-13 wer
  *  v1.0.0 - initial version                                      - 2015-11-27 wer

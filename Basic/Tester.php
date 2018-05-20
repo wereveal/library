@@ -1,48 +1,38 @@
 <?php
-/**
- * @brief     A class for testing that all other testing classes should extend.
- * @details   Class that extends this class should end with the word Tests or
- *            Tester, e.g. MyClassTester or MyClassTests.
- * @ingroup   lib_basic
- * @file      Ritc/Library/Basic/Tester.php
- * @namespace Ritc\Library\Basic
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.6.0+1
- * @date      2017-07-06 21:19:24
- * @note <b>Change log</b>
- * - v3.6.1 - Refactoring of subtest methods                                            - 2017-06-09 wer
- * - v3.5.1 - switched setupTests to use LocateFile class                               - 2017-05-30 wer
- * - v3.5.0 - modified setupTests to create test order from test values                 - 2017-05-12 wer
- * - v3.4.0 - modified setupTests to set a new property class_name                      - 2016-04-20 wer
- * - v3.3.0 - added new method to automate some setup                                   - 2016-03-10 wer
- * - v3.2.1 - bug fix                                                                   - 2016-03-09 wer
- * - v3.2.0 - moved the compare_arrays to the Arrays helper class                       - 11/02/2015 wer
- * - v3.1.1 - minor change to setTestOrder method, now required an array                - 10/23/2015 wer
- * - v3.1.0 - no longer extends Base class, uses Logit Trait instead                    - 08/19/2015 wer
- * - v3.0.2 - moved to the Basic namespace where it was more appropriate                - 12/05/2014 wer
- * - v3.0.1 - moved to the Services namespace                                           - 11/15/2014 wer
- * - v3.0.0 - changed to be a class so it could extend Base class and modified for such - 09/24/2014 wer
- * - v2.0.1 - added missing method                                                      - 07/01/2014 wer
- * - v2.0.0 - modified to not do any view stuff                                         - 2013-12-13 wer
- * - v1.1.0 - added new a couple new methods                                            - 2013-05-10 wer
- *      - compare_arrays
- *          - checks to see if the values in the first array
- *          - exist in the second array
- *      - setSubFailed
- *          - allows the test results to display individual subtests
- *          - within the method tester
- * - v1.0.1 - updated to match new framework                                            - 2013-04-03 wer
- * @todo add a todo test type, i.e. a way to say, this method needs to be written so don't run a test, just list it.
- */
 namespace Ritc\Library\Basic;
 
 use Ritc\Library\Helper\LocateFile;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class Tester provides a base class of which one extends specific testers for specific classes.
- * @class Tester
- * @package Ritc\Library\Basic
+ * Class provides a base class of which one extends specific testers for specific classes.
+ *
+ * Class that extends this class should end with the word Tests or Tester,
+ * e.g. MyClassTester or MyClassTests.
+ * @package Ritc_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v3.7.0
+ * @date    2018-05-19 14:12:33
+ * ## Change Log
+ * - v3.7.0 - Updated to handle ReflectionException                                     - 2018-05-19 wer
+ * - v3.6.0 - Refactoring of subtest methods                                            - 2017-06-09 wer
+ * - v3.5.0 - modified setupTests to create test order from test values                 - 2017-05-12 wer
+ * - v3.4.0 - modified setupTests to set a new property class_name                      - 2016-04-20 wer
+ * - v3.3.0 - added new method to automate some setup                                   - 2016-03-10 wer
+ * - v3.2.0 - moved the compare_arrays to the Arrays helper class                       - 11/02/2015 wer
+ * - v3.1.0 - no longer extends Base class, uses Logit Trait instead                    - 08/19/2015 wer
+ * - v3.0.0 - changed to be a class so it could extend Base class and modified for such - 09/24/2014 wer
+ * - v2.1.0 - added missing method                                                      - 07/01/2014 wer
+ * - v2.0.0 - modified to not do any view stuff                                         - 2013-12-13 wer
+ * - v1.1.0 - added new a couple new methods                                            - 2013-05-10 wer
+ *    - compare_arrays
+ *      - checks to see if the values in the first array
+ *      - exist in the second array
+ *    - setSubFailed
+ *      - allows the test results to display individual subtests
+ *      - within the method tester
+ * - v1.0.0 - updated to match new framework                                            - 2013-04-03 wer
+ * @todo add a todo test type, i.e. a way to say, this method needs to be written so don't run a test, just list it.
  */
 class Tester
 {
@@ -52,7 +42,7 @@ class Tester
     protected $a_test_order       = [];
     /** @var array */
     protected $a_test_values      = [];
-    /** @var string  */
+    /** @var string */
     protected $class_name         = '';
     /** @var int */
     protected $failed_subtests    = [];
@@ -220,7 +210,12 @@ class Tester
         }
         if (count($a_test_order) === 0) {
             if (count($this->a_test_order) === 0) {
-                $o_ref = new \ReflectionClass($class_name);
+                try {
+                    $o_ref = new \ReflectionClass($class_name);
+                }
+                catch (\ReflectionException $e) {
+                    return 999;
+                }
                 $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
                 foreach ($a_methods as $a_method) {
                     switch($a_method->name) {
@@ -387,7 +382,6 @@ class Tester
 
     /**
      * Return the values in $this->a_test_values
-     * @param none
      * @return array $a_test_values
      */
     public function getTestValues()
@@ -414,7 +408,12 @@ class Tester
         elseif ($class_name == '') {
             $class_name = $this->class_name;
         }
-        $o_ref = new \ReflectionClass($class_name);
+        try {
+            $o_ref = new \ReflectionClass($class_name);
+        }
+        catch (\ReflectionException $e) {
+            return false;
+        }
         $o_method = $o_ref->getMethod($method_name);
         return $o_method->isPublic();
     }

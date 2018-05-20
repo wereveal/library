@@ -1,17 +1,4 @@
 <?php
-/**
- * @brief     View for the Twig manager.
- * @details
- * @ingroup   lib_views
- * @file      Ritc/Library/Views/TwigView.php
- * @namespace Ritc\Library\Views
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-05-14 16:49:48
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
- * @todo Ritc/Library/Views/TwigView.php - Everything
- */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -27,9 +14,14 @@ use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class TwigView.
- * @class   TwigView
- * @package Ritc\Library\Views
+ * View for the Twig manager.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2017-05-14 16:49:48
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
+ * @todo Ritc/Library/Views/TwigView.php - Everything
  */
 class TwigView implements ViewInterface
 {

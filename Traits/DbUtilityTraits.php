@@ -1,54 +1,4 @@
 <?php
-/**
- * @brief     Common functions that would be used in several database classes.
- * @detail    Although this is designed to be used for all database classes, it
- *            does lack some functionality for multi-table operations and needs
- *            some work there.
- * @ingroup   lib_traits
- * @file      DbUtilityTraits.php
- * @namespace Ritc\Library\Traits
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.2.0
- * @date      2018-04-26 08:38:57
- * @note <b>Change Log</b>
- * - v2.2.0          - New methods for new property a_required_keys         - 2018-04-26 wer
- *                     Modified generic methods to use ExceptionHelper
- *                     Modified generic methods slightly to ensure required
- *                     values are provided.
- * - v2.1.0          - Added new method to get count of a table             - 2018-04-19 wer
- * - v2.0.3          - Changes to ModelException reflected here             - 2017-12-12 wer
- * - v2.0.2          - bug fix                                              - 2017-07-27 wer
- * - v2.0.1          - bug fix, logic error fix                             - 2017-06-23 wer
- * - v2.0.0          - updated to use ModelException                        - 2017-06-11 wer
- * - v1.4.4          - bug fix                                              - 2017-05-12 wer
- *                     With the introduction of the lib_prefix where it
- *                     could be different from the db_prefix, wasn't setting
- *                     the db_table property with the lib_prefix.
- * - v1.4.3          - bug fix                                              - 2017-05-11 wer
- * - v1.4.2          - removed unused parameter from setupProperties        - 2017-05-09 wer
- * - v1.4.1          - reviewed some functionality and futzed about         - 2017-03-13 wer
- * - v1.4.0          - refactoring elsewhere regarding db_prefix here too   - 2017-01-14 wer
- * - v1.3.0          - added new property lib_prefix, code clean up         - 2017-01-13 wer
- * - v1.2.0          - Refactoring of DbCommonTraits reflected here         - 2016-09-23 wer
- * - v1.1.0          - added a parameter to generic read select_distinct    - 2016-09-09 wer
- * - v1.0.0          - this went live a while back, guess it isn't alpha    - 2016-08-22 wer
- * - v1.0.0-alpha.10 - bug fix                                              - 2016-08-22 wer
- * - v1.0.0-alpha.9  - added functionality to buildSqlSelectFields method   - 2016-05-04 wer
- * - v1.0.0-alpha.8  - potential bug fix in genericDelete                   - 2016-04-20 wer
- * - v1.0.0-alpha.7  - bug fix in buildSqlWhere                             - 2016-04-13 wer
- * - v1.0.0-alpha.6  - bug fix in setupProperties                           - 2016-04-12 wer
- * - v1.0.0-alpha.5  - Added new method, additional refactoring             - 2016-04-01 wer
- *     - hasRecords
- *     - notEmptyArray
- *     - removed second parameter from genericUpdate, not needed
- *     - removed second parameter from genericDelete, not needed
- * - v1.0.0-alpha.4 - bug fix                                               - 2016-03-29 wer
- * - v1.0.0-alpha.3 - bug fixes                                             - 2016-03-28 wer
- * - v1.0.0-alpha.2 - modified genericRead to be more complete              - 2016-03-24 wer
- * - v1.0.0-alpha.1 - first hopefully working version                       - 2016-03-23 wer
- * - v1.0.0-alpha.0 - initial version                                       - 2016-03-18 wer
- * @todo Review to see where multi-table operations can be strenthened.
- */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -57,9 +7,30 @@ use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 
 /**
- * Class DbUtilityTraits Methods that are generic and can be used in many Model classes.
- * @class DbUtilityTraits
- * @package Ritc\Library\Traits
+ * Common functions that would be used in several database classes.
+ * Although this is designed to be used for all database classes, it
+ * does lack some functionality for multi-table operations and needs
+ * some work there.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.3.0
+ * @date    2018-04-26 08:38:57
+ * ## Change Log
+ * - v2.3.0          - New methods for new property a_required_keys         - 2018-04-26 wer
+ *                     Modified generic methods to use ExceptionHelper
+ *                     Modified generic methods slightly to ensure required
+ *                     values are provided.
+ * - v2.2.0          - Added new method to get count of a table             - 2018-04-19 wer
+ * - v2.1.0          - Changes to ModelException reflected here             - 2017-12-12 wer
+ * - v2.0.0          - updated to use ModelException                        - 2017-06-11 wer
+ * - v1.4.0          - refactoring elsewhere regarding db_prefix here too   - 2017-01-14 wer
+ * - v1.3.0          - added new property lib_prefix, code clean up         - 2017-01-13 wer
+ * - v1.2.0          - Refactoring of DbCommonTraits reflected here         - 2016-09-23 wer
+ * - v1.1.0          - added a parameter to generic read select_distinct    - 2016-09-09 wer
+ * - v1.0.0          - this went live a while back, guess it isn't alpha    - 2016-08-22 wer
+ * - v1.0.0-alpha.9  - added functionality to buildSqlSelectFields method   - 2016-05-04 wer
+ * - v1.0.0-alpha.0 - initial version                                       - 2016-03-18 wer
+ * @todo Review to see where multi-table operations can be strenthened.
  */
 trait DbUtilityTraits
 {

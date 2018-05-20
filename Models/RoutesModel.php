@@ -1,19 +1,25 @@
 <?php
+namespace Ritc\Library\Models;
+
+use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Interfaces\ModelInterface;
+use Ritc\Library\Services\DbModel;
+use Ritc\Library\Traits\DbUtilityTraits;
+use Ritc\Library\Traits\LogitTraits;
+
 /**
- * @brief     Does all the database CRUD stuff.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/RoutesModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.1
- * @date      2017-12-12 11:37:32
- * @note <b>Change Log</b>
+ * Does all the Model expected operations, database CRUD and business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.0.1
+ * @date    2017-12-12 11:37:32
+ * ## Change Log
  * - v2.0.1   - ModelException changes reflected here                   - 2017-12-12 wer
  * - v2.0.0   - Refactored to use ModelException and moved a couple     - 2017-06-18 wer
  *              methods to RoutesComplexModel.
- * - v1.4.3   - bug fix                                                 - 2017-05-16 wer
- * - v1.4.2   - DbUtilityTraits change reflected here                   - 2017-05-09 wer
- * - v1.4.1   - Bug fix caused by change elsewhere                      - 2017-01-27 wer
+ * - v1.5.0   - DbUtilityTraits change reflected here                   - 2017-05-09 wer
  * - v1.4.0   - Refactored readWithRequestUri to readByRequestUri       - 2016-04-10 wer
  *              Added readWithUrl to return list of routes with url.
  * - v1.3.0   - updated to use more of the DbUtilityTraits              - 2016-04-01 wer
@@ -25,20 +31,6 @@
  * - v1.0.0   - first working version                                   - 01/28/2015 wer
  * - v1.0.0β2 - Changed to match some namespace changes, and bug fix    - 11/15/2014 wer
  * - v1.0.0β1 - First live version                                      - 11/11/2014 wer
- */
-namespace Ritc\Library\Models;
-
-use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Helper\Arrays;
-use Ritc\Library\Interfaces\ModelInterface;
-use Ritc\Library\Services\DbModel;
-use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
-
-/**
- * Class RoutesModel.
- * @class   RoutesModel
- * @package Ritc\Library\Models
  */
 class RoutesModel implements ModelInterface
 {

@@ -1,19 +1,4 @@
 <?php
-/**
- * @brief     Does all the database CRUD stuff for the navigation.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/NavigationModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-12-12 11:44:37
- * @note <b>Change Log</b>
- * - v1.0.0         - Initial production version                    - 2017-12-12 wer
- * - v1.0.0-alpha.3 - Refactored to use ModelException              - 2017-06-15 wer
- * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here         - 2017-05-09 wer
- * - v1.0.0-alpha.1 - Refactoring in DbUtilityTraits reflected here - 2017-01-27 wer
- * - v1.0.0-alpha.0 - Initial version                               - 02/24/2016 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -23,9 +8,18 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class NavigationModel.
- * @class   NavigationModel
- * @package Ritc\Library\Models
+ * Does all the database CRUD stuff for the page table plus other app/business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2017-12-12 11:44:37
+ * ## Change Log
+ * - v1.0.0         - Initial production version                    - 2017-12-12 wer
+ * - v1.0.0-alpha.3 - Refactored to use ModelException              - 2017-06-15 wer
+ * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here         - 2017-05-09 wer
+ * - v1.0.0-alpha.1 - Refactoring in DbUtilityTraits reflected here - 2017-01-27 wer
+ * - v1.0.0-alpha.0 - Initial version                               - 02/24/2016 wer
  */
 class NavigationModel implements ModelInterface
 {

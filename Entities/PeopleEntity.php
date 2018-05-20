@@ -1,32 +1,19 @@
 <?php
-/**
- * @brief     An entity class for People.
- * @details   It needs to be noted that this reflects the fact that
- *            a user entity consists of data that comes from more than one
- *            database table.
- * @ingroup   lib_entities
- * @file      PRitc/Library/Entities/eopleEntity.php
- * @namespace Ritc\Library\Entities
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-12-13 16:42:22
- * @note  <b>SQL for table<b>
- * - MySQL      - resources/sql/mysql/page_mysql.sql
- * - PostgreSQL - resources/sql/postgresql/page_pg.sql
- * @note <b>Change Log</b>
- * - v2.0.0 - changed values of is_active, is_logged_in, is_immutable to string     - 2017-12-13 wer
- * - v1.1.0 - changed is_default to is_immutable to be more descriptive             - 09/03/2015 wer
- * - v1.0.0 - finalized       - 07/29/2015 wer
- * - v0.1.0 - Initial version - 09/11/2014 wer
- */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
 /**
  * Class PeopleEntity
- * @class   PeopleEntity
- * @package Ritc\Library\Entities
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.0.0
+ * @date    2017-12-13 16:42:22
+ * - v2.0.0 - changed values of is_active, is_logged_in, is_immutable to string     - 2017-12-13 wer
+ * - v1.1.0 - changed is_default to is_immutable to be more descriptive             - 09/03/2015 wer
+ * - v1.0.0 - finalized                                                             - 07/29/2015 wer
+ * - v0.1.0 - Initial version                                                       - 09/11/2014 wer
  */
 class PeopleEntity implements EntityInterface
 {

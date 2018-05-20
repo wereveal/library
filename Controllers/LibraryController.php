@@ -1,30 +1,4 @@
 <?php
-/**
- * @brief     The main Controller for the manager.
- * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/LibraryController.php
- * @namespace Ritc\Library\Controllers
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   v2.1.1
- * @date      2017-05-14 14:35:02
- * @note <b>Change Log</b>
- * - v2.1.1   - bug fix                               - 2017-05-14 wer
- * - v2.1.0   - Added UrlAdminController              - 2016-04-11 wer
- * - v2.0.0   - Renamed Class to be more specific     - 2016-03-31 wer
- * - v1.0.1   - needed to change private to protected - 12/01/2015 wer
- *              in order to extend this class.
- * - v1.0.0   - first working version                 - 11/27/2015 wer
- * - v1.0.0β8 - bug fixes                             - 11/18/2015 wer
- * - v1.0.0β7 - added page controller                 - 11/12/2015 wer
- *                also fixed logic bugs.
- * - v1.0.0β6 - added tests controller                - 10/23/2015 wer
- * - v1.0.0β5 - working for groups                    - 09/25/2015 wer
- * - v1.0.0β4 - working for Roles                     - 01/28/2015 wer
- * - v1.0.0β3 - working for router and config         - 01/16/2015 wer
- * - v1.0.0β2 - Set up to render a basic landing page - 01/06/2015 wer
- * - v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
- * - v1.0.0α1 - Initial version                       - 11/14/2014 wer
- */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
@@ -35,9 +9,27 @@ use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\LibraryView;
 
 /**
- * Class LibraryController.
- * @class LibraryController
- * @package Ritc\Library\Controllers
+ * Class LibraryController - main controller for the config manager.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.1.1
+ * @date    2017-05-14 14:35:02
+ * ## Change Log
+ * - v2.1.1   - bug fix                               - 2017-05-14 wer
+ * - v2.1.0   - Added UrlAdminController              - 2016-04-11 wer
+ * - v2.0.0   - Renamed Class to be more specific     - 2016-03-31 wer
+ * - v1.0.1   - needed to change private to protected - 12/01/2015 wer
+ *              in order to extend this class.
+ * - v1.0.0   - first working version                 - 11/27/2015 wer
+ * - v1.0.0β7 - added page controller                 - 11/12/2015 wer
+ * - v1.0.0β6 - added tests controller                - 10/23/2015 wer
+ * - v1.0.0β5 - working for groups                    - 09/25/2015 wer
+ * - v1.0.0β4 - working for Roles                     - 01/28/2015 wer
+ * - v1.0.0β3 - working for router and config         - 01/16/2015 wer
+ * - v1.0.0β2 - Set up to render a basic landing page - 01/06/2015 wer
+ * - v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
+ * - v1.0.0α1 - Initial version                       - 11/14/2014 wer
  */
 class LibraryController implements ControllerInterface
 {

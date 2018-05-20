@@ -1,13 +1,14 @@
 <?php
+namespace Ritc\Library\Helper;
+
 /**
- * @brief     Helps with uploading files.
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/UploadHelper.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.1.0
- * @date      2018-03-29 14:13:03
- * @note Change Log
+ * Class UploadHelper - helps with uploading files.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.1.0
+ * @date    2018-03-29 14:13:03
+ *
+ * ## Change Log
  * - v2.1.0 - added new methods to handle file types not    - 2018-03-29 wer
  *            specified in the sort of safe method. Changed
  *            default check for safe file types to new
@@ -15,13 +16,6 @@
  * - v2.0.0 - major rewrite to accommodate multiple files   - 2018-03-23 wer
  *            Backwards compatibility questionable.
  * - v1.0.0 - Initial version                               - 2017-11-10 wer
- */
-namespace Ritc\Library\Helper;
-
-/**
- * Class UploadHelper.
- * @class   UploadHelper
- * @package Ritc\Library\Helper
  */
 class UploadHelper
 {
@@ -220,7 +214,7 @@ class UploadHelper
             }
             $a_upload_values['real_type']       = $uploaded_mime_type;
             $a_upload_values['final_file_name'] = $final_filename;
-            $a_upload_values['save_path']       = SITE_PATH . $file_path;
+            $a_upload_values['save_path']       = PUBLIC_PATH . $file_path;
             $a_upload_values['save_dir']        = $file_path;
 
         }

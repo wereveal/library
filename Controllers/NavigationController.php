@@ -1,15 +1,4 @@
 <?php
-/**
- * @brief     Main Controller for the Navigation Management.
- * @ingroup   lib_controllers
- * @file      NavigationController * @namespace Ritc\Library\Controllers
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-04-15 11:53:36
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2016-04-15 wer
- * @todo NavigationController- Everything
- */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
@@ -21,9 +10,14 @@ use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\NavigationView;
 
 /**
- * Class NavigationController.
- * @class   NavigationController
- * @package Ritc\Library\Controllers
+ * Class NavigationController - for the Navigation Management.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2016-04-15 11:53:36
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2016-04-15 wer
  */
 class NavigationController implements ManagerControllerInterface
 {

@@ -1,25 +1,4 @@
 <?php
-/**
- * @brief     View for the Router Admin page.
- * @ingroup   lib_views
- * @file      Ritc/Library/Views/RoutesView.php
- * @namespace Ritc\Library\Views
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-05-14 16:46:14
- * @note <b>Change Log</b>
- * - v2.1.0   - two changes, switch to using RoutesComplexModel and method in           - 2017-06-20 wer
- *              ViewHelper refactored so updated here.
- * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
- * - v1.1.0   - Refactoring elsewhere forced changes here                               - 2016-04-13 wer
- * - v1.0.4   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v1.0.3   - Change in implementation of LIB_TWIG_PREFIX                             - 2016-04-10 wer
- * - v1.0.2   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.0.1   - change in database structure forced change here                         - 09/03/2015 wer
- * - v1.0.0   - first working version                                                   - 01/28/2015 wer
- * - v1.0.0β2 - changed to use DI/IOC                                                   - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                                                         - 11/14/2014 wer
- */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -32,9 +11,24 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class RoutesView
- * @class   RoutesView
- * @package Ritc\Library\Views
+ * View for the Router Admin page.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.1.0
+ * @date    2017-06-20 16:46:14
+ * ## Change Log
+ * - v2.1.0   - two changes, switch to using RoutesComplexModel and method in           - 2017-06-20 wer
+ *              ViewHelper refactored so updated here.
+ * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
+ * - v1.5.0   - Refactoring elsewhere forced changes here                               - 2016-04-13 wer
+ * - v1.4.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - v1.3.0   - Change in implementation of LIB_TWIG_PREFIX                             - 2016-04-10 wer
+ * - v1.2.0   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
+ * - v1.1.0   - change in database structure forced change here                         - 09/03/2015 wer
+ * - v1.0.0   - first working version                                                   - 01/28/2015 wer
+ * - v1.0.0β2 - changed to use DI/IOC                                                   - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                                                         - 11/14/2014 wer
  */
 class RoutesView
 {

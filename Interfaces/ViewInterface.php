@@ -1,17 +1,16 @@
 <?php
-/**
- * @brief     Interface used to set up view classes.
- * @ingroup   lib_interfaces
- * @file      Ritc/Library/Interfaces/ViewInterface.php
- * @namespace Ritc\Library\Interfaces
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2017-01-24 15:50:47
- * @note <b>Change Log</b>
- * - v1.0.0-alpha.1 - initial version                   - 2017-01-24 wer
- */
 namespace Ritc\Library\Interfaces;
 
+/**
+ * Interface ViewInterface
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2017-01-24 15:50:47
+ * ## Change Log
+ * - v1.0.0 - initial version                   - 2017-01-24 wer
+ */
 interface ViewInterface
 {
     /**

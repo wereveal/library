@@ -1,16 +1,4 @@
 <?php
-/**
- * @brief     Tests the Group Model Class.
- * @ingroup   lib_tests
- * @file      PeopleModelTester.php
- * @namespace Ritc\Library\Tests
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-03-05 10:44:05
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
- * - v0.1.0         - Initial version                - unknown wer
- */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
@@ -20,9 +8,16 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Models\PeopleModel;
 
 /**
- * Class PeopleModelTester.
- * @class   PeopleModelTester
- * @package Ritc\Library\Tests
+ * Tests the Group Model Class.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2016-03-05 10:44:05
+ * @todo.   Rewrite it all
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
+ * - v0.1.0         - Initial version                - unknown wer
  */
 class PeopleModelTester extends Tester
 {

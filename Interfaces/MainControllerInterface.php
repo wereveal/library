@@ -1,21 +1,15 @@
 <?php
-/**
- * @brief     Interface used to set up the main controller class.
- * @ingroup   lib_interfaces
- * @file      Ritc/Library/Interfaces/MainControllerInterface.php
- * @namespace Ritc\Library\Interfaces
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2018-05-01 16:29:40
- * @note <b>Change Log</b>
- * - v1.0.0 - initial version                                                       - 2018-05-01 wer
- */
 namespace Ritc\Library\Interfaces;
 
 /**
  * Interface MainControllerInterface
- * @class MainControllerInterface
- * @package Ritc\Library\Interfaces
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2018-05-01 16:29:40
+ * ## Change Log
+ * - v1.0.0 - initial version                                                       - 2018-05-01 wer
  */
 interface MainControllerInterface
 {

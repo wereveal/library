@@ -1,22 +1,4 @@
 <?php
-/**
- * @brief     Various helper functions for routes.
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/RoutesHelper.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.0.0
- * @date      2018-05-14 19:52:39
- * @note Change Log
- * - v3.0.0   - Changed to use cache for some database values       - 2018-05-14 wer
- * - v2.1.0   - Changed to handle ModelExceptions                   - 2017-06-20 wer
- * - v2.0.0   - Changed to handle inexact request URI (slashes)     - 2016-09-08 wer
- * - v1.1.0   - added method for quick min auth level for a route.  - 02/26/2016 wer
- * - v1.0.0   - took out of beta                                    - 11/27/2015 wer
- * - v1.0.0β3 - bug fix                                             - 11/24/2015 wer
- * - v1.0.0β2 - logic change                                        - 10/30/2015 wer
- * - v1.0.0β1 - intial file                                         - 09/26/2015 wer
- */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -28,8 +10,18 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class RoutesHelper
- * @class   RoutesHelper
- * @package Ritc\Library\Helper
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v3.0.0
+ * @date    2018-05-14 19:52:39
+ * ## Change Log
+ * - v3.0.0   - Changed to use cache for some database values       - 2018-05-14 wer
+ * - v2.1.0   - Changed to handle ModelExceptions                   - 2017-06-20 wer
+ * - v2.0.0   - Changed to handle inexact request URI (slashes)     - 2016-09-08 wer
+ * - v1.1.0   - added method for quick min auth level for a route.  - 02/26/2016 wer
+ * - v1.0.0   - took out of beta                                    - 11/27/2015 wer
+ * - v1.0.0β1 - intial file                                         - 09/26/2015 wer
  */
 class RoutesHelper
 {

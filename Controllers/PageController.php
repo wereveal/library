@@ -1,16 +1,4 @@
 <?php
-/**
- * @brief     Controller for the Page Admin page.
- * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/PageController * @namespace Ritc\Library\Controllers
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.1
- * @date      2015-11-27 14:49:00
- * @note <b>Change Log</b>
- * - v1.0.1   - bug fix                                      - 2016-03-08 wer
- * - v1.0.0   - First working version                        - 11/27/2015 wer
- * - v1.0.0β1 - Initial version                              - 10/30/2015 wer
- */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Strings;
@@ -24,9 +12,15 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PageView;
 
 /**
- * Class PageController.
- * @class PageController
- * @package Ritc\Library\Controllers
+ * Class PageController - Page Admin page.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.1
+ * @date    2015-11-27 14:49:00
+ * ## Change Log
+ * - v1.0.1   - bug fix                                      - 2016-03-08 wer
+ * - v1.0.0   - First working version                        - 11/27/2015 wer
  */
 class PageController implements ManagerControllerInterface
 {

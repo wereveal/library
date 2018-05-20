@@ -1,38 +1,24 @@
 <?php
-/**
- * @brief     Something simple to help me debug my websites.
- * @details   A singleton pattern because that is what I want. pfffttttt!
- * @ingroup   lib_services
- * @file      Elog.php
- * @namespace Ritc\Library\Services
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version:  3.2.0
- * @date      2017-07-16 07:57:42
- * @note <b>Change Log</b>
- * - v3.2.0 - Added additional LOG_x types, rearranged some code              - 2017-07-16 wer
- * - v3.1.0 - Added LOG_WARN and LOG_ERROR                                    - 2017-05-12 wer
- * - v3.0.4 - bug fix with JSON logging                                       - 2017-01-31 wer
- * - v3.0.3 - bug fix, clean up code                                          - 2017-01-13 wer
- * - v3.0.2 - bug fixes                                                       - 02/26/2016 wer
- * - v3.0.1 - clean up code                                                   - 02/22/2016 wer
- * - v3.0.0 - added new logging methods, changed default to custom log        - 11/19/2015 wer
- * - v2.7.1 - moved to Services namespace                                     - 11/15/2014 wer
- * - v2.7.0 - added method to ignore LOG_OFF settings to allow global logging - 11/11/2014 wer
- * - v2.6.2 - clean up, removed extend to Base class, not needed/wanted       - 09/23/2014 wer
- * - v2.6.1 - package change required minor update                            - 12/19/2013 wer
- * - v2.6.0 - Namespace changes                                               - 07/30/2013 wer
- * - v2.5.2 - added some sanity code to setElogConstants to prevent errors    - 04/23/2013 wer
- * - v2.5.1 - renamed main method from do_it to write (not so silly)
- * - v2.5.0 - FIG standards (mostly)
- */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Exceptions\ServiceException;
 
 /**
- * Class Elog does some basic logging.
- * @class Elog
- * @package Ritc\Library\Services
+ * Something simple to help me debug my websites.
+ * A singleton pattern because that is what I want. pfffttttt!
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @versionv:  3.2.0
+ * @date    2017-07-16 07:57:42
+ * ## Change Log
+ * - v3.2.0 - Added additional LOG_x types, rearranged some code              - 2017-07-16 wer
+ * - v3.1.0 - Added LOG_WARN and LOG_ERROR                                    - 2017-05-12 wer
+ * - v3.0.0 - added new logging methods, changed default to custom log        - 11/19/2015 wer
+ * - v2.8.0 - moved to Services namespace                                     - 11/15/2014 wer
+ * - v2.7.0 - added method to ignore LOG_OFF settings to allow global logging - 11/11/2014 wer
+ * - v2.6.0 - Namespace changes                                               - 07/30/2013 wer
+ * - v2.5.0 - renamed main method from do_it to write (not so silly)
+ * - v2.4.0 - FIG standards (mostly)
  */
 class Elog
 {

@@ -1,14 +1,17 @@
 <?php
+namespace Ritc\Library\Traits;
+
+use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Elog;
+
 /**
- * @brief     Common functions that inject and use the Elog class service.
- * @ingroup   lib_traits
- * @file      LogitTraits.php
- * @namespace Ritc\Library\Traits
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.1
- * @date      2018-03-29 15:44:43
- * @note      this is derived from the abstract class Base which it replaced.
- * @note <b>Change Log</b>
+ * Common functions that inject and use the Elog class service.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.3.1
+ * @date    2018-03-29 15:44:43
+ * @note    this is derived from the abstract class Base which it replaced.
+ * ## Change Log
  * - v1.3.1 - bug fix                                                        - 2018-03-29 wer
  * - v1.3.0 - added method and property to set elog for multiple object      - 2017-12-05 wer
  *            based on the names of the objects saved in the property
@@ -19,16 +22,6 @@
  * - v1.1.0 - added code to utilize the custom logging capabilities          - 11/20/2015 wer
  * - v1.0.1 - checked to see if we want to even bother with calling o_elog.  - 11/03/2015 wer
  * - v1.0.0 - initial version                                                - 08/19/2015 wer
- */
-namespace Ritc\Library\Traits;
-
-use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Elog;
-
-/**
- * Class LogitTraits
- * @class   LogitTraits
- * @package Ritc\Library\Traits
  */
 trait LogitTraits
 {

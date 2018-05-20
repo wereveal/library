@@ -1,17 +1,4 @@
 <?php
-/**
- * @brief     Does Ajax Calls used by the Config manager.
- * @details
- * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/AjaxController.php
- * @namespace Ritc\Library\Controllers
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2018-04-10 11:14:16
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2018-04-10 wer
- * @todo Ritc/Library/Controllers/AjaxController.php - Everything
- */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -22,9 +9,14 @@ use Ritc\Library\Traits\ControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class AjaxController.
- * @class   AjaxController
- * @package Ritc\Library\Controllers
+ * Class AjaxController - Does Ajax Calls used by the Config manager.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2018-04-10 11:14:16
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2018-04-10 wer
  */
 class AjaxController
 {

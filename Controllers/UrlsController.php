@@ -1,20 +1,4 @@
 <?php
-/**
- * @brief     Controller for Urls admin.
- * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/UrlsController.phpnamespace Ritc\Library\Controllers
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2017-06-03 17:17:30
- * @note Change Log
- * - v1.1.0-beta.1  - Refactored to match refactoring of model          - 2017-06-19 wer
- * - v1.0.0         - Out of beta                                       - 2017-06-03 wer
- * - v1.0.0-beta.2  - Change to splitUrl to allow posted url to not     - 2017-06-02 wer
- *                    include the current site.
- * - v1.0.0-beta.1  - minor change to ControllerTraits reflected here.  - 2016-04-15 wer
- * - v1.0.0-beta.0  - Initial working version                           - 2016-04-13 wer
- * - v1.0.0-alpha.0 - Initial version                                   - 2016-04-11 wer
- */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -27,9 +11,19 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\UrlsView;
 
 /**
- * Class UrlsController.
- * @class   UrlsController
- * @package Ritc\Library\Controller
+ * Controller for Urls admin.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.1.0
+ * @date    2017-06-03 17:17:30
+ * ## Change Log
+ * - v1.1.0-beta.1  - Refactored to match refactoring of model          - 2017-06-19 wer
+ * - v1.0.0         - Out of beta                                       - 2017-06-03 wer
+ * - v1.0.0-beta.2  - Change to splitUrl to allow posted url to not     - 2017-06-02 wer
+ *                    include the current site.
+ * - v1.0.0-beta.1  - minor change to ControllerTraits reflected here.  - 2016-04-15 wer
+ * - v1.0.0-beta.0  - Initial working version                           - 2016-04-13 wer
+ * - v1.0.0-alpha.0 - Initial version                                   - 2016-04-11 wer
  */
 class UrlsController implements ManagerControllerInterface
 {

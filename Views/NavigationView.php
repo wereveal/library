@@ -1,17 +1,4 @@
 <?php
-/**
- * @brief     The view class for the navigation manager.
- * @ingroup   lib_views
- * @file      NavigationView.phpnamespace Ritc\Library\Views
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.2
- * @date      2017-06-19 13:11:34
- * @note Change Log
- * - v1.0.0-alpha.2 - refactoring in model   - 2017-06-19 wer
- * - v1.0.0-alpha.1 - Name refactoring       - 2017-05-14 wer
- * - v1.0.0-alpha.0 - Initial version        - 2016-04-15 wer
- * @todo NavigationView- Everything
- */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -23,9 +10,16 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class NavigationView.
- * @class   NavigationView
- * @package Ritc\Library\Views
+ * The view class for the navigation manager.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.2
+ * @date    2017-06-19 13:11:34
+ * ## Change Log
+ * - v1.0.0-alpha.2 - refactoring in model   - 2017-06-19 wer
+ * - v1.0.0-alpha.1 - Name refactoring       - 2017-05-14 wer
+ * - v1.0.0-alpha.0 - Initial version        - 2016-04-15 wer
+ * @todo NavigationView- Everything
  */
 class NavigationView
 {

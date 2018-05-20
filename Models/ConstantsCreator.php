@@ -1,21 +1,25 @@
 <?php
+namespace Ritc\Library\Models;
+
+use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ExceptionHelper;
+use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\LogitTraits;
+
 /**
- * @brief     Create Constants from the constants database
- * @ingroup   lib_helper
- * @file      Ritc/Library/Models/ConstantsCreator.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.1.1
- * @date      2018-04-09 10:45:22
- * @note <b>Change Log</b>
+ * Defines Constants from the constants database used by the app.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v5.1.1
+ * @date    2018-04-09 10:45:22
+ * ## Change Log
  * - v5.1.1 - Bug fix                                                               - 2018-04-09 wer
- * - v5.1.0 - Bug fixes, added additional constants for Lib and Admin               - 2018-04-03 wer
+ * - v5.1.0 - Added additional constants for Lib and Admin                          - 2018-04-03 wer
  *            Added method to build TWIG_PREFIXES on the fly from the
- *            twig_prefix table
+ *            twig_prefix table. Bug fixes.
  * - v5.0.0 - Renamed, moved, and added ModelException throwing.                    - 2017-07-16 wer
  * - v4.1.0 - Refactor based on refactoring of ConstantsModel                       - 2017-06-20 wer
- * - v4.0.2 - bug fix.                                                              - 2017-01-27 wer
- * - v4.0.1 - bug fix. Wondering if another is still here.                          - 02/22/2016 wer
  * - v4.0.0 - renamed to reflect what it was doing. Since it isn't                  - 01/17/2015 wer
  *            a service, moved it Ritc\Library\Helper namespace.
  * - v3.3.0 - moved some contant definitions into this class                        - 12/10/2014 wer
@@ -26,29 +30,14 @@
  * - v3.1.5 - moved to the Services Namespace in the Library                        - 11/15/2014 wer
  * - v3.1.4 - changed to match changes in ConstantsModel                            - 11/13/2014 wer
  * - v3.1.3 - changed to implment the changes in Base class                         - 09/23/2014 wer
- * - v3.1.2 - bug fixes                                                             - 09/18/2014 wer
  * - v3.1.1 - made it so the constants table name will be assigned from the         - 02/24/2014 wer
  *            the db_prefix variable set from the db confuration
  *            (created in PdoFactory, passed on to DbModel).
  * - v3.1.0 - made it so it will create the constants table if it does not exist.   - 01/31/2014 wer
  *            Other changes to adjust to not having a theme based app.
- * - v3.0.3 - package change                                                        - 12/19/2013 wer
- * - v3.0.2 - bug fixes, minor changes                                              - 2013-11-08 wer
  * - v3.0.1 - refactoring for database class change                                 - 2013-11-06 wer
  * - v3.0.0 - Modified for new framework file hierarchy                             - 2013-04-30 wer
  * - v2.3.0 - mostly changes for FIG-standards
- */
-namespace Ritc\Library\Models;
-
-use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Helper\ExceptionHelper;
-use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
-
-/**
- * Class ConstantsCreator
- * @class   ConstantsCreator
- * @package Ritc\Library\Helper
  */
 class ConstantsCreator
 {

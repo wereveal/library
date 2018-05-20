@@ -1,27 +1,18 @@
 <?php
-/**
- * @brief     A basic entity class for the Article table.
- * @ingroup   lib_entities
- * @file      Ritc/Library/Entities/PeopleGroupMapEntity.php
- * @namespace Ritc\Library\Entities
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2015-07-29 11:43:02
- * @note <b>SQL for table<b><pre>
- * - MySQL      - resources/sql/mysql/people_group_map_mysql.sql
- * - PostgreSQL - resources/sql/postgresql/people_group_map_pg.sql</pre>
- * @note <b>Change Log</b>
- * - v1.0.0 - Finished        - 07/29/2015 wer
- * - v0.1.0 - Initial version - 09/11/2014 wer
- */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
 /**
  * Class PeopleGroupMapEntity
- * @class   PeopleGroupMapEntity
- * @package Ritc\Library\Entities
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2015-07-29 11:43:02
+ * ## Change Log
+ * - v1.0.0 - Finished        - 07/29/2015 wer
+ * - v0.1.0 - Initial version - 09/11/2014 wer
  */
 class PeopleGroupMapEntity implements EntityInterface
 {

@@ -1,16 +1,4 @@
 <?php
-/**
- * @brief     NavNgMapModel class tester.
- * @ingroup   lib_tests
- * @file      Ritc/Library/Tests/NavNgMapModelTester.php
- * @namespace Ritc\Library\Tests
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-06-09 10:16:28
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-06-09 wer
- * @todo Ritc/Library/Tests/NavNgMapModelTester.php - Everything
- */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
@@ -19,9 +7,15 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class NavNgMapModelTester.
- * @class   NavNgMapModelTester
- * @package Ritc\Library\Tests
+ * NavNgMapModel class tester.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2017-06-09 10:16:28
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2017-06-09 wer
+ * @todo Ritc/Library/Tests/NavNgMapModelTester.php - Everything
  */
 class NavNgMapModelTester extends Tester
 

@@ -1,18 +1,4 @@
 <?php
-/**
- * @brief     Custom Exceptions for Factorys.
- * @details   Handles custom exceptions for services.
- * @ingroup   lib_exceptions
- * @file      Ritc/Library/Exceptions/FactoryException.php
- * @namespace Ritc\Library\Exceptions
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2017-12-12 14:57:04
- * @note Change Log
- * - v1.0.0-alpha.1 - implements ExceptionHelper            - 2017-12-12 wer
- * - v1.0.0-alpha.0 - Initial version                       - 2017-07-16 wer
- * @todo Ritc/Library/Exceptions/FactoryException.php - Everything
- */
 namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomException;
@@ -21,8 +7,14 @@ use Throwable;
 
 /**
  * Class FactoryException.
- * @class   FactoryException
- * @package Ritc\Library\Exceptions
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.1
+ * @date    2017-12-12 14:57:04
+ * ## Change Log
+ * - v1.0.0-alpha.1 - implements ExceptionHelper            - 2017-12-12 wer
+ * - v1.0.0-alpha.0 - Initial version                       - 2017-07-16 wer
  */
 class FactoryException extends CustomException
 {

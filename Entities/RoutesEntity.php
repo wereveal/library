@@ -1,25 +1,17 @@
 <?php
-/**
- * @brief     Basic accessors for a routes entity.
- * @ingroup   lib_entities
- * @file      Ritc/Library/Entities/RoutesEntity.php
- * @namespace Ritc\Library\Entities
- * @author    William E Reveal
- * @version   1.0.0
- * @date      2015-10-06 14:20:33
- * @note <b>SQL for table<b>
- * - MySQL      - resources/sql/mysql/routes_mysql.sql
- * - PostgreSQL - resources/sql/postgresql/routes_pg.sql
- */
-
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
 /**
- * Class RoutesEntity
- * @class   RoutesEntity
- * @package Ritc\Library\Entities
+ * Class RoutesEntity - Basic accessors for a routes entity.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal
+ * @version v1.0.0
+ * @date    14:20:33
+ * ## Change Log
+ * - Initial version                                - 2015-10-06 wer
  */
 class RoutesEntity implements EntityInterface
 {

@@ -1,20 +1,4 @@
 <?php
-/**
- * @brief     Does all the database CRUD stuff for the navigation groups.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/NavgroupsModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-12-12 11:43:01
- * @note <b>Change Log</b>
- * - v1.0.0         - initial production version                    - 2017-12-12 wer
- * - v1.0.0-alpha.4 - Refactored to use ModelException              - 2017-06-15 wer
- * - v1.0.0-alpha.3 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
- * - v1.0.0-alpha.2 - Added two methods to get default ng           - 2016-04-18 wer
- * - v1.0.0-alpha.1 - Updated to use DbUtilityTraits                - 2016-03-31 wer
- * - v1.0.0-alpha.0 - Initial version                               - 2016-02-25 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -26,8 +10,19 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class NavgroupsModel.
- * @class   NavgroupsModel
- * @package Ritc\Library\Models
+ * Does all the database CRUD stuff for the page table plus other app/business logic.\
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2017-12-12 11:43:01
+ * ## Change Log
+ * - v1.0.0         - initial production version                    - 2017-12-12 wer
+ * - v1.0.0-alpha.4 - Refactored to use ModelException              - 2017-06-15 wer
+ * - v1.0.0-alpha.3 - Refactoring of DbUtilityTraits reflected here - 2017-01-27 wer
+ * - v1.0.0-alpha.2 - Added two methods to get default ng           - 2016-04-18 wer
+ * - v1.0.0-alpha.1 - Updated to use DbUtilityTraits                - 2016-03-31 wer
+ * - v1.0.0-alpha.0 - Initial version                               - 2016-02-25 wer
  */
 class NavgroupsModel implements ModelInterface
 {

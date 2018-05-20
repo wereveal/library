@@ -1,15 +1,4 @@
 <?php
-/**
- * @brief     Controller for the Test page.
- * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/TestsController.phpnamespace Ritc\Library\Controllers
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2017-02-15 15:23:02
- * @note <b>Change Log</b>
- * - v1.0.0-alpha.1 - Refactoring                                   - 2017-02-15 wer
- * - v1.0.0-alpha.0 - Initial version                               - 10/23/2015 wer
- */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Services\Di;
@@ -25,9 +14,15 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\TestsView;
 
 /**
- * Class TestsController
- * @class   TestsController
- * @package Ritc\Library\Controllers
+ * Class TestsController - Controller for the Test page.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.1
+ * @date    2017-02-15 15:23:02
+ * ## Change Log
+ * - v1.0.0-alpha.1 - Refactoring                                   - 2017-02-15 wer
+ * - v1.0.0-alpha.0 - Initial version                               - 10/23/2015 wer
  */
 class TestsController
 {

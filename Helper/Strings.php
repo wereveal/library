@@ -1,37 +1,29 @@
 <?php
+namespace Ritc\Library\Helper;
+
 /**
- * @brief     Modifies strings and strings in arrays.
- * @details   Methods which start with make_ return a modified version
- *            of the value passed into the method, usually indicated by
- *            the name of the method.
- *            Renamed and modified version of old class Output.
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/Strings.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   6.5.0+1
- * @date      2018-03-06 13:36:15
- * @note <b>Change Log</b>
+ * Class Strings - Modifies strings.
+ * Methods which start with make return a modified version
+ * of the value passed into the method, usually indicated by
+ * the name of the method.
+ * Renamed and modified version of old class Output which was the class name before v5.0.0.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v6.5.0+1
+ * @date    2018-03-06 13:36:15
+ * ## Change Log
  * - v6.5.0 - add new method to convert column number to Excel column letters   - 2018-03-06 wer
- * - v6.4.1 - bug fix                                                           - 2017-07-06 wer
  * - v6.4.0 - added new method to trim slashes from front and back of string    - 2016-09-08 wer
  * - v6.3.0 - added new method to translate a digit to an English word          - 02/24/2016 wer
  * - v6.2.0 - added new method to strip tags from htmlentites coded string      - 11/25/2015 wer
  * - v6.1.0 - renamed makeAlphanumeric to makeAlphanumericPlus and added two    - 11/07/2015 wer
- *              new methods called makeAlphanumeric and makeCamelCase.
+ *            new methods called makeAlphanumeric and makeCamelCase.
  * - v6.0.0 - changed all methods to static                                     - 01/27/2015 wer
  * - v5.1.2 - moved to the Helper namespace                                     - 11/15/2014 wer
  * - v5.1.1 - changed to implment the changes in Base class                     - 09/23/2014 wer
  * - v5.1.0 - added formatPhoneNumber method.                                   - 2013-05-14 wer
- * - v5.0.1 - bug fixes and removed unused code left over from old class Output - 2013-05-01 wer
  * - v5.0.0 - renamed new version for RITC Library v5
- */
-namespace Ritc\Library\Helper;
-
-/**
- * Class Strings
- * @class Strings
- * @package Ritc\Library\Helper
  */
 class Strings
 {

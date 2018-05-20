@@ -1,21 +1,20 @@
 <?php
-/**
- * @brief     Abstract which gives a basic setup for a model class.
- * @ingroup   lib_abstracts
- * @file      Ritc/Library/Abstracts/ModelAbstract.php
- * @namespace Ritc\Library\Abstracts
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2018-04-26 09:27:20
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version                                                                   - 2017-07-15 wer
- */
 namespace Ritc\Library\Abstracts;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Traits\DbUtilityTraits;
 
+/**
+ * Abstract which gives a basic setup for a model class.
+ *
+ * @package Ritc_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2018-04-26 09:27:20
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version                                                                   - 2017-07-15 wer
+ */
 abstract class ModelAbstract implements ModelInterface
 {
     use DbUtilityTraits;

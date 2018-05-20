@@ -1,27 +1,4 @@
 <?php
-/**
- * @brief     Does all the database CRUD stuff for the PeopleGroupMap table.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/PeopleGroupMapModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-06-17 13:16:31
- * @note <b>Change Log</b>
- * - v2.0.0   - Refactored to use ModelException                       - 2017-06-17 wer
- * - v1.1.3   - DbUtilityTraits change reflected here                  - 2017-05-09 wer
- * - v1.1.2   - refactoring of trait reflected here                    - 2017-01-27 wer
- * - v1.1.1   - bug fix of read method, did not match interface        - 2016-03-24 wer
- * - v1.1.0   - Refactoring of DbModel reflected here                  - 2016-03-18 wer
- * - v1.0.0   - take out of beta                                       - 11/27/2015 wer
- * - v1.0.0β7 - refactoring fix for postgres compatibility             - 11/22/2015 wer
- * - v1.0.0β6 - removed abstract Base, implemented LogitTraits         - 09/03/2015 wer
- * - v1.0.0β5 - refactoring elsewhere caused changes here              - 07/31/2015 wer
- * - v1.0.0β4 - refactored user to people                              - 01/26/2015 wer
- * - v1.0.0β3 - extends the Base class, injects the DbModel, clean up  - 09/23/2014 wer
- * - v1.0.0β2 - First Live version                                     - 09/15/2014 wer
- * - v1.0.0β1 - Initial version                                        - 01/18/2014 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -31,9 +8,24 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class PeopleGroupMapModel.
- * @class   PeopleGroupMapModel
- * @package Ritc\Library\Models
+ * Does all the Model expected operations, database CRUD and business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.0.0
+ * @date    2017-06-17 13:16:31
+ * ## Change Log
+ * - v2.0.0   - Refactored to use ModelException                       - 2017-06-17 wer
+ * - v1.1.3   - DbUtilityTraits change reflected here                  - 2017-05-09 wer
+ * - v1.1.2   - refactoring of trait reflected here                    - 2017-01-27 wer
+ * - v1.1.0   - Refactoring of DbModel reflected here                  - 2016-03-18 wer
+ * - v1.0.0   - take out of beta                                       - 11/27/2015 wer
+ * - v1.0.0β7 - refactoring fix for postgres compatibility             - 11/22/2015 wer
+ * - v1.0.0β6 - removed abstract Base, implemented LogitTraits         - 09/03/2015 wer
+ * - v1.0.0β4 - refactored user to people                              - 01/26/2015 wer
+ * - v1.0.0β3 - extends the Base class, injects the DbModel, clean up  - 09/23/2014 wer
+ * - v1.0.0β2 - First Live version                                     - 09/15/2014 wer
+ * - v1.0.0β1 - Initial version                                        - 01/18/2014 wer
  */
 class PeopleGroupMapModel implements ModelInterface
 {

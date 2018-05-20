@@ -1,25 +1,18 @@
 <?php
-/**
- * @brief     Finds a file and returns it with the full server path or web site path.
- * @detail    Based on the other similar helper, Ritc\Library\Helper\Files. However, this one uses all static functions.
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/LocateFile.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2018-04-12 11:32:47
- * @note <b>Change Log</b>
- * - v1.1.0 - Removed references to constants of THEME variations   - 2018-04-12 wer
- * - v1.0.2 - Bug fix                                               - 2017-07-06 wer
- * - v1.0.1 - Bug fix                                               - 2017-06-10 wer
- * - v1.0.0 - Initial Version                                       - 2017-02-08 wer
- */
 namespace Ritc\Library\Helper;
 
 /**
- * Class LocateFile
- * @class LocateFile
- * @package Ritc\Library\Helper
+ * Finds a file and returns it with the full server path or web site path.
+ * Based on the other similar helper, Ritc\Library\Helper\Files. 
+ * However, this one uses all static functions.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.1.0
+ * @date    2018-04-12 11:32:47
+ * ## Change Log
+ * - v1.1.0 - Removed references to constants of THEME variations   - 2018-04-12 wer
+ * - v1.0.0 - Initial Version                                       - 2017-02-08 wer
  */
 class LocateFile
 {

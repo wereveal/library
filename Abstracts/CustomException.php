@@ -1,26 +1,18 @@
 <?php
-/**
- * @brief     Abstract which extends php Exception class.
- * @ingroup   lib_abstracts
- * @file      Ritc/Library/Abstracts/CustomException.php
- * @namespace Ritc\Library\Abstracts
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2018-03-07 08:48:27
- * @note Change Log
- * - v1.0.0         - changed to production, added phpDoc                                               - 2018-03-07 wer
- * - v1.0.0-alpha.1 - expanded errorMessage and getCode                                                 - 2017-07-15 wer
- * - v1.0.0-alpha.0 - Initial version                                                                   - 2016-10-17 wer
- */
 namespace Ritc\Library\Abstracts;
 
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Interfaces\CustomExceptionInterface;
 
 /**
- * Class CustomException.
- * @class   CustomException
- * @package Ritc\Library\Abstracts
+ * Class CustomException Abstract which extends php Exception class.
+ *
+ * @package Ritc_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2018-03-07 08:48:27
+ * ## Change Log
+ * - v1.0.0         - changed to production, added phpDoc                                               - 2018-03-07 wer
  */
 abstract class CustomException extends \Exception implements CustomExceptionInterface
 {

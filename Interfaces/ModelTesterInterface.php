@@ -1,23 +1,16 @@
 <?php
-/**
- * @brief     Interface used to set up model tester classes.
- * @detail    Model classes should be implementing the ModelInterface to match.
- * @ingroup   lib_interfaces
- * @file      Ritc/Library/Interfaces/ModelTesterInterface.php
- * @namespace Ritc\Library\Interfaces
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-10-18 12:10:55
- * @note <b>Change Log</b>
- * - v1.0.0 initial versioning                                  - 2017-10-18 wer
-*/
 namespace Ritc\Library\Interfaces;
 
 /**
-* Interface ModelTesterInterface
-* @class ModelTesterInterface
-* @package Ritc\Library\Interfaces
-*/
+ * Interface ModelTesterInterface
+ * Model classes should be implementing the ModelInterface to match.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2017-10-18 12:10:55
+ * ## Change Log
+ * - v1.0.0 initial versioning                                  - 2017-10-18 wer
+ */
 interface ModelTesterInterface {
     /**
      * Tests the create method.

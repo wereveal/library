@@ -1,20 +1,4 @@
 <?php
-/**
- * @brief     View for the Tests page.
- * @ingroup   lib_views
- * @file      LibraryView.php
- * @namespace Ritc\Library\Views
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.1.0
- * @date      2017-06-10 07:25:13
- * @note <b>Change Log</b>
- * - v2.1.0   - Added additional tests, bug fixes            - 2017-06-10 wer
- * - v2.0.0   - Name refactoring                             - 2017-05-14 wer
- * - v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
- * - v1.0.0   - First stable version                         - 01/16/2015 wer
- * - v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                              - 11/08/2014 wer
- */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\ViewHelper;
@@ -23,9 +7,18 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class TestsView
- * @class   LibraryView
- * @package Ritc\Library\Views
+ * View for the Tests page.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.1.0
+ * @date    2017-06-10 07:25:13
+ * ## Change Log
+ * - v2.1.0   - Added additional tests, bug fixes            - 2017-06-10 wer
+ * - v2.0.0   - Name refactoring                             - 2017-05-14 wer
+ * - v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer
+ * - v1.0.0   - First stable version                         - 01/16/2015 wer
+ * - v1.0.0β2 - changed to match DI/IOC                      - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                              - 11/08/2014 wer
  */
 class TestsView
 {

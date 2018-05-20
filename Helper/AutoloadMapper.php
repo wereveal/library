@@ -1,30 +1,22 @@
 <?php
-/**
- * @brief     Creates the autoload_classmap.php file.
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/AutoloadMapper.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.3
- * @date      2017-01-10 12:26:57
- * @note <b>Change Log</b>
- *     v1.3.0 - refactoring of file structure reflected here  - 2017-02-15 wer
- *     v1.2.3 - bug fix                                       - 2017-01-10 wer
- *     v1.2.2 - bug fix                                       - 02/22/2016 wer
- *     v1.2.1 - refactored var names to be more descriptive   - 12/07/2015 wer
- *     v1.2.0 - added code to not include archives            - 11/06/2015 wer
- *     v1.1.0 - added traits                                  - 09/01/2015 wer
- *     v1.0.0 - initial version
- */
 namespace Ritc\Library\Helper;
 
 use \DirectoryIterator;
 use \SplFileInfo;
 
 /**
- * Class AutoloadMapper
- * @class   AutoloadMapper
- * @package Ritc\Library\Helper
+ * Class AutoloadMapper - Creates the autoload_classmap.php file.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.2.3
+ * @date    2017-01-10 12:26:57
+ * ## Change Log
+ *     v1.3.0 - refactoring of file structure reflected here  - 2017-02-15 wer
+ *     v1.2.1 - refactored var names to be more descriptive   - 12/07/2015 wer
+ *     v1.2.0 - added code to not include archives            - 11/06/2015 wer
+ *     v1.1.0 - added traits                                  - 09/01/2015 wer
+ *     v1.0.0 - initial version
  */
 class AutoloadMapper
 {

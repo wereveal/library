@@ -1,32 +1,29 @@
 <?php
+namespace Ritc\Library\Traits;
+
+use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Helper\LocateFile;
+
 /**
- * @brief     A class for testing that all other testing classes should extend.
- * @details   Class that extends this class should end with the word Tests or
- *            Tester, e.g. MyClassTester or MyClassTests.
- * @ingroup   lib_basic
- * @file      Ritc/Library/Traits/TesterTraits.php
- * @namespace Ritc\Library\Traits
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.2.0
- * @date      2017-10-19 14:03:18
- * @note <b>Change log</b>
+ * Provides all the basic commands which are extended by specific testers for specific classes.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v4.2.0
+ * @date    2017-10-19 14:03:18
+ * ## Change log
  * - v4.2.0 - updated setValues and setOrder to not use an empty parameter              - 2017-10-19 wer
- * - v4.1.1 - Bug fix - handle errors better                                            - 2017-07-12 wer
  * - v4.1.0 - Added new methods specific to model testing                               - 2017-06-20 wer
  * - v4.0.0 - Turned the class into a trait to maybe remove a hidden bug                - 2017-06-09 wer
- * - v3.6.1 - Refactoring of subtest methods                                            - 2017-06-09 wer
- * - v3.5.1 - switched setupTests to use LocateFile class                               - 2017-05-30 wer
+ * - v3.7.0 - Refactoring of subtest methods                                            - 2017-06-09 wer
+ * - v3.6.0 - switched setupTests to use LocateFile class                               - 2017-05-30 wer
  * - v3.5.0 - modified setupTests to create test order from test values                 - 2017-05-12 wer
  * - v3.4.0 - modified setupTests to set a new property class_name                      - 2016-04-20 wer
  * - v3.3.0 - added new method to automate some setup                                   - 2016-03-10 wer
- * - v3.2.1 - bug fix                                                                   - 2016-03-09 wer
  * - v3.2.0 - moved the compare_arrays to the Arrays helper class                       - 11/02/2015 wer
- * - v3.1.1 - minor change to setTestOrder method, now required an array                - 10/23/2015 wer
  * - v3.1.0 - no longer extends Base class, uses Logit Trait instead                    - 08/19/2015 wer
- * - v3.0.2 - moved to the Basic namespace where it was more appropriate                - 12/05/2014 wer
- * - v3.0.1 - moved to the Services namespace                                           - 11/15/2014 wer
  * - v3.0.0 - changed to be a class so it could extend Base class and modified for such - 09/24/2014 wer
- * - v2.0.1 - added missing method                                                      - 07/01/2014 wer
  * - v2.0.0 - modified to not do any view stuff                                         - 2013-12-13 wer
  * - v1.1.0 - added new a couple new methods                                            - 2013-05-10 wer
  *      - compare_arrays
@@ -37,54 +34,43 @@
  *          - within the method tester
  * - v1.0.1 - updated to match new framework                                            - 2013-04-03 wer
  */
-namespace Ritc\Library\Traits;
-
-use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Helper\Arrays;
-use Ritc\Library\Helper\LocateFile;
-
-/**
- * TesterTraits provides all the basic commands which are extended by specific testers for specific classes.
- * @class TesterTraits
- * @package Ritc\Library\Traits
- */
 trait TesterTraits
 {
-    /** @var array */
+    /** @var array specifies the order of tests */
     protected $a_test_order       = [];
-    /** @var array */
+    /** @var array values that will be tested */
     protected $a_test_values      = [];
-    /** @var string  */
+    /** @var string name of the class */
     protected $class_name         = '';
-    /** @var bool  */
+    /** @var bool the output will show which sub-tests are passed  */
     protected $show_passed_subs   = false;
-    /** @var int */
+    /** @var array which sub-tests were failed */
     protected $failed_subtests    = [];
-    /** @var array */
+    /** @var array names of the failed tests */
     protected $failed_test_names  = [];
-    /** @var int */
+    /** @var int number of failed tests */
     protected $failed_tests       = 0;
-    /** @var  string */
+    /** @var  string name of the instance */
     protected $instance_name      = '';
-    /** @var string  */
+    /** @var string name of the namespace */
     protected $namespace          = '';
-    /** @var int  */
+    /** @var int the new id of the record created */
     protected $new_id             = -1;
-    /** @var int */
+    /** @var int number of tests run */
     protected $num_o_tests        = 0;
-    /** @var string  */
+    /** @var string name of the file which specifies the order of tests */
     protected $order_file         = 'test_order.php';
-    /** @var array  */
+    /** @var array names of passed sub-tests */
     protected $passed_subtests    = [];
-    /** @var array */
+    /** @var array names of passed tests */
     protected $passed_test_names  = [];
-    /** @var int */
+    /** @var int number of passed tests */
     protected $passed_tests       = 0;
-    /** @var array  */
+    /** @var array names of test to skip */
     protected $skipped_test_names = [];
-    /** @var int  */
+    /** @var int numbe of skipped tests */
     protected $skipped_tests      = 0;
-    /** @var string  */
+    /** @var string name of the file which contains the values to be tested */
     protected $values_file        = 'test_values.php';
 
     ### Main Methods for Testing ###

@@ -1,25 +1,17 @@
 <?php
-/**
- * @brief     Custom Exceptions for Services.
- * @details   Handles custom exceptions for services.
- * @ingroup   lib_exceptions
- * @file      Ritc/Library/Exceptions/ServiceException.php
- * @namespace Ritc\Library\Exceptions
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-07-16 08:18:12
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-07-16 wer
- * @todo Ritc/Library/Exceptions/ServiceException.php - Everything
- */
 namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomException;
 
 /**
- * Class ServiceException.
- * @class   ServiceException
- * @package Ritc\Library\Exceptions
+ * Class ServiceException - Custom Exceptions for Services.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2017-07-16 08:18:12
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2017-07-16 wer
  */
 class ServiceException extends CustomException
 {

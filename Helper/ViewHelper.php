@@ -1,27 +1,20 @@
 <?php
+namespace Ritc\Library\Helper;
+
 /**
- * @brief     Various helper functions for views.
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/ViewHelper.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-06-20 11:56:21
- * @note Change Log
+ * Class ViewHelper - Various helper functions for views.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.0.0
+ * @date    2017-06-20 11:56:21
+ * ## Change Log
  * - v2.0.0 - Renamed 'the' method          - 2017-06-20 wer
  * - v1.1.1 - little sanitization of values - 11/05/2015 wer
  * - v1.1.0 - added lazy man's methods      - 09/25/2015 wer
  * - v1.0.1 - changed function to static    - 09/25/2014 wer
  * - v1.0.1 - minor key name change         - 12/31/2013 wer
  * - v1.0.0 - intial file                   - 07/30/2013 wer
- * @note RITC Library
- */
-namespace Ritc\Library\Helper;
-
-/**
- * Class ViewHelper.
- * @class ViewHelper
- * @package Ritc\Library\Helper
  */
 class ViewHelper
 {

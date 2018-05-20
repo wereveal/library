@@ -1,14 +1,16 @@
 <?php
+namespace Ritc\Library\Traits;
+
+use Ritc\Library\Helper\ViewHelper;
+
 /**
- * @brief       Common functions for the manager views.
- * @details     Extends the ViewTraits to include functions used only in manager like situations.
- * @ingroup     lib_traits
- * @file        ManagerViewTraits.php
- * @namespace   Ritc\Library\Traits
- * @author      William E Reveal <bill@revealitconsulting.com>
- * @version     3.2.2
- * @date        2017-12-13 18:12:06
- * @note <b>Change Log</b>
+ * Common functions for the manager views.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v3.2.2
+ * @date    2017-12-13 18:12:06
+ * ## Change Log
  * - v3.2.2 - bug fix                                                               - 2017-12-13 wer
  * - v3.2.1 - bug fix for TwigExceptions now handled by new method in ViewTraits    - 2017-12-02 wer
  * - v3.2.0 - trying to make this more generic                                      - 2017-11-28 wer
@@ -22,15 +24,6 @@
  * - v1.0.1 - changed property name                                                 - 10/16/2015 wer
  * - v1.0.0 - think it is working now                                               - 10/05/2015 wer
  * - v0.1.0 - initial version                                                       - 10/01/2015 wer
- */
-namespace Ritc\Library\Traits;
-
-use Ritc\Library\Helper\ViewHelper;
-
-/**
- * Class ManagerViewTraits
- * @class   ManagerViewTraits
- * @package Ritc\Library\Traits
  */
 trait ManagerViewTraits
 {

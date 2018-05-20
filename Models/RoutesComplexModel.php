@@ -1,17 +1,4 @@
 <?php
-/**
- * @brief     Does multi-table operations.
- * @details   Routes, groups, and urls may be used..
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/RoutesComplexModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-06-18 14:23:31
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-06-18 wer
- * @todo Ritc/Library/Models/RoutesComplexModel.php - Everything
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -20,9 +7,14 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class RoutesComplexModel.
- * @class   RoutesComplexModel
- * @package Ritc\Library\Models
+ * Does all the Model expected operations, database CRUD and business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2017-06-18 14:23:31
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2017-06-18 wer
  */
 class RoutesComplexModel
 {

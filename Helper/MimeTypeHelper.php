@@ -1,23 +1,16 @@
 <?php
-/**
- * @brief     Helps with mime types.
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/MimeTypeHelper.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.2
- * @date      2018-04-18 14:26:04
- * @note Change Log
- * - v1.0.2 - bug fix                - 2018-04-18 wer
- * - v1.0.1 - bug fix                - 2018-03-23 wer
- * - v1.0.0 - Initial version        - 2017-11-10 wer
- */
 namespace Ritc\Library\Helper;
 
 /**
- * Class MimeTypeHelper.
- * @class   MimeTypeHelper
- * @package Ritc\Library\Helper
+ * Class MimeTypeHelper - Helps with mime types.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.2
+ * @date    2018-04-18 14:26:04
+ * ## Change Log
+ * - v1.0.2 - bug fix                - 2018-04-18 wer
+ * - v1.0.0 - Initial version        - 2017-11-10 wer
  */
 class MimeTypeHelper
 {

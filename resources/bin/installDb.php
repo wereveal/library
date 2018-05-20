@@ -1,12 +1,12 @@
 <?php
 /**
- * @brief     Creates the database tables.
- * @details   This is run in the Library.
- * @file      installDb.php
- * @namespace Ritc
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @date      2015-12-09 17:42:36
- * @version   1.0.0
+ * Creates the database tables.
+ * This is run in the Library.
+ * @file    installDb.php
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @date    2015-12-09 17:42:36
+ * @version v1.0.0
 */
 namespace Ritc;
 

@@ -1,21 +1,15 @@
 <?php
-/**
- * @brief     Abstract which extends php Exception class.
- * @ingroup   lib_abstracts
- * @file      Ritc/Library/Abstracts/CustomError.php
- * @namespace Ritc\Library\Abstracts
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-07-15 12:42:53
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version                                                                   - 2017-07-15 wer
- */
 namespace Ritc\Library\Abstracts;
 
 /**
- * Class CustomError.
- * @class   CustomError
- * @package Ritc\Library\Abstracts
+ * Abstract which extends php Exception class.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @date    2017-07-15 12:42:53
+ * @version v1.0.0-alpha.0
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version                                                                   - 2017-07-15 wer
  */
 abstract class CustomError extends \ErrorException
 {

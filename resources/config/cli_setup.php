@@ -1,11 +1,11 @@
 <?php
 /**
- * @brief     This file sets up the App.
- * @details   Required to get the entire framework to work. The only thing
- *           that changes primarily is the defgroup in this comment for Doxygen.
- * @file      /src/apps/Ritc/Library/resources/config/setup.php
- * @namespace Ritc
- * @note NOTE:
+ * This file sets up the App.
+ * Required to get the entire framework to work. The only thing
+ * that changes primarily is the defgroup in this comment for Doxygen.
+ * @file    /src/apps/Ritc/Library/resources/config/setup.php
+ * @package Ritc
+ * ## NOTE:
  * - _path and _PATH indicates a full server path
  * - _dir and _DIR indicates the path in the site (URI)
  * - Both paths do not end with a slash

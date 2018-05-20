@@ -1,25 +1,4 @@
 <?php
-/**
- * @brief     View for the User Admin page.
- * @ingroup   lib_views
- * @file      PeopleView
- * @namespace Ritc\Library\Views
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.0.0
- * @date      2017-12-02 09:15:58
- * @note <b>Change Log</b>
- * - v3.0.0   - major changes to utilize the ConfigViewTraits                           - 2017-12-02 wer
- *              This should make the view more portable.
- * - v2.1.0   - method name changed elsewhere forced change here.                       - 2017-06-20 wer
- *              ModelException handling added.
- * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
- * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v1.0.2   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
- * - v1.0.1   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.0.0   - Initial non-beta version                                                - 11/12/2015 wer
- * - v1.0.0β2 - Changed to use DI/IOC                                                   - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                                                         - 11/13/2014 wer
- */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -33,9 +12,23 @@ use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class PeopleView
- * @class   PeopleView
- * @package Ritc\Library\Views
+ * View for the People Admin page.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v3.0.0
+ * @date    2017-12-02 09:15:58
+ * ## Change Log
+ * - v3.0.0   - major changes to utilize the ConfigViewTraits                           - 2017-12-02 wer
+ *              This should make the view more portable.
+ * - v2.1.0   - method name changed elsewhere forced change here.                       - 2017-06-20 wer
+ *              ModelException handling added.
+ * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
+ * - v1.3.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - v1.2.0   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
+ * - v1.1.0   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
+ * - v1.0.0   - Initial non-beta version                                                - 11/12/2015 wer
+ * - v1.0.0β2 - Changed to use DI/IOC                                                   - 11/15/2014 wer
+ * - v1.0.0β1 - Initial version                                                         - 11/13/2014 wer
  */
 class PeopleView
 {

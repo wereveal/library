@@ -1,13 +1,16 @@
 <?php
+namespace Ritc\Library\Traits;
+
+use Ritc\Library\Helper\Arrays;
+
 /**
- * @brief     Common functions that could be used in several database classes.
- * @ingroup   lib_traits
- * @file      DbTraits.php
- * @namespace Ritc\Library\Traits
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.1.0
- * @date      2017-01-25 13:45:50
- * @note <b>Change Log</b>
+ * Common functions that could be used in several database classes.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v3.1.0
+ * @date    2017-01-25 13:45:50
+ * ## Change Log
  * - v3.1.0   - moved retrieveDbConfig to DbCommonTraits            - 2017-01-25 wer
  * - v3.0.0   - changed the db prefix way of working                - 2017-01-14 wer
  * - v2.2.0   - added new property lib_prefix and fixed bug         - 2017-01-13 wer
@@ -15,15 +18,6 @@
  * - v2.0.0   - Moved a several methods from DbModel to here        - 2016-03-18 wer
  * - v1.0.0   - first working version                               - 11/27/2015 wer
  * - v1.0.0ß1 - initial version                                     - 08/19/2015 wer
- */
-namespace Ritc\Library\Traits;
-
-use Ritc\Library\Helper\Arrays;
-
-/**
- * Class DbTraits
- * @class DbTraits
- * @package Ritc\Library\Traits
  */
 trait DbTraits
 {

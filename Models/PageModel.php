@@ -1,22 +1,4 @@
 <?php
-/**
- * @brief     Does all the database CRUD stuff for the page table plus other app/business logic.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/PageModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.1
- * @date      2017-12-12 11:41:25
- * @note <b>Change Log</b>
- * - v2.0.1   - ModelException changes reflected here                   - 2017-12-12 wer
- * - v2.0.0   - Refactored to use ModelException                        - 2017-06-17 wer
- * - v1.2.2   - DbUtilityTraits change reflected here                   - 2017-05-09 wer
- * - v1.2.1   - refactoring in DbUtiltity traits reflected here         - 2017-01-27 wer
- * - v1.2.0   - refactored to utilize the DbUtilityTraits               - 2016-04-01 wer
- * - v1.1.0   - refactoring changes to DbModel reflected here.          - 2016-03-19 wer
- * - v1.0.0   - take out of beta                                        - 11/27/2015 wer
- * - v1.0.0β1 - Initial version                                         - 10/30/2015 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -27,9 +9,21 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class PageModel.
- * @class   PageModel
- * @package Ritc\Library\Models
+ * Does all the database CRUD stuff for the page table plus other app/business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.0.1
+ * @date    2017-12-12 11:41:25
+ * ## Change Log
+ * - v2.0.1   - ModelException changes reflected here                   - 2017-12-12 wer
+ * - v2.0.0   - Refactored to use ModelException                        - 2017-06-17 wer
+ * - v1.2.2   - DbUtilityTraits change reflected here                   - 2017-05-09 wer
+ * - v1.2.1   - refactoring in DbUtiltity traits reflected here         - 2017-01-27 wer
+ * - v1.2.0   - refactored to utilize the DbUtilityTraits               - 2016-04-01 wer
+ * - v1.1.0   - refactoring changes to DbModel reflected here.          - 2016-03-19 wer
+ * - v1.0.0   - take out of beta                                        - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                                         - 10/30/2015 wer
  */
 class PageModel implements ModelInterface
 {

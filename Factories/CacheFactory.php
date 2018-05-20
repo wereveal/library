@@ -1,16 +1,4 @@
 <?php
-/**
- * @brief     Factory creating the cache.
- * @ingroup   lib_factories
- * @file      Ritc/Library/Factories/CacheFactory.php
- * @namespace Ritc\Library\Factories
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2018-05-12 21:42:20
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2018-05-12 wer
- * @todo Ritc/Library/Factories/CacheFactory.php - Everything
- */
 namespace Ritc\Library\Factories;
 
 use Ritc\Library\Traits\LogitTraits;
@@ -32,9 +20,14 @@ use Symfony\Component\Cache\Simple\Psr6Cache;
 use Symfony\Component\Cache\Simple\RedisCache;
 
 /**
- * Class CacheFactory.
- * @class   CacheFactory
- * @package Ritc\Library\Factories
+ * Class CacheFactory - creates one of several different Symfony\Component\Cache objects.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2018-05-12 21:42:20
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2018-05-12 wer
  */
 class CacheFactory
 {

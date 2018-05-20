@@ -1,22 +1,15 @@
 <?php
-/**
- * @brief     Functions that could be used in several people related cases.
- * @details
- * @ingroup   lib_traits
- * @file      Ritc/Library/Traits/PeopleTraits.php
- * @namespace Ritc\Library\Traits
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-12-08 12:17:39
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2016-12-08 wer
- */
 namespace Ritc\Library\Traits;
 
 /**
- * Class PeopleTraits.
- * @class   PeopleTraits
- * @package Ritc\Library\Traits
+ * Functions that could be used in several people related cases.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2016-12-08 12:17:39
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2016-12-08 wer
  */
 trait PeopleTraits
 {

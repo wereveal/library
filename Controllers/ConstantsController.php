@@ -1,29 +1,4 @@
 <?php
-/**
- * @brief     Controller for the Configuration page.
- * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/ConstantsController.php
- * @namespace Ritc\Library\Controllers
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.0-beta.4
- * @date      2018-04-21 13:26:46
- * @note <b>Change Log</b>
- * - v1.4.0-beta.4 - Refactoring of Trait reflected here             - 2018-04-21 wer
- * - v1.4.0-beta.3 - Name change of Trait.                           - 2017-06-20 wer
- * - v1.4.0-beta.2 - Refactoring of model reflected here             - 2017-06-19 wer
- * - v1.4.0-beta.1 - Refactoring elsewhere reflected here.           - 2017-06-07 wer
- * - v1.3.2        - bug fix                                         - 2016-04-11 wer
- * - v1.3.1        - bug fix                                         - 2016-03-08 wer
- * - v1.3.0        - added immutable code                            - 10/07/2015 wer
- * - v1.2.1        - code clean up                                   - 09/25/2015 wer
- * - v1.2.0        - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
- * - v1.1.0        - changed to implement ManagerControllerInterface - 01/16/2015 wer
- *                   This class should only be called from the main
- *                   manager controller which does session validation.
- * - v1.0.2        - changed to use the new Di class                 - 11/17/2014 wer
- * - v1.0.1        - Adjusted to match file name change              - 11/13/2014 wer
- * - v1.0.0        - Initial version                                 - 04/02/2014 wer
- */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -36,17 +11,34 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class ConstantsController
- * @class ConstantsController
- * @package Ritc\Library\Controllers
+ * Class ConstantsController - controller for the Configuration page.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.4.0-beta.4
+ * @date    2018-04-21 13:26:46
+ * ## Change Log
+ * - v1.4.0-beta.4 - Refactoring of Trait reflected here             - 2018-04-21 wer
+ * - v1.4.0-beta.3 - Name change of Trait.                           - 2017-06-20 wer
+ * - v1.4.0-beta.2 - Refactoring of model reflected here             - 2017-06-19 wer
+ * - v1.4.0-beta.1 - Refactoring elsewhere reflected here.           - 2017-06-07 wer
+ * - v1.3.0        - added immutable code                            - 10/07/2015 wer
+ * - v1.2.1        - code clean up                                   - 09/25/2015 wer
+ * - v1.2.0        - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
+ * - v1.1.0        - changed to implement ManagerControllerInterface - 01/16/2015 wer
+ *                   This class should only be called from the main
+ *                   manager controller which does session validation.
+ * - v1.0.2        - changed to use the new Di class                 - 11/17/2014 wer
+ * - v1.0.1        - Adjusted to match file name change              - 11/13/2014 wer
+ * - v1.0.0        - Initial version                                 - 04/02/2014 wer
  */
 class ConstantsController implements ManagerControllerInterface
 {
     use LogitTraits, ConfigControllerTraits;
 
-    /** @var ConstantsModel */
+    /** @var ConstantsModel $o_model */
     private $o_model;
-    /** @var ConstantsView */
+    /** @var ConstantsView $o_view */
     private $o_view;
 
     /**

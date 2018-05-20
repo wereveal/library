@@ -1,23 +1,17 @@
 <?php
-/**
- * @brief     Exceptions specific to database, application rules and business logic operations.
- * @ingroup   lib_exceptions
- * @file      Ritc/Library/Exceptions/CustomErrorException.php
- * @namespace Ritc\Library\Exceptions
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-07-15 12:41:34
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-07-15 wer
- */
 namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomError;
 
 /**
- * Class CustomErrorException.
- * @class   CustomErrorException
- * @package Ritc\Library\Basic
+ * Class CustomErrorException - generic custom errors.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2017-07-15 12:41:34
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2017-07-15 wer
  */
 class CustomErrorException extends CustomError
 {

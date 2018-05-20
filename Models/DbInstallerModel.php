@@ -1,16 +1,4 @@
 <?php
-/**
- * @brief     Installs default database tables and data..
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/DbInstallerModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-12-15 14:02:55
- * @note Change Log
- * - v1.0.0         - Initial Production version    - 2017-12-15 wer
- * - v1.0.0-alpha.0 - Initial version               - 2017-11-23 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -18,9 +6,15 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class DbInstallerModel.
- * @class   DbInstallerModel
- * @package Ritc\Library\Models
+ * Class DbInstallerModel - Installs default database tables and data..
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2017-12-15 14:02:55
+ * ## Change Log
+ * - v1.0.0         - Initial Production version    - 2017-12-15 wer
+ * - v1.0.0-alpha.0 - Initial version               - 2017-11-23 wer
  */
 class DbInstallerModel
 {

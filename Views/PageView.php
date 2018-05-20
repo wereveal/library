@@ -1,22 +1,4 @@
 <?php
-/**
- * @brief     View for the Page Admin page.
- * @ingroup   lib_views
- * @file      PageView.phpnamespace Ritc\Library\Views
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.1.0
- * @date      2017-06-20 11:46:05
- * @note <b>Change Log</b>
- * - v2.1.0   - method name changed elsewhere changed here                              - 2017-06-20 wer
- *              ModelException handling added
- * - v2.0.0   - name refactoring                                                        - 2017-05-14 wer
- * - v1.1.0   - Lot of bug fixes due to the addition of URLs                            - 2016-04-13 wer
- * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v1.0.2   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
- * - v1.0.1   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.0.0   - take out of beta                                                        - 11/27/2015 wer
- * - v1.0.0β1 - Initial version                                                         - 10/30/2015 wer
- */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -30,9 +12,21 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class PageView
- * @class   PageView
- * @package Ritc\Library\Views
+ * View for the Page Admin page.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.1.0
+ * @date    2017-06-20 11:46:05
+ * ## Change Log
+ * - v2.1.0   - method name changed elsewhere changed here                              - 2017-06-20 wer
+ *              ModelException handling added
+ * - v2.0.0   - name refactoring                                                        - 2017-05-14 wer
+ * - v1.4.0   - Lot of fixes due to the addition of URLs                                - 2016-04-13 wer
+ * - v1.3.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - v1.2.0   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
+ * - v1.1.0   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
+ * - v1.0.0   - take out of beta                                                        - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                                                         - 10/30/2015 wer
  */
 class PageView
 {

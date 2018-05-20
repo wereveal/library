@@ -1,32 +1,26 @@
 <?php
-/**
- * @brief     Manages Dependency injection / Inversion of Control for the site.
- * @details   It is expected that this will be initialized in the setup file at
- *            the very begining. All other services needed to be used
- *            throughout the app then get added to it. It can also be used as an alternative
- *            to CONSTANTS or globals.
- *            This is real basic. You put an instanced service in and pull a service
- *            out. The service must have been instanced already.
- * @ingroup   lib_services
- * @file      Di.php
- * @namespace Ritc\Library\Services
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.2.0+1
- * @date      2017-02-08 09:04:05
- * @note <b>Change Log</b>
- * - v1.2.0   - added functions to save variable values        - 2017-02-08 wer
- * - v1.1.0   - added function to return all objects           - 03/03/2016 wer
- * - v1.0.1   - removed unused use                             - 02/22/2016 wer
- * - v1.0.0   - it works, not sure why it wasn't out of beta   - 09/03/2015 wer
- *              Removed abstract Base as it wasn't being used
- * - v1.0.0β1 - initial version                                - 11/17/2014 wer
- */
 namespace Ritc\Library\Services;
 
 /**
- * Class Di does some basic dependency injection.
- * @class   Di
- * @package Ritc\Library\Services
+ * Manages Dependency injection / Inversion of Control for the site.
+ *
+ * It is expected that this will be initialized in the setup file at
+ * the very begining. All other services needed to be used
+ * throughout the app then get added to it. It can also be used as an alternative
+ * to CONSTANTS or globals.
+ * This is real basic. You put an instanced service in and pull a service
+ * out. The service must have been instanced already. * @package RITC_Libra
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.2.0+1
+ * @date    2017-02-08 09:04:05
+ * ## Change Log
+ * - v1.2.0   - added functions to save variable values        - 2017-02-08 wer
+ * - v1.1.0   - added function to return all objects           - 03/03/2016 wer
+ * - v1.0.0   - it works, not sure why it wasn't out of beta   - 09/03/2015 wer
+ *              Removed abstract Base as it wasn't being used
+ * - v1.0.0β1 - initial version                                - 11/17/2014 wer
  */
 class Di
 {

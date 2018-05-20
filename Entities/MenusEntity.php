@@ -1,24 +1,17 @@
 <?php
-/**
- * @brief     Basic accessors for a menu entity.
- * @ingroup   lib_entities
- * @file      Ritc/Library/Entities/MenusEntity.php
- * @namespace Ritc\Library\Entities
- * @author    William E Reveal
- * @version   1.0.0
- * @date      2016-02-23 11:09:18
- * @note <b>SQL for table<b>
- * - MySQL      - resources/sql/mysql/menus_mysql.sql
- * - PostgreSQL - resources/sql/postgresql/menus_pg.sql
- */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
 /**
  * Class MenusEntity
- * @class   MenusEntity
- * @package Ritc\Library\Entities
+ *
+ * @package RITC_Library
+ * @author  William E Reveal
+ * @version v1.0.0
+ * @date    2016-02-23 11:09:18
+ * ## Change Log 
+ * - v1.0.0 - Initial Version                                   - 2016-02-23 wer
  */
 class MenusEntity implements EntityInterface
 {

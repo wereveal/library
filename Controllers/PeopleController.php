@@ -1,25 +1,4 @@
 <?php
-/**
- * @brief     Controller for the Configuration page.
- * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/PeopleController.phpnamespace Ritc\Library\Controllers
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.2
- * @date      2018-04-21 13:29:13
- * @note <b>Change Log</b>
- * - v1.1.2   - trait change reflected here                      - 2018-04-21 wer
- * - v1.1.1   - bug fix                                          - 2017-12-05 wer
- * - v1.1.0   - updated to use ConfigControllerTraits            - 2017-11-28 wer
- * - v1.0.2   - bug fix                                          - 2016-03-08 wer
- * - v1.0.1   - bug fixes                                        - 11/27/2015 wer
- * - v1.0.0   - initial working version                          - 11/12/2015 wer
- * - v1.0.0β4 - Realized this is nowhere near done               - 01/06/2015 wer
- *                This code was copied from somewhere else and
- *                not modified to fit the need.
- * - v1.0.0β3 - refactoring of namespaces                        - 12/05/2014 wer
- * - v1.0.0β2 - Adjusted to match file name change               - 11/13/2014 wer
- * - v1.0.0β1 - Initial version                                  - 04/02/2014 wer
- */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -33,9 +12,22 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PeopleView;
 
 /**
- * Class PeopleController.
- * @class   PeopleController
- * @package Ritc\Library\Controllers
+ * Class PeopleController - Controller for the Configuration page.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.1.2
+ * @date    2018-04-21 13:29:13
+ * ## Change Log
+ * - v1.1.2   - trait change reflected here                      - 2018-04-21 wer
+ * - v1.1.0   - updated to use ConfigControllerTraits            - 2017-11-28 wer
+ * - v1.0.0   - initial working version                          - 11/12/2015 wer
+ * - v1.0.0β4 - Realized this is nowhere near done               - 01/06/2015 wer
+ *              This code was copied from somewhere else and
+ *              not modified to fit the need.
+ * - v1.0.0β3 - refactoring of namespaces                        - 12/05/2014 wer
+ * - v1.0.0β2 - Adjusted to match file name change               - 11/13/2014 wer
+ * - v1.0.0β1 - Initial version                                  - 04/02/2014 wer
  */
 class PeopleController implements ManagerControllerInterface
 {

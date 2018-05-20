@@ -1,22 +1,15 @@
 <?php
-/**
- * @brief     Class used to set up classes that look to establish the location of a file.
- * @ingroup   lib_interfaces
- * @file      Ritc/Library/Interfaces/LocationInterface.php
- * @namespace Ritc\Library\Interfaces
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2011-06-14 15:11:26
- * @note <b>Change Log</b>
- * - v2.0.0 Changed to an interface 12/19/2013 wer
- * - v1.1.0 06/14/2011 wer
- */
 namespace Ritc\Library\Interfaces;
 
 /**
  * Interface LocationInterface.
- * @class LocationInterface
- * @package Ritc\Library\Interfaces
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2011-06-14 15:11:26
+ * ## Change Log
+ * - v1.0.0 Initial Version             - 2011-06-14 wer
  */
 interface LocationInterface
 {

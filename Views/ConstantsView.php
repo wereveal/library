@@ -1,12 +1,20 @@
 <?php
+namespace Ritc\Library\Views;
+
+use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Models\ConstantsModel;
+use Ritc\Library\Helper\ViewHelper;
+use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\ConfigViewTraits;
+use Ritc\Library\Traits\LogitTraits;
+
 /**
- * @brief     View for the Configuration page.
- * @ingroup   lib_views
- * @file      ConstantsView.phpnamespace Ritc\Library\Views
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.2.0
- * @date      2017-06-20 11:43:56
- * @note <b>Change Log</b>
+ * View for the Configuration page.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.2.0
+ * @date    2017-06-20 11:43:56
+ * ## Change Log
  * - v2.2.0   - refactoring elsewhere made changes here.                                - 2017-06-20 wer
  * - v2.1.0   - Updated to match ViewTraits and fix misc bugs.                          - 2017-06-07 wer
  * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
@@ -21,20 +29,6 @@
  * - v1.0.0β3 - changed to use the new Di class                                         - 11/17/2014 wer
  * - v1.0.0β2 - changed to use Base class and inject database object                    - 09/24/2014 wer
  * - v1.0.0β1 - Initial version                                                         - 04/02/2014 wer
- */
-namespace Ritc\Library\Views;
-
-use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Models\ConstantsModel;
-use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
-
-/**
- * Class ConstantsView
- * @class   ConstantsView
- * @package Ritc\Library\Views
  */
 class ConstantsView
 {

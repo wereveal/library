@@ -1,16 +1,4 @@
 <?php
-/**
- * @brief     Tests the NavgroupsModel class..
- * @ingroup   lib_tests
- * @file      Ritc/Library/Tests/NavgroupsModelTester.php
- * @namespace Ritc\Library\Tests
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-06-09 10:14:17
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-06-09 wer
- * @todo Ritc/Library/Tests/NavgroupsModelTester.php - Everything
- */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Models\NavgroupsModel;
@@ -19,9 +7,15 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\TesterTraits;
 
 /**
- * Class NavgroupsModelTester.
- * @class   NavgroupsModelTester
- * @package Ritc\Library\Tests
+ * Tests the NavgroupsModel class.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2017-06-09 10:14:17
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2017-06-09 wer
+ * @todo Ritc/Library/Tests/NavgroupsModelTester.php - Everything
  */
 class NavgroupsModelTester
 {

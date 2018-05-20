@@ -1,27 +1,17 @@
 <?php
-/**
- * @brief     Entity to map the Router to the Groups.
- * @ingroup   lib_entities
- * @file      Ritc/Library/Entities/RoutesGroupMapEntity.php
- * @namespace Ritc\Library\Entities
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0β1
- * @date      2015-09-03 12:47:56
- * @note <b>Change Log</b>
- *      v1.0.0β1 - Initial version                             - 09/03/2015 wer
- *      </pre>
- * @note <b>SQL for table<b>
- * - MySQL      - resources/sql/mysql/routes_group_map_mysql.sql
- * - PostgreSQL - resources/sql/postgresql/routes_group_map_pg.sql
- */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
 /**
- * Class RoutesGroupMapEntity.
- * @class   RoutesGroupMapEntity
- * @package Ritc\Library\Entities
+ * Class RoutesGroupMapEntity - Entity to map the Router to the Groups.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-beta.1
+ * @date    2015-09-03 12:47:56
+ * ## Change Log
+ *      v1.0.0-beta.1 - Initial version                             - 09/03/2015 wer
  */
 class RoutesGroupMapEntity implements EntityInterface
 {

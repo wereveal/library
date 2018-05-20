@@ -1,35 +1,24 @@
 <?php
-/**
- * @brief     For managing sessions.
- * @ingroup   lib_services
- * @file      Session.php
- * @namespace Ritc\Library\Services
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.3.2
- * @date      2017-07-06 21:13:04
- * @note <b>Change Log</b>
- * - v1.3.2 - bug fix                                               - 2017-07-06 wer
- * - v1.3.1 - added the ability to use the global constant          - 10/06/2015 wer
- *            SESSION_IDLE_TIME if it is set.
- * - v1.3.0 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
- * - v1.2.0 - added a couple new method to unset a session var      - 01/16/2015 wer
- *            and a shortcut to reset the session.
- * - v1.1.5 - added phpDoc comments                                 - 01/13/2015 wer
- * - v1.1.4 - changed session validation defaults                   - 01/06/2015 wer
- * - v1.1.3 - moved to Services namespace                           - 11/15/2014 wer
- * - v1.1.2 - changed to implement the changes in Base class        - 09/23/2014 wer
- * - v1.1.1 - Bug fixes                                             - 12/31/2013 wer
- * - v1.1.0 - Unknown Changes                                       - 06/14/2011 wer
- */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Exceptions\ServiceException;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class Session does some basic session management.
- * @class Session
- * @package Ritc\Library\Services
+ * For basic managing sessions.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.4.1
+ * @date    2017-07-06 21:13:04
+ * ## Change Log
+ * - v1.4.1 - bug fix                                               - 2017-07-06 wer
+ * - v1.4.0 - added the ability to use the global constant          - 10/06/2015 wer
+ *            SESSION_IDLE_TIME if it is set.
+ * - v1.3.0 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
+ * - v1.2.0 - added a couple new method to unset a session var      - 01/16/2015 wer
+ *            and a shortcut to reset the session.
+ * - v1.1.0 - Unknown Changes                                       - 06/14/2011 wer
  */
 class Session
 {

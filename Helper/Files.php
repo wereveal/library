@@ -1,17 +1,20 @@
 <?php
+namespace Ritc\Library\Helper;
+
+use Ritc\Library\Interfaces\LocationInterface;
+use Ritc\Library\Traits\LogitTraits;
+
 /**
- * @brief     Determines the path to the file.
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/Files.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   4.3.1+1
- * @date      2016-04-21 10:27:57
+ * Class Files - Determines the path to the file
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v4.3.1+1
+ * @date    2016-04-21 10:27:57
  * @note The constants with _DIR_NAME should correspond to dir names in
- *     the site theme or namespace (e.g. templates are in namespace). If a directory
- *     is missing, this could cause a fatal error.
- *     </pre>
- * @note <b>Change Log</b>
+ *       the site theme or namespace (e.g. templates are in namespace). If a directory
+ *       is missing, this could cause a fatal error.
+ * ## Change Log
  * - v4.3.1 - fixed bug (long standing)                                             - 2016-04-21 wer
  * - v4.3.0 - added an addition possible file location                              - 2016-04-20 wer
  * - v4.2.1 - moved to the namespace Ritc\Library\Helper                            - 11/15/2014 wer
@@ -29,16 +32,6 @@
  * - v4.1.0 - New RITC Library Layout serious changes wer
  *            BUT method results and names were not changed
  * - v4.0.0 - FIG standards (mostly) wer
- */
-namespace Ritc\Library\Helper;
-
-use Ritc\Library\Interfaces\LocationInterface;
-use Ritc\Library\Traits\LogitTraits;
-
-/**
- * Class Files
- * @class Files
- * @package Ritc\Library\Helper
  */
 class Files implements LocationInterface
 {

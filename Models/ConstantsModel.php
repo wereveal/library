@@ -1,34 +1,4 @@
 <?php
-/**
- * @brief     Creates a Model object.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/ConstantsModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.0.3
- * @date      2018-04-03 15:55:17
- * @note      see ConstantsEntity for database table definition.
- * @note <b>Change Log</b>
- * - v3.0.3 - bug fixes, cleaned up code                                    - 2018-04-03 wer
- * - v3.0.2 - ModelException changes reflected here                         - 2017-12-12 wer
- * - v3.0.1 - Bug fixes                                                     - 2017-07-12 wer
- * - v3.0.0 - Refactored to use ModelException and bug fixes                - 2017-06-14 wer
- * - v2.5.0 - Removed unused property and setting of same                   - 2017-05-18 wer
- * - v2.4.2 - DbUtilityTraits change reflected here                         - 2017-05-09 wer
- * - v2.4.1 - Refactoring of file structure reflected here                  - 2017-02-15 wer
- * - v2.4.0 - Implementing more of the DbUtilityTraits                      - 2017-01-27 wer
- * - v2.3.1 - Bug fix in create mysql table                                 - 2017-01-13 wer
- * - v2.3.0 - Refactoring of DbModel reflected here                         - 2016-03-18 wer
- * - v2.2.0 - Refactoring to provide better pgsql compatibility             - 11/22/2015 wer
- * - v2.1.0 - No longer extends Base class but uses LogitTraits             - 08/19/2015 wer
- * - v2.0.1 - Refactoring of Class Arrays required changes here             - 07/31/2015 wer
- * - v2.0.0 - Renamed to match functionality                                - 01/17/2015 wer
- * - v1.1.1 - Namespace changes elsewhere required changes here             - 11/15/2014 wer
- *              Doesn't use DI/IOC because of where it is initialized
- * - v1.1.0 - Changed from Entity to Model                                  - 11/13/2014 wer
- * - v1.0.1 - minor change to the comments                                  - 09/11/2014 wer
- * - v1.0.0 - Initial version                                               - 04/01/2014 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -41,8 +11,28 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class ConstantsModel.
- * @class   ConstantsModel
- * @package Ritc\Library\Models
+ * Does all the database CRUD stuff for the constants table plus 
+ * other app/business logic that sets up the app with a bunch of required constants.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v3.0.3
+ * @date    2018-04-03 15:55:17
+ * @note      see ConstantsEntity for database table definition.
+ * ## Change Log
+ * - v3.0.3 - bug fixes, cleaned up code                                    - 2018-04-03 wer
+ * - v3.0.0 - Refactored to use ModelException and bug fixes                - 2017-06-14 wer
+ * - v2.5.0 - Removed unused property and setting of same                   - 2017-05-18 wer
+ * - v2.4.2 - DbUtilityTraits change reflected here                         - 2017-05-09 wer
+ * - v2.4.1 - Refactoring of file structure reflected here                  - 2017-02-15 wer
+ * - v2.4.0 - Implementing more of the DbUtilityTraits                      - 2017-01-27 wer
+ * - v2.3.0 - Refactoring of DbModel reflected here                         - 2016-03-18 wer
+ * - v2.2.0 - Refactoring to provide better pgsql compatibility             - 11/22/2015 wer
+ * - v2.1.0 - No longer extends Base class but uses LogitTraits             - 08/19/2015 wer
+ * - v2.0.1 - Refactoring of Class Arrays required changes here             - 07/31/2015 wer
+ * - v2.0.0 - Renamed to match functionality                                - 01/17/2015 wer
+ * - v1.1.1 - Namespace changes elsewhere required changes here             - 11/15/2014 wer
+ * - v1.1.0 - Changed from Entity to Model                                  - 11/13/2014 wer
+ * - v1.0.0 - Initial version                                               - 04/01/2014 wer
  */
 class ConstantsModel implements ModelInterface
 {

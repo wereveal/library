@@ -1,16 +1,4 @@
 <?php
-/**
- * @brief     Multi-table model manipulations associated with the navgoups.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/NavgroupsComplexModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-12-12 10:07:24
- * @note Change Log
- * - v1.0.0         - taking it into production     - 2017-12-12 wer
- * - v1.0.0-alpha.0 - Initial version               - 2017-06-11 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -19,9 +7,15 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class NavgroupsComplexModel.
- * @class   NavgroupsComplexModel
- * @package Ritc\Library\Models
+ * Class NavgroupsComplexModel - Multi-table model manipulations associated with the navgoups.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2017-12-12 10:07:24
+ * ## Change Log
+ * - v1.0.0         - taking it into production     - 2017-12-12 wer
+ * - v1.0.0-alpha.0 - Initial version               - 2017-06-11 wer
  */
 class NavgroupsComplexModel
 {

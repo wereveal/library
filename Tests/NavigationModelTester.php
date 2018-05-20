@@ -1,16 +1,4 @@
 <?php
-/**
- * @brief     NavigationModel class tester.
- * @ingroup   lib_tests
- * @file      Ritc/Library/Tests/NavigationModelTester.php
- * @namespace Ritc\Library\Tests
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2017-06-09 10:15:23
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version        - 2017-06-09 wer
- * @todo Ritc/Library/Tests/NavigationModelTester.php - Everything
- */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
@@ -19,9 +7,15 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class NavigationModelTester.
- * @class   NavigationModelTester
- * @package Ritc\Library\Tests
+ * NavigationModel class tester.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2017-06-09 10:15:23
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version        - 2017-06-09 wer
+ * @todo Ritc/Library/Tests/NavigationModelTester.php - Everything
  */
 class NavigationModelTester extends Tester
 {

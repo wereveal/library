@@ -1,16 +1,4 @@
 <?php
-/**
- * @brief     Tests the Page Model Class.
- * @ingroup   lib_tests
- * @file      PageModelTester.php
- * @namespace Ritc\Library\Tests
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-03-05 10:44:05
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
- * - v0.1.0         - Initial version                - unknown wer
- */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
@@ -21,8 +9,15 @@ use Ritc\Library\Models\PageModel;
 
 /**
  * Class PageModelTester.
- * @class   PageModelTester
- * @package Ritc\Library\Tests
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2016-03-05 10:44:05
+ * @todo    Rewrite it all
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
+ * - v0.1.0         - Initial version                - unknown wer
  */
 class PageModelTester extends Tester
 {

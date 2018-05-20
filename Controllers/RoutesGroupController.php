@@ -1,28 +1,21 @@
 <?php
-/**
- * @brief     Controller for the Routes to Group Admin page.
- * @detail    Allows one to map which routes have specific group access.
- *            If you are not in the group, you can't go there.
- * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/RoutesGroupController.phpnamespace Ritc\Library\Controllers
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2015-08-04 04:25:11
- * @pre       The route to this controller has to already be in the database
- *            and should not be able to be deleted.
- * @note <b>Change Log</b>
- * - v1.0.0-alpha.0 - Initial version                                       - 08/04/2015 wer
- * @TODO everything
- */
-
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 
 /**
- * Class RoutesGroupController.
- * @class   RoutesGroupController
- * @package Ritc\Library\Controllers
+ * Class RoutesGroupController - Controller for the Routes to Group Admin page.
+ * @details Allows one to map which routes have specific group access.
+ *          If you are not in the group, you can't go there.
+ *          The route to this controller has to already be in the database
+ *          and should not be able to be deleted.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2015-08-04 04:25:11
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version                                       - 08/04/2015 wer
  */
 class RoutesGroupController implements ManagerControllerInterface
 {

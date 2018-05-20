@@ -5,6 +5,11 @@ use Ritc\Library\Basic\Tester;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 
+/**
+ * Class UrlsModelTester
+ *
+ * @package RITC_Library
+ */
 class UrlsModelTester extends Tester
 {
     /** @var \Ritc\Library\Models\UrlsModel  */

@@ -1,21 +1,4 @@
 <?php
-/**
- * @brief     The view for the urls manager.
- * @ingroup   lib_views
- * @file      UrlsView.php
- * @namespace Ritc\Library\Views
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2017-06-20 11:53:31
- * @note Change Log
- * - v1.1.0         - ViewHelper renaming of a method reflected here.   - 2017-06-20 wer
- *                    ModelException added
- * - v1.0.0         - Out of beta                                       - 2017-06-03 wer
- * - v1.0.0-beta.2  - Change in url display                             - 2017-06-02 wer
- * - v1.0.0-beta.1  - Name refactoring                                  - 2017-05-14 wer
- * - v1.0.0-beta.0  - Initial working version                           - 2016-04-13 wer
- * - v1.0.0-alpha.0 - Initial version                                   - 2016-04-11 wer
- */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -27,8 +10,15 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class UrlsView.
- * @class   UrlsView
- * @package Ritc\Library\Views
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.1.0
+ * @date    2017-06-20 11:53:31
+ * ## Change Log
+ * - v1.1.0         - ViewHelper renaming of a method reflected here.   - 2017-06-20 wer
+ *                    ModelException added
+ * - v1.0.0         - Out of beta                                       - 2017-06-03 wer
  */
 class UrlsView
 {
@@ -46,9 +36,7 @@ class UrlsView
         $this->setupElog($o_di);
         $this->setupView($o_di);
         $this->o_urls_model = new UrlsModel($this->o_db);
-        if (DEVELOPER_MODE) {
-            $this->o_urls_model->setElog($this->o_elog);
-        }
+        $this->o_urls_model->setupElog($o_di);
     }
 
     /**

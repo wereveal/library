@@ -1,16 +1,4 @@
 <?php
-/**
- * @brief     Tests the Group Model Class.
- * @ingroup   lib_tests
- * @file      PeopleGroupMapModelTester.php
- * @namespace Ritc\Library\Tests
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2016-03-05 10:44:05
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
- * - v0.1.0         - Initial version                - unknown wer
- */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
@@ -21,9 +9,16 @@ use Ritc\Library\Services\Elog;
 use Ritc\Library\Models\PeopleGroupMapModel;
 
 /**
- * Class PeopleGroupMapModelTester.
- * @class   PeopleGroupMapModelTester
- * @package Ritc\Library\Tests
+ * Tests the Group Model Class.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2016-03-05 10:44:05
+ * @todo    Rewrite the whole thing
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
+ * - v0.1.0         - Initial version                - unknown wer
  */
 class PeopleGroupMapModelTester extends Tester
 {

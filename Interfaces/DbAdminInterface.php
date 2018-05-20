@@ -1,22 +1,15 @@
 <?php
-/**
- * @brief     Class used to set up database admin classes.
- * @details   Started because of the guilt trip that interfaces are all that.
- * @ingroup   lib_interfaces
- * @file      Ritc/Library/Interfaces/DbAdminInterface.php
- * @namespace Ritc\Library\Interfaces
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2014-01-30 14:18:05
- * @note <b>Change Log</b>
- * - v1.0.0 initial versioning 01/30/2014 wer
- */
 namespace Ritc\Library\Interfaces;
 
 /**
  * Interface DbAdminInterface
- * @class   DbAdminInterface
- * @package Ritc\Library\Interfaces
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2014-01-30 14:18:05
+ * ## Change Log
+ * - v1.0.0 initial versioning 01/30/2014 wer
  */
 interface DbAdminInterface
 {

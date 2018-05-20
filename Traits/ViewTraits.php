@@ -1,13 +1,29 @@
 <?php
+namespace Ritc\Library\Traits;
+
+use Ritc\Library\Exceptions\FactoryException;
+use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Factories\TwigFactory;
+use Ritc\Library\Helper\AuthHelper;
+use Ritc\Library\Helper\ExceptionHelper;
+use Ritc\Library\Helper\RoutesHelper;
+use Ritc\Library\Helper\ViewHelper;
+use Ritc\Library\Models\NavComplexModel;
+use Ritc\Library\Models\NavgroupsModel;
+use Ritc\Library\Models\PageComplexModel;
+use Ritc\Library\Models\UrlsModel;
+use Ritc\Library\Services\DbModel;
+use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Router;
+use Ritc\Library\Services\Session;
+
 /**
- * @brief     Common functions for views.
- * @ingroup   lib_traits
- * @file      ViewTraits.php
- * @namespace Ritc\Library\Traits
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2018-05-14 17:38:51
- * @note <b>Change Log</b>
+ * Common functions for views.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.0.0
+ * @date    2018-05-14 17:38:51
+ * ## Change Log
  * - v2.0.0         - Added caching of some data that is used commonly in a view.
  *                    Added a new method for setting the url_id based on record id
  *                    which fixes a bug.
@@ -40,29 +56,6 @@
  *                    May cause some complaints from those that don't fix this.
  * - v1.0.0-alpha.1 - close to working version                                                  - 2016-03-10 wer
  * - v1.0.0-alpha.0 - inital version                                                            - 2016-02-22 wer
- */
-namespace Ritc\Library\Traits;
-
-use Ritc\Library\Exceptions\FactoryException;
-use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Factories\TwigFactory;
-use Ritc\Library\Helper\AuthHelper;
-use Ritc\Library\Helper\ExceptionHelper;
-use Ritc\Library\Helper\RoutesHelper;
-use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Models\NavComplexModel;
-use Ritc\Library\Models\NavgroupsModel;
-use Ritc\Library\Models\PageComplexModel;
-use Ritc\Library\Models\UrlsModel;
-use Ritc\Library\Services\DbModel;
-use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Router;
-use Ritc\Library\Services\Session;
-
-/**
- * Class ViewTraits
- * @class   ViewTraits
- * @package Ritc\Library\Traits
  */
 trait ViewTraits
 {

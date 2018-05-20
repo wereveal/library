@@ -1,18 +1,4 @@
 <?php
-/**
- * @brief     Tests the Constants Model Class.
- * @details   Tests the Constants Model Class.
- * @ingroup   lib_tests
- * @file      ConstantsModelTester.php
- * @namespace Ritc\Library\Tests
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-06-14 16:27:15
- * @note Change Log
- * - v1.0.0         - Initial working version        - 2017-06-14 wer
- * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
- * - v0.1.0         - Initial version                - unknown wer
- */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -22,9 +8,16 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\TesterTraits;
 
 /**
- * Class ConstantsModelTester.
- * @class   ConstantsModelTester
- * @package Ritc\Library\Tests
+ * Tests the Constants Model Class.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2017-06-14 16:27:15
+ * ## Change Log
+ * - v1.0.0         - Initial working version        - 2017-06-14 wer
+ * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
+ * - v0.1.0         - Initial version                - unknown wer
  */
 class ConstantsModelTester
 {

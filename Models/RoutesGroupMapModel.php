@@ -1,20 +1,4 @@
 <?php
-/**
- * @brief     Does all the database CRUD stuff.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/RoutesGroupMapModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2017-12-12 11:39:25
- * @note <b>Change Log</b>
- * - v1.0.0         - Initial production version                - 2017-12-12 wer
- * - v1.0.0-alpha.4 - Refactored to use ModelException          - 2017-06-18 wer
- * - v1.0.0-alpha.3 - DbUtilityTraits change reflected here     - 2017-05-09 wer
- * - v1.0.0-alpha.2 - Bug fix                                   - 2017-01-27 wer
- * - v1.0.0-alpha.1 - Bug Fix to read method to match interface - 2016-03-24 wer
- * - v1.0.0-alpha.0 - Initial version                           - 08/01/2015 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -25,9 +9,17 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class RoutesGroupMapModel.
- * @class   RoutesGroupMapModel
- * @package Ritc\Library\Models
+ * Does all the Model expected operations, database CRUD and business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2017-12-12 11:39:25
+ * ## Change Log
+ * - v1.0.0         - Initial production version                - 2017-12-12 wer
+ * - v1.0.0-alpha.4 - Refactored to use ModelException          - 2017-06-18 wer
+ * - v1.0.0-alpha.3 - DbUtilityTraits change reflected here     - 2017-05-09 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 08/01/2015 wer
  */
 class RoutesGroupMapModel implements ModelInterface
 {

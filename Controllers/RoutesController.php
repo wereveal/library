@@ -1,23 +1,4 @@
 <?php
-/**
- * @brief     Controller for the Routes Admin page.
- * @ingroup   lib_controllers
- * @file      Ritc/Library/Controllers/RoutesController.phpnamespace Ritc\Library\Controllers
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.2.0
- * @date      2016-04-13 08:52:26
- * @pre       The route to this controller has to already be in the database and should not be able to be deleted.
- * @note <b>Change Log</b>
- * - v2.2.0   - Refactored to work with the Urls class/model - 2016-04-13 wer
- * - v2.1.1   - bug fix                                      - 2016-03-08 wer
- * - v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
- *                If the route doesn't end with a file ext
- *                add a slash to the end as well.
- * - v2.0.0   - renamed                                      - 09/26/2015 wer
- * - v1.0.0   - first working version                        - 01/28/2015 wer
- * - v1.0.0β2 - refactored for namespaces                    - 12/05/2014 wer
- * - v1.0.0β1 - Initial version                              - 11/14/2014 wer
- */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Strings;
@@ -31,9 +12,24 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RoutesView;
 
 /**
- * Class RoutesController
- * @class   RoutesController
- * @package Ritc\Library\Controllers
+ * Class RoutesController - Controller for the Routes Admin page.
+ * The route to this controller has to already be in the database and 
+ * should not be able to be deleted.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.2.0
+ * @date    2016-04-13 08:52:26
+ * ## Change Log
+ * - v2.2.0   - Refactored to work with the Urls class/model - 2016-04-13 wer
+ * - v2.1.1   - bug fix                                      - 2016-03-08 wer
+ * - v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
+ *                If the route doesn't end with a file ext
+ *                add a slash to the end as well.
+ * - v2.0.0   - renamed                                      - 09/26/2015 wer
+ * - v1.0.0   - first working version                        - 01/28/2015 wer
+ * - v1.0.0β2 - refactored for namespaces                    - 12/05/2014 wer
+ * - v1.0.0β1 - Initial version                              - 11/14/2014 wer
  */
 class RoutesController implements ManagerControllerInterface
 {

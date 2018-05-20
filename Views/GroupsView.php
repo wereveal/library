@@ -1,21 +1,4 @@
 <?php
-/**
- * @brief     View for the Groups Admin page.
- * @ingroup   lib_views
- * @file      GroupsView.phpnamespace Ritc\Library\Views
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.1.0
- * @date      2017-06-20 11:44:34
- * @note <b>Change Log</b>
- * - v2.1.0   - Name changes elsewhere updated here.                                    - 2017-06-20 wer
- * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
- * - v1.0.3   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v1.0.2   - Bug fix to implementation of LIB_TWIG_PREFIX                            - 2016-04-10 wer
- * - v1.0.1   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.0.0   - First working version                                                   - 11/27/2015 wer
- * - v1.0.0β1 - Initial version                                                         - 01/28/2015 wer
- * @todo rewrite the verify
- */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -25,9 +8,20 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class GroupsView
- * @class   GroupsView
- * @package Ritc\Library\Views
+ * View for the Groups Admin page.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.1.0
+ * @date    2017-06-20 11:44:34
+ * ## Change Log
+ * - v2.1.0   - Name changes elsewhere updated here.                                    - 2017-06-20 wer
+ * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
+ * - v1.3.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - v1.2.0   - Bug fix to implementation of LIB_TWIG_PREFIX                            - 2016-04-10 wer
+ * - v1.1.0   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
+ * - v1.0.0   - First working version                                                   - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                                                         - 01/28/2015 wer
+ * @todo rewrite the verify
  */
 class GroupsView
 {

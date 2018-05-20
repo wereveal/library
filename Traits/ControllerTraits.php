@@ -1,21 +1,4 @@
 <?php
-/**
- * @brief     Common functions used by controllers.
- * @ingroup   lib_traits
- * @file      ControllerTraits.php
- * @namespace Ritc\Library\Traits
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.3
- * @date      2017-12-02 08:51:44
- * @note Change Log
- * - v1.1.3         - cleaned up some code, no functional changes               - 2017-12-02 wer
- * - v1.1.2         - added a commonly used property route_class                - 2017-05-10 wer
- * - v1.1.1         - added a commonly used property                            - 2017-02-06 wer
- * - v1.1.0         - added a commonly used property                            - 2016-09-09 wer
- * - v1.0.0         - added one more commonly used property and out of alpha    - 2016-09-03 wer
- * - v1.0.0-alpha.1 - added a couple more commonly used properties and setters  - 2016-04-15 wer
- * - v1.0.0-alpha.0 - Initial version                                           - 2016-04-11 wer
- */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Services\DbModel;
@@ -24,9 +7,20 @@ use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 
 /**
- * Trait ControllerTraits.
- * @class   ControllerTraits
- * @package Ritc\Library\Traits
+ * Common functions used by controllers.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.4.0
+ * @date    2017-12-02 08:51:44
+ * ## Change Log
+ * - v1.4.0         - cleaned up some code, no functional changes               - 2017-12-02 wer
+ * - v1.3.0         - added a commonly used property route_class                - 2017-05-10 wer
+ * - v1.2.0         - added a commonly used property                            - 2017-02-06 wer
+ * - v1.1.0         - added a commonly used property                            - 2016-09-09 wer
+ * - v1.0.0         - added one more commonly used property and out of alpha    - 2016-09-03 wer
+ * - v1.0.0-alpha.1 - added a couple more commonly used properties and setters  - 2016-04-15 wer
+ * - v1.0.0-alpha.0 - Initial version                                           - 2016-04-11 wer
  */
 trait ControllerTraits
 {

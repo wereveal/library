@@ -1,23 +1,17 @@
 <?php
-/**
- * @brief     Class used to set up controller classes in the manager.
- * @ingroup   lib_interfaces
- * @file      Ritc/Library/Interfaces/ManagerControllerInterface.php
- * @namespace Ritc\Library\Interfaces
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.0
- * @date      2017-01-14 09:32:39
- * @note <b>Change Log</b>
- * - v2.0.0 - changed name of method render to route to reflect intended purpose    - 2017-01-14 wer
- * - v1.0.0 - initial version                                                       - 01/11/2015 wer
- * @todo refactor - rename interface to LibraryControllerInterface or ConfigControllerInterface
- */
 namespace Ritc\Library\Interfaces;
 
 /**
  * Interface ManagerControllerInterface
- * @class   ManagerControllerInterface
- * @package Ritc\Library\Interfaces
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.0.0
+ * @date    2017-01-14 09:32:39
+ * ## Change Log
+ * - v2.0.0 - changed name of method render to route to reflect intended purpose    - 2017-01-14 wer
+ * - v1.0.0 - initial version                                                       - 01/11/2015 wer
+ * @todo refactor - fork interface to ConfigControllerInterface
  */
 interface ManagerControllerInterface
 {

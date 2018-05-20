@@ -1,23 +1,4 @@
 <?php
-/**
- * @brief     Does multi-table queries.
- * @ingroup   lib_models
- * @file      PageComplexModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.6
- * @date      2017-06-17 12:12:02
- * @note Change Log
- * - v1.0.0-alpha.7 - bug fix                           - 2018-04-17 wer
- * - v1.0.0-alpha.6 - variable name clarification       - 2018-04-12 wer
- * - v1.0.0-alpha.5 - refactored to use ModelException  - 2017-06-17 wer
- * - v1.0.0-alpha.4 - bug fixes                         - 2017-05-16 wer
- * - v1.0.0-alpha.3 - bug fixes                         - 2017-02-11 wer
- * - v1.0.0-alpha.2 - refactoring reflected here        - 2017-01-27 wer
- * - v1.0.0-alpha.1 - bug fix                           - 2016-04-28 wer
- * - v1.0.0-alpha.0 - Initial version                   - 2016-04-08 wer
- * - TODO take out of alpha
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -28,9 +9,19 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class PageComplexModel.
- * @class   PageComplexModel
- * @package Ritc\Library\Models
+ * Does multi-table queries and applies necessary business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.6
+ * @date    2017-06-17 12:12:02
+ * ## Change Log
+ * - v1.0.0-alpha.7 - bug fix                           - 2018-04-17 wer
+ * - v1.0.0-alpha.6 - variable name clarification       - 2018-04-12 wer
+ * - v1.0.0-alpha.5 - refactored to use ModelException  - 2017-06-17 wer
+ * - v1.0.0-alpha.2 - refactoring reflected here        - 2017-01-27 wer
+ * - v1.0.0-alpha.0 - Initial version                   - 2016-04-08 wer
+ * @todo take out of alpha
  */
 class PageComplexModel
 {

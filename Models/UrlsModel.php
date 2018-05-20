@@ -1,21 +1,4 @@
 <?php
-/**
- * @brief     Handles all the CRUD for the urls table.
- * @ingroup   ritc_models
- * @file      UrlsModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.1
- * @date      2017-12-12 11:35:42
- * @note Change Log
- * - v1.1.1         - ModelException changes reflected here - 2017-12-12 wer
- * - v1.1.0         - should have stayed in beta            - 2017-06-19 wer
- * - v1.0.0         - Out of beta                           - 2017-06-03 wer
- * - v1.0.0-beta.2  - Refactoring from DbUtilityTraits      - 2017-05-09 wer
- * - v1.0.0-beta.1  - Bug fix caused by changes elsewhere   - 2017-01-27 wer
- * - v1.0.0-beta.0  - Initial working version               - 2016-04-13 wer
- * - v1.0.0-alpha.0 - Initial version                       - 2016-04-10 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -26,9 +9,18 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class UrlsModel.
- * @class   UrlsModel
- * @package Ritc\Library\Models
+ * Handles all the CRUD for the urls table.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.1.1
+ * @date    2017-12-12 11:35:42
+ * ## Change Log
+ * - v1.1.1         - ModelException changes reflected here - 2017-12-12 wer
+ * - v1.1.0         - should have stayed in beta            - 2017-06-19 wer
+ * - v1.0.0         - Out of beta                           - 2017-06-03 wer
+ * - v1.0.0-beta.0  - Initial working version               - 2016-04-13 wer
+ * - v1.0.0-alpha.0 - Initial version                       - 2016-04-10 wer
  */
 class UrlsModel implements ModelInterface
 {

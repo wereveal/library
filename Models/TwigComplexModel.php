@@ -1,17 +1,4 @@
 <?php
-/**
- * @brief     Does multi-table operations for twig.
- * @details   twig_prefix, twig_dirs, twig_templates are used.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/TwigComplexModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.1
- * @date      2017-12-15 22:47:39
- * @note Change Log
- * - v1.0.0-alpha.1 - lots of changes        - 2017-12-15 wer
- * - v1.0.0-alpha.0 - Initial version        - 2017-05-13 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -22,9 +9,16 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class TwigComplexModel.
- * @class   TwigComplexModel
- * @package Ritc\Library\Models
+ * Does multi-table operations for twig.
+ * twig_prefix, twig_dirs, twig_templates are used.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.1
+ * @date    2017-12-15 22:47:39
+ * ## Change Log
+ * - v1.0.0-alpha.1 - lots of changes        - 2017-12-15 wer
+ * - v1.0.0-alpha.0 - Initial version        - 2017-05-13 wer
  */
 class TwigComplexModel
 {

@@ -1,39 +1,4 @@
 <?php
-/**
- * @brief     A Twig Factory.
- * @details   Lets us create a twig object, specific to a configuration(s)
- *            allowing multiple twig objects to render the html
- * @ingroup   lib_factories
- * @file      Ritc/Library/Factories/TwigFactory.php
- * @namespace Ritc\Library\Factories
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.2.0
- * @date      2018-05-01 15:18:58
- * @note <b>Change Log</b>
- * - v3.2.0   - added a twig test to the factory - ondisk which tests to see if the file exists         - 2018-05-01 wer
- * - v3.1.3   - Minor change in testing                                                                 - 2018-04-19 wer
- * - v3.1.2   - Class renamed elsewhere reflected here                                                  - 2018-04-04 wer
- * - v3.1.1   - bug fixes                                                                               - 2018-03-12 wer
- * - v3.1.0   - Refactoring of TwigModel created the need for changes here.                             - 2017-06-20 wer
- * - v3.0.0   - Renamed getTwig to getTwigByFile and rewrote getTwig to use either getTwigByDb          - 2017-05-15 wer
- *              or getTwigByFile, defaulting to getTwigByFile. getTwigDb was renamed to getTwigByDb
- *              Theoretically backward compatible but the getTwig method was completely rewritten.
- * - v2.1.0   - Added method to create a twig object from database config.                              - 2017-05-13 wer
- * - v2.0.1   - bug fix                                                                                 - 2017-05-11 wer
- * - v2.0.0   - added 2 new create methods, createMultiSource, createFromArray                          - 2017-03-13 wer
- *              getTwig() rewritten to used the new methods but has backwards
- *              compatibility with version 1.
- *              Deleted getLoader as it did not provide any usefulness.
- * - v1.2.0   - changed to allow config file to include a path.                                         - 2017-02-09 wer
- * - v1.1.0   - added the ability to get the loader used to add additional twig namespaces              - 2017-02-08 wer
- * - v1.0.0   - not sure why this is beta. Removed Base abstract class                                  - 09/01/2015 wer
- * - v1.0.0ß2 - moved to the Factories namespace
- * - v1.0.0ß1 - moved to the Services namespace                                                         - 11/15/2014 wer
- * - v0.2.0   - changed the name of the method which is used to create/return the object                - 09/25/2014 wer
- *              and cleaned up some code.
- * - v0.1.1   - changed to implment the changes in Base class                                           - 09/23/2014 wer
- * - v0.1.0   - initial file creation                                                                   - 2013-11-11 wer
- */
 namespace Ritc\Library\Factories;
 
 use Ritc\Library\Exceptions\FactoryException;
@@ -47,8 +12,35 @@ use Twig_Environment;
 
 /**
  * Class TwigFactory
- * @class   TwigFactory
- * @package Ritc\Library\Factories
+ * @details Lets us create a twig object, specific to a configuration(s)
+ *          allowing multiple twig objects to render the html.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v3.2.0
+ * @date    2018-05-01 15:18:58
+ * ## Change Log
+ * - v3.2.0   - added a twig test to the factory - ondisk which tests to see if the file exists         - 2018-05-01 wer
+ * - v3.1.3   - Minor change in testing                                                                 - 2018-04-19 wer
+ * - v3.1.2   - Class renamed elsewhere reflected here                                                  - 2018-04-04 wer
+ * - v3.1.0   - Refactoring of TwigModel created the need for changes here.                             - 2017-06-20 wer
+ * - v3.0.0   - Renamed getTwig to getTwigByFile and rewrote getTwig to use either getTwigByDb          - 2017-05-15 wer
+ *              or getTwigByFile, defaulting to getTwigByFile. getTwigDb was renamed to getTwigByDb
+ *              Theoretically backward compatible but the getTwig method was completely rewritten.
+ * - v2.1.0   - Added method to create a twig object from database config.                              - 2017-05-13 wer
+ * - v2.0.0   - added 2 new create methods, createMultiSource, createFromArray                          - 2017-03-13 wer
+ *              getTwig() rewritten to used the new methods but has backwards
+ *              compatibility with version 1.
+ *              Deleted getLoader as it did not provide any usefulness.
+ * - v1.2.0   - changed to allow config file to include a path.                                         - 2017-02-09 wer
+ * - v1.1.0   - added the ability to get the loader used to add additional twig namespaces              - 2017-02-08 wer
+ * - v1.0.0   - not sure why this is beta. Removed Base abstract class                                  - 09/01/2015 wer
+ * - v1.0.0ß2 - moved to the Factories namespace
+ * - v1.0.0ß1 - moved to the Services namespace                                                         - 11/15/2014 wer
+ * - v0.2.0   - changed the name of the method which is used to create/return the object                - 09/25/2014 wer
+ *              and cleaned up some code.
+ * - v0.1.1   - changed to implment the changes in Base class                                           - 09/23/2014 wer
+ * - v0.1.0   - initial file creation                                                                   - 2013-11-11 wer
  */
 class TwigFactory
 {

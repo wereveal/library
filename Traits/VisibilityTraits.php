@@ -1,27 +1,16 @@
 <?php
-/**
- * @brief     A set of visibility methods to keep things protected and private.
- * @details   Sometimes you want to force a class to create getter and setter
- *            methods instead of using the magic methods. Note that
- *            setPrivateProperties() has to be run first or the magic methods
- *            will work as normal.
- * @ingroup   lib_traits
- * @file      VisibilityTraits.php
- * @namespace Ritc\Library\Traits
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2015-08-19 12:18:25
- * @note      This was a part of the Base abstract class. Spun it out so it could
- *            be used independently, only in classes where it is important.
- * @note <b>Change Log</b>
- * - v1.0.0-alpha.0 - initial version - 08/19/2015 wer
- */
 namespace Ritc\Library\Traits;
 
 /**
- * Class Trait VisibilityTraits
- * @class   VisibilityTraits
- * @package Ritc\Library\Traits
+ * A set of visibility methods to keep things protected and private.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2015-08-19 12:18:25
+ * @note    This was a part of the Base abstract class. Spun it out so it could
+ *          be used independently, only in classes where it is important.
+ * ## Change Log
+ * - v1.0.0-alpha.0 - initial version - 08/19/2015 wer
  */
 trait VisibilityTraits {
     protected $current_page;

@@ -1,18 +1,4 @@
 <?php
-/**
- * @brief     Does all the database CRUD stuff for the navigation to navgroups mapping.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/NavNgMapModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.3
- * @date      2017-06-15 16:34:42
- * @note <b>Change Log</b>
- * - v1.0.0-alpha.3 - Refactored to use ModelException             - 2017-06-15 wer
- * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here        - 2017-05-09 wer
- * - v1.0.0-alpha.1 - Refactoring reflected here                   - 2017-01-27 wer
- * - v1.0.0-alpha.0 - Initial version                              - 02/25/2016 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -22,9 +8,17 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class NavNgMapModel.
- * @class   NavNgMapModel
- * @package Ritc\Library\Models
+ * Does all the database CRUD stuff for the navigation to navgroups mapping.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.3
+ * @date    2017-06-15 16:34:42
+ * ## Change Log
+ * - v1.0.0-alpha.3 - Refactored to use ModelException             - 2017-06-15 wer
+ * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here        - 2017-05-09 wer
+ * - v1.0.0-alpha.1 - Refactoring reflected here                   - 2017-01-27 wer
+ * - v1.0.0-alpha.0 - Initial version                              - 02/25/2016 wer
  */
 class NavNgMapModel implements ModelInterface
 {

@@ -1,27 +1,26 @@
 <?php
+namespace Ritc\Library\Services;
+
+use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Traits\DbTraits;
+use Ritc\Library\Traits\LogitTraits;
+
 /**
- * @brief     Does all the database CRUD stuff.
- * @details   For read/write access to the database based on PDO.
- * @ingroup   lib_services
- * @file      DbModel.php
- * @namespace Ritc\Library\Services
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   5.2.1
- * @date      2017-12-15 13:51:15
- * @note <b>Change Log</b>
+ * Class DbModel makes using the PDO stuff easier.
+ * For read/write access to the database based on PDO.
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v5.2.1
+ * @date    2017-12-15 13:51:15
+ * ## Change Log
  * - v5.2.1 - Bug fixes                                                                     - 2017-12-15 wer
  * - v5.2.0 - Method added to get the pdo object                                            - 2017-12-14 wer
  * - v5.1.3 - ModelException changes reflected here                                         - 2017-12-12 wer
- * - v5.1.2 - bug fixes - better exception handling.                                        - 2017-12-02 wer
- * - v5.1.1 - Bug fix                                                                       - 2017-11-16 wer
  * - v5.1.0 - Method name change to match standard for method names							- 2017-10-18 wer
- * - v5.0.1 - Bug fixes                                                                     - 2017-07-13 wer
  * - v5.0.0 - Switch to throwing exceptions instead of returning false                      - 2017-06-12 wer
- * - v4.3.1 - Bug fix                                                                       - 2017-05-14 wer
  * - v4.3.0 - Added a new method to check if a table exists in the database                 - 2017-05-09 wer
  * - v4.2.0 - Added some debugging code, cleaned up other.                                  - 2017-01-13 wer
- * - v4.1.2 - Bug fix                                                                       - 2016-08-22 wer
- * - v4.1.1 - Bug fixes, the set/create/retrieve sql error message needed clarification     - 2016-03-28 wer
  * - v4.1.0 - Renamed rawQuery to rawExec and added a new rawQuery                          - 2016-03-25 wer
  *            The old rawQuery was doing a \PDO::exec command which doesn't return
  *            results of a SELECT. So, to avoid confusion it was renamed and
@@ -32,7 +31,6 @@
  *            Removed sql building and validation methods to a trait class which
  *            then can be used independently by other classes. Yes, this may require
  *            a lot of refactoring elsewhere.
- * - v3.6.1 - bug fixes                                                                     - 2016-03-17 wer
  * - v3.6.0 - Changed property name o_db to o_pdo to clarify what the object was            - 03/04/2016 wer
  *            - Added new method to "prepare" a list array
  *            - Added new method to create and return the formated sql error message.
@@ -40,7 +38,6 @@
  *            - Updated update set build method to block unallowed key value pairs
  *            - bug fixes, build insert sql didn't take into account prepared key names
  *            - Misc other fixes and modifications.
- * - v3.5.1 - added new method to create a string for the select field names                - 02/25/2016 wer
  * - v3.5.0 - added new method to create a string for the insert value names                - 02/23/2016 wer
  * - v3.4.0 - changed so that an array can be used in place of the preferred file           - 12/09/2015 wer
  * - v3.3.0 - bug fix - pgsql insert wasn't working right                                   - 11/22/2015 wer
@@ -48,58 +45,35 @@
  * - v3.2.5 - added some additional information to be retrieved                             - 09/01/2015 wer
  * - v3.2.4 - refactoring elsewhere made a small name change here                           - 07/31/2015 wer
  * - v3.2.3 - moved to Services namespace                                                   - 11/15/2014 wer
- * - v3.2.1 - bug fix
  * - v3.2.0 - Made this class more stand alone except extending Base class.
  *            Added function to allow raw query.
  *            Changed it to use the new Base class elog inject method.
  *            Hammering down a couple bugs.
- * - v3.1.2 - bug fixes, needed to pass the pdo object into the class                       - 03/20/2014 wer
  * - v3.1.1 - added methods to set and return db prefix                                     - 02/24/2014 wer
  *            It should be noted, this assumes a db prefix has been set. see PdoFactory
  * - v3.1.0 - added method to return db tables                                              - 01/31/2014 wer
- * - v3.0.1 - renamed file to match function, eliminated the unnecessary                    - 12/19/2013 wer
  * - v3.0.0 - split the pdo creation (database connection) from the crud                    - 2013-11-06 wer
- * - v2.4.4 - bug fix in buildSqlWhere                                                      - 2013-07-23 wer
  * - v2.4.3 - reverted back to RITC Library only (removed Symfony specific stuff)           - 07/06/2013 wer
  * - v2.4.2 - added method to build sql where                                               - 05/09/2013 wer
- * - v2.4.1 - modified a couple methods to work with pgsql 05/08/2013
  * - v2.4.0 - Change to match new RITC Library layout                                       - 04/23/2013 wer
- * - v2.3.2 - new method to remove bad keys
- *            removed some redundant code
- *            reorganized putting main four commands at top for easy reference
- *            renamed from modify to update, no good reason truthfully except no legacy code to support
- * - v2.3.1 - new method to check for missing keys
- *            made a couple changes to clarify what was going on.
  * - v2.3.0 - Modified to work within Symfony
  * - v2.2.0 - FIG-standard changes
- */
-namespace Ritc\Library\Services;
-
-use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Helper\Arrays;
-use Ritc\Library\Traits\DbTraits;
-use Ritc\Library\Traits\LogitTraits;
-
-/**
- * Class DbModel Makes using the PDO stuff easier.
- * @class DbModel
- * @package Ritc\Library\Services
  */
 class DbModel
 {
     use DbTraits, LogitTraits;
 
-    /** @var array */
+    /** @var array $a_new_ids */
     private $a_new_ids = [];
-    /** @var int */
+    /** @var int $affected_rows */
     private $affected_rows;
-    /** @var \PDO */
+    /** @var \PDO $o_pdo */
     private $o_pdo;
-    /** @var string */
+    /** @var string $pgsql_sequence_name */
     private $pgsql_sequence_name = '';
-    /** @var mixed */
+    /** @var mixed $sql_error_message */
     private $sql_error_message;
-    /** @var int */
+    /** @var int $success */
     private $success;
 
     /**

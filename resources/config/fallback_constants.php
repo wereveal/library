@@ -1,10 +1,10 @@
 <?php
 /**
- * @brief     Defines some required constants.
- * @details   Used only if the class Constants could not create them from the database.
- * @file      /src/apps/Ritc/Library/resources/config/fallback_constants.php
- * @ingroup   ritc_library configs
- * @note NOTE:
+ * Defines some required constants.
+ * Used only if the class Constants could not create them from the database.
+ * @file     fallback_constants.php
+ * @pagckage RITC_Library
+ * ## NOTE:
  * - _PATH = Full server path
  * - _DIR  = Path in web site (URI)
  * - _NAME = Name of item without any path information

@@ -1,42 +1,4 @@
 <?php
-/**
- * @brief     Does all the database CRUD stuff.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/PeopleModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.4.3
- * @date      2018-04-05 10:40:48
- * @note <b>Change Log</b>
- * - v1.4.3    - bug fix in timestamp increment                              - 2018-04-05 wer
- * - v1.4.2    - bug fixCheckBoxes                                           - 2017-12-14 wer
- * - v1.4.1    - ModelException changes reflected here                       - 2017-12-12 wer
- * - v1.4.0    - moved some methods from PeopleComplex to here               - 2017-12-05 wer
- *               bug fixes too.
- * - v1.3.3    - DbUtilityTraits change reflected here                       - 2017-05-09 wer
- * - v1.3.2    - Bug fix                                                     - 2017-02-07 wer
- * - v1.3.1    - Bug fix caused by change elsewhere                          - 2017-01-27 wer
- * - v1.3.0    - Moved the multi-table queries to own class                  - 2016-12-08 wer
- * - v1.2.2    - Bug fix                                                     - 2016-08-29 wer
- * - v1.2.1    - Bug Fix, seriously, how did that get past testing?          - 2016-03-19 wer
- * - v1.2.0    - Refactoring of DbModel reflected here                       - 2016-03-18 wer
- * - v1.1.0    - refactoring to make compatible with postgresql              - 11/22/2015 wer
- * - v1.0.0    - initial working version                                     - 11/12/2015 wer
- * - v1.0.0β13 - removed roles from code                                     - 11/06/2015 wer
- * - v1.0.0β12 - Bug fix in sql, incompatible with postgresql                - 11/05/2015 wer
- * - v1.0.0β11 - Added missing method isId - causing bug elsewhere           - 09/25/2015 wer
- * - v1.0.0β10 - Added db error message retrieval                            - 09/23/2015 wer
- * - v1.0.0β9  - Added 'description' to database and added it here           - 09/22/2015 wer
- * - v1.0.0β8  - more changes to the readInfo method                         - 09/03/2015 wer
- * - v1.0.0β7  - had to rewrite the sql for the readInfo method              - 08/04/2015 wer
- * - v1.0.0β6  - refactoring elsewhere caused changes here                   - 07/31/2015 wer
- * - v1.0.0β5  - refactoring method name to reflect what is happening better - 01/06/2015 wer
- * - v1.0.0β4  - reverted to injecting DbModel                               - 11/17/2014 wer
- * - v1.0.0β3  - changed to use DI/IOC                                       - 11/15/2014 wer
- * - v1.0.0β2  - extends the Base class, injects the DbModel, clean up       - 09/23/2014 wer
- * - v1.0.0β1  - First Live version                                          - 09/15/2014 wer
- * - v0.1.0β1  - Initial version                                             - 09/11/2014 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -48,9 +10,33 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class PeopleModel.
- * @class   PeopleModel
- * @package Ritc\Library\Models
+ * Does all the Model expected operations, database CRUD and business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.4.3
+ * @date    2018-04-05 10:40:48
+ * ## Change Log
+ * - v1.4.3    - bug fix in timestamp increment                              - 2018-04-05 wer
+ * - v1.4.1    - ModelException changes reflected here                       - 2017-12-12 wer
+ * - v1.4.0    - moved some methods from PeopleComplex to here               - 2017-12-05 wer
+ *               bug fixes too.
+ * - v1.3.3    - DbUtilityTraits change reflected here                       - 2017-05-09 wer
+ * - v1.3.0    - Moved the multi-table queries to own class                  - 2016-12-08 wer
+ * - v1.2.0    - Refactoring of DbModel reflected here                       - 2016-03-18 wer
+ * - v1.1.0    - refactoring to make compatible with postgresql              - 11/22/2015 wer
+ * - v1.0.0    - initial working version                                     - 11/12/2015 wer
+ * - v1.0.0β13 - removed roles from code                                     - 11/06/2015 wer
+ * - v1.0.0β11 - Added missing method isId - causing bug elsewhere           - 09/25/2015 wer
+ * - v1.0.0β10 - Added db error message retrieval                            - 09/23/2015 wer
+ * - v1.0.0β9  - Added 'description' to database and added it here           - 09/22/2015 wer
+ * - v1.0.0β8  - more changes to the readInfo method                         - 09/03/2015 wer
+ * - v1.0.0β7  - had to rewrite the sql for the readInfo method              - 08/04/2015 wer
+ * - v1.0.0β4  - reverted to injecting DbModel                               - 11/17/2014 wer
+ * - v1.0.0β3  - changed to use DI/IOC                                       - 11/15/2014 wer
+ * - v1.0.0β2  - extends the Base class, injects the DbModel, clean up       - 09/23/2014 wer
+ * - v1.0.0β1  - First Live version                                          - 09/15/2014 wer
+ * - v0.1.0β1  - Initial version                                             - 09/11/2014 wer
  */
 class PeopleModel implements ModelInterface
 {

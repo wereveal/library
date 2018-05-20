@@ -1,18 +1,23 @@
 <?php
 /**
- * @brief     Utility methods for Object Oriented Programming.
+ *      
  * @ingroup   lib_helpers
  * @file      Ritc/Library/Helper/OopHelper.php
  * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0-alpha.0
- * @date      2018-04-04 10:02:07
- * @note Change Log
- * - v1.0.0-alpha.0 - Initial version                           - 2018-04-04 wer
  */
 
 namespace Ritc\Library\Helper;
 
+/**
+ * Class OopHelper - Utility methods for Object Oriented Programming.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0-alpha.0
+ * @date    2018-04-04 10:02:07
+ * ## Change Log
+ * - v1.0.0-alpha.0 - Initial version                           - 2018-04-04 wer
+ */
 class OopHelper
 {
     /**
@@ -20,7 +25,7 @@ class OopHelper
      * @param string $namespace
      * @return bool
      */
-    public static function namespaceExists($namespace = '') {
+    public static function namespaceExists(string $namespace = '') {
         if (empty($namespace)) {
             return false;
         }
@@ -32,5 +37,4 @@ class OopHelper
         }
         return false;
     }
-
 }

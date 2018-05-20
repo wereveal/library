@@ -1,27 +1,4 @@
 <?php
-/**
- * @brief     Does all the database CRUD stuff.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/GroupsModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.0.1
- * @date      2017-12-12 11:42:21
- * @note <b>Change Log</b>
- * - v2.0.1   - ModelException changes reflected here                           - 2017-12-12 wer
- * - v2.0.0   - Refactored to use ModelException and DbUtilityTraits            - 2017-06-10 wer
- * - v1.1.2   - DbUtilityTraits change reflected here                           - 2017-05-09 wer
- * - v1.1.1   - Bug fix caused by slight change elsewhere                       - 2017-01-27 wer
- * - v1.1.0   - Bug fix and changes due to refactoring of DbModel               - 2016-03-19 wer
- * - v1.0.0   - First working version                                           - 11/27/2015 wer
- * - v1.0.0β5 - refactoring to provide postgresql compatibility                 - 11/22/2015 wer
- * - v1.0.0β4 - added group_immutable field in db and changed code to match     - 10/08/2015 wer
- * - v1.0.0ß3 - removed abstract class Base, used LogitTraits                   - 09/01/2015 wer
- * - v1.0.0ß2 - changed to use IOC (Inversion of Control)                       - 11/15/2014 wer
- * - v1.0.0β1 - extends the Base class, injects the DbModel, clean up           - 09/23/2014 wer
- * - v1.0.0β0 - First live version                                              - 09/15/2014 wer
- * - v0.1.0β  - Initial version                                                 - 01/18/2014 wer
- */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -32,8 +9,23 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class GroupsModel.
- * @class   GroupsModel
- * @package Ritc\Library\Models
+ * Does all the database CRUD stuff for the page table plus other app/business logic.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.0.1
+ * @date    2017-12-12 11:42:21
+ * ## Change Log
+ * - v2.0.1   - ModelException changes reflected here                           - 2017-12-12 wer
+ * - v2.0.0   - Refactored to use ModelException and DbUtilityTraits            - 2017-06-10 wer
+ * - v1.1.2   - DbUtilityTraits change reflected here                           - 2017-05-09 wer
+ * - v1.0.0   - First working version                                           - 11/27/2015 wer
+ * - v1.0.0β5 - refactoring to provide postgresql compatibility                 - 11/22/2015 wer
+ * - v1.0.0β4 - added group_immutable field in db and changed code to match     - 10/08/2015 wer
+ * - v1.0.0ß3 - removed abstract class Base, used LogitTraits                   - 09/01/2015 wer
+ * - v1.0.0β1 - extends the Base class, injects the DbModel, clean up           - 09/23/2014 wer
+ * - v1.0.0β0 - First live version                                              - 09/15/2014 wer
+ * - v0.1.0β  - Initial version                                                 - 01/18/2014 wer
  */
 class GroupsModel implements ModelInterface
 {

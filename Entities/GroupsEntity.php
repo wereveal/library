@@ -1,27 +1,18 @@
 <?php
-/**
- * @brief     A basic entity class Groups table.
- * @ingroup   lib_entities
- * @file      Ritc/Library/Entities/GroupsEntity.php
- * @namespace Ritc\Library\Entities
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.0
- * @date      2015-07-29 11:41:03
- * @note <b>SQL for table<b>
- * - MySQL      - resources/sql/mysql/groups_mysql.sql
- * - PostgreSQL - resource\sql/postgresql/groups_pg.sql
- * @note <b>Change Log</b>
- * - v1.0.0 - finished        - 07/29/2015 wer
- * - v0.1.0 - Initial version - 09/11/2014 wer
- */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
 
 /**
  * Class GroupsEntity.
- * @class   GroupsEntity
- * @package Ritc\Library\Entities
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.0
+ * @date    2015-07-29 11:41:03
+ * ## Change Log
+ * - v1.0.0 - finished        - 07/29/2015 wer
+ * - v0.1.0 - Initial version - 09/11/2014 wer
  */
 class GroupsEntity implements EntityInterface
 {

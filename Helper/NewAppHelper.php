@@ -1,18 +1,4 @@
 <?php
-/**
- * @brief     Helper for setting up a new app..
- * @details   Primarily creates new directories and files for the app.
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/NewAppHelper.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.1.0
- * @date      2018-04-14 17:31:00
- * @note Change Log
- * - v1.0.0         - Create Default Files changed to use over all site variable    - 2018-04-14 wer
- * - v1.0.0         - Initial Production version                                    - 2017-12-15 wer
- * - v1.0.0-alpha.0 - Initial version                                               - 2017-11-24 wer
- */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -21,9 +7,16 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class NewAppHelper.
- * @class   NewAppHelper
- * @package Ritc\Library\Helper
+ * Class NewAppHelper - Helper for setting up a new app.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.1.0
+ * @date    2018-04-14 17:31:00
+ * ## Change Log
+ * - v1.0.0         - Create Default Files changed to use over all site variable    - 2018-04-14 wer
+ * - v1.0.0         - Initial Production version                                    - 2017-12-15 wer
+ * - v1.0.0-alpha.0 - Initial version                                               - 2017-11-24 wer
  */
 class NewAppHelper
 {

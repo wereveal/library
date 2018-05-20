@@ -1,26 +1,20 @@
 <?php
-/**
- * @brief     Similar to the Unix tail command e.g. tail -n 40 file.php.
- * @detail    When on a webpage, use the meta refresh to keep tailing a file.
- * @ingroup   lib_services
- * @file      Tail.php
- * @namespace Ritc\Library\Services
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   2.2.0
- * @date      2016-03-11 09:01:12
- * @note <b>Change Log</b>
- * - v2.2.0 - Changed method names to reflect current coding standards                             - 2016-03-11 wer
- * - v2.1.1 - Moved to Services namespace                                                          - 11/15/2014 wer
- * - v2.1.0 - Changed to work in the ritc_library                                                  - 04/22/2013 wer
- */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Traits\ViewTraits;
 
 /**
- * Class Tail - tails a log file.
- * @class Tail
- * @package Ritc\Library\Services
+ * Similar to the Unix tail command e.g. tail -n 40 file.php.
+ * When on a webpage, use the meta refresh to keep tailing a file.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v2.2.0
+ * @date    2016-03-11 09:01:12
+ * ## Change Log
+ * - v2.2.0 - Changed method names to reflect current coding standards    - 2016-03-11 wer
+ * - v2.1.1 - Moved to Services namespace                                 - 11/15/2014 wer
+ * - v2.1.0 - Changed to work in the ritc_library                         - 04/22/2013 wer
  */
 class Tail
 {

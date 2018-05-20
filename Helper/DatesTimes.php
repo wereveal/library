@@ -1,24 +1,17 @@
 <?php
-/**
- * @brief     Adds some standard use formatting methods for date and time.
- * @ingroup   lib_helper
- * @file      Ritc/Library/Helper/DatesTimes.php
- * @namespace Ritc\Library\Helper
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   3.1.0
- * @date      2017-11-28 16:14:44
- * @note <b>Change Log</b>
- * - v3.1.0 - new method to convert timestamp to Y-m-d  - 2017-11-28 wer
- * - v3.0.2 - bug fix                                   - 02/22/2016 wer
- * - v3.0.1 - moved to Ritc\Library\Helper namespace    - 11/15/2014 wer
- * - v3.0.0 - FIG standards (mostly)
- */
 namespace Ritc\Library\Helper;
 
 /**
  * Class DatesTimes - provides a lot of normal date time functionality.
- * @class DatesTimes
- * @package Ritc\Library\Helper
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v3.1.0
+ * @date    2017-11-28 16:14:44
+ * ## Change Log
+ * - v3.1.0 - new method to convert timestamp to Y-m-d  - 2017-11-28 wer
+ * - v3.0.1 - moved to Ritc\Library\Helper namespace    - 11/15/2014 wer
+ * - v3.0.0 - FIG standards (mostly)
  */
 class DatesTimes
 {

@@ -1,18 +1,4 @@
 <?php
-/**
- * @brief     Does database operations on the twig_prefix table.
- * @ingroup   lib_models
- * @file      Ritc/Library/Models/TwigPrefixModel.php
- * @namespace Ritc\Library\Models
- * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   1.0.1
- * @date      2018-04-03 17:26:11
- * @note      Change Log
- * - v1.0.1         - bug fixes                     - 2018-04-03 wer
- * - v1.0.0         - Initial production version    - 2017-12-12 wer
- * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
- */
-
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -24,9 +10,16 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class TwigPrefixModel.
- * @class   TwigPrefixModel
- * @package Ritc\Library\Models
+ * Does database operations on the twig_prefix table.
+ *
+ * @package RITC_Library
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version v1.0.1
+ * @date    2018-04-03 17:26:11
+ * ## Change Log
+ * - v1.0.1         - bug fixes                     - 2018-04-03 wer
+ * - v1.0.0         - Initial production version    - 2017-12-12 wer
+ * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
  */
 class TwigPrefixModel implements ModelInterface
 {
