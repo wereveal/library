@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class ConstantsController
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -13,7 +17,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Class ConstantsController - controller for the Configuration page.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.4.0-beta.4
  * @date    2018-04-21 13:26:46

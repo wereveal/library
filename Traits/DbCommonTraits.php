@@ -1,4 +1,8 @@
 <?php
+/**
+ * Trait DbCommonTraits
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\Arrays;
@@ -6,7 +10,6 @@ use Ritc\Library\Helper\Arrays;
 /**
  * Common methods for the db traits.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-beta.2
  * @date    2017-01-25 14:12:15

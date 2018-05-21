@@ -1,4 +1,8 @@
 <?php
+/**
+ * Trait LogitTraits
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Services\Di;
@@ -6,7 +10,7 @@ use Ritc\Library\Services\Elog;
 
 /**
  * Common functions that inject and use the Elog class service.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.3.1
  * @date    2018-03-29 15:44:43
@@ -31,7 +35,7 @@ trait LogitTraits
     protected $o_elog = '';
 
     /**
-     * @return object|string
+     * @return Elog|string
      */
     public function getElog()
     {
@@ -76,9 +80,9 @@ trait LogitTraits
 
     /**
      * Injects the Elog object into the class that uses LogitTraits.
-     * @param object|mixed $o_elog
+     * @param Elog|null $o_elog
      */
-    public function setElog($o_elog = '')
+    public function setElog($o_elog = null)
     {
         if ($o_elog instanceof Elog) {
             $this->o_elog = $o_elog;

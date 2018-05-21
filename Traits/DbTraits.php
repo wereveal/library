@@ -1,4 +1,8 @@
 <?php
+/**
+ * Trait DbTraits
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\Arrays;
@@ -6,7 +10,6 @@ use Ritc\Library\Helper\Arrays;
 /**
  * Common functions that could be used in several database classes.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.1.0
  * @date    2017-01-25 13:45:50

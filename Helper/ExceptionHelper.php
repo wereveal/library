@@ -1,10 +1,13 @@
 <?php
+/**
+ * Class ExceptionHelper
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Helper;
 
 /**
  * Class ExceptionHelper - Helps developer with exception error codes.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.2.0
  * @date    2018-04-26 07:01:46

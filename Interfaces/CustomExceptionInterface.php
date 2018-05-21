@@ -1,10 +1,13 @@
 <?php
+/**
+ * Interface CustomExceptionInterface
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Interfaces;
 
 /**
  * Interface CustomExceptionInterface
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2018-03-07 08:50:58

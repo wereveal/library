@@ -1,4 +1,8 @@
 <?php
+/**
+ * Trait ControllerTraits
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Services\DbModel;
@@ -9,7 +13,6 @@ use Ritc\Library\Services\Session;
 /**
  * Common functions used by controllers.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.4.0
  * @date    2017-12-02 08:51:44

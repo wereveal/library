@@ -4,7 +4,7 @@
  * This creates the database config and some standard directories.
  * This should be run from the /src/bin directory of the site.
  * @file    install.php
- * @package RITC_Library
+ * @package Ritc_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @date    2017-01-13 09:48:15
  * @version v2.0.0

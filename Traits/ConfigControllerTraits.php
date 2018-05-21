@@ -1,11 +1,13 @@
 <?php
+/**
+ * Trait ConfigControllerTraits
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Traits;
 
 /**
- * Commonly used functions used in Library Controllers..
+ * Commonly used functions used in Library Controllers.
  *
- * @package RITC_Library
- * @uses Ritc\Library\Traits\ManagerControllerTraits
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.2
  * @date    2017-07-04 14:28:39

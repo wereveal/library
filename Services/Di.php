@@ -1,7 +1,7 @@
 <?php
 /**
  * Class Di
- * @package RITC_Library
+ * @package Ritc_Library
  */
 namespace Ritc\Library\Services;
 

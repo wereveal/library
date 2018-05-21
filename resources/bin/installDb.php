@@ -3,7 +3,7 @@
  * Creates the database tables.
  * This is run in the Library.
  * @file    installDb.php
- * @package RITC_Library
+ * @package Ritc_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @date    2015-12-09 17:42:36
  * @version v1.0.0

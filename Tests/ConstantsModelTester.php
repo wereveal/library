@@ -1,7 +1,7 @@
 <?php
 /**
  * Class ConstantsModelTester
- * @package RITC_Library
+ * @package Ritc_Library
  */
 namespace Ritc\Library\Tests;
 

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Trait DbUtilityTraits
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -11,7 +15,7 @@ use Ritc\Library\Services\DbModel;
  * Although this is designed to be used for all database classes, it
  * does lack some functionality for multi-table operations and needs
  * some work there.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.3.0
  * @date    2018-04-26 08:38:57

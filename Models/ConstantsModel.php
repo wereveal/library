@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class ConstantsModel
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -10,10 +14,9 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class ConstantsModel.
- * Does all the database CRUD stuff for the constants table plus 
+ * Does all the database CRUD stuff for the constants table plus
  * other app/business logic that sets up the app with a bunch of required constants.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.0.3
  * @date    2018-04-03 15:55:17

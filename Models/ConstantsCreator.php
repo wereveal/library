@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class ConstantsCreator
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -9,7 +13,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Defines Constants from the constants database used by the app.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v5.1.1
  * @date    2018-04-09 10:45:22

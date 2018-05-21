@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class GroupsController
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -12,9 +16,8 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\GroupsView;
 
 /**
- * Class GroupsController - controller for the Groups Admin page.
+ * Controller for the Groups Admin page.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2018-05-19 15:07:53
