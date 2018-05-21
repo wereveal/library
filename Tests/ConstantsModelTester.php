@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class ConstantsModelTester
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -10,7 +14,6 @@ use Ritc\Library\Traits\TesterTraits;
 /**
  * Tests the Constants Model Class.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2017-06-14 16:27:15
@@ -141,17 +144,11 @@ class ConstantsModelTester
                     $results = false;
                 }
                 if ($results !== false) {
-                    try {
-                        $results = $this->genericDbSubTest($a_names, $a_test_values);
-                        if ($results) {
-                            $_SESSION['created_id'] = -1;
-                            $this->new_id = -1;
-                        }
+                    $results = $this->genericDbSubTest($a_names, $a_test_values);
+                    if ($results) {
+                        $_SESSION['created_id'] = -1;
+                        $this->new_id = -1;
                     }
-                    catch (ModelException $e) {
-                        $results = false;
-                    }
-
                 }
             }
             else {

@@ -1,10 +1,13 @@
 <?php
+/**
+ * Interface ViewInterface
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Interfaces;
 
 /**
- * Interface ViewInterface
+ * Interface to be used by views.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2017-01-24 15:50:47

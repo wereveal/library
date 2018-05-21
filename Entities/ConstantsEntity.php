@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class ConstantsEntity
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Helper\Arrays;
@@ -7,7 +11,6 @@ use Ritc\Library\Interfaces\EntityInterface;
 /**
  * Class ConstantsEntity - Basic accessors for a constants entity.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2015-10-06 14:20:33

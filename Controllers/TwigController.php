@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class TwigController
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
@@ -9,7 +13,7 @@ use Ritc\Library\Views\TwigView;
 
 /**
  * Controller admin for Twig config.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2017-05-14 14:36:29

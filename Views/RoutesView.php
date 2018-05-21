@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class RoutesView
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -12,7 +16,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * View for the Router Admin page.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 2.2.0
  * @date    2018-05-16 17:55:29

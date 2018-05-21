@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class DbInstallerModel
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -6,9 +10,8 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class DbInstallerModel - Installs default database tables and data..
+ * Installs default database tables and data.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2017-12-15 14:02:55

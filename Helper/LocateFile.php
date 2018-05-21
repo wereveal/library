@@ -1,12 +1,15 @@
 <?php
+/**
+ * Class LocateFile
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Helper;
 
 /**
  * Finds a file and returns it with the full server path or web site path.
- * Based on the other similar helper, Ritc\Library\Helper\Files. 
+ * Based on the other similar helper, Ritc\Library\Helper\Files.
  * However, this one uses all static functions.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.0
  * @date    2018-04-12 11:32:47

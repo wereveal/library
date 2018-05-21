@@ -1,4 +1,8 @@
 <?php
+/**
+ * Trait TesterTraits
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -8,7 +12,6 @@ use Ritc\Library\Helper\LocateFile;
 /**
  * Provides all the basic commands which are extended by specific testers for specific classes.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v4.2.0
  * @date    2017-10-19 14:03:18
@@ -74,10 +77,12 @@ trait TesterTraits
     protected $values_file        = 'test_values.php';
 
     ### Main Methods for Testing ###
+
     /**
      * Runs tests where method ends in Test.
      * @param bool $return_results optional, defaults to true which also returns test names.
      * @return array
+     * @throws \ReflectionException
      */
     public function runTests($return_results = true)
     {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Trait ManagerViewTraits
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\ViewHelper;
@@ -6,7 +10,6 @@ use Ritc\Library\Helper\ViewHelper;
 /**
  * Common functions for the manager views.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.2.2
  * @date    2017-12-13 18:12:06

@@ -1,17 +1,20 @@
 <?php
+/**
+ * Class Di
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Services;
 
 /**
  * Manages Dependency injection / Inversion of Control for the site.
  *
  * It is expected that this will be initialized in the setup file at
- * the very begining. All other services needed to be used
+ * the very beginning. All other services needed to be used
  * throughout the app then get added to it. It can also be used as an alternative
  * to CONSTANTS or globals.
  * This is real basic. You put an instanced service in and pull a service
  * out. The service must have been instanced already. * @package RITC_Libra
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.2.0+1
  * @date    2017-02-08 09:04:05
@@ -45,7 +48,7 @@ class Di
 
     /**
      * @param string $object_name
-     * @return bool|object
+     * @return bool|\Ritc\Library\Services\Di
      */
     public function get($object_name = '')
     {

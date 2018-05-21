@@ -1,13 +1,16 @@
 <?php
+/**
+ * Class Tail
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Similar to the Unix tail command e.g. tail -n 40 file.php.
- * When on a webpage, use the meta refresh to keep tailing a file.
+ * When on a web page, use the meta refresh to keep tailing a file.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.2.0
  * @date    2016-03-11 09:01:12
@@ -20,37 +23,37 @@ class Tail
 {
     use ViewTraits;
 
-    /** @var int */
+    /** @var int $timestamp */
     private $timestamp           = 0;
-    /** @var int */
+    /** @var int $file_size */
     private $file_size           = 0;
-    /** @var string */
+    /** @var string $file_name */
     private $file_name           = ''; // requires full path
-    /** @var array */
+    /** @var array $a_lines */
     private $a_lines             = array();
-    /** @var int */
+    /** @var int $lines */
     private $lines               = 0;
-    /** @var int */
+    /** @var int $show_lines */
     private $show_lines          = 10;
-    /** @var string */
+    /** @var string $search_string */
     private $search_string       = '';
-    /** @var string */
+    /** @var string $search_string_regex */
     private $search_string_regex = '';
-    /** @var bool */
+    /** @var bool $changed */
     private $changed             = false;
-    /** @var string */
+    /** @var string $pre_highlight */
     private $pre_highlight       = '<span style="color: red; font-weight: 900;">';
-    /** @var string */
+    /** @var string $post_highlight */
     private $post_highlight      = "</span>";
-    /** @var bool */
+    /** @var bool $newest_first */
     private $newest_first        = true;
-    /** @var string */
+    /** @var string $output_format */
     private $output_format       = 'BR';
-    /** @var string */
+    /** @var string $pre_output */
     private $pre_output          = '';
-    /** @var string */
+    /** @var string $post_output */
     private $post_output         = '';
-    /** @var string  */
+    /** @var string $tpl */
     private $tpl                 = '';
 
     /**

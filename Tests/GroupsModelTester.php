@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class GroupsModelTester
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
@@ -11,7 +15,6 @@ use Ritc\Library\Models\GroupsModel;
 /**
  * Tests the Group Model Class.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2016-03-05 10:44:05
@@ -33,8 +36,10 @@ class GroupsModelTester extends Tester
 
     /**
      * GroupsModelTester constructor.
-     * @param array $a_test_order
+     * @param array  $a_test_order
      * @param string $db_config
+     * @throws \Ritc\Library\Exceptions\FactoryException
+     * @throws \Ritc\Library\Exceptions\ServiceException
      */
     public function __construct(array $a_test_order = array(), $db_config = 'db_config.php')
     {

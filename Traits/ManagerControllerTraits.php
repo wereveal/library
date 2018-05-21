@@ -1,4 +1,8 @@
 <?php
+/**
+ * Trait ManagerControllerTraits
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Helper\AuthHelper;
@@ -7,7 +11,7 @@ use Ritc\Library\Helper\ViewHelper;
 /**
  * Commonly used functions used in Manager Controllers.
  * Expands on Controller Traits.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.3
  * @date    2017-07-13 11:40:17

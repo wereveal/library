@@ -1,13 +1,17 @@
 <?php
+/**
+ * Interface PageControllerInterface
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Interfaces;
 
 /**
- * Interface PageControllerInterface
+ * Interface for page controllers.
  *
- * @package RITC_Library
- * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.1
- * @date    2014-01-31 15:58:35
+ * @author     William E Reveal <bill@revealitconsulting.com>
+ * @version    v1.0.1
+ * @date       2014-01-31 15:58:35
+ * @deprecated v1.0.1 - controllers all route, not render, that is the views job.
  * ## Change Log
  * - v1.0.1 - fixed potential bug
  * - v1.0.0 - Initial version 12/12/2013

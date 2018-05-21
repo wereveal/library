@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PageModelTester
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
@@ -10,7 +14,6 @@ use Ritc\Library\Models\PageModel;
 /**
  * Class PageModelTester.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2016-03-05 10:44:05
@@ -23,7 +26,7 @@ class PageModelTester extends Tester
 {
     use LogitTraits;
 
-    /** @var bool */
+    /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
     /** @var PageModel */
     private $o_model;
@@ -34,10 +37,11 @@ class PageModelTester extends Tester
      */
     public function __construct(Di $o_di)
     {
+        $this->setupElog($o_di);
+        /** @var \Ritc\Library\Services\DbModel o_db */
         $this->o_db    = $o_di->get('db');
         $this->o_model = new PageModel($this->o_db);
-        $this->o_elog  = $o_di->get('elog');
-        $this->o_model->setElog($this->o_elog);
+        $this->o_model->setupElog($o_di);
     }
 
     ### Tests ###
@@ -51,6 +55,7 @@ class PageModelTester extends Tester
 
     /**
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readTester()
     {
@@ -58,8 +63,8 @@ class PageModelTester extends Tester
         $a_test_results = $this->a_test_values['read']['expected_results'];
         foreach ($a_test_values as $key => $a_input_values) {
             $results = $this->o_model->read($a_input_values);
-            if (Arrays::compareArrays($a_test_results[$key], $results)) {
-
+            if (!Arrays::compareArrays($a_test_results[$key], $results)) {
+                return false;
             }
         }
         return true;

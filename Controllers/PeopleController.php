@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PeopleController
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -14,7 +18,6 @@ use Ritc\Library\Views\PeopleView;
 /**
  * Class PeopleController - Controller for the Configuration page.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.2
  * @date    2018-04-21 13:29:13
@@ -33,11 +36,11 @@ class PeopleController implements ManagerControllerInterface
 {
     use LogitTraits, ConfigControllerTraits;
 
-    /** @var \Ritc\Library\Models\PeopleComplexModel */
+    /** @var \Ritc\Library\Models\PeopleComplexModel object */
     private $o_complex;
-    /** @var PeopleModel */
+    /** @var PeopleModel model object */
     private $o_people;
-    /** @var PeopleView */
+    /** @var PeopleView view object */
     private $o_view;
 
     /**

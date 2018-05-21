@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PdoFactory
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Factories;
 
 use Ritc\Library\Exceptions\FactoryException;
@@ -9,7 +13,7 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Class PdoFactory - The factory returns a \PDO object.
  * Several different \PDO objects can be created based on config files specified.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.0.1
  * @date    2017-06-13 12:17:42

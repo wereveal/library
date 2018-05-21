@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class TestsView
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\ViewHelper;
@@ -8,7 +12,7 @@ use Ritc\Library\Traits\ViewTraits;
 
 /**
  * View for the Tests page.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2017-06-10 07:25:13

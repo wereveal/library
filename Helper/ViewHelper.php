@@ -1,21 +1,24 @@
 <?php
+/**
+ * Class ViewHelper
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Helper;
 
 /**
- * Class ViewHelper - Various helper functions for views.
+ * Various helper functions for views.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 2.1.0
  * @date    2018-05-16 19:37:35
  * ## Change Log
- * - v2.1.0 - Added addMessage method       - 2018-05-16 wer
- * - v2.0.0 - Renamed 'the' method          - 2017-06-20 wer
- * - v1.1.1 - little sanitization of values - 11/05/2015 wer
- * - v1.1.0 - added lazy man's methods      - 09/25/2015 wer
- * - v1.0.1 - changed function to static    - 09/25/2014 wer
- * - v1.0.1 - minor key name change         - 12/31/2013 wer
- * - v1.0.0 - intial file                   - 07/30/2013 wer
+ * - v2.1.0 - Added addMessage method           - 2018-05-16 wer
+ * - v2.0.0 - Renamed 'the' method              - 2017-06-20 wer
+ * - v1.1.1 - little sensitization of values    - 11/05/2015 wer
+ * - v1.1.0 - added lazy man's methods          - 09/25/2015 wer
+ * - v1.0.1 - changed function to static        - 09/25/2014 wer
+ * - v1.0.1 - minor key name change             - 12/31/2013 wer
+ * - v1.0.0 - initial file                      - 07/30/2013 wer
  */
 class ViewHelper
 {
@@ -49,6 +52,8 @@ class ViewHelper
                 return self::failureMessage($new_message);
             case 'code':
                 return self::codeMessage($new_message);
+            default:
+                return $a_message;
         }
     }
 

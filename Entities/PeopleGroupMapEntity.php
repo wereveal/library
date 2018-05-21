@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PeopleGroupMapEntity
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
@@ -6,7 +10,6 @@ use Ritc\Library\Interfaces\EntityInterface;
 /**
  * Class PeopleGroupMapEntity
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2015-07-29 11:43:02

@@ -1,10 +1,13 @@
 <?php
+/**
+ * Class CustomError
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Abstracts;
 
 /**
  * Abstract which extends php Exception class.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @date    2017-07-15 12:42:53
  * @version v1.0.0-alpha.0
@@ -13,6 +16,10 @@ namespace Ritc\Library\Abstracts;
  */
 abstract class CustomError extends \ErrorException
 {
+    /**
+     * Overrides the base method.
+     * @return string
+     */
     public function __toString()
     {
         return get_class($this) .
@@ -20,6 +27,10 @@ abstract class CustomError extends \ErrorException
         $this->getTraceAsString();
     }
 
+    /**
+     * Returns the error message.
+     * @return string
+     */
     public function errorMessage()
     {
         $error_message = $this->getMessage();
@@ -39,6 +50,11 @@ abstract class CustomError extends \ErrorException
         return $error_message;
     }
 
+    /**
+     * Returns the text of the associated error code.
+     * @param int $code
+     * @return string
+     */
     public function getCodeText($code = -1)
     {
         switch ($code) {
@@ -60,6 +76,10 @@ abstract class CustomError extends \ErrorException
         }
     }
 
+    /**
+     * Returns the class.
+     * @return string
+     */
     public function getClass()
     {
         return get_class($this);

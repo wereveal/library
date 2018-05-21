@@ -1,15 +1,19 @@
 <?php
+/**
+ * Interface ModelTesterInterface
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Interfaces;
 
 /**
  * Interface ModelTesterInterface
  * Model classes should be implementing the ModelInterface to match.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2017-10-18 12:10:55
  * ## Change Log
- * - v1.0.0 initial versioning                                  - 2017-10-18 wer
+ * - v1.0.0 initial version                                  - 2017-10-18 wer
  */
 interface ModelTesterInterface {
     /**

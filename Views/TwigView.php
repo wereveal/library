@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class TwigView
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -16,7 +20,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * View for the Twig manager.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.1
  * @date    2018-05-20 14:59:17
@@ -29,6 +32,10 @@ class TwigView implements ViewInterface
 {
     use ConfigViewTraits, LogitTraits;
 
+    /**
+     * TwigView constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);

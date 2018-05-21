@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class RoutesGroupController
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Interfaces\ManagerControllerInterface;
@@ -10,7 +14,6 @@ use Ritc\Library\Interfaces\ManagerControllerInterface;
  *          The route to this controller has to already be in the database
  *          and should not be able to be deleted.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2015-08-04 04:25:11

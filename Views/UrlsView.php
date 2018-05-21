@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class UrlsView
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -11,7 +15,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Class UrlsView.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.0
  * @date    2017-06-20 11:53:31

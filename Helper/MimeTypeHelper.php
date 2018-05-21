@@ -1,10 +1,13 @@
 <?php
+/**
+ * Class MimeTypeHelper
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Helper;
 
 /**
  * Class MimeTypeHelper - Helps with mime types.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.2
  * @date    2018-04-18 14:26:04

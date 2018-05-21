@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class ModelAbstract
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Abstracts;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -8,7 +12,6 @@ use Ritc\Library\Traits\DbUtilityTraits;
 /**
  * Abstract which gives a basic setup for a model class.
  *
- * @package Ritc_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2018-04-26 09:27:20

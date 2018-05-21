@@ -1,13 +1,16 @@
 <?php
+/**
+ * Class Session
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Exceptions\ServiceException;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * For basic managing sessions.
+ * For basic management of sessions.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.4.1
  * @date    2017-07-06 21:13:04

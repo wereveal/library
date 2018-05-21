@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class RoutesController
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Strings;
@@ -13,10 +17,9 @@ use Ritc\Library\Views\RoutesView;
 
 /**
  * Class RoutesController - Controller for the Routes Admin page.
- * The route to this controller has to already be in the database and 
+ * The route to this controller has to already be in the database and
  * should not be able to be deleted.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.2.0
  * @date    2016-04-13 08:52:26

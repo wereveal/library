@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class RoutesGroupMapEntity
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
@@ -6,7 +10,6 @@ use Ritc\Library\Interfaces\EntityInterface;
 /**
  * Class RoutesGroupMapEntity - Entity to map the Router to the Groups.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-beta.1
  * @date    2015-09-03 12:47:56
@@ -15,11 +18,11 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class RoutesGroupMapEntity implements EntityInterface
 {
-    /** @var int */
+    /** @var int $rgm_id */
     private $rgm_id;
-    /** @var int */
+    /** @var int $route_id */
     private $route_id;
-    /** @var int */
+    /** @var int $group_id */
     private $group_id;
 
     /**

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class UrlsModel
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -11,7 +15,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Handles all the CRUD for the urls table.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.1
  * @date    2017-12-12 11:35:42

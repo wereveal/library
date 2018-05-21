@@ -1,15 +1,18 @@
 <?php
+/**
+ * Class Html
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class Html - Creates HTML strings.
+ * Creates HTML strings.
  * Methods which start with make_ return a modified version
  * of the value passed into the method, usually indicated by
  * the name of the method
  *
- * @package    RITC_Library
  * @author     William E Reveal <bill@revealitconsulting.com>
  * @version    v1.0.6
  * @date       2015-09-01 07:38:42

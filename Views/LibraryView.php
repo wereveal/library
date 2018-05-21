@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class LibraryView
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Services\Di;
@@ -7,7 +11,7 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the Manager page.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2016-04-10 14:49:43

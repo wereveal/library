@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PageController
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\Strings;
@@ -14,7 +18,6 @@ use Ritc\Library\Views\PageView;
 /**
  * Class PageController - Page Admin page.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.1
  * @date    2015-11-27 14:49:00

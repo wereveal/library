@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class UrlsModelTester
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
@@ -7,8 +11,7 @@ use Ritc\Library\Services\Di;
 
 /**
  * Class UrlsModelTester
- *
- * @package RITC_Library
+ * @package Ritc\Library\Tests
  */
 class UrlsModelTester extends Tester
 {
@@ -20,7 +23,7 @@ class UrlsModelTester extends Tester
         $o_db = $o_di->getVar('db');
         $this->setupElog($o_di);
         $this->o_model = new UrlsModel($o_db);
-        $this->o_model->setupElog($this->o_elog);
+        $this->o_model->setupElog($o_di);
     }
 
     public function createTester()

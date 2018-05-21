@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class CacheFactory
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Factories;
 
 use Ritc\Library\Traits\LogitTraits;
@@ -22,7 +26,6 @@ use Symfony\Component\Cache\Simple\RedisCache;
 /**
  * Class CacheFactory - creates one of several different Symfony\Component\Cache objects.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2018-05-12 21:42:20
@@ -38,6 +41,10 @@ class CacheFactory
     /** @var ArrayAdapter|ChainAdapter|FilesystemAdapter|PdoAdapter|PhpArrayAdapter|PhpFilesAdapter|RedisAdapter|ArrayCache|ChainCache|FilesystemCache|PdoCache|PhpArrayCache|PhpFilesCache|Psr6Cache|RedisCache  */
     private $o_cache;
 
+    /**
+     * CacheFactory constructor.
+     * @param array $a_cache_config
+     */
     private function __construct(array $a_cache_config = [])
     {
         $cache_type = empty($a_cache_config['cache_type'])

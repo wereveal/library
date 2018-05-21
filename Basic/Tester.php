@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class Tester
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Basic;
 
 use Ritc\Library\Helper\LocateFile;
@@ -6,10 +10,9 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class provides a base class of which one extends specific testers for specific classes.
- *
  * Class that extends this class should end with the word Tests or Tester,
  * e.g. MyClassTester or MyClassTests.
- * @package Ritc_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.7.0
  * @date    2018-05-19 14:12:33
@@ -38,31 +41,31 @@ class Tester
 {
     use LogitTraits;
 
-    /** @var array */
+    /** @var array the test order */
     protected $a_test_order       = [];
-    /** @var array */
+    /** @var array the test values */
     protected $a_test_values      = [];
-    /** @var string */
+    /** @var string name of the class being tested */
     protected $class_name         = '';
-    /** @var int */
+    /** @var array list of failed sub-tests */
     protected $failed_subtests    = [];
-    /** @var array */
+    /** @var array list of failed tests */
     protected $failed_test_names  = [];
-    /** @var int */
+    /** @var int number of failed tests */
     protected $failed_tests       = 0;
-    /** @var string  */
+    /** @var string namespace being tested */
     protected $namespace          = '';
-    /** @var int */
+    /** @var int number of tests */
     protected $num_o_tests        = 0;
-    /** @var array  */
+    /** @var array list of passed sub-tests */
     protected $passed_subtests    = [];
-    /** @var array */
+    /** @var array list of passed tests */
     protected $passed_test_names  = [];
-    /** @var int */
+    /** @var int number of passed tests */
     protected $passed_tests       = 0;
-    /** @var array  */
+    /** @var array list of skipped tests */
     protected $skipped_test_names = [];
-    /** @var int  */
+    /** @var int number of skipped tests */
     protected $skipped_tests      = 0;
 
     /**

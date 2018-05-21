@@ -1,4 +1,8 @@
 <?php
+/**
+ * Trait ViewTraits
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Traits;
 
 use Ritc\Library\Exceptions\FactoryException;
@@ -19,43 +23,22 @@ use Ritc\Library\Services\Session;
 
 /**
  * Common functions for views.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.0.0
  * @date    2018-05-14 17:38:51
  * ## Change Log
- * - v2.0.0         - Added caching of some data that is used commonly in a view.
+ * - v2.0.0         - Added caching of some data that is used commonly in a view.               - 2018-05-14 wer
  *                    Added a new method for setting the url_id based on record id
  *                    which fixes a bug.
  * - v1.2.0         - added method to create values needed for pager template.                  - 2018-04-20 wer
- * - v1.1.1         - bug fix                                                                   - 2018-04-19 wer
  * - v1.1.0         - added new default twig values for asset dirs                              - 2018-04-12 wer
- * - v1.0.2         - more bug fixes for missed exception handlers                              - 2018-03-12 wer
- * - v1.0.1         - bug fix, missed an exception handler for ModelException                   - 2017-12-02 wer
  * - v1.0.0         - added method to handle TWIG exceptions (took out of beta finally)         - 2017-11-29 wer
  * - v1.0.0-beta.11 - refactoring elsewhere reflected here.                                     - 2017-06-20 wer
- * - v1.0.0-beta.10 - refactoring elsewhere reflected here.                                     - 2017-06-10 wer
- * - v1.0.0-beta.9  - modified createDefaultTwigValues and getPageValues to optionally take a   - 2017-05-30 wer
- *                    url_id to in essence change the page values based on a different url from
- *                    the one called.
- * - v1.0.0-beta.8  - added renderError method to render the error page.                        - 2017-05-27 wer
- * - v1.0.0-beta.7  - database change to page table reflected here.                             - 2017-05-10 wer
- * - v1.0.0-beta.6  - added setTwig method to allow a different twig environment to be used.    - 2017-03-14 wer
- * - v1.0.0-beta.5  - moved some functionality from getPageValues to createDefaultTwigValues    - 2017-03-13 wer
- * - v1.0.0-beta.4  - removed twigLoader which apparently didn't really work                    - 2017-02-11 wer
- * - v1.0.0-beta.3  - removed LogitTraits from this trait, bug fix in twigLoader                - 2017-02-07 wer
- *                    There were times when another trait also used LogitTraits
- *                    and was causing conflicts.
- * - v1.0.0-beta.2  - added lib_prefix for twig prefixes as a default                           - 2017-01-27 wer
  * = v1.0.0-beta.1  - This should have come out of alpha a while back                           - 2017-01-24 wer
  *                    Added twigLoader method
  * - v1.0.0-alpha.4 - Added new method createDefaultTwigValues                                  - 2016-04-15 wer
- * - v1.0.0-alpha.3 - Navigation links are now sorted properly                                  - 2016-04-08 wer
- * - v1.0.0-alpha.2 - Use LogitTraits now                                                       - 2016-04-01 wer
- *                    Views that use this trait no longer need to 'use' LogitTraits
- *                    May cause some complaints from those that don't fix this.
- * - v1.0.0-alpha.1 - close to working version                                                  - 2016-03-10 wer
- * - v1.0.0-alpha.0 - inital version                                                            - 2016-02-22 wer
+ * - v1.0.0-alpha.0 - initial version                                                           - 2016-02-22 wer
  */
 trait ViewTraits
 {
@@ -65,7 +48,7 @@ trait ViewTraits
     protected $adm_level;
     /** @var AuthHelper */
     protected $o_auth;
-    /** @var object */
+    /** @var $o_cache One of several Symfony based cache classes. */
     protected $o_cache;
     /** @var DbModel */
     protected $o_db;

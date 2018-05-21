@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class RoutesHelper
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -9,9 +13,8 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class RoutesHelper
+ * Helper for routing.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.0.0
  * @date    2018-05-14 19:52:39
@@ -21,7 +24,7 @@ use Ritc\Library\Traits\LogitTraits;
  * - v2.0.0   - Changed to handle inexact request URI (slashes)     - 2016-09-08 wer
  * - v1.1.0   - added method for quick min auth level for a route.  - 02/26/2016 wer
  * - v1.0.0   - took out of beta                                    - 11/27/2015 wer
- * - v1.0.0β1 - intial file                                         - 09/26/2015 wer
+ * - v1.0.0β1 - initial file                                        - 09/26/2015 wer
  */
 class RoutesHelper
 {
@@ -29,8 +32,8 @@ class RoutesHelper
 
     /** @var array */
     private $a_route_parts;
-    /** @var object a cache instance */
-    private $o_cache = NULL;
+    /** @var */
+    private $o_cache;
     /** @var \Ritc\Library\Services\DbModel  */
     private $o_db;
     /** @var \Ritc\Library\Services\Di  */

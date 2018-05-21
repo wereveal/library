@@ -1,17 +1,13 @@
 <?php
 /**
- *      
- * @ingroup   lib_helpers
- * @file      Ritc/Library/Helper/OopHelper.php
- * @namespace Ritc\Library\Helper
+ * Class OopHelper.
+ * @package RITC_Library
  */
-
 namespace Ritc\Library\Helper;
 
 /**
- * Class OopHelper - Utility methods for Object Oriented Programming.
+ * Utility methods for Object Oriented Programming.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2018-04-04 10:02:07

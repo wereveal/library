@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PeopleView
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -13,7 +17,7 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the People Admin page.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.0.0
  * @date    2017-12-02 09:15:58

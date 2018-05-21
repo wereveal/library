@@ -1,10 +1,13 @@
 <?php
+/**
+ * Interface ManagerControllerInterface
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Interfaces;
 
 /**
- * Interface ManagerControllerInterface
+ * Interface for manager controllers.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.0.0
  * @date    2017-01-14 09:32:39

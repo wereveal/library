@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class TwigFactory
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Factories;
 
 use Ritc\Library\Exceptions\FactoryException;
@@ -11,11 +15,9 @@ use Twig_Loader_Filesystem;
 use Twig_Environment;
 
 /**
- * Class TwigFactory
- * @details Lets us create a twig object, specific to a configuration(s)
- *          allowing multiple twig objects to render the html.
+ * TwigFactory lets us create a twig object, specific to a configuration(s)
+ * allowing multiple twig objects to render the html.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.2.0
  * @date    2018-05-01 15:18:58
@@ -44,8 +46,9 @@ use Twig_Environment;
  */
 class TwigFactory
 {
+    /** @var \Twig_Loader_Filesystem object */
     private $o_loader;
-    /** @var Twig_Environment */
+    /** @var Twig_Environment object */
     private $o_twig;
     /** @var array */
     private static $instance = array();

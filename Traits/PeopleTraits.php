@@ -1,10 +1,13 @@
 <?php
+/**
+ * Trait PeopleTraits
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Traits;
 
 /**
  * Functions that could be used in several people related cases.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2016-12-08 12:17:39

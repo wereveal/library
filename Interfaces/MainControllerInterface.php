@@ -1,10 +1,13 @@
 <?php
+/**
+ * Interface MainControllerInterface
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Interfaces;
 
 /**
- * Interface MainControllerInterface
+ * Interface for the main controller for an app.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2018-05-01 16:29:40

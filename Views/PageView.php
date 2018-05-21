@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PageView
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -12,7 +16,7 @@ use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the Page Admin page.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2017-06-20 11:46:05

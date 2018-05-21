@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class NavigationView
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -11,7 +15,7 @@ use Ritc\Library\Traits\ViewTraits;
 
 /**
  * The view class for the navigation manager.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.2
  * @date    2017-06-19 13:11:34

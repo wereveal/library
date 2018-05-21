@@ -1,13 +1,16 @@
 <?php
+/**
+ * Class UploadHelper
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Helper;
 
 /**
- * Class UploadHelper - helps with uploading files.
- * @package RITC_Library
+ * Helps with uploading files.
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2018-03-29 14:13:03
- *
  * ## Change Log
  * - v2.1.0 - added new methods to handle file types not    - 2018-03-29 wer
  *            specified in the sort of safe method. Changed

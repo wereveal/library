@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class Strings
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Helper;
 
 /**
@@ -8,7 +12,6 @@ namespace Ritc\Library\Helper;
  * the name of the method.
  * Renamed and modified version of old class Output which was the class name before v5.0.0.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 6.6.0
  * @date    2018-05-15 16:00:30

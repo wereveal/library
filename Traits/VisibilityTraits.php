@@ -1,16 +1,20 @@
 <?php
+/**
+ * Trait VisibilityTraits
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Traits;
 
 /**
  * A set of visibility methods to keep things protected and private.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
+ * @version v1.0.0
  * @date    2015-08-19 12:18:25
  * @note    This was a part of the Base abstract class. Spun it out so it could
  *          be used independently, only in classes where it is important.
  * ## Change Log
- * - v1.0.0-alpha.0 - initial version - 08/19/2015 wer
+ * - v1.0.0 - initial version - 08/19/2015 wer
  */
 trait VisibilityTraits {
     protected $current_page;
@@ -23,11 +27,21 @@ trait VisibilityTraits {
      */
     protected function setPrivateProperties()
     {
-        $o_class = new \ReflectionClass(__CLASS__);
+        try {
+            $o_class = new \ReflectionClass(__CLASS__);
+        }
+        catch (\ReflectionException $e) {
+            return;
+        }
         $this->current_page = $o_class->getFileName();
         $class_properties = get_class_vars(__CLASS__);
         foreach ($class_properties as $property_name => $property_value) {
-            $o_prop = new \ReflectionProperty(__CLASS__, $property_name);
+            try {
+                $o_prop = new \ReflectionProperty(__CLASS__, $property_name);
+            }
+            catch (\ReflectionException $e) {
+                return;
+            }
             if ($o_prop->isPrivate() || $o_prop->isProtected()) {
                 $this->private_properties[$o_prop->getName()] = $o_prop->isPrivate() ? 'private' : 'protected';
             }

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class GroupsEntity
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
@@ -6,7 +10,6 @@ use Ritc\Library\Interfaces\EntityInterface;
 /**
  * Class GroupsEntity.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2015-07-29 11:41:03
@@ -16,8 +19,11 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class GroupsEntity implements EntityInterface
 {
+    /** @var int $group_id entity */
     private $group_id;
+    /** @var string entity */
     private $group_name;
+    /** @var string entity */
     private $group_description;
 
     /**

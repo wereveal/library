@@ -1,10 +1,13 @@
 <?php
+/**
+ * Interface LocationInterface
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Interfaces;
 
 /**
- * Interface LocationInterface.
+ * Interface for location based helpers.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2011-06-14 15:11:26

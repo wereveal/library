@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class DbModel
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -9,7 +13,7 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Class DbModel makes using the PDO stuff easier.
  * For read/write access to the database based on PDO.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v5.2.1
  * @date    2017-12-15 13:51:15

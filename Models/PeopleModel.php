@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PeopleModel
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -12,7 +16,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Does all the Model expected operations, database CRUD and business logic.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.4.3
  * @date    2018-04-05 10:40:48

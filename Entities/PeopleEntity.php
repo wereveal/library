@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PeopleEntity
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
@@ -6,7 +10,6 @@ use Ritc\Library\Interfaces\EntityInterface;
 /**
  * Class PeopleEntity
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.0.0
  * @date    2017-12-13 16:42:22
@@ -17,27 +20,27 @@ use Ritc\Library\Interfaces\EntityInterface;
  */
 class PeopleEntity implements EntityInterface
 {
-    /** @var string */
+    /** @var string $people_id */
     private $people_id = '';
-    /** @var string */
+    /** @var string $login_id */
     private $login_id = '';
-    /** @var string */
+    /** @var string $real_name */
     private $real_name = '';
-    /** @var string */
+    /** @var string $short_name */
     private $short_name = '';
-    /** @var string */
+    /** @var string $password */
     private $password = '';
-    /** @var int */
+    /** @var int $is_logged_in */
     private $is_logged_in = 'false';
-    /** @var int */
+    /** @var int $bad_login_count */
     private $bad_login_count = 0;
-    /** @var int */
+    /** @var int $bad_login_ts */
     private $bad_login_ts = 0;
-    /** @var int */
+    /** @var int $is_active */
     private $is_active = 'false';
-    /** @var int */
+    /** @var int $is_immutable */
     private $is_immutable = 'false';
-    /** @var int */
+    /** @var int $created_on */
     private $created_on = 0;
 
     /**

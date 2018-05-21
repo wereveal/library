@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class TwigComplexModel
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -12,7 +16,6 @@ use Ritc\Library\Traits\LogitTraits;
  * Does multi-table operations for twig.
  * twig_prefix, twig_dirs, twig_templates are used.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.1
  * @date    2017-12-15 22:47:39

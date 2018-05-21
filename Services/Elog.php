@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class Elog
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Exceptions\ServiceException;
@@ -6,9 +10,9 @@ use Ritc\Library\Exceptions\ServiceException;
 /**
  * Something simple to help me debug my websites.
  * A singleton pattern because that is what I want. pfffttttt!
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @versionv:  3.2.0
+ * @version v3.2.0
  * @date    2017-07-16 07:57:42
  * ## Change Log
  * - v3.2.0 - Added additional LOG_x types, rearranged some code              - 2017-07-16 wer
@@ -22,47 +26,47 @@ use Ritc\Library\Exceptions\ServiceException;
  */
 class Elog
 {
-    /** @var string */
+    /** @var string the current page */
     protected $current_page;
-    /** @var bool */
+    /** @var bool has logging started */
     private $custom_log_used = false;
-    /** @var string */
+    /** @var string test of a debug */
     private $debug_text;
-    /** @var bool */
+    /** @var bool should the last message be displayed */
     private $display_last_message = false;
-    /** @var string */
+    /** @var string the name of the file to be logged to */
     private $elog_file = 'elog.log';
-    /** @var string */
+    /** @var string where to send an email log message */
     private $error_email_address = 'wer@qca.net';
-    /** @var bool */
+    /** @var bool if html is used */
     private $html_used = false;
-    /** @var bool */
+    /** @var bool if true, all log messages will be done */
     private $ignore_log_off = false;
-    /** @var string */
+    /** @var string from which class the error message came */
     private $from_class = '';
-    /** @var string */
+    /** @var string from which function the error message came */
     private $from_function = '';
-    /** @var string */
+    /** @var string from the location the message came */
     private $from_location = '';
-    /** @var string */
+    /** @var string from which method the message came */
     private $from_method = '';
-    /** @var string */
+    /** @var string from which file the message came */
     private $from_file = '';
-    /** @var string */
+    /** @var string from which line the message came */
     private $from_line = '';
-    /** @var bool */
+    /** @var bool is the handler set */
     private $handler_set = false;
-    /** @var Elog */
+    /** @var Elog the elog object instance */
     private static $instance;
-    /** @var string */
+    /** @var string the name of the json file to log to */
     private $json_file = 'json.log';
-    /** @var bool */
+    /** @var bool has the json log been used */
     private $json_log_used = false;
-    /** @var string */
+    /** @var string what the last message was */
     private $last_message = '';
-    /** @var int */
+    /** @var int the method to use to log the messages */
     private $log_method;
-    /** @var bool */
+    /** @var bool has the php log been used */
     private $php_log_used = false;
 
     /**
@@ -95,7 +99,8 @@ class Elog
     /**
      * Create/use the instance.
      * Elog is a singleton and uses the start method to create/use the instance.
-     * @return object - the instance
+     * @return \Ritc\Library\Services\Elog - the instance
+     * @throws \Ritc\Library\Exceptions\ServiceException
      */
     public static function start()
     {

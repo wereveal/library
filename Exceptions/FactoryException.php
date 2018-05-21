@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class FactoryException
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomException;
@@ -8,7 +12,6 @@ use Throwable;
 /**
  * Class FactoryException.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.1
  * @date    2017-12-12 14:57:04
@@ -18,11 +21,22 @@ use Throwable;
  */
 class FactoryException extends CustomException
 {
+    /**
+     * FactoryException constructor.
+     * @param string          $message
+     * @param int             $code
+     * @param \Throwable|null $previous
+     */
     public function __construct($message = "", $code = 0, \Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
 
+    /**
+     * Returns the text string associated with the error code.
+     * @param int $code
+     * @return string
+     */
     public function getCodeText($code = -1)
     {
         return ExceptionHelper::getCodeTextFactory($code);

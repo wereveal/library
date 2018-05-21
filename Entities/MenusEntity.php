@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class MenusEntity
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
@@ -6,11 +10,10 @@ use Ritc\Library\Interfaces\EntityInterface;
 /**
  * Class MenusEntity
  *
- * @package RITC_Library
  * @author  William E Reveal
  * @version v1.0.0
  * @date    2016-02-23 11:09:18
- * ## Change Log 
+ * ## Change Log
  * - v1.0.0 - Initial Version                                   - 2016-02-23 wer
  */
 class MenusEntity implements EntityInterface

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class Router
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Helper\Arrays;
@@ -8,7 +12,7 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Figures out the routes and route parts.
  * Determines the controller and method to use based on URI.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.2.1
  * @date    2018-03-30 15:51:43
@@ -26,13 +30,13 @@ class Router
 {
     use LogitTraits;
 
-    /** @var array */
+    /** @var array values from a $_GET */
     private $a_get;
-    /** @var array */
+    /** @var array values from a $_POST */
     private $a_post;
-    /** @var array */
+    /** @var array $a_router_parts */
     private $a_router_parts;
-    /** @var \Ritc\Library\Helper\RoutesHelper */
+    /** @var \Ritc\Library\Helper\RoutesHelper $o_routes_helper */
     private $o_routes_helper;
     /** @var string the action specified by a form */
     private $form_action;
@@ -46,7 +50,7 @@ class Router
     private $route_method;
     /** @var string the path being routed (may be different from the request uri) */
     private $route_path;
-    /** @var  int */
+    /** @var  int the url id for the page */
     private $url_id;
 
     /**

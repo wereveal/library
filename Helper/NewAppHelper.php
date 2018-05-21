@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class NewAppHelper
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -7,9 +11,8 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class NewAppHelper - Helper for setting up a new app.
+ * Helper for setting up a new app.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.0
  * @date    2018-04-14 17:31:00
@@ -22,19 +25,19 @@ class NewAppHelper
 {
     use LogitTraits;
 
-    /** @var array  */
+    /** @var array $a_config */
     private $a_config;
-    /** @var  array */
+    /** @var  array $a_new_dirs */
     private $a_new_dirs;
-    /** @var  string */
+    /** @var  string $app_path */
     private $app_path;
-    /** @var  string */
+    /** @var  string $htaccess_text */
     private $htaccess_text;
-    /** @var  string */
+    /** @var  string $keep_me_text */
     private $keep_me_text;
-    /** @var \Ritc\Library\Services\Di */
+    /** @var \Ritc\Library\Services\Di $o_di */
     private $o_di;
-    /** @var  string */
+    /** @var  string $tpl_text */
     private $tpl_text;
 
     /**

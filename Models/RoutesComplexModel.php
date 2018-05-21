@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class RoutesComplexModel
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -9,7 +13,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Does all the Model expected operations, database CRUD and business logic.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2017-06-18 14:23:31
@@ -20,6 +23,10 @@ class RoutesComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
+    /**
+     * RoutesComplexModel constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         /** @var \Ritc\Library\Services\DbModel $o_db */

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class GroupsView
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -9,7 +13,7 @@ use Ritc\Library\Traits\ViewTraits;
 
 /**
  * View for the Groups Admin page.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2017-06-20 11:44:34

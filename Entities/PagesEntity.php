@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PagesEntity
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Helper\Arrays;
@@ -7,7 +11,6 @@ use Ritc\Library\Interfaces\EntityInterface;
 /**
  * Class PagesEntity.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-beta.1
  * @date    2015-10-30 08:14:03
@@ -17,23 +20,23 @@ use Ritc\Library\Interfaces\EntityInterface;
 class PagesEntity implements EntityInterface
 {
 
-    /** @var array */
+    /** @var array $a_entity */
     private $a_entity;
-    /** @var string */
+    /** @var string $page_base_url */
     private $page_base_url;
-    /** @var string */
+    /** @var string $page_charset */
     private $page_charset;
-    /** @var string */
+    /** @var string $page_description */
     private $page_description;
-    /** @var int */
+    /** @var int $page_id */
     private $page_id;
-    /** @var string */
+    /** @var string $page_lang */
     private $page_lang;
-    /** @var string */
+    /** @var string $page_title */
     private $page_title;
-    /** @var string */
+    /** @var string $page_type */
     private $page_type;
-    /** @var string */
+    /** @var string $page_url */
     private $page_url;
 
     /**

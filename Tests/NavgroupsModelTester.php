@@ -1,6 +1,11 @@
 <?php
+/**
+ * Class NavgroupsModelTester
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Tests;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -9,7 +14,6 @@ use Ritc\Library\Traits\TesterTraits;
 /**
  * Tests the NavgroupsModel class.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2017-06-09 10:14:17
@@ -190,7 +194,13 @@ class NavgroupsModelTester
         else {
             $created_id = $this->created_id;
         }
-        $default_ng_id = $this->o_model->retrieveDefaultId();
+        try {
+            $default_ng_id = $this->o_model->retrieveDefaultId();
+        }
+        catch (ModelException $e) {
+            $this->setSubFailed($test_name, "Unknown error: could not retrieve default id.");
+            return 'failed';
+        }
         if (empty($default_ng_id) || $default_ng_id < 1) {
             $this->setSubFailed($test_name, "Unknown error: could not retrieve default id.");
             return 'failed';
@@ -207,11 +217,17 @@ class NavgroupsModelTester
             if ($ng_id == 'immutable') {
                 $ng_id = $default_ng_id;
             }
-            $results = $this->o_model->delete($ng_id);
-            if ($results === $a_values['expected_results']) {
-                $this->setSubPassed($test_name, $key);
+            try {
+                $results = $this->o_model->delete($ng_id);
+                if ($results === $a_values['expected_results']) {
+                    $this->setSubPassed($test_name, $key);
+                }
+                else {
+                    $this->setSubFailed($test_name, $key);
+                    $failed++;
+                }
             }
-            else {
+            catch (ModelException $e) {
                 $this->setSubFailed($test_name, $key);
                 $failed++;
             }

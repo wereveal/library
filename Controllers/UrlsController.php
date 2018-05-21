@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class UrlsController
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -12,7 +16,7 @@ use Ritc\Library\Views\UrlsView;
 
 /**
  * Controller for Urls admin.
- * @package RITC_Library
+ *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.0
  * @date    2017-06-03 17:17:30

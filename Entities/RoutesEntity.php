@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class RoutesEntity
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Entities;
 
 use Ritc\Library\Interfaces\EntityInterface;
@@ -6,7 +10,6 @@ use Ritc\Library\Interfaces\EntityInterface;
 /**
  * Class RoutesEntity - Basic accessors for a routes entity.
  *
- * @package RITC_Library
  * @author  William E Reveal
  * @version v1.0.0
  * @date    14:20:33

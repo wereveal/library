@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class TwigTemplatesModel
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -11,7 +15,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Does database operations on the twig_prefix table.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2017-12-12 11:36:26

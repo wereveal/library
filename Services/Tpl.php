@@ -1,13 +1,18 @@
 <?php
+/**
+ * Class Tpl
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Services;
 
+use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Factories\TwigFactory;
 
 /**
  * Class Tpl that is basically a stub for the TwigFactory.
  * Left for legacy.
+ *
  * @deprecated v1.0.0
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2015-09-03 14:19:00
@@ -17,14 +22,18 @@ use Ritc\Library\Factories\TwigFactory;
  */
 class Tpl
 {
-
     /**
      * Returns the twig environment object which we use to do all the template rendering.
      * @param string $config_file
-     * @return \Twig_Environment
+     * @return \Twig_Environment|null
      */
     public function getTwig($config_file = 'twig_config.php')
     {
-        return TwigFactory::getTwig($config_file);
+        try {
+            return TwigFactory::getTwig($config_file);
+        }
+        catch(FactoryException $e) {
+            return null;
+        }
     }
 }

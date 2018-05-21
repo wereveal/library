@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PeopleModelTester
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
@@ -10,7 +14,6 @@ use Ritc\Library\Models\PeopleModel;
 /**
  * Tests the Group Model Class.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2016-03-05 10:44:05

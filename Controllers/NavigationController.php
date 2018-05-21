@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class NavigationController
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
@@ -12,7 +16,6 @@ use Ritc\Library\Views\NavigationView;
 /**
  * Class NavigationController - for the Navigation Management.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2016-04-15 11:53:36
@@ -23,9 +26,15 @@ class NavigationController implements ManagerControllerInterface
 {
     use ConfigControllerTraits, LogitTraits;
 
+    /** @var \Ritc\Library\Models\NavComplexModel model object */
     protected $o_model;
+    /** @var \Ritc\Library\Views\NavigationView view object */
     protected $o_view;
 
+    /**
+     * NavigationController constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);
@@ -97,6 +106,10 @@ class NavigationController implements ManagerControllerInterface
     }
 
     ### Extra ###
+    /**
+     * Does the modify.
+     * @return string
+     */
     private function modify()
     {
         switch ($this->form_action) {

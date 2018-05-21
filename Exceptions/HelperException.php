@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class HelperException
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomException;
@@ -6,7 +10,6 @@ use Ritc\Library\Abstracts\CustomException;
 /**
  * Class HelperException - Handles custom exceptions for helpers.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2017-07-16 08:18:12
@@ -15,11 +18,22 @@ use Ritc\Library\Abstracts\CustomException;
  */
 class HelperException extends CustomException
 {
+    /**
+     * HelperException constructor.
+     * @param string          $message
+     * @param int             $code
+     * @param \Throwable|null $previous
+     */
     public function __construct($message = "", $code = 0, \Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
 
+    /**
+     * Returns the text string associated with the error code.
+     * @param int $code
+     * @return string
+     */
     public function getCodeText($code = -1)
     {
         switch ($code) {

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class ModelException
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomException;
@@ -7,7 +11,6 @@ use Ritc\Library\Helper\ExceptionHelper;
 /**
  * Exceptions specific to database, application rules and business logic operations.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.2
  * @date    2017-12-12 11:32:33
@@ -18,6 +21,12 @@ use Ritc\Library\Helper\ExceptionHelper;
  */
 class ModelException extends CustomException
 {
+    /**
+     * ModelException constructor.
+     * @param string          $message
+     * @param int             $code
+     * @param \Throwable|null $previous
+     */
     public function __construct($message = "", $code = 0, \Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class Files
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Interfaces\LocationInterface;
@@ -7,7 +11,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Class Files - Determines the path to the file
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v4.3.1+1
  * @date    2016-04-21 10:27:57

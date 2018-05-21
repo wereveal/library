@@ -1,6 +1,11 @@
 <?php
+/**
+ * Class TestsController
+ * @package RITC_Library
+ */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Tests\ConstantsModelTester;
 use Ritc\Library\Tests\NavgroupsModelTester;
@@ -16,7 +21,6 @@ use Ritc\Library\Views\TestsView;
 /**
  * Class TestsController - Controller for the Test page.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.1
  * @date    2017-02-15 15:23:02
@@ -28,9 +32,9 @@ class TestsController
 {
     use LogitTraits, ControllerTraits;
 
-    /** @var TestsView */
+    /** @var TestsView view object */
     private $o_view;
-    /** @var string */
+    /** @var string path to the config file */
     private $test_configs_path;
 
     /**
@@ -92,7 +96,12 @@ class TestsController
         }
         $a_test_results = $o_test->runTests();
         if ($clean_up_db) {
-            $o_test->cleanupDbTests();
+            try {
+                $o_test->cleanupDbTests();
+            }
+            catch (ModelException $e) {
+
+            }
         }
         return $this->o_view->renderResults($a_test_results);
     }
