@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class LibraryController
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Helper\ViewHelper;
@@ -9,9 +13,8 @@ use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\LibraryView;
 
 /**
- * Class LibraryController - main controller for the config manager.
+ * Main controller for the config manager.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.1
  * @date    2017-05-14 14:35:02

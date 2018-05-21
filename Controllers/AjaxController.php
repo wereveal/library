@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class AjaxController
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -9,9 +13,8 @@ use Ritc\Library\Traits\ControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class AjaxController - Does Ajax Calls used by the Config manager.
+ * Does Ajax Calls used by the Config manager.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2018-04-10 11:14:16

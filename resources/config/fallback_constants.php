@@ -3,7 +3,7 @@
  * Defines some required constants.
  * Used only if the class Constants could not create them from the database.
  * @file     fallback_constants.php
- * @pagckage RITC_Library
+ * @pagckage Ritc_Library
  * ## NOTE:
  * - _PATH = Full server path
  * - _DIR  = Path in web site (URI)

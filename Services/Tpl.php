@@ -1,7 +1,7 @@
 <?php
 /**
  * Class Tpl
- * @package RITC_Library
+ * @package Ritc_Library
  */
 namespace Ritc\Library\Services;
 

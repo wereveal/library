@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class PageComplexModel
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -11,7 +15,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Does multi-table queries and applies necessary business logic.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.6
  * @date    2017-06-17 12:12:02

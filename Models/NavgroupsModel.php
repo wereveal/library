@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class NavgroupsModel
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -9,10 +13,8 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class NavgroupsModel.
  * Does all the database CRUD stuff for the page table plus other app/business logic.\
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2017-12-12 11:43:01

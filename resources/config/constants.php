@@ -2,7 +2,7 @@
 /**
  * Define Constants that will be used throughout the website.
  * @file    constants.php
- * @package RITC_Library
+ * @package Ritc_Library
  * ## NOTE:
  * - _PATH = Full server path
  * - _DIR  = Path in web site (URI)

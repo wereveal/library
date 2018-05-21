@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class AuthHelper
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -17,7 +21,6 @@ use Ritc\Library\Traits\LogitTraits;
  *            more finely grained access with be handled there
  *            or in a sub-controller.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v5.3.1
  * @date    2018-04-14 15:06:36

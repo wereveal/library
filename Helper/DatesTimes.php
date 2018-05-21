@@ -1,10 +1,13 @@
 <?php
+/**
+ * Class DatesTimes
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Helper;
 
 /**
  * Class DatesTimes - provides a lot of normal date time functionality.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.1.0
  * @date    2017-11-28 16:14:44

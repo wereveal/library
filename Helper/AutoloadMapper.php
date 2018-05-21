@@ -1,13 +1,16 @@
 <?php
+/**
+ * Class AutoloadMapper
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Helper;
 
 use \DirectoryIterator;
 use \SplFileInfo;
 
 /**
- * Class AutoloadMapper - Creates the autoload_classmap.php file.
+ * Creates the autoload_classmap.php file.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.2.3
  * @date    2017-01-10 12:26:57

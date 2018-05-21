@@ -1,7 +1,7 @@
 <?php
 /**
  * Interface DbAdminInterface
- * @package RITC_Library
+ * @package Ritc_Library
  */
 namespace Ritc\Library\Interfaces;
 
@@ -18,7 +18,7 @@ interface DbAdminInterface
 {
     /**
      * Gets the columns for the table then routes the data to the view.
-     * @param $table_name Required
+     * @param string $table_name Required
      * @return string
      */
     public function showColumns($table_name = '');

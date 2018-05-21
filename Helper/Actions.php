@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class Actions
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Traits\LogitTraits;
@@ -8,7 +12,6 @@ use Ritc\Library\Traits\LogitTraits;
  * @details Can get the action from the URL - htaccess required
  *          or from a form element with a few select id names
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.2.7
  * @date    2015-01-27 15:15:06

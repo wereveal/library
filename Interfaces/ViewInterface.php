@@ -1,7 +1,7 @@
 <?php
 /**
  * Interface ViewInterface
- * @package RITC_Library
+ * @package Ritc_Library
  */
 namespace Ritc\Library\Interfaces;
 

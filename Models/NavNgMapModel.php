@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class NavNgMapModel
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -10,7 +14,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Does all the database CRUD stuff for the navigation to navgroups mapping.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.3
  * @date    2017-06-15 16:34:42

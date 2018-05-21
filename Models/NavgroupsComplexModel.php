@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class NavgroupsComplexModel
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -9,7 +13,6 @@ use Ritc\Library\Traits\LogitTraits;
 /**
  * Class NavgroupsComplexModel - Multi-table model manipulations associated with the navgoups.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2017-12-12 10:07:24

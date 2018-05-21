@@ -1,10 +1,13 @@
 <?php
+/**
+ * Class Arrays
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Helper;
 
 /**
- * Class Arrays - does stuff with arrays.
+ * Does stuff with arrays.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 3.4.0
  * @date    2018-05-18 13:45:25

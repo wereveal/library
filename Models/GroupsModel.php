@@ -1,4 +1,8 @@
 <?php
+/**
+ * Class GroupsModel
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -8,10 +12,8 @@ use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class GroupsModel.
  * Does all the database CRUD stuff for the page table plus other app/business logic.
  *
- * @package RITC_Library
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.0.1
  * @date    2017-12-12 11:42:21
