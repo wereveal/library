@@ -14,7 +14,7 @@ use Ritc\Library\Exceptions\ServiceException;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.2.0
  * @date    2017-07-16 07:57:42
- * ## Change Log
+ * @change_log
  * - v3.2.0 - Added additional LOG_x types, rearranged some code              - 2017-07-16 wer
  * - v3.1.0 - Added LOG_WARN and LOG_ERROR                                    - 2017-05-12 wer
  * - v3.0.0 - added new logging methods, changed default to custom log        - 11/19/2015 wer

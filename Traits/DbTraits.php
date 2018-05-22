@@ -13,7 +13,7 @@ use Ritc\Library\Helper\Arrays;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.1.0
  * @date    2017-01-25 13:45:50
- * ## Change Log
+ * @change_log
  * - v3.1.0   - moved retrieveDbConfig to DbCommonTraits            - 2017-01-25 wer
  * - v3.0.0   - changed the db prefix way of working                - 2017-01-14 wer
  * - v2.2.0   - added new property lib_prefix and fixed bug         - 2017-01-13 wer

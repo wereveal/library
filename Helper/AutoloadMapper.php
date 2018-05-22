@@ -14,7 +14,7 @@ use \SplFileInfo;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.2.3
  * @date    2017-01-10 12:26:57
- * ## Change Log
+ * @change_log
  *     v1.3.0 - refactoring of file structure reflected here  - 2017-02-15 wer
  *     v1.2.1 - refactored var names to be more descriptive   - 12/07/2015 wer
  *     v1.2.0 - added code to not include archives            - 11/06/2015 wer

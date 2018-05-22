@@ -11,7 +11,7 @@ namespace Ritc\Library\Interfaces;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.0.0
  * @date    2017-01-14 09:32:39
- * ## Change Log
+ * @change_log
  * - v2.0.0 - changed name of method render to route to reflect intended purpose    - 2017-01-14 wer
  * - v1.0.0 - initial version                                                       - 01/11/2015 wer
  * @todo refactor - fork interface to ConfigControllerInterface

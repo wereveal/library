@@ -18,7 +18,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.7
  * @date    2017-12-12 10:08:19
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.7 - ModelException change reflected here                  - 2017-12-12 wer
  * - v1.0.0-alpha.6 - Moved some methods from here to PeopleModel           - 2017-12-05 wer
  * - v1.0.0-alpha.5 - Moved some business logic from controller to here     - 2017-12-02 wer

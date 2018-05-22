@@ -15,7 +15,7 @@ use Ritc\Library\Services\Elog;
  * @version v1.3.1
  * @date    2018-03-29 15:44:43
  * @note    this is derived from the abstract class Base which it replaced.
- * ## Change Log
+ * @change_log
  * - v1.3.1 - bug fix                                                        - 2018-03-29 wer
  * - v1.3.0 - added method and property to set elog for multiple object      - 2017-12-05 wer
  *            based on the names of the objects saved in the property

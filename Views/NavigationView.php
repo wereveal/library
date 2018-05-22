@@ -19,11 +19,10 @@ use Ritc\Library\Traits\ViewTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.2
  * @date    2017-06-19 13:11:34
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.2 - refactoring in model   - 2017-06-19 wer
  * - v1.0.0-alpha.1 - Name refactoring       - 2017-05-14 wer
  * - v1.0.0-alpha.0 - Initial version        - 2016-04-15 wer
- * @todo NavigationView- Everything
  */
 class NavigationView
 {

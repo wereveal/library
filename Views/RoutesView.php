@@ -19,7 +19,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 2.2.0
  * @date    2018-05-16 17:55:29
- * ## Change Log
+ * @change_log
  * - v2.2.0   - Switching code to use more of the ViewTraits (bug fixes)                - 2018-05-16 wer
  * - v2.1.0   - two changes, switch to using RoutesComplexModel and method in           - 2017-06-20 wer
  *              ViewHelper refactored so updated here.

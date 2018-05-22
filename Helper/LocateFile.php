@@ -13,7 +13,7 @@ namespace Ritc\Library\Helper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.0
  * @date    2018-04-12 11:32:47
- * ## Change Log
+ * @change_log
  * - v1.1.0 - Removed references to constants of THEME variations   - 2018-04-12 wer
  * - v1.0.0 - Initial Version                                       - 2017-02-08 wer
  */

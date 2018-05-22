@@ -19,7 +19,7 @@ use Ritc\Library\Services\DbModel;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.3.0
  * @date    2018-04-26 08:38:57
- * ## Change Log
+ * @change_log
  * - v2.3.0          - New methods for new property a_required_keys         - 2018-04-26 wer
  *                     Modified generic methods to use ExceptionHelper
  *                     Modified generic methods slightly to ensure required

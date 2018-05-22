@@ -18,7 +18,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.0.1
  * @date    2017-12-12 11:37:32
- * ## Change Log
+ * @change_log
  * - v2.0.1   - ModelException changes reflected here                   - 2017-12-12 wer
  * - v2.0.0   - Refactored to use ModelException and moved a couple     - 2017-06-18 wer
  *              methods to RoutesComplexModel.

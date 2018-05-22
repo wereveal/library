@@ -8,7 +8,7 @@
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @date    2017-01-13 09:48:15
  * @version v2.0.0
- * ## Change Log
+ * @change_log
  *  v2.0.0 - bug fixes and rewrite of the database insert stuff   - 2017-01-13 wer
  *  v1.0.0 - initial version                                      - 2015-11-27 wer
  */

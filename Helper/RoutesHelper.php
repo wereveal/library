@@ -18,7 +18,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.0.0
  * @date    2018-05-14 19:52:39
- * ## Change Log
+ * @change_log
  * - v3.0.0   - Changed to use cache for some database values       - 2018-05-14 wer
  * - v2.1.0   - Changed to handle ModelExceptions                   - 2017-06-20 wer
  * - v2.0.0   - Changed to handle inexact request URI (slashes)     - 2016-09-08 wer

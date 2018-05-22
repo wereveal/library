@@ -20,7 +20,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2017-06-20 11:46:05
- * ## Change Log
+ * @change_log
  * - v2.1.0   - method name changed elsewhere changed here                              - 2017-06-20 wer
  *              ModelException handling added
  * - v2.0.0   - name refactoring                                                        - 2017-05-14 wer

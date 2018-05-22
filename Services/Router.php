@@ -16,7 +16,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.2.1
  * @date    2018-03-30 15:51:43
- * ## Change Log
+ * @change_log
  * - v1.2.1    - bug fix, comment change                                     - 2018-03-30 wer
  * - v1.2.0    - Changed Router::setPost() and Router::setGet to use the     - 2016-09-19 wer
  *               new Arrays::cleanValues() method. By default, they do

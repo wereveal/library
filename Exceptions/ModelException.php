@@ -14,7 +14,7 @@ use Ritc\Library\Helper\ExceptionHelper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.2
  * @date    2017-12-12 11:32:33
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.2 - Renumbered codes to be more consistent    - 2017-12-12 wer
  * - v1.0.0-alpha.1 - CustomException change reflected here.    - 2017-07-15 wer
  * - v1.0.0-alpha.0 - Initial version                           - 2017-06-11 wer

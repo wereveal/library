@@ -11,7 +11,7 @@ namespace Ritc\Library\Interfaces;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2017-01-24 15:50:47
- * ## Change Log
+ * @change_log
  * - v1.0.0 - initial version                   - 2017-01-24 wer
  */
 interface ViewInterface

@@ -20,7 +20,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.4.0-beta.4
  * @date    2018-04-21 13:26:46
- * ## Change Log
+ * @change_log
  * - v1.4.0-beta.4 - Refactoring of Trait reflected here             - 2018-04-21 wer
  * - v1.4.0-beta.3 - Name change of Trait.                           - 2017-06-20 wer
  * - v1.4.0-beta.2 - Refactoring of model reflected here             - 2017-06-19 wer

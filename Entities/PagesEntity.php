@@ -14,7 +14,7 @@ use Ritc\Library\Interfaces\EntityInterface;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-beta.1
  * @date    2015-10-30 08:14:03
- * ## Change Log
+ * @change_log
  * - v1.0.0-beta.1 - Initial version                                      - 10/30/2015 wer
  */
 class PagesEntity implements EntityInterface

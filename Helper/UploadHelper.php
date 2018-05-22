@@ -11,7 +11,7 @@ namespace Ritc\Library\Helper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2018-03-29 14:13:03
- * ## Change Log
+ * @change_log
  * - v2.1.0 - added new methods to handle file types not    - 2018-03-29 wer
  *            specified in the sort of safe method. Changed
  *            default check for safe file types to new

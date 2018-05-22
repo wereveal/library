@@ -13,7 +13,7 @@ use Ritc\Library\Helper\ViewHelper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.2.2
  * @date    2017-12-13 18:12:06
- * ## Change Log
+ * @change_log
  * - v3.2.2 - bug fix                                                               - 2017-12-13 wer
  * - v3.2.1 - bug fix for TwigExceptions now handled by new method in ViewTraits    - 2017-12-02 wer
  * - v3.2.0 - trying to make this more generic                                      - 2017-11-28 wer

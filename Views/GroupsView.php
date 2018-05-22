@@ -8,8 +8,8 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ViewTraits;
 
 /**
  * View for the Groups Admin page.
@@ -17,7 +17,7 @@ use Ritc\Library\Traits\ViewTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2017-06-20 11:44:34
- * ## Change Log
+ * @change_log
  * - v2.1.0   - Name changes elsewhere updated here.                                    - 2017-06-20 wer
  * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
  * - v1.3.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
@@ -29,7 +29,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class GroupsView
 {
-    use LogitTraits, ViewTraits;
+    use LogitTraits, ConfigViewTraits;
 
     /**
      * @var \Ritc\Library\Models\GroupsModel

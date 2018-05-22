@@ -17,7 +17,7 @@ use Ritc\Library\Traits\TesterTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2017-06-14 16:27:15
- * ## Change Log
+ * @change_log
  * - v1.0.0         - Initial working version        - 2017-06-14 wer
  * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
  * - v0.1.0         - Initial version                - unknown wer

@@ -19,7 +19,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.4.3
  * @date    2018-04-05 10:40:48
- * ## Change Log
+ * @change_log
  * - v1.4.3    - bug fix in timestamp increment                              - 2018-04-05 wer
  * - v1.4.1    - ModelException changes reflected here                       - 2017-12-12 wer
  * - v1.4.0    - moved some methods from PeopleComplex to here               - 2017-12-05 wer

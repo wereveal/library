@@ -14,7 +14,7 @@ use Ritc\Library\Interfaces\CustomExceptionInterface;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2018-03-07 08:48:27
- * ## Change Log
+ * @change_log
  * - v1.0.0         - changed to production, added phpDoc                                               - 2018-03-07 wer
  */
 abstract class CustomException extends \Exception implements CustomExceptionInterface

@@ -13,7 +13,7 @@ namespace Ritc\Library\Traits;
  * @date    2015-08-19 12:18:25
  * @note    This was a part of the Base abstract class. Spun it out so it could
  *          be used independently, only in classes where it is important.
- * ## Change Log
+ * @change_log
  * - v1.0.0 - initial version - 08/19/2015 wer
  */
 trait VisibilityTraits {

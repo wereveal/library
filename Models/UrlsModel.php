@@ -18,7 +18,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.1
  * @date    2017-12-12 11:35:42
- * ## Change Log
+ * @change_log
  * - v1.1.1         - ModelException changes reflected here - 2017-12-12 wer
  * - v1.1.0         - should have stayed in beta            - 2017-06-19 wer
  * - v1.0.0         - Out of beta                           - 2017-06-03 wer

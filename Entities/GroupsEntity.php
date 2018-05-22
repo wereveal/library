@@ -13,7 +13,7 @@ use Ritc\Library\Interfaces\EntityInterface;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2015-07-29 11:41:03
- * ## Change Log
+ * @change_log
  * - v1.0.0 - finished        - 07/29/2015 wer
  * - v0.1.0 - Initial version - 09/11/2014 wer
  */

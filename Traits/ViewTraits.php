@@ -27,7 +27,7 @@ use Ritc\Library\Services\Session;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.0.0
  * @date    2018-05-14 17:38:51
- * ## Change Log
+ * @change_log
  * - v2.0.0         - Added caching of some data that is used commonly in a view.               - 2018-05-14 wer
  *                    Added a new method for setting the url_id based on record id
  *                    which fixes a bug.

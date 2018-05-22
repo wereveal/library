@@ -17,7 +17,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.0.0
  * @date    2017-06-17 13:16:31
- * ## Change Log
+ * @change_log
  * - v2.0.0   - Refactored to use ModelException                       - 2017-06-17 wer
  * - v1.1.3   - DbUtilityTraits change reflected here                  - 2017-05-09 wer
  * - v1.1.2   - refactoring of trait reflected here                    - 2017-01-27 wer

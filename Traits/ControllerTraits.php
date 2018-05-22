@@ -16,7 +16,7 @@ use Ritc\Library\Services\Session;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.4.0
  * @date    2017-12-02 08:51:44
- * ## Change Log
+ * @change_log
  * - v1.4.0         - cleaned up some code, no functional changes               - 2017-12-02 wer
  * - v1.3.0         - added a commonly used property route_class                - 2017-05-10 wer
  * - v1.2.0         - added a commonly used property                            - 2017-02-06 wer

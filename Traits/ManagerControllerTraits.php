@@ -15,7 +15,7 @@ use Ritc\Library\Helper\ViewHelper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.3
  * @date    2017-07-13 11:40:17
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.3 - Removed SetOAuth and renamed getOAuth to getAuth.                   - 2017-07-13 wer
  * - v1.0.0-alpha.2 - Reverted back to ManagerControllerTraits                            - 2017-07-04 wer
  * - v1.0.0-alpha.1 - Renamed Trait                                                       - 2017-06-20 wer

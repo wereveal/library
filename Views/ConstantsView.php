@@ -18,7 +18,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.2.0
  * @date    2017-06-20 11:43:56
- * ## Change Log
+ * @change_log
  * - v2.2.0   - refactoring elsewhere made changes here.                                - 2017-06-20 wer
  * - v2.1.0   - Updated to match ViewTraits and fix misc bugs.                          - 2017-06-07 wer
  * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer

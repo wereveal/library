@@ -17,7 +17,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @note The constants with _DIR_NAME should correspond to dir names in
  *       the site theme or namespace (e.g. templates are in namespace). If a directory
  *       is missing, this could cause a fatal error.
- * ## Change Log
+ * @change_log
  * - v4.3.1 - fixed bug (long standing)                                             - 2016-04-21 wer
  * - v4.3.0 - added an addition possible file location                              - 2016-04-20 wer
  * - v4.2.1 - moved to the namespace Ritc\Library\Helper                            - 11/15/2014 wer

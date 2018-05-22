@@ -15,7 +15,7 @@ namespace Ritc\Library\Helper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 6.6.0
  * @date    2018-05-15 16:00:30
- * ## Change Log
+ * @change_log
  * - v6.6.0 - added new method to convert url to cache compatible string        - 2018-05-15 wer
  * - v6.5.0 - add new method to convert column number to Excel column letters   - 2018-03-06 wer
  * - v6.4.0 - added new method to trim slashes from front and back of string    - 2016-09-08 wer

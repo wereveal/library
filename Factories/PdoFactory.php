@@ -17,7 +17,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.0.1
  * @date    2017-06-13 12:17:42
- * ## Change Log
+ * @change_log
  * - v3.0.1 - primarily dealing with PhpStorm inspections                                            - 2018-03-30 wer
  * - v3.0.0 - Changed to set the \PDO::ATTR_ERRMODE, defaults to \PDO::ERRMODE_EXCEPTION             - 2017-06-13 wer
  * - v2.1.0 - Simplified the Factory                                                                 - 2017-01-25 wer

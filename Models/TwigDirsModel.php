@@ -18,7 +18,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2017-12-15 22:49:00
- * ## Change Log
+ * @change_log
  * - v1.0.0         - Initial Production version    - 2017-12-15 wer
  * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
  */

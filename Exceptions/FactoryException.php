@@ -15,7 +15,7 @@ use Throwable;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.1
  * @date    2017-12-12 14:57:04
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.1 - implements ExceptionHelper            - 2017-12-12 wer
  * - v1.0.0-alpha.0 - Initial version                       - 2017-07-16 wer
  */

@@ -11,7 +11,7 @@ namespace Ritc\Library\Helper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.2.0
  * @date    2018-04-26 07:01:46
- * ## Change Log
+ * @change_log
  * - v1.2.0 additional message to code                                                - 2018-04-26 wer
  * - v1.1.0 additional error code and message                                         - 2018-04-03 wer
  * - v1.0.0 Initial version                                                           - 2017-12-12 wer

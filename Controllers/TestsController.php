@@ -24,7 +24,7 @@ use Ritc\Library\Views\TestsView;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.1
  * @date    2017-02-15 15:23:02
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.1 - Refactoring                                   - 2017-02-15 wer
  * - v1.0.0-alpha.0 - Initial version                               - 10/23/2015 wer
  */

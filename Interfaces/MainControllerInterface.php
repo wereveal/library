@@ -11,7 +11,7 @@ namespace Ritc\Library\Interfaces;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2018-05-01 16:29:40
- * ## Change Log
+ * @change_log
  * - v1.0.0 - initial version                                                       - 2018-05-01 wer
  */
 interface MainControllerInterface

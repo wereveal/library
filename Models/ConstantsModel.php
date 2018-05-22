@@ -21,7 +21,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @version v3.0.3
  * @date    2018-04-03 15:55:17
  * @note      see ConstantsEntity for database table definition.
- * ## Change Log
+ * @change_log
  * - v3.0.3 - bug fixes, cleaned up code                                    - 2018-04-03 wer
  * - v3.0.0 - Refactored to use ModelException and bug fixes                - 2017-06-14 wer
  * - v2.5.0 - Removed unused property and setting of same                   - 2017-05-18 wer
@@ -351,7 +351,6 @@ SQL;
      */
     public function createConstantRecords(array $a_constants = array())
     {
-        // todo ConstantsModel.createConstantRecords - need to add to tests
         if ($a_constants == array()) {
             throw new ModelException('Missing values', 120);
         }
@@ -373,7 +372,6 @@ SQL;
      */
     public function selectConstantsList()
     {
-        // todo ConstantsModel.selectConstantsList - need to add to tests
         try {
             return $this->read();
         }
@@ -424,7 +422,6 @@ SQL;
      */
     public function makeValidValue($const_value = '')
     {
-        // todo ConstantsModel.makeValidValue - need to add to tests
         $const_value = Strings::removeTagsWithDecode($const_value, ENT_QUOTES);
         return htmlentities($const_value,  ENT_QUOTES);
     }

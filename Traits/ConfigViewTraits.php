@@ -13,7 +13,7 @@ use Ritc\Library\Helper\ViewHelper;
  * @author    William E Reveal <bill@revealitconsulting.com>
  * @version   v3.1.3
  * @date      2018-04-14 15:23:19
- * ## Change Log
+ * @change_log
  * - v3.1.3 - bug fix (some variables seemed to be confused)                        - 2018-04-14 wer
  * - v3.1.0 - Forked this so ManagerViewTraits becomes primary                      - 2017-07-04 wer
  * - v3.0.0 - Renamed trait                                                         - 2017-06-20 wer
@@ -59,8 +59,9 @@ trait ConfigViewTraits
     }
 
     /**
-     * @param array $a_values required \see #verifydelete
-     * @param array $a_options optional \see #verifydelete
+     * @param array $a_values required
+     * @param array $a_options optional
+     * @example "src/apps/Ritc/Library/resources/docs/examples/verify_delete.php" what the two parameters can have.
      * @return string
      */
     public function renderVerifyDelete(array $a_values = [], array $a_options = [])

@@ -11,7 +11,7 @@ namespace Ritc\Library\Helper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2018-04-04 10:02:07
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.0 - Initial version                           - 2018-04-04 wer
  */
 class OopHelper

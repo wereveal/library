@@ -11,7 +11,7 @@ namespace Ritc\Library\Helper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 3.4.0
  * @date    2018-05-18 13:45:25
- * ## Change Log
+ * @change_log
  * - v3.4.0 - Changed method to remove blank pairs to not required allowed_keys           - 2018-05-18 wer
  * - v3.3.0 - Added new method to do muliple sort on database array                       - 2018-04-09 wer
  * - v3.2.0 - New method to removed key/value pairs where value is empty                  - 2017-12-05 wer

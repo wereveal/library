@@ -11,7 +11,7 @@ namespace Ritc\Library\Helper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 2.1.0
  * @date    2018-05-16 19:37:35
- * ## Change Log
+ * @change_log
  * - v2.1.0 - Added addMessage method           - 2018-05-16 wer
  * - v2.0.0 - Renamed 'the' method              - 2017-06-20 wer
  * - v1.1.1 - little sensitization of values    - 11/05/2015 wer

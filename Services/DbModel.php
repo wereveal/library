@@ -17,7 +17,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v5.2.1
  * @date    2017-12-15 13:51:15
- * ## Change Log
+ * @change_log
  * - v5.2.1 - Bug fixes                                                                     - 2017-12-15 wer
  * - v5.2.0 - Method added to get the pdo object                                            - 2017-12-14 wer
  * - v5.1.3 - ModelException changes reflected here                                         - 2017-12-12 wer

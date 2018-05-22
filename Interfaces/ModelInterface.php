@@ -11,7 +11,7 @@ namespace Ritc\Library\Interfaces;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.3.0
  * @date    2018-04-26 06:02:16
- * ## Change Log
+ * @change_log
  * - v1.3.0 Added throws phpDoc line to remind one to use it                                    - 2018-04-26 wer
  * - v1.2.0 Added new param to read, one that is used almost always anyway                      - 2016-03-24 wer
  * - v1.1.0 moved getErrorMessage from interface to the DbUtilityTraits class                   - 2016-03-19 wer
