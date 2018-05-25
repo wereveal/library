@@ -667,7 +667,6 @@ SQL;
      * By default, returns all fields except the primary index name.
      * @param array $a_exclude   Optional, defaults to empty
      * @param bool  $exclude_pin Optional, defaults to true
-     * @return array
      */
     protected function makeRequiredKeys(array $a_exclude = [], $exclude_pin = true)
     {
@@ -719,6 +718,7 @@ SQL;
     /**
      * Returns the number of records in the table.
      * @param string $where the where values string if desired, e.g. 'fred' LIKE 'barney'.
+     * @param array  $a_where_values
      * @return int
      */
     public function readCount($where = '', array $a_where_values = [])

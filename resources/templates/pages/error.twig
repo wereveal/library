@@ -1,11 +1,8 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block title %}{{ parent() }}: Error{% endblock %}
 {% block body %}
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12">
-            {% include '@' ~ lib_prefix ~ 'snippets/message.twig' %}
-        </div>
-    </div>
+    <p>The page could not be found.</p>
+    {% include '@' ~ lib_prefix ~ 'snippets/sitemap.twig' %}
 {% endblock %}
 {% block footer %}
     <!-- Footer -->
