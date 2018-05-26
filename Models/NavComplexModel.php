@@ -131,30 +131,17 @@ class NavComplexModel
      */
     public function getNavListAll()
     {
-        $select_sql = "
-            SELECT
-                n.nav_id as nav_id,
-                n.nav_parent_id as parent_id,
-                u.url_id as url_id,
-                u.url_text as url,
-                n.nav_name as name,
-                n.nav_text as text,
-                n.nav_description as description,
-                n.nav_css as css,
-                n.nav_level as level,
-                n.nav_order as order,
-                n.nav_immutable
-            FROM {$this->lib_prefix}urls as u
-            JOIN {$this->lib_prefix}navigation as n
-                ON u.url_id = n.url_id
-            ORDER BY
+        $select_sql = trim(str_replace("WHERE n.nav_active = 'true'", '', $this->select_sql));
+        $order_by_sql = "
+            ORDER BYi ng.ng_id ASC,
                 n.nav_parent_id ASC,
                 n.nav_level ASC,
                 n.nav_order ASC,
                 n.nav_name ASC
         ";
+        $sql = $select_sql . $order_by_sql;
         try {
-            return $this->o_db->search($select_sql);
+            return $this->o_db->search($sql);
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->getSqlErrorMessage();
@@ -253,10 +240,16 @@ class NavComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function getSiteMap($auth_level = 0)
+    public function getSitemap($ng_name = 'SiteMap', $auth_level = 0)
     {
-        $sql = $this->select_sql . " AND n.nav_level = :nav_level ORDER BY n.nav_order";
-        $a_search_for = [':nav_level' => 1];
+        $sql = $this->select_sql . "
+            AND n.nav_level = :nav_level
+            AND ng.ng_name = :ng_name
+            ORDER BY n.nav_order";
+        $a_search_for = [
+            ':nav_level' => 1,
+            ':ng_name'   => $ng_name
+        ];
         try {
             $results = $this->o_db->search($sql, $a_search_for);
         }
@@ -279,6 +272,33 @@ class NavComplexModel
             }
         }
         return $results;
+    }
+
+    /**
+     * Creates an array that can be used with the sitemap_xml twig file.
+     * @param int $auth_level
+     * @return array
+     */
+    public function getSitemapForXml($auth_level = 0)
+    {
+        try {
+            $a_results = $this->getNavListAll();
+        }
+        catch (ModelException $e) {
+            return [];
+        }
+        $a_urls = [];
+        foreach ($a_results as $key => $a_url) {
+            if ($a_url['auth_level'] <= $auth_level) {
+                $a_urls[] = [
+                    'loc'        => $a_url['url'],
+                    'changefreq' => '',
+                    'lastmod'    => '',
+                    'priority'   => ''
+                ];
+            }
+        }
+        return $a_urls;
     }
 
     /**
@@ -374,16 +394,16 @@ class NavComplexModel
         if ($select_sql == '') {
             $select_sql =<<<EOT
 SELECT
-    n.nav_id as 'nav_id',
-    n.nav_parent_id as 'parent_id',
-    n.url_id as 'url_id',
-    u.url_text as 'url',
-    n.nav_name as 'name',
-    n.nav_text as 'text',
-    n.nav_description as 'description',
-    n.nav_css as 'css',
-    n.nav_level as 'level',
-    n.nav_order as 'order',
+    n.nav_id as nav_id,
+    n.nav_parent_id as parent_id,
+    n.url_id as url_id,
+    u.url_text as url,
+    n.nav_name as name,
+    n.nav_text as text,
+    n.nav_description as description,
+    n.nav_css as css,
+    n.nav_level as level,
+    n.nav_order as order,
     n.nav_immutable,
     ng.ng_id,
     ng.ng_name,
@@ -544,7 +564,7 @@ EOT;
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode());
         }
-        if ($action = 'create') {
+        if ($action == 'create') {
             try {
                 $results = $o_nav->create($a_post);
             }

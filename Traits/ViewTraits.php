@@ -48,7 +48,7 @@ trait ViewTraits
     protected $adm_level;
     /** @var AuthHelper */
     protected $o_auth;
-    /** @var $o_cache One of several Symfony based cache classes. */
+    /** @var object $o_cache one of several Symfony based cache classes. */
     protected $o_cache;
     /** @var DbModel */
     protected $o_db;
@@ -293,6 +293,7 @@ trait ViewTraits
             }
         }
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+            /** @var \Ritc\Library\Services\Elog $o_elog */
             $o_elog = $o_di->get('elog');
             $this->o_nav->setElog($o_elog);
         }
