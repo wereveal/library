@@ -210,7 +210,7 @@ class TwigComplexModel
             sort($new_templates);
             try {
                 $a_tpl_ids = $this->o_tpls->create($new_templates);
-                if (empty($results)) {
+                if (empty($a_tpl_ids)) {
                     throw new ModelException('Could not create the template records. Empty Results.', 110);
                 }
             }

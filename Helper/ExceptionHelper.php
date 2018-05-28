@@ -123,6 +123,8 @@ class ExceptionHelper
                 return 35;
             case 'has_children':
                 return 36;
+            case 'too_many_records':
+                return 37;
             case 'field_missing':
                 return 40;
             case 'field_not_valid':
@@ -134,6 +136,7 @@ class ExceptionHelper
             case 'see_previous':
                 return 99;
             # Create Codes
+            case 'create_unknown':
             case 'create_unspecified':
                 return 110;
             case 'create_missing_value':
@@ -152,6 +155,7 @@ class ExceptionHelper
             case 'create_see_previous':
                 return 199;
             # Read codes
+            case 'read_unknown':
             case 'read_unspecified':
                 return 210;
             case 'read_missing_value':
@@ -161,11 +165,14 @@ class ExceptionHelper
                 return 222;
             case 'read_no_records':
                 return 230;
+            case 'read_too_many_records':
+                return 237;
             case 'read_not_permitted':
                 return 250;
             case 'read_see_previous':
                 return 299;
             # Update codes
+            case 'update_unknown':
             case 'update_unspecified':
                 return 310;
             case 'update_invalid_field':
@@ -182,6 +189,7 @@ class ExceptionHelper
             case 'update_see_previous':
                 return 399;
             # delete codes
+            case 'delete_unknown':
             case 'delete_unspecified':
                 return 410;
             case 'delete_missing_value':

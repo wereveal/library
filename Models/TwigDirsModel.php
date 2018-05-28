@@ -16,9 +16,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Does database operations on the twig_prefix table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2017-12-15 22:49:00
+ * @version v1.0.1
+ * @date    2018-05-28 12:44:18
  * @change_log
+ * - v1.0.1         - fixed default dir names       - 2018-05-28 wer
  * - v1.0.0         - Initial Production version    - 2017-12-15 wer
  * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
  */
@@ -164,14 +165,25 @@ class TwigDirsModel implements ModelInterface
         if ($prefix_id < 1) {
             throw new ModelException('Prefix record id not provided' . $meth, 20);
         }
-        $a_dirs = [
-            ['tp_id' => $prefix_id, 'td_name' => 'default'],
-            ['tp_id' => $prefix_id, 'td_name' => 'elements'],
-            ['tp_id' => $prefix_id, 'td_name' => 'forms'],
-            ['tp_id' => $prefix_id, 'td_name' => 'pages'],
-            ['tp_id' => $prefix_id, 'td_name' => 'snippets'],
-            ['tp_id' => $prefix_id, 'td_name' => 'tests']
-        ];
+        if (file_exists(SRC_CONFIG_PATH . '/install_files/default_data.php')) {
+            $a_dd = include SRC_CONFIG_PATH . '/install_files/default_data.php';
+            $a_default_dirs = $a_dd['twig_default_dirs'];
+        }
+        else {
+            $a_default_dirs = [
+                'themes',
+                'elements',
+                'forms',
+                'pages',
+                'snippets',
+                'tests'
+            ];
+        }
+        $a_dirs = [];
+        foreach ($a_default_dirs as $dir) {
+            $a_dirs[] = ['tp_id' => $prefix_id, 'td_name' => $dir];
+
+        }
         $a_new_ids = [];
         foreach ($a_dirs as $a_dir) {
             try {
