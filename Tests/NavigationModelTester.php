@@ -16,7 +16,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2017-06-09 10:15:23
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2017-06-09 wer
  * @todo Ritc/Library/Tests/NavigationModelTester.php - Everything
  */

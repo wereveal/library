@@ -19,7 +19,7 @@ use Ritc\Library\Services\DbModel;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.3.0
  * @date    2018-04-26 08:38:57
- * ## Change Log
+ * @change_log
  * - v2.3.0          - New methods for new property a_required_keys         - 2018-04-26 wer
  *                     Modified generic methods to use ExceptionHelper
  *                     Modified generic methods slightly to ensure required
@@ -667,7 +667,6 @@ SQL;
      * By default, returns all fields except the primary index name.
      * @param array $a_exclude   Optional, defaults to empty
      * @param bool  $exclude_pin Optional, defaults to true
-     * @return array
      */
     protected function makeRequiredKeys(array $a_exclude = [], $exclude_pin = true)
     {
@@ -719,6 +718,7 @@ SQL;
     /**
      * Returns the number of records in the table.
      * @param string $where the where values string if desired, e.g. 'fred' LIKE 'barney'.
+     * @param array  $a_where_values
      * @return int
      */
     public function readCount($where = '', array $a_where_values = [])

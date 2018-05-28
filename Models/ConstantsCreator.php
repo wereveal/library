@@ -16,7 +16,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v5.1.1
  * @date    2018-04-09 10:45:22
- * ## Change Log
+ * @change_log
  * - v5.1.1 - Bug fix                                                               - 2018-04-09 wer
  * - v5.1.0 - Added additional constants for Lib and Admin                          - 2018-04-03 wer
  *            Added method to build TWIG_PREFIXES on the fly from the

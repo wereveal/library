@@ -21,7 +21,7 @@ use Ritc\Library\Views\PageView;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.1
  * @date    2015-11-27 14:49:00
- * ## Change Log
+ * @change_log
  * - v1.0.1   - bug fix                                      - 2016-03-08 wer
  * - v1.0.0   - First working version                        - 11/27/2015 wer
  */

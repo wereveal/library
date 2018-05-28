@@ -18,7 +18,7 @@ use Ritc\Library\Models\GroupsModel;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2016-03-05 10:44:05
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
  * - v0.1.0         - Initial version                - unknown wer
  * @todo Everything

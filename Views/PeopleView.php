@@ -21,7 +21,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.0.0
  * @date    2017-12-02 09:15:58
- * ## Change Log
+ * @change_log
  * - v3.0.0   - major changes to utilize the ConfigViewTraits                           - 2017-12-02 wer
  *              This should make the view more portable.
  * - v2.1.0   - method name changed elsewhere forced change here.                       - 2017-06-20 wer

@@ -19,7 +19,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.1
  * @date    2017-12-15 22:47:39
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.1 - lots of changes        - 2017-12-15 wer
  * - v1.0.0-alpha.0 - Initial version        - 2017-05-13 wer
  */
@@ -210,7 +210,7 @@ class TwigComplexModel
             sort($new_templates);
             try {
                 $a_tpl_ids = $this->o_tpls->create($new_templates);
-                if (empty($results)) {
+                if (empty($a_tpl_ids)) {
                     throw new ModelException('Could not create the template records. Empty Results.', 110);
                 }
             }

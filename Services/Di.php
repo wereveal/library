@@ -18,7 +18,7 @@ namespace Ritc\Library\Services;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.2.0+1
  * @date    2017-02-08 09:04:05
- * ## Change Log
+ * @change_log
  * - v1.2.0   - added functions to save variable values        - 2017-02-08 wer
  * - v1.1.0   - added function to return all objects           - 03/03/2016 wer
  * - v1.0.0   - it works, not sure why it wasn't out of beta   - 09/03/2015 wer

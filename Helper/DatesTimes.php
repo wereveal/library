@@ -11,7 +11,7 @@ namespace Ritc\Library\Helper;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.1.0
  * @date    2017-11-28 16:14:44
- * ## Change Log
+ * @change_log
  * - v3.1.0 - new method to convert timestamp to Y-m-d  - 2017-11-28 wer
  * - v3.0.1 - moved to Ritc\Library\Helper namespace    - 11/15/2014 wer
  * - v3.0.0 - FIG standards (mostly)

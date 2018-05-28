@@ -16,7 +16,7 @@ use Ritc\Library\Traits\ViewTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2017-06-10 07:25:13
- * ## Change Log
+ * @change_log
  * - v2.1.0   - Added additional tests, bug fixes            - 2017-06-10 wer
  * - v2.0.0   - Name refactoring                             - 2017-05-14 wer
  * - v1.1.0   - removed abstract class Base, use LogitTraits - 09/01/2015 wer

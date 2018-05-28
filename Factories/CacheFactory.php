@@ -29,7 +29,7 @@ use Symfony\Component\Cache\Simple\RedisCache;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2018-05-12 21:42:20
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2018-05-12 wer
  */
 class CacheFactory

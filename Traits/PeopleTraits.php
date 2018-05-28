@@ -11,7 +11,7 @@ namespace Ritc\Library\Traits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2016-12-08 12:17:39
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2016-12-08 wer
  */
 trait PeopleTraits

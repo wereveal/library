@@ -17,7 +17,7 @@ use Ritc\Library\Interfaces\ManagerControllerInterface;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2015-08-04 04:25:11
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.0 - Initial version                                       - 08/04/2015 wer
  */
 class RoutesGroupController implements ManagerControllerInterface

@@ -14,7 +14,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.4.1
  * @date    2017-07-06 21:13:04
- * ## Change Log
+ * @change_log
  * - v1.4.1 - bug fix                                               - 2017-07-06 wer
  * - v1.4.0 - added the ability to use the global constant          - 10/06/2015 wer
  *            SESSION_IDLE_TIME if it is set.

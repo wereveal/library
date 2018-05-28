@@ -23,7 +23,7 @@ use Ritc\Library\Views\RoutesView;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.2.0
  * @date    2016-04-13 08:52:26
- * ## Change Log
+ * @change_log
  * - v2.2.0   - Refactored to work with the Urls class/model - 2016-04-13 wer
  * - v2.1.1   - bug fix                                      - 2016-03-08 wer
  * - v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer

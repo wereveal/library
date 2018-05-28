@@ -18,7 +18,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v3.0.0
  * @date    2018-05-14 19:52:39
- * ## Change Log
+ * @change_log
  * - v3.0.0   - Changed to use cache for some database values       - 2018-05-14 wer
  * - v2.1.0   - Changed to handle ModelExceptions                   - 2017-06-20 wer
  * - v2.0.0   - Changed to handle inexact request URI (slashes)     - 2016-09-08 wer
@@ -395,12 +395,11 @@ class RoutesHelper
                 $request_uri = $_SERVER["REQUEST_URI"];
             }
         }
-        $cache_key = 'route_parts.for.';
-
-        $cache_key .= $request_uri != '/'
-            ? Strings::uriToCache($request_uri)
-            : 'home';
         if ($this->use_cache) {
+            $cache_key = 'route_parts.for.';
+            $cache_key .= $request_uri != '/'
+                ? Strings::uriToCache($request_uri)
+                : 'home';
             $a_route_parts = $this->o_cache->get($cache_key);
             if (!empty($a_route_parts)) {
                 $this->a_route_parts = $a_route_parts;

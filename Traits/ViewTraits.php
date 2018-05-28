@@ -27,7 +27,7 @@ use Ritc\Library\Services\Session;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.0.0
  * @date    2018-05-14 17:38:51
- * ## Change Log
+ * @change_log
  * - v2.0.0         - Added caching of some data that is used commonly in a view.               - 2018-05-14 wer
  *                    Added a new method for setting the url_id based on record id
  *                    which fixes a bug.
@@ -48,7 +48,7 @@ trait ViewTraits
     protected $adm_level;
     /** @var AuthHelper */
     protected $o_auth;
-    /** @var $o_cache One of several Symfony based cache classes. */
+    /** @var object $o_cache one of several Symfony based cache classes. */
     protected $o_cache;
     /** @var DbModel */
     protected $o_db;
@@ -293,6 +293,7 @@ trait ViewTraits
             }
         }
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+            /** @var \Ritc\Library\Services\Elog $o_elog */
             $o_elog = $o_di->get('elog');
             $this->o_nav->setElog($o_elog);
         }

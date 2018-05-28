@@ -13,7 +13,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2017-05-14 16:38:08
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
  * @todo Ritc/Library/Views/RoutesGroupView.php - Everything
  */

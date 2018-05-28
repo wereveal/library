@@ -17,7 +17,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @version    v1.0.6
  * @date       2015-09-01 07:38:42
  * @deprecated v1.0.6
- * ## Change Log
+ * @change_log
  * - v1.0.6 - removed abstract class Base, used LogitTraits            - 09/01/2015 wer
  * - v1.0.5 - Refactored to match the Arrays class                     - 07/31/2015 wer
  * - v1.0.4 - moved to the Ritc\Library\Helper namespace               - 11/15/2014 wer

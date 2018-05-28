@@ -13,7 +13,7 @@ use Ritc\Library\Helper\Arrays;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-beta.2
  * @date    2017-01-25 14:12:15
- * ## Change Log
+ * @change_log
  * - v1.0.0-beta.2  - Cleared up that they work with array of assoc arrays      - 2017-06-16 wer
  * - v1.0.0-beta.1  - Moved method from DbTraits to here and moved into beta    - 2017-01-25 wer
  * - v1.0.0-alpha.0 - Initial version                                           - 2016-03-19 wer

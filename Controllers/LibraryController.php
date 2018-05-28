@@ -18,7 +18,7 @@ use Ritc\Library\Views\LibraryView;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.1
  * @date    2017-05-14 14:35:02
- * ## Change Log
+ * @change_log
  * - v2.1.1   - bug fix                               - 2017-05-14 wer
  * - v2.1.0   - Added UrlAdminController              - 2016-04-11 wer
  * - v2.0.0   - Renamed Class to be more specific     - 2016-03-31 wer

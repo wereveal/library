@@ -1,0 +1,26 @@
+        <ul class="sitemap">
+    {% for l1_menu_item in a_sitemap %}
+            <li>
+                <a href="{{ l1_menu_item.url }}">{{ l1_menu_item.text }} - {{ l1_menu_item.description }}</a><br>
+            {% if l1_menu_item.submenu is not empty %}
+                <ul>
+                {% for l2_menu_item in l1_menu_item.submenu %}
+                   <li>
+                       <a href="{{ l2_menu_item.url }}">{{ l2_menu_item.text }} - {{ l2_menu_item.description }}</a>
+                   {% if l2_menu_item.submenu is not empty %}
+                       <ul>
+                       {% for l3_menu_item in l2_menu_item.submenu %}
+                           <li>
+                               <a href="{{ l3_menu_item.url }}">{{ l3_menu_item.text }} - {{ l3_menu_item.description }}</a>
+                           </li>
+                       {% endfor %}
+                       </ul>
+                   {% endif %}
+                   </li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            </li>
+    {% endfor %}
+        </ul>
+

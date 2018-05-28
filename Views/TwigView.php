@@ -23,7 +23,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.1
  * @date    2018-05-20 14:59:17
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.1 - Bug fix                - 2018-05-20 wer
  * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
  * @todo Ritc/Library/Views/TwigView.php - Everything

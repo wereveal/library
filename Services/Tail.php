@@ -14,7 +14,7 @@ use Ritc\Library\Traits\ViewTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.2.0
  * @date    2016-03-11 09:01:12
- * ## Change Log
+ * @change_log
  * - v2.2.0 - Changed method names to reflect current coding standards    - 2016-03-11 wer
  * - v2.1.1 - Moved to Services namespace                                 - 11/15/2014 wer
  * - v2.1.0 - Changed to work in the ritc_library                         - 04/22/2013 wer

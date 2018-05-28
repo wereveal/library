@@ -21,7 +21,7 @@ use Ritc\Library\Views\PeopleView;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.2
  * @date    2018-04-21 13:29:13
- * ## Change Log
+ * @change_log
  * - v1.1.2   - trait change reflected here                      - 2018-04-21 wer
  * - v1.1.0   - updated to use ConfigControllerTraits            - 2017-11-28 wer
  * - v1.0.0   - initial working version                          - 11/12/2015 wer

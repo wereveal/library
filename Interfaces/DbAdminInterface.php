@@ -11,7 +11,7 @@ namespace Ritc\Library\Interfaces;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2014-01-30 14:18:05
- * ## Change Log
+ * @change_log
  * - v1.0.0 initial version                                 - 01/30/2014 wer
  */
 interface DbAdminInterface

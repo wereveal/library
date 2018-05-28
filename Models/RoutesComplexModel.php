@@ -16,7 +16,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2017-06-18 14:23:31
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2017-06-18 wer
  */
 class RoutesComplexModel

@@ -16,7 +16,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.0
  * @date    2018-04-14 17:31:00
- * ## Change Log
+ * @change_log
  * - v1.0.0         - Create Default Files changed to use over all site variable    - 2018-04-14 wer
  * - v1.0.0         - Initial Production version                                    - 2017-12-15 wer
  * - v1.0.0-alpha.0 - Initial version                                               - 2017-11-24 wer

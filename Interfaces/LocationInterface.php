@@ -11,7 +11,7 @@ namespace Ritc\Library\Interfaces;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2011-06-14 15:11:26
- * ## Change Log
+ * @change_log
  * - v1.0.0 Initial Version             - 2011-06-14 wer
  */
 interface LocationInterface

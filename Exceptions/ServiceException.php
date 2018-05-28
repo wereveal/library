@@ -13,7 +13,7 @@ use Ritc\Library\Abstracts\CustomException;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2017-07-16 08:18:12
- * ## Change Log
+ * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2017-07-16 wer
  */
 class ServiceException extends CustomException

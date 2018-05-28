@@ -20,7 +20,7 @@ use Ritc\Library\Views\UrlsView;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.0
  * @date    2017-06-03 17:17:30
- * ## Change Log
+ * @change_log
  * - v1.1.0-beta.1  - Refactored to match refactoring of model          - 2017-06-19 wer
  * - v1.0.0         - Out of beta                                       - 2017-06-03 wer
  * - v1.0.0-beta.2  - Change to splitUrl to allow posted url to not     - 2017-06-02 wer

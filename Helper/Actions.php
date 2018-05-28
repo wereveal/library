@@ -15,7 +15,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.2.7
  * @date    2015-01-27 15:15:06
- * ## Change Log
+ * @change_log
  * - 2.2.7 - match refactoring of Strings and Arrays to static methods  - 01/27/2015 wer
  *
  * - 2.2.6 - moved file into Helper area                                - 11/15/2014 wer

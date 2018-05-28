@@ -13,7 +13,7 @@ use Ritc\Library\Interfaces\EntityInterface;
  * @author  William E Reveal
  * @version v1.0.0
  * @date    2016-02-23 11:09:18
- * ## Change Log
+ * @change_log
  * - v1.0.0 - Initial Version                                   - 2016-02-23 wer
  */
 class MenusEntity implements EntityInterface

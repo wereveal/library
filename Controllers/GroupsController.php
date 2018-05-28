@@ -21,7 +21,7 @@ use Ritc\Library\Views\GroupsView;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.1.0
  * @date    2018-05-19 15:07:53
- * ## Change Log
+ * @change_log
  * - v2.1.0   - updated to use ModelException           - 2018-05-19 wer
  *              Updated to use ConfigControllerTraits
  * - v2.0.0   - name refactoring                        - 2017-05-14 wer

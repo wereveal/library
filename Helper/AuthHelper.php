@@ -24,7 +24,7 @@ use Ritc\Library\Traits\LogitTraits;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v5.3.1
  * @date    2018-04-14 15:06:36
- * ## Change Log
+ * @change_log
  * - v5.3.1 - Bug fix                                               - 2018-04-14 wer
  * - v5.3.0 - Refactored due to refactoring of models               - 2017-06-20 wer
  * - v5.2.0 - Adding DbUtilityTraits only pointed out problems.     - 2016-03-19 wer

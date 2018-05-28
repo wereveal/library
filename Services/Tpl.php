@@ -16,7 +16,7 @@ use Ritc\Library\Factories\TwigFactory;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
  * @date    2015-09-03 14:19:00
- * ## Change Log
+ * @change_log
  * - v1.0.0   - took out of beta, removed abstract class Base                - 09/03/2015 wer
  * - v0.1.0ß1 - initial file creation                                        - 2013-11-11 wer
  */

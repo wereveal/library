@@ -13,7 +13,7 @@ use Ritc\Library\Interfaces\EntityInterface;
  * @author  William E Reveal
  * @version v1.0.0
  * @date    14:20:33
- * ## Change Log
+ * @change_log
  * - Initial version                                - 2015-10-06 wer
  */
 class RoutesEntity implements EntityInterface
