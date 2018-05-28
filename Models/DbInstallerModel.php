@@ -254,10 +254,6 @@ class DbInstallerModel
                 ({$a_strings['fields']})
             VALUES
                 ({$a_strings['values']})";
-        $parent_sql = "
-            SELECT nav_id
-            FROM {$table_name}
-            WHERE nav_name = :nav_name";
         $update_sql = "
             UPDATE {$table_name}
             SET nav_parent_id = :nav_parent_id
@@ -268,7 +264,6 @@ class DbInstallerModel
         ];
         try {
             $o_nav_stmt    = $this->o_db->prepare($nav_sql);
-            $o_parent_stmt = $this->o_db->prepare($parent_sql);
             $o_update_stmt = $this->o_db->prepare($update_sql);
         }
         catch (ModelException $e) {
@@ -298,18 +293,7 @@ class DbInstallerModel
         }
         //  Updating nav records with parent ids:
         foreach ($a_navigation as $key => $a_record) {
-            $search_values = ['nav_name' => $a_record['nav_parent_name']];
-            $update_values = [];
-            try {
-                $results = $this->o_db->execute($search_values, $o_parent_stmt);
-                if ($results === false) {
-                    $this->error_message = 'Could not retrieve parent navigation data.';
-                }
-                $update_values = ['nav_id' => $a_record['nav_id'], 'nav_parent_id' => $results[0]['nav_id']];
-            }
-            catch (ModelException $e) {
-                $this->error_message = 'Could not retrieve parent navigation data. ' . $e->errorMessage();
-            }
+            $update_values = ['nav_id' => $a_record['nav_id'], 'nav_parent_id' => $a_navigation[$a_record['nav_parent_name']]['nav_id']];
             try {
                 $results = $this->o_db->execute($update_values, $o_update_stmt);
                 if ($results === false) {
