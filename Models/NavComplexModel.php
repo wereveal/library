@@ -162,7 +162,7 @@ class NavComplexModel
                 $navgroup_name = $this->o_ng->retrieveDefaultName();
             }
             catch (ModelException $e) {
-
+                $navgroup_name = 'Main';
             }
         }
         $where = "AND ng.ng_name = :ng_name\n";
@@ -282,7 +282,7 @@ class NavComplexModel
     public function getSitemapForXml($auth_level = 0)
     {
         try {
-            $a_results = $this->getNavListAll();
+            $a_results = $this->getNavListByName('Sitemap');
         }
         catch (ModelException $e) {
             return [];

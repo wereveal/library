@@ -27,12 +27,20 @@ class Sitemap implements ViewInterface
 {
     use LogitTraits, ConfigViewTraits;
 
+    /**
+     * Sitemap constructor.
+     * @param \Ritc\Library\Services\Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);
         $this->setupView($o_di);
     }
 
+    /**
+     * Main method to render the sitemap page.
+     * @return string
+     */
     public function render()
     {
         // TODO: Implement render() method.
@@ -64,20 +72,35 @@ class Sitemap implements ViewInterface
         return $this->renderIt($tpl, $a_twig_values);
     }
 
+    /**
+     * Creates the sitemap.xml file used by search engines.
+     * @param bool $force
+     * @return bool|int
+     */
     public function createXmlFile($force = false)
     {
         $key = 'sitemap.xml.date';
         if (!$force) {
-            $xml_create_date = $this->o_cache->get($key);
-            if ($xml_create_date == date('Ymd')) {
-                return true;
+            if ($this->use_cache) {
+                $xml_create_date = $this->o_cache->get($key);
+                if ($xml_create_date == date('Ymd')) {
+                    return true;
+                }
             }
         }
-        $this->o_cache->set($key, date('Ymd'));
-        $file_contents = '';
-        // get links
-        // create array compatible with template
-        // render xml
-        file_put_contents(PUBLIC_PATH . '/sitemap.xml', $file_contents);
+        if ($this->use_cache) {
+            $this->o_cache->set($key, date('Ymd'));
+        }
+        $o_nav = new NavComplexModel($this->o_di);
+        $a_sitemap = $o_nav->getSitemapForXml();
+        $a_tpl_values = [
+           'page_prefix' => LIB_TWIG_PREFIX,
+           'twig_prefix' => TWIG_PREFIX,
+           'twig_dir'    => 'pages',
+           'tpl'         => 'sitemap_xml.twig'
+        ];
+        $tpl = $this->createTplString($a_tpl_values);
+        $file_contents = $this->renderIt($tpl, ['a_sitemap' => $a_sitemap]);
+        return file_put_contents(PUBLIC_PATH . '/sitemap.xml', $file_contents);
     }
 }
