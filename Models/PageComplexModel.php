@@ -30,6 +30,8 @@ class PageComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
+    /** @var \Ritc\Library\Models\ContentModel  */
+    private $o_content;
     /** @var \Ritc\Library\Services\Di */
     private $o_di;
     /** @var \Ritc\Library\Models\PageModel  */
@@ -48,19 +50,15 @@ class PageComplexModel
     public function __construct(Di $o_di)
     {
         $this->o_di = $o_di;
+        $this->a_object_names = ['o_page', 'o_urls', 'o_content'];
         /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
-        /** @var Elog $o_elog */
-        $o_elog = $o_di->get('elog');
         $this->o_db = $o_db;
-        $this->o_elog = $o_elog;
         $this->o_page = new PageModel($o_db);
         $this->o_urls = new UrlsModel($o_db);
+        $this->o_content = new ContentModel($o_db);
         $this->o_tpls = new TwigComplexModel($o_di);
-        if (DEVELOPER_MODE) {
-            $this->o_page->setElog($o_elog);
-            $this->o_urls->setElog($o_elog);
-        }
+        $this->setupElog($o_di);
         $this->setSelectSql();
     }
 
@@ -163,15 +161,17 @@ class PageComplexModel
         else {
             $a_page_fields  = $this->o_page->getDbFields();
             $a_urls_fields  = $this->o_urls->getDbFields();
-            $page_db_prefix = $this->o_page->getLibPrefix();
-            $url_db_prefix  = $this->o_urls->getLibPrefix();
+            $a_content_fields = $this->o_content->getDbFields();
             $select_fields  = $this->buildSqlSelectFields($a_page_fields, 'p');
             $select_fields .= ', ' . $this->buildSqlSelectFields($a_urls_fields, 'u');
+            $select_fields .= ', ' . $this->buildSqlSelectFields($a_content_fields, 'c');
             $this->select_sql = "
                 SELECT {$select_fields}
-                FROM {$page_db_prefix}page as p
-                JOIN {$url_db_prefix}urls as u
-                ON p.url_id = u.url_id";
+                FROM {$this->lib_prefix}page as p
+                JOIN {$this->lib_prefix}urls as u
+                  ON p.url_id = u.url_id
+                JOIN {$this->lib_prefix}content as c
+                  ON p.page_id = c.c_page_id AND c.c_current = 'true'";
         }
     }
 }
