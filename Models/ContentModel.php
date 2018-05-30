@@ -31,13 +31,14 @@ class ContentModel extends ModelAbstract
     }
 
     /**
-     * Reads all versions of content for a particular page and block
+     * Reads all versions of content for a particular page and block that are current.
      * @param int    $page_id Required
-     * @param string $block   Optional, defaults to 'body'
+     * @param string $block   Optional, defaults to '' returning all blocks for a page.
+     * @param string $current Optional, defaults to true returning only current content.
      * @return array          Records from the database table.
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readAllByPage($page_id = -1, $block = 'body') {
+    public function readAllByPage($page_id = -1, $block = '', $current = 'true') {
         if ($page_id < 1) {
             $message = 'Missing the required page id.';
             $error_code = ExceptionHelper::getCodeNumberModel('missing value');
@@ -45,8 +46,11 @@ class ContentModel extends ModelAbstract
         }
         $a_search_for = [
             'c_page_id' => $page_id,
-            'c_block'   => $block
+            'c_current' => $current
         ];
+        if (!empty($block)) {
+            $a_search_for['c_block'] = $block;
+        }
         try {
             $a_results = $this->read($a_search_for);
         }

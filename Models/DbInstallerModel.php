@@ -13,57 +13,60 @@ use Ritc\Library\Traits\LogitTraits;
  * Installs default database tables and data.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2017-12-15 14:02:55
+ * @version v1.1.0
+ * @date    2018-05-30 14:50:52
  * @change_log
- * - v1.0.0         - Initial Production version    - 2017-12-15 wer
- * - v1.0.0-alpha.0 - Initial version               - 2017-11-23 wer
+ * - v1.1.0         - added new method for content, bug fixes   - 2018-05-30 wer
+ * - v1.0.0         - Initial Production version                - 2017-12-15 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2017-11-23 wer
  */
 class DbInstallerModel
 {
     use LogitTraits;
 
-    /** @var array */
+    /** @var array $a_content */
+    private $a_content;
+    /** @var array $a_data */
     private $a_data;
-    /** @var  array */
+    /** @var  array $a_groups */
     private $a_groups;
-    /** @var  array */
+    /** @var  array $a_install_config */
     private $a_install_config;
-    /** @var  array */
+    /** @var  array $a_navgroups */
     private $a_navgroups;
-    /** @var  array */
+    /** @var  array $a_navigation */
     private $a_navigation;
-    /** @var  array */
+    /** @var  array $a_nnm */
     private $a_nnm;
-    /** @var  array */
+    /** @var  array $a_page */
     private $a_page;
-    /** @var  array */
+    /** @var  array $a_people */
     private $a_people;
-    /** @var  array */
+    /** @var  array $a_pgm */
     private $a_pgm;
-    /** @var  array */
+    /** @var  array $a_rgm */
     private $a_rgm;
-    /** @var  array */
+    /** @var  array $a_routes */
     private $a_routes;
-    /** @var array */
+    /** @var array $a_sql */
     private $a_sql;
-    /** @var  array */
+    /** @var  array $a_twig_dirs */
     private $a_twig_dirs;
-    /** @var  array */
+    /** @var  array $a_twig_prefix */
     private $a_twig_prefix;
-    /** @var  array */
+    /** @var  array $a_twig_tpls */
     private $a_twig_tpls;
-    /** @var  array */
+    /** @var  array $a_urls */
     private $a_urls;
-    /** @var string  */
+    /** @var string $db_prefix */
     private $db_prefix;
-    /** @var string */
+    /** @var string $error_message */
     private $error_message;
-    /** @var \Ritc\Library\Services\DbModel */
+    /** @var \Ritc\Library\Services\DbModel $o_db */
     private $o_db;
-    /** @var \Ritc\Library\Services\Di */
+    /** @var \Ritc\Library\Services\Di $o_di */
     private $o_di;
-    /** @var \PDO */
+    /** @var \PDO $o_pdo */
     private $o_pdo;
 
     /**
@@ -107,6 +110,65 @@ class DbInstallerModel
                 return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * Adds the content records to db.
+     * @param array $a_content Optional
+     * @needs $this->a_page must be set
+     * @return bool
+     */
+    public function insertContent(array $a_content = [])
+    {
+        if (empty($a_content)) {
+            if (empty($this->a_data['content'])) {
+                $this->error_message = 'content data not provided.';
+                return false;
+            }
+            $a_content = $this->a_data['content'];
+        }
+        $table_name = $this->db_prefix . 'content';
+        $a_strings = $this->createStrings($a_content);
+        $sql = "
+            INSERT INTO {$table_name}
+              ({$a_strings['fields']})
+            VALUES
+              ({$a_strings['values']})
+        ";
+        $a_table_info = [
+            'table_name'  => $table_name,
+            'column_name' => 'c_id'
+        ];
+        try {
+            $o_pdo_stmt = $this->o_db->prepare($sql);
+        }
+        catch (ModelException $e) {
+            $this->error_message = $e->errorMessage();
+            return false;
+        }
+        foreach ($a_content as $key => $a_record) {
+            $a_record['c_page_id'] = $this->a_page[$a_record['c_page_id']]['page_id'];
+            $a_record['c_created'] = date('Y-m-d H:i:s');
+            $this->o_db->resetNewIds();
+            try {
+                $results = $this->o_db->executeInsert($a_record, $o_pdo_stmt, $a_table_info);
+                if ($results) {
+                    $ids = $this->o_db->getNewIds();
+                    $a_content[$key]['content_id'] = $ids[0];
+                }
+                else {
+                    $this->error_message = 'Could not insert a content record.';
+                    return false;
+                }
+            }
+            catch (ModelException $e) {
+                $this->error_message = 'Could not insert a content record: ' . $e->getMessage();
+                return false;
+
+            }
+        }
+        $this->a_content = $a_content;
         return true;
     }
 
@@ -387,6 +449,10 @@ class DbInstallerModel
             VALUES
               ({$a_strings['values']})
         ";
+        $a_table_info = [
+            'table_name'  => $table_name,
+            'column_name' => 'nnm_id'
+        ];
         try {
             $o_pdo_stmt = $this->o_db->prepare($sql);
         }
@@ -394,14 +460,17 @@ class DbInstallerModel
             $this->error_message = $e->errorMessage();
             return false;
         }
+        $a_new_page = [];
         foreach ($a_page as $key => $a_record) {
             $a_record['url_id'] = $this->a_urls[$a_record['url_id']]['url_id'];
             $a_record['tpl_id'] = $this->a_twig_tpls[$a_record['tpl_id']]['tpl_id'];
+            $this->o_db->resetNewIds();
             try {
-                $results = $this->o_db->execute($a_record, $o_pdo_stmt);
+                $results = $this->o_db->executeInsert($a_record, $o_pdo_stmt, $a_table_info);
                 if ($results) {
                     $ids = $this->o_db->getNewIds();
-                    $a_page[$key]['page_id'] = $ids[0];
+                    $a_record['page_id'] = $ids[0];
+                    $a_new_page[$key] = $a_record;
                 }
                 else {
                     $this->error_message = 'Could not insert a page record.';
@@ -413,7 +482,7 @@ class DbInstallerModel
                 return false;
             }
         }
-        $this->a_page = $a_page;
+        $this->a_page = $a_new_page;
         return true;
     }
 
