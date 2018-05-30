@@ -380,7 +380,7 @@ class RoutesHelper
             'route_id'       => 0,
             'route_path'     => $request_uri,
             'request_uri'    => $request_uri,
-            'route_class'    => 'MainController',
+            'route_class'    => 'MasterController',
             'route_method'   => '',
             'route_action'   => '',
             'url_actions'    => [],

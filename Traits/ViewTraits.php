@@ -280,7 +280,7 @@ trait ViewTraits
             $this->o_auth = new AuthHelper($o_di);
         }
         if (empty($this->o_nav)) {
-            $this->o_nav = new NavComplexModel($this->o_db);
+            $this->o_nav = new NavComplexModel($this->o_di);
         }
         if (empty($this->o_routes_helper)) {
             $this->o_routes_helper = new RoutesHelper($o_di);

@@ -70,7 +70,7 @@ class TwigFactory
                         $o_loader->prependPath($path, $namespace);
                     }
                     catch (\Twig_Error_Loader $e) {
-                        error_log('Unable to load paths with Twig Loader: ' . $meth);
+                        error_log('Unable to load paths with Twig Loader: ' . $e->getMessage() . ' -- ' . $meth);
                         $continue = false;
                         break;
                     }

@@ -46,10 +46,10 @@ class TwigPrefixModel implements ModelInterface
      */
     public function create(array $a_values = [])
     {
-        $meth            = ' -- ' . __METHOD__;
+        $meth = ' -- ' . __METHOD__;
         $a_required_keys = [
-            'twig_prefix',
-            'twig_path'
+            'tp_prefix',
+            'tp_path'
         ];
         $a_psql          = [
             'table_name'  => $this->db_table,

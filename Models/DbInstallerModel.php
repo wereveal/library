@@ -131,42 +131,6 @@ class DbInstallerModel
             'table_name'  => $table_name,
             'column_name' => 'const_id'
         ];
-
-        if (!empty($this->a_install_config['twig_prefix']) && isset($a_constants['twig_prefix']['const_value'])) {
-            $a_constants['twig_prefix']['const_value'] = $this->a_install_config['twig_prefix'];
-        }
-        elseif (!empty($this->a_install_config['twig_prefix'])) {
-            $a_constants['twig_prefix'] = [
-                'const_name'      => 'TWIG_PREFIX',
-                'const_value'     => $this->a_install_config['twig_prefix'],
-                'const_immutable' => 'true'
-            ];
-        }
-        else if (empty($a_constants['twig_prefix']['const_value'])) {
-            $a_constants['twig_prefix'] = [
-                'const_name'      => 'TWIG_PREFIX',
-                'const_value'     => 'site_',
-                'const_immutable' => 'true'
-            ];
-        }
-        if (!empty($this->a_install_config['lib_twig_prefix']) && isset($a_constants['lib_twig_prefix']['const_value'])) {
-            $a_constants['lib_twig_prefix']['const_value'] = $this->a_install_config['twig_prefix'];
-        }
-        elseif (!empty($this->a_install_config['lib_twig_prefix'])) {
-            $a_constants['lib_twig_prefix'] = [
-                'const_name'      => 'LIB_TWIG_PREFIX',
-                'const_value'     => $this->a_install_config['lib_twig_prefix'],
-                'const_immutable' => 'true'
-            ];
-        }
-        else if (empty($a_constants['lib_twig_prefix']['const_value'])) {
-            $a_constants['lib_twig_prefix'] = [
-                'const_name'      => 'LIB_TWIG_PREFIX',
-                'const_value'     => 'lib_',
-                'const_immutable' => 'true'
-            ];
-        }
-
         $results = $this->genericInsert($a_constants, $a_table_info);
         if ($results) {
             return true;

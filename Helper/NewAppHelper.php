@@ -15,9 +15,10 @@ use Ritc\Library\Traits\LogitTraits;
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.0
- * @date    2018-04-14 17:31:00
+ * @date    2018-05-29 19:11:01
  * @change_log
- * - v1.0.0         - Create Default Files changed to use over all site variable    - 2018-04-14 wer
+ * - v1.1.1         - Bug fixes                                                     - 2018-05-29 wer
+ * - v1.1.0         - Create Default Files changed to use over all site variable    - 2018-04-14 wer
  * - v1.0.0         - Initial Production version                                    - 2017-12-15 wer
  * - v1.0.0-alpha.0 - Initial version                                               - 2017-11-24 wer
  */
@@ -132,6 +133,9 @@ class NewAppHelper
                 '{app_name}',
                 '{controller_name}',
                 '{controller_method}',
+                '{controller_use}',
+                '{controller_vars}',
+                '{controller_construct}',
                 '{author}',
                 '{sauthor}',
                 '{email}',
@@ -146,6 +150,9 @@ class NewAppHelper
                 strtolower($this->a_config['app_name']),
                 '',
                 '',
+                '',
+                '',
+                '',
                 $this->a_config['author'],
                 $this->a_config['short_author'],
                 $this->a_config['email'],
@@ -155,23 +162,25 @@ class NewAppHelper
             ];
 
             ### Create the main controller for the app ###
-            $a_replace[4] = 'Main';
-            $a_replace[5] = file_get_contents(SRC_CONFIG_PATH . '/install_files/main_controller.snippet');
             if ($is_site) {
-                $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/site_controller.php.txt');
+                $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/MasterController.php.txt');
+                $controller_text = str_replace($a_find, $a_replace, $controller_text);
+                if (!file_put_contents($this->app_path . "/Controllers/MasterController.php", $controller_text)) {
+                    return false;
+                }
             }
             else {
+                $a_replace[4] = 'Main';
+                $a_replace[5] = file_get_contents(SRC_CONFIG_PATH . '/install_files/main_controller.snippet');
                 $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/controller.php.txt');
-            }
-            $controller_text = str_replace($a_find, $a_replace, $controller_text);
-            if (!file_put_contents($this->app_path . "/Controllers/MainController.php", $controller_text)) {
-                return false;
+                $controller_text = str_replace($a_find, $a_replace, $controller_text);
+                if (!file_put_contents($this->app_path . "/Controllers/MainController.php", $controller_text)) {
+                    return false;
+                }
             }
 
             ### Create the home controller for the app ###
-            $a_replace[4] = 'Home';
-            $a_replace[5] = file_get_contents(SRC_CONFIG_PATH . '/install_files/home_controller.snippet');
-            $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/controller.php.txt');
+            $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/HomeController.php.txt');
             if ($controller_text) {
                 $controller_text = str_replace($a_find, $a_replace, $controller_text);
                 if (!file_put_contents($this->app_path . "/Controllers/HomeController.php", $controller_text)) {
@@ -183,8 +192,6 @@ class NewAppHelper
             }
 
             ### Create the manager controller for the app ###
-            $a_replace[4] = 'Manager';
-            $a_replace[5] = '';
             $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/ManagerController.php.txt');
             if ($controller_text) {
                 $controller_text = str_replace($a_find, $a_replace, $controller_text);
@@ -269,71 +276,72 @@ class NewAppHelper
                     }
                 }
             }
-            $a_find = [
-                '{NAMESPACE}',
-                '{APPNAME}'
-            ];
-            $a_replace = [
-                $this->a_config['namespace'],
-                $this->a_config['app_name']
-            ];
-            $index_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/index.php.txt');
-            if ($index_text) {
-                $index_text = str_replace($a_find, $a_replace, $index_text);
-                if (!file_put_contents(PUBLIC_PATH . '/index.php', $index_text)) {
-                    return false;
+            if ($is_site) {
+                $a_find = [
+                    '{NAMESPACE}',
+                    '{APPNAME}'
+                ];
+                $a_replace = [
+                    $this->a_config['namespace'],
+                    $this->a_config['app_name']
+                ];
+                $index_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/index.php.txt');
+                if ($index_text) {
+                    $index_text = str_replace($a_find, $a_replace, $index_text);
+                    if (!file_put_contents(PUBLIC_PATH . '/index.php', $index_text)) {
+                        return false;
+                    }
                 }
-
+                $public_path = empty($this->a_config['public_path'])
+                    ? '$_SERVER["DOCUMENT_ROOT"]'
+                    : $this->a_config['public_path'];
+                $base_path = empty($this->a_config['base_path'])
+                    ? 'dirname(PUBLIC_PATH)'
+                    : $this->a_config['base_path'];
+                $developer_mode = isset($this->a_config['developer_mode']) && $this->a_config['developer_mode'] == 'true'
+                    ? 'true'
+                    : 'false';
+                $http_host = empty($this->a_config['http_host'])
+                    ? ''
+                    : $this->a_config['http_host'];
+                $domain = empty($this->a_config['domain'])
+                    ? ''
+                    : $this->a_config['domain'];
+                $tld = empty($this->a_config['tld'])
+                    ? 'com'
+                    : $this->a_config['tld'];
+                $specific_host = empty($this->a_config['specific_host'])
+                    ? ''
+                    : $this->a_config['specific_host'];
+                $a_find = [
+                    '{db_config_file}',
+                    '{public_path}',
+                    '{base_path}',
+                    '{developer_mode}',
+                    '{http_host}',
+                    '{domain}',
+                    '{tld}',
+                    '{specific_host}'
+                ];
+                $a_replace = [
+                    $this->a_config['db_file'],
+                    $public_path,
+                    $base_path,
+                    $developer_mode,
+                    $http_host,
+                    $domain,
+                    $tld,
+                    $specific_host
+                ];
+                if (!empty($http_host)) {
+                    $host_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/http_host.snippet');
+                    $host_text = str_replace($a_find, $a_replace, $host_text);
+                    $a_replace[7] = $host_text;
+                }
+                $setup_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/setup.php.txt');
+                $setup_text = str_replace($a_find, $a_replace, $setup_text);
+                file_put_contents(PUBLIC_PATH . '/setup.php', $setup_text);
             }
-            $public_path = empty($this->a_config['public_path'])
-                ? '$_SERVER["DOCUMENT_ROOT"]'
-                : $this->a_config['public_path'];
-            $base_path = empty($this->a_config['base_path'])
-                ? 'dirname(PUBLIC_PATH)'
-                : $this->a_config['base_path'];
-            $developer_mode = isset($this->a_config['developer_mode']) && $this->a_config['developer_mode'] == 'true'
-                ? 'true'
-                : 'false';
-            $http_host = empty($this->a_config['http_host'])
-                ? ''
-                : $this->a_config['http_host'];
-            $domain = empty($this->a_config['domain'])
-                ? ''
-                : $this->a_config['domain'];
-            $tld = empty($this->a_config['tld'])
-                ? 'com'
-                : $this->a_config['tld'];
-            $specific_host = empty($this->a_config['specific_host'])
-                ? ''
-                : $this->a_config['specific_host'];
-            $a_find = [
-                '{db_config_file}',
-                '{public_path}',
-                '{base_path}',
-                '{developer_mode}',
-                '{http_host}',
-                '{domain}',
-                '{tld}',
-                '{specific_host}'
-            ];
-            $a_replace = [
-                $this->a_config['db_file'],
-                $public_path,
-                $base_path,
-                $developer_mode,
-                $http_host,
-                $domain,
-                $tld,
-                $specific_host
-            ];
-            if (!empty($http_host)) {
-                $host_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/http_host.snippet');
-                $host_text = str_replace($a_find, $a_replace, $host_text);
-                $a_replace[7] = $host_text;
-            }
-            $setup_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/setup.php.txt');
-            $setup_text = str_replace($a_find, $a_replace, $setup_text);
-            file_put_contents(PUBLIC_PATH . '/setup.php', $setup_text);
             return true;
         }
         return false;
@@ -345,8 +353,15 @@ class NewAppHelper
     public function createTwigDbRecords()
     {
         $o_tcm = new TwigComplexModel($this->o_di);
+        $app_resource_dir = str_replace(BASE_PATH, '', $this->app_path) . '/resources/templates';
+        $a_values = [
+           'tp_prefix'  => $this->a_config['app_twig_prefix'],
+           'tp_path'    => $app_resource_dir,
+           'tp_active'  => 'true',
+           'tp_default' => $this->a_config['master_app']
+        ];
         try {
-            return $o_tcm->createTwigForApp($this->a_config['app_twig_prefix'], $this->app_path);
+            return $o_tcm->createTwigForApp($a_values);
         }
         catch (ModelException $e) {
             return $e->errorMessage();
@@ -387,8 +402,7 @@ class NewAppHelper
             'domain'          => 'revealitconsulting',            // domain name of site
             'tld'             => 'com',                           // top level domain, e.g., com, net, org
             'specific_host'   => '',                              // e.g. www, test
-            'developer_mode'  => 'false',                         // affects debugging messages
-            'app_twig_prefix' => 'main_'
+            'developer_mode'  => 'false'                          // affects debugging messages
         ];
 
         if (empty($a_values)) {
@@ -398,6 +412,9 @@ class NewAppHelper
             if (!isset($a_values[$key])) {
                 $a_values[$key] = $a_default[$key];
             }
+        }
+        if (empty($a_values['app_twig_prefix'])) {
+            $a_values['app_twig_prefix'] = strtolower($a_values['app_name']) . '_';
         }
         $this->a_config = $a_values;
     }

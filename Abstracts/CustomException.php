@@ -40,7 +40,7 @@ abstract class CustomException extends \Exception implements CustomExceptionInte
         if (empty($error_message)) {
             $error_message = $this->getCodeText($this->getCode());
         }
-        $error_message .= ' -- ' . $this->getClass() . '.' . $this->getLine();
+        $error_message .= "\n -- " . $this->getClass() . '.' . $this->getLine();
 
         $previous = $this->getPrevious();
         if ($previous) {
@@ -48,7 +48,7 @@ abstract class CustomException extends \Exception implements CustomExceptionInte
             $code = $previous->getCode();
             $line = $previous->getLine();
             $file = $previous->getFile();
-            $error_message .= ' - Previous: ' . $msg . ' -- ' . $file . '.' . $line . '(code: ' . $code . ')';
+            $error_message .= "\n- Previous: {$msg}\n -- $file.$line (code: $code)";
         }
         return $error_message;
     }

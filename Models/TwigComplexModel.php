@@ -20,8 +20,9 @@ use Ritc\Library\Traits\LogitTraits;
  * @version v1.0.0-alpha.1
  * @date    2017-12-15 22:47:39
  * @change_log
- * - v1.0.0-alpha.1 - lots of changes        - 2017-12-15 wer
- * - v1.0.0-alpha.0 - Initial version        - 2017-05-13 wer
+ * - v1.0.0         - Initial Production version    - 2018-05-29 wer
+ * - v1.0.0-alpha.1 - lots of changes               - 2017-12-15 wer
+ * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
  */
 class TwigComplexModel
 {
@@ -45,7 +46,6 @@ class TwigComplexModel
     public function __construct(Di $o_di)
     {
         $this->o_di = $o_di;
-        $this->setupElog($o_di);
         /** @var DbModel $o_db */
         $o_db = $this->o_di->get('db');
         $this->setupProperties($o_db);
@@ -118,17 +118,17 @@ class TwigComplexModel
 
     /**
      * Creates default records for the app in the three twig tables.
-     * @param string $app_twig_prefix Optional, defaults to 'main_'
-     * @param string $a_app_path      Required
-     * @return array                  ['tp_id', 'td_ids', 'tpl_ids']
+     * @param  array $a_values Required ['tp_prefix', 'tp_path', 'tp_active', 'tp_default']
+     * @return array                    ['tp_id', 'td_ids', 'tpl_ids']
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function createTwigForApp($app_twig_prefix = 'main_', $a_app_path = '')
+    public function createTwigForApp(array $a_values = [])
     {
-        if ($a_app_path == '') {
-            $message = 'The app path is required.';
+        if (empty($a_values) || empty($a_values['tp_prefix']) || empty($a_values['tp_path'])) {
+            $message = 'Missing required values.';
             throw new ModelException($message, 10);
         }
+        $app_twig_prefix = $a_values['tp_prefix'];
         try {
             $results = $this->o_prefix->read(['tp_prefix' => $app_twig_prefix]);
         }
@@ -143,12 +143,13 @@ class TwigComplexModel
             $tp_prefix_id = $results[0]['tp_id'];
         }
         else {
-            $a_values = [
-                'tp_prefix'  => $app_twig_prefix,
-                'tp_path'    => $a_app_path,
-                'tp_active'  => 'true',
-                'tp_default' => 'false'
-            ];
+            if (empty($a_values['tp_active'])) {
+                $a_values['tp_active'] = 'true';
+            }
+            if (empty($a_values['tp_default'])) {
+                $a_values['tp_default'] = 'false';
+            }
+
             try {
                 $results = $this->o_prefix->create($a_values);
                 if (empty($results)) {
@@ -157,7 +158,7 @@ class TwigComplexModel
                 $tp_prefix_id = $results[0];
             }
             catch (ModelException $e) {
-                throw new ModelException('Unable to create the twig_prefix record', $e->getCode());
+                throw new ModelException('Unable to try to create the twig_prefix record', $e->getCode(), $e);
             }
         }
         try {
@@ -339,13 +340,11 @@ class TwigComplexModel
      */
     private function setupDbs(DbModel $o_db)
     {
+        $this->a_object_names = ['o_dirs', 'o_prefix', 'o_tpls', 'o_page'];
         $this->o_dirs   = new TwigDirsModel($o_db);
         $this->o_prefix = new TwigPrefixModel($o_db);
         $this->o_tpls   = new TwigTemplatesModel($o_db);
         $this->o_page   = new PageModel($o_db);
-        $this->o_dirs->setElog($this->o_elog);
-        $this->o_prefix->setElog($this->o_elog);
-        $this->o_tpls->setElog($this->o_elog);
-        $this->o_page->setElog($this->o_elog);
+        $this->setupElog($this->o_di);
     }
 }
