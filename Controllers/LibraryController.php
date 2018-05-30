@@ -74,8 +74,14 @@ class LibraryController implements ControllerInterface
                 case 'ajax':
                     $o_c = new AjaxController($this->o_di);
                     break;
+                case 'cache':
+                    $o_c = new CacheManagerController($this->o_di);
+                    break;
                 case 'constants':
                     $o_c = new ConstantsController($this->o_di);
+                    break;
+                case 'content':
+                    $o_c = new ContentController($this->o_di);
                     break;
                 case 'groups':
                     $o_c = new GroupsController($this->o_di);

@@ -121,7 +121,7 @@ class TwigFactory
         if ($param_one instanceof Di) {
             self::$o_di = $param_one;
             if (!is_bool($param_two)) {
-                $param_two = true;
+                $param_two = false;
             }
             try {
                 $o_te = self::getTwigByDb($param_one, $param_two);
