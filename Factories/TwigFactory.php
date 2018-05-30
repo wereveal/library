@@ -9,6 +9,7 @@ use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\LocateFile;
 use Ritc\Library\Helper\OopHelper;
+use Ritc\Library\Helper\TwigExtensions;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Services\Di;
 use Twig_Loader_Filesystem;
@@ -46,6 +47,7 @@ use Twig_Environment;
  */
 class TwigFactory
 {
+    private static $o_di;
     /** @var \Twig_Loader_Filesystem object */
     private $o_loader;
     /** @var Twig_Environment object */
@@ -79,6 +81,7 @@ class TwigFactory
                 if ($continue) {
                     try {
                         $this->o_twig = new Twig_Environment($o_loader, $a_twig_config['environment_options']);
+                        /*
                         $ondisk_test = new \Twig_Test('ondisk', function($value) {
                             $file_w_path = PUBLIC_PATH . $value;
                             if (file_exists($file_w_path)) {
@@ -89,6 +92,10 @@ class TwigFactory
                             }
                         });
                         $this->o_twig->addTest($ondisk_test);
+                        */
+                        if (self::$o_di instanceof Di) {
+                            $this->o_twig->addExtension(new TwigExtensions(self::$o_di));
+                        }
                     }
                     catch (\Error $e) {
                         error_log("Twig Environment Error: " . $e->getMessage() . ' -- ' . $meth);
@@ -112,6 +119,7 @@ class TwigFactory
     public static function getTwig($param_one = '', $param_two = '')
     {
         if ($param_one instanceof Di) {
+            self::$o_di = $param_one;
             if (!is_bool($param_two)) {
                 $param_two = true;
             }

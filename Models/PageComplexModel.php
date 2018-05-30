@@ -8,7 +8,6 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Elog;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -105,24 +104,38 @@ class PageComplexModel
             WHERE p.url_id = :url_id";
         try {
             $a_values = $this->o_db->search($sql, [':url_id' => $url_id]);
+            if (empty($a_values[0])) {
+                throw new ModelException('Unable to get the page values', 140);
+            }
+            else {
+                $a_record = $a_values[0];
+            }
         }
         catch (ModelException $e) {
             throw new ModelException('Unable to get the page values', 140, $e);
         }
-        foreach ($a_values as $key => $a_record) {
-            $tpl_id = $a_record['tpl_id'];
-            try {
-                $a_twig_stuff = $this->o_tpls->readTplInfo($tpl_id);
-            }
-            catch (ModelException $e) {
-                throw new ModelException('Unable to get the template values', 140, $e);
-            }
-            if (!empty($a_twig_stuff)) {
-                $a_record = array_merge($a_record, $a_twig_stuff);
-                $a_values[$key] = $a_record;
-            }
+        $tpl_id = $a_record['tpl_id'];
+        try {
+            $a_twig_stuff = $this->o_tpls->readTplInfo($tpl_id);
         }
-        return $a_values;
+        catch (ModelException $e) {
+            throw new ModelException('Unable to get the template values', 140, $e);
+        }
+        if (!empty($a_twig_stuff)) {
+            $a_record = array_merge($a_record, $a_twig_stuff);
+        }
+        try {
+            $a_content = [];
+            $a_content_results = $this->o_content->readAllByPage($a_record['page_id']);
+            foreach ($a_content_results as $a_block) {
+                $a_content[$a_block['c_block']] = $a_block;
+            }
+            $a_record['a_content'] = $a_content;
+        }
+        catch (ModelException $e) {
+            throw new ModelException('Unable to get the content values', 140, $e);
+        }
+        return $a_record;
     }
 
     /**
@@ -161,17 +174,14 @@ class PageComplexModel
         else {
             $a_page_fields  = $this->o_page->getDbFields();
             $a_urls_fields  = $this->o_urls->getDbFields();
-            $a_content_fields = $this->o_content->getDbFields();
             $select_fields  = $this->buildSqlSelectFields($a_page_fields, 'p');
             $select_fields .= ', ' . $this->buildSqlSelectFields($a_urls_fields, 'u');
-            $select_fields .= ', ' . $this->buildSqlSelectFields($a_content_fields, 'c');
             $this->select_sql = "
                 SELECT {$select_fields}
                 FROM {$this->lib_prefix}page as p
                 JOIN {$this->lib_prefix}urls as u
                   ON p.url_id = u.url_id
-                JOIN {$this->lib_prefix}content as c
-                  ON p.page_id = c.c_page_id AND c.c_current = 'true'";
+            ";
         }
     }
 }

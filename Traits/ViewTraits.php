@@ -200,7 +200,7 @@ trait ViewTraits
             }
         }
           $log_message = 'page values ' . var_export($a_page_values, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
         $a_menus = $this->retrieveNav($a_page_values['ng_id']);
         if (empty($a_message)) {
             $a_message = ViewHelper::fullMessage(['message' => '']);
@@ -385,13 +385,7 @@ trait ViewTraits
         $o_page_model = new PageComplexModel($this->o_di);
         $url_id = $this->urlId($url_id);
         try {
-            $a_values = $o_page_model->readPageValuesByUrlId($url_id);
-            if (isset($a_values[0])) {
-                $a_page_values = $a_values[0];
-            }
-            else {
-                $a_page_values = [];
-            }
+            $a_page_values = $o_page_model->readPageValuesByUrlId($url_id);
         }
         catch (ModelException $e) {
             $a_page_values = [];
@@ -410,12 +404,16 @@ trait ViewTraits
                 'page_prefix'    => TWIG_PREFIX,
                 'twig_dir'       => 'pages',
                 'tpl'            => 'index',
-                'base_url'       => '/',
+                'a_content'      => [],
+                'base_url'       => '/'
             ];
         }
-        $base_url = $a_page_values['page_base_url'] == '/'
-            ? SITE_URL
-            : SITE_URL . $a_page_values['page_base_url'];
+        else {
+            $base_url = $a_page_values['page_base_url'] == '/'
+                ? SITE_URL
+                : SITE_URL . $a_page_values['page_base_url'];
+
+        }
         return [
             'page_id'     => $a_page_values['page_id'],
             'url_id'      => $a_page_values['url_id'],
@@ -429,6 +427,7 @@ trait ViewTraits
             'page_prefix' => $a_page_values['twig_prefix'],
             'twig_dir'    => $a_page_values['twig_dir'],
             'tpl'         => $a_page_values['tpl_name'],
+            'a_content'   => $a_page_values['a_content'],
             'base_url'    => $base_url
         ];
     }

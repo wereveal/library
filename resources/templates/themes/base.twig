@@ -14,10 +14,22 @@
 {% endblock %}
 {% block meta %}{% endblock %}
 {% block vendorStylesheets %}
+{% if fonts_dir ~ '/fontawesome/css/fa-svg-with-js.css' is ondisk %}
     <link href="{{ fonts_dir }}/fontawesome/css/fa-svg-with-js.css">
+    <script src="{{ fonts_dir }}/fontawesome/js/fontawesome-all.min.js"></script>
+{% else %}
+    {% if vendor_dir ~ '/@fortawesome/fontawesome-free/css/all.css' is ondisk %}
+    <link href="{{ vendor_dir }}/@fortawesome/fontawesome-free/css/all.css">
+    <script src="{{ vendor_dir }}/@fortawesome/fontawesome-free/js/all.js"></script>
+    {% endif %}
+{% endif %}
 {% endblock %}
 {% block stylesheets %}
+    {% if css_dir ~ '/min/styles_library.css' is ondisk %}
+    <link rel="stylesheet" href="{{ css_dir }}/min/styles_library.css" media="screen">
+    {% else %}
     <link rel="stylesheet" href="{{ css_dir }}/styles_library.css" media="screen">
+    {% endif %}
 {% endblock %}
 {% block icons %}
     <link rel="apple-touch-icon" sizes="180x180" href="{{ images_dir }}/apple-touch-icon.png">
@@ -30,7 +42,6 @@
 {% endblock %}
 {% block vendorJs %}
     <script src="{{ vendor_dir }}/jquery/dist/jquery.min.js"></script>
-    <script src="{{ fonts_dir }}/fontawesome/js/fontawesome-all.min.js"></script>
 {% endblock %}
 {% block headJs %}{% endblock %}
 {% block mainContainer %}
