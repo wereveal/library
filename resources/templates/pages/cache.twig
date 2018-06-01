@@ -1,5 +1,53 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block body %}
 <div class="container">
+{% if is_enabled == 'unknown' or is_enabled == '' %}
+    <a href="/manager/config/constants/" class="btn btn-primary">Constants Manager</a>
+{% else %}
+    <div class="row">
+    {% if is_enabled == 'true' %}
+        <div class="col">
+            <div class="card">
+                <h2 class="card-header">Reset Cache</h2>
+                <div class="card-body">
+                    <form action="/manager/config/cache/" method="post" class="form-inline">
+                        <button type="submit" name="submit" value="clear_cache" class="btn btn-outline-blue">Reset Cache</button>
+                        <input type="hidden" name="tolken" value="{{ tolken }}">
+                        <input type="hidden" name="form_ts" value="{{ form_ts }}">
+                        <label for="hobbit" class="hobbit">Humans don't fill this in
+                            <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit">
+                        </label>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+        <div class="col">
+            <div class="card">
+                <h2 class="card-header">
+                {% if is_enabled == 'true' %}
+                    Disable Cache
+                {% else %}
+                    Enable Cache
+                {% endif %}
+                </h2>
+                <div class="card-body">
+                    <form action="/manager/config/cache/" method="post" class="form-inline">
+                        {% if is_enabled == 'true' %}
+                            <button type="submit" name="submit" value="disable_cache" class="btn btn-blue">Disable Cache</button>
+                        {% else %}
+                            <button type="submit" name="submit" value="enable_cache" class="btn btn-blue">Enable Cache</button>
+                        {% endif %}
+                        <input type="hidden" name="tolken" value="{{ tolken }}">
+                        <input type="hidden" name="form_ts" value="{{ form_ts }}">
+                        <label for="hobbit" class="hobbit">Humans don't fill this in
+                            <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit">
+                        </label>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
 </div>
 {% endblock %}
