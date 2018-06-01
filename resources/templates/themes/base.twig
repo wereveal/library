@@ -14,22 +14,20 @@
 {% endblock %}
 {% block meta %}{% endblock %}
 {% block vendorStylesheets %}
-{% if fonts_dir ~ '/fontawesome/css/fa-svg-with-js.css' is ondisk %}
+{% set fontawesomePro = fonts_dir ~ '/fontawesome/js/fontawesome-all.min.js' %}
+{% set fontawesomeFree = vendor_dir ~ '/@fortawesome/fontawesome-free/js/all.js' %}
+{% if fontawesomePro is inPublic %}
     <link href="{{ fonts_dir }}/fontawesome/css/fa-svg-with-js.css">
     <script src="{{ fonts_dir }}/fontawesome/js/fontawesome-all.min.js"></script>
 {% else %}
-    {% if vendor_dir ~ '/@fortawesome/fontawesome-free/css/all.css' is ondisk %}
+    {% if fontawesomeFree is inPublic %}
     <link href="{{ vendor_dir }}/@fortawesome/fontawesome-free/css/all.css">
     <script src="{{ vendor_dir }}/@fortawesome/fontawesome-free/js/all.js"></script>
     {% endif %}
 {% endif %}
 {% endblock %}
 {% block stylesheets %}
-    {% if css_dir ~ '/min/styles_library.css' is ondisk %}
-    <link rel="stylesheet" href="{{ css_dir }}/min/styles_library.css" media="screen">
-    {% else %}
     <link rel="stylesheet" href="{{ css_dir }}/styles_library.css" media="screen">
-    {% endif %}
 {% endblock %}
 {% block icons %}
     <link rel="apple-touch-icon" sizes="180x180" href="{{ images_dir }}/apple-touch-icon.png">
@@ -57,7 +55,10 @@
         <nav class="navbar navbar-expand-md navbar-dark bg-gray no-margin" role="navigation">
             {% block navbarToggler %}
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#{{ mainNavName }}">
-                <span class="far fa-bars slate"></span>
+             <span class="fa-layers fa-fw">
+                <span class="far fa-square fa-lg slate"></span>
+                <span class="fas fa-bars fa-lg slate" data-fa-transform="shrink-6"></span>
+             </span>
             </button>
             {% endblock %}
             {% block navbarBrand %}

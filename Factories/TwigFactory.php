@@ -9,7 +9,6 @@ use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\LocateFile;
 use Ritc\Library\Helper\OopHelper;
-use Ritc\Library\Helper\TwigExtensions;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Services\Di;
 use Twig_Loader_Filesystem;
@@ -23,7 +22,7 @@ use Twig_Environment;
  * @version v3.2.0
  * @date    2018-05-01 15:18:58
  * @change_log
- * - v3.2.0   - added a twig test to the factory - ondisk which tests to see if the file exists         - 2018-05-01 wer
+ * - v3.2.0   - added a twig test to the factory - inPublic which tests to see if the file exists         - 2018-05-01 wer
  * - v3.1.3   - Minor change in testing                                                                 - 2018-04-19 wer
  * - v3.1.2   - Class renamed elsewhere reflected here                                                  - 2018-04-04 wer
  * - v3.1.0   - Refactoring of TwigModel created the need for changes here.                             - 2017-06-20 wer
@@ -47,12 +46,17 @@ use Twig_Environment;
  */
 class TwigFactory
 {
+    /** @var Di $o_di */
     private static $o_di;
-    /** @var \Twig_Loader_Filesystem object */
+    /** @var \Twig_Loader_Filesystem $o_loader */
     private $o_loader;
-    /** @var Twig_Environment object */
+    /** @var \Parsedown $o_md */
+    private $o_md;
+    /** @var \ParsedownExtra $o_mde */
+    private $o_mde;
+    /** @var Twig_Environment $o_twig */
     private $o_twig;
-    /** @var array */
+    /** @var array $instance */
     private static $instance = array();
 
     /**
@@ -62,6 +66,19 @@ class TwigFactory
     private function __construct($a_twig_config)
     {
         $meth = __METHOD__ . '.';
+        $o_md = new \Parsedown();
+        if ($o_md instanceof \Parsedown) {
+            $this->o_md = $o_md;
+            try {
+                $o_mde = new \ParsedownExtra();
+                if ($o_mde instanceof \ParsedownExtra) {
+                    $this->o_mde = $o_mde;
+                }
+            }
+            catch (\Exception $e) {
+                // silently ignore
+            }
+        }
         try {
             $o_loader = new Twig_Loader_Filesystem($a_twig_config['default_path']);
             if ($o_loader instanceof Twig_Loader_Filesystem) {
@@ -81,21 +98,12 @@ class TwigFactory
                 if ($continue) {
                     try {
                         $this->o_twig = new Twig_Environment($o_loader, $a_twig_config['environment_options']);
-                        /*
-                        $ondisk_test = new \Twig_Test('ondisk', function($value) {
-                            $file_w_path = PUBLIC_PATH . $value;
-                            if (file_exists($file_w_path)) {
-                                return true;
-                            }
-                            else {
-                                return false;
-                            }
-                        });
-                        $this->o_twig->addTest($ondisk_test);
-                        */
-                        if (self::$o_di instanceof Di) {
-                            $this->o_twig->addExtension(new TwigExtensions(self::$o_di));
-                        }
+                        $md_filter = new \Twig_Filter('md', [$this, 'mdFilter'], ['is_safe' => ['html']]);
+                        $this->o_twig->addFilter($md_filter);
+                        $mde_filter = new \Twig_Filter('mde', [$this, 'mdeFilter', ['is_safe' => ['html']]]);
+                        $this->o_twig->addFilter($mde_filter);
+                        $inPublic_test = new \Twig_Test('inPublic', [$this, 'inPublicTest']);
+                        $this->o_twig->addTest($inPublic_test);
                     }
                     catch (\Error $e) {
                         error_log("Twig Environment Error: " . $e->getMessage() . ' -- ' . $meth);
@@ -383,5 +391,43 @@ class TwigFactory
         /** @noinspection PhpIncludeInspection */
         $a_twig_config = $config_w_path != '' ? require $config_w_path : [];
         return $a_twig_config;
+    }
+
+    ### Extensions to Twig ###
+    /**
+     * Determines if a file exists within the public directory specified.
+     * @param string $value Path and filename starting from the public root directory.
+     * @return bool
+     */
+    public function inPublicTest($value = '')
+    {
+        $file_w_path = PUBLIC_PATH . $value;
+        return file_exists($file_w_path);
+    }
+
+    /**
+     * Converts markdown into html.
+     * @param string $value
+     * @return string
+     */
+    public function mdFilter($value = '')
+    {
+        if ($this->o_md instanceof \Parsedown) {
+            $value = $this->o_md->text($value);
+        }
+        return $value;
+    }
+
+    /**
+     * Converts markdown extra into html.
+     * @param string $value
+     * @return null|string|string[]
+     */
+    public function mdeFilter($value = '')
+    {
+        if ($this->o_mde instanceof \ParsedownExtra) {
+            $value = $this->o_mde->text($value);
+        }
+        return $value;
     }
 }

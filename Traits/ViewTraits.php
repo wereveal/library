@@ -185,13 +185,11 @@ trait ViewTraits
     public function createDefaultTwigValues(array $a_message = [], $url_id = -1)
     {
         $meth = __METHOD__ . '.';
+        $a_page_values = [];
         $url_id = $this->urlId($url_id);
         $cache_key = 'page_values.id.' . $url_id;
         if ($this->use_cache) {
             $a_page_values = $this->o_cache->get($cache_key);
-        }
-        else {
-            $a_page_values = [];
         }
         if (!is_array($a_page_values) || empty($a_page_values)) {
             $a_page_values = $this->getPageValues($url_id);
@@ -200,7 +198,7 @@ trait ViewTraits
             }
         }
           $log_message = 'page values ' . var_export($a_page_values, TRUE);
-          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_menus = $this->retrieveNav($a_page_values['ng_id']);
         if (empty($a_message)) {
             $a_message = ViewHelper::fullMessage(['message' => '']);
