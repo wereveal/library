@@ -1,6 +1,6 @@
 <?php
 /**
- * Class CustomException
+ * Class CustomExceptionAbstract
  * @package Ritc_Library
  */
 namespace Ritc\Library\Abstracts;
@@ -9,7 +9,7 @@ use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Interfaces\CustomExceptionInterface;
 
 /**
- * Class CustomException Abstract which extends php Exception class.
+ * Class CustomExceptionAbstract Abstract which extends php Exception class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0
@@ -17,7 +17,7 @@ use Ritc\Library\Interfaces\CustomExceptionInterface;
  * @change_log
  * - v1.0.0         - changed to production, added phpDoc                                               - 2018-03-07 wer
  */
-abstract class CustomException extends \Exception implements CustomExceptionInterface
+abstract class CustomExceptionAbstract extends \Exception implements CustomExceptionInterface
 {
     /**
      * Overrides \Exception

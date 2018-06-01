@@ -5,7 +5,7 @@
  */
 namespace Ritc\Library\Exceptions;
 
-use Ritc\Library\Abstracts\CustomException;
+use Ritc\Library\Abstracts\CustomExceptionAbstract;
 
 /**
  * Class ServiceException - Custom Exceptions for Services.
@@ -16,7 +16,7 @@ use Ritc\Library\Abstracts\CustomException;
  * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2017-07-16 wer
  */
-class ServiceException extends CustomException
+class ServiceException extends CustomExceptionAbstract
 {
     /**
      * ServiceException constructor.

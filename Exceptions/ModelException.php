@@ -5,7 +5,7 @@
  */
 namespace Ritc\Library\Exceptions;
 
-use Ritc\Library\Abstracts\CustomException;
+use Ritc\Library\Abstracts\CustomExceptionAbstract;
 use Ritc\Library\Helper\ExceptionHelper;
 
 /**
@@ -16,10 +16,10 @@ use Ritc\Library\Helper\ExceptionHelper;
  * @date    2017-12-12 11:32:33
  * @change_log
  * - v1.0.0-alpha.2 - Renumbered codes to be more consistent    - 2017-12-12 wer
- * - v1.0.0-alpha.1 - CustomException change reflected here.    - 2017-07-15 wer
+ * - v1.0.0-alpha.1 - CustomExceptionAbstract change reflected here.    - 2017-07-15 wer
  * - v1.0.0-alpha.0 - Initial version                           - 2017-06-11 wer
  */
-class ModelException extends CustomException
+class ModelException extends CustomExceptionAbstract
 {
     /**
      * ModelException constructor.

@@ -1,6 +1,6 @@
 <?php
 /**
- * Class CustomError
+ * Class CustomErrorAbstract
  * @package Ritc_Library
  */
 namespace Ritc\Library\Abstracts;
@@ -14,7 +14,7 @@ namespace Ritc\Library\Abstracts;
  * @change_log
  * - v1.0.0-alpha.0 - Initial version                                                                   - 2017-07-15 wer
  */
-abstract class CustomError extends \ErrorException
+abstract class CustomErrorAbstract extends \ErrorException
 {
     /**
      * Overrides the base method.

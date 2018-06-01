@@ -5,7 +5,7 @@
  */
 namespace Ritc\Library\Exceptions;
 
-use Ritc\Library\Abstracts\CustomException;
+use Ritc\Library\Abstracts\CustomExceptionAbstract;
 
 /**
  * Class HelperException - Handles custom exceptions for helpers.
@@ -16,7 +16,7 @@ use Ritc\Library\Abstracts\CustomException;
  * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2017-07-16 wer
  */
-class HelperException extends CustomException
+class HelperException extends CustomExceptionAbstract
 {
     /**
      * HelperException constructor.
