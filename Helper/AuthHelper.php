@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Helper;
 
+use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PeopleComplexModel;
@@ -96,13 +97,16 @@ class AuthHelper
         $o_db            = $o_di->get('db');
         $this->o_session = $o_di->get('session');
         $this->o_router  = $o_di->get('router');
-        $this->o_elog    = $o_di->get('elog');
         $this->o_people  = new PeopleModel($o_db);
         $this->o_groups  = new GroupsModel($o_db);
-        $this->o_complex = new PeopleComplexModel($o_db);
-        $this->o_people->setElog($this->o_elog);
-        $this->o_groups->setElog($this->o_elog);
-        $this->o_complex->setElog($this->o_elog);
+        try {
+            $this->o_complex = new PeopleComplexModel($o_di);
+        }
+        catch (CustomException $e) {
+            $this->logIt($e->getMessage(), LOG_ALWAYS, __METHOD__);
+        }
+        $this->a_object_names = ['o_people', 'o_groups'];
+        $this->setupElog($o_di);
     }
 
     #### Actions ####
