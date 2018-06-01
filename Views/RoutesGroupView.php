@@ -5,6 +5,9 @@
  */
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Interfaces\ViewInterface;
+use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
@@ -17,15 +20,24 @@ use Ritc\Library\Traits\LogitTraits;
  * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
  * @todo Ritc/Library/Views/RoutesGroupView.php - Everything
  */
-class RoutesGroupView
+class RoutesGroupView implements ViewInterface
 {
-    use LogitTraits;
+    use LogitTraits, ConfigViewTraits;
 
     /**
      * RoutesGroupView constructor.
+     * @param \Ritc\Library\Services\Di $o_di
      */
-    public function __construct()
+    public function __construct(Di $o_di)
     {
+        $this->setupView($o_di);
+        $this->a_object_names = [];
+        $this->setupElog($o_di);
+    }
 
+    public function render()
+    {
+        // TODO: Implement render() method.
+        return '';
     }
 }

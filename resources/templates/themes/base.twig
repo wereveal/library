@@ -67,9 +67,9 @@
             <div class="collapse navbar-collapse" id="{{ mainNavName }}">
                 <ul class="navbar-nav mr-auto">
                     {% for menu in a_menus %}
-                        {% if menu.css != '' %}
+                        {% if menu.nav_css != '' %}
                             {% set extra_css %}
-                                {{ ' ' ~ menu.css }}
+                                {{ ' ' ~ menu.nav_css }}
                             {% endset %}
                         {% else %}
                             {% set extra_css = '' %}
@@ -81,16 +81,16 @@
                         {% endif %}
                         {% if menu.submenu is empty %}
                             <li class="nav-item">
-                                <a class="nav-link{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ menu.url }}">{{ menu.text }}</a>
+                                <a class="nav-link{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ menu.url }}">{{ menu.nav_text }}</a>
                             </li>
                         {% else %}
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle{{ menu.css }}{{ active_url }}" data-toggle="dropdown" href="{{ public_dir }}{{ menu.url }}" role="button" aria-haspopup="true" aria-expanded="false">{{ menu.text }}</a>
+                                <a class="nav-link dropdown-toggle{{ menu.nav_css }}{{ active_url }}" data-toggle="dropdown" href="{{ public_dir }}{{ menu.url }}" role="button" aria-haspopup="true" aria-expanded="false">{{ menu.nav_text }}</a>
                                 <div class="dropdown-menu">
                                     {% for child in menu.submenu %}
-                                        {% if child.css != '' %}
+                                        {% if child.nav_css != '' %}
                                             {% set extra_css %}
-                                                {{ ' ' ~ child.css }}
+                                                {{ ' ' ~ child.nav_css }}
                                             {% endset %}
                                         {% else %}
                                             {% set extra_css = '' %}
@@ -100,7 +100,7 @@
                                         {% else %}
                                             {% set active_url = '' %}
                                         {% endif %}
-                                        <a class="dropdown-item{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ child.url }}">{{ child.text }}</a>
+                                        <a class="dropdown-item{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ child.url }}">{{ child.nav_text }}</a>
                                     {% endfor %}
                                 </div>
                             </li>

@@ -9,6 +9,7 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
+use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\TwigView;
 
 /**
@@ -23,7 +24,7 @@ use Ritc\Library\Views\TwigView;
  */
 class TwigController implements ControllerInterface
 {
-    use ConfigControllerTraits;
+    use ConfigControllerTraits, LogitTraits;
 
     /** @var \Ritc\Library\Views\TwigView  */
     private $o_view;
@@ -36,6 +37,7 @@ class TwigController implements ControllerInterface
     {
         $this->setupManagerController($o_di);
         $this->o_view = new TwigView($this->o_di);
+        $this->setupElog($o_di);
     }
 
     /**

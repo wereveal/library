@@ -49,16 +49,12 @@ class PeopleController implements ManagerControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupManagerController($o_di);
         $this->o_view        = new PeopleView($o_di);
         $this->o_people      = new PeopleModel($this->o_db);
         $this->o_complex     = new PeopleComplexModel($this->o_db);
-        if (DEVELOPER_MODE) {
-            $this->o_complex->setElog($this->o_elog);
-            $this->o_people->setElog($this->o_elog);
-            $this->o_view->setElog($this->o_elog);
-        }
+        $this->a_object_names = ['o_people', 'o_complex'];
+        $this->setupElog($o_di);
     }
 
     /**

@@ -6,6 +6,10 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Interfaces\ManagerControllerInterface;
+use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\ConfigControllerTraits;
+use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Views\RoutesGroupView;
 
 /**
  * Class RoutesGroupController - Controller for the Routes to Group Admin page.
@@ -22,12 +26,24 @@ use Ritc\Library\Interfaces\ManagerControllerInterface;
  */
 class RoutesGroupController implements ManagerControllerInterface
 {
+    use LogitTraits, ConfigControllerTraits;
+
+    private $o_view;
+
+    public function __construct(Di $o_di)
+    {
+        $this->setupManagerController($o_di);
+        $this->o_view = new RoutesGroupView($o_di);
+        $this->a_object_names = [];
+        $this->setupElog($o_di);
+    }
+
     /**
      * @return string
      */
     public function route()
     {
-        return '';
+        return $this->o_view->render();
     }
 
     /**

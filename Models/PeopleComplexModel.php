@@ -2,13 +2,15 @@
 /**
  * Class PeopleComplexModel
  * @package Ritc_Library
+ * @todo fix warnings
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Helper\Arrays;
-use Ritc\Library\Helper\Strings;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
+use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -45,15 +47,21 @@ class PeopleComplexModel
 
     /**
      * PeopleComplexModel constructor.
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param \Ritc\Library\Services\Di $o_di
+     * @throws \Ritc\Library\Exceptions\CustomException
      */
-    public function __construct(DbModel $o_db)
+    public function __construct(Di $o_di)
     {
+        $o_db = $o_di->get('db');
+        if (!$o_db instanceof DbModel) {
+            throw new CustomException('Could not get o_db', ExceptionHelper::getCodeNumber('instance'));
+        }
         $this->setupProperties($o_db, 'people');
         $this->o_people = new PeopleModel($o_db);
         $this->o_group  = new GroupsModel($o_db);
         $this->o_pgm    = new PeopleGroupMapModel($o_db);
         $this->setObjectNames(['o_people', 'o_group', 'o_pgm']);
+        $this->setupElog($o_di);
     }
 
     /**
@@ -87,7 +95,7 @@ class PeopleComplexModel
                 }
                 catch (ModelException $e) {
                     $this->o_db->rollbackTransaction();
-                    $errror_message = DEVELOPER_MODE
+                    $error_message = DEVELOPER_MODE
                         ? $e->errorMessage()
                         : $e->getMessage();
                     throw new ModelException($error_message, $e->getCode(), $e);
@@ -282,8 +290,9 @@ class PeopleComplexModel
      * If the values contain a value of people_id, person is updated
      * Else it is a new person.
      * @param array $a_person values to save
-     * @return bool|int people_id
+     * @return bool|int
      * @throws \Ritc\Library\Exceptions\ModelException
+     * @todo cleanup code so return value is clear
      */
     public function savePerson(array $a_person = [])
     {

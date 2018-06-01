@@ -5,16 +5,16 @@
     {% if link.submenu %}
         {% for menu in link.submenu %}
             {% if loop.index is even %}
-                {% set menu_class = menu.class ~ ' alt-row' %}
+                {% set menu_class = menu.nav_class ~ ' alt-row' %}
             {% else %}
-                {% set menu_class = menu.class ~ ' normal-row' %}
+                {% set menu_class = menu.nav_class ~ ' normal-row' %}
             {% endif %}
                 <div class="row {{ menu_class }}">
                     <div class="col-2 aright">
-                        <a href="{{ menu.url }}" class="{{ menu_class }} font-small-caps-bold">{{ menu.text }}</a>
+                        <a href="{{ menu.url }}" class="{{ menu_class }} font-small-caps-bold">{{ menu.nav_text }}</a>
                     </div>
                     <div class="col-10">
-                        {{ menu.description }}
+                        {{ menu.nav_description }}
                     </div>
                 </div>
         {% endfor %}

@@ -47,9 +47,9 @@ class LibraryController implements ControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupManagerController($o_di);
         $this->o_view = new LibraryView($this->o_di);
+        $this->setupElog($o_di);
         if (!defined('LIB_TWIG_PREFIX')) {
             define('LIB_TWIG_PREFIX', 'lib_');
         }

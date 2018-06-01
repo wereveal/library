@@ -26,8 +26,8 @@ class ContentController implements ControllerInterface
 
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupManagerController($o_di);
+        $this->setupElog($o_di);
     }
 
     public function route()

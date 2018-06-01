@@ -47,10 +47,8 @@ class UrlsController implements ManagerControllerInterface
         $this->setupController($o_di);
         $this->o_urls_model = new UrlsModel($this->o_db);
         $this->o_urls_view  = new UrlsView($o_di);
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-            $this->o_urls_model->setElog($this->o_elog);
-        }
+        $this->a_object_names = ['o_urls_model'];
+        $this->setupElog($o_di);
     }
 
     /**

@@ -154,7 +154,7 @@ trait ViewTraits
      */
     public function retrieveNav($nav_group = '')
     {
-        $cache_key = 'nav_values.id.' . $nav_group;
+        $cache_key = 'nav_values.ng_id.' . $nav_group;
         if ($this->use_cache) {
             $a_nav = $this->o_cache->get($cache_key);
         }
@@ -187,7 +187,7 @@ trait ViewTraits
         $meth = __METHOD__ . '.';
         $a_page_values = [];
         $url_id = $this->urlId($url_id);
-        $cache_key = 'page_values.id.' . $url_id;
+        $cache_key = 'page_values.url_id.' . $url_id;
         if ($this->use_cache) {
             $a_page_values = $this->o_cache->get($cache_key);
         }
@@ -634,7 +634,7 @@ trait ViewTraits
         }
         $a_new_nav = [];
         foreach ($a_nav as $a_link) {
-            if ($a_link['level'] == 1) {
+            if ($a_link['nav_level'] == 1) {
                 $this_link_id = isset($a_link['nav_id'])
                     ? $a_link['nav_id']
                     : 0;
@@ -716,8 +716,8 @@ trait ViewTraits
         $a_used_order = [];
         $a_new_nav = [];
         foreach ($a_nav as $key => $a_link) {
-            $order_number = !empty($a_link['order'])
-                ? (int)$a_link['order']
+            $order_number = !empty($a_link['nav_order'])
+                ? (int)$a_link['nav_order']
                 : 99;
             if (array_search($order_number, $a_used_order) !== false) {
                 $new_order_number = (int) $this->createNewOrderNumber($a_used_order, $order_number);

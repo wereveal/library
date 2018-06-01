@@ -43,9 +43,10 @@ class TestsController
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupController($o_di);
         $this->o_view   = new TestsView($o_di);
+        $this->a_object_names = [];
+        $this->setupElog($o_di);
         if (file_exists(LIBRARY_CONFIG_PATH . '/tests')) {
             $this->test_configs_path = LIBRARY_CONFIG_PATH . '/tests';
         }

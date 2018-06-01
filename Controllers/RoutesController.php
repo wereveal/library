@@ -2,6 +2,7 @@
 /**
  * Class RoutesController
  * @package Ritc_Library
+ * @todo Review Class and fix warnings, especially missing try/catch/throws
  */
 namespace Ritc\Library\Controllers;
 
@@ -12,6 +13,7 @@ use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
+use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RoutesView;
 
@@ -36,18 +38,10 @@ use Ritc\Library\Views\RoutesView;
  */
 class RoutesController implements ManagerControllerInterface
 {
-    use LogitTraits;
+    use LogitTraits, ConfigControllerTraits;
 
-    /** @var array */
-    private $a_post;
-    /** @var Di */
-    private $o_di;
     /** @var RoutesModel */
     private $o_model;
-    /** @var Router */
-    private $o_router;
-    /** @var Session */
-    private $o_session;
     /** @var RoutesView */
     private $o_view;
 
@@ -57,17 +51,11 @@ class RoutesController implements ManagerControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->o_di      = $o_di;
-        $o_db            = $o_di->get('db');
-        $this->o_session = $o_di->get('session');
-        $this->o_router  = $o_di->get('router');
-        $this->o_model   = new RoutesModel($o_db);
+        $this->setupManagerController($o_di);
+        $this->o_model   = new RoutesModel($this->o_db);
         $this->o_view    = new RoutesView($o_di);
-        $this->a_post    = $this->o_router->getPost();
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-            $this->o_model->setElog($this->o_elog);
-        }
+        $this->a_object_names = ['o_model'];
+        $this->setupElog($o_di);
     }
 
     /**

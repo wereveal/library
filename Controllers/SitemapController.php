@@ -26,8 +26,9 @@ class SitemapController implements ControllerInterface
 
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupController($o_di);
+        $this->a_object_names = [];
+        $this->setupElog($o_di);
     }
 
     /**

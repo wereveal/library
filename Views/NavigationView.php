@@ -242,7 +242,7 @@ class NavigationView
         foreach ($a_nav as $nav) {
             $a_temp = [
                 'value'       => $nav['nav_id'],
-                'label'       => $nav['text'] . ' (level ' . $nav['level'] . ')',
+                'label'       => $nav['nav_text'] . ' (level ' . $nav['nav_level'] . ')',
                 'other_stuph' => ''
             ];
             if ($nav['nav_id'] == $nav_id) {
@@ -312,8 +312,8 @@ class NavigationView
                 $submenu = $this->createTwigListArray($nav['submenu']);
             }
             $a_twig_nav[] = [
-                'nav_text'        => $nav['text'],
-                'nav_description' => $nav['description'],
+                'nav_text'        => $nav['nav_text'],
+                'nav_description' => $nav['nav_description'],
                 'form_action'     => PUBLIC_DIR . '/manger/config/navigation/',
                 'form_class'      => '',
                 'btn_primary'     => 'btn-primary',

@@ -2,11 +2,11 @@
         <div class="row {{ class }}">
             <div class="col-md-4">
                 <span class="inline-block bold w75 aright pad-right">Name:</span>
-                {{ nav.name }}
+                {{ nav.nav_name }}
             </div>
             <div class="col-md-7">
                 <span class="inline-block bold w75 aright pad-right">Description:</span>
-                {{ nav.description }}
+                {{ nav.nav_description }}
             </div>
             <div class="col-md-1">
                 {% set hidden_value = nav.nav_id %}
@@ -19,11 +19,11 @@
                 <div class="row row-inside {{ class }}">
                     <div class="col-md-4">
                         <span class="inline-block bold w75 aright pad-right">Name:</span>
-                        {{ nav.name }}
+                        {{ nav.nav_name }}
                     </div>
                     <div class="col-md-7">
                         <span class="inline-block bold w75 aright pad-right">Description:</span>
-                        {{ nav.description }}
+                        {{ nav.nav_description }}
                     </div>
                     <div class="col-md-1">
                         {% set hidden_value = nav.nav_id %}
@@ -34,11 +34,11 @@
                 <div class="row {{ class }}">
                     <div class="col-md-4">
                         <span class="inline-block bold w75 aright pad-right">Name:</span>
-                        {{ child.name }}
+                        {{ child.nav_name }}
                     </div>
                     <div class="col-md-7">
                         <span class="inline-block bold w75 aright pad-right">Description:</span>
-                        {{ child.description }}
+                        {{ child.nav_description }}
                     </div>
                     <div class="col-md-1">
                         {% set hidden_value = child.nav_id %}
