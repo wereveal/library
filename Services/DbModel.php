@@ -266,7 +266,7 @@ class DbModel
             return $this->mdQuery($the_query, $a_values, $single_record);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->getMessage() . ': ' . $the_query, $e->getCode(), $e);
         }
     }
 

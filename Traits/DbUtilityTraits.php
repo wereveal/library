@@ -299,7 +299,7 @@ SQL;
             return $this->o_db->update($sql, $a_values, true);
         }
         catch (ModelException $e) {
-            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
+            $this->error_message = $e->getMessage();
             $error_code = ExceptionHelper::getCodeNumberModel('update_unspecified');
             throw new ModelException($this->error_message, $error_code, $e);
         }

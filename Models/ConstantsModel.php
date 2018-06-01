@@ -130,28 +130,17 @@ class ConstantsModel implements ModelInterface
         }
         catch (ModelException $e) {
             $this->error_message = $e->errorMessage();
-            throw new ModelException($this->error_message, $e->getCode(), $e);
+            $message = 'Cannot read the record to be updated.';
+            throw new ModelException($message, $e->getCode(), $e);
         }
         if ($results[0]['const_immutable'] == 'true') {
             unset($a_values['const_name']);
-            unset($a_values['const_value']);
-            if (isset($a_values['const_immutable'])) {
-                switch ($a_values['const_immutable']) {
-                    case 'false':
-                        break;
-                    case 'true':
-                    default:
-                        $this->error_message = 'You must change the record to not immutable to change other values.';
-                        throw new ModelException($this->error_message, 320);
-
-                }
-            }
         }
         try {
             return $this->genericUpdate($a_values);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
