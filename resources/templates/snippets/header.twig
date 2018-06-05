@@ -1,0 +1,15 @@
+    <div class="container" id="shared">
+        {% if a_content.shared %}
+            {% set ctype = a_content.shared.c_type %}
+            {% set content = a_content.shared.c_content %}
+            {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
+                {{ content | raw }}
+            {% elseif ctype == 'md' %}
+                {{ content | md }}
+            {% elseif ctype == 'mde' %}
+                {{ content | mde }}
+            {% else %}
+                {{ content | nl2br }}
+            {% endif %}
+        {% endif %}
+    </div>

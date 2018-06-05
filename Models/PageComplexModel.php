@@ -6,6 +6,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -45,6 +46,7 @@ class PageComplexModel
     /**
      * PageComplexModel constructor.
      * @param \Ritc\Library\Services\Di $o_di
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function __construct(Di $o_di)
     {
@@ -55,7 +57,14 @@ class PageComplexModel
         $this->o_db = $o_db;
         $this->o_page = new PageModel($o_db);
         $this->o_urls = new UrlsModel($o_db);
-        $this->o_content = new ContentModel($o_db);
+        try {
+            $this->o_content = new ContentComplexModel($o_di);
+        }
+        catch (ModelException $e) {
+            $message = 'Unable to create instanceof ContentComplexModel.';
+            $error_code = ExceptionHelper::getCodeNumber('instance');
+            throw new ModelException($message, $error_code, $e);
+        }
         $this->o_tpls = new TwigComplexModel($o_di);
         $this->setupElog($o_di);
         $this->setSelectSql();
@@ -126,9 +135,12 @@ class PageComplexModel
         }
         try {
             $a_content = [];
-            $a_content_results = $this->o_content->readAllByPage($a_record['page_id']);
-            foreach ($a_content_results as $a_block) {
-                $a_content[$a_block['c_block']] = $a_block;
+            $a_content_results = $this->o_content->readCurrent($a_record['page_id']);
+            $log_message = 'Content ' . var_export($a_content_results, true);
+            $this->logIt($log_message, LOG_OFF, __METHOD__);
+
+            foreach ($a_content_results as $a_row) {
+                $a_content[$a_row['b_name']] = $a_row;
             }
             $a_record['a_content'] = $a_content;
         }

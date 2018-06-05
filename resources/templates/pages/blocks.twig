@@ -1,0 +1,149 @@
+{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% block body %}
+{% set hidden_tpl = '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+{% set cb_tpl = '@' ~ lib_prefix ~ 'elements/checkbox.twig' %}
+    <div class="container">
+        <div class="row list-header d-none d-lg-flex sticky-top">
+            <div class="col-lg-3">Name</div>
+            <div class="col-lg-3">Type</div>
+            <div class="col-lg-2">Active</div>
+            <div class="col-lg-2">Immutable</div>
+            <div class="col-lg-2">&nbsp;</div>
+        </div>
+        {% set class = 'even' %}
+        <form action="{{ public_dir }}/manager/config/blocks/" method= "post">
+        <div class="row {{ class }}">
+            <div class="col-12 col-lg-3">
+                <label for="blocks0[b_name]" class="form-label d-lg-none bold mb-0">Block Name</label>
+                <input type="text" id="blocks0[b_name]" name="blocks[b_name]" value="" maxlength="32" class="flexible colorful" />
+            </div>
+            <div class="col-12 col-lg-3">
+                <label for="blocks0[b_type]" class="form-label d-lg-none bold mb-0">Block Type</label>
+                <select id="blocks0[b_type]" name="blocks[b_type]" class="form-control colorful">
+                    <option value="solo">Unique per Page</option>
+                    <option value="shared">Shared among Pages</option>
+                </select>
+            </div>
+            <div class="col-12 col-lg-2">
+                <label for="blocks0[b_active]" class="form-label d-lg-none bold mb-0">Active</label>
+                {% set cb_values = {'id':'blocks0[b_active]','name':'blocks[b_active]','value':'true','checked':'','label':'Active'} %}
+                {% include cb_tpl with cb_values only %}
+            </div>
+            <div class="col-12 col-lg-2">
+                {% set cb_values = {'id':'blocks0[b_immutable]','name':'blocks[b_immutable]','value':'true','checked':'','label':'Immutable'} %}
+                {% include cb_tpl with cb_values only %}
+            </div>
+            <div class="col-12 col-lg-2">
+                <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
+                {% include hidden_tpl %}
+            </div>
+        </div>
+        </form>
+    {% for row in a_blocks %}
+        {% set class = class == 'even' ? 'odd' : 'even' %}
+        {% set id_name = 'blocks' ~ loop.index %}
+        {% set last_id_name = 'blocks' ~ (loop.length + 1) %}
+        <form action="{{ public_dir }}/manager/config/blocks/" method="post">
+        <div class="row {{ class }}">
+            <div class="col-12 col-lg-3">
+                <label for="{{ id_name }}[b_name]" class="form-label d-lg-none bold mb-0">Block Name: </label>
+                {% if row.b_immutable == 'true' %}
+                    <span class="pl-1"><input type="hidden" name="blocks[b_name]" id="{{ id_name }}[b_name]" value="{{ row.b_name }}" />{{ row.b_name }}</span>
+                {% else %}
+                    <input type="text" name="blocks[b_name]" id="{{ id_name }}[b_name]" value="{{ row.b_name }}" class="flexible colorful">
+                {% endif %}
+            </div>
+            <div class="col-12 col-lg-3 pr-3">
+                <label for="{{ id_name }}[b_type]" class="form-label d-lg-none bold mb-0">Block Type: </label>
+            {% if row.b_immutable == 'true' %}
+                {% if row.b_type == 'solo' %}
+                    Unique per Page
+                {% else %}
+                    Shared among Pages
+                {% endif %}
+            {% else %}
+                {% set soloSelected = '' %}
+                {% set sharedSelected = '' %}
+                {% set ukSelected = '' %}
+                {% if row.b_type == 'solo' %}
+                    {% set soloSelected = ' selected' %}
+                {% elseif row.b_type == 'shared' %}
+                    {% set sharedSelected = ' selected' %}
+                {% else %}
+                    {% set ukSelected = ' selected' %}
+                {% endif %}
+                <select id="{{ id_name }}[b_type]" name="blocks[b_type]" class="form-control colorful">
+                    <option value="solo"{{ soloSelected }}>Unique per Page</option>
+                    <option value="shared{{ sharedSelected }}">Shared among Pages</option>
+                {% if ukSelected is not empty %}
+                    <option value=""{{ ukSelected }}>--Select Type--</option>
+                {% endif %}
+                </select>
+            {% endif %}
+            </div>
+            <div class="col-12 col-lg-2">
+                    <span class="form-label d-lg-none bold mb-0">Active: </span>
+                    {% if row.b_active == 'true' %}
+                        {% set checked = ' checked' %}
+                    {% else %}
+                        {% set checked = '' %}
+                    {% endif %}
+                    {% set cb_values = {'id':id_name~'[b_active]','name':'blocks[b_active]','value':'true','checked':checked,'label':'Active'} %}
+                    {% include cb_tpl with cb_values only %}
+            </div>
+            <div class="col-12 col-lg-2">
+            {% if row.b_immutable == 'true' and adm_lvl < 10 %}
+                <span class="form-label d-lg-none bold mb-0">Immutable: </span>
+            {% else %}
+                {% if row.b_immutable == 'true' %}
+                    {% set checked = ' checked' %}
+                {% else %}
+                    {% set checked = '' %}
+                {% endif %}
+                {% set cb_values = {'id':id_name~'[b_immutable]','name':'blocks[b_immutable]','value':'true','checked':checked,'label':'Immutable'} %}
+                {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+            {% endif %}
+            </div>
+            <div class="col-12 col-lg-2">
+                <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
+                {% if row.b_immutable != 'true' %}
+                <button type="submit" name="submit" value="verify" class="btn btn-outline-orange btn-xs">Delete</button>
+                {% endif %}
+                <input type="hidden" name="blocks[b_id]" value="{{ row.b_id }}" />
+                {% include hidden_tpl %}
+            </div>
+        </div>
+        </form>
+    {% endfor %}
+        {% set class = class == 'even' ? 'odd' : 'even' %}
+        <form action="{{ public_dir }}/manager/config/blocks/" method= "post">
+            <div class="row {{ class }}">
+                <div class="col-12 col-lg-3">
+                    <label for="{{ last_id_name }}[b_name]" class="form-label d-lg-none bold mb-0">Block Name</label>
+                    <input type="text" id="{{ last_id_name }}[b_name]" name="blocks[b_name]" value="" maxlength="32" class="flexible colorful" />
+                </div>
+                <div class="col-12 col-lg-3">
+                    <label for="{{ last_id_name }}[b_type]" class="form-label d-lg-none bold mb-0">Block Type</label>
+                    <select id="{{ last_id_name }}[b_type]" name="blocks[b_type]" class="form-control colorful">
+                        <option value="solo">Unique per Page</option>
+                        <option value="shared">Shared among Pages</option>
+                    </select>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label for="{{ last_id_name }}[b_active]" class="form-label d-lg-none bold mb-0">Active</label>
+                    {% set cb_values = {'id':'{{ last_id_name }}[b_active]','name':'blocks[b_active]','value':'true','checked':'','label':'Active'} %}
+                    {% include cb_tpl with cb_values only %}
+                </div>
+                <div class="col-12 col-lg-2">
+                    {% set cb_values = {'id':last_id_name~'[b_immutable]','name':'blocks[b_immutable]','value':'true','checked':'','label':'Immutable'} %}
+                    {% include cb_tpl with cb_values only %}
+                </div>
+                <div class="col-12 col-lg-2">
+                    <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
+                    {% include hidden_tpl %}
+                </div>
+            </div>
+        </form>
+    </div>
+    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+{% endblock %}
