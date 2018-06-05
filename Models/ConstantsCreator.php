@@ -186,9 +186,11 @@ class ConstantsCreator
                             case 'false':
                                 define("{$key}", false);
                                 break;
-                            case null:
                             case 'null':
                                 define("{$key}", null);
+                                break;
+                            case null:
+                                define("{$key}", '');
                                 break;
                             default:
                                 $value = $row['const_value'];
@@ -228,13 +230,19 @@ class ConstantsCreator
                     }
                 }
                 if (!defined('ADMIN_DIR') && defined('ADMIN_DIR_NAME')) {
-                    define('ADMIN_DIR',   PUBLIC_DIR . '/' . ADMIN_DIR_NAME);
+                    $the_dir = ADMIN_DIR_NAME == '' || is_null(ADMIN_DIR_NAME)
+                        ? PUBLIC_DIR
+                        : PUBLIC_DIR . '/' . ADMIN_DIR_NAME;
+                    define('ADMIN_DIR', $the_dir);
                 }
                 if (!defined('ADMIN_PATH') && defined('ADMIN_DIR')) {
                     define('ADMIN_PATH',  PUBLIC_PATH . ADMIN_DIR);
                 }
                 if (!defined('ASSETS_DIR') && defined('ASSETS_DIR_NAME')) {
-                    define('ASSETS_DIR',  PUBLIC_DIR . '/' . ASSETS_DIR_NAME);
+                    $the_dir = ASSETS_DIR_NAME == '' || is_null(ASSETS_DIR_NAME)
+                        ? PUBLIC_DIR
+                        : PUBLIC_DIR . '/' . ASSETS_DIR_NAME;
+                    define('ASSETS_DIR', $the_dir);
                 }
                 if (!defined('ASSETS_PATH') && defined('ASSETS_DIR')) {
                     define('ASSETS_PATH', PUBLIC_PATH . ASSETS_DIR);

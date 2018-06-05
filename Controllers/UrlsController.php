@@ -78,6 +78,10 @@ class UrlsController implements ManagerControllerInterface
      */
     public function save()
     {
+        $meth = __METHOD__ . '.';
+        $log_message = 'post:  ' . var_export($this->a_post, true);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         $url = $this->a_post['url'];
         if (!empty(strpos($url, '://'))) {
             if (filter_var($url, FILTER_VALIDATE_URL) === false) {
@@ -104,8 +108,12 @@ class UrlsController implements ManagerControllerInterface
      */
     public function update()
     {
+        $meth = __METHOD__ . '.';
+        $log_message = 'Post ' . var_export($this->a_post, true);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         if (!isset($this->a_post['url_id']) || !isset($this->a_post['url'])) {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The url could not be updated.');
+            $a_message = ViewHelper::failureMessage('A Problem Has Occurred. The url could not be updated.');
             return $this->o_urls_view->renderList($a_message);
         }
         $url = $this->a_post['url'];
@@ -115,9 +123,12 @@ class UrlsController implements ManagerControllerInterface
                 return $this->o_urls_view->renderList($a_message);
             }
         }
-        $a_values                  = $this->splitUrl($url);
-        $a_values['url_id']        = (int) $this->a_post['url_id'];
+        $a_values = $this->splitUrl($url);
+        $a_values['url_id'] = $this->a_post['url_id'];
         $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 'true' : 'false';
+
+        $log_message = 'final values ' . var_export($a_values, true);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         try {
             $this->o_urls_model->update($a_values);

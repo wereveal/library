@@ -1,7 +1,7 @@
-    <div class="container" id="shared">
-        {% if a_content.shared %}
-            {% set ctype = a_content.shared.c_type %}
-            {% set content = a_content.shared.c_content %}
+    <div class="container" id="header">
+        {% if a_content.header %}
+            {% set ctype = a_content.header.c_type %}
+            {% set content = a_content.header.c_content %}
             {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
                 {{ content | raw }}
             {% elseif ctype == 'md' %}

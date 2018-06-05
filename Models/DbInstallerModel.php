@@ -24,6 +24,8 @@ class DbInstallerModel
 {
     use LogitTraits;
 
+    /** @var array $a_blocks */
+    private $a_blocks;
     /** @var array $a_content */
     private $a_content;
     /** @var array $a_data */
@@ -40,6 +42,8 @@ class DbInstallerModel
     private $a_nnm;
     /** @var  array $a_page */
     private $a_page;
+    /** @var  array $a_pbm */
+    private $a_pbm;
     /** @var  array $a_people */
     private $a_people;
     /** @var  array $a_pgm */
@@ -114,6 +118,38 @@ class DbInstallerModel
     }
 
     /**
+     * Inserts the blocks data into the blocks table;
+     * @param array $a_blocks optional as long as it is set
+     *                        in the property a_data['blocks'].
+     * @return bool
+     */
+    public function insertBlocks(array $a_blocks = [])
+    {
+        if (empty($a_blocks)) {
+            if (empty($this->a_data['blocks'])) {
+                $this->error_message = 'Blocks values not provided.';
+                return false;
+            }
+            $a_blocks = $this->a_data['blocks'];
+        }
+
+        $table_name = $this->db_prefix . 'blocks';
+        $a_table_info = [
+            'table_name'  => $table_name,
+            'column_name' => 'b_id'
+        ];
+        $results = $this->genericInsert($a_blocks, $a_table_info);
+        if ($results) {
+            error_log(var_export($results, true));
+            $this->a_blocks = $results;
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
      * Adds the content records to db.
      * @param array $a_content Optional
      * @needs $this->a_page must be set
@@ -148,7 +184,7 @@ class DbInstallerModel
             return false;
         }
         foreach ($a_content as $key => $a_record) {
-            $a_record['c_page_id'] = $this->a_page[$a_record['c_page_id']]['page_id'];
+            $a_record['c_pbm_id'] = $this->a_pbm[$a_record['c_pbm_id']]['pbm_id'];
             $a_record['c_created'] = date('Y-m-d H:i:s');
             $this->o_db->resetNewIds();
             try {
@@ -341,7 +377,7 @@ class DbInstallerModel
      */
     public function insertNNM(array $a_nnm = [])
     {
-        print "In insertNNM\n";
+        // print "In insertNNM\n";
         if (empty($a_nnm)) {
             if (empty($this->a_data['nav_ng_map'])) {
                 $this->error_message = 'Nav Navgroup Map values not provided.';
@@ -379,7 +415,7 @@ class DbInstallerModel
         }
         try {
             $results = $this->o_db->executeInsert($a_new_nnm, $o_pdo_stmt, $a_table_info);
-            print "New NNM results: " . var_export($results, true) . "\n";
+            // print "New NNM results: " . var_export($results, true) . "\n";
             if ($results) {
                 $ids = $this->o_db->getNewIds();
                 foreach ($a_new_nnm as $key => $a_record) {
@@ -484,6 +520,40 @@ class DbInstallerModel
         }
         $this->a_page = $a_new_page;
         return true;
+    }
+
+    public function insertPBM(array $a_pbm = [])
+    {
+        if (empty($a_pbm)) {
+            if (empty($this->a_data['page_block_map'])) {
+                $this->error_message = 'Page block map data not provided.';
+                return false;
+            }
+            $a_pbm = $this->a_data['page_block_map'];
+        }
+        foreach ($a_pbm as $key => $a_record) {
+            $page_id  = $this->a_page[$a_record['pbm_page_id']]['page_id'];
+            $block_id = $this->a_blocks[$a_record['pbm_block_id']]['b_id'];
+            if (empty($page_id) || empty($block_id)) {
+                return false;
+            }
+            $a_pbm[$key]['pbm_page_id']  = $page_id;
+            $a_pbm[$key]['pbm_block_id'] = $block_id;
+        }
+        $a_table_info = [
+            'table_name'  => $this->db_prefix . 'page_blocks_map',
+            'column_name' => 'pbm_id'
+        ];
+
+        $results = $this->genericInsert($a_pbm, $a_table_info);
+        if ($results) {
+            error_log(var_export($results, true));
+            $this->a_pbm = $results;
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**

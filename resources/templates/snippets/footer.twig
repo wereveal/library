@@ -1,7 +1,6 @@
-    <div class="container" id="sidebar">
-        {% if a_content.sidebar %}
-            {% set ctype = a_content.sidebar.c_type %}
-            {% set content = a_content.sidebar.c_content %}
+        {% if a_content.footer %}
+            {% set ctype = a_content.footer.c_type %}
+            {% set content = a_content.footer.c_content %}
             {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
                 {{ content | raw }}
             {% elseif ctype == 'md' %}
@@ -12,4 +11,3 @@
                 {{ content | nl2br }}
             {% endif %}
         {% endif %}
-    </div>

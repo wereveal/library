@@ -102,6 +102,7 @@ class UrlsModel implements ModelInterface
      */
     public function update(array $a_values = [])
     {
+        $meth = __METHOD__ . '.';
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
                 if ($this->validId($a_record['url_id'])) {
@@ -116,12 +117,17 @@ class UrlsModel implements ModelInterface
         }
         else {
             if ($this->validId($a_values['url_id'])) {
-                unset($a_values['url_text']);
+                if ($this->isImmutable($a_values['url_id'])) {
+                    unset($a_values['url_text']);
+                }
             }
             else {
                 throw new ModelException('Invalid Primary Index.', 330);
             }
         }
+        $log_message = 'Final Final values ' . var_export($a_values, true);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         try {
             return $this->genericUpdate($a_values);
         }

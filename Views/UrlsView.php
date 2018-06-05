@@ -49,6 +49,7 @@ class UrlsView
      */
     public function renderList(array $a_message = [])
     {
+        $meth = __METHOD__ . '.';
         try {
             $a_urls = $this->o_urls_model->read();
         }
@@ -86,6 +87,9 @@ class UrlsView
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/urls/');
         $a_twig_values['a_urls'] = $a_new_urls;
         $tpl = $this->createTplString($a_twig_values);
+        $log_message = 'twig values ' . var_export($a_twig_values, true);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         return $this->renderIt($tpl, $a_twig_values);
     }
 

@@ -43,7 +43,7 @@ abstract class ModelAbstract implements ModelInterface
             return $this->genericCreate($a_values, $a_params);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -67,7 +67,7 @@ abstract class ModelAbstract implements ModelInterface
             return $this->genericRead($a_parameters);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -83,7 +83,7 @@ abstract class ModelAbstract implements ModelInterface
             return $this->genericUpdate($a_values);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
@@ -99,7 +99,7 @@ abstract class ModelAbstract implements ModelInterface
             return $this->genericDelete($id);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
     }
 }

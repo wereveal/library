@@ -47,7 +47,16 @@ class PageView
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
-        $this->o_model = new PageComplexModel($this->o_di);
+        try {
+            $o_model = new PageComplexModel($this->o_di);
+            if (! $o_model instanceof PageComplexModel) {
+                die('Unable to create an instance of PageComplexModel.');
+            }
+            $this->o_model = $o_model;
+        }
+        catch (ModelException $e) {
+            die('Unable to create an instance of PageComplexModel. ' . $e->getMessage());
+        }
         $this->setupElog($o_di);
         $this->o_model->setElog($this->o_elog);
     }

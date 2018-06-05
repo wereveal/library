@@ -32,6 +32,7 @@ class AjaxController
     public function __construct(Di $o_di)
     {
         $this->setupController($o_di);
+        $this->setupElog($o_di);
     }
 
     /**

@@ -24,21 +24,23 @@ class ViewHelper
 {
     /**
      * Adds a message string to a message array.
-     * @param array  $a_message
-     * @param string $message
-     * @param string $message_type
+     * @param array  $a_message    Advised but optional. If empty creates a new message array.
+     * @param string $message      Required, nothing to add otherwise.
+     * @param string $message_type Optional, defaults to message type of original message, or info if none provided.
      * @return array
      */
     public static function addMessage(array $a_message = [], $message = '', $message_type = '')
     {
-        if (empty($a_message) || empty($message)) {
+        if (empty($message)) {
             return $a_message;
         }
         $message_type = empty($message_type)
             ? $a_message['type']
             : $message_type
         ;
-        $new_message = $a_message['message'] . '<br>' . $message;
+        $new_message = empty($a_message['message'])
+            ? $message
+            : $a_message['message'] . '<br>' . $message;
         switch ($message_type) {
             case 'success':
                 return self::successMessage($new_message);
@@ -53,7 +55,7 @@ class ViewHelper
             case 'code':
                 return self::codeMessage($new_message);
             default:
-                return $a_message;
+                return self::infoMessage($new_message);
         }
     }
 

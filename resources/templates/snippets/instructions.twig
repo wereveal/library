@@ -1,15 +1,15 @@
-    <div class="container" id="header">
-        {% if a_content.header %}
-            {% set ctype = a_content.header.c_type %}
-            {% set content = a_content.header.c_content %}
-            {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
-                {{ content | raw }}
-            {% elseif ctype == 'md' %}
-                {{ content | md }}
-            {% elseif ctype == 'mde' %}
-                {{ content | mde }}
-            {% else %}
-                {{ content | nl2br }}
-            {% endif %}
+{% if a_content.instructions %}
+        <div class="container instructions">
+        {% set ctype = a_content.instructions.c_type %}
+        {% set content = a_content.instructions.c_content %}
+        {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
+            {{ content | raw }}
+        {% elseif ctype == 'md' %}
+            {{ content | md }}
+        {% elseif ctype == 'mde' %}
+            {{ content | mde }}
+        {% else %}
+            {{ content | nl2br }}
         {% endif %}
-    </div>
+        </div>
+{% endif %}

@@ -182,33 +182,10 @@
                 </div>
 
                 </fieldset></form>
-                <div class="row">
-                    <div class="col-md-12">
-                        <h3>Instructions:</h3>
-                        <ul>
-                            <li>Login ID is required. It is what is used for authentication and access. Immutable Login IDs are locked and should never be changed.</li>
-                            <li>Name is required. It can be anything. It is used for display. If left blank it will be set to the Login ID.</li>
-                            <li>Alias can be anything that is 8 characters or less and may be used in some views. Can be blank, it will be automagically created from Name.</li>
-                            <li>Password:
-                                <ul>
-                                    <li>Is required</li>
-                                    <li>Is Encrypted and cannot be recovered, only replaced.</li>
-                                    <li>Must be at least 8 characters long.</li>
-                                    <li>Recommendation: It be at least 12 random or psuedo-random characters, upper and lower alpha, numeric and characters such as @% etc.</li>
-                                    <li>Recommendation: It not be a single dictionary word, name, or personal information.</li>
-                                    <li>Optionally a good practice would be to use 3 or 4 non-associated words of at least 4 characters long, e.g., 'Television river Banana' which allows one to remember the password while being difficult for a malicious attacker guess.</li>
-                                    <li>password and 12345678 are not good passwords. Come on! You don't want to be responsible for someone maliciously accessing this site and deface it.</li>
-                                </ul>
-                            </li>
-                            <li>Description can be anything and is optional.</li>
-                            <li>Active determines if the person is allowed to log in. Allows for historical data, keeping the person in the database but preventing one from logging in again.</li>
-                            <li>Groups allow the person to access the materials that group can access. A person can be assigned to multiple groups. Some groups are inclusive of other groups.</li>
-                        </ul>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
+    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
 {% endblock %}
 {# expected array
     [

@@ -110,6 +110,9 @@
             </div>
         </nav>
     {% endblock %}
+    {% if a_content.header %}
+        {% include '@' ~ lib_prefix ~ 'snippets/header.twig' %}
+    {% endif %}
     {% block otherHeader %}{% endblock %}
 {% endblock %}
 {% block search %}{% endblock %}
@@ -129,13 +132,26 @@
 {% endblock %}
 {% block body %}
         <div class="container">
-            {{ body_text }}
+            {% if a_content.body %}
+                {% set ctype = a_content.body.c_type %}
+                {% set content = a_content.body.c_content %}
+                {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
+                    {{ content | raw }}
+                {% elseif ctype == 'md' %}
+                    {{ content | md }}
+                {% elseif ctype == 'mde' %}
+                    {{ content | mde }}
+                {% else %}
+                    {{ content | nl2br }}
+                {% endif %}
+            {% endif %}
         </div>
 {% endblock %}
 {% block footer %}
-        <div class="container footer">
+        <footer class="container footer">
+            {% include '@' ~ lib_prefix ~ 'snippets/footer.twig' %}
             <p>Copyright &copy;&nbsp;{{ copyright_date }} <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved</p>
-        </div>
+        </footer>
 {% endblock %}
 {% block debug %}
     {% if debug_text %}

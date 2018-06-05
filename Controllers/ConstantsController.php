@@ -114,15 +114,20 @@ class ConstantsController implements ManagerControllerInterface
     public function update()
     {
         $a_constants = $this->a_post['constant'];
-        if (!isset($a_constants['const_immutable'])) {
-            $a_constants['const_immutable'] = 'false';
+        if (empty($a_constants['const_id'])) {
+            $a_message = ViewHelper::failureMessage('A Problem Has Occurred. The constant could not be updated, missing id.');
         }
-        try {
-            $this->o_model->update($a_constants);
-            $a_message = ViewHelper::successMessage();
-        }
-        catch (ModelException $e) {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The constant could not be updated.');
+        else {
+            if (!isset($a_constants['const_immutable'])) {
+                $a_constants['const_immutable'] = 'false';
+            }
+            try {
+                $this->o_model->update($a_constants);
+                $a_message = ViewHelper::successMessage();
+            }
+            catch (ModelException $e) {
+                $a_message = ViewHelper::failureMessage('A Problem Has Occurred. The constant could not be updated.');
+            }
         }
         return $this->o_view->renderList($a_message);
     }

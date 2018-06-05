@@ -94,20 +94,7 @@
         </div>
         </form>
     </div>
-    <div class="container">
-        <h3>Instructions:</h3>
-        <ul>
-            <li>Most values are used in the HTML meta tags, used in the head.
-            <li>The Page Url is unique per page. Only unused URLs are available. If you need a new url, you need to create it first <a href="/manager/config/urls/">Here</a> and normally then a new route <a href="/manager/config/routes/">here</a></li>
-            <li>Page Title is used in the meta data but may also be used in a &lt;h1&gt;. If not specified, a default value may be used.</li>
-            <li>Page Description can be pretty much any text. Can be blank. If not specified, a default value may be used. Per SEO, the descriptions should be no more than 150 characters.</li>
-            <li>Base URL is a meta tag value. The default '/' is normally fine - the base site url will be used then.</li>
-            <li>Mime Type is a meta tag value. The default 'text/html' is used for most web pages.</li>
-            <li>Language is a meta tag value. The default is 'en' (English).</li>
-            <li>Character Set is a meta tag value. The default is 'utf8' and should normally be used.</li>
-            <li>Immutable means the page cannot be deleted nor the URL changed. <b class="red bold">Be careful!</b></li>
-        </ul>
-    </div>
+    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
 {% endblock %}
 {# expected array
     [

@@ -380,9 +380,9 @@ trait ViewTraits
      */
     public function getPageValues($url_id = -1)
     {
-        $o_page_model = new PageComplexModel($this->o_di);
         $url_id = $this->urlId($url_id);
         try {
+            $o_page_model = new PageComplexModel($this->o_di);
             $a_page_values = $o_page_model->readPageValuesByUrlId($url_id);
         }
         catch (ModelException $e) {

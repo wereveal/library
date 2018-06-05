@@ -2,129 +2,98 @@
 {% block body %}
     <div class="container">
         <div class="row list-header d-none d-lg-flex sticky-top">
-            <div class="col-md-4">Name</div>
-            <div class="col-md-4">Value</div>
-            <div class="col-md-1">Immutable</div>
-            <div class="col-md-3">&nbsp;</div>
+            <div class="col-lg-3">Name</div>
+            <div class="col-lg-5">Value</div>
+            <div class="col-lg-2">Immutable</div>
+            <div class="col-lg-2">&nbsp;</div>
         </div>
-        <form action="{{ public_dir }}/manager/config/constants/" method= "post">
         {% set class = 'even' %}
+        <form action="{{ public_dir }}/manager/config/constants/" method= "post">
         <div class="row {{ class }}">
-            <div class="col-12 col-md-4">
-                <label for="constant[const_name]" class="hidden-md-up bold pr-1">Constant Name</label>
-                <input type="text" id="constant[const_name]" name="constant[const_name]" value="" maxlength="32" class="colorful pw100" />
+            <div class="col-12 col-lg-3">
+                <label for="constant0[const_name]" class="form-label d-lg-none bold mb-0">Constant Name</label>
+                <input type="text" id="constant0[const_name]" name="constant[const_name]" value="" maxlength="32" class="flexible colorful" />
             </div>
-            <div class="col-12 col-md-4">
-                <label for="constant[const_value]" class="hidden-md-up bold pr-1">Constant Value</label>
-                <input type="text" name="constant[const_value]" id="constant[const_value]" value="" maxlength="32" class="colorful pw100"/>
+            <div class="col-12 col-lg-5">
+                <label for="constant0[const_value]" class="form-label d-lg-none bold mb-0">Constant Value</label>
+                <input type="text" name="constant[const_value]" id="constant0[const_value]" value="" maxlength="32" class="flexible colorful"/>
             </div>
-            <div class="col-6 col-md-1">
-                {% if adm_lvl == 10 %}
-                <label for="constant[const_immutable]" class="hidden-md-up bold pr-1">Immutable</label>
-                <input type="checkbox" name="constant[const_immutable]" id="constant[const_immutable]" value="true">
-                {% else %}
-                    Immutable
-                {% endif %}
+            <div class="col-12 col-lg-2">
+                {% set cb_values = {'id':'constant0[const_immutable]','name':'constant[const_immutable]','value':'true','checked':'','label':'Immutable'} %}
+                {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col-12 col-lg-2">
                 <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
-                <input type="hidden" name="tolken" value="{{ tolken }}" />
-                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                <label class="hobbit">Humans don't enter anything here.
-                <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                </label>
+                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
             </div>
         </div>
         </form>
-        {% for row in a_constants %}
-            {% set class = class == 'even' ? 'odd' : 'even' %}
-            <form action="{{ public_dir }}/manager/config/constants/" method="post">
-            <div class="row {{ class }}">
-                <div class="col-12 col-md-4">
-                    <label for="constant[const_value]" class="hidden-md-up bold pr-1">Constant Name</label>
-                    {% if row.const_immutable == 'true' %}
-                        <input type="hidden" name="constant[const_name]" id="constant[const_name]" value="{{ row.const_name }}" />{{ row.const_name }}
-                    {% else %}
-                        <input type="text" name="constant[const_name]" id="constant[const_name]" value="{{ row.const_name }}" class="colorful pw100">
-                    {% endif %}
-                </div>
-                <div class="col-12 col-md-4">
-                    <label for="constant[const_value]" class="hidden-md-up bold pr-1">Constant Value</label>
-                    <input type="text" name="constant[const_value]" id="constant[const_value]" value="{{ row.const_value }}" maxlength="32" class="colorful pw100"/>
-                </div>
-                <div class="col-6 col-md-1 col-sm-2 col-xs-2">
-                    <label for="constant[const_immutable]" class="hidden-md-up bold pr-1">Immutable</label>
-                    {% if row.const_immutable == 'false' and adm_lvl < 10 %}
-                        True
-                    {% else %}
-                        {% if row.const_immutable == 'false' %}
-                            {% set checked = ' checked' %}
-                        {% else %}
-                            {% set checked = '' %}
-                        {% endif %}
-                        <input type="checkbox" name="constant[const_immutable]" id="constant[const_immutable]" value="true"{{ checked }}>
-                    {% endif %}
-                </div>
-                <div class="col-md-2 col-sm-2 col-xs-2">
-                    <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
-                    {% if row.const_immutable != 'true' %}
-                    <button type="submit" name="submit" value="verify" class="btn btn-warning btn-xs">Delete</button>
-                    {% endif %}
-                    <input type="hidden" name="tolken" value="{{ tolken }}" />
-                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                    <label for="hobbit" class="hobbit">Humans don't enter anything here.
-                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                    </label>
-                    <input type="hidden" name="constant[const_id]" value="{{ row.const_id }}" />
-                </div>
+    {% for row in a_constants %}
+        {% set class = class == 'even' ? 'odd' : 'even' %}
+        {% set id_name = 'constant' ~ loop.index %}
+        <form action="{{ public_dir }}/manager/config/constants/" method="post">
+        <div class="row {{ class }}">
+            <div class="col-12 col-lg-3">
+                <label for="{{ id_name }}[const_name]" class="form-label d-lg-none bold mb-0">Constant Name</label>
+                {% if row.const_immutable == 'true' %}
+                    <span class="pl-1"><input type="hidden" name="constant[const_name]" id="{{ id_name }}[const_name]" value="{{ row.const_name }}" />{{ row.const_name }}</span>
+                {% else %}
+                    <input type="text" name="constant[const_name]" id="{{ id_name }}[const_name]" value="{{ row.const_name }}" class="flexible colorful">
+                {% endif %}
             </div>
-            </form>
-        {% endfor %}
+            <div class="col-12 col-lg-5">
+                <label for="{{ id_name }}[const_value]" class="form-label d-lg-none bold mb-0">Constant Value</label>
+                <input type="text" name="constant[const_value]" id="{{ id_name }}[const_value]" value="{{ row.const_value }}" maxlength="32" class="flexible colorful"/>
+            </div>
+            <div class="col-12 col-lg-2">
+            {% if row.const_immutable == 'true' and adm_lvl < 10 %}
+                <span class="form-label d-lg-none bold mb-0">Immutable: </span>True
+            {% else %}
+                {% if row.const_immutable == 'true' %}
+                    {% set checked = ' checked' %}
+                {% else %}
+                    {% set checked = '' %}
+                {% endif %}
+                {% set cb_values = {'id':id_name~'[const_immutable]','name':'constant[const_immutable]','value':'true','checked':checked,'label':'Immutable'} %}
+                {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+            {% endif %}
+            </div>
+            <div class="col-12 col-lg-2">
+                <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
+                {% if row.const_immutable != 'true' %}
+                <button type="submit" name="submit" value="verify" class="btn btn-outline-orange btn-xs">Delete</button>
+                {% endif %}
+                <input type="hidden" name="tolken" value="{{ tolken }}" />
+                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
+                <label for="hobbit" class="hobbit">Humans don't enter anything here.
+                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                </label>
+                <input type="hidden" name="constant[const_id]" value="{{ row.const_id }}" />
+            </div>
+        </div>
+        </form>
+    {% endfor %}
         {% set class = class == 'even' ? 'odd' : 'even' %}
         <form action="{{ public_dir }}/manager/config/constants/" method= "post">
             <div class="row {{ class }}">
-                    <div class="col-12 col-md-4">
-                        <label for="constant[const_name]" class="hidden-md-up bold pr-1">Constant Name</label>
-                        <input type="text" id="constant[const_name]" name="constant[const_name]" value="" size="30" maxlength="32" class="colorful w200" />
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <label for="constant[const_value]" class="hidden-md-up bold pr-1">Constant Value</label>
-                        <input type="text" id="constant[const_value]" name="constant[const_value]" value="" maxlength="32" class="colorful w200"/>
-                    </div>
-                    <div class="col-6 col-md-1">
-                        {% if adm_lvl == 10 %}
-                            <label for="constant[const_immutable]" class="hidden-md-up bold pr-1">Immutable</label>
-                            <input type="checkbox" id="constant[const_immutable]" name="constant[const_immutable]" value="true">
-                        {% else %}
-                            &nbsp;
-                        {% endif %}
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
-                        <input type="hidden" name="tolken" value="{{ tolken }}" />
-                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                        <label for="hobbit" class="hobbit">Humans don't enter anything here.
-                            <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                        </label>
-                    </div>
+                <div class="col-12 col-lg-3">
+                    <label for="constant[const_name]" class="form-label d-lg-none bold mb-0">Constant Name</label>
+                    <input type="text" id="constant[const_name]" name="constant[const_name]" value="" maxlength="32" class="flexible colorful" />
+                </div>
+                <div class="col-12 col-lg-5">
+                    <label for="constant[const_value]" class="form-label d-lg-none bold mb-0">Constant Value</label>
+                    <input type="text" name="constant[const_value]" id="constant[const_value]" value="" maxlength="32" class="flexible colorful"/>
+                </div>
+                <div class="col-12 col-lg-2">
+                    {% set cb_values = {'id':'constant[const_immutable]','name':'constant[const_immutable]','value':'true','checked':'','label':'Immutable'} %}
+                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+                </div>
+                <div class="col-12 col-lg-2">
+                    <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
+                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                </div>
             </div>
         </form>
     </div>
-
-    <div class="row">
-        <div class="col-lg-12 col-md-12">
-            <h3>Instructions</h3>
-            <ul>
-            <li>Constant Name must be letters only. The constant name will be
-            converted to all caps, spaces to underscores, and all other
-            characters removed, e.g., 'my 2nd config!' will become
-            'MY_ND_CONFIG'.</li>
-            <li>Constant values will be sanitized (hacker prevention) but
-            otherwise remain as typed. Values are limited to 64 characters.</li>
-            <li>Immutable means you can't change the Constant Name or delete it.
-            <b class="red bold">So be careful!</b>
-            If you set something immutable, it can't go back.</li>
-            </ul>
-        </div>
-    </div>
+    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
 {% endblock %}

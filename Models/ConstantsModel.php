@@ -66,6 +66,13 @@ class ConstantsModel implements ModelInterface
         $a_required_keys = [
             'const_name'
         ];
+
+        if (!empty($a_values['const_name'])) {
+            $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
+        }
+        if (!empty($a_values['const_value'])) {
+            $a_values['const_value'] = $this->makeValidValue($a_values['const_value']);
+        }
         $a_psql = [
             'table_name'  => $this->db_table,
             'column_name' => $this->primary_index_name
@@ -135,6 +142,14 @@ class ConstantsModel implements ModelInterface
         }
         if ($results[0]['const_immutable'] == 'true') {
             unset($a_values['const_name']);
+        }
+        else {
+            if (!empty($a_values['const_name'])) {
+                $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
+            }
+        }
+        if (!empty($a_values['const_value'])) {
+            $a_values['const_value'] = $this->makeValidValue($a_values['const_value']);
         }
         try {
             return $this->genericUpdate($a_values);

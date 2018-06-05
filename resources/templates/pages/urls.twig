@@ -6,107 +6,85 @@
             <div class="col-md-3">Cannot be Deleted</div>
             <div class="col-md-3">Action</div>
         </div>
-        {% set x = -1 %}
-        {% set y = 1 %}
-        <form action="{{ public_id }}/manager/config/urls/" method="post" id="{{ "url#{y}" }}">
+        <form action="{{ public_id }}/manager/config/urls/" method="post" id="form-url-0">
         <div class="row odd">
             <div class="col-12 col-md-6">
-                <label for="url" class="form-label d-md-none bold mb-0">Url</label>
-                <input type="text" name="url" class="flexible colorful" value="" required>
+                <label for="url-0" class="form-label d-md-none bold mb-0">Url</label>
+                <input type="text" id="url0" name="url" class="flexible colorful" value="" required>
             </div>
             <div class="col-12 col-md-3">
-                {% set cb_values = {'id':'immutable','name':'immutable','value':'true','checked':'','label':'Immutable'} %}
+                {% set cb_values = {'id':'immutable-0','name':'immutable','value':'true','checked':'','label':'Immutable'} %}
                 {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
             </div>
             <div class="col-12 col-md-3">
                 <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
                 <input type="hidden" name="action" value="save_new">
-                <input type="hidden" name="tolken" value="{{ tolken }}" />
-                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                <label for="hobbit" class="hobbit">Humans don't enter anything here.
-                <input type="text" name="hobbit" value="" size="2" maxlength="24" class="hobbit" />
-                </label>
+                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
             </div>
         </div>
         </form>
-    {% set x = x * -1 %}
-    {% set y = y + 1 %}
     {% for row in a_urls %}
-        {% set class = x == -1 ? 'odd' : 'even' %}
-        <form action="{{ public_id }}/manager/config/urls/" method="post" id="{{ 'url' ~ y }}">
+        {% set class = loop.index is even ? 'odd' : 'even' %}
+        {% set formId = 'form-url-' ~ loop.index %}
+        {% set urlId = 'url-' ~ loop.index %}
+        {% set immId = 'immutable-' ~ loop.index %}
+        {% set finalRowNumber = (loop.length + 1) %}
+        <form action="{{ public_id }}/manager/config/urls/" method="post" id="{{ formId }}">
             <div class="row {{ class }}">
                 <div class="col-12 col-md-6">
-                    <label for="url" class="form-label d-md-none bold mb-0">Url</label>
-                    <input type="text" name="url" class="flexible colorful" value="{{ row.url }}" required>
+                    <label for="{{ urlId }}" class="form-label d-md-none bold mb-0">Url</label>
+                    <input type="text" id="{{ urlId }}" name="url" class="flexible colorful" value="{{ row.url }}" required>
                 </div>
                 <div class="col-12 col-md-3">
                 {% if row.immutable == 'true' and adm_lvl < 10 %}
-                    <b>Cannot Be Deleted</b> &nbsp; <i class="far fa-check"></i>
-                    <input type="hidden" name="immutable" value="1">
+                    <b>Cannot Be Deleted</b> &nbsp; <span class="far fa-check"></span>
+                    <input type="hidden" id="{{ immId }}" name="immutable" value="1">
                 {% else %}
                     {% if row.immutable == 'true' %}
                         {% set checked = ' checked' %}
                     {% else %}
                         {% set checked = '' %}
                     {% endif %}
-                    {% set cb_values = {'id':'immutable','name':'immutable','value':'true','checked':checked,'label':'Immutable'} %}
+                    {% set cb_values = {'id':immId,'name':'immutable','value':'true','checked':checked,'label':'Immutable'} %}
                     {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
                 {% endif %}
                 </div>
                 <div class="col-12 col-md-3">
                     <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Update</button>
                 {% if row.immutable == 'true' and adm_lvl == 10 %}
-                    <button type="submit" name="submit" value="verify_delete" class="btn btn-danger btn-xs">Delete</button>
+                    <button type="submit" name="submit" value="verify_delete" class="btn btn-outline-danger btn-xs">Delete</button>
                 {% elseif row.immutable == 'false' %}
-                    <button type="submit" name="submit" value="verify_delete" class="btn btn-danger btn-xs">Delete</button>
+                    <button type="submit" name="submit" value="verify_delete" class="btn btn-outline-danger btn-xs">Delete</button>
                 {% endif %}
                     <input type="hidden" name="url_id" value="{{ row.url_id }}">
-                    <input type="hidden" name="tolken" value="{{ tolken }}" />
-                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                    <label for="hobbit" class="hobbit">Humans don't enter anything here.</label><input type="text" name="hobbit" value="" size="2" maxlength="24" class="hobbit" />
+                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
                 </div>
             </div>
         </form>
-        {% set x = x * -1 %}
-        {% set y = y + 1 %}
     {% endfor %}
-    {% set class = x == -1 ? 'alt-row' : 'normal-row' %}
-        <form action="{{ public_id }}/manager/config/urls/" method="post" id="{{ "url#{y}" }}">
+        {% set class = class == 'even' ? 'odd' : 'even' %}
+        {% set formId = 'form-url-' ~ finalRowNumber %}
+        {% set urlId = 'url-' ~ finalRowNumber %}
+        {% set immId = 'immutable-' ~ finalRowNumber %}
+        <form action="{{ public_id }}/manager/config/urls/" method="post" id="{{ formId }}">
             <div class="row {{ class }}">
                 <div class="col-12 col-md-6">
-                    <label for="url" class="form-label d-md-none bold mb-0">Url</label>
-                    <input type="text" name="url" class="flexible colorful" value="" required>
+                    <label for="{{ urlId }}" class="form-label d-md-none bold mb-0">Url</label>
+                    <input type="text" id="{{ urlId }}" name="url" class="flexible colorful" value="" required>
                 </div>
                 <div class="col-12 col-md-3">
-                    {% set cb_values = {'id':'immutable','name':'immutable','value':'true','checked':'','label':'Immutable'} %}
+                    {% set cb_values = {'id':immId,'name':'immutable','value':'true','checked':'','label':'Immutable'} %}
                     {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
                 </div>
                 <div class="col-12 col-md-3">
                     <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
                     <input type="hidden" name="action" value="save_new">
-                    <input type="hidden" name="tolken" value="{{ tolken }}" />
-                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                    <label for="hobbit" class="hobbit">Humans don't enter anything here.</label>
-                    <input type="text" name="hobbit" value="" size="2" maxlength="24" class="hobbit" />
+                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
                 </div>
             </div>
         </form>
     </div>
-    <div class="container">
-        <h3>Instructions</h3>
-        <ul>
-            <li>Urls may be in one of two formats
-                <ul>
-                    <li>In proper (standards based) url format, e.g. https://my.fred.com/</li>
-                    <li>Without protocol and server defaulting to the current site, e.g., /manager/config/urls/</li>
-                </ul>
-            </li>
-            <li>Cannot Be Deleted means you can't delete it, pretty clear eh?
-                <b class="red bold">So be careful!</b>
-                If you set it that way, it can't go back.
-            </li>
-        </ul>
-    </div>
+    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
     <script>
         $().ready(function() {
             {% for i in 1..y %}
