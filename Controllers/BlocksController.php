@@ -8,8 +8,7 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\ControllerInterface;
-use Ritc\Library\Interfaces\ManagerControllerInterface;
+use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Models\BlocksModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
@@ -25,7 +24,7 @@ use Ritc\Library\Views\BlocksView;
  * @change_log
  * - v1.0.0 - Initial version.                                    - 2018-06-03 wer
  */
-class BlocksController implements ManagerControllerInterface
+class BlocksController implements ConfigControllerInterface
 {
     use LogitTraits, ControllerTraits;
 
@@ -68,7 +67,6 @@ class BlocksController implements ManagerControllerInterface
      */
     public function save()
     {
-        $a_message = ViewHelper::infoMessage('Test');
         $a_blocks = $this->a_post['blocks'];
         try {
             $this->o_model->create($a_blocks);
@@ -86,7 +84,6 @@ class BlocksController implements ManagerControllerInterface
      */
     public function update()
     {
-        $a_message = [];
         $a_blocks = $this->a_post['blocks'];
         if (empty($a_blocks['b_active'])) {
             $a_blocks['b_active'] = 'false';
@@ -94,9 +91,8 @@ class BlocksController implements ManagerControllerInterface
         if (empty($a_blocks['b_immutable'])) {
             $a_blocks['b_immutable'] = 'false';
         }
-        print_r($a_blocks);
         try {
-            $this->o_model->update($a_blocks);
+            $this->o_model->update($a_blocks, 'b_immutable', ['b_name', 'b_type']);
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -113,11 +109,11 @@ class BlocksController implements ManagerControllerInterface
     {
         $a_values = [
             'what'         => 'block',
-            'name'         => $this->a_post['block']['b_name'],
+            'name'         => $this->a_post['blocks']['b_name'],
             'form_action'  => '/manager/config/blocks/',
-            'btn_value'    => 'Blocks',
+            'btn_value'    => 'Block',
             'hidden_name'  => 'b_id',
-            'hidden_value' => $this->a_post['block']['b_id'],
+            'hidden_value' => $this->a_post['blocks']['b_id'],
         ];
         $a_options = [
             'tpl'      => 'verify_delete',
@@ -132,7 +128,6 @@ class BlocksController implements ManagerControllerInterface
      */
     public function delete()
     {
-        $a_message = [];
         $b_id = $this->a_post['b_id'];
         try {
             $this->o_model->delete($b_id);
