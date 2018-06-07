@@ -53,6 +53,7 @@ trait ManagerViewTraits
         $a_twig_values['tpl'] = empty($a_values['tpl'])
             ? 'login'
             : $a_values['tpl'];
+        $a_twig_values['login_url'] = $location;
         $tpl = $this->createTplString($a_twig_values);
 
         return $this->renderIt($tpl, $a_twig_values);

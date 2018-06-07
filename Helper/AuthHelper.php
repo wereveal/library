@@ -215,6 +215,7 @@ class AuthHelper
                 $a_person['password']        = '';
                 $a_person['bad_login_count'] = 0;
                 $a_person['bad_login_ts']    = 0;
+                $a_person['auth_level']      = $this->getHighestAuthLevel($a_person['people_id']);
                 return $a_person;
             } else {
                 $message = $this->o_people->makeBadLoginAttempt($a_person['people_id']);
@@ -334,9 +335,9 @@ class AuthHelper
      * @param int    $auth_level
      * @return bool
      */
-    public function isAllowedAccess($people_id = '', $auth_level = 0)
+    public function isAllowedAccess($people_id = '', $auth_level = 0, $logged_in = false)
     {
-        if ($this->isLoggedIn()
+        if (($logged_in || $this->isLoggedIn())
             &&
             (
                 $this->hasMinimumAuthLevel($people_id, $auth_level)

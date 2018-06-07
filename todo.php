@@ -6,11 +6,12 @@
 #############################################################################################################
 /*
  * @todo Tests
- * Blocks
+ * Blocks √
  * Cache √
  * Constants √
+ * Sitemap
  * Content
- * Groups
+ * Groups √
  * LibSitemap
  * Navigation
  * Navgroups

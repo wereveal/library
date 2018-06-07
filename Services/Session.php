@@ -38,8 +38,10 @@ class Session
 
     /**
      * Session constructor.
+     *
      * @param string $session_id
      * @param string $session_name
+     * @throws ServiceException
      */
     private function __construct($session_id = '', $session_name = '')
     {
@@ -459,6 +461,8 @@ class Session
 
     /**
      * Cloning is not allowed.
+     *
+     * @throws ServiceException
      */
     public function __clone()
     {

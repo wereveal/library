@@ -65,15 +65,18 @@ trait ManagerControllerTraits
     {
         $a_results = $this->o_auth->login($this->a_post); // authentication part
         if ($a_results['is_logged_in'] == 'true') {
-            $this->o_session->setVar('login_id', $a_results['login_id']);
             $min_auth_level = $this->a_router_parts['min_auth_level'];
-            if ($this->o_auth->isAllowedAccess($a_results['people_id'], $min_auth_level)) { // authorization part
+            print_r($a_results);
+            print "\n$min_auth_level\n";
+            if ($this->o_auth->isAllowedAccess($a_results['people_id'], $min_auth_level, true)) { // authorization part
+                $this->o_session->setVar('login_id', $a_results['login_id']);
+                $this->o_session->setVar('adm_lvl', $a_results['auth_level']);
                 return ViewHelper::successMessage('Success, you are now logged in!');
             }
-        }
-        /* well, apparently they weren't allowed access so kick em to the curb */
-        if ($a_results['is_logged_in'] == 'true') {
-            $this->o_auth->logout($a_results['people_id']);
+            else {
+                $this->o_auth->logout($a_results['people_id']);
+                $a_results = ['message' => 'Sorry, you are not allowed access at this time.'];
+            }
         }
         return isset($a_results['message'])
             ? ViewHelper::failureMessage($a_results['message'])

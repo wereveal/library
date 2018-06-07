@@ -13,9 +13,10 @@ use Ritc\Library\Traits\DbUtilityTraits;
  * Abstract which gives a basic setup for a model class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2018-04-26 09:27:20
+ * @version v1.0.0
+ * @date    2018-06-06 12:35:38
  * @change_log
+ * - v1.0.0         - Initial Production version                                                        - 2018-06-06 wer
  * - v1.0.0-alpha.0 - Initial version                                                                   - 2017-07-15 wer
  */
 abstract class ModelAbstract implements ModelInterface
@@ -73,12 +74,20 @@ abstract class ModelAbstract implements ModelInterface
 
     /**
      * Update for a record using the values provided.
-     * @param array $a_values required
+     * @param array  $a_values        required
+     * @param string $immutable_field optional, field name that specifies record can be immutable.
+     * @param array  $a_do_not_change optional, list of field names which should be immutable.
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function update(array $a_values = [])
+    public function update(array $a_values = [], $immutable_field = '', array $a_do_not_change = [])
     {
+        if (!empty($immutable_field) && !empty($a_do_not_change)) {
+            $results = $this->fixUpdateValues($a_values, $immutable_field , $a_do_not_change);
+            if ($results !== false) {
+                $a_values = $results;
+            }
+        }
         try {
             return $this->genericUpdate($a_values);
         }

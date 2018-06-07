@@ -280,18 +280,44 @@ class DbInstallerModel
             }
             $a_navgroups = $this->a_data['navgroups'];
         }
+        $table_name = $this->db_prefix . 'navgroups';
+        $a_strings = $this->createStrings($a_navgroups);
+        $sql = "
+            INSERT INTO {$table_name}
+                ({$a_strings['fields']})
+            VALUES
+                ({$a_strings['values']})";
         $a_table_info = [
-            'table_name'  => $this->db_prefix . 'navgroups',
+            'table_name'  => $table_name,
             'column_name' => 'ng_id'
         ];
-        $results = $this->genericInsert($a_navgroups, $a_table_info);
-        if ($results) {
-            $this->a_navgroups = $results;
-            return true;
+        try {
+            $o_stmt = $this->o_db->prepare($sql);
         }
-        else {
+        catch (ModelException $e) {
+            $this->error_message = "Unable to prepare the sql statement(s)" . $e->errorMessage();
             return false;
         }
+        foreach ($a_navgroups as $key => $a_record) {
+            try {
+                $this->o_db->resetNewIds();
+                $results = $this->o_db->executeInsert($a_record, $o_stmt, $a_table_info);
+                if ($results) {
+                    $ids = $this->o_db->getNewIds();
+                    $a_navgroups[$key]['ng_id'] = $ids[0];
+                }
+                else {
+                    $this->error_message = 'Could not insert new navigation record.';
+                    return false;
+                }
+            }
+            catch (ModelException $e) {
+                $this->error_message = 'Could not insert navigation data. ' . $e->errorMessage();
+                return false;
+            }
+        }
+            $this->a_navgroups = $a_navgroups;
+            return true;
     }
 
     /**
@@ -498,6 +524,7 @@ class DbInstallerModel
         }
         $a_new_page = [];
         foreach ($a_page as $key => $a_record) {
+            $a_record['ng_id']  = $this->a_navgroups[$a_record['ng_id']]['ng_id'];
             $a_record['url_id'] = $this->a_urls[$a_record['url_id']]['url_id'];
             $a_record['tpl_id'] = $this->a_twig_tpls[$a_record['tpl_id']]['tpl_id'];
             $this->o_db->resetNewIds();
@@ -522,6 +549,11 @@ class DbInstallerModel
         return true;
     }
 
+    /**
+     * Inserts pbm records.
+     * @param array $a_pbm
+     * @return bool
+     */
     public function insertPBM(array $a_pbm = [])
     {
         if (empty($a_pbm)) {

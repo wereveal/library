@@ -50,6 +50,7 @@ trait ConfigViewTraits
         $a_twig_values['tpl'] = empty($a_values['tpl'])
             ? 'login'
             : $a_values['tpl'];
+        $a_twig_values['login_url'] = $location;
         $tpl = $this->createTplString($a_twig_values);
           $log_message = 'twig values:  ' . var_export($a_twig_values, TRUE);
           $this->logIt($log_message, LOG_OFF, $meth . __LINE__);

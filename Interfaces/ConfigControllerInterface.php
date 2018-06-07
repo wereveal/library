@@ -1,6 +1,6 @@
 <?php
 /**
- * Interface ManagerControllerInterface
+ * Interface ConfigControllerInterface
  * @package Ritc_Library
  */
 namespace Ritc\Library\Interfaces;
@@ -9,13 +9,12 @@ namespace Ritc\Library\Interfaces;
  * Interface for manager controllers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
- * @date    2017-01-14 09:32:39
+ * @version v1.0.0
+ * @date    2018-06-06 11:19:39
  * @change_log
- * - v2.0.0 - changed name of method render to route to reflect intended purpose    - 2017-01-14 wer
- * - v1.0.0 - initial version                                                       - 01/11/2015 wer
+ * - v1.0.0 - initial version                                                       - 2018-06-06 wer
  */
-interface ManagerControllerInterface
+interface ConfigControllerInterface
 {
     /**
      * Main method used to route the page to the appropriate controller/view/model.

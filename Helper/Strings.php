@@ -13,9 +13,10 @@ namespace Ritc\Library\Helper;
  * Renamed and modified version of old class Output which was the class name before v5.0.0.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 6.6.0
- * @date    2018-05-15 16:00:30
+ * @version 6.6.1
+ * @date    2018-06-06 14:12:32
  * @change_log
+ * - v6.6.1 - bug fix, makeCamelCase                                            - 2018-06-06 wer
  * - v6.6.0 - added new method to convert url to cache compatible string        - 2018-05-15 wer
  * - v6.5.0 - add new method to convert column number to Excel column letters   - 2018-03-06 wer
  * - v6.4.0 - added new method to trim slashes from front and back of string    - 2016-09-08 wer
@@ -203,7 +204,7 @@ class Strings
     }
 
     /**
-     * Makes the string alpha camelCase.
+     * Makes the string alpha camelCase or CamelCase depending on 2nd param.
      * Splits string at spaces, dashes and underscores into alpha 'words' which
      * it will uppercase all but the first word by default.
      * @param string $the_string        defaults to blank string
@@ -223,12 +224,15 @@ class Strings
             $a_string = explode('-', $the_string);
         }
         else {
+            if ($leave_first_alone === false) {
+                $the_string = ucfirst($the_string);
+            }
             return self::makeAlpha($the_string);
         }
         $new_string = '';
         foreach($a_string as $key => $word) {
             $word = self::makeAlpha($word);
-            if ($key != 0 || $leave_first_alone === false) {
+            if ($key > 0 || $leave_first_alone === false) {
                 $word = ucfirst($word);
             }
             $new_string .= $word;
