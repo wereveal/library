@@ -59,7 +59,7 @@ class NavgroupsComplexModel
         $o_map = new NavNgMapModel($this->o_db);
         $o_ng  = new NavgroupsModel($this->o_db);
         try {
-            $o_map->delete($ng_id);
+            $o_map->deleteWith($ng_id);
             try {
                 $o_ng->delete($ng_id);
                 try {

@@ -5,9 +5,9 @@
     {% if link.submenu %}
         {% for menu in link.submenu %}
             {% if loop.index is even %}
-                {% set menu_class = menu.nav_class ~ ' alt-row' %}
+                {% set menu_class = menu.nav_class ~ 'odd' %}
             {% else %}
-                {% set menu_class = menu.nav_class ~ ' normal-row' %}
+                {% set menu_class = menu.nav_class ~ 'even' %}
             {% endif %}
                 <div class="row {{ menu_class }}">
                     <div class="col-2 aright">

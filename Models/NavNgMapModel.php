@@ -5,8 +5,8 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -15,15 +15,16 @@ use Ritc\Library\Traits\LogitTraits;
  * Does all the database CRUD stuff for the navigation to navgroups mapping.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.3
- * @date    2017-06-15 16:34:42
+ * @version v1.0.0-alpha.4
+ * @date    2018-06-07 16:34:47
  * @change_log
+ * - v1.0.0-alpha.4 - Refactored to use ModelAbstract              - 2018-06-07 wer
  * - v1.0.0-alpha.3 - Refactored to use ModelException             - 2017-06-15 wer
  * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here        - 2017-05-09 wer
  * - v1.0.0-alpha.1 - Refactoring reflected here                   - 2017-01-27 wer
  * - v1.0.0-alpha.0 - Initial version                              - 02/25/2016 wer
  */
-class NavNgMapModel implements ModelInterface
+class NavNgMapModel extends ModelAbstract
 {
     use LogitTraits, DbUtilityTraits;
 
@@ -37,73 +38,25 @@ class NavNgMapModel implements ModelInterface
     }
 
     /**
-     * General create a record using the values provided.
-     * @param array $a_values required assoc array or array of assoc array
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function create(array $a_values = [])
-    {
-        $a_required_keys = $this->a_db_fields;
-        unset($a_required_keys[$this->primary_index_name]);
-        $a_psql = [
-            'table_name'  => $this->db_table,
-            'column_name' => $this->primary_index_name
-        ];
-        $a_params = [
-            'a_required_keys' => $a_required_keys,
-            'a_field_names'   => $this->a_db_fields,
-            'a_psql'          => $a_psql
-        ];
-        try {
-            return $this->genericCreate($a_values, $a_params);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
-        }
-    }
-
-    /**
-     * Returns an array of records based on the search params provided.
-     * If no search values and search params are given, all records are returned.
-     * @param array $a_search_values optional
-     * @param array $a_search_params optional
-     * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function read(array $a_search_values = [], array $a_search_params = [])
-    {
-        $a_parameters = [
-            'table_name'     => $this->db_table,
-            'a_search_for'   => $a_search_values,
-            'a_allowed_keys' => $this->a_db_fields,
-            'order_by'       => 'ng_id ASC, nav_id ASC'
-        ];
-        $a_parameters = array_merge($a_parameters, $a_search_params);
-        try {
-            return $this->genericRead($a_parameters);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
-        }
-    }
-
-    /**
      * Generic update for a record using the values provided.
      * Required by interface but not used in this instance.
      * The two fields in the table create a single primary key so can not be changed.
      * To change, an INSERT/DELETE thing has to be done.
-     * @param array $a_values
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     *
+     * @param array  $a_values
+     * @param string $immutable
+     * @param array  $a_not_used
+     * @return void
+     * @throws ModelException
      */
-    public function update(array $a_values)
+    public function update(array $a_values = [], $immutable = '', array $a_not_used = [])
     {
         throw new ModelException('Update not allowed.', 350);
     }
 
     /**
-     * Deletes a record based on either/both id(s) provided.
+     * Deletes a record with either/both id(s) provided.
+     *
      * @param int $ng_id  semi-optional, either/both ng_id and/or nav_id must be set
      * @param int $nav_id semi-optional, either/both ng_id and/or nav_id must be set
      * @note The obvious needs to be noted. If only one param is provided, all the records
@@ -111,7 +64,7 @@ class NavNgMapModel implements ModelInterface
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function delete($ng_id = -1, $nav_id = -1)
+    public function deleteWith($ng_id = -1, $nav_id = -1)
     {
         if ($ng_id == -1 && $nav_id == -1) {
             return false;

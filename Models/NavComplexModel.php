@@ -6,6 +6,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -31,13 +32,15 @@ class NavComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var \Ritc\Library\Services\Di */
+    /** @var \Ritc\Library\Services\Di $o_di */
     private $o_di;
-    /** @var \Ritc\Library\Models\NavgroupsModel */
+    /** @var \Ritc\Library\Models\NavgroupsModel $o_ng */
     private $o_ng;
-    /** @var string */
+    /** @var NavNgMapModel $o_nnm */
+    private $o_nnm;
+    /** @var string $select_sql */
     private $select_sql;
-    /** @var string */
+    /** @var string $select_order_sql */
     private $select_order_sql;
 
     /**
@@ -47,15 +50,82 @@ class NavComplexModel
     public function __construct(Di $o_di)
     {
         $this->o_di = $o_di;
-        $this->setupElog($o_di);
         /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
         $this->o_db = $o_db;
         $this->setupProperties($o_db, 'navigation');
-        $this->o_ng = new NavgroupsModel($this->o_db);
-        $this->o_ng->setupElog($o_di);
+        $this->o_ng = new NavgroupsModel($o_db);
+        $this->o_nnm = new NavNgMapModel($o_db);
+        $this->a_object_names = ['o_ng', 'o_nnm'];
+        $this->setupElog($o_di);
         $this->setSelectSql();
         $this->setSelectOrderSql();
+    }
+
+    /**
+     * Creates a nav_ng_map record.
+     * Verifies that it doesn't exist first.
+     *
+     * @param int $nav_id
+     * @return bool
+     * @throws ModelException
+     */
+    public function addNavToSitemap($nav_id = -1)
+    {
+        if ($nav_id < 1) {
+            $err = ExceptionHelper::getCodeNumberModel('create missing value');
+            throw new ModelException('Missing required nav_id', $err);
+        }
+        try {
+            $a_ng = $this->o_ng->readByName('Sitemap');
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        $ng_id = $a_ng[0]['ng_id'];
+        try {
+            $results = $this->o_nnm->read(['nav_id' => $nav_id, 'ng_id' => $ng_id]);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        return true;
+    }
+
+    /**
+     * Creates the array used to build a nav
+     * @param int $ng_id
+     * @return array
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    public function createNavArray($ng_id = -1)
+    {
+        if ($ng_id == -1) {
+            $ng_id = $this->o_ng->retrieveDefaultId();
+            if ($ng_id == -1) {
+                throw new ModelException('Missing required id.', 220);
+            }
+        }
+        $a_new_list = array();
+        try {
+            $a_top_list = $this->getTopLevelNavList($ng_id);
+        }
+        catch (ModelException $e) {
+            $this->error_message = 'Could not get the nav list: ' . $this->o_db->getSqlErrorMessage();
+            throw new ModelException($this->error_message, 10, $e);
+        }
+        foreach ($a_top_list as $a_nav) {
+            try {
+                $a_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
+            }
+            catch (ModelException $e) {
+                $this->error_message = 'Unable to get nav list: ' . $this->o_db->getSqlErrorMessage();
+                throw new ModelException($this->error_message, 210, $e);
+            }
+            $a_nav['submenu'] = $a_results;
+            $a_new_list[] = $a_nav;
+        }
+        return $a_new_list;
     }
 
     /**
@@ -68,7 +138,8 @@ class NavComplexModel
     public function getChildrenRecursive($parent_id = -1, $ng_id = -1)
     {
         if ($parent_id == -1 || $ng_id == -1) {
-            throw new ModelException('Missing required value.', 220);
+            $error_code = ExceptionHelper::getCodeNumberModel('missing value');
+            throw new ModelException('Missing required value.', $error_code);
         }
         $a_new_list = [];
         try {
@@ -77,16 +148,15 @@ class NavComplexModel
         catch (ModelException $e) {
             throw new ModelException('Unable to get the nav list.', 210, $e);
         }
-
-        if (count($a_results) > 0) {
+        if (!empty($a_results)) {
             foreach ($a_results as $a_nav) {
                 try {
-                    $a_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
+                    $a_more_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
                 }
                 catch (ModelException $e) {
                     throw new ModelException('A problem getting the children.', 210, $e);
                 }
-                $a_nav['submenu'] = $a_results;
+                $a_nav['submenu'] = $a_more_results;
                 $a_new_list[] = $a_nav;
             }
             return $a_new_list;
@@ -142,6 +212,27 @@ class NavComplexModel
             $this->error_message = $this->o_db->getSqlErrorMessage();
             throw new ModelException($this->error_message, 210, $e);
         }
+    }
+
+    /**
+     * Returns the nav records that have an auth level equal or less than value provided.
+     * @param int $auth_level
+     * @return array|mixed
+     * @throws ModelException
+     */
+    public function getNavListByAuthLevel($auth_level = 0)
+    {
+        $replace_this = 'ON g.group_id = rgm.group_id';
+        $with_this = 'ON g.group_id = rgm.group_id AND g.group_auth_level <= :auth_level';
+        $sql = str_replace($replace_this, $with_this, $this->select_sql);
+        $a_search_for = [':auth_level' => $auth_level];
+        try {
+            $results = $this->o_db->search($sql, $a_search_for);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        return $results;
     }
 
     /**
@@ -237,27 +328,29 @@ class NavComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function getSitemap(array $a_navgroups = ['Sitemap'])
+    public function getSitemap(array $a_navgroups = ['Sitemap'], $auth_level = 0)
     {
+        $meth = __METHOD__ . '.';
         $sql = $this->select_sql;
         $replace_this = 'ON ng.ng_id = map.ng_id';
         $with_this = '';
         $a_search_for = [];
         foreach ($a_navgroups as $key => $navgroup) {
             $with_this .= empty($with_this)
-                ? '('
-                : ' AND ';
+                ? 'ON ng.ng_id = map.ng_id AND ('
+                : ' OR ';
             $with_this .= 'ng.ng_name = :ng_name' . $key;
             $a_search_for[':ng_name' . $key] = $navgroup;
         }
         if (!empty($with_this)) {
             $with_this .= ')';
         }
+        $this->logIt('with this: ' . $with_this, LOG_OFF, $meth . __LINE__);
         $sql = str_replace($replace_this, $with_this, $sql);
-        $sql = $sql . "
-            AND n.nav_level = :nav_level
+        $sql = $sql . "AND n.nav_level = :nav_level
             ORDER BY n.nav_order";
         $a_search_for[':nav_level'] = 1;
+        $this->logIt('sql: ' . $sql, LOG_OFF, $meth . __LINE__);
         try {
             $results = $this->o_db->search($sql, $a_search_for);
         }
@@ -265,29 +358,43 @@ class NavComplexModel
             $this->error_message = 'Could not get the record: ' . $this->o_db->getSqlErrorMessage();
             throw new ModelException($this->error_message, 210, $e);
         }
+        $log_message = 'Results ' . var_export($results, true);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        $a_parents = [];
         foreach ($results as $key => $record) {
-            if ($record['auth_level'] >= $auth_level) {
-                $a_children = $this->getChildrenRecursive($record['parent_id'], $record['ng_id']);
+            if (empty($a_parents[$record['url']]) && !empty($record['url'])) {
+                $a_parents[$record['url']] = $record;
+            }
+        }
+        $log_message = 'Parents ' . var_export($a_parents, true);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        foreach ($a_parents as $key => $record) {
+            if ($record['auth_level'] <= $auth_level && $record['nav_id'] == $record['parent_id']) {
+                $a_children = $this->getChildrenRecursive($record['nav_id'], $record['ng_id']);
                 foreach ($a_children as $child_key => $child_record) {
-                    if ($child_record['auth_level'] < $auth_level) {
+                    if ($child_record['auth_level'] > $auth_level) {
                         unset($a_children[$child_key]);
                     }
                 }
-                $results[$key]['submenu'] = $a_children;
+                $a_parents[$key]['submenu'] = $a_children;
             }
             else {
-                unset($results[$key]);
+                unset($a_parents[$key]);
             }
         }
-        return $results;
+        return $a_parents;
     }
 
     /**
      * Creates an array that can be used with the sitemap_xml twig file.
-     * @param int $auth_level
+     *
+     * @param int   $auth_level optional, defaults to unregistered
+     * @param array $a_options  optional, ['changefreq' => 'yearly', 'priority' => 0.5]
      * @return array
      */
-    public function getSitemapForXml($auth_level = 0)
+    public function getSitemapForXml($auth_level = 0, array $a_options = [])
     {
         try {
             $a_results = $this->getNavListByName('Sitemap');
@@ -296,14 +403,35 @@ class NavComplexModel
             return [];
         }
         $a_urls = [];
+        $changefreq = empty($a_options['changefreq'])
+            ? ''
+            : $a_options['changefreq'];
+        $priority = empty($a_options['priority'])
+            ? ''
+            : $a_options['priority'];
+        try {
+            $o_page = new PageComplexModel($this->o_di);
+        }
+        catch (ModelException $e) {
+            return [];
+        }
         foreach ($a_results as $key => $a_url) {
             if ($a_url['auth_level'] <= $auth_level) {
-                $a_urls[] = [
-                    'loc'        => $a_url['url'],
-                    'changefreq' => '',
-                    'lastmod'    => '',
-                    'priority'   => ''
-                ];
+                try {
+                    $a_page = $o_page->readPageValuesByUrlId($a_url['url_id']);
+                    $today = date('Y-m-d H:i:s');
+                    if ($a_page['page_up'] <= $today && $a_page['page_down'] >= $today) {
+                        $a_urls[] = [
+                            'loc'        => $a_url['url'],
+                            'changefreq' => $changefreq,
+                            'lastmod'    => $a_page['updated_on'],
+                            'priority'   => $priority
+                        ];
+                    }
+                }
+                catch (ModelException $e) {
+                    // do nothing
+                }
             }
         }
         return $a_urls;
@@ -334,42 +462,6 @@ class NavComplexModel
     }
 
     /**
-     * Creates the array used to build a nav
-     * @param int $ng_id
-     * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function createNavArray($ng_id = -1)
-    {
-        if ($ng_id == -1) {
-            $ng_id = $this->o_ng->retrieveDefaultId();
-            if ($ng_id == -1) {
-                throw new ModelException('Missing required id.', 220);
-            }
-        }
-        $a_new_list = array();
-        try {
-            $a_top_list = $this->getTopLevelNavList($ng_id);
-        }
-        catch (ModelException $e) {
-            $this->error_message = 'Could not get the nav list: ' . $this->o_db->getSqlErrorMessage();
-            throw new ModelException($this->error_message, 10, $e);
-        }
-        foreach ($a_top_list as $a_nav) {
-            try {
-                $a_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
-            }
-            catch (ModelException $e) {
-                $this->error_message = 'Unable to get nav list: ' . $this->o_db->getSqlErrorMessage();
-                throw new ModelException($this->error_message, 210, $e);
-            }
-            $a_nav['submenu'] = $a_results;
-            $a_new_list[] = $a_nav;
-        }
-        return $a_new_list;
-    }
-
-    /**
      * Returns the number of levels for a given nav list.
      * @param array $a_nav_list
      * @return int
@@ -386,84 +478,40 @@ class NavComplexModel
     }
 
     /**
-     * Getter for var $select_sql
-     * @return string
+     * @param $nav_id
+     * @return bool
+     * @throws ModelException
      */
-    public function getSelectSql()
+    public function removeNavFromSitemap($nav_id)
     {
-        return $this->select_sql;
-    }
-
-    /**
-     * @param string $select_sql normally not set.
-     */
-    public function setSelectSql($select_sql = '')
-    {
-        if ($select_sql == '') {
-            $select_sql =<<<EOT
-SELECT
-    n.nav_id,
-    n.nav_parent_id as parent_id,
-    n.url_id,
-    u.url_text as url,
-    n.nav_name,
-    n.nav_text,
-    n.nav_description,
-    n.nav_css,
-    n.nav_level,
-    n.nav_order,
-    n.nav_immutable,
-    ng.ng_id,
-    ng.ng_name,
-    r.route_id,
-    g.group_id,
-    g.group_auth_level as auth_level
-FROM {$this->lib_prefix}navigation as n
-JOIN {$this->lib_prefix}urls as u
-    ON n.url_id = u.url_id
-JOIN {$this->lib_prefix}nav_ng_map as map
-    ON n.nav_id = map.nav_id
-JOIN {$this->lib_prefix}navgroups as ng
-    ON ng.ng_id = map.ng_id
-JOIN {$this->lib_prefix}routes as r
-    ON r.url_id = u.url_id
-JOIN {$this->lib_prefix}routes_group_map as rgm
-    ON rgm.route_id = r.route_id
-JOIN {$this->lib_prefix}groups as g
-    ON g.group_id = rgm.group_id
-WHERE n.nav_active = 'true'
-
-EOT;
+        if ($nav_id < 1) {
+            $err = ExceptionHelper::getCodeNumberModel('delete missing value');
+            throw new ModelException('Missing required nav_id', $err);
         }
-        $this->select_sql = $select_sql;
-    }
-
-    /**
-     * Getter for var $select_order_sql.
-     * @return string
-     */
-    public function getSelectOrderSql()
-    {
-        return $this->select_order_sql;
-    }
-
-    /**
-     * Sets the string for the ORDER BY statement used in several ReadNavX methods.
-     * @param string $string optional
-     */
-    public function setSelectOrderSql($string = '')
-    {
-        if ($string == '') {
-            $string =<<<EOT
-ORDER BY
-    ng.ng_id ASC,
-    n.nav_parent_id ASC,
-    n.nav_level ASC,
-    n.nav_order ASC,
-    n.nav_name ASC
-EOT;
+        try {
+            $a_ng = $this->o_ng->readByName('Sitemap');
+            print_r($a_ng);
         }
-        $this->select_order_sql = $string;
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        $ng_id = $a_ng[0]['ng_id'];
+        try {
+            $results = $this->o_nnm->read(['nav_id' => $nav_id, 'ng_id' => $ng_id]);
+            print_r($results);
+            $nnm_id = $results[0]['nnm_id'];
+            try {
+                $this->o_nnm->delete($nnm_id);
+            }
+            catch (ModelException $e) {
+
+            }
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        return true;
+
     }
 
     /**
@@ -545,14 +593,14 @@ EOT;
                     }
                     break;
                 default:
-                // no default action needed
+                    // no default action needed
             }
         }
         if ($action == 'error' || $action == '') {
             throw new ModelException($this->error_message, 120);
         }
         $o_nav = new NavigationModel($this->o_db);
-        $o_map = new NavNgMapModel($this->o_db);
+        $o_map = $this->o_nnm;
         $old_ng_id = false;
         if ($action == 'update') {
             try {
@@ -604,7 +652,7 @@ EOT;
             if ($results) {
                 if ($old_ng_id) {
                     try {
-                        $results = $o_map->delete($old_ng_id, $a_post['nav_id']);
+                        $results = $o_map->deleteWith($old_ng_id, $a_post['nav_id']);
                     }
                     catch (ModelException $e) {
                         $this->error_message = 'Unable to delete the old map record: ' . $this->o_db->getSqlErrorMessage();
@@ -645,5 +693,87 @@ EOT;
                 throw new ModelException('Unable to do the operation', 17);
             }
         }
+    }
+
+    ### Real GETters and SETters
+    /**
+     * Getter for var $select_sql
+     * @return string
+     */
+    public function getSelectSql()
+    {
+        return $this->select_sql;
+    }
+
+    /**
+     * @param string $select_sql normally not set.
+     */
+    public function setSelectSql($select_sql = '')
+    {
+        if ($select_sql == '') {
+            $select_sql =<<<EOT
+SELECT
+    n.nav_id,
+    n.nav_parent_id as parent_id,
+    n.url_id,
+    u.url_text as url,
+    n.nav_name,
+    n.nav_text,
+    n.nav_description,
+    n.nav_css,
+    n.nav_level,
+    n.nav_order,
+    n.nav_immutable,
+    ng.ng_id,
+    ng.ng_name,
+    r.route_id,
+    g.group_id,
+    g.group_auth_level as auth_level
+FROM {$this->lib_prefix}navigation as n
+JOIN {$this->lib_prefix}urls as u
+    ON n.url_id = u.url_id
+JOIN {$this->lib_prefix}nav_ng_map as map
+    ON n.nav_id = map.nav_id
+JOIN {$this->lib_prefix}navgroups as ng
+    ON ng.ng_id = map.ng_id
+JOIN {$this->lib_prefix}routes as r
+    ON r.url_id = u.url_id
+JOIN {$this->lib_prefix}routes_group_map as rgm
+    ON rgm.route_id = r.route_id
+JOIN {$this->lib_prefix}groups as g
+    ON g.group_id = rgm.group_id
+WHERE n.nav_active = 'true'
+
+EOT;
+        }
+        $this->select_sql = $select_sql;
+    }
+
+    /**
+     * Getter for var $select_order_sql.
+     * @return string
+     */
+    public function getSelectOrderSql()
+    {
+        return $this->select_order_sql;
+    }
+
+    /**
+     * Sets the string for the ORDER BY statement used in several ReadNavX methods.
+     * @param string $string optional
+     */
+    public function setSelectOrderSql($string = '')
+    {
+        if ($string == '') {
+            $string =<<<EOT
+ORDER BY
+    ng.ng_id ASC,
+    n.nav_parent_id ASC,
+    n.nav_level ASC,
+    n.nav_order ASC,
+    n.nav_name ASC
+EOT;
+        }
+        $this->select_order_sql = $string;
     }
 }

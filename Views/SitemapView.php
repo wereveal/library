@@ -44,6 +44,7 @@ class SitemapView implements ViewInterface
      */
     public function render()
     {
+        $meth = __METHOD__ . '.';
         $a_sitemap = [];
         $a_message = [];
         if ($this->use_cache) {
@@ -62,7 +63,7 @@ class SitemapView implements ViewInterface
             $o_auth = new AuthHelper($this->o_di);
             $a_navgroups = ['Sitemap'];
             if ($o_auth->isLoggedIn()) {
-                $auth_level = $this->o_session->getVar('auth_level');
+                $auth_level = $this->o_session->getVar('adm_lvl');
                 if ($auth_level >= 9) {
                     $a_navgroups[] = 'ConfigLinks';
                     $a_navgroups[] = 'ManagerLinks';
@@ -76,48 +77,22 @@ class SitemapView implements ViewInterface
                     $a_navgroups[] = 'EditorLinks';
                 }
             }
+            else {
+                $auth_level = 0;
+            }
             try {
-                $a_sitemap = $o_nav->getSitemap($a_navgroups);
+                $a_sitemap = $o_nav->getSitemap($a_navgroups, $auth_level);
             }
             catch (ModelException $e) {
                 $a_message = ViewHelper::errorMessage('Unable to retrieve the sitemap.');
             }
         }
+        $log_message = 'sitemap ' . var_export($a_sitemap, true);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['a_sitemap'] = $a_sitemap;
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
-    }
-
-    /**
-     * Creates the sitemap.xml file used by search engines.
-     * @param bool $force
-     * @return bool|int
-     */
-    public function createXmlFile($force = false)
-    {
-        $key = 'sitemap.xml.date';
-        if (!$force) {
-            if ($this->use_cache) {
-                $xml_create_date = $this->o_cache->get($key);
-                if ($xml_create_date == date('Ymd')) {
-                    return true;
-                }
-            }
-        }
-        if ($this->use_cache) {
-            $this->o_cache->set($key, date('Ymd'));
-        }
-        $o_nav = new NavComplexModel($this->o_di);
-        $a_sitemap = $o_nav->getSitemapForXml();
-        $a_tpl_values = [
-           'page_prefix' => LIB_TWIG_PREFIX,
-           'twig_prefix' => TWIG_PREFIX,
-           'twig_dir'    => 'pages',
-           'tpl'         => 'sitemap_xml.twig'
-        ];
-        $tpl = $this->createTplString($a_tpl_values);
-        $file_contents = $this->renderIt($tpl, ['a_sitemap' => $a_sitemap]);
-        return file_put_contents(PUBLIC_PATH . '/sitemap.xml', $file_contents);
     }
 }

@@ -165,7 +165,7 @@ class NavigationModel implements ModelInterface
             throw new ModelException($e->errorMessage(), $e->getCode());
         }
         try {
-            $o_map->delete(-1, $nav_id); // -1 specifies delete all map records with the nav_id
+            $o_map->deleteWith(-1, $nav_id); // -1 specifies delete all map records with the nav_id
         }
         catch (ModelException $e) {
             $this->error_message = $o_map->getErrorMessage();

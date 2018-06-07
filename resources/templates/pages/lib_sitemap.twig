@@ -1,4 +1,42 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block body %}
+    <div class="container">
+        {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with rebuild_btn %}
+    </div>
+    <div class="container">
+        <p class="h4">Current Sitemap</p>
+        <div class="row list-header header-small-caps d-none d-lg-flex">
+            <div class="col-lg-4">Url</div>
+            <div class="col-lg-4">Last Modified</div>
+            <div class="col-lg-2">Frequency</div>
+            <div class="col-lg-2">Priority</div>
+        </div>
+    {% for link in a_sitemap %}
+        {% set class = loop.index is odd ? 'odd' : 'even' %}
+        <div class="row {{ class }}">
+            <div class="col-12 col-lg-4"><span class="d-lg-none bold pad-right">Url:</span>{{ link.loc }}</div>
+            <div class="col-12 col-lg-4"><span class="d-lg-none bold pad-right">Last Modified:</span>{{ link.lastmod }}</div>
+            <div class="col-12 col-lg-2"><span class="d-lg-none bold pad-right">Change Frequency:</span>{{ link.changefreq }}</div>
+            <div class="col-12 col-lg-2"><span class="d-lg-none bold pad-right">Priority:</span>{{ link.priority }}</div>
+        </div>
+    {% endfor %}
+    </div>
+    <div class="container">
+        <p class="h4">Available Links for Sitemap</p>
+        <div class="row list-header header-small-caps d-none d-lg-flex">
+            <div class="col-lg-4">Location</div>
+            <div class="col-lg-4">Url</div>
+            <div class="col-lg-4 aright">Action</div>
+        </div>
+    {% for link in a_available %}
+        <div class="row">
+            <div class="col-12 col-lg-4"><span class="d-lg-none bold pad-right">Location:</span>{{ link.nav_text }}</div>
+            <div class="col-12 col-lg-4"><span class="d-lg-none bold pad-right">URL:</span>{{ link.url }}</div>
+            <div class="col-12 col-lg-4 aright">
+                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with link.action_btn %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
 {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
 {% endblock %}

@@ -101,6 +101,9 @@ class LibraryController implements ControllerInterface
                 case 'routes':
                     $o_c = new RoutesController($this->o_di);
                     break;
+                case 'sitemap':
+                    $o_c = new LibSitemapController($this->o_di);
+                    break;
                 case 'tests':
                     $o_c = new TestsController($this->o_di);
                     break;

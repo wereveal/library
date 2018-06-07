@@ -1,26 +1,42 @@
-        <ul class="sitemap">
-    {% for l1_menu_item in a_sitemap %}
-            <li>
-                <a href="{{ l1_menu_item.url }}">{{ l1_menu_item.nav_text }} - {{ l1_menu_item.nav_description }}</a><br>
-            {% if l1_menu_item.submenu is not empty %}
-                <ul>
-                {% for l2_menu_item in l1_menu_item.submenu %}
-                   <li>
-                       <a href="{{ l2_menu_item.url }}">{{ l2_menu_item.nav_text }} - {{ l2_menu_item.nav_description }}</a>
-                   {% if l2_menu_item.submenu is not empty %}
-                       <ul>
-                       {% for l3_menu_item in l2_menu_item.submenu %}
-                           <li>
-                               <a href="{{ l3_menu_item.url }}">{{ l3_menu_item.nav_text }} - {{ l3_menu_item.nav_description }}</a>
-                           </li>
-                       {% endfor %}
-                       </ul>
-                   {% endif %}
-                   </li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-            </li>
+<div class="container">
+    <div class="row list-header sticky-top">
+        <div class="col-12 col-lg-3">Link</div>
+        <div class="col-12 col-lg-9">Description</div>
+    </div>
+{% for l1_menu_item in a_sitemap %}
+{% set class = loop.index is even ? 'even' : 'odd' %}
+    <div class="row {{ class }}">
+        <div class="col-12 col-lg-3">
+            <a href="{{ l1_menu_item.url }}" class="font-larger font-small-caps-bold">{{ l1_menu_item.nav_text }}</a>
+        </div>
+        <div class="col-12 col-lg-9">
+            {{ l1_menu_item.nav_description }}
+        </div>
+    </div>
+    {% if l1_menu_item.submenu is not empty %}
+    {% for l2_menu_item in l1_menu_item.submenu %}
+    <div class="row {{ class }}">
+        <div class="col-12 col-lg-3 pad-left-2">
+            <a href="{{ l2_menu_item.url }}">{{ l2_menu_item.nav_text }}</a>
+        </div>
+        <div class="col-12 col-lg-9">
+            {{ l2_menu_item.nav_description }}
+        </div>
+    {% if l2_menu_item.submenu is not empty %}
+    {% for l3_menu_item in l2_menu_item.submenu %}
+    <div class="row {{ class }}">
+        <div class="col-12 col-lg-3 pad-left-4">
+            <a href="{{ l2_menu_item.url }}">{{ l2_menu_item.nav_text }}</a>
+        </div>
+        <div class="col-12 col-lg-9">
+            {{ l2_menu_item.nav_description }}
+        </div>
+    </div>
     {% endfor %}
-        </ul>
-
+    {% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    {% endif %}
+{% endfor %}
+</div>
