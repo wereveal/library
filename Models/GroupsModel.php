@@ -5,8 +5,9 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Interfaces\ModelInterface;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -29,7 +30,7 @@ use Ritc\Library\Traits\LogitTraits;
  * - v1.0.0β0 - First live version                                              - 09/15/2014 wer
  * - v0.1.0β  - Initial version                                                 - 01/18/2014 wer
  */
-class GroupsModel implements ModelInterface
+class GroupsModel extends ModelAbstract
 {
     use LogitTraits, DbUtilityTraits;
 
@@ -43,112 +44,12 @@ class GroupsModel implements ModelInterface
     }
 
     /**
-     * Generic create function to create a single record.
-     * @param array $a_values required
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * in ModelAbstract
+     * create
+     * read
+     * update
+     * delete
      */
-    public function create(array $a_values = array())
-    {
-        $a_required_keys = [
-            'group_name',
-            'group_description',
-            'group_auth_level',
-            'group_immutable'
-        ];
-        $a_psql = [
-            'table_name'  => $this->db_table,
-            'column_name' => $this->primary_index_name
-        ];
-        $a_params = [
-            'a_required_keys' => $a_required_keys,
-            'a_field_names'   => $this->a_db_fields,
-            'a_psql'          => $a_psql
-        ];
-        try {
-            return $this->genericCreate($a_values, $a_params);
-        }
-        catch (ModelException $e) {
-            $message = $e->errorMessage();
-            $code = $e->getCode();
-            throw new ModelException($message, $code);
-        }
-    }
-
-    /**
-     * @param array $a_search_for
-     * @param array $a_search_params
-     * @return mixed
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function read(array $a_search_for = array(), array $a_search_params = array())
-    {
-        $a_parameters = [
-            'table_name'     => $this->db_table,
-            'a_search_for'   => $a_search_for,
-            'a_allowed_keys' => $this->a_db_fields,
-            'order_by'       => 'group_name ASC'
-        ];
-        $a_parameters = array_merge($a_parameters, $a_search_params);
-        try {
-            return $this->genericRead($a_parameters);
-        }
-        catch (ModelException $e) {
-            $message = $e->errorMessage();
-            $code = $e->getCode();
-            throw new ModelException($message, $code);
-        }
-    }
-
-    /**
-     * Updates the group record
-     * @param array $a_values
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function update(array $a_values = array())
-    {
-        $a_values = $this->fixUpdateValues($a_values, 'group_immutable', ['group_name']);
-        if ($a_values === false) {
-            throw new ModelException('Missing Values', 320);
-        }
-        try {
-            return $this->genericUpdate($a_values);
-        }
-        catch (ModelException $e) {
-            $message = $e->errorMessage();
-            $code = $e->getCode();
-            throw new ModelException($message, $code);
-        }
-    }
-
-    /**
-     * Deletes the specific record.
-     * NOTE: this could leave orphaned records in the user_group_map table and group_role_map table
-     * if the database isn't set up for relations. If not sure, or want more control, use the
-     * deleteWithRelated method.
-     * @param int|array $group_id
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function delete($group_id = -1)
-    {
-        if ($group_id == -1) {
-            throw new ModelException('Missing required value.', 420);
-        }
-        if (is_array($group_id)) {
-            $a_ids = $group_id;
-        }
-        else {
-            $a_ids = [$group_id];
-        }
-        try {
-            return $this->genericDeleteMultiple($a_ids);
-        }
-        catch (ModelException $e) {
-            throw new ModelException('Unable to delete the record', 410);
-        }
-    }
 
     /**
      * Deletes related records as well as main group record.
@@ -159,13 +60,8 @@ class GroupsModel implements ModelInterface
     public function deleteWithRelated($group_id = -1)
     {
         if ($group_id == -1 || empty($group_id)) {
-            throw new ModelException('Missing required value(s)', 420);
-        }
-        try {
-            $this->o_db->startTransaction();
-        }
-        catch (ModelException $e) {
-            throw new ModelException('Unable to start the transaction.', 12, $e);
+            $error_code = ExceptionHelper::getCodeNumberModel('delete missing values');
+            throw new ModelException('Missing required value(s)', $error_code);
         }
         $o_ugm = new PeopleGroupMapModel($this->o_db);
         $o_people = new PeopleModel($this->o_db);
@@ -174,7 +70,7 @@ class GroupsModel implements ModelInterface
                 $results = $o_ugm->read($group_id);
             }
             catch (ModelException $e) {
-                throw new ModelException('Could not read the map records', 410);
+                throw new ModelException('Could not read the map records', $e->getCode(), $e);
             }
         }
         else {
@@ -182,50 +78,52 @@ class GroupsModel implements ModelInterface
                 $results = $o_ugm->read(['group_id' => $group_id]);
             }
             catch (ModelException $e) {
-                throw new ModelException('Could not read the map records.', 410);
+                throw new ModelException('Could not read the map records.', $e->getCode(), $e);
             }
         }
-        $a_people_ids = [];
-        $a_map_ids = [];
-        foreach ($results as $a_record) {
-            $a_people_ids[] = $a_record['people_id'];
-            $a_map_ids[] = $a_record['pgm_id'];
-        }
-        try {
-            $results = $o_people->delete($a_people_ids);
-            if (!$results) {
-                throw new ModelException('Could not delete the people records.', 410);
-            }
+        $transaction = false;
+        if (!empty($results)) {
             try {
-                $results = $o_ugm->delete($a_map_ids);
-                if (!$results) {
-                    throw new ModelException('Could not delete the people group map records.', 410);
-                }
-                try {
-                    $results = $this->delete($group_id);
-                    if ($results) {
-                        try {
-                            $this->o_db->commitTransaction();
-                        }
-                        catch (ModelException $e) {
-                            $this->o_db->rollbackTransaction();
-                            $this->error_message = $this->o_db->getSqlErrorMessage();
-                            throw new ModelException($this->error_message, 410);
-                        }
-                    }
-                }
-                catch (ModelException $e) {
-                    throw new ModelException($e->errorMessage(), $e->getCode(), $e);
-                }
+                $this->o_db->startTransaction();
+                $transaction = true;
             }
             catch (ModelException $e) {
-                throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+                throw new ModelException('Unable to start the transaction.', 12, $e);
+            }
+            $a_people_ids = [];
+            $a_map_ids = [];
+            foreach ($results as $a_record) {
+                $a_people_ids[] = $a_record['people_id'];
+                $a_map_ids[] = $a_record['pgm_id'];
+            }
+            try {
+                $o_people->delete($a_people_ids);
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Could not delete the people records.', $e->getCode(), $e);
+            }
+            try {
+                $o_ugm->delete($a_map_ids);
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Could not delete the people group map records.', $e->getCode(), $e);
+            }
+        }
+        try {
+            $this->delete($group_id);
+            if ($transaction) {
+                try {
+                    $this->o_db->commitTransaction();
+                }
+                catch (ModelException $e) {
+                    $this->o_db->rollbackTransaction();
+                    $this->error_message = $this->o_db->getSqlErrorMessage();
+                    throw new ModelException($this->error_message, 410);
+                }
             }
         }
         catch (ModelException $e) {
-            $this->o_db->rollbackTransaction();
-            $this->error_message = $this->o_db->getSqlErrorMessage();
-            throw new ModelException($this->error_message, 410);
+            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
         }
         return true;
     }

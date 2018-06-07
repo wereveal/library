@@ -9,6 +9,7 @@ use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
+use Ritc\Library\Views\SitemapView;
 
 /**
  * Sitemap router.
@@ -37,6 +38,7 @@ class SitemapController implements ControllerInterface
      */
     public function route()
     {
-
+        $o_view = new SitemapView($this->o_di);
+        return $o_view->render();
     }
 }

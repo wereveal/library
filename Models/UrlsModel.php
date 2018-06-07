@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Interfaces\ModelInterface;
@@ -25,7 +26,7 @@ use Ritc\Library\Traits\LogitTraits;
  * - v1.0.0-beta.0  - Initial working version               - 2016-04-13 wer
  * - v1.0.0-alpha.0 - Initial version                       - 2016-04-10 wer
  */
-class UrlsModel implements ModelInterface
+class UrlsModel extends ModelAbstract
 {
     use LogitTraits, DbUtilityTraits;
 
@@ -39,107 +40,8 @@ class UrlsModel implements ModelInterface
     }
 
     /**
-     * Create a record using the values provided.
-     * @param array $a_values
-     * @return int
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function create(array $a_values = [])
-    {
-        $a_required_keys = [
-            'url_text'
-        ];
-        $a_psql = [
-            'table_name'  => $this->db_table,
-            'column_name' => $this->primary_index_name
-        ];
-        $a_params = [
-            'a_required_keys' => $a_required_keys,
-            'a_field_names'   => $this->a_db_fields,
-            'a_psql'          => $a_psql
-        ];
-        try {
-            return $this->genericCreate($a_values, $a_params);
-        }
-        catch (ModelException $e) {
-            $message = $e->errorMessage();
-            $code = $e->getCode();
-            throw new ModelException($message, $code);
-        }
-    }
-
-    /**
-     * Returns an array of records based on the search params provided.
-     * @param array $a_search_for    key pairs of field name => field value
-     * @param array $a_search_params \ref searchparams \ref readparams
-     * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function read(array $a_search_for = [], array $a_search_params = [])
-    {
-        $a_parameters = [
-            'table_name'     => $this->db_table,
-            'a_search_for'   => $a_search_for,
-            'a_allowed_keys' => $this->a_db_fields,
-            'order_by'       => 'url_text ASC'
-        ];
-        $a_parameters = array_merge($a_parameters, $a_search_params);
-        try {
-            return $this->genericRead($a_parameters);
-        }
-        catch (ModelException $e) {
-            $message = $e->errorMessage();
-            $code = $e->getCode();
-            throw new ModelException($message, $code);
-        }
-    }
-
-    /**
-     * Update for a record using the values provided.
-     * @param array $a_values
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function update(array $a_values = [])
-    {
-        $meth = __METHOD__ . '.';
-        if (Arrays::isArrayOfAssocArrays($a_values)) {
-            foreach ($a_values as $key => $a_record) {
-                if ($this->validId($a_record['url_id'])) {
-                    if ($this->isImmutable($a_record['url_id'])) {
-                        unset($a_values[$key]['url_text']);
-                    }
-                }
-                else {
-                    throw new ModelException('Invalid Primary Index.', 330);
-                }
-            }
-        }
-        else {
-            if ($this->validId($a_values['url_id'])) {
-                if ($this->isImmutable($a_values['url_id'])) {
-                    unset($a_values['url_text']);
-                }
-            }
-            else {
-                throw new ModelException('Invalid Primary Index.', 330);
-            }
-        }
-        $log_message = 'Final Final values ' . var_export($a_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        try {
-            return $this->genericUpdate($a_values);
-        }
-        catch (ModelException $e) {
-            $message = $e->errorMessage();
-            $code = $e->getCode();
-            throw new ModelException($message, $code);
-        }
-    }
-
-    /**
      * Deletes a record based on the id provided.
+     * Overrides method in abstract
      * Checks to see if there are any other tables with relations.
      * @param int|array $id
      * @return bool

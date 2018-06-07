@@ -7,7 +7,7 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\ManagerControllerInterface;
+use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
@@ -19,8 +19,9 @@ use Ritc\Library\Views\UrlsView;
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.0
- * @date    2017-06-03 17:17:30
+ * @date    2018-06-06 11:28:33
  * @change_log
+ * - v1.1.0         - put into production                               - 2018-06-06 wer
  * - v1.1.0-beta.1  - Refactored to match refactoring of model          - 2017-06-19 wer
  * - v1.0.0         - Out of beta                                       - 2017-06-03 wer
  * - v1.0.0-beta.2  - Change to splitUrl to allow posted url to not     - 2017-06-02 wer
@@ -29,7 +30,7 @@ use Ritc\Library\Views\UrlsView;
  * - v1.0.0-beta.0  - Initial working version                           - 2016-04-13 wer
  * - v1.0.0-alpha.0 - Initial version                                   - 2016-04-11 wer
  */
-class UrlsController implements ManagerControllerInterface
+class UrlsController implements ConfigControllerInterface
 {
     use ControllerTraits, LogitTraits;
 
@@ -131,7 +132,7 @@ class UrlsController implements ManagerControllerInterface
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         try {
-            $this->o_urls_model->update($a_values);
+            $this->o_urls_model->update($a_values, 'url_immutable', ['url_text', 'url_host']);
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {

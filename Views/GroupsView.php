@@ -6,6 +6,7 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
@@ -53,22 +54,9 @@ class GroupsView
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = array())
+    public function renderList(array $a_message = [])
     {
-        $a_twig_values = $this->createDefaultTwigValues($a_message);
-
-        $a_values = [
-            'a_groups'    => array(
-                [
-                    'group_id'          => '',
-                    'group_name'        => '',
-                    'group_description' => '',
-                    'group_immutable'   => 'false'
-                ]
-            ),
-            'a_menus'     => $this->a_nav,
-        ];
-        $a_values = array_merge($a_twig_values, $a_values);
+        $meth = __METHOD__ . '.';
         try {
             $a_groups = $this->o_groups->read(array(), ['order_by' => 'group_name']);
         }
@@ -81,10 +69,14 @@ class GroupsView
                 $selected_key_name = 'selected' . $a_row['group_auth_level'];
                 $a_groups[$a_group_key][$selected_key_name] = ' selected';
             }
-            $a_values['a_groups'] = $a_groups;
         }
-        $tpl = $this->createTplString($a_values);
-        return $this->renderIt($tpl, $a_values);
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['a_groups'] = $a_groups;
+        $log_message = 'Twig values ' . var_export($a_twig_values, true);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
@@ -92,23 +84,27 @@ class GroupsView
      * @param array $a_values
      * @return string
      */
-    public function renderVerify(array $a_values = array())
+    public function renderVerify(array $a_values = [])
     {
         if ($a_values === array()) {
-            return $this->renderList(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
+            $a_message = ViewHelper::failureMessage('An Error Has Occurred. Please Try Again.');
+            return $this->renderList($a_message);
         }
-        $a_twig_values = $this->createDefaultTwigValues([], '/manager/config/groups/');
         $a_values = [
             'what'         => 'Group',
-            'name'         => $a_values['name'],
-            'page_url'     => '/manager/config/groups/',
-            'btn_value'    => $a_values['name'],
+            'name'         => $a_values['group_name'],
+            'form_action'  => '/manager/config/groups/',
+            'btn_value'    => $a_values['group_name'],
             'hidden_name'  => 'group_id',
-            'hidden_value' => $a_values['group_id'],
-            'tpl'          => 'verify_delete'
+            'hidden_value' => $a_values['group_id']
         ];
-        $a_twig_values = array_merge($a_twig_values, $a_values);
-        $tpl = $this->createTplString($a_twig_values);
-        return $this->renderIt($tpl, $a_twig_values);
+        $a_options = [
+            'tpl'         => 'verify_delete',
+            'page_prefix' => 'site_',
+            'location'    => '/manager/config/groups/',
+            'a_message'   => [],
+            'fallback'    => 'renderList'
+        ];
+        return $this->renderVerifyDelete($a_values, $a_options);
     }
 }

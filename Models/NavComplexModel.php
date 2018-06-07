@@ -112,8 +112,10 @@ class NavComplexModel
                 throw new ModelException('Missing required navgroup id.', 220, $e);
             }
         }
-        $where = "AND ng.ng_id = :ng_id\n";
-        $sql = $this->select_sql . $where . $this->select_order_sql;
+        $replace_this = 'ON ng.ng_id = map.ng_id';
+        $with_this = 'ON ng.ng_id = map.ng_id AND ng.ng_id = :ng_id';
+        $sql = str_replace($replace_this, $with_this, $this->select_sql);
+        $sql = $sql . $this->select_order_sql;
         $a_search_for = [':ng_id' => $ng_id];
         try {
             return $this->o_db->search($sql, $a_search_for);
@@ -132,14 +134,7 @@ class NavComplexModel
     public function getNavListAll()
     {
         $select_sql = trim(str_replace("WHERE n.nav_active = 'true'", '', $this->select_sql));
-        $order_by_sql = "
-            ORDER BYi ng.ng_id ASC,
-                n.nav_parent_id ASC,
-                n.nav_level ASC,
-                n.nav_order ASC,
-                n.nav_name ASC
-        ";
-        $sql = $select_sql . $order_by_sql;
+        $sql = $select_sql . $this->select_order_sql;
         try {
             return $this->o_db->search($sql);
         }
@@ -189,12 +184,14 @@ class NavComplexModel
         if ($parent_id == -1 || $ng_id == -1) {
             return false;
         }
+        $replace_this = "ON n.nav_id = map.nav_id";
+        $with_this = "ON n.nav_id = map.nav_id AND map.ng_id = :map_ng_id";
+        $sql = str_replace($replace_this, $with_this, $this->select_sql);
         $where = "
             AND n.nav_parent_id = :parent_id
             AND n.nav_id != :parent_nav_id
-            AND map.ng_id = :map_ng_id
         ";
-        $sql = $this->select_sql . $where . $this->select_order_sql;
+        $sql = $sql . $where . $this->select_order_sql;
         $a_search_for = [
             ':parent_id'     => $parent_id,
             ':parent_nav_id' => $parent_id,
@@ -240,16 +237,27 @@ class NavComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function getSitemap($ng_name = 'SiteMap', $auth_level = 0)
+    public function getSitemap(array $a_navgroups = ['Sitemap'])
     {
-        $sql = $this->select_sql . "
+        $sql = $this->select_sql;
+        $replace_this = 'ON ng.ng_id = map.ng_id';
+        $with_this = '';
+        $a_search_for = [];
+        foreach ($a_navgroups as $key => $navgroup) {
+            $with_this .= empty($with_this)
+                ? '('
+                : ' AND ';
+            $with_this .= 'ng.ng_name = :ng_name' . $key;
+            $a_search_for[':ng_name' . $key] = $navgroup;
+        }
+        if (!empty($with_this)) {
+            $with_this .= ')';
+        }
+        $sql = str_replace($replace_this, $with_this, $sql);
+        $sql = $sql . "
             AND n.nav_level = :nav_level
-            AND ng.ng_name = :ng_name
             ORDER BY n.nav_order";
-        $a_search_for = [
-            ':nav_level' => 1,
-            ':ng_name'   => $ng_name
-        ];
+        $a_search_for[':nav_level'] = 1;
         try {
             $results = $this->o_db->search($sql, $a_search_for);
         }
@@ -410,8 +418,8 @@ SELECT
     r.route_id,
     g.group_id,
     g.group_auth_level as auth_level
-FROM {$this->lib_prefix}urls as u
-JOIN {$this->lib_prefix}navigation as n
+FROM {$this->lib_prefix}navigation as n
+JOIN {$this->lib_prefix}urls as u
     ON n.url_id = u.url_id
 JOIN {$this->lib_prefix}nav_ng_map as map
     ON n.nav_id = map.nav_id

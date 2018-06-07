@@ -7,7 +7,7 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ViewHelper;
-use Ritc\Library\Interfaces\ManagerControllerInterface;
+use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\ConstantsView;
@@ -18,9 +18,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Class ConstantsController - controller for the Configuration page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.4.0-beta.4
- * @date    2018-04-21 13:26:46
+ * @version v1.4.0
+ * @date    2018-06-06 11:26:30
  * @change_log
+ * - v1.4.0        - Production version                              - 2018-06-06 wer
  * - v1.4.0-beta.4 - Refactoring of Trait reflected here             - 2018-04-21 wer
  * - v1.4.0-beta.3 - Name change of Trait.                           - 2017-06-20 wer
  * - v1.4.0-beta.2 - Refactoring of model reflected here             - 2017-06-19 wer
@@ -35,7 +36,7 @@ use Ritc\Library\Traits\LogitTraits;
  * - v1.0.1        - Adjusted to match file name change              - 11/13/2014 wer
  * - v1.0.0        - Initial version                                 - 04/02/2014 wer
  */
-class ConstantsController implements ManagerControllerInterface
+class ConstantsController implements ConfigControllerInterface
 {
     use LogitTraits, ConfigControllerTraits;
 

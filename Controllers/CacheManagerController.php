@@ -18,9 +18,10 @@ use Ritc\Library\Views\CacheManagerView;
  * Main router for Symfony based cache..
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.0
- * @date    2018-05-30 15:45:21
+ * @version 1.0.0
+ * @date    2018-06-06 11:30:29
  * @change_log
+ * - v1.0.0         - Initial production     - 2018-06-06 wer
  * - v1.0.0-alpha.0 - Initial version        - 2018-05-30 wer
  */
 class CacheManagerController implements ControllerInterface
