@@ -490,7 +490,6 @@ class NavComplexModel
         }
         try {
             $a_ng = $this->o_ng->readByName('Sitemap');
-            print_r($a_ng);
         }
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
@@ -498,7 +497,6 @@ class NavComplexModel
         $ng_id = $a_ng[0]['ng_id'];
         try {
             $results = $this->o_nnm->read(['nav_id' => $nav_id, 'ng_id' => $ng_id]);
-            print_r($results);
             $nnm_id = $results[0]['nnm_id'];
             try {
                 $this->o_nnm->delete($nnm_id);

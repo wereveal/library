@@ -66,8 +66,6 @@ trait ManagerControllerTraits
         $a_results = $this->o_auth->login($this->a_post); // authentication part
         if ($a_results['is_logged_in'] == 'true') {
             $min_auth_level = $this->a_router_parts['min_auth_level'];
-            print_r($a_results);
-            print "\n$min_auth_level\n";
             if ($this->o_auth->isAllowedAccess($a_results['people_id'], $min_auth_level, true)) { // authorization part
                 $this->o_session->setVar('login_id', $a_results['login_id']);
                 $this->o_session->setVar('adm_lvl', $a_results['auth_level']);

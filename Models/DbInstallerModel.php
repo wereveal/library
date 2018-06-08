@@ -447,7 +447,6 @@ class DbInstallerModel
                 foreach ($a_new_nnm as $key => $a_record) {
                     $a_new_nnm[$key]['nnm_id'] = $ids[$key];
                 }
-                print_r($a_new_nnm, true);
             }
             else {
                 $this->error_message = 'Could not insert new nav ng map. Empty results';
