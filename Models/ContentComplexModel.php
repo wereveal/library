@@ -25,8 +25,11 @@ class ContentComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
+    /** @var BlocksModel $o_blocks */
     private $o_blocks;
+    /** @var ContentModel $o_content */
     private $o_content;
+    /** @var PageBlocksMapModel $o_pbm */
     private $o_pbm;
 
     /**
@@ -81,7 +84,7 @@ class ContentComplexModel
             SELECT 
               p.page_id, p.page_title, p.page_description,
               b.b_name, b.b_type,
-              c.c_content, c.c_type
+              c.c_content, c.c_short_content, c.c_type
             FROM lib_page as p
             JOIN lib_page_blocks_map as pbm
               ON p.page_id = pbm.pbm_page_id
@@ -104,6 +107,43 @@ class ContentComplexModel
         $log_message = 'results ' . var_export($a_results, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
+        return $a_results;
+    }
+
+    /**
+     * Returns current featured content.
+     * @return mixed
+     * @throws ModelException
+     */
+    public function readAllFeatured()
+    {
+        $sql = "
+            SELECT 
+              p.page_id, p.page_title, p.page_description,
+              b.b_name, b.b_type,
+              c.c_content, c.c_short_content, c.c_type
+            FROM lib_page as p
+            JOIN lib_page_blocks_map as pbm
+              ON p.page_id = pbm.pbm_page_id
+            JOIN  lib_blocks as b
+              ON b.b_id = pbm.pbm_block_id
+            JOIN lib_content as c
+              ON c.c_pbm_id = pbm.pbm_id 
+                AND c.c_current = :c_current
+                AND c.c_location = :c_location
+            WHERE p.page_id = :page_id  
+        ";
+        $a_search_for = [
+            ':c_current'  => 'true',
+            ':c_location' => 'featured'
+        ];
+
+        try {
+            $a_results = $this->o_db->search($sql, $a_search_for);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
         return $a_results;
     }
 
