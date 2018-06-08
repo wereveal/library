@@ -55,17 +55,17 @@ class PeopleModel implements ModelInterface
     }
 
     ### Basic CRUD commands, required by interface, deals only with the {$this->lib_prefix}people table ###
-
     /**
      * Creates new people record(s) in the people table.
-     * @param array $a_values                      required Can be a simple assoc array or array of assoc arrays
-     *                                             e.g. ['login_id' => 'fred', 'real_name' => 'Fred', 'password' => 'letmein']
-     *                                             or
-     *                                             [
-     *                                             ['login_id' => 'fred',   'real_name' => 'Fred',   'password' => 'letmein'],
-     *                                             ['login_id' => 'barney', 'real_name' => 'Barney', 'password' => 'lethimin']
-     *                                             ].
-     *                                             Optional key=>values 'short_name',
+     *
+     * @param array $a_values required Can be a simple assoc array or array of assoc arrays
+     *                        e.g. ['login_id' => 'fred', 'real_name' => 'Fred', 'password' => 'letmein']
+     *                        or
+     *                        [
+     *                          ['login_id' => 'fred',   'real_name' => 'Fred',   'password' => 'letmein'],
+     *                          ['login_id' => 'barney', 'real_name' => 'Barney', 'password' => 'lethimin']
+     *                        ].
+     *                        Optional key=>values 'short_name',
      *                                             'description', 'is_logged_in',
      *                                             'is_active' & 'is_immutable'
      * @return array|bool

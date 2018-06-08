@@ -185,26 +185,6 @@ class NavgroupsModel implements ModelInterface
     }
 
     /**
-     * Returns a record based on the record id.
-     * @param int $id
-     * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function readById($id = -1)
-    {
-        if ($id < 1) {
-            throw new ModelException('A record id must be provided.', 220);
-        }
-        $a_search_values = ['ng_id' => $id];
-        try {
-            return $this->read($a_search_values);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
-        }
-    }
-
-    /**
      * Returns the whole record base on name.
      * @param string $name
      * @return array

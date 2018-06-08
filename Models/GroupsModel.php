@@ -130,29 +130,6 @@ class GroupsModel extends ModelAbstract
 
     ### Shortcuts ###
     /**
-     * Returns a record of the group specified by id.
-     * @param int $group_id
-     * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function readById($group_id = -1)
-    {
-        if (is_numeric($group_id) && $group_id > 0) {
-            try {
-                $results = $this->read(array('group_id' => $group_id));
-                return $results[0];
-            }
-            catch (ModelException $e) {
-                $this->error_message = "Unable to find a group with the group id {$group_id}";
-                throw new ModelException($this->error_message,210, $e);
-            }
-        }
-        else {
-            throw new ModelException('Missing group id', 220);
-        }
-    }
-
-    /**
      * Returns a record of the group specified by name.
      * @param string $group_name
      * @return array|bool

@@ -39,7 +39,7 @@ class NavNgMapModel extends ModelAbstract
 
     /**
      * Generic update for a record using the values provided.
-     * Required by interface but not used in this instance.
+     * Overrides abstract. Required by interface but not used in this instance.
      * The two fields in the table create a single primary key so can not be changed.
      * To change, an INSERT/DELETE thing has to be done.
      *
@@ -48,6 +48,7 @@ class NavNgMapModel extends ModelAbstract
      * @param array  $a_not_used
      * @return void
      * @throws ModelException
+     * @todo change so that it does the delete/insert thing... maybe.
      */
     public function update(array $a_values = [], $immutable = '', array $a_not_used = [])
     {

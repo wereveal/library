@@ -716,6 +716,30 @@ SQL;
     }
 
     /**
+     * Reads a record based on id.
+     * @param int $primary_id
+     * @return array|bool
+     * @throws ModelException
+     */
+    public function readById($primary_id = -1)
+    {
+        if (is_numeric($primary_id) && $primary_id > 0) {
+            $a_search_for = ['a_search_for' => [$this->primary_index_name => $primary_id]];
+            try {
+                return $this->genericRead($a_search_for);
+            }
+            catch (ModelException $e) {
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
+        else {
+            $message = 'Missing valid primary id value.';
+            $err_code = ExceptionHelper::getCodeNumberModel('read missing value');
+            throw new ModelException($message, $err_code);
+        }
+    }
+
+    /**
      * Returns the number of records in the table.
      * @param string $where the where values string if desired, e.g. 'fred' LIKE 'barney'.
      * @param array  $a_where_values
