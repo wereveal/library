@@ -67,4 +67,29 @@ class FormHelper
             'hidden_value' => $hidden_value
         ];
     }
+
+    /**
+     * Makes required key => value pairs for the checkbox.twig tpl.
+     * @param array $a_values
+     * @return array
+     */
+    public static function checkbox(array $a_values = [])
+    {
+        if (empty($a_values['id']) || empty($a_values['name']) || empty($a_values['label'])) {
+            return [];
+        }
+        $value = empty($a_values['value'])
+            ? 'true'
+            : $a_values['value'];
+        $checked = empty($a_values['checked'])
+            ? ''
+            : $a_values['checked'];
+        return [
+            'id'      => $a_values['id'],
+            'name'    => $a_values['name'],
+            'value'   => $value,
+            'checked' => $checked,
+            'label'   => $a_values['label']
+        ];
+    }
 }

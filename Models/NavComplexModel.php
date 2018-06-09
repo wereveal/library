@@ -138,12 +138,14 @@ class NavComplexModel
 
     /**
      * Attempt to get all the sub navigation for the parent, recursively.
-     * @param int $parent_id Required. Parent id of the navigation record.
-     * @param int $ng_id     Required. Id of the navigation group it belongs in.
+     *
+     * @param int    $parent_id Required. Parent id of the navigation record.
+     * @param int    $ng_id     Required. Id of the navigation group it belongs in.
+     * @param string $levels    Optional, defaults to all, for now it is either 'all' or 'none'
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function getChildrenRecursive($parent_id = -1, $ng_id = -1)
+    public function getChildrenRecursive($parent_id = -1, $ng_id = -1, $levels = 'all')
     {
         if ($parent_id == -1 || $ng_id == -1) {
             $error_code = ExceptionHelper::getCodeNumberModel('missing value');
@@ -158,11 +160,14 @@ class NavComplexModel
         }
         if (!empty($a_results)) {
             foreach ($a_results as $a_nav) {
-                try {
-                    $a_more_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
-                }
-                catch (ModelException $e) {
-                    throw new ModelException('A problem getting the children.', 210, $e);
+                $a_more_results = [];
+                if ($levels == 'all') {
+                    try {
+                        $a_more_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
+                    }
+                    catch (ModelException $e) {
+                        throw new ModelException('A problem getting the children.', 210, $e);
+                    }
                 }
                 $a_nav['submenu'] = $a_more_results;
                 $a_new_list[] = $a_nav;
@@ -332,11 +337,14 @@ class NavComplexModel
 
     /**
      * Returns an array that maps the site links available for the auth level provided.
-     * @param int $auth_level
+     *
+     * @param array  $a_navgroups  Optional, defaults to ['Sitemap']
+     * @param int    $auth_level   Optional, defaults to 0
+     * @param string $child_levels Optional, defaults to 'all', options are 'all', 'one', 'none'
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function getSitemap(array $a_navgroups = ['Sitemap'], $auth_level = 0)
+    public function getSitemap(array $a_navgroups = ['Sitemap'], $auth_level = 0, $child_levels = 'all')
     {
         $meth = __METHOD__ . '.';
         $sql = $this->select_sql;
@@ -380,7 +388,15 @@ class NavComplexModel
 
         foreach ($a_parents as $key => $record) {
             if ($record['auth_level'] <= $auth_level && $record['nav_id'] == $record['parent_id']) {
-                $a_children = $this->getChildrenRecursive($record['nav_id'], $record['ng_id']);
+                switch ($child_levels) {
+                    case 'one':
+                        $levels = 'none';
+                        break;
+                    case 'all':
+                    default:
+                        $levels = 'all';
+                }
+                $a_children = $this->getChildrenRecursive($record['nav_id'], $record['ng_id'], $levels);
                 foreach ($a_children as $child_key => $child_record) {
                     if ($child_record['auth_level'] > $auth_level) {
                         unset($a_children[$child_key]);

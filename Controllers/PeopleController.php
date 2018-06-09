@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
@@ -52,8 +53,14 @@ class PeopleController implements ManagerControllerInterface
         $this->setupManagerController($o_di);
         $this->o_view        = new PeopleView($o_di);
         $this->o_people      = new PeopleModel($this->o_db);
-        $this->o_complex     = new PeopleComplexModel($this->o_db);
-        $this->a_object_names = ['o_people', 'o_complex'];
+        try {
+            $this->o_complex = new PeopleComplexModel($o_di);
+        }
+        catch (CustomException $e) {
+            error_log("A fatal problem has occurred: " . $e->getMessage());
+            header("Location: " . SITE_URL);
+        }
+        $this->a_object_names = ['o_people'];
         $this->setupElog($o_di);
     }
 
@@ -70,7 +77,7 @@ class PeopleController implements ManagerControllerInterface
         switch ($form_action) {
             case 'new':
                 return $this->o_view->renderNew();
-            case 'modify':
+            case 'edit':
                 if (!empty($a_post['people_id'])) {
                     return $this->o_view->renderModify($a_post['people_id']);
                 }

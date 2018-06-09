@@ -177,6 +177,62 @@ trait ViewTraits
     }
 
     /**
+     * Builds the sitemap array or an error message.
+     *
+     * @param string $child_levels Optional, defaults to 'all', options are 'all', 'one', 'none'.
+     *                             All = all chilren, one = one child level, none = no children.
+     *                             Note that for now, only two children levels are available.
+     * @return array
+     */
+    public function buildSitemapArray($child_levels = 'all')
+    {
+        $a_sitemap = [];
+        if ($this->use_cache) {
+            $date_key = 'sitemap.html.date';
+            $value_key = 'sitemap.html.value';
+            $date = $this->o_cache->get($date_key);
+            if ($date == date('Ymd')) {
+                $a_values = $this->o_cache->get($value_key);
+                if (!empty($a_values)) {
+                    $a_sitemap = $a_values;
+                }
+            }
+        }
+        if (empty($a_sitemap)) {
+            $a_navgroups = ['Sitemap'];
+            if ($this->o_auth->isLoggedIn()) {
+                $auth_level = $this->o_session->getVar('adm_lvl');
+                if ($auth_level >= 9) {
+                    $a_navgroups[] = 'ConfigLinks';
+                    $a_navgroups[] = 'ManagerLinks';
+                    $a_navgroups[] = 'EditorLinks';
+                }
+                elseif ($auth_level >= 6) {
+                    $a_navgroups[] = 'ManagerLinks';
+                    $a_navgroups[] = 'EditorLinks';
+                }
+                elseif ($auth_level >= 4) {
+                    $a_navgroups[] = 'EditorLinks';
+                }
+            }
+            else {
+                $auth_level = 0;
+            }
+            try {
+                $a_sitemap = $this->o_nav->getSitemap($a_navgroups, $auth_level, $child_levels);
+            }
+            catch (ModelException $e) {
+                $a_sitemap = ViewHelper::errorMessage('Unable to retrieve the sitemap.');
+            }
+            if (empty($a_sitemap['message']) && $this->use_cache) {
+                $this->o_cache->set($date_key, date('Ymd'));
+                $this->o_cache->set($value_key, $a_sitemap);
+            }
+        }
+        return $a_sitemap;
+    }
+
+    /**
      * Creates some commonly used values to pass into a twig template.
      * @param array      $a_message Optional, defaults to []. Allows a message to be passed.
      * @param int|string $url_id    Optional, defaults to -1 which then uses current url_id.

@@ -5,7 +5,9 @@
  */
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\FormHelper;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\PeopleModel;
@@ -58,7 +60,13 @@ class PeopleView
         $this->o_people_model   = new PeopleModel($this->o_db);
         $this->o_group_model    = new GroupsModel($this->o_db);
         $this->o_pgm_model      = new PeopleGroupMapModel($this->o_db);
-        $this->o_people_complex = new PeopleComplexModel($this->o_db);
+        try {
+            $this->o_people_complex = new PeopleComplexModel($o_di);
+        }
+        catch (CustomException $e) {
+            error_log('A fatal problem has occurred: ' . $e->getMessage());
+            header("Location: " . SITE_URL);
+        }
         if (DEVELOPER_MODE) {
             $this->o_people_model->setElog($this->o_elog);
             $this->o_group_model->setElog($this->o_elog);
@@ -89,12 +97,38 @@ class PeopleView
             }
         }
         if (!empty($a_people)) {
+            $a_edit_btn = [
+                'form_action' => '/manager/config/people/',
+                'btn_value'   => 'edit',
+                'btn_label'   => 'Edit',
+                'btn_size'    => 'btn-xs',
+                'hidden_name' => 'people_id'
+            ];
+            $a_delete_btn = [
+                'form_action' => '/manager/config/people/',
+                'btn_value'   => 'verify',
+                'btn_label'   => 'Delete',
+                'btn_size'    => 'btn-xs',
+                'btn_color'   => 'btn-outline-danger',
+                'hidden_name' => 'people_id'
+            ];
             foreach($a_people as $key => $a_person) {
                 $highest_auth_level = $this->o_auth->getHighestAuthLevel($a_person['people_id']);
                 $a_people[$key]['auth_level'] = $highest_auth_level;
+                $a_edit_btn['hidden_value'] = $a_person['people_id'];
+                $a_delete_btn['hidden_value'] = $a_person['people_id'];
+                $a_people[$key]['edit_btn'] = FormHelper::singleBtnForm($a_edit_btn);
+                $a_people[$key]['delete_btn'] = FormHelper::singleBtnForm($a_delete_btn);
             }
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_new_btn = [
+            'form_action' => '/manager/config/people/',
+            'btn_value'   => 'new',
+            'btn_label'   => 'Create New Person',
+            'btn_size'    => 'btn-xs'
+        ];
+        $a_twig_values['new_btn'] = FormHelper::singleBtnForm($a_new_btn);
         $a_twig_values['a_people'] = $a_people;
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
@@ -118,7 +152,13 @@ class PeopleView
                 $log_message = 'A group values: ' . var_export($a_groups, true);
                 $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
                 foreach ($a_groups as $key => $a_group) {
-                    $a_groups[$key]['checked'] = '';
+                    $a_groups_cbx = [
+                        'id'    => 'groups' . $key,
+                        'name'  => 'groups[]',
+                        'label' => $a_group['group_name'],
+                        'value' => $a_group['group_id']
+                    ];
+                    $a_groups[$key]['group_cbx'] = FormHelper::checkbox($a_groups_cbx);
                 }
             }
         }
@@ -126,6 +166,16 @@ class PeopleView
             $a_message = ViewHelper::errorMessage('A problem occurred. Please try again.');
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_active_cbx = [
+            'id'    => 'is_active',
+            'name'  => 'person[is_active]',
+            'label' => 'Active'
+        ];
+        $a_immutable_cbx = [
+            'id'    => 'is_immutable',
+            'name'  => 'person[is_immutable]',
+            'label' => 'Immutable'
+        ];
         $a_twig_values['person'] = [
             'people_id'      => '',
             'login_id'       => '',
@@ -134,18 +184,22 @@ class PeopleView
             'description'    => '',
             'password'       => '',
             'is_active'      => 'false',
+            'active_cbx'     => FormHelper::checkbox($a_active_cbx),
+            'immutable_cbx'  => FormHelper::checkbox($a_immutable_cbx),
             'is_immutable'   => 'false',
             'is_logged_in'   => 'false',
             'last_logged_in' => '1000-01-01',
             'created_on'     => date('Y-m-d H:i:s'),
-            'groups'         => [],
+            'groups'         => $a_groups,
             'highest_role'   => 0
         ];
         $a_twig_values['action'] = 'create';
-        $a_twig_values['person']['groups'] = $a_groups;
-        $log_message = 'A person values: ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $a_twig_values['tpl'] = 'person_form';
+        $log_message = 'A twig values: ' . var_export($a_twig_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        print $log_message;
         $tpl = $this->createTplString($a_twig_values);
+        print 'Template: ' . $tpl . "\n";
         return $this->renderIt($tpl, $a_twig_values);
     }
 

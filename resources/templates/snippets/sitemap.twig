@@ -26,10 +26,10 @@
     {% for l3_menu_item in l2_menu_item.submenu %}
     <div class="row {{ class }}">
         <div class="col-12 col-lg-3 pad-left-4">
-            <a href="{{ l2_menu_item.url }}">{{ l2_menu_item.nav_text }}</a>
+            <a href="{{ l3_menu_item.url }}">{{ l3_menu_item.nav_text }}</a>
         </div>
         <div class="col-12 col-lg-9">
-            {{ l2_menu_item.nav_description }}
+            {{ l3_menu_item.nav_description }}
         </div>
     </div>
     {% endfor %}

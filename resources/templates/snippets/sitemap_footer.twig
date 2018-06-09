@@ -1,0 +1,26 @@
+{% set cols = 12 / a_menus|length %}
+    <div class="row small">
+    {% for l1_menu_item in a_menus %}
+        <div class="col-12 col-lg-{{ cols }}">
+            <a href="{{ l1_menu_item.url }}" class="small">{{ l1_menu_item.nav_text }}</a>
+            {% if l1_menu_item.submenu is not empty %}
+            <ul class="list-unstyled">
+            {% for l2_menu_item in l1_menu_item.submenu %}
+                <li>
+                    <a href="{{ l2_menu_item.url }}">{{ l2_menu_item.nav_text }}</a>
+                {% if l2_menu_item.submenu is not empty %}
+                    <ul class="list-unstyled">
+                    {% for l3_menu_item in l2_menu_item.submenu %}
+                        <li>
+                            <a href="{{ l3_menu_item.url }}">{{ l3_menu_item.nav_text }}</a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    {% endfor %}
+    </div>
