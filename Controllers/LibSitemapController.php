@@ -66,24 +66,24 @@ class LibSitemapController implements ControllerInterface
     {
         $nav_id = $this->a_post['nav_id'];
         try {
-            $results = $this->o_nav->addNavToSitemap($nav_id);
+            $this->o_nav->addNavToSitemap($nav_id);
         }
         catch (ModelException $e) {
             return ViewHelper::failureMessage($e->getMessage());
         }
-        return [];
+        return ViewHelper::successMessage();
     }
 
     private function removeFrom()
     {
         $nav_id = $this->a_post['nav_id'];
         try {
-            $results = $this->o_nav->removeNavFromSitemap($nav_id);
+            $this->o_nav->removeNavFromSitemap($nav_id);
         }
         catch (ModelException $e) {
             return ViewHelper::failureMessage($e->getMessage());
         }
-        return [];
+        return ViewHelper::successMessage();
     }
 
 }

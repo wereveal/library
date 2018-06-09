@@ -89,6 +89,14 @@ class NavComplexModel
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
+        if (empty($results)) {
+            try {
+                $this->o_nnm->create(['nav_id' => $nav_id, 'ng_id' => $ng_id]);
+            }
+            catch (ModelException $e) {
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
         return true;
     }
 

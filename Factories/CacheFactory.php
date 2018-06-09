@@ -51,7 +51,7 @@ class CacheFactory
             ? 'SimplePhpFiles'
             : $a_cache_config['cache_type'];
         $lifetime = empty($a_cache_config['lifetime'])
-            ? 0
+            ? defined('CACHE_TTL') ? CACHE_TTL : 604800
             : $a_cache_config['lifetime'];
         $namespace = empty($a_cache_config['namespace'])
             ? 'Ritc'

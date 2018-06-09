@@ -200,9 +200,9 @@ class RoutesHelper
     public function findValidRoute($request_uri = '')
     {
         $cache_key = 'route.valid.by.request_uri.';
-        $fixed_uri = str_replace('/', '_', $request_uri);
-        $cache_key .= Strings::makeAlphanumericPlus($fixed_uri);
+        $cache_key .= Strings::uriToCache($request_uri);
         if ($this->use_cache) {
+            /** @var array $valid_route */
             $valid_route = $this->o_cache->get($cache_key);
             if (!empty($valid_route)) {
                 return $valid_route;
@@ -213,7 +213,7 @@ class RoutesHelper
         foreach ($a_search_for as $key => $value) {
             try {
                 $a_results = $o_routes->readByRequestUri($value);
-                if (!empty($a_results)) {
+                if (!empty($a_results[0])) {
                     if ($this->use_cache) {
                         $this->o_cache->set($cache_key, $a_results[0]);
                     }
@@ -280,8 +280,9 @@ class RoutesHelper
         $cache_key = 'groups.for.route.' . $route_id;
         $use_cache = USE_CACHE && is_object($this->o_cache);
         if ($use_cache) {
-            $a_groups = $this->o_cache->get($cache_key);
-            if (!empty($a_groups)) {
+            $a_groups_json = $this->o_cache->get($cache_key);
+            if (!empty($a_groups_json)) {
+                $a_groups = json_decode($a_groups_json);
                 return $a_groups;
             }
         }
@@ -295,7 +296,8 @@ class RoutesHelper
                     $a_groups[] = $a_rgm['group_id'];
                 }
                 if ($use_cache) {
-                    $this->o_cache->set($cache_key, $a_groups);
+                    $json = json_encode($a_groups);
+                    $this->o_cache->set($cache_key, $json);
                 }
                 return $a_groups;
             }
@@ -313,21 +315,36 @@ class RoutesHelper
      * @param array $a_groups
      * @return int
      */
-    public function getMinAuthLevel(array $a_groups = array())
+    public function getMinAuthLevel(array $a_groups = [])
     {
         $meth = __METHOD__ . '.';
+        $hash = md5(json_encode($a_groups));
+        $key = 'route.minauthlevel.'.$hash;
+        if ($this->use_cache) {
+            $results = $this->o_cache->get($key);
+            if (!empty($results)) {
+                return $results;
+            }
+        }
         $min_auth_level = 0;
         $o_group = new GroupsModel($this->o_db);
+        $pi_name = $o_group->getPrimaryIndexName();
         foreach ($a_groups as $group_id) {
             try {
-                $results = $o_group->readById($group_id);
-                if (!empty($results) && $results['group_auth_level'] >= $min_auth_level) {
-                    $min_auth_level = $results['group_auth_level'];
+                $results = $o_group->readById($group_id, $pi_name);
+                if (!empty($results['group_auth_level'])) {
+                    $the_auth_level = $results['group_auth_level'];
+                    if ($the_auth_level < $min_auth_level) {
+                        $min_auth_level = $the_auth_level;
+                    }
                 }
             }
             catch (ModelException $e) {
                 $this->logIt("DB problem: " . $e->errorMessage(), LOG_ALWAYS, $meth . __LINE__);
             }
+        }
+        if ($this->use_cache) {
+            $this->o_cache->set($key, $min_auth_level);
         }
         return $min_auth_level;
     }

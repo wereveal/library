@@ -45,8 +45,27 @@ class SitemapView implements ViewInterface
     public function render()
     {
         $meth = __METHOD__ . '.';
-        $a_sitemap = [];
         $a_message = [];
+        $a_sitemap = $this->buildSitemapArray();
+        if (!empty($a_sitemap['message'])) {
+            $a_message = $a_sitemap;
+            $a_sitemap = [];
+        }
+        $log_message = 'sitemap ' . var_export($a_sitemap, true);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['a_sitemap'] = $a_sitemap;
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
+    }
+
+    /**
+     * Builds the sitemap array or an error message.
+     * @return array
+     */
+    public function buildSitemapArray()
+    {
+        $a_sitemap = [];
         if ($this->use_cache) {
             $date_key = 'sitemap.html.date';
             $value_key = 'sitemap.html.value';
@@ -84,15 +103,13 @@ class SitemapView implements ViewInterface
                 $a_sitemap = $o_nav->getSitemap($a_navgroups, $auth_level);
             }
             catch (ModelException $e) {
-                $a_message = ViewHelper::errorMessage('Unable to retrieve the sitemap.');
+                $a_sitemap = ViewHelper::errorMessage('Unable to retrieve the sitemap.');
+            }
+            if (empty($a_sitemap['message']) && $this->use_cache) {
+                $this->o_cache->set($date_key, date('Ymd'));
+                $this->o_cache->set($value_key, $a_sitemap);
             }
         }
-        $log_message = 'sitemap ' . var_export($a_sitemap, true);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-
-        $a_twig_values = $this->createDefaultTwigValues($a_message);
-        $a_twig_values['a_sitemap'] = $a_sitemap;
-        $tpl = $this->createTplString($a_twig_values);
-        return $this->renderIt($tpl, $a_twig_values);
+        return $a_sitemap;
     }
 }

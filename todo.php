@@ -6,13 +6,13 @@
 #############################################################################################################
 /*
  * @todo Tests
- * Blocks √
- * Cache √
- * Constants √
+ * Blocks √√
+ * Cache √√
+ * Constants √√
  * Sitemap
  * Content
- * Groups √
- * LibSitemap
+ * Groups √√
+ * LibSitemap √√
  * Navigation
  * Navgroups
  * Page (should include blocks, rebuild sitemap)
@@ -20,5 +20,5 @@
  * Routes (should include RGM)
  * Sitemap (builds view for pages)
  * Twig (does all three things)
- * Urls √
+ * Urls √√
  */

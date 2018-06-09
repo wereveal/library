@@ -126,7 +126,7 @@ class GroupsController implements ConfigControllerInterface
             : 'true';
         $this->logIt("Update vars: " . var_export($a_group, true), LOG_ON, $meth . __LINE__);
         try {
-            $this->o_model->update($a_group, 'group_immutable', ['group_name, group_auth_level']);
+            $this->o_model->update($a_group, 'group_immutable', ['group_name', 'group_auth_level']);
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {

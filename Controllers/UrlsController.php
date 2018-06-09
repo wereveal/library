@@ -6,6 +6,7 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Models\UrlsModel;
@@ -125,6 +126,10 @@ class UrlsController implements ConfigControllerInterface
             }
         }
         $a_values = $this->splitUrl($url);
+        if ($a_values === false) {
+            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/ or /fred/ or /fred.html');
+            return $this->o_urls_view->renderList($a_message);
+        }
         $a_values['url_id'] = $this->a_post['url_id'];
         $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 'true' : 'false';
 
@@ -190,11 +195,17 @@ class UrlsController implements ConfigControllerInterface
     /**
      * Splits the url into 3 components, scheme, host, and the rest of the url.
      * @param string $url
-     * @return array
+     * @return array|bool
      */
     private function splitUrl($url = '')
     {
         if (empty(strpos($url, '://'))) {
+            $url = Strings::removeTags($url);
+            $url = str_replace(' ', '', $url);
+            $test_string = SITE_URL . $url;
+            if (filter_var($test_string, FILTER_VALIDATE_URL) === false) {
+                return false;
+            }
             $scheme = SITE_PROTOCOL;
             $host   = 'self';
             $text   = $url;

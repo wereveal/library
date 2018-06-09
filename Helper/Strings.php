@@ -13,10 +13,10 @@ namespace Ritc\Library\Helper;
  * Renamed and modified version of old class Output which was the class name before v5.0.0.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 6.6.1
- * @date    2018-06-06 14:12:32
+ * @version 6.7.0
+ * @date    2018-06-08 15:28:42
  * @change_log
- * - v6.6.1 - bug fix, makeCamelCase                                            - 2018-06-06 wer
+ * - v6.7.0 - changed makeInternetUsable, backwards compatible                  - 2018-06-08 wer
  * - v6.6.0 - added new method to convert url to cache compatible string        - 2018-05-15 wer
  * - v6.5.0 - add new method to convert column number to Excel column letters   - 2018-03-06 wer
  * - v6.4.0 - added new method to trim slashes from front and back of string    - 2016-09-08 wer
@@ -241,8 +241,8 @@ class Strings
     }
 
     /**
-     * Makes the string alphanumeric plus _*.+!- in all lower case.
-     * Removes html and php tags first, replaces spaces with undersHelpers,
+     * Makes the string alphanumeric plus _*.+!-~ in all lower case.
+     * Removes html and php tags first, replaces spaces with underscores,
      * removes all other characters, then finally make lowercase.
      * @param string $the_string
      * @return string the modified string
@@ -251,7 +251,7 @@ class Strings
     {
         $the_string = self::removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
-        $the_string = preg_replace("/[^a-zA-Z0-9_*.+!\-]/", '', $the_string);
+        $the_string = preg_replace("/[^a-zA-Z0-9_.+!\-~]/", '', $the_string);
         return strtolower($the_string);
     }
 

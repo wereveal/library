@@ -577,6 +577,12 @@ SQL;
      */
     protected function fixUpdateValues(array $a_values = [], $immutable_field = '', array $a_immutable_fields = [])
     {
+        $meth = __METHOD__ . '.';
+        $log_message = 'a values ' . var_export($a_values, true);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
+        $log_message = 'a immut: ' . var_export($a_immutable_fields, true);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
                 $results = $this->fixUpdateValues($a_record);
@@ -598,7 +604,7 @@ SQL;
                 $primary_id = $a_values[$this->primary_index_name];
                 try {
                     $a_results = $this->readById($primary_id);
-                    if (isset($a_results[0][$immutable_field]) && $a_results[0][$immutable_field] == 'true') {
+                    if (isset($a_results[$immutable_field]) && $a_results[$immutable_field] == 'true') {
                         foreach ($a_immutable_fields as $field) {
                             unset($a_values[$field]);
                         }
@@ -611,6 +617,9 @@ SQL;
 
             }
         }
+        $log_message = 'final values ' . var_export($a_values, true);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         return $a_values;
     }
 
@@ -721,12 +730,19 @@ SQL;
      * @return array|bool
      * @throws ModelException
      */
-    public function readById($primary_id = -1)
+    public function readById($primary_id = -1, $pi_name = '')
     {
         if (is_numeric($primary_id) && $primary_id > 0) {
-            $a_search_for = ['a_search_for' => [$this->primary_index_name => $primary_id]];
+            if ($pi_name == '') {
+                $pi_name = $this->primary_index_name;
+            }
+            $a_search_for = ['a_search_for' => [$pi_name => $primary_id]];
             try {
-                return $this->genericRead($a_search_for);
+                $results = $this->genericRead($a_search_for);
+                if (!empty($results[0])) {
+                    return $results[0];
+                }
+                return [];
             }
             catch (ModelException $e) {
                 throw new ModelException($e->getMessage(), $e->getCode(), $e);

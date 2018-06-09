@@ -2,12 +2,16 @@
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
 {% for a_url in a_sitemap %}
     {% if a_url.loc %}
-    <url>
+<url>
         <loc>{{ a_url.loc  }}</loc>
         <changefreq>{% if a_url.changefreq %}{{ a_url.changefreq }}{% else %}yearly{% endif %}</changefreq>
-        {% if a_url.lastmod %}<lastmod>{{ a_url.lastmod }}</lastmod>{% endif %}
-        {% if a_url.priority %}<priority>{{ a_url.priority }}</priority>{% endif %}
-    </url>
+    {% if a_url.lastmod %}
+    <lastmod>{{ a_url.lastmod }}</lastmod>
+    {% endif %}
+    {% if a_url.priority %}
+    <priority>{{ a_url.priority }}</priority>
+    {% endif %}
+</url>
     {% endif %}
 {% endfor %}
 </urlset>

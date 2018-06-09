@@ -50,6 +50,11 @@ class LibSitemapView implements ViewInterface
         try {
             $a_nav_list = $this->o_nav->getNavListByAuthLevel(0);
             $a_available = [];
+            $btn_values = [
+                'form_action' => '/manager/config/sitemap/',
+                'btn_size'    => 'btn-sm',
+                'hidden_name' => 'nav_id',
+            ];
             foreach ($a_nav_list as $key => $item) {
                 if (empty($a_available[$item['nav_name']])) {
                     $in_sitemap = false; 
@@ -58,12 +63,7 @@ class LibSitemapView implements ViewInterface
                             $in_sitemap = true;
                         }
                     }
-                    $btn_values = [
-                        'form_action' => '/manager/config/sitemap/',
-                        'btn_size'    => 'btn-sm',
-                        'hidden_name' => 'nav_id',
-                        'hidden_value' => $item['nav_id']
-                    ];
+                    $btn_values['hidden_value'] = $item['nav_id'];
                     if ($in_sitemap) {
                         $btn_values['btn_value'] = 'remove_from';
                         $btn_values['btn_label'] = 'Remove';
@@ -105,7 +105,7 @@ class LibSitemapView implements ViewInterface
             'page_prefix' => LIB_TWIG_PREFIX,
             'twig_prefix' => TWIG_PREFIX,
             'twig_dir'    => 'pages',
-            'tpl'         => 'sitemap_xml.twig'
+            'tpl'         => 'sitemap_xml'
         ];
         $tpl = $this->createTplString($a_tpl_values);
         $file_contents = $this->renderIt($tpl, ['a_sitemap' => $a_sitemap]);
