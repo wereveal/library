@@ -17,11 +17,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Does all the Model expected operations, database CRUD and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.4.3
- * @date    2018-04-05 10:40:48
+ * @version v1.5.0
+ * @date    2018-06-10 11:07:31
  * @change_log
- * - v1.4.3    - bug fix in timestamp increment                              - 2018-04-05 wer
- * - v1.4.1    - ModelException changes reflected here                       - 2017-12-12 wer
+ * - v1.5.0    - New method, isImmutable                                     - 2018-06-10 wer
  * - v1.4.0    - moved some methods from PeopleComplex to here               - 2017-12-05 wer
  *               bug fixes too.
  * - v1.3.3    - DbUtilityTraits change reflected here                       - 2017-05-09 wer
@@ -214,7 +213,7 @@ class PeopleModel implements ModelInterface
                 throw new ModelException('Unable to determine if the record is immutable. Could not find existing record.', 435);
             }
             foreach ($results as $key => $record) {
-                if ($record['is_immutable'] === 'true') {
+                if (!empty($record['is_immutable']) && $record['is_immutable'] === 'true') {
                     throw new ModelException('Unable to delete the record: record is immutable.', 450);
                 }
             }
@@ -666,28 +665,6 @@ class PeopleModel implements ModelInterface
     }
 
     /**
-     * @param int $people_id
-     * @return bool
-     */
-    public function isId($people_id = -1)
-    {
-        if (ctype_digit($people_id) && $people_id != -1) {
-            $a_where_values = ['people_id' => $people_id];
-            try {
-                $results = $this->read($a_where_values);
-                if (isset($results[0]['people_id']) && $results[0]['people_id'] == $people_id) {
-                    return true;
-                }
-                return false;
-            }
-            catch (ModelException $e) {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    /**
      * @param string $login_id
      * @return bool
      */
@@ -724,6 +701,51 @@ class PeopleModel implements ModelInterface
     }
 
     /**
+     * @param int $people_id
+     * @return bool
+     */
+    public function isId($people_id = -1)
+    {
+        if (ctype_digit($people_id) && $people_id != -1) {
+            $a_where_values = ['people_id' => $people_id];
+            try {
+                $results = $this->read($a_where_values);
+                if (isset($results[0]['people_id']) && $results[0]['people_id'] == $people_id) {
+                    return true;
+                }
+                return false;
+            }
+            catch (ModelException $e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Verifies person is immutable.
+     * @param int $people_id
+     * @return bool
+     */
+    public function isImmutable($people_id = -1)
+    {
+        if (ctype_digit($people_id) && $people_id != -1) {
+            $a_where_values = ['people_id' => $people_id];
+            try {
+                $results = $this->read($a_where_values);
+                if (isset($results[0]['is_immutable']) && $results[0]['is_immutable'] == 'true') {
+                    return true;
+                }
+                return false;
+            }
+            catch (ModelException $e) {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns an array to be used to create or update a people record.
      * Values in are normally from a POSTed form.
      * @param array $a_person
@@ -735,7 +757,12 @@ class PeopleModel implements ModelInterface
         $new_person = empty($a_person['people_id'])
             ? true
             : false;
-        $a_person['password'] = $this->hashPass($a_person['password']);
+        if (substr($a_person['password'], 1) !== '*') {
+            $a_person['password'] = $this->hashPass($a_person['password']);
+        }
+        else {
+            $a_person['password'] = '';
+        }
         $a_fix_these = ['login_id', 'real_name', 'short_name', 'description'];
         foreach ($a_fix_these as $key) {
             if (isset($a_person[$key])) {

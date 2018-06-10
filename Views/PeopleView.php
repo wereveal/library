@@ -196,7 +196,7 @@ class PeopleView
         $a_twig_values['action'] = 'create';
         $a_twig_values['tpl'] = 'person_form';
         $log_message = 'A twig values: ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         print $log_message;
         $tpl = $this->createTplString($a_twig_values);
         print 'Template: ' . $tpl . "\n";
@@ -230,10 +230,10 @@ class PeopleView
             return $this->renderList($a_message);
         }
         try {
-            $a_default_groups = $this->o_group_model->read([], ['order_by' => 'group_auth_level DESC']);
-              $log_message = 'Groups:  ' . var_export($a_default_groups, TRUE);
+            $a_groups = $this->o_group_model->read([], ['order_by' => 'group_auth_level DESC']);
+              $log_message = 'Groups:  ' . var_export($a_groups, TRUE);
               $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-            if (empty($a_default_groups)) {
+            if (empty($a_groups)) {
                 $a_message = ViewHelper::errorMessage('An error occurred, please try again.');
                 return $this->renderList($a_message);
             }
@@ -242,22 +242,48 @@ class PeopleView
             $a_message = ViewHelper::errorMessage('An error occurred, please try again.');
             return $this->renderList($a_message);
         }
-        foreach ($a_default_groups as $key => $a_group) {
-            $a_default_groups[$key]['checked'] = '';
+        foreach ($a_groups as $key => $a_group) {
+            $a_groups_cbx = [
+                'id'    => 'groups' . $key,
+                'name'  => 'groups[]',
+                'label' => $a_group['group_name'],
+                'value' => $a_group['group_id']
+            ];
             foreach ($a_person['groups'] as $a_person_group) {
-                if ($a_person_group['group_id'] === $a_default_groups[$key]['group_id']) {
-                    $a_default_groups[$key]['checked'] = ' checked';
+                if ($a_person_group['group_id'] === $a_groups[$key]['group_id']) {
+                    $a_groups_cbx['checked'] = ' checked';
                 }
             }
+            $a_groups[$key]['group_cbx'] = FormHelper::checkbox($a_groups_cbx);
         }
-        $a_person['groups'] = $a_default_groups;
+        $a_person['groups'] = $a_groups;
+        $a_active_cbx = [
+            'id'    => 'is_active',
+            'name'  => 'person[is_active]',
+            'label' => 'Active'
+        ];
+        $a_immutable_cbx = [
+            'id'    => 'is_immutable',
+            'name'  => 'person[is_immutable]',
+            'label' => 'Immutable'
+        ];
+        if ($a_person['is_active'] == 'true') {
+            $a_active_cbx['checked'] = ' checked';
+        }
+        if ($a_person['is_immutable'] == 'true') {
+            $a_immutable_cbx['checked'] = ' checked';
+        }
+        $a_person['active_cbx'] = $a_active_cbx;
+        $a_person['immutable_cbx'] = $a_immutable_cbx;
         $a_person['password'] = '************';
           $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
         $a_twig_values = $this->createDefaultTwigValues();
         $a_twig_values['person'] = $a_person;
         $a_twig_values['action'] = 'update';
+        $a_twig_values['tpl'] = 'person_form';
           $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
+        $this->logIt('tpl: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 }

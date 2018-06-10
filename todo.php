@@ -16,7 +16,7 @@
  * Navigation
  * Navgroups
  * Page (should include blocks, rebuild sitemap)
- * People
+ * People √√
  * Routes (should include RGM)
  * Sitemap (builds view for pages)
  * Twig (does all three things)

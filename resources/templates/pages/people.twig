@@ -41,8 +41,6 @@
             <div class="col-6 col-lg-1">
                 {% if adm_lvl >= person.auth_level %}
                     {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with person.delete_btn %}
-                {% else %}
-                    &nbsp;
                 {% endif %}
             </div>
         </div>
