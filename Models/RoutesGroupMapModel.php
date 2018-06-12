@@ -5,9 +5,9 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
-use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -16,15 +16,16 @@ use Ritc\Library\Traits\LogitTraits;
  * Does all the Model expected operations, database CRUD and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2017-12-12 11:39:25
+ * @version v2.0.0
+ * @date    2018-06-12 08:10:59
  * @change_log
+ * - v2.0.0         - Refactored to extend ModelAbstract        - 2018-06-12 wer
  * - v1.0.0         - Initial production version                - 2017-12-12 wer
  * - v1.0.0-alpha.4 - Refactored to use ModelException          - 2017-06-18 wer
  * - v1.0.0-alpha.3 - DbUtilityTraits change reflected here     - 2017-05-09 wer
  * - v1.0.0-alpha.0 - Initial version                           - 08/01/2015 wer
  */
-class RoutesGroupMapModel implements ModelInterface
+class RoutesGroupMapModel extends ModelAbstract
 {
     use LogitTraits, DbUtilityTraits;
 
@@ -37,80 +38,16 @@ class RoutesGroupMapModel implements ModelInterface
         $this->setupProperties($o_db, 'routes_group_map');
     }
 
-    ### Basic CRUD commands, required by interface ###
-
-    /**
-     * Creates a new group_role map record in the routes_group_map table.
-     * @param array $a_values required
-     * @return bool|int
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function create(array $a_values = array())
-    {
-        $a_required_keys = [
-            'route_id',
-            'group_id'
-        ];
-        $a_psql = [
-            'table_name'  => $this->db_table,
-            'column_name' => $this->primary_index_name
-        ];
-        $a_params = [
-            'a_required_keys' => $a_required_keys,
-            'a_field_names'   => $this->a_db_fields,
-            'a_psql'          => $a_psql
-        ];
-        try {
-            return $this->genericCreate($a_values, $a_params);
-        }
-        catch (ModelException $e) {
-            throw new ModelException('Could not create new record(s)', 110);
-        }
-    }
-
-    /**
-     * @param array $a_search_values     ['rgm_id', 'group_id', 'route_id']
-     * @param array $a_search_parameters \ref searchparams \ref readparams
-     * @return mixed
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function read(array $a_search_values = [], array $a_search_parameters = [])
-    {
-        $a_search_parameters['a_search_for'] = $a_search_values;
-        $a_search_parameters['table_name']   = $this->db_table;
-        if (!isset($a_search_parameters['order_by'])) {
-            $a_search_parameters['order_by'] = 'group_id ASC, route_id ASC';
-        }
-        if (!isset($a_search_parameters['a_allowed_keys'])) {
-            $a_search_parameters['a_allowed_keys'] = $this->a_db_fields;
-        }
-        try {
-            return $this->genericRead($a_search_parameters);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
-        }
-    }
-
+    ### Basic CRUD commands, overrides Abtract ###
     /**
      * Returns all records in the table.
+     * Legacy method.
      * @return array|bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readAll()
     {
-        $a_parameters = [
-            'table_name'     => $this->db_table,
-            'a_search_for'   => [],
-            'a_allowed_keys' => $this->a_db_fields,
-            'order_by'       => 'group_id ASC, route_id ASC'
-        ];
-        try {
-            return $this->genericRead($a_parameters);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
-        }
+        return $this->read();
     }
 
     /**
@@ -120,11 +57,14 @@ class RoutesGroupMapModel implements ModelInterface
      *     Reasoning. The group_id and route_id form a unique index. As such
      *     they should not be modified. The record should always be deleted and
      *     a new one added. That is what this function actually does.
-     * @param array $a_values
+     *
+     * @param array  $a_values   Required ['rgm_id, group_id, route_id] all three
+     * @param string $not_used   As named, not used. required by abstract.
+     * @param array  $a_not_used As named, not used. required by abstract.
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function update(array $a_values = array())
+    public function update(array $a_values = array(), $not_used = '', array $a_not_used = [])
     {
         $a_required_keys = array(
             'rgm_id',
@@ -133,6 +73,8 @@ class RoutesGroupMapModel implements ModelInterface
         );
         $a_delete_ids = [];
         $create_values = [];
+        $error_code = 0;
+        $error_message = '';
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $a_record) {
                 $a_record = Arrays::removeUndesiredPairs($a_record, $a_required_keys);
@@ -165,47 +107,33 @@ class RoutesGroupMapModel implements ModelInterface
                     $this->create($create_values);
                     try {
                         $this->o_db->commitTransaction();
-                        return true;
                     }
                     catch (ModelException $e) {
-                        $this->error_message = $e->errorMessage();
+                        $error_message = $e->errorMessage();
                         $error_code = $e->getCode();
                     }
                 }
                 catch (ModelException $e) {
-                    $this->error_message = 'Unable to save the new map record.';
+                    $error_message = 'Unable to save the new map record.';
                     $error_code = $e->getCode();
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = 'Unable to delete the old map record.';
+                $error_message = 'Unable to delete the old map record.';
                 $error_code = $e->getCode();
             }
         }
         catch (ModelException $e) {
-            $this->error_message = $e->errorMessage();
+            $error_message = $e->errorMessage();
             $error_code = $e->getCode();
         }
-        $this->error_message .= $this->o_db->getSqlErrorMessage();
-        throw new ModelException($this->error_message, $error_code);
-    }
-
-    /**
-     * Deletes a record by rgm_id.
-     * @param string|array $rgm_id
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function delete($rgm_id = '')
-    {
-        if (empty($rgm_id)) {
-            throw new ModelException('Missing required values.', 420);
+        if (empty($error_message)) {
+            $this->error_message = '';
+            return true;
         }
-        try {
-            return $this->genericDelete($rgm_id);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
+        else {
+            $this->error_message = $error_message;
+            throw new ModelException($error_message, $error_code);
         }
     }
 

@@ -140,7 +140,7 @@ class RoutesView
         $a_twig_values['a_urls_select'] = $a_urls_select;
         $a_twig_values['a_urls_select_bottom'] = $a_urls_select_bottom;
           $log_message = 'a_twig_values ' . var_export($a_twig_values, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
           $this->logIt("tpl: " . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);

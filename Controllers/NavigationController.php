@@ -40,8 +40,7 @@ class NavigationController implements ManagerControllerInterface
         $this->setupElog($o_di);
         $this->setupManagerController($o_di);
         $this->o_view = new NavigationView($o_di);
-        $this->o_model = new NavComplexModel($this->o_db);
-        $this->o_model->setElog($this->o_elog);
+        $this->o_model = new NavComplexModel($o_di);
     }
 
     /**
@@ -103,23 +102,5 @@ class NavigationController implements ManagerControllerInterface
     public function delete()
     {
         return $this->o_view->renderList();
-    }
-
-    ### Extra ###
-    /**
-     * Does the modify.
-     * @return string
-     */
-    private function modify()
-    {
-        switch ($this->form_action) {
-            case 'verify':
-                return $this->verifyDelete();
-            case 'update':
-                return $this->update();
-            default:
-                $a_message = ViewHelper::failureMessage('A problem occured. Please try again.');
-                return $this->o_view->renderList($a_message);
-        }
     }
 }

@@ -166,6 +166,7 @@ class UrlsModel extends ModelAbstract
               SELECT * from {$this->lib_prefix}routes as r
               WHERE r.url_id = u.url_id 
             )
+            AND u.url_text != 'shared'
         ";
         try {
             return $this->o_db->search($sql);

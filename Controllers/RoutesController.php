@@ -6,13 +6,12 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Router;
-use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RoutesView;
@@ -59,6 +58,7 @@ class RoutesController implements ManagerControllerInterface
     }
 
     /**
+     * Main router for the controller.
      * @return string
      */
     public function route()
@@ -111,22 +111,14 @@ class RoutesController implements ManagerControllerInterface
             $a_message = ViewHelper::errorMessage('A Problem Has Occured. The route id was not provided.');
             return $this->o_view->renderList($a_message);
         }
-        $results = $this->o_model->delete($route_id);
-        if ($results) {
-            $a_results = [
-                'message' => 'Success!',
-                'type'    => 'success'
-            ];
+        try {
+            $this->o_model->delete($route_id);
+            $a_message = ViewHelper::successMessage();
         }
-        else {
-            $message = $this->o_model->getErrorMessage();
-            $a_results = [
-                'message' => $message,
-                'type'    => 'failure'
-            ];
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage('Error: ' . $e->getMessage());
         }
-
-        return $this->o_view->renderList($a_results);
+        return $this->o_view->renderList($a_message);
     }
 
     /**
@@ -136,11 +128,11 @@ class RoutesController implements ManagerControllerInterface
     public function save()
     {
         $a_route = $this->fixRoute($this->a_post['route']);
-        $results = $this->o_model->create($a_route);
-        if ($results) {
+        try {
+            $this->o_model->create($a_route);
             $a_message = ViewHelper::successMessage();
         }
-        else {
+        catch (ModelException $e) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new route could not be saved.');
         }
         return $this->o_view->renderList($a_message);
@@ -153,11 +145,11 @@ class RoutesController implements ManagerControllerInterface
     public function update()
     {
         $a_route = $this->fixRoute($this->a_post['route']);
-        $results = $this->o_model->update($a_route);
-        if ($results) {
+        try {
+            $this->o_model->update($a_route);
             $a_message = ViewHelper::successMessage();
         }
-        else {
+        catch (ModelException $e) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The route could not be updated.');
         }
         return $this->o_view->renderList($a_message);

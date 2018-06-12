@@ -412,11 +412,11 @@ class RoutesHelper
                 $request_uri = $_SERVER["REQUEST_URI"];
             }
         }
+        $cache_key = 'route_parts.for.';
+        $cache_key .= $request_uri != '/'
+            ? Strings::uriToCache($request_uri)
+            : 'home';
         if ($this->use_cache) {
-            $cache_key = 'route_parts.for.';
-            $cache_key .= $request_uri != '/'
-                ? Strings::uriToCache($request_uri)
-                : 'home';
             $a_route_parts = $this->o_cache->get($cache_key);
             if (!empty($a_route_parts)) {
                 $this->a_route_parts = $a_route_parts;

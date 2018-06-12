@@ -5,10 +5,12 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\PageModel;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
@@ -49,6 +51,7 @@ class PageController implements ManagerControllerInterface
     public function __construct(Di $o_di)
     {
         $this->o_di      = $o_di;
+        /** @var DbModel $o_db */
         $o_db            = $o_di->get('db');
         $this->o_session = $o_di->get('session');
         $this->o_router  = $o_di->get('router');
@@ -121,13 +124,12 @@ class PageController implements ManagerControllerInterface
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The page id was not provided.');
             return $this->o_view->renderList($a_message);
         }
-        $results = $this->o_model->delete($page_id);
-        if ($results) {
+        try {
+            $this->o_model->delete($page_id);
             $a_results = ViewHelper::successMessage();
         }
-        else {
-            $error_message = $this->o_model->getErrorMessage();
-            $a_results = ViewHelper::failureMessage($error_message);
+        catch (ModelException $e) {
+            $a_results = ViewHelper::errorMessage('Error: ' . $e->getMessage());
         }
         return $this->o_view->renderList($a_results);
     }
@@ -141,12 +143,12 @@ class PageController implements ManagerControllerInterface
         $meth = __METHOD__ . '.';
         $a_page = $this->a_post['page'];
         $this->logIt('Post Values' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
-        $results = $this->o_model->create($a_page);
-        if ($results) {
+        try {
+            $this->o_model->create($a_page);
             $a_message = ViewHelper::successMessage();
         }
-        else {
-            $message = $this->o_model->getErrorMessage();
+        catch (ModelException $e) {
+            $message = 'Error: ' . $e->getMessage();
             $a_message = ViewHelper::failureMessage($message);
         }
         return $this->o_view->renderList($a_message);
@@ -164,12 +166,12 @@ class PageController implements ManagerControllerInterface
         if (!isset($a_page['page_immutable'])) {
             $a_page['page_immutable'] = 'false';
         }
-        $results = $this->o_model->update($a_page);
-        if ($results) {
+        try {
+            $this->o_model->update($a_page);
             $a_message = ViewHelper::successMessage();
         }
-        else {
-            $message = $this->o_model->getErrorMessage();
+        catch(ModelException $e) {
+            $message = 'Error: ' . $e->getMessage();
             $a_message = ViewHelper::failureMessage($message);
         }
         return $this->o_view->renderList($a_message);

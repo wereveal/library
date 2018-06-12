@@ -41,8 +41,7 @@ class NavigationView
     {
         $this->setupElog($o_di);
         $this->setupView($o_di);
-        $this->o_nav_complex = new NavComplexModel($this->o_db);
-        $this->o_nav_complex->setElog($this->o_elog);
+        $this->o_nav_complex = new NavComplexModel($o_di);
     }
 
     /**
@@ -87,12 +86,13 @@ class NavigationView
     public function renderForm($nav_id = -1)
     {
         $meth = __METHOD__ . '.';
-        $a_twig_values = $this->createDefaultTwigValues('library');
+        $a_twig_values = $this->createDefaultTwigValues();
         /* Additional twig_values needed
          * action
          * a_uls_select['select']
          * a_nav_select['select']
          * selected0 - selected3
+         *
          */
         if ($nav_id == -1) {
             $a_twig_values['action'] = 'save';
