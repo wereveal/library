@@ -92,7 +92,7 @@
                     {% include cb_tpl with cb_values only %}
             </div>
             <div class="col-12 col-lg-2">
-            {% if row.b_immutable == 'true' and adm_lvl < 10 %}
+            {% if row.b_immutable == 'true' and adm_lvl < auth_lvl.superadmin %}
                 <span class="form-label d-lg-none bold mb-0">Immutable: </span>
             {% else %}
                 {% if row.b_immutable == 'true' %}
@@ -107,7 +107,7 @@
             <div class="col-12 col-lg-2">
                 <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
                 {% if row.b_immutable != 'true' %}
-                <button type="submit" name="submit" value="verify" class="btn btn-outline-orange btn-xs">Delete</button>
+                <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
                 {% endif %}
                 <input type="hidden" name="blocks[b_id]" value="{{ row.b_id }}" />
                 {% include hidden_tpl %}

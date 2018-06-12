@@ -58,7 +58,7 @@
         <div class="col {{ class }}">{{ tpl.tpl_name }}</div>
         <div class="col {{ class }}">{{ tpl.twig_dir }}</div>
         <div class="col {{ class }}">{{ tpl.twig_prefix }}</div>
-        {% if adm_lvl >= 9 %}
+        {% if adm_lvl >= auth_lvl.admin %}
         <div class="col {{ class }}">
             <input class="form-check-input" id="{{ this_checkbox }}" name="immutable" type="checkbox" value="true" checked>
             <label class="form-check-label" for="{{ this_checkbox }}">Immutable</label>

@@ -56,7 +56,7 @@
         {% set this_immutable = 'immutable' ~ loop.index %}
         <form action="{{ public_dir }}/manager/config/twig/" method="post">
         <div class="row {{ class }}">
-            {% if adm_lvl >= 9 or tpl.tpl_immutable == 'false' %}
+            {% if adm_lvl >= auth_lvl.admin or tpl.tpl_immutable == 'false' %}
                 <div class="col-lg {{ class }}">
                     <label for="{{ this_tpl_id }}" class="d-md-none pr-h">Template Name:</label>
                     <input type="text" id="{{ this_tpl_id }}" name="tpl_name" value="{{ tpl.tpl_name }}" class="colorful flexible">

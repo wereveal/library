@@ -6,6 +6,7 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\FormHelper;
 use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Models\PageModel;
@@ -191,6 +192,13 @@ class PageView
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['a_pages'] = $a_pages;
         $a_twig_values['a_message'] = $a_message;
+        $a_btn_form = [
+            'form_action' => '/manager/config/pages/',
+            'btn_value'   => 'new_page',
+            'btn_label'   => 'New Page',
+            'btn_size'    => 'btn-sm'
+        ];
+        $a_twig_values['new_btn'] = FormHelper::singleBtnForm($a_btn_form);
         $tpl = $this->createTplString($a_twig_values);
         $log_message = 'Twig Values ' . var_export($a_twig_values, TRUE);
         $this->logIt($log_message, LOG_ON, $meth . __LINE__);

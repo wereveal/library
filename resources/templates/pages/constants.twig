@@ -46,7 +46,7 @@
                 <input type="text" name="constant[const_value]" id="{{ id_name }}[const_value]" value="{{ row.const_value }}" maxlength="32" class="flexible colorful"/>
             </div>
             <div class="col-12 col-lg-2">
-            {% if row.const_immutable == 'true' and adm_lvl < 10 %}
+            {% if row.const_immutable == 'true' and adm_lvl < auth_lvl.superadmin %}
                 <span class="form-label d-lg-none bold mb-0">Immutable: </span>True
             {% else %}
                 {% if row.const_immutable == 'true' %}
@@ -61,13 +61,9 @@
             <div class="col-12 col-lg-2">
                 <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
                 {% if row.const_immutable != 'true' %}
-                <button type="submit" name="submit" value="verify" class="btn btn-outline-orange btn-xs">Delete</button>
+                <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
                 {% endif %}
-                <input type="hidden" name="tolken" value="{{ tolken }}" />
-                <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                <label for="hobbit" class="hobbit">Humans don't enter anything here.
-                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                </label>
+                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
                 <input type="hidden" name="constant[const_id]" value="{{ row.const_id }}" />
             </div>
         </div>

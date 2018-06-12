@@ -29,7 +29,7 @@
         {% set urlId = 'url-' ~ loop.index %}
         {% set immId = 'immutable-' ~ loop.index %}
         {% set finalRowNumber = (loop.length + 1) %}
-        {% if row.immutable == 'false' or adm_lvl >= 10 %}
+        {% if row.immutable == 'false' or adm_lvl >= auth_lvl.superadmin %}
         <form action="{{ public_id }}/manager/config/urls/" method="post" id="{{ formId }}">
             <div class="row {{ class }}">
                 <div class="col-12 col-md-6">

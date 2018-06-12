@@ -1,20 +1,12 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block body %}
     <div class="container container-bordered-square">
-        <div class="row">
-            <div class="col-md-1 offset-md-10">
-                <form action="{{ public_dir }}/manager/config/pages/" method= "post">
-                    <button type="submit" name="submit" value="new_page" class="btn btn-primary btn-xs">New Page</button>
-                    <input type="hidden" name="tolken" value="{{ tolken }}" />
-                    <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                    <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
-                </form>
-            </div>
-        </div>
         <div class="row list-header d-none d-lg-flex sticky-top">
             <div class="col-4 xtra-bold">Title</div>
             <div class="col-6 xtra-bold">URL</div>
-            <div class="col-2 xtra-bold">Action</div>
+            <div class="col-2 xtra-bold">
+                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with new_btn %}
+            </div>
         </div>
 {% for page in a_pages %}
     {% if 'library' not in page.page_url %}

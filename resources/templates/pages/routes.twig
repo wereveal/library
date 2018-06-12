@@ -47,7 +47,7 @@
         {% set class = loop.index is even ? 'even' : 'odd' %}
         {% set last_id = 'route' ~ (loop.length + 1) %}
         {% set for_id = 'route' ~ loop.index %}
-        {% if row.route_immutable == 'false' or adm_lvl >= 10 %}
+        {% if row.route_immutable == 'false' or adm_lvl >= auth_lvl.superadmin %}
         <form action="{{ public_dir }}/manager/config/routes/update/" method="post">
         <div class="row {{ class }} border-left border-right">
             <div class="col-12 col-lg-4">

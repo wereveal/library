@@ -13,7 +13,7 @@
         <fieldset class="nice-fieldset">
         <div class="form-group row alt-row">
             <label for="page_url" class="col-md-2 form-control-label alt-row form-label">Page URL: </label>
-        {% if adm_lvl < 9 and a_page.page_immutable == 'true' %}
+        {% if adm_lvl < auth_lvl.admin and a_page.page_immutable == 'true' %}
             <div class="col-md-10 alt-row aleft">
                 <input type="text" value="{{ a_page.url_text }}" class="form-control" disabled>
             </div>
@@ -62,11 +62,11 @@
         <div class="form-group row normal-row">
             <label for="page_immutable" class="col-md-2 form-control-label normal-row form-label">Immutable: </label>
             <div class="col-md-10 aleft">
-    {% if adm_lvl >= 10 and a_page.page_immutable == 'true' %}
+    {% if adm_lvl >= auth_lvl.superadmin and a_page.page_immutable == 'true' %}
                 <input type="checkbox" name="page[page_immutable]" checked="checked" id="page_immutable" class="colorful normal-row" value="1" />
     {% elseif a_page.page_immutable == 'true' %}
                 True <input type="hidden" name="page[page_immutable]" checked="checked" id="page_immutable" value="1"/>
-    {% elseif adm_lvl >= 9 %}
+    {% elseif adm_lvl >= auth_lvl.admin %}
                 <input type="checkbox" name="page[page_immutable]" id="page_immutable" class="form-control normal-row colorful" value="1" />
     {% else %}
                 False <input type="hidden" name="page[page_immutable]" value="0"/>

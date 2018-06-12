@@ -12,6 +12,7 @@ use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Helper\ViewHelper;
+use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\PageComplexModel;
@@ -187,9 +188,9 @@ trait ViewTraits
     public function buildSitemapArray($child_levels = 'all')
     {
         $a_sitemap = [];
+        $date_key = 'sitemap.html.date';
+        $value_key = 'sitemap.html.value';
         if ($this->use_cache) {
-            $date_key = 'sitemap.html.date';
-            $value_key = 'sitemap.html.value';
             $date = $this->o_cache->get($date_key);
             if ($date == date('Ymd')) {
                 $a_values = $this->o_cache->get($value_key);
@@ -242,10 +243,13 @@ trait ViewTraits
     {
         $meth = __METHOD__ . '.';
         $a_page_values = [];
+        $a_auth_levels = [];
         $url_id = $this->urlId($url_id);
         $cache_key = 'page_values.url_id.' . $url_id;
+        $group_cache_key = 'group_values.auth_levels';
         if ($this->use_cache) {
             $a_page_values = $this->o_cache->get($cache_key);
+            $a_auth_levels = $this->o_cache->get($group_cache_key);
         }
         if (!is_array($a_page_values) || empty($a_page_values)) {
             $a_page_values = $this->getPageValues($url_id);
@@ -255,6 +259,22 @@ trait ViewTraits
         }
           $log_message = 'page values ' . var_export($a_page_values, TRUE);
           $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        if (empty($a_auth_levels)) {
+            $o_group = new GroupsModel($this->o_db);
+            $o_group->setupElog($this->o_di);
+            try {
+                $a_groups = $o_group->read();
+                foreach ($a_groups as $a_group) {
+                    $a_auth_levels[strtolower($a_group['group_name'])] = $a_group['group_auth_level'];
+                }
+                if ($this->use_cache) {
+                    $this->o_cache->set($group_cache_key, $a_auth_levels);
+                }
+            }
+            catch (ModelException $e) {
+                $a_auth_levels = [];
+            }
+        }
         $a_menus = $this->retrieveNav($a_page_values['ng_id']);
         if (empty($a_message)) {
             $a_message = ViewHelper::fullMessage(['message' => '']);
@@ -270,6 +290,7 @@ trait ViewTraits
             'hobbit'         => '',
             'a_menus'        => $a_menus,
             'adm_lvl'        => $this->adm_level,
+            'auth_lvls'      => $a_auth_levels,
             'twig_prefix'    => TWIG_PREFIX,
             'lib_prefix'     => LIB_TWIG_PREFIX,
             'assets_dir'     => ASSETS_DIR,
@@ -355,20 +376,34 @@ trait ViewTraits
 
     /**
      * Sets the class property $adm_level to a value of the highest auth level
-     * found or 0 if not found.
-     * @param string $login_id
+     * found for login_id or 0 if not found.
+     * 
+     * @param string $login_id Optional, if empty tries to use $_SESSION['login_id'].
      */
     protected function setAdmLevel($login_id = '')
     {
-        if ($login_id != '') {
-            $this->adm_level = $this->o_auth->getHighestAuthLevel($login_id);
+        $login_id = empty($login_id)
+            ? empty($_SESSION['login_id'])
+                ? 'empty'
+                : $_SESSION['login_id']
+            : $login_id;
+        $cache_key = 'adm.level.for.' . $login_id;
+        $adm_level = 0;
+        if ($this->use_cache) {
+            $adm_level = $this->o_cache->get($cache_key);
         }
-        elseif (isset($_SESSION['login_id'])) {
-            $this->adm_level = $this->o_auth->getHighestAuthLevel($_SESSION['login_id']);
+        if (empty($adm_level)) {
+            if ($login_id != 'empty') {
+                $adm_level = $this->o_auth->getHighestAuthLevel($login_id);
+            }
+            else {
+                $adm_level = 0;
+            }
         }
-        else {
-            $this->adm_level = 0;
+        if ($this->use_cache) {
+            $this->o_cache->set($cache_key, $adm_level);
         }
+        $this->adm_level = $adm_level;
     }
 
     /**
