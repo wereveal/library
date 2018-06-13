@@ -579,10 +579,10 @@ SQL;
     {
         $meth = __METHOD__ . '.';
         $log_message = 'a values ' . var_export($a_values, true);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $log_message = 'a immut: ' . var_export($a_immutable_fields, true);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
                 $results = $this->fixUpdateValues($a_record);
@@ -618,7 +618,7 @@ SQL;
             }
         }
         $log_message = 'final values ' . var_export($a_values, true);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         return $a_values;
     }

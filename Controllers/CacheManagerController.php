@@ -57,7 +57,7 @@ class CacheManagerController implements ControllerInterface
     {
         $a_message = ViewHelper::infoMessage('The cache can speed things up but can also temporarily mask changes.');
         $message = 'Form Action: ' . $this->form_action;
-        $this->logIt($message, LOG_ON, __METHOD__);
+        $this->logIt($message, LOG_OFF, __METHOD__);
         switch ($this->form_action) {
             case 'clear_cache':
                 if ($this->o_cache->clear()) {

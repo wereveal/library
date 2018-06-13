@@ -150,7 +150,7 @@ class PeopleController implements ManagerControllerInterface
         $meth = __METHOD__ . '.';
         $error_message = "Opps, the person was not updated.";
           $log_message = 'Post ' . var_export($this->a_post, TRUE);
-          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_person = $this->a_post['person'];
         if (!isset($this->a_post['groups']) || count($this->a_post['groups']) < 1) {

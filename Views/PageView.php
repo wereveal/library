@@ -201,8 +201,8 @@ class PageView
         $a_twig_values['new_btn'] = FormHelper::singleBtnForm($a_btn_form);
         $tpl = $this->createTplString($a_twig_values);
         $log_message = 'Twig Values ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-        $this->logIt("tpl: " . $tpl, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $this->logIt("tpl: " . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
