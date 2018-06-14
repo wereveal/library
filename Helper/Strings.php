@@ -13,9 +13,10 @@ namespace Ritc\Library\Helper;
  * Renamed and modified version of old class Output which was the class name before v5.0.0.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 6.7.0
- * @date    2018-06-08 15:28:42
+ * @version 6.8.0
+ * @date    2018-06-13 12:36:35
  * @change_log
+ * - v6.8.0 - added new methods makeGoodUrl, makeValidUrlScheme                 - 2018-06-13 wer
  * - v6.7.0 - changed makeInternetUsable, backwards compatible                  - 2018-06-08 wer
  * - v6.6.0 - added new method to convert url to cache compatible string        - 2018-05-15 wer
  * - v6.5.0 - add new method to convert column number to Excel column letters   - 2018-03-06 wer
@@ -241,9 +242,43 @@ class Strings
     }
 
     /**
+     * Does a few more things than raw filter_var($the_string, FILTER_SANITIZE_URL).
+     * Replaces spaces with underscores and removes bad stuff before running string
+     * through filter_var($the_string, FILTER_SANITIZE_URL).
+     *
+     * @param string $the_string
+     * @param bool   $allow_upper
+     * @return string
+     */
+    public static function makeGoodUrl($the_string = '', $allow_upper = true)
+    {
+        $the_string = self::removeTags($the_string);
+        $the_string = str_replace(' ', '_', $the_string);
+        $the_string = filter_var($the_string, FILTER_SANITIZE_URL);
+        if ($allow_upper === false) {
+            $the_string = strtolower($the_string);
+        }
+        $test_string = $the_string;
+        if (empty(strpos($test_string, '://'))) {
+            $test_string = SITE_URL . $test_string;
+        }
+        else {
+            list($scheme, $the_rest) = explode('://', $test_string);
+            $scheme = self::makeValidUrlScheme($scheme);
+            $test_string = $scheme . '://' . $the_rest;
+            $the_string = $test_string;
+        }
+        if (filter_var($test_string, FILTER_VALIDATE_URL) === false) {
+            $the_string = '';
+        }
+        return $the_string;
+    }
+
+    /**
      * Makes the string alphanumeric plus _*.+!-~ in all lower case.
-     * Removes html and php tags first, replaces spaces with underscores,
-     * removes all other characters, then finally make lowercase.
+     * This is an extension of filter_var($the_string, FILTER_SANITIZE_URL) using
+     * a subset of allowed characters and lowercase only. Will not work with URLs.
+     *
      * @param string $the_string
      * @return string the modified string
      */
@@ -251,6 +286,7 @@ class Strings
     {
         $the_string = self::removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
+        $the_string = filter_var($the_string, FILTER_SANITIZE_URL);
         $the_string = preg_replace("/[^a-zA-Z0-9_.+!\-~]/", '', $the_string);
         return strtolower($the_string);
     }
@@ -338,6 +374,26 @@ class Strings
     }
 
     /**
+     * Really this returns valid schemes as is and returns everything else as https.
+     *
+     * @param string $scheme
+     * @return string
+     */
+    public static function makeValidUrlScheme($scheme = '')
+    {
+        switch ($scheme) {
+            case 'http':
+            case 'https':
+            case 'ftp':
+            case 'gopher':
+            case 'mailto':
+            case 'file':
+                return $scheme;
+            default:
+                return 'https';
+        }
+    }
+    /**
      * Changes column numbers to column letters compatible with excel.
      * @param int  $var
      * @param bool $start_w_zero
@@ -376,11 +432,14 @@ class Strings
     /**
      * Remove HTML tags, javascript sections and white space.
      * Idea taken from php.net documentation.
+     *
      * @param string $html
      * @return string
      */
     public static function removeTags($html = '')
     {
+        /** @noinspection BadExpressionStatementJS */
+        /** @noinspection JSUnresolvedVariable */
         $search = [
             '@<script[^>]*?>.*?</script>@si', // Strip out javascript
             '@<[\/\!]*?[^<>]*?>@si',          // Strip out HTML tags
@@ -400,6 +459,8 @@ class Strings
      */
     public static function removeTagsWithDecode($string = '', $ent_flag = ENT_QUOTES)
     {
+        /** @noinspection BadExpressionStatementJS */
+        /** @noinspection JSUnresolvedVariable */
         $search = [
             '@<script[^>]*?>.*?</script>@si', // Strip out javascript
             '@<[\/\!]*?[^<>]*?>@si',          // Strip out HTML tags

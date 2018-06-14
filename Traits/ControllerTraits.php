@@ -15,9 +15,9 @@ use Ritc\Library\Services\Session;
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.4.0
- * @date    2017-12-02 08:51:44
+ * @date    2018-06-13 16:14:22
  * @change_log
- * - v1.4.0         - cleaned up some code, no functional changes               - 2017-12-02 wer
+ * - v1.4.0         - added the cache property for injection                    - 2018-06-13 wer
  * - v1.3.0         - added a commonly used property route_class                - 2017-05-10 wer
  * - v1.2.0         - added a commonly used property                            - 2017-02-06 wer
  * - v1.1.0         - added a commonly used property                            - 2016-09-09 wer
@@ -37,6 +37,8 @@ trait ControllerTraits
     protected $form_action = '';
     /** @var  string */
     protected $main_action = '';
+    /** @var object $o_cache one of several Symfony based cache classes. */
+    protected $o_cache;
     /** @var  DbModel */
     protected $o_db;
     /** @var  Di */
@@ -53,6 +55,8 @@ trait ControllerTraits
     protected $route_method = '';
     /** @var  string */
     protected $url_action_one = '';
+    /** @var bool */
+    protected $use_cache;
 
     /**
      * Does the common stuff that is normally done in the __contruct method.
@@ -81,6 +85,13 @@ trait ControllerTraits
         }
         if (!$this->o_session instanceof Session) {
             $this->o_session = $o_di->get('session');
+        }
+        if (empty($this->o_cache) && USE_CACHE) {
+            $o_cache = $o_di->get('cache');
+            if (is_object($o_cache)) {
+                $this->o_cache = $o_cache;
+                $this->use_cache = true;
+            }
         }
     }
 

@@ -85,11 +85,10 @@ class UrlsController implements ConfigControllerInterface
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $url = $this->a_post['url'];
-        if (!empty(strpos($url, '://'))) {
-            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-                $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
-                return $this->o_urls_view->renderList($a_message);
-            }
+        $url = Strings::makeGoodUrl($url);
+        if (empty($url)) {
+            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
+            return $this->o_urls_view->renderList($a_message);
         }
         $a_values  = $this->splitUrl($url);
         $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 'true' : 'false';
@@ -119,11 +118,10 @@ class UrlsController implements ConfigControllerInterface
             return $this->o_urls_view->renderList($a_message);
         }
         $url = $this->a_post['url'];
-        if (!empty(strpos($url, '://'))) {
-            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
-                $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
-                return $this->o_urls_view->renderList($a_message);
-            }
+        $url = Strings::makeGoodUrl($url);
+        if (empty($url)) {
+            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
+            return $this->o_urls_view->renderList($a_message);
         }
         $a_values = $this->splitUrl($url);
         if ($a_values === false) {
@@ -173,26 +171,6 @@ class UrlsController implements ConfigControllerInterface
     }
 
     /**
-     * Verifies that the scheme is a valid one for the app.
-     * @param string $value
-     * @return bool
-     */
-    private function isValidScheme($value = '')
-    {
-        switch ($value) {
-            case 'http':
-            case 'https':
-            case 'ftp':
-            case 'gopher':
-            case 'mailto':
-            case 'file':
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
      * Splits the url into 3 components, scheme, host, and the rest of the url.
      * @param string $url
      * @return array|bool
@@ -200,21 +178,13 @@ class UrlsController implements ConfigControllerInterface
     private function splitUrl($url = '')
     {
         if (empty(strpos($url, '://'))) {
-            $url = Strings::removeTags($url);
-            $url = str_replace(' ', '', $url);
-            $test_string = SITE_URL . $url;
-            if (filter_var($test_string, FILTER_VALIDATE_URL) === false) {
-                return false;
-            }
             $scheme = SITE_PROTOCOL;
             $host   = 'self';
             $text   = $url;
         }
         else {
             list($scheme, $text) = explode('://', $url);
-            if (!$this->isValidScheme($scheme)) {
-                $scheme = 'https';
-            }
+            $scheme = Strings::makeValidUrlScheme($scheme);
             $first_slash = strpos($text, '/');
             $host = substr($text, 0, $first_slash);
             $text = substr($text, $first_slash);

@@ -51,8 +51,8 @@ class RoutesController implements ManagerControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
-        $this->o_model   = new RoutesModel($this->o_db);
-        $this->o_view    = new RoutesView($o_di);
+        $this->o_model = new RoutesModel($this->o_db);
+        $this->o_view = new RoutesView($o_di);
         $this->a_object_names = ['o_model'];
         $this->setupElog($o_di);
     }
@@ -63,36 +63,15 @@ class RoutesController implements ManagerControllerInterface
      */
     public function route()
     {
-        $a_route_parts = $this->o_router->getRouteParts();
-        $main_action = $a_route_parts['route_action'];
-        $form_action = $a_route_parts['form_action'];
-        $url_action    = isset($a_route_parts['url_actions'][0])
-            ? $a_route_parts['url_actions'][0]
-            : '';
-        if ($main_action == '' && $url_action != '') {
-            $main_action = $url_action;
-        }
-        if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
-            if ($this->o_session->isNotValidSession($this->a_post, true)) {
-                header("Location: " . SITE_URL . '/manager/login/');
-            }
-        }
-        switch ($main_action) {
-            case 'save':
-                return $this->save();
+        switch ($this->form_action) {
             case 'delete':
                 return $this->delete();
+            case 'save_new':
+                return $this->save();
             case 'update':
-                if ($form_action == 'verify') {
-                    return $this->verifyDelete();
-                }
-                elseif ($form_action == 'update') {
-                    return $this->update();
-                }
-                else {
-                    $a_message = ViewHelper::failureMessage();
-                    return $this->o_view->renderList($a_message);
-                }
+                 return $this->update();
+            case 'verify':
+                return $this->verifyDelete();
             case '':
             default:
                 return $this->o_view->renderList();
@@ -102,12 +81,13 @@ class RoutesController implements ManagerControllerInterface
     ### Required by Interface ###
     /**
      * Deletes a record.
+     *
      * @return string
      */
     public function delete()
     {
         $route_id = $this->a_post['route_id'];
-        if ($route_id == -1) {
+        if (empty($route_id) || $route_id < 1) {
             $a_message = ViewHelper::errorMessage('A Problem Has Occured. The route id was not provided.');
             return $this->o_view->renderList($a_message);
         }
@@ -123,79 +103,117 @@ class RoutesController implements ManagerControllerInterface
 
     /**
      * Saves a record
+     *
      * @return string
      */
     public function save()
     {
         $a_route = $this->fixRoute($this->a_post['route']);
-        try {
-            $this->o_model->create($a_route);
-            $a_message = ViewHelper::successMessage();
+        if ($a_route === false) {
+            $a_message = ViewHelper::failureMessage('A Problem Has Occured. Required values missing.');
         }
-        catch (ModelException $e) {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new route could not be saved.');
+        else {
+            try {
+                $this->o_model->create($a_route);
+                $a_message = ViewHelper::successMessage();
+            }
+            catch (ModelException $e) {
+                $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new route could not be saved.');
+            }
         }
         return $this->o_view->renderList($a_message);
     }
 
     /**
      * Updates the record.
+     *
      * @return string
      */
     public function update()
     {
         $a_route = $this->fixRoute($this->a_post['route']);
-        try {
-            $this->o_model->update($a_route);
-            $a_message = ViewHelper::successMessage();
+        if ($a_route === false) {
+            $a_message = ViewHelper::failureMessage('A Problem Has Occured. Required values missing.');
         }
-        catch (ModelException $e) {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. The route could not be updated.');
+        else {
+            try {
+                $this->o_model->update($a_route);
+                $a_message = ViewHelper::successMessage();
+            }
+            catch (ModelException $e) {
+                $a_message = ViewHelper::failureMessage('A Problem Has Occured. The route could not be updated.');
+            }
         }
         return $this->o_view->renderList($a_message);
     }
 
     /**
      * Verifies the deletion.
+     *
      * @return string
      */
     public function verifyDelete()
     {
-        return $this->o_view->renderVerify($this->a_post);
+        $route_id = $this->a_post['route']['route_id'];
+        $cache_key = 'route.by.id.' . $route_id;
+        $a_route = [];
+        if ($this->use_cache) {
+            $a_route = $this->o_cache->get($cache_key);
+        }
+        if (empty($a_route)) {
+            try {
+                $a_results = $this->o_model->readById($route_id);
+                $a_route = $a_results[0];
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $a_route);
+                }
+            }
+            catch (ModelException $e) {
+                $a_message = ViewHelper::errorMessage('Unable to delete the record');
+                return $this->o_view->renderList($a_message);
+            }
+        }
+        $a_values = [
+            'what'          => 'Route',
+            'name'          => 'Route ' . $a_route['route_id'],
+            'form_action'   => '/manger/config/routes/',
+            'btn_value'     => 'Route',
+            'hidden_name'   => 'route_id',
+            'hidden_value'  => $a_route['route_id'],
+        ];
+        $a_options = [
+            'tpl'         => 'verify_delete',
+            'location'    => '/manager/config/routes/',
+            'fallback'    => 'renderList'
+        ];
+        return $this->o_view->renderVerifyDelete($a_values, $a_options);
     }
 
     /**
-     * Removes tags and makes fields single words, camelCase.
-     * @param array $a_route defaults to empty array.
-     * @return array
+     * Fixes values to be valid for save/updates.
+     *
+     * @param array $a_route Required ['url_id','route_class','route_method'].
+     * @return array|bool
      */
-    private function fixRoute(array $a_route = array())
+    private function fixRoute(array $a_route = [])
     {
-        if ($a_route == array()) {
-            return [
-                'url_id'          => '',
-                'route_class'     => '',
-                'route_method'    => '',
-                'route_action'    => '',
-                'route_immutable'=> 'false',
-                'route_id'        => 0
-            ];
+        if (empty($a_route) ||
+            empty($a_route['url_id']) ||
+            empty($a_route['route_class']) ||
+            empty($a_route['route_method'])
+        ) {
+            return false;
         }
-        foreach ($a_route as $key => $value) {
-            switch ($key) {
-                case 'route_id':
-                case 'route_immutable':
-                case 'url_id':
-                    break;
-                case 'route_class':
-                    $value = Strings::removeTagsWithDecode($value, ENT_QUOTES);
-                    $a_route[$key] = Strings::makeCamelCase($value, false);
-                    break;
-                default:
-                    $value = Strings::removeTagsWithDecode($value, ENT_QUOTES);
-                    $a_route[$key] = Strings::makeCamelCase($value, true);
-            }
-        }
+        $a_route['route_action'] = empty($a_route['route_action'])
+            ? ''
+            : $a_route['route_action'];
+        $a_route['route_immutable'] = empty($a_route['route_immutable'])
+            ? 'false'
+            : $a_route['route_immutable'];
+        $a_route['route_class'] = Strings::removeTagsWithDecode($a_route['route_class'], ENT_QUOTES);
+        $a_route['route_class'] = Strings::makeCamelCase($a_route['route_class'], false);
+        $a_route['route_method'] = Strings::removeTagsWithDecode($a_route['route_method'], ENT_QUOTES);
+        $a_route['route_method'] = Strings::makeCamelCase($a_route['route_method'], true);
         return $a_route;
     }
 }

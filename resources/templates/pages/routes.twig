@@ -48,7 +48,7 @@
         {% set last_id = 'route' ~ (loop.length + 1) %}
         {% set for_id = 'route' ~ loop.index %}
         {% if row.route_immutable == 'false' or adm_lvl >= auth_lvl.superadmin %}
-        <form action="{{ public_dir }}/manager/config/routes/update/" method="post">
+        <form action="{{ public_dir }}/manager/config/routes/" method="post">
         <div class="row {{ class }} border-left border-right">
             <div class="col-12 col-lg-4">
                 {% set select = {'select':row.a_urls} %}
@@ -68,7 +68,7 @@
             </div>
             <div class="col-12 col-lg-2">
                 <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
-                <button type="submit" name="submit" value="verify" class="btn btn-danger btn-xs">Delete</button>
+                <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
                 {% include hidden_stuph %}
                 <input type="hidden" name="route[route_id]" value="{{ row.route_id }}" />
             </div>
@@ -129,23 +129,7 @@
         </form>
         {% endif %}
     </div>
-    <div class="container">
-        <h3>Instructions</h3>
-        <ul>
-            <li>Routes maps the url to a class, method, and action.
-                Certain routes are fixed so that the app will work. They are not visible.
-            </li>
-            <li>Route Path is what appears in the browser address bar, e.g., '/about/charlie/' and is taken from the URL manager.</li>
-            <li>Route Class is the name of the class associated with the path, e.g., MasterController.
-                The class is required and must match the class name exactly.
-                The class is normally a controller.
-            </li>
-            <li>The method is the name of the method to be used. The method is required.
-                The method must match the method name exactly.
-            </li>
-            <li>The action is normally an argument that is used in the method. This is optional.</li>
-        </ul>
-    </div>
+    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
 {% endblock %}
 {# Expected values
     [
