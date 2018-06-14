@@ -102,7 +102,7 @@ class PeopleController implements ManagerControllerInterface
     }
 
     /**
-     * Saves the person mapped to group(s).
+     * Saves a new person mapped to group(s).
      * Returns array that specifies succsss or failure.
      * @return array a message regarding outcome.
      */

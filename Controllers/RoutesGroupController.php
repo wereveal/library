@@ -12,17 +12,17 @@ use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RoutesGroupView;
 
 /**
- * Class RoutesGroupController - Controller for the Routes to Group Admin page.
- * @details Allows one to map which routes have specific group access.
- *          If you are not in the group, you can't go there.
- *          The route to this controller has to already be in the database
- *          and should not be able to be deleted.
+ * Controller for the Routes to Group Admin page.
+ * Allows one to map which routes have specific group access.
+ * If you are not in the group, you can't go there.
+ * The route has to be in the database and should not be able to be deleted.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.0.0-alpha.0
  * @date    2015-08-04 04:25:11
  * @change_log
- * - v1.0.0-alpha.0 - Initial version                                       - 08/04/2015 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 08/04/2015 wer
+ * @todo Everything
  */
 class RoutesGroupController implements ManagerControllerInterface
 {

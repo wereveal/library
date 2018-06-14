@@ -11,10 +11,10 @@ $a_values = [
     'hidden_value'  => 'primary id, e.g. 1',
 ];
 $a_options = [
-    'tpl'         => 'verify_delete',
-    'page_prefix' => 'site_',
-    'location'    => '/manager/ (or an id like 12)',
+    'tpl'         => 'verify_delete', // if not lib_prefix ~ pages/verify_delete.twig, page_prefix should be set too
+    'page_prefix' => 'site_', // if not lib_
+    'location'    => '/manager/ (or an id like 12)', // not used often
     'a_message'   => ['type' => 'success', 'message' => 'Success'],
-    'fallback'    => 'render'
+    'fallback'    => 'render' // if something goes wrong, which method to fallback
 ];
 

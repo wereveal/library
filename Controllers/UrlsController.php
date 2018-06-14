@@ -109,10 +109,6 @@ class UrlsController implements ConfigControllerInterface
      */
     public function update()
     {
-        $meth = __METHOD__ . '.';
-        $log_message = 'Post ' . var_export($this->a_post, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         if (!isset($this->a_post['url_id']) || !isset($this->a_post['url'])) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occurred. The url could not be updated.');
             return $this->o_urls_view->renderList($a_message);
@@ -131,9 +127,6 @@ class UrlsController implements ConfigControllerInterface
         $a_values['url_id'] = $this->a_post['url_id'];
         $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 'true' : 'false';
 
-        $log_message = 'final values ' . var_export($a_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         try {
             $this->o_urls_model->update($a_values, 'url_immutable', ['url_text', 'url_host']);
             $a_message = ViewHelper::successMessage();
@@ -150,7 +143,27 @@ class UrlsController implements ConfigControllerInterface
      */
     public function verifyDelete()
     {
-        return $this->o_urls_view->renderVerify($this->a_post);
+        $url_id = $this->a_post['url_id'];
+        $url = $this->a_post['url'];
+        $immutable = empty($this->a_post['immutable'])
+            ? false
+            : true;
+        if ($immutable) {
+            $msg = ViewHelper::errorMessage('Unable to delete an immutable record.');
+            return $this->o_urls_view->renderList($msg);
+        }
+        $a_values = [
+            'what'          => 'URL',
+            'name'          => $url,
+            'form_action'   => '/manager/config/urls/',
+            'btn_value'     => 'Url',
+            'hidden_name'   => 'url_id',
+            'hidden_value'  => $url_id
+        ];
+        $a_options = [
+            'fallback' => 'renderList' // if something goes wrong, which method to fallback
+        ];
+        return $this->o_urls_view->renderVerifyDelete($a_values, $a_options);
     }
 
     /**

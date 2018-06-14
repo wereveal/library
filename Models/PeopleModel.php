@@ -39,6 +39,7 @@ use Ritc\Library\Traits\LogitTraits;
  * - v1.0.0β2  - extends the Base class, injects the DbModel, clean up       - 09/23/2014 wer
  * - v1.0.0β1  - First Live version                                          - 09/15/2014 wer
  * - v0.1.0β1  - Initial version                                             - 09/11/2014 wer
+ * @todo change to extend ModelAbstract
  */
 class PeopleModel implements ModelInterface
 {
@@ -233,42 +234,6 @@ class PeopleModel implements ModelInterface
         }
     }
 
-    ### Potentially multiple user methods ###
-    /**
-     * Read the people record(s) by people_id.
-     * @param int|array $people_id required may be a single id or a list of ids (array).
-     * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function readById($people_id = -1)
-    {
-        if (is_array($people_id)) {
-            $a_search_for = [];
-            foreach ($people_id as $id) {
-                if ($id < 1) {
-                    throw new ModelException("Missing people_id value.", 220);
-                }
-                $a_search_for[] = ['people_id' => $id];
-            }
-        }
-        elseif ($people_id < 1) {
-            throw new ModelException("Missing people_id value.", 220);
-        }
-        else {
-            $a_search_for = ['people_id' => $people_id];
-        }
-          $log_message = 'a search for ' . var_export($a_search_for, TRUE);
-          $this->logIt($log_message, LOG_OFF, __METHOD__);
-
-        try {
-            $results = $this->read($a_search_for);
-            return $results;
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
-        }
-    }
-
     /**
      * Reads the people record(s) by login_id.
      * @param string $login_id
@@ -300,8 +265,6 @@ class PeopleModel implements ModelInterface
             throw new ModelException($e->errorMessage(), $e->getCode(), $e);
         }
     }
-
-    ### Single User Methods ###
 
     /**
      * Gets the people_id (primary record key) for a specific login_id.
@@ -711,29 +674,6 @@ class PeopleModel implements ModelInterface
             try {
                 $results = $this->read($a_where_values);
                 if (isset($results[0]['people_id']) && $results[0]['people_id'] == $people_id) {
-                    return true;
-                }
-                return false;
-            }
-            catch (ModelException $e) {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Verifies person is immutable.
-     * @param int $people_id
-     * @return bool
-     */
-    public function isImmutable($people_id = -1)
-    {
-        if (ctype_digit($people_id) && $people_id != -1) {
-            $a_where_values = ['people_id' => $people_id];
-            try {
-                $results = $this->read($a_where_values);
-                if (isset($results[0]['is_immutable']) && $results[0]['is_immutable'] == 'true') {
                     return true;
                 }
                 return false;

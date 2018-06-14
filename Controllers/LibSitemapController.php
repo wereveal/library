@@ -18,11 +18,10 @@ use Ritc\Library\Views\LibSitemapView;
  * Manager for Sitemap.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.0
+ * @version 1.0.0
  * @date    2018-05-27 18:46:57
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2018-05-27 wer
- * @todo LibSitemapController.php - Everything
+ * - v1.0.0 - Initial version                                   - 2018-05-27 wer
  */
 class LibSitemapController implements ControllerInterface
 {
@@ -41,7 +40,6 @@ class LibSitemapController implements ControllerInterface
 
     public function route()
     {
-        // TODO: Implement route() method.
         switch ($this->form_action) {
             case 'build_xml':
                 $a_message = $this->o_view->createXmlSitemap();

@@ -93,25 +93,4 @@ class UrlsView
         return $this->renderIt($tpl, $a_twig_values);
     }
 
-    /**
-     * Renders the verify delete record form.
-     * @param $a_values
-     * @return string
-     */
-    public function renderVerify($a_values)
-    {
-        if ($a_values === array()) {
-            $a_message = ViewHelper::fullMessage(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
-            return $this->renderList($a_message);
-        }
-        $a_twig_values = $this->createDefaultTwigValues([], '/manager/config/urls/');
-        $a_twig_values['tpl']          = 'verify_delete';
-        $a_twig_values['what']         = 'URL';
-        $a_twig_values['name']         = $a_values['url'];
-        $a_twig_values['hidden_name']  = 'url_id';
-        $a_twig_values['hidden_value'] = $a_values['url_id'];
-        $a_twig_values['btn_value']    = 'URL';
-        $tpl = $this->createTplString($a_twig_values);
-        return $this->renderIt($tpl, $a_twig_values);
-    }
 }

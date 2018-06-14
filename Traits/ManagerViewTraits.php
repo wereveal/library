@@ -60,8 +60,11 @@ trait ManagerViewTraits
     }
 
     /**
-     * @param array $a_values required \see #verifydelete
-     * @param array $a_options optional but recommended \see #verifydelete
+     * Returns the verify delete form page.
+     *
+     * @param array $a_values required
+     * @param array $a_options optional but recommended
+     * @example verify_delete.php
      * @return string
      */
     public function renderVerifyDelete(array $a_values = [], array $a_options = [])

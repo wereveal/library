@@ -15,11 +15,10 @@ use Ritc\Library\Views\SitemapView;
  * Sitemap router.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.0
+ * @version 1.0.0
  * @date    2018-05-27 18:46:57
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2018-05-27 wer
- * @todo SitemapController.php - Everything
+ * - v1.0.0 - Initial version                                   - 2018-05-27 wer
  */
 class SitemapController implements ControllerInterface
 {

@@ -20,7 +20,8 @@ use Ritc\Library\Views\NavigationView;
  * @version v1.0.0-alpha.0
  * @date    2016-04-15 11:53:36
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2016-04-15 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2016-04-15 wer
+ * @todo Save, update, verify, delete
  */
 class NavigationController implements ManagerControllerInterface
 {

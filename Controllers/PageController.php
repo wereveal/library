@@ -26,6 +26,7 @@ use Ritc\Library\Views\PageView;
  * @change_log
  * - v1.0.1   - bug fix                                      - 2016-03-08 wer
  * - v1.0.0   - First working version                        - 11/27/2015 wer
+ * @todo Convert to use ConfigControllerTraits
  */
 class PageController implements ManagerControllerInterface
 {

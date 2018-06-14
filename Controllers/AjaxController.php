@@ -16,10 +16,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Does Ajax Calls used by the Config manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
+ * @version v1.0.0
  * @date    2018-04-10 11:14:16
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2018-04-10 wer
+ * - v1.0.0 - Initial version                                   - 2018-04-10 wer
  */
 class AjaxController
 {
@@ -63,8 +63,17 @@ class AjaxController
             'td_id' => '',
             'value' => 'Not Available'
         ];
+        $bad_results = json_encode([$bad_results]);
         if (empty($prefix_id)) {
-            return json_encode([$bad_results]);
+            return $bad_results;
+        }
+        $cache_key = 'ajax.doTwigDirs.' . $prefix_id;
+        $json = '';
+        if ($this->use_cache) {
+            $json = $this->o_cache->get($cache_key);
+        }
+        if (!empty($json)) {
+            return $json;
         }
         $o_dirs = new TwigDirsModel($this->o_db);
         try {
@@ -76,10 +85,14 @@ class AjaxController
                     'td_name' => $a_result['td_name']
                 ];
             }
-            return json_encode($a_encode_this);
+            $json = json_encode($a_encode_this);
+            if ($this->use_cache) {
+                $this->o_cache->set($cache_key, $json);
+            }
+            return $json;
         }
         catch (ModelException $e) {
-            return json_encode($bad_results);
+            return $bad_results;
         }
     }
 
@@ -91,9 +104,17 @@ class AjaxController
     private function forDirectories()
     {
         $prefix_id = $this->o_router->getPost('prefix_id');
-        $bad_results = [];
+        $bad_results = json_encode([[]]);
         if (empty($prefix_id)) {
-            return json_encode([$bad_results]);
+            return $bad_results;
+        }
+        $cache_key = 'ajax.forDirectories.' . $prefix_id;
+        $json = '';
+        if ($this->use_cache) {
+            $json = $this->o_cache->get($cache_key);
+        }
+        if (!empty($json)) {
+            return $json;
         }
         $o_tc = new TwigComplexModel($this->o_di);
         try {
@@ -102,10 +123,14 @@ class AjaxController
                 $a_results[$key]['tolken']  = $_SESSION['token'];
                 $a_results[$key]['form_ts'] = $_SESSION['idle_timestamp'];
             }
-            return json_encode($a_results);
+            $json = json_encode($a_results);
+            if ($this->use_cache) {
+                $this->o_cache->set($cache_key, $json);
+            }
+            return $json;
         }
         catch (ModelException $e) {
-            return json_encode([$bad_results]);
+            return $bad_results;
         }
     }
 }

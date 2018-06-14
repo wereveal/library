@@ -18,11 +18,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Various sitemap views.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.0
+ * @version 1.0.0
  * @date    2018-05-26 12:50:04
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2018-05-26 wer
- * @todo SitemapView.php - Everything
+ * - v1.0.0 - Initial version                                   - 2018-05-26 wer
  */
 class SitemapView implements ViewInterface
 {

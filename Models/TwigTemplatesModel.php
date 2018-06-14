@@ -148,42 +148,4 @@ class TwigTemplatesModel implements ModelInterface
         }
     }
 
-    /**
-     * Checks to see if the record is immutable.
-     * Obviously only works on existing records.
-     * @param $values
-     * @return bool
-     */
-    public function isImmutable($values)
-    {
-        $pim = $this->primary_index_name;
-        if (Arrays::isArrayOfAssocArrays($values)) {
-            foreach ($values as $a_record) {
-                $id = $a_record[$pim];
-                try {
-                    $search_results = $this->read([$pim => $id], ['a_fields' => ['tpl_immutable']]);
-                    if (isset($search_results[0]) && $search_results[0]['tpl_immutable'] == 'true') {
-                        return true;
-                    }
-                }
-                catch (ModelException $e) {
-                    return true;
-                }
-
-            }
-        }
-        else {
-            $id = $values[$pim];
-            try {
-                $search_results = $this->read([$pim => $id], ['a_fields' => ['tpl_immutable']]);
-                if (isset($search_results[0]) && $search_results[0]['tpl_immutable'] == 'true') {
-                    return true;
-                }
-            }
-            catch (ModelException $e) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

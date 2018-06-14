@@ -56,6 +56,8 @@ trait DbUtilityTraits
     protected $db_type = 'mysql';
     /** @var  string */
     protected $error_message = '';
+    /** @var string $immutable_field */
+    protected $immutable_field = '';
     /** @var string */
     protected $lib_prefix = 'lib_';
     /** @var \Ritc\Library\Services\DbModel */
@@ -672,6 +674,55 @@ SQL;
     }
 
     /**
+     * Checks to see if the record is immutable.
+     * There has to be a field in the table that has immutable in its name
+     * else it will be false.
+     *
+     * @param int $record_id
+     * @return bool
+     */
+    protected function isImmutable($record_id = -1)
+    {
+        if ($record_id < 1 || empty($this->immutable_field)) {
+            false;
+        }
+        try {
+            $results = $this->readById($record_id);
+            if (!empty($results[0][$this->immutable_field]) && $results[0][$this->immutable_field] === 'true') {
+                return true;
+            }
+            return false;
+        }
+        catch (ModelException $e) {
+            return true;
+        }
+    }
+
+    /**
+     * Checks to see if the id is valid.
+     * @param string $id
+     * @return bool
+     */
+    public function isValidId($id = '')
+    {
+        if (empty($id)) {
+            false;
+        }
+        try {
+            $results = $this->readById($id);
+            if (!empty($results[$this->primary_index_name]) &&
+                $results[$this->primary_index_name] === $id
+            ) {
+                return true;
+            }
+            return false;
+        }
+        catch (ModelException $e) {
+            return false;
+        }
+    }
+
+    /**
      * Creates an array of required keys to do db opperations.
      * By default, returns all fields except the primary index name.
      * @param array $a_exclude   Optional, defaults to empty
@@ -726,7 +777,9 @@ SQL;
 
     /**
      * Reads a record based on id.
-     * @param int $primary_id
+     *
+     * @param int    $primary_id
+     * @param string $pi_name
      * @return array|bool
      * @throws ModelException
      */
@@ -807,6 +860,19 @@ SQL;
             $value = $this->o_db->retrieveFormattedSqlErrorMessage();
         }
         $this->error_message = $value;
+    }
+
+    /**
+     * Sets the class property immutable_field from the list of db_fields, if it exists.
+     */
+    protected function setImmutableField()
+    {
+       foreach ($this->a_db_fields as $field) {
+           if (strpos($field, 'immutable') !== false) {
+               $this->immutable_field = $field;
+               break;
+           }
+       }
     }
 
     /**
@@ -917,6 +983,7 @@ SQL;
                     $this->setErrorMessage($e->errorMessage());
                 }
                 $this->setPrimaryIndexName();
+                $this->setImmutableField();
             }
         }
     }
