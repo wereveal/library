@@ -681,14 +681,14 @@ SQL;
      * @param int $record_id
      * @return bool
      */
-    protected function isImmutable($record_id = -1)
+    public function isImmutable($record_id = -1)
     {
         if ($record_id < 1 || empty($this->immutable_field)) {
             false;
         }
         try {
             $results = $this->readById($record_id);
-            if (!empty($results[0][$this->immutable_field]) && $results[0][$this->immutable_field] === 'true') {
+            if (!empty($results[$this->immutable_field]) && $results[$this->immutable_field] === 'true') {
                 return true;
             }
             return false;

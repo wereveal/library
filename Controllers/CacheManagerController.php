@@ -30,8 +30,6 @@ class CacheManagerController implements ControllerInterface
 
     /** @var int $cache_const_id */
     private $cache_const_id;
-    /** @var bool|object  */
-    private $o_cache;
     /** @var ConstantsModel $o_const */
     private $o_const;
 
@@ -43,10 +41,6 @@ class CacheManagerController implements ControllerInterface
     {
         $this->setupElog($o_di);
         $this->setupManagerController($o_di);
-        $o_cache = $o_di->get('cache');
-        if (is_object($o_cache)) {
-            $this->o_cache = $o_cache;
-        }
         $this->setupConst();
     }
 
@@ -72,7 +66,11 @@ class CacheManagerController implements ControllerInterface
                     $a_message = ViewHelper::successMessage();
                 }
                 else {
-                    $a_message = ViewHelper::failureMessage('Could not enable the cache.');
+                    $msg = 'Could not enable the cache. ';
+                    $msg .= !ini_get('opcache.enable')
+                        ? 'Opcache is not enabled.'
+                        : 'USE_CACHE record not found.';
+                    $a_message = ViewHelper::failureMessage($msg);
                 }
                 break;
             case 'disable_cache':
@@ -117,7 +115,7 @@ class CacheManagerController implements ControllerInterface
      */
     private function updateCacheRecord($which_way = 'false')
     {
-        if ($this->cache_const_id < 1) {
+        if ($this->cache_const_id < 1 || !ini_get('opcache.enable')) {
             return false;
         }
         $a_values = [

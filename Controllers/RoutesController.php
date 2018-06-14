@@ -162,8 +162,7 @@ class RoutesController implements ManagerControllerInterface
         }
         if (empty($a_route)) {
             try {
-                $a_results = $this->o_model->readById($route_id);
-                $a_route = $a_results[0];
+                $a_route = $this->o_model->readById($route_id);
                 if ($this->use_cache) {
                     $this->o_cache->set($cache_key, $a_route);
                 }
@@ -176,7 +175,7 @@ class RoutesController implements ManagerControllerInterface
         $a_values = [
             'what'          => 'Route',
             'name'          => 'Route ' . $a_route['route_id'],
-            'form_action'   => '/manger/config/routes/',
+            'form_action'   => '/manager/config/routes/',
             'btn_value'     => 'Route',
             'hidden_name'   => 'route_id',
             'hidden_value'  => $a_route['route_id'],

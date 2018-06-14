@@ -366,6 +366,10 @@ trait ViewTraits
                 $this->o_cache = $o_cache;
                 $this->use_cache = true;
             }
+            else {
+                $this->o_cache = null;
+                $this->use_cache = false;
+            }
         }
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             /** @var \Ritc\Library\Services\Elog $o_elog */

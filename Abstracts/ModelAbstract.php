@@ -75,15 +75,14 @@ abstract class ModelAbstract implements ModelInterface
     /**
      * Update for a record using the values provided.
      * @param array  $a_values        required
-     * @param string $immutable_field optional, field name that specifies record can be immutable.
      * @param array  $a_do_not_change optional, list of field names which should be immutable.
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function update(array $a_values = [], $immutable_field = '', array $a_do_not_change = [])
+    public function update(array $a_values = [], array $a_do_not_change = [])
     {
-        if (!empty($immutable_field) && !empty($a_do_not_change)) {
-            $results = $this->fixUpdateValues($a_values, $immutable_field , $a_do_not_change);
+        if (!empty($this->immutable_field) && !empty($a_do_not_change)) {
+            $results = $this->fixUpdateValues($a_values, $this->immutable_field , $a_do_not_change);
             if ($results !== false) {
                 $a_values = $results;
             }

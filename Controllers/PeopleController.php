@@ -210,6 +210,10 @@ class PeopleController implements ManagerControllerInterface
             $a_message = ViewHelper::errorMessage('An error has occurred and the person was not deleted. Please try again.');
             return $this->o_view->renderList($a_message);
         }
+        if ($this->o_people->isImmutable($people_id)) {
+            $a_message = ViewHelper::errorMessage('The person is immutable and cannot be deleted.');
+            return $this->o_view->renderList($a_message);
+        }
         try {
             $a_person = $this->o_people->read(['people_id' => $people_id]);
             $real_name = !empty($a_person[0]['real_name'])

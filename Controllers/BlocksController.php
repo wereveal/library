@@ -38,11 +38,10 @@ class BlocksController implements ConfigControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupController($o_di);
-        $this->a_object_names = [];
-        $this->setupElog($o_di);
+        $this->a_object_names = ['o_model'];
         $this->o_view = new BlocksView($o_di);
         $this->o_model = new BlocksModel($this->o_db);
-        $this->o_model->setupElog($o_di);
+        $this->setupElog($o_di);
     }
 
     public function route()

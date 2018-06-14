@@ -50,7 +50,7 @@ class NavNgMapModel extends ModelAbstract
      * @throws ModelException
      * @todo change so that it does the delete/insert thing... maybe.
      */
-    public function update(array $a_values = [], $immutable = '', array $a_not_used = [])
+    public function update(array $a_values = [], array $a_not_used = [])
     {
         throw new ModelException('Update not allowed.', 350);
     }

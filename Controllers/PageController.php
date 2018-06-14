@@ -14,6 +14,7 @@ use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
+use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PageView;
 
@@ -30,18 +31,10 @@ use Ritc\Library\Views\PageView;
  */
 class PageController implements ManagerControllerInterface
 {
-    use LogitTraits;
+    use LogitTraits, ConfigControllerTraits;
 
-    /** @var array */
-    private $a_post;
-    /** @var Di */
-    private $o_di;
     /** @var PageModel */
     private $o_model;
-    /** @var Router */
-    private $o_router;
-    /** @var Session */
-    private $o_session;
     /** @var PageView */
     private $o_view;
 
@@ -51,18 +44,11 @@ class PageController implements ManagerControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->o_di      = $o_di;
-        /** @var DbModel $o_db */
-        $o_db            = $o_di->get('db');
-        $this->o_session = $o_di->get('session');
-        $this->o_router  = $o_di->get('router');
-        $this->o_model   = new PageModel($o_db);
-        $this->o_view    = new PageView($o_di);
-        $this->a_post    = $this->o_router->getPost();
-        if (DEVELOPER_MODE) {
-            $this->o_elog = $o_di->get('elog');
-            $this->o_model->setElog($this->o_elog);
-        }
+        $this->setupController($o_di);
+        $this->a_object_names = ['o_model'];
+        $this->o_model = new PageModel($this->o_db);
+        $this->o_view = new PageView($o_di);
+        $this->setupElog($o_di);
     }
 
     /**
@@ -71,43 +57,18 @@ class PageController implements ManagerControllerInterface
      */
     public function route()
     {
-        $meth = __METHOD__ . '.';
-        $a_route_parts = $this->o_router->getRouteParts();
-        $this->logIt('Route Parts' . var_export($a_route_parts, TRUE), LOG_OFF, $meth . __LINE__);
-        $main_action = $a_route_parts['route_action'];
-        $form_action = $a_route_parts['form_action'];
-        $url_action    = isset($a_route_parts['url_actions'][0])
-            ? $a_route_parts['url_actions'][0]
-            : '';
-        if ($main_action == '' && $url_action != '') {
-            $main_action = $url_action;
-        }
-        if ($main_action == 'save' || $main_action == 'update' || $main_action == 'delete') {
-            if ($this->o_session->isNotValidSession($this->a_post, true)) {
-                header("Location: " . SITE_URL . '/manager/login/');
-            }
-        }
-        $this->logIt("Main Action: {$main_action}", LOG_OFF, $meth . __LINE__);
-        $this->logIt("Form Action: {$form_action}", LOG_OFF, $meth . __LINE__);
-        switch ($main_action) {
+        switch ($this->form_action) {
             case 'save':
                 return $this->save();
             case 'delete':
                 return $this->delete();
             case 'update':
-                if ($form_action == 'verify') {
-                    return $this->o_view->renderVerify();
-                }
-                elseif ($form_action == 'update') {
-                    return $this->update();
-                }
-                else {
-                    $a_message = ViewHelper::failureMessage();
-                    return $this->o_view->renderList($a_message);
-                }
+                return $this->update();
+            case 'verify':
+                return $this->verifyDelete();
             case 'new':
             case 'modify':
-                return $this->o_view->renderForm();
+                return $this->o_view->renderForm($this->form_action);
             case '':
             default:
                 return $this->o_view->renderList();
@@ -116,6 +77,7 @@ class PageController implements ManagerControllerInterface
 
     ### Required by Interface ###
     /**
+     * Deletes specifed record then displays the page list with results.
      * @return string
      */
     public function delete()
@@ -179,12 +141,27 @@ class PageController implements ManagerControllerInterface
     }
 
     /**
-     * Required by interface. Not called.
+     * Required by interface.
      * @return string
      */
     public function verifyDelete()
     {
-        return $this->o_view->renderVerify();
+
+        $a_values = [
+            'what'          => 'Page',
+            'name'          => 'Something to help one know which one, e.g. myConstant',
+            'extra_message' => 'an extra message',
+            'submit_value'  => 'value that is being submitted by button, defaults to delete',
+            'form_action'   => 'the url, e.g. /manger/config/constants/',
+            'cancel_action' => 'the url for canceling the delete if different from form action',
+            'btn_value'     => 'What the Button says, e.g. Constants',
+            'hidden_name'   => 'primary id name, e.g., const_id',
+            'hidden_value'  => 'primary id, e.g. 1',
+        ];
+        $a_options = [
+            'fallback'    => 'renderList' // if something goes wrong, which method to fallback
+        ];
+        return $this->o_view->renderVerifyDelete($a_values, $a_options);
     }
 
     /**

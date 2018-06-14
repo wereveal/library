@@ -1,8 +1,10 @@
 <?php
 /**
  * Class RoutesHelper
+ *
  * @package Ritc_Library
  */
+
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -34,19 +36,20 @@ class RoutesHelper
     private $a_route_parts;
     /** @var */
     private $o_cache;
-    /** @var \Ritc\Library\Services\DbModel  */
+    /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
-    /** @var \Ritc\Library\Services\Di  */
+    /** @var \Ritc\Library\Services\Di */
     private $o_di;
     /** @var string */
     private $route_path;
     /** @var string */
     private $request_uri;
-    /** @var bool  */
+    /** @var bool */
     private $use_cache = false;
 
     /**
      * RoutesHelper constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      * @param string                    $request_uri
      */
@@ -58,7 +61,7 @@ class RoutesHelper
         if (USE_CACHE) {
             $o_cache = $o_di->get('cache');
             if (is_object($o_cache)) {
-                $this->o_cache = $o_cache;
+                $this->o_cache   = $o_cache;
                 $this->use_cache = true;
             }
         }
@@ -69,6 +72,7 @@ class RoutesHelper
      * Compare request uri with route path.
      * Determines if the only difference between the request uri and the route path
      * is a missing or unneeded slash at the end or beginning.
+     *
      * @param string $request_uri required
      * @param string $route_path  required
      * @return bool
@@ -89,22 +93,21 @@ class RoutesHelper
 
     /**
      * Creates an array for possible uri to search for in database.
+     *
      * @param string $request_uri
      * @return array
      */
     private function createComparisonUri($request_uri = '')
     {
         if ($request_uri == '') {
-            return [
-                'original'   => $request_uri,
-                'lastplus'   => '',
-                'lastminus'  => '',
-                'startplus'  => '',
-                'startminus' => '',
-                'both'       => '',
-                'reversed'   => '',
-                'none'       => ''
-            ];
+            return ['original'   => $request_uri,
+                    'lastplus'   => '',
+                    'lastminus'  => '',
+                    'startplus'  => '',
+                    'startminus' => '',
+                    'both'       => '',
+                    'reversed'   => '',
+                    'none'       => ''];
         }
         $first_slash         = strpos($request_uri, '/');
         $last_slash          = strrpos($request_uri, '/');
@@ -112,73 +115,64 @@ class RoutesHelper
 
         /* example 'test/test' */
         if ($first_slash !== 0 && ($last_slash !== $possible_last_slash)) {
-            return [
-                'original'   => $request_uri,
-                'lastplus'   => $request_uri . '/',
-                'lastminus'  => $request_uri,
-                'startplus'  => '/' . $request_uri,
-                'startminus' => $request_uri,
-                'both'       => '/' . $request_uri . '/',
-                'reversed'   => '/' . $request_uri . '/',
-                'none'       => $request_uri
-            ];
+            return ['original'   => $request_uri,
+                    'lastplus'   => $request_uri . '/',
+                    'lastminus'  => $request_uri,
+                    'startplus'  => '/' . $request_uri,
+                    'startminus' => $request_uri,
+                    'both'       => '/' . $request_uri . '/',
+                    'reversed'   => '/' . $request_uri . '/',
+                    'none'       => $request_uri];
         }
         /* example 'test/test/' */
         if ($first_slash !== 0 && ($last_slash === $possible_last_slash)) {
-            return [
-                'original'   => $request_uri,
-                'lastplus'   => $request_uri,
-                'lastminus'  => substr($request_uri, 0, -1),
-                'startplus'  => '/' . $request_uri,
-                'startminus' => $request_uri,
-                'both'       => '/' . $request_uri,
-                'reversed'   => '/' . substr($request_uri, 0, -1),
-                'none'       => substr($request_uri, 0, -1)
-            ];
+            return ['original'   => $request_uri,
+                    'lastplus'   => $request_uri,
+                    'lastminus'  => substr($request_uri, 0, -1),
+                    'startplus'  => '/' . $request_uri,
+                    'startminus' => $request_uri,
+                    'both'       => '/' . $request_uri,
+                    'reversed'   => '/' . substr($request_uri, 0, -1),
+                    'none'       => substr($request_uri, 0, -1)];
         }
 
         /* example '/test/test/' */
         if ($first_slash === 0 && ($last_slash === $possible_last_slash)) {
-            return [
-                'original'   => $request_uri,
-                'lastplus'   => $request_uri,
-                'lastminus'  => substr($request_uri, 0, -1),
-                'startplus'  => $request_uri,
-                'startminus' => substr($request_uri, 1),
-                'both'       => $request_uri,
-                'reversed'   => substr(substr($request_uri, 1), 0, -1),
-                'none'       => substr(substr($request_uri, 1), 0, -1)
-            ];
+            return ['original'   => $request_uri,
+                    'lastplus'   => $request_uri,
+                    'lastminus'  => substr($request_uri, 0, -1),
+                    'startplus'  => $request_uri,
+                    'startminus' => substr($request_uri, 1),
+                    'both'       => $request_uri,
+                    'reversed'   => substr(substr($request_uri, 1), 0, -1),
+                    'none'       => substr(substr($request_uri, 1), 0, -1)];
         }
 
         /* example '/test/test' */
         if ($first_slash === 0 && ($last_slash !== $possible_last_slash)) {
-            return [
-                'original'   => $request_uri,
-                'lastplus'   => $request_uri . '/',
-                'lastminus'  => $request_uri,
-                'startplus'  => $request_uri,
-                'startminus' => substr($request_uri, 1),
-                'both'       => $request_uri . '/',
-                'reversed'   => substr($request_uri, 1) . '/',
-                'none'       => substr($request_uri, 1)
-            ];
+            return ['original'   => $request_uri,
+                    'lastplus'   => $request_uri . '/',
+                    'lastminus'  => $request_uri,
+                    'startplus'  => $request_uri,
+                    'startminus' => substr($request_uri, 1),
+                    'both'       => $request_uri . '/',
+                    'reversed'   => substr($request_uri, 1) . '/',
+                    'none'       => substr($request_uri, 1)];
         }
 
-        return [
-                'original'   => $request_uri,
+        return ['original'   => $request_uri,
                 'lastplus'   => '',
                 'lastminus'  => '',
                 'startplus'  => '',
                 'startminus' => '',
                 'both'       => '',
                 'reversed'   => '',
-                'none'       => ''
-        ];
+                'none'       => ''];
     }
 
     /**
      * Shortcut for setRouteParts and getRouteParts.
+     *
      * @param string $route_path
      * @return array
      */
@@ -194,6 +188,7 @@ class RoutesHelper
      * a subset of the request uri, e.g. /fred/flinstone/barney/rubble/
      * could return the route for /fred/flinstone/ if there is no
      * /fred/flinstone/barney/rubble/ request_uri based route.
+     *
      * @param string $request_uri
      * @return array
      */
@@ -208,7 +203,7 @@ class RoutesHelper
                 return $valid_route;
             }
         }
-        $o_routes = new RoutesComplexModel($this->o_di);
+        $o_routes     = new RoutesComplexModel($this->o_di);
         $a_search_for = $this->createComparisonUri($request_uri);
         foreach ($a_search_for as $key => $value) {
             try {
@@ -228,7 +223,7 @@ class RoutesHelper
         }
 
         /* Well, looks like the uri doesn't exist as is so check to see if a part of the uri is a route */
-        $uri = $a_search_for['none'];
+        $uri         = $a_search_for['none'];
         $a_uri_parts = explode('/', $uri);
         array_pop($a_uri_parts);
         $new_request_uri = '/' . implode('/', $a_uri_parts) . '/';
@@ -245,8 +240,9 @@ class RoutesHelper
      * any starting slashes and ending slashes.
      * For example: $request_uri = '/test/fred/barney/' and $route_path is '/test/'
      *              then the returned string = 'fred/barney'
+     *
      * @param string $request_uri required.
-     * @param string $route_path required.
+     * @param string $route_path  required.
      * @return string
      */
     private function prepareToExplode($request_uri = '', $route_path = '')
@@ -271,12 +267,16 @@ class RoutesHelper
     }
 
     /**
+     * Gets the groups gor a given route.
+     *
      * @param int $route_id
      * @return array|mixed
      */
     public function getGroups($route_id = -1)
     {
-        if ($route_id == -1) { return []; }
+        if ($route_id == -1) {
+            return [];
+        }
         $cache_key = 'groups.for.route.' . $route_id;
         $use_cache = USE_CACHE && is_object($this->o_cache);
         if ($use_cache) {
@@ -311,7 +311,8 @@ class RoutesHelper
     /**
      * Gets the min auth level needed for the route.
      * The groups for the route are passed in
-     *    and iterated searching the group db for the auth level.
+     * and iterated searching the group db for the auth level.
+     *
      * @param array $a_groups
      * @return int
      */
@@ -319,7 +320,7 @@ class RoutesHelper
     {
         $meth = __METHOD__ . '.';
         $hash = md5(json_encode($a_groups));
-        $key = 'route.minauthlevel.'.$hash;
+        $key  = 'route.minauthlevel.' . $hash;
         if ($this->use_cache) {
             $results = $this->o_cache->get($key);
             if (!empty($results)) {
@@ -327,8 +328,8 @@ class RoutesHelper
             }
         }
         $min_auth_level = 0;
-        $o_group = new GroupsModel($this->o_db);
-        $pi_name = $o_group->getPrimaryIndexName();
+        $o_group        = new GroupsModel($this->o_db);
+        $pi_name        = $o_group->getPrimaryIndexName();
         foreach ($a_groups as $group_id) {
             try {
                 $results = $o_group->readById($group_id, $pi_name);
@@ -351,17 +352,22 @@ class RoutesHelper
 
     /**
      * Returns minimum auth level for a route.
+     *
      * @param int $route_id if not supplied an auth level of 10 is returned.
      * @return int
      */
     public function getMinAuthLevelForRoute($route_id = -1)
     {
-        if ($route_id == -1) { return 10; }
+        if ($route_id == -1) {
+            return 10;
+        }
         $a_groups = $this->getGroups($route_id);
         return $this->getMinAuthLevel($a_groups);
     }
 
     /**
+     * Standard GETter for class property route_path.
+     *
      * @return string
      */
     public function getRoutePath()
@@ -370,6 +376,8 @@ class RoutesHelper
     }
 
     /**
+     * Standard GETter for class property a_route_parts.
+     *
      * @return array
      */
     public function getRouteParts()
@@ -378,6 +386,8 @@ class RoutesHelper
     }
 
     /**
+     * Standard GETter for class property request_uri.
+     *
      * @return string
      */
     public function getRequestUri()
@@ -388,22 +398,21 @@ class RoutesHelper
     /**
      * Sets the class property a_route_parts.
      * a_route_parts provides a lot of information regarding the route/page to be displayed.
+     *
      * @param string $request_uri
      */
     public function setRouteParts($request_uri = '')
     {
-        $meth = __METHOD__ . '.';
-        $a_route_parts = [
-            'route_id'       => 0,
-            'route_path'     => $request_uri,
-            'request_uri'    => $request_uri,
-            'route_class'    => 'MasterController',
-            'route_method'   => '',
-            'route_action'   => '',
-            'url_actions'    => [],
-            'groups'         => [],
-            'min_auth_level' => 0
-        ];
+        $meth          = __METHOD__ . '.';
+        $a_route_parts = ['route_id'       => 0,
+                          'route_path'     => $request_uri,
+                          'request_uri'    => $request_uri,
+                          'route_class'    => 'MasterController',
+                          'route_method'   => '',
+                          'route_action'   => '',
+                          'url_actions'    => [],
+                          'groups'         => [],
+                          'min_auth_level' => 0];
         if ($request_uri == '') {
             if ($this->request_uri != '') {
                 $request_uri = $this->request_uri;
@@ -413,9 +422,7 @@ class RoutesHelper
             }
         }
         $cache_key = 'route_parts.for.';
-        $cache_key .= $request_uri != '/'
-            ? Strings::uriToCache($request_uri)
-            : 'home';
+        $cache_key .= $request_uri != '/' ? Strings::uriToCache($request_uri) : 'home';
         if ($this->use_cache) {
             $a_route_parts = $this->o_cache->get($cache_key);
             if (!empty($a_route_parts)) {
@@ -427,7 +434,7 @@ class RoutesHelper
         if (!empty($a_route)) {
             $a_route_parts = $a_route;
         }
-        $log_message = 'Route Found:  ' . var_export($a_route, TRUE);
+        $log_message = 'Route Found:  ' . var_export($a_route, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         if ($a_route_parts['route_id'] !== 0) {
@@ -448,7 +455,7 @@ class RoutesHelper
             $a_route_parts['min_auth_level'] = $this->getMinAuthLevel($a_route_parts['groups']);
         }
 
-        $log_message = 'Route parts:  ' . var_export($a_route_parts, TRUE);
+        $log_message = 'Route parts:  ' . var_export($a_route_parts, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if ($this->use_cache) {
             $this->o_cache->set($cache_key, $a_route_parts);
@@ -457,6 +464,8 @@ class RoutesHelper
     }
 
     /**
+     * Sets the class property route_path.
+     *
      * @param string $route_path
      */
     public function setRoutePath($route_path = '')

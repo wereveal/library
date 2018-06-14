@@ -5,10 +5,10 @@
  */
 namespace Ritc\Library\Models;
 
+use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
-use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -17,31 +17,23 @@ use Ritc\Library\Traits\LogitTraits;
  * Does all the Model expected operations, database CRUD and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.5.0
- * @date    2018-06-10 11:07:31
+ * @version v2.0.0
+ * @date    2018-06-14 15:17:32 
  * @change_log
- * - v1.5.0    - New method, isImmutable                                     - 2018-06-10 wer
- * - v1.4.0    - moved some methods from PeopleComplex to here               - 2017-12-05 wer
+ * - v2.0.0    - Refactored to extend ModelAbstract             - 2018-06-14 wer            
+ * - v1.5.0    - New method, isImmutable                        - 2018-06-10 wer
+ * - v1.4.0    - moved some methods from PeopleComplex to here  - 2017-12-05 wer
  *               bug fixes too.
- * - v1.3.3    - DbUtilityTraits change reflected here                       - 2017-05-09 wer
- * - v1.3.0    - Moved the multi-table queries to own class                  - 2016-12-08 wer
- * - v1.2.0    - Refactoring of DbModel reflected here                       - 2016-03-18 wer
- * - v1.1.0    - refactoring to make compatible with postgresql              - 11/22/2015 wer
- * - v1.0.0    - initial working version                                     - 11/12/2015 wer
- * - v1.0.0β13 - removed roles from code                                     - 11/06/2015 wer
- * - v1.0.0β11 - Added missing method isId - causing bug elsewhere           - 09/25/2015 wer
- * - v1.0.0β10 - Added db error message retrieval                            - 09/23/2015 wer
- * - v1.0.0β9  - Added 'description' to database and added it here           - 09/22/2015 wer
- * - v1.0.0β8  - more changes to the readInfo method                         - 09/03/2015 wer
- * - v1.0.0β7  - had to rewrite the sql for the readInfo method              - 08/04/2015 wer
- * - v1.0.0β4  - reverted to injecting DbModel                               - 11/17/2014 wer
- * - v1.0.0β3  - changed to use DI/IOC                                       - 11/15/2014 wer
- * - v1.0.0β2  - extends the Base class, injects the DbModel, clean up       - 09/23/2014 wer
- * - v1.0.0β1  - First Live version                                          - 09/15/2014 wer
- * - v0.1.0β1  - Initial version                                             - 09/11/2014 wer
+ * - v1.3.3    - DbUtilityTraits change reflected here          - 2017-05-09 wer
+ * - v1.3.0    - Moved the multi-table queries to own class     - 2016-12-08 wer
+ * - v1.2.0    - Refactoring of DbModel reflected here          - 2016-03-18 wer
+ * - v1.1.0    - refactoring to make compatible with postgresql - 11/22/2015 wer
+ * - v1.0.0    - Finally out of beta                            - 11/12/2015 wer
+ * - v1.0.0β1  - First Live version                             - 09/15/2014 wer
+ * - v0.1.0β1  - Initial version                                - 09/11/2014 wer
  * @todo change to extend ModelAbstract
  */
-class PeopleModel implements ModelInterface
+class PeopleModel extends ModelAbstract
 {
     use LogitTraits, DbUtilityTraits;
 
@@ -52,187 +44,21 @@ class PeopleModel implements ModelInterface
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'people');
+        $this->setRequiredKeys(
+            [
+                'login_id',
+                'real_name',
+                'short_name',
+                'password',
+                'description',
+                'is_logged_in',
+                'is_active',
+                'is_immutable'
+            ]
+        );
     }
 
-    ### Basic CRUD commands, required by interface, deals only with the {$this->lib_prefix}people table ###
-    /**
-     * Creates new people record(s) in the people table.
-     *
-     * @param array $a_values required Can be a simple assoc array or array of assoc arrays
-     *                        e.g. ['login_id' => 'fred', 'real_name' => 'Fred', 'password' => 'letmein']
-     *                        or
-     *                        [
-     *                          ['login_id' => 'fred',   'real_name' => 'Fred',   'password' => 'letmein'],
-     *                          ['login_id' => 'barney', 'real_name' => 'Barney', 'password' => 'lethimin']
-     *                        ].
-     *                        Optional key=>values 'short_name',
-     *                                             'description', 'is_logged_in',
-     *                                             'is_active' & 'is_immutable'
-     * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function create(array $a_values = [])
-    {
-        $a_required_keys = [
-            'login_id',
-            'real_name',
-            'short_name',
-            'password',
-            'description',
-            'is_logged_in',
-            'is_active',
-            'is_immutable'
-        ];
-        $a_psql = [
-            'table_name'  => $this->db_table,
-            'column_name' => $this->primary_index_name
-        ];
-        $a_params = [
-            'a_required_keys' => $a_required_keys,
-            'a_field_names'   => $this->a_db_fields,
-            'a_psql'          => $a_psql
-        ];
-        try {
-            return $this->genericCreate($a_values, $a_params);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
-        }
-    }
-
-    /**
-     * Returns the record for
-     * @param array $a_search_values
-     * @param array $a_search_params
-     * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function read(array $a_search_values = [], array $a_search_params = [])
-    {
-        $a_parameters = [
-            'table_name'     => $this->db_table,
-            'a_search_for'   => $a_search_values,
-            'a_allowed_keys' => $this->a_db_fields,
-            'order_by'       => 'login_id ASC'
-        ];
-        $a_parameters = array_merge($a_parameters, $a_search_params);
-        try {
-            return $this->genericRead($a_parameters);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode());
-        }
-    }
-
-    /**
-     * Updates the people record(s).
-     * Enforces immutable app rule.
-     * @param array $a_values required $a_values['people_id'] || $a_values['login_id']
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function update(array $a_values = [])
-    {
-        $pin = $this->primary_index_name;
-        if (Arrays::isArrayOfAssocArrays($a_values)) {
-            $people_ids = [];
-            foreach ($a_values as $key => $a_record) {
-                $people_ids[] = $a_record[$pin];
-            }
-            try {
-                $results = $this->readById($people_ids);
-                foreach ($results as $key => $record) {
-                    if ($record['is_immutable'] === 'true') {
-                        unset($a_values[$key]['login_id']);
-                    }
-                }
-            }
-            catch (ModelException $e) {
-                throw new ModelException($e->getCodeText(435), 435, $e);
-            }
-        }
-        else {
-            try {
-                $results = $this->readById($a_values[$pin]);
-                if ($results[0]['is_immutable'] === 'true') {
-                    unset($a_values['login_id']);
-                }
-            }
-            catch (ModelException $e) {
-                throw new ModelException($e->getCodeText(435), 435, $e);
-            }
-        }
-        try {
-            return $this->genericUpdate($a_values);
-        }
-        catch (ModelException $e) {
-            $message = $e->errorMessage();
-            $code = $e->getCode();
-            throw new ModelException($message, $code);
-        }
-    }
-
-    /**
-     * Deletes a {$this->db_table} record based on id.
-     * @param int|array $people_id required
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function delete($people_id = -1)
-    {
-        $meth = __METHOD__ . '.';
-        $pin = $this->primary_index_name;
-        $o_pdo = $this->o_db->getPDO();
-        $this->logIt("In delete, in Transaction: " . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
-        if (Arrays::isArrayOfAssocArrays($people_id)) {
-            $people_ids = [];
-            foreach ($people_id as $key => $a_record) {
-                $people_ids[] = $a_record[$pin];
-            }
-        }
-        elseif (Arrays::isAssocArray($people_id)) {
-            if (empty($people_id[$pin])) {
-                throw new ModelException('Unable to determine if the record is immutable. People ID not provided.', 435);
-            }
-            $people_ids = [$people_id[$pin]];
-        }
-        elseif (is_array($people_id)) {
-            $people_ids = $people_id;
-        }
-        else {
-            $people_ids = [$people_id];
-        }
-          $log_message = 'people_ids ' . var_export($people_ids, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        try {
-            $results = $this->readById($people_ids);
-          $log_message = 'people results ' . var_export($results, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-            if (empty($results)) {
-                throw new ModelException('Unable to determine if the record is immutable. Could not find existing record.', 435);
-            }
-            foreach ($results as $key => $record) {
-                if (!empty($record['is_immutable']) && $record['is_immutable'] === 'true') {
-                    throw new ModelException('Unable to delete the record: record is immutable.', 450);
-                }
-            }
-        }
-        catch (ModelException $e) {
-            $message = 'Unable to determine if the record is immutable.';
-            $message .= DEVELOPER_MODE
-                ? $e->errorMessage()
-                : $e->getMessage();
-            throw new ModelException($message, 435, $e);
-        }
-        try {
-            return $this->genericDelete($people_id);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
-        }
-    }
+    ### Standard CRUD methods in ModelAbstract ###
 
     /**
      * Reads the people record(s) by login_id.
@@ -664,28 +490,6 @@ class PeopleModel implements ModelInterface
     }
 
     /**
-     * @param int $people_id
-     * @return bool
-     */
-    public function isId($people_id = -1)
-    {
-        if (ctype_digit($people_id) && $people_id != -1) {
-            $a_where_values = ['people_id' => $people_id];
-            try {
-                $results = $this->read($a_where_values);
-                if (isset($results[0]['people_id']) && $results[0]['people_id'] == $people_id) {
-                    return true;
-                }
-                return false;
-            }
-            catch (ModelException $e) {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Returns an array to be used to create or update a people record.
      * Values in are normally from a POSTed form.
      * @param array $a_person
@@ -843,12 +647,9 @@ class PeopleModel implements ModelInterface
         }
         $pass_info = password_get_info($password);
         if ($pass_info['algo'] === 0) {
-            if (defined('PASSWORD_ARGON2I')) {
-                $password = password_hash($password, PASSWORD_ARGON2I);
-            }
-            else {
-                $password = password_hash($password, PASSWORD_DEFAULT);
-            }
+            $password = defined('PASSWORD_ARGON2I')
+                ? password_hash($password, PASSWORD_ARGON2I)
+                : password_hash($password, PASSWORD_DEFAULT);
         }
         return $password;
     }

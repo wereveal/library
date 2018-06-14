@@ -9,6 +9,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -292,7 +293,6 @@ class PeopleComplexModel
      * @param array $a_person values to save
      * @return bool|int
      * @throws \Ritc\Library\Exceptions\ModelException
-     * @todo cleanup code so return value is clear
      */
     public function savePerson(array $a_person = [])
     {
@@ -336,8 +336,9 @@ class PeopleComplexModel
                 $a_pgm_values = $this->makePgmArray($new_people_id, $a_groups);
                 if (empty($a_pgm_values)) {
                     $this->error_message = 'Unable to create the required values.';
+                    $err_code = ExceptionHelper::getCodeNumberModel('create unknown');
                     $this->o_db->rollbackTransaction();
-                    throw new ModelException($this->error_message, 20);
+                    throw new ModelException($this->error_message, $err_code);
                 }
                 try {
                     $this->o_pgm->create($a_pgm_values);
@@ -347,7 +348,7 @@ class PeopleComplexModel
                     }
                     catch (ModelException $e) {
                         $this->error_message = 'Unable to commit the transaction: ' . $e->errorMessage();
-                        $error_code = 40;
+                        $error_code = ExceptionHelper::getCodeNumberModel('transaction commit');
                     }
                 }
                 catch (ModelException $e) {
@@ -368,17 +369,7 @@ class PeopleComplexModel
                 $a_pg_values = $this->makePgmArray($a_person['people_id'], $a_groups);
                 unset($a_person['groups']);
             }
-            $a_possible_keys = array(
-                'people_id',
-                'login_id',
-                'real_name',
-                'password',
-                'short_name',
-                'description',
-                'is_logged_in',
-                'is_active',
-                'is_immutable'
-            );
+            $a_possible_keys = $this->o_people->getDbFields();
             if (isset($a_person['password'])) {
                 $a_person['password'] = $this->o_people->hashPass($a_person['password']);
             }
@@ -387,7 +378,8 @@ class PeopleComplexModel
                     switch ($key_name) {
                         case 'people_id':
                             $this->error_message = 'Missing people_id.';
-                            throw new ModelException($this->error_message, 20);
+                            $err_code = ExceptionHelper::getCodeNumberModel('create missing primary');
+                            throw new ModelException($this->error_message, $err_code);
                         case 'login_id':
                         case 'password':
                         case 'real_name':
@@ -409,10 +401,11 @@ class PeopleComplexModel
                 }
                 catch (ModelException $e) {
                     $this->error_message = 'Unable to start the transaction: ' . $e->errorMessage();
-                    throw new ModelException($this->error_message, 12);
+                    $err_code = ExceptionHelper::getCodeNumberModel('transaction start');
+                    throw new ModelException($this->error_message, $err_code);
                 }
                 try {
-                    $this->o_people->update($a_person);
+                    $this->o_people->update($a_person, ['login_id']);
                     try {
                         $this->o_pgm->deleteByPeopleId($a_person['people_id']);
                         try {

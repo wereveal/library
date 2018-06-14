@@ -9,10 +9,10 @@
             </div>
         </div>
 {% for page in a_pages %}
-    {% if 'library' not in page.page_url %}
+    {% if 'manager/config' not in page.page_url %}
         {% set class = loop.index is even ? 'even' : 'odd' %}
         {% include '@' ~ lib_prefix ~ 'snippets/page_line.twig' %}
-    {% elseif adm_lvl == 10 %}
+    {% elseif adm_lvl >=  auth_lvl %}
         {% set class = loop.index is even ? 'even' : 'odd' %}
         {% include '@' ~ lib_prefix ~ 'snippets/page_line.twig' %}
     {% endif %}

@@ -67,7 +67,7 @@ class PageView
      * @param array $a_message
      * @return string
      */
-    public function renderForm(array $a_message = array())
+    public function renderForm($new_or_modify = 'new', $page_id = -1)
     {
         $meth = __METHOD__ . '.';
         /**
@@ -76,7 +76,7 @@ class PageView
          * This triggers two things: specifies the action to be use on the page form,
          * and if we do a lookup of the page values that we are modifying.
          */
-        $action = $this->o_router->getFormAction() == 'new_page'
+        $action = $new_or_modify == 'new'
             ? 'save'
             : 'update';
         $o_urls = new UrlsModel($this->o_db);
@@ -128,14 +128,14 @@ class PageView
             'page_immutable'   => 'false',
         ];
         ### If we are trying to modify an existing page, grab its data and shove it into the form ###
-        $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_twig_values = $this->createDefaultTwigValues();
         $a_twig_values['select'] = $a_select;
         $a_twig_values['action'] = $action;
         $a_twig_values['a_page'] = $a_page;
         if ($action == 'update') {
             try {
                 $a_pages = $this->o_model->readPageValues(
-                    ['page_id' => $this->o_router->getPost('page_id')]
+                    ['page_id' => $page_id]
                 );
             }
             catch (ModelException $e) {

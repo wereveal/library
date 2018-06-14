@@ -602,7 +602,9 @@ class DbInstallerModel
             $a_people = $this->a_data['people'];
         }
         foreach ($a_people as $key => $a_person) {
-            $a_people[$key]['password'] = password_hash($a_person['password'], PASSWORD_DEFAULT);
+            $a_people[$key]['password'] = defined('PASSWORD_ARGON2I')
+                ? password_hash($a_person['password'], PASSWORD_ARGON2I)
+                : password_hash($a_person['password'], PASSWORD_DEFAULT);
         }
         $a_table_info = [
             'table_name'  => $this->db_prefix . 'people',

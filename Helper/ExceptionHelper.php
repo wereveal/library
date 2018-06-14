@@ -180,6 +180,8 @@ class ExceptionHelper
             case 'update_missing_value':
             case 'update_missing_values':
                 return 320;
+            case 'update_missing_primary':
+                return 325;
             case 'update_no_records':
                 return 330;
             case 'update_immutable':
@@ -414,6 +416,8 @@ class ExceptionHelper
                 return 'Unable to update the record: a field given does not exist in the database.';
             case 320:
                 return 'Unable to update the record: a required field is missing from the values';
+            case 325:
+                return 'Unable to update the record: the primary key field is missing from the values';
             case 330:
                 return 'Unable to update the record: no record with that id exists.';
             case 344:
