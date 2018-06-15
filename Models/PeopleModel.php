@@ -31,7 +31,6 @@ use Ritc\Library\Traits\LogitTraits;
  * - v1.0.0    - Finally out of beta                            - 11/12/2015 wer
  * - v1.0.0β1  - First Live version                             - 09/15/2014 wer
  * - v0.1.0β1  - Initial version                                - 09/11/2014 wer
- * @todo change to extend ModelAbstract
  */
 class PeopleModel extends ModelAbstract
 {
@@ -58,7 +57,12 @@ class PeopleModel extends ModelAbstract
         );
     }
 
-    ### Standard CRUD methods in ModelAbstract ###
+    ### Abstract Methods ###
+    # create(array $a_values = [])
+    # read(array $a_search_for = [], array $a_search_params = [])
+    # update(array $a_values = [], array $a_do_not_change = [])
+    # delete($id = -1)
+    ###
 
     /**
      * Reads the people record(s) by login_id.

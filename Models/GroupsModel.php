@@ -16,17 +16,13 @@ use Ritc\Library\Traits\LogitTraits;
  * Does all the database CRUD stuff for the page table plus other app/business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.1
- * @date    2017-12-12 11:42:21
+ * @version v3.0.0
+ * @date    2018-06-15 10:44:04
  * @change_log
- * - v2.0.1   - ModelException changes reflected here                           - 2017-12-12 wer
+ * - v3.0.0   - Refactored to use ModelAbstract                                 - 2018-06-15 wer
  * - v2.0.0   - Refactored to use ModelException and DbUtilityTraits            - 2017-06-10 wer
- * - v1.1.2   - DbUtilityTraits change reflected here                           - 2017-05-09 wer
  * - v1.0.0   - First working version                                           - 11/27/2015 wer
  * - v1.0.0β5 - refactoring to provide postgresql compatibility                 - 11/22/2015 wer
- * - v1.0.0β4 - added group_immutable field in db and changed code to match     - 10/08/2015 wer
- * - v1.0.0ß3 - removed abstract class Base, used LogitTraits                   - 09/01/2015 wer
- * - v1.0.0β1 - extends the Base class, injects the DbModel, clean up           - 09/23/2014 wer
  * - v1.0.0β0 - First live version                                              - 09/15/2014 wer
  * - v0.1.0β  - Initial version                                                 - 01/18/2014 wer
  */
@@ -43,16 +39,16 @@ class GroupsModel extends ModelAbstract
         $this->setupProperties($o_db, 'groups');
     }
 
-    /**
-     * in ModelAbstract
-     * create
-     * read
-     * update
-     * delete
-     */
+    ### Abstract Methods ###
+    # create(array $a_values = [])
+    # read(array $a_search_for = [], array $a_search_params = [])
+    # update(array $a_values = [], array $a_do_not_change = [])
+    # delete($id = -1)
+    ###
 
     /**
      * Deletes related records as well as main group record.
+     *
      * @param int|array $group_id
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -131,6 +127,7 @@ class GroupsModel extends ModelAbstract
     ### Shortcuts ###
     /**
      * Returns a record of the group specified by name.
+     *
      * @param string $group_name
      * @return array|bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -157,6 +154,7 @@ class GroupsModel extends ModelAbstract
 
     /**
      * Checks to see if the id is a valid group id.
+     *
      * @param int $group_id required
      * @return bool
      */
@@ -175,5 +173,4 @@ class GroupsModel extends ModelAbstract
         }
         return false;
     }
-
 }

@@ -8,8 +8,6 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Services\DbModel;
-use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does all the database CRUD stuff for the navigation to navgroups mapping.
@@ -26,8 +24,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavNgMapModel extends ModelAbstract
 {
-    use LogitTraits, DbUtilityTraits;
-
     /**
      * NavNgMapModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db
@@ -35,6 +31,7 @@ class NavNgMapModel extends ModelAbstract
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'nav_ng_map');
+        $this->setRequiredKeys(['ng_id', 'nav_id']);
     }
 
     /**

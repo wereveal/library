@@ -45,6 +45,7 @@ class RoutesModel extends ModelAbstract
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'routes');
+        $this->setRequiredKeys(['url_id', 'route_class', 'route_method']);
     }
 
     /**

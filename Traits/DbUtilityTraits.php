@@ -988,6 +988,32 @@ SQL;
         }
     }
 
+    /**
+     * Checks to see if the table exists.
+     *
+     * @param string $table_name Required, prefix may be omitted if = db_prefix or lib_prefix.
+     * @return bool
+     */
+    public function tableExists($table_name = '')
+    {
+        try {
+            $a_tables = $this->o_db->selectDbTables();
+        }
+        catch (ModelException $e) {
+            return false;
+        }
+        if (array_search($table_name, $a_tables, true) === false) {
+            $test_table_name = $this->db_prefix .$table_name;
+            if (array_search($test_table_name, $a_tables, true) === false) {
+                $test_table_name = $this->lib_prefix . $table_name;
+                if (array_search($test_table_name, $a_tables, true) === false) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     ### Getters and Setters ###
     /**
      * Getter for $a_db_config.

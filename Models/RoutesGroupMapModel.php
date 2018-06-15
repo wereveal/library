@@ -27,50 +27,45 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesGroupMapModel extends ModelAbstract
 {
-    use LogitTraits, DbUtilityTraits;
-
     /**
      * RoutesGroupMapModel constructor.
+     *
      * @param \Ritc\Library\Services\DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'routes_group_map');
+        $this->setRequiredKeys(['route_id', 'group_id']);
     }
+
+    ### Abstract Methods ###
+    # create(array $a_values = [])
+    # read(array $a_search_for = [], array $a_search_params = [])
+    # update(array $a_values = [], array $a_do_not_change = [])
+    # delete($id = -1)
+    ###
 
     ### Basic CRUD commands, overrides Abtract ###
     /**
-     * Returns all records in the table.
-     * Legacy method.
-     * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function readAll()
-    {
-        return $this->read();
-    }
-
-    /**
      * Updates the record, NOT! Well, sort of.
-     * Method is required by interface.
-     *     Update should never happen!
-     *     Reasoning. The group_id and route_id form a unique index. As such
-     *     they should not be modified. The record should always be deleted and
-     *     a new one added. That is what this function actually does.
+     * Method overrides the ModelAbstract definition.
+     *   Update should never happen!
+     *   Reasoning. The group_id and route_id form a unique index. As such
+     *   they should not be modified. The record should always be deleted and
+     *   a new one added. That is what this function actually does.
      *
      * @param array  $a_values   Required ['rgm_id, group_id, route_id] all three
-     * @param string $not_used   As named, not used. required by abstract.
      * @param array  $a_not_used As named, not used. required by abstract.
      * @return bool
      * @throws ModelException
      */
-    public function update(array $a_values = array(), $not_used = '', array $a_not_used = [])
+    public function update(array $a_values = [], array $a_not_used = [])
     {
-        $a_required_keys = array(
+        $a_required_keys = [
             'rgm_id',
             'group_id',
             'route_id'
-        );
+        ];
         $a_delete_ids = [];
         $create_values = [];
         $error_code = 0;
@@ -137,8 +132,22 @@ class RoutesGroupMapModel extends ModelAbstract
         }
     }
 
+    ### Additional methods ###
+    /**
+     * Returns all records in the table.
+     * Legacy method.
+     *
+     * @return array|bool
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    public function readAll()
+    {
+        return $this->read();
+    }
+
     /**
      * Deletes record(s) by Route ID.
+     *
      * @param int $route_id
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -162,6 +171,7 @@ class RoutesGroupMapModel extends ModelAbstract
 
     /**
      * Deletes record(s) by Group ID.
+     *
      * @param int $group_id
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -182,5 +192,4 @@ class RoutesGroupMapModel extends ModelAbstract
             throw new ModelException($e->errorMessage(), $e->getCode());
         }
     }
-
 }

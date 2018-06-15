@@ -39,8 +39,17 @@ class UrlsModel extends ModelAbstract
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'urls');
+        $this->setRequiredKeys(['url_text']);
     }
 
+    ### Abstract Methods ###
+    # create(array $a_values = [])
+    # read(array $a_search_for = [], array $a_search_params = [])
+    # update(array $a_values = [], array $a_do_not_change = [])
+    # delete($id = -1)
+    ###
+
+    ### Overrides Abstract Methods ###
     /**
      * Deletes a record based on the id provided.
      * Overrides method in abstract
@@ -124,6 +133,7 @@ class UrlsModel extends ModelAbstract
         }
     }
 
+    ### Specialized Methods ###
     /**
      * Finds Urls that are not assigned to a route.
      * @return mixed
