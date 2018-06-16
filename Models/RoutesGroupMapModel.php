@@ -8,6 +8,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -146,9 +147,30 @@ class RoutesGroupMapModel extends ModelAbstract
     }
 
     /**
-     * Deletes record(s) by Route ID.
+     * Returns the records which have the route id.
      *
      * @param int $route_id
+     * @return array
+     * @throws ModelException
+     */
+    public function readByRouteId($route_id = -1)
+    {
+        $a_search_for = ['route_id' => $route_id];
+        if ($route_id < 1) {
+            $a_search_for = [];
+        }
+        try {
+            return $this->read($a_search_for);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Deletes record(s) by Route ID.
+     *
+     * @param int $route_id Required
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
@@ -172,7 +194,7 @@ class RoutesGroupMapModel extends ModelAbstract
     /**
      * Deletes record(s) by Group ID.
      *
-     * @param int $group_id
+     * @param int $group_id Required
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
@@ -187,6 +209,40 @@ class RoutesGroupMapModel extends ModelAbstract
         ";
         try {
             return $this->o_db->delete($sql, [':group_id' => $group_id], true);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode());
+        }
+    }
+
+    /**
+     * Deletes a record based on the values.
+     *
+     * @param int $route_id Required
+     * @param int $group_id Required
+     * @return bool
+     * @throws ModelException
+     */
+    public function deleteByRouteGroup(int $route_id = -1, int $group_id = -1)
+    {
+        if ($route_id < 1 || $group_id < 1) {
+            $err_code = ExceptionHelper::getCodeNumberModel('delete missing value');
+            $msg = 'Missing';
+            $msg .= $route_id < 1 ? ' route id' : '';
+            $msg .= $group_id < 1 ? ' group id' : '';
+            throw new ModelException($msg, $err_code);
+        }
+        $sql = "
+            DELETE FROM {$this->db_table}
+            WHERE group_id = :group_id
+            AND route_id = :route_id
+        ";
+        try {
+            $a_values = [
+                ':group_id' => $group_id,
+                ':route_id' => $route_id
+            ];
+            return $this->o_db->delete($sql, $a_values, true);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode());

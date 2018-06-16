@@ -1,5 +1,6 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% set hidden_stuph = '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+{% set cbx_form = '@' ~ lib_prefix ~ 'elements/checkbox.twig' %}
 {% block body %}
     <div class="container">
         <div class="row d-none d-lg-flex list-header sticky-top">
@@ -9,72 +10,109 @@
             <div class="col-lg-2">Route Action</div>
             <div class="col-lg-2">&nbsp;</div>
         </div>
-    {% set class = 'even' %}
-        {% if a_urls_select['options'][1] is empty %}
+        {% set class = 'even' %}
+    {% if a_urls_select['options'][1] is empty %}
         <div class="row {{ class }} border-left border-right border-top">
             <div class="col-12">
                 No unused urls to assign to a route.
             </div>
         </div>
-        {% else %}
-        <form action="{{ public_dir }}/manager/config/routes/" method= "post">
-        <div class="row {{ class }} border-left border-right border-top">
-            <div class="col-12 col-lg-4">
-                {% set this_select = {'select':a_urls_select}  %}
-                {% include '@' ~ lib_prefix ~ 'elements/select.twig' with this_select %}
-            </div>
-            <div class="col-12 col-lg-2">
-                <label class="d-lg-none" for="route[route_class]">Route Class: </label>
-                <input type="text" id="route[route_class]" name="route[route_class]" value="" maxlength="32" class="flexible colorful"/>
-            </div>
-            <div class="col-12 col-lg-2">
-                <label class="d-lg-none" for="route[route_method]">Route Method: </label>
-                <input type="text" id="route[route_method]" name="route[route_method]" value="" maxlength="32" class="flexible colorful"/>
-            </div>
-            <div class="col-12 col-lg-2">
-                <label class="d-lg-none" for="route[route_action]">Route Action: </label>
-                <input type="text" id="route[route_action]" name="route[route_action]" value="" maxlength="32" class="flexible colorful"/>
-            </div>
-            <div class="col-12 col-lg-2">
-                <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Route</button>
-                <input type="hidden" name="route[route_id]" value="" />
-                {% include hidden_stuph %}
-            </div>
-        </div>
-        </form>
-        {% endif %}
-    {% for row in a_routes %}
-        {% set class = loop.index is even ? 'even' : 'odd' %}
-        {% set last_id = 'route' ~ (loop.length + 1) %}
-        {% set for_id = 'route' ~ loop.index %}
-        {% if row.route_immutable == 'false' or adm_lvl >= auth_lvl.superadmin %}
+    {% else %}
         <form action="{{ public_dir }}/manager/config/routes/" method="post">
-        <div class="row {{ class }} border-left border-right">
-            <div class="col-12 col-lg-4">
-                {% set select = {'select':row.a_urls} %}
-                {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select only %}
+        <div class="container m-0 pad-lr-0">
+            <div class="row {{ class }} border-left border-right border-top">
+                <div class="col-12 col-lg-4">
+                    {% set this_select = {'select':a_urls_select} %}
+                    {% include '@' ~ lib_prefix ~ 'elements/select.twig' with this_select %}
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label class="d-lg-none" for="route[route_class]">Route Class: </label>
+                    <input type="text" id="route[route_class]" name="route[route_class]" value="" maxlength="32"
+                           class="flexible colorful"/>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label class="d-lg-none" for="route[route_method]">Route Method: </label>
+                    <input type="text" id="route[route_method]" name="route[route_method]" value="" maxlength="32"
+                           class="flexible colorful"/>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label class="d-lg-none" for="route[route_action]">Route Action: </label>
+                    <input type="text" id="route[route_action]" name="route[route_action]" value="" maxlength="32"
+                           class="flexible colorful"/>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New
+                        Route
+                    </button>
+                    <input type="hidden" name="route[route_id]" value=""/>
+                    {% include hidden_stuph %}
+                </div>
             </div>
-            <div class="col-12 col-lg-2">
-                <label class="d-lg-none" for="{{ for_id }}[route_class]">Route Class: </label>
-                <input type="text" id="{{ for_id }}[route_class]" name="route[route_class]" value="{{ row.route_class }}" maxlength="32" class="flexible colorful"/>
+            <div class="row {{ class }}">
+                {% for group in groups %}
+                {% if loop.index0 % 5 == 0 %}
             </div>
-            <div class="col-12 col-lg-2">
-                <label class="d-lg-none" for="{{ for_id }}[route_method]">Route Method: </label>
-                <input type="text" id="{{ for_id }}[route_method]"  name="route[route_method]" value="{{ row.route_method }}" maxlength="32" class="flexible colorful"/>
-            </div>
-            <div class="col-12 col-lg-2">
-                <label class="d-lg-none" for="{{ for_id }}[route_action]">Route Action: </label>
-                <input type="text" id="{{ for_id }}[route_action]" name="route[route_action]" value="{{ row.route_action }}" maxlength="32" class="flexible colorful"/>
-            </div>
-            <div class="col-12 col-lg-2">
-                <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save</button>
-                <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
-                {% include hidden_stuph %}
-                <input type="hidden" name="route[route_id]" value="{{ row.route_id }}" />
+            <div class="row {{ class }}">
+                {% endif %}
+                <div class="col-lg-2">
+                    {% include cbx_form with group %}
+                </div>
+                {% endfor %}
             </div>
         </div>
         </form>
-        {% elseif row.route_class != 'LibraryController' %}
+    {% endif %}
+{% for row in a_routes %}
+    {% set class = loop.index is even ? 'even' : 'odd' %}
+    {% set last_id = 'route' ~ (loop.length + 1) %}
+    {% set for_id = 'route' ~ loop.index %}
+    {% if row.route_immutable == 'false' or adm_lvl >= auth_lvl.superadmin %}
+        <form action="{{ public_dir }}/manager/config/routes/" method="post">
+        <div class="container m-0 pad-lr-0">
+            <div class="row {{ class }} border-left border-right">
+                <div class="col-12 col-lg-4">
+                    {% set select = {'select':row.a_urls} %}
+                    {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select only %}
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label class="d-lg-none" for="{{ for_id }}[route_class]">Route Class: </label>
+                    <input type="text" id="{{ for_id }}[route_class]" name="route[route_class]"
+                           value="{{ row.route_class }}" maxlength="32" class="flexible colorful"/>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label class="d-lg-none" for="{{ for_id }}[route_method]">Route Method: </label>
+                    <input type="text" id="{{ for_id }}[route_method]" name="route[route_method]"
+                           value="{{ row.route_method }}" maxlength="32" class="flexible colorful"/>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label class="d-lg-none" for="{{ for_id }}[route_action]">Route Action: </label>
+                    <input type="text" id="{{ for_id }}[route_action]" name="route[route_action]"
+                           value="{{ row.route_action }}" maxlength="32" class="flexible colorful"/>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Save
+                    </button>
+                    <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">
+                        Delete
+                    </button>
+                    {% include hidden_stuph %}
+                    <input type="hidden" name="route[route_id]" value="{{ row.route_id }}"/>
+                </div>
+            </div>
+            <div class="row {{ class }}">
+                {% for group in row.groups %}
+                {% if loop.index0 % 5 == 0 %}
+            </div>
+            <div class="row {{ class }}">
+                {% endif %}
+                <div class="col-lg-2">
+                    {% include cbx_form with group %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        </form>
+    {% elseif row.route_class != 'LibraryController' %}
         <div class="row {{ class }} border-left border-right">
             <div class="col-12 col-lg-4">
                 <span class="d-lg-none">URL: </span>{{ row.url_text }}
@@ -92,42 +130,60 @@
                 Immutable
             </div>
         </div>
-        {% endif %}
-    {% endfor %}
+    {% endif %}
+{% endfor %}
     {% set class = class == 'odd' ? 'even' : 'odd' %}
-        {% if a_urls_select_bottom['options'][1] is empty %}
+    {% if a_urls_select_bottom['options'][1] is empty %}
         <div class="row {{ class }} border-left border-right border-top">
             <div class="col-12">
                 No unused urls to assign to a route.
             </div>
         </div>
-        {% else %}
-        <form action="{{ public_dir }}/manager/config/routes/" method= "post">
-        <div class="row {{ class }} border-left border-right border-bottom">
-            <div class="col-12 col-lg-4">
-                {% set select = {'select':a_urls_select_bottom} %}
-                {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select only %}
+    {% else %}
+        <form action="{{ public_dir }}/manager/config/routes/" method="post">
+            <div class="container m-0 pad-lr-0">
+            <div class="row {{ class }} border-left border-right border-bottom">
+                <div class="col-12 col-lg-4">
+                    {% set select = {'select':a_urls_select_bottom} %}
+                    {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select only %}
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label class="d-lg-none" for="route[route_class]">Route Class: </label>
+                    <input type="text" id="route[route_class]" name="route[route_class]" value="" maxlength="32"
+                           class="flexible colorful"/>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label class="d-lg-none" for="route[route_method]">Route Method: </label>
+                    <input type="text" id="route[route_method]" name="route[route_method]" value="" maxlength="32"
+                           class="flexible colorful"/>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <label class="d-lg-none" for="route[route_action]">Route Action: </label>
+                    <input type="text" id="route[route_action]" name="route[route_action]" value="" maxlength="32"
+                           class="flexible colorful"/>
+                </div>
+                <div class="col-12 col-lg-2">
+                    <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New
+                        Route
+                    </button>
+                    {% include hidden_stuph %}
+                    <input type="hidden" name="route[route_id]" value=""/>
+                </div>
             </div>
-            <div class="col-12 col-lg-2">
-                <label class="d-lg-none" for="route[route_class]">Route Class: </label>
-                <input type="text" id="route[route_class]" name="route[route_class]" value="" maxlength="32" class="flexible colorful"/>
+            <div class="row {{ class }}">
+                {% for group in groups_bottom %}
+                {% if loop.index0 % 5 == 0 %}
             </div>
-            <div class="col-12 col-lg-2">
-                <label class="d-lg-none" for="route[route_method]">Route Method: </label>
-                <input type="text" id="route[route_method]" name="route[route_method]" value="" maxlength="32" class="flexible colorful"/>
+            <div class="row {{ class }}">
+                {% endif %}
+                <div class="col-lg-2">
+                    {% include cbx_form with group %}
+                </div>
+                {% endfor %}
             </div>
-            <div class="col-12 col-lg-2">
-                <label class="d-lg-none" for="route[route_action]">Route Action: </label>
-                <input type="text" id="route[route_action]" name="route[route_action]" value="" maxlength="32" class="flexible colorful"/>
             </div>
-            <div class="col-12 col-lg-2">
-                <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New Route</button>
-                {% include hidden_stuph %}
-                <input type="hidden" name="route[route_id]" value="" />
-            </div>
-        </div>
         </form>
-        {% endif %}
+    {% endif %}
     </div>
     {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
 {% endblock %}

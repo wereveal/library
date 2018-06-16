@@ -10,6 +10,7 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
+use Ritc\Library\Models\RoutesComplexModel;
 use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
@@ -39,26 +40,31 @@ class RoutesController implements ManagerControllerInterface
 {
     use LogitTraits, ConfigControllerTraits;
 
-    /** @var RoutesModel */
+    /** @var RoutesComplexModel $o_complex */
+    private $o_complex;
+    /** @var RoutesModel $o_model */
     private $o_model;
-    /** @var RoutesView */
+    /** @var RoutesView $o_view */
     private $o_view;
 
     /**
      * RoutesController constructor.
+     *
      * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
-        $this->o_model = new RoutesModel($this->o_db);
-        $this->o_view = new RoutesView($o_di);
+        $this->o_model        = new RoutesModel($this->o_db);
+        $this->o_view         = new RoutesView($o_di);
+        $this->o_complex      = new RoutesComplexModel($o_di);
         $this->a_object_names = ['o_model'];
         $this->setupElog($o_di);
     }
 
     /**
      * Main router for the controller.
+     *
      * @return string
      */
     public function route()
@@ -92,7 +98,7 @@ class RoutesController implements ManagerControllerInterface
             return $this->o_view->renderList($a_message);
         }
         try {
-            $this->o_model->delete($route_id);
+            $this->o_complex->delete($route_id);
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -108,18 +114,16 @@ class RoutesController implements ManagerControllerInterface
      */
     public function save()
     {
-        $a_route = $this->fixRoute($this->a_post['route']);
-        if ($a_route === false) {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. Required values missing.');
+        try {
+            $this->o_complex->saveNew($this->a_post);
+            $a_message = ViewHelper::successMessage();
         }
-        else {
-            try {
-                $this->o_model->create($a_route);
-                $a_message = ViewHelper::successMessage();
-            }
-            catch (ModelException $e) {
-                $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new route could not be saved.');
-            }
+        catch (ModelException $e) {
+            $msg  = 'A Problem Has Occured. The route could not be saved.';
+            $msg .= DEVELOPER_MODE
+                ? ' -- ' . $e->getMessage()
+                : '';
+            $a_message = ViewHelper::failureMessage($msg);
         }
         return $this->o_view->renderList($a_message);
     }
@@ -131,18 +135,16 @@ class RoutesController implements ManagerControllerInterface
      */
     public function update()
     {
-        $a_route = $this->fixRoute($this->a_post['route']);
-        if ($a_route === false) {
-            $a_message = ViewHelper::failureMessage('A Problem Has Occured. Required values missing.');
+        try {
+            $this->o_complex->update($this->a_post);
+            $a_message = ViewHelper::successMessage();
         }
-        else {
-            try {
-                $this->o_model->update($a_route);
-                $a_message = ViewHelper::successMessage();
-            }
-            catch (ModelException $e) {
-                $a_message = ViewHelper::failureMessage('A Problem Has Occured. The route could not be updated.');
-            }
+        catch (ModelException $e) {
+            $msg = 'A Problem Has Occured. The route could not be updated.';
+            $msg .= DEVELOPER_MODE
+                ? ' -- ' . $e->getMessage()
+                : '';
+            $a_message = ViewHelper::failureMessage($msg);
         }
         return $this->o_view->renderList($a_message);
     }
@@ -155,14 +157,14 @@ class RoutesController implements ManagerControllerInterface
     public function verifyDelete()
     {
         $route_id = $this->a_post['route']['route_id'];
-        $cache_key = 'route.by.id.' . $route_id;
-        $a_route = [];
+        $cache_key = 'route.url.for.' . $route_id;
+        $url = '';
         if ($this->use_cache) {
-            $a_route = $this->o_cache->get($cache_key);
+            $url = $this->o_cache->get($cache_key);
         }
-        if (empty($a_route)) {
+        if (empty($url)) {
             try {
-                $a_route = $this->o_model->readById($route_id);
+                $a_route = $this->o_complex->readById($route_id);
                 if ($this->use_cache) {
                     $this->o_cache->set($cache_key, $a_route);
                 }
@@ -174,11 +176,11 @@ class RoutesController implements ManagerControllerInterface
         }
         $a_values = [
             'what'          => 'Route',
-            'name'          => 'Route ' . $a_route['route_id'],
+            'name'          => 'Route ' . $route_id,
             'form_action'   => '/manager/config/routes/',
             'btn_value'     => 'Route',
             'hidden_name'   => 'route_id',
-            'hidden_value'  => $a_route['route_id'],
+            'hidden_value'  => $route_id,
         ];
         $a_options = [
             'tpl'         => 'verify_delete',
@@ -186,6 +188,12 @@ class RoutesController implements ManagerControllerInterface
             'fallback'    => 'renderList'
         ];
         return $this->o_view->renderVerifyDelete($a_values, $a_options);
+    }
+
+    ### Utilities ###
+    private function fixGroups(array $a_groups = [], $route_id)
+    {
+
     }
 
     /**

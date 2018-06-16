@@ -6,8 +6,11 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\FormHelper;
+use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RoutesComplexModel;
 use Ritc\Library\Helper\ViewHelper;
+use Ritc\Library\Models\RoutesGroupMapModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
@@ -61,6 +64,12 @@ class RoutesView
     {
         $meth = __METHOD__ . '.';
         $message = 'Changing router values can result in unexpected results. If you are not sure, do not do it.';
+        $o_urls = new UrlsModel($this->o_db);
+        $o_rgm = new RoutesGroupMapModel($this->o_db);
+        $o_groups = new GroupsModel($this->o_db);
+        $o_urls->setupElog($this->o_di);
+        $o_rgm->setupElog($this->o_di);
+        $o_groups->setupElog($this->o_di);
         if (empty($a_message)) {
             $a_message = ViewHelper::warningMessage($message);
         }
@@ -75,16 +84,19 @@ class RoutesView
             $a_routes = false;
             $error_message .= $e->errorMessage();
         }
-        $o_urls = new UrlsModel($this->o_db);
         try {
             $a_available_urls = $o_urls->readNoRoute();
         }
         catch (ModelException $e) {
             $a_available_urls = [];
-            $error_message .= $e->errorMessage();
+            $error_message .= $e->getMessage();
         }
-        if (!empty($error_message)) {
-            $a_message = ViewHelper::addMessage($a_message, $error_message, 'error');
+        $a_available_groups = [];
+        try {
+            $a_available_groups = $o_groups->read();
+        }
+        catch (ModelException $e) {
+            $error_message .= ' ' . $e->getMessage();
         }
         $a_url_options = [
             [
@@ -113,6 +125,20 @@ class RoutesView
         $a_urls_select_bottom = $a_urls_select;
         $a_urls_select_bottom['label_for'] = 'route999[url_id]';
         $a_urls_select_bottom['id'] = 'route999[url_id]';
+
+        $a_groups = [];
+        $a_groups_bottom = [];
+        foreach ($a_available_groups as $key => $a_group) {
+            $id_bottom = 'group00[' . $a_group['group_id'] .']';
+            $a_g = FormHelper::checkbox([
+                'id'    => 'group0[' . $a_group['group_id'] .']',
+                'name'  => 'group[' . $a_group['group_id'] .']',
+                'label' => $a_group['group_name']
+            ]);
+            $a_groups[] = $a_g;
+            $a_g['id'] = $id_bottom;
+            $a_groups_bottom[] = $a_g;
+        }
         $x = 1;
         foreach ($a_routes as $key => $a_route)  {
             $this_route_options = $a_url_options;
@@ -132,11 +158,34 @@ class RoutesView
                 'options'     => $this_route_options
             ];
             $a_routes[$key]['a_urls'] = $a_select;
+            try {
+                $a_rgm_results = $o_rgm->readByRouteId($a_route['route_id']);
+            }
+            catch (ModelException $e) {
+                $error_message .= $e->getMessage();
+            }
+            $a_routes[$key]['groups'] = $a_groups;
+            foreach ($a_routes[$key]['groups'] as $g_key => $a_group) {
+                $a_routes[$key]['groups'][$g_key]['id'] = 'group' . $x . $a_group['id'];
+                $replace_this = '/group\[(.*)\]/i';
+                $with_this = '$1';
+                $group_id = preg_replace($replace_this, $with_this, $a_group['name']);
+                foreach ($a_rgm_results as $r_key => $a_rgm) {
+                    if ($group_id == $a_rgm['group_id']) {
+                        $a_routes[$key]['groups'][$g_key]['checked'] = ' checked';
+                    }
+                }
+            }
             $x++;
+        }
+        if (!empty($error_message)) {
+            $a_message = ViewHelper::addMessage($a_message, $error_message, 'error');
         }
 
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['a_routes'] = $a_routes;
+        $a_twig_values['groups'] = $a_groups;
+        $a_twig_values['groups_bottom'] = $a_groups_bottom;
         $a_twig_values['a_urls_select'] = $a_urls_select;
         $a_twig_values['a_urls_select_bottom'] = $a_urls_select_bottom;
           $log_message = 'a_twig_values ' . var_export($a_twig_values, TRUE);
