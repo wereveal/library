@@ -128,7 +128,7 @@ class UrlsController implements ConfigControllerInterface
         $a_values['url_immutable'] = isset($this->a_post['immutable']) ? 'true' : 'false';
 
         try {
-            $this->o_urls_model->update($a_values, 'url_immutable', ['url_text', 'url_host']);
+            $this->o_urls_model->update($a_values, ['url_text', 'url_host']);
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {

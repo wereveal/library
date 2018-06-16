@@ -634,6 +634,7 @@ class DbModel
      *                                         array("test", "brains") for question mark place holders prepared statement
      *                                         array(":test"=>"test", ":food"=>"brains") for named parameters prepared statement
      *                                         '' when the values have been bound before calling this method
+     *
      * @param object|\PDOStatement $o_pdo_stmt - the object created from the prepare
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -691,7 +692,8 @@ class DbModel
     }
 
     /**
-     * Executes the pdo fetch method
+     * Executes the pdo fetch method.
+     *
      * @see \PDOStatment::fetch
      * @param object|\PDOStatement $o_pdo_stmt     a \PDOStatement object
      * @param array                $a_fetch_config array('fetch_style'=>'ASSOC', 'cursor_orientation'=>'', 'cursor_offset'=>0)
@@ -752,7 +754,8 @@ class DbModel
     }
 
     /**
-     * Prepares a sql statement for execution
+     * Fetches all from a pdo statement.
+     *
      * @param object|\PDOStatement $o_pdo_stmt  a \PDOStatement object
      * @param string               $fetch_style @see \PDO (optional)
      * @return array
@@ -796,6 +799,8 @@ class DbModel
     }
 
     /**
+     * Prepares a query for execution.
+     *
      * @param string $the_query
      * @param string $cursor
      * @return \PDOStatement
