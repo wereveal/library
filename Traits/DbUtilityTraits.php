@@ -80,7 +80,7 @@ trait DbUtilityTraits
      *      'column_name' => string
      *  ]
      * ] \endcode
-     * @return array|bool
+     * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      * @see  \ref createparams
      */

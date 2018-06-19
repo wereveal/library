@@ -10,8 +10,6 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
-use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does all the Model expected operations, database CRUD and business logic.

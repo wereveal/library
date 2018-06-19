@@ -7,7 +7,6 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\RoutesComplexModel;
@@ -164,9 +163,10 @@ class RoutesController implements ManagerControllerInterface
         }
         if (empty($url)) {
             try {
-                $a_route = $this->o_complex->readById($route_id);
+                $a_route = $this->o_complex->readWithUrl($route_id);
+                $url = $a_route[0]['url_text'];
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $a_route);
+                    $this->o_cache->set($cache_key, $url);
                 }
             }
             catch (ModelException $e) {
@@ -174,9 +174,10 @@ class RoutesController implements ManagerControllerInterface
                 return $this->o_view->renderList($a_message);
             }
         }
+
         $a_values = [
             'what'          => 'Route',
-            'name'          => 'Route ' . $route_id,
+            'name'          => 'Route for ' . $url,
             'form_action'   => '/manager/config/routes/',
             'btn_value'     => 'Route',
             'hidden_name'   => 'route_id',
@@ -188,39 +189,5 @@ class RoutesController implements ManagerControllerInterface
             'fallback'    => 'renderList'
         ];
         return $this->o_view->renderVerifyDelete($a_values, $a_options);
-    }
-
-    ### Utilities ###
-    private function fixGroups(array $a_groups = [], $route_id)
-    {
-
-    }
-
-    /**
-     * Fixes values to be valid for save/updates.
-     *
-     * @param array $a_route Required ['url_id','route_class','route_method'].
-     * @return array|bool
-     */
-    private function fixRoute(array $a_route = [])
-    {
-        if (empty($a_route) ||
-            empty($a_route['url_id']) ||
-            empty($a_route['route_class']) ||
-            empty($a_route['route_method'])
-        ) {
-            return false;
-        }
-        $a_route['route_action'] = empty($a_route['route_action'])
-            ? ''
-            : $a_route['route_action'];
-        $a_route['route_immutable'] = empty($a_route['route_immutable'])
-            ? 'false'
-            : $a_route['route_immutable'];
-        $a_route['route_class'] = Strings::removeTagsWithDecode($a_route['route_class'], ENT_QUOTES);
-        $a_route['route_class'] = Strings::makeCamelCase($a_route['route_class'], false);
-        $a_route['route_method'] = Strings::removeTagsWithDecode($a_route['route_method'], ENT_QUOTES);
-        $a_route['route_method'] = Strings::makeCamelCase($a_route['route_method'], true);
-        return $a_route;
     }
 }

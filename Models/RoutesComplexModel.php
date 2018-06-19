@@ -297,6 +297,7 @@ class RoutesComplexModel
      */
     public function saveNew(array $a_from_post = [])
     {
+        $meth = __METHOD__ . '.';
         $a_route = $this->fixRoute($a_from_post['route']);
         if ($a_route === false) {
             $message = 'A Problem Has Occured. Required values missing.';
@@ -311,6 +312,28 @@ class RoutesComplexModel
                 throw new ModelException($message, $err_code);
             }
         }
+          $log_message = 'route ' . var_export($a_route, TRUE);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $o_routes = new RoutesModel($this->o_db);
+        $o_routes->setupElog($this->o_di);
+        $o_rgm = new RoutesGroupMapModel($this->o_db);
+        $o_rgm->setupElog($this->o_di);
+        try {
+            $this->o_db->startTransaction();
+            $results = $o_routes->create($a_route);
+            $route_id = $results[0];
+            foreach ($a_groups as $key => $a_group) {
+                $a_groups[$key]['route_id'] = $route_id;
+            }
+              $log_message = 'groups ' . var_export($a_groups, TRUE);
+              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+            $o_rgm->create($a_groups);
+            $this->o_db->commitTransaction();
+        }
+        catch (ModelException $e) {
+            $this->o_db->rollbackTransaction();
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
         return true;
     }
 
@@ -324,6 +347,7 @@ class RoutesComplexModel
      */
     public function update(array $a_from_post = [])
     {
+        $meth = __METHOD__ . '.';
         $a_route = $this->fixRoute($a_from_post['route']);
         $a_groups = [];
         if (empty($a_route['route_id'])) {
@@ -348,6 +372,9 @@ class RoutesComplexModel
         if (!empty($a_group_ids)) { // we have new map records to create
             $a_groups = $this->fixGroups($a_group_ids, $a_route['route_id']);
         }
+        $log_message = 'groups ' . var_export($a_groups, TRUE);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
         $o_rgm = new RoutesGroupMapModel($this->o_db);
         $o_routes = new RoutesModel($this->o_db);
         $o_rgm->setupElog($this->o_di);
@@ -363,6 +390,7 @@ class RoutesComplexModel
                 $o_rgm->create($a_groups);
             }
             $o_routes->update($a_route);
+            $this->o_db->commitTransaction();
         }
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);

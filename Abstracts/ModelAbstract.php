@@ -30,7 +30,7 @@ abstract class ModelAbstract implements ModelInterface
      * Create a record using the values provided.
      *
      * @param array $a_values required
-     * @return bool
+     * @return array The ids of new records.
      * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function create(array $a_values = [])
