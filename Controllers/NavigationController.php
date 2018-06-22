@@ -5,7 +5,6 @@
  */
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Services\Di;

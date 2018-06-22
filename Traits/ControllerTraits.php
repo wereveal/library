@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Traits;
 
+use Ritc\Library\Helper\CacheHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
@@ -33,11 +34,13 @@ trait ControllerTraits
     protected $a_router_parts = [];
     /** @var array */
     protected $a_url_actions = [];
+    /** @var string $cache_type */
+    protected $cache_type;
     /** @var  string */
     protected $form_action = '';
     /** @var  string */
     protected $main_action = '';
-    /** @var object $o_cache one of several Symfony based cache classes. */
+    /** @var CacheHelper $o_cache */
     protected $o_cache;
     /** @var  DbModel */
     protected $o_db;
@@ -86,12 +89,13 @@ trait ControllerTraits
         if (!$this->o_session instanceof Session) {
             $this->o_session = $o_di->get('session');
         }
-        if (empty($this->o_cache) && USE_CACHE) {
-            $o_cache = $o_di->get('cache');
-            if (is_object($o_cache)) {
-                $this->o_cache = $o_cache;
-                $this->use_cache = true;
-            }
+        if (USE_CACHE) {
+            $this->o_cache = new CacheHelper($this->o_di);
+            $this->cache_type = $this->o_cache->getCacheType();
+            $this->use_cache = empty($this->cache_type)
+                ? false
+                : true
+            ;
         }
     }
 

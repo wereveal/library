@@ -27,23 +27,43 @@ class BlocksView implements ViewInterface
 {
     use LogitTraits, ConfigViewTraits;
 
+    /**
+     * BlocksView constructor.
+     *
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
         $this->setupElog($o_di);
     }
 
+    /**
+     * Main render method for view.
+     *
+     * @param array $a_message
+     * @return string
+     */
     public function render(array $a_message = [])
     {
         $meth = __METHOD__ . '.';
-        $o_model = new BlocksModel($this->o_db);
-        $o_model->setupElog($this->o_di);
-        try {
-            $results = $o_model->read([],['order_by' => 'b_name ASC']);
+        $cache_key = 'blocks.read.all';
+        if ($this->use_cache) {
+            $results = $this->o_cache->get($cache_key);
         }
-        catch (ModelException $e) {
-            $a_message = ViewHelper::addMessage($a_message, $e->getMessage(), 'error');
-            $results = [];
+        if (empty($results)) {
+            $o_model = new BlocksModel($this->o_db);
+            $o_model->setupElog($this->o_di);
+            try {
+                $results = $o_model->read([],['order_by' => 'b_name ASC']);
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $results, 'blocks');
+                }
+            }
+            catch (ModelException $e) {
+                $a_message = ViewHelper::addMessage($a_message, $e->getMessage(), 'error');
+                $results = [];
+            }
         }
         $log_message = 'results ' . var_export($results, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);

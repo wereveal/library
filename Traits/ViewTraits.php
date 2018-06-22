@@ -9,6 +9,7 @@ use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Factories\TwigFactory;
 use Ritc\Library\Helper\AuthHelper;
+use Ritc\Library\Helper\CacheHelper;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Helper\ViewHelper;
@@ -47,9 +48,11 @@ trait ViewTraits
     protected $a_nav;
     /** @var int */
     protected $adm_level;
+    /** @var string $cache_type */
+    protected $cache_type;
     /** @var AuthHelper */
     protected $o_auth;
-    /** @var object $o_cache one of several Symfony based cache classes. */
+    /** @var CacheHelper $o_cache */
     protected $o_cache;
     /** @var DbModel */
     protected $o_db;
@@ -66,7 +69,7 @@ trait ViewTraits
     /** @var \Twig_Environment */
     protected $o_twig;
     /** @var bool */
-    private $use_cache = false;
+    private $use_cache;
 
     ### Main Public Methods ###
     /**
@@ -155,7 +158,7 @@ trait ViewTraits
      */
     public function retrieveNav($nav_group = '')
     {
-        $cache_key = 'nav_values.ng_id.' . $nav_group;
+        $cache_key = 'nav.values.ng_id.' . $nav_group;
         if ($this->use_cache) {
             $a_nav = $this->o_cache->get($cache_key);
         }
@@ -171,7 +174,7 @@ trait ViewTraits
             $a_nav = $this->createSubmenu($a_nav);
             $a_nav = $this->sortTopLevel($a_nav);
             if ($this->use_cache) {
-                $this->o_cache->set($cache_key, $a_nav);
+                $this->o_cache->set($cache_key, $a_nav, 'nav');
             }
         }
         return $a_nav;
@@ -226,8 +229,8 @@ trait ViewTraits
                 $a_sitemap = ViewHelper::errorMessage('Unable to retrieve the sitemap.');
             }
             if (empty($a_sitemap['message']) && $this->use_cache) {
-                $this->o_cache->set($date_key, date('Ymd'));
-                $this->o_cache->set($value_key, $a_sitemap);
+                $this->o_cache->set($date_key, date('Ymd'), 'sitemap');
+                $this->o_cache->set($value_key, $a_sitemap, 'sitemap');
             }
         }
         return $a_sitemap;
@@ -245,8 +248,8 @@ trait ViewTraits
         $a_page_values = [];
         $a_auth_levels = [];
         $url_id = $this->urlId($url_id);
-        $cache_key = 'page_values.url_id.' . $url_id;
-        $group_cache_key = 'group_values.auth_levels';
+        $cache_key = 'page.values.url_id.' . $url_id;
+        $group_cache_key = 'groups.values.auth_levels';
         if ($this->use_cache) {
             $a_page_values = $this->o_cache->get($cache_key);
             $a_auth_levels = $this->o_cache->get($group_cache_key);
@@ -254,7 +257,7 @@ trait ViewTraits
         if (!is_array($a_page_values) || empty($a_page_values)) {
             $a_page_values = $this->getPageValues($url_id);
             if ($this->use_cache) {
-                $this->o_cache->set($cache_key, $a_page_values);
+                $this->o_cache->set($cache_key, $a_page_values, 'page');
             }
         }
           $log_message = 'page values ' . var_export($a_page_values, TRUE);
@@ -268,7 +271,7 @@ trait ViewTraits
                     $a_auth_levels[strtolower($a_group['group_name'])] = $a_group['group_auth_level'];
                 }
                 if ($this->use_cache) {
-                    $this->o_cache->set($group_cache_key, $a_auth_levels);
+                    $this->o_cache->set($group_cache_key, $a_auth_levels, 'groups');
                 }
             }
             catch (ModelException $e) {
@@ -360,11 +363,15 @@ trait ViewTraits
         if (empty($this->o_routes_helper)) {
             $this->o_routes_helper = new RoutesHelper($o_di);
         }
-        if (empty($this->o_cache) && USE_CACHE) {
+        if (USE_CACHE) {
             $o_cache = $o_di->get('cache');
             if (is_object($o_cache)) {
-                $this->o_cache = $o_cache;
-                $this->use_cache = true;
+                $this->o_cache    = $o_cache;
+                $this->cache_type = $this->o_cache->getCacheType();
+                $this->use_cache  = empty($this->cache_type)
+                    ? false
+                    : true
+                ;
             }
             else {
                 $this->o_cache = null;
@@ -381,7 +388,7 @@ trait ViewTraits
     /**
      * Sets the class property $adm_level to a value of the highest auth level
      * found for login_id or 0 if not found.
-     * 
+     *
      * @param string $login_id Optional, if empty tries to use $_SESSION['login_id'].
      */
     protected function setAdmLevel($login_id = '')
@@ -405,7 +412,7 @@ trait ViewTraits
             }
         }
         if ($this->use_cache) {
-            $this->o_cache->set($cache_key, $adm_level);
+            $this->o_cache->set($cache_key, $adm_level, 'adm');
         }
         $this->adm_level = $adm_level;
     }
@@ -439,8 +446,8 @@ trait ViewTraits
             catch (ModelException $e) {
                 $ng_id = 1;
             }
-            if (USE_CACHE) {
-                $this->o_cache->set($cache_key, $ng_id);
+            if ($this->use_cache) {
+                $this->o_cache->set($cache_key, $ng_id, 'navgroup');
             }
         }
         $this->setNav($ng_id);
@@ -579,7 +586,7 @@ trait ViewTraits
             || empty($a_parameters['href'])
         ) {
             if ($this->use_cache) {
-                $this->o_cache->deleteItem($pager_key);
+                $this->o_cache->clearKey($pager_key);
             }
             return [];
         }
@@ -595,7 +602,7 @@ trait ViewTraits
         $href               = $a_parameters['href'];
         if ($records_to_display >= $total_records) {
             if ($this->use_cache) {
-                $this->o_cache->set($pager_key, []);
+                $this->o_cache->set($pager_key, [], 'pager');
             }
             return [];
         }
@@ -712,7 +719,7 @@ trait ViewTraits
             ];
         }
         if ($this->use_cache) {
-            $this->o_cache->set($pager_key, $a_pager);
+            $this->o_cache->set($pager_key, $a_pager, 'pager');
         }
         return $a_pager;
     }

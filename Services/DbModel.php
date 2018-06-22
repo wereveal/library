@@ -1323,6 +1323,8 @@ class DbModel
     }
 
     /**
+     * Does a search with a prepared statement.
+     *
      * @param array         $a_values
      * @param \PDOStatement $o_pdo_stmt
      * @param string        $type

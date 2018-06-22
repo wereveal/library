@@ -64,7 +64,9 @@ class PageView
 
     /**
      * Returns a form to enter page data into db.
-     * @param array $a_message
+     *
+     * @param string $new_or_modify Defaults to new
+     * @param int    $page_id
      * @return string
      */
     public function renderForm($new_or_modify = 'new', $page_id = -1)

@@ -13,6 +13,7 @@ use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Component\Cache\Adapter\PhpArrayAdapter;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\Exception\CacheException;
 use Symfony\Component\Cache\Simple\ArrayCache;
 use Symfony\Component\Cache\Simple\ChainCache;
@@ -43,12 +44,13 @@ class CacheFactory
 
     /**
      * CacheFactory constructor.
+     *
      * @param array $a_cache_config
      */
     private function __construct(array $a_cache_config = [])
     {
         $cache_type = empty($a_cache_config['cache_type'])
-            ? 'SimplePhpFiles'
+            ? defined('CACHE_TYPE') ? CACHE_TYPE : 'SimplePhpFiles'
             : $a_cache_config['cache_type'];
         $lifetime = empty($a_cache_config['lifetime'])
             ? defined('CACHE_TTL') ? CACHE_TTL : 604800
@@ -60,6 +62,9 @@ class CacheFactory
             ? BASE_PATH . '/cache'
             : $a_cache_config['directory']
         ;
+        $psr6 = strpos($cache_type, 'Simple') === false
+            ? true
+            : false;
         $o_cache = NULL;
         switch ($cache_type) {
             case 'Array':
@@ -117,6 +122,9 @@ class CacheFactory
                 catch (CacheException $e) {
                     error_log('Could not create the PhpFilesCache instance: ' . $e->getMessage());
                 }
+        }
+        if ($psr6 && is_object($o_cache)) {
+            $o_cache = new TagAwareAdapter($o_cache, $o_cache);
         }
         $this->o_cache = $o_cache;
     }

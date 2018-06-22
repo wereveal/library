@@ -181,6 +181,7 @@ class NavComplexModel
 
     /**
      * Returns the search results for all nav records for a navgroup.
+     *
      * @param int $ng_id Optional, will use the default navgroup if not provided.
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -211,13 +212,15 @@ class NavComplexModel
 
     /**
      * Gets all the navigation records with related values.
+     *
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function getNavListAll()
     {
         $select_sql = trim(str_replace("WHERE n.nav_active = 'true'", '', $this->select_sql));
-        $sql = $select_sql . $this->select_order_sql;
+        $sql = $select_sql . "\n" . $this->select_order_sql;
+        $this->logIt('sql: ' . $sql, LOG_OFF, __METHOD__);
         try {
             return $this->o_db->search($sql);
         }
@@ -229,6 +232,7 @@ class NavComplexModel
 
     /**
      * Returns the nav records that have an auth level equal or less than value provided.
+     *
      * @param int $auth_level
      * @return array|mixed
      * @throws ModelException
@@ -250,6 +254,7 @@ class NavComplexModel
 
     /**
      * Returns the Navigation list by navgroup name.
+     *
      * @param string $navgroup_name Optional, will use default navgroup if not supplied.
      * @return array|bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -279,6 +284,7 @@ class NavComplexModel
 
     /**
      * Returns an array of nav items based on parent nav id.
+     *
      * @param int $parent_id Required. Parent id of the navigation record.
      * @param int $ng_id     Required. Id of the navigation group it belongs in.
      * @return bool|array
@@ -313,6 +319,7 @@ class NavComplexModel
 
     /**
      * Returns a single nav record by nav_id with the url_text.
+     *
      * @param int $nav_id
      * @return array|bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -463,6 +470,7 @@ class NavComplexModel
 
     /**
      * Returns array of the top level nav items for a navgroup.
+     *
      * @param int $ng_id
      * @return array|bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -487,6 +495,7 @@ class NavComplexModel
 
     /**
      * Returns the number of levels for a given nav list.
+     *
      * @param array $a_nav_list
      * @return int
      */
@@ -502,6 +511,66 @@ class NavComplexModel
     }
 
     /**
+     * Returns all nav records in a tree format based on nav_level.
+     * Limited to three levels.
+     *
+     * @return array
+     * @throws ModelException
+     */
+    public function readAllNavUrlTree()
+    {
+        $meth = __METHOD__ . '.';
+        $select_sql = 'SELECT ' . $this->buildSqlSelectFields($this->a_db_fields, 'n');
+        $select_sql = str_replace('n.nav_parent_id', 'n.nav_parent_id as parent_id', $select_sql);
+        $select_sql = str_replace('n.url_id,', '', $select_sql);
+        $a_url_fields = [
+            'url_id'   => 'url_id',
+            'url_text' => 'url'
+        ];
+        $select_sql .= ', ' . $this->buildSqlSelectFields($a_url_fields, 'u');
+        $select_sql .= "
+            FROM {$this->lib_prefix}navigation as n
+            JOIN {$this->lib_prefix}urls as u
+              ON n.url_id = u.url_id
+            WHERE n.nav_level = :nav_level
+        ";
+        $order_by = "ORDER BY n.nav_order ASC";
+        $top_sql = $select_sql . $order_by;
+        $prepare_sql = $select_sql . "
+            AND n.nav_parent_id = :parent_id
+        " . $order_by;
+        $this->logIt('top sql: ' . $top_sql, LOG_ON, $meth . __LINE__);
+        $this->logIt('prepare sql: ' . $prepare_sql, LOG_ON, $meth . __LINE__);
+        try {
+            $a_search_for = [':nav_level' => 1];
+            $a_top_levels = $this->o_db->search($top_sql, $a_search_for);
+            $o_stmt = $this->o_db->prepare($prepare_sql);
+            foreach ($a_top_levels as $key => $a_record) {
+                $a_search_for2 = [
+                    ':nav_level' => 2,
+                    ':parent_id' => $a_record['nav_id']
+                ];
+                $a_second_levels = $this->o_db->searchPrepared($a_search_for2, $o_stmt);
+                foreach ($a_second_levels as $key2 => $a_record2) {
+                    $a_search_for3 = [
+                        ':nav_level' => 3,
+                        ':parent_id' => $a_record2['nav_id']
+                    ];
+                    $a_third_levels = $this->o_db->searchPrepared($a_search_for3, $o_stmt);
+                    $a_second_levels[$key2]['submenu'] = $a_third_levels;
+                }
+                $a_top_levels[$key]['submenu'] = $a_second_levels;
+            }
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        return $a_top_levels;
+    }
+
+    /**
+     * Removes a nav navgroup map record that belongs to the Sitemap navgroup.
+     *
      * @param $nav_id
      * @return bool
      * @throws ModelException
@@ -539,6 +608,7 @@ class NavComplexModel
     /**
      * Does a transaction saving the navigation record and associated nav to navgroup map record.
      * This handles both new records and updating old ones.
+     *
      * @param array $a_post
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -719,7 +789,8 @@ class NavComplexModel
 
     ### Real GETters and SETters
     /**
-     * Getter for var $select_sql
+     * Getter for class property $select_sql.
+     *
      * @return string
      */
     public function getSelectSql()
@@ -728,6 +799,8 @@ class NavComplexModel
     }
 
     /**
+     * SETter for class property $select_sql.
+     *
      * @param string $select_sql normally not set.
      */
     public function setSelectSql($select_sql = '')
@@ -772,7 +845,8 @@ EOT;
     }
 
     /**
-     * Getter for var $select_order_sql.
+     * Getter for class property $select_order_sql.
+     *
      * @return string
      */
     public function getSelectOrderSql()
@@ -782,6 +856,7 @@ EOT;
 
     /**
      * Sets the string for the ORDER BY statement used in several ReadNavX methods.
+     *
      * @param string $string optional
      */
     public function setSelectOrderSql($string = '')

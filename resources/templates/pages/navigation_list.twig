@@ -1,59 +1,68 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block body %}
-    <div class="container">
-        {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with navgroups_btn %}
+    <div class="container text-right">
+        {% include '@' ~ lib_prefix ~ 'elements/anchor.twig' with navgroups_btn %}
     </div>
     <div class="container">
-        <div class="row">
-            <div class="col-md-1 offset-md-11">
-                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with new_btn_form %}
-            </div>
-        </div>
-        <div class="row list-header hidden-sm-down">
-            <div class="col-12 col-md-3">
+        <div class="row list-header d-none d-lg-flex sticky-top">
+            <div class="col-12 col-lg-4">
                 Name
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-lg-6">
                 Description
             </div>
-            <div class="col-12 col-md-3">
-                &nbsp;
+            <div class="col-12 col-lg-2">
+                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with new_btn_form %}
             </div>
         </div>
     {% for nav in a_nav %}
-        {% set class = loop.index is divisible by(2) ? 'even' : 'odd' %}
-        <div class="row list-header hidden-sm-down">
-            <div class="col-12 col-md-3">
+        {% set class = loop.index is even ? 'even' : 'odd' %}
+        <div class="row {{ class }}">
+            <div class="col-12 col-lg-4">
                 {{ nav.nav_text }}
             </div>
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-lg-6">
                 {{ nav.nav_description }}
             </div>
-            <div class="col-12 col-md-3">
-                {% include '@' ~ lib_prefix ~ 'forms/update_delete_btn_form.twig' with nav %}
+            <div class="col-12 col-lg-2">
+                <form action="{{ public_dir }}/manager/config/navigation/" method="post">
+                    <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Update</button>
+                {% if nav.nav_immutable == 'false' or adm_lvl >= auth_lvl.superadmin  %}
+                    <button type="submit" name="submit" value="verify_delete" class="btn btn-outline-danger btn-xs">Delete</button>
+                {% endif %}
+                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    <input type="hidden" name="nav_id" value="{{ nav.nav_id }}">
+                </form>
             </div>
         </div>
-        {% if nav.submenu %}
-            {% for sub in nav.submenu %}
-            <div class="row list-header hidden-sm-down">
-                <div class="col-12 col-md-3">
-                    {{ sub.nav_text }}
-                </div>
-                <div class="col-12 col-md-6">
-                    {{ sub.nav_description }}
-                </div>
-                <div class="col-12 col-md-3">
-                    {% include '@' ~ lib_prefix ~ 'forms/update_delete_btn_form.twig' with sub %}
-                </div>
+    {% if nav.submenu %}
+        {% for sub in nav.submenu %}
+    {% if class == 'even' %}
+        {% set inner_class = loop.index is even ? 'even-inner-even' : 'even-inner-odd' %}
+    {% else %}
+        {% set inner_class = loop.index is even ? 'odd-inner-even' : 'odd-inner-odd' %}
+    {% endif %}
+        <div class="row {{ inner_class }}">
+            <div class="col-12 col-lg-4 pad-left-2">
+                {{ sub.nav_text }}
             </div>
-            {% endfor %}
-        {% endif %}
+            <div class="col-12 col-lg-6">
+                {{ sub.nav_description }}
+            </div>
+            <div class="col-12 col-lg-2">
+                <form action="{{ public_dir }}/manager/config/navigation/" method="post">
+                    <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Update</button>
+                    {% if nav.nav_immutable == 'false' or adm_lvl >= auth_lvl.superadmin  %}
+                        <button type="submit" name="submit" value="verify_delete" class="btn btn-outline-danger btn-xs">Delete</button>
+                    {% endif %}
+                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    <input type="hidden" name="nav_id" value="{{ nav.nav_id }}">
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
     {% endfor %}
-        <div class="row">
-            <div class="col-md-1 offset-md-11">
-                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with new_btn_form %}
-            </div>
-        </div>
     </div>
     {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
 {% endblock %}

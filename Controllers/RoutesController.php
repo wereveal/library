@@ -22,9 +22,10 @@ use Ritc\Library\Views\RoutesView;
  * should not be able to be deleted.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.2.0
- * @date    2016-04-13 08:52:26
+ * @version v3.0.0
+ * @date    2018-06-20 13:56:13
  * @change_log
+ * - v3.0.0   - Working version after a lot of refactoring.  - 2018-06-20 wer
  * - v2.2.0   - Refactored to work with the Urls class/model - 2016-04-13 wer
  * - v2.1.1   - bug fix                                      - 2016-03-08 wer
  * - v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
@@ -98,6 +99,9 @@ class RoutesController implements ManagerControllerInterface
         }
         try {
             $this->o_complex->delete($route_id);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('route');
+            }
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -116,6 +120,9 @@ class RoutesController implements ManagerControllerInterface
         try {
             $this->o_complex->saveNew($this->a_post);
             $a_message = ViewHelper::successMessage();
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('route');
+            }
         }
         catch (ModelException $e) {
             $msg  = 'A Problem Has Occured. The route could not be saved.';
@@ -137,6 +144,9 @@ class RoutesController implements ManagerControllerInterface
         try {
             $this->o_complex->update($this->a_post);
             $a_message = ViewHelper::successMessage();
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('route');
+            }
         }
         catch (ModelException $e) {
             $msg = 'A Problem Has Occured. The route could not be updated.';
@@ -166,7 +176,7 @@ class RoutesController implements ManagerControllerInterface
                 $a_route = $this->o_complex->readWithUrl($route_id);
                 $url = $a_route[0]['url_text'];
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $url);
+                    $this->o_cache->set($cache_key, $url, 'route');
                 }
             }
             catch (ModelException $e) {

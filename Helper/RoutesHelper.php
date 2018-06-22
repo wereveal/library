@@ -34,7 +34,9 @@ class RoutesHelper
 
     /** @var array */
     private $a_route_parts;
-    /** @var */
+    /** @var string $cache_type */
+    private $cache_type;
+    /** @var CacheHelper $o_cache */
     private $o_cache;
     /** @var \Ritc\Library\Services\DbModel */
     private $o_db;
@@ -45,7 +47,7 @@ class RoutesHelper
     /** @var string */
     private $request_uri;
     /** @var bool */
-    private $use_cache = false;
+    private $use_cache;
 
     /**
      * RoutesHelper constructor.
@@ -61,8 +63,11 @@ class RoutesHelper
         if (USE_CACHE) {
             $o_cache = $o_di->get('cache');
             if (is_object($o_cache)) {
-                $this->o_cache   = $o_cache;
-                $this->use_cache = true;
+                $this->o_cache    = $o_cache;
+                $this->cache_type = $this->o_cache->getCacheType();
+                $this->use_cache  = empty($this->cache_type)
+                    ? false
+                    : true;
             }
         }
         $this->route_path = $request_uri;
@@ -210,7 +215,7 @@ class RoutesHelper
                 $a_results = $o_routes->readByRequestUri($value);
                 if (!empty($a_results[0])) {
                     if ($this->use_cache) {
-                        $this->o_cache->set($cache_key, $a_results[0]);
+                        $this->o_cache->set($cache_key, $a_results[0], 'route');
                     }
                     return $a_results[0];
                 }
@@ -278,8 +283,7 @@ class RoutesHelper
             return [];
         }
         $cache_key = 'groups.for.route.' . $route_id;
-        $use_cache = USE_CACHE && is_object($this->o_cache);
-        if ($use_cache) {
+        if ($this->use_cache) {
             $a_groups_json = $this->o_cache->get($cache_key);
             if (!empty($a_groups_json)) {
                 $a_groups = json_decode($a_groups_json);
@@ -295,9 +299,9 @@ class RoutesHelper
                 foreach ($a_rgm_results as $a_rgm) {
                     $a_groups[] = $a_rgm['group_id'];
                 }
-                if ($use_cache) {
+                if ($this->use_cache) {
                     $json = json_encode($a_groups);
-                    $this->o_cache->set($cache_key, $json);
+                    $this->o_cache->set($cache_key, $json, 'groups');
                 }
                 return $a_groups;
             }
@@ -345,7 +349,7 @@ class RoutesHelper
             }
         }
         if ($this->use_cache) {
-            $this->o_cache->set($key, $min_auth_level);
+            $this->o_cache->set($key, $min_auth_level, 'route');
         }
         return $min_auth_level;
     }
@@ -421,7 +425,7 @@ class RoutesHelper
                 $request_uri = $_SERVER["REQUEST_URI"];
             }
         }
-        $cache_key = 'route_parts.for.';
+        $cache_key = 'route.parts.for.';
         $cache_key .= $request_uri != '/' ? Strings::uriToCache($request_uri) : 'home';
         if ($this->use_cache) {
             $a_route_parts = $this->o_cache->get($cache_key);
@@ -458,7 +462,7 @@ class RoutesHelper
         $log_message = 'Route parts:  ' . var_export($a_route_parts, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if ($this->use_cache) {
-            $this->o_cache->set($cache_key, $a_route_parts);
+            $this->o_cache->set($cache_key, $a_route_parts, 'route');
         }
         $this->a_route_parts = $a_route_parts;
     }

@@ -24,6 +24,7 @@ class ViewHelper
 {
     /**
      * Adds a message string to a message array.
+     *
      * @param array  $a_message    Advised but optional. If empty creates a new message array.
      * @param string $message      Required, nothing to add otherwise.
      * @param string $message_type Optional, defaults to message type of original message, or info if none provided.

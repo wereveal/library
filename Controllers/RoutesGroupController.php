@@ -28,8 +28,14 @@ class RoutesGroupController implements ManagerControllerInterface
 {
     use LogitTraits, ConfigControllerTraits;
 
+    /** @var RoutesGroupView  */
     private $o_view;
 
+    /**
+     * RoutesGroupController constructor.
+     *
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);

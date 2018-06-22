@@ -42,6 +42,7 @@ class UrlsController implements ConfigControllerInterface
 
     /**
      * UrlsController constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -55,6 +56,7 @@ class UrlsController implements ConfigControllerInterface
 
     /**
      * Main method used to render the page.
+     *
      * @return string
      */
     public function route()
@@ -76,6 +78,7 @@ class UrlsController implements ConfigControllerInterface
 
     /**
      * Method for saving data.
+     *
      * @return string
      */
     public function save()
@@ -95,6 +98,9 @@ class UrlsController implements ConfigControllerInterface
 
         try {
             $this->o_urls_model->create($a_values);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('urls');
+            }
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -105,6 +111,7 @@ class UrlsController implements ConfigControllerInterface
 
     /**
      * Method for updating data.
+     *
      * @return string
      */
     public function update()
@@ -129,6 +136,9 @@ class UrlsController implements ConfigControllerInterface
 
         try {
             $this->o_urls_model->update($a_values, ['url_text', 'url_host']);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('urls');
+            }
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -139,6 +149,7 @@ class UrlsController implements ConfigControllerInterface
 
     /**
      * Method to display the verify delete form.
+     *
      * @return string
      */
     public function verifyDelete()
@@ -168,6 +179,7 @@ class UrlsController implements ConfigControllerInterface
 
     /**
      * Method to delete data.
+     *
      * @return string
      */
     public function delete()
@@ -175,6 +187,9 @@ class UrlsController implements ConfigControllerInterface
         $url_id = isset($this->a_post['url_id']) ? $this->a_post['url_id'] : -1;
         try {
             $this->o_urls_model->delete($url_id);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('urls');
+            }
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -185,6 +200,7 @@ class UrlsController implements ConfigControllerInterface
 
     /**
      * Splits the url into 3 components, scheme, host, and the rest of the url.
+     *
      * @param string $url
      * @return array|bool
      */

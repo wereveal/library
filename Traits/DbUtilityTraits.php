@@ -426,7 +426,8 @@ SQL;
      * Builds the select field portion of a sql select statement.
      * Can be a simple array list or an assoc array which specifies
      * the name of the field in the array key, the name to be as is the array value, e.g.,
-     * ['ngv' => 'general] becomes the string "ngv as 'general'"
+     * ['ngv' => 'general] becomes the string "ngv as 'general'".
+     *
      * @param array $a_values Required
      * @param string $prefix  Optional. Allows a table name or table alias to be added to the select name.
      * @return string

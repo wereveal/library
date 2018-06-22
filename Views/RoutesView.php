@@ -158,6 +158,7 @@ class RoutesView
                 'options'     => $this_route_options
             ];
             $a_routes[$key]['a_urls'] = $a_select;
+            $a_rgm_results = [];
             try {
                 $a_rgm_results = $o_rgm->readByRouteId($a_route['route_id']);
             }

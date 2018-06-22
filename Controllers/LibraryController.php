@@ -92,6 +92,9 @@ class LibraryController implements ControllerInterface
                 case 'navigation':
                     $o_c = new NavigationController($this->o_di);
                     break;
+                case 'navgroups':
+                    $o_c = new NavgroupsController($this->o_di);
+                    break;
                 case 'pages':
                     $o_c = new PageController($this->o_di);
                     break;

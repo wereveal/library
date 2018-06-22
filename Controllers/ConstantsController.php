@@ -100,6 +100,9 @@ class ConstantsController implements ConfigControllerInterface
             }
             else {
                 $a_message = ViewHelper::successMessage();
+                if ($this->use_cache) {
+                    $this->o_cache->clearTag('constants');
+                }
             }
         }
         catch (ModelException $e) {
@@ -124,6 +127,9 @@ class ConstantsController implements ConfigControllerInterface
             }
             try {
                 $this->o_model->update($a_constants);
+                if ($this->use_cache) {
+                    $this->o_cache->clearTag('constants');
+                }
                 $a_message = ViewHelper::successMessage();
             }
             catch (ModelException $e) {
@@ -172,6 +178,9 @@ class ConstantsController implements ConfigControllerInterface
         }
         try {
             if ($this->o_model->delete($const_id)) {
+                if ($this->use_cache) {
+                    $this->o_cache->clearTag('constants');
+                }
                 $a_message = ViewHelper::successMessage();
             }
             else {

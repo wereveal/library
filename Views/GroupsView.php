@@ -57,17 +57,26 @@ class GroupsView
     public function renderList(array $a_message = [])
     {
         $meth = __METHOD__ . '.';
-        try {
-            $a_groups = $this->o_groups->read(array(), ['order_by' => 'group_name']);
+        $cache_key = 'groups.read.all';
+        if ($this->use_cache) {
+            $a_groups = $this->o_cache->get($cache_key);
         }
-        catch (ModelException $e) {
-            $a_groups = [];
-        }
-        if (!empty($a_groups)) {
-            foreach ($a_groups as $a_group_key => $a_row) {
-                $a_groups[$a_group_key]['group_description'] = html_entity_decode($a_row['group_description'], ENT_QUOTES);
-                $selected_key_name = 'selected' . $a_row['group_auth_level'];
-                $a_groups[$a_group_key][$selected_key_name] = ' selected';
+        if (empty($a_groups)) {
+            try {
+                $a_groups = $this->o_groups->read([], ['order_by' => 'group_name']);
+                if (!empty($a_groups)) {
+                    foreach ($a_groups as $a_group_key => $a_row) {
+                        $a_groups[$a_group_key]['group_description'] = html_entity_decode($a_row['group_description'], ENT_QUOTES);
+                        $selected_key_name = 'selected' . $a_row['group_auth_level'];
+                        $a_groups[$a_group_key][$selected_key_name] = ' selected';
+                    }
+                    if ($this->use_cache) {
+                        $this->o_cache->set($cache_key, $a_groups, 'groups');
+                    }
+                }
+            }
+            catch (ModelException $e) {
+                $a_groups = [];
             }
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message);

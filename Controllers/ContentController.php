@@ -33,5 +33,6 @@ class ContentController implements ControllerInterface
     public function route()
     {
         // TODO: Implement route() method.
+        return 'Todo';
     }
 }

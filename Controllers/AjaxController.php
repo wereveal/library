@@ -27,6 +27,7 @@ class AjaxController
 
     /**
      * AjaxController constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -87,7 +88,7 @@ class AjaxController
             }
             $json = json_encode($a_encode_this);
             if ($this->use_cache) {
-                $this->o_cache->set($cache_key, $json);
+                $this->o_cache->set($cache_key, $json, 'ajax');
             }
             return $json;
         }
@@ -125,7 +126,7 @@ class AjaxController
             }
             $json = json_encode($a_results);
             if ($this->use_cache) {
-                $this->o_cache->set($cache_key, $json);
+                $this->o_cache->set($cache_key, $json, 'ajax');
             }
             return $json;
         }

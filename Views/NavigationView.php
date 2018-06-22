@@ -6,12 +6,13 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\FormHelper;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ViewTraits;
 
 /**
  * The view class for the navigation manager.
@@ -26,7 +27,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class NavigationView
 {
-    use LogitTraits, ViewTraits;
+    use LogitTraits, ConfigViewTraits;
 
     /**
      * @var \Ritc\Library\Models\NavComplexModel
@@ -51,29 +52,33 @@ class NavigationView
      */
     public function renderList(array $a_message = [])
     {
+        $meth = __METHOD__ . '.';
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/navigation/');
         try {
-            $a_nav = $this->o_nav_complex->getNavListAll();
+            $a_nav = $this->o_nav_complex->readAllNavUrlTree();
         }
         catch (ModelException $e) {
             $a_nav = [];
         }
-        $a_nav = $this->createSubmenu($a_nav);
-        $a_nav = $this->sortTopLevel($a_nav);
-        $a_nav = $this->createTwigListArray($a_nav);
+        $log_message = 'a_nav' . var_export($a_nav, true);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
 
         $a_twig_values['a_nav'] = $a_nav;
-
-        $a_twig_values['new_btn_form'] = [
+        $a_navgroups_btn = [
+            'url'   => PUBLIC_DIR . '/manager/config/navgroups/',
+            'class' => 'btn btn-primary',
+            'text'  => 'Navgroups'
+        ];
+        $a_twig_values['navgroups_btn'] = $a_navgroups_btn;
+        $a_twig_values['new_btn_form'] = FormHelper::singleBtnForm([
             'form_action'  => PUBLIC_DIR . '/manager/config/navigation/',
-            'form_class'   => '',
             'btn_value'    => 'new',
             'btn_label'    => 'New',
             'btn_color'    => 'btn-primary',
             'btn_size'     => 'btn-xs',
             'hidden_name'  => 'nav_id',
             'hidden_value' => ''
-        ];
+        ]);
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }

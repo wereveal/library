@@ -46,6 +46,7 @@ class PeopleController implements ManagerControllerInterface
 
     /**
      * PeopleController constructor.
+     *
      * @param Di $o_di
      */
     public function __construct(Di $o_di)
@@ -66,6 +67,7 @@ class PeopleController implements ManagerControllerInterface
 
     /**
      * Routes the code to the appropriate methods and classes. Returns a string.
+     *
      * @return string html to be displayed.
      */
     public function route()
@@ -103,6 +105,7 @@ class PeopleController implements ManagerControllerInterface
 
     /**
      * Saves a new person mapped to group(s).
+     *
      * Returns array that specifies succsss or failure.
      * @return array a message regarding outcome.
      */
@@ -130,6 +133,9 @@ class PeopleController implements ManagerControllerInterface
                     if ($results === false) {
                         return ViewHelper::failureMessage($error_message);
                     }
+                    if ($this->use_cache) {
+                        $this->o_cache->clearTag('people');
+                    }
                     return ViewHelper::successMessage("Success, the person was saved.");
                 }
                 catch (ModelException $e) {
@@ -143,6 +149,7 @@ class PeopleController implements ManagerControllerInterface
 
     /**
      * Updates the user record.
+     *
      * @return array a message regarding outcome.
      */
     public function update()
@@ -183,6 +190,9 @@ class PeopleController implements ManagerControllerInterface
             if ($results === false) {
                 return ViewHelper::failureMessage($error_message);
             }
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('people');
+            }
             $message = "Success, the person was saved." . $addendum;
             return ViewHelper::successMessage($message);
         }
@@ -196,6 +206,7 @@ class PeopleController implements ManagerControllerInterface
 
     /**
      * Display the form to verify delete.
+     *
      * @return string
      */
     public function verifyDelete()
@@ -210,23 +221,30 @@ class PeopleController implements ManagerControllerInterface
             $a_message = ViewHelper::errorMessage('An error has occurred and the person was not deleted. Please try again.');
             return $this->o_view->renderList($a_message);
         }
-        if ($this->o_people->isImmutable($people_id)) {
+        $cache_key = 'people.by.id.' . $people_id;
+        $a_person = $this->o_cache->get($cache_key);
+        if (empty($a_person)) {
+            try {
+                $a_person = $this->o_people->readById($people_id);
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $a_person, 'people');
+                }
+            }
+            catch (ModelException $e) {
+                $a_message = ViewHelper::errorMessage('An error occurred and the person was not deleted.');
+                return $this->o_view->renderList($a_message);
+            }
+        }
+        if (empty($a_person['is_immutable']) || $a_person['is_immutable'] == 'true') {
             $a_message = ViewHelper::errorMessage('The person is immutable and cannot be deleted.');
             return $this->o_view->renderList($a_message);
         }
-        try {
-            $a_person = $this->o_people->read(['people_id' => $people_id]);
-            $real_name = !empty($a_person[0]['real_name'])
-                ? $a_person[0]['real_name']
-                : 'Problem Child';
-            $login_id = !empty($a_person[0]['login_id'])
-                ? $a_person[0]['login_id']
-                : 'Problem Child';
-        }
-        catch (ModelException $e) {
-            $a_message = ViewHelper::errorMessage('An error occurred and the person was not deleted.');
-            return $this->o_view->renderList($a_message);
-        }
+        $real_name = !empty($a_person['real_name'])
+            ? $a_person['real_name']
+            : 'Problem Child';
+        $login_id = !empty($a_person['login_id'])
+            ? $a_person['login_id']
+            : 'Problem Child';
         $a_values = [
             'what'          => 'Person',
             'name'          => $real_name,
@@ -256,6 +274,9 @@ class PeopleController implements ManagerControllerInterface
         }
         try {
             if ($this->o_complex->deletePerson($this->a_post['people_id'])) {
+                if ($this->use_cache) {
+                    $this->o_cache->clearTag('people');
+                }
                 return ViewHelper::successMessage();
             }
             return ViewHelper::failureMessage($this->o_people->getErrorMessage());

@@ -54,7 +54,7 @@ class CacheManagerController implements ControllerInterface
         $this->logIt($message, LOG_OFF, __METHOD__);
         switch ($this->form_action) {
             case 'clear_cache':
-                if ($this->o_cache->clear()) {
+                if ($this->o_cache->clearAll()) {
                     $a_message = ViewHelper::successMessage();
                 }
                 else {
@@ -80,7 +80,7 @@ class CacheManagerController implements ControllerInterface
                 else {
                     $a_message = ViewHelper::failureMessage('Could not disable the cache.');
                 }
-                $this->o_cache->clear();
+                $this->o_cache->clearAll();
                 break;
             default:
                 // do nothing

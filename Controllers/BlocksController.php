@@ -28,7 +28,9 @@ class BlocksController implements ConfigControllerInterface
 {
     use LogitTraits, ControllerTraits;
 
+    /** @var BlocksModel */
     private $o_model;
+    /** @var BlocksView  */
     private $o_view;
 
     /**
@@ -44,6 +46,11 @@ class BlocksController implements ConfigControllerInterface
         $this->setupElog($o_di);
     }
 
+    /**
+     * Main router for controller as required by interface.
+     *
+     * @return string
+     */
     public function route()
     {
         switch ($this->form_action) {
@@ -70,6 +77,9 @@ class BlocksController implements ConfigControllerInterface
         try {
             $this->o_model->create($a_blocks);
             $a_message = ViewHelper::successMessage();
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('blocks');
+            }
         }
         catch (ModelException $e) {
             $a_message = ViewHelper::failureMessage('Unable to save the new block.');
@@ -91,7 +101,10 @@ class BlocksController implements ConfigControllerInterface
             $a_blocks['b_immutable'] = 'false';
         }
         try {
-            $this->o_model->update($a_blocks, 'b_immutable', ['b_name', 'b_type']);
+            $this->o_model->update($a_blocks, ['b_name', 'b_type']);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('blocks');
+            }
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -131,6 +144,9 @@ class BlocksController implements ConfigControllerInterface
         try {
             $this->o_model->delete($b_id);
             $a_message = ViewHelper::successMessage();
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('blocks');
+            }
         }
         catch (ModelException $e) {
             $a_message = ViewHelper::failureMessage('Unable to delete the block.');

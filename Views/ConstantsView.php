@@ -40,6 +40,7 @@ class ConstantsView
 
     /**
      * ConstantsView constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -51,35 +52,39 @@ class ConstantsView
 
     /**
      * Returns the list of configs in html.
+     *
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = array())
+    public function renderList(array $a_message = [])
     {
-        /** @var \Ritc\Library\Services\DbModel $o_db */
-        $o_db = $this->o_di->get('db');
-        $o_const = new ConstantsModel($o_db);
-        $o_const->setElog($this->o_elog);
-
-        if (count($a_message) != 0) {
-            $a_message['message'] .= "<br><br>Changing configuration values can result in unexpected results. If you are not sure, do not do it.";
+        $message = 'Changing configuration values can result in unexpected results. If you are not sure, do not do it.';
+        if (empty($a_message)) {
+            $a_message = ViewHelper::warningMessage($message);
         }
         else {
-            $a_message = ViewHelper::warningMessage('Changing configuration values can result in unexpected results. If you are not sure, do not do it.');
+            $a_message = ViewHelper::addMessage($a_message, $message);
         }
-        $a_twig_values = $this->createDefaultTwigValues($a_message);
-        try {
-            $a_constants = $o_const->read([], ['order_by' => 'const_name']);
-            if (!empty($a_constants)) {
-                $a_twig_values['a_constants'] = $a_constants;
+        $cache_key = 'constants.read.all';
+        $a_constants = [];
+        if ($this->use_cache) {
+            $a_constants = $this->o_cache->get($cache_key);
+        }
+        if (empty($a_constants)) {
+            $o_const = new ConstantsModel($this->o_db);
+            $o_const->setElog($this->o_elog);
+            try {
+                $a_constants = $o_const->read([], ['order_by' => 'const_name']);
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $a_constants, 'constants');
+                }
             }
-            else {
+            catch (ModelException $e) {
                 $a_twig_values['a_constants'] = [];
             }
         }
-        catch (ModelException $e) {
-            $a_twig_values['a_constants'] = [];
-        }
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['a_constants'] = $a_constants;
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }

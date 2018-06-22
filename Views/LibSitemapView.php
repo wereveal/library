@@ -9,7 +9,6 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\FormHelper;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ViewInterface;
-use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -46,10 +45,36 @@ class LibSitemapView implements ViewInterface
      */
     public function render(array $a_message = [])
     {
-        $a_results = $this->o_nav->getSitemapForXml();
-        try {
-            $a_nav_list = $this->o_nav->getNavListByAuthLevel(0);
-            $a_available = [];
+        $xml_cache_key       = 'nav.sitemap.for.xml';
+        $list_cache_key      = 'nav.list.by.auth_level.0';
+        $available_cache_key = 'nav.available.for.sitemap';
+        $tag                 = 'nav';
+        $a_results           = [];
+        $a_nav_list          = [];
+        $a_available         = [];
+        if ($this->use_cache) {
+            $a_results   = $this->o_cache->get($xml_cache_key);
+            $a_nav_list  = $this->o_cache->get($list_cache_key);
+            $a_available = $this->o_cache->get($available_cache_key);
+        }
+        if (empty($a_results)) {
+            $a_results = $this->o_nav->getSitemapForXml();
+            if ($this->use_cache) {
+                $this->o_cache->set($xml_cache_key, $a_results, $tag);
+            }
+        }
+        if (empty($a_nav_list)) {
+            try {
+                $a_nav_list = $this->o_nav->getNavListByAuthLevel(0);
+                if ($this->use_cache) {
+                    $this->o_cache->set($list_cache_key, $a_nav_list, 'nav');
+                }
+            }
+            catch (ModelException $e) {
+                $a_nav_list = [];
+            }
+        }
+        if (empty($a_available)) {
             $btn_values = [
                 'form_action' => '/manager/config/sitemap/',
                 'btn_size'    => 'btn-sm',
@@ -57,7 +82,7 @@ class LibSitemapView implements ViewInterface
             ];
             foreach ($a_nav_list as $key => $item) {
                 if (empty($a_available[$item['nav_name']])) {
-                    $in_sitemap = false; 
+                    $in_sitemap = false;
                     foreach ($a_results as $a_this) {
                         if ($a_this['loc'] == $item['url']) {
                             $in_sitemap = true;
@@ -76,9 +101,9 @@ class LibSitemapView implements ViewInterface
                     $a_available[$item['nav_name']] = $item;
                 }
             }
-        }
-        catch (ModelException $e) {
-            $a_available = [];
+            if ($this->use_cache) {
+                $this->o_cache->set($available_cache_key, $a_available, 'nav');
+            }
         }
         $rebuild_btn = [
             'form_action' => '/manager/config/sitemap/',
@@ -87,7 +112,7 @@ class LibSitemapView implements ViewInterface
         ];
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['rebuild_btn'] = FormHelper::singleBtnForm($rebuild_btn);
-        $a_twig_values['a_sitemap'] = $a_results;
+        $a_twig_values['a_sitemap']   = $a_results;
         $a_twig_values['a_available'] = $a_available;
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
@@ -100,7 +125,17 @@ class LibSitemapView implements ViewInterface
      */
     public function createXmlSitemap()
     {
-        $a_sitemap = $this->o_nav->getSitemapForXml();
+        $xml_cache_key = 'nav.sitemap.for.xml';
+        $a_sitemap = [];
+        if ($this->use_cache) {
+            $a_sitemap = $this->o_cache->get($xml_cache_key);
+        }
+        if (empty($a_sitemap)) {
+            $a_sitemap = $this->o_nav->getSitemapForXml();
+            if ($this->use_cache) {
+                $this->o_cache->set($xml_cache_key, $a_sitemap, 'nav');
+            }
+        }
         $a_tpl_values = [
             'page_prefix' => LIB_TWIG_PREFIX,
             'twig_prefix' => TWIG_PREFIX,

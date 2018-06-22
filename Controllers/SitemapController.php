@@ -24,6 +24,11 @@ class SitemapController implements ControllerInterface
 {
     use LogitTraits, ControllerTraits;
 
+    /**
+     * SitemapController constructor.
+     *
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupController($o_di);

@@ -6,14 +6,10 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\PageModel;
-use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Router;
-use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PageView;
@@ -22,12 +18,11 @@ use Ritc\Library\Views\PageView;
  * Class PageController - Page Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.1
- * @date    2015-11-27 14:49:00
+ * @version v2.0.0
+ * @date    2018-06-21 07:04:13
  * @change_log
- * - v1.0.1   - bug fix                                      - 2016-03-08 wer
+ * - v2.0.0   - Refactored to use ConfigControllerTraits     - 2018-06-21 wer
  * - v1.0.0   - First working version                        - 11/27/2015 wer
- * @todo Convert to use ConfigControllerTraits
  */
 class PageController implements ManagerControllerInterface
 {
@@ -89,6 +84,9 @@ class PageController implements ManagerControllerInterface
         }
         try {
             $this->o_model->delete($page_id);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('page');
+            }
             $a_results = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -108,6 +106,9 @@ class PageController implements ManagerControllerInterface
         $this->logIt('Post Values' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
         try {
             $this->o_model->create($a_page);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('page');
+            }
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -131,6 +132,9 @@ class PageController implements ManagerControllerInterface
         }
         try {
             $this->o_model->update($a_page);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('page');
+            }
             $a_message = ViewHelper::successMessage();
         }
         catch(ModelException $e) {
@@ -162,29 +166,5 @@ class PageController implements ManagerControllerInterface
             'fallback'    => 'renderList' // if something goes wrong, which method to fallback
         ];
         return $this->o_view->renderVerifyDelete($a_values, $a_options);
-    }
-
-    /**
-     * Adds slashes to url if needed.
-     * @param string $url
-     * @return string
-     */
-    private function fixUrl($url = '/')
-    {
-        if ($url == '/') {
-            return '/';
-        }
-        $url = Strings::removeTags($url);
-        $url = str_replace(' ', '_', $url);
-        $url = preg_replace("/[^a-zA-Z0-9_\-\/]/", '', $url);
-        if (substr($url, 0, 1) != '/') {
-            $url = '/' . $url;
-        }
-        if (strrpos($url, '.') === false) { // url is not like /index.php
-            if (substr($url, -1, 1) != '/') {
-                $url .= '/';
-            }
-        }
-        return $url;
     }
 }

@@ -84,6 +84,9 @@ class GroupsController implements ConfigControllerInterface
         }
         try {
             $this->o_model->deleteWithRelated($group_id);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('groups');
+            }
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -104,6 +107,9 @@ class GroupsController implements ConfigControllerInterface
         $this->logIt(var_export($a_group, true), LOG_OFF, $meth . __LINE__);
         try {
             $this->o_model->create($a_group);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('groups');
+            }
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
@@ -126,7 +132,10 @@ class GroupsController implements ConfigControllerInterface
             : 'true';
         $this->logIt("Update vars: " . var_export($a_group, true), LOG_OFF, $meth . __LINE__);
         try {
-            $this->o_model->update($a_group, 'group_immutable', ['group_name', 'group_auth_level']);
+            $this->o_model->update($a_group, ['group_name', 'group_auth_level']);
+            if ($this->use_cache) {
+                $this->o_cache->clearTag('groups');
+            }
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {

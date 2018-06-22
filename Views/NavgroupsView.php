@@ -1,6 +1,6 @@
 <?php
 /**
- * Class RoutesGroupView
+ * Class NavgroupsView.
  * @package Ritc_Library
  */
 namespace Ritc\Library\Views;
@@ -11,38 +11,36 @@ use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * View for Route Group mapping admin.
+ * View for the Navgroups Manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2017-05-14 16:38:08
+ * @version 1.0.0-alpha.0
+ * @date    2018-06-19 12:11:51
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
- * @todo Ritc/Library/Views/RoutesGroupView.php - Everything
+ * - v1.0.0-alpha.0 - Initial version        - 2018-06-19 wer
+ * @todo NavgroupsView.php - Everything
  */
-class RoutesGroupView implements ViewInterface
+class NavgroupsView implements ViewInterface
 {
     use LogitTraits, ConfigViewTraits;
 
     /**
-     * RoutesGroupView constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     * NavgroupsView constructor.
+     *
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
-        $this->a_object_names = [];
         $this->setupElog($o_di);
     }
 
     /**
-     * Main method to render the html.
-     *
+     * Default method for rendering the html.
      * @return string
      */
     public function render()
     {
-        // TODO: Implement render() method.
         return '';
     }
 }

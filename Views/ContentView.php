@@ -44,6 +44,6 @@ class ContentView implements ViewInterface
     public function render(array $a_message = [])
     {
         // TODO: Implement render() method.
-        return '';
+        return 'TODO: Implement render() method.';
     }
 }

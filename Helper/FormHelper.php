@@ -9,16 +9,16 @@ namespace Ritc\Library\Helper;
  * Helps build arrays used with Twig tpls..
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.0
+ * @version 1.0.0
  * @date    2018-06-07 13:57:26
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2018-06-07 wer
- * @todo FormHelper.php - Everything
+ * - v1.0.0 - Initial version                                   - 2018-06-07 wer
  */
 class FormHelper
 {
     /**
      * Returns an array with all values needed for the single_button_form.twig tpl.
+     *
      * @param array $a_values
      * @return array
      */
@@ -70,7 +70,8 @@ class FormHelper
 
     /**
      * Makes required key => value pairs for the checkbox.twig tpl.
-     * @param array $a_values
+     *
+     * @param array $a_values ['id', 'name', 'label', 'value', 'checked']
      * @return array
      */
     public static function checkbox(array $a_values = [])
@@ -83,13 +84,13 @@ class FormHelper
             : $a_values['value'];
         $checked = empty($a_values['checked'])
             ? ''
-            : $a_values['checked'];
+            : ' checked';
         return [
             'id'      => $a_values['id'],
             'name'    => $a_values['name'],
+            'label'   => $a_values['label'],
             'value'   => $value,
-            'checked' => $checked,
-            'label'   => $a_values['label']
+            'checked' => $checked
         ];
     }
 }
