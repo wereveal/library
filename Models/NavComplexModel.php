@@ -674,8 +674,8 @@ class NavComplexModel
                     }
                     break;
                 case 'nav_active':
-                    if (!isset($a_post[$key_name]) || $a_post[$key_name] == 'false') {
-                        $a_post[$key_name] = 'true';
+                    if (!isset($a_post[$key_name]) || $a_post[$key_name] != 'true') {
+                        $a_post[$key_name] = 'false';
                     }
                     break;
                 case 'nav_level':

@@ -121,7 +121,7 @@ class NavigationView
                             'label'   => 'Active',
                             'checked' => $nav_value == 'true' ? ' checked' : ''
                         ];
-                        $a_twig_values['nav_ckbx'] = FormHelper::checkbox($a_chbx_values);
+                        $a_twig_values['nav_active_ckbx'] = FormHelper::checkbox($a_chbx_values);
                         break;
                     case 'url_id':
                         $a_twig_values['a_url_select']['select'] = $this->createUrlSelect($nav_value);
@@ -288,6 +288,12 @@ class NavigationView
         return $a_select;
     }
 
+    /**
+     * Creates the array for the select template.
+     *
+     * @param int $nav_level
+     * @return array
+     */
     private function createNavLvlSelect($nav_level = 0)
     {
         $a_options = [[
