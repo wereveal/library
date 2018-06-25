@@ -113,7 +113,6 @@ class RoutesView
             ];
         }
         $a_urls_select = [
-            'label_for'   => 'route0[url_id]',
             'label_class' => 'd-md-none',
             'label_text'  => 'URL',
             'name'        => 'route[url_id]',
@@ -123,7 +122,6 @@ class RoutesView
             'options'     => $a_url_options
         ];
         $a_urls_select_bottom = $a_urls_select;
-        $a_urls_select_bottom['label_for'] = 'route999[url_id]';
         $a_urls_select_bottom['id'] = 'route999[url_id]';
 
         $a_groups = [];
@@ -148,7 +146,6 @@ class RoutesView
                 'other_stuph' => ' selected'
             ];
             $a_select = [
-                'label_for'   => 'route' . $x . '[url_id]',
                 'label_class' => 'd-md-none',
                 'label_text'  => 'URL',
                 'name'        => 'route[url_id]',
