@@ -11,10 +11,10 @@ use Ritc\Library\Helper\ViewHelper;
  * Common functions for the manager views.
  *
  * @author    William E Reveal <bill@revealitconsulting.com>
- * @version   v3.1.3
- * @date      2018-04-14 15:23:19
+ * @version   v3.1.4
+ * @date      2018-06-25 13:12:22
  * @change_log
- * - v3.1.3 - bug fix (some variables seemed to be confused)                        - 2018-04-14 wer
+ * - v3.1.4 - bug fix                                                               - 2018-06-25 wer
  * - v3.1.0 - Forked this so ManagerViewTraits becomes primary                      - 2017-07-04 wer
  * - v3.0.0 - Renamed trait                                                         - 2017-06-20 wer
  * - v2.1.0 - changed method to use the twig value for tpl                          - 2017-05-10 wer
@@ -30,6 +30,7 @@ trait ConfigViewTraits
 
     /**
      * Renders login form after resetting session.
+     *
      * @param array $a_values optional default values ['tpl' => 'login', 'location' => '/manager/config/', 'a_message' => [], 'login_id' => '']
      * @return string
      */
@@ -60,6 +61,8 @@ trait ConfigViewTraits
     }
 
     /**
+     * Renders the verify delete form.
+     *
      * @param array $a_values required
      * @param array $a_options optional
      * @example "src/apps/Ritc/Library/resources/docs/examples/verify_delete.php" what the two parameters can have.
@@ -79,7 +82,9 @@ trait ConfigViewTraits
             ? []
             : $a_options['a_message'];
         $location = empty($a_options['location'])
-            ? '/manager/config/'
+            ? empty($a_values['form_action'])
+                ? '/manager/config/'
+                : $a_values['form_action']
             : $a_options['location'];
         $a_twig_values = $this->createDefaultTwigValues($a_message, $location);
         $a_twig_values['location'] = empty($a_options['location'])
