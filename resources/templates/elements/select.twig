@@ -1,5 +1,5 @@
-{% if select.label_for != '' %}
-<label for="{{ select.label_for }}"{% if select.label_class != '' %} class="{{ select.label_class }}"{% endif %}>{{ select.label_text }}{{ select.label_extra | raw }}</label>
+{% if select.id != '' %}
+<label for="{{ select.id }}"{% if select.label_class != '' %} class="{{ select.label_class }}"{% endif %}>{{ select.label_text }}{{ select.label_extra | raw }}</label>
 {% endif %}
 {% if select.name != '' %}
 <select name="{{ select.name }}"{% if select.id %} id="{{ select.id }}"{% endif %}{% if select.class != '' %} class="{{ select.class }}"{% endif %}{{ select.other_stuph | raw }}>

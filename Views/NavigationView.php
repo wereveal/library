@@ -92,19 +92,18 @@ class NavigationView
     {
         $meth = __METHOD__ . '.';
         $a_twig_values = $this->createDefaultTwigValues();
-        /* Additional twig_values needed
-         * action
-         * a_uls_select['select']
-         * a_nav_select['select']
-         * selected0 - selected3
-         *
-         */
         if ($nav_id == -1) {
             $a_twig_values['action'] = 'save';
             $a_twig_values['a_url_select']['select'] = $this->createUrlSelect($nav_id);
             $a_twig_values['a_nav_select']['select'] = $this->createNavSelect($nav_id);
             $a_twig_values['a_ng_select']['select']  = $this->createNgSelect($nav_id);
-            $a_twig_values['selected0'] = ' selected';
+            $a_twig_values['a_nav_lvl_select']['select'] = $this->createNavLvlSelect(0);
+            $a_chbx_values = [
+                'id'      => 'nav_active',
+                'name'    => 'nav_active',
+                'label'   => 'Active'
+            ];
+            $a_twig_values['nav_ckbx'] = FormHelper::checkbox($a_chbx_values);
         }
         else {
             try {
@@ -116,7 +115,13 @@ class NavigationView
             foreach ($results as $nav_label => $nav_value) {
                 switch ($nav_label) {
                     case 'nav_active':
-                        $a_twig_values['active_checked'] = $nav_value == 'true' ? ' checked' : '';
+                        $a_chbx_values = [
+                            'id'      => 'nav_active',
+                            'name'    => 'nav_active',
+                            'label'   => 'Active',
+                            'checked' => $nav_value == 'true' ? ' checked' : ''
+                        ];
+                        $a_twig_values['nav_ckbx'] = FormHelper::checkbox($a_chbx_values);
                         break;
                     case 'url_id':
                         $a_twig_values['a_url_select']['select'] = $this->createUrlSelect($nav_value);
@@ -125,7 +130,7 @@ class NavigationView
                         $a_twig_values['a_nav_select']['select'] = $this->createNavSelect($nav_value);
                         break;
                     case 'nav_level':
-                        $a_twig_values['selected' . $nav_value] = ' selected';
+                        $a_twig_values['a_nav_lvl_select']['select'] = $this->createNavLvlSelect($nav_value);
                         break;
                     default:
                         $a_twig_values[$nav_label] = $nav_value;
@@ -134,9 +139,9 @@ class NavigationView
             $a_twig_values['action'] = 'modify';
         }
         $log_message = 'twig values ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        $tpl = '@' . LIB_TWIG_PREFIX . 'pages/navigation_form.twig';
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $a_twig_values['tpl'] = 'navigation_form';
+        $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
@@ -170,7 +175,7 @@ class NavigationView
     private function createUrlSelect($url_id = -1)
     {
         $a_select = [
-            'label_for'   => '',
+            'id'          => '',
             'label_class' => '',
             'label_text'  => '',
             'name'        => 'url_id',
@@ -215,14 +220,14 @@ class NavigationView
     private function createNavSelect($nav_id = -1)
     {
         try {
-            $a_nav = $this->o_nav_complex->getNavListAll();
+            $a_nav = $this->o_nav_complex->readAllNavUrlTree();
         }
         catch (ModelException $e) {
             $a_nav = [];
         }
 
         $a_select = [
-            'label_for'   => '',
+            'id'   => '',
             'label_class' => '',
             'label_text'  => '',
             'name'        => 'nav_parent_id',
@@ -237,13 +242,11 @@ class NavigationView
                 'other_stuph' => $nav_id == -1 ? ' selected' : ''
             ],
         ];
-        if  ($nav_id == -1) {
-            $a_options[] = [
-                'value'       => -1,
-                'label'       => 'SELF',
-                'other_stuph' => ''
-            ];
-        }
+        $a_options[] = [
+            'value'       => $nav_id > 0 ? $nav_id : -1,
+            'label'       => 'SELF',
+            'other_stuph' => ''
+        ];
         foreach ($a_nav as $nav) {
             $a_temp = [
                 'value'       => $nav['nav_id'],
@@ -254,9 +257,60 @@ class NavigationView
                 $a_temp['other_stuph'] = ' selected';
             }
             $a_options[] = $a_temp;
+            if (!empty($nav['submenu'])) {
+                foreach ($nav['submenu'] as $submenu) {
+                    $a_temp = [
+                        'value'       => $submenu['nav_id'],
+                        'label'       => $submenu['nav_text'] . ' (level ' . $submenu['nav_level'] . ')',
+                        'other_stuph' => ''
+                    ];
+                    if ($submenu['nav_id'] == $nav_id) {
+                        $a_temp['other_stuph'] = ' selected';
+                    }
+                    $a_options[] = $a_temp;
+                    if (!empty($submenu['submenu'])) {
+                        foreach ($submenu['submenu'] as $ssmenu) {
+                            $a_temp = [
+                                'value'       => $ssmenu['nav_id'],
+                                'label'       => $ssmenu['nav_text'] . ' (level ' . $ssmenu['nav_level'] . ')',
+                                'other_stuph' => ''
+                            ];
+                            if ($ssmenu['nav_id'] == $nav_id) {
+                                $a_temp['other_stuph'] = ' selected';
+                            }
+                            $a_options[] = $a_temp;
+                        }
+                    }
+                }
+            }
         }
         $a_select['options'] = $a_options;
         return $a_select;
+    }
+
+    private function createNavLvlSelect($nav_level = 0)
+    {
+        $a_options = [[
+            'value'       => 0,
+            'label'       => '--Select Nav Level--',
+            'other_stuph' => $nav_level === 0 ? ' selected' : ''
+        ]];
+        for ($x = 1; $x <= 3; $x++) {
+            $a_options[] = [
+                'value'       => $x,
+                'label'       => 'Nav Level ' . $x,
+                'other_stuph' => $nav_level === $x ? ' selected' : ''
+            ];
+        }
+        return [
+            'id'          => '',
+            'label_class' => '',
+            'label_text'  => '',
+            'name'        => 'nav_level',
+            'class'       => 'form-control',
+            'other_stuph' => '',
+            'options'     => $a_options
+        ];
     }
 
     /**
@@ -275,7 +329,7 @@ class NavigationView
         }
 
         $a_select = [
-            'label_for'   => '',
+            'id'          => '',
             'label_class' => '',
             'label_text'  => '',
             'name'        => 'ng_id',

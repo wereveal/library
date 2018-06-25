@@ -539,8 +539,8 @@ class NavComplexModel
         $prepare_sql = $select_sql . "
             AND n.nav_parent_id = :parent_id
         " . $order_by;
-        $this->logIt('top sql: ' . $top_sql, LOG_ON, $meth . __LINE__);
-        $this->logIt('prepare sql: ' . $prepare_sql, LOG_ON, $meth . __LINE__);
+        $this->logIt('top sql: ' . $top_sql, LOG_OFF, $meth . __LINE__);
+        $this->logIt('prepare sql: ' . $prepare_sql, LOG_OFF, $meth . __LINE__);
         try {
             $a_search_for = [':nav_level' => 1];
             $a_top_levels = $this->o_db->search($top_sql, $a_search_for);
