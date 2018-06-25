@@ -25,13 +25,12 @@ trait ManagerControllerTraits
 {
     use ControllerTraits;
 
-    /**
-     * @var AuthHelper
-     */
+    /** @var AuthHelper */
     protected $o_auth;
 
     /**
      * Verifies that the person is logged in and is valid
+     *
      * @return bool
      */
     protected function loginValid()
@@ -48,6 +47,7 @@ trait ManagerControllerTraits
 
     /**
      * Creates the o_auth instance property for the class
+     *
      * @param $o_di
      */
     protected function setupManagerController($o_di)
@@ -59,6 +59,7 @@ trait ManagerControllerTraits
 
     /**
      * Verifies the login attempt via the login form.
+     *
      * @return array The standard basic message array with message and message type.
      */
     protected function verifyLogin()
@@ -83,6 +84,7 @@ trait ManagerControllerTraits
 
     /**
      * Gets the o_auth property.
+     *
      * @return \Ritc\Library\Helper\AuthHelper
      */
     public function getAuth()

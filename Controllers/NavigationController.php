@@ -92,7 +92,19 @@ class NavigationController implements ManagerControllerInterface
      */
     public function verifyDelete()
     {
-        return $this->o_view->renderVerifyDelete($this->a_post);
+        $a_values = [
+            'what'         => 'Navigation ',
+            'name'         => 'Navigation',
+            'form_action'  => $this->o_router->getRequestUri(),
+            'btn_value'    => 'Navigation',
+            'hidden_name'  => 'nav_id',
+            'hidden_value' => $this->a_post['nav_id'],
+
+        ];
+        $a_options = [
+            'fallback' => 'renderList'
+        ];
+        return $this->o_view->renderVerifyDelete($a_values, $a_options);
     }
 
     /**

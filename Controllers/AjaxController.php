@@ -8,6 +8,7 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Models\TwigDirsModel;
+use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -45,8 +46,10 @@ class AjaxController
         switch ($this->url_action_one) {
             case 'twig_dirs';
                 return $this->doTwigDirs();
-            case 'forDirectories';
+            case 'for_directories';
                 return $this->forDirectories();
+            case 'urls_available':
+                return $this->urlsAvailableForNavgroups();
             default:
                 return json_encode([]);
         }
@@ -55,6 +58,7 @@ class AjaxController
     /**
      * Creates the json string needed from list of twig directories based on twig_prefix.
      * This is for the javascript to create the options for a select.
+     *
      * @return string
      */
     private function doTwigDirs()
@@ -100,6 +104,7 @@ class AjaxController
     /**
      * Creates the json string needed from list of twig directories based on twig_prefix.
      * This one is to display the list of directories to be modified or deleted.
+     *
      * @return string
      */
     private function forDirectories()
@@ -133,5 +138,54 @@ class AjaxController
         catch (ModelException $e) {
             return $bad_results;
         }
+    }
+
+    /**
+     * Create json string from a list of urls.
+     * List consists of urls not in a navgroup. Assumes a url should only
+     * be assigned to one navigation link.
+     *
+     * @return array|mixed|string
+     */
+    private function urlsAvailableForNavgroups()
+    {
+        $navgroup_id = $this->o_router->getPost('navgroup_id');
+        $cache_key = 'ajax.urlsAvailableFor.navgroup.' . $navgroup_id;
+        $bad_results = [
+            'url_id' => '',
+            'value'  => 'Not Available'
+        ];
+        $results = '';
+        $bad_results = json_encode([$bad_results]);
+        if (empty($navgroup_id)) {
+            return $bad_results;
+        }
+        if ($this->use_cache) {
+            $results = $this->o_cache->get($cache_key);
+        }
+        if (empty($results)) {
+            $o_urls = new UrlsModel($this->o_db);
+            $a_encode_this = [[
+                'url_id' => '',
+                'value'  => '--Select URL--'
+            ]];
+            try {
+                $a_results = $o_urls->readNotInNavgroup($navgroup_id);
+                foreach ($a_results as $a_result) {
+                    $a_encode_this[] = [
+                      'url_id' => $a_result['url_id'],
+                      'value'  => $a_result['url_text']
+                    ];
+                }
+                $results = json_encode($a_encode_this);
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $results, 'ajax');
+                }
+            }
+            catch (ModelException $e) {
+                return $bad_results;
+            }
+        }
+        return $results;
     }
 }

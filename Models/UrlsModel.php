@@ -9,7 +9,6 @@ use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ExceptionHelper;
-use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -34,6 +33,7 @@ class UrlsModel extends ModelAbstract
 
     /**
      * UrlsModel constructor.
+     *
      * @param \Ritc\Library\Services\DbModel $o_db
      */
     public function __construct(DbModel $o_db)
@@ -136,6 +136,7 @@ class UrlsModel extends ModelAbstract
     ### Specialized Methods ###
     /**
      * Finds Urls that are not assigned to a route.
+     *
      * @return mixed
      * @throws ModelException
      */
@@ -148,6 +149,30 @@ class UrlsModel extends ModelAbstract
               WHERE r.url_id = u.url_id 
             )
             AND u.url_text NOT LIKE '%shared%'
+        ";
+        try {
+            return $this->o_db->search($sql);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Read the URLs that are not in the navgroup.
+     *
+     * @param int $navgroup_id
+     * @return mixed
+     * @throws ModelException
+     */
+    public function readNotInNavgroup($navgroup_id = -1)
+    {
+        $sql = "
+            SELECT DISTINCT u.*
+            FROM {$this->lib_prefix}urls as u
+            JOIN {$this->lib_prefix}navigation as n ON n.url_id = u.url_id
+            JOIN {$this->lib_prefix}nav_ng_map as m ON n.nav_id = m.nav_id
+            WHERE m.ng_id != $navgroup_id;
         ";
         try {
             return $this->o_db->search($sql);

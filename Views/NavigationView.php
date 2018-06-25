@@ -103,7 +103,7 @@ class NavigationView
                 'name'    => 'nav_active',
                 'label'   => 'Active'
             ];
-            $a_twig_values['nav_ckbx'] = FormHelper::checkbox($a_chbx_values);
+            $a_twig_values['nav_active_ckbx'] = FormHelper::checkbox($a_chbx_values);
         }
         else {
             try {
@@ -142,28 +142,6 @@ class NavigationView
         $this->logIt($log_message, LOG_ON, $meth . __LINE__);
         $a_twig_values['tpl'] = 'navigation_form';
         $tpl = $this->createTplString($a_twig_values);
-        return $this->renderIt($tpl, $a_twig_values);
-    }
-
-    /**
-     * Returns html, a form to verify the manager wants to delete a record.
-     * @param array $a_post
-     * @return string
-     */
-    public function renderVerifyDelete(array $a_post = [])
-    {
-        $a_twig_values = $this->createDefaultTwigValues('library');
-        $a_values = array(
-            'what'         => 'Navigation ',
-            'name'         => $a_twig_values['page_title'],
-            'where'        => 'navigation',
-            'btn_value'    => 'Navigation',
-            'hidden_name'  => 'nav_id',
-            'hidden_value' => $a_post['nav_id'],
-
-        );
-        $a_twig_values = array_merge($a_twig_values, $a_values);
-        $tpl = '@' . LIB_TWIG_PREFIX . 'page/verify_delete.twig';
         return $this->renderIt($tpl, $a_twig_values);
     }
 
