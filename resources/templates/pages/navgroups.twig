@@ -16,7 +16,7 @@
                 &nbsp;
             </div>
         </div>
-        <form action="{{ public_id }}/manager/config/navgroups/" method="post" id="navgroups-new"">
+        <form action="{{ public_id }}/manager/config/navgroups/" method="post" id="navgroups-new">
             <div class="row {{ class }}">
                 <div class="col-12 col-md-6">
                     <label for="ng_name" class="hidden-md-up pr-1">Name</label>
@@ -35,7 +35,7 @@
         </form>
     {% for nav in a_nav %}
         {% set class = class == 'odd' ? 'even' : 'odd' %}
-        <form action="{{ public_id }}/manager/config/navgroups/" method="post" id="navgroups-update>
+        <form action="{{ public_id }}/manager/config/navgroups/" method="post" id="navgroups-update">
             <div class="row {{ class }}">
                 <div class="col-12 col-md-6">
                     <label for="ng_name" class="hidden-md-up pr-1">Name</label>
@@ -48,7 +48,7 @@
                     {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with nav.default_btn %}
                 </div>
                 <div class="col-6 col-md-4">
-                    {% include '@' ~ page_prefix ~ 'forms/modify_delete_btns.twig' with nav.action_btns %}
+                    {% include '@' ~ page_prefix ~ 'forms/update_delete_btns.twig' with nav.action_btns %}
                 </div>
             </div>
         </form>

@@ -84,11 +84,5 @@
 {% endblock %}
 {% block bottomJs %}
     {{ parent() }}
-    {% set configJs = js_dir ~ '/config.js' %}
-    {% set configJsMin = js_dir ~ '/min/config.js' %}
-    {% if configJsMin is inPublic %}
-    <script src="{{ configJsMin }}"></script>
-    {% else %}
-    <script src="{{ configJs }}"></script>
-    {% endif %}
+    <script src="{{ js_dir }}'/config.js'"></script>
 {% endblock %}
