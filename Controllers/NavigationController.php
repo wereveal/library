@@ -74,6 +74,9 @@ class NavigationController implements ManagerControllerInterface
      */
     public function save()
     {
+        if ($this->use_cache) {
+            $this->o_cache->clearTag('nav');
+        }
         return $this->o_view->renderList();
     }
 
@@ -83,6 +86,9 @@ class NavigationController implements ManagerControllerInterface
      */
     public function update()
     {
+        if ($this->use_cache) {
+            $this->o_cache->clearTag('nav');
+        }
         return $this->o_view->renderList();
     }
 
@@ -113,6 +119,9 @@ class NavigationController implements ManagerControllerInterface
      */
     public function delete()
     {
+        if ($this->use_cache) {
+            $this->o_cache->clearTag('nav');
+        }
         return $this->o_view->renderList();
     }
 }

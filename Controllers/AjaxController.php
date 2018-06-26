@@ -149,11 +149,12 @@ class AjaxController
      */
     private function urlsAvailableForNavgroups()
     {
+        $meth = __METHOD__ . '.';
         $navgroup_id = $this->o_router->getPost('navgroup_id');
         $cache_key = 'ajax.urlsAvailableFor.navgroup.' . $navgroup_id;
         $bad_results = [
-            'url_id' => '',
-            'value'  => 'Not Available'
+            'url_id'   => '',
+            'url_text' => 'Not Available'
         ];
         $results = '';
         $bad_results = json_encode([$bad_results]);
@@ -166,26 +167,30 @@ class AjaxController
         if (empty($results)) {
             $o_urls = new UrlsModel($this->o_db);
             $a_encode_this = [[
-                'url_id' => '',
-                'value'  => '--Select URL--'
+                'url_id'   => '',
+                'url_text' => '--Select URL--'
             ]];
             try {
                 $a_results = $o_urls->readNotInNavgroup($navgroup_id);
                 foreach ($a_results as $a_result) {
                     $a_encode_this[] = [
-                      'url_id' => $a_result['url_id'],
-                      'value'  => $a_result['url_text']
+                      'url_id'   => $a_result['url_id'],
+                      'url_text' => $a_result['url_text']
                     ];
                 }
-                $results = json_encode($a_encode_this);
+                  $log_message = 'urls results ' . var_export($a_encode_this, true);
+                  $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
+                $results = trim(json_encode($a_encode_this));
                 if ($this->use_cache) {
                     $this->o_cache->set($cache_key, $results, 'ajax');
                 }
+                $this->logIt('JSON: ' . $results, LOG_ON, $meth . __LINE__);
+                return $results;
             }
             catch (ModelException $e) {
                 return $bad_results;
             }
         }
-        return $results;
     }
 }

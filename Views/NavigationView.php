@@ -29,13 +29,12 @@ class NavigationView
 {
     use LogitTraits, ConfigViewTraits;
 
-    /**
-     * @var \Ritc\Library\Models\NavComplexModel
-     */
+    /** @var \Ritc\Library\Models\NavComplexModel */
     private $o_nav_complex;
 
     /**
      * NavigationView constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -47,22 +46,33 @@ class NavigationView
 
     /**
      * Returns html, the list of navigation record forms.
+     *
      * @param array $a_message
      * @return string
      */
     public function renderList(array $a_message = [])
     {
         $meth = __METHOD__ . '.';
-        $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/navigation/');
-        try {
-            $a_nav = $this->o_nav_complex->readAllNavUrlTree();
+        $a_nav = [];
+        $cache_key = 'nav.url.tree';
+        if ($this->use_cache) {
+            $a_nav = $this->o_cache->get($cache_key);
         }
-        catch (ModelException $e) {
-            $a_nav = [];
+        if (empty($a_nav)) {
+            try {
+                $a_nav = $this->o_nav_complex->readAllNavUrlTree();
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $a_nav, 'nav');
+                }
+            }
+            catch (ModelException $e) {
+                $a_nav = [];
+            }
         }
         $log_message = 'a_nav' . var_export($a_nav, true);
         $this->logIt($log_message, LOG_ON, $meth . __LINE__);
 
+        $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/navigation/');
         $a_twig_values['a_nav'] = $a_nav;
         $a_navgroups_btn = [
             'url'   => PUBLIC_DIR . '/manager/config/navgroups/',
@@ -85,6 +95,7 @@ class NavigationView
 
     /**
      * Returns html, a form to add/modify a navigation record.
+     *
      * @param int $nav_id Required.
      * @return string
      */
@@ -139,7 +150,7 @@ class NavigationView
             $a_twig_values['action'] = 'modify';
         }
         $log_message = 'twig values ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_twig_values['tpl'] = 'navigation_form';
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
@@ -147,13 +158,14 @@ class NavigationView
 
     /**
      * Creates an array for the twig values to display a select listing the urls.
+     *
      * @param int $url_id
      * @return array
      */
-    private function createUrlSelect($url_id = -1)
+    private function createUrlSelect($url_id = -1, $navgroup_id = -1)
     {
         $a_select = [
-            'id'          => '',
+            'id'          => 'url_id',
             'label_class' => '',
             'label_text'  => '',
             'name'        => 'url_id',
@@ -161,37 +173,64 @@ class NavigationView
             'other_stuph' => '',
             'options'     => []
         ];
-        $o_urls = new UrlsModel($this->o_db);
-        try {
-            $a_results = $o_urls->read();
-            $a_options = [[
-                'value'       => 0,
-                'label'       => '--Select Url--',
-                'other_stuph' => $url_id == -1 ? ' selected' : ''
-            ]];
-            foreach ($a_results as $url) {
-                $a_temp = [
-                    'value'       => $url['url_id'],
-                    'label'       => $url['url_text'],
-                    'other_stuph' => ''
-                ];
-                if ($url['url_id'] == $url_id) {
-                    $a_temp['other_stuph'] = ' selected';
-                }
-                if ($a_temp['value'] != '') {
-                    $a_options[] = $a_temp;
-                }
-            }
+        if ($url_id < 1 || $navgroup_id < -1) {
+            $a_options = [
+                [
+                    'value'       => 0,
+                    'label'       => '--Select a Navgroup First--',
+                    'other_stuph' => ' selected'
+                ]
+            ];
             $a_select['options'] = $a_options;
             return $a_select;
         }
-        catch (ModelException $e) {
-            return [];
+        $cache_key = 'nav.select.urls.' . $url_id . '.for.' . $navgroup_id;
+        $results = '';
+        if ($this->use_cache) {
+            $results = $this->o_cache->get($cache_key);
+        }
+        if (empty($results)) {
+            $o_urls = new UrlsModel($this->o_db);
+            try {
+                $a_results = $o_urls->readNotInNavgroup($navgroup_id);
+                $a_options = [
+                    [
+                        'value'       => 0,
+                        'label'       => '--Select Url--',
+                        'other_stuph' => ''
+                    ]
+                ];
+                foreach ($a_results as $url) {
+                    $a_temp = [
+                        'value'       => $url['url_id'],
+                        'label'       => $url['url_text'],
+                        'other_stuph' => ''
+                    ];
+                    if ($url['url_id'] == $url_id) {
+                        $a_temp['other_stuph'] = ' selected';
+                    }
+                    if ($a_temp['value'] != '') {
+                        $a_options[] = $a_temp;
+                    }
+                }
+                $a_select['options'] = $a_options;
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $a_select, 'nav');
+                }
+                return $a_select;
+            }
+            catch (ModelException $e) {
+                return [];
+            }
+        }
+        else {
+            return $results;
         }
     }
 
     /**
      * Creates an array for the twig values to display a select listing the navigation records.
+     *
      * @param int $nav_id
      * @return array
      */
@@ -205,7 +244,7 @@ class NavigationView
         }
 
         $a_select = [
-            'id'   => '',
+            'id'          => 'nav_parent_id',
             'label_class' => '',
             'label_text'  => '',
             'name'        => 'nav_parent_id',
@@ -216,7 +255,7 @@ class NavigationView
         $a_options = [
             [
                 'value'       => 0,
-                'label'       => '--Select Navigation--',
+                'label'       => '--Select Parent--',
                 'other_stuph' => $nav_id == -1 ? ' selected' : ''
             ],
         ];
@@ -287,7 +326,7 @@ class NavigationView
             ];
         }
         return [
-            'id'          => '',
+            'id'          => 'nav_level',
             'label_class' => '',
             'label_text'  => '',
             'name'        => 'nav_level',
@@ -299,26 +338,36 @@ class NavigationView
 
     /**
      * Creates an array for the twig values to display a select for the navigation group.
+     * 
      * @param int $parent_ng_id The parent navigation group id
      * @return array
      */
     private function createNgSelect($parent_ng_id = -1)
     {
-        $o_ng = new NavgroupsModel($this->o_db);
-        try {
-            $results = $o_ng->read();
+        $cache_key = 'nav.select.navgroups';
+        $results = '';
+        if ($this->use_cache) {
+            $results = $this->o_cache->get($cache_key);
         }
-        catch (ModelException $e) {
-            $results = [];
+        if (empty($results)) {
+            $o_ng = new NavgroupsModel($this->o_db);
+            try {
+                $results = $o_ng->read();
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $results, 'nav');
+                }
+            }
+            catch (ModelException $e) {
+                $results = [];
+            }
         }
-
         $a_select = [
-            'id'          => '',
+            'id'          => 'ng_id',
             'label_class' => '',
             'label_text'  => '',
             'name'        => 'ng_id',
             'class'       => 'form-control',
-            'other_stuph' => '',
+            'other_stuph' => ' onchange="urlsForNavgroup(this)"',
             'options'     => []
         ];
         $a_options = [[
@@ -343,6 +392,7 @@ class NavigationView
 
     /**
      * Creates the array used in the twig template to display the list of navigation records.
+     *
      * @param array $a_values
      * @return array
      */

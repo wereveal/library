@@ -1,4 +1,4 @@
-{% if select.id != '' %}
+{% if select.label_text != '' %}
 <label for="{{ select.id }}"{% if select.label_class != '' %} class="{{ select.label_class }}"{% endif %}>{{ select.label_text }}{{ select.label_extra | raw }}</label>
 {% endif %}
 {% if select.name != '' %}

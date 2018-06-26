@@ -82,3 +82,13 @@
     </div>
     {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
 {% endblock %}
+{% block bottomJs %}
+    {{ parent() }}
+    {% set configJs = js_dir ~ '/config.js' %}
+    {% set configJsMin = js_dir ~ '/min/config.js' %}
+    {% if configJsMin is inPublic %}
+    <script src="{{ configJsMin }}"></script>
+    {% else %}
+    <script src="{{ configJs }}"></script>
+    {% endif %}
+{% endblock %}
