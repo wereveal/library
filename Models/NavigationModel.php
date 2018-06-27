@@ -32,7 +32,7 @@ class NavigationModel extends ModelAbstract
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'navigation');
-        $this->setRequiredKeys(['url_id', 'nav_parent_id', 'nav_name']);
+        $this->setRequiredKeys(['url_id', 'parent_id', 'nav_name']);
     }
 
     ### Abstract Methods ###
@@ -108,10 +108,10 @@ class NavigationModel extends ModelAbstract
         $sql = "
             SELECT DISTINCT nav_level
             FROM {$this->db_table}
-            WHERE nav_parent_id = :nav_parent_id
-            AND nav_id != nav_parent_id
+            WHERE parent_id = :parent_id
+            AND nav_id != parent_id
         ";
-        $a_search_values = [':nav_parent_id' => $nav_id, ];
+        $a_search_values = [':parent_id' => $nav_id, ];
         try {
             $results = $this->o_db->search($sql, $a_search_values);
             if (count($results) > 0) {

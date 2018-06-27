@@ -34,6 +34,8 @@ class NavComplexModel
 
     /** @var \Ritc\Library\Services\Di $o_di */
     private $o_di;
+    /** @var NavigationModel $o_nav */
+    private $o_nav;
     /** @var \Ritc\Library\Models\NavgroupsModel $o_ng */
     private $o_ng;
     /** @var NavNgMapModel $o_nnm */
@@ -54,9 +56,10 @@ class NavComplexModel
         $o_db = $o_di->get('db');
         $this->o_db = $o_db;
         $this->setupProperties($o_db, 'navigation');
+        $this->o_nav = new NavigationModel($o_db);
         $this->o_ng = new NavgroupsModel($o_db);
         $this->o_nnm = new NavNgMapModel($o_db);
-        $this->a_object_names = ['o_ng', 'o_nnm'];
+        $this->a_object_names = ['o_nav', 'o_ng', 'o_nnm'];
         $this->setupElog($o_di);
         $this->setSelectSql();
         $this->setSelectOrderSql();
@@ -134,6 +137,31 @@ class NavComplexModel
             $a_new_list[] = $a_nav;
         }
         return $a_new_list;
+    }
+
+    /**
+     * Deletes the navigation record and associated map records.
+     *
+     * @param int $nav_id Required
+     * @return bool
+     * @throws ModelException
+     */
+    public function delete($nav_id = -1)
+    {
+        if ($nav_id < 1) {
+            $err_code = ExceptionHelper::getCodeNumberModel('delete missing primary');
+            throw new ModelException('Missing ID', $err_code);
+        }
+        try {
+            $this->o_db->startTransaction();
+            $this->o_nnm->deleteWith(-1, $nav_id);
+            $this->o_nav->delete($nav_id);
+            $this->o_db->commitTransaction();
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        return true;
     }
 
     /**
@@ -298,7 +326,7 @@ class NavComplexModel
         $with_this = "ON n.nav_id = map.nav_id AND map.ng_id = :map_ng_id";
         $sql = str_replace($replace_this, $with_this, $this->select_sql);
         $where = "
-            AND n.nav_parent_id = :parent_id
+            AND n.parent_id = :parent_id
             AND n.nav_id != :parent_nav_id
         ";
         $sql = $sql . $where . $this->select_order_sql;
@@ -521,7 +549,6 @@ class NavComplexModel
     {
         $meth = __METHOD__ . '.';
         $select_sql = 'SELECT ' . $this->buildSqlSelectFields($this->a_db_fields, 'n');
-        $select_sql = str_replace('n.nav_parent_id', 'n.nav_parent_id as parent_id', $select_sql);
         $select_sql = str_replace('n.url_id,', '', $select_sql);
         $a_url_fields = [
             'url_id'   => 'url_id',
@@ -537,7 +564,7 @@ class NavComplexModel
         $order_by = "ORDER BY n.nav_order ASC";
         $top_sql = $select_sql . $order_by;
         $prepare_sql = $select_sql . "
-            AND n.nav_parent_id = :parent_id
+            AND n.parent_id = :parent_id
         " . $order_by;
         $this->logIt('top sql: ' . $top_sql, LOG_OFF, $meth . __LINE__);
         $this->logIt('prepare sql: ' . $prepare_sql, LOG_OFF, $meth . __LINE__);
@@ -622,7 +649,7 @@ class NavComplexModel
         $a_possible_keys = [
             'nav_id',
             'url_id',
-            'nav_parent_id',
+            'parent_id',
             'ng_id',
             'nav_name',
             'nav_text',
@@ -649,7 +676,7 @@ class NavComplexModel
                         $this->error_message .= 'A URL must be selected. ';
                     }
                     break;
-                case 'nav_parent_id':
+                case 'parent_id':
                     if (!isset($a_post[$key_name]) || intval($a_post[$key_name]) == 0) {
                         $action = 'error';
                         $this->error_message .= 'A Parent must be selected. ';
@@ -691,7 +718,7 @@ class NavComplexModel
         if ($action == 'error' || $action == '') {
             throw new ModelException($this->error_message, 120);
         }
-        $o_nav = new NavigationModel($this->o_db);
+        $o_nav = $this->o_nav;
         $o_map = $this->o_nnm;
         $old_ng_id = false;
         if ($action == 'update') {
@@ -806,40 +833,30 @@ class NavComplexModel
     public function setSelectSql($select_sql = '')
     {
         if ($select_sql == '') {
-            $select_sql =<<<EOT
-SELECT
-    n.nav_id,
-    n.nav_parent_id as parent_id,
-    n.url_id,
-    u.url_text as url,
-    n.nav_name,
-    n.nav_text,
-    n.nav_description,
-    n.nav_css,
-    n.nav_level,
-    n.nav_order,
-    n.nav_immutable,
-    ng.ng_id,
-    ng.ng_name,
-    r.route_id,
-    g.group_id,
-    g.group_auth_level as auth_level
-FROM {$this->lib_prefix}navigation as n
-JOIN {$this->lib_prefix}urls as u
-    ON n.url_id = u.url_id
-JOIN {$this->lib_prefix}nav_ng_map as map
-    ON n.nav_id = map.nav_id
-JOIN {$this->lib_prefix}navgroups as ng
-    ON ng.ng_id = map.ng_id
-JOIN {$this->lib_prefix}routes as r
-    ON r.url_id = u.url_id
-JOIN {$this->lib_prefix}routes_group_map as rgm
-    ON rgm.route_id = r.route_id
-JOIN {$this->lib_prefix}groups as g
-    ON g.group_id = rgm.group_id
-WHERE n.nav_active = 'true'
-
-EOT;
+            $nav_select = $this->buildSqlSelectFields($this->a_db_fields, 'n');
+            $select_sql = "
+                SELECT {$nav_select}, 
+                    u.url_text as url,
+                    ng.ng_id,
+                    ng.ng_name,
+                    r.route_id,
+                    g.group_id,
+                    g.group_auth_level as auth_level
+                FROM {$this->lib_prefix}navigation as n
+                JOIN {$this->lib_prefix}urls as u
+                    ON n.url_id = u.url_id
+                JOIN {$this->lib_prefix}nav_ng_map as map
+                    ON n.nav_id = map.nav_id
+                JOIN {$this->lib_prefix}navgroups as ng
+                    ON ng.ng_id = map.ng_id
+                JOIN {$this->lib_prefix}routes as r
+                    ON r.url_id = u.url_id
+                JOIN {$this->lib_prefix}routes_group_map as rgm
+                    ON rgm.route_id = r.route_id
+                JOIN {$this->lib_prefix}groups as g
+                    ON g.group_id = rgm.group_id
+                WHERE n.nav_active = 'true'
+            ";
         }
         $this->select_sql = $select_sql;
     }
@@ -865,7 +882,7 @@ EOT;
             $string =<<<EOT
 ORDER BY
     ng.ng_id ASC,
-    n.nav_parent_id ASC,
+    n.parent_id ASC,
     n.nav_level ASC,
     n.nav_order ASC,
     n.nav_name ASC

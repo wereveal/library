@@ -53,22 +53,7 @@ class NavigationView
     public function renderList(array $a_message = [])
     {
         $meth = __METHOD__ . '.';
-        $a_nav = [];
-        $cache_key = 'nav.url.tree';
-        if ($this->use_cache) {
-            $a_nav = $this->o_cache->get($cache_key);
-        }
-        if (empty($a_nav)) {
-            try {
-                $a_nav = $this->o_nav_complex->readAllNavUrlTree();
-                if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $a_nav, 'nav');
-                }
-            }
-            catch (ModelException $e) {
-                $a_nav = [];
-            }
-        }
+        $a_nav = $this->getNavUrlTree();
         $log_message = 'a_nav' . var_export($a_nav, true);
         $this->logIt($log_message, LOG_ON, $meth . __LINE__);
 
@@ -103,55 +88,84 @@ class NavigationView
     {
         $meth = __METHOD__ . '.';
         $a_twig_values = $this->createDefaultTwigValues();
+        $a_nav = [];
         if ($nav_id == -1) {
-            $a_twig_values['action'] = 'save';
-            $a_twig_values['a_url_select']['select'] = $this->createUrlSelect($nav_id);
-            $a_twig_values['a_nav_select']['select'] = $this->createNavSelect($nav_id);
-            $a_twig_values['a_ng_select']['select']  = $this->createNgSelect($nav_id);
-            $a_twig_values['a_nav_lvl_select']['select'] = $this->createNavLvlSelect(0);
-            $a_chbx_values = [
-                'id'      => 'nav_active',
-                'name'    => 'nav_active',
-                'label'   => 'Active'
-            ];
-            $a_twig_values['nav_active_ckbx'] = FormHelper::checkbox($a_chbx_values);
-        }
-        else {
-            try {
-                $results = $this->o_nav_complex->getNavRecord($nav_id);
+            $cache_key = 'nav.form.by.new';
+            if ($this->use_cache) {
+                $a_nav = $this->o_cache->get($cache_key);
             }
-            catch (ModelException $e) {
-                $results = [];
-            }
-            foreach ($results as $nav_label => $nav_value) {
-                switch ($nav_label) {
-                    case 'nav_active':
-                        $a_chbx_values = [
-                            'id'      => 'nav_active',
-                            'name'    => 'nav_active',
-                            'label'   => 'Active',
-                            'checked' => $nav_value == 'true' ? ' checked' : ''
-                        ];
-                        $a_twig_values['nav_active_ckbx'] = FormHelper::checkbox($a_chbx_values);
-                        break;
-                    case 'url_id':
-                        $a_twig_values['a_url_select']['select'] = $this->createUrlSelect($nav_value);
-                        break;
-                    case 'nav_parent_id':
-                        $a_twig_values['a_nav_select']['select'] = $this->createNavSelect($nav_value);
-                        break;
-                    case 'nav_level':
-                        $a_twig_values['a_nav_lvl_select']['select'] = $this->createNavLvlSelect($nav_value);
-                        break;
-                    default:
-                        $a_twig_values[$nav_label] = $nav_value;
+            if (empty($a_nav)) {
+                $a_nav['a_url_select']['select'] = $this->createUrlSelect();
+                $a_nav['a_nav_select']['select'] = $this->createNavSelect();
+                $a_nav['a_ng_select']['select']  = $this->createNgSelect();
+                $a_nav['a_nav_lvl_select']['select'] = $this->createNavLvlSelect();
+                $a_chbx_values = [
+                    'id'      => 'nav_active',
+                    'name'    => 'nav_active',
+                    'label'   => 'Active'
+                ];
+                $a_nav['nav_active_ckbx'] = FormHelper::checkbox($a_chbx_values);
+                $a_nav['nav_id'] = '';
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $a_nav, 'nav');
                 }
             }
-            $a_twig_values['action'] = 'modify';
         }
-        $log_message = 'twig values ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        else {
+            $cache_key = 'nav.form.by.id.' . $nav_id;
+            if ($this->use_cache) {
+                $a_nav = $this->o_cache->get($cache_key);
+            }
+            if (empty($a_nav)) {
+                try {
+                    $results = $this->o_nav_complex->getNavRecord($nav_id);
+                }
+                catch (ModelException $e) {
+                    $results = [];
+                }
+                $log_message = 'nav results   ' . var_export($results, true);
+                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+                $a_nav['nav_active_ckbx']            = [];
+                $a_nav['a_url_select']['select']     = [];
+                $a_nav['a_nav_select']['select']     = [];
+                $a_nav['a_nav_lvl_select']['select'] = [];
+                $a_nav['a_ng_select']['select']      = [];
+                foreach ($results as $nav_label => $nav_value) {
+                    switch ($nav_label) {
+                        case 'nav_active':
+                            $a_chbx_values = [
+                                'id'      => 'nav_active',
+                                'name'    => 'nav_active',
+                                'label'   => 'Active',
+                                'checked' => $nav_value == 'true' ? ' checked' : ''
+                            ];
+                            $a_nav['nav_active_ckbx'] = FormHelper::checkbox($a_chbx_values);
+                            break;
+                        case 'url_id':
+                            $a_nav['a_url_select']['select'] = $this->createUrlSelect($nav_value);
+                            break;
+                        case 'parent_id':
+                            $a_nav['a_nav_select']['select'] = $this->createNavSelect($nav_value);
+                            break;
+                        case 'ng_id':
+                            $a_nav['a_ng_select']['select']  = $this->createNgSelect($nav_value);
+                            break;
+                        case 'nav_level':
+                            $a_nav['a_nav_lvl_select']['select'] = $this->createNavLvlSelect($nav_value);
+                            break;
+                        default:
+                            $a_nav[$nav_label] = $nav_value;
+                    }
+                }
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $a_nav, 'nav');
+                }
+            }
+        }
+        $a_twig_values['nav'] = $a_nav;
         $a_twig_values['tpl'] = 'navigation_form';
+          $log_message = 'twig values ' . var_export($a_twig_values, TRUE);
+          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }
@@ -159,7 +173,8 @@ class NavigationView
     /**
      * Creates an array for the twig values to display a select listing the urls.
      *
-     * @param int $url_id
+     * @param int $url_id      Optional, both $url_id and $navgroup_id need to be set if either is.
+     * @param int $navgroup_id Optional, both $url_id and $navgroup_id need to be set if either is.
      * @return array
      */
     private function createUrlSelect($url_id = -1, $navgroup_id = -1)
@@ -236,18 +251,12 @@ class NavigationView
      */
     private function createNavSelect($nav_id = -1)
     {
-        try {
-            $a_nav = $this->o_nav_complex->readAllNavUrlTree();
-        }
-        catch (ModelException $e) {
-            $a_nav = [];
-        }
-
+        $a_nav = $this->getNavUrlTree();
         $a_select = [
-            'id'          => 'nav_parent_id',
+            'id'          => 'parent_id',
             'label_class' => '',
             'label_text'  => '',
-            'name'        => 'nav_parent_id',
+            'name'        => 'parent_id',
             'class'       => 'form-control',
             'other_stuph' => '',
             'options'     => []
@@ -319,10 +328,11 @@ class NavigationView
             'other_stuph' => $nav_level === 0 ? ' selected' : ''
         ]];
         for ($x = 1; $x <= 3; $x++) {
+            $other_stuph = $nav_level == $x ? ' selected' : '';
             $a_options[] = [
                 'value'       => $x,
                 'label'       => 'Nav Level ' . $x,
-                'other_stuph' => $nav_level === $x ? ' selected' : ''
+                'other_stuph' => $other_stuph
             ];
         }
         return [
@@ -339,10 +349,10 @@ class NavigationView
     /**
      * Creates an array for the twig values to display a select for the navigation group.
      * 
-     * @param int $parent_ng_id The parent navigation group id
+     * @param int $ng_id Optional, the navigation group id
      * @return array
      */
-    private function createNgSelect($parent_ng_id = -1)
+    private function createNgSelect($ng_id = -1)
     {
         $cache_key = 'nav.select.navgroups';
         $results = '';
@@ -373,7 +383,7 @@ class NavigationView
         $a_options = [[
             'value'       => 0,
             'label'       => '--Select NavGroup--',
-            'other_stuph' => $parent_ng_id == -1 ? ' selected' : ''
+            'other_stuph' => $ng_id == -1 ? ' selected' : ''
         ]];
         foreach($results as $ng) {
             $a_temp = [
@@ -381,7 +391,7 @@ class NavigationView
                 'label'       => $ng['ng_name'],
                 'other_stuph' => ''
             ];
-            if ($parent_ng_id != -1 && $ng['ng_id'] == $parent_ng_id) {
+            if ($ng_id != -1 && $ng['ng_id'] == $ng_id) {
                 $a_temp['other_stuph'] = ' selected';
             }
             $a_options[] = $a_temp;
@@ -418,5 +428,31 @@ class NavigationView
             ];
         }
         return $a_twig_nav;
+    }
+
+    /**
+     * Returns the nav url list.
+     *
+     * @return array|mixed
+     */
+    private function getNavUrlTree()
+    {
+        $a_nav = [];
+        $cache_key = 'nav.url.tree';
+        if ($this->use_cache) {
+            $a_nav = $this->o_cache->get($cache_key);
+        }
+        if (empty($a_nav)) {
+            try {
+                $a_nav = $this->o_nav_complex->readAllNavUrlTree();
+                if ($this->use_cache) {
+                    $this->o_cache->set($cache_key, $a_nav, 'nav');
+                }
+            }
+            catch (ModelException $e) {
+                $a_nav = [];
+            }
+        }
+        return $a_nav;
     }
 }

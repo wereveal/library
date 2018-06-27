@@ -5,6 +5,8 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Services\Di;
@@ -74,10 +76,17 @@ class NavigationController implements ManagerControllerInterface
      */
     public function save()
     {
+        try {
+            $this->o_model->save($this->a_post);
+            $a_msg = ViewHelper::successMessage();
+        }
+        catch (ModelException $e) {
+            $a_msg = ViewHelper::failureMessage('Unable to save the record.');
+        }
         if ($this->use_cache) {
             $this->o_cache->clearTag('nav');
         }
-        return $this->o_view->renderList();
+        return $this->o_view->renderList($a_msg);
     }
 
     /**
@@ -86,10 +95,7 @@ class NavigationController implements ManagerControllerInterface
      */
     public function update()
     {
-        if ($this->use_cache) {
-            $this->o_cache->clearTag('nav');
-        }
-        return $this->o_view->renderList();
+        return $this->save();
     }
 
     /**
@@ -119,9 +125,16 @@ class NavigationController implements ManagerControllerInterface
      */
     public function delete()
     {
+        try {
+            $this->o_model->delete($this->a_post);
+            $a_msg = ViewHelper::successMessage();
+        }
+        catch (ModelException $e) {
+            $a_msg = ViewHelper::failureMessage('Unable to delete the nav record.');
+        }
         if ($this->use_cache) {
             $this->o_cache->clearTag('nav');
         }
-        return $this->o_view->renderList();
+        return $this->o_view->renderList($a_msg);
     }
 }

@@ -7,6 +7,7 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 
 /**
@@ -35,21 +36,50 @@ class NavNgMapModel extends ModelAbstract
     }
 
     /**
-     * Generic update for a record using the values provided.
-     * Overrides abstract. Required by interface but not used in this instance.
+     * "Updates" a record using the values provided.
+     * Overrides abstract. Doesn't actually update a record.
      * The two fields in the table create a single primary key so can not be changed.
-     * To change, an INSERT/DELETE thing has to be done.
+     * To change, a DELETE/INSERT thing has to be done. This method should be wrapped
+     * in a transaction. It doesn't itself so that it can be used in a larger transaction.
      *
-     * @param array  $a_values
-     * @param string $immutable
-     * @param array  $a_not_used
-     * @return void
+     * @param array  $a_new_values Required, not like abstract. ['nav_id', 'ng_id']
+     * @param array  $a_old_values Required, not like abstract. ['nnm_id', 'nav_id', 'ng_id']
+     * @return bool
      * @throws ModelException
-     * @todo change so that it does the delete/insert thing... maybe.
      */
-    public function update(array $a_values = [], array $a_not_used = [])
+    public function update(array $a_new_values = [], array $a_old_values = [])
     {
-        throw new ModelException('Update not allowed.', 350);
+        if ($a_new_values['nav_id'] === $a_old_values['nav_id'] &&
+            $a_new_values['ng_id']  === $a_old_values['ng_id']
+        ) {
+            return true;
+        }
+        if (
+            empty($a_new_values['nav_id']) ||
+            empty($a_new_values['ng_id']) ||
+            empty($a_old_values['nav_id']) ||
+            empty($a_old_values['ng_id'])
+        ) {
+            $err_msg = 'Missing required values.';
+            $err_code = ExceptionHelper::getCodeNumberModel('update missing values');
+            throw new ModelException($err_msg, $err_code);
+        }
+        
+        try {
+            if (empty($a_old_values['nnm_id'])) {
+                $a_old_record = $this->read($a_old_values);
+                $nnm_id = $a_old_record[0][$this->primary_index_name];
+            }
+            else {
+                $nnm_id = $a_old_values['nnm_id'];
+            }
+            $this->delete($nnm_id);
+            $this->create($a_new_values);
+            return true;
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
