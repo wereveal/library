@@ -1,6 +1,6 @@
 <?php
 /**
- * Class DbInstallerModel
+ * Class DbCreator
  * @package Ritc_Library
  */
 namespace Ritc\Library\Models;
@@ -20,7 +20,7 @@ use Ritc\Library\Traits\LogitTraits;
  * - v1.0.0         - Initial Production version                - 2017-12-15 wer
  * - v1.0.0-alpha.0 - Initial version                           - 2017-11-23 wer
  */
-class DbInstallerModel
+class DbCreator
 {
     use LogitTraits;
 
@@ -74,7 +74,7 @@ class DbInstallerModel
     private $o_pdo;
 
     /**
-     * DbInstallerModel constructor.
+     * DbCreator constructor.
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -344,7 +344,7 @@ class DbInstallerModel
                 ({$a_strings['values']})";
         $update_sql = "
             UPDATE {$table_name}
-            SET nav_parent_id = :nav_parent_id
+            SET parent_id = :parent_id
             WHERE nav_id = :nav_id";
         $a_nav_table_info = [
             'table_name'  => $table_name,
@@ -360,14 +360,14 @@ class DbInstallerModel
         }
         foreach ($a_navigation as $key => $a_record) {
             $a_record['url_id']        = $this->a_urls[$a_record['url_id']]['url_id'];
-            $a_record['nav_parent_id'] = 0;
+            $a_record['parent_id'] = 0;
             try {
                 $this->o_db->resetNewIds();
                 $results = $this->o_db->executeInsert($a_record, $o_nav_stmt, $a_nav_table_info);
                 if ($results) {
                     $ids = $this->o_db->getNewIds();
                     $a_navigation[$key]['nav_id'] = $ids[0];
-                    $a_navigation[$key]['nav_parent_name'] = $a_navigation[$key]['nav_parent_id'];
+                    $a_navigation[$key]['nav_parent_name'] = $a_navigation[$key]['parent_id'];
                 }
                 else {
                     $this->error_message = 'Could not insert new navigation record.';
@@ -381,7 +381,7 @@ class DbInstallerModel
         }
         //  Updating nav records with parent ids:
         foreach ($a_navigation as $key => $a_record) {
-            $update_values = ['nav_id' => $a_record['nav_id'], 'nav_parent_id' => $a_navigation[$a_record['nav_parent_name']]['nav_id']];
+            $update_values = ['nav_id' => $a_record['nav_id'], 'parent_id' => $a_navigation[$a_record['nav_parent_name']]['nav_id']];
             try {
                 $results = $this->o_db->execute($update_values, $o_update_stmt);
                 if ($results === false) {

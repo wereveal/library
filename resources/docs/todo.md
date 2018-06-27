@@ -24,8 +24,6 @@
 
 * On multiple anything, should transactions be invoked? Or a switch be added to allow for that?
 
-* nav_ng_map table should have an automagical primary key
-
 * There are several tables (mostly map) which have field names like fs_sec_id to help keep straight
   the various field names apart which would otherwise be named the same in different tables.
   This may be too verbose since in most cases, we are either not using addtional tables

@@ -63,7 +63,7 @@ function urlsForNavgroup(navgroup) {
     $.post(goTo, posted, function(jsonStr) {
         if (jsonStr.includes("<pre>")) {
             jsonStr = jsonStr.replace('<pre></pre>','');
-            console.error("jsonStr includes the pre tag.");
+            // console.error("jsonStr includes the pre tag.");
         }
         var parsedJson = JSON.parse(jsonStr);
         $("#url_id").empty();
