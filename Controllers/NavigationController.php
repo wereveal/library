@@ -22,7 +22,6 @@ use Ritc\Library\Views\NavigationView;
  * @date    2016-04-15 11:53:36
  * @change_log
  * - v1.0.0-alpha.0 - Initial version                           - 2016-04-15 wer
- * @todo Save, update, verify, delete
  */
 class NavigationController implements ManagerControllerInterface
 {
@@ -47,9 +46,10 @@ class NavigationController implements ManagerControllerInterface
 
     /**
      * Main method used to render the page.
+     *
      * @return string
      */
-    public function route()
+    public function route(): string
     {
         switch($this->form_action) {
             case 'new':
@@ -72,9 +72,10 @@ class NavigationController implements ManagerControllerInterface
     ### Required by Interface ###
     /**
      * Method for saving data.
+     *
      * @return string
      */
-    public function save()
+    public function save(): string
     {
         try {
             $this->o_model->save($this->a_post);
@@ -91,18 +92,20 @@ class NavigationController implements ManagerControllerInterface
 
     /**
      * Method for updating data.
+     *
      * @return string
      */
-    public function update()
+    public function update(): string
     {
         return $this->save();
     }
 
     /**
      * Method to display the verify delete form.
+     *
      * @return string
      */
-    public function verifyDelete()
+    public function verifyDelete(): string
     {
         $a_values = [
             'what'         => 'Navigation ',
@@ -121,9 +124,10 @@ class NavigationController implements ManagerControllerInterface
 
     /**
      * Method to delete data.
+     *
      * @return string
      */
-    public function delete()
+    public function delete(): string
     {
         try {
             $this->o_model->delete($this->a_post);

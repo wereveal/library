@@ -22,16 +22,17 @@ abstract class CustomErrorAbstract extends \ErrorException
      */
     public function __toString()
     {
-        return get_class($this) .
+        return \get_class($this) .
         " '{$this->message}' in {$this->file}.{$this->line}\n" .
         $this->getTraceAsString();
     }
 
     /**
      * Returns the error message.
+     *
      * @return string
      */
-    public function errorMessage()
+    public function errorMessage(): string
     {
         $error_message = $this->getMessage();
         if (empty($error_message)) {
@@ -52,10 +53,11 @@ abstract class CustomErrorAbstract extends \ErrorException
 
     /**
      * Returns the text of the associated error code.
+     *
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1)
+    public function getCodeText($code = -1): string
     {
         switch ($code) {
             ### Business Logic Errors ###
@@ -78,10 +80,11 @@ abstract class CustomErrorAbstract extends \ErrorException
 
     /**
      * Returns the class.
+     *
      * @return string
      */
-    public function getClass()
+    public function getClass(): string
     {
-        return get_class($this);
+        return \get_class($this);
     }
 }

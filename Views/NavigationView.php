@@ -50,7 +50,7 @@ class NavigationView
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = [])
+    public function renderList(array $a_message = []): string
     {
         $meth = __METHOD__ . '.';
         $a_nav = $this->getNavUrlTree();
@@ -84,12 +84,12 @@ class NavigationView
      * @param int $nav_id Required.
      * @return string
      */
-    public function renderForm($nav_id = -1)
+    public function renderForm($nav_id = -1): string
     {
         $meth = __METHOD__ . '.';
         $a_twig_values = $this->createDefaultTwigValues();
         $a_nav = [];
-        if ($nav_id == -1) {
+        if ($nav_id === -1) {
             $cache_key = 'nav.form.by.new';
             if ($this->use_cache) {
                 $a_nav = $this->o_cache->get($cache_key);
@@ -137,7 +137,7 @@ class NavigationView
                                 'id'      => 'nav_active',
                                 'name'    => 'nav_active',
                                 'label'   => 'Active',
-                                'checked' => $nav_value == 'true' ? ' checked' : ''
+                                'checked' => $nav_value === 'true' ? ' checked' : ''
                             ];
                             $a_nav['nav_active_ckbx'] = FormHelper::checkbox($a_chbx_values);
                             break;
@@ -177,7 +177,7 @@ class NavigationView
      * @param int $navgroup_id Optional, both $url_id and $navgroup_id need to be set if either is.
      * @return array
      */
-    private function createUrlSelect($url_id = -1, $navgroup_id = -1)
+    private function createUrlSelect($url_id = -1, $navgroup_id = -1): array
     {
         $a_select = [
             'id'          => 'url_id',
@@ -221,10 +221,10 @@ class NavigationView
                         'label'       => $url['url_text'],
                         'other_stuph' => ''
                     ];
-                    if ($url['url_id'] == $url_id) {
+                    if ($url['url_id'] === (int)$url_id) {
                         $a_temp['other_stuph'] = ' selected';
                     }
-                    if ($a_temp['value'] != '') {
+                    if (!empty($a_temp['value'])) {
                         $a_options[] = $a_temp;
                     }
                 }
@@ -249,7 +249,7 @@ class NavigationView
      * @param int $nav_id
      * @return array
      */
-    private function createNavSelect($nav_id = -1)
+    private function createNavSelect($nav_id = -1): array
     {
         $a_nav = $this->getNavUrlTree();
         $a_select = [
@@ -265,7 +265,7 @@ class NavigationView
             [
                 'value'       => 0,
                 'label'       => '--Select Parent--',
-                'other_stuph' => $nav_id == -1 ? ' selected' : ''
+                'other_stuph' => (int)$nav_id === -1 ? ' selected' : ''
             ],
         ];
         $a_options[] = [
@@ -279,7 +279,7 @@ class NavigationView
                 'label'       => $nav['nav_text'] . ' (level ' . $nav['nav_level'] . ')',
                 'other_stuph' => ''
             ];
-            if ($nav['nav_id'] == $nav_id) {
+            if ($nav['nav_id'] === (int)$nav_id) {
                 $a_temp['other_stuph'] = ' selected';
             }
             $a_options[] = $a_temp;
@@ -290,7 +290,7 @@ class NavigationView
                         'label'       => $submenu['nav_text'] . ' (level ' . $submenu['nav_level'] . ')',
                         'other_stuph' => ''
                     ];
-                    if ($submenu['nav_id'] == $nav_id) {
+                    if ($submenu['nav_id'] === (int)$nav_id) {
                         $a_temp['other_stuph'] = ' selected';
                     }
                     $a_options[] = $a_temp;
@@ -301,7 +301,7 @@ class NavigationView
                                 'label'       => $ssmenu['nav_text'] . ' (level ' . $ssmenu['nav_level'] . ')',
                                 'other_stuph' => ''
                             ];
-                            if ($ssmenu['nav_id'] == $nav_id) {
+                            if ($ssmenu['nav_id'] === (int)$nav_id) {
                                 $a_temp['other_stuph'] = ' selected';
                             }
                             $a_options[] = $a_temp;
@@ -320,15 +320,15 @@ class NavigationView
      * @param int $nav_level
      * @return array
      */
-    private function createNavLvlSelect($nav_level = 0)
+    private function createNavLvlSelect($nav_level = 0): array
     {
         $a_options = [[
             'value'       => 0,
             'label'       => '--Select Nav Level--',
-            'other_stuph' => $nav_level === 0 ? ' selected' : ''
+            'other_stuph' => (int)$nav_level === 0 ? ' selected' : ''
         ]];
         for ($x = 1; $x <= 3; $x++) {
-            $other_stuph = $nav_level == $x ? ' selected' : '';
+            $other_stuph = (int)$nav_level === $x ? ' selected' : '';
             $a_options[] = [
                 'value'       => $x,
                 'label'       => 'Nav Level ' . $x,
@@ -352,7 +352,7 @@ class NavigationView
      * @param int $ng_id Optional, the navigation group id
      * @return array
      */
-    private function createNgSelect($ng_id = -1)
+    private function createNgSelect($ng_id = -1): array
     {
         $cache_key = 'nav.select.navgroups';
         $results = '';
@@ -383,7 +383,7 @@ class NavigationView
         $a_options = [[
             'value'       => 0,
             'label'       => '--Select NavGroup--',
-            'other_stuph' => $ng_id == -1 ? ' selected' : ''
+            'other_stuph' => $ng_id === -1 ? ' selected' : ''
         ]];
         foreach($results as $ng) {
             $a_temp = [
@@ -391,7 +391,7 @@ class NavigationView
                 'label'       => $ng['ng_name'],
                 'other_stuph' => ''
             ];
-            if ($ng_id != -1 && $ng['ng_id'] == $ng_id) {
+            if ($ng_id !== -1 && $ng['ng_id'] === $ng_id) {
                 $a_temp['other_stuph'] = ' selected';
             }
             $a_options[] = $a_temp;
@@ -406,7 +406,7 @@ class NavigationView
      * @param array $a_values
      * @return array
      */
-    private function createTwigListArray(array $a_values = [])
+    private function createTwigListArray(array $a_values = []): array
     {
         $a_twig_nav = [];
         foreach ($a_values as $nav) {
@@ -433,9 +433,9 @@ class NavigationView
     /**
      * Returns the nav url list.
      *
-     * @return array|mixed
+     * @return array
      */
-    private function getNavUrlTree()
+    private function getNavUrlTree(): array
     {
         $a_nav = [];
         $cache_key = 'nav.url.tree';

@@ -47,7 +47,7 @@ class NavNgMapModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function update(array $a_new_values = [], array $a_old_values = [])
+    public function update(array $a_new_values = [], array $a_old_values = []): bool
     {
         if ($a_new_values['nav_id'] === $a_old_values['nav_id'] &&
             $a_new_values['ng_id']  === $a_old_values['ng_id']
@@ -92,21 +92,22 @@ class NavNgMapModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function deleteWith($ng_id = -1, $nav_id = -1)
+    public function deleteWith($ng_id = -1, $nav_id = -1): bool
     {
-        if ($ng_id == -1 && $nav_id == -1) {
+        if ($ng_id === -1 && $nav_id === -1) {
             return false;
         }
-        elseif ($ng_id == -1) {
+
+        if ($ng_id === -1) {
             $where = 'nav_id = :nav_id';
             $a_values = ['nav_id' => $nav_id];
         }
-        elseif ($nav_id == -1) {
+        elseif ($nav_id === -1) {
             $where = 'ng_id = :ng_id';
             $a_values = ['ng_id' => $ng_id];
         }
         else {
-            $where = "ng_id = :ng_id AND nav_id = :nav_id";
+            $where = 'ng_id = :ng_id AND nav_id = :nav_id';
             $a_values = ['ng_id' => $ng_id, 'nav_id' => $nav_id];
         }
         $sql = "
@@ -125,10 +126,11 @@ class NavNgMapModel extends ModelAbstract
      * Checks to see if either/both navigation record and navgroups record exists.
      * Note that this does make a weird assumption: it must be able to verify records do not exist.
      * If it errors on the read it returns true, as if it found something.
+     *
      * @param array $a_values
      * @return bool
      */
-    public function relatedRecordsExist(array $a_values = [])
+    public function relatedRecordsExist(array $a_values = []): bool
     {
         if (empty($a_values['nav_id']) && empty($a_values['ng_id'])) {
             return true;
@@ -137,12 +139,12 @@ class NavNgMapModel extends ModelAbstract
             $o_nav = new NavigationModel($this->o_db);
             try {
                 $results = $o_nav->read(['nav_id' => $a_values['nav_id']]);
-                if (count($results) > 0) {
+                if (!empty($results)) {
                     return true;
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = "The Navigation record does not exist.";
+                $this->error_message = 'The Navigation record does not exist.';
                 return true;
             }
         }
@@ -150,13 +152,12 @@ class NavNgMapModel extends ModelAbstract
             $o_ng  = new NavgroupsModel($this->o_db);
             try {
                 $results = $o_ng->read(['ng_id' => $a_values['ng_id']]);
-                if (count($results) > 0) {
-                    $this->error_message = "The Navgroup record does not exist.";
+                if (!empty($results)) {
                     return true;
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = "The Navgroup record does not exist.";
+                $this->error_message = 'The Navgroup record does not exist.';
                 return true;
             }
         }

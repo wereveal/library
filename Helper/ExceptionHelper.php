@@ -20,10 +20,11 @@ class ExceptionHelper
 {
     /**
      * Gets the code number for a generic error.
+     *
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumber($failure_string = '')
+    public static function getCodeNumber($failure_string = ''): int
     {
         $failure_string = self::fixFailureString($failure_string);
         switch ($failure_string) {
@@ -42,10 +43,11 @@ class ExceptionHelper
 
     /**
      * Gets the code number for a factory error.
+     *
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumberFactory($failure_string = '')
+    public static function getCodeNumberFactory($failure_string = ''): int
     {
         $failure_string = self::fixFailureString($failure_string);
         switch ($failure_string) {
@@ -68,10 +70,11 @@ class ExceptionHelper
 
     /**
      * Gets the code number for the model exception.
+     *
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumberModel($failure_string = '')
+    public static function getCodeNumberModel($failure_string = ''): int
     {
         $failure_string = self::fixFailureString($failure_string);
         switch ($failure_string) {
@@ -275,10 +278,11 @@ class ExceptionHelper
 
     /**
      * Gets the text for the error code provided for generic exceptions.
+     *
      * @param int $code
      * @return string
      */
-    public static function getCodeText($code = -1)
+    public static function getCodeText($code = -1): string
     {
         switch ($code) {
             ### Business Logic Errors ###
@@ -301,10 +305,11 @@ class ExceptionHelper
 
     /**
      * Gets the text for the error code provided for factory exceptions.
+     *
      * @param int $code
      * @return string
      */
-    public static function getCodeTextFactory($code = -1)
+    public static function getCodeTextFactory($code = -1): string
     {
         switch ($code) {
             case 10:
@@ -326,10 +331,11 @@ class ExceptionHelper
 
     /**
      * Gets the text for the error code provided for model exceptions.
+     *
      * @param int $code
      * @return string
      */
-    public static function getCodeTextModel($code = -1)
+    public static function getCodeTextModel($code = -1): string
     {
         switch ($code) {
             # Generic Database failures
@@ -505,10 +511,11 @@ class ExceptionHelper
 
     /**
      * Fixes the string to be compatible with methods that use it.
+     *
      * @param string $failure_string
      * @return string
      */
-    public static function fixFailureString($failure_string = '')
+    public static function fixFailureString($failure_string = ''): string
     {
         return Strings::makeAlphanumericPlus(strtolower($failure_string));
     }

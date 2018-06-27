@@ -21,20 +21,22 @@ abstract class CustomExceptionAbstract extends \Exception implements CustomExcep
 {
     /**
      * Overrides \Exception
+     *
      * @return string
      */
     public function __toString()
     {
-        return get_class($this) .
+        return \get_class($this) .
         " '{$this->message}' in {$this->file}.{$this->line}\n" .
         $this->getTraceAsString();
     }
 
     /**
      * Required by Interface.
+     *
      * @return string
      */
-    public function errorMessage()
+    public function errorMessage(): string
     {
         $error_message = $this->getMessage();
         if (empty($error_message)) {
@@ -55,20 +57,22 @@ abstract class CustomExceptionAbstract extends \Exception implements CustomExcep
 
     /**
      * Required by Interface.
+     *
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1)
+    public function getCodeText($code = -1): string
     {
         return ExceptionHelper::getCodeText($code);
     }
 
     /**
      * Gets the name of the custom exception.
+     *
      * @return string
      */
-    public function getClass()
+    public function getClass(): string
     {
-        return get_class($this);
+        return \get_class($this);
     }
 }

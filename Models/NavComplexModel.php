@@ -47,6 +47,7 @@ class NavComplexModel
 
     /**
      * NavAllModel constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -73,7 +74,7 @@ class NavComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function addNavToSitemap($nav_id = -1)
+    public function addNavToSitemap($nav_id = -1): bool
     {
         if ($nav_id < 1) {
             $err = ExceptionHelper::getCodeNumberModel('create missing value');
@@ -109,11 +110,11 @@ class NavComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function createNavArray($ng_id = -1)
+    public function createNavArray($ng_id = -1): array
     {
-        if ($ng_id == -1) {
+        if ($ng_id === -1) {
             $ng_id = $this->o_ng->retrieveDefaultId();
-            if ($ng_id == -1) {
+            if ($ng_id === -1) {
                 throw new ModelException('Missing required id.', 220);
             }
         }
@@ -146,7 +147,7 @@ class NavComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function delete($nav_id = -1)
+    public function delete($nav_id = -1): bool
     {
         if ($nav_id < 1) {
             $err_code = ExceptionHelper::getCodeNumberModel('delete missing primary');
@@ -173,9 +174,9 @@ class NavComplexModel
      * @return array
      * @throws ModelException
      */
-    public function getChildrenRecursive($parent_id = -1, $ng_id = -1, $levels = 'all')
+    public function getChildrenRecursive($parent_id = -1, $ng_id = -1, $levels = 'all'): array
     {
-        if ($parent_id == -1 || $ng_id == -1) {
+        if ($parent_id === -1 || $ng_id === -1) {
             $error_code = ExceptionHelper::getCodeNumberModel('missing value');
             throw new ModelException('Missing required value.', $error_code);
         }
@@ -189,7 +190,7 @@ class NavComplexModel
         if (!empty($a_results)) {
             foreach ($a_results as $a_nav) {
                 $a_more_results = [];
-                if ($levels == 'all') {
+                if ($levels === 'all') {
                     try {
                         $a_more_results = $this->getChildrenRecursive($a_nav['nav_id'], $ng_id);
                     }
@@ -202,9 +203,7 @@ class NavComplexModel
             }
             return $a_new_list;
         }
-        else {
-            return [];
-        }
+        return [];
     }
 
     /**
@@ -214,9 +213,9 @@ class NavComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function getNavList($ng_id = -1)
+    public function getNavList($ng_id = -1): array
     {
-        if ($ng_id == -1) {
+        if ($ng_id === -1) {
             try {
                 $ng_id = $this->o_ng->retrieveDefaultId();
             }
@@ -225,9 +224,9 @@ class NavComplexModel
             }
         }
         $replace_this = 'ON ng.ng_id = map.ng_id';
-        $with_this = 'ON ng.ng_id = map.ng_id AND ng.ng_id = :ng_id';
-        $sql = str_replace($replace_this, $with_this, $this->select_sql);
-        $sql = $sql . $this->select_order_sql;
+        $with_this    = 'ON ng.ng_id = map.ng_id AND ng.ng_id = :ng_id';
+        $sql          = str_replace($replace_this, $with_this, $this->select_sql);
+        $sql          .= $this->select_order_sql;
         $a_search_for = [':ng_id' => $ng_id];
         try {
             return $this->o_db->search($sql, $a_search_for);
@@ -244,7 +243,7 @@ class NavComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function getNavListAll()
+    public function getNavListAll(): array
     {
         $select_sql = trim(str_replace("WHERE n.nav_active = 'true'", '', $this->select_sql));
         $sql = $select_sql . "\n" . $this->select_order_sql;
@@ -289,7 +288,7 @@ class NavComplexModel
      */
     public function getNavListByName($navgroup_name = '')
     {
-        if ($navgroup_name == '') {
+        if ($navgroup_name === '') {
             try {
                 $navgroup_name = $this->o_ng->retrieveDefaultName();
             }
@@ -318,17 +317,18 @@ class NavComplexModel
      * @return bool|array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function getNavListByParent($parent_id = -1, $ng_id = -1) {
-        if ($parent_id == -1 || $ng_id == -1) {
+    public function getNavListByParent($parent_id = -1, $ng_id = -1)
+    {
+        if ($parent_id === -1 || $ng_id === -1) {
             return false;
         }
-        $replace_this = "ON n.nav_id = map.nav_id";
-        $with_this = "ON n.nav_id = map.nav_id AND map.ng_id = :map_ng_id";
+        $replace_this = 'ON n.nav_id = map.nav_id';
+        $with_this = 'ON n.nav_id = map.nav_id AND map.ng_id = :map_ng_id';
         $sql = str_replace($replace_this, $with_this, $this->select_sql);
-        $where = "
+        $where = '
             AND n.parent_id = :parent_id
             AND n.nav_id != :parent_nav_id
-        ";
+        ';
         $sql = $sql . $where . $this->select_order_sql;
         $a_search_for = [
             ':parent_id'     => $parent_id,
@@ -354,7 +354,7 @@ class NavComplexModel
      */
     public function getNavRecord($nav_id = -1)
     {
-        if ($nav_id == -1) {
+        if ($nav_id === -1) {
             return false;
         }
         $sql_and = "AND n.nav_id = :nav_id\n";
@@ -379,7 +379,7 @@ class NavComplexModel
      * @return array
      * @throws ModelException
      */
-    public function getSitemap(array $a_navgroups = ['Sitemap'], $auth_level = 0, $child_levels = 'all')
+    public function getSitemap(array $a_navgroups = ['Sitemap'], $auth_level = 0, $child_levels = 'all'): array
     {
         $meth = __METHOD__ . '.';
         $sql = $this->select_sql;
@@ -397,9 +397,9 @@ class NavComplexModel
             $with_this .= ')';
         }
         $this->logIt('with this: ' . $with_this, LOG_OFF, $meth . __LINE__);
-        $sql = str_replace($replace_this, $with_this, $sql);
-        $sql = $sql . "AND n.nav_level = :nav_level
-            ORDER BY n.nav_order";
+        $sql  = str_replace($replace_this, $with_this, $sql);
+        $sql .= 'AND n.nav_level = :nav_level
+            ORDER BY n.nav_order';
         $a_search_for[':nav_level'] = 1;
         $this->logIt('sql: ' . $sql, LOG_OFF, $meth . __LINE__);
         try {
@@ -414,7 +414,7 @@ class NavComplexModel
 
         $a_parents = [];
         foreach ($results as $key => $record) {
-            if (empty($a_parents[$record['url']]) && !empty($record['url'])) {
+            if (!empty($record['url']) && empty($a_parents[$record['url']])) {
                 $a_parents[$record['url']] = $record;
             }
         }
@@ -422,7 +422,7 @@ class NavComplexModel
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         foreach ($a_parents as $key => $record) {
-            if ($record['auth_level'] <= $auth_level && $record['nav_id'] == $record['parent_id']) {
+            if ($record['auth_level'] <= $auth_level && $record['nav_id'] === $record['parent_id']) {
                 switch ($child_levels) {
                     case 'one':
                         $levels = 'none';
@@ -453,7 +453,7 @@ class NavComplexModel
      * @param array $a_options  optional, ['changefreq' => 'yearly', 'priority' => 0.5]
      * @return array
      */
-    public function getSitemapForXml($auth_level = 0, array $a_options = [])
+    public function getSitemapForXml($auth_level = 0, array $a_options = []): array
     {
         try {
             $a_results = $this->getNavListByName('Sitemap');
@@ -505,7 +505,7 @@ class NavComplexModel
      */
     public function getTopLevelNavList($ng_id = -1)
     {
-        if ($ng_id == -1) {
+        if ($ng_id === -1) {
             throw new ModelException('Missing required id.', 220);
         }
         $where = "AND ng.ng_id = :ng_id\nAND n.nav_level = :nav_level\n";
@@ -527,7 +527,7 @@ class NavComplexModel
      * @param array $a_nav_list
      * @return int
      */
-    public function numOfLevels(array $a_nav_list = [])
+    public function numOfLevels(array $a_nav_list = []): int
     {
         $nav_level = 0;
         foreach ($a_nav_list as $a_nav) {
@@ -545,7 +545,7 @@ class NavComplexModel
      * @return array
      * @throws ModelException
      */
-    public function readAllNavUrlTree()
+    public function readAllNavUrlTree(): array
     {
         $meth = __METHOD__ . '.';
         $select_sql = 'SELECT ' . $this->buildSqlSelectFields($this->a_db_fields, 'n');
@@ -561,11 +561,11 @@ class NavComplexModel
               ON n.url_id = u.url_id
             WHERE n.nav_level = :nav_level
         ";
-        $order_by = "ORDER BY n.nav_order ASC";
+        $order_by = 'ORDER BY n.nav_order ASC';
         $top_sql = $select_sql . $order_by;
-        $prepare_sql = $select_sql . "
+        $prepare_sql = $select_sql . '
             AND n.parent_id = :parent_id
-        " . $order_by;
+        ' . $order_by;
         $this->logIt('top sql: ' . $top_sql, LOG_OFF, $meth . __LINE__);
         $this->logIt('prepare sql: ' . $prepare_sql, LOG_OFF, $meth . __LINE__);
         try {
@@ -602,7 +602,7 @@ class NavComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function removeNavFromSitemap($nav_id)
+    public function removeNavFromSitemap($nav_id): bool
     {
         if ($nav_id < 1) {
             $err = ExceptionHelper::getCodeNumberModel('delete missing value');
@@ -640,10 +640,10 @@ class NavComplexModel
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function save(array $a_post = [])
+    public function save(array $a_post = []): bool
     {
-        if ($a_post == []) {
-            $this->error_message = "An array with the save values was not supplied.";
+        if (empty($a_post)) {
+            $this->error_message = 'An array with the save values was not supplied.';
             throw new ModelException($this->error_message, 120);
         }
         $a_possible_keys = [
@@ -663,51 +663,48 @@ class NavComplexModel
         foreach ($a_possible_keys as $key_name) {
             switch ($key_name) {
                 case 'nav_id':
-                    if (isset($a_post[$key_name]) && $a_post[$key_name] != '') {
-                        $action = 'update';
-                    }
-                    else {
-                        $action = 'create';
-                    }
+                    $action = isset($a_post[$key_name]) && !empty($a_post[$key_name])
+                        ? 'update'
+                        : 'create';
                     break;
                 case 'url_id':
-                    if (!isset($a_post[$key_name]) || intval($a_post[$key_name]) == 0) {
+                    if (!isset($a_post[$key_name]) || (int)$a_post[$key_name] === 0) {
                         $action = 'error';
                         $this->error_message .= 'A URL must be selected. ';
                     }
                     break;
                 case 'parent_id':
-                    if (!isset($a_post[$key_name]) || intval($a_post[$key_name]) == 0) {
+                    if (!isset($a_post[$key_name]) || (int)$a_post[$key_name] === 0) {
                         $action = 'error';
                         $this->error_message .= 'A Parent must be selected. ';
                     }
                     break;
                 case 'ng_id':
-                    if (!isset($a_post[$key_name]) || intval($a_post[$key_name]) == 0) {
+                    if (!isset($a_post[$key_name]) || (int)$a_post[$key_name] === 0) {
                         $action = 'error';
                         $this->error_message .= 'A navigation group must be selected. ';
                     }
                     break;
                 case 'nav_name':
-                    if (!isset($a_post[$key_name]) || $a_post[$key_name] == '') {
+                    if (!isset($a_post[$key_name]) || empty($a_post[$key_name])) {
                         $action = 'error';
                         $this->error_message .= 'A Name must be given for the navigation record. ';
                     }
                     break;
                 case 'nav_text':
                 case 'nav_description':
-                    if (!isset($a_post[$key_name]) || $a_post[$key_name] == '') {
+                    if (!isset($a_post[$key_name]) || empty($a_post[$key_name])) {
                         $a_post[$key_name] = $a_post['nav_name'];
                     }
                     break;
                 case 'nav_active':
-                    if (!isset($a_post[$key_name]) || $a_post[$key_name] != 'true') {
+                    if (!isset($a_post[$key_name]) || $a_post[$key_name] !== 'true') {
                         $a_post[$key_name] = 'false';
                     }
                     break;
                 case 'nav_level':
                 case 'nav_order':
-                    if (!isset($a_post[$key_name]) || intval($a_post[$key_name]) == 0) {
+                    if (!isset($a_post[$key_name]) || (int)$a_post[$key_name] === 0) {
                         $a_post[$key_name] = 1;
                     }
                     break;
@@ -715,13 +712,13 @@ class NavComplexModel
                     // no default action needed
             }
         }
-        if ($action == 'error' || $action == '') {
+        if ($action === 'error' || $action === '') {
             throw new ModelException($this->error_message, 120);
         }
         $o_nav = $this->o_nav;
         $o_map = $this->o_nnm;
         $old_ng_id = false;
-        if ($action == 'update') {
+        if ($action === 'update') {
             try {
                 $old_record = $this->getNavRecord($a_post['nav_id']);
             }
@@ -729,7 +726,7 @@ class NavComplexModel
                 $this->error_message = 'Not able to get the old nav record: ' . $this->o_db->getSqlErrorMessage();
                 throw new ModelException($this->error_message, 210, $e);
             }
-            $old_ng_id = $old_record['ng_id'] != $a_post['ng_id']
+            $old_ng_id = $old_record['ng_id'] !== $a_post['ng_id']
                 ? $old_record['ng_id']
                 : false;
         }
@@ -739,7 +736,7 @@ class NavComplexModel
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode());
         }
-        if ($action == 'create') {
+        if ($action === 'create') {
             try {
                 $results = $o_nav->create($a_post);
             }
@@ -768,26 +765,24 @@ class NavComplexModel
             catch (ModelException $e) {
                 throw new ModelException('Unable to update the navigation record', 300, $e);
             }
-            if ($results) {
-                if ($old_ng_id) {
+            if ($results && $old_ng_id) {
+                try {
+                    $results = $o_map->deleteWith($old_ng_id, $a_post['nav_id']);
+                }
+                catch (ModelException $e) {
+                    $this->error_message = 'Unable to delete the old map record: ' . $this->o_db->getSqlErrorMessage();
+                    throw new ModelException($this->error_message, 10, $e);
+                }
+                if ($results) {
+                    $a_values = [
+                        'ng_id'  => $a_post['ng_id'],
+                        'nav_id' => $a_post['nav_id']
+                    ];
                     try {
-                        $results = $o_map->deleteWith($old_ng_id, $a_post['nav_id']);
+                        $results = $o_map->create($a_values);
                     }
                     catch (ModelException $e) {
-                        $this->error_message = 'Unable to delete the old map record: ' . $this->o_db->getSqlErrorMessage();
-                        throw new ModelException($this->error_message, 10, $e);
-                    }
-                    if ($results) {
-                        $a_values = [
-                            'ng_id'  => $a_post['ng_id'],
-                            'nav_id' => $a_post['nav_id']
-                        ];
-                        try {
-                            $results = $o_map->create($a_values);
-                        }
-                        catch (ModelException $e) {
-                            throw new ModelException('Unable to create a new map record.', 110, $e);
-                        }
+                        throw new ModelException('Unable to create a new map record.', 110, $e);
                     }
                 }
             }
@@ -802,15 +797,14 @@ class NavComplexModel
             }
             return true;
         }
-        else {
-            $this->error_message .= $this->o_db->retrieveFormattedSqlErrorMessage();
-            try {
-                $this->o_db->rollbackTransaction();
-                throw new ModelException($this->error_message, 10);
-            }
-            catch (ModelException $e) {
-                throw new ModelException('Unable to do the operation', 17);
-            }
+
+        $this->error_message .= $this->o_db->retrieveFormattedSqlErrorMessage();
+        try {
+            $this->o_db->rollbackTransaction();
+            throw new ModelException($this->error_message, 10);
+        }
+        catch (ModelException $e) {
+            throw new ModelException('Unable to do the operation', 17);
         }
     }
 
@@ -820,7 +814,7 @@ class NavComplexModel
      *
      * @return string
      */
-    public function getSelectSql()
+    public function getSelectSql(): string
     {
         return $this->select_sql;
     }
@@ -830,9 +824,9 @@ class NavComplexModel
      *
      * @param string $select_sql normally not set.
      */
-    public function setSelectSql($select_sql = '')
+    public function setSelectSql($select_sql = ''): void
     {
-        if ($select_sql == '') {
+        if ($select_sql === '') {
             $nav_select = $this->buildSqlSelectFields($this->a_db_fields, 'n');
             $select_sql = "
                 SELECT {$nav_select}, 
@@ -866,7 +860,7 @@ class NavComplexModel
      *
      * @return string
      */
-    public function getSelectOrderSql()
+    public function getSelectOrderSql(): string
     {
         return $this->select_order_sql;
     }
@@ -876,9 +870,9 @@ class NavComplexModel
      *
      * @param string $string optional
      */
-    public function setSelectOrderSql($string = '')
+    public function setSelectOrderSql($string = ''): void
     {
-        if ($string == '') {
+        if (empty($string)) {
             $string =<<<EOT
 ORDER BY
     ng.ng_id ASC,

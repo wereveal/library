@@ -9,8 +9,6 @@ use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
-use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does all the database CRUD stuff for the page table plus other app/business logic.\
@@ -30,8 +28,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavgroupsModel extends ModelAbstract
 {
-    use LogitTraits, DbUtilityTraits;
-
     /**
      * NavgroupsModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db
@@ -58,9 +54,9 @@ class NavgroupsModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function delete($ng_id = -1)
+    public function delete($ng_id = -1): bool
     {
-        if ($ng_id == -1) {
+        if ($ng_id === -1) {
             throw new ModelException('The navgroup id was not provided');
         }
         $o_map = new NavNgMapModel($this->o_db);
@@ -77,7 +73,7 @@ class NavgroupsModel extends ModelAbstract
             $this->error_message = 'Unable to retrieve the default record.';
             throw new ModelException($this->error_message, $e->getCode(), $e);
         }
-        if ($results == $ng_id) {
+        if ($results === $ng_id) {
             $this->error_message = 'This is the default navgroup. Change a different record to be default and try again.';
             $err_code = ExceptionHelper::getCodeNumberModel('delete not permitted');
             throw new ModelException($this->error_message, $err_code);
@@ -98,9 +94,9 @@ class NavgroupsModel extends ModelAbstract
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readByName($name = '')
+    public function readByName($name = ''): array
     {
-        if ($name == '') {
+        if ($name === '') {
             throw new ModelException('A record name must be provided.', 220);
         }
         $a_search_values = ['ng_name' => $name];
@@ -119,7 +115,7 @@ class NavgroupsModel extends ModelAbstract
      * @return int
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readIdByName($name = '')
+    public function readIdByName($name = ''): int
     {
         $a_values = [':ng_name' => $name];
         $a_search_parms = [
@@ -131,9 +127,7 @@ class NavgroupsModel extends ModelAbstract
             if (!empty($results[0])) {
                 return $results[0]['ng_id'];
             }
-            else {
-                throw new ModelException('No record found', 230);
-            }
+            throw new ModelException('No record found', 230);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode(), $e);
@@ -142,10 +136,11 @@ class NavgroupsModel extends ModelAbstract
 
     /**
      * Gets the default navgroup by id.
+     *
      * @return int
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function retrieveDefaultId()
+    public function retrieveDefaultId(): int
     {
         $a_search_for = [':ng_default' => 1];
         $a_search_parms = [
@@ -157,9 +152,7 @@ class NavgroupsModel extends ModelAbstract
             if (!empty($results[0])) {
                 return $results[0]['ng_id'];
             }
-            else {
-                throw new ModelException('No record found', 230);
-            }
+            throw new ModelException('No record found', 230);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode());
@@ -168,10 +161,11 @@ class NavgroupsModel extends ModelAbstract
 
     /**
      * Returns the default navgroup by name.
+     *
      * @return string
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function retrieveDefaultName()
+    public function retrieveDefaultName(): string
     {
         $a_search_for = [':ng_default' => 1];
         $a_search_parms = [
@@ -183,9 +177,7 @@ class NavgroupsModel extends ModelAbstract
             if (!empty($results[0])) {
                 return $results[0]['ng_name'];
             }
-            else {
-                throw new ModelException('No record found', 230);
-            }
+            throw new ModelException('No record found', 230);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode(), $e);
