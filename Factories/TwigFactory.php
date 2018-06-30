@@ -7,6 +7,7 @@ namespace Ritc\Library\Factories;
 
 use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\LocateFile;
 use Ritc\Library\Helper\OopHelper;
 use Ritc\Library\Models\TwigComplexModel;
@@ -61,7 +62,9 @@ class TwigFactory
 
     /**
      * TwigFactory constructor.
+     *
      * @param $a_twig_config
+     * @throws FactoryException
      */
     private function __construct($a_twig_config)
     {
@@ -90,9 +93,8 @@ class TwigFactory
                     }
                     catch (\Twig_Error_Loader $e) {
                         /** @noinspection ForgottenDebugOutputInspection */
-                        error_log('Unable to load paths with Twig Loader: ' . $e->getMessage() . ' -- ' . $meth);
-                        $continue = false;
-                        break;
+                        $msg = 'Unable to load paths with Twig Loader: ' . $e->getMessage() . ' -- ' . $meth;
+                        throw new FactoryException($msg, $e->getCode(), $e);
                     }
 
                 }
@@ -107,15 +109,17 @@ class TwigFactory
                         $this->o_twig->addTest($inPublic_test);
                     }
                     catch (\Error $e) {
-                        /** @noinspection ForgottenDebugOutputInspection */
-                        error_log('Twig Environment Error: ' . $e->getMessage() . ' -- ' . $meth);
+                        $msg = 'Twig Environment Error: ' . $e->getMessage() . ' -- ' . $meth;
+                        $err_code = ExceptionHelper::getCodeNumberFactory('instance');
+                        throw new FactoryException($msg, $err_code, $e);
                     }
                 }
             }
         }
         catch (\Error $e) {
-            /** @noinspection ForgottenDebugOutputInspection */
-            error_log('Unable to create Twig Loader: ' . $meth);
+            $msg = 'Unable to create Twig Loader: ' . $meth;
+            $err_code = ExceptionHelper::getCodeNumberFactory('instance');
+            throw new FactoryException($msg, $err_code, $e);
         }
     }
 
@@ -159,10 +163,11 @@ class TwigFactory
      *
      * @param \Ritc\Library\Services\Di $o_di
      * @param bool                      $use_cache
-     * @return mixed|\Twig_Environment
+     * @return \Twig_Environment
      * @throws \Ritc\Library\Exceptions\FactoryException
      */
-    public static function getTwigByDb(Di $o_di, $use_cache = true) {
+    public static function getTwigByDb(Di $o_di, $use_cache = true): Twig_Environment
+    {
         $cache = $use_cache
             ? SRC_PATH . '/twig_cache'
             : false;
@@ -175,47 +180,56 @@ class TwigFactory
                 'debug'       => true
             ]
         ];
+        $try_create = false;
+        $o_tf = '';
         try {
             $o_tp = new TwigComplexModel($o_di);
+            try {
+                $results = $o_tp->readTwigConfig();
+                if (empty($results)) {
+                    $try_create = true;
+                }
+                else {
+                    $additional_paths = [];
+                    $default_path = '';
+                    foreach ($results as $record) {
+                        if ($default_path === '' && $record['tp_default'] === 'true') {
+                            $default_path = $record['twig_path'];
+                            $a_config['default_path'] = BASE_PATH . $default_path;
+                        }
+                        $twig_path = BASE_PATH . $record['twig_path'] . '/' . $record['twig_dir'];
+                        $additional_paths[$twig_path] = $record['twig_prefix'] . $record['twig_dir'];
+                    }
+                    $a_config['additional_paths'] = $additional_paths;
+                    try {
+                        /** @var TwigFactory $o_tf */
+                        $o_tf = self::createWithArray($a_config, 'db');
+                    }
+                    catch (FactoryException $e) {
+                        throw new FactoryException('Unable to create instance of the twig.' . $e->errorMessage());
+                    }
+                    catch (\Error $e) {
+                        throw new FactoryException('Unable to create instace of the twig: ' . $e->getMessage());
+                    }
+                }
+            }
+            catch (ModelException $e) {
+                $try_create = true;
+            }
         }
         catch (\Error $e) {
+            $try_create = true;
+        }
+        if ($try_create || !($o_tf instanceof self)) {
             try {
-                return self::create();
+                $o_tf = self::create();
             }
             catch (FactoryException $e) {
-                throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
+                throw new FactoryException($e->getMessage(), $e->getCode(), $e);
             }
         }
-        try {
-            $results = $o_tp->readTwigConfig();
-            if (empty($results)) {
-                return self::create();
-            }
-        }
-        catch (ModelException $e) {
-            return self::create();
-        }
-        $additional_paths = [];
-        $default_path = '';
-        foreach ($results as $record) {
-            if ($default_path === '' && $record['tp_default'] === 1) {
-                $default_path = $record['twig_path'];
-                $a_config['default_path'] = BASE_PATH . $default_path;
-            }
-            $twig_path = BASE_PATH . $record['twig_path'] . '/' . $record['twig_dir'];
-            $additional_paths[$twig_path] = $record['twig_prefix'] . $record['twig_dir'];
-        }
-        $a_config['additional_paths'] = $additional_paths;
-        try {
-            /** @noinspection PhpUndefinedFieldInspection */
-            return self::createWithArray($a_config, 'db')->o_twig;
-        }
-        catch (FactoryException $e) {
-            throw new FactoryException('Unable to create instance of the twig.' . $e->errorMessage());
-        }
-        catch (\Error $e) {
-            throw new FactoryException('Unable to create instace of the twig: ' . $e->getMessage());
-        }
+        /** @noinspection PhpUndefinedFieldInspection */
+        return $o_tf->o_twig;
     }
 
     /**
@@ -249,7 +263,7 @@ class TwigFactory
             }
         }
         else {
-            /** @var \Ritc\Library\Factories\TwigFactory $o_tf */
+            /** @var TwigFactory $o_tf */
             $o_tf = self::create($config, $namespace);
         }
         return $o_tf->o_twig;
@@ -261,13 +275,14 @@ class TwigFactory
      * Use self::getTwig() to get the Twig_Environment object.
      * The instance name will be derived from the config file name.
      * If the file name is the default name, the instance name will be main.
+     *
      * @param string $config_file Optional, defaults to twig_config.php
      * @param string $namespace   Optional, defaults to no namespace (looks for the file in all the usual places).
      *                            If namespace is given, it looks for the file in the namespace.
-     * @return \Twig_Environment
+     * @return TwigFactory
      * @throws \Ritc\Library\Exceptions\FactoryException
      */
-    protected static function create($config_file = 'twig_config.php', $namespace = ''):Twig_Environment
+    protected static function create($config_file = 'twig_config.php', $namespace = ''): TwigFactory
     {
         $org_config_file = $config_file;
         if (strpos($config_file, '/') !== false) {
@@ -296,14 +311,15 @@ class TwigFactory
      * Creates an instance of the class.
      * Note that this method returns the factory instance and not the Twig_Environment object.
      * Use self::getTwig() to get the Twig_Environment object.
+     *
      * @param array  $a_config_files Optional but if omitted silly, because it will only return the main twig instance
      *                               [['name' => 'twig_config.php', 'namespace' => 'Ritc\MyApp']...]
      * @param string $name           Optional but recommended as it will only return the main twig environment if it has already been defined.
      * @param bool   $use_main_twig  Optional, defaults to true. If set to false, will only use the config files specified.
-     * @return \Twig_Environment
+     * @return TwigFactory
      * @throws \Ritc\Library\Exceptions\FactoryException
      */
-    protected static function createMultiSource(array $a_config_files = [], $name = 'main', $use_main_twig = true):Twig_Environment
+    protected static function createMultiSource(array $a_config_files = [], $name = 'main', $use_main_twig = true):TwigFactory
     {
         if (!isset(self::$instance[$name])) {
             # No config files specified
@@ -349,16 +365,17 @@ class TwigFactory
      * Creates an instance of the class.
      * Note that this method returns the factory instance and not the Twig_Environment object.
      * Use self::getTwig() to get the Twig_Environment object.
+     *
      * @param array  $a_twig_config    Required. Array must have three key pairs,
      *                                 default_path        => string
      *                                 additional_paths    => array map of path => twig_name
      *                                 environment_options => array map of twig options, have at least the
      *                                 cache, debug, and auto_reload options set.
      * @param string $name             Optional but recommended. Name to give the instance. Defaults to main.
-     * @return \Twig_Environment
+     * @return TwigFactory
      * @throws \Ritc\Library\Exceptions\FactoryException
      */
-    protected static function createWithArray(array $a_twig_config = [], $name = 'main'):Twig_Environment
+    protected static function createWithArray(array $a_twig_config = [], $name = 'main'):TwigFactory
     {
         if (!isset(self::$instance[$name])) {
             if (   empty($a_twig_config)
@@ -371,8 +388,15 @@ class TwigFactory
             try {
                 self::$instance[$name] = new TwigFactory($a_twig_config);
             }
+            catch (FactoryException $e) {
+                $msg = 'Unable to create a new TwigFactory: ' . $e->getMessage();
+                $err_code = ExceptionHelper::getCodeNumberFactory('instance');
+                throw new FactoryException($msg, $err_code, $e);
+            }
             catch (\Error $e) {
-                throw new FactoryException('Unable to create a new TwigFactory: ' . $e->getMessage(), 100, $e);
+                $msg = 'Unable to create a new TwigFactory: ' . $e->getMessage();
+                $err_code = ExceptionHelper::getCodeNumberFactory('instance');
+                throw new FactoryException($msg, $err_code, $e);
             }
         }
         return self::$instance[$name];
