@@ -37,9 +37,10 @@ class MenusEntity implements EntityInterface
 
     /**
      * Returns all the record values.
+     *
      * @return array
      */
-    public function getAllProperties()
+    public function getAllProperties():array
     {
         return array(
             'menu_id'        => $this->menu_id,
@@ -55,10 +56,11 @@ class MenusEntity implements EntityInterface
 
     /**
      * Sets all the properties for the record in one step.
+     *
      * @param array $a_entity
      * @return bool
      */
-    public function setAllProperties(array $a_entity = array())
+    public function setAllProperties(array $a_entity = array()):bool
     {
         $a_default_values = [
             'menu_id'        => 0,
@@ -84,7 +86,7 @@ class MenusEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getMenuId()
+    public function getMenuId():int
     {
         return $this->menu_id;
     }
@@ -92,7 +94,7 @@ class MenusEntity implements EntityInterface
     /**
      * @param int $menu_id
      */
-    public function setMenuId($menu_id)
+    public function setMenuId($menu_id):void
     {
         $this->menu_id = $menu_id;
     }
@@ -100,7 +102,7 @@ class MenusEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getMenuPageId()
+    public function getMenuPageId():int
     {
         return $this->menu_page_id;
     }
@@ -108,7 +110,7 @@ class MenusEntity implements EntityInterface
     /**
      * @param int $menu_page_id
      */
-    public function setMenuPageId($menu_page_id)
+    public function setMenuPageId($menu_page_id):void
     {
         $this->menu_page_id = $menu_page_id;
     }
@@ -116,7 +118,7 @@ class MenusEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getMenuParentId()
+    public function getMenuParentId():int
     {
         return $this->menu_parent_id;
     }
@@ -124,7 +126,7 @@ class MenusEntity implements EntityInterface
     /**
      * @param int $menu_parent_id
      */
-    public function setMenuParentId($menu_parent_id)
+    public function setMenuParentId($menu_parent_id):void
     {
         $this->menu_parent_id = $menu_parent_id;
     }
@@ -132,7 +134,7 @@ class MenusEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getMenuName()
+    public function getMenuName():string
     {
         return $this->menu_name;
     }
@@ -140,7 +142,7 @@ class MenusEntity implements EntityInterface
     /**
      * @param string $menu_name
      */
-    public function setMenuName($menu_name)
+    public function setMenuName($menu_name):void
     {
         $this->menu_name = $menu_name;
     }
@@ -148,7 +150,7 @@ class MenusEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getMenuCss()
+    public function getMenuCss():string
     {
         return $this->menu_css;
     }
@@ -156,7 +158,7 @@ class MenusEntity implements EntityInterface
     /**
      * @param string $menu_css
      */
-    public function setMenuCss($menu_css)
+    public function setMenuCss($menu_css):void
     {
         $this->menu_css = $menu_css;
     }
@@ -164,7 +166,7 @@ class MenusEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getMenuOrder()
+    public function getMenuOrder():int
     {
         return $this->menu_order;
     }
@@ -172,7 +174,7 @@ class MenusEntity implements EntityInterface
     /**
      * @param int $menu_order
      */
-    public function setMenuOrder($menu_order)
+    public function setMenuOrder($menu_order):void
     {
         $this->menu_order = $menu_order;
     }
@@ -180,7 +182,7 @@ class MenusEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getMenuActive()
+    public function getMenuActive():int
     {
         return $this->menu_active;
     }
@@ -188,7 +190,7 @@ class MenusEntity implements EntityInterface
     /**
      * @param int $menu_active
      */
-    public function setMenuActive($menu_active)
+    public function setMenuActive($menu_active):void
     {
         $this->menu_active = $menu_active;
     }
@@ -196,7 +198,7 @@ class MenusEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getMenuLevel()
+    public function getMenuLevel():int
     {
         return $this->menu_level;
     }
@@ -204,7 +206,7 @@ class MenusEntity implements EntityInterface
     /**
      * @param int $menu_level
      */
-    public function setMenuLevel($menu_level)
+    public function setMenuLevel($menu_level):void
     {
         $this->menu_level = $menu_level;
     }

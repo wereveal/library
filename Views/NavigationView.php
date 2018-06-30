@@ -50,7 +50,7 @@ class NavigationView
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = []): string
+    public function renderList(array $a_message = []):string
     {
         $meth = __METHOD__ . '.';
         $a_nav = $this->getNavUrlTree();
@@ -84,7 +84,7 @@ class NavigationView
      * @param int $nav_id Required.
      * @return string
      */
-    public function renderForm($nav_id = -1): string
+    public function renderForm($nav_id = -1):string
     {
         $meth = __METHOD__ . '.';
         $a_twig_values = $this->createDefaultTwigValues();
@@ -177,7 +177,7 @@ class NavigationView
      * @param int $navgroup_id Optional, both $url_id and $navgroup_id need to be set if either is.
      * @return array
      */
-    private function createUrlSelect($url_id = -1, $navgroup_id = -1): array
+    private function createUrlSelect($url_id = -1, $navgroup_id = -1):array
     {
         $a_select = [
             'id'          => 'url_id',
@@ -249,7 +249,7 @@ class NavigationView
      * @param int $nav_id
      * @return array
      */
-    private function createNavSelect($nav_id = -1): array
+    private function createNavSelect($nav_id = -1):array
     {
         $a_nav = $this->getNavUrlTree();
         $a_select = [
@@ -320,7 +320,7 @@ class NavigationView
      * @param int $nav_level
      * @return array
      */
-    private function createNavLvlSelect($nav_level = 0): array
+    private function createNavLvlSelect($nav_level = 0):array
     {
         $a_options = [[
             'value'       => 0,
@@ -348,11 +348,11 @@ class NavigationView
 
     /**
      * Creates an array for the twig values to display a select for the navigation group.
-     * 
+     *
      * @param int $ng_id Optional, the navigation group id
      * @return array
      */
-    private function createNgSelect($ng_id = -1): array
+    private function createNgSelect($ng_id = -1):array
     {
         $cache_key = 'nav.select.navgroups';
         $results = '';
@@ -406,7 +406,7 @@ class NavigationView
      * @param array $a_values
      * @return array
      */
-    private function createTwigListArray(array $a_values = []): array
+    private function createTwigListArray(array $a_values = []):array
     {
         $a_twig_nav = [];
         foreach ($a_values as $nav) {
@@ -435,7 +435,7 @@ class NavigationView
      *
      * @return array
      */
-    private function getNavUrlTree(): array
+    private function getNavUrlTree():array
     {
         $a_nav = [];
         $cache_key = 'nav.url.tree';

@@ -5,7 +5,6 @@
  */
 namespace Ritc\Library\Controllers;
 
-use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Tests\ConstantsModelTester;
 use Ritc\Library\Tests\NavgroupsModelTester;
@@ -59,7 +58,7 @@ class TestsController
      * @return string
      * @throws \ReflectionException
      */
-    public function route()
+    public function route():string
     {
         switch ($this->form_action) {
             case 'ConstantsModel':
@@ -90,12 +89,7 @@ class TestsController
                 return $this->o_view->renderList();
         }
         $a_test_results = $o_test->runTests();
-        try {
-            $o_test->cleanupDbTests();
-        }
-        catch (ModelException $e) {
-
-        }
+        $o_test->cleanupDbTests();
         return $this->o_view->renderResults($a_test_results);
     }
 }

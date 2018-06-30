@@ -52,13 +52,13 @@ trait LogitTraits
      * @param  int    $log_type see Elog Class for allowed values
      * @param  string $location
      */
-    protected function logIt($message = '', $log_type = LOG_OFF, $location = '')
+    protected function logIt($message = '', $log_type = LOG_OFF, $location = ''):void
     {
         if ($this->o_elog instanceof Elog
-            && is_int($log_type)
+            && \is_int($log_type)
             && $log_type <= LOG_ALWAYS
             && $log_type > LOG_OFF
-            && $message != ''
+            && $message !== ''
         ) {
             switch ($log_type) {
                 case LOG_ON:
@@ -82,7 +82,7 @@ trait LogitTraits
      * Injects the Elog object into the class that uses LogitTraits.
      * @param Elog|null $o_elog
      */
-    public function setElog($o_elog = null)
+    public function setElog($o_elog = null):void
     {
         if ($o_elog instanceof Elog) {
             $this->o_elog = $o_elog;
@@ -94,14 +94,12 @@ trait LogitTraits
      * Sets the elog for objects in the object list.
      * Normally a part of a complex model class.
      */
-    public function setElogForObjects()
+    public function setElogForObjects():void
     {
-        if ($this->o_elog instanceof Elog) {
-            if (!empty($this->a_object_names)) {
-                foreach ($this->a_object_names as $object) {
-                    if (is_object($this->$object)) {
-                        $this->$object->setElog($this->o_elog);
-                    }
+        if ($this->o_elog instanceof Elog && !empty($this->a_object_names)) {
+            foreach ($this->a_object_names as $object) {
+                if (\is_object($this->$object)) {
+                    $this->$object->setElog($this->o_elog);
                 }
             }
         }
@@ -111,9 +109,9 @@ trait LogitTraits
      * Quick Stub for a commonly called thing.
      * @param \Ritc\Library\Services\Di $o_di
      */
-    public function setupElog(Di $o_di)
+    public function setupElog(Di $o_di):void
     {
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+        if (\defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $o_elog = $o_di->get('elog');
             $this->setElog($o_elog);
         }
@@ -123,7 +121,7 @@ trait LogitTraits
      * Standard SETter for protected class property.
      * @param array $a_object_names
      */
-    protected function setObjectNames(array $a_object_names = [])
+    protected function setObjectNames(array $a_object_names = []):void
     {
         $this->a_object_names = $a_object_names;
     }

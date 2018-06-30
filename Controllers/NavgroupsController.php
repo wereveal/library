@@ -37,45 +37,50 @@ class NavgroupsController implements ConfigControllerInterface
 
     /**
      * Main method used to route the page to the appropriate controller/view/model.
+     *
      * @return string
      */
-    public function route()
+    public function route():string
     {
         return 'ToDo';
     }
 
     /**
      * Method for saving data.
+     *
      * @return string
      */
-    public function save()
+    public function save():string
     {
         return '';
     }
 
     /**
      * Method for updating data.
+     *
      * @return string
      */
-    public function update()
+    public function update():string
     {
         return '';
     }
 
     /**
      * Method to display the verify delete form.
+     *
      * @return string
      */
-    public function verifyDelete()
+    public function verifyDelete():string
     {
         return '';
     }
 
     /**
      * Method to delete data.
+     *
      * @return string
      */
-    public function delete()
+    public function delete():string
     {
         return '';
     }

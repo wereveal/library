@@ -36,7 +36,7 @@ abstract class CustomExceptionAbstract extends \Exception implements CustomExcep
      *
      * @return string
      */
-    public function errorMessage(): string
+    public function errorMessage():string
     {
         $error_message = $this->getMessage();
         if (empty($error_message)) {
@@ -61,7 +61,7 @@ abstract class CustomExceptionAbstract extends \Exception implements CustomExcep
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1): string
+    public function getCodeText($code = -1):string
     {
         return ExceptionHelper::getCodeText($code);
     }
@@ -71,7 +71,7 @@ abstract class CustomExceptionAbstract extends \Exception implements CustomExcep
      *
      * @return string
      */
-    public function getClass(): string
+    public function getClass():string
     {
         return \get_class($this);
     }

@@ -9,8 +9,6 @@ use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
-use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does all the database CRUD stuff for the page table plus other app/business logic.
@@ -28,8 +26,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class GroupsModel extends ModelAbstract
 {
-    use LogitTraits, DbUtilityTraits;
-
     /**
      * GroupsModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db
@@ -53,15 +49,15 @@ class GroupsModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function deleteWithRelated($group_id = -1)
+    public function deleteWithRelated($group_id = -1):bool
     {
-        if ($group_id == -1 || empty($group_id)) {
+        if ($group_id === -1 || empty($group_id)) {
             $error_code = ExceptionHelper::getCodeNumberModel('delete missing values');
             throw new ModelException('Missing required value(s)', $error_code);
         }
         $o_ugm = new PeopleGroupMapModel($this->o_db);
         $o_people = new PeopleModel($this->o_db);
-        if (is_array($group_id)) {
+        if (\is_array($group_id)) {
             try {
                 $results = $o_ugm->read($group_id);
             }
@@ -134,7 +130,7 @@ class GroupsModel extends ModelAbstract
      */
     public function readByName($group_name = '')
     {
-        if ($group_name == '') {
+        if ($group_name === '') {
             throw new ModelException('Missing group name', 220);
         }
         try {
@@ -158,7 +154,7 @@ class GroupsModel extends ModelAbstract
      * @param int $group_id required
      * @return bool
      */
-    public function isValidGroupId($group_id = -1)
+    public function isValidGroupId($group_id = -1):bool
     {
         if (is_numeric($group_id) && $group_id > 0) {
             try {
@@ -168,7 +164,7 @@ class GroupsModel extends ModelAbstract
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = "Could not do the read operation.";
+                $this->error_message = 'Could not do the read operation.';
             }
         }
         return false;

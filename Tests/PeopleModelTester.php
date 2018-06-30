@@ -7,8 +7,8 @@ namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Models\PeopleModel;
 
 /**
@@ -24,9 +24,7 @@ use Ritc\Library\Models\PeopleModel;
  */
 class PeopleModelTester extends Tester
 {
-    use LogitTraits;
-
-    /** @var bool */
+    /** @var DbModel */
     private $o_db;
     /** @var PeopleModel */
     private $o_model;
@@ -47,22 +45,23 @@ class PeopleModelTester extends Tester
     /**
      * @return bool
      */
-    public function createTester()
+    public function createTester():bool
     {
         return false;
     }
 
     /**
      * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readTester()
+    public function readTester():bool
     {
         $a_test_values  = $this->a_test_values['read']['test_values'];
         $a_test_results = $this->a_test_values['read']['expected_results'];
         foreach ($a_test_values as $key => $a_input_values) {
             $results = $this->o_model->read($a_input_values);
             if (Arrays::compareArrays($a_test_results[$key], $results)) {
-
+                return true;
             }
         }
         return true;
@@ -71,7 +70,7 @@ class PeopleModelTester extends Tester
     /**
      * @return bool
      */
-    public function updateTester()
+    public function updateTester():bool
     {
         return false;
     }
@@ -79,7 +78,7 @@ class PeopleModelTester extends Tester
     /**
      * @return bool
      */
-    public function deleteTester()
+    public function deleteTester():bool
     {
         return false;
     }
@@ -87,7 +86,7 @@ class PeopleModelTester extends Tester
     /**
      * @return bool
      */
-    public function readByIdTester()
+    public function readByIdTester():bool
     {
         return false;
     }
@@ -95,7 +94,7 @@ class PeopleModelTester extends Tester
     /**
      * @return bool
      */
-    public function readyByName()
+    public function readyByName():bool
     {
         return false;
     }
@@ -103,7 +102,7 @@ class PeopleModelTester extends Tester
     /**
      * @return bool
      */
-    public function isValidGroupId()
+    public function isValidGroupId():bool
     {
         return false;
     }

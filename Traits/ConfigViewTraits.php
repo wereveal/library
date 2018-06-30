@@ -34,7 +34,7 @@ trait ConfigViewTraits
      * @param array $a_values optional default values ['tpl' => 'login', 'location' => '/manager/config/', 'a_message' => [], 'login_id' => '']
      * @return string
      */
-    public function renderLogin(array $a_values = [])
+    public function renderLogin(array $a_values = []):string
     {
         $meth = __METHOD__ . '.';
         $this->o_session->resetSession();
@@ -68,7 +68,7 @@ trait ConfigViewTraits
      * @example "src/apps/Ritc/Library/resources/docs/examples/verify_delete.php" what the two parameters can have.
      * @return string
      */
-    public function renderVerifyDelete(array $a_values = [], array $a_options = [])
+    public function renderVerifyDelete(array $a_values = [], array $a_options = []):string
     {
         if (empty($a_values)) {
             $fallback_method = empty($a_options['fallback'])

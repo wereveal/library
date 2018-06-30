@@ -59,7 +59,7 @@ class UrlsController implements ConfigControllerInterface
      *
      * @return string
      */
-    public function route()
+    public function route():string
     {
         $this->setProperties();
         switch ($this->form_action) {
@@ -81,7 +81,7 @@ class UrlsController implements ConfigControllerInterface
      *
      * @return string
      */
-    public function save()
+    public function save():string
     {
         $meth = __METHOD__ . '.';
         $log_message = 'post:  ' . var_export($this->a_post, true);
@@ -114,9 +114,9 @@ class UrlsController implements ConfigControllerInterface
      *
      * @return string
      */
-    public function update()
+    public function update():string
     {
-        if (!isset($this->a_post['url_id']) || !isset($this->a_post['url'])) {
+        if (!isset($this->a_post['url_id'], $this->a_post['url'])) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occurred. The url could not be updated.');
             return $this->o_urls_view->renderList($a_message);
         }
@@ -152,7 +152,7 @@ class UrlsController implements ConfigControllerInterface
      *
      * @return string
      */
-    public function verifyDelete()
+    public function verifyDelete():string
     {
         $url_id = $this->a_post['url_id'];
         $url = $this->a_post['url'];
@@ -182,9 +182,9 @@ class UrlsController implements ConfigControllerInterface
      *
      * @return string
      */
-    public function delete()
+    public function delete():string
     {
-        $url_id = isset($this->a_post['url_id']) ? $this->a_post['url_id'] : -1;
+        $url_id = $this->a_post['url_id'] ?? -1;
         try {
             $this->o_urls_model->delete($url_id);
             if ($this->use_cache) {
@@ -202,9 +202,9 @@ class UrlsController implements ConfigControllerInterface
      * Splits the url into 3 components, scheme, host, and the rest of the url.
      *
      * @param string $url
-     * @return array|bool
+     * @return array
      */
-    private function splitUrl($url = '')
+    private function splitUrl($url = ''):array
     {
         if (empty(strpos($url, '://'))) {
             $scheme = SITE_PROTOCOL;
@@ -212,20 +212,18 @@ class UrlsController implements ConfigControllerInterface
             $text   = $url;
         }
         else {
-            list($scheme, $text) = explode('://', $url);
+            [$scheme, $text] = explode('://', $url);
             $scheme = Strings::makeValidUrlScheme($scheme);
             $first_slash = strpos($text, '/');
             $host = substr($text, 0, $first_slash);
             $text = substr($text, $first_slash);
         }
 
-        if (substr($text, 0, 1) != '/') {
+        if (0 !== strpos($text, '/')) {
             $text = '/' . $text;
         }
-        if (strrpos($text, '.') === false) {
-            if (substr($text, -1, 1) != '/') {
-                $text .= '/';
-            }
+        if (strrpos($text, '.') === false && $text[\strlen($text) - 1] !== '/') {
+            $text .= '/';
         }
         $return_this = [
             'url_scheme' => $scheme,

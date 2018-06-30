@@ -44,7 +44,7 @@ class LibraryView
      * @param array $a_message A message, optional.
      * @return string
      */
-    public function renderLandingPage(array $a_message = [])
+    public function renderLandingPage(array $a_message = []):string
     {
         $meth = __METHOD__ . '.';
         $this->setAdmLevel($_SESSION['login_id']);
@@ -54,7 +54,7 @@ class LibraryView
         $tpl = $this->createTplString($a_values);
         $log_message = 'twig values ' . var_export($a_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $this->logIt("Template: " . $tpl, LOG_OFF, $meth . __LINE__);
+        $this->logIt('Template: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_values);
     }
 }

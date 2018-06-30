@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ForgottenDebugOutputInspection */
 /**
  * Class Elog
  * @package Ritc_Library
@@ -102,9 +102,9 @@ class Elog
      * @return \Ritc\Library\Services\Elog - the instance
      * @throws \Ritc\Library\Exceptions\ServiceException
      */
-    public static function start()
+    public static function start():Elog
     {
-        if (!isset(self::$instance)) {
+        if (self::$instance === null) {
             $c = __CLASS__;
             try {
                 self::$instance = new $c;
@@ -127,34 +127,34 @@ class Elog
      *
      * @return bool - success or failure of logging
      */
-    public function write($the_string = '', $log_method = LOG_OFF, $manual_from = '')
+    public function write($the_string = '', $log_method = LOG_OFF, $manual_from = ''):?bool
     {
-        if ($this->ignore_log_off && $log_method == LOG_OFF) {
+        if ($this->ignore_log_off && $log_method === LOG_OFF) {
             $log_method = LOG_ON;
         }
-        if ($the_string == '' || $log_method === LOG_OFF) {
+        if ($the_string === '' || $log_method === LOG_OFF) {
             return true;
         }
         $this->log_method = $log_method;
-        if ($manual_from != '') {
+        if ($manual_from !== '') {
             $this->from_location = $manual_from;
-            $from = $log_method != LOG_JSON
-                ? ' (From: ' . $manual_from. ")"
+            $from = $log_method !== LOG_JSON
+                ? ' (From: ' . $manual_from. ')'
                 : '';
         }
-        elseif ($this->from_file . $this->from_method . $this->from_class . $this->from_function . $this->from_line != '') {
+        elseif ($this->from_file . $this->from_method . $this->from_class . $this->from_function . $this->from_line !== '') {
             $from = $this->from_file
-                  . ($this->from_file != '' ? '  ' : '')
+                  . ($this->from_file !== '' ? '  ' : '')
                   . $this->from_method
-                  . ($this->from_method != '' ? '  ' : '')
+                  . ($this->from_method !== '' ? '  ' : '')
                   . $this->from_class
-                  . ($this->from_class != '' ? '  ' : '')
+                  . ($this->from_class !== '' ? '  ' : '')
                   . $this->from_function
-                  . ($this->from_function != '' ? '  ' : '')
-                  . ($this->from_line != '' ? 'Line: ' : '')
+                  . ($this->from_function !== '' ? '  ' : '')
+                  . ($this->from_line !== '' ? 'Line: ' : '')
                   . $this->from_line;
             $this->from_location = $from;
-            if ($log_method != LOG_JSON) {
+            if ($log_method !== LOG_JSON) {
                 $from = ' (From: ' . $from . ")\n";
             }
         }
@@ -162,20 +162,22 @@ class Elog
             $from = '';
             $this->from_location = '';
         }
-        $the_string = $the_string . $from;
+        $the_string         .= $from;
         $this->last_message = $the_string;
         switch ($log_method) {
             case LOG_OFF:
                 return true;
             case LOG_EMAIL:
                 return error_log($the_string, 1, $this->error_email_address,
-                                  "From: error_" . $this->error_email_address
-                                  . "\r\nX-Mailer: PHP/" . phpversion());
+                                 'From: error_' . $this->error_email_address
+                                  . "\r\nX-Mailer: PHP/" . PHP_VERSION
+                );
             /** @noinspection PhpMissingBreakStatementInspection */
             case LOG_BOTH:
                 error_log($the_string, 1, $this->error_email_address,
-                    "From: error_" . $this->error_email_address
-                    . "\r\nX-Mailer: PHP/" . phpversion());
+                          'From: error_' . $this->error_email_address
+                    . "\r\nX-Mailer: PHP/" . PHP_VERSION
+                );
             case LOG_JSON:
                 return trigger_error($the_string, E_USER_NOTICE);
             case LOG_ON:
@@ -243,9 +245,9 @@ class Elog
                 $this->json_log_used = true;
 		        $error_string = str_replace("\n", '', $error_string);
 		        $string = stripslashes(json_encode ([
-                    'date'       => date("Y-m-d H:i:s"),
-                    'location'   => $this->from_location,
-		            'message'    => $error_string
+                                                        'date'       => date('Y-m-d H:i:s'),
+                                                        'location'   => $this->from_location,
+                                                        'message'    => $error_string
 		        ]));
 		        $string .= "\n";
 		        return file_put_contents(LOG_PATH . '/' . $this->json_file, $string, FILE_APPEND);
@@ -267,21 +269,20 @@ class Elog
      * @param $var_name
      * @return string
      */
-    public function getVar($var_name)
+    public function getVar($var_name):string
     {
         if (isset($this->$var_name)) {
             return $this->$var_name;
         }
-        else {
-            return '';
-        }
+
+        return '';
     }
 
     /**
      * Getter for property debug_text.
      * @return string - the value of $debug_text
      */
-    public function getText()
+    public function getText():string
     {
         return $this->debug_text;
     }
@@ -290,7 +291,7 @@ class Elog
      * Getter for property last_message.
      * @return string - the value of $last_message
      */
-    public function getLastMessage()
+    public function getLastMessage():string
     {
         return $this->last_message;
     }
@@ -298,32 +299,92 @@ class Elog
     /**
      * Sets Constants for use whenever Elog is used.
      */
-    private function setElogConstants()
+    private function setElogConstants():void
     {
-        if (!defined('LOG_OFF'))        { define('LOG_OFF',         0); }
-        if (!defined('LOG_PHP'))        { define('LOG_PHP',         1); }
-        if (!defined('LOG_BOTH'))       { define('LOG_BOTH',        2); }
-        if (!defined('LOG_EMAIL'))      { define('LOG_EMAIL',       3); }
-        if (!defined('LOG_ON'))         { define('LOG_ON',          4); }
-        if (!defined('LOG_CUSTOM'))     { define('LOG_CUSTOM',      4); }
-        if (!defined('LOG_JSON'))       { define('LOG_JSON',        5); }
-        if (!defined('LOG_DB'))         { define('LOG_DB',          6); }
-        if (!defined('LOG_HTML'))       { define('LOG_HTML',        7); }
-        if (!defined('LOG_ALWAYS'))     { define('LOG_ALWAYS',      8); }
-        if (!defined('LOG_WARN'))       { define('LOG_WARN',        9); }
-        if (!defined('LOG_ERROR'))      { define('LOG_ERROR',      10); }
-        if (!defined('LOG_NOTICE'))     { define('LOG_NOTICE',     11); }
-        if (!defined('LOG_DEPRECATED')) { define('LOG_DEPRECATED', 12); }
-        if (!defined('LOG_PATH'))       { define('LOG_PATH', BASE_PATH . '/logs'); }
+        if (!\defined('LOG_OFF'))        {
+            /**
+             *
+             */
+            \define('LOG_OFF', 0); }
+        if (!\defined('LOG_PHP'))        {
+            /**
+             *
+             */
+            \define('LOG_PHP', 1); }
+        if (!\defined('LOG_BOTH'))       {
+            /**
+             *
+             */
+            \define('LOG_BOTH', 2); }
+        if (!\defined('LOG_EMAIL'))      {
+            /**
+             *
+             */
+            \define('LOG_EMAIL', 3); }
+        if (!\defined('LOG_ON'))         {
+            /**
+             *
+             */
+            \define('LOG_ON', 4); }
+        if (!\defined('LOG_CUSTOM'))     {
+            /**
+             *
+             */
+            \define('LOG_CUSTOM', 4); }
+        if (!\defined('LOG_JSON'))       {
+            /**
+             *
+             */
+            \define('LOG_JSON', 5); }
+        if (!\defined('LOG_DB'))         {
+            /**
+             *
+             */
+            \define('LOG_DB', 6); }
+        if (!\defined('LOG_HTML'))       {
+            /**
+             *
+             */
+            \define('LOG_HTML', 7); }
+        if (!\defined('LOG_ALWAYS'))     {
+            /**
+             *
+             */
+            \define('LOG_ALWAYS', 8); }
+        if (!\defined('LOG_WARN'))       {
+            /**
+             *
+             */
+            \define('LOG_WARN', 9); }
+        if (!\defined('LOG_ERROR'))      {
+            /**
+             *
+             */
+            \define('LOG_ERROR', 10); }
+        if (!\defined('LOG_NOTICE'))     {
+            /**
+             *
+             */
+            \define('LOG_NOTICE', 11); }
+        if (!\defined('LOG_DEPRECATED')) {
+            /**
+             *
+             */
+            \define('LOG_DEPRECATED', 12); }
+        if (!\defined('LOG_PATH'))       {
+            /**
+             *
+             */
+            \define('LOG_PATH', BASE_PATH . '/logs'); }
     }
 
     /**
      * This sets the error_handler to custom.
      * @param int $error_types optional, defaults to user-generated errors.
      */
-    public function setErrorHandler($error_types = -2)
+    public function setErrorHandler($error_types = -2):void
     {
-        if ($error_types == -2) {
+        if ($error_types === -2) {
             $error_types = E_USER_WARNING | E_USER_NOTICE | E_USER_ERROR;
         }
         set_error_handler([self::$instance,'errorHandler'], $error_types);
@@ -340,7 +401,7 @@ class Elog
      * @param string $class class name
      * @param string $function function name
      */
-    public function setFrom($file = '', $method = '', $line = '', $class = '', $function = '')
+    public function setFrom($file = '', $method = '', $line = '', $class = '', $function = ''):void
     {
         $this->setFromFile($file);
         $this->setFromClass($class);
@@ -353,7 +414,7 @@ class Elog
      * Sets the property from_class.
      * @param string $class
      */
-    public function setFromClass($class = '')
+    public function setFromClass($class = ''):void
     {
         $this->from_class = $class;
     }
@@ -362,7 +423,7 @@ class Elog
      * Sets the property from_line.
      * @param string $line
      */
-    public function setFromLine($line = '')
+    public function setFromLine($line = ''):void
     {
         $this->from_line = $line;
     }
@@ -371,7 +432,7 @@ class Elog
      * Sets the property from_location.
      * @param string $location
      */
-    public function setFromLocation($location = '')
+    public function setFromLocation($location = ''):void
     {
         $this->from_location = $location;
     }
@@ -380,7 +441,7 @@ class Elog
      * Sets the property from_function.
      * @param string $function
      */
-    public function setFromFunction($function = '')
+    public function setFromFunction($function = ''):void
     {
         $this->from_function = $function;
     }
@@ -389,7 +450,7 @@ class Elog
      * Sets the property from_method.
      * @param string $method
      */
-    public function setFromMethod($method = '')
+    public function setFromMethod($method = ''):void
     {
         $this->from_method = $method;
     }
@@ -398,7 +459,7 @@ class Elog
      * Sets the property from_file.
      * @param string $file
      */
-    public function setFromFile($file = '')
+    public function setFromFile($file = ''):void
     {
             $this->from_file = basename($file);
     }
@@ -407,7 +468,7 @@ class Elog
      * Sets the property handler_set.
      * @param bool $value
      */
-    public function setHandlerSet($value = true)
+    public function setHandlerSet($value = true):void
     {
         $this->handler_set = $value;
     }
@@ -417,7 +478,7 @@ class Elog
      * Basically turns logging on globally.
      * @param bool $boolean
      */
-    public function setIgnoreLogOff($boolean = false)
+    public function setIgnoreLogOff($boolean = false):void
     {
         $this->ignore_log_off = $boolean;
     }
@@ -426,7 +487,7 @@ class Elog
      * Sets the property log_method.
      * @param int $log_method
      */
-    public function setLogMethod($log_method = LOG_CUSTOM)
+    public function setLogMethod($log_method = LOG_CUSTOM):void
     {
         $this->log_method = $log_method;
     }
@@ -438,7 +499,7 @@ class Elog
      * @param bool   $not_visible should it formated as an HTML comment
      * @return string the formated string
      */
-    public function makeComment($the_string, $not_visible = true)
+    public function makeComment($the_string, $not_visible = true):string
     {
         return $not_visible ? "<!-- {$the_string} -->\n"
                             : "COMMENT: {$the_string}<br />\n";
@@ -457,8 +518,7 @@ class Elog
         }
         if ($this->custom_log_used === false) {
             $string = "\n\n\n\n\n\n\n\n\n\n=== Start Elog ===\n" .
-                date("Y-m-d H:i:s") .
-                " - " .
+                date('Y-m-d H:i:s') . ' - ' .
                 $this->from_location .
                 "\n" .
                 $error_string .
@@ -469,7 +529,7 @@ class Elog
             $string = $error_string . "\n\n";
         }
         else {
-            $string = date("Y-m-d H:i:s") . " - " .
+            $string = date('Y-m-d H:i:s') . ' - ' .
                 $error_type . ' - ' .
                 $this->from_location . "\n" .
                 $error_string . "\n\n";

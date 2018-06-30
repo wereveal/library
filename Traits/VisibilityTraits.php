@@ -17,7 +17,9 @@ namespace Ritc\Library\Traits;
  * - v1.0.0 - initial version - 08/19/2015 wer
  */
 trait VisibilityTraits {
+    /** @var */
     protected $current_page;
+    /** @var array */
     protected $private_properties = array();
 
     /**
@@ -25,7 +27,7 @@ trait VisibilityTraits {
      * Used by the magic methods __set, __get, __isset, __unset to keep those
      * properties protected and private
      */
-    protected function setPrivateProperties()
+    protected function setPrivateProperties():void
     {
         try {
             $o_class = new \ReflectionClass(__CLASS__);
@@ -52,34 +54,28 @@ trait VisibilityTraits {
      * Prevent direct access to protected and private properties.
      * $this->private_properties has to be set via setPrivateProperties()
      * for this to be effective.
+     *
      * @param string $var name of property being set
      * @param string $val value of the property to be set
-     * @return NULL
      */
     public function __set($var, $val)
     {
         $a_backtrace = debug_backtrace();
-        if (is_null($this->private_properties) || $this->private_properties == array()) {
-            $this->$var = $val;
-            return null;
-        }
-        if (($a_backtrace[0]['file'] != $this->current_page) && (array_key_exists($var, $this->private_properties))) {
-            error_log(
-                "Cannot access {$this->private_properties[$var]} property of "
-                . __CLASS__
-                . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}"
-            );
-        }
-        else {
+        if (null === $this->private_properties || $this->private_properties === []) {
             $this->$var = $val;
         }
-        return null;
+        if (!array_key_exists($var, $this->private_properties)
+            || $a_backtrace[0]['file'] !== $this->current_page
+        ) {
+            $this->$var = $val;
+        }
     }
 
     /**
      * Prevent direct access to protected and private properties.
      * $this->private_properties has to be set via setPrivateProperties()
      * for this to be effective.
+     *
      * @param string $var name of property being get
      * @return mixed - value of the property being get
      */
@@ -87,26 +83,21 @@ trait VisibilityTraits {
     {
         $a_backtrace = debug_backtrace();
         if (isset($this->$var)) {
-            if (($a_backtrace[0]['file'] != $this->current_page) && (array_key_exists($var, $this->private_properties))) {
-                error_log(
-                    "Cannot access {$this->private_properties[$var]} property "
-                    . __CLASS__
-                    . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}"
-                );
+            if (array_key_exists($var, $this->private_properties)
+                && $a_backtrace[0]['file'] !== $this->current_page
+            ) {
                 return '';
             }
             return $this->$var;
         }
-        else {
-            error_log("Required property [{$var}] has not been set!" . __METHOD__ . '.' . __LINE__);
-            return '';
-        }
+        return '';
     }
 
     /**
      * Prevent direct access to protected and private properties.
      * $this->private_properties has to be set via setPrivateProperties()
      * for this to be effective.
+     *
      * @param string $var name of property being evaluated
      * @return bool
      */
@@ -114,45 +105,26 @@ trait VisibilityTraits {
     {
         $a_backtrace = debug_backtrace();
         if (isset($this->$var)) {
-            if (($a_backtrace[0]['file'] != $this->current_page) && (array_key_exists($var, $this->private_properties))) {
-                error_log(
-                    "Cannot access {$this->private_properties[$var]} property "
-                    . __CLASS__
-                    . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}"
-                );
-                return false;
-            }
-            return true;
+            return $a_backtrace[0]['file'] === $this->current_page
+                || !array_key_exists($var, $this->private_properties);
         }
-        else {
-            error_log("Required property [{$var}] has not been set!", 4);
-            return false;
-        }
+        return false;
     }
 
     /**
      * Prevent direct access to protected and private properties.
      * $this->private_properties has to be set via setPrivateProperties()
      * for this to be effective.
+     *
      * @param string $var name of property being unset
      */
     public function __unset($var)
     {
         $a_backtrace = debug_backtrace();
         if (isset($this->$var)) {
-            if (($a_backtrace[0]['file'] != $this->current_page) && (array_key_exists($var, $this->private_properties))) {
-                error_log(
-                    "Cannot access {$this->private_properties[$var]} property "
-                    . __CLASS__
-                    . "::{$var} in {$a_backtrace[0]['file']} on line {$a_backtrace[0]['line']}"
-                );
-            }
-            else {
+            if (!array_key_exists($var, $this->private_properties) || $a_backtrace[0]['file'] !== $this->current_page) {
                 unset($this->$var);
             }
-        }
-        else {
-            error_log("Required property [{$var}] has not been set! (From __unset)");
         }
     }
 }

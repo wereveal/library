@@ -24,7 +24,7 @@ class CustomException extends CustomExceptionAbstract
      * @param int        $code
      * @param \Throwable $previous
      */
-    public function __construct($message = "", $code = 0, \Throwable $previous = null)
+    public function __construct($message = '', $code = 0, \Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
@@ -33,9 +33,13 @@ class CustomException extends CustomExceptionAbstract
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1)
+    public function getCodeText($code = -1):string
     {
         switch ($code) {
+            case 900:
+                return 'General Error, see error message';
+            case 999:
+                return 'Unspecified Error.';
             default:
                 return parent::getCodeText($code);
 

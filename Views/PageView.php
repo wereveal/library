@@ -69,7 +69,7 @@ class PageView
      * @param int    $page_id
      * @return string
      */
-    public function renderForm($new_or_modify = 'new', $page_id = -1)
+    public function renderForm($new_or_modify = 'new', $page_id = -1):string
     {
         $meth = __METHOD__ . '.';
         /**
@@ -78,7 +78,7 @@ class PageView
          * This triggers two things: specifies the action to be use on the page form,
          * and if we do a lookup of the page values that we are modifying.
          */
-        $action = $new_or_modify == 'new'
+        $action = $new_or_modify === 'new'
             ? 'save'
             : 'update';
         $o_urls = new UrlsModel($this->o_db);
@@ -134,7 +134,7 @@ class PageView
         $a_twig_values['select'] = $a_select;
         $a_twig_values['action'] = $action;
         $a_twig_values['a_page'] = $a_page;
-        if ($action == 'update') {
+        if ($action === 'update') {
             try {
                 $a_pages = $this->o_model->readPageValues(
                     ['page_id' => $page_id]
@@ -148,7 +148,7 @@ class PageView
                 $a_page = $a_pages[0];
                 $a_twig_values['a_page'] = $a_page;
 
-                $label = $a_page['url_host'] == 'self'
+                $label = $a_page['url_host'] === 'self'
                     ? $a_page['url_text']
                     : $a_page['url_host'] . $a_page['url_text'];
 
@@ -160,7 +160,7 @@ class PageView
                 $a_twig_values['select']['options'][0]['other_stuph'] = ''; // this should be the default --Select--
             }
             else {
-                $this->logIt("Could not get the page values!", LOG_OFF, $meth . __LINE__);
+                $this->logIt('Could not get the page values!', LOG_OFF, $meth . __LINE__);
             }
         }
         $tpl = $this->createTplString($a_twig_values);
@@ -172,7 +172,7 @@ class PageView
      * @param array $a_message Optional
      * @return string
      */
-    public function renderList(array $a_message = [])
+    public function renderList(array $a_message = []):string
     {
         $meth = __METHOD__ . '.';
         $a_search_for = [];
@@ -184,7 +184,7 @@ class PageView
             $a_pages = [];
         }
         foreach($a_pages as $key => $a_page) {
-            if ($a_page['url_host'] == 'self') {
+            if ($a_page['url_host'] === 'self') {
                 $a_pages[$key]['page_url'] = $a_page['url_text'];
             }
             else {
@@ -204,7 +204,7 @@ class PageView
         $tpl = $this->createTplString($a_twig_values);
         $log_message = 'Twig Values ' . var_export($a_twig_values, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $this->logIt("tpl: " . $tpl, LOG_OFF, $meth . __LINE__);
+        $this->logIt('tpl: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
@@ -212,7 +212,7 @@ class PageView
      * Returns HTML verify form to delete.
      * @return string
      */
-    public function renderVerify()
+    public function renderVerify():string
     {
         $meth = __METHOD__ . '.';
         $a_post_values = $this->o_router->getPost();

@@ -21,7 +21,8 @@ class OopHelper
      * @param string $namespace
      * @return bool
      */
-    public static function namespaceExists(string $namespace = '') {
+    public static function namespaceExists(string $namespace = ''):bool
+    {
         if (empty($namespace)) {
             return false;
         }

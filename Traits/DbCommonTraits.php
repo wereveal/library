@@ -25,7 +25,7 @@ trait DbCommonTraits
      * @param array $array required associative array or list of assoc arrays.
      * @return array fixed key names
      */
-    public function prepareKeys(array $array = array())
+    public function prepareKeys(array $array = array()):array
     {
         $a_new = array();
         if (Arrays::isAssocArray($array)) {
@@ -35,7 +35,8 @@ trait DbCommonTraits
             }
             return $a_new;
         }
-        elseif (Arrays::isArrayOfAssocArrays($array)) {
+
+        if (Arrays::isArrayOfAssocArrays($array)) {
             foreach ($array as $a_keys) {
                 $results = $this->prepareKeys($a_keys);
                 if ($results === false) {
@@ -45,9 +46,8 @@ trait DbCommonTraits
             }
             return $a_new;
         }
-        else {
-            return $array;
-        }
+
+        return $array;
     }
 
     /**
@@ -55,7 +55,7 @@ trait DbCommonTraits
      * @param array $array key/value pairs to fix, assoc array or array of assoc arrays.
      * @return array fixed where needed
      */
-    public function prepareValues(array $array)
+    public function prepareValues(array $array):array
     {
         $a_new = array();
         if (Arrays::isAssocArray($array)) {
@@ -65,12 +65,11 @@ trait DbCommonTraits
             }
             return $a_new;
         }
-        elseif (Arrays::isArrayOfAssocArrays($array)) {
+
+        if (Arrays::isArrayOfAssocArrays($array)) {
             return $this->prepareValues($array[0]);
         }
-        else {
-            return $array;
-        }
+        return $array;
     }
 
     /**
@@ -97,43 +96,39 @@ trait DbCommonTraits
      * \endcode
      * @return array
      */
-    protected function retrieveDbConfig($config_file = 'db_config.php')
+    protected function retrieveDbConfig($config_file = 'db_config.php'):array
     {
         if (strpos($config_file, '/') !== false) {
             if (file_exists($config_file)) {
                 /** @noinspection PhpIncludeInspection */
                 $a_db = include $config_file;
-                if (is_array($a_db)) {
+                if (\is_array($a_db)) {
                     return $a_db;
                 }
-                else {
-                    return [];
-                }
+                return [];
             }
-            else {
-                $config_file = substr($config_file, strrpos($config_file, '/') + 1);
-            }
+            $config_file = substr($config_file, strrpos($config_file, '/') + 1);
         }
         $config_w_apppath  = '';
         $config_w_privpath = '';
         $config_w_pubpath = '';
         $config_w_path     = $_SERVER['DOCUMENT_ROOT'] . '/config/' . $config_file;
-        if (defined('SRC_PATH')) {
+        if (\defined('SRC_PATH')) {
             $config_w_apppath = SRC_PATH . '/config/' . $config_file;
         }
-        if (defined('PRIVATE_PATH')) {
+        if (\defined('PRIVATE_PATH')) {
             $config_w_privpath = PRIVATE_PATH . '/' . $config_file;
         }
-        if (defined('PUBLIC_PATH')) {
+        if (\defined('PUBLIC_PATH')) {
             $config_w_pubpath = PUBLIC_PATH . '/config/' . $config_file;
         }
-        if ($config_w_privpath != '' && file_exists($config_w_privpath)) {
+        if ($config_w_privpath !== '' && file_exists($config_w_privpath)) {
             $config_w_path = $config_w_privpath;
         }
-        elseif ($config_w_apppath != '' && file_exists($config_w_apppath)) {
+        elseif ($config_w_apppath !== '' && file_exists($config_w_apppath)) {
             $config_w_path = $config_w_apppath;
         }
-        elseif ($config_w_pubpath != '' && file_exists($config_w_pubpath)) {
+        elseif ($config_w_pubpath !== '' && file_exists($config_w_pubpath)) {
             $config_w_path = $config_w_pubpath;
         }
         if (!file_exists($config_w_path)) {
@@ -141,12 +136,9 @@ trait DbCommonTraits
         }
         /** @noinspection PhpIncludeInspection */
         $a_db = include $config_w_path;
-        if (is_array($a_db)) {
+        if (\is_array($a_db)) {
             return $a_db;
         }
-        else {
-            return [];
-        }
+        return [];
     }
-
 }

@@ -58,8 +58,9 @@ class PeopleController implements ManagerControllerInterface
             $this->o_complex = new PeopleComplexModel($o_di);
         }
         catch (CustomException $e) {
-            error_log("A fatal problem has occurred: " . $e->getMessage());
-            header("Location: " . SITE_URL);
+            /** @noinspection ForgottenDebugOutputInspection */
+            error_log('A fatal problem has occurred: ' . $e->getMessage());
+            header('Location: ' . SITE_URL);
         }
         $this->a_object_names = ['o_people'];
         $this->setupElog($o_di);
@@ -70,7 +71,7 @@ class PeopleController implements ManagerControllerInterface
      *
      * @return string html to be displayed.
      */
-    public function route()
+    public function route():string
     {
         $a_post        = $this->a_post;
         $form_action   = $this->form_action;
@@ -88,14 +89,11 @@ class PeopleController implements ManagerControllerInterface
             case 'verify':
                 return $this->verifyDelete();
             case 'save':
-                $a_message = $this->save();
-                break;
+                return $this->save();
             case 'update':
-                $a_message = $this->update();
-                break;
+                return $this->update();
             case 'delete':
-                $a_message = $this->delete();
-                break;
+                return $this->delete();
             case '':
             default:
                 $a_message = array();
@@ -105,103 +103,117 @@ class PeopleController implements ManagerControllerInterface
 
     /**
      * Saves a new person mapped to group(s).
-     *
      * Returns array that specifies succsss or failure.
-     * @return array a message regarding outcome.
+     *
+     * @return string
      */
-    public function save()
+    public function save():string
     {
         $a_person = $this->o_complex->createNewPersonArray($this->a_post);
-        $error_message = "Opps, the person was not saved.";
+        $error_message = 'Opps, the person was not saved.';
         switch ($a_person) {
             case 'login-missing':
-                return ViewHelper::failureMessage($error_message . " -- missing Login ID.");
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- missing Login ID.');
+                break;
             case 'name-missing':
-                return ViewHelper::failureMessage($error_message . " -- missing Name.");
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- missing Name.');
+                break;
             case 'password-missing':
-                return ViewHelper::failureMessage($error_message . " -- missing password.");
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- missing password.');
+                break;
             case 'login-exists':
-                return ViewHelper::failureMessage($error_message . " -- the login id already exists.");
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- the login id already exists.');
+                break;
             case 'short-exists':
-                return ViewHelper::failureMessage($error_message . " -- the short name already exists.");
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- the short name already exists.');
+                break;
             case 'group-missing':
-                return ViewHelper::failureMessage($error_message . " -- missing at least one group.");
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- missing at least one group.');
+                break;
             case true:
             default:
                 try {
-                    $results = $this->o_complex->savePerson($a_person);
-                    if ($results === false) {
-                        return ViewHelper::failureMessage($error_message);
-                    }
+                    $this->o_complex->savePerson($a_person);
                     if ($this->use_cache) {
                         $this->o_cache->clearTag('people');
                     }
-                    return ViewHelper::successMessage("Success, the person was saved.");
+                    $a_msg = ViewHelper::successMessage('Success, the person was saved.');
                 }
                 catch (ModelException $e) {
                     if (DEVELOPER_MODE) {
-                        $error_message .= " " . $e->errorMessage();
+                        $error_message .= ' ' . $e->errorMessage();
                     }
-                    return ViewHelper::failureMessage($error_message);
+                    $a_msg = ViewHelper::failureMessage($error_message);
                 }
         }
+        return $this->o_view->renderList($a_msg);
     }
 
     /**
      * Updates the user record.
      *
-     * @return array a message regarding outcome.
+     * @return string
      */
-    public function update()
+    public function update():string
     {
         $meth = __METHOD__ . '.';
-        $error_message = "Opps, the person was not updated.";
+        $error_message = 'Opps, the person was not updated.';
           $log_message = 'Post ' . var_export($this->a_post, TRUE);
           $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_person = $this->a_post['person'];
-        if (!isset($this->a_post['groups']) || count($this->a_post['groups']) < 1) {
-            return ViewHelper::failureMessage($error_message . " The person must be assigned to at least one group.");
+        if (empty($this->a_post['groups'])) {
+            $a_msg = ViewHelper::failureMessage($error_message . ' The person must be assigned to at least one group.');
+            return $this->o_view->renderList($a_msg);
         }
+
         $a_person = $this->o_people->setPersonValues($a_person);
         $addendum = '';
+        $a_msg    = [];
         switch ($a_person) {
             case 'people_id-missing':
-                return ViewHelper::failureMessage($error_message . " -- record id missing.");
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- record id missing.');
+                break;
             case 'people_id-invalid':
-                return ViewHelper::failureMessage($error_message . " -- record id invalid.");
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- record id invalid.');
+                break;
             case 'password-missing':
-                return ViewHelper::failureMessage($error_message . " -- missing password.");
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- missing password.');
+                break;
             case 'login-exists':
-                return ViewHelper::failureMessage($error_message . ' -- the new login id already exists.');
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- the new login id already exists.');
+                break;
             case 'short_name-exists':
-                return ViewHelper::failureMessage($error_message . ' -- the new short name already exists.');
+                $a_msg = ViewHelper::failureMessage($error_message . ' -- the new short name already exists.');
+                break;
             case 'nothing-to-update':
-                return ViewHelper::successMessage("No values changed.");
+                $a_msg = ViewHelper::successMessage('No values changed.');
+                break;
             case true:
             default:
                 // try to save the record.
         }
+        if (!empty($a_msg)) {
+            return $this->o_view->renderList($a_msg);
+        }
         $a_person['groups'] = $this->a_post['groups'];
         try {
-              $log_message = 'Person to update ' . var_export($a_person, TRUE);
-              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-            $results = $this->o_complex->savePerson($a_person);
-            if ($results === false) {
-                return ViewHelper::failureMessage($error_message);
-            }
+            $log_message = 'Person to update ' . var_export($a_person, TRUE);
+            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+            $this->o_complex->savePerson($a_person);
             if ($this->use_cache) {
                 $this->o_cache->clearTag('people');
             }
-            $message = "Success, the person was saved." . $addendum;
-            return ViewHelper::successMessage($message);
+            $message = 'Success, the person was saved.' . $addendum;
+            $a_msg = ViewHelper::successMessage($message);
         }
         catch (ModelException $e) {
             if (DEVELOPER_MODE) {
-                $error_message .= " " . $e->errorMessage();
+                $error_message .= ' ' . $e->errorMessage();
             }
-            return ViewHelper::failureMessage($error_message);
+            $a_msg = ViewHelper::failureMessage($error_message);
         }
+        return $this->o_view->renderList($a_msg);
     }
 
     /**
@@ -209,7 +221,7 @@ class PeopleController implements ManagerControllerInterface
      *
      * @return string
      */
-    public function verifyDelete()
+    public function verifyDelete():string
     {
         if (isset($this->a_post['people_id'])) {
             $people_id = $this->a_post['people_id'];
@@ -235,7 +247,7 @@ class PeopleController implements ManagerControllerInterface
                 return $this->o_view->renderList($a_message);
             }
         }
-        if (empty($a_person['is_immutable']) || $a_person['is_immutable'] == 'true') {
+        if (empty($a_person['is_immutable']) || $a_person['is_immutable'] === 'true') {
             $a_message = ViewHelper::errorMessage('The person is immutable and cannot be deleted.');
             return $this->o_view->renderList($a_message);
         }
@@ -265,24 +277,29 @@ class PeopleController implements ManagerControllerInterface
 
     /**
      * Deletes the user record.
-     * @return array a message regarding outcome.
+     *
+     * @return string
      */
-    public function delete()
+    public function delete():string
     {
         if ($this->o_people->isImmutable($this->a_post['people_id'])) {
-            return ViewHelper::warningMessage('Unable to delete immutable people.');
+            $a_msg = ViewHelper::warningMessage('Unable to delete immutable people.');
+            return $this->o_view->renderList($a_msg);
         }
         try {
             if ($this->o_complex->deletePerson($this->a_post['people_id'])) {
                 if ($this->use_cache) {
                     $this->o_cache->clearTag('people');
                 }
-                return ViewHelper::successMessage();
+                $a_msg = ViewHelper::successMessage();
             }
-            return ViewHelper::failureMessage($this->o_people->getErrorMessage());
+            else {
+                $a_msg = ViewHelper::failureMessage($this->o_people->getErrorMessage());
+            }
         }
         catch (ModelException $e) {
-            return ViewHelper::failureMessage($e->errorMessage());
+            $a_msg = ViewHelper::failureMessage($e->errorMessage());
         }
+        return $this->o_view->renderList($a_msg);
     }
 }

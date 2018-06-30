@@ -60,9 +60,10 @@ class ConstantsController implements ConfigControllerInterface
 
     /**
      * Renders the html based on the route requested.
+     *
      * @return string html to be displayed.
      */
-    public function route()
+    public function route():string
     {
         switch ($this->form_action) {
             case 'verify':
@@ -81,11 +82,12 @@ class ConstantsController implements ConfigControllerInterface
     ### Required by Interface ###
     /**
      * Saves the constants record and returns the list of constants with a message.
+     *
      * @return string
      */
-    public function save()
+    public function save():string
     {
-        if ($this->a_router_parts['form_action'] != 'save_new') {
+        if ($this->a_router_parts['form_action'] !== 'save_new') {
             $a_message = ViewHelper::errorMessage('An error occurred. The record could not be saved.');
             return $this->o_view->renderList($a_message);
         }
@@ -113,9 +115,10 @@ class ConstantsController implements ConfigControllerInterface
 
     /**
      * Updates the constants record and returns the list of constants with a message.
+     *
      * @return string
      */
-    public function update()
+    public function update():string
     {
         $a_constants = $this->a_post['constant'];
         if (empty($a_constants['const_id'])) {
@@ -142,9 +145,10 @@ class ConstantsController implements ConfigControllerInterface
     /**
      * Returns the html to display a form to verify the delete.
      * Required by Interface.
+     *
      * @return string
      */
-    public function verifyDelete()
+    public function verifyDelete():string
     {
         $a_values = [
             'what'         => 'constant',
@@ -163,16 +167,17 @@ class ConstantsController implements ConfigControllerInterface
 
     /**
      * Deletes the constants record and returns the list of constants with a message.
+     *
      * @return string
      */
-    public function delete()
+    public function delete():string
     {
-        if ($this->a_router_parts['form_action'] != 'delete') {
+        if ($this->a_router_parts['form_action'] !== 'delete') {
             $a_message = ViewHelper::errorMessage('An error occurred. The record could not be deleted.');
             return $this->o_view->renderList($a_message);
         }
         $const_id = $this->a_post['const_id'];
-        if ($const_id == -1 || $const_id == '') {
+        if ($const_id === -1 || $const_id === '') {
             $a_message = ViewHelper::errorMessage('An Error Has Occured. The config record id was not provided.');
             return $this->o_view->renderList($a_message);
         }

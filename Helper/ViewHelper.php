@@ -30,7 +30,7 @@ class ViewHelper
      * @param string $message_type Optional, defaults to message type of original message, or info if none provided.
      * @return array
      */
-    public static function addMessage(array $a_message = [], $message = '', $message_type = '')
+    public static function addMessage(array $a_message = [], $message = '', $message_type = ''):?array
     {
         if (empty($message)) {
             return $a_message;
@@ -73,8 +73,8 @@ class ViewHelper
 	 *	)</pre>
 	 * @return array values for the template.
 	 */
-	public static function fullMessage(array $a_message_params = array())
-	{
+	public static function fullMessage(array $a_message_params = array()):array
+    {
 	    if (empty($a_message_params)) {
 	        $a_message_params = ['type' => '', 'message' => ''];
 	    }
@@ -116,39 +116,39 @@ class ViewHelper
 	                // do nothing
 	        }
 	    }
-		if ($message == '') {
+		if ($message === '') {
 			$type = '';
 		}
 		switch ($type) {
 			case 'success':
-				$alt_text  = $alt_text  != '' ? $alt_text  : 'Success!';
-				$image_src = $image_src != '' ? $image_src : $image_dir . '/success.png';
-				$msg_class = $msg_class != '' ? $msg_class : 'message success';
+				$alt_text  = $alt_text  !== '' ? $alt_text  : 'Success!';
+				$image_src = $image_src !== '' ? $image_src : $image_dir . '/success.png';
+				$msg_class = $msg_class !== '' ? $msg_class : 'message success';
 				break;
 			case 'info':
-				$alt_text  = $alt_text  != '' ? $alt_text  : 'Information';
-				$image_src = $image_src != '' ? $image_src : $image_dir . '/information.png';
-                $msg_class = $msg_class != '' ? $msg_class : 'message info';
+				$alt_text  = $alt_text  !== '' ? $alt_text  : 'Information';
+				$image_src = $image_src !== '' ? $image_src : $image_dir . '/information.png';
+                $msg_class = $msg_class !== '' ? $msg_class : 'message info';
 				break;
 			case 'warning':
-				$alt_text  = $alt_text  != '' ? $alt_text  : 'Warning!';
-				$image_src = $image_src != '' ? $image_src : $image_dir . '/warning.png';
-                $msg_class = $msg_class != '' ? $msg_class : 'message warning';
+				$alt_text  = $alt_text  !== '' ? $alt_text  : 'Warning!';
+				$image_src = $image_src !== '' ? $image_src : $image_dir . '/warning.png';
+                $msg_class = $msg_class !== '' ? $msg_class : 'message warning';
 				break;
 			case 'error':
-				$alt_text  = $alt_text  != '' ? $alt_text  : 'Error!';
-				$image_src = $image_src != '' ? $image_src : $image_dir . '/error.png';
-                $msg_class = $msg_class != '' ? $msg_class : 'message error';
+				$alt_text  = $alt_text  !== '' ? $alt_text  : 'Error!';
+				$image_src = $image_src !== '' ? $image_src : $image_dir . '/error.png';
+                $msg_class = $msg_class !== '' ? $msg_class : 'message error';
 				break;
 			case 'failure':
-				$alt_text  = $alt_text  != '' ? $alt_text  : 'Failure!';
-				$image_src = $image_src != '' ? $image_src : $image_dir . '/failure.png';
-                $msg_class = $msg_class != '' ? $msg_class : 'message failure';
+				$alt_text  = $alt_text  !== '' ? $alt_text  : 'Failure!';
+				$image_src = $image_src !== '' ? $image_src : $image_dir . '/failure.png';
+                $msg_class = $msg_class !== '' ? $msg_class : 'message failure';
 				break;
 			case 'code':
-				$alt_text  = $alt_text  != '' ? $alt_text  : 'Code';
-				$image_src = $image_src != '' ? $image_src : $image_dir . '/info.png';
-                $msg_class = $msg_class != '' ? $msg_class : 'message code';
+				$alt_text  = $alt_text  !== '' ? $alt_text  : 'Code';
+				$image_src = $image_src !== '' ? $image_src : $image_dir . '/info.png';
+                $msg_class = $msg_class !== '' ? $msg_class : 'message code';
 				break;
 			default:
                 $msg_class   = '';
@@ -173,9 +173,9 @@ class ViewHelper
      * @param string $message
      * @return array
      */
-    public static function codeMessage($message = '')
+    public static function codeMessage($message = ''):array
     {
-        if ($message == '') {
+        if ($message === '') {
             $message = 'Insert code here.';
         }
         return [
@@ -189,9 +189,9 @@ class ViewHelper
      * @param string $message
      * @return array
      */
-    public static function errorMessage($message = '')
+    public static function errorMessage($message = ''):array
     {
-        if ($message == '') {
+        if ($message === '') {
             $message = 'An Error Has Occured. Please Try Again.';
         }
         return [
@@ -205,9 +205,9 @@ class ViewHelper
 	 * @param string $message
 	 * @return array
 	 */
-	public static function failureMessage($message = '')
-	{
-		if ($message == '') {
+	public static function failureMessage($message = ''):array
+    {
+		if ($message === '') {
 			$message = 'A Problem Has Occured. Please Try Again.';
 		}
 		return [
@@ -221,9 +221,9 @@ class ViewHelper
      * @param string $message
      * @return array
      */
-    public static function infoMessage($message = '')
+    public static function infoMessage($message = ''):array
     {
-        if ($message == '') {
+        if ($message === '') {
             $message = 'Insert helpful info here.';
         }
         return [
@@ -237,9 +237,9 @@ class ViewHelper
 	 * @param string $message
 	 * @return array
 	 */
-	public static function successMessage($message = '')
-	{
-		if ($message == '') {
+	public static function successMessage($message = ''):array
+    {
+		if ($message === '') {
 			$message = 'Success!';
 		}
 		return [
@@ -253,9 +253,9 @@ class ViewHelper
      * @param string $message
      * @return array
      */
-    public static function warningMessage($message = '')
+    public static function warningMessage($message = ''):array
     {
-        if ($message == '') {
+        if ($message === '') {
             $message = 'A Problem Has Occured. Please Try Again.';
         }
         return [

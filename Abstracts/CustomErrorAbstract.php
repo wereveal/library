@@ -32,7 +32,7 @@ abstract class CustomErrorAbstract extends \ErrorException
      *
      * @return string
      */
-    public function errorMessage(): string
+    public function errorMessage():string
     {
         $error_message = $this->getMessage();
         if (empty($error_message)) {
@@ -57,7 +57,7 @@ abstract class CustomErrorAbstract extends \ErrorException
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1): string
+    public function getCodeText($code = -1):string
     {
         switch ($code) {
             ### Business Logic Errors ###
@@ -83,7 +83,7 @@ abstract class CustomErrorAbstract extends \ErrorException
      *
      * @return string
      */
-    public function getClass(): string
+    public function getClass():string
     {
         return \get_class($this);
     }

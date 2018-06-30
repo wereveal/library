@@ -37,9 +37,10 @@ class NavgroupsView implements ViewInterface
 
     /**
      * Default method for rendering the html.
+     *
      * @return string
      */
-    public function render()
+    public function render():string
     {
         return '';
     }

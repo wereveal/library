@@ -47,7 +47,7 @@ class UrlsView
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = [])
+    public function renderList(array $a_message = []):string
     {
         $meth = __METHOD__ . '.';
         try {
@@ -59,7 +59,7 @@ class UrlsView
         }
         $a_new_urls = [];
         foreach($a_urls as $a_url) {
-            if ($a_url['url_host'] == 'self') {
+            if ($a_url['url_host'] === 'self') {
                 $url = $a_url['url_text'];
             }
             else {
@@ -68,11 +68,11 @@ class UrlsView
             $a_new_urls[] = [
                 'url_id'    => $a_url['url_id'],
                 'url'       => $url,
-                'immutable' => $a_url['url_immutable'] == 'true' ? 'true' : 'false'
+                'immutable' => $a_url['url_immutable'] === 'true' ? 'true' : 'false'
             ];
         }
         if (!empty($a_message['message'])) {
-            $a_message['message'] .= "<br>Changing the URL can result in unexpected results. If you are not sure, do not do it.";
+            $a_message['message'] .= '<br>Changing the URL can result in unexpected results. If you are not sure, do not do it.';
             $a_message = ViewHelper::fullMessage($a_message);
         }
         else {

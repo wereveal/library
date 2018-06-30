@@ -62,7 +62,7 @@ class GroupsModelTester extends Tester
     /**
      * @return bool
      */
-    public function createTester()
+    public function createTester():bool
     {
         return false;
     }
@@ -70,7 +70,7 @@ class GroupsModelTester extends Tester
     /**
      * @return bool
      */
-    public function readTester()
+    public function readTester():bool
     {
         return false;
     }
@@ -78,7 +78,7 @@ class GroupsModelTester extends Tester
     /**
      * @return bool
      */
-    public function updateTester()
+    public function updateTester():bool
     {
         return false;
     }
@@ -86,7 +86,7 @@ class GroupsModelTester extends Tester
     /**
      * @return bool
      */
-    public function deleteTester()
+    public function deleteTester():bool
     {
         return false;
     }

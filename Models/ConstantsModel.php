@@ -58,10 +58,10 @@ class ConstantsModel extends ModelAbstract
      * Filters a couple values which is not available in abstract version.
      *
      * @param array $a_values
-     * @return int
+     * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function create(array $a_values = [])
+    public function create(array $a_values = []):array
     {
         if (empty($a_values)) {
             $err_code = ExceptionHelper::getCodeNumberModel('create missing values');
@@ -103,7 +103,7 @@ class ConstantsModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function update(array $a_values = [], array $a_immutable = ['const_name'])
+    public function update(array $a_values = [], array $a_immutable = ['const_name']):bool
     {
         if (!isset($a_values[$this->primary_index_name]) ||
             (!is_numeric( $a_values[$this->primary_index_name])) ||
@@ -113,7 +113,7 @@ class ConstantsModel extends ModelAbstract
             $err_code = ExceptionHelper::getCodeNumberModel('update missing primary');
             throw new ModelException($this->error_message, $err_code);
         }
-        if (isset($a_values['const_name']) && $a_values['const_name'] == '') {
+        if (isset($a_values['const_name']) && $a_values['const_name'] === '') {
             unset($a_values['const_name']);
         }
         try {
@@ -124,15 +124,13 @@ class ConstantsModel extends ModelAbstract
             $message             = 'Cannot read the record to be updated.';
             throw new ModelException($message, $e->getCode(), $e);
         }
-        if ($results['const_immutable'] == 'true') {
+        if ($results['const_immutable'] === 'true') {
             foreach ($a_immutable as $field_name) {
                 unset($a_values[$field_name]);
             }
         }
-        else {
-            if (!empty($a_values['const_name'])) {
-                $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
-            }
+        else if (!empty($a_values['const_name'])) {
+            $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
         }
         if (!empty($a_values['const_value'])) {
             $a_values['const_value'] = $this->makeValidValue($a_values['const_value']);
@@ -153,20 +151,20 @@ class ConstantsModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function createNewConstants()
+    public function createNewConstants():bool
     {
         $file_w_path = SRC_CONFIG_PATH . '/fallback_constants_array.php';
         if (file_exists($file_w_path)) {
             $a_constants = include $file_w_path;
         }
         else {
-            throw new ModelException("Values not available", ExceptionHelper::getCodeNumberModel('missing values'));
+            throw new ModelException('Values not available', ExceptionHelper::getCodeNumberModel('missing values'));
         }
         try {
             $this->o_db->startTransaction();
         }
         catch (ModelException $e) {
-            $message = "Could not start transaction.";
+            $message = 'Could not start transaction.';
             throw new ModelException($message, ExceptionHelper::getCodeNumberModel('transaction start'), $e);
         }
         if (!$this->tableExists('lib_constants')) {
@@ -190,7 +188,7 @@ class ConstantsModel extends ModelAbstract
             }
         }
         catch (ModelException $e) {
-            $this->error_message = "Unable to create the records.";
+            $this->error_message = 'Unable to create the records.';
             throw new ModelException($this->error_message, $e->getCode(), $e);
         }
     }
@@ -201,7 +199,7 @@ class ConstantsModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function createTable()
+    public function createTable():bool
     {
         $db_type = $this->o_db->getDbType();
         switch ($db_type) {
@@ -214,14 +212,14 @@ class ConstantsModel extends ModelAbstract
                         const_immutable character varying(10) NOT NULL DEFAULT 'false'::character varying
                     )
 SQL;
-                $sql_sequence = "
+                $sql_sequence = '
                     CREATE SEQUENCE const_id_seq
                         START WITH 1
                         INCREMENT BY 1
                         NO MINVALUE
                         NO MAXVALUE
                         CACHE 1
-                    ";
+                    ';
                 try {
                     $this->o_db->rawExec($sql_sequence);
                     try {
@@ -246,11 +244,11 @@ SQL;
 SQL;
                 try {
                     $this->o_db->rawExec($sql);
-                    return true;
                 }
                 catch (ModelException $e) {
                     throw new ModelException('Unable to create table in sqlite', $e->getCode(), $e);
                 }
+                return true;
             case 'mysql':
             default:
                 $sql = <<<SQL
@@ -265,11 +263,11 @@ SQL;
 SQL;
                 try {
                     $this->o_db->rawExec($sql);
-                    return true;
                 }
                 catch (ModelException $e) {
                     throw new ModelException('Unable to create table in mysql', $e->getCode(), $e);
                 }
+            return true;
             // end default
         }
     }
@@ -294,16 +292,16 @@ SQL;
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function createConstantRecords(array $a_constants = array())
+    public function createConstantRecords(array $a_constants = array()):bool
     {
-        if ($a_constants == array()) {
+        if ($a_constants === []) {
             throw new ModelException('Missing values', 120);
         }
         $query = "
             INSERT INTO {$this->db_table} (const_name, const_value, const_immutable)
             VALUES (?, ?, ?)";
         try {
-            return $this->o_db->insert($query, $a_constants, "{$this->db_table}");
+            return $this->o_db->insert($query, $a_constants, $this->db_table);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode(), $e);
@@ -333,10 +331,10 @@ SQL;
      * @param $const_name
      * @return string
      */
-    public function makeValidName($const_name = '')
+    public function makeValidName($const_name = ''):string
     {
         $const_name = Strings::removeTagsWithDecode($const_name, ENT_QUOTES);
-        $const_name = preg_replace("/[^a-zA-Z_ ]/", '', $const_name);
+        $const_name = preg_replace('/[^a-zA-Z_ ]/', '', $const_name);
         $const_name = trim($const_name);
         $const_name = preg_replace('/(\s+)/i', '_', $const_name);
         return strtoupper($const_name);
@@ -348,7 +346,7 @@ SQL;
      * @param string $const_value
      * @return string
      */
-    public function makeValidValue($const_value = '')
+    public function makeValidValue($const_value = ''):string
     {
         $const_value = Strings::removeTagsWithDecode($const_value, ENT_QUOTES);
         return htmlentities($const_value, ENT_QUOTES);

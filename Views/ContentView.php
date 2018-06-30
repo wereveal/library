@@ -37,11 +37,12 @@ class ContentView implements ViewInterface
     }
 
     /**
-     * Main method required by interface
+     * Main method required by interface.
+     *
      * @param array $a_message
      * @return string
      */
-    public function render(array $a_message = [])
+    public function render(array $a_message = []):string
     {
         // TODO: Implement render() method.
         return 'TODO: Implement render() method.';

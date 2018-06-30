@@ -45,9 +45,10 @@ class PeopleEntity implements EntityInterface
 
     /**
      * Gets all the entity properties.
+     *
      * @return array
      */
-    public function getAllProperties()
+    public function getAllProperties():array
     {
         return array(
             'people_id'       => $this->people_id,
@@ -66,10 +67,11 @@ class PeopleEntity implements EntityInterface
 
     /**
      * Sets all the properties for the entity in one step.
+     *
      * @param array $a_entity
      * @return bool
      */
-    public function setAllProperties(array $a_entity = array())
+    public function setAllProperties(array $a_entity = array()):bool
     {
         $a_needed_keys = array(
             'people_id'       => 0,
@@ -98,7 +100,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $bad_login_count
      */
-    public function setBadLoginCount($bad_login_count)
+    public function setBadLoginCount($bad_login_count):void
     {
         $this->bad_login_count = $bad_login_count;
     }
@@ -106,7 +108,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getBadLoginCount()
+    public function getBadLoginCount():int
     {
         return $this->bad_login_count;
     }
@@ -114,7 +116,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $bad_login_ts
      */
-    public function setBadLoginTs($bad_login_ts)
+    public function setBadLoginTs($bad_login_ts):void
     {
         $this->bad_login_ts = $bad_login_ts;
     }
@@ -122,7 +124,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getBadLoginTs()
+    public function getBadLoginTs():int
     {
         return $this->bad_login_ts;
     }
@@ -130,7 +132,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $created_on
      */
-    public function setCreatedOn($created_on)
+    public function setCreatedOn($created_on):void
     {
         $this->created_on = $created_on;
     }
@@ -138,7 +140,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getCreatedOn()
+    public function getCreatedOn():int
     {
         return $this->created_on;
     }
@@ -146,7 +148,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $is_active
      */
-    public function setIsActive($is_active)
+    public function setIsActive($is_active):void
     {
         $this->is_active = $is_active;
     }
@@ -154,7 +156,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getIsActive()
+    public function getIsActive():int
     {
         return $this->is_active;
     }
@@ -162,7 +164,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $is_immutable
      */
-    public function setIsImmutable($is_immutable)
+    public function setIsImmutable($is_immutable):void
     {
         $this->$is_immutable = $is_immutable;
     }
@@ -170,7 +172,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getIsImmutable()
+    public function getIsImmutable():int
     {
         return $this->is_immutable;
     }
@@ -178,7 +180,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param string $password
      */
-    public function setPassword($password)
+    public function setPassword($password):void
     {
         $this->password = $password;
     }
@@ -186,7 +188,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getPassword()
+    public function getPassword():string
     {
         return $this->password;
     }
@@ -194,7 +196,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param string $real_name
      */
-    public function setRealName($real_name)
+    public function setRealName($real_name):void
     {
         $this->real_name = $real_name;
     }
@@ -202,7 +204,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getRealName()
+    public function getRealName():string
     {
         return $this->real_name;
     }
@@ -210,7 +212,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param string $short_name
      */
-    public function setShortName($short_name)
+    public function setShortName($short_name):void
     {
         $this->short_name = $short_name;
     }
@@ -218,7 +220,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getShortName()
+    public function getShortName():string
     {
         return $this->short_name;
     }
@@ -226,7 +228,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param string $people_id
      */
-    public function setPeopleId($people_id)
+    public function setPeopleId($people_id):void
     {
         $this->people_id = $people_id;
     }
@@ -234,7 +236,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getPeopleId()
+    public function getPeopleId():string
     {
         return $this->people_id;
     }
@@ -242,7 +244,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getIsLoggedIn()
+    public function getIsLoggedIn():int
     {
         return $this->is_logged_in;
     }
@@ -250,7 +252,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $value
      */
-    public function setIsLoggedIn($value)
+    public function setIsLoggedIn($value):void
     {
         $this->is_logged_in = $value;
     }
@@ -258,7 +260,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param string $login_id
      */
-    public function setLoginId($login_id)
+    public function setLoginId($login_id):void
     {
         $this->login_id = $login_id;
     }
@@ -266,7 +268,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getLoginId()
+    public function getLoginId():string
     {
         return $this->login_id;
     }

@@ -55,6 +55,7 @@ class Router
 
     /**
      * Router constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -73,18 +74,19 @@ class Router
      *      - wilma represents a variable that the controller understands.
      *      - For example wilma could be an blog id or blog name 'blog_id'
      *      - for which a blog controller would search in the blog db by blog_id.
+     *
      * @param string $request_uri Optional, normally NOT used.
      *                            Defaults to '' which turns into $_SERVER['REQUEST_URI']
      *                            in the setRequestUri method.
      */
-    public function setRouteParts($request_uri = '')
+    public function setRouteParts($request_uri = ''):void
     {
         $meth = __METHOD__ . '.';
         $this->setRequestUri($request_uri);
         $this->setGet();
         $this->setPost();
         $this->setFormAction();
-        $this->logIt("Request URI: " . $this->request_uri, LOG_OFF, $meth . __LINE__);
+        $this->logIt('Request URI: ' . $this->request_uri, LOG_OFF, $meth . __LINE__);
         $a_router_parts = $this->o_routes_helper->createRouteParts($this->request_uri);
         $log_message = 'a_router_parts ' . var_export($a_router_parts, TRUE);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
@@ -103,15 +105,17 @@ class Router
     ### GETters and SETters ###
     /**
      * Gets the groups that are allowed to access this route.
+     *
      * @return array
      */
-    public function getAllowedGroups()
+    public function getAllowedGroups():array
     {
         return $this->a_router_parts['groups'];
     }
 
     /**
      * Returns the property form_action.
+     *
      * @return mixed
      */
     public function getFormAction()
@@ -121,48 +125,48 @@ class Router
 
     /**
      * Returns the property a_get or one of the array values based on name.
+     *
      * @param string $value
      * @return array|string
      */
     public function getGet($value = '')
     {
-        if ($value == '') {
+        if ($value === '') {
             return $this->a_get;
-        } else {
-            if (isset($this->a_get[$value])) {
-                return $this->a_get[$value];
-            } else {
-                $this->logIt(var_export($this->a_get, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-                return '';
-            }
         }
+
+        if (isset($this->a_get[$value])) {
+            return $this->a_get[$value];
+        }
+        $this->logIt(var_export($this->a_get, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        return '';
     }
 
     /**
      * Returns the property a_post or one of the property array values.
+     *
      * @param string $value
      * @return array|string
      */
     public function getPost($value = '')
     {
         $meth = __METHOD__ . '.';
-        if ($value == '') {
+        if ($value === '') {
             return $this->a_post;
         }
-        else {
-            $this->logIt("Name to look for is: {$value}", LOG_OFF, $meth . __LINE__);
-            if (isset($this->a_post[$value])) {
-                return $this->a_post[$value];
-            }
-            else {
-                $this->logIt("The Value Doesn't Exist. " . var_export($this->a_post, true), LOG_OFF, $meth . __LINE__);
-                return '';
-            }
+
+        $this->logIt("Name to look for is: {$value}", LOG_OFF, $meth . __LINE__);
+        if (isset($this->a_post[$value])) {
+            return $this->a_post[$value];
         }
+
+        $this->logIt("The Value Doesn't Exist. " . var_export($this->a_post, true), LOG_OFF, $meth . __LINE__);
+        return '';
     }
 
     /**
-     * Returns the property route_action value.
+     * Returns the class property route_action value.
+     *
      * @return mixed
      */
     public function getRequestUri()
@@ -171,6 +175,8 @@ class Router
     }
 
     /**
+     * Returns the class property route_action.
+     *
      * @return mixed
      */
     public function getRouteAction()
@@ -180,6 +186,7 @@ class Router
 
     /**
      * Returns the property route_class value.
+     *
      * @return mixed
      */
     public function getRouteClass()
@@ -189,6 +196,7 @@ class Router
 
     /**
      * Returns the property route_path value.
+     *
      * @return mixed
      */
     public function getRouteParts()
@@ -198,18 +206,20 @@ class Router
 
     /**
      * Returns the property a_router_parts value.
+     *
      * @return string
      */
-    public function getRoutePath()
+    public function getRoutePath():string
     {
         return $this->route_path;
     }
 
     /**
      * Returns the property url_id.
+     *
      * @return int
      */
-    public function getUrlId()
+    public function getUrlId():int
     {
         return $this->url_id;
     }
@@ -217,35 +227,36 @@ class Router
     /**
      * Sets the class property $form_action.
      * Assumes the array passed in is from a form posted after it was sanitized.
+     *
      * @param array $a_post an associate array put through filter_var($var, FILTER_SANITIZE_ENCODED)
      * @return bool
      */
-    public function setFormAction(array $a_post = array())
+    public function setFormAction(array $a_post = []):bool
     {
-        if ($a_post == array()) {
+        if ($a_post === []) {
             $a_post = $this->a_post;
         }
-        $this->logIt("Starting with: " . var_export($a_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
+        $this->logIt('Starting with: ' . var_export($a_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $x_action = '';
         $y_action = '';
         foreach ($a_post as $key=>$value) {
-            if (substr($key, strlen($key) - 2) == "_x") {
-                $x_action = substr($key, 0, strpos($key, "_x"));
+            if (substr($key, \strlen($key) - 2) === '_x') {
+                $x_action = substr($key, 0, strpos($key, '_x'));
             }
-            elseif (substr($key, strlen($key) - 2) == "_y") {
-                $y_action = substr($key, 0, strpos($key, "_y"));
+            elseif (substr($key, \strlen($key) - 2) === '_y') {
+                $y_action = substr($key, 0, strpos($key, '_y'));
             }
         }
-        if (isset($a_post["action"]) && ($a_post["action"] != '')) {
-            $action = $a_post["action"];
+        if (isset($a_post['action']) && ($a_post['action'] !== '')) {
+            $action = $a_post['action'];
         }
-        elseif (isset($a_post["step"]) && ($a_post["step"] != '')) {
-            $action = $a_post["step"];
+        elseif (isset($a_post['step']) && ($a_post['step'] !== '')) {
+            $action = $a_post['step'];
         }
-        elseif (isset($a_post["submit"]) && ($a_post["submit"] != '')) {
-            $action = $a_post["submit"];
+        elseif (isset($a_post['submit']) && ($a_post['submit'] !== '')) {
+            $action = $a_post['submit'];
         }
-        elseif (($x_action != '') && ($x_action == $y_action)) {
+        elseif (($x_action !== '') && ($x_action === $y_action)) {
             $action = $x_action;
         }
         else {
@@ -258,26 +269,28 @@ class Router
 
     /**
      * Sets the property a_get with semi-sanitized values from $_GET.
+     *
      * @param array $a_allowed_keys
      * @param array $a_allowed_commands
      * @param int   $filter_flags
      */
-    public function setGet(array $a_allowed_keys = [], array $a_allowed_commands = [], $filter_flags = 0)
+    public function setGet(array $a_allowed_keys = [], array $a_allowed_commands = [], $filter_flags = 0):void
     {
         $this->a_get = Arrays::cleanValues($_GET, $a_allowed_keys, $a_allowed_commands, $filter_flags);
     }
 
     /**
      * Sets the property $request_uri.
+     *
      * @param string $request_uri optional, defaults to $_SERVER['REQUEST_URI']
      */
-    public function setRequestUri($request_uri = '')
+    public function setRequestUri($request_uri = ''):void
     {
-        if ($request_uri == '') {
-            $request_uri = $_SERVER["REQUEST_URI"];
+        if ($request_uri === '') {
+            $request_uri = $_SERVER['REQUEST_URI'] ?? '/';
         }
-        if (strpos($request_uri, "?") !== false) {
-            $this->request_uri = substr($request_uri, 0, strpos($request_uri, "?"));
+        if (strpos($request_uri, '?') !== false) {
+            $this->request_uri = substr($request_uri, 0, strpos($request_uri, '?'));
         }
         else {
             $this->request_uri = $request_uri;
@@ -286,22 +299,24 @@ class Router
 
     /**
      * Sets the property route_path.
+     *
      * @param string $value
      */
-    public function setRoutePath($value = '')
+    public function setRoutePath($value = ''):void
     {
-        if ($value != '') {
+        if ($value !== '') {
             $this->route_path = $value;
         }
     }
 
     /**
      * Sets the property a_post.
+     *
      * @param array $a_allowed_keys
      * @param array $a_allowed_commands
      * @param int   $filter_flags
      */
-    public function setPost(array $a_allowed_keys = [], array $a_allowed_commands = [], $filter_flags = 0)
+    public function setPost(array $a_allowed_keys = [], array $a_allowed_commands = [], $filter_flags = 0):void
     {
         $this->a_post = Arrays::cleanValues($_POST, $a_allowed_keys, $a_allowed_commands, $filter_flags);
     }

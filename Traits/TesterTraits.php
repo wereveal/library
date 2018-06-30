@@ -5,7 +5,6 @@
  */
 namespace Ritc\Library\Traits;
 
-use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\LocateFile;
 
@@ -84,15 +83,15 @@ trait TesterTraits
      * @return array
      * @throws \ReflectionException
      */
-    public function runTests($return_results = true)
+    public function runTests($return_results = true):array
     {
-        if ($this->class_name != '') {
+        if ($this->class_name !== '') {
             $class_name = $this->class_name;
         }
-        elseif (substr(__CLASS__, -5) == 'Tests') {
+        elseif (substr(__CLASS__, -5) === 'Tests') {
             $class_name = str_replace('Tests','',__CLASS__);
         }
-        elseif (substr(__CLASS__, -6) == 'Tester') {
+        elseif (substr(__CLASS__, -6) === 'Tester') {
             $class_name = str_replace('Tester','',__CLASS__);
         }
         else {
@@ -100,7 +99,7 @@ trait TesterTraits
         }
         $ns_class = $this->namespace . '\\' . $class_name;
         $a_test_order = [];
-        if (count($this->a_test_order) === 0) {
+        if (\count($this->a_test_order) === 0) {
             $o_ref = new \ReflectionClass($ns_class);
             $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
             foreach ($a_methods as $a_method) {
@@ -113,7 +112,7 @@ trait TesterTraits
                     case '__clone':
                         break;
                     default:
-                        if (substr($a_method->name, -6) == 'Tester') {
+                        if (substr($a_method->name, -6) === 'Tester') {
                             $a_test_order[] = $a_method->name;
                         }
                 }
@@ -124,7 +123,7 @@ trait TesterTraits
         }
         $failed_tests = 0;
         foreach ($a_test_order as $method_name) {
-            if (substr($method_name, -6) == 'Tester') {
+            if (substr($method_name, -6) === 'Tester') {
                 $tester_name = $method_name;
                 $method_name = $this->shortenName($method_name);
             } else {
@@ -161,7 +160,7 @@ trait TesterTraits
      * Sets up the two main arrays the tests uses.
      * @param array $a_values ['namespace', 'class_name', 'order_file', 'values_file', 'extra_dir']
      */
-    public function setupTests(array $a_values = [])
+    public function setupTests(array $a_values = []):void
     {
         $namespace     = '';
         $class_name    = '';
@@ -193,7 +192,7 @@ trait TesterTraits
             $this->namespace = $namespace;
             $a_ns_part = explode('\\', $namespace);
             $short_ns = '';
-            for ($i = 0; $i < count($a_ns_part) - 1; $i++) {
+            for ($i = 0; $i < \count($a_ns_part) - 1; $i++) {
                 $short_ns .= empty($short_ns)
                     ? $a_ns_part[$i]
                     : '\\' . $a_ns_part[$i];
@@ -220,26 +219,25 @@ trait TesterTraits
             $this->order_file = $test_order_file;
             $this->a_test_order = include $test_order_file;
         }
+        else if (!empty($this->a_test_values)) {
+            $a_test_order = [];
+            foreach ($this->a_test_values as $key => $test_values) {
+                $a_test_order[] = $key;
+            }
+            $this->a_test_order = $a_test_order;
+        }
         else {
-            if (!empty($a_test_values)) {
-                $a_test_order = [];
-                foreach ($a_test_values as $key => $test_values) {
-                    $a_test_order[] = $key;
-                }
-                $this->a_test_order = $a_test_order;
-            }
-            else {
-                $this->a_test_order = [];
-            }
+            $this->a_test_order = [];
         }
     }
 
     /**
      * Deletes a test record if the id exists.
+     *
      * @param string $instance
-     * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function cleanupDbTests($instance = '') {
+    public function cleanupDbTests($instance = ''):void
+    {
         if ($this->new_id > 0) {
             $new_id = $this->new_id;
         }
@@ -249,19 +247,13 @@ trait TesterTraits
         else {
             $new_id = -1;
         }
-        if ($instance == '') {
+        if ($instance === '') {
             $instance = $this->instance_name;
         }
         if ($new_id > 0) {
-            try {
-                $this->$instance->delete($new_id);
-                $_SESSION['created_id'] = -1;
-                $this->new_id = -1;
-            }
-            catch (ModelException $e) {
-                $_SESSION['created_id'] = -1;
-                $this->new_id = -1;
-            }
+            $this->$instance->delete($new_id);
+            $_SESSION['created_id'] = -1;
+            $this->new_id = -1;
         }
     }
 
@@ -272,7 +264,7 @@ trait TesterTraits
      * @param array $a_test_values
      * @return string
      */
-    private function genericTest(array $a_names = [], array $a_test_values = [])
+    private function genericTest(array $a_names = [], array $a_test_values = []):string
     {
         if (empty($a_test_values) || empty($a_names) || empty($a_names['instance']) || empty($a_names['test'])) {
             return 'skipped';
@@ -295,7 +287,7 @@ trait TesterTraits
      * @param array $a_values
      * @return bool
      */
-    public function genericSubtest(array $a_names = [], array $a_values = [])
+    public function genericSubtest(array $a_names = [], array $a_values = []):bool
     {
         if (empty($a_names) || empty($a_names['instance']) || empty($a_names['test']) || empty($a_names['subtest'])) {
             return false;
@@ -337,7 +329,7 @@ trait TesterTraits
      * @param array $a_test_values
      * @return string
      */
-    private function genericDbTest(array $a_names = [], array $a_test_values = [])
+    private function genericDbTest(array $a_names = [], array $a_test_values = []):string
     {
         if (empty($a_test_values) || empty($a_names)) {
             return 'skipped';
@@ -365,7 +357,7 @@ trait TesterTraits
      * @param array $a_values
      * @return bool
      */
-    public function genericDbSubTest(array $a_names = [], array $a_values = [])
+    public function genericDbSubTest(array $a_names = [], array $a_values = []):bool
     {
         if (empty($a_names['test']) || empty($a_names['subtest'])) {
             return false;
@@ -393,21 +385,12 @@ trait TesterTraits
                 : true;
             if ($results == $expected_results) {
                 $this->setSubPassed($test, $subtest);
-                if ($test == 'create') {
-                    if ($subtest == 'valid_create_values' || $subtest == 'good_values') {
+                if ($test === 'create') {
+                    if ($subtest === 'valid_create_values' || $subtest === 'good_values') {
                         $_SESSION['created_id'] = $a_results[0];
                         $this->new_id = $a_results[0];
                     }
                 }
-            }
-            else {
-                $this->setSubFailed($test, $subtest);
-                $good_results = false;
-            }
-        }
-        catch (ModelException $e) {
-            if ($expected_results == false) {
-                $this->setSubPassed($test, $subtest);
             }
             else {
                 $this->setSubFailed($test, $subtest);
@@ -450,7 +433,7 @@ trait TesterTraits
      * @param array $a_test_values
      * @return string
      */
-    public function genericSingleTest(array $a_names = [], array $a_test_values)
+    public function genericSingleTest(array $a_names = [], array $a_test_values):string
     {
         if (empty($a_names) || empty($a_test_values)) {
             return 'skipped';
@@ -463,9 +446,8 @@ trait TesterTraits
         if ($results == $expected_results) {
             return 'passed';
         }
-        else {
-            return 'failed';
-        }
+
+        return 'failed';
     }
 
     /**
@@ -474,7 +456,7 @@ trait TesterTraits
      * @param array $a_test_values
      * @return string
      */
-    public function genericDbSingleTest(array $a_names = [], array $a_test_values)
+    public function genericDbSingleTest(array $a_names = [], array $a_test_values):string
     {
         if (empty($a_names) || empty($a_test_values)) {
             return 'skipped';
@@ -483,23 +465,15 @@ trait TesterTraits
         $instance = $a_names['instance'];
         $expected_results = $a_test_values['expected_results'];
         $test_this = $a_test_values['test_values'];
-        try {
-            $a_results = $this->$instance->$test($test_this);
-            $results = empty($a_results)
-                ? false
-                : true;
-            if ($results == $expected_results) {
-                return 'passed';
-            }
-            else {
-                return 'failed';
-            }
+        $a_results = $this->$instance->$test($test_this);
+        $results = empty($a_results)
+            ? false
+            : true;
+        if ($results == $expected_results) {
+            return 'passed';
         }
-        catch (ModelException $e) {
-            return $expected_results
-                ? 'failed'
-                : 'passed';
-        }
+
+        return 'failed';
     }
 
     ### All the other methods needed to run tests ###
@@ -508,17 +482,15 @@ trait TesterTraits
      * @param bool $show_test_names optional defaults to showing names
      * @return array
      */
-    public function returnTestResults($show_test_names = true)
+    public function returnTestResults($show_test_names = true):array
     {
         $a_failed_test_names = array();
         $a_passed_test_names = array();
         if ($show_test_names === true) {
             foreach ($this->passed_test_names as $name) {
                 $a_subnames = [];
-                if ($this->show_passed_subs) {
-                    if (!empty($this->passed_subtests[$name])) {
-                        $a_subnames = $this->passed_subtests[$name];
-                    }
+                if ($this->show_passed_subs && !empty($this->passed_subtests[$name])) {
+                    $a_subnames = $this->passed_subtests[$name];
                 }
                 $a_passed_test_names[] = [
                     'name' => $name,
@@ -550,16 +522,15 @@ trait TesterTraits
                 'skipped_test_names' => $this->skipped_test_names
             );
         }
-        else {
-            return array(
-                'failed_tests'       => $this->failed_tests,
-                'passed_tests'       => $this->passed_tests,
-                'num_o_tests'        => $this->num_o_tests,
-                'failed_test_names'  => '',
-                'passed_test_names'  => '',
-                'skipped_test_names' => ''
-            );
-        }
+
+        return array(
+            'failed_tests'       => $this->failed_tests,
+            'passed_tests'       => $this->passed_tests,
+            'num_o_tests'        => $this->num_o_tests,
+            'failed_test_names'  => '',
+            'passed_test_names'  => '',
+            'skipped_test_names' => ''
+        );
     }
 
     /**
@@ -567,9 +538,9 @@ trait TesterTraits
      * @param string $method_name
      * @return bool
      */
-    public function addMethodToTestOrder($method_name = '')
+    public function addMethodToTestOrder($method_name = ''):bool
     {
-        if ($method_name == '') { return false; }
+        if ($method_name === '') { return false; }
         $this->a_test_order[] = $method_name;
         return true;
     }
@@ -579,9 +550,9 @@ trait TesterTraits
      * @param string $key the key name
      * @param mixed $value  the value assigned to the key
      */
-    public function addTestValue($key = '', $value = '')
+    public function addTestValue($key = '', $value = ''):void
     {
-        if ($key == '') { return; }
+        if ($key === '') { return; }
         $this->a_test_values[$key] = $value;
     }
 
@@ -589,7 +560,7 @@ trait TesterTraits
      * Getter
      * @return array
      */
-    public function getFailedTestNames()
+    public function getFailedTestNames():array
     {
         return $this->failed_test_names;
     }
@@ -598,7 +569,7 @@ trait TesterTraits
      * Getter
      * @return int
      */
-    public function getFailedTests()
+    public function getFailedTests():int
     {
         return $this->failed_tests;
     }
@@ -607,7 +578,7 @@ trait TesterTraits
      * Getter
      * @return int
      */
-    public function getNumOTests()
+    public function getNumOTests():int
     {
         return $this->num_o_tests;
     }
@@ -616,7 +587,7 @@ trait TesterTraits
      * Getter
      * @return int
      */
-    public function getPassedTests()
+    public function getPassedTests():int
     {
         return $this->passed_tests;
     }
@@ -625,7 +596,7 @@ trait TesterTraits
      * Getter
      * @return array
      */
-    public function getPassedTestNames()
+    public function getPassedTestNames():array
     {
         return $this->passed_test_names;
     }
@@ -634,7 +605,7 @@ trait TesterTraits
      * Getter
      * @return array
      */
-    public function getTestOrder()
+    public function getTestOrder():array
     {
         return $this->a_test_order;
     }
@@ -644,16 +615,16 @@ trait TesterTraits
      * @param  string $method_name defaults to 'Tester'
      * @return string
      */
-    public function shortenName($method_name = 'Tester')
+    public function shortenName($method_name = 'Tester'):string
     {
         if (strpos($method_name, '::')) {
             $a_parts = explode('::', $method_name);
             $method_name = $a_parts[1];
         }
-        if (substr($method_name, -6) == 'Tester') {
+        if (substr($method_name, -6) === 'Tester') {
             return substr($method_name, 0, -6);
         }
-        if (substr($method_name, -5) == 'Tests') {
+        if (substr($method_name, -5) === 'Tests') {
             return substr($method_name, 0, -5);
         }
         return $method_name;
@@ -663,7 +634,7 @@ trait TesterTraits
      * Standard Setter for the property $class_name;
      * @param string $class_name
      */
-    public function setClassName($class_name = '')
+    public function setClassName($class_name = ''):void
     {
         $this->class_name = $class_name;
     }
@@ -672,7 +643,7 @@ trait TesterTraits
      * Sets three properties, num_o_test++, failed_tests++, and failed test names.
      * @param string $method_name
      */
-    public function setFailures($method_name = '')
+    public function setFailures($method_name = ''):void
     {
         $this->num_o_tests++;
         $this->failed_tests++;
@@ -683,7 +654,7 @@ trait TesterTraits
      * Standard setter for the propery $namespace.
      * @param string $namespace
      */
-    public function setNamespace($namespace = '')
+    public function setNamespace($namespace = ''):void
     {
         $this->namespace = $namespace;
     }
@@ -693,11 +664,11 @@ trait TesterTraits
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubFailed($method_name = '', $test_name = '')
+    public function setSubFailed($method_name = '', $test_name = ''):void
     {
-        if ($method_name == '' || $test_name == '') { return; }
+        if ($method_name === '' || $test_name === '') { return; }
         $method_name = $this->shortenName($method_name);
-        if (is_array($this->failed_subtests) === false) {
+        if (\is_array($this->failed_subtests) === false) {
             $this->failed_subtests = array();
         }
         if (array_key_exists($method_name, $this->failed_subtests)) {
@@ -713,9 +684,9 @@ trait TesterTraits
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubPassed($method_name = '', $test_name = '')
+    public function setSubPassed($method_name = '', $test_name = ''):void
     {
-        if ($method_name != '' && $test_name != '') {
+        if ($method_name !== '' && $test_name !== '') {
             $method_name = $this->shortenName($method_name);
             if (array_key_exists($method_name, $this->passed_subtests)) {
                 $this->passed_subtests[$method_name][] = $test_name;
@@ -730,7 +701,7 @@ trait TesterTraits
      * Sets the array a_test_order to the array passed in
      * @param array $a_test_order optional, defaults to an empty array
      */
-    public function setTestOrder(array $a_test_order = array())
+    public function setTestOrder(array $a_test_order = array()):void
     {
         if (empty($a_test_order)) {
             $a_test_order = include $this->order_file;
@@ -742,7 +713,7 @@ trait TesterTraits
      * Sets the array a_test_value to the array passed in
      * @param array $a_test_values optional, defaults to an empty array
      */
-    public function setTestValues(array $a_test_values = array())
+    public function setTestValues(array $a_test_values = array()):void
     {
         if (empty($a_test_values)) {
             $a_test_values = include $this->values_file;
@@ -754,20 +725,23 @@ trait TesterTraits
      * Return the values in $this->a_test_values
      * @return array $a_test_values
      */
-    public function getTestValues()
+    public function getTestValues():array
     {
         return $this->a_test_values;
     }
 
     ### Utility Methods ###
+
     /**
      * Checks to see if a method is public in the tester class.
+     *
      * @param string $method_name required defaults to ''
      * @return bool true or false
+     * @throws \ReflectionException
      */
-    public function isPublicMethod($method_name = '')
+    public function isPublicMethod($method_name = ''):bool
     {
-        if ($method_name == '') {
+        if ($method_name === '') {
             return false;
         }
         $o_ref = new \ReflectionClass(__CLASS__);

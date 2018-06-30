@@ -60,7 +60,7 @@ class RoutesView
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = array())
+    public function renderList(array $a_message = array()):string
     {
         $meth = __METHOD__ . '.';
         $message = 'Changing router values can result in unexpected results. If you are not sure, do not do it.';
@@ -189,7 +189,7 @@ class RoutesView
           $log_message = 'a_twig_values ' . var_export($a_twig_values, TRUE);
           $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
-          $this->logIt("tpl: " . $tpl, LOG_OFF, $meth . __LINE__);
+          $this->logIt('tpl: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
@@ -198,7 +198,7 @@ class RoutesView
      * @param array $a_values
      * @return string
      */
-    public function renderVerify(array $a_values = array())
+    public function renderVerify(array $a_values = array()):string
     {
         $meth = __METHOD__ . '.';
         $log_message = 'Posted Values: ' . var_export($a_values, TRUE);

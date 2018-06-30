@@ -37,7 +37,7 @@ trait ManagerViewTraits
      * @param array $a_values optional default values ['tpl' => 'login', 'location' => '/manager/', 'a_message' => [], 'login_id' => '']
      * @return string
      */
-    public function renderLogin(array $a_values = [])
+    public function renderLogin(array $a_values = []):string
     {
         $this->o_session->resetSession();
         $location = empty($a_values['location'])
@@ -67,7 +67,7 @@ trait ManagerViewTraits
      * @example verify_delete.php
      * @return string
      */
-    public function renderVerifyDelete(array $a_values = [], array $a_options = [])
+    public function renderVerifyDelete(array $a_values = [], array $a_options = []):string
     {
         if (empty($a_values)) {
             $fallback_method = empty($a_options['fallback'])

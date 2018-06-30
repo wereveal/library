@@ -20,6 +20,7 @@ class CustomErrorException extends CustomErrorAbstract
 {
     /**
      * CustomErrorException constructor.
+     *
      * @param string     $message
      * @param int        $code
      * @param int        $severity
@@ -27,7 +28,7 @@ class CustomErrorException extends CustomErrorAbstract
      * @param int        $lineno
      * @param \Exception $previous
      */
-    public function __construct($message = "", $code = 0, $severity = 1, $filename = __FILE__, $lineno = __LINE__, \Exception $previous)
+    public function __construct($message = '', $code = 0, $severity = 1, $filename = __FILE__, $lineno = __LINE__, \Exception $previous)
     {
         parent::__construct($message, $code, $severity, $filename, $lineno, $previous);
     }
@@ -36,9 +37,15 @@ class CustomErrorException extends CustomErrorAbstract
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1)
+    public function getCodeText($code = -1):string
     {
         switch ($code) {
+            case 900:
+                return 'General Error, see error message';
+            case 999:
+                return 'Unspecified Error.';
+            case '':
+                return 999;
             default:
                 return parent::getCodeText($code);
 

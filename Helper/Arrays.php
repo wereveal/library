@@ -44,29 +44,30 @@ class Arrays
      * Initially designed to do some basic filtering of $_POST, $_GET, etc
      * but will work with any array.
      * This is now depreciated in favor of Arrays::cleanValues() and Arrays::encodeValues()
+     *
      * @param array $a_pairs             the array to clean
      * @param array $a_allowed_keys      allows only specified keys to be returned
      * @param bool  $unsafe_php_commands defaults to true strips 'unsafe' php commands, rare should it be false
      * @param int   $ent_flag            sets the entity coding defaults to ENT_QUOTES
      * @return array                     the cleaned array
      */
-    public static function cleanArrayValues(array $a_pairs = [], $a_allowed_keys = [], $unsafe_php_commands = true, $ent_flag = ENT_QUOTES)
+    public static function cleanArrayValues(array $a_pairs = [], array $a_allowed_keys = [], $unsafe_php_commands = true, $ent_flag = ENT_QUOTES):array
     {
         $a_clean = [];
-        if (count($a_pairs) === 0) {
+        if (\count($a_pairs) === 0) {
             return $a_clean;
         }
         if ($unsafe_php_commands === true) {
             $a_pairs = self::stripUnsafePhp($a_pairs);
         }
         foreach ($a_pairs as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $a_clean[$key] = self::cleanArrayValues($value);
             }
             else {
                 $value = trim($value);
-                if (count($a_allowed_keys) >= 1) {
-                    if (in_array($key, $a_allowed_keys)) {
+                if (\count($a_allowed_keys) >= 1) {
+                    if (\in_array($key, $a_allowed_keys)) {
                         $a_clean[$key] = htmlentities($value, $ent_flag);
                     }
                 }
@@ -80,13 +81,14 @@ class Arrays
 
     /**
      * Modifies array values by removing php and mysql commands.
+     *
      * @param array   $a_pairs            optional, sort of, the array to clean.
      * @param array   $a_allowed_keys     optional, allows only specified keys to be returned.
      * @param array   $a_allowed_commands optional, defaults to []. Used values is ['php' => true, 'mysql' => true].
      * @param integer $sanitize_flags     optional, defaults to 0. If provided, calls Array::encodeValues().
      * @return array
      */
-    public static function cleanValues(array $a_pairs = [], array $a_allowed_keys = [], array $a_allowed_commands = [], $sanitize_flags = 0)
+    public static function cleanValues(array $a_pairs = [], array $a_allowed_keys = [], array $a_allowed_commands = [], $sanitize_flags = 0):array
     {
         if (empty($a_pairs)) {
             return [];
@@ -118,6 +120,7 @@ class Arrays
      * It should be noted that the second array can have additional
      * key=>value pairs but only the key=>value pairs that are in the
      * expected_values array are checked.
+     *
      * @param array $a_expected_values can be a simple array or an array of arrays
      * @param array $a_check_values    Needs to be identical structure wise as $a_expected values
      * @return bool                    true or false
@@ -134,19 +137,19 @@ class Arrays
      *      ]
      * </pre>
      */
-    public static function compareArrays(array $a_expected_values = [], array $a_check_values = [])
+    public static function compareArrays(array $a_expected_values = [], array $a_check_values = []):bool
     {
-        if ($a_check_values != [] && $a_expected_values == []) {
+        if ($a_check_values !== [] && $a_expected_values === []) {
             return false;
         }
         foreach ($a_expected_values as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $results = self::compareArrays($value, $a_check_values[$key]);
                 if ($results === false) {
                     return false;
                 }
             }
-            elseif ($a_expected_values[$key] != $a_check_values[$key]) {
+            elseif ($a_expected_values[$key] !== $a_check_values[$key]) {
                 return false;
             }
         }
@@ -155,12 +158,13 @@ class Arrays
 
     /**
      * Returns an array which has only the required keys and has all of them.
+     *
      * @param array $a_pairs
      * @param array $a_required_keys
      * @param mixed $delete_undesired
      * @return array
      */
-    public static function createRequiredPairs(array $a_pairs = [], $a_required_keys = [], $delete_undesired = false)
+    public static function createRequiredPairs(array $a_pairs = [], array $a_required_keys = [], $delete_undesired = false):array
     {
         if ($delete_undesired) {
             $a_pairs = self::removeUndesiredPairs($a_pairs, $a_required_keys);
@@ -177,19 +181,20 @@ class Arrays
     }
 
     /**
-     * Decodes htmlentities in array values
+     * Decodes htmlentities in array values.
+     *
      * @param array $a_pairs
      * @param int   $ent_flag sets the entity decoding defaults to ENT_QUOTES
      * @return array
      */
-    public static function decodeEntities(array $a_pairs = [], $ent_flag = ENT_QUOTES)
+    public static function decodeEntities(array $a_pairs = [], $ent_flag = ENT_QUOTES):array
     {
         $a_clean = [];
-        if (count($a_pairs) === 0) {
+        if (\count($a_pairs) === 0) {
             return $a_clean;
         }
         foreach ($a_pairs as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $a_clean[$key] = self::decodeEntities($value, $ent_flag);
             }
             else {
@@ -203,17 +208,18 @@ class Arrays
      * Runs the value of each array pair through filter_var($var, FILTER_SANITIZE_STRING) using specified flags.
      * Calling this method one would probably use the Flag Constants, e.g.
      * encodeValues($a_pairs, FILTER_FLAG_NO_ENCODE_QUOTES) or encodeValues($a_pairs, FILTER_FLAG_NO_ENCODE_QUOTES | FILTER_FLAG_ENCODE_HIGH).
+     *
      * @param array $a_pairs        Required of sorts
      * @param int   $sanitize_flags Optional, defaults to 0 (i.e. default filtering).
      * @return array
      */
-    public static function encodeValues(array $a_pairs = [], $sanitize_flags = 0)
+    public static function encodeValues(array $a_pairs = [], $sanitize_flags = 0):array
     {
         if (empty($a_pairs)) {
             return $a_pairs;
         }
         foreach ($a_pairs as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $a_pairs[$key] = self::encodeValues($value, $sanitize_flags);
             }
             else {
@@ -224,26 +230,23 @@ class Arrays
     }
 
     /**
-     * Determines if any required keys are missing
+     * Determines if any required keys are missing.
+     *
      * @param  array $a_pairs
      * @param  array $a_required_keys required
      * @return array $a_missing_keys
      */
-    public static function findMissingKeys(array $a_pairs = [], array $a_required_keys = [])
+    public static function findMissingKeys(array $a_pairs = [], array $a_required_keys = []):array
     {
         if (empty($a_required_keys) || empty($a_pairs)) { return []; }
         $a_missing_keys = [];
         foreach ($a_required_keys as $key) {
-            if (
-                array_key_exists($key, $a_pairs)
-                ||
-                array_key_exists(':' . $key, $a_pairs)
-                ||
-                array_key_exists(str_replace(':', '', $key), $a_pairs)
+            if (!array_key_exists($key, $a_pairs)
+                &&
+                !array_key_exists(':' . $key, $a_pairs)
+                &&
+                !array_key_exists(str_replace(':', '', $key), $a_pairs)
             ) {
-                // we are happy
-            }
-            else {
                 $a_missing_keys[] = $key;
             }
         }
@@ -251,17 +254,18 @@ class Arrays
     }
 
     /**
-     * Finds missing or empty values for given key => value pair
+     * Finds missing or empty values for given key => value pair.
+     *
      * @param array $a_required_keys required list of keys that need to have values
      * @param array $a_pairs
      * @return array $a_keys list of the the keys that are missing values
      */
-    public static function findMissingValues(array $a_pairs = [], array $a_required_keys = [])
+    public static function findMissingValues(array $a_pairs = [], array $a_required_keys = []):array
     {
         if (empty($a_pairs) && !empty($a_required_keys)) {
             return $a_required_keys;
         }
-        elseif (empty($a_pairs) && empty($a_required_keys)) {
+        if (empty($a_pairs) && empty($a_required_keys)) {
             return [];
         }
         $a_keys = [];
@@ -274,7 +278,7 @@ class Arrays
                 array_key_exists(str_replace(':', '', $key), $a_pairs)
             )
             {
-                if ($a_pairs[$key] === '' || is_null($a_pairs[$key])) {
+                if ($a_pairs[$key] === '' || null === $a_pairs[$key]) {
                     $a_keys[] = $key;
                 }
             }
@@ -287,13 +291,14 @@ class Arrays
 
     /**
      * Verifies an associate array has the necessary keys.
+     *
      * @param array $a_pairs         required, must be associative array or array of assoc arrays.
      * @param array $a_required_keys required to have at least one value.
      * @return bool
      */
-    public static function hasRequiredKeys(array $a_pairs = [], array $a_required_keys = [])
+    public static function hasRequiredKeys(array $a_pairs = [], array $a_required_keys = []):bool
     {
-        if (count($a_required_keys) === 0 || count($a_pairs) === 0) {
+        if (\count($a_required_keys) === 0 || \count($a_pairs) === 0) {
             return false;
         }
         if (self::isArrayOfAssocArrays($a_pairs)) {
@@ -318,13 +323,14 @@ class Arrays
 
     /**
      * Checks array for blank values and missing key=>value pairs.
+     *
      * @param array $a_pairs         required, assoc array or array of assoc arrays
      * @param array $a_keys_to_check required
      * @return bool
      */
-    public static function hasBlankValues(array $a_pairs = [], array $a_keys_to_check = [])
+    public static function hasBlankValues(array $a_pairs = [], array $a_keys_to_check = []):bool
     {
-        if ($a_pairs == []) {
+        if ($a_pairs === []) {
             return true;
         }
         if (self::isArrayOfAssocArrays($a_pairs)) {
@@ -340,15 +346,15 @@ class Arrays
                 return true;
             }
             foreach ($a_pairs as $key => $value) {
-                if (is_array($value)) {
+                if (\is_array($value)) {
                     $results = self::hasBlankValues($value, $a_keys_to_check);
                     if ($results === true) {
                         return true;
                     }
                 }
                 elseif ($value === '') {
-                    if ($a_keys_to_check != []) {
-                        if (in_array($key, $a_keys_to_check)) {
+                    if ($a_keys_to_check !== []) {
+                        if (\in_array($key, $a_keys_to_check)) {
                             return true;
                         }
                     }
@@ -362,14 +368,15 @@ class Arrays
     }
 
     /**
-     * Determines if the value exists in an associative array or array or assoc arrays.
+     * Determines if the value exists in an associative array or array of assoc arrays.
+     *
      * @param string $key_name   Required.
      * @param string $needle     Required.
      * @param array  $a_haystack Required.
      * @param bool   $strict     Optional.
      * @return bool
      */
-    public static function inAssocArrayRecursive($key_name = '', $needle = '', array $a_haystack, $strict = false)
+    public static function inAssocArrayRecursive($key_name = '', $needle = '', array $a_haystack, $strict = false):bool
     {
         if ($key_name === '' || $needle === '' || $a_haystack === []) {
             return false;
@@ -378,17 +385,18 @@ class Arrays
             return false;
         }
         foreach ($a_haystack as $key => $item) {
-            if (is_array($item)) {
+            if (\is_array($item)) {
                 $inner_key = self::inAssocArrayRecursive($key_name, $needle, $item, $strict);
                 if ($inner_key !== false) {
                     return true;
                 }
             }
             else {
-                if (($strict && $key_name == $key && $item === $needle)) {
+                if ($strict && $key_name === $key && $item === $needle) {
                     return true;
                 }
-                elseif ($key_name == $key && $item == $needle) {
+                /** @noinspection TypeUnsafeComparisonInspection */
+                if ($key_name == $key && $item == $needle) {
                     return true;
                 }
             }
@@ -400,6 +408,7 @@ class Arrays
      * Searches a multidimensional array for a value.
      * If found, returns the key of the array, if multidimenstional array
      * it returns the keys of each array dot separated, e.g., 1.3.2 or 'fred'.'wife'.'wilma'.
+     *
      * @param string $needle     Required.
      * @param array  $a_haystack Required.
      * @param bool   $strict     Optional.
@@ -411,18 +420,18 @@ class Arrays
             return false;
         }
         foreach ($a_haystack as $key => $item) {
-            if (is_array($item)) {
+            if (\is_array($item)) {
                 $inner_key = self::inArrayRecursive($needle, $item, $strict);
                 if ($inner_key !== false) {
                     return $key . '.' . $inner_key;
                 }
             }
-            else {
-                if (($strict && $item === $needle)
-                || ($strict === false && $item == $needle)) {
-                    // print $key . "\n";
-                    return $key;
-                }
+            elseif ($strict && $item === $needle) {
+                return $key;
+            }
+            /** @noinspection TypeUnsafeComparisonInspection */
+            elseif ($item == $needle) {
+                return $key;
             }
         }
         return false;
@@ -431,28 +440,30 @@ class Arrays
     /**
      * Determines that the value passed in is an associative array with all non-numeric keys.
      * Also determines that the array is not empty.
+     *
      * @param mixed $a_pairs
      * @return bool
      */
-    public static function isAssocArray($a_pairs = [])
+    public static function isAssocArray($a_pairs = []):bool
     {
         return (
-            is_array($a_pairs)
+            \is_array($a_pairs)
             &&
-            count($a_pairs) !== 0
+            \count($a_pairs) !== 0
             &&
-            count(array_diff_key($a_pairs, array_keys(array_keys($a_pairs)))) == count($a_pairs)
+            \count(array_diff_key($a_pairs, array_keys(array_keys($a_pairs)))) === \count($a_pairs)
         );
     }
 
     /**
      * Sees if the array passed in is an array of assoc arrays.
+     *
      * @param mixed
      * @return bool
      */
-    public static function isArrayOfAssocArrays($a_arrays = [])
+    public static function isArrayOfAssocArrays(array $a_arrays = []):bool
     {
-        if (!is_array($a_arrays) || empty($a_arrays)) {
+        if (!\is_array($a_arrays) || empty($a_arrays)) {
             return false;
         }
         foreach ($a_arrays as $a_array) {
@@ -465,6 +476,7 @@ class Arrays
 
     /**
      * Tries to do a multi array sort from database data.
+     *
      * @param array $a_data
      * @param array $a_criteria
      * @return array|mixed
@@ -504,15 +516,16 @@ class Arrays
     /**
      * Removes any key/value pair that has empty value.
      * Optionally will remove any pairs that don't have a key match to allowed keys.
+     *
      * @param array $a_pairs        Required.          key/value pairs to check to see if the value is blank.
      * @param array $a_allowed_keys Optional/Required. key names to check for blank values, required if strict
      * @param bool  $strict         Optional.          default: true, removes any pair which doesn't have a key
      *                                                 found in allowed_keys.
      * @return array
      */
-    public static function removeBlankPairs(array $a_pairs = [], array $a_allowed_keys = [], $strict = true)
+    public static function removeBlankPairs(array $a_pairs = [], array $a_allowed_keys = [], $strict = true):array
     {
-        if ($a_pairs == [] || (empty($a_allowed_keys) && $strict)) {
+        if ($a_pairs === [] || (empty($a_allowed_keys) && $strict)) {
             return [];
         }
         if ($strict) {
@@ -543,17 +556,18 @@ class Arrays
     /**
      * Removes the slashes from values in an array.
      * Used primarily for returned values from a database search.
+     *
      * @param array $a_pairs
      * @return array
      */
-    public static function removeSlashes(array $a_pairs = [])
+    public static function removeSlashes(array $a_pairs = []):array
     {
         $a_stripped = [];
-        if (count($a_pairs) === 0) {
+        if (\count($a_pairs) === 0) {
             return $a_stripped;
         }
         foreach ($a_pairs as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $a_stripped[$key] = self::removeSlashes($value);
             }
             else {
@@ -567,15 +581,16 @@ class Arrays
     /**
      * Strips unwanted key=>value pairs.
      * Only really valuable for assoc arrays.
+     *
      * @param array $a_pairs
      * @param array $a_allowed_keys
      * @return array $a_pairs
      */
-    public static function removeUndesiredPairs(array $a_pairs = [], array $a_allowed_keys = [])
+    public static function removeUndesiredPairs(array $a_pairs = [], array $a_allowed_keys = []):array
     {
-        if ($a_pairs == [] || $a_allowed_keys == []) { return []; }
+        if ($a_pairs === [] || $a_allowed_keys === []) { return []; }
         foreach ($a_pairs as $key => $value) {
-            if (!in_array($key, $a_allowed_keys)) {
+            if (!\in_array($key, $a_allowed_keys)) {
                 unset($a_pairs[$key]);
             }
         }
@@ -584,10 +599,11 @@ class Arrays
 
     /**
      * Removes SQL commands from array pairs.
+     *
      * @param array $a_pairs
      * @return array
      */
-    public static function stripSQL(array $a_pairs = [])
+    public static function stripSQL(array $a_pairs = []):array
     {
         if (empty($a_pairs)) {
             return [];
@@ -670,7 +686,7 @@ class Arrays
         ];
 
         foreach ($a_pairs as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $a_pairs[$key] = self::stripSQL($value);
             }
             else {
@@ -681,26 +697,27 @@ class Arrays
     }
 
     /**
-     * Strip HTML and PHP tags from the values in an array
+     * Strip HTML and PHP tags from the values in an array.
+     *
      * @param array  $a_pairs        the array with the values to modify
      * @param array  $a_allowed_keys an array with a list of keys allowed to have tags (optional)
      * @param string $allowable_tags a string with allowed tags (see php strip_tags())
      * @return array $a_clean
      */
-    public static function stripTags(array $a_pairs = [], array $a_allowed_keys = [], $allowable_tags = '')
+    public static function stripTags(array $a_pairs = [], array $a_allowed_keys = [], $allowable_tags = ''):array
     {
         $a_clean = [];
-        if (count($a_pairs) === 0) {
+        if (\count($a_pairs) === 0) {
             return $a_clean;
         }
         foreach ($a_pairs as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $a_clean[$key] = self::stripTags($value, $a_allowed_keys, $allowable_tags);
             }
             else {
                 $value = trim($value);
-                if (count($a_allowed_keys) >= 1) {
-                    if (!in_array($key, $a_allowed_keys)) {
+                if (\count($a_allowed_keys) >= 1) {
+                    if (!\in_array($key, $a_allowed_keys)) {
                         $a_clean[$key] = strip_tags($value, $allowable_tags);
                     }
                 }
@@ -714,10 +731,11 @@ class Arrays
 
     /**
      * Removes unsafe php function names from array values.
+     *
      * @param array $a_pairs
      * @return array
      */
-    public static function stripUnsafePhp(array $a_pairs)
+    public static function stripUnsafePhp(array $a_pairs):array
     {
         $a_functions = [
             '/shell_exec\((.*)\)/i',
@@ -733,7 +751,7 @@ class Arrays
         ];
         $a_return_this = [];
         foreach ($a_pairs as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 $a_return_this[$key] = self::stripUnsafePhp($value);
             }
             else {

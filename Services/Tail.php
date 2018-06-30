@@ -44,7 +44,7 @@ class Tail
     /** @var string $pre_highlight */
     private $pre_highlight       = '<span style="color: red; font-weight: 900;">';
     /** @var string $post_highlight */
-    private $post_highlight      = "</span>";
+    private $post_highlight      = '</span>';
     /** @var bool $newest_first */
     private $newest_first        = true;
     /** @var string $output_format */
@@ -71,7 +71,7 @@ class Tail
             $this->file_name    = $file_name;
         }
         else {
-            die("elog file does not exist.");
+            die('elog file does not exist.');
         }
     }
 
@@ -104,106 +104,83 @@ class Tail
         if ($this->changed) {
             $pre_output = '';
             $post_output = '';
-            $pre_line = "";
+            $pre_line = '';
             $post_line = "\n";
             switch ($this->output_format) {
-                case "BR":
-                    $pre_line = "";
-                    $post_line = "<br />";
+                case 'BR':
+                    $pre_line = '';
+                    $post_line = '<br />';
                     break;
-                case "P":
-                    $pre_line = "<p>";
-                    $post_line = "</p>";
+                case 'P':
+                    $pre_line = '<p>';
+                    $post_line = '</p>';
                     break;
-                case "UL":
-                    $pre_output = $this->pre_output == "" ? "<ul>" : $this->pre_output ;
-                    $post_output = $this->post_output == "" ? "</ul>" : $this->post_output;
-                    $pre_line = "<li>";
-                    $post_line = "</li>";
+                case 'UL':
+                    $pre_output = $this->pre_output === '' ? '<ul>' : $this->pre_output ;
+                    $post_output = $this->post_output === '' ? '</ul>' : $this->post_output;
+                    $pre_line = '<li>';
+                    $post_line = '</li>';
                     break;
-                case "OL":
-                    $pre_output = $this->pre_output == "" ? "<ol>" : $this->pre_output ;
-                    $post_output = $this->post_output == "" ? "</ol>" : $this->post_output;
-                    $pre_line = "<li>";
-                    $post_line = "</li>";
+                case 'OL':
+                    $pre_output = $this->pre_output === '' ? '<ol>' : $this->pre_output ;
+                    $post_output = $this->post_output === '' ? '</ol>' : $this->post_output;
+                    $pre_line = '<li>';
+                    $post_line = '</li>';
                     break;
-                case "XML":
-                    $pre_output = $this->pre_output == "" ? "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<list>" : $this->pre_output ;
-                    $post_output = $this->post_output == "" ? "</list>" : $this->post_output;
-                    $pre_line = "<line>";
+                case 'XML':
+                    $pre_output = $this->pre_output === '' ? "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<list>" : $this->pre_output ;
+                    $post_output = $this->post_output === '' ? '</list>' : $this->post_output;
+                    $pre_line = '<line>';
                     $post_line = "</line>\n";
                     break;
                 default:
                     break;
             }
-
             $output = $pre_output;
+            $a_lines = $this->a_lines;
             if ($this->newest_first === TRUE) {
-                for ($i = (count($this->a_lines) - 1); $i < 0; $i--) {
-                    if (!empty($this->a_lines[$i])) {
-                        $output .= $pre_line;
-                        if (($this->search_string == "") && ($this->search_string_regex == "")) {
-                            $output .= $this->a_lines[$i];
-                        }
-                        elseif ($this->search_string_regex != "") {
-                            $replacement = "$1" . $this->pre_highlight . "$2" . $this->post_highlight . "$3";
-                            $output .= preg_replace($this->search_string_regex, $replacement, $this->a_lines[$i]);
-                        }
-                        elseif ($this->search_string != "") {
-                            $output .= str_replace($this->search_string, $this->pre_highlight . $this->search_string . $this->post_highlight, $this->a_lines[$i]);
-                        }
-                        else {
-                            $output .= $this->a_lines[$i];
-                        }
-                        $output .= $post_line;
-                    }
-                }
+                $a_lines = array_reverse($a_lines);
             }
-            else {
-                for ($i = 0; $i <= count($this->a_lines) - 1; $i++){
-                    if (!empty($this->a_lines[$i])) {
-                        $output .= $pre_line;
-                        if (($this->search_string == "") && ($this->search_string_regex == "")) {
-                            $output .= $this->a_lines[$i];
-                        }
-                        elseif ($this->search_string_regex != "") {
-                            $replacement = "$1" . $this->pre_highlight . "$2" . $this->post_highlight . "$3";
-                            $output .= preg_replace($this->search_string_regex, $replacement, $this->a_lines[$i]);
-                        }
-                        elseif ($this->search_string != "") {
-                            $output .= str_replace($this->search_string, $this->pre_highlight . $this->search_string . $this->post_highlight, $this->a_lines[$i]);
-                        }
-                        else {
-                            $output .= $this->a_lines[$i];
-                        }
-                        $output .= $post_line;
-                    }
+            foreach($a_lines as $line) {
+                $output .= $pre_line;
+                if (($this->search_string === '') && ($this->search_string_regex === '')) {
+                    $output .= $line;
                 }
+                elseif ($this->search_string_regex !== '') {
+                    $replacement = '$1' . $this->pre_highlight . '$2' . $this->post_highlight . '$3';
+                    $output .= preg_replace($this->search_string_regex, $replacement, $line);
+                }
+                elseif ($this->search_string !== '') {
+                    $output .= str_replace($this->search_string, $this->pre_highlight . $this->search_string . $this->post_highlight, $line);
+                }
+                else {
+                    $output .= $line;
+                }
+                $output .= $post_line;
             }
             $output .= $post_output;
             $a_twig_values['content'] = $output;
             return $this->renderIt($this->tpl, $a_twig_values);
         }
-        else {
-            $a_twig_values['content'] = 'No changes.<br>';
-            return $this->renderIt($this->tpl, $a_twig_values);
-        }
+
+        $a_twig_values['content'] = 'No changes.<br>';
+        return $this->renderIt($this->tpl, $a_twig_values);
     }
 
     ### GETters and SETters ###
     /**
      * @return string
      */
-    public function getHighlightCode()
+    public function getHighlightCode():string
     {
-        return htmlentities($this->pre_highlight) . " && " . htmlentities($this->post_highlight);
+        return htmlentities($this->pre_highlight) . ' && ' . htmlentities($this->post_highlight);
     }
 
     /**
      * Standard getter.
      * @return string
      */
-    public function getOutputFormat()
+    public function getOutputFormat():string
     {
         return $this->output_format;
     }
@@ -212,7 +189,7 @@ class Tail
      * Standard getter.
      * @return string
      */
-    public function getPostHighlight()
+    public function getPostHighlight():string
     {
         return $this->post_highlight;
     }
@@ -221,7 +198,7 @@ class Tail
      * Standard getter.
      * @return string
      */
-    public function getPostOutput()
+    public function getPostOutput():string
     {
         return $this->post_output;
     }
@@ -230,7 +207,7 @@ class Tail
      * Standard getter.
      * @return string
      */
-    public function getPreHighlight()
+    public function getPreHighlight():string
     {
         return $this->pre_highlight;
     }
@@ -238,23 +215,23 @@ class Tail
     /**
      * @param string $string
      */
-    public function setHighlightCode($string="<b>")
+    public function setHighlightCode($string= '<b>'):void
     {
         $this->pre_highlight = $string;
-        $a_string = explode(" ",$string);
-        $this->post_highlight = "</" . str_replace("<","",$a_string[0]) . ">";
+        $a_string = explode(' ', $string);
+        $this->post_highlight = '</' . str_replace('<', '', $a_string[0]) . '>';
     }
 
     /**
      * Sets the lines from the log file to be displayed.
      * @param int $num_of_lines
      */
-    public function setLines($num_of_lines = 0)
+    public function setLines($num_of_lines = 0):void
     {
-        $show_lines = $num_of_lines == 0
+        $show_lines = $num_of_lines === 0
             ? $this->show_lines
             : $num_of_lines;
-        $r_file = fopen($this->file_name, 'r');
+        $r_file = fopen($this->file_name, 'rb');
         $line_count = 0;
         while(($line = fgets($r_file)) !== false) {
             if (!empty(trim($line))) {
@@ -274,21 +251,21 @@ class Tail
             }
         }
         $this->a_lines = $a_lines;
-        $this->lines = count($a_lines);
+        $this->lines = \count($a_lines);
     }
 
     /**
      * @param bool $value
      */
-    public function setNewestFirst($value=TRUE)
+    public function setNewestFirst($value=TRUE):void
     {
-        $this->newest_first = $value == FALSE ? FALSE : TRUE;
+        $this->newest_first = $value !== false;
     }
 
     /**
      * @param int $lines
      */
-    public function setNumberOfLines($lines=20)
+    public function setNumberOfLines($lines=20):void
     {
         $this->show_lines = $lines;
         $this->setLines();
@@ -297,7 +274,7 @@ class Tail
     /**
      * @param string $value
      */
-    public function setOutputFormat($value = "BR")
+    public function setOutputFormat($value = 'BR'):void
     {
         $this->output_format = $value;
     }
@@ -305,7 +282,7 @@ class Tail
     /**
      * @param string $value
      */
-    public function setPostOutput($value = "")
+    public function setPostOutput($value = ''):void
     {
         $this->post_output = $value;
     }
@@ -313,7 +290,7 @@ class Tail
     /**
      * @param string $value
      */
-    public function setPreOutput($value = "")
+    public function setPreOutput($value = ''):void
     {
         $this->pre_output = $value;
     }
@@ -321,7 +298,7 @@ class Tail
     /**
      * @param string $search_string
      */
-    public function setSearchString($search_string = "")
+    public function setSearchString($search_string = ''):void
     {
         $this->search_string = $search_string;
     }
@@ -329,7 +306,7 @@ class Tail
     /**
      * @param string $search_string
      */
-    public function setSearchStringRegex($search_string = "")
+    public function setSearchStringRegex($search_string = ''):void
     {
         /* overrides setSearchString */
         $this->search_string_regex = $search_string;
@@ -339,9 +316,9 @@ class Tail
      * SETs the class property tpl.
      * @param string $tpl
      */
-    public function setTpl($tpl = '')
+    public function setTpl($tpl = ''):void
     {
-            $this->tpl = $tpl != ''
+            $this->tpl = $tpl !== ''
                 ? $tpl
                 : '@' . TWIG_PREFIX . 'pages/tail.tpl';
     }
@@ -361,7 +338,7 @@ class Tail
     /**
      * Sets a couple properties.
      */
-    private function updateStats()
+    private function updateStats():void
     {
         $new_timestamp = filemtime($this->file_name);
         // check for change

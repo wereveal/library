@@ -74,7 +74,7 @@ class NavComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function addNavToSitemap($nav_id = -1): bool
+    public function addNavToSitemap($nav_id = -1):bool
     {
         if ($nav_id < 1) {
             $err = ExceptionHelper::getCodeNumberModel('create missing value');
@@ -110,7 +110,7 @@ class NavComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function createNavArray($ng_id = -1): array
+    public function createNavArray($ng_id = -1):array
     {
         if ($ng_id === -1) {
             $ng_id = $this->o_ng->retrieveDefaultId();
@@ -147,7 +147,7 @@ class NavComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function delete($nav_id = -1): bool
+    public function delete($nav_id = -1):bool
     {
         if ($nav_id < 1) {
             $err_code = ExceptionHelper::getCodeNumberModel('delete missing primary');
@@ -174,7 +174,7 @@ class NavComplexModel
      * @return array
      * @throws ModelException
      */
-    public function getChildrenRecursive($parent_id = -1, $ng_id = -1, $levels = 'all'): array
+    public function getChildrenRecursive($parent_id = -1, $ng_id = -1, $levels = 'all'):array
     {
         if ($parent_id === -1 || $ng_id === -1) {
             $error_code = ExceptionHelper::getCodeNumberModel('missing value');
@@ -213,7 +213,7 @@ class NavComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function getNavList($ng_id = -1): array
+    public function getNavList($ng_id = -1):array
     {
         if ($ng_id === -1) {
             try {
@@ -243,7 +243,7 @@ class NavComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function getNavListAll(): array
+    public function getNavListAll():array
     {
         $select_sql = trim(str_replace("WHERE n.nav_active = 'true'", '', $this->select_sql));
         $sql = $select_sql . "\n" . $this->select_order_sql;
@@ -379,7 +379,7 @@ class NavComplexModel
      * @return array
      * @throws ModelException
      */
-    public function getSitemap(array $a_navgroups = ['Sitemap'], $auth_level = 0, $child_levels = 'all'): array
+    public function getSitemap(array $a_navgroups = ['Sitemap'], $auth_level = 0, $child_levels = 'all'):array
     {
         $meth = __METHOD__ . '.';
         $sql = $this->select_sql;
@@ -453,7 +453,7 @@ class NavComplexModel
      * @param array $a_options  optional, ['changefreq' => 'yearly', 'priority' => 0.5]
      * @return array
      */
-    public function getSitemapForXml($auth_level = 0, array $a_options = []): array
+    public function getSitemapForXml($auth_level = 0, array $a_options = []):array
     {
         try {
             $a_results = $this->getNavListByName('Sitemap');
@@ -527,7 +527,7 @@ class NavComplexModel
      * @param array $a_nav_list
      * @return int
      */
-    public function numOfLevels(array $a_nav_list = []): int
+    public function numOfLevels(array $a_nav_list = []):int
     {
         $nav_level = 0;
         foreach ($a_nav_list as $a_nav) {
@@ -545,7 +545,7 @@ class NavComplexModel
      * @return array
      * @throws ModelException
      */
-    public function readAllNavUrlTree(): array
+    public function readAllNavUrlTree():array
     {
         $meth = __METHOD__ . '.';
         $select_sql = 'SELECT ' . $this->buildSqlSelectFields($this->a_db_fields, 'n');
@@ -602,7 +602,7 @@ class NavComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function removeNavFromSitemap($nav_id): bool
+    public function removeNavFromSitemap($nav_id):bool
     {
         if ($nav_id < 1) {
             $err = ExceptionHelper::getCodeNumberModel('delete missing value');
@@ -640,7 +640,7 @@ class NavComplexModel
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function save(array $a_post = []): bool
+    public function save(array $a_post = []):bool
     {
         if (empty($a_post)) {
             $this->error_message = 'An array with the save values was not supplied.';
@@ -814,7 +814,7 @@ class NavComplexModel
      *
      * @return string
      */
-    public function getSelectSql(): string
+    public function getSelectSql():string
     {
         return $this->select_sql;
     }
@@ -824,12 +824,12 @@ class NavComplexModel
      *
      * @param string $select_sql normally not set.
      */
-    public function setSelectSql($select_sql = ''): void
+    public function setSelectSql($select_sql = ''):void
     {
         if ($select_sql === '') {
             $nav_select = $this->buildSqlSelectFields($this->a_db_fields, 'n');
             $select_sql = "
-                SELECT {$nav_select}, 
+                SELECT {$nav_select},
                     u.url_text as url,
                     ng.ng_id,
                     ng.ng_name,
@@ -860,7 +860,7 @@ class NavComplexModel
      *
      * @return string
      */
-    public function getSelectOrderSql(): string
+    public function getSelectOrderSql():string
     {
         return $this->select_order_sql;
     }
@@ -870,7 +870,7 @@ class NavComplexModel
      *
      * @param string $string optional
      */
-    public function setSelectOrderSql($string = ''): void
+    public function setSelectOrderSql($string = ''):void
     {
         if (empty($string)) {
             $string =<<<EOT

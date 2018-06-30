@@ -28,9 +28,10 @@ class PeopleGroupMapEntity implements EntityInterface
 
     /**
      * Gets all the entity properties.
+     *
      * @return array
      */
-    public function getAllProperties()
+    public function getAllProperties():array
     {
         return array(
             'pgm_id'    => $this->pgm_id,
@@ -41,10 +42,11 @@ class PeopleGroupMapEntity implements EntityInterface
 
     /**
      * Sets all the properties for the entity in one step.
+     *
      * @param array $a_entity
      * @return bool
      */
-    public function setAllProperties(array $a_entity = array())
+    public function setAllProperties(array $a_entity = array()):bool
     {
         $a_defaults = [
             'pgm_id'    => -1,
@@ -65,7 +67,7 @@ class PeopleGroupMapEntity implements EntityInterface
     /**
      * @param integer $group_id
      */
-    public function setGroupId($group_id = -1)
+    public function setGroupId($group_id = -1):void
     {
         $this->group_id = $group_id;
     }
@@ -73,7 +75,7 @@ class PeopleGroupMapEntity implements EntityInterface
     /**
      * @return integer
      */
-    public function getGroupId()
+    public function getGroupId():int
     {
         return $this->group_id;
     }
@@ -81,7 +83,7 @@ class PeopleGroupMapEntity implements EntityInterface
     /**
      * @param integer $pgm_id
      */
-    public function setPgmId($pgm_id = -1)
+    public function setPgmId($pgm_id = -1):void
     {
         $this->pgm_id = $pgm_id;
     }
@@ -89,7 +91,7 @@ class PeopleGroupMapEntity implements EntityInterface
     /**
      * @return integer
      */
-    public function getPgmId()
+    public function getPgmId():int
     {
         return $this->pgm_id;
     }
@@ -97,7 +99,7 @@ class PeopleGroupMapEntity implements EntityInterface
     /**
      * @param integer $people_id
      */
-    public function setPeopleId($people_id = -1)
+    public function setPeopleId($people_id = -1):void
     {
         $this->people_id = $people_id;
     }
@@ -105,7 +107,7 @@ class PeopleGroupMapEntity implements EntityInterface
     /**
      * @return integer
      */
-    public function getPeopleId()
+    public function getPeopleId():int
     {
         return $this->people_id;
     }

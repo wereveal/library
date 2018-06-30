@@ -21,7 +21,10 @@ trait ConfigControllerTraits
 {
     use ManagerControllerTraits;
 
-    protected function testMethod()
+    /**
+     * @return string
+     */
+    protected function testMethod():string
     {
         return '';
     }

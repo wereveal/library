@@ -43,9 +43,9 @@ class NavgroupsComplexModel
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function deleteWithMap($ng_id = -1)
+    public function deleteWithMap($ng_id = -1):bool
     {
-        if ($ng_id == -1) {
+        if ($ng_id === -1) {
             $this->error_message = 'Missing Navgroup id.';
             throw new ModelException($this->error_message, 420);
         }
@@ -53,7 +53,7 @@ class NavgroupsComplexModel
             $this->o_db->startTransaction();
         }
         catch (ModelException $e) {
-            $this->error_message = "Could not start transaction.";
+            $this->error_message = 'Could not start transaction.';
             throw new ModelException($this->error_message, 12);
         }
         $o_map = new NavNgMapModel($this->o_db);

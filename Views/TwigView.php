@@ -47,7 +47,7 @@ class TwigView implements ViewInterface
      * @param array $a_message
      * @return string
      */
-    public function render(array $a_message = [])
+    public function render(array $a_message = []):string
     {
         $meth = __METHOD__ . '.';
         $o_tp = new TwigPrefixModel($this->o_db);
@@ -66,31 +66,28 @@ class TwigView implements ViewInterface
                     $a_tp_results = $o_tp->read();
                 }
                 catch (ModelException $e) {
-                    $message = "Unable to retrieve the Twig prefix records";
+                    $message = 'Unable to retrieve the Twig prefix records';
                     $message = empty($a_message['message'])
                         ? $message
                         : $a_message['message'] . ' -- ' . $message;
-                    ;
                     $a_message = ViewHelper::failureMessage($message);
                     $continue = false;
                 }
             }
             catch (ModelException $e) {
-                $message = "Unable to retrieve the Twig dir records";
+                $message = 'Unable to retrieve the Twig dir records';
                 $message = empty($a_message['message'])
                     ? $message
                     : $a_message['message'] . ' -- ' . $message;
-                ;
                 $a_message = ViewHelper::failureMessage($message);
                 $continue = false;
             }
         }
         catch (ModelException $e) {
-            $message = "Unable to retrieve the Twig tpl records";
+            $message = 'Unable to retrieve the Twig tpl records';
             $message = empty($a_message['message'])
                 ? $message
                 : $a_message['message'] . ' -- ' . $message;
-            ;
             $a_message = ViewHelper::failureMessage($message);
             $continue = false;
         }
@@ -107,7 +104,6 @@ class TwigView implements ViewInterface
                     $message = empty($a_message['message'])
                         ? $message
                         : $a_message['message'] . ' -- ' . $message;
-                    ;
                     $a_message = ViewHelper::failureMessage($message);
                     $continue = false;
                     break;
@@ -138,12 +134,13 @@ class TwigView implements ViewInterface
 
     /**
      * Returns the verify delete form with directory values.
+     *
      * @param int $td_id
      * @return string
      */
-    public function renderDeleteDir($td_id = -1)
+    public function renderDeleteDir($td_id = -1):string
     {
-        if ($td_id == -1) {
+        if ($td_id === -1) {
             $a_message = ViewHelper::warningMessage('Unable to delete the directory: a directory must be specified by id.');
             return $this->render($a_message);
         }
@@ -188,16 +185,18 @@ class TwigView implements ViewInterface
      * @param int $tp_id
      * @return string
      */
-    public function renderDeleteTp($tp_id = -1)
+    public function renderDeleteTp($tp_id = -1):string
     {
-        if ($tp_id == -1) {
+        if ($tp_id === -1) {
             $a_message = ViewHelper::warningMessage('Unable to delete the twig prefix: it must be specified by id.');
             return $this->render($a_message);
         }
         $a_router_parts = $this->o_router->getRouteParts();
         $o_tc = new TwigComplexModel($this->o_di);
         if (!$o_tc->canBeDeleted('tp', $tp_id)) {
-            $a_message = ViewHelper::errorMessage("Unable to delete the twig prefix: directories which use it may still exist.");
+            $a_message = ViewHelper::errorMessage(
+                'Unable to delete the twig prefix: directories which use it may still exist.'
+            );
             return $this->render($a_message);
         }
         $o_tp = new TwigPrefixModel($this->o_db);
@@ -207,12 +206,14 @@ class TwigView implements ViewInterface
                 $a_tp = $a_results[0];
             }
             else {
-                $a_message = ViewHelper::warningMessage("Unable to delete the twig prefix: the prefix values were not available.");
+                $a_message = ViewHelper::warningMessage(
+                    'Unable to delete the twig prefix: the prefix values were not available.'
+                );
                 return $this->render($a_message);
             }
         }
         catch (ModelException $e) {
-            $a_message = ViewHelper::errorMessage("Unable to delete the twig prefix: an error has occurred.");
+            $a_message = ViewHelper::errorMessage('Unable to delete the twig prefix: an error has occurred.');
             return $this->render($a_message);
         }
         /* if a directory still uses this twig prefix, don't allow delete */
@@ -239,9 +240,9 @@ class TwigView implements ViewInterface
      * @param int $tpl_id
      * @return string
      */
-    public function renderDeleteTpl($tpl_id = -1)
+    public function renderDeleteTpl($tpl_id = -1):string
     {
-        if ($tpl_id == -1) {
+        if ($tpl_id === -1) {
             $a_message = ViewHelper::warningMessage('Unable to delete the template: it must be specified by id.');
             return $this->render($a_message);
         }
@@ -249,27 +250,29 @@ class TwigView implements ViewInterface
         // first make sure no pages still use this template
         $o_tc = new TwigComplexModel($this->o_di);
         if (!$o_tc->canBeDeleted('tpl', $tpl_id)) {
-            $a_message = ViewHelper::warningMessage("Unable to delete the template: a page may still use it.");
+            $a_message = ViewHelper::warningMessage('Unable to delete the template: a page may still use it.');
             return $this->render($a_message);
         }
         $o_tpl  = new TwigTemplatesModel($this->o_db);
         try {
             $a_results = $o_tpl->read(['tpl_id' => $tpl_id]);
-            if (count($a_results) > 0) {
+            if (\count($a_results) > 0) {
                 $a_tpl = $a_results[0];
             }
             else {
-                $a_message = ViewHelper::warningMessage("Unable to delete the template: the template values were not available.");
+                $a_message = ViewHelper::warningMessage(
+                    'Unable to delete the template: the template values were not available.'
+                );
                 return $this->render($a_message);
             }
         }
         catch (ModelException $e) {
-            $a_message = ViewHelper::errorMessage("Unable to delete the template: could not find it.");
+            $a_message = ViewHelper::errorMessage('Unable to delete the template: could not find it.');
             return $this->render($a_message);
         }
         $login_id = $this->o_session->getVar('login_id');
-        if ($a_tpl['tpl_immutable'] == 'true' && $this->o_auth->hasMinimumAuthLevel($login_id, 9)) {
-            $a_message = ViewHelper::warningMessage("Unable to delete the template: the template is immutable.");
+        if ($a_tpl['tpl_immutable'] === 'true' && $this->o_auth->hasMinimumAuthLevel($login_id, 9)) {
+            $a_message = ViewHelper::warningMessage('Unable to delete the template: the template is immutable.');
             return $this->render($a_message);
         }
         $a_values = [

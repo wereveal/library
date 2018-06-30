@@ -37,9 +37,9 @@ class Di
      * @param        $object
      * @return bool
      */
-    public function set($object_name = '', $object)
+    public function set($object_name = '', $object):bool
     {
-        if (!is_object($object) || $object_name == '') {
+        if (!\is_object($object) || $object_name === '') {
             return false;
         }
         $this->a_objects[$object_name] = $object;
@@ -52,7 +52,8 @@ class Di
      */
     public function get($object_name = '')
     {
-        if ($object_name != '' && isset($this->a_objects[$object_name]) && is_object($this->a_objects[$object_name])) {
+        if ($object_name !== '' && isset($this->a_objects[$object_name]) && \is_object
+            ($this->a_objects[$object_name])) {
             return $this->a_objects[$object_name];
         }
         return false;
@@ -62,7 +63,7 @@ class Di
      * Returns the array of objects.
      * @return array
      */
-    public function getObjects()
+    public function getObjects():array
     {
         return $this->a_objects;
     }
@@ -72,7 +73,7 @@ class Di
      * @param string $var_name
      * @param string $var_value
      */
-    public function setVar($var_name = '', $var_value = '')
+    public function setVar($var_name = '', $var_value = ''):void
     {
         if (!empty($var_name)) {
             if (empty($var_value)) {
@@ -95,8 +96,6 @@ class Di
         if (isset($this->a_vars[$var_name])) {
             return $this->a_vars[$var_name];
         }
-        else {
-            return '';
-        }
+        return '';
     }
 }

@@ -58,7 +58,7 @@ class RoutesGroupMapModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function update(array $a_values = [], array $a_not_used = [])
+    public function update(array $a_values = [], array $a_not_used = []):bool
     {
         $a_required_keys = [
             'rgm_id',
@@ -125,10 +125,9 @@ class RoutesGroupMapModel extends ModelAbstract
             $this->error_message = '';
             return true;
         }
-        else {
-            $this->error_message = $error_message;
-            throw new ModelException($error_message, $error_code);
-        }
+
+        $this->error_message = $error_message;
+        throw new ModelException($error_message, $error_code);
     }
 
     ### Additional methods ###
@@ -151,7 +150,7 @@ class RoutesGroupMapModel extends ModelAbstract
      * @return array
      * @throws ModelException
      */
-    public function readByRouteId($route_id = -1)
+    public function readByRouteId($route_id = -1):?array
     {
         $a_search_for = ['route_id' => $route_id];
         if ($route_id < 1) {
@@ -172,9 +171,9 @@ class RoutesGroupMapModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function deleteByRouteId($route_id = -1)
+    public function deleteByRouteId($route_id = -1):?bool
     {
-        if ($route_id == -1) {
+        if ($route_id === -1) {
             throw new ModelException('Missing required value for route_id.', 420);
         }
         $sql = "
@@ -196,9 +195,9 @@ class RoutesGroupMapModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function deleteByGroupId($group_id = -1)
+    public function deleteByGroupId($group_id = -1):?bool
     {
-        if ($group_id == -1) {
+        if ($group_id === -1) {
             throw new ModelException('Missing required value for route_id.', 420);
         }
         $sql = "
@@ -221,7 +220,7 @@ class RoutesGroupMapModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function deleteByRouteGroup(int $route_id = -1, int $group_id = -1)
+    public function deleteByRouteGroup(int $route_id = -1, int $group_id = -1):?bool
     {
         if ($route_id < 1 || $group_id < 1) {
             $err_code = ExceptionHelper::getCodeNumberModel('delete missing value');

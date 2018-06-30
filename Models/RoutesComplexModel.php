@@ -48,7 +48,7 @@ class RoutesComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function delete(int $route_id = -1)
+    public function delete(int $route_id = -1):bool
     {
         if ($route_id < 1) {
             $err_code = ExceptionHelper::getCodeNumberModel('delete missing primary');
@@ -83,7 +83,7 @@ class RoutesComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readAll(int $route_id = -1)
+    public function readAll(int $route_id = -1):array
     {
         $o_url = new UrlsModel($this->o_db);
         $o_route = new RoutesModel($this->o_db);
@@ -103,12 +103,12 @@ class RoutesComplexModel
             JOIN {$this->lib_prefix}urls as u
               ON r.url_id = u.url_id";
         if ($route_id > 0) {
-            $where = "
-            WHERE r.route_id = :route_id";
+            $where = '
+            WHERE r.route_id = :route_id';
             $a_search_for = [':route_id' => $route_id];
         }
-        $order_by = "
-            ORDER BY r.route_immutable DESC, u.url_text";
+        $order_by = '
+            ORDER BY r.route_immutable DESC, u.url_text';
         $sql .= $where . $order_by;
         try {
             $a_routes = $this->o_db->search($sql, $a_search_for);
@@ -125,7 +125,7 @@ class RoutesComplexModel
             FROM {$this->lib_prefix}routes_group_map as rgm
             JOIN {$this->lib_prefix}groups as g
               ON rgm.group_id = g.group_id
-            WHERE rgm.route_id = :route_id  
+            WHERE rgm.route_id = :route_id
         ";
         try {
             $o_stmt = $this->o_db->prepare($sql);
@@ -191,7 +191,7 @@ class RoutesComplexModel
      */
     public function readByRequestUri(string $request_uri = '')
     {
-        if ($request_uri == '') {
+        if ($request_uri === '') {
             throw new ModelException('Missing required value: request uri', 220);
         }
         $a_search_params = [':url_text' => $request_uri];
@@ -205,7 +205,7 @@ class RoutesComplexModel
         $url_fields   = $this->buildSqlSelectFields($url_fields, 'u');
         $sql = "
             SELECT {$route_fields},
-                   {$url_fields} 
+                   {$url_fields}
             FROM {$this->lib_prefix}routes as r, {$this->lib_prefix}urls as u
             WHERE r.url_id = u.url_id
             AND u.url_text = :url_text
@@ -226,7 +226,7 @@ class RoutesComplexModel
      * @return array
      * @throws ModelException
      */
-    public function readGroupsFor(int $route_id = -1)
+    public function readGroupsFor(int $route_id = -1):?array
     {
         if ($route_id < 1) {
             $err_code = ExceptionHelper::getCodeNumberModel('read missing value');
@@ -237,7 +237,7 @@ class RoutesComplexModel
             FROM {$this->lib_prefix}routes_group_map as rgm
             JOIN {$this->lib_prefix}groups as g
               ON rgm.group_id = g.group_id
-            WHERE rgm.route_id = :route_id  
+            WHERE rgm.route_id = :route_id
         ";
         try {
             return $this->o_db->search($sql, [':route_id' => $route_id]);
@@ -254,7 +254,7 @@ class RoutesComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function readWithUrl(int $route_id = -1)
+    public function readWithUrl(int $route_id = -1):?bool
     {
         if ($route_id < 1) {
             $err_code = ExceptionHelper::getCodeNumberModel('read missing value');
@@ -275,7 +275,7 @@ class RoutesComplexModel
             FROM {$this->lib_prefix}routes as r
             JOIN {$this->lib_prefix}urls as u
               ON r.url_id = u.url_id
-            WHERE r.route_id = :route_id  
+            WHERE r.route_id = :route_id
             ORDER BY r.route_immutable DESC, u.url_text
         ";
         $a_search_for = [':route_id' => $route_id];
@@ -295,7 +295,7 @@ class RoutesComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function saveNew(array $a_from_post = [])
+    public function saveNew(array $a_from_post = []):bool
     {
         $meth = __METHOD__ . '.';
         $a_route = $this->fixRoute($a_from_post['route']);
@@ -304,15 +304,14 @@ class RoutesComplexModel
             $err_code = ExceptionHelper::getCodeNumberModel('create missing values');
             throw new ModelException($message, $err_code);
         }
-        else {
-            $a_groups = $this->fixGroups($a_from_post['group'], -1);
-            if ($a_groups === false) {
-                $message = 'A Problem Has Occured. Required group values missing.';
-                $err_code = ExceptionHelper::getCodeNumberModel('create missing values');
-                throw new ModelException($message, $err_code);
-            }
+
+        $a_groups = $this->fixGroups($a_from_post['group'], -1);
+        if ($a_groups === false) {
+            $message = 'A Problem Has Occured. Required group values missing.';
+            $err_code = ExceptionHelper::getCodeNumberModel('create missing values');
+            throw new ModelException($message, $err_code);
         }
-          $log_message = 'route ' . var_export($a_route, TRUE);
+        $log_message = 'route ' . var_export($a_route, TRUE);
           $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $o_routes = new RoutesModel($this->o_db);
         $o_routes->setupElog($this->o_di);
@@ -345,7 +344,7 @@ class RoutesComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function update(array $a_from_post = [])
+    public function update(array $a_from_post = []):bool
     {
         $meth = __METHOD__ . '.';
         $a_route = $this->fixRoute($a_from_post['route']);
@@ -365,8 +364,8 @@ class RoutesComplexModel
         foreach ($a_old_groups as $old_key => $a_old_group) {
             $key = array_search($a_old_group['group_id'], $a_group_ids);
             if ($key) {
-                unset($a_group_ids[$key]); // already has a record
-                unset($a_old_groups[$old_key]); // no need to delete map record
+                unset($a_group_ids[$key], $a_old_groups[$old_key]); // already has a record
+                // no need to delete map record
             }
         }
         if (!empty($a_group_ids)) { // we have new map records to create
@@ -407,7 +406,7 @@ class RoutesComplexModel
      * @param       $route_id
      * @return array
      */
-    private function fixGroups(array $a_groups = [], $route_id)
+    private function fixGroups(array $a_groups = [], $route_id):array
     {
         $a_new_groups = [];
         foreach ($a_groups as $group_id => $value) {

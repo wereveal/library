@@ -35,9 +35,10 @@ class SitemapView implements ViewInterface
 
     /**
      * Main method to render the sitemap page.
+     *
      * @return string
      */
-    public function render()
+    public function render():string
     {
         $meth = __METHOD__ . '.';
         $a_message = [];

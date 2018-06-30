@@ -26,6 +26,7 @@ class TwigDirsModel extends ModelAbstract
 {
     /**
      * TwigDirsModel constructor.
+     *
      * @param \Ritc\Library\Services\DbModel $o_db
      */
     public function __construct(DbModel $o_db)
@@ -50,7 +51,7 @@ class TwigDirsModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function delete($id = -1)
+    public function delete($id = -1):bool
     {
         $meth = ' — ' . __METHOD__;
         $o_tpl = new TwigTemplatesModel($this->o_db);
@@ -60,7 +61,7 @@ class TwigDirsModel extends ModelAbstract
                 try {
                     $results = $o_tpl->readById($dir_id);
                     if (!empty($results)) {
-                        $this->error_message = "A template exists that uses this directory";
+                        $this->error_message = 'A template exists that uses this directory';
                         $err_code = ExceptionHelper::getCodeNumberModel('delete has children');
                         throw new ModelException($this->error_message . $meth, $err_code);
                     }
@@ -74,7 +75,7 @@ class TwigDirsModel extends ModelAbstract
             try {
                 $results = $o_tpl->readById($id);
                 if (!empty($results)) {
-                    $this->error_message = "A template exists that uses this directory";
+                    $this->error_message = 'A template exists that uses this directory';
                     $err_code = ExceptionHelper::getCodeNumberModel('delete has children');
                     throw new ModelException($this->error_message . $meth, $err_code);
                 }
@@ -99,7 +100,7 @@ class TwigDirsModel extends ModelAbstract
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function createDefaultDirs($prefix_id = -1)
+    public function createDefaultDirs($prefix_id = -1):array
     {
         $meth = ' — ' . __METHOD__;
         if ($prefix_id < 1) {
@@ -147,7 +148,7 @@ class TwigDirsModel extends ModelAbstract
                 }
             }
             catch (ModelException $e) {
-                $message = "Unable to determine if the default dir exists. ";
+                $message = 'Unable to determine if the default dir exists. ';
                 $message .= DEVELOPER_MODE
                     ? $e->errorMessage()
                     : $e->getMessage();

@@ -59,7 +59,7 @@ class TwigComplexModel
      * @param int    $id
      * @return bool
      */
-    public function canBeDeleted($which_one = '', $id = -1)
+    public function canBeDeleted($which_one = '', $id = -1):?bool
     {
         if (empty($which_one) || $id < 1) {
             return false;
@@ -122,7 +122,7 @@ class TwigComplexModel
      * @return array                    ['tp_id', 'td_ids', 'tpl_ids']
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function createTwigForApp(array $a_values = [])
+    public function createTwigForApp(array $a_values = []):array
     {
         if (empty($a_values) || empty($a_values['tp_prefix']) || empty($a_values['tp_path'])) {
             $message = 'Missing required values.';
@@ -234,7 +234,7 @@ class TwigComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readDirsForPrefix($prefix_id = -1)
+    public function readDirsForPrefix($prefix_id = -1):?array
     {
         if ($prefix_id < 1) {
             return [];
@@ -243,7 +243,7 @@ class TwigComplexModel
         $td_prefix  = $this->o_dirs->getLibPrefix();
         $sql = "
             SELECT p.tp_id, p.tp_prefix, d.td_id, d.td_name from {$tp_prefix}twig_prefix as p
-            JOIN {$td_prefix}twig_dirs as d 
+            JOIN {$td_prefix}twig_dirs as d
               ON p.tp_id = d.tp_id
             WHERE p.tp_active = 'true'
             AND p.tp_id = :tp_id
@@ -290,9 +290,8 @@ class TwigComplexModel
             if (empty($a_tpl_info)) {
                 return [];
             }
-            else {
-                return $a_tpl_info[0];
-            }
+
+            return $a_tpl_info[0];
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
@@ -306,11 +305,11 @@ class TwigComplexModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readTwigConfig($is_active = 'true')
+    public function readTwigConfig($is_active = 'true'):?array
     {
         $tp_prefix = $this->o_tpls->getLibPrefix();
         $td_prefix = $this->o_dirs->getLibPrefix();
-        $is_active = $is_active != 'false'
+        $is_active = $is_active !== 'false'
             ? 'true'
             : 'false';
         $a_values = [':tp_active' => $is_active];
@@ -321,8 +320,8 @@ class TwigComplexModel
             FROM {$tp_prefix}twig_prefix as p
             JOIN {$td_prefix}twig_dirs as d
               ON d.tp_id = p.tp_id
-            WHERE p.tp_active = :tp_active 
-            ORDER BY $order_by 
+            WHERE p.tp_active = :tp_active
+            ORDER BY $order_by
         ";
         try {
             return $this->o_db->search($sql, $a_values);
@@ -338,7 +337,7 @@ class TwigComplexModel
      * Creates the required properties containing instances of the respective database models.
      * @param \Ritc\Library\Services\DbModel $o_db
      */
-    private function setupDbs(DbModel $o_db)
+    private function setupDbs(DbModel $o_db):void
     {
         $this->a_object_names = ['o_dirs', 'o_prefix', 'o_tpls', 'o_page'];
         $this->o_dirs   = new TwigDirsModel($o_db);

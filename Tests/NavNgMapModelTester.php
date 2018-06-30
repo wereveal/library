@@ -8,7 +8,6 @@ namespace Ritc\Library\Tests;
 use Ritc\Library\Basic\Tester;
 use Ritc\Library\Models\NavNgMapModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * NavNgMapModel class tester.
@@ -23,8 +22,6 @@ use Ritc\Library\Traits\LogitTraits;
 class NavNgMapModelTester extends Tester
 
 {
-    use LogitTraits;
-
     /** @var \Ritc\Library\Models\NavNgMapModel  */
     private $o_db;
 
@@ -37,6 +34,7 @@ class NavNgMapModelTester extends Tester
         $this->setupElog($o_di);
         /** @var \Ritc\Library\Services\DbModel $o_db */
         $o_db = $o_di->get('db');
+        /** @noinspection UnusedConstructorDependenciesInspection */
         $this->o_db = new NavNgMapModel($o_db);
         $this->o_db->setElog($this->o_elog);
     }
@@ -44,7 +42,7 @@ class NavNgMapModelTester extends Tester
     /**
      * @return bool
      */
-    public function createTester()
+    public function createTester():bool
     {
         return false;
     }
@@ -52,7 +50,7 @@ class NavNgMapModelTester extends Tester
     /**
      * @return bool
      */
-    public function readTester()
+    public function readTester():bool
     {
         return false;
     }
@@ -60,7 +58,7 @@ class NavNgMapModelTester extends Tester
     /**
      * @return bool
      */
-    public function updateTester()
+    public function updateTester():bool
     {
         return false;
     }
@@ -68,7 +66,7 @@ class NavNgMapModelTester extends Tester
     /**
      * @return bool
      */
-    public function deleteTester()
+    public function deleteTester():bool
     {
         return false;
     }

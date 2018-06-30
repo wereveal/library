@@ -49,9 +49,9 @@ class NavigationModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function deleteWithMap($nav_id = -1)
+    public function deleteWithMap($nav_id = -1):bool
     {
-        if ($nav_id == -1) {
+        if ($nav_id === -1) {
             $this->error_message = 'Missing required nav id.';
             throw new ModelException($this->error_message, 420);
         }
@@ -99,13 +99,14 @@ class NavigationModel extends ModelAbstract
      * @param int $nav_id
      * @return bool
      */
-    public function navHasChildren($nav_id = -1)
+    public function navHasChildren($nav_id = -1):bool
     {
-        if ($nav_id == -1) {
+        if ($nav_id === -1) {
             $this->error_message = 'Missing required nav id';
             return false;
         }
-        $sql = "
+        $sql = /** @lang text */
+        "
             SELECT DISTINCT nav_level
             FROM {$this->db_table}
             WHERE parent_id = :parent_id
@@ -114,7 +115,7 @@ class NavigationModel extends ModelAbstract
         $a_search_values = [':parent_id' => $nav_id, ];
         try {
             $results = $this->o_db->search($sql, $a_search_values);
-            if (count($results) > 0) {
+            if (\count($results) > 0) {
                 return true;
             }
         }

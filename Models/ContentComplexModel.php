@@ -61,7 +61,7 @@ class ContentComplexModel
      * @return array          Records from the database table.
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readAllByPage($page_id = -1, $block = '', $current = '')
+    public function readAllByPage($page_id = -1, $block = '', $current = ''):array
     {
         $meth = __METHOD__ . '.';
         if ($page_id < 1) {
@@ -81,7 +81,7 @@ class ContentComplexModel
             $sql_current = ' AND c.c_current = :c_current';
         }
         $sql = "
-            SELECT 
+            SELECT
               p.page_id, p.page_title, p.page_description,
               b.b_name, b.b_type,
               c.c_content, c.c_short_content, c.c_type
@@ -92,7 +92,7 @@ class ContentComplexModel
               ON b.b_id = pbm.pbm_block_id{$sql_block}
             JOIN lib_content as c
               ON c.c_pbm_id = pbm.pbm_id{$sql_current}
-            WHERE p.page_id = :page_id  
+            WHERE p.page_id = :page_id
         ";
         $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
         $log_message = 'a search for  ' . var_export($a_search_for, true);
@@ -117,8 +117,8 @@ class ContentComplexModel
      */
     public function readAllFeatured()
     {
-        $sql = "
-            SELECT 
+        $sql = '
+            SELECT
               p.page_id, p.page_title, p.page_description,
               b.b_name, b.b_type,
               c.c_content, c.c_short_content, c.c_type
@@ -128,11 +128,11 @@ class ContentComplexModel
             JOIN  lib_blocks as b
               ON b.b_id = pbm.pbm_block_id
             JOIN lib_content as c
-              ON c.c_pbm_id = pbm.pbm_id 
+              ON c.c_pbm_id = pbm.pbm_id
                 AND c.c_current = :c_current
                 AND c.c_location = :c_location
-            WHERE p.page_id = :page_id  
-        ";
+            WHERE p.page_id = :page_id
+        ';
         $a_search_for = [
             ':c_current'  => 'true',
             ':c_location' => 'featured'
@@ -154,7 +154,7 @@ class ContentComplexModel
      * @return array Record(s).
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readCurrent($page_id = -1, $block = '')
+    public function readCurrent($page_id = -1, $block = ''):array
     {
         if ($page_id < 1) {
             $message    = 'Missing the required page id.';
@@ -178,7 +178,7 @@ class ContentComplexModel
             JOIN {$prefix}page_blocks_map as pbm
               ON c.c_pbm_id = pbm.pbm_id
             JOIN {$prefix}blocks as b
-              ON b.b_id = pbm.pbm_block_id 
+              ON b.b_id = pbm.pbm_block_id
                 AND b.b_active = :b_active
                 AND b.b_type = :b_type
             WHERE c.c_current = :current;

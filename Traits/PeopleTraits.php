@@ -18,13 +18,14 @@ trait PeopleTraits
 {
     /**
      * Returns an array mapping a person to the group(s) specified.
+     *
      * @param string $people_id
      * @param array  $a_groups
      * @return array
      */
-    public function makePgmArray($people_id = '', array $a_groups = array())
+    public function makePgmArray($people_id = '', array $a_groups = array()):array
     {
-        if ($people_id == '' || $a_groups == array()) {
+        if ($people_id === '' || $a_groups === []) {
             return array();
         }
         $a_return_map = array();

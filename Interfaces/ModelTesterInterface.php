@@ -20,23 +20,23 @@ interface ModelTesterInterface {
      * Tests the create method.
      * @return string
      */
-    public function createTester();
+    public function createTester():string;
 
     /**
      * Tests the read method.
      * @return string
      */
-    public function readTester();
+    public function readTester():string;
 
     /**
      * Tests the update method.
      * @return string
      */
-    public function updateTester();
+    public function updateTester():string;
 
     /**
      * Tests the delete method.
      * @return string
      */
-    public function deleteTester();
+    public function deleteTester():string;
 }

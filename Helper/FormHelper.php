@@ -22,7 +22,7 @@ class FormHelper
      * @param array $a_values
      * @return array
      */
-    public static function singleBtnForm(array $a_values = [])
+    public static function singleBtnForm(array $a_values = []):array
     {
         $form_action = empty($a_values['form_action'])
             ? '/'
@@ -74,7 +74,7 @@ class FormHelper
      * @param array $a_values ['id', 'name', 'label', 'value', 'checked']
      * @return array
      */
-    public static function checkbox(array $a_values = [])
+    public static function checkbox(array $a_values = []):array
     {
         if (empty($a_values['id']) || empty($a_values['name']) || empty($a_values['label'])) {
             return [];

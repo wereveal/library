@@ -76,7 +76,7 @@ trait ViewTraits
      * The default setup for a view.
      * @param Di $o_di
      */
-    public function setupView(Di $o_di)
+    public function setupView(Di $o_di):void
     {
         $this->setOProperties($o_di);
         $this->setAdmLevel();
@@ -89,7 +89,7 @@ trait ViewTraits
      * @param array  $a_twig_values
      * @return string
      */
-    public function renderIt($tpl = '', array $a_twig_values = [])
+    public function renderIt($tpl = '', array $a_twig_values = []):?string
     {
         if (empty($tpl) || empty($a_twig_values)) {
             return 'Error: missing values.';
@@ -102,33 +102,29 @@ trait ViewTraits
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
-                else {
-                    return '';
-                }
+
+                return '';
             }
             catch(\Twig_Error_Syntax $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
-                else {
-                    return '';
-                }
+
+                return '';
             }
             catch(\Twig_Error_Runtime $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
-                else {
-                    return '';
-                }
+
+                return '';
             }
             catch(\TypeError $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
-                else {
-                    return '';
-                }
+
+                return '';
             }
         }
         else {
@@ -141,7 +137,7 @@ trait ViewTraits
      * @param array $a_message
      * @return string
      */
-    public function renderError(array $a_message = [])
+    public function renderError(array $a_message = []):string
     {
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['tpl'] = 'error';
@@ -156,7 +152,7 @@ trait ViewTraits
      *                              This can be either the navgroup id or name.
      * @return array
      */
-    public function retrieveNav($nav_group = '')
+    public function retrieveNav($nav_group = ''):array
     {
         $cache_key = 'nav.values.ng_id.' . $nav_group;
         if ($this->use_cache) {
@@ -165,8 +161,8 @@ trait ViewTraits
         else {
             $a_nav = [];
         }
-        if (!is_array($a_nav) || empty($a_nav)) {
-            if ($this->adm_level == '') {
+        if (!\is_array($a_nav) || empty($a_nav)) {
+            if ($this->adm_level === '') {
                 $this->setAdmLevel();
             }
             $a_nav = $this->readNav($nav_group);
@@ -188,14 +184,14 @@ trait ViewTraits
      *                             Note that for now, only two children levels are available.
      * @return array
      */
-    public function buildSitemapArray($child_levels = 'all')
+    public function buildSitemapArray($child_levels = 'all'):array
     {
         $a_sitemap = [];
         $date_key = 'sitemap.html.date';
         $value_key = 'sitemap.html.value';
         if ($this->use_cache) {
             $date = $this->o_cache->get($date_key);
-            if ($date == date('Ymd')) {
+            if ($date === date('Ymd')) {
                 $a_values = $this->o_cache->get($value_key);
                 if (!empty($a_values)) {
                     $a_sitemap = $a_values;
@@ -228,7 +224,7 @@ trait ViewTraits
             catch (ModelException $e) {
                 $a_sitemap = ViewHelper::errorMessage('Unable to retrieve the sitemap.');
             }
-            if (empty($a_sitemap['message']) && $this->use_cache) {
+            if ($this->use_cache && empty($a_sitemap['message'])) {
                 $this->o_cache->set($date_key, date('Ymd'), 'sitemap');
                 $this->o_cache->set($value_key, $a_sitemap, 'sitemap');
             }
@@ -242,7 +238,7 @@ trait ViewTraits
      * @param int|string $url_id    Optional, defaults to -1 which then uses current url_id.
      * @return array
      */
-    public function createDefaultTwigValues(array $a_message = [], $url_id = -1)
+    public function createDefaultTwigValues(array $a_message = [], $url_id = -1):array
     {
         $meth = __METHOD__ . '.';
         $a_page_values = [];
@@ -254,7 +250,7 @@ trait ViewTraits
             $a_page_values = $this->o_cache->get($cache_key);
             $a_auth_levels = $this->o_cache->get($group_cache_key);
         }
-        if (!is_array($a_page_values) || empty($a_page_values)) {
+        if (!\is_array($a_page_values) || empty($a_page_values)) {
             $a_page_values = $this->getPageValues($url_id);
             if ($this->use_cache) {
                 $this->o_cache->set($cache_key, $a_page_values, 'page');
@@ -317,7 +313,7 @@ trait ViewTraits
      * @param array $a_twig_values
      * @return string
      */
-    public function createTplString(array $a_twig_values = [])
+    public function createTplString(array $a_twig_values = []):string
     {
         if (empty($a_twig_values)) { return ''; }
         $page_prefix = empty($a_twig_values['page_prefix'])
@@ -337,35 +333,35 @@ trait ViewTraits
      * Sets the standard used objects from the object injector.
      * @param Di $o_di
      */
-    protected function setOProperties(Di $o_di)
+    protected function setOProperties(Di $o_di):void
     {
-        if (empty($this->o_di)) {
+        if (null === $this->o_di) {
             $this->o_di = $o_di;
         }
-        if (empty($this->o_router)) {
+        if (null === $this->o_router) {
             $this->o_router = $o_di->get('router');
         }
-        if (empty($this->o_twig)) {
+        if (null === $this->o_twig) {
             $this->o_twig = $o_di->get('twig');
         }
-        if (empty($this->o_db)) {
+        if (null === $this->o_db) {
             $this->o_db = $o_di->get('db');
         }
-        if (empty($this->o_session)) {
+        if (null === $this->o_session) {
             $this->o_session = $o_di->get('session');
         }
-        if (empty($this->o_auth)) {
+        if (null === $this->o_auth) {
             $this->o_auth = new AuthHelper($o_di);
         }
-        if (empty($this->o_nav)) {
+        if (null === $this->o_nav) {
             $this->o_nav = new NavComplexModel($this->o_di);
         }
-        if (empty($this->o_routes_helper)) {
+        if (null === $this->o_routes_helper) {
             $this->o_routes_helper = new RoutesHelper($o_di);
         }
         if (USE_CACHE) {
             $o_cache = $o_di->get('cache');
-            if (is_object($o_cache)) {
+            if (\is_object($o_cache)) {
                 $this->o_cache    = $o_cache;
                 $this->cache_type = $this->o_cache->getCacheType();
                 $this->use_cache  = empty($this->cache_type)
@@ -378,7 +374,7 @@ trait ViewTraits
                 $this->use_cache = false;
             }
         }
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+        if (\defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             /** @var \Ritc\Library\Services\Elog $o_elog */
             $o_elog = $o_di->get('elog');
             $this->o_nav->setElog($o_elog);
@@ -391,7 +387,7 @@ trait ViewTraits
      *
      * @param string $login_id Optional, if empty tries to use $_SESSION['login_id'].
      */
-    protected function setAdmLevel($login_id = '')
+    protected function setAdmLevel($login_id = ''):void
     {
         $login_id = empty($login_id)
             ? empty($_SESSION['login_id'])
@@ -404,7 +400,7 @@ trait ViewTraits
             $adm_level = $this->o_cache->get($cache_key);
         }
         if (empty($adm_level)) {
-            if ($login_id != 'empty') {
+            if ($login_id !== 'empty') {
                 $adm_level = $this->o_auth->getHighestAuthLevel($login_id);
             }
             else {
@@ -422,7 +418,7 @@ trait ViewTraits
      * Uses the retrieveNav method to do so.
      * @param int|string $nav_group optional, defaults to 1
      */
-    protected function setNav($nav_group = 1)
+    protected function setNav($nav_group = 1):void
     {
         $this->a_nav = $this->retrieveNav($nav_group);
     }
@@ -431,11 +427,11 @@ trait ViewTraits
      * Sets the property a_nav array by the navgroup_name.
      * @param string $navgroup_name
      */
-    protected function setNavByNgName($navgroup_name = '')
+    protected function setNavByNgName($navgroup_name = ''):void
     {
         $ng_id = -1;
         $cache_key = 'navgroup.id.by.' . $navgroup_name;
-        if (USE_CACHE && is_object($this->o_cache)) {
+        if (USE_CACHE && \is_object($this->o_cache)) {
             $ng_id = $this->o_cache->get($cache_key);
         }
         if ($ng_id < 1) {
@@ -460,7 +456,7 @@ trait ViewTraits
      * @param string       $name
      * @throws \Ritc\Library\Exceptions\FactoryException
      */
-    public function setTwig($twig_config = 'twig_config.php', $name = 'main')
+    public function setTwig($twig_config = 'twig_config.php', $name = 'main'):void
     {
         try {
             $o_twig = TwigFactory::getTwig($twig_config, $name);
@@ -480,7 +476,7 @@ trait ViewTraits
      * @param int|string $url_id
      * @return array
      */
-    public function getPageValues($url_id = -1)
+    public function getPageValues($url_id = -1):array
     {
         $url_id = $this->urlId($url_id);
         try {
@@ -508,12 +504,10 @@ trait ViewTraits
                 'base_url'       => '/'
             ];
         }
-        else {
-            $base_url = $a_page_values['page_base_url'] == '/'
-                ? SITE_URL
-                : SITE_URL . $a_page_values['page_base_url'];
 
-        }
+        $base_url = $a_page_values['page_base_url'] === '/'
+            ? SITE_URL
+            : SITE_URL . $a_page_values['page_base_url'];
         return [
             'page_id'     => $a_page_values['page_id'],
             'url_id'      => $a_page_values['url_id'],
@@ -535,7 +529,7 @@ trait ViewTraits
     /**
      * @return array
      */
-    public function getNav()
+    public function getNav():array
     {
         return $this->a_nav;
     }
@@ -548,18 +542,15 @@ trait ViewTraits
      * @param int   $value
      * @return int
      */
-    protected function createNewOrderNumber(array $a_used = [], $value = 0)
+    protected function createNewOrderNumber(array $a_used = [], $value = 0):int
     {
-        if (array_search($value, $a_used) === false) {
+        if (!\in_array($value, $a_used)) {
             return (int) $value;
         }
-        elseif (array_search($value + 1, $a_used) === false) {
-            $new_value = $value + 1;
-            return (int) $new_value;
+        if (!\in_array($value + 1, $a_used)) {
+            return $value + 1;
         }
-        else {
-            return $this->createNewOrderNumber($a_used, $value + 1);
-        }
+        return $this->createNewOrderNumber($a_used, $value + 1);
     }
 
     /**
@@ -576,7 +567,7 @@ trait ViewTraits
      *                            ]```
      * @return array
      */
-    protected function createNumericPagerValues($a_parameters = [])
+    protected function createNumericPagerValues(array $a_parameters = []):array
     {
         $a_pager = [];
         $pager_key = 'pager.values.for.' . md5(json_encode($a_parameters));
@@ -609,7 +600,7 @@ trait ViewTraits
         $get_stuff = '';
         if (!empty($a_parameters['get_params'])) {
             foreach($a_parameters['get_params'] as $key => $value) {
-                $get_stuff .= $get_stuff == ''
+                $get_stuff .= $get_stuff === ''
                     ? '?' . $key . '=' . $value
                     : '&' . $key . '=' . $value;
 
@@ -622,7 +613,7 @@ trait ViewTraits
         $use_page_numbers   = !empty($a_parameters['use_page_numbers'])
             ? $a_parameters['use_page_numbers']
             : true;
-        $previous_value     = $start_record == 1 || $start_record - $records_to_display < 1
+        $previous_value     = $start_record === 1 || $start_record - $records_to_display < 1
             ? 1
             : $start_record - $records_to_display;
         $next_value         = $start_record > 1
@@ -639,7 +630,7 @@ trait ViewTraits
             $i_start = $before_this_page;
         }
         $a_pager['first']    = $href
-                               . "/1"
+                               . '/1'
                                . $use_to_display
                                . '/'
                                . $get_stuff;
@@ -657,15 +648,15 @@ trait ViewTraits
                                . $use_to_display
                                . '/' . $get_stuff;
         $display_links = !empty($a_parameters['display_links'])
-            ? $a_parameters['display_links'] == 'all'
+            ? $a_parameters['display_links'] === 'all'
                 ? $number_of_pages
                 : $a_parameters['display_links']
             : 11;
-        if ($start_record == 1) {
+        if ($start_record === 1) {
             $a_pager['previous'] = '';
             $a_pager['first'] = '';
         }
-        if ($start_record == $records_to_display) {
+        if ($start_record === $records_to_display) {
             $a_pager['previous'] = $href
                                    . '/1'
                                    . $use_to_display
@@ -677,7 +668,7 @@ trait ViewTraits
                 ? 1
                 : $number_of_pages - 10;
             $i_end = $number_of_pages;
-            if ($i_end == $this_page) {
+            if ($i_end === $this_page) {
                 $a_pager['next'] = '';
                 $a_pager['last'] = '';
             }
@@ -686,13 +677,11 @@ trait ViewTraits
             if ($use_page_numbers) {
                 $text = $i;
             }
+            else if ($i === 1) {
+                $text = 1;
+            }
             else {
-                if ($i == 1) {
-                    $text = 1;
-                }
-                else {
-                    $text = ($i - 1) * $records_to_display;
-                }
+                $text = ($i - 1) * $records_to_display;
             }
             if ($i === 1) {
                 $link = $href
@@ -700,7 +689,7 @@ trait ViewTraits
                         . $use_to_display
                         . '/' . $get_stuff;
             }
-            elseif ($this_page == $i) {
+            elseif ($this_page === $i) {
                 $link = '';
             }
             else {
@@ -710,7 +699,7 @@ trait ViewTraits
                         . $use_to_display
                         . '/' . $get_stuff;
             }
-            if ($i == $start_record || ($start_record == 1 && $i == 0)) {
+            if ($i === $start_record || ($start_record === 1 && $i === 0)) {
                 $link = '';
             }
             $a_pager['links'][] = [
@@ -729,17 +718,15 @@ trait ViewTraits
      * @param array $a_nav
      * @return array
      */
-    protected function createSubmenu(array $a_nav = [])
+    protected function createSubmenu(array $a_nav = []):array
     {
-        if ($a_nav == []) {
+        if ($a_nav === []) {
             return [];
         }
         $a_new_nav = [];
         foreach ($a_nav as $a_link) {
-            if ($a_link['nav_level'] == 1) {
-                $this_link_id = isset($a_link['nav_id'])
-                    ? $a_link['nav_id']
-                    : 0;
+            if ($a_link['nav_level'] === 1) {
+                $this_link_id = $a_link['nav_id'] ?? 0;
                 $a_new_nav[$this_link_id] = $a_link;
                 $a_new_nav[$this_link_id]['submenu'] = [];
             }
@@ -756,7 +743,7 @@ trait ViewTraits
      *                             This can be either the navgroup id or name.
      * @return array
      */
-    protected function readNav($navgroup = '')
+    protected function readNav($navgroup = ''):?array
     {
         $o_ng = new NavgroupsModel($this->o_db);
         if (empty($navgroup)) {
@@ -791,9 +778,10 @@ trait ViewTraits
      * @param array $a_nav If empty, this is a waste.
      * @return array
      */
-    protected function removeUnauthorizedLinks(array $a_nav = []) {
+    protected function removeUnauthorizedLinks(array $a_nav = []):array
+    {
         foreach($a_nav as $key => $a_item) {
-            if (isset($a_item['submenu']) && count($a_item['submenu']) > 0) {
+            if (isset($a_item['submenu']) && \count($a_item['submenu']) > 0) {
                 $a_nav[$key]['submenu'] = $this->removeUnauthorizedLinks($a_item['submenu']);
             }
             else {
@@ -812,7 +800,7 @@ trait ViewTraits
      * @param array $a_nav
      * @return array
      */
-    protected function sortTopLevel(array $a_nav = [])
+    protected function sortTopLevel(array $a_nav = []):array
     {
         // first see if the links have duplicate sort order
         $a_used_order = [];
@@ -821,8 +809,8 @@ trait ViewTraits
             $order_number = !empty($a_link['nav_order'])
                 ? (int)$a_link['nav_order']
                 : 99;
-            if (array_search($order_number, $a_used_order) !== false) {
-                $new_order_number = (int) $this->createNewOrderNumber($a_used_order, $order_number);
+            if (\in_array($order_number, $a_used_order)) {
+                $new_order_number = $this->createNewOrderNumber($a_used_order, $order_number);
                 $a_used_order[] = $new_order_number;
                 $a_new_nav[$new_order_number] = $a_link;
             }
@@ -840,21 +828,19 @@ trait ViewTraits
      * @param array $a_nav
      * @return array
      */
-    protected function specifyActiveMenu(array $a_nav = [])
+    protected function specifyActiveMenu(array $a_nav = []):array
     {
         $a_route_parts = $this->o_router->getRouteParts();
         $current_uri = $a_route_parts['request_uri'];
         foreach ($a_nav as $key => $a_item) {
-            if (count($a_item['submenu']) > 0) {
+            if (\count($a_item['submenu']) > 0) {
                 $a_nav[$key]['submenu'] = $this->specifyActiveMenu($a_item['submenu']);
             }
+            else if ($a_item['url'] === $current_uri) {
+                $a_item['class'] .= ' menu-active';
+            }
             else {
-                if ($a_item['url'] == $current_uri) {
-                    $a_item['class'] .= ' menu-active';
-                }
-                else {
-                    $a_item['class'] .= ' menu-inactive';
-                }
+                $a_item['class'] .= ' menu-inactive';
             }
         }
         return $a_nav;
@@ -868,7 +854,7 @@ trait ViewTraits
      *                           url id as specified by o_router.
      * @return int
      */
-    public function urlId($url_id = -1)
+    public function urlId($url_id = -1):int
     {
         $o_url = new UrlsModel($this->o_db);
         if (is_numeric($url_id)) {

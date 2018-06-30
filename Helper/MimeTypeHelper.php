@@ -20,12 +20,13 @@ class MimeTypeHelper
     /**
      * Gets the extensions that are associated with a mime type.
      * Since multiple extensions can be associated with a mime type, must return an array.
+     *
      * @param string $mime_type
      * @return array|mixed
      */
     public static function getExtensionFromMime($mime_type = '')
     {
-        if ($mime_type == '') {
+        if ($mime_type === '') {
             return [];
         }
         $a_mime_types = self::mapMimeToExtension();
@@ -38,6 +39,7 @@ class MimeTypeHelper
     /**
      * Gets the mimetype of a physical file.
      * File must exist and be in the path.
+     *
      * @param string $file_with_path
      * @return mixed|string
      */
@@ -55,30 +57,32 @@ class MimeTypeHelper
      * It should be noted that just because a file has a particular
      * extension, doesn't mean it is the mime type associated with
      * the extension.
+     *
      * @param string $filename
      * @return int|string
      */
     public static function getMimeFromFilename($filename = '')
     {
-        if ($filename == '') {
+        if ($filename === '') {
             return '';
         }
         $parts = explode('.', $filename);
-        return self::getMimeFromExtension($parts[count($parts) - 1]);
+        return self::getMimeFromExtension($parts[\count($parts) - 1]);
     }
 
     /**
      * Returns the mimetype based on the extension.
+     *
      * @param $ext
      * @return int|string
      */
     public static function getMimeFromExtension($ext) {
-        if ($ext == '') {
+        if ($ext === '') {
             return '';
         }
         $a_mime_types = self::mapMimeToExtension();
         foreach ($a_mime_types as $mime_type => $a_extensions) {
-            if (array_search($ext, $a_extensions) !== false) {
+            if (\in_array($ext, $a_extensions)) {
                 return $mime_type;
             }
         }
@@ -87,34 +91,33 @@ class MimeTypeHelper
 
     /**
      * Determines if the extension matches the mime type.
+     *
      * @param string $mime_type
      * @param string $ext
      * @return bool
      */
-    public static function isMimeForExtension($mime_type = '', $ext = '')
+    public static function isMimeForExtension($mime_type = '', $ext = ''):bool
     {
-        if ($mime_type == '' || $ext == '') {
+        if ($mime_type === '' || $ext === '') {
             return false;
         }
         $a_extensions = self::getExtensionFromMime($mime_type);
-        if (array_search($ext, $a_extensions) !== false) {
-            return true;
-        }
-        return false;
+        return \in_array($ext, $a_extensions);
     }
 
     /**
      * Determines if the extension has the mime type.
+     *
      * @param string $mime_type
      * @param string $ext
      * @return bool
      */
-    public static function isExtensionForMime($mime_type = '', $ext = '')
+    public static function isExtensionForMime($mime_type = '', $ext = ''):bool
     {
-        if ($mime_type == '' || $ext == '') {
+        if ($mime_type === '' || $ext === '') {
             return false;
         }
-        if (self::getMimeFromExtension($ext) == $mime_type) {
+        if (self::getMimeFromExtension($ext) === $mime_type) {
             return true;
         }
         return false;
@@ -122,13 +125,14 @@ class MimeTypeHelper
 
     /**
      * Reads a file of mime types and puts them into an array.
+     *
      * @return array
      */
-    public static function mapMimeToExtension()
+    public static function mapMimeToExtension():array
     {
         $mime_type_path = PUBLIC_PATH . '/assets/vendor/jquery-ui/node_modules/testswarm/node_modules/request/node_modules/mime/types/mime.types';
         if (file_exists($mime_type_path)) {
-            $r_file = fopen($mime_type_path, "r");
+            $r_file = fopen($mime_type_path, 'rb');
             $a_map = [];
             while (($line = fgets($r_file)) !== false) {
                 if (strpos($line, '#') === false) {
@@ -140,8 +144,7 @@ class MimeTypeHelper
             }
             return $a_map;
         }
-        else {
-            return [];
-        }
+
+        return [];
     }
 }

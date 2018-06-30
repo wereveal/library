@@ -34,6 +34,7 @@ class NavigationController implements ManagerControllerInterface
 
     /**
      * NavigationController constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -45,11 +46,11 @@ class NavigationController implements ManagerControllerInterface
     }
 
     /**
-     * Main method used to render the page.
+     * Main method used to route the activity.
      *
      * @return string
      */
-    public function route(): string
+    public function route():string
     {
         switch($this->form_action) {
             case 'new':
@@ -75,7 +76,7 @@ class NavigationController implements ManagerControllerInterface
      *
      * @return string
      */
-    public function save(): string
+    public function save():string
     {
         try {
             $this->o_model->save($this->a_post);
@@ -92,10 +93,11 @@ class NavigationController implements ManagerControllerInterface
 
     /**
      * Method for updating data.
+     * Required by interface, stub for self::save().
      *
      * @return string
      */
-    public function update(): string
+    public function update():string
     {
         return $this->save();
     }
@@ -105,7 +107,7 @@ class NavigationController implements ManagerControllerInterface
      *
      * @return string
      */
-    public function verifyDelete(): string
+    public function verifyDelete():string
     {
         $a_values = [
             'what'         => 'Navigation ',
@@ -127,7 +129,7 @@ class NavigationController implements ManagerControllerInterface
      *
      * @return string
      */
-    public function delete(): string
+    public function delete():string
     {
         try {
             $this->o_model->delete($this->a_post);

@@ -41,12 +41,13 @@ trait DbTraits
     /**
      * Creates the class properties of a_db_config, db_type and db_prefix from config file or array if passed in.
      * Prefer config file but array is allowed so this can be called without a config file.
+     *
      * @param string|array $config_file
      */
-    private function createDbParams($config_file = 'db_config.php')
+    private function createDbParams($config_file = 'db_config.php'):void
     {
         $a_required_keys = ['driver', 'host', 'name', 'user', 'password'];
-        if (is_array($config_file)) {
+        if (\is_array($config_file)) {
             $a_db = $config_file;
         }
         else {
@@ -63,7 +64,7 @@ trait DbTraits
         }
         $a_prefix = [];
         foreach ($a_db as $key => $value) {
-            if (substr($key, -7) == '_prefix') {
+            if (substr($key, -7) === '_prefix') {
                 $short_key = str_replace('_prefix', '', $key);
                 $a_prefix[$short_key] = $value;
             }
@@ -81,8 +82,8 @@ trait DbTraits
             $a_db['passro'] = $a_db['password'];
         }
         if (!isset($a_prefix['db'])) {
-            $a_prefix['db'] = isset($a_db['prefix']) ? $a_db['prefix'] : '';
-            $a_db['db_prefix'] = isset($a_db['prefix']) ? $a_db['prefix'] : '';
+            $a_prefix['db'] = $a_db['prefix'] ?? '';
+            $a_db['db_prefix'] = $a_db['prefix'] ?? '';
         }
         if (!isset($a_prefix['lib'])) {
             $a_prefix['lib'] = 'ritc_';
@@ -98,9 +99,10 @@ trait DbTraits
 
     /**
      * Reloads Db Config file.
+     *
      * @param string $config_file
      */
-    public function reloadDbConfig($config_file = 'db_config.php')
+    public function reloadDbConfig($config_file = 'db_config.php'):void
     {
         $this->createDbParams($config_file);
     }
@@ -108,9 +110,10 @@ trait DbTraits
     ### GETters and SETters ###
     /**
      * Gets the array $a_db_config which holds the config for the db.
+     *
      * @return array
      */
-    public function getDbConfig()
+    public function getDbConfig():array
     {
         return $this->a_db_config;
     }
@@ -133,69 +136,43 @@ trait DbTraits
     }
 
     /**
-     * Returns the SQL error message
+     * Returns the SQL error message.
+     *
      * @return string
      */
-    public function getErrorMessage()
+    public function getErrorMessage():string
     {
         return $this->error_message;
     }
 
     /**
      * Returns the class property lib_prefix.
+     *
      * @return string
      */
-    public function getLibPrefix()
+    public function getLibPrefix():string
     {
         return $this->a_prefix['lib'];
     }
 
     /**
-     * Standard Getter
+     * Standard Getter.
+     *
      * @return array
      */
-    public function getPrefixArray()
+    public function getPrefixArray():array
     {
         return $this->a_prefix;
     }
 
     /**
-     * @param string $value This method does nothing, intentionally.
-     * @return null
-     */
-    protected function setDbConfig($value)
-    {
-        unset($value);
-        return null; // db_config can only be set privately
-    }
-
-    /**
      * Allows one to set a db prefix without it being in the db_config file.
+     *
      * @param string $name
      * @param string $value
      */
-    protected function setDbPrefix($name = 'db' , $value = 'ritc_')
+    protected function setDbPrefix($name = 'db' , $value = 'ritc_'):void
     {
         $this->a_prefix[$name] = $value;
-    }
-
-    /**
-     * @param string $value
-     * @return null
-     */
-    protected function setDbType($value = '')
-    {
-        unset($value);
-        return null; // db type can only be set privately
-    }
-
-    /**
-     * @param string $value This method does nothing, intentionally.
-     * @return null
-     */
-    protected function setLibPrefix($value)
-    {
-        unset($value);
-        return null; // $this->lib_prefix can only be set privately
     }
 }

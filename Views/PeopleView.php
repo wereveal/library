@@ -12,7 +12,6 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
-use Ritc\Library\Models\PeopleGroupMapModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -46,41 +45,36 @@ class PeopleView
     private $o_people_model;
     /** @var \Ritc\Library\Models\GroupsModel */
     private $o_group_model;
-    /** @var \Ritc\Library\Models\PeopleGroupMapModel */
-    private $o_pgm_model;
 
     /**
      * PeopleView constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
-        $this->setupElog($o_di);
         $this->o_people_model   = new PeopleModel($this->o_db);
         $this->o_group_model    = new GroupsModel($this->o_db);
-        $this->o_pgm_model      = new PeopleGroupMapModel($this->o_db);
         try {
             $this->o_people_complex = new PeopleComplexModel($o_di);
         }
         catch (CustomException $e) {
+            /** @noinspection ForgottenDebugOutputInspection */
             error_log('A fatal problem has occurred: ' . $e->getMessage());
-            header("Location: " . SITE_URL);
+            header('Location: ' . SITE_URL);
         }
-        if (DEVELOPER_MODE) {
-            $this->o_people_model->setElog($this->o_elog);
-            $this->o_group_model->setElog($this->o_elog);
-            $this->o_pgm_model->setElog($this->o_elog);
-            $this->o_people_complex->setElog($this->o_elog);
-        }
+        $this->a_object_names = ['o_people_model', 'o_group_model'];
+        $this->setupElog($o_di);
     }
 
     /**
      * Renders the list of people.
+     *
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = [])
+    public function renderList(array $a_message = []):string
     {
         try {
             $a_people = $this->o_people_model->read();
@@ -136,9 +130,10 @@ class PeopleView
 
     /**
      * Renders the new person form.
+     *
      * @return string
      */
-    public function renderNew()
+    public function renderNew():string
     {
         $meth = __METHOD__ . '.';
         $a_message = [];
@@ -205,13 +200,14 @@ class PeopleView
 
     /**
      * Renders the modify people form.
+     *
      * @param int $people_id
      * @return string
      */
-    public function renderModify($people_id = -1)
+    public function renderModify($people_id = -1):string
     {
         $meth = __METHOD__ . '.';
-        if ($people_id == -1) {
+        if ($people_id === -1) {
             $a_message = ViewHelper::errorMessage('A Problem Has Occured. Please Try Again.');
             return $this->renderList($a_message);
         }
@@ -226,7 +222,7 @@ class PeopleView
         }
         catch (ModelException $e) {
             $a_message = ViewHelper::errorMessage('The person was not found. Please Try Again.');
-            $this->logIt("Exception Error: " . $e->errorMessage(), LOG_OFF, $meth . __LINE__);
+            $this->logIt('Exception Error: ' . $e->errorMessage(), LOG_OFF, $meth . __LINE__);
             return $this->renderList($a_message);
         }
         try {
@@ -267,16 +263,16 @@ class PeopleView
             'name'  => 'person[is_immutable]',
             'label' => 'Immutable'
         ];
-        if ($a_person['is_active'] == 'true') {
+        if ($a_person['is_active'] === 'true') {
             $a_active_cbx['checked'] = ' checked';
         }
-        if ($a_person['is_immutable'] == 'true') {
+        if ($a_person['is_immutable'] === 'true') {
             $a_immutable_cbx['checked'] = ' checked';
         }
         $a_person['active_cbx'] = $a_active_cbx;
         $a_person['immutable_cbx'] = $a_immutable_cbx;
         $a_person['password'] = '************';
-          $this->logIt("Person: " . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
+          $this->logIt('Person: ' . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
         $a_twig_values = $this->createDefaultTwigValues();
         $a_twig_values['person'] = $a_person;
         $a_twig_values['action'] = 'update';

@@ -61,11 +61,12 @@ class PeopleGroupMapModel extends ModelAbstract
      *     a new one added.
      *
      * @param array $a_values
+     * @param array $a_not_used
      * @return bool|void
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      * @todo Change to do the delete create workflow
      */
-    public function update(array $a_values = [], array $a_not_used = [])
+    public function update(array $a_values = [], array $a_not_used = []):bool
     {
         throw new ModelException('Operation not permitted', 350);
     }
@@ -79,14 +80,14 @@ class PeopleGroupMapModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function deleteByGroupId($group_id = -1)
+    public function deleteByGroupId($group_id = -1):?bool
     {
         $sql      = "
             DELETE FROM {$this->db_table}
             WHERE group_id = :group_id
         ";
         $a_values = array();
-        if (is_array($group_id)) {
+        if (\is_array($group_id)) {
             foreach ($group_id as $id) {
                 $a_values[] = [':group_id' => $id];
             }
@@ -105,18 +106,18 @@ class PeopleGroupMapModel extends ModelAbstract
     /**
      * Deletes the records based on people id.
      *
-     * @param int $people_id required either '1' or ['1', '2', '3']
+     * @param int|array $people_id required either '1' or ['1', '2', '3']
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function deleteByPeopleId($people_id = -1)
+    public function deleteByPeopleId($people_id = -1):?bool
     {
         $sql      = "
             DELETE FROM {$this->db_table}
             WHERE people_id = :people_id
         ";
         $a_values = [];
-        if (is_array($people_id)) {
+        if (\is_array($people_id)) {
             foreach ($people_id as $id) {
                 $a_values[] = [':people_id' => $id];
             }
@@ -141,7 +142,7 @@ class PeopleGroupMapModel extends ModelAbstract
      */
     public function readByGroupId($group_id = -1)
     {
-        if ($group_id == -1) {
+        if ($group_id === -1) {
             throw new ModelException('Missing required value.', 220);
         }
         $a_search_for = ['group_id' => $group_id];
@@ -162,7 +163,7 @@ class PeopleGroupMapModel extends ModelAbstract
      */
     public function readByPeopleId($people_id = -1)
     {
-        if ($people_id == -1) {
+        if ($people_id === -1) {
             throw new ModelException('Missing required value.', 220);
         }
         $a_search_for = ['people_id' => $people_id];

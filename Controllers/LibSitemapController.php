@@ -27,9 +27,16 @@ class LibSitemapController implements ControllerInterface
 {
     use LogitTraits, ConfigControllerTraits;
 
+    /** @var NavComplexModel */
     private $o_nav;
+    /** @var LibSitemapView */
     private $o_view;
 
+    /**
+     * LibSitemapController constructor.
+     *
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupController($o_di);
@@ -38,6 +45,9 @@ class LibSitemapController implements ControllerInterface
         $this->setupElog($o_di);
     }
 
+    /**
+     * @return mixed|string
+     */
     public function route()
     {
         switch ($this->form_action) {
@@ -60,7 +70,7 @@ class LibSitemapController implements ControllerInterface
      * Adds the navigation record to the Sitemap navgroup.
      * @return array
      */
-    private function addTo()
+    private function addTo():array
     {
         $nav_id = $this->a_post['nav_id'];
         try {
@@ -72,7 +82,10 @@ class LibSitemapController implements ControllerInterface
         return ViewHelper::successMessage();
     }
 
-    private function removeFrom()
+    /**
+     * @return array
+     */
+    private function removeFrom():array
     {
         $nav_id = $this->a_post['nav_id'];
         try {

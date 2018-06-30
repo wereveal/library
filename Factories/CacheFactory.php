@@ -50,10 +50,10 @@ class CacheFactory
     private function __construct(array $a_cache_config = [])
     {
         $cache_type = empty($a_cache_config['cache_type'])
-            ? defined('CACHE_TYPE') ? CACHE_TYPE : 'SimplePhpFiles'
+            ? \defined('CACHE_TYPE') ? CACHE_TYPE : 'PhpFiles'
             : $a_cache_config['cache_type'];
         $lifetime = empty($a_cache_config['lifetime'])
-            ? defined('CACHE_TTL') ? CACHE_TTL : 604800
+            ? \defined('CACHE_TTL') ? CACHE_TTL : 604800
             : $a_cache_config['lifetime'];
         $namespace = empty($a_cache_config['namespace'])
             ? 'Ritc'
@@ -62,9 +62,7 @@ class CacheFactory
             ? BASE_PATH . '/cache'
             : $a_cache_config['directory']
         ;
-        $psr6 = strpos($cache_type, 'Simple') === false
-            ? true
-            : false;
+        $psr6 = strpos($cache_type, 'Simple') === false;
         $o_cache = NULL;
         switch ($cache_type) {
             case 'Array':
@@ -87,7 +85,8 @@ class CacheFactory
                     $o_cache = new PhpFilesAdapter($namespace, $lifetime, $directory);
                 }
                 catch (CacheException $e) {
-                    error_log("Unable to create PhpFilesAdapter instance: " . $e->getMessage());
+                    /** @noinspection ForgottenDebugOutputInspection */
+                    error_log('Unable to create PhpFilesAdapter instance: ' . $e->getMessage());
                 }
                 break;
             case 'Redis':
@@ -120,12 +119,17 @@ class CacheFactory
                     $o_cache = new PhpFilesCache($namespace, $lifetime, $directory);
                 }
                 catch (CacheException $e) {
+                    /** @noinspection ForgottenDebugOutputInspection */
                     error_log('Could not create the PhpFilesCache instance: ' . $e->getMessage());
                 }
         }
-        if ($psr6 && is_object($o_cache)) {
+        if ($psr6 && \is_object($o_cache)) {
             $o_cache = new TagAwareAdapter($o_cache, $o_cache);
         }
+        /** @var ArrayAdapter|ChainAdapter|FilesystemAdapter|PdoAdapter|PhpArrayAdapter|PhpFilesAdapter|RedisAdapter
+         *       $this->o_cache
+         */
+        /** @noinspection UnusedConstructorDependenciesInspection */
         $this->o_cache = $o_cache;
     }
 
@@ -149,7 +153,7 @@ class CacheFactory
         if (!isset(self::$instance[$name])) {
             if (empty($a_cache_config['cache_type'])) {
                 $a_cache_config = [
-                    'cache_type' => 'SimplePhpFiles',
+                    'cache_type' => 'PhpFiles',
                     'directory'  => BASE_PATH . '/cache/',
                     'lifetime'   => 0
                 ];

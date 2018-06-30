@@ -41,30 +41,24 @@ class AutoloadMapper
      */
     public function __construct(array $a_dirs = array())
     {
-        $this->src_path = isset($a_dirs['src_path'])
-            ? $a_dirs['src_path']
-            : '/src';
-        $this->config_path = isset($a_dirs['config_path'])
-            ? $a_dirs['config_path']
-            : '/src/config';
-        $this->apps_path = isset($a_dirs['apps_path'])
-            ? $a_dirs['apps_path']
-            : '/src/apps';
+        $this->src_path = $a_dirs['src_path'] ?? '/src';
+        $this->config_path = $a_dirs['config_path'] ?? '/src/config';
+        $this->apps_path = $a_dirs['apps_path'] ?? '/src/apps';
     }
 
     /**
      * @param string $apps_path
      * @return bool
      */
-    public function generateMapFiles($apps_path = '')
+    public function generateMapFiles($apps_path = ''):bool
     {
         $classmap_array_str = '';
         $ns_map_array_str   = '';
-        if ($apps_path != '' && file_exists($apps_path)) {
+        if ($apps_path !== '' && file_exists($apps_path)) {
             $this->apps_path =  $apps_path;
         }
         $o_dir = new DirectoryIterator($this->apps_path);
-        if (!is_object($o_dir)) {
+        if (!\is_object($o_dir)) {
             return false;
         }
         $a_classmap = $this->createMapArray($o_dir, array());
@@ -73,12 +67,12 @@ class AutoloadMapper
         $ns_str_length = 0;
         $vendor_str_length = 0;
         foreach ($a_classmap as $key => $value) {
-            $ns_str_length = strlen($key) > $ns_str_length
-                ? strlen($key)
+            $ns_str_length = \strlen($key) > $ns_str_length
+                ? \strlen($key)
                 : $ns_str_length;
             $a_ns_parts = explode('\\', $key);
-            $vendor_str_length = strlen($a_ns_parts[0]) > $vendor_str_length
-                ? strlen($a_ns_parts[0])
+            $vendor_str_length = \strlen($a_ns_parts[0]) > $vendor_str_length
+                ? \strlen($a_ns_parts[0])
                 : $vendor_str_length;
         }
         /* Go over the array again, now building the string */
@@ -86,7 +80,7 @@ class AutoloadMapper
         foreach ($a_classmap as $key => $value) {
             /* First classmap string buildup */
             $padding = '';
-            $key_length = strlen($key);
+            $key_length = \strlen($key);
             if ($key_length < $ns_str_length) {
                 $pad_length = $ns_str_length - $key_length;
                 for ($i = 1 ; $i <= $pad_length ; $i++) {
@@ -100,10 +94,10 @@ class AutoloadMapper
             /* Next namespace map buildup */
             $a_ns_parts = explode('\\', $key);
             $vendor_name = $a_ns_parts[0];
-            if (array_search($vendor_name, $a_existing_vendors) === false) {
+            if (!\in_array($vendor_name, $a_existing_vendors)) {
                 $a_existing_vendors[] = $vendor_name;
                 $v_padding = '';
-                $v_length = strlen($vendor_name);
+                $v_length = \strlen($vendor_name);
                 if ($v_length < $vendor_str_length) {
                     $pad_length = $vendor_str_length - $v_length;
                     for ($i = 1 ; $i <= $pad_length ; $i++) {
@@ -141,19 +135,19 @@ EOT;
      * @param array              $a_classmap
      * @return array
      */
-    private function createMapArray(DirectoryIterator $o_dir, array $a_classmap)
+    private function createMapArray(DirectoryIterator $o_dir, array $a_classmap):array
     {
         while ($o_dir->valid()) {
             $name = $o_dir->getFilename();
             // echo $name . "\n";
-            if ($name != '.' && $name != '..') {
+            if ($name !== '.' && $name !== '..') {
                 if ($o_dir->isFile()) {
                     $path = $o_dir->getPath();
                     if (strpos($path, '/archive') === false) {
-	                    $file_name = $path . "/" . $name;
+	                    $file_name = $path . '/' . $name;
 	                    // echo $file_name . "\n";
 	                    $o_file_info = new SplFileInfo($file_name);
-	                    if ($o_file_info->getExtension() == 'php') {
+	                    if ($o_file_info->getExtension() === 'php') {
 	                        $file_real_path = $o_file_info->getRealPath();
 	                        $file_contents = file_get_contents($file_real_path);
 	                        $a_tokens = token_get_all($file_contents);
@@ -162,16 +156,16 @@ EOT;
 	                        $namespace = $this->getNamespace($a_tokens);
 	                        $classname = $this->getClassName($a_tokens);
 	                        // echo 'Namespace: ' . $namespace . "\n";
-	                        if (trim($namespace) != '' && trim($classname) != '') {
+	                        if (trim($namespace) !== '' && trim($classname) !== '') {
 	                            // echo $namespace . "\\" . $classname . " => " . $file_real_path . "\n";
 	                            $left_side = trim($namespace) . "\\" . trim($classname);
-	                            $a_classmap["{$left_side}"] = $file_real_path;
+	                            $a_classmap[$left_side] = $file_real_path;
 	                        }
 	                    }
                     }
                 }
                 else {
-                    $new_path = $o_dir->getPath() . "/" . $name;
+                    $new_path = $o_dir->getPath() . '/' . $name;
                     $o_new_dir = new DirectoryIterator($new_path);
                     $a_classmap = $this->createMapArray($o_new_dir, $a_classmap);
                 }
@@ -188,7 +182,7 @@ EOT;
     private function getClassName(array $a_tokens = array())
     {
         foreach ($a_tokens as $key => $a_token) {
-            if (is_array($a_token)) {
+            if (\is_array($a_token)) {
                 switch ($a_token[0]) {
                     case T_ABSTRACT:
                         return $a_tokens[$key+4][1];
@@ -210,20 +204,18 @@ EOT;
      * @param array $a_tokens
      * @return string
      */
-    private function getNamespace(array $a_tokens = array())
+    private function getNamespace(array $a_tokens = array()):string
     {
         $namespace = '';
         $line_number = -1;
         foreach ($a_tokens as $key => $a_token) {
-            if (is_array($a_token)) {
-                if ($a_token[0] == T_NAMESPACE) {
-                    $line_number = $a_token[2];
-                    break;
-                }
+            if (\is_array($a_token) && $a_token[0] === T_NAMESPACE) {
+                $line_number = $a_token[2];
+                break;
             }
         }
         foreach($a_tokens as $a_token) {
-            if (isset($a_token[2]) && $a_token[2] == $line_number) {
+            if (isset($a_token[2]) && $a_token[2] === $line_number) {
                 // echo $a_token[0] . '  ' . token_name($a_token[0]) . "\n";
                 switch ($a_token[0]) {
                     case T_STRING:
@@ -244,7 +236,7 @@ EOT;
      * Returns the app path.
      * @return string
      */
-    public function getSrcPath()
+    public function getSrcPath():string
     {
         return $this->src_path;
     }
@@ -253,9 +245,9 @@ EOT;
      * Sets the app path.
      * @param string $value
      */
-    public function setSrcPath($value = '')
+    public function setSrcPath($value = ''):void
     {
-        $this->src_path = $value != ''
+        $this->src_path = $value !== ''
             ? $value
             : $this->src_path;
     }
@@ -264,7 +256,7 @@ EOT;
      * Return the config path.
      * @return string
      */
-    public function getConfigPath()
+    public function getConfigPath():string
     {
         return $this->config_path;
     }
@@ -273,9 +265,9 @@ EOT;
      * Sets the config path.
      * @param string $value
      */
-    public function setConfigPath($value = '')
+    public function setConfigPath($value = ''):void
     {
-        $this->config_path = $value != ''
+        $this->config_path = $value !== ''
             ? $value
             : $this->config_path;
     }
@@ -284,7 +276,7 @@ EOT;
      * Returns the apps path.
      * @return string
      */
-    public function getAppsPath()
+    public function getAppsPath():string
     {
         return $this->apps_path;
     }
@@ -293,9 +285,9 @@ EOT;
      * Sets the apps path.
      * @param string $value
      */
-    public function setAppsPath($value = '')
+    public function setAppsPath($value = ''):void
     {
-        $this->apps_path = $value != ''
+        $this->apps_path = $value !== ''
             ? $value
             : $this->apps_path;
     }

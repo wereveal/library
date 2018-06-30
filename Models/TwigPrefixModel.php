@@ -50,10 +50,10 @@ class TwigPrefixModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function delete($id = -1)
+    public function delete($id = -1):bool
     {
         $meth = ' -- ' . __METHOD__;
-        if ($id == -1) {
+        if ($id === -1) {
             return false;
         }
         $o_tpl = new TwigTemplatesModel($this->o_db);
@@ -64,7 +64,7 @@ class TwigPrefixModel extends ModelAbstract
         try {
             $results = $o_tpl->read([$tpl_pin => $id]);
             if (!empty($results)) {
-                $this->error_message = "A template exists that uses this prefix" . $meth;
+                $this->error_message = 'A template exists that uses this prefix' . $meth;
                 throw new ModelException($this->error_message, 10);
             }
         }
@@ -90,7 +90,7 @@ class TwigPrefixModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function updateDefaultPrefixOff()
+    public function updateDefaultPrefixOff():?bool
     {
         $meth = ' -- ' . __METHOD__;
         $sql = "UPDATE {$this->db_table} SET tp_default = 'false' WHERE tp_default = 'true'";
@@ -109,23 +109,23 @@ class TwigPrefixModel extends ModelAbstract
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function clearDefaultPrefix(array $a_values = [])
+    public function clearDefaultPrefix(array $a_values = []):array
     {
         $meth       = ' -- ' . __METHOD__;
         $is_default = 'false';
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
-                if (!empty($a_record['tp_default']) && $a_record['tp_default'] == 'true') {
+                if (!empty($a_record['tp_default']) && $a_record['tp_default'] === 'true') {
                     if ($is_default === 'false') {
                         $is_default = 'true';
                         try {
                             if (!$this->updateDefaultPrefixOff()) {
-                                $this->error_message = "Could not set other prefix as not default.";
+                                $this->error_message = 'Could not set other prefix as not default.';
                                 throw new ModelException($this->error_message . $meth, 110);
                             }
                         }
                         catch (ModelException $e) {
-                            $this->error_message = "Could not set other prefix as not default.";
+                            $this->error_message = 'Could not set other prefix as not default.';
                             throw new ModelException($this->error_message . $meth, 110);
                         }
                     }
@@ -136,18 +136,16 @@ class TwigPrefixModel extends ModelAbstract
             }
 
         }
-        else {
-            if (!empty($a_values['tp_default']) && $a_values['tp_default'] == 'true') {
-                try {
-                    if (!$this->updateDefaultPrefixOff()) {
-                        $this->error_message = "Could not set other prefix as not default.";
-                        throw new ModelException($this->error_message . $meth, 110);
-                    }
-                }
-                catch (ModelException $e) {
-                    $this->error_message = "Could not set other prefix as not default.";
+        else if (!empty($a_values['tp_default']) && $a_values['tp_default'] === 'true') {
+            try {
+                if (!$this->updateDefaultPrefixOff()) {
+                    $this->error_message = 'Could not set other prefix as not default.';
                     throw new ModelException($this->error_message . $meth, 110);
                 }
+            }
+            catch (ModelException $e) {
+                $this->error_message = 'Could not set other prefix as not default.';
+                throw new ModelException($this->error_message . $meth, 110);
             }
         }
         return $a_values;

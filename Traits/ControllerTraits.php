@@ -65,7 +65,7 @@ trait ControllerTraits
      * Does the common stuff that is normally done in the __contruct method.
      * @param \Ritc\Library\Services\Di $o_di
      */
-    protected function setupController(Di $o_di)
+    protected function setupController(Di $o_di):void
     {
         $this->setObjects($o_di);
         $this->setProperties();
@@ -75,7 +75,7 @@ trait ControllerTraits
      * Sets the class properties that are objects.
      * @param \Ritc\Library\Services\Di $o_di
      */
-    protected function setObjects(Di $o_di)
+    protected function setObjects(Di $o_di):void
     {
         if (!$this->o_di instanceof Di) {
             $this->o_di = $o_di;
@@ -102,7 +102,7 @@ trait ControllerTraits
     /**
      * Sets the class properties based on the route parts.
      */
-    protected function setProperties()
+    protected function setProperties():void
     {
         $a_router_parts       = $this->o_router->getRouteParts();
         $this->a_router_parts = $a_router_parts;
@@ -115,13 +115,13 @@ trait ControllerTraits
             $this->a_url_actions  = $a_router_parts['url_actions'];
             $this->url_action_one = $a_router_parts['url_actions'][0];
         }
-        if ($this->route_action != '') {
+        if ($this->route_action !== '') {
             $this->main_action = $a_router_parts['route_action'];
         }
-        elseif ($this->url_action_one != '') {
+        elseif ($this->url_action_one !== '') {
             $this->main_action = $this->url_action_one;
         }
-        elseif ($this->form_action != '') {
+        elseif ($this->form_action !== '') {
             $this->main_action = $this->form_action;
         }
         else {

@@ -41,7 +41,7 @@ class AjaxController
      * Main router for class.
      * @return string
      */
-    public function route()
+    public function route():?string
     {
         switch ($this->url_action_one) {
             case 'twig_dirs';
@@ -61,7 +61,7 @@ class AjaxController
      *
      * @return string
      */
-    private function doTwigDirs()
+    private function doTwigDirs():?string
     {
         $prefix_id = $this->o_router->getPost('prefix_id');
         $bad_results = [
@@ -107,7 +107,7 @@ class AjaxController
      *
      * @return string
      */
-    private function forDirectories()
+    private function forDirectories():?string
     {
         $prefix_id = $this->o_router->getPost('prefix_id');
         $bad_results = json_encode([[]]);
@@ -186,11 +186,11 @@ class AjaxController
                     $this->o_cache->set($cache_key, $results, 'ajax');
                 }
                 $this->logIt('JSON: ' . $results, LOG_ON, $meth . __LINE__);
-                return $results;
             }
             catch (ModelException $e) {
                 return $bad_results;
             }
         }
+        return $results;
     }
 }

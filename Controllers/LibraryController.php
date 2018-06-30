@@ -50,16 +50,18 @@ class LibraryController implements ControllerInterface
         $this->setupManagerController($o_di);
         $this->o_view = new LibraryView($this->o_di);
         $this->setupElog($o_di);
-        if (!defined('LIB_TWIG_PREFIX')) {
-            define('LIB_TWIG_PREFIX', 'lib_');
+        if (!\defined('LIB_TWIG_PREFIX')) {
+            /** @var string LIB_TWIG_PREFIX */
+            \define('LIB_TWIG_PREFIX', 'lib_');
         }
     }
 
     /**
      * Default page for the library manager and login.
+     *
      * @return string
      */
-    public function route()
+    public function route():?string
     {
         if ($this->loginValid()) {
             $o_c = '';
@@ -69,7 +71,7 @@ class LibraryController implements ControllerInterface
                     break;
                 case 'logout':
                     $this->o_auth->logout($_SESSION['login_id']);
-                    header("Location: " . SITE_URL . '/manager/');
+                    header('Location: ' . SITE_URL . '/manager/');
                     break;
                 case 'ajax':
                     $o_c = new AjaxController($this->o_di);
@@ -120,31 +122,34 @@ class LibraryController implements ControllerInterface
                 default:
                     return $this->o_view->renderLandingPage();
             }
-            if (is_object($o_c)) {
-                return $o_c->route();
+            if (\is_object($o_c)) {
+                try {
+                    return $o_c->route();
+                }
+                catch (\ReflectionException $e) {
+                    $a_message = ViewHelper::errorMessage('Could not find the page requested.');
+                    return $this->o_view->renderError($a_message);
+                }
             }
             else {
                 $a_message = ViewHelper::errorMessage('Could not find the page requested.');
                 return $this->o_view->renderError($a_message);
             }
         }
-        elseif ($this->form_action == 'verifyLogin' || $this->route_action == 'verifyLogin') {
+        elseif ($this->form_action === 'verifyLogin' || $this->route_action === 'verifyLogin') {
             $a_message = $this->verifyLogin();
-            if ($a_message['type'] == 'success') {
+            if ($a_message['type'] === 'success') {
                 return $this->o_view->renderLandingPage($a_message);
             }
-            else {
-                $login_id = isset($this->a_post['login_id'])
-                    ? $this->a_post['login_id']
-                    : '';
-                $a_values = [
-                    'tpl'       => 'login',
-                    'location'  => '/manager/config/',
-                    'login_id'  => $login_id,
-                    'a_message' => $a_message
-                ];
-                return $this->o_view->renderLogin($a_values);
-            }
+
+            $login_id = $this->a_post['login_id'] ?? '';
+            $a_values = [
+                'tpl'       => 'login',
+                'location'  => '/manager/config/',
+                'login_id'  => $login_id,
+                'a_message' => $a_message
+            ];
+            return $this->o_view->renderLogin($a_values);
         }
         else {
             return $this->o_view->renderLogin();

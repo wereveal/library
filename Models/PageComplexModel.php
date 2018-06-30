@@ -32,8 +32,6 @@ class PageComplexModel
 
     /** @var \Ritc\Library\Models\ContentModel  */
     private $o_content;
-    /** @var \Ritc\Library\Services\Di */
-    private $o_di;
     /** @var \Ritc\Library\Models\PageModel  */
     private $o_page;
     /** @var \Ritc\Library\Models\TwigComplexModel  */
@@ -50,7 +48,6 @@ class PageComplexModel
      */
     public function __construct(Di $o_di)
     {
-        $this->o_di = $o_di;
         $this->a_object_names = ['o_page', 'o_urls', 'o_content'];
         /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
@@ -104,7 +101,7 @@ class PageComplexModel
      */
     public function readPageValuesByUrlId($url_id = -1)
     {
-        if ($url_id == -1) {
+        if ($url_id === -1) {
             return false;
         }
         $this->setSelectSql();
@@ -116,9 +113,8 @@ class PageComplexModel
             if (empty($a_values[0])) {
                 throw new ModelException('Unable to get the page values', 140);
             }
-            else {
-                $a_record = $a_values[0];
-            }
+
+            $a_record = $a_values[0];
         }
         catch (ModelException $e) {
             throw new ModelException('Unable to get the page values', 140, $e);
@@ -158,7 +154,7 @@ class PageComplexModel
      */
     public function readPageValuesByUrlText($url_text = '')
     {
-        if ($url_text == '') {
+        if ($url_text === '') {
             return false;
         }
         $url_text = str_replace(SITE_URL, '', $url_text);
@@ -178,9 +174,9 @@ class PageComplexModel
      * Sets the class property select_sql.
      * @param string $the_string Optional, normally not specified.
      */
-    private function setSelectSql($the_string = '')
+    private function setSelectSql($the_string = ''):void
     {
-        if ($the_string != '') {
+        if ($the_string !== '') {
             $this->select_sql = $the_string;
         }
         else {

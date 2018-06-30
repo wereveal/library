@@ -51,7 +51,7 @@ class BlocksController implements ConfigControllerInterface
      *
      * @return string
      */
-    public function route()
+    public function route():string
     {
         switch ($this->form_action) {
             case 'verify':
@@ -69,9 +69,10 @@ class BlocksController implements ConfigControllerInterface
 
     /**
      * Method for saving data.
+     *
      * @return string
      */
-    public function save()
+    public function save():string
     {
         $a_blocks = $this->a_post['blocks'];
         try {
@@ -89,9 +90,10 @@ class BlocksController implements ConfigControllerInterface
 
     /**
      * Method for updating data.
+     *
      * @return string
      */
-    public function update()
+    public function update():string
     {
         $a_blocks = $this->a_post['blocks'];
         if (empty($a_blocks['b_active'])) {
@@ -115,9 +117,10 @@ class BlocksController implements ConfigControllerInterface
 
     /**
      * Method to display the verify delete form.
+     *
      * @return string
      */
-    public function verifyDelete()
+    public function verifyDelete():string
     {
         $a_values = [
             'what'         => 'block',
@@ -136,9 +139,10 @@ class BlocksController implements ConfigControllerInterface
 
     /**
      * Method to delete data.
+     *
      * @return string
      */
-    public function delete()
+    public function delete():string
     {
         $b_id = $this->a_post['b_id'];
         try {

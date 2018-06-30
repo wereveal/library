@@ -21,18 +21,18 @@ interface DbAdminInterface
      * @param string $table_name Required
      * @return string
      */
-    public function showColumns($table_name = '');
+    public function showColumns($table_name = ''):string;
 
     /**
      * Gets the tables for the database then routes the data to the view.
      * @param string $database_name Required
      * @return string
      */
-    public function showTables($database_name = '');
+    public function showTables($database_name = ''):string;
 
     /**
      * Not sure what this does
      * @return string
      */
-    public function showViews();
+    public function showViews():string;
 }

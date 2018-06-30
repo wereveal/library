@@ -7,4 +7,4 @@ else {
     print 'Admin: ' . password_hash('letADMin', PASSWORD_DEFAULT) . "\n";
     print 'Manager: ' . password_hash('letMANin', PASSWORD_DEFAULT) . "\n";
 }
-?>
+

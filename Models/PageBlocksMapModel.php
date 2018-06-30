@@ -9,7 +9,6 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Services\DbModel;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Basic model class based on the page_blocks_map table.

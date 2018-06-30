@@ -33,8 +33,6 @@ class Html
     protected $o_arrays;
     /** @var Files  */
     protected $o_files;
-    /** @var Strings  */
-    private   $o_str;
     /** @var string  */
     protected $the_original_string = 'Start';
     /** @var string */
@@ -49,7 +47,6 @@ class Html
      */
     public function __construct()
     {
-        $this->o_str    = new Strings;
         $this->o_arrays = new Arrays();
         $this->o_files  = new Files('main.twig', 'templates',  'default', 'Ritc');
     }
@@ -58,7 +55,7 @@ class Html
      * @param array $a_button_values
      * @return string
      */
-    public function button($a_button_values = array())
+    public function button(array $a_button_values = array()):string
     {
         $a_button_values = Arrays::removeUndesiredPairs(
             $a_button_values,
@@ -81,10 +78,10 @@ class Html
             'button_text'  => 'Needs Some Text',
             'tab_index'    => '10'
         );
-        if ($a_button_values == array()) {
+        if ($a_button_values === []) {
             $a_button_values = $a_default_values;
         }
-        if ($a_button_values['button_id'] == '' && $a_button_values['button_value'] != '') {
+        if ($a_button_values['button_id'] === '' && $a_button_values['button_value'] !== '') {
             $a_button_values['button_id'] = $a_button_values['button_value'];
         }
         $a_button_values = array_merge($a_default_values, $a_button_values);
@@ -97,15 +94,15 @@ class Html
      * @param string $css_media
      * @return string
      */
-    public function cssLink($css_file = '', $css_dir = 'css', $css_media = 'screen')
+    public function cssLink($css_file = '', $css_dir = 'css', $css_media = 'screen'):string
     {
-        if($css_file == '') {
+        if($css_file === '') {
             $this->logIt('A Problem Has Occurred. The css file must be specified', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return '';
         }
         $this->o_files->setFileDirName($css_dir);
         $a_tpl_values = array(
-            'css_media'  => ($css_media),
+            'css_media'  => $css_media,
             'css_source' => $this->o_files->getFileWithDir($css_file));
         return $this->render('css.tpl', $a_tpl_values, true);
     }
@@ -115,9 +112,9 @@ class Html
      * @param string $image_file
      * @return string
      */
-    public function failure($message = 'A Problem Has Occurred. Please Try Again.', $image_file = '')
+    public function failure($message = 'A Problem Has Occurred. Please Try Again.', $image_file = ''):string
     {
-        if ($image_file == '') {
+        if ($image_file === '') {
             $image = $this->o_files->getImageWithDir('icons/failure.png');
         } else {
             $image = $this->o_files->getImageWithDir($image_file);
@@ -135,9 +132,9 @@ class Html
      * @param string $js_dir
      * @return string
      */
-    public function jsLink($js_file = '', $js_dir = 'js')
+    public function jsLink($js_file = '', $js_dir = 'js'):string
     {
-        if($js_file == '') {
+        if($js_file === '') {
             $this->logIt('A Problem Has Occurred. The JavaScript File must be specified', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return '';
         }
@@ -152,9 +149,9 @@ class Html
      * @param string $image_file
      * @return string
      */
-    public function success($message = 'Success!', $image_file = '')
+    public function success($message = 'Success!', $image_file = ''):string
     {
-        if ($image_file == '') {
+        if ($image_file === '') {
             $image = $this->o_files->getImageWithDir('icons/success.png');
         } else {
             $image = $this->o_files->getImageWithDir($image_file);
@@ -172,9 +169,9 @@ class Html
      * @param string $image_file
      * @return string
      */
-    public function warning($message = "Warning!", $image_file = '')
+    public function warning($message = 'Warning!', $image_file = ''):string
     {
-        if ($image_file == '') {
+        if ($image_file === '') {
             $image = $this->o_files->getImageWithDir('icons/warning.png');
         } else {
             $image = $this->o_files->getImageWithDir($image_file);
@@ -198,26 +195,26 @@ class Html
      * @param bool $is_file the template is the path to a file, defaults to false
      * @return string - the filled in template
      */
-    public function render($template = '', array $a_values = array(), $is_file = false)
+    public function render($template = '', array $a_values = array(), $is_file = false):string
     {
         if ($is_file) {
             $file_with_path = $this->o_files->getFileWithPath($template);
             if (file_exists($file_with_path)) {
-                $this->logIt("Template: " . $template . ' == file_with_path ' . $file_with_path, LOG_OFF, __METHOD__ . '.' . __LINE__);
+                $this->logIt('Template: ' . $template . ' == file_with_path ' . $file_with_path, LOG_OFF, __METHOD__ . '.' . __LINE__);
             }
         }
-        $this->logIt("array of values: " . var_export($a_values, true), LOG_OFF);
-        if ($template == '' || $a_values == array()) {
-            $this->logIt("The Template or the array of values was empty", LOG_OFF);
+        $this->logIt('array of values: ' . var_export($a_values, true), LOG_OFF);
+        if ($template === '' || $a_values === []) {
+            $this->logIt('The Template or the array of values was empty', LOG_OFF);
             return false;
         }
-        if (count($a_values) == 0) {
-            $this->logIt("a_values was an empty array.", LOG_OFF);
+        if (\count($a_values) === 0) {
+            $this->logIt('a_values was an empty array.', LOG_OFF);
             return false;
         }
         if ($is_file) {
             $tpl_content = $this->o_files->getContents($template, 'templates');
-            if ($tpl_content == '') {
+            if ($tpl_content === '') {
                 $this->logIt("The template is empty: '{$template}'", LOG_OFF);
             } elseif ($tpl_content === false) {
                 $this->logIt('file_get_contents failed', LOG_OFF);
@@ -226,10 +223,10 @@ class Html
         else {
             $tpl_content = $template;
         }
-        if (($tpl_content !== false) && ($tpl_content != '')) {
+        if (($tpl_content !== false) && ($tpl_content !== '')) {
             foreach ($a_values as $var_name=>$var_value) {
                 $$var_name = $var_value;
-                $this_var = "{\$" . $var_name . "}";
+                $this_var = '{$' . $var_name . '}';
                 $tpl_content = str_replace($this_var, $var_value, $tpl_content);
             }
             // now cleanup any vars without values
@@ -244,7 +241,7 @@ class Html
     /**
      * @param string $value
      */
-    public function updateFilesNamespace($value = 'Ritc')
+    public function updateFilesNamespace($value = 'Ritc'):void
     {
         $this->o_files->setNamespace($value);
     }
@@ -253,7 +250,7 @@ class Html
     /**
      * @param string $value
      */
-    public function setNamespace($value = 'Ritc')
+    public function setNamespace($value = 'Ritc'):void
     {
         $this->namespace = $value;
         $this->updateFilesNamespace($value);

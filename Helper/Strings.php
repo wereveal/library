@@ -35,10 +35,11 @@ class Strings
 {
     /**
      * Returns the English string for the digit, e.g., 1 = 'one'
+     *
      * @param int $var
      * @return string
      */
-    public static function digitToString($var = 0)
+    public static function digitToString($var = 0):?string
     {
         switch ($var) {
             case 0:
@@ -79,46 +80,46 @@ class Strings
      */
     public static function formatPhoneNumber($phone_number = '', $phone_format = 'AAA-BBB-CCCC')
     {
-        if ($phone_number == '') { return ''; }
-        $phone_number = preg_replace("/[^0-9]/", "", $phone_number);
-        $strlen = strlen($phone_number);
+        if ($phone_number === '') { return ''; }
+        $phone_number = preg_replace('/[^0-9]/', '', $phone_number);
+        $strlen = \strlen($phone_number);
 
         switch ( $strlen ) {
             case 7:
-                return preg_replace("/([0-9]{3})([0-9]{4})/", "$1-$2", $phone_number);
+                return preg_replace('/([0-9]{3})([0-9]{4})/', '$1-$2', $phone_number);
                 break;
             case 10:
                 switch ($phone_format) {
                     case '(XXX) XXX-XXXX':
                     case '(AAA) BBB-CCCC':
-                        return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "($1) $2-$3", $phone_number);
+                        return preg_replace('/([0-9]{3})([0-9]{3})([0-9]{4})/', '($1) $2-$3', $phone_number);
                     case 'XXX XXX XXXX':
                     case 'AAA BBB CCCC':
-                        return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 $2 $3", $phone_number);
+                        return preg_replace('/([0-9]{3})([0-9]{3})([0-9]{4})/', '$1 $2 $3', $phone_number);
                     case 'XXX.XXX.XXXX':
                     case 'AAA.BBB.CCCC':
-                        return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "$1.$2.$3", $phone_number);
+                        return preg_replace('/([0-9]{3})([0-9]{3})([0-9]{4})/', '$1.$2.$3', $phone_number);
                     case 'XXX-XXX-XXXX':
                     case 'AAA-BBB-CCCC':
                     default:
-                        return preg_replace("/([0-9]{3})([0-9]{3})([0-9]{4})/", "$1-$2-$3", $phone_number);
+                        return preg_replace('/([0-9]{3})([0-9]{3})([0-9]{4})/', '$1-$2-$3', $phone_number);
                 }
                 break;
             case 11:
                 switch ($phone_format) {
                     case '(XXX) XXX-XXXX':
                     case '(AAA) BBB-CCCC':
-                        return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 ($2) $3-$4", $phone_number);
+                        return preg_replace('/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/', '$1 ($2) $3-$4', $phone_number);
                     case 'XXX XXX XXXX':
                     case 'AAA BBB CCCC':
-                        return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 $2 $3 $4", $phone_number);
+                        return preg_replace('/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/', '$1 $2 $3 $4', $phone_number);
                     case 'XXX.XXX.XXXX':
                     case 'AAA.BBB.CCCC':
-                        return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1.$2.$3.$4", $phone_number);
+                        return preg_replace('/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/', '$1.$2.$3.$4', $phone_number);
                     case 'XXX-XXX-XXXX':
                     case 'AAA-BBB-CCCC':
                     default:
-                        return preg_replace("/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/", "$1 $2-$3-$4", $phone_number);
+                        return preg_replace('/([0-9]{1})([0-9]{3})([0-9]{3})([0-9]{4})/', '$1 $2-$3-$4', $phone_number);
                 }
             default:
                 return $phone_number;
@@ -131,15 +132,17 @@ class Strings
      * @param mixed $input the value to turn to a boolean
      * @return bool        the changed value
      */
-    public static function isTrue($input = '')
+    public static function isTrue($input = ''):?bool
     {
-        if (is_bool($input)) {
+        if (\is_bool($input)) {
             return $input;
         }
-        elseif ($input === NULL || $input === 'NULL' || $input === 'null') {
+
+        if ($input === NULL || $input === 'NULL' || $input === 'null') {
             return false;
         }
-        elseif (is_string($input)) {
+
+        if (\is_string($input)) {
             $input = strtoupper(trim($input));
             if (ctype_digit($input)) {
                 $input = (int) $input === 0 ? 'false' : 'true';
@@ -157,12 +160,12 @@ class Strings
             }
         }
         elseif (ctype_digit((string) $input)) {
-            return ((int) $input === 0 ? false : true);
+            return ((int)$input !== 0);
         }
-        elseif (is_array($input)) {
+        elseif (\is_array($input)) {
             return false;
         }
-        elseif (is_object($input)){
+        elseif (\is_object($input)){
             return false;
         }
         else {
@@ -175,9 +178,9 @@ class Strings
      * @param string $the_string
      * @return string
      */
-    public static function makeAlpha($the_string = '')
+    public static function makeAlpha($the_string = ''):string
     {
-        return preg_replace("/[^a-zA-Z]/", '', $the_string);
+        return preg_replace('/[^a-zA-Z]/', '', $the_string);
     }
 
     /**
@@ -185,9 +188,9 @@ class Strings
      * @param string $the_string
      * @return string the modified string
      */
-    public static function makeAlphanumeric($the_string = '')
+    public static function makeAlphanumeric($the_string = ''):string
     {
-        return preg_replace("/[^a-zA-Z0-9]/", '', $the_string);
+        return preg_replace('/[^a-zA-Z0-9]/', '', $the_string);
     }
 
     /**
@@ -197,7 +200,7 @@ class Strings
      * @param string $the_string
      * @return string
      */
-    public static function makeAlphanumericPlus($the_string = '')
+    public static function makeAlphanumericPlus($the_string = ''):string
     {
         $the_string = self::removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
@@ -212,7 +215,7 @@ class Strings
      * @param bool   $leave_first_alone defaults to true
      * @return string
      */
-    public static function makeCamelCase($the_string = '', $leave_first_alone = true)
+    public static function makeCamelCase($the_string = '', $leave_first_alone = true):string
     {
         $the_string = self::removeTags(trim($the_string));
         if (strpos($the_string, ' ') !== false) {
@@ -250,7 +253,7 @@ class Strings
      * @param bool   $allow_upper
      * @return string
      */
-    public static function makeGoodUrl($the_string = '', $allow_upper = true)
+    public static function makeGoodUrl($the_string = '', $allow_upper = true):string
     {
         $the_string = self::removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
@@ -263,7 +266,7 @@ class Strings
             $test_string = SITE_URL . $test_string;
         }
         else {
-            list($scheme, $the_rest) = explode('://', $test_string);
+            [$scheme, $the_rest] = explode('://', $test_string);
             $scheme = self::makeValidUrlScheme($scheme);
             $test_string = $scheme . '://' . $the_rest;
             $the_string = $test_string;
@@ -282,7 +285,7 @@ class Strings
      * @param string $the_string
      * @return string the modified string
      */
-    public static function makeInternetUsable($the_string = '')
+    public static function makeInternetUsable($the_string = ''):string
     {
         $the_string = self::removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
@@ -298,14 +301,14 @@ class Strings
      * @param array  $a_special_words array ['replace_this' => '', 'with_this' => '']
      * @return string
      */
-    public static function makeSentenceCase($the_string = '', array $a_special_words = array())
+    public static function makeSentenceCase($the_string = '', array $a_special_words = array()):string
     {
         $return_this = '';
         $a_sentences = preg_split('/([.?!]+)/', $the_string, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
         foreach($a_sentences as $sentence) {
-            $return_this .= $sentence == '.' ? '. ' : ucfirst(strtolower(trim($sentence)));
+            $return_this .= $sentence === '.' ? '. ' : ucfirst(strtolower(trim($sentence)));
         }
-        if ($a_special_words != array()) {
+        if ($a_special_words !== []) {
             $return_this = str_replace($a_special_words['replace_this'], $a_special_words['with_this'], $return_this);
         }
         return trim($return_this);
@@ -324,51 +327,40 @@ class Strings
      *     number of words if the number of characters restricts it.
      * @note this method strips all html and php tags before shortening the
      *     string.
+     *
      * @param string $string       string to be shortened.
      * @param int    $num_of_words number of words, defaults to 5
      * @param int    $num_of_chars number of characters, if not '', the method
      *                             uses this param to shorten the string
      * @return string - short string.
      */
-    public static function makeShortString($string = '', $num_of_words = 0, $num_of_chars = 0)
+    public static function makeShortString($string = '', $num_of_words = 0, $num_of_chars = 0):string
     {
-        if ($string == '') {
+        if ($string === '') {
             return '';
         }
         $string = self::removeTags($string);
-        $this_string = '';
         $that_string = '';
-        if ((int) $num_of_words === 0 && (int) $num_of_chars === 0) {
-            $this_string = self::makeShortString($string, 5, 0);
-        }
-        elseif ((int) $num_of_words === 0 && (int) $num_of_chars > 0) {
-            for ($i=0;$i < $num_of_chars; $i++) {
-                $this_string .= $string{$i};
-            }
-        }
-        elseif ((int) $num_of_words > 0 && (int) $num_of_chars === 0) {
+
+        if ((int) $num_of_words > 0) {
             $string_parts = explode(' ', $string);
-            if (count($string_parts) < $num_of_words) {
-                $num_of_words = count($string_parts);
+            if ($num_of_chars < 1 && \count($string_parts) <= $num_of_words) {
+                return $string;
             }
             for ($i = 0; $i < $num_of_words; $i++) {
-                $this_string .= $this_string == '' ? '' : ' ';
-                $this_string .= $string_parts[$i];
-            }
-        }
-        else {
-            $string_parts = explode(' ', $string);
-            for ($i=0; $i < $num_of_words; $i++) {
-                $that_string .= $that_string == '' ? '' : ' ';
-                $this_string = $that_string;
-                $this_string .= $string_parts[$i];
-                if (strlen($this_string) <= $num_of_chars) {
-                    $that_string = $this_string;
-                } else {
-                    $i = $num_of_words;
+                $that_string .= $that_string ?? ' ';
+                if ($num_of_chars > 0 && \strlen($that_string . $string_parts[$i]) > $num_of_chars) {
+                    break;
                 }
+                $that_string .= $string_parts[$i];
             }
             $this_string = $that_string;
+        }
+        elseif ((int) $num_of_chars > 0) {
+            $this_string = substr($string, 0, $num_of_chars - 1);
+        }
+        else {
+            $this_string = self::makeShortString($string, 5, 0);
         }
         return trim($this_string);
     }
@@ -379,7 +371,7 @@ class Strings
      * @param string $scheme
      * @return string
      */
-    public static function makeValidUrlScheme($scheme = '')
+    public static function makeValidUrlScheme($scheme = ''):?string
     {
         switch ($scheme) {
             case 'http':
@@ -399,16 +391,16 @@ class Strings
      * @param bool $start_w_zero
      * @return string
      */
-    public static function numberToExcelColumn($var = 0, $start_w_zero = true)
+    public static function numberToExcelColumn($var = 0, $start_w_zero = true):string
     {
         if ($start_w_zero) {
             $var++;
         }
         if ($var > 26) {
-            $letter = chr((int)($var/26) + 64) . chr(($var % 26) + 64);
+            $letter = \chr((int)($var/26) + 64) . \chr(($var % 26) + 64);
         }
         else {
-            $letter = chr($var + 64);
+            $letter = \chr($var + 64);
         }
         return $letter;
     }
@@ -418,7 +410,7 @@ class Strings
      * @param string $string optional, defaults to empty
      * @return string
      */
-    public static function removeImages($string = '')
+    public static function removeImages($string = ''):string
     {
         $search = [
             '@<img[^>]*?>@si',
@@ -436,7 +428,7 @@ class Strings
      * @param string $html
      * @return string
      */
-    public static function removeTags($html = '')
+    public static function removeTags($html = ''):string
     {
         /** @noinspection BadExpressionStatementJS */
         /** @noinspection JSUnresolvedVariable */
@@ -457,7 +449,7 @@ class Strings
      * @param int    $ent_flag defaults to ENT_QUOTES
      * @return string
      */
-    public static function removeTagsWithDecode($string = '', $ent_flag = ENT_QUOTES)
+    public static function removeTagsWithDecode($string = '', $ent_flag = ENT_QUOTES):string
     {
         /** @noinspection BadExpressionStatementJS */
         /** @noinspection JSUnresolvedVariable */
@@ -476,17 +468,17 @@ class Strings
      * @param string $value
      * @return string
      */
-    public static function trimSlashes($value)
+    public static function trimSlashes($value):string
     {
         if (strpos($value, '/') === 0) {
             $value = substr($value, 1);
         }
 
-        if (strrpos($value, '/') === strlen($value) - 1) {
+        if (strrpos($value, '/') === \strlen($value) - 1) {
             $value = substr($value, 0, -1);
         }
 
-        if (strpos($value, '/') === 0 || strrpos($value, '/') === strlen($value) - 1) {
+        if (strpos($value, '/') === 0 || strrpos($value, '/') === \strlen($value) - 1) {
             $value = self::trimSlashes($value);
         }
         return $value;
@@ -497,7 +489,7 @@ class Strings
      * @param string $value
      * @return string
      */
-    public static function uriToCache($value = '')
+    public static function uriToCache($value = ''):string
     {
         $value = self::removeTags($value);
         $value = str_replace('/', ' ', $value);

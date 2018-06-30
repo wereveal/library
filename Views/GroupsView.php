@@ -54,7 +54,7 @@ class GroupsView
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = [])
+    public function renderList(array $a_message = []):string
     {
         $meth = __METHOD__ . '.';
         $cache_key = 'groups.read.all';
@@ -93,7 +93,7 @@ class GroupsView
      * @param array $a_values
      * @return string
      */
-    public function renderVerify(array $a_values = [])
+    public function renderVerify(array $a_values = []):string
     {
         if ($a_values === array()) {
             $a_message = ViewHelper::failureMessage('An Error Has Occurred. Please Try Again.');

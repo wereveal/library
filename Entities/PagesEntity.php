@@ -42,16 +42,16 @@ class PagesEntity implements EntityInterface
     /**
      * @return array
      */
-    public function getAllProperties()
+    public function getAllProperties():array
     {
         return $this->a_entity;
     }
 
     /**
      * @param array $a_entity
-     * @return bool|void
+     * @return bool
      */
-    public function setAllProperties(array $a_entity = array())
+    public function setAllProperties(array $a_entity = array()):bool
     {
         $a_required_keys = [
             'page_base_url',
@@ -68,12 +68,13 @@ class PagesEntity implements EntityInterface
         foreach ($a_entity as $key => $value) {
             $this->$key = $value;
         }
+        return true;
     }
 
     /**
      * @return string
      */
-    public function getPageBaseUrl()
+    public function getPageBaseUrl():string
     {
         return $this->page_base_url;
     }
@@ -81,7 +82,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_base_url
      */
-    public function setPageBaseUrl($page_base_url)
+    public function setPageBaseUrl($page_base_url):void
     {
         $this->page_base_url = $page_base_url;
     }
@@ -89,7 +90,7 @@ class PagesEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getPageCharset()
+    public function getPageCharset():string
     {
         return $this->page_charset;
     }
@@ -97,7 +98,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_charset
      */
-    public function setPageCharset($page_charset)
+    public function setPageCharset($page_charset):void
     {
         $this->page_charset = $page_charset;
     }
@@ -105,7 +106,7 @@ class PagesEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getPageDescription()
+    public function getPageDescription():string
     {
         return $this->page_description;
     }
@@ -113,7 +114,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_description
      */
-    public function setPageDescription($page_description)
+    public function setPageDescription($page_description):void
     {
         $this->page_description = $page_description;
     }
@@ -121,7 +122,7 @@ class PagesEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getPageId()
+    public function getPageId():int
     {
         return $this->page_id;
     }
@@ -129,9 +130,9 @@ class PagesEntity implements EntityInterface
     /**
      * @param int $page_id
      */
-    public function setPageId($page_id = -1)
+    public function setPageId($page_id = -1):void
     {
-        if ($page_id != -1) {
+        if ($page_id !== -1) {
             $this->page_id = $page_id;
         }
     }
@@ -139,7 +140,7 @@ class PagesEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getPageLang()
+    public function getPageLang():string
     {
         return $this->page_lang;
     }
@@ -147,7 +148,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_lang
      */
-    public function setPageLang($page_lang)
+    public function setPageLang($page_lang):void
     {
         $this->page_lang = $page_lang;
     }
@@ -155,7 +156,7 @@ class PagesEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getPageTitle()
+    public function getPageTitle():string
     {
         return $this->page_title;
     }
@@ -163,7 +164,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_title
      */
-    public function setPageTitle($page_title)
+    public function setPageTitle($page_title):void
     {
         $this->page_title = $page_title;
     }
@@ -171,7 +172,7 @@ class PagesEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getPageType()
+    public function getPageType():string
     {
         return $this->page_type;
     }
@@ -179,7 +180,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_type
      */
-    public function setPageType($page_type)
+    public function setPageType($page_type):void
     {
         $this->page_type = $page_type;
     }
@@ -187,7 +188,7 @@ class PagesEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getPageUrl()
+    public function getPageUrl():string
     {
         return $this->page_url;
     }
@@ -195,7 +196,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_url
      */
-    public function setPageUrl($page_url)
+    public function setPageUrl($page_url):void
     {
         $this->page_url = $page_url;
     }

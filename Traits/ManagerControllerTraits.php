@@ -33,9 +33,9 @@ trait ManagerControllerTraits
      *
      * @return bool
      */
-    protected function loginValid()
+    protected function loginValid():bool
     {
-        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] != '') {
+        if (isset($_SESSION['login_id']) && $_SESSION['login_id'] !== '') {
             $min_auth_level = $this->a_router_parts['min_auth_level'];
             if ($this->o_auth->isAllowedAccess($_SESSION['login_id'], $min_auth_level)) {
                 $this->o_session->updateIdleTimestamp();
@@ -50,7 +50,7 @@ trait ManagerControllerTraits
      *
      * @param $o_di
      */
-    protected function setupManagerController($o_di)
+    protected function setupManagerController($o_di):void
     {
         $this->setupController($o_di);
         $o_auth = new AuthHelper($o_di);
@@ -62,20 +62,19 @@ trait ManagerControllerTraits
      *
      * @return array The standard basic message array with message and message type.
      */
-    protected function verifyLogin()
+    protected function verifyLogin():array
     {
         $a_results = $this->o_auth->login($this->a_post); // authentication part
-        if ($a_results['is_logged_in'] == 'true') {
+        if ($a_results['is_logged_in'] === 'true') {
             $min_auth_level = $this->a_router_parts['min_auth_level'];
             if ($this->o_auth->isAllowedAccess($a_results['people_id'], $min_auth_level, true)) { // authorization part
                 $this->o_session->setVar('login_id', $a_results['login_id']);
                 $this->o_session->setVar('adm_lvl', $a_results['auth_level']);
                 return ViewHelper::successMessage('Success, you are now logged in!');
             }
-            else {
-                $this->o_auth->logout($a_results['people_id']);
-                $a_results = ['message' => 'Sorry, you are not allowed access at this time.'];
-            }
+
+            $this->o_auth->logout($a_results['people_id']);
+            $a_results = ['message' => 'Sorry, you are not allowed access at this time.'];
         }
         return isset($a_results['message'])
             ? ViewHelper::failureMessage($a_results['message'])
@@ -87,7 +86,7 @@ trait ManagerControllerTraits
      *
      * @return \Ritc\Library\Helper\AuthHelper
      */
-    public function getAuth()
+    public function getAuth():AuthHelper
     {
         return $this->o_auth;
     }

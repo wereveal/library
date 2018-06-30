@@ -42,9 +42,10 @@ class TwigController implements ControllerInterface
 
     /**
      * Routes things around to do the Twig management.
+     *
      * @return string
      */
-    public function route()
+    public function route():string
     {
         $a_message = [];
         $action = empty($this->form_action)
@@ -53,7 +54,7 @@ class TwigController implements ControllerInterface
         if ($this->o_session->isNotValidSession($this->a_post, true)) {
             $this->o_auth->logout($_SESSION['login_id']);
             $o_main = $this->o_di->get('MasterController');
-            if (is_object($o_main)) {
+            if (\is_object($o_main)) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $o_main->route();
             }
@@ -92,10 +93,11 @@ class TwigController implements ControllerInterface
 
     /**
      * Routes to the correct verifyDelete form.
+     *
      * @param string $which_one
-     * @return array|string
+     * @return string
      */
-    private function verifyDelete($which_one = '')
+    private function verifyDelete($which_one = ''):string
     {
         if (empty($which_one)) {
             $a_message = ViewHelper::errorMessage('Could not perform the delete. Missing a required value.');
@@ -118,7 +120,8 @@ class TwigController implements ControllerInterface
                 }
                 return $this->o_view->renderDeleteDir($this->a_post['td_id']);
             default:
-                return ViewHelper::errorMessage('Missing a valid value.');
+                $a_message = ViewHelper::errorMessage('Missing a valid value.');
+                return $this->o_view->render($a_message);
         }
     }
 }

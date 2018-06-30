@@ -9,7 +9,6 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
-use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -33,21 +32,16 @@ class PeopleComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
-    /**
-     * @var \Ritc\Library\Models\PeopleModel
-     */
+    /** @var \Ritc\Library\Models\PeopleModel */
     private $o_people;
-    /**
-     * @var \Ritc\Library\Models\GroupsModel
-     */
+    /** @var \Ritc\Library\Models\GroupsModel */
     private $o_group;
-    /**
-     * @var \Ritc\Library\Models\PeopleGroupMapModel
-     */
+    /** @var \Ritc\Library\Models\PeopleGroupMapModel */
     private $o_pgm;
 
     /**
      * PeopleComplexModel constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      * @throws \Ritc\Library\Exceptions\CustomException
      */
@@ -71,10 +65,10 @@ class PeopleComplexModel
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function deletePerson($people_id = -1)
+    public function deletePerson($people_id = -1):bool
     {
         $meth = __METHOD__ . '.';
-        if ($people_id == -1) {
+        if ($people_id === -1) {
             throw new ModelException('Missing required people id', 420);
         }
         try {
@@ -84,13 +78,13 @@ class PeopleComplexModel
             throw new ModelException('Unable to start transaction', $e->getCode(), $e);
         }
         $o_pdo = $this->o_db->getPDO();
-          $this->logIt("In Transaction 1: " . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
+          $this->logIt('In Transaction 1: ' . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
         try {
             $this->o_pgm->deleteByPeopleId($people_id);
-              $this->logIt("In Transaction 2: " . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
+              $this->logIt('In Transaction 2: ' . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
             try {
                 $this->o_people->delete($people_id);
-                  $this->logIt("In Transaction 3: " . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
+                  $this->logIt('In Transaction 3: ' . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
                 try {
                     $this->o_db->commitTransaction();
                 }
@@ -103,7 +97,7 @@ class PeopleComplexModel
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = 'Unable to delete the people record(s): ';
+                $this->error_message = 'Unable to delete the people record(s):';
                 $this->error_message .= DEVELOPER_MODE
                     ? $e->errorMessage()
                     : $e->getMessage();
@@ -126,9 +120,9 @@ class PeopleComplexModel
      * @return array the records for the person
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readInfo($people_id = '')
+    public function readInfo($people_id = ''):array
     {
-        if ($people_id == '') {
+        if ($people_id === '') {
             $this->error_message = 'People ID not provided.';
             throw new ModelException($this->error_message, 220);
         }
@@ -146,8 +140,8 @@ class PeopleComplexModel
 
         $fields = '';
         foreach ($a_people_fields as $field_name) {
-            if ($field_name != 'password') {
-                $fields .= $fields == ''
+            if ($field_name !== 'password') {
+                $fields .= $fields === ''
                     ? 'p.' . $field_name
                     : ', p.' . $field_name
                 ;
@@ -159,11 +153,11 @@ class PeopleComplexModel
 
 
         if (is_numeric($people_id)) {
-            $where          = "p.people_id = :people_id";
+            $where          = 'p.people_id = :people_id';
             $a_where_values = [':people_id' => $people_id];
         }
         else {
-            $where          = "p.login_id = :login_id";
+            $where          = 'p.login_id = :login_id';
             $a_where_values = [':login_id' => $people_id];
         }
         $sql = "
@@ -183,8 +177,8 @@ class PeopleComplexModel
             throw new ModelException($e->errorMessage(), $e->getCode());
         }
         $a_person = [];
-        if (isset($a_people[0]) && is_array($a_people[0])) {
-            if (($a_people[0]['people_id'] == $people_id) || ($a_people[0]['login_id'] == $people_id)) {
+        if (isset($a_people[0]) && \is_array($a_people[0])) {
+            if (($a_people[0]['people_id'] === $people_id) || ($a_people[0]['login_id'] === $people_id)) {
                 $a_groups = array();
                 foreach ($a_people as $key => $person) {
                     $a_groups[] = [
@@ -200,7 +194,7 @@ class PeopleComplexModel
                 array_multisort($a_group_id, SORT_ASC, $a_groups);
                 $previous_group = '';
                 foreach ($a_groups as $key => $a_group) {
-                    if ($a_group['group_id'] == $previous_group) {
+                    if ($a_group['group_id'] === $previous_group) {
                         unset($a_groups[$key]);
                     }
                     else {
@@ -208,10 +202,12 @@ class PeopleComplexModel
                     }
                 }
                 $a_person = $a_people[0];
-                unset($a_person['group_id']);
-                unset($a_person['group_name']);
-                unset($a_person['group_description']);
-                unset($a_person['group_auth_level']);
+                unset(
+                    $a_person['group_id'],
+                    $a_person['group_name'],
+                    $a_person['group_description'],
+                    $a_person['group_auth_level']
+                );
                 $a_person['groups'] = $a_groups;
             }
         }
@@ -253,8 +249,8 @@ class PeopleComplexModel
         }
         $fields = '';
         foreach ($a_people_fields as $field_name) {
-            if ($field_name != 'password') {
-                $fields .= $fields == ''
+            if ($field_name !== 'password') {
+                $fields .= $fields === ''
                     ? 'p.' . $field_name
                     : ', p.' . $field_name
                 ;
@@ -290,22 +286,23 @@ class PeopleComplexModel
      * Saves the person.
      * If the values contain a value of people_id, person is updated
      * Else it is a new person.
+     *
      * @param array $a_person values to save
-     * @return bool|int
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @return int
+     * @throws ModelException
      */
-    public function savePerson(array $a_person = [])
+    public function savePerson(array $a_person = []):int
     {
           $log_message = 'person to save ' . var_export($a_person, TRUE);
           $this->logIt($log_message, LOG_OFF, __METHOD__);
-        if (!isset($a_person['people_id']) || $a_person['people_id'] == '') { // New User
+        if (!isset($a_person['people_id']) || $a_person['people_id'] === '') { // New User
             $a_required_keys = array(
                 'login_id',
                 'real_name',
                 'password'
             );
             foreach($a_required_keys as $key_name) {
-                if ($a_person[$key_name] == '') {
+                if ($a_person[$key_name] === '') {
                     switch ($key_name) {
                         case 'login_id':
                             throw new ModelException('Missing login_id', 20);
@@ -363,75 +360,68 @@ class PeopleComplexModel
             $this->o_db->rollbackTransaction();
             throw new ModelException($this->error_message, $error_code);
         }
-        else { // Existing User
-            if (isset($a_person['groups'])) {
-                $a_groups = $this->makeGroupIdArray($a_person['groups']);
-                $a_pg_values = $this->makePgmArray($a_person['people_id'], $a_groups);
-                unset($a_person['groups']);
-            }
-            $a_possible_keys = $this->o_people->getDbFields();
-            if (isset($a_person['password'])) {
-                $a_person['password'] = $this->o_people->hashPass($a_person['password']);
-            }
-            foreach($a_possible_keys as $key_name) {
-                if (empty($a_person[$key_name])) {
-                    switch ($key_name) {
-                        case 'people_id':
-                            $this->error_message = 'Missing people_id.';
-                            $err_code = ExceptionHelper::getCodeNumberModel('create missing primary');
-                            throw new ModelException($this->error_message, $err_code);
-                        case 'login_id':
-                        case 'password':
-                        case 'real_name':
-                            unset($a_person[$key_name]);
-                            break;
-                        case 'is_logged_in':
-                        case 'is_active':
-                        case 'is_immutable':
-                            $a_person[$key_name] = 'false';
-                            break;
-                        default:
-                            break;
-                    }
+
+        // Existing User
+        if (isset($a_person['groups'])) {
+            $a_groups = $this->makeGroupIdArray($a_person['groups']);
+            $a_pg_values = $this->makePgmArray($a_person['people_id'], $a_groups);
+            unset($a_person['groups']);
+        }
+        $a_possible_keys = $this->o_people->getDbFields();
+        if (isset($a_person['password'])) {
+            $a_person['password'] = $this->o_people->hashPass($a_person['password']);
+        }
+        foreach($a_possible_keys as $key_name) {
+            if (empty($a_person[$key_name])) {
+                switch ($key_name) {
+                    case 'people_id':
+                        $this->error_message = 'Missing people_id.';
+                        $err_code = ExceptionHelper::getCodeNumberModel('create missing primary');
+                        throw new ModelException($this->error_message, $err_code);
+                    case 'login_id':
+                    case 'password':
+                    case 'real_name':
+                        unset($a_person[$key_name]);
+                        break;
+                    case 'is_logged_in':
+                    case 'is_active':
+                    case 'is_immutable':
+                        $a_person[$key_name] = 'false';
+                        break;
+                    default:
+                        break;
                 }
             }
-            if (!empty($a_pg_values)) {
+        }
+        if (!empty($a_pg_values)) {
+            try {
+                $this->o_db->startTransaction();
+            }
+            catch (ModelException $e) {
+                $this->error_message = 'Unable to start the transaction: ' . $e->errorMessage();
+                $err_code = ExceptionHelper::getCodeNumberModel('transaction start');
+                throw new ModelException($this->error_message, $err_code);
+            }
+            try {
+                $this->o_people->update($a_person, ['login_id']);
                 try {
-                    $this->o_db->startTransaction();
-                }
-                catch (ModelException $e) {
-                    $this->error_message = 'Unable to start the transaction: ' . $e->errorMessage();
-                    $err_code = ExceptionHelper::getCodeNumberModel('transaction start');
-                    throw new ModelException($this->error_message, $err_code);
-                }
-                try {
-                    $this->o_people->update($a_person, ['login_id']);
+                    $this->o_pgm->deleteByPeopleId($a_person['people_id']);
                     try {
-                        $this->o_pgm->deleteByPeopleId($a_person['people_id']);
+                        $this->o_pgm->create($a_pg_values);
                         try {
-                            $this->o_pgm->create($a_pg_values);
-                            try {
-                                $this->o_db->commitTransaction();
-                                return true;
-                            }
-                            catch (ModelException $e) {
-                                $this->error_message = 'Unable to commit the transaction';
-                                if (DEVELOPER_MODE) {
-                                    $this->error_message .= ' ' . $e->errorMessage();
-                                }
-                                $error_code = 40;
-                            }
+                            $this->o_db->commitTransaction();
+                            return $a_person['people_id'];
                         }
                         catch (ModelException $e) {
-                            $this->error_message = 'Unable to create the people group map record.';
+                            $this->error_message = 'Unable to commit the transaction';
                             if (DEVELOPER_MODE) {
                                 $this->error_message .= ' ' . $e->errorMessage();
                             }
-                            $error_code = $e->getCode();
+                            $error_code = 40;
                         }
                     }
                     catch (ModelException $e) {
-                        $this->error_message = 'Unable to delete old people group map record.';
+                        $this->error_message = 'Unable to create the people group map record.';
                         if (DEVELOPER_MODE) {
                             $this->error_message .= ' ' . $e->errorMessage();
                         }
@@ -439,12 +429,19 @@ class PeopleComplexModel
                     }
                 }
                 catch (ModelException $e) {
-                    $this->error_message = 'Unable to update the person: '. $e->errorMessage();
+                    $this->error_message = 'Unable to delete old people group map record.';
+                    if (DEVELOPER_MODE) {
+                        $this->error_message .= ' ' . $e->errorMessage();
+                    }
                     $error_code = $e->getCode();
                 }
-                $this->o_db->rollbackTransaction();
-                throw new ModelException($this->error_message, $error_code);
             }
+            catch (ModelException $e) {
+                $this->error_message = 'Unable to update the person: '. $e->errorMessage();
+                $error_code = $e->getCode();
+            }
+            $this->o_db->rollbackTransaction();
+            throw new ModelException($this->error_message, $error_code);
         }
         throw new ModelException('Unable to save the person. ' . $this->error_message, 110);
     }
@@ -461,10 +458,10 @@ class PeopleComplexModel
         $meth = __METHOD__ . '.';
         $a_person = $a_values['person'];
         $a_person = $this->o_people->setPersonValues($a_person);
-        if (!is_array($a_person)) { // then it should be a string describing the error from setPersonValues.
+        if (!\is_array($a_person)) { // then it should be a string describing the error from setPersonValues.
             return $a_person;
         }
-        if (!isset($a_values['groups']) || count($a_values['groups']) < 1) {
+        if (!isset($a_values['groups']) || \count($a_values['groups']) < 1) {
             return 'group-missing';
         }
         $a_person['groups'] = $a_values['groups'];
@@ -478,12 +475,12 @@ class PeopleComplexModel
      * @param string       $group_name Optional, used if $group_id is empty
      * @return array
      */
-    public function makeGroupIdArray($group_id = '', $group_name = '')
+    public function makeGroupIdArray($group_id = '', $group_name = ''):array
     {
-        if (is_array($group_id)) {
+        if (\is_array($group_id)) {
             $a_group_ids = $group_id;
         }
-        elseif ($group_id != '') {
+        elseif ($group_id !== '') {
            $results = $this->o_group->isValidGroupId($group_id);
            $a_group_ids = $results
                ? [$group_id]
@@ -506,7 +503,7 @@ class PeopleComplexModel
         if (empty($a_group_ids)) {
             try {
                 $a_found_groups = $this->o_group->readByName('Registered');
-                $use_id = $a_found_groups !== false && count($a_found_groups) > 0
+                $use_id = $a_found_groups !== false && \count($a_found_groups) > 0
                     ? $a_found_groups[0]['group_id']
                     : 5;
                 $a_group_ids = [$use_id];
@@ -520,13 +517,14 @@ class PeopleComplexModel
 
     /**
      * Returns an array mapping a person to the group(s) specified.
+     *
      * @param string $people_id
      * @param array  $a_groups
      * @return array
      */
-    public function makePgmArray($people_id = '', array $a_groups = array())
+    public function makePgmArray($people_id = '', array $a_groups = array()):array
     {
-        if ($people_id == '' || $a_groups == array()) {
+        if ($people_id === '' || $a_groups === array()) {
             return array();
         }
         $a_return_map = array();

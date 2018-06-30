@@ -33,7 +33,7 @@ abstract class ModelAbstract implements ModelInterface
      * @return array The ids of new records.
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function create(array $a_values = []): ?array
+    public function create(array $a_values = []):array
     {
         $a_psql = [
             'table_name'  => $this->db_table,
@@ -60,7 +60,7 @@ abstract class ModelAbstract implements ModelInterface
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function read(array $a_search_for = [], array $a_search_params = []): array
+    public function read(array $a_search_for = [], array $a_search_params = []):array
     {
         $a_parameters = [
             'table_name'     => $this->db_table,
@@ -85,7 +85,7 @@ abstract class ModelAbstract implements ModelInterface
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function update(array $a_values = [], array $a_do_not_change = []): bool
+    public function update(array $a_values = [], array $a_do_not_change = []):bool
     {
         if (!empty($this->immutable_field) && !empty($a_do_not_change)) {
             $results = $this->fixUpdateValues($a_values, $this->immutable_field , $a_do_not_change);
@@ -110,7 +110,7 @@ abstract class ModelAbstract implements ModelInterface
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function delete($id = -1): bool
+    public function delete($id = -1):bool
     {
         if (!empty($this->immutable_field)) {
             try {

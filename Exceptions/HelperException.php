@@ -19,22 +19,12 @@ use Ritc\Library\Abstracts\CustomExceptionAbstract;
 class HelperException extends CustomExceptionAbstract
 {
     /**
-     * HelperException constructor.
-     * @param string          $message
-     * @param int             $code
-     * @param \Throwable|null $previous
-     */
-    public function __construct($message = "", $code = 0, \Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-    }
-
-    /**
      * Returns the text string associated with the error code.
+     *
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1)
+    public function getCodeText($code = -1):string
     {
         switch ($code) {
             case 10:

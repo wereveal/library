@@ -24,7 +24,7 @@ class ExceptionHelper
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumber($failure_string = ''): int
+    public static function getCodeNumber($failure_string = ''):int
     {
         $failure_string = self::fixFailureString($failure_string);
         switch ($failure_string) {
@@ -47,7 +47,7 @@ class ExceptionHelper
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumberFactory($failure_string = ''): int
+    public static function getCodeNumberFactory($failure_string = ''):int
     {
         $failure_string = self::fixFailureString($failure_string);
         switch ($failure_string) {
@@ -74,7 +74,7 @@ class ExceptionHelper
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumberModel($failure_string = ''): int
+    public static function getCodeNumberModel($failure_string = ''):int
     {
         $failure_string = self::fixFailureString($failure_string);
         switch ($failure_string) {
@@ -282,7 +282,7 @@ class ExceptionHelper
      * @param int $code
      * @return string
      */
-    public static function getCodeText($code = -1): string
+    public static function getCodeText($code = -1):string
     {
         switch ($code) {
             ### Business Logic Errors ###
@@ -309,7 +309,7 @@ class ExceptionHelper
      * @param int $code
      * @return string
      */
-    public static function getCodeTextFactory($code = -1): string
+    public static function getCodeTextFactory($code = -1):string
     {
         switch ($code) {
             case 10:
@@ -335,7 +335,7 @@ class ExceptionHelper
      * @param int $code
      * @return string
      */
-    public static function getCodeTextModel($code = -1): string
+    public static function getCodeTextModel($code = -1):string
     {
         switch ($code) {
             # Generic Database failures
@@ -404,17 +404,17 @@ class ExceptionHelper
                 return 'Unable to create a new record: see previous message.';
             # Read codes
             case 210:
-                return 'Unable to read the record(s): unspecified reason.';
+                return 'Unable to read the record(s):unspecified reason.';
             case 220:
-                return 'Unable to read the record(s): a required field is missing.';
+                return 'Unable to read the record(s):a required field is missing.';
             case 222:
-                return 'unable to read the record(s): invalid search term provided.';
+                return 'unable to read the record(s):invalid search term provided.';
             case 230:
-                return 'Unable to read the record(s): No record exists with values given.';
+                return 'Unable to read the record(s):No record exists with values given.';
             case 250:
-                return 'Unable to read the record(s): the opperation was not permitted.';
+                return 'Unable to read the record(s):the opperation was not permitted.';
             case 299:
-                return 'Unable to read the record(s): see the previous exception message.';
+                return 'Unable to read the record(s):see the previous exception message.';
             # Update Codes
             case 310:
                 return 'Unable to update the record';
@@ -515,7 +515,7 @@ class ExceptionHelper
      * @param string $failure_string
      * @return string
      */
-    public static function fixFailureString($failure_string = ''): string
+    public static function fixFailureString($failure_string = ''):string
     {
         return Strings::makeAlphanumericPlus(strtolower($failure_string));
     }

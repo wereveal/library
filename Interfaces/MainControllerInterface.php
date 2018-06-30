@@ -20,7 +20,7 @@ interface MainControllerInterface
      * Main method to route to the appropriate controller/view/model
      * @return string
      */
-    public function route();
+    public function route():string;
 
     /**
      * Method to reset the route to / and display that page.
@@ -30,5 +30,5 @@ interface MainControllerInterface
      *   return $o_controller->route();
      * @return string
      */
-    public function goHome();
+    public function goHome():string;
 }

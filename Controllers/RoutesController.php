@@ -10,7 +10,6 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\RoutesComplexModel;
-use Ritc\Library\Models\RoutesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -42,8 +41,6 @@ class RoutesController implements ManagerControllerInterface
 
     /** @var RoutesComplexModel $o_complex */
     private $o_complex;
-    /** @var RoutesModel $o_model */
-    private $o_model;
     /** @var RoutesView $o_view */
     private $o_view;
 
@@ -55,7 +52,6 @@ class RoutesController implements ManagerControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
-        $this->o_model        = new RoutesModel($this->o_db);
         $this->o_view         = new RoutesView($o_di);
         $this->o_complex      = new RoutesComplexModel($o_di);
         $this->a_object_names = ['o_model'];
@@ -67,7 +63,7 @@ class RoutesController implements ManagerControllerInterface
      *
      * @return string
      */
-    public function route()
+    public function route():string
     {
         switch ($this->form_action) {
             case 'delete':
@@ -90,7 +86,7 @@ class RoutesController implements ManagerControllerInterface
      *
      * @return string
      */
-    public function delete()
+    public function delete():string
     {
         $route_id = $this->a_post['route_id'];
         if (empty($route_id) || $route_id < 1) {
@@ -115,7 +111,7 @@ class RoutesController implements ManagerControllerInterface
      *
      * @return string
      */
-    public function save()
+    public function save():string
     {
         try {
             $this->o_complex->saveNew($this->a_post);
@@ -139,7 +135,7 @@ class RoutesController implements ManagerControllerInterface
      *
      * @return string
      */
-    public function update()
+    public function update():string
     {
         try {
             $this->o_complex->update($this->a_post);
@@ -163,7 +159,7 @@ class RoutesController implements ManagerControllerInterface
      *
      * @return string
      */
-    public function verifyDelete()
+    public function verifyDelete():string
     {
         $route_id = $this->a_post['route']['route_id'];
         $cache_key = 'route.url.for.' . $route_id;

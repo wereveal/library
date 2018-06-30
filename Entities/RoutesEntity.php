@@ -33,9 +33,10 @@ class RoutesEntity implements EntityInterface
 
     /**
      * Gets all the entity properties.
+     *
      * @return array
      */
-    public function getAllProperties()
+    public function getAllProperties():array
     {
         return array(
             'route_id'        => $this->route_id,
@@ -49,10 +50,11 @@ class RoutesEntity implements EntityInterface
 
     /**
      * Sets all the properties for the entity in one step.
+     *
      * @param array $a_entity
      * @return bool
      */
-    public function setAllProperties(array $a_entity = array())
+    public function setAllProperties(array $a_entity = array()):bool
     {
         $a_default_values = [
             'route_id'        => 0,
@@ -76,7 +78,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getRouteId()
+    public function getRouteId():int
     {
         return $this->route_id;
     }
@@ -84,7 +86,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param int $route_id
      */
-    public function setRouteId($route_id)
+    public function setRouteId($route_id):void
     {
         $this->route_id = $route_id;
     }
@@ -92,7 +94,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getRoutePath()
+    public function getRoutePath():string
     {
         return $this->route_path;
     }
@@ -100,7 +102,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param string $route_path
      */
-    public function setRoutePath($route_path)
+    public function setRoutePath($route_path):void
     {
         $this->route_path = $route_path;
     }
@@ -108,7 +110,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getRouteClass()
+    public function getRouteClass():string
     {
         return $this->route_class;
     }
@@ -116,7 +118,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param string $route_class
      */
-    public function setRouteClass($route_class)
+    public function setRouteClass($route_class):void
     {
         $this->route_class = $route_class;
     }
@@ -124,7 +126,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getRouteMethod()
+    public function getRouteMethod():string
     {
         return $this->route_method;
     }
@@ -132,7 +134,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param string $route_method
      */
-    public function setRouteMethod($route_method)
+    public function setRouteMethod($route_method):void
     {
         $this->route_method = $route_method;
     }
@@ -140,7 +142,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getRouteAction()
+    public function getRouteAction():string
     {
         return $this->route_action;
     }
@@ -148,7 +150,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param string $route_action
      */
-    public function setRouteAction($route_action)
+    public function setRouteAction($route_action):void
     {
         $this->route_action = $route_action;
     }
@@ -156,7 +158,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getRouteDefault()
+    public function getRouteDefault():int
     {
         return $this->route_immutable;
     }
@@ -164,7 +166,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param int $route_immutable
      */
-    public function setRouteDefault($route_immutable)
+    public function setRouteDefault($route_immutable):void
     {
         $this->route_immutable = $route_immutable;
     }

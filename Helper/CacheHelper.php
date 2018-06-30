@@ -41,7 +41,7 @@ class CacheHelper
     {
         if (USE_CACHE) {
             $o_cache = $o_di->get('cache');
-            if (is_object($o_cache)) {
+            if (\is_object($o_cache)) {
                 $this->o_cache = $o_cache;
                 $this->cache_type = strpos(CACHE_TYPE, 'Simple') !== false
                     ? 'psr-16'
@@ -66,7 +66,7 @@ class CacheHelper
      *
      * @param string $cache_key
      */
-    public function clearKey(string $cache_key = '')
+    public function clearKey(string $cache_key = ''):void
     {
         switch ($this->cache_type) {
             case 'psr-6':
@@ -90,7 +90,7 @@ class CacheHelper
      *
      * @param string $tag
      */
-    public function clearTag(string $tag = '')
+    public function clearTag(string $tag = ''):void
     {
         switch ($this->cache_type) {
             case 'psr-6':
@@ -147,7 +147,7 @@ class CacheHelper
      *
      * @return string
      */
-    public function getCacheType()
+    public function getCacheType():string
     {
         return $this->cache_type;
     }
@@ -161,7 +161,7 @@ class CacheHelper
      * @param string $tag       Optional, only used if cache is PSR-6
      * @return bool
      */
-    public function set(string $cache_key = '', $value = '', string $tag = '')
+    public function set(string $cache_key = '', $value = '', string $tag = ''):?bool
     {
         if (empty($cache_key)) {
             return false;

@@ -7,8 +7,6 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Services\DbModel;
-use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does all the Model expected operations, database CRUD and business logic.
@@ -36,8 +34,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesModel extends ModelAbstract
 {
-    use LogitTraits, DbUtilityTraits;
-
     /**
      * RoutesModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db

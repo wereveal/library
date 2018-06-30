@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class DbCreator
  * @package Ritc_Library
@@ -25,43 +26,43 @@ class DbCreator
     use LogitTraits;
 
     /** @var array $a_blocks */
-    private $a_blocks;
+    private $a_blocks = [];
     /** @var array $a_content */
-    private $a_content;
+    private $a_content = [];
     /** @var array $a_data */
     private $a_data;
     /** @var  array $a_groups */
-    private $a_groups;
+    private $a_groups = [];
     /** @var  array $a_install_config */
     private $a_install_config;
     /** @var  array $a_navgroups */
-    private $a_navgroups;
+    private $a_navgroups = [];
     /** @var  array $a_navigation */
-    private $a_navigation;
+    private $a_navigation = [];
     /** @var  array $a_nnm */
-    private $a_nnm;
+    private $a_nnm = [];
     /** @var  array $a_page */
-    private $a_page;
+    private $a_page = [];
     /** @var  array $a_pbm */
-    private $a_pbm;
+    private $a_pbm = [];
     /** @var  array $a_people */
-    private $a_people;
+    private $a_people = [];
     /** @var  array $a_pgm */
-    private $a_pgm;
+    private $a_pgm = [];
     /** @var  array $a_rgm */
-    private $a_rgm;
+    private $a_rgm = [];
     /** @var  array $a_routes */
-    private $a_routes;
+    private $a_routes = [];
     /** @var array $a_sql */
     private $a_sql;
     /** @var  array $a_twig_dirs */
-    private $a_twig_dirs;
+    private $a_twig_dirs = [];
     /** @var  array $a_twig_prefix */
-    private $a_twig_prefix;
+    private $a_twig_prefix = [];
     /** @var  array $a_twig_tpls */
-    private $a_twig_tpls;
+    private $a_twig_tpls = [];
     /** @var  array $a_urls */
-    private $a_urls;
+    private $a_urls = [];
     /** @var string $db_prefix */
     private $db_prefix;
     /** @var string $error_message */
@@ -69,7 +70,6 @@ class DbCreator
     /** @var \Ritc\Library\Services\DbModel $o_db */
     private $o_db;
     /** @var \Ritc\Library\Services\Di $o_di */
-    private $o_di;
     /** @var \PDO $o_pdo */
     private $o_pdo;
 
@@ -79,7 +79,6 @@ class DbCreator
      */
     public function __construct(Di $o_di)
     {
-        $this->o_di             = $o_di;
         $this->o_db             = $o_di->get('db');
         $this->o_pdo            = $o_di->get('pdo');
         $this->a_sql            = $o_di->getVar('a_sql');
@@ -93,7 +92,7 @@ class DbCreator
      * @param array $a_sql
      * @return bool
      */
-    public function createTables(array $a_sql = [])
+    public function createTables(array $a_sql = []):bool
     {
         if (empty($a_sql)) {
             if (empty($this->a_sql)) {
@@ -123,7 +122,7 @@ class DbCreator
      *                        in the property a_data['blocks'].
      * @return bool
      */
-    public function insertBlocks(array $a_blocks = [])
+    public function insertBlocks(array $a_blocks = []):bool
     {
         if (empty($a_blocks)) {
             if (empty($this->a_data['blocks'])) {
@@ -140,13 +139,10 @@ class DbCreator
         ];
         $results = $this->genericInsert($a_blocks, $a_table_info);
         if ($results) {
-            error_log(var_export($results, true));
             $this->a_blocks = $results;
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -155,7 +151,7 @@ class DbCreator
      * @needs $this->a_page must be set
      * @return bool
      */
-    public function insertContent(array $a_content = [])
+    public function insertContent(array $a_content = []):bool
     {
         if (empty($a_content)) {
             if (empty($this->a_data['content'])) {
@@ -214,7 +210,7 @@ class DbCreator
      *                           in the property a_data['constants'].
      * @return bool
      */
-    public function insertConstants(array $a_constants = [])
+    public function insertConstants(array $a_constants = []):?bool
     {
         if (empty($a_constants)) {
             if (empty($this->a_data['constants'])) {
@@ -233,9 +229,7 @@ class DbCreator
         if ($results) {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -243,7 +237,7 @@ class DbCreator
      * @param array $a_groups optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertGroups(array $a_groups = [])
+    public function insertGroups(array $a_groups = []):?bool
     {
         if (empty($a_groups)) {
             if (empty($this->a_data['groups'])) {
@@ -261,9 +255,7 @@ class DbCreator
             $this->a_groups = $results;
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -271,7 +263,7 @@ class DbCreator
      * @param array $a_navgroups optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertNavgroups(array $a_navgroups = [])
+    public function insertNavgroups(array $a_navgroups = []):bool
     {
         if (empty($a_navgroups)) {
             if (empty($this->a_data['navgroups'])) {
@@ -295,7 +287,7 @@ class DbCreator
             $o_stmt = $this->o_db->prepare($sql);
         }
         catch (ModelException $e) {
-            $this->error_message = "Unable to prepare the sql statement(s)" . $e->errorMessage();
+            $this->error_message = 'Unable to prepare the sql statement(s)' . $e->errorMessage();
             return false;
         }
         foreach ($a_navgroups as $key => $a_record) {
@@ -325,7 +317,7 @@ class DbCreator
      * @param array $a_navigation optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertNavigation(array $a_navigation = [])
+    public function insertNavigation(array $a_navigation = []):bool
     {
         if (empty($a_navigation)) {
             if (empty($this->a_data['navigation'])) {
@@ -342,7 +334,8 @@ class DbCreator
                 ({$a_strings['fields']})
             VALUES
                 ({$a_strings['values']})";
-        $update_sql = "
+        $update_sql = /** @lang text */
+        "
             UPDATE {$table_name}
             SET parent_id = :parent_id
             WHERE nav_id = :nav_id";
@@ -355,7 +348,7 @@ class DbCreator
             $o_update_stmt = $this->o_db->prepare($update_sql);
         }
         catch (ModelException $e) {
-            $this->error_message = "Unable to prepare the sql statement(s)" . $e->errorMessage();
+            $this->error_message = 'Unable to prepare the sql statement(s)' . $e->errorMessage();
             return false;
         }
         foreach ($a_navigation as $key => $a_record) {
@@ -401,7 +394,7 @@ class DbCreator
      * @param array $a_nnm optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertNNM(array $a_nnm = [])
+    public function insertNNM(array $a_nnm = []):bool
     {
         // print "In insertNNM\n";
         if (empty($a_nnm)) {
@@ -493,7 +486,7 @@ class DbCreator
      * @param array $a_page options, if not provided uses class property a_data['page'].
      * @return bool
      */
-    public function insertPage(array $a_page = [])
+    public function insertPage(array $a_page = []):bool
     {
         if (empty($a_page)) {
             if (empty($this->a_data['page'])) {
@@ -553,7 +546,7 @@ class DbCreator
      * @param array $a_pbm
      * @return bool
      */
-    public function insertPBM(array $a_pbm = [])
+    public function insertPBM(array $a_pbm = []):?bool
     {
         if (empty($a_pbm)) {
             if (empty($this->a_data['page_block_map'])) {
@@ -578,13 +571,10 @@ class DbCreator
 
         $results = $this->genericInsert($a_pbm, $a_table_info);
         if ($results) {
-            error_log(var_export($results, true));
             $this->a_pbm = $results;
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -592,7 +582,7 @@ class DbCreator
      * @param array $a_people optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertPeople(array $a_people = [])
+    public function insertPeople(array $a_people = []):?bool
     {
         if (empty($a_people)) {
             if (empty($this->a_data['people'])) {
@@ -602,7 +592,7 @@ class DbCreator
             $a_people = $this->a_data['people'];
         }
         foreach ($a_people as $key => $a_person) {
-            $a_people[$key]['password'] = defined('PASSWORD_ARGON2I')
+            $a_people[$key]['password'] = \defined('PASSWORD_ARGON2I')
                 ? password_hash($a_person['password'], PASSWORD_ARGON2I)
                 : password_hash($a_person['password'], PASSWORD_DEFAULT);
         }
@@ -615,9 +605,7 @@ class DbCreator
             $this->a_people = $results;
             return true;
         }
-        else {
-           return false;
-        }
+        return false;
     }
 
     /**
@@ -625,7 +613,7 @@ class DbCreator
      * @param array $a_pgm optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertPGM(array $a_pgm = [])
+    public function insertPGM(array $a_pgm = []):?bool
     {
         if (empty($a_pgm)) {
             if (empty($this->a_data['people_group_map'])) {
@@ -652,9 +640,7 @@ class DbCreator
             $this->a_pgm = $results;
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -662,7 +648,7 @@ class DbCreator
      * @param array $a_rgm optional optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertRGM(array $a_rgm = [])
+    public function insertRGM(array $a_rgm = []):?bool
     {
         if (empty($a_rgm)) {
             if (empty($this->a_data['routes_group_map'])) {
@@ -684,9 +670,7 @@ class DbCreator
             $this->a_rgm = $results;
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -694,7 +678,7 @@ class DbCreator
      * @param array $a_routes optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertRoutes(array $a_routes = [])
+    public function insertRoutes(array $a_routes = []):?bool
     {
         if (empty($a_routes)) {
             if (empty($this->a_data['routes'])) {
@@ -715,9 +699,7 @@ class DbCreator
             $this->a_routes = $results;
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -725,7 +707,7 @@ class DbCreator
      * @param array $a_twig_dirs optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertTwigDirs(array $a_twig_dirs = [])
+    public function insertTwigDirs(array $a_twig_dirs = []):bool
     {
         if (empty($a_twig_dirs)) {
             if (empty($this->a_data['twig_dirs'])) {
@@ -784,7 +766,7 @@ class DbCreator
      * @param array $a_twig_prefix optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertTwigPrefixes(array $a_twig_prefix = [])
+    public function insertTwigPrefixes(array $a_twig_prefix = []):bool
     {
         if (empty($a_twig_prefix)) {
             if (empty($this->a_data['twig_prefix'])) {
@@ -822,7 +804,7 @@ class DbCreator
                 }
             }
             catch (ModelException $e) {
-                $this->error_message = "Could not insert new twig prefix record.";
+                $this->error_message = 'Could not insert new twig prefix record.';
                 return false;
             }
         }
@@ -835,7 +817,7 @@ class DbCreator
      * @param array $a_twig_tpls optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertTwigTemplates(array $a_twig_tpls = [])
+    public function insertTwigTemplates(array $a_twig_tpls = []):bool
     {
         if (empty($a_twig_tpls)) {
             if (empty($this->a_data['twig_templates'])) {
@@ -894,7 +876,7 @@ class DbCreator
      * @param array $a_urls
      * @return bool
      */
-    public function insertUrls(array $a_urls = [])
+    public function insertUrls(array $a_urls = []):?bool
     {
         if (empty($a_urls)) {
             if (empty($this->a_data['urls'])) {
@@ -912,9 +894,7 @@ class DbCreator
             $this->a_urls = $results;
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -943,13 +923,11 @@ class DbCreator
                     $this->error_message = 'Could not insert constants: insert did not return valid values';
                     return false;
                 }
-                else {
-                    $ids = $this->o_db->getNewIds();
-                    $a_values_list[$key][$a_table_info['column_name']] = $ids[0];
-                }
+                $ids = $this->o_db->getNewIds();
+                $a_values_list[$key][$a_table_info['column_name']] = $ids[0];
             }
             catch (ModelException $e) {
-                $this->error_message = "Could not insert constants data. " . $e->errorMessage() . "\n\n" . $this->o_db->retrieveFormattedSqlErrorMessage() . "\n\n" . $sql;
+                $this->error_message = 'Could not insert constants data. ' . $e->errorMessage() . "\n\n" . $this->o_db->retrieveFormattedSqlErrorMessage() . "\n\n" . $sql;
                 return false;
             }
         }
@@ -963,13 +941,14 @@ class DbCreator
      * @param array $a_records
      * @return array
      */
-    private function createStrings($a_records = []) {
+    private function createStrings(array $a_records = []):array
+    {
         $a_record = array_shift($a_records);
         $fields = '';
         $values = '';
         foreach ($a_record as $key => $a_value) {
-            $fields .= $fields == '' ? $key : ', ' . $key;
-            $values .= $values == '' ? ':' . $key : ', :' . $key;
+            $fields .= $fields === '' ? $key : ', ' . $key;
+            $values .= $values === '' ? ':' . $key : ', :' . $key;
         }
         return [
             'fields' => $fields,
@@ -980,17 +959,18 @@ class DbCreator
     /**
      * Updates the property a_data twig data when the app has a unique prefix.
      */
-    public function createTwigAppConfig()
+    public function createTwigAppConfig():void
     {
         if (!empty($this->a_install_config['app_twig_prefix'])) {
             $app_twig_prefix = $this->a_install_config['app_twig_prefix'];
             $key_name = str_replace('_', '', $app_twig_prefix);
-            if (!isset($this->a_data['twig_prefix'][$key_name])) {
+            if ($key_name !== '' && isset($this->a_data['twig_prefix']) && !isset($this->a_data['twig_prefix'][$key_name])) {
                 $tp_path = '/src/apps'
                     . $this->a_install_config['namespace']
                     . '/'
                     . $this->a_install_config['app_name']
                     . '/resources/templates';
+                /** @noinspection UnsupportedStringOffsetOperationsInspection */
                 $this->a_data['twig_prefix'][$key_name] = [
                     'tp_prefix'  => $app_twig_prefix,
                     'tp_path'    => $tp_path,
@@ -1000,15 +980,19 @@ class DbCreator
             }
             $a_dir_names = $this->a_data['twig_default_dirs'];
             foreach ($a_dir_names as $name) {
-                if (!isset($this->a_data['twig_dirs'][$app_twig_prefix . $name])) {
-                    $this->a_data['twig_dirs'][$app_twig_prefix . $name] = [
+                $dir_name = $app_twig_prefix . $name;
+                if (isset($this->a_data['twig_dirs']) && !isset($this->a_data['twig_dirs'][$dir_name])) {
+                    /** @noinspection UnsupportedStringOffsetOperationsInspection */
+                    $this->a_data['twig_dirs'][$dir_name] = [
                         'tp_id'   => $key_name,
                         'td_name' => $name
                     ];
                 }
             }
-            if (!isset($this->a_data['twig_templates'][$app_twig_prefix . 'index'])) {
-                $this->a_data['twig_templates'][$app_twig_prefix . 'index'] = [
+            $tpl_name = $app_twig_prefix . 'index';
+            if (isset($this->a_data['twig_templates']) && !isset($this->a_data['twig_templates'][$tpl_name])) {
+                /** @noinspection UnsupportedStringOffsetOperationsInspection */
+                $this->a_data['twig_templates'][$tpl_name] = [
                     'td_id'         => $app_twig_prefix . 'pages',
                     'tpl_name'      => 'index',
                     'tpl_immutable' => 'false'
@@ -1022,7 +1006,7 @@ class DbCreator
      * Gets the property a_data.
      * @return array
      */
-    public function getData()
+    public function getData():array
     {
         return $this->a_data;
     }
@@ -1031,7 +1015,7 @@ class DbCreator
      * Sets the property a_data.
      * @param array $a_data
      */
-    public function setData(array $a_data = [])
+    public function setData(array $a_data = []):void
     {
         $this->a_data = $a_data;
     }
@@ -1040,7 +1024,7 @@ class DbCreator
      * Gets the property error_message.
      * @return string
      */
-    public function getErrorMessage()
+    public function getErrorMessage():string
     {
         return $this->error_message;
     }
@@ -1049,7 +1033,7 @@ class DbCreator
      * Sets the property error_message.
      * @param string $value
      */
-    public function setErrorMessage($value = '')
+    public function setErrorMessage($value = ''):void
     {
         $this->error_message = $value;
     }
@@ -1058,7 +1042,7 @@ class DbCreator
      * Gets the property a_install_config.
      * @return array
      */
-    public function getInstallConfig()
+    public function getInstallConfig():array
     {
         return $this->a_install_config;
     }
@@ -1067,7 +1051,7 @@ class DbCreator
      * Sets the property a_install_config.
      * @param array $a_values
      */
-    public function setInstallConfig(array $a_values = [])
+    public function setInstallConfig(array $a_values = []):void
     {
         $this->a_install_config = $a_values;
     }
@@ -1076,7 +1060,7 @@ class DbCreator
      * Gets the property a_sql.
      * @return array
      */
-    public function getSql()
+    public function getSql():array
     {
         return $this->a_sql;
     }
@@ -1085,7 +1069,7 @@ class DbCreator
      * Sets the property a_sql.
      * @param array $a_sql
      */
-    public function setSql(array $a_sql = [])
+    public function setSql(array $a_sql = []):void
     {
         $this->a_sql = $a_sql;
     }

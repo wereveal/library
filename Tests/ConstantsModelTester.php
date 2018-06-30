@@ -51,7 +51,7 @@ class ConstantsModelTester
     /**
      * @return string
      */
-    public function createTester()
+    public function createTester():string
     {
         $test_name = $this->shortenName(__METHOD__);
         $a_names = [
@@ -64,7 +64,7 @@ class ConstantsModelTester
     /**
      * @return string
      */
-    public function readTester()
+    public function readTester():string
     {
         $test_name = $this->shortenName(__METHOD__);
         $a_names = [
@@ -77,18 +77,17 @@ class ConstantsModelTester
     /**
      * @return string
      */
-    public function updateTester()
+    public function updateTester():string
     {
         $test_name = $this->shortenName(__METHOD__);
         if (empty($this->new_id)) {
             return 'failed';
         }
-        else {
-            $a_values = [];
-            foreach ($this->a_test_values[$test_name] as $key => $a_test_values) {
-                $a_test_values['test_values']['const_id'] = $this->new_id;
-                $a_values[$key] = $a_test_values;
-            }
+
+        $a_values = [];
+        foreach ($this->a_test_values[$test_name] as $key => $a_test_values) {
+            $a_test_values['test_values']['const_id'] = $this->new_id;
+            $a_values[$key] = $a_test_values;
         }
         $a_names = [
             'instance' => 'o_model',
@@ -100,7 +99,7 @@ class ConstantsModelTester
     /**
      * @return string
      */
-    public function deleteTester()
+    public function deleteTester():string
     {
         $test_name = $this->shortenName(__METHOD__);
         if (empty($this->a_test_values[$test_name])) {
@@ -115,9 +114,7 @@ class ConstantsModelTester
             if (empty($_SESSION['created_id'])) {
                 return 'failed';
             }
-            else {
-                $new_id = $_SESSION['created_id'];
-            }
+            $new_id = $_SESSION['created_id'];
         }
         else {
             $new_id = $this->new_id;
@@ -136,7 +133,7 @@ class ConstantsModelTester
                 default:
                     // use the given test value.
             }
-            if ($subtest == 'not_immutable') {
+            if ($subtest === 'not_immutable') {
                 try {
                     $results = $this->o_model->update(['const_id' => $new_id, 'const_immutable' => 'false']);
                 }
@@ -165,7 +162,7 @@ class ConstantsModelTester
     /**
      * @return string
      */
-    public function makeValidNameTester()
+    public function makeValidNameTester():string
     {
         $test_name = $this->shortenName(__METHOD__);
         $a_names = [

@@ -73,9 +73,9 @@ class Tester
      * @param string $method_name
      * @return bool
      */
-    public function addMethodToTestOrder($method_name = '')
+    public function addMethodToTestOrder($method_name = ''):bool
     {
-        if ($method_name == '') { return false; }
+        if ($method_name === '') { return false; }
         $this->a_test_order[] = $method_name;
         return true;
     }
@@ -85,16 +85,16 @@ class Tester
      * @param string $key the key name
      * @param mixed $value  the value assigned to the key
      */
-    public function addTestValue($key = '', $value = '')
+    public function addTestValue($key = '', $value = ''):void
     {
-        if ($key == '') { return; }
+        if ($key === '') { return; }
         $this->a_test_values[$key] = $value;
     }
 
     /**
      * @return array
      */
-    public function getFailedTestNames()
+    public function getFailedTestNames():array
     {
         return $this->failed_test_names;
     }
@@ -102,7 +102,7 @@ class Tester
     /**
      * @return int
      */
-    public function getFailedTests()
+    public function getFailedTests():int
     {
         return $this->failed_tests;
     }
@@ -110,7 +110,7 @@ class Tester
     /**
      * @return int
      */
-    public function getNumOTests()
+    public function getNumOTests():int
     {
         return $this->num_o_tests;
     }
@@ -118,7 +118,7 @@ class Tester
     /**
      * @return int
      */
-    public function getPassedTests()
+    public function getPassedTests():int
     {
         return $this->passed_tests;
     }
@@ -126,7 +126,7 @@ class Tester
     /**
      * @return array
      */
-    public function getPassedTestNames()
+    public function getPassedTestNames():array
     {
         return $this->passed_test_names;
     }
@@ -134,7 +134,7 @@ class Tester
     /**
      * @return array
      */
-    public function getTestOrder()
+    public function getTestOrder():array
     {
         return $this->a_test_order;
     }
@@ -144,16 +144,16 @@ class Tester
      * @param bool $show_test_names optional defaults to showing names
      * @return array
      */
-    public function returnTestResults($show_test_names = true)
+    public function returnTestResults($show_test_names = true):array
     {
         $a_failed_test_names = array();
         $a_passed_test_names = array();
         if ($show_test_names === true) {
-            if (count($this->passed_test_names) > 0) {
+            if (\count($this->passed_test_names) > 0) {
                 $a_passed_test_names = $this->passed_test_names;
             }
             foreach ($this->failed_test_names as $name) {
-                if (is_array($this->failed_subtests) && isset($this->failed_subtests[$name])) {
+                if (\is_array($this->failed_subtests) && isset($this->failed_subtests[$name])) {
                     $a_subnames = $this->failed_subtests[$name];
                 }
                 else {
@@ -172,15 +172,14 @@ class Tester
                 'passed_test_names' => $a_passed_test_names
             );
         }
-        else {
-            return array(
-                'failed_tests'      => $this->failed_tests,
-                'passed_tests'      => $this->passed_tests,
-                'num_o_tests'       => $this->num_o_tests,
-                'failed_test_names' => '',
-                'passed_test_names' => ''
-            );
-        }
+
+        return array(
+            'failed_tests'      => $this->failed_tests,
+            'passed_tests'      => $this->passed_tests,
+            'num_o_tests'       => $this->num_o_tests,
+            'failed_test_names' => '',
+            'passed_test_names' => ''
+        );
     }
 
     /**
@@ -194,16 +193,16 @@ class Tester
      *                            and won't try to build one from the class methods.
      * @return int number of failed tests.
      */
-    public function runTests($class_name = '', array $a_test_order = [])
+    public function runTests($class_name = '', array $a_test_order = []):int
     {
-        if ($class_name == '') {
-            if ($this->class_name != '') {
+        if ($class_name === '') {
+            if ($this->class_name !== '') {
                 $class_name = $this->class_name;
             }
-            elseif (substr(__CLASS__, -5) == 'Tests') {
+            elseif (substr(__CLASS__, -5) === 'Tests') {
                 $class_name = str_replace('Tests','',__CLASS__);
             }
-            elseif (substr(__CLASS__, -6) == 'Tester') {
+            elseif (substr(__CLASS__, -6) === 'Tester') {
                 $class_name = str_replace('Tester','',__CLASS__);
                 $this->class_name = $class_name;
             }
@@ -211,8 +210,8 @@ class Tester
                 return 999;
             }
         }
-        if (count($a_test_order) === 0) {
-            if (count($this->a_test_order) === 0) {
+        if (\count($a_test_order) === 0) {
+            if (\count($this->a_test_order) === 0) {
                 try {
                     $o_ref = new \ReflectionClass($class_name);
                 }
@@ -230,7 +229,7 @@ class Tester
                         case '__clone':
                             break;
                         default:
-                            if (substr($a_method->name, -6) == 'Tester') {
+                            if (substr($a_method->name, -6) === 'Tester') {
                                 $a_test_order[] = $a_method->name;
                             }
                     }
@@ -250,7 +249,7 @@ class Tester
         $failed_tests = 0;
         foreach ($a_test_order as $method_name) {
             $this->logIt($method_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
-            if (substr($method_name, -6) == 'Tester') {
+            if (substr($method_name, -6) === 'Tester') {
                 $tester_name = $method_name;
                 $method_name = $this->shortenName($method_name);
             } else {
@@ -289,9 +288,9 @@ class Tester
      * @param  string $method_name defaults to 'Tester'
      * @return string
      */
-    public function shortenName($method_name = 'Tester')
+    public function shortenName($method_name = 'Tester'):string
     {
-        if (substr($method_name, -6) == 'Tester') {
+        if (substr($method_name, -6) === 'Tester') {
             return substr($method_name, 0, -6);
         }
         return $method_name;
@@ -301,7 +300,7 @@ class Tester
      * Standard Setter for the property $class_name;
      * @param string $class_name
      */
-    public function setClassName($class_name = '')
+    public function setClassName($class_name = ''):void
     {
         $this->class_name = $class_name;
     }
@@ -310,7 +309,7 @@ class Tester
      * Sets three properties, num_o_test++, failed_tests++, and failed test names.
      * @param string $method_name
      */
-    public function setFailures($method_name = '')
+    public function setFailures($method_name = ''):void
     {
         $this->num_o_tests++;
         $this->failed_tests++;
@@ -321,7 +320,7 @@ class Tester
      * Standard setter for the propery $namespace.
      * @param string $namespace
      */
-    public function setNamespace($namespace = '')
+    public function setNamespace($namespace = ''):void
     {
         $this->namespace = $namespace;
     }
@@ -331,11 +330,11 @@ class Tester
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubFailed($method_name = '', $test_name = '')
+    public function setSubFailed($method_name = '', $test_name = ''):void
     {
-        if ($method_name == '' || $test_name == '') { return; }
+        if ($method_name === '' || $test_name === '') { return; }
         $method_name = $this->shortenName($method_name);
-        if (is_array($this->failed_subtests) === false) {
+        if (\is_array($this->failed_subtests) === false) {
             $this->failed_subtests = array();
         }
         if (array_key_exists($method_name, $this->failed_subtests)) {
@@ -351,9 +350,9 @@ class Tester
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubPassed($method_name = '', $test_name = '')
+    public function setSubPassed($method_name = '', $test_name = ''):void
     {
-        if ($method_name == '' || $test_name == '') {
+        if ($method_name === '' || $test_name === '') {
             return;
         }
         $method_name = $this->shortenName($method_name);
@@ -369,7 +368,7 @@ class Tester
      * Sets the array a_test_order to the array passed in
      * @param array $a_test_order optional, defaults to an empty array
      */
-    public function setTestOrder(array $a_test_order = array())
+    public function setTestOrder(array $a_test_order = array()):void
     {
         $this->a_test_order = $a_test_order;
     }
@@ -378,7 +377,7 @@ class Tester
      * Sets the array a_test_value to the array passed in
      * @param array $a_test_values optional, defaults to an empty array
      */
-    public function setTestValues(array $a_test_values = array())
+    public function setTestValues(array $a_test_values = array()):void
     {
         $this->a_test_values = $a_test_values;
     }
@@ -387,7 +386,7 @@ class Tester
      * Return the values in $this->a_test_values
      * @return array $a_test_values
      */
-    public function getTestValues()
+    public function getTestValues():array
     {
         return $this->a_test_values;
     }
@@ -400,15 +399,16 @@ class Tester
      * @param string $method_name required defaults to ''
      * @return bool true or false
      */
-    public function isPublicMethod($class_name = '', $method_name = '')
+    public function isPublicMethod($class_name = '', $method_name = ''):bool
     {
-        if ($method_name == '') {
+        if ($method_name === '') {
             return false;
         }
-        if ($class_name == '' && $this->class_name == '') {
+        if ($class_name === '' && $this->class_name === '') {
             return false;
         }
-        elseif ($class_name == '') {
+
+        if ($class_name === '') {
             $class_name = $this->class_name;
         }
         try {
@@ -425,7 +425,7 @@ class Tester
      * Sets up the two main arrays the tests uses.
      * @param array $a_values ['class_name', 'order_file', 'values_file', 'extra_dir', 'namespace']
      */
-    public function setupTests(array $a_values = [])
+    public function setupTests(array $a_values = []):void
     {
         $class_name  = '';
         $order_file  = 'test_order.php';
@@ -441,9 +441,9 @@ class Tester
             'namespace'
         ];
         foreach ($a_expected_keys as $keyname) {
-            if (isset($a_values[$keyname]) && $a_values[$keyname] != '') {
+            if (isset($a_values[$keyname]) && $a_values[$keyname] !== '') {
                 $$keyname = $a_values[$keyname];
-                if ($keyname == 'namespace') {
+                if ($keyname === 'namespace') {
                     $this->namespace = $a_values[$keyname];
                 }
             }
@@ -453,25 +453,25 @@ class Tester
         $test_values_file = LocateFile::getTestFileWithPath($values_file, $namespace, $extra_dir);
         if (empty($test_values_file)) {
            $this->a_test_values = [];
+           $a_test_values = [];
         }
         else {
             $this->a_test_values = include $test_values_file;
+            $a_test_values = $this->a_test_values;
         }
         $test_order_file = LocateFile::getTestFileWithPath($order_file, $namespace, $extra_dir);
         if (!empty($test_order_file)) {
             $this->a_test_order = include $test_order_file;
         }
+        else if (!empty($a_test_values)) {
+            $a_test_order = [];
+            foreach ($a_test_values as $key => $test_values) {
+                $a_test_order[] = $key;
+            }
+            $this->a_test_order = $a_test_order;
+        }
         else {
-            if (!empty($a_test_values)) {
-                $a_test_order = [];
-                foreach ($a_test_values as $key => $test_values) {
-                    $a_test_order[] = $key;
-                }
-                $this->a_test_order = $a_test_order;
-            }
-            else {
-                $this->a_test_order = [];
-            }
+            $this->a_test_order = [];
         }
     }
 }

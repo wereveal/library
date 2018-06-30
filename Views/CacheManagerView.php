@@ -43,7 +43,7 @@ class CacheManagerView implements ViewInterface
      * @param array $a_message
      * @return string
      */
-    public function render(array $a_message = [])
+    public function render(array $a_message = []):string
     {
         $cache_key = 'constants.read.const_name.use_cache';
         if ($this->use_cache) {
@@ -57,10 +57,8 @@ class CacheManagerView implements ViewInterface
                 $a_record = empty($a_results[0])
                     ? []
                     : $a_results[0];
-                if (!empty($a_record)) {
-                    if ($this->use_cache) {
-                        $this->o_cache->set($cache_key, $a_record, 'constants');
-                    }
+                if (!empty($a_record) && $this->use_cache) {
+                    $this->o_cache->set($cache_key, $a_record, 'constants');
                 }
             }
             catch (ModelException $e) {
@@ -71,7 +69,7 @@ class CacheManagerView implements ViewInterface
             $is_enabled = 'unknown';
             $a_message = ViewHelper::errorMessage('Unable to determine if the cache is enabled.<br>Manually set it with the constants manager.');
         }
-        elseif ($a_record['const_value'] == 'true') {
+        elseif ($a_record['const_value'] === 'true') {
             $is_enabled = 'true';
         }
         else {

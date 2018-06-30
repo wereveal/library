@@ -48,9 +48,10 @@ class PageController implements ManagerControllerInterface
 
     /**
      * Returns the html for the route as determined.
+     *
      * @return string
      */
-    public function route()
+    public function route():string
     {
         switch ($this->form_action) {
             case 'save':
@@ -73,12 +74,13 @@ class PageController implements ManagerControllerInterface
     ### Required by Interface ###
     /**
      * Deletes specifed record then displays the page list with results.
+     *
      * @return string
      */
-    public function delete()
+    public function delete():string
     {
-        $page_id = isset($this->a_post['page_id']) ? $this->a_post['page_id'] : -1;
-        if ($page_id == -1) {
+        $page_id = $this->a_post['page_id'] ?? -1;
+        if ($page_id === -1) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The page id was not provided.');
             return $this->o_view->renderList($a_message);
         }
@@ -97,9 +99,10 @@ class PageController implements ManagerControllerInterface
 
     /**
      * Saves a record and returns the list again.
+     *
      * @return string
      */
-    public function save()
+    public function save():string
     {
         $meth = __METHOD__ . '.';
         $a_page = $this->a_post['page'];
@@ -120,9 +123,10 @@ class PageController implements ManagerControllerInterface
 
     /**
      * Updates a record and returns the list.
+     *
      * @return string
      */
-    public function update()
+    public function update():string
     {
         $meth = __METHOD__ . '.';
         $a_page = $this->a_post['page'];
@@ -146,9 +150,10 @@ class PageController implements ManagerControllerInterface
 
     /**
      * Required by interface.
+     *
      * @return string
      */
-    public function verifyDelete()
+    public function verifyDelete():string
     {
 
         $a_values = [

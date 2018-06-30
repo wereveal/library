@@ -18,6 +18,11 @@ class UrlsModelTester extends Tester
     /** @var \Ritc\Library\Models\UrlsModel  */
     private $o_model;
 
+    /**
+     * UrlsModelTester constructor.
+     *
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $o_db = $o_di->getVar('db');
@@ -26,22 +31,34 @@ class UrlsModelTester extends Tester
         $this->o_model->setupElog($o_di);
     }
 
-    public function createTester()
+    /**
+     * @return array
+     */
+    public function createTester():array
     {
         return [];
     }
 
-    public function readTester()
+    /**
+     * @return array
+     */
+    public function readTester():array
     {
         return [];
     }
 
-    public function updateTester()
+    /**
+     * @return array
+     */
+    public function updateTester():array
     {
         return [];
     }
 
-    public function deleteTester()
+    /**
+     * @return array
+     */
+    public function deleteTester():array
     {
         return [];
     }

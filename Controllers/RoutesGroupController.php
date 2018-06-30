@@ -47,40 +47,40 @@ class RoutesGroupController implements ManagerControllerInterface
     /**
      * @return string
      */
-    public function route()
+    public function route():string
     {
         return $this->o_view->render();
     }
 
     /**
-     * @return bool
-     */
-    public function save()
-    {
-        return false;
-    }
-
-    /**
-     * @return bool
-     */
-    public function update()
-    {
-        return false;
-    }
-
-    /**
      * @return string
      */
-    public function verifyDelete()
+    public function save():string
     {
         return '';
     }
 
     /**
-     * @return bool
+     * @return string
      */
-    public function delete()
+    public function update():string
     {
-        return false;
+        return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function verifyDelete():string
+    {
+        return '';
+    }
+
+    /**
+     * @return string
+     */
+    public function delete():string
+    {
+        return '';
     }
 }

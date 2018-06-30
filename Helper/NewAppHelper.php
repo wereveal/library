@@ -43,6 +43,7 @@ class NewAppHelper
 
     /**
      * NewAppHelper constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -54,21 +55,24 @@ class NewAppHelper
 
     /**
      * Creates directories for the new app.
+     *
      * @return bool
      */
-    public function createDirectories()
+    public function createDirectories():bool
     {
-        if (!file_exists($this->app_path)) {
-            if (mkdir($this->app_path, 0755, true) === false) {
-                return false;
-            }
+        if (!file_exists($this->app_path) &&
+            !mkdir($this->app_path, 0755, true) &&
+            !is_dir($this->app_path)
+        ) {
+            return false;
         }
         foreach ($this->a_new_dirs as $dir) {
             $new_dir = $this->app_path . '/' . $dir;
-            if (!file_exists($new_dir)) {
-                if (mkdir($new_dir, 0755, true) === false) {
-                    return false;
-                }
+            if (!file_exists($new_dir) &&
+                !mkdir($new_dir, 0755, true) &&
+                !is_dir($new_dir)
+            ) {
+                return false;
             }
         }
         return true;
@@ -76,10 +80,11 @@ class NewAppHelper
 
     /**
      * Creates the default files for the app.
+     *
      * @param bool $is_site optional, defaults to false
      * @return bool
      */
-    public function createDefaultFiles($is_site = false)
+    public function createDefaultFiles($is_site = false):bool
     {
         if (empty($this->a_new_dirs)
             || empty($this->app_path)
@@ -115,10 +120,8 @@ class NewAppHelper
                                 return false;
                             }
                         }
-                        else {
-                            if (!file_put_contents($new_file, $this->keep_me_text)) {
-                                return false;
-                            }
+                        else if (!file_put_contents($new_file, $this->keep_me_text)) {
+                            return false;
                         }
                     }
                     else {
@@ -165,7 +168,7 @@ class NewAppHelper
             if ($is_site) {
                 $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/MasterController.php.txt');
                 $controller_text = str_replace($a_find, $a_replace, $controller_text);
-                if (!file_put_contents($this->app_path . "/Controllers/MasterController.php", $controller_text)) {
+                if (!file_put_contents($this->app_path . '/Controllers/MasterController.php', $controller_text)) {
                     return false;
                 }
             }
@@ -174,7 +177,7 @@ class NewAppHelper
                 $a_replace[5] = file_get_contents(SRC_CONFIG_PATH . '/install_files/main_controller.snippet');
                 $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/controller.php.txt');
                 $controller_text = str_replace($a_find, $a_replace, $controller_text);
-                if (!file_put_contents($this->app_path . "/Controllers/MainController.php", $controller_text)) {
+                if (!file_put_contents($this->app_path . '/Controllers/MainController.php', $controller_text)) {
                     return false;
                 }
             }
@@ -183,7 +186,7 @@ class NewAppHelper
             $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/HomeController.php.txt');
             if ($controller_text) {
                 $controller_text = str_replace($a_find, $a_replace, $controller_text);
-                if (!file_put_contents($this->app_path . "/Controllers/HomeController.php", $controller_text)) {
+                if (!file_put_contents($this->app_path . '/Controllers/HomeController.php', $controller_text)) {
                     return false;
                 }
             }
@@ -195,7 +198,7 @@ class NewAppHelper
             $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/ManagerController.php.txt');
             if ($controller_text) {
                 $controller_text = str_replace($a_find, $a_replace, $controller_text);
-                if (!file_put_contents($this->app_path . "/Controllers/ManagerController.php", $controller_text)) {
+                if (!file_put_contents($this->app_path . '/Controllers/ManagerController.php', $controller_text)) {
                     return false;
                 }
             }
@@ -207,7 +210,7 @@ class NewAppHelper
             $view_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/HomeView.php.txt');
             if ($view_text) {
                 $view_text = str_replace($a_find, $a_replace, $view_text);
-                if (!file_put_contents($this->app_path . "/Views/HomeView.php", $view_text)) {
+                if (!file_put_contents($this->app_path . '/Views/HomeView.php', $view_text)) {
                     return false;
                 }
             }
@@ -219,7 +222,7 @@ class NewAppHelper
             $view_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/ManagerView.php.txt');
             if ($view_text) {
                 $view_text = str_replace($a_find, $a_replace, $view_text);
-                if (!file_put_contents($this->app_path . "/Views/ManagerView.php", $view_text)) {
+                if (!file_put_contents($this->app_path . '/Views/ManagerView.php', $view_text)) {
                     return false;
                 }
             }
@@ -255,16 +258,14 @@ class NewAppHelper
             $base_twig = '/templates/themes/base.twig';
             $resource_path = $this->app_path . '/resources';
             $twig_text = file_get_contents(SRC_PATH . $base_twig);
-            if ($twig_text) {
-                if (!file_put_contents($resource_path . $base_twig, $twig_text)) {
-                    return false;
-                }
+            if ($twig_text && !file_put_contents($resource_path . $base_twig, $twig_text)) {
+                return false;
             }
             $default_templates_path = SRC_PATH . '/templates/pages/';
-            $a_default_files = scandir($default_templates_path);
+            $a_default_files = scandir($default_templates_path, SCANDIR_SORT_ASCENDING);
             $pages_path = $resource_path . '/templates/pages/';
             foreach ($a_default_files as $this_file) {
-                if ($this_file != '.' && $this_file != '..') {
+                if ($this_file !== '.' && $this_file !== '..') {
                     $twig_text = file_get_contents($default_templates_path . $this_file);
                     if ($twig_text) {
                         if (!file_put_contents($pages_path . $this_file, $twig_text)) {
@@ -298,7 +299,7 @@ class NewAppHelper
                 $base_path = empty($this->a_config['base_path'])
                     ? 'dirname(PUBLIC_PATH)'
                     : $this->a_config['base_path'];
-                $developer_mode = isset($this->a_config['developer_mode']) && $this->a_config['developer_mode'] == 'true'
+                $developer_mode = isset($this->a_config['developer_mode']) && $this->a_config['developer_mode'] === 'true'
                     ? 'true'
                     : 'false';
                 $http_host = empty($this->a_config['http_host'])
@@ -370,9 +371,10 @@ class NewAppHelper
 
     /**
      * Standard class property SETter, app_path.
+     *
      * @param string $value
      */
-    public function setAppPath($value = '')
+    public function setAppPath($value = ''):void
     {
         if ($value === '') {
             $value = APPS_PATH
@@ -386,9 +388,10 @@ class NewAppHelper
 
     /**
      * Standard class property SETter for a_values.
+     *
      * @param array $a_values Optional, defaults to a preset bunch of values.
      */
-    public function setConfig(array $a_values = [])
+    public function setConfig(array $a_values = []):void
     {
         $a_default = [
             'app_name'        => 'Main',                          // specify the primary app to which generates the home page
@@ -423,7 +426,7 @@ class NewAppHelper
      * Standard class property SETter, htaccess_text.
      * @param string $value
      */
-    public function setHtaccessText($value = '')
+    public function setHtaccessText($value = ''):void
     {
         if ($value === '') {
             $value =<<<EOF
@@ -443,7 +446,7 @@ EOF;
      * Standard class property SETter, keepme_text.
      * @param string $value
      */
-    public function setKeepMeText($value = '')
+    public function setKeepMeText($value = ''):void
     {
         if ($value === '') {
             $value = 'Place Holder';
@@ -455,7 +458,7 @@ EOF;
      * Standard class property SETter, a_new_dirs.
      * @param array $a_values
      */
-    public function setNewDirs(array $a_values = [])
+    public function setNewDirs(array $a_values = []):void
     {
         if (empty($a_values)) {
             $a_values = [
@@ -486,10 +489,10 @@ EOF;
      * Standard class property SETter, tpl_text.
      * @param string $value
      */
-    public function setTplText($value = '')
+    public function setTplText($value = ''):void
     {
         if ($value === '') {
-            $value = "<h3>An Error Has Occurred</h3>";
+            $value = '<h3>An Error Has Occurred</h3>';
         }
         $this->tpl_text = $value;
     }
@@ -497,7 +500,7 @@ EOF;
     /**
      * Sets the class properties that are needed.
      */
-    private function setupProperties()
+    private function setupProperties():void
     {
 
         $this->setAppPath();

@@ -10,17 +10,15 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Services\DbModel;
-use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does all the Model expected operations, database CRUD and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v2.0.0
- * @date    2018-06-14 15:17:32 
+ * @date    2018-06-14 15:17:32
  * @change_log
- * - v2.0.0    - Refactored to extend ModelAbstract             - 2018-06-14 wer            
+ * - v2.0.0    - Refactored to extend ModelAbstract             - 2018-06-14 wer
  * - v1.5.0    - New method, isImmutable                        - 2018-06-10 wer
  * - v1.4.0    - moved some methods from PeopleComplex to here  - 2017-12-05 wer
  *               bug fixes too.
@@ -34,8 +32,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PeopleModel extends ModelAbstract
 {
-    use LogitTraits, DbUtilityTraits;
-
     /**
      * PeopleModel constructor.
      * @param \Ritc\Library\Services\DbModel $o_db
@@ -66,30 +62,30 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Reads the people record(s) by login_id.
-     * @param string $login_id
-     * @return array|bool
+     *
+     * @param string|int|array $login_id
+     * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readByLoginId($login_id = '')
+    public function readByLoginId($login_id = ''):?array
     {
-        if (is_array($login_id)) {
+        if (\is_array($login_id)) {
             $a_search_for = [];
             foreach ($login_id as $id) {
-                if ($id == '') {
+                if ($id === '') {
                     throw new ModelException('Missing login id value.', 220);
                 }
                 $a_search_for[] = ['login_id' => $id];
             }
         }
-        elseif ($login_id == '') {
-            throw new ModelException("Missing login_id value.", 220);
+        elseif ($login_id === '') {
+            throw new ModelException('Missing login_id value.', 220);
         }
         else {
             $a_search_for = ['login_id' => $login_id];
         }
         try {
-            $results = $this->read($a_search_for);
-            return $results;
+            return $this->read($a_search_for);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode(), $e);
@@ -98,13 +94,14 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Gets the people_id (primary record key) for a specific login_id.
+     *
      * @param string $login_id required
-     * @return bool|int $people_id
+     * @return int $people_id
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function getPeopleId($login_id = '')
+    public function getPeopleId($login_id = ''):int
     {
-        if ($login_id == '') {
+        if ($login_id === '') {
             throw new ModelException('Missing required login_id.');
         }
         try {
@@ -112,9 +109,7 @@ class PeopleModel extends ModelAbstract
             if (!empty($a_results[0])) {
                 return $a_results[0]['people_id'];
             }
-            else {
-                throw new ModelException('No records were returned.', 230);
-            }
+            throw new ModelException('No records were returned.', 230);
         }
         catch (ModelException $e) {
             throw new ModelException('Unable to get the records.', 200);
@@ -122,15 +117,17 @@ class PeopleModel extends ModelAbstract
     }
 
     /**
-     * Updates the bad_login_count field for the user by one
+     * Updates the bad_login_count field for the user by one.
+     *
      * @param int $people_id
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function incrementBadLoginCount($people_id = -1)
+    public function incrementBadLoginCount($people_id = -1):?bool
     {
-        if ($people_id == -1) { return false; }
-        $sql = "
+        if ($people_id === -1) { return false; }
+        $sql = /** @lang text */
+        "
             UPDATE {$this->db_table}
             SET bad_login_count = bad_login_count + 1
             WHERE people_id = :people_id
@@ -141,9 +138,8 @@ class PeopleModel extends ModelAbstract
             if ($results) {
                 return true;
             }
-            else {
-                throw new ModelException('Unable to update bad_login_count in the people record', 300);
-            }
+
+            throw new ModelException('Unable to update bad_login_count in the people record', 300);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode(), $e);
@@ -152,13 +148,14 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Increments the bad_login_ts record by one minute
+     *
      * @param int $people_id required
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function incrementBadLoginTimestamp($people_id = -1)
+    public function incrementBadLoginTimestamp($people_id = -1):?bool
     {
-        if ($people_id == -1) {
+        if ($people_id === -1) {
             throw new ModelException('Missing required people id.', 320);
         }
         $a_values = [
@@ -175,10 +172,11 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Does the normal things to indicate the login attempt was bad.
+     *
      * @param int $people_id
      * @return string
      */
-    public function makeBadLoginAttempt($people_id = -1)
+    public function makeBadLoginAttempt($people_id = -1):string
     {
         $message = '';
         try {
@@ -210,10 +208,11 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Does the normal things to indicate the person is logged in.
+     *
      * @param $people_id
      * @return bool
      */
-    public function makeGoodLoginAttempt($people_id)
+    public function makeGoodLoginAttempt($people_id):bool
     {
         $is_good = true;
         try {
@@ -239,13 +238,14 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Returns the user record.
+     *
      * @param int|string $user either user id or user name
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readPeopleRecord($user = '')
+    public function readPeopleRecord($user = ''):?array
     {
-        if ($user == '') {
+        if ($user === '') {
             throw new ModelException('Missing required value.', 220);
         }
         if (is_numeric($user)) {
@@ -256,12 +256,10 @@ class PeopleModel extends ModelAbstract
         }
         try {
             $a_records = $this->read($a_search_by);
-            if (isset($a_records[0]) && is_array($a_records[0])) {
+            if (isset($a_records[0]) && \is_array($a_records[0])) {
                 return $a_records[0];
             }
-            else {
-                return [];
-            }
+            return [];
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode(), $e);
@@ -270,13 +268,14 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Resets the bad_login_count to 0
+     *
      * @param int $people_id required
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function resetBadLoginCount($people_id = -1)
+    public function resetBadLoginCount($people_id = -1):?bool
     {
-        if ($people_id == -1) {
+        if ($people_id === -1) {
             throw new ModelException('Missing required value: people_id', 320);
         }
         $a_values = [
@@ -292,14 +291,15 @@ class PeopleModel extends ModelAbstract
     }
 
     /**
-     * Resets the timestamp to 0
+     * Resets the timestamp to 0.
+     *
      * @param int $people_id required
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function resetBadLoginTimestamp($people_id = -1)
+    public function resetBadLoginTimestamp($people_id = -1):?bool
     {
-        if ($people_id == -1) {
+        if ($people_id === -1) {
             throw new ModelException('Missing required value: people_id', 320);
         }
         $a_values = [
@@ -316,13 +316,14 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Sets the bad login timestamp for the user.
+     *
      * @param int $people_id required
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function setBadLoginTimestamp($people_id = -1)
+    public function setBadLoginTimestamp($people_id = -1):?bool
     {
-        if ($people_id == -1) {
+        if ($people_id === -1) {
             throw new ModelException('Missing required value: people_id', 320);
         }
         $a_values = [
@@ -339,13 +340,14 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Sets the user record to be logged in.
+     *
      * @param int $people_id
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function setLoggedIn($people_id = -1)
+    public function setLoggedIn($people_id = -1):?bool
     {
-        if ($people_id == -1) {
+        if ($people_id === -1) {
             throw new ModelException('Missing required value: people_id', 320);
         }
         $a_values = [
@@ -363,13 +365,14 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Sets the user record to be logged out.
+     *
      * @param int $people_id
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function setLoggedOut($people_id = -1)
+    public function setLoggedOut($people_id = -1):?bool
     {
-        if ($people_id == -1) {
+        if ($people_id === -1) {
             throw new ModelException('Missing required value: people_id', 320);
         }
         $a_values = [
@@ -385,15 +388,16 @@ class PeopleModel extends ModelAbstract
     }
 
     /**
-     * Updates the user record with a new password
+     * Updates the user record with a new password.
+     *
      * @param int    $people_id required
      * @param string $password  required
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function updatePassword($people_id = -1, $password = '')
+    public function updatePassword($people_id = -1, $password = ''):?bool
     {
-        if ($people_id == -1 || $password == '') {
+        if ($people_id === -1 || $password === '') {
             throw new ModelException('Missing required value.', 320);
         }
         $a_values = [
@@ -410,14 +414,15 @@ class PeopleModel extends ModelAbstract
 
     /**
      * Updates the user record to be make the user active or inactive, normally inactive.
+     *
      * @param int    $people_id required id of a user
      * @param string $is_active optional defaults to inactive (false)
      * @return bool success or failure
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function updateActive($people_id = -1, $is_active = 'false')
+    public function updateActive($people_id = -1, $is_active = 'false'):?bool
     {
-        if ($people_id == -1) {
+        if ($people_id === -1) {
             throw new ModelException('Missing required value.', 320);
         }
         $a_values = [
@@ -435,24 +440,31 @@ class PeopleModel extends ModelAbstract
     ### Utility methods ###
 
     /**
-     * Creates a short name/alias if none is provided
+     * Creates a short name/alias if none is provided.
+     *
      * @param  string $long_name
      * @return string the short name.
      */
-    public function createShortName($long_name = '')
+    public function createShortName($long_name = ''):string
     {
         if (strpos($long_name, ' ') !== false) {
             $a_real_name = explode(' ', $long_name);
             $short_name = '';
             foreach($a_real_name as $name) {
-                $short_name .= strtoupper(substr($name, 0, 1));
+                $short_name .= strtoupper($name[0]);
             }
         }
         else {
             $short_name = strtoupper(substr($long_name, 0, 8));
         }
         if ($this->isExistingShortName($short_name)) {
-            $short_name = $this->createShortName(substr($short_name, 0, 6) . rand(0,99));
+            try {
+                $rand = random_int(0, 99);
+            }
+            catch (\Exception $e) {
+                $rand = 1;
+            }
+            $short_name = $this->createShortName(substr($short_name, 0, 6) . $rand);
         }
         return $short_name;
     }
@@ -461,7 +473,7 @@ class PeopleModel extends ModelAbstract
      * @param string $login_id
      * @return bool
      */
-    public function isExistingLoginId($login_id = '')
+    public function isExistingLoginId($login_id = ''):?bool
     {
         try {
             $results = $this->readByLoginId($login_id);
@@ -479,14 +491,11 @@ class PeopleModel extends ModelAbstract
      * @param string $short_name
      * @return bool
      */
-    public function isExistingShortName($short_name = '')
+    public function isExistingShortName($short_name = ''):?bool
     {
         try {
             $a_results = $this->read(['short_name' => $short_name]);
-            if (isset($a_results[0]['short_name']) && $a_results[0]['short_name'] == $short_name) {
-                return true;
-            }
-            return false;
+            return isset($a_results[0]['short_name']) && $a_results[0]['short_name'] === $short_name;
         }
         catch (ModelException $e) {
             return false;
@@ -515,10 +524,10 @@ class PeopleModel extends ModelAbstract
         foreach ($a_fix_these as $key) {
             if (isset($a_person[$key])) {
                 $a_person[$key] = Strings::removeTagsWithDecode($a_person[$key], ENT_QUOTES);
-                if ($key == 'short_name') {
+                if ($key === 'short_name') {
                     $a_person[$key] = Strings::makeAlphanumeric($a_person[$key]);
                 }
-                if ($key == 'login_id') {
+                if ($key === 'login_id') {
                     $a_person['login_id'] = Strings::makeAlphanumericPlus($a_person['login_id']);
                 }
             }
@@ -546,10 +555,10 @@ class PeopleModel extends ModelAbstract
                 'is_immutable'
             ];
             $a_person = Arrays::createRequiredPairs($a_person, $a_allowed_keys, true);
-            if ($a_person['real_name'] == '') {
+            if ($a_person['real_name'] === '') {
                 $a_person['real_name'] = $a_person['login_id'];
             }
-            if ($a_person['short_name'] == '') {
+            if ($a_person['short_name'] === '') {
                 $a_person['short_name'] = $this->createShortName($a_person['real_name']);
             }
             else {
@@ -590,30 +599,29 @@ class PeopleModel extends ModelAbstract
               $log_message = 'Old Person ' . var_export($a_old_person, TRUE);
               $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             foreach ($a_allowed_keys as $key) {
-                if ($key !== 'people_id') {
-                    if (isset($a_person[$key])) {
-                        $old_value = $a_old_person[$key];
-                        $new_value = $a_person[$key];
-                        if ($key === 'login_id' && ($new_value !== $old_value)) {
-                            if ($this->isExistingLoginId($a_person['login_id'])) {
-                                return 'login-exists';
-                            }
-                        }
-                        if ($key === 'short_name' && ($new_value !== $old_value)) {
-                            if ($this->isExistingShortName($a_person['short_name'])) {
-                                return 'short_name-exists';
-                            }
-                        }
-                        if ($new_value === $old_value) {
-                            unset($a_person[$key]);
-                        }
+                if ($key !== 'people_id' && isset($a_person[$key])) {
+                    $old_value = $a_old_person[$key];
+                    $new_value = $a_person[$key];
+                    if ($key === 'login_id' &&
+                        ($new_value !== $old_value) &&
+                        $this->isExistingLoginId($a_person['login_id'])
+                    ) {
+                        return 'login-exists';
+                    }
+                    if ($key === 'short_name' &&
+                        ($new_value !== $old_value) &&
+                        $this->isExistingShortName($a_person['short_name'])
+                    ) {
+                        return 'short_name-exists';
+                    }
+                    if ($new_value === $old_value) {
+                        unset($a_person[$key]);
                     }
                 }
             }
-            if (count($a_person) < 2) {
+            if (\count($a_person) < 2) {
                 return 'nothing-to-update';
             }
-
         }
           $log_message = 'Person modified ' . var_export($a_person, TRUE);
           $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
@@ -625,7 +633,7 @@ class PeopleModel extends ModelAbstract
      * @param array $a_person
      * @return array
      */
-    private function fixCheckBoxes(array $a_person = [])
+    private function fixCheckBoxes(array $a_person = []):array
     {
           $this->logIt(var_export($a_person, true), LOG_OFF, __METHOD__);
         $a_person['is_logged_in'] = isset($a_person['is_logged_in']) ? 'true' : 'false';
@@ -638,6 +646,7 @@ class PeopleModel extends ModelAbstract
     /**
      * Hashes the password if it isn't already hashed.
      * Also verifies that it isn't a starred out password (value hidden).
+     *
      * @param string $password
      * @return bool|string
      */
@@ -646,14 +655,17 @@ class PeopleModel extends ModelAbstract
         if (empty($password)) {
             return '';
         }
-        if (substr($password, 0, 3) == '***') {
+        if (0 === strpos($password, '***')) {
             return '';
         }
         $pass_info = password_get_info($password);
         if ($pass_info['algo'] === 0) {
-            $password = defined('PASSWORD_ARGON2I')
-                ? password_hash($password, PASSWORD_ARGON2I)
-                : password_hash($password, PASSWORD_DEFAULT);
+            if (\defined('PASSWORD_ARGON2I')) {
+                $password = password_hash($password, PASSWORD_ARGON2I);
+            }
+            else {
+                $password = password_hash($password, PASSWORD_DEFAULT);
+            }
         }
         return $password;
     }

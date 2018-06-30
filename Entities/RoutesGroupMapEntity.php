@@ -28,7 +28,7 @@ class RoutesGroupMapEntity implements EntityInterface
     /**
      * @return array
      */
-    public function getAllProperties()
+    public function getAllProperties():array
     {
         return [
             'rgm_id'   => $this->rgm_id,
@@ -48,7 +48,7 @@ class RoutesGroupMapEntity implements EntityInterface
     /**
      * @param mixed $rgm_id
      */
-    public function setRrmId($rgm_id)
+    public function setRrmId($rgm_id):void
     {
         $this->rgm_id = $rgm_id;
     }
@@ -64,7 +64,7 @@ class RoutesGroupMapEntity implements EntityInterface
     /**
      * @param mixed $route_id
      */
-    public function setRouteId($route_id)
+    public function setRouteId($route_id):void
     {
         $this->route_id = $route_id;
     }
@@ -80,7 +80,7 @@ class RoutesGroupMapEntity implements EntityInterface
     /**
      * @param mixed $group_id
      */
-    public function setGroupId($group_id)
+    public function setGroupId($group_id):void
     {
         $this->group_id = $group_id;
     }
@@ -89,7 +89,7 @@ class RoutesGroupMapEntity implements EntityInterface
      * @param array $a_entity
      * @return bool
      */
-    public function setAllProperties(array $a_entity = array())
+    public function setAllProperties(array $a_entity = array()):bool
     {
         $a_defaults = [
             'rgm_id'   => -1,

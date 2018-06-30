@@ -39,18 +39,18 @@ class UploadHelper
      * @param bool  $only_safe optional, defaults to true. Only allow safe, per self::isAllowedFileType
      * @return bool
      */
-    public static function uploadFile(array $a_values = [], $only_safe = true)
+    public static function uploadFile(array $a_values = [], $only_safe = true):bool
     {
         if (empty($a_values)) {
             throw new \UnexpectedValueException('Required Values not provided.');
         }
 
-        if ($a_values['error'] != 'OK') {
+        if ($a_values['error'] !== 'OK') {
             throw new \RuntimeException($a_values['error']);
         }
 
         if (!file_exists($a_values['save_path'])) {
-            throw new \UnexpectedValueException("File path invalid");
+            throw new \UnexpectedValueException('File path invalid');
         }
 
         if (!is_uploaded_file($a_values['tmp_name'])) {
@@ -62,7 +62,7 @@ class UploadHelper
             $r_finfo = finfo_open(FILEINFO_MIME_TYPE);
             if (!empty($a_values['real_type'])) {
                 if (!self::isAllowedFileType($a_values['real_type'])) {
-                    throw new \UnexpectedValueException("The file type may not be safe.");
+                    throw new \UnexpectedValueException('The file type may not be safe.');
                 }
             }
             elseif (!empty($a_values['type'])) {
@@ -74,7 +74,7 @@ class UploadHelper
             else {
                 $file_mime_type = finfo_file($r_finfo, $a_values['tmp_name']);
                 if (!self::isAllowedFileType($file_mime_type)) {
-                    throw new \UnexpectedValueException("The file type may not be safe.");
+                    throw new \UnexpectedValueException('The file type may not be safe.');
                 }
             }
         }
@@ -88,12 +88,12 @@ class UploadHelper
             $max_filesize = str_replace('K', '000', $max_filesize);
         }
         if ($a_values['size'] >= $max_filesize) {
-            throw new \RuntimeException("The uploaded file exceeds the max filesize: " . ini_get('upload_max_filesize'));
+            throw new \RuntimeException('The uploaded file exceeds the max filesize: ' . ini_get('upload_max_filesize'));
         }
 
         $save_to = $a_values['save_path'] . '/' . $a_values['final_file_name'];
         if (!move_uploaded_file($a_values['tmp_name'], $save_to)) {
-            throw new \RuntimeException("The file was not able to be uploaded.");
+            throw new \RuntimeException('The file was not able to be uploaded.');
         }
         return true;
     }
@@ -103,15 +103,15 @@ class UploadHelper
      * @param int $error
      * @return string
      */
-    public static function getError($error = -1)
+    public static function getError($error = -1):?string
     {
         switch ($error) {
             case UPLOAD_ERR_OK:
                 return 'OK';
             case UPLOAD_ERR_INI_SIZE:
-                return "The uploaded file exceeds the max filesize: " . ini_get('upload_max_filesize');
+                return 'The uploaded file exceeds the max filesize: ' . ini_get('upload_max_filesize');
             case UPLOAD_ERR_FORM_SIZE:
-                return "The uploaded file exceeds the max upload size: " . ini_get('post_max_size');
+                return 'The uploaded file exceeds the max upload size: ' . ini_get('post_max_size');
             case UPLOAD_ERR_PARTIAL:
                 return 'The file was only partially uploaded.';
             case UPLOAD_ERR_NO_FILE:
@@ -133,12 +133,12 @@ class UploadHelper
      * @param string $file_type
      * @return bool
      */
-    public static function isAllowedFileType($file_type = '')
+    public static function isAllowedFileType($file_type = ''):bool
     {
         if (empty(self::$a_allowed_file_types)) {
             self::setAllowedFileTypes();
         }
-        if (in_array($file_type, self::$a_allowed_file_types)) {
+        if (\in_array($file_type, self::$a_allowed_file_types)) {
             return true;
         }
         return false;
@@ -149,7 +149,7 @@ class UploadHelper
      * @param string $file_type
      * @return bool
      */
-    public static function isSortOfSafeFileType($file_type = '')
+    public static function isSortOfSafeFileType($file_type = ''):?bool
     {
         switch ($file_type) {
             case 'image/jpg':
@@ -185,7 +185,7 @@ class UploadHelper
      *                        'save_path'       => ''
      *                        ]
      */
-    public static function createUploadValues(array $a_upload_values = [], $file_path = '/files', $only_safe = true)
+    public static function createUploadValues(array $a_upload_values = [], $file_path = '/files', $only_safe = true):array
     {
         if (   empty($a_upload_values)
             || empty($a_upload_values['name'])
@@ -198,12 +198,8 @@ class UploadHelper
         $error = self::getError($a_upload_values['error']);
         if ($error === 'OK') {
             $uploaded_mime_type = MimeTypeHelper::getMimeFromFile($a_upload_values['tmp_name']);
-            if ($only_safe) {
-                if (self::isAllowedFileType($uploaded_mime_type)) {
-                    if (false) {
-                        return ViewHelper::errorMessage('The file type is not allowed.');
-                    }
-                }
+            if ($only_safe && self::isAllowedFileType($uploaded_mime_type)) {
+                return ViewHelper::errorMessage('The file type is not allowed.');
             }
             $a_extensions = MimeTypeHelper::getExtensionFromMime($uploaded_mime_type);
             $real_ext     = empty($a_extensions[0]) ? 'txt' : $a_extensions[0];
@@ -265,11 +261,11 @@ class UploadHelper
      * </pre>
      * @return array
      */
-    public static function reorganizeFilesGlobal()
+    public static function reorganizeFilesGlobal():array
     {
         $a_reorg_files = [];
         foreach ($_FILES as $field_name => $a_values) {
-            if (is_array($a_values['tmp_name'])) {
+            if (\is_array($a_values['tmp_name'])) {
                 $keys = [];
                 foreach ($a_values['tmp_name'] as $key => $value) {
                     $keys[] = $key;
@@ -293,12 +289,10 @@ class UploadHelper
      * Adds an additional extension to the class property a_allowed_file_types.
      * @param string $value
      */
-    public static function addAllowedFileType($value = '')
+    public static function addAllowedFileType($value = ''):void
     {
-        if (!empty($value)) {
-            if (!isset(self::$a_allowed_file_types['value'])) {
-                self::$a_allowed_file_types[] = $value;
-            }
+        if (!empty($value) && !isset(self::$a_allowed_file_types['value'])) {
+            self::$a_allowed_file_types[] = $value;
         }
     }
 
@@ -306,7 +300,7 @@ class UploadHelper
      * Standard setter for class property a_allowed_file_types.
      * @param array $a_values
      */
-    public static function setAllowedFileTypes(array $a_values = [])
+    public static function setAllowedFileTypes(array $a_values = []):void
     {
         if (empty($a_values)) {
             $a_values = [
@@ -330,7 +324,7 @@ class UploadHelper
      * Standard getter for class property a_allowed_file_types;
      * @return array
      */
-    public static function getAllowedFileTypes()
+    public static function getAllowedFileTypes():array
     {
         return self::$a_allowed_file_types;
     }

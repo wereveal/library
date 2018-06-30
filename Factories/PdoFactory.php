@@ -77,13 +77,13 @@ class PdoFactory
         $org_config_file = $config_file;
         if (strpos($config_file, '/') !== false) {
             $a_parts = explode('/', $config_file);
-            $config_file = $a_parts[count($a_parts) - 1];
+            $config_file = $a_parts[\count($a_parts) - 1];
         }
-        list($name, $extension) = explode('.', $config_file);
-        if ($extension != 'php' && $extension != 'cfg') {
+        [$name, $extension] = explode('.', $config_file);
+        if ($extension !== 'php' && $extension !== 'cfg') {
             throw new FactoryException('Invalid file type for configuration.', 30);
         }
-        if ($read_type == 'ro') {
+        if ($read_type === 'ro') {
             if (!isset(self::$factory_ro_instance[$name])) {
                 try {
                     self::$factory_ro_instance[$name] = new PdoFactory($o_di);
@@ -129,13 +129,13 @@ class PdoFactory
      */
     private function createPdo($config_file = 'db_config.php', $read_type = 'rw')
     {
-        if (is_object($this->o_db)) {
+        if (\is_object($this->o_db)) {
             return $this->o_db;
         }
         /** @var array $a_db */
         $a_db = $this->retrieveDbConfig($config_file);
         if (empty($a_db)) {
-            $message = "Could not retrieve the db config file.";
+            $message = 'Could not retrieve the db config file.';
             throw new FactoryException($message, 40);
         }
         $a_db['dsn'] = $this->createDsn($a_db);
@@ -152,7 +152,7 @@ class PdoFactory
                 break;
         }
         try {
-            $this->o_db = $read_type == 'ro'
+            $this->o_db = $read_type === 'ro'
                 ? new \PDO(
                     $a_db['dsn'],
                     $a_db['userro'],
@@ -185,24 +185,21 @@ class PdoFactory
      * @param array $a_db ['port', 'driver', 'host', 'name']
      * @return string
      */
-    private function createDsn(array $a_db = array())
+    private function createDsn(array $a_db = array()):?string
     {
-        if ($a_db == array()) {
+        if ($a_db === []) {
             return '';
         }
-        else {
-            if ($a_db['port'] != '' && $a_db['port'] !== null) {
-                return $a_db['driver']
-                    . ':host='   . $a_db['host']
-                    . ';port='   . $a_db['port']
-                    . ';dbname=' . $a_db['name'];
-            }
-            else {
-                return $a_db['driver']
-                    . ':host='   . $a_db['host']
-                    . ';dbname=' . $a_db['name'];
-            }
+
+        if ($a_db['port'] !== '' && $a_db['port'] !== null) {
+            return $a_db['driver']
+                . ':host='   . $a_db['host']
+                . ';port='   . $a_db['port']
+                . ';dbname=' . $a_db['name'];
         }
+        return $a_db['driver']
+            . ':host='   . $a_db['host']
+            . ';dbname=' . $a_db['name'];
     }
 
     ### Magic Method fixes
@@ -220,6 +217,6 @@ class PdoFactory
      */
     public function __toString()
     {
-        return "PdoFactory";
+        return 'PdoFactory';
     }
 }

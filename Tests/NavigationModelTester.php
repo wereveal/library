@@ -8,7 +8,6 @@ namespace Ritc\Library\Tests;
 use Ritc\Library\Basic\Tester;
 use Ritc\Library\Models\NavigationModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * NavigationModel class tester.
@@ -22,8 +21,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavigationModelTester extends Tester
 {
-    use LogitTraits;
-
     /** @var \Ritc\Library\Models\NavigationModel  */
     private $o_nav_db;
 
@@ -36,6 +33,7 @@ class NavigationModelTester extends Tester
         $this->setupElog($o_di);
         /** @var \Ritc\Library\Services\DbModel $o_db */
         $o_db = $o_di->get('db');
+        /** @noinspection UnusedConstructorDependenciesInspection */
         $this->o_nav_db = new NavigationModel($o_db);
         $this->o_nav_db->setElog($this->o_elog);
     }
@@ -43,7 +41,7 @@ class NavigationModelTester extends Tester
     /**
      * @return bool
      */
-    public function createTester()
+    public function createTester():bool
     {
         return false;
     }
@@ -51,7 +49,7 @@ class NavigationModelTester extends Tester
     /**
      * @return bool
      */
-    public function readTester()
+    public function readTester():bool
     {
         return false;
     }
@@ -59,7 +57,7 @@ class NavigationModelTester extends Tester
     /**
      * @return bool
      */
-    public function updateTester()
+    public function updateTester():bool
     {
         return false;
     }
@@ -67,7 +65,7 @@ class NavigationModelTester extends Tester
     /**
      * @return bool
      */
-    public function deleteTester()
+    public function deleteTester():bool
     {
         return false;
     }

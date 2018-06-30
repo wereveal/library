@@ -24,12 +24,20 @@ class ContentController implements ControllerInterface
 {
     use LogitTraits, ConfigControllerTraits;
 
+    /**
+     * ContentController constructor.
+     *
+     * @param Di $o_di
+     */
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
         $this->setupElog($o_di);
     }
 
+    /**
+     * @return mixed|string
+     */
     public function route()
     {
         // TODO: Implement route() method.

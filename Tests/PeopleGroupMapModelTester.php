@@ -6,6 +6,8 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
+use Ritc\Library\Exceptions\FactoryException;
+use Ritc\Library\Exceptions\ServiceException;
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -36,21 +38,31 @@ class PeopleGroupMapModelTester extends Tester
 
     /**
      * PeopleGroupMapModelTester constructor.
-     * @param array $a_test_order
+     *
+     * @param array  $a_test_order
      * @param string $db_config
      */
     public function __construct(array $a_test_order = array(), $db_config = 'db_config.php')
     {
         $this->a_test_order = $a_test_order;
-        $this->o_elog = Elog::start();
+        try {
+            $this->o_elog = Elog::start();
+        }
+        catch (ServiceException $e) {
+        }
         $this->o_di = new Di();
         $this->o_di->set('elog', $this->o_elog);
-        $o_pdo = PdoFactory::start($db_config, 'rw', $this->o_di);
-        if ($o_pdo !== false) {
-            $this->o_db = new DbModel($o_pdo, $db_config);
+        try {
+            $o_pdo = PdoFactory::start($db_config, 'rw', $this->o_di);
+            if ($o_pdo !== false) {
+                $this->o_db = new DbModel($o_pdo, $db_config);
+            }
+            else {
+                $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+            }
         }
-        else {
-            $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
+        catch (FactoryException $e) {
+            die('Unable to create the pdo instance.');
         }
         $this->o_ugm = new PeopleGroupMapModel($this->o_db);
     }
@@ -59,7 +71,7 @@ class PeopleGroupMapModelTester extends Tester
     /**
      * @return bool
      */
-    public function createTester()
+    public function createTester():bool
     {
         return false;
     }
@@ -67,7 +79,7 @@ class PeopleGroupMapModelTester extends Tester
     /**
      * @return bool
      */
-    public function readTester()
+    public function readTester():bool
     {
         return false;
     }
@@ -75,7 +87,7 @@ class PeopleGroupMapModelTester extends Tester
     /**
      * @return bool
      */
-    public function updateTester()
+    public function updateTester():bool
     {
         return false;
     }
@@ -83,7 +95,7 @@ class PeopleGroupMapModelTester extends Tester
     /**
      * @return bool
      */
-    public function deleteTester()
+    public function deleteTester():bool
     {
         return false;
     }

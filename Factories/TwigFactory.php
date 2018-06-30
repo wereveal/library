@@ -89,6 +89,7 @@ class TwigFactory
                         $o_loader->prependPath($path, $namespace);
                     }
                     catch (\Twig_Error_Loader $e) {
+                        /** @noinspection ForgottenDebugOutputInspection */
                         error_log('Unable to load paths with Twig Loader: ' . $e->getMessage() . ' -- ' . $meth);
                         $continue = false;
                         break;
@@ -106,12 +107,14 @@ class TwigFactory
                         $this->o_twig->addTest($inPublic_test);
                     }
                     catch (\Error $e) {
-                        error_log("Twig Environment Error: " . $e->getMessage() . ' -- ' . $meth);
+                        /** @noinspection ForgottenDebugOutputInspection */
+                        error_log('Twig Environment Error: ' . $e->getMessage() . ' -- ' . $meth);
                     }
                 }
             }
         }
         catch (\Error $e) {
+            /** @noinspection ForgottenDebugOutputInspection */
             error_log('Unable to create Twig Loader: ' . $meth);
         }
     }
@@ -119,36 +122,41 @@ class TwigFactory
     /**
      * Primary method for the factory. see \ref twigfactory
      * Created to provide backwards compatibility.
+     *
      * @param string|array|Di $param_one Optional sort of
      * @param string|bool     $param_two
      * @return mixed|\Twig_Environment
-     * @throws \Ritc\Library\Exceptions\FactoryException
+     * @throws FactoryException
      */
     public static function getTwig($param_one = '', $param_two = '')
     {
         if ($param_one instanceof Di) {
             self::$o_di = $param_one;
-            if (!is_bool($param_two)) {
+            if (!\is_bool($param_two)) {
                 $param_two = false;
             }
             try {
-                $o_te = self::getTwigByDb($param_one, $param_two);
-                return $o_te;
+                return self::getTwigByDb($param_one, $param_two);
             }
             catch (FactoryException $e) {
-                throw new FactoryException($e->errorMessage(), $e->getCode());
+                throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
             }
         }
-        else {
-            if (is_bool($param_two)) {
-                $param_two = '';
-            }
+
+        if (\is_bool($param_two)) {
+            $param_two = '';
+        }
+        try {
             return self::getTwigByFile($param_one, $param_two);
+        }
+        catch (FactoryException $e) {
+            throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
         }
     }
 
     /**
      * Returns the twig environment instance as configured from database values.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      * @param bool                      $use_cache
      * @return mixed|\Twig_Environment
@@ -190,7 +198,7 @@ class TwigFactory
         $additional_paths = [];
         $default_path = '';
         foreach ($results as $record) {
-            if ($record['tp_default'] === 1 && $default_path == '') {
+            if ($default_path === '' && $record['tp_default'] === 1) {
                 $default_path = $record['twig_path'];
                 $a_config['default_path'] = BASE_PATH . $default_path;
             }
@@ -199,9 +207,8 @@ class TwigFactory
         }
         $a_config['additional_paths'] = $additional_paths;
         try {
-            /** @var \Ritc\Library\Factories\TwigFactory $o_tf */
-            $o_tf = self::createWithArray($a_config, 'db');
-            return $o_tf->o_twig;
+            /** @noinspection PhpUndefinedFieldInspection */
+            return self::createWithArray($a_config, 'db')->o_twig;
         }
         catch (FactoryException $e) {
             throw new FactoryException('Unable to create instance of the twig.' . $e->errorMessage());
@@ -218,9 +225,9 @@ class TwigFactory
      * @return \Twig_Environment
      * @throws \Ritc\Library\Exceptions\FactoryException
      */
-    public static function getTwigByFile($config = 'twig_config.php', $namespace = '')
+    public static function getTwigByFile($config = 'twig_config.php', $namespace = ''):Twig_Environment
     {
-        if (is_array($config)) {
+        if (\is_array($config)) {
             if (empty($config)) {
                 $o_tf = self::create('twig_config.php', $namespace);
             }
@@ -260,17 +267,17 @@ class TwigFactory
      * @return \Twig_Environment
      * @throws \Ritc\Library\Exceptions\FactoryException
      */
-    protected static function create($config_file = 'twig_config.php', $namespace = '')
+    protected static function create($config_file = 'twig_config.php', $namespace = ''):Twig_Environment
     {
         $org_config_file = $config_file;
         if (strpos($config_file, '/') !== false) {
             $a_parts = explode('/', $config_file);
-            $config_file = $a_parts[count($a_parts) - 1];
+            $config_file = $a_parts[\count($a_parts) - 1];
         }
-        list($name, $extension) = explode('.', $config_file);
+        [$name, $extension] = explode('.', $config_file);
         unset($extension);
         $name = str_replace('twig_config_', '', $name);
-        if ($name == 'twig_config' || $name == '') {
+        if ($name === 'twig_config' || $name === '') {
             $name = 'main';
         }
         if (!isset(self::$instance[$name])) {
@@ -296,7 +303,7 @@ class TwigFactory
      * @return \Twig_Environment
      * @throws \Ritc\Library\Exceptions\FactoryException
      */
-    protected static function createMultiSource(array $a_config_files = [], $name = 'main', $use_main_twig = true)
+    protected static function createMultiSource(array $a_config_files = [], $name = 'main', $use_main_twig = true):Twig_Environment
     {
         if (!isset(self::$instance[$name])) {
             # No config files specified
@@ -321,6 +328,7 @@ class TwigFactory
                     : '';
                 $a_twig_config_next = self::retrieveTwigConfigArray($config_file, $namespace);
                 if (!empty($a_twig_config_next['additional_paths'])) {
+                    /** @noinspection SlowArrayOperationsInLoopInspection */
                     $a_twig_config['additional_paths'] = array_merge(
                         $a_twig_config['additional_paths'],
                         $a_twig_config_next['additional_paths']
@@ -350,7 +358,7 @@ class TwigFactory
      * @return \Twig_Environment
      * @throws \Ritc\Library\Exceptions\FactoryException
      */
-    protected static function createWithArray(array $a_twig_config = [], $name = 'main')
+    protected static function createWithArray(array $a_twig_config = [], $name = 'main'):Twig_Environment
     {
         if (!isset(self::$instance[$name])) {
             if (   empty($a_twig_config)
@@ -377,7 +385,7 @@ class TwigFactory
      *                            Use namespace format e.g. My\Namespace.
      * @return array
      */
-    private static function retrieveTwigConfigArray($config_file = 'twig_config.php', $namespace = '')
+    private static function retrieveTwigConfigArray($config_file = 'twig_config.php', $namespace = ''):array
     {
         if (strpos($config_file, '/') !== false) {
             $config_w_path = $config_file;
@@ -388,9 +396,7 @@ class TwigFactory
                 : '';
             $config_w_path = LocateFile::getConfigWithPath($config_file, $namespace);
         }
-        /** @noinspection PhpIncludeInspection */
-        $a_twig_config = $config_w_path != '' ? require $config_w_path : [];
-        return $a_twig_config;
+        return $config_w_path !== '' ? require $config_w_path : [];
     }
 
     ### Extensions to Twig ###
@@ -399,7 +405,7 @@ class TwigFactory
      * @param string $value Path and filename starting from the public root directory.
      * @return bool
      */
-    public function inPublicTest($value = '')
+    public function inPublicTest($value = ''):bool
     {
         $file_w_path = PUBLIC_PATH . $value;
         return file_exists($file_w_path);
@@ -410,7 +416,7 @@ class TwigFactory
      * @param string $value
      * @return string
      */
-    public function mdFilter($value = '')
+    public function mdFilter($value = ''):string
     {
         if ($this->o_md instanceof \Parsedown) {
             $value = $this->o_md->text($value);
@@ -429,5 +435,37 @@ class TwigFactory
             $value = $this->o_mde->text($value);
         }
         return $value;
+    }
+
+    /**
+     * @return Twig_Loader_Filesystem
+     */
+    public function getLoader():Twig_Loader_Filesystem
+    {
+        return $this->o_loader;
+    }
+
+    /**
+     * @return \Parsedown
+     */
+    public function getMd():\Parsedown
+    {
+        return $this->o_md;
+    }
+
+    /**
+     * @return \ParsedownExtra
+     */
+    public function getMde():\ParsedownExtra
+    {
+        return $this->o_mde;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getInstance():array
+    {
+        return self::$instance;
     }
 }

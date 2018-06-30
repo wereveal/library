@@ -23,5 +23,5 @@ interface PageControllerInterface
      * Turns over the hard work to the specific controllers through the router.
      * @return string $html
      */
-    public function renderPage();
+    public function renderPage():string;
 }

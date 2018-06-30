@@ -27,7 +27,7 @@ class Tpl
      * @param string $config_file
      * @return \Twig_Environment|null
      */
-    public function getTwig($config_file = 'twig_config.php')
+    public function getTwig($config_file = 'twig_config.php'):?\Twig_Environment
     {
         try {
             return TwigFactory::getTwig($config_file);

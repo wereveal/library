@@ -33,7 +33,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getId()
+    public function getId():int
     {
         return $this->a_properties['const_id'];
     }
@@ -41,7 +41,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @param int $value
      */
-    public function setId($value)
+    public function setId($value):void
     {
         $this->a_properties['const_id'] = $value;
     }
@@ -49,7 +49,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @return string
      */
-    public function getName()
+    public function getName():string
     {
         return $this->a_properties['const_name'];
     }
@@ -57,7 +57,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @param string $value
      */
-    public function setName($value)
+    public function setName($value):void
     {
         $this->a_properties['const_name'] = $value;
     }
@@ -73,7 +73,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @param mixed $value
      */
-    public function setValue($value)
+    public function setValue($value):void
     {
         $this->a_properties['const_value'] = $value;
     }
@@ -81,7 +81,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @return int
      */
-    public function getImmutable()
+    public function getImmutable():int
     {
         return $this->a_properties['const_immutable'];
     }
@@ -89,7 +89,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @param int $value
      */
-    public function setImmutable($value)
+    public function setImmutable($value):void
     {
         $this->a_properties['const_immutable'] = $value;
     }
@@ -97,16 +97,16 @@ class ConstantsEntity implements EntityInterface
     /**
      * @return array
      */
-    public function getAllProperties()
+    public function getAllProperties():array
     {
         return $this->a_properties;
     }
 
     /**
      * @param array $a_properties
-     * @return bool|void
+     * @return bool
      */
-    public function setAllProperties(array $a_properties = array())
+    public function setAllProperties(array $a_properties = array()):bool
     {
         $required_keys = [
             'const_id',
@@ -116,5 +116,6 @@ class ConstantsEntity implements EntityInterface
         ];
         $a_properties = Arrays::createRequiredPairs($a_properties, $required_keys, 'delete_undesired_keys');
         $this->a_properties = $a_properties;
+        return true;
     }
 }

@@ -10,8 +10,6 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
-use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Handles all the CRUD for the urls table.
@@ -29,8 +27,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class UrlsModel extends ModelAbstract
 {
-    use LogitTraits, DbUtilityTraits;
-
     /**
      * UrlsModel constructor.
      *
@@ -59,7 +55,7 @@ class UrlsModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function delete($id = -1)
+    public function delete($id = -1):bool
     {
         if (Arrays::isArrayOfAssocArrays($id)) {
             $a_search_for_route = [];
@@ -77,18 +73,16 @@ class UrlsModel extends ModelAbstract
                 }
             }
         }
+        elseif ($this->isValidId($id)) {
+            if ($this->isImmutable($id)) {
+                $immut_err_code = ExceptionHelper::getCodeNumberModel('delete immutable');
+                throw new ModelException('Immutable record may not be deleted.', $immut_err_code);
+            }
+            $a_search_for_route = ['url_id' => $id];
+        }
         else {
-            if ($this->isValidId($id)) {
-                if ($this->isImmutable($id)) {
-                    $immut_err_code = ExceptionHelper::getCodeNumberModel('delete immutable');
-                    throw new ModelException('Immutable record may not be deleted.', $immut_err_code);
-                }
-                $a_search_for_route = ['url_id' => $id];
-            }
-            else {
-                $invalid_err_code = ExceptionHelper::getCodeNumberModel('delete missing primary');
-                throw new ModelException('Invalid Primary Index.', $invalid_err_code);
-            }
+            $invalid_err_code = ExceptionHelper::getCodeNumberModel('delete missing primary');
+            throw new ModelException('Invalid Primary Index.', $invalid_err_code);
         }
         $o_routes = new RoutesModel($this->o_db);
         try {
@@ -123,8 +117,7 @@ class UrlsModel extends ModelAbstract
             throw new ModelException($message, $err_code, $e);
         }
         try {
-            $results = $this->genericDelete($id);
-            return $results;
+            return $this->genericDelete($id);
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
@@ -146,7 +139,7 @@ class UrlsModel extends ModelAbstract
             SELECT * from {$this->lib_prefix}urls as u
             WHERE NOT EXISTS (
               SELECT * from {$this->lib_prefix}routes as r
-              WHERE r.url_id = u.url_id 
+              WHERE r.url_id = u.url_id
             )
             AND u.url_text NOT LIKE '%shared%'
         ";
@@ -167,7 +160,8 @@ class UrlsModel extends ModelAbstract
      */
     public function readNotInNavgroup($navgroup_id = -1)
     {
-        $sql = "
+        $sql = /** @lang text */
+        "
             SELECT DISTINCT u.*
             FROM {$this->lib_prefix}urls as u
             JOIN {$this->lib_prefix}navigation as n ON n.url_id = u.url_id

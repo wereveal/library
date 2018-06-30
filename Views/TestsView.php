@@ -41,7 +41,7 @@ class TestsView
     /**
      * @return string
      */
-    public function renderList()
+    public function renderList():string
     {
         $a_message = ViewHelper::infoMessage('Select which Class you wish to test.');
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/tests/');
@@ -63,9 +63,9 @@ class TestsView
      * @param array $a_result_values
      * @return string
      */
-    public function renderResults(array $a_result_values = array())
+    public function renderResults(array $a_result_values = array()):string
     {
-        if (count($a_result_values) == 0) {
+        if (\count($a_result_values) == 0) {
             $a_message = ViewHelper::failureMessage('No results were available.');
             $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/tests/');
         }

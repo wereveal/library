@@ -44,7 +44,7 @@ class BlocksView implements ViewInterface
      * @param array $a_message
      * @return string
      */
-    public function render(array $a_message = [])
+    public function render(array $a_message = []):string
     {
         $meth = __METHOD__ . '.';
         $cache_key = 'blocks.read.all';

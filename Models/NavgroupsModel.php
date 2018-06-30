@@ -54,7 +54,7 @@ class NavgroupsModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function delete($ng_id = -1): bool
+    public function delete($ng_id = -1):bool
     {
         if ($ng_id === -1) {
             throw new ModelException('The navgroup id was not provided');
@@ -94,7 +94,7 @@ class NavgroupsModel extends ModelAbstract
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readByName($name = ''): array
+    public function readByName($name = ''):array
     {
         if ($name === '') {
             throw new ModelException('A record name must be provided.', 220);
@@ -115,7 +115,7 @@ class NavgroupsModel extends ModelAbstract
      * @return int
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function readIdByName($name = ''): int
+    public function readIdByName($name = ''):int
     {
         $a_values = [':ng_name' => $name];
         $a_search_parms = [
@@ -140,7 +140,7 @@ class NavgroupsModel extends ModelAbstract
      * @return int
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function retrieveDefaultId(): int
+    public function retrieveDefaultId():int
     {
         $a_search_for = [':ng_default' => 1];
         $a_search_parms = [
@@ -165,7 +165,7 @@ class NavgroupsModel extends ModelAbstract
      * @return string
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function retrieveDefaultName(): string
+    public function retrieveDefaultName():string
     {
         $a_search_for = [':ng_default' => 1];
         $a_search_parms = [

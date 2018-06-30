@@ -39,6 +39,7 @@ class GroupsController implements ConfigControllerInterface
 
     /**
      * GroupsController constructor.
+     *
      * @param Di $o_di
      */
     public function __construct(Di $o_di)
@@ -52,9 +53,10 @@ class GroupsController implements ConfigControllerInterface
 
     /**
      * Standard routing method as required by interface.
+     *
      * @return string
      */
-    public function route()
+    public function route():string
     {
         switch ($this->form_action) {
             case 'save_new':
@@ -73,12 +75,13 @@ class GroupsController implements ConfigControllerInterface
     ### Required by Interface ###
     /**
      * Deletes the record.
+     *
      * @return string
      */
-    public function delete()
+    public function delete():string
     {
         $group_id = $this->a_post['group_id'];
-        if ($group_id == -1) {
+        if ($group_id === -1) {
             $a_message = ViewHelper::errorMessage('An Error Has Occured. The group id was not provided.');
             return $this->o_view->renderList($a_message);
         }
@@ -97,9 +100,10 @@ class GroupsController implements ConfigControllerInterface
 
     /**
      * Saves a new record.
+     *
      * @return string
      */
-    public function save()
+    public function save():string
     {
         $meth = __METHOD__ . '.';
         $a_group = $this->a_post['groups'];
@@ -120,9 +124,10 @@ class GroupsController implements ConfigControllerInterface
 
     /**
      * Updates a record.
+     *
      * @return string
      */
-    public function update()
+    public function update():string
     {
         $meth = __METHOD__ . '.';
         $a_group = $this->a_post['groups'];
@@ -130,7 +135,7 @@ class GroupsController implements ConfigControllerInterface
         $a_group['group_immutable'] = empty($a_group['group_immutable'])
             ? 'false'
             : 'true';
-        $this->logIt("Update vars: " . var_export($a_group, true), LOG_OFF, $meth . __LINE__);
+        $this->logIt('Update vars: ' . var_export($a_group, true), LOG_OFF, $meth . __LINE__);
         try {
             $this->o_model->update($a_group, ['group_name', 'group_auth_level']);
             if ($this->use_cache) {
@@ -146,9 +151,10 @@ class GroupsController implements ConfigControllerInterface
 
     /**
      * Verifies the deletion of a record.
+     *
      * @return string
      */
-    public function verifyDelete()
+    public function verifyDelete():string
     {
         return $this->o_view->renderVerify($this->a_post['groups']);
     }

@@ -43,7 +43,7 @@ class LibSitemapView implements ViewInterface
      * @param array $a_message
      * @return string
      */
-    public function render(array $a_message = [])
+    public function render(array $a_message = []):string
     {
         $xml_cache_key       = 'nav.sitemap.for.xml';
         $list_cache_key      = 'nav.list.by.auth_level.0';
@@ -84,7 +84,7 @@ class LibSitemapView implements ViewInterface
                 if (empty($a_available[$item['nav_name']])) {
                     $in_sitemap = false;
                     foreach ($a_results as $a_this) {
-                        if ($a_this['loc'] == $item['url']) {
+                        if ($a_this['loc'] === $item['url']) {
                             $in_sitemap = true;
                         }
                     }
@@ -123,7 +123,7 @@ class LibSitemapView implements ViewInterface
      *
      * @return array
      */
-    public function createXmlSitemap()
+    public function createXmlSitemap():array
     {
         $xml_cache_key = 'nav.sitemap.for.xml';
         $a_sitemap = [];
@@ -148,8 +148,7 @@ class LibSitemapView implements ViewInterface
         if ($results) {
             return ViewHelper::successMessage();
         }
-        else {
-            return ViewHelper::failureMessage();
-        }
+
+        return ViewHelper::failureMessage();
     }
 }

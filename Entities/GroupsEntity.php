@@ -28,9 +28,10 @@ class GroupsEntity implements EntityInterface
 
     /**
      * Gets all the entity properties.
+     *
      * @return array
      */
-    public function getAllProperties()
+    public function getAllProperties():array
     {
         return [
             'group_id'          => $this->group_id,
@@ -41,10 +42,11 @@ class GroupsEntity implements EntityInterface
 
     /**
      * Sets all the properties for the entity in one step.
+     *
      * @param array $a_entity
      * @return bool
      */
-    public function setAllProperties(array $a_entity = array())
+    public function setAllProperties(array $a_entity = array()):bool
     {
         $a_defaults = array(
             'group_id'           => 0,
@@ -73,7 +75,7 @@ class GroupsEntity implements EntityInterface
     /**
      * @param mixed $group_id
      */
-    public function setGroupId($group_id)
+    public function setGroupId($group_id):void
     {
         $this->group_id = $group_id;
     }
@@ -89,7 +91,7 @@ class GroupsEntity implements EntityInterface
     /**
      * @param mixed $group_name
      */
-    public function setGroupName($group_name)
+    public function setGroupName($group_name):void
     {
         $this->group_name = $group_name;
     }
@@ -105,7 +107,7 @@ class GroupsEntity implements EntityInterface
     /**
      * @param mixed $group_description
      */
-    public function setGroupDescription($group_description)
+    public function setGroupDescription($group_description):void
     {
         $this->group_description = $group_description;
     }

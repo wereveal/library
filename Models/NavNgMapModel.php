@@ -47,7 +47,7 @@ class NavNgMapModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function update(array $a_new_values = [], array $a_old_values = []): bool
+    public function update(array $a_new_values = [], array $a_old_values = []):bool
     {
         if ($a_new_values['nav_id'] === $a_old_values['nav_id'] &&
             $a_new_values['ng_id']  === $a_old_values['ng_id']
@@ -64,7 +64,7 @@ class NavNgMapModel extends ModelAbstract
             $err_code = ExceptionHelper::getCodeNumberModel('update missing values');
             throw new ModelException($err_msg, $err_code);
         }
-        
+
         try {
             if (empty($a_old_values['nnm_id'])) {
                 $a_old_record = $this->read($a_old_values);
@@ -92,7 +92,7 @@ class NavNgMapModel extends ModelAbstract
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function deleteWith($ng_id = -1, $nav_id = -1): bool
+    public function deleteWith($ng_id = -1, $nav_id = -1):bool
     {
         if ($ng_id === -1 && $nav_id === -1) {
             return false;
@@ -130,7 +130,7 @@ class NavNgMapModel extends ModelAbstract
      * @param array $a_values
      * @return bool
      */
-    public function relatedRecordsExist(array $a_values = []): bool
+    public function relatedRecordsExist(array $a_values = []):bool
     {
         if (empty($a_values['nav_id']) && empty($a_values['ng_id'])) {
             return true;

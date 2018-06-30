@@ -92,7 +92,7 @@ class CacheManagerController implements ControllerInterface
     /**
      * Sets up the model and sets the class property cache_const_id
      */
-    private function setupConst()
+    private function setupConst():void
     {
         $o_const = new ConstantsModel($this->o_db);
         $o_const->setupElog($this->o_di);
@@ -113,7 +113,7 @@ class CacheManagerController implements ControllerInterface
      * @param string $which_way
      * @return bool
      */
-    private function updateCacheRecord($which_way = 'false')
+    private function updateCacheRecord($which_way = 'false'):?bool
     {
         if ($this->cache_const_id < 1 || !ini_get('opcache.enable')) {
             return false;

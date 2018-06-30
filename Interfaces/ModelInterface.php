@@ -21,34 +21,38 @@ namespace Ritc\Library\Interfaces;
 interface ModelInterface {
     /**
      * Create a record using the values provided.
+     *
      * @param array $a_values Required
-     * @return bool
+     * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function create(array $a_values);
+    public function create(array $a_values):array;
 
     /**
      * Returns an array of records based on the search params provided.
+     *
      * @param array $a_search_for    key pairs of field name => field value
      * @param array $a_search_params \ref searchparams \ref readparams
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function read(array $a_search_for, array $a_search_params);
+    public function read(array $a_search_for, array $a_search_params):array;
 
     /**
      * Update for a record using the values provided.
+     *
      * @param array $a_values Required
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function update(array $a_values);
+    public function update(array $a_values):bool;
 
     /**
      * Deletes a record based on the id provided.
+     *
      * @param int $id Required
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function delete($id);
+    public function delete($id):bool;
 }

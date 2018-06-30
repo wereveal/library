@@ -56,7 +56,7 @@ class ConstantsView
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = [])
+    public function renderList(array $a_message = []):string
     {
         $message = 'Changing configuration values can result in unexpected results. If you are not sure, do not do it.';
         if (empty($a_message)) {
