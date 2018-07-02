@@ -41,9 +41,9 @@ class AutoloadMapper
      */
     public function __construct(array $a_dirs = array())
     {
-        $this->src_path = $a_dirs['src_path'] ?? '/src';
-        $this->config_path = $a_dirs['config_path'] ?? '/src/config';
-        $this->apps_path = $a_dirs['apps_path'] ?? '/src/apps';
+        $this->src_path    = empty($a_dirs['src_path'])    ? '/src'       : $a_dirs['src_path'];
+        $this->config_path = empty($a_dirs['config_path']) ? '/src/config': $a_dirs['config_path'];
+        $this->apps_path   = empty($a_dirs['apps_path'])   ? '/src/apps'  : $a_dirs['apps_path'];
     }
 
     /**

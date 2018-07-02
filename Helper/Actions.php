@@ -217,10 +217,12 @@ class Actions
     }
 
     /**
+     * Sets the class property uri_no_get.
+     * Uri without any query stuff, otherwise known as the GET stuff.
+     *
      * @param string $request_uri
-     * @return bool
      */
-    public function setUriNoGet($request_uri = ''):bool
+    public function setUriNoGet($request_uri = ''):void
     {
         if ($request_uri === '') {
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */
@@ -234,7 +236,6 @@ class Actions
             $this->uri_no_get = $request_uri;
         }
         $this->logIt('The clean uri is: ' . $this->uri_no_get, LOG_OFF, __METHOD__);
-        return true;
     }
 
     /**
@@ -279,7 +280,7 @@ class Actions
      * @param string $uri
      * @return bool
      */
-    public function setUrlPath($uri = ''):bool
+    public function setUrlPath(string $uri = ''):bool
     {
         $uri = ($uri === '') ? $this->uri_no_get : $uri;
         $a_file_path = explode('/', $uri);
