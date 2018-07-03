@@ -1,6 +1,7 @@
 <?php
 /**
  * Class DatesTimes
+ *
  * @package Ritc_Library
  */
 namespace Ritc\Library\Helper;
@@ -175,7 +176,7 @@ class DatesTimes
      * @param bool|true $include_meridiem
      * @return null|string
      */
-    public static function change24hTo12h(string $time_string = '', $include_seconds = true, $include_meridiem = true):?string
+    public static function change24hTo12h(string $time_string = '', $include_seconds = true, $include_meridiem = true):string
     {
         if ($include_seconds) {
             $time_format = $include_meridiem ? 'g:i:s a' : 'g:i:s' ;
@@ -214,7 +215,7 @@ class DatesTimes
      * @deprecated v3.2.0
      * @return null|string
      */
-    public static function convertDateWith(string $date_format = '', string $timestamp = '', string $timezone = ''):?string
+    public static function convertDateWith(string $date_format = '', string $timestamp = '', string $timezone = ''):string
     {
         return self::convertDateTimeWith($date_format, $timestamp, $timezone);
     }
@@ -229,7 +230,7 @@ class DatesTimes
      *                            server date time tz to provided tz.
      * @return string|null
      */
-    public static function convertDateTimeWith(string $date_format = '', string $timestamp = '', string $timezone = ''):?string
+    public static function convertDateTimeWith(string $date_format = '', string $timestamp = '', string $timezone = ''):string
     {
         $date_format = self::isValidDateFormat($date_format)
             ? $date_format
@@ -305,7 +306,7 @@ class DatesTimes
      * @param string $end_date
      * @return \DateInterval
      */
-    public static function getInterval(string $start_date = '', string $end_date = ''):?\DateInterval
+    public static function getInterval(string $start_date = '', string $end_date = ''):\DateInterval
     {
         $start_date = $start_date === '' ? @date('m/d/Y H:i:s') : $start_date;
         $end_date   = $end_date === ''   ? @date('m/d/Y H:i:s') : $end_date;
@@ -688,7 +689,7 @@ class DatesTimes
      * @param string $timestamp
      * @return string
      */
-    public static function convertToShortDate(string $timestamp = ''):?string
+    public static function convertToShortDate(string $timestamp = ''):string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
         return @date('m/d/Y', $ts);
@@ -749,7 +750,7 @@ class DatesTimes
      * @param string $timezone
      * @return null|string
      */
-    public static function convertToTimeWithTz(string $timestamp = '', string $timezone = ''):?string
+    public static function convertToTimeWithTz(string $timestamp = '', string $timezone = ''):string
     {
         $time_format = 'H:i:s T';
         return self::convertDateTimeWith($time_format, $timestamp, $timezone);
@@ -762,7 +763,7 @@ class DatesTimes
      * @param string $timezone
      * @return null|string
      */
-    public static function convertToTimeWithTzOffset(string $timestamp = '', string $timezone = ''):?string
+    public static function convertToTimeWithTzOffset(string $timestamp = '', string $timezone = ''):string
     {
         $time_format = 'H:i:sP';
         return self::convertDateTimeWith($time_format, $timestamp, $timezone);
@@ -778,7 +779,7 @@ class DatesTimes
      */
     public static function convertToTimeWith(string $time_format = '',
                                              string $timestamp = '',
-                                             string $timezone = ''):?string
+                                             string $timezone = ''):string
     {
         $time_format = $time_format === ''
             ? 'H:i:s'
@@ -886,7 +887,7 @@ class DatesTimes
      * @param string $date_format
      * @return bool
      */
-    public static function isValidDateFormat(string $date_format = ''):?bool
+    public static function isValidDateFormat(string $date_format = ''):bool
     {
         $a_date_info = date_parse_from_format($date_format, date($date_format));
         return !($a_date_info['error_count'] > 0);

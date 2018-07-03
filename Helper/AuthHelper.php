@@ -1,6 +1,7 @@
 <?php
 /**
  * Class AuthHelper
+ *
  * @package Ritc_Library
  */
 namespace Ritc\Library\Helper;
@@ -17,10 +18,9 @@ use Ritc\Library\Services\Session;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class AuthHelper - Manages User Authentication and Authorization to the site.
- * @details   It is expected that this will be used within a controller and
- *            more finely grained access with be handled there
- *            or in a sub-controller.
+ * Manages User Authentication and Authorization to the site.
+ * It is expected that this will be used within a controller and
+ * more finely grained access with be handled there or in a sub-controller.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v5.3.1
@@ -76,15 +76,15 @@ class AuthHelper
 {
     use LogitTraits;
 
-    /** @var PeopleComplexModel */
+    /** @var PeopleComplexModel $o_complex */
     private $o_complex;
-    /** @var GroupsModel */
+    /** @var GroupsModel $o_groups */
     private $o_groups;
-    /** @var Router */
+    /** @var Router $o_router */
     private $o_router;
-    /** @var Session */
+    /** @var Session $o_session */
     private $o_session;
-    /** @var PeopleModel */
+    /** @var PeopleModel $o_people */
     private $o_people;
 
     /**
@@ -128,7 +128,7 @@ class AuthHelper
      * </pre>
      * @return array person_values or login values with message.
      */
-    public function login(array $a_person_post = []):?array
+    public function login(array $a_person_post = []):array
     {
         $meth = __METHOD__ . '.';
         if ($a_person_post === []) {

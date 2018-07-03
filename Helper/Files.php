@@ -1,6 +1,7 @@
 <?php
 /**
  * Class Files
+ *
  * @package Ritc_Library
  */
 namespace Ritc\Library\Helper;
@@ -9,7 +10,7 @@ use Ritc\Library\Interfaces\LocationInterface;
 use Ritc\Library\Traits\LogitTraits;
 
 /**
- * Class Files - Determines the path to the file
+ * Determines the path to the file
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v4.3.1+1
@@ -41,52 +42,94 @@ class Files implements LocationInterface
     use LogitTraits;
 
     /**
+     * Name of the config dir.
      *
+     * @var 'CONFIG_DIR_NAME'
      */
     public const CONFIG_DIR_NAME = 'config';
     /**
+     * Name of the css dir.
      *
+     * @var 'CSS_DIR_NAME'
      */
     public const CSS_DIR_NAME = 'css';
     /**
+     * Name of the HTML dir.
      *
+     * @var 'HTML_DIR_NAME' a class const
      */
     public const HTML_DIR_NAME = 'html';
     /**
+     * Name of the Images dir.
      *
+     * @var 'IMAGES_DIR_NAME'
      */
     public const IMAGES_DIR_NAME = 'images';
     /**
+     * Name of the javascript directory.
      *
+     * @var 'JS_DIR_NAME'
      */
     public const JS_DIR_NAME = 'js';
     /**
+     * Name of the Library dir. Not sure which dir this is actually referring to.
      *
+     * @var 'LIBS_DIR_NAME'
      */
     public const LIBS_DIR_NAME = 'library';
     /**
+     * Name of the directory for private files.
      *
+     * @var 'PRIVATE_DIR_NAME'
      */
     public const PRIVATE_DIR_NAME = 'private';
     /**
+     * Name of the directory for templates.
      *
+     * @var 'TEMPLATES_DIR_NAME'
      */
     public const TEMPLATES_DIR_NAME = 'templates';
     /**
+     * Name of the directory for temporary files.
      *
+     * @var 'TMP_DIR_NAME'
      */
     public const TMP_DIR_NAME = 'tmp';
-    /** @var string */
+    /**
+     * Name of the file to find.
+     *
+     * @var string
+     */
     protected $file_name     = 'no_file.tpl';
-    /** @var string */
+    /**
+     * Name of the directory the file is located.
+     *
+     * @var string
+     */
     protected $file_dir_name = '';
-    /** @var string */
+    /**
+     * Namespace the file is located in.
+     *
+     * @var string
+     */
     protected $namespace;
-    /** @var string */
+    /**
+     * File with the directory path from base path.
+     *
+     * @var string
+     */
     protected $file_w_dir;
-    /** @var string */
+    /**
+     * File with the path from the root of the server.
+     *
+     * @var string
+     */
     protected $file_w_path;
-    /** @var string */
+    /**
+     * Name of the theme.
+     *
+     * @var string
+     */
     protected $theme_name = '';
 
     /**

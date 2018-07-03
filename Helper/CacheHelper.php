@@ -27,9 +27,17 @@ class CacheHelper
 {
     use LogitTraits;
 
-    /** @var string */
+    /**
+     * Type of Cache, e.g. PhpFiles.
+     *
+     * @var string
+     */
     protected $cache_type;
-    /** @var AbstractAdapter|AbstractCache|CacheItem|TagAwareAdapter  */
+    /**
+     * The cache object.
+     *
+     * @var AbstractAdapter|AbstractCache|CacheItem|TagAwareAdapter
+     */
     protected $o_cache;
 
     /**
@@ -161,7 +169,7 @@ class CacheHelper
      * @param string $tag       Optional, only used if cache is PSR-6
      * @return bool
      */
-    public function set(string $cache_key = '', $value = '', string $tag = ''):?bool
+    public function set(string $cache_key = '', $value = '', string $tag = ''):bool
     {
         if (empty($cache_key)) {
             return false;
