@@ -202,15 +202,15 @@ class Session
                ini_get('session.use_cookies') !== '1'
             && ini_get('session.use_only_cookies') !== '1'
             && $max_time >= time()
-            && $a_values['tolken']  === $_SESSION['token']
-            && $a_values['form_ts'] === $_SESSION['idle_timestamp']
+            && $a_values['tolken']  === (string)$_SESSION['token']
+            && $a_values['form_ts'] === (string)$_SESSION['idle_timestamp']
         ) {
                 return true;
         }
         elseif (
                $max_time >= time()
-            && $a_values['tolken']  === $_SESSION['token']
-            && $a_values['form_ts'] === $_SESSION['idle_timestamp']
+            && $a_values['tolken']  === (string)$_SESSION['token']
+            && $a_values['form_ts'] === (string)$_SESSION['idle_timestamp']
             && $_COOKIE[$this->session_name] === session_id()
         ) {
             return true;

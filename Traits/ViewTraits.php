@@ -74,6 +74,7 @@ trait ViewTraits
     ### Main Public Methods ###
     /**
      * The default setup for a view.
+     *
      * @param Di $o_di
      */
     public function setupView(Di $o_di):void
@@ -85,6 +86,7 @@ trait ViewTraits
 
     /**
      * The generic method to actually do the Twig rendering.
+     *
      * @param string $tpl
      * @param array  $a_twig_values
      * @return string
@@ -102,28 +104,24 @@ trait ViewTraits
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
-
                 return '';
             }
             catch(\Twig_Error_Syntax $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
-
                 return '';
             }
             catch(\Twig_Error_Runtime $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
-
                 return '';
             }
             catch(\TypeError $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
-
                 return '';
             }
         }
@@ -134,6 +132,7 @@ trait ViewTraits
 
     /**
      * Renders the error page.
+     *
      * @param array $a_message
      * @return string
      */
@@ -148,6 +147,7 @@ trait ViewTraits
     /**
      * Retrieves the navigation info for the nav group.
      * Does not set the class property a_nav. Use the setNav method to do that.
+     *
      * @param string|int $nav_group Defaults to the default navgroup.
      *                              This can be either the navgroup id or name.
      * @return array
@@ -234,6 +234,7 @@ trait ViewTraits
 
     /**
      * Creates some commonly used values to pass into a twig template.
+     *
      * @param array      $a_message Optional, defaults to []. Allows a message to be passed.
      * @param int|string $url_id    Optional, defaults to -1 which then uses current url_id.
      * @return array
@@ -310,6 +311,7 @@ trait ViewTraits
 
     /**
      * Creates the template string used by \Twig_Environment::render.
+     *
      * @param array $a_twig_values
      * @return string
      */
@@ -331,6 +333,7 @@ trait ViewTraits
     ### SETters and GETters ###
     /**
      * Sets the standard used objects from the object injector.
+     *
      * @param Di $o_di
      */
     protected function setOProperties(Di $o_di):void
@@ -416,6 +419,7 @@ trait ViewTraits
     /**
      * Sets the class property a_nav.
      * Uses the retrieveNav method to do so.
+     *
      * @param int|string $nav_group optional, defaults to 1
      */
     protected function setNav($nav_group = 1):void
@@ -425,6 +429,7 @@ trait ViewTraits
 
     /**
      * Sets the property a_nav array by the navgroup_name.
+     *
      * @param string $navgroup_name
      */
     protected function setNavByNgName($navgroup_name = ''):void
@@ -452,6 +457,7 @@ trait ViewTraits
     /**
      * Creates and sets the o_twig property.
      * See the TwigFactory::getTwig method for details.
+     *
      * @param string|array $twig_config \ref twigfactory
      * @param string       $name
      * @throws \Ritc\Library\Exceptions\FactoryException
@@ -473,6 +479,7 @@ trait ViewTraits
 
     /**
      * Returns an array with the values used primarily in the meta tags of the html.
+     *
      * @param int|string $url_id
      * @return array
      */
@@ -527,6 +534,8 @@ trait ViewTraits
     }
 
     /**
+     * Retrieves the class property a_nav.
+     *
      * @return array
      */
     public function getNav():array
@@ -538,6 +547,7 @@ trait ViewTraits
     /**
      * Utility to create a new unique integer value for the array passed in.
      * Recursive in nature, will find an integer value not in the array and return it.
+     *
      * @param array $a_used
      * @param int   $value
      * @return int
@@ -555,6 +565,7 @@ trait ViewTraits
 
     /**
      * Creates the values needed for the pager template.
+     *
      * @param array $a_parameters Required in part```
      *                            [
      *                              'start_record'       => required
@@ -715,6 +726,7 @@ trait ViewTraits
 
     /**
      * Turns a flat db result into a multi-dimensional array for navigation.
+     *
      * @param array $a_nav
      * @return array
      */
@@ -725,7 +737,7 @@ trait ViewTraits
         }
         $a_new_nav = [];
         foreach ($a_nav as $a_link) {
-            if ($a_link['nav_level'] === 1) {
+            if ((int)$a_link['nav_level'] === 1) {
                 $this_link_id = $a_link['nav_id'] ?? 0;
                 $a_new_nav[$this_link_id] = $a_link;
                 $a_new_nav[$this_link_id]['submenu'] = [];
@@ -739,11 +751,12 @@ trait ViewTraits
 
     /**
      * Retrieves the raw nav records for the nav group.
+     *
      * @param string|int $navgroup Defaults to the default navgroup.
      *                             This can be either the navgroup id or name.
      * @return array
      */
-    protected function readNav($navgroup = ''):?array
+    protected function readNav($navgroup = ''):array
     {
         $o_ng = new NavgroupsModel($this->o_db);
         if (empty($navgroup)) {
@@ -775,6 +788,7 @@ trait ViewTraits
 
     /**
      * Removes Navigation links that the person is not authorized to see.
+     *
      * @param array $a_nav If empty, this is a waste.
      * @return array
      */
@@ -797,6 +811,7 @@ trait ViewTraits
 
     /**
      * Sorts the top level nav array by the top level nav order.
+     *
      * @param array $a_nav
      * @return array
      */
@@ -825,6 +840,7 @@ trait ViewTraits
 
     /**
      * Adds class to the nav array to indicate active menu.
+     *
      * @param array $a_nav
      * @return array
      */
@@ -850,6 +866,7 @@ trait ViewTraits
      * Makes sure the url_id is the actual record id.
      * If a string is given, looks up the url for the string.
      * Returns the record id for the url.
+     *
      * @param int|string $url_id Optional, if not provided will return the
      *                           url id as specified by o_router.
      * @return int
