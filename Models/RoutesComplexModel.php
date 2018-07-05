@@ -226,7 +226,7 @@ class RoutesComplexModel
      * @return array
      * @throws ModelException
      */
-    public function readGroupsFor(int $route_id = -1):?array
+    public function readGroupsFor(int $route_id = -1):array
     {
         if ($route_id < 1) {
             $err_code = ExceptionHelper::getCodeNumberModel('read missing value');
@@ -251,10 +251,10 @@ class RoutesComplexModel
      * Reads a route record with associated url info.
      *
      * @param int $route_id
-     * @return bool
+     * @return array
      * @throws ModelException
      */
-    public function readWithUrl(int $route_id = -1):?bool
+    public function readWithUrl(int $route_id = -1):array
     {
         if ($route_id < 1) {
             $err_code = ExceptionHelper::getCodeNumberModel('read missing value');

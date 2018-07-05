@@ -21,11 +21,11 @@
         <form action="{{ public_dir }}/manager/config/routes/" method="post">
         <div class="container m-0 pad-lr-0">
             <div class="row {{ class }} border-left border-right border-top">
-                <div class="col-12 col-lg-4">
+                <div class="col-12 col-lg-3">
                     {% set this_select = {'select':a_urls_select} %}
                     {% include '@' ~ lib_prefix ~ 'elements/select.twig' with this_select %}
                 </div>
-                <div class="col-12 col-lg-2">
+                <div class="col-12 col-lg-3">
                     <label class="d-lg-none" for="route[route_class]">Route Class: </label>
                     <input type="text" id="route[route_class]" name="route[route_class]" value="" maxlength="32"
                            class="flexible colorful"/>
@@ -70,11 +70,11 @@
         <form action="{{ public_dir }}/manager/config/routes/" method="post">
         <div class="container m-0 pad-lr-0">
             <div class="row {{ class }} border-left border-right">
-                <div class="col-12 col-lg-4">
+                <div class="col-12 col-lg-3">
                     {% set select = {'select':row.a_urls} %}
                     {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select only %}
                 </div>
-                <div class="col-12 col-lg-2">
+                <div class="col-12 col-lg-3">
                     <label class="d-lg-none" for="{{ for_id }}[route_class]">Route Class: </label>
                     <input type="text" id="{{ for_id }}[route_class]" name="route[route_class]"
                            value="{{ row.route_class }}" maxlength="32" class="flexible colorful"/>
@@ -114,10 +114,10 @@
         </form>
     {% elseif row.route_class != 'LibraryController' %}
         <div class="row {{ class }} border-left border-right">
-            <div class="col-12 col-lg-4">
+            <div class="col-12 col-lg-3">
                 <span class="d-lg-none">URL: </span>{{ row.url_text }}
             </div>
-            <div class="col-12 col-lg-2">
+            <div class="col-12 col-lg-3">
                 <span class="d-lg-none">Route Class: </span>{{ row.route_class }}
             </div>
             <div class="col-12 col-lg-2">
