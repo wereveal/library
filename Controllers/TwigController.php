@@ -51,14 +51,6 @@ class TwigController implements ControllerInterface
         $action = empty($this->form_action)
             ? 'renderList'
             : $this->form_action;
-        if ($this->o_session->isNotValidSession($this->a_post, true)) {
-            $this->o_auth->logout($_SESSION['login_id']);
-            $o_main = $this->o_di->get('MasterController');
-            if (\is_object($o_main)) {
-                /** @noinspection PhpUndefinedMethodInspection */
-                $o_main->route();
-            }
-        }
         switch ($action) {
             case 'new_tpl':
                 break;

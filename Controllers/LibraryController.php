@@ -1,6 +1,7 @@
 <?php
 /**
  * Class LibraryController
+ *
  * @package Ritc_Library
  */
 namespace Ritc\Library\Controllers;
@@ -43,6 +44,7 @@ class LibraryController implements ControllerInterface
 
     /**
      * LibraryController constructor.
+     *
      * @param Di $o_di
      */
     public function __construct(Di $o_di)
@@ -61,7 +63,7 @@ class LibraryController implements ControllerInterface
      *
      * @return string
      */
-    public function route():?string
+    public function route():string
     {
         if ($this->loginValid()) {
             $o_c = '';

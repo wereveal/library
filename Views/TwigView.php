@@ -26,7 +26,6 @@ use Ritc\Library\Traits\LogitTraits;
  * @change_log
  * - v1.0.0-alpha.1 - Bug fix                - 2018-05-20 wer
  * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
- * @todo Ritc/Library/Views/TwigView.php - Everything
  */
 class TwigView implements ViewInterface
 {
@@ -54,6 +53,13 @@ class TwigView implements ViewInterface
         $o_td = new TwigDirsModel($this->o_db);
         $o_tt = new TwigTemplatesModel($this->o_db);
         $o_tc = new TwigComplexModel($this->o_di);
+        $this->a_object_names = [
+            'o_tp',
+            'o_td',
+            'o_tt',
+            'o_tc'
+        ];
+        $this->setElogForObjects();
         $continue = true;
         $a_tt_results = [];
         $a_td_results = [];

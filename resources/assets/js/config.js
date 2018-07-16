@@ -4,8 +4,11 @@ function changeTwigDirs(selectedPrefix) {
     var whichOne = selectedPrefix.id.substring(howLong);
     var replaceIn = '#directory'+whichOne;
     var posted = {"prefix_id":selectedPrefix.value};
-    $.post(goTo, posted, function(response) {
-        var resp = JSON.parse(response);
+    $.post(goTo, posted, function(jsonStr) {
+        if (jsonStr.includes("<pre>")) {
+            jsonStr = jsonStr.replace('<pre></pre>','');
+        }
+        var resp = JSON.parse(jsonStr);
         $(replaceIn).empty();
         var dirSelect = $(replaceIn);
         $(resp).each(function(k, v) {
@@ -21,8 +24,11 @@ function changeTwigDirs(selectedPrefix) {
 function displayDirectories(selectedPrefix) {
     var goTo = location.origin+'/manager/config/ajax/for_directories/';
     var posted = {"prefix_id":selectedPrefix.value};
-    $.post(goTo, posted, function(response) {
-        var resp = JSON.parse(response);
+    $.post(goTo, posted, function(jsonStr) {
+        if (jsonStr.includes("<pre>")) {
+            jsonStr = jsonStr.replace('<pre></pre>','');
+        }
+        var resp = JSON.parse(jsonStr);
         var theClass = 'odd';
         var theDiv = $('#forDirectories');
         theDiv.empty();
@@ -34,7 +40,7 @@ function displayDirectories(selectedPrefix) {
             else {
                 theClass = 'odd';
             }
-            theStuff += '<form action="{{ public_dir }}/manager/config/twig/" method="post">';
+            theStuff += '<form action="/manager/config/twig/" method="post">';
             theStuff += '<div id="dirRow'+k+'" class="row '+theClass+'">';
             theStuff += '<div id="dirCol1-'+k+'" class="col-lg-2">'+v.tp_prefix+'</div>';
             theStuff += '<div id="dirCol2-'+k+'" class="col-lg-2">';
@@ -63,7 +69,6 @@ function urlsForNavgroup(navgroup) {
     $.post(goTo, posted, function(jsonStr) {
         if (jsonStr.includes("<pre>")) {
             jsonStr = jsonStr.replace('<pre></pre>','');
-            // console.error("jsonStr includes the pre tag.");
         }
         var parsedJson = JSON.parse(jsonStr);
         $("#url_id").empty();

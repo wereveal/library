@@ -1,6 +1,7 @@
 <?php
 /**
  * Class AjaxController
+ *
  * @package Ritc_Library
  */
 namespace Ritc\Library\Controllers;
@@ -39,9 +40,10 @@ class AjaxController
 
     /**
      * Main router for class.
+     *
      * @return string
      */
-    public function route():?string
+    public function route():string
     {
         switch ($this->url_action_one) {
             case 'twig_dirs';
@@ -61,7 +63,7 @@ class AjaxController
      *
      * @return string
      */
-    private function doTwigDirs():?string
+    private function doTwigDirs():string
     {
         $prefix_id = $this->o_router->getPost('prefix_id');
         $bad_results = [
@@ -107,7 +109,7 @@ class AjaxController
      *
      * @return string
      */
-    private function forDirectories():?string
+    private function forDirectories():string
     {
         $prefix_id = $this->o_router->getPost('prefix_id');
         $bad_results = json_encode([[]]);

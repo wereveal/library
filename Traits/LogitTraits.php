@@ -121,7 +121,7 @@ trait LogitTraits
      * Standard SETter for protected class property.
      * @param array $a_object_names
      */
-    protected function setObjectNames(array $a_object_names = []):void
+    public function setObjectNames(array $a_object_names = []):void
     {
         $this->a_object_names = $a_object_names;
     }
