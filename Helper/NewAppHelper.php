@@ -359,7 +359,7 @@ class NewAppHelper
            'tp_prefix'  => $this->a_config['app_twig_prefix'],
            'tp_path'    => $app_resource_dir,
            'tp_active'  => 'true',
-           'tp_default' => $this->a_config['master_app']
+           'tp_default' => $this->a_config['master_twig']
         ];
         try {
             return $o_tcm->createTwigForApp($a_values);
@@ -405,7 +405,9 @@ class NewAppHelper
             'domain'          => 'revealitconsulting',            // domain name of site
             'tld'             => 'com',                           // top level domain, e.g., com, net, org
             'specific_host'   => '',                              // e.g. www, test
-            'developer_mode'  => 'false'                          // affects debugging messages
+            'developer_mode'  => 'false',                         // affects debugging messages
+            'master_app'      => 'false',                         // specifies if this app is the one called by /index.php and specifies the MasterController
+            'master_twig'     => 'false'                          // specifies if this app's twig prefix is the default (if false, site_ is default)
         ];
 
         if (empty($a_values)) {

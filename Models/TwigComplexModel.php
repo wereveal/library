@@ -7,6 +7,7 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\AuthHelper;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -55,6 +56,7 @@ class TwigComplexModel
     /**
      * Determines if the database record can be deleted based on its children.
      * If it has children, then don't delete.
+     *
      * @param string $which_one
      * @param int    $id
      * @return bool
@@ -149,11 +151,20 @@ class TwigComplexModel
             if (empty($a_values['tp_default'])) {
                 $a_values['tp_default'] = 'false';
             }
-
+            if (empty($a_values['tp_default'])) {
+                $a_values['tp_default'] = 'false';
+            }
+            try {
+                $this->o_prefix->clearDefaultPrefix($a_values);
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Unable to clear the default prefix.');
+            }
             try {
                 $results = $this->o_prefix->create($a_values);
                 if (empty($results)) {
-                    throw new ModelException('Unable to create the twig_prefix record.', 110);
+                    $err_code = ExceptionHelper::getCodeNumberModel('create unknown');
+                    throw new ModelException('Unable to create the twig_prefix record.', $err_code);
                 }
                 $tp_prefix_id = $results[0];
             }
@@ -241,7 +252,8 @@ class TwigComplexModel
         }
         $tp_prefix  = $this->o_prefix->getLibPrefix();
         $td_prefix  = $this->o_dirs->getLibPrefix();
-        $sql = "
+        $sql = /** @lang text */
+            "
             SELECT p.tp_id, p.tp_prefix, d.td_id, d.td_name from {$tp_prefix}twig_prefix as p
             JOIN {$td_prefix}twig_dirs as d
               ON p.tp_id = d.tp_id
@@ -274,7 +286,8 @@ class TwigComplexModel
         $lib_prefix = $this->o_db->getLibPrefix();
 
         $a_values = [':tpl_id' => $tpl_id];
-        $sql = "
+        $sql = /** @lang text */
+            "
             SELECT t.tpl_id, t.tpl_name, t.tpl_immutable,
               p.tp_id, p.tp_prefix as twig_prefix, p.tp_path as twig_path, p.tp_active, p.tp_default,
               d.td_id, d.td_name as twig_dir
@@ -314,7 +327,8 @@ class TwigComplexModel
             : 'false';
         $a_values = [':tp_active' => $is_active];
         $order_by = 'p.tp_default DESC, p.tp_id ASC';
-        $sql = "
+        $sql = /** @lang text */
+            "
             SELECT p.tp_id, p.tp_prefix as twig_prefix, p.tp_path as twig_path, p.tp_active, p.tp_default,
               d.td_id, d.td_name as twig_dir
             FROM {$tp_prefix}twig_prefix as p

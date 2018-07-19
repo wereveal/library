@@ -53,13 +53,10 @@ class TwigView implements ViewInterface
         $o_td = new TwigDirsModel($this->o_db);
         $o_tt = new TwigTemplatesModel($this->o_db);
         $o_tc = new TwigComplexModel($this->o_di);
-        $this->a_object_names = [
-            'o_tp',
-            'o_td',
-            'o_tt',
-            'o_tc'
-        ];
-        $this->setElogForObjects();
+        $o_tp->setupElog($this->o_di);
+        $o_td->setupElog($this->o_di);
+        $o_tt->setupElog($this->o_di);
+        $o_tc->setupElog($this->o_di);
         $continue = true;
         $a_tt_results = [];
         $a_td_results = [];

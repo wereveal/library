@@ -243,10 +243,9 @@
                 {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
             </div>
             <div class="col-lg-2">
+                {% set is_checked = '' %}
                 {% if prefix.tp_default == 'true' %}
                     {% set is_checked = ' checked' %}
-                {% else %}
-                    {% set is_checked = '' %}
                 {% endif %}
                 {% set cb_values = {'id':this_default,'name':'tp_default','value':'true','checked':is_checked,'label':'Default'} %}
                 {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}

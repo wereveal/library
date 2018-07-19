@@ -174,7 +174,8 @@ class Strings
     }
 
     /**
-     * Turns a string into pure alpha string stripping out everything else
+     * Turns a string into pure alpha string stripping out everything else.
+     *
      * @param string $the_string
      * @return string
      */
@@ -366,6 +367,20 @@ class Strings
     }
 
     /**
+     * Turns string into snake_case.
+     * Alpha only except underscore which replaces spaces, all lowercase.
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function makeSnakeCase($string = '')
+    {
+        $string = self::removeTags($string);
+        $string = str_replace(' ', '_', strtolower(trim($string)));
+        return preg_replace('/[^a-z_]/', '', $string);
+    }
+
+    /**
      * Really this returns valid schemes as is and returns everything else as https.
      *
      * @param string $scheme
@@ -385,6 +400,7 @@ class Strings
                 return 'https';
         }
     }
+
     /**
      * Changes column numbers to column letters compatible with excel.
      * @param int  $var

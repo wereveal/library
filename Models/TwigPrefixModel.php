@@ -86,23 +86,6 @@ class TwigPrefixModel extends ModelAbstract
 
     ### Specific Methods ###
     /**
-     * Sets the records that are specified as default to not default.
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function updateDefaultPrefixOff():?bool
-    {
-        $meth = ' -- ' . __METHOD__;
-        $sql = "UPDATE {$this->db_table} SET tp_default = 'false' WHERE tp_default = 'true'";
-        try {
-            return $this->o_db->update($sql);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
-        }
-    }
-
-    /**
      * Checks the values to see if they are trying to set the record to be saved/updated to be the default prefix.
      *
      * @param array $a_values
@@ -149,5 +132,23 @@ class TwigPrefixModel extends ModelAbstract
             }
         }
         return $a_values;
+    }
+
+    /**
+     * Sets the records that are specified as default to not default.
+     *
+     * @return bool
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    public function updateDefaultPrefixOff():bool
+    {
+        $meth = ' -- ' . __METHOD__;
+        $sql = "UPDATE {$this->db_table} SET tp_default = 'false' WHERE tp_default = 'true'";
+        try {
+            return $this->o_db->update($sql);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
+        }
     }
 }

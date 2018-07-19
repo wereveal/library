@@ -147,8 +147,11 @@ class ViewHelper
 				break;
 			case 'code':
 				$alt_text  = $alt_text  !== '' ? $alt_text  : 'Code';
-				$image_src = $image_src !== '' ? $image_src : $image_dir . '/info.png';
+				$image_src = $image_src !== '' ? $image_src : $image_dir . '/code.png';
                 $msg_class = $msg_class !== '' ? $msg_class : 'message code';
+                if (strpos($message, '<pre>') === false) {
+                    $message = '<pre>' . $message . '</pre>';
+                }
 				break;
 			default:
                 $msg_class   = '';
