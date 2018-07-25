@@ -7,13 +7,9 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Models\TwigComplexModel;
-use Ritc\Library\Models\TwigDirsModel;
-use Ritc\Library\Models\TwigPrefixModel;
-use Ritc\Library\Models\TwigTemplatesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -32,17 +28,21 @@ class TwigController implements ControllerInterface
 {
     use ConfigControllerTraits, LogitTraits;
 
+    /** @var TwigComplexModel $o_tc */
+    private $o_tc;
     /** @var \Ritc\Library\Views\TwigView  */
     private $o_view;
 
     /**
      * TwigController constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
         $this->o_view = new TwigView($this->o_di);
+        $this->o_tc = new TwigComplexModel($this->o_di);
         $this->setupElog($o_di);
     }
 
@@ -65,14 +65,17 @@ class TwigController implements ControllerInterface
             case 'delete_tpl':
                 return $this->deleteTpl();
             case 'new_dir':
+                return $this->saveDir('new');
             case 'update_dir':
-                return $this->saveDir();
+                return $this->saveDir('update');
             case 'new_tp':
+                return $this->savePrefix('new');
             case 'update_tp':
-                return $this->savePrefix();
+                return $this->savePrefix('update');
             case 'new_tpl':
+                return $this->saveTpl('new');
             case 'update_tpl':
-                return $this->saveTpl();
+                return $this->saveTpl('update');
             case 'verify_delete_tpl':
                 return $this->verifyDelete('tpl');
             case 'verify_delete_tp':
@@ -90,33 +93,23 @@ class TwigController implements ControllerInterface
     /**
      * Updates or Creates a new twig directory record.
      *
+     * @param string $action
      * @return string
      */
-    private function saveDir():string
+    private function saveDir($action = 'update'):string
     {
-        $o_dir = new TwigDirsModel($this->o_db);
-        $o_dir->setupElog($this->o_di);
-        $a_message = ViewHelper::successMessage('testing');
-        $a_values = [
-            'tp_id'   => $this->a_post['tp_id'],
-            'td_name' => $this->a_post['td_name']
-        ];
-        if ($this->form_action === 'new_dir') {
-            try {
-                $o_dir->create($a_values);
+        try {
+            $this->o_tc->saveDir($this->a_post, $action);
+            if ($action === 'update') {
+                $message = 'Update of the directory successful.';
             }
-            catch (ModelException $e) {
-                $a_message = ViewHelper::failureMessage();
+            else {
+                $message = 'New Directory Record Saved.';
             }
+            $a_message = ViewHelper::successMessage($message);
         }
-        else {
-            $a_values['td_id'] = $this->a_post['td_id'];
-            try {
-                $o_dir->update($a_values, ['tp_id']);
-            }
-            catch (ModelException $e) {
-                $a_message = ViewHelper::failureMessage();
-            }
+        catch (ModelException $e) {
+            $a_message = ViewHelper::failureMessage($e->getMessage());
         }
         return $this->o_view->render($a_message);
     }
@@ -124,33 +117,23 @@ class TwigController implements ControllerInterface
     /**
      * Creates or Updates a twig prefix record.
      *
+     * @param string $action
      * @return string
      */
-    private function savePrefix():string
+    private function savePrefix($action = 'update'):string
     {
-        $o_prefix = new TwigPrefixModel($this->o_db);
-        $o_prefix->setupElog($this->o_di);
-        $a_message = ViewHelper::successMessage('testing');
-        $a_values = [
-            'tp_prefix'  => $this->a_post['tp_prefix'],
-            'td_path'    => $this->a_post['tp_path'],
-            'tp_active'  => empty($this->a_post['tp_active']) ? 'false' : $this->a_post['tp_active'],
-            'tp_default' => empty($this->a_post['tp_default']) ? 'false' : $this->a_post['tp_default']
-        ];
-        if ($this->form_action === 'update_tp') {
-            $a_values['tp_id'] = $this->a_post['tp_id'];
-        }
         try {
-            $a_values = $o_prefix->clearDefaultPrefix($a_values);
-            if ($this->form_action === 'new_tp') {
-                $o_prefix->create($a_values);
+            $this->o_tc->savePrefix($this->a_post, $action);
+            if ($action === 'update') {
+                $message = 'Update of the prefix successful.';
             }
             else {
-                $o_prefix->update($a_values);
+                $message = 'New prefix record saved.';
             }
+            $a_message = ViewHelper::successMessage($message);
         }
         catch (ModelException $e) {
-            $a_message = ViewHelper::failureMessage();
+            $a_message = ViewHelper::failureMessage($e->getMessage());
         }
         return $this->o_view->render($a_message);
     }
@@ -158,29 +141,23 @@ class TwigController implements ControllerInterface
     /**
      * Creates or updates a new twig template record.
      *
+     * @param string $action
      * @return string
      */
-    private function saveTpl():string
+    private function saveTpl($action = 'update'):string
     {
-        $o_tpl = new TwigTemplatesModel($this->o_db);
-        $o_tpl->setupElog($this->o_di);
-        $a_message = ViewHelper::codeMessage('testing.');
-        $tpl_name = Strings::makeSnakeCase($this->a_post['tpl_name']);
-        $a_values = [
-            'td_id'         => $this->a_post['td_id'],
-            'tpl_name'      => $tpl_name,
-            'tpl_immutable' => empty($this->a_post['tpl_immutable']) ? 'false' : $this->a_post['tpl_immutable']
-        ];
         try {
-            if ($this->form_action === 'new_tpl') {
-                $o_tpl->create($a_values);
+            $this->o_tc->saveTpl($this->a_post, $action);
+            if ($action === 'update') {
+                $message = 'Update of the template successful.';
             }
             else {
-                $o_tpl->update($a_values, ['td_id']);
+                $message = 'New template record saved.';
             }
+            $a_message = ViewHelper::successMessage($message);
         }
         catch (ModelException $e) {
-            $a_message = ViewHelper::failureMessage();
+            $a_message = ViewHelper::failureMessage($e->getMessage());
         }
         return $this->o_view->render($a_message);
     }
@@ -192,20 +169,12 @@ class TwigController implements ControllerInterface
      */
     private function deleteDir():string
     {
-        $a_message = ViewHelper::codeMessage('Testing');
-        $o_tc = new TwigComplexModel($this->o_di);
-        if ($o_tc->canBeDeleted('dir', $this->a_post['td_id'])) {
-            $o_dir = new TwigDirsModel($this->o_db);
-            $o_dir->setupElog($this->o_di);
-            try {
-                $o_dir->delete($this->a_post['td_id']);
-            }
-            catch (ModelException $e) {
-                $a_message = ViewHelper::failureMessage();
-            }
+        try {
+            $this->o_tc->deleteDir($this->a_post['td_id']);
+            $a_message = ViewHelper::successMessage('Delete Successful.');
         }
-        else {
-            $a_message = ViewHelper::errorMessage('The directory has templates still assigned to it.');
+        catch (ModelException $e) {
+            $a_message = ViewHelper::failureMessage($e->getMessage());
         }
         return $this->o_view->render($a_message);
     }
@@ -217,20 +186,12 @@ class TwigController implements ControllerInterface
      */
     private function deletePrefix():string
     {
-        $a_message = ViewHelper::codeMessage('Testing');
-        $o_tc = new TwigComplexModel($this->o_di);
-        if ($o_tc->canBeDeleted('prefix', $this->a_post['tp_id'])) {
-            $o_prefix = new TwigPrefixModel($this->o_db);
-            $o_prefix->setupElog($this->o_di);
-            try {
-                $o_prefix->delete($this->a_post['tp_id']);
-            }
-            catch (ModelException $e) {
-                $a_message = ViewHelper::failureMessage();
-            }
+        try {
+            $this->o_tc->deletePrefix($this->a_post['tp_id']);
+            $a_message = ViewHelper::successMessage('Delete Successful.');
         }
-        else {
-            $a_message = ViewHelper::errorMessage('The prefix has directories still assigned to it.');
+        catch (ModelException $e) {
+            $a_message = ViewHelper::failureMessage($e->getMessage());
         }
         return $this->o_view->render($a_message);
     }
@@ -242,20 +203,12 @@ class TwigController implements ControllerInterface
      */
     private function deleteTpl():string
     {
-        $a_message = ViewHelper::codeMessage('Testing.');
-        $o_tc = new TwigComplexModel($this->o_di);
-        if ($o_tc->canBeDeleted('tpl', $this->a_post['tpl_id'])) {
-            $o_tpl = new TwigTemplatesModel($this->o_db);
-            $o_tpl->setupElog($this->o_di);
-            try {
-                $o_tpl->delete($this->a_post['tpl_id']);
-            }
-            catch (ModelException $e) {
-                $a_message = ViewHelper::failureMessage();
-            }
+        try {
+            $this->o_tc->deleteTpl($this->a_post['tpl_id']);
+            $a_message = ViewHelper::successMessage('Delete Successful.');
         }
-        else {
-            $a_message = ViewHelper::errorMessage('The template is immutable.');
+        catch (ModelException $e) {
+            $a_message = ViewHelper::failureMessage($e->getMessage());
         }
         return $this->o_view->render($a_message);
     }
@@ -270,23 +223,26 @@ class TwigController implements ControllerInterface
     {
         switch ($which_one) {
             case 'tpl':
-                if (empty($this->a_post['tpl_id'])) {
-                    return $this->o_view->render(ViewHelper::errorMessage('Could not delete the template, unknown template.'));
+                if (!empty($this->a_post['tpl_id'])) {
+                    return $this->o_view->renderDeleteTpl($this->a_post['tpl_id']);
                 }
-                return $this->o_view->renderDeleteTpl($this->a_post['tpl_id']);
+                $a_message =ViewHelper::errorMessage('Could not delete the template, unknown template.');
+                break;
             case 'tp':
-                if (empty($this->a_post['tp_id'])) {
-                    return $this->o_view->render(ViewHelper::errorMessage('Could not delete the twig prefix, unknown prefix.'));
+                if (!empty($this->a_post['tp_id'])) {
+                    return $this->o_view->renderDeleteTp($this->a_post['tp_id']);
                 }
-                return $this->o_view->renderDeleteTp($this->a_post['tp_id']);
+                $a_message = ViewHelper::errorMessage('Could not delete the twig prefix, unknown prefix.');
+                break;
             case 'dir':
-                if (empty($this->a_post['td_id'])) {
-                    return $this->o_view->render(ViewHelper::errorMessage('Could not delete the twig prefix, unknown directory.'));
+                if (!empty($this->a_post['td_id'])) {
+                    return $this->o_view->renderDeleteDir($this->a_post['td_id']);
                 }
-                return $this->o_view->renderDeleteDir($this->a_post['td_id']);
+                $a_message = ViewHelper::errorMessage('Could not delete the twig prefix, unknown directory.');
+                break;
             default:
                 $a_message = ViewHelper::errorMessage('Missing a valid value.');
-                return $this->o_view->render($a_message);
         }
+        return $this->o_view->render($a_message);
     }
 }

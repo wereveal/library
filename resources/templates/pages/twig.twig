@@ -1,9 +1,5 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block body %}
-    <p>TODO:</p>
-    <ol>
-        <li>Figure out the default prefix error.</li>
-    </ol>
     <h3 class="font-small-caps-bold">Templates</h3>
     <div class="container container-bordered-square">
         <div class="row list-header d-none d-lg-flex">
@@ -17,7 +13,7 @@
             <div class="row list-stripped even">
                 <div class="col-lg even">
                     <label for="template0" class="d-lg-none pr-h">Template Name:</label>
-                    <input type="text" id="template0" name="template0" class="colorful flexible">
+                    <input type="text" id="template0" name="tpl_name" class="colorful flexible">
                 </div>
                 <div class="col-md even">
                     <label for="prefix0" class="d-none">Twig Prefixes</label>
@@ -149,25 +145,25 @@
         </div>
         <div class="row list-header d-none d-lg-flex">
             <div class="col-lg-2">Prefix</div>
-            <div class="col-lg-2">Directory Name</div>
-            <div class="col-lg-2 offset-lg-6">Actions</div>
+            <div class="col-lg-4">Directory Name</div>
+            <div class="col-lg-3 offset-lg-3">Actions</div>
         </div>
         <form action="{{ public_dir }}/manager/config/twig/" method="post">
             <div class="row even">
                 <div class="col-lg-2">
                     <label for="prefixes" class="d-none">Twig Prefixes</label>
-                    <select id="prefixes" name="tp_id">
+                    <select id="prefixes" name="tp_id" class="form-control colorful">
                         <option value="" selected>Twig Prefixes</option>
                         {% for tp in a_prefix %}
                             <option value="{{ tp.tp_id }}">{{ tp.tp_prefix }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-4">
                     <label for="directory_name" class="d-md-none pr-h">Directory Name</label>
                     <input type="text" id="directory_name" name="td_name" value="" class="colorful flexible">
                 </div>
-                <div class="col-lg-2 offset-lg-6">
+                <div class="col-lg-3 offset-lg-3">
                     <button type="submit" name="submit" value="new_dir" class="btn btn-green btn-xs">New</button>
                     {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
 
@@ -180,21 +176,21 @@
     </div>
     <h3 class="font-small-caps-bold">Prefix</h3>
     <div class="container container-bordered-square">
-        <div class="row list-header d-none d-lg-flex">
+        <div class="row list-header d-none">
             <div class="col-lg-2">Prefix</div>
-            <div class="col-lg-4">Path</div>
+            <div class="col-lg-10">Path</div>
             <div class="col-lg-2">Immutable</div>
             <div class="col-lg-2">Default</div>
-            <div class="col-lg-2">Actions</div>
+            <div class="col-lg-3">Actions</div>
         </div>
         <form action="{{ public_dir }}/manager/config/twig/" method="post">
         <div class="row even">
-            <div class="col-lg-2">
-                <label for="tp_prefix0" class="d-md-none pr-h">Prefix</label>
+            <div class="col-lg-4">
+                <label for="tp_prefix0" class="bold margin-bottom-0 pr-h">Prefix</label>
                 <input type="text" id="tp_prefix0" name="tp_prefix" value="" class="colorful flexible">
             </div>
-            <div class="col-lg-4">
-                <label for="tp_path0" class="d-md-none pr-h">Path</label>
+            <div class="col-lg-8">
+                <label for="tp_path0" class="bold margin-bottom-0 pr-h">Path</label>
                 <input type="text" id="tp_path0" name="tp_path" value="" class="colorful flexible">
             </div>
             <div class="col-lg-2">
@@ -205,7 +201,7 @@
                 {% set cb_values = {'id':'tp_default0','name':'tp_default','value':'true','checked':'','label':'Default'} %}
                 {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-3 offset-lg-5">
                 <button type="submit" name="submit" value="new_tp" class="btn btn-green btn-xs">New</button>
                 {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
                 <input type="hidden" name="tp_id" value="">
@@ -225,12 +221,12 @@
         {% set this_default = 'tp_default' ~ loop.index %}
         <form action="{{ public_dir }}/manager/config/twig/" method="post">
         <div class="row {{ class }}">
-            <div class="col-lg-2">
-                <label for="{{ this_prefix }}" class="d-md-none pr-h">Prefix</label>
+            <div class="col-lg-4">
+                <label for="{{ this_prefix }}" class="bold margin-bottom-0 pr-h">Prefix</label>
                 <input type="text" id="{{ this_prefix }}" name="tp_prefix" value="{{ prefix.tp_prefix }}" class="colorful flexible">
             </div>
-            <div class="col-lg-4">
-                <label for="{{ this_path }}" class="d-md-none pr-h">Path</label>
+            <div class="col-lg-8">
+                <label for="{{ this_path }}" class="bold margin-bottom-0 pr-h">Path</label>
                 <input type="text" id="{{ this_path }}" name="tp_path" value="{{ prefix.tp_path }}" class="colorful flexible">
             </div>
             <div class="col-lg-2">
@@ -250,7 +246,7 @@
                 {% set cb_values = {'id':this_default,'name':'tp_default','value':'true','checked':is_checked,'label':'Default'} %}
                 {% include '@' ~ page_prefix ~ 'elements/checkbox.twig' with cb_values only %}
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-3 offset-lg-5">
                 <button type="submit" name="submit" value="update_tp" class="btn btn-green btn-xs">Update</button>
                 <button type="submit" name="submit" value="verify_delete_tp" class="btn btn-outline-red btn-xs">Delete</button>
                 {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}

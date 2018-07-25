@@ -7,8 +7,6 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
-use Ritc\Library\Helper\Arrays;
-use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 
 /**
@@ -41,56 +39,6 @@ class TwigDirsModel extends ModelAbstract
     # update(array $a_values = [], array $a_do_not_change = [])
     # delete($id = -1)
     ###
-
-    ### Overrides Abstract Methods ###
-    /**
-     * Deletes a record based on the id provided.
-     * Verifies no children records exists.
-     *
-     * @param int|array $id required, can be single id or array(list) of ids
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function delete($id = -1):bool
-    {
-        $meth = ' — ' . __METHOD__;
-        $o_tpl = new TwigTemplatesModel($this->o_db);
-        $o_tpl->setElog($this->o_elog);
-        if (Arrays::isArrayOfAssocArrays($id)) {
-            foreach ($id as $dir_id) {
-                try {
-                    $results = $o_tpl->readById($dir_id);
-                    if (!empty($results)) {
-                        $this->error_message = 'A template exists that uses this directory';
-                        $err_code = ExceptionHelper::getCodeNumberModel('delete has children');
-                        throw new ModelException($this->error_message . $meth, $err_code);
-                    }
-                }
-                catch (ModelException $e) {
-                    throw new ModelException($e->errorMessage() . $meth, $e->getCode());
-                }
-            }
-        }
-        else {
-            try {
-                $results = $o_tpl->readById($id);
-                if (!empty($results)) {
-                    $this->error_message = 'A template exists that uses this directory';
-                    $err_code = ExceptionHelper::getCodeNumberModel('delete has children');
-                    throw new ModelException($this->error_message . $meth, $err_code);
-                }
-            }
-            catch (ModelException $e) {
-                throw new ModelException($e->errorMessage() . $meth, $e->getCode());
-            }
-        }
-        try {
-            return $this->genericDelete($id);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
-        }
-    }
 
     ### Specific Methods ###
     /**

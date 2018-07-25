@@ -9,7 +9,6 @@ use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Services\DbModel;
-use Ritc\Library\Services\Elog;
 
 /**
  * Does database operations on the twig_prefix table.
@@ -41,48 +40,6 @@ class TwigPrefixModel extends ModelAbstract
     # update(array $a_values = [], array $a_do_not_change = [])
     # delete($id = -1)
     ###
-
-    ### Overrides Abstract Method ###
-    /**
-     * Deletes a record based on the id provided.
-     *
-     * @param int $id
-     * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
-     */
-    public function delete($id = -1):bool
-    {
-        $meth = ' -- ' . __METHOD__;
-        if ($id === -1) {
-            return false;
-        }
-        $o_tpl = new TwigTemplatesModel($this->o_db);
-        if ($this->o_elog instanceof Elog) {
-            $o_tpl->setElog($this->o_elog);
-        }
-        $tpl_pin = $o_tpl->getPrimaryIndexName();
-        try {
-            $results = $o_tpl->read([$tpl_pin => $id]);
-            if (!empty($results)) {
-                $this->error_message = 'A template exists that uses this prefix' . $meth;
-                throw new ModelException($this->error_message, 10);
-            }
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
-        }
-        try {
-            $results = $this->genericDelete($id);
-            if ($results === false) {
-                $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
-                throw new ModelException($this->error_message . $meth, 410);
-            }
-            return $results;
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->errorMessage() . $meth, $e->getCode());
-        }
-    }
 
     ### Specific Methods ###
     /**

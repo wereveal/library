@@ -43,6 +43,7 @@ class TwigView implements ViewInterface
 
     /**
      * Renders the list of the twig prefixes, directories, and templates.
+     *
      * @param array $a_message
      * @return string
      */
@@ -170,7 +171,7 @@ class TwigView implements ViewInterface
             'name'         => $a_results[0]['td_name'],
             'form_action'  => '/manager/config/twig/',
             'submit_value' => 'delete_dir',
-            'btn_value'    => 'Delete',
+            'btn_value'    => $a_results[0]['td_name'],
             'hidden_name'  => 'td_id',
             'hidden_value' => $a_results[0]['td_id']
         ];
@@ -245,6 +246,7 @@ class TwigView implements ViewInterface
      */
     public function renderDeleteTpl($tpl_id = -1):string
     {
+        $meth = __METHOD__ . '.';
         if ($tpl_id === -1) {
             $a_message = ViewHelper::warningMessage('Unable to delete the template: it must be specified by id.');
             return $this->render($a_message);
@@ -273,6 +275,9 @@ class TwigView implements ViewInterface
             $a_message = ViewHelper::errorMessage('Unable to delete the template: could not find it.');
             return $this->render($a_message);
         }
+        $log_message = 'template results ' . var_export($a_tpl, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
         $login_id = $this->o_session->getVar('login_id');
         if ($a_tpl['tpl_immutable'] === 'true' && $this->o_auth->hasMinimumAuthLevel($login_id, 9)) {
             $a_message = ViewHelper::warningMessage('Unable to delete the template: the template is immutable.');
@@ -283,7 +288,7 @@ class TwigView implements ViewInterface
             'name'         => $a_tpl['tpl_name'],
             'form_action'  => '/manager/config/twig/',
             'submit_value' => 'delete_tpl',
-            'btn_value'    => 'Delete',
+            'btn_value'    => $a_tpl['tpl_name'],
             'hidden_name'  => 'tpl_id',
             'hidden_value' => $a_tpl['tpl_id']
         ];

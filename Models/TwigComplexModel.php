@@ -8,6 +8,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\AuthHelper;
 use Ritc\Library\Helper\ExceptionHelper;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
@@ -29,6 +30,8 @@ class TwigComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
+    /** @var array $a_ids The ids of the new records */
+    private $a_ids;
     /** @var \Ritc\Library\Services\Di  */
     private $o_di;
     /** @var  \Ritc\Library\Models\TwigDirsModel */
@@ -63,6 +66,7 @@ class TwigComplexModel
      */
     public function canBeDeleted($which_one = '', $id = -1):?bool
     {
+        $meth = __METHOD__ . '.';
         if (empty($which_one) || $id < 1) {
             return false;
         }
@@ -97,6 +101,9 @@ class TwigComplexModel
             case 'template':
                 try {
                     $a_results = $this->o_page->read(['tpl_id' => $id]);
+                    $log_message = 'template reslts ' . var_export($a_results, TRUE);
+                    $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+                    
                     if (empty($a_results)) {
                         if ($this->o_tpls->isImmutable([$id])) {
                             $o_auth = new AuthHelper($this->o_di);
@@ -240,6 +247,83 @@ class TwigComplexModel
     }
 
     /**
+     * Deletes a twig directory record.
+     *
+     * @param int $td_id
+     * @return bool
+     * @throws ModelException
+     */
+    public function deleteDir($td_id = -1):bool
+    {
+        if ($this->canBeDeleted('dir', $td_id)) {
+            try {
+                return $this->o_dirs->delete($td_id);
+            }
+            catch (ModelException $e) {
+                $this->error_message = $e->errorMessage();
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
+        else {
+            $this->error_message = 'The record is not allowed to be deleted.';
+            $err_no = ExceptionHelper::getCodeNumberModel('delete immutable');
+            throw new ModelException($this->error_message, $err_no);
+        }
+    }
+
+    /**
+     * Deletes a twig prefix record.
+     *
+     * @param int $tp_id
+     * @return bool
+     * @throws ModelException
+     */
+    public function deletePrefix($tp_id = -1):bool
+    {
+        if ($this->canBeDeleted('prefix', $tp_id)) {
+            $this->o_prefix->setupElog($this->o_di);
+            try {
+                return $this->o_prefix->delete($tp_id);
+            }
+            catch (ModelException $e) {
+                $this->error_message = $e->errorMessage();
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
+        else {
+            $this->error_message = 'The prefix has directories still assigned to it.';
+            $err_no = ExceptionHelper::getCodeNumberModel('delete has children');
+            throw new ModelException($this->error_message, $err_no);
+        }
+    }
+
+    /**
+     * Deletes a twig template record.
+     *
+     * @param int $tpl_id
+     * @return bool
+     * @throws ModelException
+     */
+    public function deleteTpl($tpl_id = -1):bool
+    {
+        if ($this->canBeDeleted('tpl', $tpl_id)) {
+            $this->o_tpls->setupElog($this->o_di);
+            try {
+                return $this->o_tpls->delete($tpl_id);
+            }
+            catch (ModelException $e) {
+                $this->error_message = $e->errorMessage();
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
+        else {
+            $this->error_message = 'The template is immutable.';
+            $err_no = ExceptionHelper::getCodeNumberModel('delete immutable');
+            throw new ModelException($this->error_message, $err_no);
+        }
+    }
+
+    /**
      * Reads the records for the given prefix_id.
      * @param int $prefix_id Required
      * @return array
@@ -348,7 +432,160 @@ class TwigComplexModel
     }
 
     /**
+     * Updates or Creates a new twig directory record.
+     *
+     * @param array  $a_values
+     * @param string $action
+     * @return bool
+     * @throws ModelException
+     */
+    public function saveDir(array $a_values = [], $action = 'update'):bool
+    {
+        $meth = __METHOD__ . '.';
+        $log_message = 'Values ' . var_export($a_values, TRUE);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+
+        $td_name = $a_values['td_name'];
+        try {
+            $results = $this->o_prefix->readById($a_values['tp_id']);
+            $new_dir_path = BASE_PATH . $results['tp_path'] . '/' . $td_name;
+            if (!file_exists($new_dir_path)) {
+                $this->error_message = 'Please create the directory first before entering it here.';
+                $err_num = ExceptionHelper::getCodeNumberModel('save missing value');
+                throw new ModelException($this->error_message, $err_num);
+            }
+        }
+        catch (ModelException $e) {
+            $this->error_message = $e->errorMessage();
+            throw new ModelException($e->getMessage(), $e->getCode());
+        }
+        $a_save_values = [
+            'tp_id'   => $a_values['tp_id'],
+            'td_name' => $a_values['td_name']
+        ];
+        if ($action === 'new') {
+            try {
+                $this->a_ids = $this->o_dirs->create($a_save_values);
+                return true;
+            }
+            catch (ModelException $e) {
+                $this->error_message = $e->errorMessage();
+                throw new ModelException($e->getMessage(), $e->getCode());
+            }
+        }
+        else {
+            $a_save_values['td_id'] = $a_values['td_id'];
+            try {
+                $this->o_dirs->update($a_save_values, ['tp_id']);
+                return true;
+            }
+            catch (ModelException $e) {
+                $this->error_message = $e->errorMessage();
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
+    }
+
+    /**
+     * Creates or Updates a twig prefix record.
+     *
+     * @param array  $a_values
+     * @param string $action
+     * @return bool
+     * @throws ModelException
+     */
+    public function savePrefix(array $a_values = [], $action = 'update'):bool
+    {
+        $tp_prefix = $a_values['tp_prefix'];
+        $tp_path = $a_values['tp_path'];
+        $tp_active = empty($a_values['tp_active'])
+            ? 'false'
+            : $a_values['tp_active'];
+        $tp_default = empty($a_values['tp_default'])
+            ? 'false'
+            : $a_values['tp_default'];
+        if (strrpos($tp_prefix, '_') !== \strlen($tp_prefix) - 1) {
+            $tp_prefix .= '_';
+        }
+        if (strpos($tp_path, '/') !== 0) {
+            $tp_path = '/' . $tp_path;
+        }
+        $a_real_values = [
+            'tp_prefix'  => $tp_prefix,
+            'tp_path'    => $tp_path,
+            'tp_active'  => $tp_active,
+            'tp_default' => $tp_default
+        ];
+        if ($action === 'update_tp') {
+            $a_real_values['tp_id'] = $a_values['tp_id'];
+        }
+        if (!file_exists(BASE_PATH . $tp_path)) {
+            $this->error_message = ' File path does not exist. Be sure to create it first, then add the prefix here.';
+            $err_no = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException($this->error_message, $err_no);
+        }
+
+        try {
+            $a_real_values = $this->o_prefix->clearDefaultPrefix($a_real_values);
+            if ($action === 'new') {
+                $this->a_ids = $this->o_prefix->create($a_real_values);
+                return true;
+            }
+
+            $this->o_prefix->update($a_real_values);
+            return true;
+        }
+        catch (ModelException $e) {
+            $this->error_message = $e->errorMessage();
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Creates or updates a new twig template record.
+     *
+     * @param array  $a_values
+     * @param string $action
+     * @return bool
+     * @throws ModelException
+     */
+    public function saveTpl(array $a_values = [], $action = 'update'):bool
+    {
+        $tpl_name  = Strings::makeSnakeCase($a_values['tpl_name']);
+        $a_save_values  = [
+            'td_id'         => $a_values['td_id'],
+            'tpl_name'      => $tpl_name,
+            'tpl_immutable' => empty($a_values['tpl_immutable'])
+                ? 'false'
+                : $a_values['tpl_immutable']
+        ];
+        try {
+            if ($action === 'new') {
+                $this->a_ids = $this->o_tpls->create($a_save_values);
+                return true;
+            }
+
+            $a_save_values['tpl_id'] = $a_values['tpl_id'];
+            return $this->o_tpls->update($a_save_values, ['td_id']);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Standard getter for the class property a_ids.
+     *
+     * @return array
+     */
+    public function getIds(): array
+    {
+        return $this->a_ids;
+    }
+
+    /**
      * Creates the required properties containing instances of the respective database models.
+     *
      * @param \Ritc\Library\Services\DbModel $o_db
      */
     private function setupDbs(DbModel $o_db):void
