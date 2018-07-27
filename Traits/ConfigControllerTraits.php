@@ -22,10 +22,21 @@ trait ConfigControllerTraits
     use ManagerControllerTraits;
 
     /**
+     * Test Example.
+     *
      * @return string
      */
     protected function testMethod():string
     {
         return '';
     }
+
+    /**
+     * Found in ManagerControllerTraits
+     *
+     * loginValid
+     * setupManagerController
+     * verifyLogin
+     * getAuth
+     */
 }

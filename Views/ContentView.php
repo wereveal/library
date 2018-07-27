@@ -6,7 +6,9 @@
 
 namespace Ritc\Library\Views;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Interfaces\ViewInterface;
+use Ritc\Library\Models\ContentComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
@@ -25,14 +27,25 @@ class ContentView implements ViewInterface
 {
     use LogitTraits, ViewTraits;
 
+    /** @var bool $has_problem */
+    private $has_problem = false;
+    /** @var ContentComplexModel $o_model */
+    private $o_model;
+
     /**
      * ContentView constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
-        $this->a_object_names = [];
+        try {
+            $this->o_model = new ContentComplexModel($o_di);
+        }
+        catch (ModelException $e) {
+            $this->has_problem = true;
+        }
         $this->setupElog($o_di);
     }
 
@@ -46,5 +59,7 @@ class ContentView implements ViewInterface
     {
         // TODO: Implement render() method.
         return 'TODO: Implement render() method.';
+
+
     }
 }

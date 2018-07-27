@@ -30,6 +30,7 @@ class ConstantsModelTester
 
     /**
      * ConstantsModelTester constructor.
+     *
      * @param Di $o_di
      */
     public function __construct(Di $o_di)

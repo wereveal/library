@@ -743,6 +743,33 @@ SQL;
     }
 
     /**
+     * Merges multiple table fields into one select statement.
+     *
+     * @param array $a_values          Format = ['table_prefix' => array(field_name), etc]
+     * @param bool  $remove_duplicates Optional, defaults to false. Removes duplicate field names and ignores prefix.
+     * @return string
+     */
+    public function mergeAndBuildSqlSelect(array $a_values = [], $remove_duplicates = false):string
+    {
+        if ($remove_duplicates) {
+            $a_final = [];
+            foreach($a_values as $a_fields) {
+                /** @noinspection SlowArrayOperationsInLoopInspection */
+                $a_final = array_merge($a_final, $a_fields);
+            }
+            $a_final = array_unique($a_final);
+            return $this->buildSqlSelectFields($a_final);
+        }
+        $final_string = '';
+        foreach ($a_values as $key => $a_fields) {
+            $final_string = empty($final_string)
+                ? $this->buildSqlSelectFields($a_fields, $key)
+                : ', ' . $this->buildSqlSelectFields($a_fields, $key);
+        }
+        return $final_string;
+    }
+
+    /**
      * Verifies that the php mysqli extension is installed.
      * Left over, not sure it is needed now.
      *
