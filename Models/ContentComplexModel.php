@@ -114,6 +114,30 @@ class ContentComplexModel
     }
 
     /**
+     * Returns all records that current.
+     *
+     * @return array
+     * @throws ModelException
+     */
+    public function readAllCurrent():array
+    {
+        $meth = __METHOD__ . '.';
+        $where = '
+            WHERE c_current = :c_current
+        ';
+        $sql = $this->select_sql . $where;
+        $this->logIt('SQL: ' . $sql, LOG_ON, $meth . __LINE__);
+        $a_search_for = [':c_current' => 'true'];
+        try {
+            $a_results = $this->o_db->search($sql, $a_search_for);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        return $a_results;
+    }
+
+    /**
      * Returns current featured content.
      *
      * @return array
@@ -144,6 +168,11 @@ class ContentComplexModel
         return $a_results;
     }
 
+    public function readByContentId($id = -1):array
+    {
+
+    }
+
     /**
      * Reads the current version of content for a page.
      *
@@ -170,6 +199,7 @@ class ContentComplexModel
      */
     public function readCurrentShared():array
     {
+        $meth = __METHOD__ . '.';
         $blocks_extra = ' AND b.b_active = :b_active AND b.b_type = :b_type';
         $where = '
             WHERE c.c_current = :current';
@@ -179,6 +209,10 @@ class ContentComplexModel
             ':b_type'   => 'shared',
             ':current'  => 'true'
         ];
+        $this->logIt('SQL: ' . $sql, LOG_ON, $meth . __LINE__);
+        $log_message = 'Search For:  ' . var_export($a_search_for, true);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        
         try {
             $results = $this->o_db->search($sql, $a_search_for);
         }

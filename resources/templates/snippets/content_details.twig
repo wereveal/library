@@ -1,30 +1,23 @@
 <form id="content-form" method="post" action="{{ public_dir }}/manager/config/content/">
     <div class="form-group">
-        <label for="content[c_page_id]" class="form-label">Page</label>
-        <select id="content[c_page_id]" name="content[c_page_id]" class="form-control colorful">
-        {% for page in a_pages %}
-            <option value="{{ page.page_id }}"{{ page.selected }}>{{ page.page_title }}</option>
-        {% endfor %}
-        </select>
+        {% include '@' ~ lib_prefix ~ "elements/select.twig" with page_select %}
+    </div>
+    <div class="form-group">
+        {% include '@' ~ lib_prefix ~ "elements/select.twig" with blocks_select %}
     </div>
     <div class="form-group">
         <label for="content[c_content]" class="form-label">Content</label>
         <textarea id="content[c_content]" name="content[c_content]" class="form-control colorful">{{ content.c_content }}</textarea>
     </div>
     <div class="form-group">
-        <label for="content[c_block]" class="form-label">Block</label>
-        <select name="content[c_block]" id="content[c_block]" class="form-control colorful">
-            {% for block in a_blocks %}
-                <option value="{{ block.value }}"{{ block.checked }}>{{ block.label }}</option>
-            {% endfor %}
-        </select>
+        {% include '@' ~ lib_prefix ~ "forms/hidden_form_stuff.twig" %}
+    {% if action == 'new' %}
+        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
+    {% else %}
+        <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Update</button>
+        {% if adm_lvl >= auth_lvl.admin %}
+        <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
+        {% endif %}
+    {% endif %}
     </div>
 </form>
-{#
-[
-  public_dir
-  a_pages[page_id,selected,page_titlr]
-  content[c_content]
-  a_blocks
-]
-#}

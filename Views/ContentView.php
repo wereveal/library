@@ -7,6 +7,9 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Exceptions\ViewException;
+use Ritc\Library\Helper\ExceptionHelper;
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Models\ContentComplexModel;
 use Ritc\Library\Services\Di;
@@ -27,8 +30,6 @@ class ContentView implements ViewInterface
 {
     use LogitTraits, ViewTraits;
 
-    /** @var bool $has_problem */
-    private $has_problem = false;
     /** @var ContentComplexModel $o_model */
     private $o_model;
 
@@ -36,6 +37,7 @@ class ContentView implements ViewInterface
      * ContentView constructor.
      *
      * @param \Ritc\Library\Services\Di $o_di
+     * @throws ViewException
      */
     public function __construct(Di $o_di)
     {
@@ -44,22 +46,44 @@ class ContentView implements ViewInterface
             $this->o_model = new ContentComplexModel($o_di);
         }
         catch (ModelException $e) {
-            $this->has_problem = true;
+            $message = 'Unable to create the ContentComplexModel instance';
+            $err_no = ExceptionHelper::getCodeTextView('view object');
+            throw new ViewException($message, $err_no, $e);
         }
         $this->setupElog($o_di);
     }
 
     /**
      * Main method required by interface.
+     * Returns the list of content records in a nice view.
      *
      * @param array $a_message
      * @return string
      */
     public function render(array $a_message = []):string
     {
-        // TODO: Implement render() method.
-        return 'TODO: Implement render() method.';
+        try {
+            $a_records = $this->o_model->readCurrent();
+        }
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage('Unable to read the current content records.');
+        }
+        $log_message = 'Records:  ' . var_export($a_records, TRUE);
+        $this->logIt($log_message, LOG_ON, __METHOD__);
 
+        $a_twig_values = $this->createDefaultTwigValues($a_message);
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
+    }
 
+    /**
+     * Renders the form to add/update/delete a content record.
+     *
+     * @param string $action
+     * @return string
+     */
+    public function renderForm($action = 'new'):string
+    {
+        return 'TODO: implement renderForm() method.';
     }
 }

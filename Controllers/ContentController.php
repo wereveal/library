@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\ViewException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Services\Di;
@@ -26,6 +27,9 @@ class ContentController implements ConfigControllerInterface
 {
     use LogitTraits, ConfigControllerTraits;
 
+    /** @var string $instance_failure Lets me know if the instance had a failure. */
+    private $instance_failure = '';
+    /** @var ContentView $o_view view for content. */
     private $o_view;
 
     /**
@@ -37,7 +41,12 @@ class ContentController implements ConfigControllerInterface
     {
         $this->setupManagerController($o_di);
         $this->setupElog($o_di);
-        $this->o_view = new ContentView($o_di);
+        try {
+            $this->o_view = new ContentView($o_di);
+        }
+        catch (ViewException $e) {
+            $this->instance_failure = $e->getMessage();
+        }
     }
 
     /**
@@ -47,6 +56,9 @@ class ContentController implements ConfigControllerInterface
      */
     public function route():string
     {
+        if (!empty($this->instance_failure)) {
+            return $this->instance_failure;
+        }
         switch ($this->form_action) {
             case 'edit':
                 return $this->edit();
