@@ -6,6 +6,7 @@
 namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomExceptionAbstract;
+use Ritc\Library\Helper\ExceptionHelper;
 
 /**
  * Class ServiceException - Custom Exceptions for Services.
@@ -19,6 +20,17 @@ use Ritc\Library\Abstracts\CustomExceptionAbstract;
 class ServiceException extends CustomExceptionAbstract
 {
     /**
+     * Returns the exception error code for the string provided.
+     *
+     * @param string $failure_string
+     * @return int
+     */
+    public function getCodeNumber($failure_string = ''):int
+    {
+        return ExceptionHelper::getCodeNumberService($failure_string);
+    }
+
+    /**
      * Returns the text string for the error code.
      *
      * @param int $code
@@ -26,13 +38,6 @@ class ServiceException extends CustomExceptionAbstract
      */
     public function getCodeText($code = -1):string
     {
-        switch ($code) {
-            case 10:
-                return 'Unable to start the service.';
-            case 20:
-                return '__clone not allowed for this service.';
-            default:
-                return parent::getCodeText($code);
-        }
+        return ExceptionHelper::getCodeTextService($code);
     }
 }

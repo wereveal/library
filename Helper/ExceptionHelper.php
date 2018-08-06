@@ -32,6 +32,11 @@ class ExceptionHelper
                 return 600;
             case 'application':
                 return 700;
+            case 'application dependencies':
+                return 710;
+            case 'application instances':
+            case 'application objects':
+                return 720;
             case 'instance':
                 return 800;
             case 'general':
@@ -277,6 +282,47 @@ class ExceptionHelper
     }
 
     /**
+     * Gets the code number for service exception.
+     *
+     * @param string $failure_string
+     * @return int
+     */
+    public static function getCodeNumberService($failure_string = ''):int
+    {
+        switch ($failure_string) {
+            case 'service start':
+                return 10;
+            case 'service clone':
+                return 20;
+            default:
+                return self::getCodeNumber($failure_string);
+        }
+    }
+
+    /**
+     * Returns the exception code number for a view.
+     *
+     * @param string $failure_string
+     * @return int
+     */
+    public static function getCodeNumberView($failure_string = ''):int
+    {
+        switch ($failure_string) {
+            case 'view':
+                return '700';
+            case 'view dependencies':
+                return 710;
+            case 'view instances':
+            case 'view objects':
+                return 720;
+            case 'view twig':
+                return 750;
+            default:
+                return self::getCodeNumber($failure_string);
+        }
+    }
+
+    /**
      * Gets the text for the error code provided for generic exceptions.
      *
      * @param int $code
@@ -291,6 +337,10 @@ class ExceptionHelper
             ### Application Rule Errors ###
             case 700:
                 return 'General Application Rule Error.';
+            case 710:
+                return 'Unable to load required dependencies.';
+            case 720:
+                return 'Unable to create required instance.';
             ### Generic Errors ###
             case 800:
                 return 'Unable to create the instance';
@@ -504,6 +554,46 @@ class ExceptionHelper
                 return 'Unable to ALTER the view.';
             case 582:
                 return 'Unable to DROP the view.';
+            default:
+                return self::getCodeText($code);
+        }
+    }
+
+    /**
+     * Gets the text for the service exception code.
+     *
+     * @param int $code
+     * @return string
+     */
+    public static function getCodeTextService($code = -1):string
+    {
+        switch ($code) {
+            case 10:
+                return 'Unable to start the service.';
+            case 20:
+                return '__clone not allowed for this service.';
+            default:
+                return self::getCodeText($code);
+        }
+    }
+
+    /**
+     * Gets the text for the error code provided for view exceptions.
+     *
+     * @param int $code
+     * @return string
+     */
+    public static function getCodeTextView($code = -1):string
+    {
+        switch ($code) {
+            case 700:
+                return 'General View Exception.';
+            case 710:
+                return 'Unable to load required dependencies.';
+            case 720:
+                return 'Unable to create required instances/objects.';
+            case 750:
+                return 'A Twig exception occurred.';
             default:
                 return self::getCodeText($code);
         }
