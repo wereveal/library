@@ -10,11 +10,21 @@
         <textarea id="content[c_content]" name="content[c_content]" class="form-control colorful">{{ content.c_content }}</textarea>
     </div>
     <div class="form-group">
+        {% include '@' ~ lib_prefix ~ "elements/checkbox.twig" with featured_cbx %}
+    </div>
+    <div class="form-group">
+        {% include '@' ~ lib_prefix ~ "elements/checkbox.twig" with shared_cbx %}
+    </div>
+    <div class="container">
+        <span class="bold aright pad-right">Version:</span> {{ version }}
+    </div>
+    <div class="form-group">
         {% include '@' ~ lib_prefix ~ "forms/hidden_form_stuff.twig" %}
     {% if action == 'new' %}
         <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
     {% else %}
         <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Update</button>
+        <button type="submit" name="submit" value="view_all" class="btn btn-primary btn-xs">View All Versions</button>
         {% if adm_lvl >= auth_lvl.admin %}
         <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
         {% endif %}

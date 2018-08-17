@@ -95,6 +95,7 @@ class PageComplexModel
 
     /**
      * Returns records from the join of the page and urls tables based on url id.
+     *
      * @param int $url_id Required
      * @return array|bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -148,6 +149,7 @@ class PageComplexModel
 
     /**
      * Returns one or more records based on the url ordered by the url text.
+     *
      * @param string $url_text Required
      * @return array|bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -172,6 +174,7 @@ class PageComplexModel
 
     /**
      * Sets the class property select_sql.
+     *
      * @param string $the_string Optional, normally not specified.
      */
     private function setSelectSql($the_string = ''):void

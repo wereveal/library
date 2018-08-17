@@ -31,6 +31,7 @@ class LibraryView
 
     /**
      * LibraryView constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -41,6 +42,7 @@ class LibraryView
 
     /**
      * Creates the home page of the Manager.
+     *
      * @param array $a_message A message, optional.
      * @return string
      */
@@ -48,13 +50,13 @@ class LibraryView
     {
         $meth = __METHOD__ . '.';
         $this->setAdmLevel($_SESSION['login_id']);
-        $a_values = $this->createDefaultTwigValues($a_message, '/manager/config/');
+        $a_values = $this->createDefaultTwigValues($a_message);
         $a_nav = $this->retrieveNav('ConfigLinks');
         $a_values['links'] = $a_nav;
         $tpl = $this->createTplString($a_values);
-        $log_message = 'twig values ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $this->logIt('Template: ' . $tpl, LOG_OFF, $meth . __LINE__);
+          $log_message = 'twig values ' . var_export($a_values, TRUE);
+          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+          $this->logIt('Template: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_values);
     }
 }

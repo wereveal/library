@@ -244,7 +244,9 @@ trait ViewTraits
         $meth = __METHOD__ . '.';
         $a_page_values = [];
         $a_auth_levels = [];
-        $url_id = $this->urlId($url_id);
+        if ((int) $url_id < 1) {
+            $url_id = $this->urlId($url_id);
+        }
         $cache_key = 'page.values.url_id.' . $url_id;
         $group_cache_key = 'groups.values.auth_levels';
         if ($this->use_cache) {
@@ -485,7 +487,9 @@ trait ViewTraits
      */
     public function getPageValues($url_id = -1):array
     {
-        $url_id = $this->urlId($url_id);
+        if ((int) $url_id < 1) {
+            $url_id = $this->urlId((string) $url_id);
+        }
         try {
             $o_page_model = new PageComplexModel($this->o_di);
             $a_page_values = $o_page_model->readPageValuesByUrlId($url_id);
@@ -867,37 +871,31 @@ trait ViewTraits
      * If a string is given, looks up the url for the string.
      * Returns the record id for the url.
      *
-     * @param int|string $url_id Optional, if not provided will return the
+     * @param string $url_string Optional, if not provided will return the
      *                           url id as specified by o_router.
      * @return int
      */
-    public function urlId($url_id = -1):int
+    public function urlId($url_string = ''):int
     {
-        $o_url = new UrlsModel($this->o_db);
-        if (is_numeric($url_id)) {
-            if ($url_id < 1) {
-                $url_id = $this->o_router->getUrlId();
-            }
-            try {
-                $a_urls = $o_url->read(['url_id' => $url_id]);
-                $url_id = empty($a_urls[0]['url_id'])
-                    ? -1
-                    : $a_urls[0]['url_id'];
-            }
-            catch (ModelException $e) {
-                $url_id = -1;
-            }
+        if ((string) $url_string === '-1') {
+            $url_string = '';
         }
-        else {
-            try {
-                $a_urls = $o_url->read(['url_text' => $url_id]);
-                $url_id = empty($a_urls[0]['url_id'])
-                    ? $this->o_router->getUrlId()
-                    : $a_urls[0]['url_id'];
-            }
-            catch (ModelException $e) {
-                $url_id = $this->o_router->getUrlId();
-            }
+        $url_id = $this->o_router->getUrlId();
+        if ($url_string === '' && $url_id > 0) {
+            return $url_id;
+        }
+        if ($url_string === $this->o_router->getRequestUri() && $url_id > 0) {
+            return $url_id;
+        }
+        $o_url = new UrlsModel($this->o_db);
+        try {
+            $a_urls = $o_url->read(['url_text' => $url_string]);
+            $url_id = empty($a_urls[0]['url_id'])
+                ? $this->o_router->getUrlId()
+                : $a_urls[0]['url_id'];
+        }
+        catch (ModelException $e) {
+            $url_id = $this->o_router->getUrlId();
         }
         return $url_id;
     }

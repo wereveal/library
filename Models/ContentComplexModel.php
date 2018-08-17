@@ -33,8 +33,6 @@ class ContentComplexModel
     private $o_content;
     /** @var PageModel $o_page */
     private $o_page;
-    /** @var PageBlocksMapModel $o_pbm */
-    private $o_pbm;
 
     /**
      * ContentComplexModel constructor.
@@ -54,7 +52,6 @@ class ContentComplexModel
         $this->o_blocks       = new BlocksModel($o_db);
         $this->o_content      = new ContentModel($o_db);
         $this->o_page         = new PageModel($o_db);
-        $this->o_pbm          = new PageBlocksMapModel($o_db);
         $this->setupElog($o_di);
         $this->setupProperties($o_db);
         $this->buildBasicSelectSql();
@@ -80,7 +77,7 @@ class ContentComplexModel
         $sql_block = '';
         $where = '';
         $a_search_for = [':page_id' => $page_id];
-        $page_current = ' AND p.p_id = :page_id';
+        $page_current = ' AND p.page_id = :page_id';
         if (!empty($block)) {
             $a_search_for[':b_name'] = $block;
             $sql_block = ' 
@@ -92,14 +89,14 @@ class ContentComplexModel
                 WHERE c.c_current = :c_current';
         }
         $sql = str_replace(
-            array('{{block_extra}}', '{{page_extra}}'),
-            array($sql_block, $page_current),
+            ['{{pbm_extra}}', '{{blocks_extra}}', '{{page_extra}}'],
+            ['', $sql_block, $page_current],
             $this->select_sql
         );
         $sql .= $where;
-          $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
+          $this->logIt('SQL: ' . $sql, LOG_ON, $meth . __LINE__);
           $log_message = 'a search for  ' . var_export($a_search_for, true);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
 
         try {
             $a_results = $this->o_db->search($sql, $a_search_for);
@@ -121,11 +118,16 @@ class ContentComplexModel
      */
     public function readAllCurrent():array
     {
-        $meth = __METHOD__ . '.';
+        $meth  = __METHOD__ . '.';
         $where = '
             WHERE c_current = :c_current
         ';
-        $sql = $this->select_sql . $where;
+        $sql   = str_replace(
+            ['{{pbm_extra}}', '{{blocks_extra}}', '{{page_extra}}'],
+            '',
+            $this->select_sql
+        );
+        $sql   .= $where;
         $this->logIt('SQL: ' . $sql, LOG_ON, $meth . __LINE__);
         $a_search_for = [':c_current' => 'true'];
         try {
@@ -151,8 +153,12 @@ class ContentComplexModel
             AND c.c_featured = :c_featured';
         $page_extra = ' 
                 AND p.page_id = :page_id';
-        $sql = str_replace('{{page_extra}}', $page_extra, $this->select_sql) . $where;
-        $this->logIt("SQL: " . $sql, LOG_ON, $meth . __LINE__);
+        $sql = str_replace(
+            ['{{pbm_extra}}', '{{blocks_extra}}', '{{page_extra}}'],
+            ['', '', $page_extra],
+            $this->select_sql
+        ) . $where;
+        $this->logIt('SQL: ' . $sql, LOG_ON, $meth . __LINE__);
         $a_search_for = [
             ':c_current'  => 'true',
             ':c_featured' => 'true',
@@ -168,9 +174,28 @@ class ContentComplexModel
         return $a_results;
     }
 
+    /**
+     * Reads the content for a page by the content id.
+     *
+     * @param int $id
+     * @return array
+     * @throws ModelException
+     */
     public function readByContentId($id = -1):array
     {
-
+        $pin = $this->o_content->getPrimaryIndexName();
+        $sql = str_replace(
+            ['{{pbm_extra}}', '{{blocks_extra}}', '{{page_extra}}'],
+            '',
+            $this->select_sql
+        ) . ' WHERE ' . $pin . ' = :' . $pin;
+        try {
+            $a_results = $this->o_db->search($sql, [':' . $pin => $id]);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        return $a_results;
     }
 
     /**
@@ -226,6 +251,7 @@ class ContentComplexModel
 
     /**
      * Creates the common sql used throughout the class.
+     *
      * Sets the class property $select_sql.
      */
     private function buildBasicSelectSql():void
@@ -249,7 +275,7 @@ class ContentComplexModel
             JOIN {$prefix}blocks as b
               ON b.b_id = pbm.pbm_block_id{{blocks_extra}}
             JOIN {$prefix}page as p
-              ON p.p_id = pbm.pbm_page_id{{page_extra}}
+              ON p.page_id = pbm.pbm_page_id{{page_extra}}
         ";
     }
 }

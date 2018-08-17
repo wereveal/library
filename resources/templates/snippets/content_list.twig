@@ -20,11 +20,14 @@
 {% set row_class = row_class == 'odd' ? 'even' : 'odd' %}
         <form action="{{ public_dir }}/manager/config/content/" method="post" class="form">
         <div class="row {{ row_class }}">
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-2">
                 {{ row.page }}
             </div>
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-2">
                 {{ row.c_block }}
+            </div>
+            <div class="col-12 col-md-6">
+                {{ row.c_content[0:40] }}
             </div>
             <div class="col-12 col-md-2">
                 <button type="submit" name="submit" value="edit_content" class="btn btn-primary">Edit Content</button>
