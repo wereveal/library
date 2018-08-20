@@ -62,6 +62,7 @@ class ViewHelper
 
     /**
 	 * Returns a message variables needed for a twig template.
+     *
 	 * @param array $a_message_params <pre>array(
 	 *     'message'       => '',              // obviously if no message this is stupid
 	 *     'type'          => 'info',          // info is the generic message type

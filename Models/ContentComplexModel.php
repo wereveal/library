@@ -195,7 +195,7 @@ class ContentComplexModel
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
-        return $a_results;
+        return $a_results[0];
     }
 
     /**
