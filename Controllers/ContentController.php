@@ -70,6 +70,8 @@ class ContentController implements ConfigControllerInterface
                 return $this->save();
             case 'delete':
                 return $this->delete();
+            case 'new_content':
+                return $this->o_view->renderForm('new');
             default:
                 return $this->o_view->render();
         }
@@ -93,8 +95,7 @@ class ContentController implements ConfigControllerInterface
      */
     public function edit():string
     {
-        $a_message = ViewHelper::infoMessage('Needs to be written');
-        return $this->o_view->render($a_message);
+        return $this->o_view->renderForm('update');
     }
 
     /**

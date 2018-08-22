@@ -1,38 +1,42 @@
 <form id="content-form" method="post" action="{{ public_dir }}/manager/config/content/">
     <div class="form-group">
-        {% include '@' ~ lib_prefix ~ "elements/select.twig" with content.page_select %}
+        {% set select = a_content.page_select %}
+        {% include '@' ~ lib_prefix ~ "elements/select.twig" with select %}
     </div>
     <div class="form-group">
-        {% include '@' ~ lib_prefix ~ "elements/select.twig" with content.blocks_select %}
+        {% set select = a_content.blocks_select %}
+        {% include '@' ~ lib_prefix ~ "elements/select.twig" with select %}
     </div>
     <div class="form-group">
-        <label for="content[c_content]" class="form-label">Content</label>
-        <textarea id="content[c_content]" name="content[c_content]" class="form-control colorful">{{ content.c_content }}</textarea>
+        <label for="content[c_content]" class="form-label bold">Content</label>
+        <textarea id="content[c_content]" name="content[c_content]" class="form-control colorful">{{ a_content.c_content }}</textarea>
     </div>
     <div class="form-group">
-        <label for="content[c_short_content]" class="form-label">Content</label>
-        <textarea id="content[c_short_content]" name="content[c_short_content]" class="form-control colorful">{{ content.c_content }}</textarea>
+        <label for="content[c_short_content]" class="form-label bold">Short Content</label>
+        <textarea id="content[c_short_content]" name="content[c_short_content]" class="form-control colorful">{{ a_content.c_content }}</textarea>
     </div>
     <div class="form-group">
-        {% include '@' ~ lib_prefix ~ "elements/checkbox.twig" with content.featured_cbx %}
+        {% include '@' ~ lib_prefix ~ "elements/checkbox.twig" with a_content.featured_cbx %}
     </div>
     <div class="form-group">
-        {% include '@' ~ lib_prefix ~ "elements/checkbox.twig" with content.shared_cbx %}
+        {% include '@' ~ lib_prefix ~ "elements/checkbox.twig" with a_content.shared_cbx %}
     </div>
+    {% if a_content.c_version %}
     <div class="container">
-        <span class="bold aright pad-right">Version:</span> {{ content.c_version }}
+        <span class="bold aright pad-right">Version:</span> {{ a_content.c_version }}
     </div>
+    {% endif %}
     <div class="form-group">
         {% include '@' ~ lib_prefix ~ "forms/hidden_form_stuff.twig" %}
-    {% if action == 'new' %}
-        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
-    {% else %}
+    {% if a_content.c_id %}
         <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Update</button>
         <button type="submit" name="submit" value="view_all" class="btn btn-primary btn-xs">View All Versions</button>
         {% if adm_lvl >= auth_lvl.admin %}
-        <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
+            <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
         {% endif %}
-        <input type="hidden" name="content[c_id]" value="{{ content.c_id }}">
+        <input type="hidden" name="content[c_id]" value="{{ a_content.c_id }}">
+    {% else %}
+        <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
     {% endif %}
     </div>
 </form>

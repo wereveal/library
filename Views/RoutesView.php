@@ -1,8 +1,10 @@
 <?php
 /**
  * Class RoutesView
+ *
  * @package Ritc_Library
  */
+
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
@@ -45,6 +47,7 @@ class RoutesView
 
     /**
      * RoutesView constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      */
     public function __construct(Di $o_di)
@@ -57,15 +60,16 @@ class RoutesView
 
     /**
      * Returns the list of routes in html.
+     *
      * @param array $a_message
      * @return string
      */
-    public function renderList(array $a_message = array()):string
+    public function renderList(array $a_message = array()): string
     {
-        $meth = __METHOD__ . '.';
-        $message = 'Changing router values can result in unexpected results. If you are not sure, do not do it.';
-        $o_urls = new UrlsModel($this->o_db);
-        $o_rgm = new RoutesGroupMapModel($this->o_db);
+        $meth     = __METHOD__ . '.';
+        $message  = 'Changing router values can result in unexpected results. If you are not sure, do not do it.';
+        $o_urls   = new UrlsModel($this->o_db);
+        $o_rgm    = new RoutesGroupMapModel($this->o_db);
         $o_groups = new GroupsModel($this->o_db);
         $o_urls->setupElog($this->o_di);
         $o_rgm->setupElog($this->o_di);
@@ -81,7 +85,7 @@ class RoutesView
             $a_routes = $this->o_model->readAllWithUrl();
         }
         catch (ModelException $e) {
-            $a_routes = false;
+            $a_routes       = false;
             $error_message .= $e->errorMessage();
         }
         try {
@@ -89,7 +93,7 @@ class RoutesView
         }
         catch (ModelException $e) {
             $a_available_urls = [];
-            $error_message .= $e->getMessage();
+            $error_message   .= $e->getMessage();
         }
         $a_available_groups = [];
         try {
@@ -100,19 +104,19 @@ class RoutesView
         }
         $a_url_options = [
             [
-                'value' => '',
-                'label' => '--Select URL--',
+                'value'       => '',
+                'label'       => '--Select URL--',
                 'other_stuph' => ''
             ]
         ];
         foreach ($a_available_urls as $a_url) {
             $a_url_options[] = [
-                'value' => $a_url['url_id'],
-                'label' => $a_url['url_text'],
+                'value'       => $a_url['url_id'],
+                'label'       => $a_url['url_text'],
                 'other_stuph' => ''
             ];
         }
-        $a_urls_select = [
+        $a_urls_select              = [
             'label_class' => 'd-md-none',
             'label_text'  => 'URL',
             'name'        => 'route[url_id]',
@@ -121,31 +125,33 @@ class RoutesView
             'other_stuph' => '',
             'options'     => $a_url_options
         ];
-        $a_urls_select_bottom = $a_urls_select;
+        $a_urls_select_bottom       = $a_urls_select;
         $a_urls_select_bottom['id'] = 'route999[url_id]';
 
-        $a_groups = [];
+        $a_groups        = [];
         $a_groups_bottom = [];
         foreach ($a_available_groups as $key => $a_group) {
-            $id_bottom = 'group00[' . $a_group['group_id'] .']';
-            $a_g = FormHelper::checkbox([
-                'id'    => 'group0[' . $a_group['group_id'] .']',
-                'name'  => 'group[' . $a_group['group_id'] .']',
-                'label' => $a_group['group_name']
-            ]);
-            $a_groups[] = $a_g;
-            $a_g['id'] = $id_bottom;
+            $id_bottom         = 'group00[' . $a_group['group_id'] . ']';
+            $a_g               = FormHelper::checkbox(
+                [
+                    'id'    => 'group0[' . $a_group['group_id'] . ']',
+                    'name'  => 'group[' . $a_group['group_id'] . ']',
+                    'label' => $a_group['group_name']
+                ]
+            );
+            $a_groups[]        = $a_g;
+            $a_g['id']         = $id_bottom;
             $a_groups_bottom[] = $a_g;
         }
         $x = 1;
-        foreach ($a_routes as $key => $a_route)  {
-            $this_route_options = $a_url_options;
-            $this_route_options[] = [
-                'value' => $a_route['url_id'],
-                'label' => $a_route['url_text'],
+        foreach ($a_routes as $key => $a_route) {
+            $this_route_options       = $a_url_options;
+            $this_route_options[]     = [
+                'value'       => $a_route['url_id'],
+                'label'       => $a_route['url_text'],
                 'other_stuph' => ' selected'
             ];
-            $a_select = [
+            $a_select                 = [
                 'label_class' => 'd-md-none',
                 'label_text'  => 'URL',
                 'name'        => 'route[url_id]',
@@ -155,7 +161,7 @@ class RoutesView
                 'options'     => $this_route_options
             ];
             $a_routes[$key]['a_urls'] = $a_select;
-            $a_rgm_results = [];
+            $a_rgm_results            = [];
             try {
                 $a_rgm_results = $o_rgm->readByRouteId($a_route['route_id']);
             }
@@ -165,11 +171,11 @@ class RoutesView
             $a_routes[$key]['groups'] = $a_groups;
             foreach ($a_routes[$key]['groups'] as $g_key => $a_group) {
                 $a_routes[$key]['groups'][$g_key]['id'] = 'group' . $x . $a_group['id'];
-                $replace_this = '/group\[(.*)\]/i';
-                $with_this = '$1';
-                $group_id = preg_replace($replace_this, $with_this, $a_group['name']);
+                $replace_this                           = '/group\[(.*)\]/i';
+                $with_this                              = '$1';
+                $group_id                               = preg_replace($replace_this, $with_this, $a_group['name']);
                 foreach ($a_rgm_results as $r_key => $a_rgm) {
-                    if ($group_id == $a_rgm['group_id']) {
+                    if ($group_id === $a_rgm['group_id']) {
                         $a_routes[$key]['groups'][$g_key]['checked'] = ' checked';
                     }
                 }
@@ -180,28 +186,29 @@ class RoutesView
             $a_message = ViewHelper::addMessage($a_message, $error_message, 'error');
         }
 
-        $a_twig_values = $this->createDefaultTwigValues($a_message);
-        $a_twig_values['a_routes'] = $a_routes;
-        $a_twig_values['groups'] = $a_groups;
-        $a_twig_values['groups_bottom'] = $a_groups_bottom;
-        $a_twig_values['a_urls_select'] = $a_urls_select;
+        $a_twig_values                         = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['a_routes']             = $a_routes;
+        $a_twig_values['groups']               = $a_groups;
+        $a_twig_values['groups_bottom']        = $a_groups_bottom;
+        $a_twig_values['a_urls_select']        = $a_urls_select;
         $a_twig_values['a_urls_select_bottom'] = $a_urls_select_bottom;
-          $log_message = 'a_twig_values ' . var_export($a_twig_values, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+        $log_message                           = 'a_twig_values ' . var_export($a_twig_values, true);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
-          $this->logIt('tpl: ' . $tpl, LOG_OFF, $meth . __LINE__);
+        $this->logIt('tpl: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
     /**
      * Returns HTML verify form to delete.
+     *
      * @param array $a_values
      * @return string
      */
-    public function renderVerify(array $a_values = array()):string
+    public function renderVerify(array $a_values = array()): string
     {
-        $meth = __METHOD__ . '.';
-        $log_message = 'Posted Values: ' . var_export($a_values, TRUE);
+        $meth        = __METHOD__ . '.';
+        $log_message = 'Posted Values: ' . var_export($a_values, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         if ($a_values === array()) {
@@ -217,7 +224,7 @@ class RoutesView
             'hidden_value' => $a_values['route']['route_id']
         ];
         $a_twig_values = array_merge($a_twig_values, $a_more_values);
-        $log_message = 'Twig Values: ' . var_export($a_twig_values, TRUE);
+        $log_message   = 'Twig Values: ' . var_export($a_twig_values, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $tpl = $this->createTplString($a_twig_values);

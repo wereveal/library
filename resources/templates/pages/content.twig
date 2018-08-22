@@ -1,7 +1,7 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block body %}
     <div class="container">
-    {% if isList %}
+    {% if is_list %}
         {% include '@' ~ lib_prefix ~ 'snippets/content_list.twig' %}
     {% else %}
         {% include '@' ~ lib_prefix ~ 'snippets/content_details.twig' %}

@@ -48,7 +48,7 @@ class ContentComplexModel
             $error_code = ExceptionHelper::getCodeNumber('instance');
             throw new ModelException($message, $error_code);
         }
-        $this->a_object_names = ['o_blocks', 'o_pbm', 'o_content', 'o_page'];
+        $this->a_object_names = ['o_blocks', 'o_content', 'o_page'];
         $this->o_blocks       = new BlocksModel($o_db);
         $this->o_content      = new ContentModel($o_db);
         $this->o_page         = new PageModel($o_db);
@@ -94,9 +94,9 @@ class ContentComplexModel
             $this->select_sql
         );
         $sql .= $where;
-          $this->logIt('SQL: ' . $sql, LOG_ON, $meth . __LINE__);
+          $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
           $log_message = 'a search for  ' . var_export($a_search_for, true);
-          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         try {
             $a_results = $this->o_db->search($sql, $a_search_for);
@@ -106,7 +106,6 @@ class ContentComplexModel
         }
         $log_message = 'results ' . var_export($a_results, true);
         $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         return $a_results;
     }
 

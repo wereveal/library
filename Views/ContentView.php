@@ -66,16 +66,21 @@ class ContentView implements ViewInterface
     {
         $a_records = [];
         try {
-            $a_records = $this->o_model->readCurrent();
+            $a_records = $this->o_model->readAllCurrent();
         }
         catch (ModelException $e) {
-            $a_message = ViewHelper::errorMessage('Unable to read the current content records.');
+            $message = 'Unable to read the current content records.';
+            if (DEVELOPER_MODE) {
+                $message .= ' -- ' . $e->getMessage();
+            }
+            $a_message = ViewHelper::errorMessage($message);
         }
-        $log_message = 'Records:  ' . var_export($a_records, true);
-        $this->logIt($log_message, LOG_ON, __METHOD__);
-
+          $log_message = 'Records:  ' . var_export($a_records, true);
+          $this->logIt($log_message, LOG_OFF, __METHOD__);
         $a_twig_values = $this->createDefaultTwigValues($a_message);
-        $tpl           = $this->createTplString($a_twig_values);
+        $a_twig_values['a_content_list'] = $a_records;
+        $a_twig_values['is_list'] = true;
+        $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
@@ -87,6 +92,7 @@ class ContentView implements ViewInterface
      */
     public function renderForm($action = 'new'): string
     {
+        $meth = __METHOD__ . '.';
         $a_record        = [
             'c_id'            => '',
             'c_content'       => '',
@@ -94,7 +100,9 @@ class ContentView implements ViewInterface
             'c_version'       => '',
             'c_featured'      => 'false',
             'c_shared'        => 'false',
+            'page_id'         => '',
             'page_select'     => [],
+            'b_id'            => '',
             'blocks_select'   => [],
             'featured_cbx'    => [],
             'shared_cbx'      => []
@@ -114,6 +122,8 @@ class ContentView implements ViewInterface
         }
         $o_page   = new PageModel($this->o_db);
         $o_blocks = new BlocksModel($this->o_db);
+        $o_page->setupElog($this->o_di);
+        $o_blocks->setupElog($this->o_di);
         try {
             $a_pages   = $o_page->read();
             $pages_pin = $o_page->getPrimaryIndexName();
@@ -149,7 +159,7 @@ class ContentView implements ViewInterface
             'name'        => 'content[page_id]',
             'class'       => 'form-control colorful',
             'other_stuph' => '',
-            'label_class' => 'form-label',
+            'label_class' => 'form-label bold',
             'label_text'  => 'Page',
             'options'     => $a_page_options
         ];
@@ -158,7 +168,7 @@ class ContentView implements ViewInterface
             'name'        => 'content[b_id]',
             'class'       => 'form-control colorful',
             'other_stuph' => '',
-            'label_class' => 'form-label',
+            'label_class' => 'form-label bold',
             'label_text'  => 'Block',
             'options'     => $a_block_options
         ];
@@ -182,7 +192,11 @@ class ContentView implements ViewInterface
         $a_record['shared_cbx']     = $a_shared;
         $a_twig_values              = $this->createDefaultTwigValues($a_message);
         $a_twig_values['a_content'] = $a_record;
+        $a_twig_values['is_list']   = false;
         $tpl                        = $this->createTplString($a_twig_values);
+        $log_message = 'twig values ' . var_export($a_twig_values, true);
+        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt('TPL: ' . $tpl, LOG_ON, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 }

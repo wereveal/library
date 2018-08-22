@@ -54,7 +54,6 @@ class RoutesController implements ManagerControllerInterface
         $this->setupManagerController($o_di);
         $this->o_view         = new RoutesView($o_di);
         $this->o_complex      = new RoutesComplexModel($o_di);
-        $this->a_object_names = ['o_model'];
         $this->setupElog($o_di);
     }
 

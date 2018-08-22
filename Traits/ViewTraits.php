@@ -884,7 +884,7 @@ trait ViewTraits
         if ($url_string === '' && $url_id > 0) {
             return $url_id;
         }
-        if ($url_string === $this->o_router->getRequestUri() && $url_id > 0) {
+        if ($url_id > 0 && $url_string === $this->o_router->getRequestUri()) {
             return $url_id;
         }
         $o_url = new UrlsModel($this->o_db);

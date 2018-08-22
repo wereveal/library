@@ -1,36 +1,33 @@
-       <div class="row list-header sticky-top">
+       <div class="row list-header sticky-top d-none d-md-flex">
            <div class="col-12 col-md-4">
                Page
            </div>
-           <div class="col-12 col-md-4">
+           <div class="col-12 col-md-2">
                 Block
            </div>
-           <div class="col-12 col-md-2 offset-md-2">
+           <div class="col-12 col-md-4">
+               Content
+           </div>
+           <div class="col-12 col-md-2">
                 &nbsp;
            </div>
        </div>
 {% set row_class = 'odd' %}
        <div class="row {{ row_class }}"><div class="col-md-2 offset-md-10">
             <form action="{{ public_dir }}/manager/config/content/" method="post" class="form">
-                <button type="submit" name="submit" value="new_content" class="btn btn-primary">New Content</button>
+                <button type="submit" name="submit" value="new_content" class="btn btn-primary btn-sm">New Content</button>
                 {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
             </form>
        </div></div>
-{% for row in a_content %}
+{% for row in a_content_list %}
 {% set row_class = row_class == 'odd' ? 'even' : 'odd' %}
         <form action="{{ public_dir }}/manager/config/content/" method="post" class="form">
         <div class="row {{ row_class }}">
+            <div class="col-12 col-md-4"><span class="bold d-md-none">Page: </span>{{ row.page_title }}</div>
+            <div class="col-12 col-md-2"><span class="bold d-md-none">Block: </span>{{ row.b_name }}</div>
+            <div class="col-12 col-md-4 text-truncate"><span class="bold d-md-none">Content: </span>{{ row.c_content }}</div>
             <div class="col-12 col-md-2">
-                {{ row.page }}
-            </div>
-            <div class="col-12 col-md-2">
-                {{ row.c_block }}
-            </div>
-            <div class="col-12 col-md-6">
-                {{ row.c_content[0:40] }}
-            </div>
-            <div class="col-12 col-md-2">
-                <button type="submit" name="submit" value="edit_content" class="btn btn-primary">Edit Content</button>
+                <button type="submit" name="submit" value="edit_content" class="btn btn-primary btn-sm">Edit Content</button>
                 <input type="hidden" name="content_id" value="{{ row.c_id }}">
                 {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
             </div>
