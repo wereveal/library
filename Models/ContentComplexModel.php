@@ -246,6 +246,19 @@ class ContentComplexModel
         return $results;
     }
 
+    /**
+     * Saves a new content record.
+     *
+     * @param array $a_values
+     * @throws ModelException
+     */
+    public function saveNew(array $a_values = [])
+    {
+        if (empty($a_values)) {
+            $err_code = ExceptionHelper::getCodeNumberModel('create missing values');
+            throw new ModelException('No values provided to save', $err_code);
+        }
+    }
     ### Utility Methods
 
     /**

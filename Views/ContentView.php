@@ -16,8 +16,8 @@ use Ritc\Library\Models\BlocksModel;
 use Ritc\Library\Models\ContentComplexModel;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\ConfigViewTraits;
 use Ritc\Library\Traits\LogitTraits;
-use Ritc\Library\Traits\ViewTraits;
 
 /**
  * Manager for Content View.
@@ -30,7 +30,7 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class ContentView implements ViewInterface
 {
-    use LogitTraits, ViewTraits;
+    use LogitTraits, ConfigViewTraits;
 
     /** @var ContentComplexModel $o_model */
     private $o_model;

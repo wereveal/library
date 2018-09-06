@@ -1,4 +1,8 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% block vendorJs %}
+    {{ parent() }}
+    <script src="{{ vendor_dir }}/jquery-validation/dist/jquery.validate.min.js"></script>
+{% endblock %}
 {% block body %}
     <div class="container">
     {% if is_list %}

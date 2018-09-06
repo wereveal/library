@@ -5,9 +5,11 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Exceptions\ViewException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ConfigControllerInterface;
+use Ritc\Library\Models\ContentComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -29,6 +31,7 @@ class ContentController implements ConfigControllerInterface
 
     /** @var string $instance_failure Lets me know if the instance had a failure. */
     private $instance_failure = '';
+    private $o_model;
     /** @var ContentView $o_view view for content. */
     private $o_view;
 
@@ -36,10 +39,12 @@ class ContentController implements ConfigControllerInterface
      * ContentController constructor.
      *
      * @param Di $o_di
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
+        $this->o_model = new ContentComplexModel($o_di);
         $this->setupElog($o_di);
         try {
             $this->o_view = new ContentView($o_di);
@@ -60,7 +65,7 @@ class ContentController implements ConfigControllerInterface
             return $this->instance_failure;
         }
         switch ($this->form_action) {
-            case 'edit':
+            case 'edit_content':
                 return $this->edit();
             case 'verify':
                 return $this->verifyDelete();
@@ -85,6 +90,7 @@ class ContentController implements ConfigControllerInterface
     public function delete():string
     {
         $a_message = ViewHelper::infoMessage('Needs to be written');
+
         return $this->o_view->render($a_message);
     }
 
@@ -99,13 +105,16 @@ class ContentController implements ConfigControllerInterface
     }
 
     /**
-     * Method for saving data.
+     * Method for saving new data.
      *
      * @return string
      */
     public function save():string
     {
         $a_message = ViewHelper::infoMessage('Needs to be written');
+        $a_content = $this->a_post['content'];
+        // check if pbm exists, if so, error
+        // if it doesn't
         return $this->o_view->render($a_message);
     }
 
@@ -127,7 +136,22 @@ class ContentController implements ConfigControllerInterface
      */
     public function verifyDelete():string
     {
-        $a_message = ViewHelper::infoMessage('Needs to be written');
-        return $this->o_view->render($a_message);
+        $c_id = $this->a_post['content']['c_id'];
+        try {
+            $a_content = $this->o_model->readByContentId($c_id);
+        }
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage('Could not determine the content to delete.');
+            return $this->o_view->render($a_message);
+        }
+        $a_values = [
+            'what'          => 'Content for page/block',
+            'name'          => $a_content['page_title'] . '/' . $a_content['b_name'],
+            'form_action'   => '/manager/config/content/',
+            'btn_value'     => 'Content',
+            'hidden_name'   => 'c_id',
+            'hidden_value'  => $a_content['c_id'],
+        ];
+        return $this->o_view->renderVerifyDelete($a_values);
     }
 }
