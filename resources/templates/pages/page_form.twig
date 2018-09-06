@@ -2,7 +2,6 @@
 {% block body %}
     <div class="container">
         <form action="{{ public_dir }}/manager/config/pages/" method="post" id="page-form">
-        <fieldset class="nice-fieldset">
         <div class="form-group row alt-row">
             <label for="page_url" class="col-lg-2 form-control-label alt-row form-label">Page URL: </label>
         {% if adm_lvl < auth_lvl.admin and a_page.page_immutable == 'true' %}
@@ -66,7 +65,22 @@
     {% endif %}
             </div>
         </div>
-        </fieldset>
+        <div class="form-group row alt-row">
+            <div class="col-12">
+                <div class="row">
+            {% for block in a_blocks %}
+                {% if loop.index % 4 === 0 %}
+                </div>
+                <div class="row">
+                {% endif %}
+                    <div class="col-12 col-md-3">
+                        {% set cb_values = {'id':'blocks'~block.id~'['~block.id~']','name':'blocks['~block.id~']','value':'true','checked':' checked','label':block.b_name} %}
+                        {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values %}
+                    </div>
+            {% endfor %}
+                </div>
+            </div>
+        </div>
         <div class="form-group row">
             <div class="col-lg-10 offset-lg-2">
     {% if action == 'save' %}
@@ -79,10 +93,8 @@
     {% endif %}
             </div>
             <div class="col-lg-10">
-                <input type="hidden" id="tolken" name="tolken" value="{{ tolken }}">
-                <input type="hidden" id="form_ts" name="form_ts" value="{{ form_ts }}">
                 <input type="hidden" id="page_id" name="page[page_id]" value="{{ a_page.page_id }}">
-                <label class="hobbit" for="hobbit">Enter Age</label><input type="text" id="hobbit" name="hobbit" value="" class="hobbit">
+                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
             </div>
         </div>
         </form>

@@ -7,6 +7,8 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\FormHelper;
+use Ritc\Library\Models\BlocksModel;
+use Ritc\Library\Models\PageBlocksMapModel;
 use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Models\PageModel;
@@ -82,6 +84,7 @@ class PageView
             ? 'save'
             : 'update';
         $o_urls = new UrlsModel($this->o_db);
+        $o_urls->setupElog($this->o_di);
         try {
             $a_urls = $o_urls->read();
         }
@@ -89,11 +92,30 @@ class PageView
             $a_urls = [];
         }
         $o_page = new PageModel($this->o_db);
+        $o_page->setupElog($this->o_di);
         try {
             $a_page_list = $o_page->read();
         }
         catch (ModelException $e) {
             $a_page_list = [];
+        }
+        $o_blocks = new BlocksModel($this->o_db);
+        $o_blocks->setupElog($this->o_di);
+        try {
+            $a_block_list = [];
+            $a_blocks = $o_blocks->readActive();
+            foreach ($a_blocks as $a_block) {
+                $a_block_list[] = [
+                    'id'      => 'blocks[' . $a_block['b_id'] . ']',
+                    'name'    => 'blocks[' . $a_block['b_id'] . ']',
+                    'value'   => 'true',
+                    'checked' => '',
+                    'label'   => $a_block['b_name']
+                ];
+            }
+        }
+        catch (ModelException $e) {
+            $a_block_list = [];
         }
         $a_options = [
             [
@@ -131,9 +153,9 @@ class PageView
         ];
         ### If we are trying to modify an existing page, grab its data and shove it into the form ###
         $a_twig_values = $this->createDefaultTwigValues();
-        $a_twig_values['select'] = $a_select;
-        $a_twig_values['action'] = $action;
-        $a_twig_values['a_page'] = $a_page;
+        $a_twig_values['select']   = $a_select;
+        $a_twig_values['action']   = $action;
+        $a_twig_values['a_page']   = $a_page;
         if ($action === 'update') {
             try {
                 $a_pages = $this->o_model->readPageValues(
@@ -143,7 +165,21 @@ class PageView
             catch (ModelException $e) {
                 $a_pages = [];
             }
-
+            $o_pbm = new PageBlocksMapModel($this->o_db);
+            $o_pbm->setupElog($this->o_di);
+            try {
+                $a_pbm = $o_pbm->readByPageId($page_id);
+            }
+            catch (ModelException $e) {
+                $a_pbm = [];
+            }
+            foreach ($a_pbm as $a_record) {
+                foreach ($a_block_list as $key => $a_block) {
+                    if ($a_block['b_id'] === 'blocks[' . $a_record['pbm_block_id'] . ']') {
+                        $a_block_list[$key]['checked'] = ' checked';
+                    }
+                }
+            }
             if (!empty($a_pages[0])) {
                 $a_page = $a_pages[0];
                 $a_twig_values['a_page'] = $a_page;
@@ -163,6 +199,7 @@ class PageView
                 $this->logIt('Could not get the page values!', LOG_OFF, $meth . __LINE__);
             }
         }
+        $a_twig_values['a_blocks'] = $a_block_list;
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }

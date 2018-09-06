@@ -8,6 +8,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\ModelAbstract;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Services\DbModel;
 
 /**
@@ -30,5 +31,32 @@ class PageBlocksMapModel extends ModelAbstract
     {
         $this->setupProperties($o_db, 'page_blocks_map');
         $this->setRequiredKeys(['pbm_page_id', 'bm_block_id']);
+    }
+
+    ### Abstract Methods ###
+    # create(array $a_values = [])
+    # read(array $a_search_for = [], array $a_search_params = [])
+    # update(array $a_values = [], array $a_do_not_change = [])
+    # delete($id = -1)
+    ###
+
+    /**
+     * Returns all records for a page.
+     *
+     * @param int $page_id
+     * @return array
+     * @throws ModelException
+     */
+    public function readByPageId($page_id = -1)
+    {
+        $a_search_for = [
+            'pbm_page_id' => $page_id
+        ];
+        try {
+            return $this->read($a_search_for);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
     }
 }

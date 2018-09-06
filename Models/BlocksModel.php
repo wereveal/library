@@ -6,6 +6,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\ModelAbstract;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Services\DbModel;
 
 /**
@@ -36,4 +37,21 @@ class BlocksModel extends ModelAbstract
     # update(array $a_values = [], array $a_do_not_change = [])
     # delete($id = -1)
     ###
+
+    /**
+     * Returns only the active blocks.
+     *
+     * @return array
+     * @throws ModelException
+     */
+    public function readActive()
+    {
+        $a_search_for = ['b_active' => 'true'];
+        try {
+            return $this->read($a_search_for);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
 }
