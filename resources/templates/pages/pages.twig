@@ -1,26 +1,8 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
 {% block body %}
-    <div class="container container-bordered-square">
-        <div class="row list-header d-none d-lg-flex sticky-top">
-            <div class="col-4 xtra-bold">Title</div>
-            <div class="col-5 xtra-bold">URL</div>
-            <div class="col-3">
-                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with new_btn %}
-            </div>
-        </div>
-        <div class="row list-header d-lg-none sticky-top">
-            <div class="col-12">
-                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with new_btn %}
-            </div>
-        </div>
-{% for page in a_pages %}
-    {% if 'manager/config' not in page.page_url %}
-        {% set class = loop.index is even ? 'even' : 'odd' %}
-        {% include '@' ~ lib_prefix ~ 'snippets/page_line.twig' %}
-    {% elseif adm_lvl >=  auth_lvl %}
-        {% set class = loop.index is even ? 'even' : 'odd' %}
-        {% include '@' ~ lib_prefix ~ 'snippets/page_line.twig' %}
+    {% if which_page is same as('list') %}
+        {% include '@' ~ lib_prefix ~ 'snippets/page_list.twig' %}
+    {% else %}
+        {% include '@' ~ lib_prefix ~ 'snippets/page_form.twig' %}
     {% endif %}
-{% endfor %}
-    </div>
 {% endblock %}

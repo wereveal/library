@@ -1,0 +1,102 @@
+    <!--suppress HtmlUnknownTarget -->
+    <div class="container">
+        <form action="{{ public_dir }}/manager/config/pages/" method="post" id="page-form">
+        <div class="form-group row alt-row">
+            <label for="page_url" class="col-lg-3 form-control-label alt-row form-label">Page URL: </label>
+        {% if adm_lvl < auth_lvl.admin and a_page.page_immutable is same as('true') %}
+            <div class="col-lg-9 alt-row aleft">
+                <label class="d-lg-none bold" for="url_text">URL: </label>
+                <input type="text" id="url_text" value="{{ a_page.url_text }}" class="form-control" disabled>
+            </div>
+        {% else %}
+            <div class="col-lg-9 alt-row aleft">
+                {% set select = url_select %}
+                {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select %}
+            </div>
+        {% endif %}
+        </div>
+        <div class="form-group row normal-row">
+            <label for="page_title" class="col-lg-3 form-control-label normal-row form-label">Title: </label>
+            <div class="col-lg-9 aleft">
+                <input type="text" id="page_title" name="page[page_title]" class="form-control normal-row colorful" maxlength="64" value="{{ a_page.page_title }}">
+            </div>
+        </div>
+        <div class="form-group row alt-row ">
+            <label for="page_description" class="col-lg-3 form-control-label alt-row form-label">Meta Description: </label>
+            <div class="col-lg-9 aleft">
+                <input type="text" id="page_description" name="page[page_description]" class="form-control  alt-row colorful" maxlength="64" value="{{ a_page.page_description }}">
+            </div>
+        </div>
+        <div class="form-group row normal-row">
+            <label for="page_base_url" class="col-lg-3 form-control-label normal-row form-label">Base URL: </label>
+            <div class="col-lg-9 aleft">
+                <input type="text" id="page_base_url" name="page[page_base_url]" class="form-control normal-row colorful" maxlength="64" value="{{ a_page.page_base_url }}" />
+            </div>
+        </div>
+        <div class="form-group row alt-row ">
+            <label for="page_type" class="col-lg-3 form-control-label alt-row form-label">MIME Type: </label>
+            <div class="col-lg-9 aleft">
+                <input type="text" id="page_type" name="page[page_type]" class="form-control  alt-row colorful" maxlength="250" value="{{ a_page.page_type }}" />
+            </div>
+        </div>
+        <div class="form-group row normal-row">
+            <label for="page_lang" class="col-lg-3 form-control-label normal-row form-label">Language: </label>
+            <div class="col-lg-9 aleft">
+                <input type="text" id="page_lang" name="page[page_lang]" class="form-control normal-row colorful" maxlength="4" value="{{ a_page.page_lang }}" />
+            </div>
+        </div>
+        <div class="form-group row alt-row ">
+            <label for="page_charset" class="col-lg-3 form-control-label alt-row form-label">Character Set: </label>
+            <div class="col-lg-9 aleft">
+                <input type="text" id="page_charset" name="page[page_charset]" class="form-control alt-row colorful" maxlength="20" value="{{ a_page.page_charset }}" />
+            </div>
+        </div>
+        <div class="form-group row normal-row">
+            <label for="page_immutable" class="col-lg-3 form-control-label normal-row form-label">Immutable: </label>
+            <div class="col-lg-9 aleft">
+    {% if adm_lvl >= auth_lvl.superadmin and a_page.page_immutable == 'true' %}
+                <input type="checkbox" name="page[page_immutable]" checked="checked" id="page_immutable" class="colorful normal-row" value="1" />
+    {% elseif a_page.page_immutable == 'true' %}
+                True <input type="hidden" name="page[page_immutable]" checked="checked" id="page_immutable" value="1"/>
+    {% elseif adm_lvl >= auth_lvl.admin %}
+                <input type="checkbox" name="page[page_immutable]" id="page_immutable" class="form-control normal-row colorful" value="1" />
+    {% else %}
+                False <input type="hidden" name="page[page_immutable]" value="0"/>
+    {% endif %}
+            </div>
+        </div>
+        <div class="form-group row alt-row">
+            <div class="col-12">
+                <span class="bold">Blocks</span>
+                <div class="row">
+            {% for block in a_blocks %}
+                {% if loop.index0 % 4 == 0 %}
+                </div>
+                <div class="row">
+                {% endif %}
+                    <div class="col-12 col-md-3">
+                        {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with block %}
+                    </div>
+            {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-lg-10 offset-lg-2">
+    {% if action == 'save' %}
+                <button type="submit" name="submit" value="save" class="btn btn-primary btn-sm">Create New Page</button>
+    {% else %}
+                <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Update Page</button>
+        {% if a_page.page_immutable == 'false' %}
+                <button type="submit" name="submit" value="verify" class="btn btn-danger btn-sm">Delete</button>
+        {% endif %}
+    {% endif %}
+            </div>
+            <div class="col-lg-10">
+                <input type="hidden" id="page_id" name="page[page_id]" value="{{ a_page.page_id }}">
+                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+            </div>
+        </div>
+        </form>
+    </div>
+    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}

@@ -39,18 +39,22 @@ class ContentController implements ConfigControllerInterface
      * ContentController constructor.
      *
      * @param Di $o_di
-     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
-        $this->o_model = new ContentComplexModel($o_di);
+        try {
+            $this->o_model = new ContentComplexModel($o_di);
+        }
+        catch (ModelException $e) {
+            $this->instance_failure .= $e->getMessage();
+        }
         $this->setupElog($o_di);
         try {
             $this->o_view = new ContentView($o_di);
         }
         catch (ViewException $e) {
-            $this->instance_failure = $e->getMessage();
+            $this->instance_failure .= $e->getMessage();
         }
     }
 
@@ -112,7 +116,7 @@ class ContentController implements ConfigControllerInterface
     public function save():string
     {
         $a_message = ViewHelper::infoMessage('Needs to be written');
-        $a_content = $this->a_post['content'];
+        // $a_content = $this->a_post['content'];
         // check if pbm exists, if so, error
         // if it doesn't
         return $this->o_view->render($a_message);

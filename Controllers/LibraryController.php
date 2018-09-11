@@ -6,6 +6,7 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\ControllerException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
@@ -100,7 +101,13 @@ class LibraryController implements ControllerInterface
                     $o_c = new NavgroupsController($this->o_di);
                     break;
                 case 'pages':
-                    $o_c = new PageController($this->o_di);
+                    try {
+                        $o_c = new PageController($this->o_di);
+                    }
+                    catch (ControllerException $e) {
+                        $a_message = ViewHelper::errorMessage($e->getMessage());
+                        return $this->o_view->renderLandingPage($a_message);
+                    }
                     break;
                 case 'people':
                     $o_c = new PeopleController($this->o_di);

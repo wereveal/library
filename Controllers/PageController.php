@@ -5,7 +5,9 @@
  */
 namespace Ritc\Library\Controllers;
 
+use Ritc\Library\Exceptions\ControllerException;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Exceptions\ViewException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\PageModel;
@@ -35,14 +37,21 @@ class PageController implements ManagerControllerInterface
 
     /**
      * PageController constructor.
+     *
      * @param Di $o_di
+     * @throws ControllerException
      */
     public function __construct(Di $o_di)
     {
         $this->setupController($o_di);
         $this->a_object_names = ['o_model'];
         $this->o_model = new PageModel($this->o_db);
-        $this->o_view = new PageView($o_di);
+        try {
+            $this->o_view = new PageView($o_di);
+        }
+        catch (ViewException $e) {
+            throw new ControllerException($e->getMessage(), $e->getCode(), $e);
+        }
         $this->setupElog($o_di);
     }
 
@@ -63,8 +72,10 @@ class PageController implements ManagerControllerInterface
             case 'verify':
                 return $this->verifyDelete();
             case 'new':
+            case 'new_page':
+                return $this->o_view->renderForm('new_page');
             case 'modify':
-                return $this->o_view->renderForm($this->form_action);
+                return $this->o_view->renderForm('modify_page');
             case '':
             default:
                 return $this->o_view->renderList();

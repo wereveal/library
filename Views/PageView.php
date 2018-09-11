@@ -6,6 +6,8 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Exceptions\ViewException;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\FormHelper;
 use Ritc\Library\Models\BlocksModel;
 use Ritc\Library\Models\PageBlocksMapModel;
@@ -38,30 +40,28 @@ class PageView
 {
     use LogitTraits, ConfigViewTraits;
 
-    /**
-     * @var \Ritc\Library\Models\PageComplexModel
-     */
+    /** @var \Ritc\Library\Models\PageComplexModel */
     private $o_model;
 
     /**
      * PageView constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
+     * @throws ViewException
      */
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
         try {
-            $o_model = new PageComplexModel($this->o_di);
-            if (! $o_model instanceof PageComplexModel) {
-                die('Unable to create an instance of PageComplexModel.');
-            }
-            $this->o_model = $o_model;
+            $this->o_model = new PageComplexModel($this->o_di);
+            $this->o_model->setupElog($o_di);
         }
         catch (ModelException $e) {
-            die('Unable to create an instance of PageComplexModel. ' . $e->getMessage());
+            $message  = 'Unable to create an instance of PageComplexModel.';
+            $err_code = ExceptionHelper::getCodeNumberModel('instance');
+            throw new ViewException($message, $err_code);
         }
         $this->setupElog($o_di);
-        $this->o_model->setElog($this->o_elog);
     }
 
     /**
@@ -71,7 +71,7 @@ class PageView
      * @param int    $page_id
      * @return string
      */
-    public function renderForm($new_or_modify = 'new', $page_id = -1):string
+    public function renderForm($new_or_modify = 'new_page', $page_id = -1):string
     {
         $meth = __METHOD__ . '.';
         /**
@@ -80,9 +80,6 @@ class PageView
          * This triggers two things: specifies the action to be use on the page form,
          * and if we do a lookup of the page values that we are modifying.
          */
-        $action = $new_or_modify === 'new'
-            ? 'save'
-            : 'update';
         $o_urls = new UrlsModel($this->o_db);
         $o_urls->setupElog($this->o_di);
         try {
@@ -135,14 +132,16 @@ class PageView
             }
         }
         $a_select = [
-            'name'         => 'page[url_id]',
-            'select_class' => 'form-control',
-            'other_stuff'  => '',
-            'options'      => $a_options
+            'id'          => 'page[url_id]',
+            'name'        => 'page[url_id]',
+            'class'       => 'form-control',
+            'other_stuff' => '',
+            'options'     => $a_options
         ];
         $a_page = [
             'page_id'          => '',
             'url_id'           => '',
+            'url_text'         => '',
             'page_title'       => '',
             'page_description' => '',
             'page_base_url'    => '/',
@@ -151,12 +150,13 @@ class PageView
             'page_charset'     => 'utf8',
             'page_immutable'   => 'false',
         ];
-        ### If we are trying to modify an existing page, grab its data and shove it into the form ###
         $a_twig_values = $this->createDefaultTwigValues();
-        $a_twig_values['select']   = $a_select;
-        $a_twig_values['action']   = $action;
-        $a_twig_values['a_page']   = $a_page;
-        if ($action === 'update') {
+        $a_twig_values['url_select'] = $a_select;
+        $a_twig_values['action']     = $new_or_modify === 'modify_page' ? 'update' : 'save';
+        $a_twig_values['a_page']     = $a_page;
+        $a_twig_values['which_page'] = 'form';
+        ### If we are trying to modify an existing page, grab its data and shove it into the form ###
+        if ($new_or_modify === 'modify_page') {
             try {
                 $a_pages = $this->o_model->readPageValues(
                     ['page_id' => $page_id]
@@ -188,12 +188,12 @@ class PageView
                     ? $a_page['url_text']
                     : $a_page['url_host'] . $a_page['url_text'];
 
-                $a_twig_values['select']['options'][] = [
+                $a_twig_values['url_select']['options'][] = [
                     'value'       => $a_page['url_id'],
                     'label'       => $label,
                     'other_stuph' => ' selected'
                 ];
-                $a_twig_values['select']['options'][0]['other_stuph'] = ''; // this should be the default --Select--
+                $a_twig_values['url_select']['options'][0]['other_stuph'] = ''; // this should be the default --Select--
             }
             else {
                 $this->logIt('Could not get the page values!', LOG_OFF, $meth . __LINE__);
@@ -206,6 +206,7 @@ class PageView
 
     /**
      * Returns the list of pages in html.
+     *
      * @param array $a_message Optional
      * @return string
      */
@@ -229,8 +230,9 @@ class PageView
             }
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message);
-        $a_twig_values['a_pages'] = $a_pages;
-        $a_twig_values['a_message'] = $a_message;
+        $a_twig_values['a_pages']    = $a_pages;
+        $a_twig_values['a_message']  = $a_message;
+        $a_twig_values['which_page'] = 'list';
         $a_btn_form = [
             'form_action' => '/manager/config/pages/',
             'btn_value'   => 'new_page',
@@ -247,6 +249,7 @@ class PageView
 
     /**
      * Returns HTML verify form to delete.
+     *
      * @return string
      */
     public function renderVerify():string
