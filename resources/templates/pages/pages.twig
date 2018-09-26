@@ -6,3 +6,7 @@
         {% include '@' ~ lib_prefix ~ 'snippets/page_form.twig' %}
     {% endif %}
 {% endblock %}
+{% block bottomJs %}
+    {{ parent() }}
+    <script src="{{ js_dir }}/config.js"></script>
+{% endblock %}

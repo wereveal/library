@@ -91,3 +91,16 @@
 * See if you can write/find a web front-end to phpUnit for testing so testing can be
   done at either CLI or web and get rid of your own Testing class.
 
+## Future Additions
+
+* URL aliases
+  * CREATE TABLE `lib_aliases` (
+      `a_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+      `a_url_id` int(11) unsigned NOT NULL,
+      `a_alias` varchar(150) NOT NULL DEFAULT '',
+      PRIMARY KEY (`a_id`),
+      KEY `a_url_id` (`a_url_id`),
+      CONSTRAINT `lib_aliases_ibfk_1` FOREIGN KEY (`a_url_id`) REFERENCES `lib_urls` (`url_id`) ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  * Add controller, view, models for manager
+  * Update Router and/or RoutesHelper to handle aliases

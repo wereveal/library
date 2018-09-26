@@ -11,11 +11,12 @@
                 {% if page.page_immutable != 'true' or adm_lvl >= auth_lvl %}
                     <form action="{{ public_dir }}/manager/config/pages/" method="post">
                         <button type="submit" name="submit" value="modify" class="btn btn-primary btn-xs">Modify</button>
-                        {% if adm_lvl >= auth_lvl %}
+                        {% if adm_lvl >= auth_lvl and page.page_immutable == 'false' %}
                             <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
                         {% endif %}
                         {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
-                        <input type="hidden" name="page_id" value="{{ page.page_id }}" />
+                        <input type="hidden" name="page[page_id]" value="{{ page.page_id }}" />
+                        <input type="hidden" name="page[page_title]" value="{{ page.page_title }}" />
                     </form>
                 {% endif %}
             </div>

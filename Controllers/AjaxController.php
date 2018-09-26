@@ -9,6 +9,7 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Models\TwigDirsModel;
+use Ritc\Library\Models\TwigTemplatesModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
@@ -47,11 +48,15 @@ class AjaxController
     {
         switch ($this->url_action_one) {
             case 'twig_dirs';
-                return $this->doTwigDirs();
+                return $this->doTwigDirs(false);
             case 'for_directories';
                 return $this->forDirectories();
             case 'urls_available':
                 return $this->urlsAvailableForNavgroups();
+            case 'page_dirs_tpls':
+                return $this->doTwigTpls();
+            case 'page_prefix_dirs':
+                return $this->doTwigDirs(true);
             default:
                 return json_encode([]);
         }
@@ -61,9 +66,11 @@ class AjaxController
      * Creates the json string needed from list of twig directories based on twig_prefix.
      * This is for the javascript to create the options for a select.
      *
+     * @param bool $has_tpls Optional, defaults to false.
+     *                       Specifies if return only dirs that has templates.
      * @return string
      */
-    private function doTwigDirs():string
+    private function doTwigDirs($has_tpls = false):string
     {
         $prefix_id = $this->o_router->getPost('prefix_id');
         $bad_results = [
@@ -75,6 +82,9 @@ class AjaxController
             return $bad_results;
         }
         $cache_key = 'ajax.doTwigDirs.' . $prefix_id;
+        if ($has_tpls) {
+            $cache_key .= '.limited';
+        }
         $json = '';
         if ($this->use_cache) {
             $json = $this->o_cache->get($cache_key);
@@ -85,11 +95,71 @@ class AjaxController
         $o_dirs = new TwigDirsModel($this->o_db);
         try {
             $a_results = $o_dirs->read(['tp_id' => $prefix_id]);
+            if ($has_tpls) {
+                $o_tpls = new TwigTemplatesModel($this->o_db);
+                foreach ($a_results as $key => $a_result) {
+                    try {
+                        $a_tpls = $o_tpls->read(['td_id' => $a_result['td_id']]);
+                        if (empty($a_tpls[0])) {
+                            unset($a_results[$key]);
+                        }
+                    }
+                    catch (ModelException $e) {
+                        unset($a_results[$key]);
+                    }
+                }
+            }
             $a_encode_this = [];
             foreach ($a_results as $a_result) {
                 $a_encode_this[] = [
                     'td_id'   => $a_result['td_id'],
                     'td_name' => $a_result['td_name']
+                ];
+            }
+            $json = json_encode($a_encode_this);
+            if ($this->use_cache) {
+                $this->o_cache->set($cache_key, $json, 'ajax');
+            }
+            return $json;
+        }
+        catch (ModelException $e) {
+            return $bad_results;
+        }
+    }
+
+    /**
+     * Creates the JSON string used by the javascript to set the
+     * templates select options.
+     *
+     * @return string
+     */
+    private function doTwigTpls():string
+    {
+        $dir_id = $this->o_router->getPost('td_id');
+        $bad_results = [
+            'tpl_id' => '',
+            'value'  => 'Not Available'
+        ];
+        $bad_results = json_encode([$bad_results]);
+        if (empty($dir_id)) {
+            return $bad_results;
+        }
+        $cache_key = 'ajax.doTwigTpls.' . $dir_id;
+        $json = '';
+        if ($this->use_cache) {
+            $json = $this->o_cache->get($cache_key);
+        }
+        if (!empty($json)) {
+            return $json;
+        }
+        $o_tpls = new TwigTemplatesModel($this->o_db);
+        try {
+            $a_results = $o_tpls->read(['td_id' => $dir_id]);
+            $a_encode_this = [];
+            foreach ($a_results as $a_result) {
+                $a_encode_this[] = [
+                    'tpl_id'   => $a_result['tpl_id'],
+                    'tpl_name' => $a_result['tpl_name']
                 ];
             }
             $json = json_encode($a_encode_this);

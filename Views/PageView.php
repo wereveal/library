@@ -9,11 +9,14 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Exceptions\ViewException;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\FormHelper;
+use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\BlocksModel;
 use Ritc\Library\Models\PageBlocksMapModel;
 use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Models\PageModel;
+use Ritc\Library\Models\TwigPrefixModel;
+use Ritc\Library\Models\TwigTemplatesModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
@@ -70,6 +73,9 @@ class PageView
      * @param string $new_or_modify Defaults to new
      * @param int    $page_id
      * @return string
+     * @todo see inline todos in method
+     * @todo determine if the ng_id needs to be a part of the page anymore,
+     *       don't know why I added that to the database.
      */
     public function renderForm($new_or_modify = 'new_page', $page_id = -1):string
     {
@@ -96,6 +102,62 @@ class PageView
         catch (ModelException $e) {
             $a_page_list = [];
         }
+        $o_twig_prefix = new TwigPrefixModel($this->o_db);
+        $o_twig_prefix->setupElog($this->o_di);
+        try {
+            $a_prefixes = $o_twig_prefix->read();
+        }
+        catch (ModelException $e) {
+            $a_prefixes = [];
+        }
+        $a_options = [[
+            'value' => '',
+            'label' => '-Select Twig Prefix-'
+        ]];
+        foreach ($a_prefixes as $a_prefix) {
+            $a_options[] = [
+                'value' => $a_prefix['tp_id'],
+                'label' => $a_prefix['tp_prefix']
+            ];
+        }
+        /**
+         * @todo write javascript on change of prefix to change dirs and reset tpls
+         * @todo write javascript to change tpls based on dir selected
+         * @todo write AjaxController method to match above javascripts
+         */
+        $a_prefix_select = [
+            'id'          => 'tp_id',
+            'label_class' => 'form-label bold',
+            'label_text'  => 'Twig Prefix',
+            'name'        => 'tp_id',
+            'class'       => 'form-control',
+            'other_stuph' => ' onchange="switchPageDirsForPrefix(this)"',
+            'options'     => $a_options
+        ];
+        $a_dir_select = [
+            'id'          => 'td_id',
+            'label_class' => 'form-label bold',
+            'label_text'  => 'Twig Directory',
+            'name'        => 'td_id',
+            'class'       => 'form-control',
+            'other_stuph' => ' onchange="switchTplForDir(this)"',
+            'options'     => [[
+                'value' => '',
+                'label' => '-Select the twig prefix first-'
+            ]]
+        ];
+        $a_tpl_select = [
+            'id'          => 'tpl_id',
+            'label_class' => 'form-label bold',
+            'label_text'  => 'Page Template',
+            'name'        => 'tpl_id',
+            'class'       => 'form-control',
+            'other_stuph' => '',
+            'options'     => [[
+                'value' => '',
+                'label' => '-Select the twig prefix first-'
+            ]]
+        ];
         $o_blocks = new BlocksModel($this->o_db);
         $o_blocks->setupElog($this->o_di);
         try {
@@ -175,7 +237,7 @@ class PageView
             }
             foreach ($a_pbm as $a_record) {
                 foreach ($a_block_list as $key => $a_block) {
-                    if ($a_block['b_id'] === 'blocks[' . $a_record['pbm_block_id'] . ']') {
+                    if ($a_block['id'] === 'blocks[' . $a_record['pbm_block_id'] . ']') {
                         $a_block_list[$key]['checked'] = ' checked';
                     }
                 }
@@ -194,11 +256,40 @@ class PageView
                     'other_stuph' => ' selected'
                 ];
                 $a_twig_values['url_select']['options'][0]['other_stuph'] = ''; // this should be the default --Select--
+                $o_tpl = new TwigTemplatesModel($this->o_db);
+                $o_tpl->setupElog($this->o_di);
+                /* @todo need to write code to set which twig prefix is being used and which directory is being used. */
+                try {
+                    $a_tpls = $o_tpl->read(['tpl_id' => $a_page['tpl_id']]);
+                    $a_tpl_select['options'] = [
+                        [
+                            'value'       => $a_page['tpl_id'],
+                            'label'       => $a_tpls[0]['tpl_name'],
+                            'other_stuph' => ' selected'
+                        ],
+                        [
+                            'value' => 'reset',
+                            'label' => '-Select a different template-'
+                        ]
+                    ];
+                }
+                catch (ModelException $e) {
+                    $this->logIt($e->errorMessage(), LOG_OFF, __METHOD__);
+                }
             }
             else {
                 $this->logIt('Could not get the page values!', LOG_OFF, $meth . __LINE__);
+                $a_msg_values = [
+                    'message' => 'Could not get the page values!',
+                    'type'    => 'error'
+                ];
+                $a_message = ViewHelper::fullMessage($a_msg_values);
+                $a_twig_values['a_message'] = $a_message;
             }
         }
+        $a_twig_values['twig_prefix_select'] = $a_prefix_select;
+        $a_twig_values['twig_dir_select']    = $a_dir_select;
+        $a_twig_values['twig_tpl_select']    = $a_tpl_select;
         $a_twig_values['a_blocks'] = $a_block_list;
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);

@@ -1,12 +1,14 @@
 <?php
 /**
  * Class DbModel
+ *
  * @package Ritc_Library
  */
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Traits\DbTraits;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -15,10 +17,10 @@ use Ritc\Library\Traits\LogitTraits;
  * For read/write access to the database based on PDO.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v5.2.1
- * @date    2017-12-15 13:51:15
+ * @version v5.2.2
+ * @date    2018-09-17 17:16:20
  * @change_log
- * - v5.2.1 - Bug fixes                                                                     - 2017-12-15 wer
+ * - v5.2.2 - Bug fixes                                                                     - 2018-09-17 wer
  * - v5.2.0 - Method added to get the pdo object                                            - 2017-12-14 wer
  * - v5.1.3 - ModelException changes reflected here                                         - 2017-12-12 wer
  * - v5.1.0 - Method name change to match standard for method names							- 2017-10-18 wer
@@ -82,6 +84,7 @@ class DbModel
 
     /**
      * On creating a new object, certain things happen.
+     *
      * @param  \PDO   $o_pdo       can be from PdoFactory or from a direct new PDO
      *                             This allows it to be independent of the PdoFactory.
      * @param  string $config_file name of the config file which is a returned array
@@ -96,6 +99,7 @@ class DbModel
 
     /**
      * Inserts data into the database.
+     *
      * @param string $the_query    the INSERT statement, default is empty.
      * @param array  $a_values     default is empty array
      *                             If blank, the values are in the INSERT string
@@ -172,7 +176,8 @@ class DbModel
 
     /**
      * Searches the database for records.
-     * Can be set up with upto 3 arguments, the first required, the sql
+     * Can be set up with upto 3 arguments, the first required, the sql.
+     *
      * @param string $the_query , required
      * @param array  $a_values  associative array, key in named prepared
      *                          format preferred e.g., [':id'=>1, ':name'=>'fred'] but optional.
@@ -253,7 +258,8 @@ class DbModel
 
     /**
      * Executes a query to modify one or more records.
-     * This is a stub. It executes the $this->mdQuery method
+     * This is a stub. It executes the $this->mdQuery method.
+     *
      * @param string $the_query     default ''
      * @param array  $a_values      associative array with paramaters default empty array
      * @param bool   $single_record default true specifies if only a single record should be deleted per query
@@ -273,6 +279,7 @@ class DbModel
     /**
      * Executes a query to delete one or more records.
      * This is a stub. It executes the $this->mdQuery method.
+     *
      * @param string $the_query
      * @param array  $a_values      associative array with where paramaters
      * @param bool   $single_record specifies if only a single record should be deleted per query
@@ -293,6 +300,7 @@ class DbModel
      * Allows a raw \PDO::exec sql statement to be made.
      * As specified by \PDO, this does not return results from a select statement.
      * The query must be properly escaped, otherwise, this could be vulnerable.
+     *
      * @param string $the_query
      * @return int
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -311,6 +319,7 @@ class DbModel
     /**
      * Executes and returns the results of a \PDO::query.
      * The query must be properly escaped, otherwise, this could be vulnerable.
+     *
      * @param string $the_query
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -340,6 +349,7 @@ class DbModel
     ### Getters and Setters
     /**
      * Get the value of the property specified.
+     *
      * @param string $var_name
      * @return mixed value of the property
      * @note - this is normally set to private so not to be used
@@ -351,6 +361,7 @@ class DbModel
 
     /**
      * GETter for the class property affected_rows.
+     *
      * @return mixed
      */
     public function getAffectedRows()
@@ -360,6 +371,7 @@ class DbModel
 
     /**
      * GETter for the class property a_new_ids.
+     *
      * @return array
      */
     public function getNewIds():array
@@ -369,6 +381,7 @@ class DbModel
 
     /**
      * Standard GETter for private property for the class.
+     *
      * @return \PDO
      */
     public function getPDO():\PDO
@@ -379,6 +392,7 @@ class DbModel
     /**
      * GETter for the class property pgsql_sequence_name.
      * Also sets the class property if array is provided.
+     *
      * @param array $a_table_info
      * @return string
      */
@@ -398,6 +412,7 @@ class DbModel
 
     /**
      * GETter for class property success.
+     *
      * @return mixed
      */
     public function getSuccess()
@@ -407,6 +422,7 @@ class DbModel
 
     /**
      * GETter for class property sql_error_message.
+     *
      * @return mixed
      */
     public function getSqlErrorMessage()
@@ -416,6 +432,7 @@ class DbModel
 
     /**
      * SETter for an individual element of the class property array a_new_ids.
+     *
      * @param string $value
      * @return bool
      */
@@ -429,6 +446,7 @@ class DbModel
 
     /**
      * Get and save the sequence name for a pgsql table in the protected property $pgsql_sequence_name.
+     *
      * @param array $a_table_info ['table_name', 'column_name', 'schema']
      * @return bool success or failure
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -472,6 +490,7 @@ class DbModel
 
     /**
      * Sets the class propery error_message to a formated string.
+     *
      * @param $pdo null|\PDO|\PDOStatement
      */
     public function setSqlErrorMessage($pdo = null):void
@@ -489,6 +508,7 @@ class DbModel
 
     /**
      * Sets and gets the sql_error_message property.
+     *
      * @param $pdo null|\PDO|\PDOStatement
      * @return string
      */
@@ -500,12 +520,13 @@ class DbModel
         elseif ($this->sql_error_message === '') {
             $this->setSqlErrorMessage();
         }
-        return $this->sql_error_message;
+        return empty($this->sql_error_message) ? '' : $this->sql_error_message;
     }
 
     /**
      * Retrieves the raw sql errors.
      * In the format of ['SQLSTATE Error Code', 'Driver Error Code', 'Driver Error Message'].
+     *
      * @param $pdo null|\PDO|\PDOStatement
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -533,7 +554,8 @@ class DbModel
     }
 
     /**
-     * A setter of the $a_new_ids property
+     * A setter of the $a_new_ids property.
+     *
      * @return void
      */
     public function resetNewIds():void
@@ -545,13 +567,19 @@ class DbModel
 
     /**
      * Bind values from an assoc array to a prepared query.
+     *
      * @param array                $a_values Keys must match the prepared query
      * @param \PDOStatement $o_pdo_stmt
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function bindValues(array $a_values = [], \PDOStatement $o_pdo_stmt):?bool
+    public function bindValues(array $a_values = [], \PDOStatement $o_pdo_stmt = null):?bool
     {
+        if ($o_pdo_stmt === null) {
+            $message = 'PDO must be passed into the execute';
+            $err_code = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException($message, $err_code);
+        }
         if (Arrays::isAssocArray($a_values)) {
             $a_values = $this->prepareKeys($a_values);
             foreach ($a_values as $key => $value) {
@@ -590,6 +618,7 @@ class DbModel
 
     /**
      * Shortcut for PDOStatement::closeCursor().
+     *
      * @param \PDOStatement $o_pdo_stmt
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -607,6 +636,7 @@ class DbModel
 
     /**
      * Commits the PDO transaction.
+     *
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
@@ -624,7 +654,8 @@ class DbModel
     }
 
     /**
-     * Executes a prepared query
+     * Executes a prepared query.
+     *
      * @param array                $a_values   <pre>
      *                                         $a_values could be:
      *                                         array("test", "brains") for question mark place holders prepared statement
@@ -635,8 +666,13 @@ class DbModel
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function execute(array $a_values = [], \PDOStatement $o_pdo_stmt):?bool
+    public function execute(array $a_values = [], \PDOStatement $o_pdo_stmt = null):?bool
     {
+        if ($o_pdo_stmt === null) {
+            $message = 'PDO must be passed into the execute';
+            $err_code = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException($message, $err_code);
+        }
         if (\count($a_values) > 0) {
             if (Arrays::isAssocArray($a_values)) { // for a query with bind values
                 $a_values = $this->prepareKeys($a_values);
@@ -834,6 +870,7 @@ class DbModel
 
     /**
      * Rolls back a PDO transaction.
+     *
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
@@ -852,6 +889,7 @@ class DbModel
 
     /**
      * Executes PDOStatement::rowCount().
+     *
      * @param \PDOStatement $o_pdo_stmt
      * @return int
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -868,6 +906,7 @@ class DbModel
 
     /**
      * Starts a PDO transaction.
+     *
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
@@ -887,6 +926,7 @@ class DbModel
     ### Complete Transaction in a single command
     /**
      * Does an insert statement wrapped in a transaction.
+     *
      * @param string $the_query
      * @param array  $a_values
      * @param string $table_name
@@ -925,6 +965,7 @@ class DbModel
 
     /**
      * Does a query wrapped in a transaction.
+     *
      * @param string $the_query
      * @param array  $the_array
      * @param bool   $single_record
@@ -960,6 +1001,7 @@ class DbModel
 
     /**
      * Does an update wrapped in a transaction.
+     *
      * @param string $the_query
      * @param array  $the_array
      * @param bool   $single_record
@@ -979,6 +1021,7 @@ class DbModel
 
     /**
      * Does a delete wrapped in a transaction.
+     *
      * @param string $the_query
      * @param array  $the_array
      * @param bool   $single_record
@@ -999,14 +1042,20 @@ class DbModel
     ### Complex Commands
     /**
      * Does an insert based on a prepared query.
+     *
      * @param array         $a_values   the values to be insert
      * @param \PDOStatement $o_pdo_stmt the object pointing to the prepared statement
      * @param array         $a_table_info
      * @return bool success or failure
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function insertPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt, array $a_table_info = []):?bool
+    public function insertPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt = null, array $a_table_info = []):?bool
     {
+        if ($o_pdo_stmt === null) {
+            $message = 'PDO must be passed into the execute';
+            $err_code = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException($message, $err_code);
+        }
         if (\count($a_values) > 0) {
             $this->resetNewIds();
             try {
@@ -1033,8 +1082,13 @@ class DbModel
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function executeInsert(array $a_values = [], \PDOStatement $o_pdo_stmt, array $a_table_info = []):bool
+    public function executeInsert(array $a_values = [], \PDOStatement $o_pdo_stmt = null, array $a_table_info = []):bool
     {
+        if ($o_pdo_stmt === null) {
+            $message = 'PDO must be passed into the execute';
+            $err_code = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException($message, $err_code);
+        }
         if (\count($a_values) > 0) {
             if (isset($a_values[0]) && \is_array($a_values[0])) { // is an array of arrays, can not be mixed
                 foreach ($a_values as $a_stuph) {
@@ -1078,6 +1132,7 @@ class DbModel
 
     /**
      * Used for both modifying and deleting record(s)
+     *
      * @param string $the_query     required, the sql statement, default is ''
      * @param array  $a_values      optional, formated values for a prepared sql statement, default is ''
      * @param bool   $single_record optional, if only a single record should be changed/deleted, default is true
@@ -1138,15 +1193,21 @@ class DbModel
     /**
      * Executes a prepared sql statement, allowing for it to call itself for multiple records.
      * Question: why is it called mdQueryPrepared? You can tell this is an old method,
-     * with its mysterious name.
+     * with its mysterious name. md stands for modify delete.
+     *
      * @param array         $a_values
      * @param bool          $single_record
      * @param \PDOStatement $o_pdo_stmt
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function mdQueryPrepared(array $a_values = [], $single_record = true, \PDOStatement $o_pdo_stmt):?bool
+    public function mdQueryPrepared(array $a_values = [], $single_record = true, \PDOStatement $o_pdo_stmt = null):?bool
     {
+        if ($o_pdo_stmt === null) {
+            $message = 'PDO must be passed into the execute';
+            $err_code = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException($message, $err_code);
+        }
         if (empty($a_values)) {
             throw new ModelException('Missing array values', 20);
         }
@@ -1175,7 +1236,9 @@ class DbModel
 
     /**
      * Do a query.
-     * Has three params. The first is required. The second is required if the first param doesn't include a valid sql statement.
+     * Has three params. The first is required.
+     * The second is required if the first param doesn't include a valid sql statement.
+     *
      * @param string|array $query_params default is empty str.  - required
      *                                   Should correspond to something like
      *                                   ['type'=>'search', 'table_name'=>'test_table', 'single_record'=>false, 'sql'=>'']
@@ -1186,14 +1249,14 @@ class DbModel
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function query($query_params = '', $data = '', $where_values):?bool
+    public function query($query_params = '', $data = '', array $where_values = []):?bool
     {
-        $default_params = array(
+        $default_params = [
             'type'          => '',
             'table_name'    => '',
             'single_record' => false,
             'sql'           => ''
-        );
+        ];
         if ($query_params === '') {
             $query_params = $default_params;
         }
@@ -1325,8 +1388,13 @@ class DbModel
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function searchPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt, $type = 'assoc'):?array
+    public function searchPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt = null, $type = 'assoc'):?array
     {
+        if ($o_pdo_stmt === null) {
+            $message = 'PDO must be passed into the execute';
+            $err_code = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException($message, $err_code);
+        }
         switch ($type) {
             case 'num':
                 $fetch_style = \PDO::FETCH_NUM;

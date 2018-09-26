@@ -34,6 +34,8 @@ class PageComplexModel
     private $o_content;
     /** @var \Ritc\Library\Models\PageModel  */
     private $o_page;
+    /** @var PageBlocksMapModel  */
+    private $o_pbm;
     /** @var \Ritc\Library\Models\TwigComplexModel  */
     private $o_tpls;
     /** @var \Ritc\Library\Models\UrlsModel  */
@@ -43,22 +45,24 @@ class PageComplexModel
 
     /**
      * PageComplexModel constructor.
+     *
      * @param \Ritc\Library\Services\Di $o_di
      * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function __construct(Di $o_di)
     {
-        $this->a_object_names = ['o_page', 'o_urls', 'o_content'];
+        $this->a_object_names = ['o_page', 'o_urls', 'o_pbm'];
         /** @var DbModel $o_db */
-        $o_db = $o_di->get('db');
-        $this->o_db = $o_db;
+        $o_db         = $o_di->get('db');
+        $this->o_db   = $o_db;
         $this->o_page = new PageModel($o_db);
         $this->o_urls = new UrlsModel($o_db);
+        $this->o_pbm  = new PageBlocksMapModel($o_db);
         try {
             $this->o_content = new ContentComplexModel($o_di);
         }
         catch (ModelException $e) {
-            $message = 'Unable to create instanceof ContentComplexModel.';
+            $message    = 'Unable to create instanceof ContentComplexModel.';
             $error_code = ExceptionHelper::getCodeNumber('instance');
             throw new ModelException($message, $error_code, $e);
         }
@@ -68,23 +72,64 @@ class PageComplexModel
     }
 
     /**
+     * Deletes all records associated with the page id passed in.
+     * This includes the content records, the pbm records, and finally page record.
+     *
+     * @param int $page_id
+     * @return bool
+     * @throws ModelException
+     */
+    public function deletePageValues($page_id = -1):bool
+    {
+        if ($page_id === -1) {
+            $message = 'Missing Required Values';
+            $err_code = ExceptionHelper::getCodeNumberModel('missing_values');
+            throw new ModelException($message, $err_code);
+        }
+        try {
+            $this->o_db->startTransaction();
+            $this->o_content->deleteAllByPage($page_id);
+            $this->o_pbm->deleteAllByPageId($page_id);
+            $this->o_page->delete($page_id);
+            $this->o_db->commitTransaction();
+        }
+        catch (ModelException $e) {
+            $this->o_db->rollbackTransaction();
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        return true;
+    }
+
+    /**
      * @param array $a_search_for        Optional, defaults to returning all records
      *                                   Allowed search keys ['url_id', 'url_text', 'page_id', 'page_title']
-     * @param array $a_search_parameters Optional, defaults to ['order_by' => 'page_id ASC']
+     * @param array $a_search_parameters Optional, defaults to ['order_by' => 'page_id ASC', 'search_type' => 'AND']
+     *                                   Note that other values are ignored.
      * @return array|bool
      * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function readPageValues(array $a_search_for = [], array $a_search_parameters = [])
     {
-        $a_allowed_keys = ['u.url_id', 'u.url_text', 'p.page_id', 'p.page_title'];
-        if (!isset($a_search_parameters['order_by'])) {
-            $a_search_parameters['order_by'] = 'page_id ASC';
+        $a_allowed_keys = ['url_id', 'url_text', 'page_id', 'page_title'];
+        $order_by = 'p.page_id ASC';
+        $search_type = 'AND';
+        if (isset($a_search_parameters['order_by'])) {
+            $order_by = $a_search_parameters['order_by'];
         }
-        if (!isset($a_search_parameters['where_exists'])) {
-            $a_search_parameters['where_exists'] = true;
+        if (isset($a_search_parameters['search_type'])) {
+            $search_type = $a_search_parameters['search_type'];
         }
-        $sql_where = $this->buildSqlWhere($a_search_for, $a_search_parameters, $a_allowed_keys);
-        $sql = $this->select_sql . "\n" . $sql_where;
+        $sql_where = '';
+        foreach ($a_search_for as $key => $value) {
+            if (\in_array($key, $a_allowed_keys)) {
+                $search_for = $key[0] . '.' . $key;
+                $placeholder = ':' . $key;
+                $sql_where .= $sql_where === ''
+                    ? " WHERE {$search_for} = {$placeholder}"
+                    : " {$search_type} {$search_for} = {$placeholder}";
+            }
+        }
+        $sql = trim($this->select_sql . $sql_where . ' ORDER BY ' . $order_by);
         try {
             return $this->o_db->search($sql, $a_search_for);
         }
@@ -173,6 +218,86 @@ class PageComplexModel
     }
 
     /**
+     * Save the page values as well as the page to block records.
+     * This is for a new page. \see self::updatePageValues() for
+     * updating existing records.
+     *
+     * @param array $a_values Required, needs both $a_values['a_blocks'] and $a_values['a_page']
+     * @return bool
+     * @throws ModelException
+     */
+    public function savePageValues(array $a_values = []):bool
+    {
+        /*
+        save page getting new id
+        save pbm records specifying blocks assigned to page
+        */
+        $a_blocks = $a_values['a_blocks'];
+        $a_page   = $a_values['a_page'];
+        if (empty($a_page) || empty($a_blocks)) {
+            $message = 'Missing Required Values';
+            $err_code = ExceptionHelper::getCodeNumberModel('missing_values');
+            throw new ModelException($message, $err_code);
+        }
+        $this->o_db->startTransaction();
+        try {
+            $a_ids  = $this->o_page->create($a_page);
+            $new_id = $a_ids[0];
+        }
+        catch (ModelException $e) {
+            $this->o_db->rollbackTransaction();
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        try {
+            $this->o_pbm->deleteAllByPageId($a_page['page_id']);
+            $this->o_pbm->createByPageId($new_id, $a_blocks);
+        }
+        catch (ModelException $e) {
+            $this->o_db->rollbackTransaction();
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        $this->o_db->commitTransaction();
+        return true;
+    }
+
+    /**
+     * Updates the page record and resets the pbm records with new values.
+     *
+     * @param array $a_values
+     * @return bool
+     * @throws ModelException
+     */
+    public function updatePageValues(array $a_values = []):bool
+    {
+        $a_page   = $a_values['a_page'];
+        $a_blocks = $a_values['a_blocks'];
+        if (empty($a_page) || empty($a_blocks)) {
+            $message = 'Missing Required Values';
+            $err_code = ExceptionHelper::getCodeNumberModel('missing_values');
+            throw new ModelException($message, $err_code);
+        }
+        $this->o_db->startTransaction();
+        try {
+            $this->o_page->update($a_page);
+        }
+        catch (ModelException $e) {
+            $this->o_db->rollbackTransaction();
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        try {
+            $this->o_pbm->deleteAllByPageId($a_page['page_id']);
+            $this->o_pbm->createByPageId($a_page['page_id'], $a_blocks);
+        }
+        catch (ModelException $e) {
+            $this->o_db->rollbackTransaction();
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        $this->o_db->commitTransaction();
+        return true;
+    }
+
+    ### Utilities ###
+    /**
      * Sets the class property select_sql.
      *
      * @param string $the_string Optional, normally not specified.
@@ -191,8 +316,7 @@ class PageComplexModel
                 SELECT {$select_fields}
                 FROM {$this->lib_prefix}page as p
                 JOIN {$this->lib_prefix}urls as u
-                  ON p.url_id = u.url_id
-            ";
+                  ON p.url_id = u.url_id ";
         }
     }
 }

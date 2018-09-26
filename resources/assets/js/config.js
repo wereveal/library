@@ -25,7 +25,7 @@ function displayDirectories(selectedPrefix) {
     var goTo = location.origin+'/manager/config/ajax/for_directories/';
     var posted = {"prefix_id":selectedPrefix.value};
     $.post(goTo, posted, function(jsonStr) {
-        console.log(jsonStr);
+        // console.log(jsonStr);
         if (jsonStr.includes("<pre>")) {
             jsonStr = jsonStr.replace('<pre></pre>','');
         }
@@ -78,4 +78,72 @@ function urlsForNavgroup(navgroup) {
             $("#url_id").append($("<option></option>").attr("value", v.url_id).text(v.url_text));
         });
     })
+}
+
+function switchPageDirsForPrefix(selectedPrefix) {
+    var goTo = location.origin+'/manager/config/ajax/page_prefix_dirs/';
+    var posted = {'prefix_id':selectedPrefix.value};
+    var dirSelectName = '#td_id';
+    var tplSelectName = '#tpl_id';
+    $.post(goTo, posted, function(jsonStr) {
+        if (jsonStr.includes("<pre>")) {
+            jsonStr = jsonStr.replace('<pre></pre>','');
+        }
+        var resp = JSON.parse(jsonStr);
+        $(dirSelectName).empty();
+        var dirSelect = $(dirSelectName);
+        $(resp).each(function(k, v) {
+            dirSelect
+                .append($("<option></option>")
+                    .attr("value", v.td_id)
+                    .text(v.td_name)
+                );
+        });
+        $(tplSelectName).empty();
+        var tplSelect = $(tplSelectName);
+        if (Object.keys(resp).length > 1) {
+            tplSelect.append($("<option></option>")
+                .attr("value", "")
+                .text("-Select Dir First-")
+            );
+        }
+        else {
+            var goToTwo = location.origin+'/manager/config/ajax/page_dirs_tpls/';
+            var postedTwo = {'td_id':resp[0].td_id};
+            $.post(goToTwo, postedTwo, function(jsonStrTwo) {
+                if (jsonStrTwo.includes("<pre>")) {
+                    jsonStrTwo = jsonStrTwo.replace('<pre></pre>','');
+                }
+                var respTwo = JSON.parse(jsonStrTwo);
+                $(respTwo).each(function(k2, v2) {
+                    tplSelect.append($("<option></option>")
+                        .attr("value", v2.tpl_id)
+                        .text(v2.tpl_name)
+                    );
+                });
+            });
+        }
+    });
+}
+
+function switchTplForDir(selectedDir) {
+    var goTo = location.origin+'/manager/config/ajax/page_dirs_tpls/';
+    var posted = {'td_id':selectedDir.value};
+    var replaceIn = '#tpl_id';
+    $.post(goTo, posted, function(jsonStr) {
+        if (jsonStr.includes("<pre>")) {
+            jsonStr = jsonStr.replace('<pre></pre>','');
+        }
+        var resp = JSON.parse(jsonStr);
+        $(replaceIn).empty();
+        var tplSelect = $(replaceIn);
+        $(resp).each(function(k, v) {
+            tplSelect
+                .append($("<option></option>")
+                    .attr("value", v.tpl_id)
+                    .text(v.tpl_name)
+                );
+        });
+    });
+
 }

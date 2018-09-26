@@ -10,7 +10,7 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Exceptions\ViewException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
-use Ritc\Library\Models\PageModel;
+use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -30,7 +30,7 @@ class PageController implements ManagerControllerInterface
 {
     use LogitTraits, ConfigControllerTraits;
 
-    /** @var PageModel */
+    /** @var PageComplexModel */
     private $o_model;
     /** @var PageView */
     private $o_view;
@@ -44,8 +44,12 @@ class PageController implements ManagerControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupController($o_di);
-        $this->a_object_names = ['o_model'];
-        $this->o_model = new PageModel($this->o_db);
+        try {
+            $this->o_model = new PageComplexModel($o_di);
+        }
+        catch (ModelException $e) {
+            throw new ControllerException($e->getMessage(), $e->getCode(), $e);
+        }
         try {
             $this->o_view = new PageView($o_di);
         }
@@ -75,7 +79,8 @@ class PageController implements ManagerControllerInterface
             case 'new_page':
                 return $this->o_view->renderForm('new_page');
             case 'modify':
-                return $this->o_view->renderForm('modify_page');
+                $page_id = $this->a_post['page']['page_id'];
+                return $this->o_view->renderForm('modify_page', $page_id);
             case '':
             default:
                 return $this->o_view->renderList();
@@ -96,7 +101,7 @@ class PageController implements ManagerControllerInterface
             return $this->o_view->renderList($a_message);
         }
         try {
-            $this->o_model->delete($page_id);
+            $this->o_model->deletePageValues($page_id);
             if ($this->use_cache) {
                 $this->o_cache->clearTag('page');
             }
@@ -116,18 +121,27 @@ class PageController implements ManagerControllerInterface
     public function save():string
     {
         $meth = __METHOD__ . '.';
-        $a_page = $this->a_post['page'];
+        $a_page['a_page']   = $this->a_post['page'];
+        $a_page['a_blocks'] = [];
+        foreach ($this->a_post['blocks'] as $block_id => $value) {
+            if ($value === 'true') {
+                $a_page['a_blocks'][] = $block_id;
+            }
+        }
         $this->logIt('Post Values' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
         try {
-            $this->o_model->create($a_page);
+            $this->o_model->savePageValues($a_page);
             if ($this->use_cache) {
                 $this->o_cache->clearTag('page');
             }
             $a_message = ViewHelper::successMessage();
         }
         catch (ModelException $e) {
-            $message = 'Error: ' . $e->getMessage();
-            $a_message = ViewHelper::failureMessage($message);
+            $a_msg_values = [
+                'message' => 'Error: ' . $e->getMessage(),
+                'type'    => 'error'
+            ];
+            $a_message = ViewHelper::fullMessage($a_msg_values);
         }
         return $this->o_view->renderList($a_message);
     }
@@ -140,13 +154,19 @@ class PageController implements ManagerControllerInterface
     public function update():string
     {
         $meth = __METHOD__ . '.';
-        $a_page = $this->a_post['page'];
+        $a_page['a_page']   = $this->a_post['page'];
+        $a_page['a_blocks'] = [];
+        foreach ($this->a_post['blocks'] as $block_id => $value) {
+            if ($value === 'true') {
+                $a_page['a_blocks'] = $block_id;
+            }
+        }
         $this->logIt('Posted Page: ' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
         if (!isset($a_page['page_immutable'])) {
             $a_page['page_immutable'] = 'false';
         }
         try {
-            $this->o_model->update($a_page);
+            $this->o_model->updatePageValues($a_page);
             if ($this->use_cache) {
                 $this->o_cache->clearTag('page');
             }
@@ -166,17 +186,17 @@ class PageController implements ManagerControllerInterface
      */
     public function verifyDelete():string
     {
-
+        $a_page = $this->a_post['page'];
         $a_values = [
             'what'          => 'Page',
-            'name'          => 'Something to help one know which one, e.g. myConstant',
-            'extra_message' => 'an extra message',
-            'submit_value'  => 'value that is being submitted by button, defaults to delete',
-            'form_action'   => 'the url, e.g. /manger/config/constants/',
-            'cancel_action' => 'the url for canceling the delete if different from form action',
-            'btn_value'     => 'What the Button says, e.g. Constants',
-            'hidden_name'   => 'primary id name, e.g., const_id',
-            'hidden_value'  => 'primary id, e.g. 1',
+            'name'          => $a_page['page_title'],
+            'extra_message' => 'This is significant! It will delete both the content and the page. The url will still remain but may point to nothing!',
+            'submit_value'  => 'delete',
+            'form_action'   => $this->a_router_parts['request_uri'],
+            'cancel_action' => $this->a_router_parts['request_uri'],
+            'btn_value'     => 'Delete',
+            'hidden_name'   => 'page_id',
+            'hidden_value'  => $a_page['page_id']
         ];
         $a_options = [
             'fallback'    => 'renderList' // if something goes wrong, which method to fallback

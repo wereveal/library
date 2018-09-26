@@ -58,6 +58,62 @@ class ContentComplexModel
     }
 
     /**
+     * Deletes all content records for a specified page.
+     *
+     * @param int    $page_id  Required
+     * @param string $block    Optional, defaults to deleting all content assigned to all blocks for page.
+     * @param bool   $old_only Optional, defaults to false and deletes all records.
+     *                         If true, deletes only non-current records.
+     * @return bool
+     * @throws ModelException
+     */
+    public function deleteAllByPage($page_id = -1, $block = '', $old_only = false):bool
+    {
+        if ($page_id === -1) {
+            $message = 'Missing Required Values';
+            $err_code = ExceptionHelper::getCodeNumberModel('missing_values');
+            throw new ModelException($message, $err_code);
+        }
+        $block_sql = '';
+        $current_sql = '';
+        if ($block !== '') {
+            $block_sql =  ' AND pbm_block_id = :block_id';
+        }
+        if ($old_only) {
+            $current_sql = ' AND c_current = :c_current';
+        }
+        $lib_prefix = $this->lib_prefix;
+        /** @noinspection SqlResolve */
+        $sql = "SELECT c_id
+            FROM {$lib_prefix}content 
+            WHERE c_pbm_id IN (
+              SELECT pbm_id 
+              FROM {$lib_prefix}page_blocks_map 
+              WHERE pbm_page_id = :page_id{$block_sql})
+            {$current_sql}";
+        $a_values = [
+            ':page_id' => $page_id
+        ];
+        try {
+            $a_content_ids = $this->o_db->search($sql, $a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        $delete_sql = "
+            DELETE FROM {$lib_prefix}content
+            WHERE c_id = :c_id
+        ";
+        try {
+            $this->o_db->delete($delete_sql, $a_content_ids, false);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        return true;
+    }
+
+    /**
      * Reads all versions of content for a particular page and block that are current.
      *
      * @param int    $page_id Required

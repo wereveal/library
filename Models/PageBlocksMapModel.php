@@ -9,6 +9,7 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 
 /**
@@ -30,7 +31,7 @@ class PageBlocksMapModel extends ModelAbstract
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'page_blocks_map');
-        $this->setRequiredKeys(['pbm_page_id', 'bm_block_id']);
+        $this->setRequiredKeys(['pbm_page_id', 'pbm_block_id']);
     }
 
     ### Abstract Methods ###
@@ -41,14 +42,41 @@ class PageBlocksMapModel extends ModelAbstract
     ###
 
     /**
+     * Deletes all records based on page id.
+     *
+     * @param int $page_id
+     * @return bool
+     * @throws ModelException
+     */
+    public function deleteAllByPageId($page_id = -1):bool
+    {
+        if ($page_id === -1) {
+            $err_num = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException('Missing required values', $err_num);
+        }
+        $sql = 'DELETE FROM ' . $this->db_table . 'WHERE pbm_page_id = :page_id';
+        try {
+            $this->o_db->delete($sql, [':page_id' => $page_id], false);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        return true;
+    }
+
+    /**
      * Returns all records for a page.
      *
      * @param int $page_id
      * @return array
      * @throws ModelException
      */
-    public function readByPageId($page_id = -1)
+    public function readByPageId($page_id = -1):array
     {
+        if ($page_id === -1) {
+            $err_num = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException('Missing required values', $err_num);
+        }
         $a_search_for = [
             'pbm_page_id' => $page_id
         ];
@@ -58,5 +86,35 @@ class PageBlocksMapModel extends ModelAbstract
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    /**
+     * Creates multiple records for a page id.
+     *
+     * @param int   $page_id  Required
+     * @param array $a_blocks Required. Example, ['1', '2']
+     * @return bool
+     * @throws ModelException
+     */
+    public function createByPageId($page_id = -1, array $a_blocks = []):bool
+    {
+        if ($page_id === -1 || empty($a_blocks)) {
+            $err_num = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException('Missing required values', $err_num);
+        }
+        foreach ($a_blocks as $block_id) {
+            try {
+                $a_save_values = [
+                    'pbm_page_id' => $page_id,
+                    'pbm_block_id' => $block_id
+                ];
+                $this->create($a_save_values);
+            }
+            catch (ModelException $e) {
+                $this->o_db->rollbackTransaction();
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
+        return true;
     }
 }
