@@ -17,23 +17,26 @@ use Ritc\Library\Services\DbModel;
  * some work there.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.3.0
- * @date    2018-04-26 08:38:57
+ * @version v2.4.0
+ * @date    2018-10-24 16:04:13
  * @change_log
- * - v2.3.0          - New methods for new property a_required_keys         - 2018-04-26 wer
+ * - v2.4.0          - Changed genericCreate to remove primary index values     - 2018-10-24 wer
+ *                     from db field names and values except when the parameter
+ *                     is set to allow the primary index to be specified
+ * - v2.3.0          - New methods for new property a_required_keys             - 2018-04-26 wer
  *                     Modified generic methods to use ExceptionHelper
  *                     Modified generic methods slightly to ensure required
  *                     values are provided.
- * - v2.2.0          - Added new method to get count of a table             - 2018-04-19 wer
- * - v2.1.0          - Changes to ModelException reflected here             - 2017-12-12 wer
- * - v2.0.0          - updated to use ModelException                        - 2017-06-11 wer
- * - v1.4.0          - refactoring elsewhere regarding db_prefix here too   - 2017-01-14 wer
- * - v1.3.0          - added new property lib_prefix, code clean up         - 2017-01-13 wer
- * - v1.2.0          - Refactoring of DbCommonTraits reflected here         - 2016-09-23 wer
- * - v1.1.0          - added a parameter to generic read select_distinct    - 2016-09-09 wer
- * - v1.0.0          - this went live a while back, guess it isn't alpha    - 2016-08-22 wer
- * - v1.0.0-alpha.9  - added functionality to buildSqlSelectFields method   - 2016-05-04 wer
- * - v1.0.0-alpha.0 - initial version                                       - 2016-03-18 wer
+ * - v2.2.0          - Added new method to get count of a table                 - 2018-04-19 wer
+ * - v2.1.0          - Changes to ModelException reflected here                 - 2017-12-12 wer
+ * - v2.0.0          - updated to use ModelException                            - 2017-06-11 wer
+ * - v1.4.0          - refactoring elsewhere regarding db_prefix here too       - 2017-01-14 wer
+ * - v1.3.0          - added new property lib_prefix, code clean up             - 2017-01-13 wer
+ * - v1.2.0          - Refactoring of DbCommonTraits reflected here             - 2016-09-23 wer
+ * - v1.1.0          - added a parameter to generic read select_distinct        - 2016-09-09 wer
+ * - v1.0.0          - this went live a while back, guess it isn't alpha        - 2016-08-22 wer
+ * - v1.0.0-alpha.9  - added functionality to buildSqlSelectFields method       - 2016-05-04 wer
+ * - v1.0.0-alpha.0 - initial version                                           - 2016-03-18 wer
  * @todo Review to see where multi-table operations can be strenthened.
  */
 trait DbUtilityTraits
@@ -79,7 +82,8 @@ trait DbUtilityTraits
      *  'a_psql'          => [
      *      'table_name'  => string,
      *      'column_name' => string
-     *  ]
+     *  ],
+     *  'allow_pin'       => false
      * ] \endcode
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -119,6 +123,12 @@ trait DbUtilityTraits
             $error_code = ExceptionHelper::getCodeNumberModel('create_missing_values');
             throw new ModelException($this->error_message, $error_code);
         }
+        if (empty($a_parameters['allow_pin']) || $a_parameters['allow_pin'] !== true) {
+            $has_pin = array_search($this->primary_index_name, $a_field_names);
+            if ($has_pin !== false) {
+                unset($a_field_names[$has_pin]);
+            }
+        }
 
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_value) {
@@ -128,6 +138,9 @@ trait DbUtilityTraits
                         $this->error_message = 'Missing required keys: ' . json_encode($a_missing_values);
                         $error_code = ExceptionHelper::getCodeNumberModel('create_missing_values');
                         throw new ModelException($this->error_message, $error_code);
+                    }
+                    if (empty($a_parameters['allow_pin']) || $a_parameters['allow_pin'] !== true) {
+                        unset($a_values[$key][$this->primary_index_name]);
                     }
                 }
             }
@@ -140,6 +153,11 @@ trait DbUtilityTraits
                     $this->error_message = 'Missing required keys: ' . json_encode($a_missing_values);
                     $error_code = ExceptionHelper::getCodeNumberModel('create_missing_values');
                     throw new ModelException($this->error_message, $error_code);
+                }
+            }
+            if (empty($a_parameters['allow_pin']) || $a_parameters['allow_pin'] !== true) {
+                if (isset($a_values[$this->primary_index_name])) {
+                    unset($a_values[$this->primary_index_name]);
                 }
             }
             $sql_set = $this->buildSqlInsert($a_values, $a_field_names);
@@ -382,6 +400,7 @@ SQL;
     }
 
     #### Utility Methods ####
+
     /**
      * Creates a string that is part of an INSERT sql statement.
      * It produces a string in "prepared" format, e.g. ":fred" for the values.
@@ -392,6 +411,8 @@ SQL;
      *                              but using the array of the actual values being inserted
      *                              ensures that only those values are inserted.
      * @param array $a_allowed_keys list array of key names that are allowed in the a_values array.
+     * @param bool  $allow_pin      Optional, defaults to false. If true the primary index may be set in the insert.
+     *                              Normally, the pin will be auto created so this is unusual.
      * @return string
      */
     protected function buildSqlInsert(array $a_values = [], array $a_allowed_keys = []):string

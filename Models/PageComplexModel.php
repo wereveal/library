@@ -249,7 +249,6 @@ class PageComplexModel
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
         try {
-            $this->o_pbm->deleteAllByPageId($a_page['page_id']);
             $this->o_pbm->createByPageId($new_id, $a_blocks);
         }
         catch (ModelException $e) {

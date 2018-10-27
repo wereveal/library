@@ -61,7 +61,7 @@ class ConstantsModel extends ModelAbstract
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
      */
-    public function create(array $a_values = []):array
+    public function create(array $a_values = [], $allow_pin = false):array
     {
         if (empty($a_values)) {
             $err_code = ExceptionHelper::getCodeNumberModel('create missing values');
@@ -84,7 +84,8 @@ class ConstantsModel extends ModelAbstract
         $a_params = [
             'a_required_keys' => $this->a_required_keys,
             'a_field_names'   => $this->a_db_fields,
-            'a_psql'          => $a_psql
+            'a_psql'          => $a_psql,
+            'allow_pin'       => $allow_pin
         ];
         try {
             return $this->genericCreate($a_values, $a_params);

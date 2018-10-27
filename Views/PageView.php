@@ -11,6 +11,7 @@ use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\FormHelper;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\BlocksModel;
+use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\PageBlocksMapModel;
 use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Helper\Arrays;
@@ -74,8 +75,6 @@ class PageView
      * @param int    $page_id
      * @return string
      * @todo see inline todos in method
-     * @todo determine if the ng_id needs to be a part of the page anymore,
-     *       don't know why I added that to the database.
      */
     public function renderForm($new_or_modify = 'new_page', $page_id = -1):string
     {
@@ -102,6 +101,24 @@ class PageView
         catch (ModelException $e) {
             $a_page_list = [];
         }
+        $o_ng = new NavgroupsModel($this->o_db);
+        $o_ng->setupElog($this->o_di);
+        try {
+            $a_ng_list = $o_ng->read(['ng_active' => 'true']);
+        }
+        catch (ModelException $e) {
+            $a_ng_list = [];
+        }
+        $a_ng_options = [[
+            'value' => '',
+            'label' => '-Select Navgroup-'
+        ]];
+        foreach ($a_ng_list as $a_ng) {
+            $a_ng_options[] = [
+                'value' => $a_ng['ng_id'],
+                'label' => $a_ng['ng_name']
+            ];
+        }
         $o_twig_prefix = new TwigPrefixModel($this->o_db);
         $o_twig_prefix->setupElog($this->o_di);
         try {
@@ -120,11 +137,6 @@ class PageView
                 'label' => $a_prefix['tp_prefix']
             ];
         }
-        /**
-         * @todo write javascript on change of prefix to change dirs and reset tpls
-         * @todo write javascript to change tpls based on dir selected
-         * @todo write AjaxController method to match above javascripts
-         */
         $a_prefix_select = [
             'id'          => 'tp_id',
             'label_class' => 'form-label bold',
@@ -150,13 +162,22 @@ class PageView
             'id'          => 'tpl_id',
             'label_class' => 'form-label bold',
             'label_text'  => 'Page Template',
-            'name'        => 'tpl_id',
+            'name'        => 'page[tpl_id]',
             'class'       => 'form-control',
             'other_stuph' => '',
             'options'     => [[
                 'value' => '',
                 'label' => '-Select the twig prefix first-'
             ]]
+        ];
+        $a_ng_select = [
+            'id'          => 'ng_id',
+            'label_class' => 'form-label bold',
+            'label_text'  => 'Navgroup',
+            'name'        => 'page[ng_id]',
+            'class'       => 'form-control',
+            'other_stuph' => '',
+            'options'     => $a_ng_options
         ];
         $o_blocks = new BlocksModel($this->o_db);
         $o_blocks->setupElog($this->o_di);
@@ -197,8 +218,17 @@ class PageView
             'id'          => 'page[url_id]',
             'name'        => 'page[url_id]',
             'class'       => 'form-control',
+            'label_text'  => 'Page Url: ',
+            'label_class' => 'form-label bold',
             'other_stuff' => '',
             'options'     => $a_options
+        ];
+        $a_immutable_cbx = [
+            'id'      => 'page[page_immutable]',
+            'name'    => 'page[page_immutable]',
+            'label'   => 'Immutable',
+            'value'   => 'false',
+            'checked' => ''
         ];
         $a_page = [
             'page_id'          => '',
@@ -255,6 +285,15 @@ class PageView
                     'label'       => $label,
                     'other_stuph' => ' selected'
                 ];
+                foreach ($a_ng_select['options'] as $key => $a_option) {
+                    if ($a_option['value'] === $a_page['ng_id']) {
+                        $a_ng_select['options'][$key]['other_stuph'] = ' selected';
+                    }
+                }
+                if ($a_page['page_immutable'] === 'true') {
+                    $a_immutable_cbx['value'] = 'true';
+                    $a_immutable_cbx['checked'] = ' checked';
+                }
                 $a_twig_values['url_select']['options'][0]['other_stuph'] = ''; // this should be the default --Select--
                 $o_tpl = new TwigTemplatesModel($this->o_db);
                 $o_tpl->setupElog($this->o_di);
@@ -287,10 +326,12 @@ class PageView
                 $a_twig_values['a_message'] = $a_message;
             }
         }
+        $a_twig_values['ng_select']          = $a_ng_select;
         $a_twig_values['twig_prefix_select'] = $a_prefix_select;
         $a_twig_values['twig_dir_select']    = $a_dir_select;
         $a_twig_values['twig_tpl_select']    = $a_tpl_select;
-        $a_twig_values['a_blocks'] = $a_block_list;
+        $a_twig_values['immutable_cbx']      = $a_immutable_cbx;
+        $a_twig_values['a_blocks']           = $a_block_list;
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }

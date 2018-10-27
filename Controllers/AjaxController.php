@@ -19,9 +19,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Does Ajax Calls used by the Config manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2018-04-10 11:14:16
+ * @version v1.1.0
+ * @date    2018-09-29 13:53:43
  * @change_log
+ * - v1.1.0 - Additional methods for the Page Manger            - 2018-09-29 wer
  * - v1.0.0 - Initial version                                   - 2018-04-10 wer
  */
 class AjaxController

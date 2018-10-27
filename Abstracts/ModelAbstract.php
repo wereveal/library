@@ -15,9 +15,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Abstract which gives a basic setup for a model class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2018-06-06 12:35:38
+ * @version v1.2.0
+ * @date    2018-10-24 16:27:01
  * @change_log
+ * - v1.2.0         - Added allow_pin to create as required by interface        - 2018-10-24 wer
  * - v1.1.0         - Changed delete to verify the record is not immutable      - 2018-06-15 wer
  * - v1.0.0         - Initial Production version                                - 2018-06-06 wer
  * - v1.0.0-alpha.0 - Initial version                                           - 2017-07-15 wer
@@ -29,11 +30,16 @@ abstract class ModelAbstract implements ModelInterface
     /**
      * Create a record using the values provided.
      *
-     * @param array $a_values required
+     * @param array $a_values  Required
+     * @param bool  $allow_pin Optional, defaults to false. Ordinarily
+     *                         the primary index is set automagically but in
+     *                         some cases may be manually set by setting this
+     *                         to true and specifying the value. Otherwise,
+     *                         strips out any values attempted to be set.
      * @return array The ids of new records.
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function create(array $a_values = []):array
+    public function create(array $a_values = [], $allow_pin = false):array
     {
         $a_psql = [
             'table_name'  => $this->db_table,
@@ -42,7 +48,8 @@ abstract class ModelAbstract implements ModelInterface
         $a_params = [
             'a_required_keys' => $this->a_required_keys,
             'a_field_names'   => $this->a_db_fields,
-            'a_psql'          => $a_psql
+            'a_psql'          => $a_psql,
+            'allow_pin'       => $allow_pin
         ];
         try {
             return $this->genericCreate($a_values, $a_params);

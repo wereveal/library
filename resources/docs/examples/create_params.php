@@ -13,5 +13,6 @@ $a_create_params = [
         'column_name' => $this->primary_index_name
     ],
     'table_name'      => 'string',
-    'column_name'     => 'string'
+    'column_name'     => 'string',
+    'allow_pin'       => false // if true it allows the create to specify the primary index value
 ];

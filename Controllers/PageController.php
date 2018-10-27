@@ -158,7 +158,7 @@ class PageController implements ManagerControllerInterface
         $a_page['a_blocks'] = [];
         foreach ($this->a_post['blocks'] as $block_id => $value) {
             if ($value === 'true') {
-                $a_page['a_blocks'] = $block_id;
+                $a_page['a_blocks'][] = $block_id;
             }
         }
         $this->logIt('Posted Page: ' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);

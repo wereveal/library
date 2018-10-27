@@ -92,6 +92,11 @@ function switchPageDirsForPrefix(selectedPrefix) {
         var resp = JSON.parse(jsonStr);
         $(dirSelectName).empty();
         var dirSelect = $(dirSelectName);
+        dirSelect
+            .append($("<option></option>")
+                .attr("value", "")
+                .text("-Select Directory-")
+            );
         $(resp).each(function(k, v) {
             dirSelect
                 .append($("<option></option>")
@@ -115,6 +120,10 @@ function switchPageDirsForPrefix(selectedPrefix) {
                     jsonStrTwo = jsonStrTwo.replace('<pre></pre>','');
                 }
                 var respTwo = JSON.parse(jsonStrTwo);
+                tplSelect.append($("<option></option>")
+                    .attr("value", "")
+                    .text("-Select Template-")
+                );
                 $(respTwo).each(function(k2, v2) {
                     tplSelect.append($("<option></option>")
                         .attr("value", v2.tpl_id)
@@ -137,6 +146,11 @@ function switchTplForDir(selectedDir) {
         var resp = JSON.parse(jsonStr);
         $(replaceIn).empty();
         var tplSelect = $(replaceIn);
+        tplSelect
+            .append($("<option></option>")
+                .attr("value", "")
+                .text("-Select Template-")
+            );
         $(resp).each(function(k, v) {
             tplSelect
                 .append($("<option></option>")
