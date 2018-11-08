@@ -1,4 +1,10 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% block vendorStylesheets %}
+    {{ parent() }}
+    {% if which_page is not same as('list') %}
+        <link rel="stylesheet" type="text/css" href="{{ vendor_dir }}/jquery-datetimepicker/jquery.datetimepicker.css">
+    {% endif %}
+{% endblock %}
 {% block body %}
     {% if which_page is same as('list') %}
         {% include '@' ~ lib_prefix ~ 'snippets/page_list.twig' %}
@@ -8,5 +14,9 @@
 {% endblock %}
 {% block bottomJs %}
     {{ parent() }}
+    {% if which_page is not same as('list') %}
+    <script src="{{ vendor_dir }}/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js"></script>
     <script src="{{ js_dir }}/config.js"></script>
+    {% include '@' ~ lib_prefix ~ 'snippets/form_validation_js.twig' %}
+    {% endif %}
 {% endblock %}

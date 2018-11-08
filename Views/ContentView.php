@@ -14,6 +14,7 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Models\BlocksModel;
 use Ritc\Library\Models\ContentComplexModel;
+use Ritc\Library\Models\PageBlocksMapModel;
 use Ritc\Library\Models\PageModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
@@ -79,8 +80,26 @@ class ContentView implements ViewInterface
           $this->logIt($log_message, LOG_OFF, __METHOD__);
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['a_content_list'] = $a_records;
-        $a_twig_values['is_list'] = true;
+        $a_twig_values['content_type'] = 'list';
         $tpl = $this->createTplString($a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
+    }
+
+    /**
+     * Returns a list of all versions of content for a page/block.
+     *
+     * @param int $pbm_id Required
+     * @return string
+     */
+    public function renderAllVersions($pbm_id = -1): string
+    {
+        if ($pbm_id < 1) {
+            return $this->render(ViewHelper::errorMessage('Missing required value for the page/block combo.'));
+        }
+        $a_message = [];
+        $a_twig_values                 = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['content_type'] = 'versions';
+        $tpl                           = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
@@ -100,17 +119,61 @@ class ContentView implements ViewInterface
             'c_version'       => '',
             'c_featured'      => 'false',
             'c_shared'        => 'false',
-            'page_id'         => '',
-            'page_select'     => [],
-            'b_id'            => '',
-            'blocks_select'   => [],
+            'c_type_select'   => [],
+            'pbm_id'          => '',
+            'pbm_select'      => [],
             'featured_cbx'    => [],
             'shared_cbx'      => []
         ];
+        $a_c_type_options = [];
+        $a_type_options = [
+            'text' => 'Text',
+            'html' => 'HTML',
+            'md'   => 'Markdown',
+            'mde'  => 'Markdown Extra',
+            'xml'  => 'XML',
+            'raw'  => 'Raw'
+        ];
+        foreach ($a_type_options as $value => $label) {
+            $a_c_type_options[] = [
+                'value'       => $value,
+                'other_stuph' => $value === 'md' ? ' selected' : '',
+                'label'       => $label
+            ];
+        }
         $a_message       = [];
-        $a_page_options  = [];
-        $a_block_options = [];
-        if ($action !== 'new') {
+        if ($action === 'new') {
+            $o_pbm = new PageBlocksMapModel($this->o_db);
+            $o_pbm->setupElog($this->o_di);
+            $a_pbm_options = [[
+                'value'       => '',
+                'other_stuph' => ' selected',
+                'label'       => '-Select Page/Block for Content-'
+            ]];
+            try {
+                $a_pbms = $o_pbm->readPbmWithoutContent();
+                foreach ($a_pbms as $a_pbm) {
+                    $a_pbm_options[] = [
+                        'value'       => $a_pbm['pbm_id'],
+                        'other_stuph' => '',
+                        'label'       => $a_pbm['page_title'] . '/' . $a_pbm['b_name']
+                    ];
+                }
+            }
+            catch (ModelException $e) {
+                $a_message = ViewHelper::errorMessage('Unable to determine the pages that exist.');
+            }
+            $a_pbm_select = [
+                'id'          => 'content[pbm_id]',
+                'name'        => 'content[pbm_id]',
+                'class'       => 'form-control colorful',
+                'other_stuph' => '',
+                'label_class' => 'form-label bold',
+                'label_text'  => 'Available Page/Block Combinations without Content',
+                'options'     => $a_pbm_options
+            ];
+        }
+        else {
             $a_post     = $this->o_router->getPost();
             $content_id = $a_post['c_id'];
             try {
@@ -119,84 +182,48 @@ class ContentView implements ViewInterface
             catch (ModelException $e) {
                 $a_message = ViewHelper::errorMessage('Unable to read the details for the content record.');
             }
-        }
-        $o_page   = new PageModel($this->o_db);
-        $o_blocks = new BlocksModel($this->o_db);
-        $o_page->setupElog($this->o_di);
-        $o_blocks->setupElog($this->o_di);
-        try {
-            $a_pages   = $o_page->read();
-            $pages_pin = $o_page->getPrimaryIndexName();
-            foreach ($a_pages as $a_page) {
-                $other_stuph      = $a_record[$pages_pin] === $a_page[$pages_pin] ? ' selected' : '';
-                $a_page_options[] = [
-                    'value'       => $a_page[$pages_pin],
-                    'other_stuph' => $other_stuph,
-                    'label'       => $a_page['page_title']
-                ];
-            }
-            try {
-                $a_blocks   = $o_blocks->read();
-                $blocks_pin = $o_blocks->getPrimaryIndexName();
-                foreach ($a_blocks as $a_block) {
-                    $other_stuph       = $a_record[$blocks_pin] === $a_block[$blocks_pin] ? ' selected' : '';
-                    $a_block_options[] = [
-                        'value'       => $a_block[$blocks_pin],
-                        'other_stuph' => $other_stuph,
-                        'label'       => $a_block['b_name']
-                    ];
+            foreach ($a_c_type_options as $key => $a_option) {
+                $a_c_type_options[$key]['other_stuph'] = '';
+                if ($a_record['c_type'] === $a_option['value']) {
+                    $a_c_type_options[$key]['other_stuph'] = ' selected';
                 }
             }
-            catch (ModelException $e) {
-                $a_message = ViewHelper::errorMessage('Unable to determine the blocks that exist.');
-            }
+            $a_pbm_select = [];
         }
-        catch (ModelException $e) {
-            $a_message = ViewHelper::errorMessage('Unable to determine the pages that exist.');
-        }
-        $a_pages                    = [
-            'id'          => 'content[page_id]',
-            'name'        => 'content[page_id]',
-            'class'       => 'form-control colorful',
-            'other_stuph' => '',
-            'label_class' => 'form-label bold',
-            'label_text'  => 'Page',
-            'options'     => $a_page_options
-        ];
-        $a_blocks                   = [
-            'id'          => 'content[b_id]',
-            'name'        => 'content[b_id]',
-            'class'       => 'form-control colorful',
-            'other_stuph' => '',
-            'label_class' => 'form-label bold',
-            'label_text'  => 'Block',
-            'options'     => $a_block_options
-        ];
-        $a_featured                 = [
+        $a_featured = [
             'id'      => 'content[c_featured]',
             'name'    => 'content[c_featured]',
             'label'   => 'Featured',
             'value'   => 'true',
             'checked' => $a_record['c_featured'] === 'true' ? ' checked' : ''
         ];
-        $a_shared                   = [
+        $a_shared = [
             'id'      => 'content[c_shared]',
             'name'    => 'content[c_shared]',
             'label'   => 'Shared',
             'value'   => 'true',
             'checked' => $a_record['c_shared'] === 'true' ? ' checked' : ''
         ];
-        $a_record['page_select']    = $a_pages;
-        $a_record['blocks_select']  = $a_blocks;
-        $a_record['featured_cbx']   = $a_featured;
-        $a_record['shared_cbx']     = $a_shared;
-        $a_twig_values              = $this->createDefaultTwigValues($a_message);
-        $a_twig_values['a_content'] = $a_record;
-        $a_twig_values['is_list']   = false;
-        $tpl                        = $this->createTplString($a_twig_values);
-        $log_message = 'twig values ' . var_export($a_twig_values, true);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-        $this->logIt('TPL: ' . $tpl, LOG_ON, $meth . __LINE__);
+        $a_c_type_select = [
+            'id'          => 'content[c_type]',
+            'name'        => 'content[c_type]',
+            'class'       => 'form-control colorful',
+            'other_stuph' => '',
+            'label_class' => 'form-label bold',
+            'label_text'  => 'Content Type',
+            'options'     => $a_c_type_options
+        ];
+        $a_record['pbm_select']        = $a_pbm_select;
+        $a_record['c_type_select']     = $a_c_type_select;
+        $a_record['featured_cbx']      = $a_featured;
+        $a_record['shared_cbx']        = $a_shared;
+        $a_twig_values                 = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['a_content']    = $a_record;
+        $a_twig_values['content_type'] = 'details';
+        $tpl                           = $this->createTplString($a_twig_values);
+          $log_message = 'twig values ' . var_export($a_twig_values, true);
+          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+          $this->logIt('TPL: ' . $tpl, LOG_ON, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 }

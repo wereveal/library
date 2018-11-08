@@ -8,8 +8,12 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Exceptions\ControllerException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Exceptions\ViewException;
+use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Helper\DatesTimes;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
+use Ritc\Library\Models\BlocksModel;
 use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
@@ -121,27 +125,81 @@ class PageController implements ManagerControllerInterface
     public function save():string
     {
         $meth = __METHOD__ . '.';
-        $a_page['a_page']   = $this->a_post['page'];
-        $a_page['a_blocks'] = [];
-        foreach ($this->a_post['blocks'] as $block_id => $value) {
+        $a_message = [];
+        $a_required_fields = [
+            'url_id',
+            'page_title',
+            'page_base_url',
+            'page_type',
+            'page_lang',
+            'page_charset',
+            'tpl_id'
+        ];
+        $a_page = $this->a_post['page'];
+        $a_missing_keys = Arrays::findMissingKeys($a_page, $a_required_fields);
+        if (!empty($a_missing_keys)) {
+            $message = 'Missing Values for the Page: ';
+            foreach ($a_missing_keys as $the_key) {
+                $message .= $the_key . ', ';
+            }
+            $message = Strings::removeLastCharacters(trim($message), ',');
+            $a_msg_values = [
+                'message' => $message,
+                'type'    => 'error'
+            ];
+            $a_message = ViewHelper::fullMessage($a_msg_values);
+        }
+        if (empty($this->a_post['blocks']) && empty($a_message)) {
+            $o_blocks = new BlocksModel($this->o_db);
+            $o_blocks->setupElog($this->o_di);
+            try {
+                $a_block_results = $o_blocks->read(['b_name' => 'body'], ['a_fields' => ['b_id']]);
+                $a_blocks = [$a_block_results[0]['b_id'] => 'true'];
+            }
+            catch (ModelException $e) {
+                $a_msg_values = [
+                    'message' => 'A problem with the blocks occurred. Please try again.',
+                    'type'    => 'error'
+                ];
+                $a_message = ViewHelper::fullMessage($a_msg_values);
+            }
+        }
+        else {
+            $a_blocks = $this->a_post['blocks'];
+        }
+        if (!empty($a_page['page_up'])) {
+            $a_page['page_up'] = DatesTimes::convertDateTimeWith('Y-m-d H:i:s', $a_page['page_up']);
+        }
+        if (!empty($a_page['page_down'])) {
+            $a_page['page_down'] = DatesTimes::convertDateTimeWith('Y-m-d H:i:s', $a_page['page_down']);
+        }
+        if (empty($a_page['created_on'])) {
+            $a_page['created_on'] = date('Y-m-d H:i:s');
+        }
+        $a_page['updated_on'] = date('Y-m-d H:i:s');
+        $a_page['a_page']     = $a_page;
+        $a_page['a_blocks']   = [];
+        foreach ($a_blocks as $block_id => $value) {
             if ($value === 'true') {
                 $a_page['a_blocks'][] = $block_id;
             }
         }
-        $this->logIt('Post Values' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
-        try {
-            $this->o_model->savePageValues($a_page);
-            if ($this->use_cache) {
-                $this->o_cache->clearTag('page');
+        $this->logIt('Page Values' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
+        if (empty($a_message)) {
+            try {
+                $this->o_model->savePageValues($a_page);
+                if ($this->use_cache) {
+                    $this->o_cache->clearTag('page');
+                }
+                $a_message = ViewHelper::successMessage();
             }
-            $a_message = ViewHelper::successMessage();
-        }
-        catch (ModelException $e) {
-            $a_msg_values = [
-                'message' => 'Error: ' . $e->getMessage(),
-                'type'    => 'error'
-            ];
-            $a_message = ViewHelper::fullMessage($a_msg_values);
+            catch (ModelException $e) {
+                $a_msg_values = [
+                    'message' => 'Error: ' . $e->getMessage(),
+                    'type'    => 'error'
+                ];
+                $a_message = ViewHelper::fullMessage($a_msg_values);
+            }
         }
         return $this->o_view->renderList($a_message);
     }
@@ -194,7 +252,7 @@ class PageController implements ManagerControllerInterface
             'submit_value'  => 'delete',
             'form_action'   => $this->a_router_parts['request_uri'],
             'cancel_action' => $this->a_router_parts['request_uri'],
-            'btn_value'     => 'Delete',
+            'btn_value'     => $a_page['page_title'],
             'hidden_name'   => 'page_id',
             'hidden_value'  => $a_page['page_id']
         ];

@@ -33,6 +33,8 @@ class ContentComplexModel
     private $o_content;
     /** @var PageModel $o_page */
     private $o_page;
+    /** @var PageBlocksMapModel  */
+    private $o_pbm;
 
     /**
      * ContentComplexModel constructor.
@@ -48,10 +50,11 @@ class ContentComplexModel
             $error_code = ExceptionHelper::getCodeNumber('instance');
             throw new ModelException($message, $error_code);
         }
-        $this->a_object_names = ['o_blocks', 'o_content', 'o_page'];
+        $this->a_object_names = ['o_blocks', 'o_content', 'o_page', 'o_pbm'];
         $this->o_blocks       = new BlocksModel($o_db);
         $this->o_content      = new ContentModel($o_db);
         $this->o_page         = new PageModel($o_db);
+        $this->o_pbm          = new PageBlocksMapModel($o_db);
         $this->setupElog($o_di);
         $this->setupProperties($o_db);
         $this->buildBasicSelectSql();
@@ -100,68 +103,82 @@ class ContentComplexModel
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
-        $delete_sql = "
-            DELETE FROM {$lib_prefix}content
-            WHERE c_id = :c_id
-        ";
-        try {
-            $this->o_db->delete($delete_sql, $a_content_ids, false);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        if (count($a_content_ids) > 1) {
+            $delete_sql = "
+                DELETE FROM {$lib_prefix}content
+                WHERE c_id = :c_id
+            ";
+            try {
+                $this->o_db->delete($delete_sql, $a_content_ids, false);
+            }
+            catch (ModelException $e) {
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
         }
         return true;
     }
 
     /**
-     * Reads all versions of content for a particular page and block that are current.
+     * Reads content for a particular page and optional block.
      *
-     * @param int    $page_id Required
-     * @param string $block   Optional, defaults to '' returning all blocks for a page.
-     * @param string $current Optional, defaults to true returning only current content.
+     * @param array $a_params One of two values must be specified, page_id or pbm_id.
+     *                        block_id and current are optional. Current defaults to showing all versions if empty.
      * @return array          Records from the database table.
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function readAllByPage($page_id = -1, $block = '', $current = 'true'):array
+    public function readAllByPage(array $a_params = []):array
     {
-        $meth = __METHOD__ . '.';
-        if ($page_id < 1) {
-            $message = 'Missing the required page id.';
+        $a_search_for = [];
+        $block_extra  = '';
+        $block_id     = '';
+        $page_extra   = '';
+        $page_id      = '';
+        $pbm_id       = '';
+        $pbm_extra    = '';
+        $where        = '';
+        if (!empty($a_params['pbm_id'])) {
+            $pbm_id = $a_params['pbm_id'];
+        }
+        elseif (!empty($a_params['page_id'])) {
+            $page_id = $a_params['page_id'];
+            if (!empty($a_params['block_id'])) {
+                $block_id = $a_params['block_id'];
+            }
+        }
+        else {
+            $message = 'Missing a required value.';
             $error_code = ExceptionHelper::getCodeNumberModel('missing value');
             throw new ModelException($message, $error_code);
         }
-        $sql_block = '';
-        $where = '';
-        $a_search_for = [':page_id' => $page_id];
-        $page_current = ' AND p.page_id = :page_id';
-        if (!empty($block)) {
-            $a_search_for[':b_name'] = $block;
-            $sql_block = ' 
+        if (!empty($pbm_id)) {
+            $pbm_extra = ' AND pbm.pbm_id = :pbm_id';
+        }
+        if (!empty($page_id)) {
+            $a_search_for = [':page_id' => $page_id];
+            $page_extra = ' AND p.page_id = :page_id';
+        }
+        if (!empty($block_id)) {
+            $a_search_for[':b_name'] = $block_id;
+            $block_extra = ' 
                 AND b.b_name = :b_name';
         }
-        if ($current === 'true') {
-            $a_search_for[':c_current'] = $current;
+        if (!empty($a_params['current'])) {
+            $a_search_for[':c_current'] = $a_params['current'];
             $where = ' 
                 WHERE c.c_current = :c_current';
         }
         $sql = str_replace(
             ['{{pbm_extra}}', '{{blocks_extra}}', '{{page_extra}}'],
-            ['', $sql_block, $page_current],
+            [$pbm_extra, $block_extra, $page_extra],
             $this->select_sql
         );
         $sql .= $where;
-          $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
-          $log_message = 'a search for  ' . var_export($a_search_for, true);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         try {
             $a_results = $this->o_db->search($sql, $a_search_for);
         }
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
-        $log_message = 'results ' . var_export($a_results, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $a_results;
     }
 
@@ -256,19 +273,19 @@ class ContentComplexModel
     /**
      * Reads the current version of content for a page.
      *
-     * @param int    $page_id Required
-     * @param string $block   Optional, returns all blocks if empty.
+     * @param array $a_params
      * @return array Record(s).
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function readCurrent($page_id = -1, $block = ''):array
+    public function readCurrent(array $a_params = []):array
     {
-        if ($page_id < 1) {
-            $message    = 'Missing the required page id.';
-            $error_code = ExceptionHelper::getCodeNumberModel('missing value');
-            throw new ModelException($message, $error_code);
+        $a_params['current'] = 'true';
+        try {
+            return $this->readAllByPage($a_params);
         }
-        return $this->readAllByPage($page_id, $block, 'true');
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
@@ -292,7 +309,7 @@ class ContentComplexModel
         $this->logIt('SQL: ' . $sql, LOG_ON, $meth . __LINE__);
         $log_message = 'Search For:  ' . var_export($a_search_for, true);
         $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-        
+
         try {
             $results = $this->o_db->search($sql, $a_search_for);
         }

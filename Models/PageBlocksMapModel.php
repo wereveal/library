@@ -89,6 +89,57 @@ class PageBlocksMapModel extends ModelAbstract
     }
 
     /**
+     * Returns the values for a specific page block map record.
+     *
+     * @param int $pbm_id
+     * @return array
+     * @throws ModelException
+     */
+    public function readByPbmId($pbm_id = -1):array
+    {
+        if ($pbm_id === -1) {
+            $err_num = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException('Missing required values', $err_num);
+        }
+        $a_values = ['pbm_id' => $pbm_id];
+        try {
+            $a_results = $this->read($a_values);
+            if (!empty($a_results[0])) {
+                return $a_results[0];
+            }
+            $err_code = ExceptionHelper::getCodeNumberModel('read no records');
+            throw new ModelException('No Records Available', $err_code);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Returns the values for the page/block groups which have no content assigned to it.
+     *
+     * @return array
+     * @throws ModelException
+     */
+    public function readPbmWithoutContent():array
+    {
+        $prefix = $this->lib_prefix;
+        $sql = "SELECT pbm.*, p.*, b.*
+            FROM {$prefix}page_blocks_map as pbm
+            JOIN {$prefix}page as p 
+              ON pbm.pbm_page_id = p.page_id
+            JOIN {$prefix}blocks as b
+              ON pbm.pbm_block_id = b.b_id
+            WHERE pbm.pbm_id NOT IN (SELECT c_pbm_id FROM {$prefix}content)";
+        try {
+            return $this->o_db->search($sql);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
      * Creates multiple records for a page id.
      *
      * @param int   $page_id  Required

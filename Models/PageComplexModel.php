@@ -30,7 +30,7 @@ class PageComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var \Ritc\Library\Models\ContentModel  */
+    /** @var ContentComplexModel  */
     private $o_content;
     /** @var \Ritc\Library\Models\PageModel  */
     private $o_page;
@@ -177,7 +177,7 @@ class PageComplexModel
         }
         try {
             $a_content = [];
-            $a_content_results = $this->o_content->readCurrent($a_record['page_id']);
+            $a_content_results = $this->o_content->readCurrent(['page_id' => $a_record['page_id']]);
             $log_message = 'Content ' . var_export($a_content_results, true);
             $this->logIt($log_message, LOG_OFF, __METHOD__);
 

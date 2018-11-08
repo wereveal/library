@@ -1,3 +1,23 @@
+$('#page_up').datetimepicker({
+    format:'Y-m-d H:i',
+    lazyInit: true,
+    step: 15,
+    defaultDate: new Date(),
+    defaultTime: '00:00',
+    formatTime: 'H:i',
+    mask: true
+});
+
+$('#page_down').datetimepicker({
+    format:'Y-m-d H:i',
+    lazyInit: true,
+    step: 15,
+    defaultDate: '9999-12-31',
+    defaultTime: '23:59',
+    formatTime: 'H:i',
+    mask: true
+});
+
 function changeTwigDirs(selectedPrefix) {
     var goTo = location.origin+'/manager/config/ajax/twig_dirs/';
     var howLong = selectedPrefix.id.length - 1;
@@ -161,3 +181,4 @@ function switchTplForDir(selectedDir) {
     });
 
 }
+

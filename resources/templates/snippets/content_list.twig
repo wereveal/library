@@ -12,7 +12,7 @@
                 &nbsp;
            </div>
        </div>
-{% set row_class = 'odd' %}
+{% set row_class = 'row-light' %}
        <div class="row {{ row_class }}"><div class="col-md-2 offset-md-10">
             <form action="{{ public_dir }}/manager/config/content/" method="post" class="form">
                 <button type="submit" name="submit" value="new_content" class="btn btn-primary btn-sm">New Content</button>
@@ -20,7 +20,7 @@
             </form>
        </div></div>
 {% for row in a_content_list %}
-{% set row_class = row_class == 'odd' ? 'even' : 'odd' %}
+{% set row_class = row_class == 'row-light' ? 'row-dark' : 'row-light' %}
         <form action="{{ public_dir }}/manager/config/content/" method="post" class="form">
         <div class="row {{ row_class }}">
             <div class="col-12 col-md-4"><span class="bold d-md-none">Page: </span>{{ row.page_title }}</div>

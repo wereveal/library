@@ -13,9 +13,10 @@ namespace Ritc\Library\Helper;
  * Renamed and modified version of old class Output which was the class name before v5.0.0.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 6.8.0
- * @date    2018-06-13 12:36:35
+ * @version 6.9.0
+ * @date    2018-11-06 14:56:21
  * @change_log
+ * - v6.9.0 - added new method to strip characters from the end of a string     - 2018-11-06 wer
  * - v6.8.0 - added new methods makeGoodUrl, makeValidUrlScheme                 - 2018-06-13 wer
  * - v6.7.0 - changed makeInternetUsable, backwards compatible                  - 2018-06-08 wer
  * - v6.6.0 - added new method to convert url to cache compatible string        - 2018-05-15 wer
@@ -373,7 +374,7 @@ class Strings
      * @param string $string
      * @return string
      */
-    public static function makeSnakeCase($string = '')
+    public static function makeSnakeCase($string = ''): string
     {
         $string = self::removeTags($string);
         $string = str_replace(' ', '_', strtolower(trim($string)));
@@ -423,6 +424,7 @@ class Strings
 
     /**
      * Removes the image tag from the string.
+     *
      * @param string $string optional, defaults to empty
      * @return string
      */
@@ -435,6 +437,18 @@ class Strings
         ];
         $replace = ['', ''];
         return preg_replace($search, $replace, $string);
+    }
+
+    /**
+     * Removes the last character(s) of the string as specified.
+     *
+     * @param string $string
+     * @param string $remove_this
+     * @return bool|string
+     */
+    public static function removeLastCharacters($string = '', $remove_this = '')
+    {
+        return substr($string, 0, strrpos($string, $remove_this));
     }
 
     /**

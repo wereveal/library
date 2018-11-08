@@ -5,10 +5,12 @@
 {% endblock %}
 {% block body %}
     <div class="container">
-    {% if is_list %}
-        {% include '@' ~ lib_prefix ~ 'snippets/content_list.twig' %}
-    {% else %}
+    {% if content_type == 'versions' %}
+        {% include '@' ~ lib_prefix ~ 'snippets/content_versions.twig' %}
+    {% elseif content_type == 'details' %}
         {% include '@' ~ lib_prefix ~ 'snippets/content_details.twig' %}
+    {% else %}
+        {% include '@' ~ lib_prefix ~ 'snippets/content_list.twig' %}
     {% endif %}
     </div>
     {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}

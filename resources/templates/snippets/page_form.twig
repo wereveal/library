@@ -1,6 +1,6 @@
     <div class="container">
-        <form action="{{ public_dir }}/manager/config/pages/" method="post" id="page-form">
-        <div class="row alt-row form-group form-group-row">
+    <form action="{{ public_dir }}/manager/config/pages/" method="post" id="page-form" class="needs-validation" novalidate>
+        <div class="row row-dark form-group form-group-row">
         {% if adm_lvl < auth_lvl.admin and a_page.page_immutable is same as('true') %}
             <label for="url_text" class="form-label bold">Page URL: </label>
             <input type="text" id="url_text" name="url_text" value="{{ a_page.url_text }}" class="form-control" disabled>
@@ -8,41 +8,32 @@
         {% else %}
             {% set select = url_select %}
             {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select %}
+            <div class="invalid-feedback">
+                Please specify a url for the page.
+            </div>
         {% endif %}
         </div>
-        <div class="row normal-row form-group form-group-row">
-            <label for="page_title" class="form-label bold">Title: </label>
-            <input type="text" id="page_title" name="page[page_title]" class="form-control normal-row colorful" maxlength="64" value="{{ a_page.page_title }}">
+        <div class="row row-light border-left border-right form-group form-group-row">
+            <label for="page_title" class="form-label bold">Title: <span class="text-danger">*</span></label>
+            <input type="text" id="page_title" name="page[page_title]" class="form-control colorful" maxlength="64" value="{{ a_page.page_title }}" required>
+            <div class="invalid-feedback">
+                Please specify a title for the page.
+            </div>
         </div>
-        <div class="row alt-row form-group form-group-row">
+        <div class="row row-dark form-group form-group-row">
             <label for="page_description" class="form-label bold">Meta Description: </label>
-            <input type="text" id="page_description" name="page[page_description]" class="form-control  alt-row colorful" maxlength="64" value="{{ a_page.page_description }}">
+            <input type="text" id="page_description" name="page[page_description]" class="form-control colorful" maxlength="64" value="{{ a_page.page_description }}">
         </div>
-        <div class="row normal-row form-group form-group-row">
-            <label for="page_base_url" class="form-label bold">Base URL: </label>
-            <input type="text" id="page_base_url" name="page[page_base_url]" class="form-control normal-row colorful" maxlength="64" value="{{ a_page.page_base_url }}" />
+        <div class="row row-light border-left border-right form-group form-group-row">
+            <label for="page_up" class="form-label bold">Publish On:</label>
+            <input type="text" id="page_up" name="page[page_up]" class="form-control colorful" value="{{ a_page.page_up }}">
         </div>
-        <div class="row alt-row form-group form-group-row">
-            <label for="page_type" class="form-label bold">MIME Type: </label>
-            <input type="text" id="page_type" name="page[page_type]" class="form-control  alt-row colorful" maxlength="250" value="{{ a_page.page_type }}" />
+        <div class="row row-dark form-group form-group-row">
+            <label for="page_up" class="form-label bold">Unpublish On:</label>
+            <input type="text" id="page_down" name="page[page_down]" class="form-control colorful" value="{{ a_page.page_down }}">
         </div>
-        <div class="row normal-row form-group form-group-row">
-            <label for="page_lang" class="form-label bold">Language: </label>
-            <input type="text" id="page_lang" name="page[page_lang]" class="form-control normal-row colorful" maxlength="4" value="{{ a_page.page_lang }}" />
-        </div>
-        <div class="row alt-row form-group form-group-row">
-            <label for="page_charset" class="form-label bold">Character Set: </label>
-            <input type="text" id="page_charset" name="page[page_charset]" class="form-control alt-row colorful" maxlength="20" value="{{ a_page.page_charset }}" />
-        </div>
-        <div class="row normal-row form-group form-group-row">
-        {% if adm_lvl <= auth_level.superadmin and immutable_cbx.value == 'true' %}
-            <label for="page_immutable" class="form-label bold">Immutable: </label>
-            {{ immutable_cbx.value | capitalize }}<input type="hidden" name="page[page_immutable]" checked="checked" id="page_immutable" value="{{ immutable_cbx.value }}"/>
-        {% else %}
-            {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with immutable_cbx %}
-        {% endif %}
-        </div>
-        <div class="row alt-row form-group form-group-row">
+        <h4 class="mt-6 font-small-caps-bold">Template Data</h4>
+        <div class="row row-dark form-group form-group-row">
             <div class="col-12 col-md-4">
                 {% set select = twig_prefix_select %}
                 {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select %}
@@ -54,27 +45,69 @@
             <div class="col-12 col-md-4">
                 {% set select = twig_tpl_select %}
                 {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select %}
+                <div class="invalid-feedback">
+                    Please specify a template for the page.
+                </div>
             </div>
         </div>
-        <div class="row normal-row form-group form-group-row">
+        <div class="row row-light border-left border-right form-group form-group-row">
             <div class="col-12">
-                <span class="bold">Blocks (should be on template)</span>
-                <div class="row normal-row">
-            {% for block in a_blocks %}
-                {% if loop.index0 % 4 == 0 %}
+                <span class="bold">Blocks (should be on template) <span class="text-danger">*</span></span>
+                <div class="row {{ rowClass }}">
+                    {% for block in a_blocks %}
+                    {% if loop.index0 % 4 == 0 %}
+                        {% if rowClass == 'row-medium' %}
+                            {% set rowClass = 'row-med-light' %}
+                        {% else %}
+                            {% set rowClass = 'row-medium' %}
+                        {% endif %}
                 </div>
-                <div class="row normal-row">
-                {% endif %}
+                <div class="row {{ rowClass }}">
+                    {% endif %}
                     <div class="col-12 col-md-3">
                         {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with block %}
                     </div>
-            {% endfor %}
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        <div class="row alt-row form-group form-group-row">
+        <div class="row row-dark form-group form-group-row">
             {% set select = ng_select %}
             {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select %}
+            <div class="invalid-feedback">
+                Please specify a navigation group for the page.
+            </div>
+        </div>
+        <a data-toggle="collapse" aria-expanded="false" aria-controls="metadataCollapse" role="button" href="#metadataCollapse"><h4 class="mt-6 font-small-caps-bold">Other Metadata - <small>Defaults are normally OK</small> <span class="far fa-arrow-down"></span></h4></a>
+        <div class="collapse" id="metadataCollapse">
+        <div class="row row-dark form-group form-group-row">
+            <label for="page_base_url" class="form-label bold">Base URL: <span class="text-danger">*</span></label>
+            <input type="text" id="page_base_url" name="page[page_base_url]" class="form-control colorful" maxlength="64" value="{{ a_page.page_base_url }}" required />
+            <div class="invalid-feedback">
+                A base URL must be specified. The default / should work.
+            </div>
+        </div>
+        <div class="row row-light border-left border-right form-group form-group-row">
+            <label for="page_type" class="form-label bold">MIME Type: <span class="text-danger">*</span></label>
+            <input type="text" id="page_type" name="page[page_type]" class="form-control colorful" maxlength="250" value="{{ a_page.page_type }}" required />
+            <div class="invalid-feedback">
+                MIME type must be specified, e.g. text/html.
+            </div>
+        </div>
+        <div class="row row-dark form-group form-group-row">
+            <label for="page_lang" class="form-label bold">Language: <span class="text-danger">*</span></label>
+            <input type="text" id="page_lang" name="page[page_lang]" class="form-control colorful" maxlength="4" value="{{ a_page.page_lang }}" required />
+            <div class="invalid-feedback">
+                Default language must be specified, e.g. en.
+            </div>
+        </div>
+        <div class="row row-light border border-top-0 form-group form-group-row">
+            <label for="page_charset" class="form-label bold">Character Set: <span class="text-danger">*</span></label>
+            <input type="text" id="page_charset" name="page[page_charset]" class="form-control colorful" maxlength="20" value="{{ a_page.page_charset }}" required />
+            <div class="invalid-feedback">
+                Character set must be specified, utf8.
+            </div>
+        </div>
         </div>
         <div class="row form-group form-group-row">
             <div class="col">
@@ -90,6 +123,13 @@
                 {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
             </div>
         </div>
-        </form>
+    </form>
+        <h4 class="font-small-caps-bold mt-4">Page Info</h4>
+        <div class="row">
+            <div class="col-md-2">Created On:</div>
+            <div class="col-md-4">{{ a_page.created_on }}</div>
+            <div class="col-md-2">Last Updated On:</div>
+            <div class="col-md-4">{{ a_page.updated_on }}</div>
+        </div>
     </div>
     {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}

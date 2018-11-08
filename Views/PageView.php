@@ -141,6 +141,7 @@ class PageView
             'id'          => 'tp_id',
             'label_class' => 'form-label bold',
             'label_text'  => 'Twig Prefix',
+            'label_extra' => '',
             'name'        => 'tp_id',
             'class'       => 'form-control',
             'other_stuph' => ' onchange="switchPageDirsForPrefix(this)"',
@@ -150,6 +151,7 @@ class PageView
             'id'          => 'td_id',
             'label_class' => 'form-label bold',
             'label_text'  => 'Twig Directory',
+            'label_extra' => '',
             'name'        => 'td_id',
             'class'       => 'form-control',
             'other_stuph' => ' onchange="switchTplForDir(this)"',
@@ -162,9 +164,10 @@ class PageView
             'id'          => 'tpl_id',
             'label_class' => 'form-label bold',
             'label_text'  => 'Page Template',
+            'label_extra' => ' <span class="text-danger">*</span>',
             'name'        => 'page[tpl_id]',
             'class'       => 'form-control',
-            'other_stuph' => '',
+            'other_stuph' => ' required',
             'options'     => [[
                 'value' => '',
                 'label' => '-Select the twig prefix first-'
@@ -174,9 +177,10 @@ class PageView
             'id'          => 'ng_id',
             'label_class' => 'form-label bold',
             'label_text'  => 'Navgroup',
+            'label_extra' => ' <span class="text-danger">*</span>',
             'name'        => 'page[ng_id]',
             'class'       => 'form-control',
-            'other_stuph' => '',
+            'other_stuph' => ' required',
             'options'     => $a_ng_options
         ];
         $o_blocks = new BlocksModel($this->o_db);
@@ -199,7 +203,7 @@ class PageView
         }
         $a_options = [
             [
-                'value'       => '0',
+                'value'       => '',
                 'label'       => '--Select URL--',
                 'other_stuph' => ' selected'
             ]
@@ -214,13 +218,14 @@ class PageView
                 ];
             }
         }
-        $a_select = [
+        $a_url_select = [
             'id'          => 'page[url_id]',
             'name'        => 'page[url_id]',
             'class'       => 'form-control',
             'label_text'  => 'Page Url: ',
             'label_class' => 'form-label bold',
-            'other_stuff' => '',
+            'label_extra' => ' <span class="text-danger">*</span>',
+            'other_stuph' => ' required',
             'options'     => $a_options
         ];
         $a_immutable_cbx = [
@@ -239,11 +244,11 @@ class PageView
             'page_base_url'    => '/',
             'page_type'        => 'text/html',
             'page_lang'        => 'en',
-            'page_charset'     => 'utf8',
+            'page_charset'     => 'utf-8',
             'page_immutable'   => 'false',
         ];
         $a_twig_values = $this->createDefaultTwigValues();
-        $a_twig_values['url_select'] = $a_select;
+        $a_twig_values['url_select'] = $a_url_select;
         $a_twig_values['action']     = $new_or_modify === 'modify_page' ? 'update' : 'save';
         $a_twig_values['a_page']     = $a_page;
         $a_twig_values['which_page'] = 'form';
@@ -326,6 +331,8 @@ class PageView
                 $a_twig_values['a_message'] = $a_message;
             }
         }
+        // TODO need to add page up and page down controls.
+        // TODO need to add created and updated info
         $a_twig_values['ng_select']          = $a_ng_select;
         $a_twig_values['twig_prefix_select'] = $a_prefix_select;
         $a_twig_values['twig_dir_select']    = $a_dir_select;

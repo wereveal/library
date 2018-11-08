@@ -1,1 +1,6 @@
+{% if label_text %}
+<label for="{{ id }}"{% if label_class != '' %} class="{{ label_class }}"{% endif %}>{{ label_text }}{{ select.label_extra | raw }}</label>
+{% endif %}
+{% if name %}
 <input type="{{ type }}" name="{{ name }}" id="{{ name }}" value="{{ value }}"{{ extras }} />
+{% endif %}

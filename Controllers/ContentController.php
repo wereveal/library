@@ -31,6 +31,7 @@ class ContentController implements ConfigControllerInterface
 
     /** @var string $instance_failure Lets me know if the instance had a failure. */
     private $instance_failure = '';
+    /** @var ContentComplexModel  */
     private $o_model;
     /** @var ContentView $o_view view for content. */
     private $o_view;
