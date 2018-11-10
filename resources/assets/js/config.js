@@ -182,3 +182,8 @@ function switchTplForDir(selectedDir) {
 
 }
 
+function updateContentVCS() {
+    console.error('In the function.');
+    var goTo = location.origin+'/manager/config/ajax/content_vcs/';
+    $.ajax({url:goTo});
+}

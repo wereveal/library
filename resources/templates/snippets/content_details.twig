@@ -1,50 +1,49 @@
 <form id="content-form" method="post" action="{{ public_dir }}/manager/config/content/">
     {% set select_tpl = '@' ~ lib_prefix ~ "elements/select.twig" %}
     {% set cbx_tpl = '@' ~ lib_prefix ~ "elements/checkbox.twig" %}
-{% if a_content.c_id %}
+{% if a_record.c_id %}
     <div class="form-group">
-        <span class="bold aright pad-right-half">Page Name:</span>{{ a_content.page_title }}<input type="hidden" name="content[c_pbm_id]" value="{{ a_content.c_pbm_id }}">&nbsp;&nbsp;&nbsp;
-        <span class="bold aright pad-right-half">Block Name:</span>{{ a_content.b_name }}
+        <span class="bold aright pad-right-half">Page Name:</span>{{ a_record.page_title }}<input type="hidden" name="content[c_pbm_id]" value="{{ a_record.c_pbm_id }}">&nbsp;&nbsp;&nbsp;
+        <span class="bold aright pad-right-half">Block Name:</span>{{ a_record.b_name }}
     </div>
 {% else %}
     <div class="form-group">
-        {% set select = a_content.pbm_select %}
+        {% set select = a_record.pbm_select %}
         {% include select_tpl with select %}
     </div>
 {% endif %}
     <div class="form-group">
-        <label for="content[c_content]" class="form-label bold">Content</label>
-        <textarea id="content[c_content]" name="content[c_content]" class="form-control colorful colorful-tall" required aria-required="true">{{ a_content.c_content }}</textarea>
-    </div>
-    <div class="form-group">
-        <label for="content[c_short_content]" class="form-label bold">Short Content</label>
-        <textarea id="content[c_short_content]" name="content[c_short_content]" class="form-control colorful">{{ a_content.c_content }}</textarea>
-    </div>
-    <div class="form-group">
-        {% set select = a_content.c_type_select %}
+        {% set select = a_record.c_type_select %}
         {% include select_tpl with select %}
     </div>
     <div class="form-group">
-        {% include cbx_tpl with a_content.featured_cbx %}
+        <label for="content[c_content]" class="form-label bold">Content</label>
+        <textarea id="content[c_content]" name="content[c_content]" class="form-control colorful colorful-tall" required aria-required="true">{{ a_record.c_content }}</textarea>
     </div>
     <div class="form-group">
-        {% include cbx_tpl with a_content.shared_cbx %}
+        <label for="content[c_short_content]" class="form-label bold">Short Content</label>
+        <textarea id="content[c_short_content]" name="content[c_short_content]" class="form-control colorful">{{ a_record.c_short_content }}</textarea>
     </div>
-    {% if a_content.c_version %}
     <div class="form-group">
-        <span class="bold aright pad-right-half">Version:</span>{{ a_content.c_version }}&nbsp;&nbsp;&nbsp;
-        <span class="bold right pad-right-half">Created On:</span>{{ a_content.c_created }}</span>
+        {% include cbx_tpl with a_record.featured_cbx %}
+    </div>
+    {% if a_record.c_version %}
+    <div class="form-group">
+        <span class="bold aright pad-right-half">Version:</span>{{ a_record.c_version }}&nbsp;&nbsp;&nbsp;
+        <span class="bold right pad-right-half">Created On:</span>{{ a_record.c_created }}
     </div>
     {% endif %}
     <div class="form-group">
         {% include '@' ~ lib_prefix ~ "forms/hidden_form_stuff.twig" %}
-    {% if a_content.c_id %}
+    {% if a_record.c_id %}
         <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Update</button>
+        {% if has_versions == 'true' %}
         <button type="submit" name="submit" value="view_all" class="btn btn-primary btn-xs">View All Versions</button>
-        {% if adm_lvl >= auth_lvl.admin %}
-            <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
         {% endif %}
-        <input type="hidden" name="content[c_id]" value="{{ a_content.c_id }}">
+        {% if adm_lvl >= auth_lvl.admin %}
+        <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
+        {% endif %}
+        <input type="hidden" name="content[c_id]" value="{{ a_record.c_id }}">
     {% else %}
         <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
     {% endif %}

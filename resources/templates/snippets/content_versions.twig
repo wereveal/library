@@ -1,0 +1,38 @@
+        <div class="row list-header sticky-top d-none d-md-flex">
+            <div class="col-md-6">
+                Content
+            </div>
+            <div class="col-md-1">
+                Version
+            </div>
+            <div class="col-md-3">
+                Date
+            </div>
+            <div class="col-md-2">
+                Action
+            </div>
+        </div>
+        {% set row_class = 'row-light' %}
+        {% for row in a_content_list %}
+            {% set row_class = row_class == 'row-light' ? 'row-dark' : 'row-light' %}
+            {% set c_pbm_id = row.c_pbm_id %}
+            <form action="{{ public_dir }}/manager/config/content/" method="post" class="form">
+                <div class="row {{ row_class }}">
+                    <div class="col-12 col-md-6 text-truncate"><span class="bold d-md-none">Content: </span>{{ row.c_content }}</div>
+                    <div class="col-12 col-md-1"><span class="bold d-md-none">Version: </span>{{ row.c_version }}</div>
+                    <div class="col-12 col-md-3"><span class="bold d-md-none">Date: </span>{{ row.c_created }}</div>
+                    <div class="col-12 col-md-2">
+                        <button type="submit" name="submit" value="view_content" class="btn btn-primary btn-sm">View Version</button>
+                        <input type="hidden" name="c_id" value="{{ row.c_id }}">
+                        {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    </div>
+                </div>
+            </form>
+        {% endfor %}
+        <div class="container">
+            <form action="{{ public_dir }}/manager/config/content/" method="post" class="form-inline">
+                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                <button type="submit" name="submit" value="edit_content_by_pbm" class="btn btn-primary">Edit Content for this Page/Block</button>
+                <input type="hidden" name="c_pbm_id" value="{{ c_pbm_id }}">
+            </form>
+        </div>

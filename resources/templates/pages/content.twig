@@ -9,9 +9,19 @@
         {% include '@' ~ lib_prefix ~ 'snippets/content_versions.twig' %}
     {% elseif content_type == 'details' %}
         {% include '@' ~ lib_prefix ~ 'snippets/content_details.twig' %}
+    {% elseif content_type == 'ro_details' %}
+        {% include '@' ~ lib_prefix ~ 'snippets/content_ro_details.twig' %}
     {% else %}
         {% include '@' ~ lib_prefix ~ 'snippets/content_list.twig' %}
     {% endif %}
     </div>
+    {% if content_type == 'details' %}
     {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {% endif %}
+{% endblock %}
+{% block bottomJs %}
+    {{ parent() }}
+    {% if content_type != 'details' %}
+    <script src="{{ js_dir }}/config.js"></script>
+    {% endif %}
 {% endblock %}

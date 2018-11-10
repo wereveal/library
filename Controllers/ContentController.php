@@ -7,6 +7,7 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Exceptions\ViewException;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Models\ContentComplexModel;
@@ -71,7 +72,9 @@ class ContentController implements ConfigControllerInterface
         }
         switch ($this->form_action) {
             case 'edit_content':
-                return $this->edit();
+                return $this->edit('by_c_id');
+            case 'edit_content_by_pbm':
+                return $this->edit('by_pbm_id');
             case 'verify':
                 return $this->verifyDelete();
             case 'update':
@@ -82,6 +85,10 @@ class ContentController implements ConfigControllerInterface
                 return $this->delete();
             case 'new_content':
                 return $this->o_view->renderForm('new');
+            case 'view_content':
+                return $this->o_view->renderDetails();
+            case 'view_all':
+                return $this->o_view->renderAllVersions($this->a_post['content']['c_pbm_id']);
             default:
                 return $this->o_view->render();
         }
@@ -104,9 +111,9 @@ class ContentController implements ConfigControllerInterface
      *
      * @return string
      */
-    public function edit():string
+    public function edit($how = 'by_c_id'):string
     {
-        return $this->o_view->renderForm('update');
+        return $this->o_view->renderForm($how);
     }
 
     /**
@@ -116,10 +123,21 @@ class ContentController implements ConfigControllerInterface
      */
     public function save():string
     {
-        $a_message = ViewHelper::infoMessage('Needs to be written');
-        // $a_content = $this->a_post['content'];
-        // check if pbm exists, if so, error
-        // if it doesn't
+        $a_message = [];
+        $a_content = $this->a_post['content'];
+        $a_requires_values = ['c_pbm_id'];
+        if (Arrays::hasBlankValues($a_content, $a_requires_values)) {
+            $message = 'A page/block combo must be specified.';
+            $a_message = ViewHelper::errorMessage($message);
+        }
+        else {
+            try {
+                $this->o_model->saveNew($a_content);
+            }
+            catch (ModelException $e) {
+                $a_message = ViewHelper::errorMessage($e->errorMessage());
+            }
+        }
         return $this->o_view->render($a_message);
     }
 
@@ -130,7 +148,14 @@ class ContentController implements ConfigControllerInterface
      */
     public function update():string
     {
-        $a_message = ViewHelper::infoMessage('Needs to be written');
+        $a_message = [];
+        $a_content = $this->a_post['content'];
+        try {
+            $this->o_model->updateContent($a_content);
+        }
+        catch (ModelException $e) {
+            $a_message = ViewHelper::errorMessage('Could not update the record. ' . $e->getMessage());
+        }
         return $this->o_view->render($a_message);
     }
 

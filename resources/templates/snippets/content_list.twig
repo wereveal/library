@@ -1,15 +1,15 @@
        <div class="row list-header sticky-top d-none d-md-flex">
-           <div class="col-12 col-md-4">
+           <div class="col-md-4">
                Page
            </div>
-           <div class="col-12 col-md-2">
+           <div class="col-md-2">
                 Block
            </div>
-           <div class="col-12 col-md-4">
+           <div class="col-md-3">
                Content
            </div>
-           <div class="col-12 col-md-2">
-                &nbsp;
+           <div class="col-md-3">
+               {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cbx_vcs %}
            </div>
        </div>
 {% set row_class = 'row-light' %}

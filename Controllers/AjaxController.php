@@ -7,6 +7,7 @@
 namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Models\TwigDirsModel;
 use Ritc\Library\Models\TwigTemplatesModel;
@@ -58,6 +59,8 @@ class AjaxController
                 return $this->doTwigTpls();
             case 'page_prefix_dirs':
                 return $this->doTwigDirs(true);
+            case 'content_vcs':
+                return $this->updateContentVcsConstant();
             default:
                 return json_encode([]);
         }
@@ -210,6 +213,29 @@ class AjaxController
         }
         catch (ModelException $e) {
             return $bad_results;
+        }
+    }
+
+    /**
+     * Updates the constant CONTENT_VCS to be the opposite of what it is.
+     *
+     * @return bool
+     */
+    private function updateContentVcsConstant()
+    {
+        $o_constants = new ConstantsModel($this->o_db);
+        $o_constants->setupElog($this->o_di);
+        try {
+            $a_results = $o_constants->selectByConstantName('CONTENT_VCS');
+            $a_update_values = [
+                'const_id' => $a_results['const_id'],
+                'const_value' => $a_results['const_value'] === 'true' ? 'false' : 'true'
+            ];
+            $o_constants->update($a_update_values);
+            return true;
+        }
+        catch (ModelException $e) {
+            return false;
         }
     }
 

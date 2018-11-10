@@ -1,0 +1,39 @@
+    <div class="row">
+        <div class="col-2 bold text-right">Page Name:</div>
+        <div class="col-4">{{ a_record.page_title }}</div>
+        <div class="col-2 bold text-right">Block Name:</div>
+        <div class="col-4">{{ a_record.b_name }}</div>
+    </div>
+    <div class="row">
+        <div class="col-12 bold">Content</div>
+    {% if a_record.c_type == 'md' %}
+        <div class="col-12 border border-dark p-3">{{ a_record.c_content | md }}</div>
+    {% elseif a_record.c_type == 'mde' %}
+        <div class="col-12 border border-dark p-3">{{ a_record.c_content | mde }}</div>
+    {% elseif a_record.c_type == 'raw' or a_record.c_type == 'html' or a_record.c_type == 'xml' %}
+        <div class="col-12 border border-dark p-3">{{ a_record.c_content | raw }}</div>
+    {% else %}
+        <div class="col-12 border border-dark p-3">{{ a_record.c_content }}</div>
+    {% endif %}
+    </div>
+    {% if a_record.c_short_content %}
+    <div class="row">
+        <div class="col-12 bold">Short Content</div>
+        <div class="col-12 border">{{ a_record.c_short_content }}</div>
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-2 bold text-right">Content Type:</div>
+        <div class="col-4">{{ a_record.content_type }}</div>
+        <div class="col-2 bold text-right">Featured:</div>
+        <div class="col-4">{{ a_record.c_featured | title }}</div>
+    </div>
+    <div class="row">
+        <div class="col-2 bold text-right">Version:</div><div class="col-4">{{ a_record.c_version }}</div>
+        <div class="col-2 bold text-right">Created On:</div><div class="col-4">{{ a_record.c_created }}</div>
+    </div>
+    <form id="content-form" method="post" action="{{ public_dir }}/manager/config/content/">
+        {% include '@' ~ lib_prefix ~ "forms/hidden_form_stuff.twig" %}
+        <button type="submit" name="submit" value="edit_content_by_pbm" class="btn btn-primary">Edit Content for this Page/Block</button>
+        <input type="hidden" name="c_pbm_id" value="{{ a_record.c_pbm_id }}">
+    </form>

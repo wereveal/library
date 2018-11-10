@@ -81,6 +81,14 @@ class ContentView implements ViewInterface
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['a_content_list'] = $a_records;
         $a_twig_values['content_type'] = 'list';
+        $a_twig_values['cbx_vcs'] = [
+            'id'          => 'content_vcs',
+            'name'        => 'content_vcs',
+            'value'       => CONTENT_VCS,
+            'label'       => 'Use Versions',
+            'other_stuph' => ' onchange="updateContentVCS()"',
+            'checked'     => CONTENT_VCS ? ' checked' : ''
+        ];
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }
@@ -94,13 +102,64 @@ class ContentView implements ViewInterface
     public function renderAllVersions($pbm_id = -1): string
     {
         if ($pbm_id < 1) {
-            return $this->render(ViewHelper::errorMessage('Missing required value for the page/block combo.'));
+            $message = 'Missing required value for the page/block combo.';
+            return $this->render(ViewHelper::errorMessage($message));
         }
         $a_message = [];
-        $a_twig_values                 = $this->createDefaultTwigValues($a_message);
-        $a_twig_values['content_type'] = 'versions';
-        $tpl                           = $this->createTplString($a_twig_values);
+        $a_results = [];
+        try {
+            $a_search_for = ['pbm_id' => $pbm_id, 'order_by' => 'DESC'];
+            $a_results = $this->o_model->readAllByPage($a_search_for);
+        }
+        catch (ModelException $e) {
+            $message = 'A problem occurred retreiving a list of all versions for the page';
+            $a_message = ViewHelper::errorMessage($message);
+        }
+        $a_twig_values                   = $this->createDefaultTwigValues($a_message);
+        $a_twig_values['content_type']   = 'versions';
+        $a_twig_values['a_content_list'] = $a_results;
+        $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
+    }
+
+    public function renderDetails():string
+    {
+        $a_post = $this->o_router->getPost();
+        $c_id = $a_post['c_id'];
+        try {
+            $a_results = $this->o_model->readByContentId($c_id);
+        }
+        catch (ModelException $e) {
+            $message = 'Could not get the details for the record.';
+            $a_message = ViewHelper::errorMessage($message);
+            return $this->render($a_message);
+        }
+        switch ($a_results['c_type']) {
+            case 'text':
+                $a_results['content_type'] = 'Text';
+                break;
+            case 'html':
+                $a_results['content_type'] = 'HTML';
+                break;
+            case 'mde':
+                $a_results['content_type'] = 'Markdown Extra';
+                break;
+            case 'xml':
+                $a_results['content_type'] = 'XML';
+                break;
+            case 'raw':
+                $a_results['content_type'] = 'Raw';
+                break;
+            case 'md':
+            default:
+                $a_results['content_type'] = 'Markdown';
+        }
+        $a_twig_values                 = $this->createDefaultTwigValues();
+        $a_twig_values['a_record']     = $a_results;
+        $a_twig_values['content_type'] = 'ro_details';
+        $tpl = $this->createTplString($a_twig_values);
+        return $this->renderIt($tpl, $a_twig_values);
+
     }
 
     /**
@@ -118,12 +177,10 @@ class ContentView implements ViewInterface
             'c_short_content' => '',
             'c_version'       => '',
             'c_featured'      => 'false',
-            'c_shared'        => 'false',
             'c_type_select'   => [],
             'pbm_id'          => '',
             'pbm_select'      => [],
-            'featured_cbx'    => [],
-            'shared_cbx'      => []
+            'featured_cbx'    => []
         ];
         $a_c_type_options = [];
         $a_type_options = [
@@ -164,8 +221,8 @@ class ContentView implements ViewInterface
                 $a_message = ViewHelper::errorMessage('Unable to determine the pages that exist.');
             }
             $a_pbm_select = [
-                'id'          => 'content[pbm_id]',
-                'name'        => 'content[pbm_id]',
+                'id'          => 'content[c_pbm_id]',
+                'name'        => 'content[c_pbm_id]',
                 'class'       => 'form-control colorful',
                 'other_stuph' => '',
                 'label_class' => 'form-label bold',
@@ -197,13 +254,6 @@ class ContentView implements ViewInterface
             'value'   => 'true',
             'checked' => $a_record['c_featured'] === 'true' ? ' checked' : ''
         ];
-        $a_shared = [
-            'id'      => 'content[c_shared]',
-            'name'    => 'content[c_shared]',
-            'label'   => 'Shared',
-            'value'   => 'true',
-            'checked' => $a_record['c_shared'] === 'true' ? ' checked' : ''
-        ];
         $a_c_type_select = [
             'id'          => 'content[c_type]',
             'name'        => 'content[c_type]',
@@ -216,14 +266,15 @@ class ContentView implements ViewInterface
         $a_record['pbm_select']        = $a_pbm_select;
         $a_record['c_type_select']     = $a_c_type_select;
         $a_record['featured_cbx']      = $a_featured;
-        $a_record['shared_cbx']        = $a_shared;
         $a_twig_values                 = $this->createDefaultTwigValues($a_message);
-        $a_twig_values['a_content']    = $a_record;
+        $a_twig_values['a_record']     = $a_record;
         $a_twig_values['content_type'] = 'details';
-        $tpl                           = $this->createTplString($a_twig_values);
+        $a_twig_values['has_versions'] = CONTENT_VCS ? 'true' : 'false';
+        $tpl = $this->createTplString($a_twig_values);
           $log_message = 'twig values ' . var_export($a_twig_values, true);
           $this->logIt($log_message, LOG_ON, $meth . __LINE__);
           $this->logIt('TPL: ' . $tpl, LOG_ON, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
+
 }

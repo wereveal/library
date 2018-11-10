@@ -7,6 +7,7 @@ namespace Ritc\Library\Models;
 
 use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 
 /**
@@ -71,6 +72,28 @@ class ContentModel extends ModelAbstract
         }
         try {
             return $this->read($a_find);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Sets all records to not current for a particular pbm_id.
+     *
+     * @param int $pbm_id
+     * @throws ModelException
+     */
+    public function setCurrentFalse($pbm_id = -1):void
+    {
+        if ($pbm_id <= 0) {
+            $err_code = ExceptionHelper::getCodeNumberModel('update missing value');
+            throw new ModelException('Missing Required Value.', $err_code);
+        }
+        $sql = 'UPDATE ' . $this->db_table . " SET c_current = 'false' WHERE c_pbm_id = :c_pbm_id";
+        $a_values = ['c_pbm_id' => $pbm_id];
+        try {
+            $this->o_db->update($sql, $a_values, false);
         }
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);

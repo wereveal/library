@@ -6,6 +6,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -33,8 +34,6 @@ class ContentComplexModel
     private $o_content;
     /** @var PageModel $o_page */
     private $o_page;
-    /** @var PageBlocksMapModel  */
-    private $o_pbm;
 
     /**
      * ContentComplexModel constructor.
@@ -50,11 +49,10 @@ class ContentComplexModel
             $error_code = ExceptionHelper::getCodeNumber('instance');
             throw new ModelException($message, $error_code);
         }
-        $this->a_object_names = ['o_blocks', 'o_content', 'o_page', 'o_pbm'];
+        $this->a_object_names = ['o_blocks', 'o_content', 'o_page'];
         $this->o_blocks       = new BlocksModel($o_db);
         $this->o_content      = new ContentModel($o_db);
         $this->o_page         = new PageModel($o_db);
-        $this->o_pbm          = new PageBlocksMapModel($o_db);
         $this->setupElog($o_di);
         $this->setupProperties($o_db);
         $this->buildBasicSelectSql();
@@ -103,7 +101,7 @@ class ContentComplexModel
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
-        if (count($a_content_ids) > 1) {
+        if (\count($a_content_ids) > 1) {
             $delete_sql = "
                 DELETE FROM {$lib_prefix}content
                 WHERE c_id = :c_id
@@ -128,51 +126,45 @@ class ContentComplexModel
      */
     public function readAllByPage(array $a_params = []):array
     {
-        $a_search_for = [];
-        $block_extra  = '';
-        $block_id     = '';
-        $page_extra   = '';
-        $page_id      = '';
-        $pbm_id       = '';
-        $pbm_extra    = '';
-        $where        = '';
+        $block_extra = '';
+        $page_extra  = '';
+        $pbm_extra   = '';
+        $where       = '';
+        $order_by    = '';
         if (!empty($a_params['pbm_id'])) {
-            $pbm_id = $a_params['pbm_id'];
+            $pbm_id       = $a_params['pbm_id'];
+            $a_search_for = ['pbm_id' => $pbm_id];
+            $pbm_extra    = ' AND pbm.pbm_id = :pbm_id';
         }
         elseif (!empty($a_params['page_id'])) {
-            $page_id = $a_params['page_id'];
+            $page_id      = $a_params['page_id'];
+            $a_search_for = [':page_id' => $page_id];
+            $page_extra   = ' AND p.page_id = :page_id';
             if (!empty($a_params['block_id'])) {
-                $block_id = $a_params['block_id'];
+                $block_id                = $a_params['block_id'];
+                $a_search_for[':b_name'] = $block_id;
+                $block_extra             = ' AND b.b_name = :b_name';
             }
         }
         else {
-            $message = 'Missing a required value.';
+            $message    = 'Missing a required value.';
             $error_code = ExceptionHelper::getCodeNumberModel('missing value');
             throw new ModelException($message, $error_code);
         }
-        if (!empty($pbm_id)) {
-            $pbm_extra = ' AND pbm.pbm_id = :pbm_id';
-        }
-        if (!empty($page_id)) {
-            $a_search_for = [':page_id' => $page_id];
-            $page_extra = ' AND p.page_id = :page_id';
-        }
-        if (!empty($block_id)) {
-            $a_search_for[':b_name'] = $block_id;
-            $block_extra = ' 
-                AND b.b_name = :b_name';
-        }
         if (!empty($a_params['current'])) {
             $a_search_for[':c_current'] = $a_params['current'];
-            $where = ' 
+            $where                      = ' 
                 WHERE c.c_current = :c_current';
+        }
+        if (!empty($a_params['order_by'])) {
+            $order_by = ' ORDER BY c_version ' . $a_params['order_by'];
         }
         $sql = str_replace(
             ['{{pbm_extra}}', '{{blocks_extra}}', '{{page_extra}}'],
             [$pbm_extra, $block_extra, $page_extra],
             $this->select_sql
         );
-        $sql .= $where;
+        $sql .= $where . $order_by;
         try {
             $a_results = $this->o_db->search($sql, $a_search_for);
         }
@@ -323,15 +315,97 @@ class ContentComplexModel
      * Saves a new content record.
      *
      * @param array $a_values
+     * @return int
      * @throws ModelException
      */
-    public function saveNew(array $a_values = [])
+    public function saveNew(array $a_values = []): int
     {
-        if (empty($a_values)) {
+        if (empty($a_values['c_pbm_id'])) {
             $err_code = ExceptionHelper::getCodeNumberModel('create missing values');
-            throw new ModelException('No values provided to save', $err_code);
+            throw new ModelException('The page/block must be specified to save.', $err_code);
+        }
+        $a_values['c_current'] = 'true';
+        $a_values['c_version'] = 1;
+        if (empty($a_values['c_type'])) {
+            $a_values['c_type'] = 'text';
+        }
+        try {
+            $a_ids = $this->o_content->create($a_values);
+            return $a_ids[0];
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
     }
+
+    /**
+     * Updates the content for a page/block.
+     * If version control in effect, creates a new record, else, updates existing.
+     *
+     * @param array $a_values
+     * @return bool
+     * @throws ModelException
+     */
+    public function updateContent(array $a_values = []):bool
+    {
+        $a_requires_values = [
+            'c_pbm_id',
+            'c_id'
+        ];
+        $a_missing_values = Arrays::findMissingValues($a_values, $a_requires_values);
+        if (!empty($a_missing_values)) {
+            $err_code = ExceptionHelper::getCodeNumberModel('create missing values');
+            $missing = '';
+            foreach ($a_missing_values as $key_name) {
+                $missing .= $missing === '' ? $key_name : ', ' . $key_name;
+            }
+            throw new ModelException('Missing Values: ' . $missing, $err_code);
+        }
+        try {
+            $a_results = $this->o_content->readById($a_values['c_id']);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        $a_values['c_version'] = $a_results['c_version'] + 1;
+        $a_values['c_current'] = 'true';
+        $this->o_db->startTransaction();
+        try {
+            $this->o_content->setCurrentFalse($a_values['c_pbm_id']);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        if (CONTENT_VCS) {
+            unset($a_values['c_id']);
+            try {
+                $results = $this->o_content->create($a_values);
+                if (empty($results)) {
+                    $this->o_db->rollbackTransaction();
+                    $err_code = ExceptionHelper::getCodeNumberModel('update unknown');
+                    throw new ModelException('Unknown Error', $err_code);
+                }
+                $this->o_db->commitTransaction();
+                return true;
+            }
+            catch (ModelException $e) {
+                $this->o_db->rollbackTransaction();
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
+        else {
+            try {
+                $this->o_content->update($a_values);
+                $this->o_db->commitTransaction();
+                return true;
+            }
+            catch (ModelException $e) {
+                $this->o_db->rollbackTransaction();
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
+        }
+    }
+
     ### Utility Methods
 
     /**

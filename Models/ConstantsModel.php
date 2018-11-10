@@ -18,9 +18,10 @@ use Ritc\Library\Services\DbModel;
  * other app/business logic that sets up the app with a bunch of required constants.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
- * @date    2018-06-15 10:19:21
+ * @version v4.1.0
+ * @date    2018-11-09 12:44:47
  * @change_log
+ * - v4.1.0 - New method to retrieve record by the constant name            - 2018-11-09 wer
  * - v4.0.0 - Refactored to extend ModelException                           - 2018-06-15 wer
  * - v3.0.0 - Refactored to use ModelException and bug fixes                - 2017-06-14 wer
  * - v2.5.0 - Removed unused property and setting of same                   - 2017-05-18 wer
@@ -58,8 +59,9 @@ class ConstantsModel extends ModelAbstract
      * Filters a couple values which is not available in abstract version.
      *
      * @param array $a_values
+     * @param bool  $allow_pin
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function create(array $a_values = [], $allow_pin = false):array
     {
@@ -306,6 +308,27 @@ SQL;
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
+     * Returns the values for a specific constant record.
+     *
+     * @param string $const_name
+     * @return array
+     * @throws ModelException
+     */
+    public function selectByConstantName($const_name = ''):array
+    {
+        try {
+            $a_results = $this->read(['const_name' => $const_name]);
+            if (!empty($a_results[0])) {
+                return $a_results[0];
+            }
+            return [];
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
     }
 
