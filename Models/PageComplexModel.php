@@ -88,7 +88,7 @@ class PageComplexModel
         }
         try {
             $this->o_db->startTransaction();
-            $this->o_content->deleteAllByPage($page_id);
+            $this->o_content->deleteAllByPage(['page_id' => $page_id]);
             $this->o_pbm->deleteAllByPageId($page_id);
             $this->o_page->delete($page_id);
             $this->o_db->commitTransaction();

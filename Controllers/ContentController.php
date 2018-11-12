@@ -24,7 +24,6 @@ use Ritc\Library\Views\ContentView;
  * @date    2018-05-30 16:58:04
  * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2018-05-30 wer
- * @todo ContentController.php - Everything
  */
 class ContentController implements ConfigControllerInterface
 {
@@ -62,6 +61,7 @@ class ContentController implements ConfigControllerInterface
 
     /**
      * Main method used to route the page to the appropriate controller/view/model.
+     * Required by interface.
      *
      * @return string
      */
@@ -71,20 +71,20 @@ class ContentController implements ConfigControllerInterface
             return $this->instance_failure;
         }
         switch ($this->form_action) {
-            case 'edit_content':
-                return $this->edit('by_c_id');
-            case 'edit_content_by_pbm':
-                return $this->edit('by_pbm_id');
-            case 'verify':
-                return $this->verifyDelete();
-            case 'update':
-                return $this->update();
-            case 'save_new':
-                return $this->save();
             case 'delete':
                 return $this->delete();
+            case 'edit_content':
+                return $this->o_view->renderForm('by_c_id');
+            case 'edit_content_by_pbm':
+                return $this->o_view->renderForm('by_pbm_id');
             case 'new_content':
                 return $this->o_view->renderForm('new');
+            case 'save_new':
+                return $this->save();
+            case 'update':
+                return $this->update();
+            case 'verify':
+                return $this->verifyDelete();
             case 'view_content':
                 return $this->o_view->renderDetails();
             case 'view_all':
@@ -96,28 +96,53 @@ class ContentController implements ConfigControllerInterface
 
     /**
      * Method to delete data.
+     * Required by interface.
      *
      * @return string
      */
     public function delete():string
     {
-        $a_message = ViewHelper::infoMessage('Needs to be written');
-
+        if (empty($this->a_post['c_id'])) {
+            $a_message = ViewHelper::failureMessage('Unable to delete the record: unknown reason');
+        }
+        else {
+            try {
+                $a_results = $this->o_model->readByContentId($this->a_post['c_id']);
+                $pbm_id = $a_results['c_pbm_id'];
+            }
+            catch (ModelException $e) {
+                $msg = 'Unable to delete the record: could not get all the records needed to delete.';
+                $a_message = ViewHelper::errorMessage($msg);
+                return $this->o_view->render($a_message);
+            }
+            if (CONTENT_VCS) { // don't actually delete records, make them not current.
+                try {
+                    $this->o_model->deactivateAll($pbm_id);
+                    $a_message = ViewHelper::successMessage();
+                }
+                catch (ModelException $e) {
+                    $msg = 'Unable to delete the record: with version control, 
+                        records are set to "not current" but unable to do that.';
+                    $a_message = ViewHelper::errorMessage($msg);
+                }
+            }
+            else {
+                try {
+                    $this->o_model->deleteAllByPage(['pbm_id' => $pbm_id]);
+                    $a_message = ViewHelper::successMessage();
+                }
+                catch (ModelException $e) {
+                    $msg = 'Unable to delete the record: ' . $e->getMessage();
+                    $a_message = ViewHelper::errorMessage($msg);
+                }
+            }
+        }
         return $this->o_view->render($a_message);
     }
 
     /**
-     * Method to edit a content record.
-     *
-     * @return string
-     */
-    public function edit($how = 'by_c_id'):string
-    {
-        return $this->o_view->renderForm($how);
-    }
-
-    /**
      * Method for saving new data.
+     * Required by interface.
      *
      * @return string
      */
@@ -143,6 +168,7 @@ class ContentController implements ConfigControllerInterface
 
     /**
      * Method for updating data.
+     * Required by interface.
      *
      * @return string
      */
@@ -151,16 +177,30 @@ class ContentController implements ConfigControllerInterface
         $a_message = [];
         $a_content = $this->a_post['content'];
         try {
-            $this->o_model->updateContent($a_content);
+            $a_record = $this->o_model->readByContentId($a_content['c_id']);
         }
         catch (ModelException $e) {
-            $a_message = ViewHelper::errorMessage('Could not update the record. ' . $e->getMessage());
+            $a_message = ViewHelper::errorMessage('Could not update the record. Unknown error.');
+            return $this->o_view->render($a_message);
+        }
+        if (Arrays::compareArrays($a_content, $a_record)) {
+            $this->o_view->renderForm('by_c_id');
+        }
+        else {
+            try {
+                $this->o_model->updateContent($a_content);
+                $a_message = ViewHelper::successMessage();
+            }
+            catch (ModelException $e) {
+                $a_message = ViewHelper::errorMessage('Could not update the record. ' . $e->getMessage());
+            }
         }
         return $this->o_view->render($a_message);
     }
 
     /**
      * Method to display the verify delete form.
+     * Required by interface.
      *
      * @return string
      */

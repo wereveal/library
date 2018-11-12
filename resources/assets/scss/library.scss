@@ -1,0 +1,15 @@
+.instructions {
+  @include contentBlock('gray');
+  ul {
+    list-style: disc;
+    li {
+      ul {
+        list-style: square;
+        margin-left: -1rem;
+      }
+    }
+  }
+  ul li::before {
+    content: "\200B";
+  }
+}

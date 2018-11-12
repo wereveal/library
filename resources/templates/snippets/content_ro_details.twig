@@ -5,7 +5,11 @@
         <div class="col-4">{{ a_record.b_name }}</div>
     </div>
     <div class="row">
-        <div class="col-12 bold">Content</div>
+        <div class="col-12 bold">Content as Saved</div>
+        <div class="col-12"><textarea class="w-100 p-3" title="raw content" disabled>{{ a_record.c_content }}</textarea></div>
+    </div>
+    <div class="row">
+        <div class="col-12 bold">Content as Rendered</div>
     {% if a_record.c_type == 'md' %}
         <div class="col-12 border border-dark p-3">{{ a_record.c_content | md }}</div>
     {% elseif a_record.c_type == 'mde' %}
@@ -19,7 +23,7 @@
     {% if a_record.c_short_content %}
     <div class="row">
         <div class="col-12 bold">Short Content</div>
-        <div class="col-12 border">{{ a_record.c_short_content }}</div>
+        <div class="col-12 border p-3">{{ a_record.c_short_content }}</div>
     </div>
     {% endif %}
     <div class="row">

@@ -124,15 +124,20 @@ class PageBlocksMapModel extends ModelAbstract
     public function readPbmWithoutContent():array
     {
         $prefix = $this->lib_prefix;
+        $a_values = ['c_current' => 'true'];
         $sql = "SELECT pbm.*, p.*, b.*
             FROM {$prefix}page_blocks_map as pbm
             JOIN {$prefix}page as p 
               ON pbm.pbm_page_id = p.page_id
             JOIN {$prefix}blocks as b
               ON pbm.pbm_block_id = b.b_id
-            WHERE pbm.pbm_id NOT IN (SELECT c_pbm_id FROM {$prefix}content)";
+            WHERE pbm.pbm_id NOT IN (
+              SELECT c_pbm_id 
+              FROM {$prefix}content 
+              WHERE c_current = :c_current
+            )";
         try {
-            return $this->o_db->search($sql);
+            return $this->o_db->search($sql, $a_values);
         }
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);

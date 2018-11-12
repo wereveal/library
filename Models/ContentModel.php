@@ -82,9 +82,10 @@ class ContentModel extends ModelAbstract
      * Sets all records to not current for a particular pbm_id.
      *
      * @param int $pbm_id
+     * @return bool
      * @throws ModelException
      */
-    public function setCurrentFalse($pbm_id = -1):void
+    public function setCurrentFalse($pbm_id = -1):bool
     {
         if ($pbm_id <= 0) {
             $err_code = ExceptionHelper::getCodeNumberModel('update missing value');
@@ -93,10 +94,11 @@ class ContentModel extends ModelAbstract
         $sql = 'UPDATE ' . $this->db_table . " SET c_current = 'false' WHERE c_pbm_id = :c_pbm_id";
         $a_values = ['c_pbm_id' => $pbm_id];
         try {
-            $this->o_db->update($sql, $a_values, false);
+            return $this->o_db->update($sql, $a_values, false);
         }
         catch (ModelException $e) {
-            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            $msg = ' - Unable to change current status.';
+            throw new ModelException($e->getMessage() . $msg, $e->getCode(), $e);
         }
     }
 }

@@ -59,51 +59,43 @@ class ContentComplexModel
     }
 
     /**
-     * Deletes all content records for a specified page.
+     * Sets all records for a page/block to not current.
      *
-     * @param int    $page_id  Required
-     * @param string $block    Optional, defaults to deleting all content assigned to all blocks for page.
-     * @param bool   $old_only Optional, defaults to false and deletes all records.
-     *                         If true, deletes only non-current records.
-     * @return bool
+     * @param int $c_pbm_id
      * @throws ModelException
      */
-    public function deleteAllByPage($page_id = -1, $block = '', $old_only = false):bool
+    public function deactivateAll($c_pbm_id = -1)
     {
-        if ($page_id === -1) {
-            $message = 'Missing Required Values';
-            $err_code = ExceptionHelper::getCodeNumberModel('missing_values');
-            throw new ModelException($message, $err_code);
-        }
-        $block_sql = '';
-        $current_sql = '';
-        if ($block !== '') {
-            $block_sql =  ' AND pbm_block_id = :block_id';
-        }
-        if ($old_only) {
-            $current_sql = ' AND c_current = :c_current';
-        }
-        $lib_prefix = $this->lib_prefix;
-        /** @noinspection SqlResolve */
-        $sql = "SELECT c_id
-            FROM {$lib_prefix}content 
-            WHERE c_pbm_id IN (
-              SELECT pbm_id 
-              FROM {$lib_prefix}page_blocks_map 
-              WHERE pbm_page_id = :page_id{$block_sql})
-            {$current_sql}";
-        $a_values = [
-            ':page_id' => $page_id
-        ];
         try {
-            $a_content_ids = $this->o_db->search($sql, $a_values);
+            $this->o_content->setCurrentFalse($c_pbm_id);
         }
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    /**
+     * Deletes all content records for a specified page.
+     *
+     * @param array $a_values Required either ['page_id'] or ['pbm_id'], optional 'block_id' and 'current'.
+     * @return bool
+     * @throws ModelException
+     */
+    public function deleteAllByPage(array $a_values = []):bool
+    {
+        try {
+            $a_results = $this->readAllByPage($a_values);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        $a_content_ids = [];
+        foreach ($a_results as $a_record) {
+            $a_content_ids[] = ['c_id' => $a_record['c_id']];
+        }
         if (\count($a_content_ids) > 1) {
             $delete_sql = "
-                DELETE FROM {$lib_prefix}content
+                DELETE FROM {$this->lib_prefix}content
                 WHERE c_id = :c_id
             ";
             try {
@@ -114,6 +106,23 @@ class ContentComplexModel
             }
         }
         return true;
+    }
+
+    /**
+     * Deletes a content record.
+     *
+     * @param int $c_id
+     * @return bool
+     * @throws ModelException
+     */
+    public function deleteById($c_id = -1):bool
+    {
+        try {
+            return $this->o_content->delete($c_id);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
@@ -185,6 +194,7 @@ class ContentComplexModel
         $meth  = __METHOD__ . '.';
         $where = '
             WHERE c_current = :c_current
+            ORDER BY p.page_title ASC, b.b_name ASC
         ';
         $sql   = str_replace(
             ['{{pbm_extra}}', '{{blocks_extra}}', '{{page_extra}}'],
@@ -368,16 +378,22 @@ class ContentComplexModel
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
         }
         $a_values['c_version'] = $a_results['c_version'] + 1;
+        $a_values['c_updated'] = date('Y-m-d H:i:s');
         $a_values['c_current'] = 'true';
-        $this->o_db->startTransaction();
-        try {
-            $this->o_content->setCurrentFalse($a_values['c_pbm_id']);
-        }
-        catch (ModelException $e) {
-            throw new ModelException($e->getMessage(), $e->getCode(), $e);
-        }
         if (CONTENT_VCS) {
             unset($a_values['c_id']);
+            $this->o_db->startTransaction();
+            try {
+                $set_results = $this->o_content->setCurrentFalse($a_values['c_pbm_id']);
+                if (!$set_results) {
+                    $msg = 'Unable to update the record: could not change old to not current.';
+                    $err_code = ExceptionHelper::getCodeNumberModel('update not permitted');
+                    throw new ModelException($msg, $err_code);
+                }
+            }
+            catch (ModelException $e) {
+                throw new ModelException($e->getMessage(), $e->getCode(), $e);
+            }
             try {
                 $results = $this->o_content->create($a_values);
                 if (empty($results)) {
@@ -395,12 +411,9 @@ class ContentComplexModel
         }
         else {
             try {
-                $this->o_content->update($a_values);
-                $this->o_db->commitTransaction();
-                return true;
+                return $this->o_content->update($a_values);
             }
             catch (ModelException $e) {
-                $this->o_db->rollbackTransaction();
                 throw new ModelException($e->getMessage(), $e->getCode(), $e);
             }
         }

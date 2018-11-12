@@ -263,8 +263,8 @@ class DbModel
      * @param string $the_query     default ''
      * @param array  $a_values      associative array with paramaters default empty array
      * @param bool   $single_record default true specifies if only a single record should be deleted per query
-     * @throws \Ritc\Library\Exceptions\ModelException
      * @return bool success or failure
+     * @throws \Ritc\Library\Exceptions\ModelException
      */
     public function update($the_query = '', array $a_values = [], $single_record = true):?bool
     {
