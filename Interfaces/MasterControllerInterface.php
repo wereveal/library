@@ -1,6 +1,6 @@
 <?php
 /**
- * Interface MainControllerInterface
+ * Interface MasterControllerInterface
  * @package Ritc_Library
  */
 namespace Ritc\Library\Interfaces;
@@ -14,16 +14,18 @@ namespace Ritc\Library\Interfaces;
  * @change_log
  * - v1.0.0 - initial version                                                       - 2018-05-01 wer
  */
-interface MainControllerInterface
+interface MasterControllerInterface
 {
     /**
      * Main method to route to the appropriate controller/view/model
+     *
      * @return string
      */
     public function route():string;
 
     /**
      * Method to reset the route to / and display that page.
+     *
      * For example:
      *   $this->o_router->setRouteParts('/');
      *   $o_controller = new HomeController($this->o_di);
