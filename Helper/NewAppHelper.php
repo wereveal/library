@@ -5,8 +5,12 @@
  */
 namespace Ritc\Library\Helper;
 
+use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Models\GroupsModel;
+use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\TwigComplexModel;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -367,6 +371,72 @@ class NewAppHelper
         catch (ModelException $e) {
             return $e->errorMessage();
         }
+    }
+
+    /**
+     * Creates Users and possibly groups from the the data.
+     *
+     * @return array
+     */
+    public function createUsers(): array
+    {
+        try {
+            $o_people = new PeopleComplexModel($this->o_di);
+        }
+        catch (CustomException $e) {
+            return ViewHelper::errorMessage($e->getMessage());
+        }
+        /** @var DbModel $o_db */
+        $o_db = $this->o_di->get('db');
+        $o_groups = new GroupsModel($o_db);
+        $o_groups->setupElog($this->o_di);
+
+        $a_people = empty($this->a_config['a_users'])
+            ? []
+            : $this->a_config['a_users'];
+        $a_groups = empty($this->a_config['a_groups'])
+            ? []
+            : $this->a_config['a_groups'];
+        if (empty($a_people) && empty($a_groups)) {
+            return ViewHelper::infoMessage('Nothing to save');
+        }
+        if (!empty($a_groups)) {
+            try {
+                $a_found_groups = $o_groups->read();
+            }
+            catch (ModelException $e) {
+                return ViewHelper::errorMessage('A problem occurred retrieving groups');
+            }
+            foreach ($a_found_groups as $key => $a_found_group) {
+                $value = $a_found_group['group_name'];
+                $found_key = Arrays::inArrayRecursive($value, $a_groups, true);
+                if (!$found_key) {
+                    $found_key = $found_key[0];
+                    unset($a_groups[$found_key]);
+                }
+            }
+            try {
+                $o_groups->create($a_groups);
+            }
+            catch (ModelException $e) {
+                return ViewHelper::errorMessage('Could not save the groups: ' . $e->getMessage());
+            }
+        }
+        if (!empty($a_people)) {
+            foreach ($a_people as $person_key => $a_person) {
+                try {
+                    $a_groups = $o_groups->readByName($a_person['group_name']);
+                    unset($a_person['group_name']);
+                    $a_person['groups'] = [$a_groups[0]['group_id']];
+                    $o_people->savePerson($a_person);
+                }
+                catch (ModelException $e) {
+                    return ViewHelper::errorMessage('A problem occurred trying to save the person: ' . $e->errorMessage());
+                }
+            }
+            return ViewHelper::successMessage();
+        }
+        return ViewHelper::errorMessage('Unknown error occurred.');
     }
 
     /**

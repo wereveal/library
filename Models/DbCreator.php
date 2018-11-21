@@ -14,8 +14,8 @@ use Ritc\Library\Traits\LogitTraits;
  * Installs default database tables and data.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
- * @date    2018-05-30 14:50:52
+ * @version v1.1.0+1
+ * @date    2018-11-21 09:26:26
  * @change_log
  * - v1.1.0         - added new method for content, bug fixes   - 2018-05-30 wer
  * - v1.0.0         - Initial Production version                - 2017-12-15 wer
@@ -586,7 +586,7 @@ class DbCreator
     {
         if (empty($a_people)) {
             if (empty($this->a_data['people'])) {
-                $this->error_message = 'Groups values not provided.';
+                $this->error_message = 'People values not provided.';
                 return false;
             }
             $a_people = $this->a_data['people'];
