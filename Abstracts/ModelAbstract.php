@@ -39,7 +39,7 @@ abstract class ModelAbstract implements ModelInterface
      * @return array The ids of new records.
      * @throws ModelException
      */
-    public function create(array $a_values = [], $allow_pin = false):array
+    public function create(array $a_values = [], bool $allow_pin = false):array
     {
         $a_psql = [
             'table_name'  => $this->db_table,

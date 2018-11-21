@@ -121,7 +121,6 @@ trait TesterTraits
         else {
             $a_test_order = $this->a_test_order;
         }
-        $failed_tests = 0;
         foreach ($a_test_order as $method_name) {
             if (substr($method_name, -6) === 'Tester') {
                 $tester_name = $method_name;
@@ -142,7 +141,6 @@ trait TesterTraits
                         break;
                     case 'failed':
                     default:
-                        $failed_tests++;
                         $this->failed_tests++;
                         $this->failed_test_names[] = $method_name;
                         break;
@@ -308,7 +306,7 @@ trait TesterTraits
                 $test_this = '';
             }
             $results = $this->$o_name->$test($test_this);
-            if ($results == $expected_results) {
+            if ($results === $expected_results) {
                 $this->setSubPassed($test, $subtest);
             }
             else {
@@ -383,7 +381,7 @@ trait TesterTraits
             $results = empty($a_results)
                 ? false
                 : true;
-            if ($results == $expected_results) {
+            if ($results === $expected_results) {
                 $this->setSubPassed($test, $subtest);
                 if ($test === 'create') {
                     if ($subtest === 'valid_create_values' || $subtest === 'good_values') {
@@ -398,7 +396,7 @@ trait TesterTraits
             }
         }
         catch (\TypeError $e) {
-            if ($expected_results == false) {
+            if ($expected_results === false) {
                 $this->setSubPassed($test, $subtest);
             }
             else {
@@ -407,7 +405,7 @@ trait TesterTraits
             }
         }
         catch (\Exception $e) {
-            if ($expected_results == false) {
+            if ($expected_results === false) {
                 $this->setSubPassed($test, $subtest);
             }
             else {
@@ -416,7 +414,7 @@ trait TesterTraits
             }
         }
         catch (\Error $e) {
-            if ($expected_results == false) {
+            if ($expected_results === false) {
                 $this->setSubPassed($test, $subtest);
             }
             else {
@@ -429,11 +427,12 @@ trait TesterTraits
 
     /**
      * Runs a single generic test.
+     *
      * @param array $a_names
      * @param array $a_test_values
      * @return string
      */
-    public function genericSingleTest(array $a_names = [], array $a_test_values):string
+    public function genericSingleTest(array $a_names = [], array $a_test_values = []):string
     {
         if (empty($a_names) || empty($a_test_values)) {
             return 'skipped';
@@ -443,7 +442,7 @@ trait TesterTraits
         $expected_results = $a_test_values['expected_results'];
         $test_this = $a_test_values['test_values'];
         $results = $this->$instance->$test($test_this);
-        if ($results == $expected_results) {
+        if ($results === $expected_results) {
             return 'passed';
         }
 
@@ -456,7 +455,7 @@ trait TesterTraits
      * @param array $a_test_values
      * @return string
      */
-    public function genericDbSingleTest(array $a_names = [], array $a_test_values):string
+    public function genericDbSingleTest(array $a_names = [], array $a_test_values = []):string
     {
         if (empty($a_names) || empty($a_test_values)) {
             return 'skipped';
@@ -469,7 +468,7 @@ trait TesterTraits
         $results = empty($a_results)
             ? false
             : true;
-        if ($results == $expected_results) {
+        if ($results === $expected_results) {
             return 'passed';
         }
 
