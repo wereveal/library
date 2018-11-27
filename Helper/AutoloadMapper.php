@@ -87,8 +87,8 @@ class AutoloadMapper
                     $padding .= ' ';
                 }
             }
-            $value = str_replace($this->src_path . '/', '', $value);
-            $classmap_array_str .= "    '{$key}'{$padding} => __DIR__ . '/../{$value}',\n";
+            $value = str_replace($this->src_path . '/apps', '', $value);
+            $classmap_array_str .= "    '{$key}'{$padding} => " . APPS_PATH . " . '{$value}',\n";
             // echo $key . "\n";
 
             /* Next namespace map buildup */
@@ -104,7 +104,7 @@ class AutoloadMapper
                         $v_padding .= ' ';
                     }
                 }
-                $ns_map_array_str   .= "    '{$vendor_name}\\\\'{$v_padding} => __DIR__ . '/../apps/{$vendor_name}',\n";
+                $ns_map_array_str   .= "    '{$vendor_name}\\\\'{$v_padding} =>  " . APPS_PATH . " . '/{$vendor_name}',\n";
                 // echo $vendor_name . "\n";
             }
         }

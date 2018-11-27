@@ -2,7 +2,6 @@
 /**
  * Class PeopleComplexModel
  * @package Ritc_Library
- * @todo fix warnings
  */
 namespace Ritc\Library\Models;
 
@@ -61,6 +60,7 @@ class PeopleComplexModel
 
     /**
      * Deletes the person and related records.
+     *
      * @param int $people_id
      * @return bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -116,6 +116,7 @@ class PeopleComplexModel
 
     /**
      * Gets the user values based on login_id or people_id.
+     *
      * @param int|string $people_id the people_id or login_id (as defined in the db)
      * @return array the records for the person
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -219,6 +220,7 @@ class PeopleComplexModel
 
     /**
      * Reads the people in the group provided.
+     *
      * @param int $group_id
      * @return bool|mixed
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -450,6 +452,7 @@ class PeopleComplexModel
     /**
      * Creates the array used to save a new person to the database.
      * Values passed in are normally from a POSTed form that have been sanitized.
+     *
      * @param array $a_values
      * @return array|bool|mixed|string
      */
@@ -471,6 +474,7 @@ class PeopleComplexModel
 
     /**
      * Returns an array used in the creation of people group map records.
+     *
      * @param string|array $group_id   Optional, if $group_name is empty then Registered group is assigned.
      * @param string       $group_name Optional, used if $group_id is empty
      * @return array

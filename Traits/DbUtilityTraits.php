@@ -89,7 +89,7 @@ trait DbUtilityTraits
      * @throws \Ritc\Library\Exceptions\ModelException
      * @see  \ref createparams
      */
-    protected function genericCreate(array $a_values = [], array $a_parameters = []):?array
+    protected function genericCreate(array $a_values = [], array $a_parameters = []):array
     {
         $meth = __METHOD__ . '.';
         if (empty($a_values)) {

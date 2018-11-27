@@ -130,7 +130,6 @@ class AuthHelper
      */
     public function login(array $a_person_post = []):array
     {
-        $meth = __METHOD__ . '.';
         if ($a_person_post === []) {
             return [
                 'login_id'     => '',
@@ -172,7 +171,7 @@ class AuthHelper
                 return [
                     'login_id'     => '',
                     'is_logged_in' => 'false',
-                    'message'      => 'Please try again. The login id was not found.'
+                    'message'      => 'Please try again: invalid values.'
                 ];
             }
             if ($a_person['is_active'] !== 'true') {
@@ -226,21 +225,22 @@ class AuthHelper
             ];
         }
 
-          $this->logIt(var_export($a_person_post, true), LOG_OFF, $meth . __LINE__);
         $message = 'Please try again.';
         try {
             $a_person = $this->o_people->readPeopleRecord($a_person_post['login_id']);
-            try {
-                $this->o_people->setLoggedOut($a_person['people_id']);
-                $this->o_session->resetSession();
-            }
-            catch (ModelException $e) {
-                $message .= ' ' . $e->errorMessage();
+            if ($a_person['is_logged_in'] === 'true') {
+                try {
+                    $this->o_people->setLoggedOut($a_person['people_id']);
+                }
+                catch (ModelException $e) {
+                    $message .= ' ' . $e->errorMessage();
+                }
             }
         }
         catch (ModelException $e) {
             $message .= ' ' . $e->errorMessage();
         }
+        $this->o_session->resetSession();
         return [
             'login_id'     => '',
             'is_logged_in' => 'false',
