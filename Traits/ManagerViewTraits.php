@@ -34,6 +34,7 @@ trait ManagerViewTraits
 
     /**
      * Renders login form after resetting session.
+     *
      * @param array $a_values optional default values ['tpl' => 'login', 'location' => '/manager/', 'a_message' => [], 'login_id' => '']
      * @return string
      */

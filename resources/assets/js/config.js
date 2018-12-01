@@ -34,8 +34,8 @@ function changeTwigDirs(selectedPrefix) {
         $(resp).each(function(k, v) {
             dirSelect
                 .append($("<option></option>")
-                   .attr("value", v.td_id)
-                   .text(v.td_name)
+                    .attr("value", v.td_id)
+                    .text(v.td_name)
                 );
         });
     });

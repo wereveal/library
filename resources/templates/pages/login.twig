@@ -2,10 +2,6 @@
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ css_dir }}/styles_library.css" media="screen">
 {% endblock %}
-{% block vendorJs %}
-{{ parent() }}
-    <script src="{{ vendor_assets }}/jquery-validation/dist/jquery.validate.js"></script>
-{% endblock %}
 {% block header %}{% endblock %}
 {% block search %}{% endblock %}
 {% block bodyTitle %}{% endblock %}
@@ -22,4 +18,8 @@
     <div class="container">
         {% include '@' ~ lib_prefix ~ 'forms/login_form.twig' %}
     </div>
+{% endblock %}
+{% block bottomJs %}
+ {{ parent() }}
+    {% include '@' ~ lib_prefix ~ 'snippets/form_validation_js.twig' %}
 {% endblock %}

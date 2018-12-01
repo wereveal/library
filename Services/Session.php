@@ -13,9 +13,11 @@ use Ritc\Library\Traits\LogitTraits;
  * For basic management of sessions.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.4.1
- * @date    2017-07-06 21:13:04
+ * @version v1.5.0
+ * @date    2018-11-29 21:32:03
  * @change_log
+ * - v1.5.0 - Changed to set the cookie parameters before the       - 2018-11-29 wer
+ *            session is started when parameters are provided.
  * - v1.4.1 - bug fix                                               - 2017-07-06 wer
  * - v1.4.0 - added the ability to use the global constant          - 10/06/2015 wer
  *            SESSION_IDLE_TIME if it is set.
@@ -40,20 +42,35 @@ class Session
     /**
      * Session constructor.
      *
-     * @param string $session_id
-     * @param string $session_name
+     * @param array $a_params
      * @throws ServiceException
      */
-    private function __construct($session_id = '', $session_name = '')
+    private function __construct(array $a_params = [])
     {
-        if ($session_id !== '') {
-            session_id($session_id);
+        if (!empty($a_params['session_id'])) {
+            session_id($a_params['session_id']);
         }
-        if ($session_name !== '') {
-            session_name($session_name);
+        if (!empty($a_params['session_name'])) {
+            session_name($a_params['session_name']);
         }
         else {
             session_name('RITCSESSID');
+        }
+        if (!empty($a_params['cookie'])) {
+            if (PHP_VERSION_ID >= 70300) {
+                session_set_cookie_params($a_params['cookie']);
+            }
+            else {
+                $lifetime = 0;
+                $path     = '/';
+                $domain   = '';
+                $secure   = false;
+                $httponly = false;
+                foreach ($a_params['cookie'] as $cookie_key => $cookie_value) {
+                    $$cookie_key = $cookie_value;
+                }
+                session_set_cookie_params($lifetime, $path, $domain, $secure, $httponly);
+            }
         }
         $this->session_started = session_start();
         if ($this->session_started) {
@@ -73,16 +90,16 @@ class Session
 
     /**
      * Returns the instance of the Session class.
-     * @param string $session_id
-     * @param string $session_name
+     *
+     * @param array $a_params
      * @return \Ritc\Library\Services\Session
-     * @throws \Ritc\Library\Exceptions\ServiceException
+     * @throws ServiceException
      */
-    public static function start($session_id = '', $session_name = ''):Session
+    public static function start(array $a_params = []):Session
     {
         if (self::$instance === null) {
             try {
-                self::$instance = new Session($session_id, $session_name);
+                self::$instance = new Session($a_params);
             }
             catch (ServiceException $e) {
                 throw new ServiceException($e->errorMessage(), $e->getCode(), $e->getPrevious());
@@ -94,6 +111,7 @@ class Session
     /**
      * Clears the session values.
      * Allows certain ones not to be cleared based on the array $a_not_these.
+     *
      * @param array $a_not_these optional.
      */
     public function clear(array $a_not_these = array()):void
@@ -122,6 +140,7 @@ class Session
 
     /**
      * Returns the values from session_get_cookie_params().
+     *
      * @return array the session's cookies values
      */
     public function getCookieParams():array
@@ -131,6 +150,7 @@ class Session
 
     /**
      * Checks to see if the session has sat there unused for $_SESSION['idle_time'] amount of time.
+     *
      * @return bool
      */
     public function isIdle():bool
@@ -142,6 +162,7 @@ class Session
 
     /**
      * Returns if the Session has not been idle.
+     *
      * @return bool
      */
     public function isNotIdle():bool
@@ -153,6 +174,7 @@ class Session
      * Verifies the session is valid.
      * This is a simple and probably easily spoofed validation but it seems
      * to fool many XSS things.
+     *
      * @pre session variables token and idle_timestamp
      *      as well as the session id matches cookie name
      * @param array $a_values  <pre>array(
@@ -221,6 +243,7 @@ class Session
     /**
      * Tells you if it is not a valid session.
      * returns the opposite of isValidSession method. See its comments for more info
+     *
      * @param array $a_values <pre>array(
      *      'token'=>_SESSION['token'],
      *      'form_ts'=>_SESSION['idle_timestamp'])</pre>
@@ -245,6 +268,7 @@ class Session
 
     /**
      * Returns the Session ID.
+     *
      * @param string $id
      * @return string
      */
@@ -258,6 +282,7 @@ class Session
 
     /**
      * Returns the session name.
+     *
      * @param string $name
      * @return string
      */
@@ -271,6 +296,7 @@ class Session
 
     /**
      * Regenerates the session id.
+     *
      * @param bool $delete_old
      * @return bool
      */
@@ -290,6 +316,7 @@ class Session
 
     /**
      * Returns the Session variable value for the session variable name.
+     *
      * @param string $var_name
      * @return mixed whatever the value is of the session variable.
      */
@@ -302,6 +329,7 @@ class Session
 
     /**
      * Sets a session variable.
+     *
      * @param string $var_name
      * @param string $var_value
      * @return bool
@@ -315,6 +343,7 @@ class Session
 
     /**
      * Sets basic session vars for form validation.
+     *
      * @param array $a_values valid array()
      */
     public function setSessionVars(array $a_values = array()):void
@@ -349,6 +378,7 @@ class Session
     /**
      * Sets $_SESSION vars specified in the array.
      * Any number session vars can be set/created with this function.
+     *
      * @pre If the $a_vars array is from a POST or GET it is assumed in this
      *      method that the values have been put through some sort of data
      *      cleaner. In other words, you should not put a raw $_POST or $_GET
@@ -374,6 +404,7 @@ class Session
      * Sets the amount of time for a page to be allowed idle.
      * Can either be passed in or defaults to the constant SESSION_IDLE_TIME
      * if set or 1800 if not.
+     *
      * @param int $time
      * @param bool $add
      */
@@ -411,6 +442,8 @@ class Session
     }
 
     /**
+     * Sets the php ini session.use_cookies variable.
+     *
      * @param bool $use_cookies
      * @return bool|string
      */
@@ -426,6 +459,8 @@ class Session
     }
 
     /**
+     * Sets the php ini session.user_trans_sid variable.
+     *
      * @param bool $use_trans
      * @return bool|string
      */
@@ -439,6 +474,8 @@ class Session
     }
 
     /**
+     * GETtter for class property session_id.
+     *
      * @return string
      */
     public function getSessionId():string
@@ -447,6 +484,8 @@ class Session
     }
 
     /**
+     * SETtter for class property session_id.
+     *
      * @param string $session_id
      */
     public function setSessionId(string $session_id):void
@@ -455,6 +494,8 @@ class Session
     }
 
     /**
+     * GETter for class property session_name.
+     *
      * @return string
      */
     public function getSessionName():string
@@ -463,6 +504,8 @@ class Session
     }
 
     /**
+     * SETter for class propery session_name.
+     *
      * @param string $session_name
      */
     public function setSessionName(string $session_name):void
@@ -471,6 +514,8 @@ class Session
     }
 
     /**
+     * GETter for class property session_started.
+     *
      * @return bool
      */
     public function isSessionStarted():bool
@@ -479,6 +524,8 @@ class Session
     }
 
     /**
+     * SETter for class property session_started.
+     *
      * @param bool $session_started
      */
     public function setSessionStarted(bool $session_started):void
@@ -496,6 +543,7 @@ class Session
 
     /**
      * Gets the token.
+     *
      * @return mixed
      */
     public function getToken()

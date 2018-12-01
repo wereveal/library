@@ -80,7 +80,8 @@ class LibraryController implements ControllerInterface
                     $o_c = new AjaxController($this->o_di);
                     break;
                 case 'alias':
-                    return $this->o_view->renderError('Not Available Yet');
+                    $a_message = ViewHelper::infoMessage('Not Available Yet');
+                    return $this->o_view->renderError($a_message);
                 case 'blocks':
                     $o_c = new BlocksController($this->o_di);
                     break;

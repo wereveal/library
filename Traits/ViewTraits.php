@@ -305,7 +305,8 @@ trait ViewTraits
             'public_dir'     => PUBLIC_DIR,
             'site_url'       => SITE_URL,
             'rights_holder'  => RIGHTS_HOLDER,
-            'copyright_date' => COPYRIGHT_DATE
+            'copyright_date' => COPYRIGHT_DATE,
+            'debug_on'       => DEVELOPER_MODE ? 'true' : ''
         ];
         $a_values = array_merge($a_values, $a_page_values);
         return $a_values;
