@@ -94,7 +94,7 @@ class Tail
             'hobbit'         => '',
             'a_menus'        => [],
             'adm_lvl'        => 10,
-            'twig_prefix'    => TWIG_PREFIX,
+            'site_prefix'    => SITE_TWIG_PREFIX,
             'lib_prefix'     => LIB_TWIG_PREFIX,
             'public_dir'     => PUBLIC_DIR,
             'site_url'       => SITE_URL,
@@ -320,7 +320,7 @@ class Tail
     {
             $this->tpl = $tpl !== ''
                 ? $tpl
-                : '@' . TWIG_PREFIX . 'pages/tail.tpl';
+                : '@' . SITE_PREFIX . 'pages/tail.tpl';
     }
 
     ### Private Functions ###

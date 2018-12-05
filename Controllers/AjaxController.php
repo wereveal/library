@@ -284,7 +284,7 @@ class AjaxController
                 if ($this->use_cache) {
                     $this->o_cache->set($cache_key, $results, 'ajax');
                 }
-                $this->logIt('JSON: ' . $results, LOG_ON, $meth . __LINE__);
+                $this->logIt('JSON: ' . $results, LOG_OFF, $meth . __LINE__);
             }
             catch (ModelException $e) {
                 return $bad_results;

@@ -276,7 +276,7 @@ class TwigView implements ViewInterface
             return $this->render($a_message);
         }
         $log_message = 'template results ' . var_export($a_tpl, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $login_id = $this->o_session->getVar('login_id');
         if ($a_tpl['tpl_immutable'] === 'true' && $this->o_auth->hasMinimumAuthLevel($login_id, 9)) {

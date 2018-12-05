@@ -138,7 +138,7 @@ class LibSitemapView implements ViewInterface
         }
         $a_tpl_values = [
             'page_prefix' => LIB_TWIG_PREFIX,
-            'twig_prefix' => TWIG_PREFIX,
+            'site_prefix' => SITE_PREFIX,
             'twig_dir'    => 'pages',
             'tpl'         => 'sitemap_xml'
         ];

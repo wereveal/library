@@ -398,7 +398,7 @@ class ConstantsCreator
                 }
             }
         }
-        if (!\defined('TWIG_PREFIX')) {
+        if (!\defined('TWIG_PREFIX')) { // left for legacy reasons
             /** @var string 'TWIG_PREFIX' */
             \define('TWIG_PREFIX', $default_twig_prefix);
         }

@@ -17,9 +17,17 @@ use Ritc\Library\Services\DbModel;
  * some work there.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.4.0
- * @date    2018-10-24 16:04:13
+ * @version v3.0.0
+ * @date    2018-12-05 13:03:16
  * @change_log
+ * - v3.0.0          - Changed readCount() method, not backwards compatible     - 2018-12-05 wer
+ *                     readCount was relying on values that were not easily
+ *                     created in places that needed the method.
+ *                     buildSqlInsert() method was also changed at some point
+ *                     in the past and not documented. Change could have caused
+ *                     errors--not backwards compatible--so should have been
+ *                     documented.
+ *                     necessarily available and didn't really make sense
  * - v2.4.0          - Changed genericCreate to remove primary index values     - 2018-10-24 wer
  *                     from db field names and values except when the parameter
  *                     is set to allow the primary index to be specified
@@ -411,8 +419,6 @@ SQL;
      *                              but using the array of the actual values being inserted
      *                              ensures that only those values are inserted.
      * @param array $a_allowed_keys list array of key names that are allowed in the a_values array.
-     * @param bool  $allow_pin      Optional, defaults to false. If true the primary index may be set in the insert.
-     *                              Normally, the pin will be auto created so this is unusual.
      * @return string
      */
     protected function buildSqlInsert(array $a_values = [], array $a_allowed_keys = []):string
@@ -855,18 +861,21 @@ SQL;
 
     /**
      * Returns the number of records in the table.
-     * @param string $where the where values string if desired, e.g. 'fred' LIKE 'barney'.
-     * @param array  $a_where_values
+     *
+     * @param array $a_where  Optional, [field_name => value]
+     * @param array $a_params Optional, @see DbUtilityTraits::buildSqlWhere()
      * @return int
      */
-    public function readCount($where = '', array $a_where_values = []):?int
+    public function readCount(array $a_where = [], array $a_params = []):?int
     {
         $sql = "SELECT count(*) as 'count' FROM " . $this->db_table;
-        if (!empty($where) && !empty($a_where_values)) {
-            $sql .= ' ' . $where;
+        $where = '';
+        if (!empty($a_where)) {
+            $where = $this->buildSqlWhere($a_where, $a_params);
         }
+        $sql .= $where;
         try {
-            $results = $this->o_db->search($sql, $a_where_values);
+            $results = $this->o_db->search($sql, $a_where);
             return $results[0]['count'];
         }
         catch (ModelException $e) {

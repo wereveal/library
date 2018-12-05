@@ -55,7 +55,7 @@ class NavigationView
         $meth = __METHOD__ . '.';
         $a_nav = $this->getNavUrlTree();
         $log_message = 'a_nav' . var_export($a_nav, true);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/navigation/');
         $a_twig_values['a_nav'] = $a_nav;
@@ -165,7 +165,7 @@ class NavigationView
         $a_twig_values['nav'] = $a_nav;
         $a_twig_values['tpl'] = 'navigation_form';
           $log_message = 'twig values ' . var_export($a_twig_values, TRUE);
-          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }

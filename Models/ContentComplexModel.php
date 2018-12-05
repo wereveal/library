@@ -162,7 +162,7 @@ class ContentComplexModel
         }
         if (!empty($a_params['current'])) {
             $a_search_for[':c_current'] = $a_params['current'];
-            $where                      = ' 
+            $where                      = '
                 WHERE c.c_current = :c_current';
         }
         if (!empty($a_params['order_by'])) {
@@ -184,6 +184,25 @@ class ContentComplexModel
     }
 
     /**
+     * Reads the current content for a page specified by the url.
+     *
+     * @param int $url_id
+     * @return array
+     * @throws ModelException
+     */
+    public function readAllByUrlId($url_id = -1):array
+    {
+        try {
+            $a_results = $this->o_page->readByUrlId($url_id);
+            $page_id = $a_results[0]['page_id'];
+            return $this->readAllByPage(['page_id' => $page_id]);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
      * Returns all records that current.
      *
      * @return array
@@ -202,7 +221,7 @@ class ContentComplexModel
             $this->select_sql
         );
         $sql   .= $where;
-        $this->logIt('SQL: ' . $sql, LOG_ON, $meth . __LINE__);
+        $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
         $a_search_for = [':c_current' => 'true'];
         try {
             $a_results = $this->o_db->search($sql, $a_search_for);
@@ -223,16 +242,16 @@ class ContentComplexModel
     {
         $meth = __METHOD__ . '.';
         $where = '
-            WHERE c.c_current = :c_current 
+            WHERE c.c_current = :c_current
             AND c.c_featured = :c_featured';
-        $page_extra = ' 
+        $page_extra = '
                 AND p.page_id = :page_id';
         $sql = str_replace(
             ['{{pbm_extra}}', '{{blocks_extra}}', '{{page_extra}}'],
             ['', '', $page_extra],
             $this->select_sql
         ) . $where;
-        $this->logIt('SQL: ' . $sql, LOG_ON, $meth . __LINE__);
+        $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
         $a_search_for = [
             ':c_current'  => 'true',
             ':c_featured' => 'true',
@@ -308,9 +327,9 @@ class ContentComplexModel
             ':b_type'   => 'shared',
             ':current'  => 'true'
         ];
-        $this->logIt('SQL: ' . $sql, LOG_ON, $meth . __LINE__);
+        $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
         $log_message = 'Search For:  ' . var_export($a_search_for, true);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         try {
             $results = $this->o_db->search($sql, $a_search_for);

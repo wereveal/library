@@ -102,8 +102,8 @@ class TwigComplexModel
                 try {
                     $a_results = $this->o_page->read(['tpl_id' => $id]);
                     $log_message = 'template reslts ' . var_export($a_results, TRUE);
-                    $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-                    
+                    $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+
                     if (empty($a_results)) {
                         if ($this->o_tpls->isImmutable([$id])) {
                             $o_auth = new AuthHelper($this->o_di);
@@ -443,7 +443,7 @@ class TwigComplexModel
     {
         $meth = __METHOD__ . '.';
         $log_message = 'Values ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_ON, $meth . __LINE__);
+        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $td_name = $a_values['td_name'];
         try {

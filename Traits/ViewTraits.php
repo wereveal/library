@@ -27,9 +27,10 @@ use Ritc\Library\Services\Session;
  * Common functions for views.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
- * @date    2018-05-14 17:38:51
+ * @version v2.0.1
+ * @date    2018-12-05 13:11:40
  * @change_log
+ * - v2.0.1         - bug fixes - createNumericPagerValues()                                    - 2018-12-05 wer
  * - v2.0.0         - Added caching of some data that is used commonly in a view.               - 2018-05-14 wer
  *                    Added a new method for setting the url_id based on record id
  *                    which fixes a bug.
@@ -293,7 +294,7 @@ trait ViewTraits
             'a_menus'        => $a_menus,
             'adm_lvl'        => $this->adm_level,
             'auth_lvls'      => $a_auth_levels,
-            'twig_prefix'    => TWIG_PREFIX,
+            'site_prefix'    => SITE_TWIG_PREFIX,
             'lib_prefix'     => LIB_TWIG_PREFIX,
             'assets_dir'     => ASSETS_DIR,
             'css_dir'        => CSS_DIR,
@@ -509,7 +510,7 @@ trait ViewTraits
                 'title'          => '',
                 'lang'           => 'en',
                 'charset'        => 'utf-8',
-                'page_prefix'    => TWIG_PREFIX,
+                'page_prefix'    => SITE_TWIG_PREFIX,
                 'twig_dir'       => 'pages',
                 'tpl'            => 'index',
                 'a_content'      => [],
@@ -587,10 +588,10 @@ trait ViewTraits
     {
         $a_pager = [];
         $pager_key = 'pager.values.for.' . md5(json_encode($a_parameters));
-        if (empty($a_parameters['start_record'])
-            || empty($a_parameters['records_to_display'])
-            || empty($a_parameters['total_records'])
-            || empty($a_parameters['href'])
+        if (!isset($a_parameters['start_record'])
+            || !isset($a_parameters['records_to_display'])
+            || !isset($a_parameters['total_records'])
+            || !isset($a_parameters['href'])
         ) {
             if ($this->use_cache) {
                 $this->o_cache->clearKey($pager_key);
@@ -603,10 +604,10 @@ trait ViewTraits
         if (!empty($a_pager)) {
             return $a_pager;
         }
-        $start_record       = $a_parameters['start_record'];
-        $records_to_display = $a_parameters['records_to_display'];
-        $total_records      = $a_parameters['total_records'];
-        $href               = $a_parameters['href'];
+        $start_record       = (int)$a_parameters['start_record'];
+        $records_to_display = (int)$a_parameters['records_to_display'];
+        $total_records      = (int)$a_parameters['total_records'];
+        $href               = (string)$a_parameters['href'] === '' ? '/' : (string)$a_parameters['href'];
         if ($records_to_display >= $total_records) {
             if ($this->use_cache) {
                 $this->o_cache->set($pager_key, [], 'pager');
@@ -668,7 +669,7 @@ trait ViewTraits
                 ? $number_of_pages
                 : $a_parameters['display_links']
             : 11;
-        if ($start_record === 1) {
+        if ((int)$this_page === (int)$i_start) {
             $a_pager['previous'] = '';
             $a_pager['first'] = '';
         }
@@ -684,7 +685,7 @@ trait ViewTraits
                 ? 1
                 : $number_of_pages - 10;
             $i_end = $number_of_pages;
-            if ($i_end === $this_page) {
+            if ((int)$i_end === (int)$this_page) {
                 $a_pager['next'] = '';
                 $a_pager['last'] = '';
             }
@@ -693,20 +694,20 @@ trait ViewTraits
             if ($use_page_numbers) {
                 $text = $i;
             }
-            else if ($i === 1) {
+            elseif ($i === 1) {
                 $text = 1;
             }
             else {
                 $text = ($i - 1) * $records_to_display;
             }
-            if ($i === 1) {
+            if ((int)$this_page === (int)$i) {
+                $link = '';
+            }
+            elseif ($i === 1) {
                 $link = $href
                         . '/' . $i
                         . $use_to_display
                         . '/' . $get_stuff;
-            }
-            elseif ($this_page === $i) {
-                $link = '';
             }
             else {
                 $link = $href
@@ -714,9 +715,6 @@ trait ViewTraits
                         . (($i - 1) * $records_to_display)
                         . $use_to_display
                         . '/' . $get_stuff;
-            }
-            if ($i === $start_record || ($start_record === 1 && $i === 0)) {
-                $link = '';
             }
             $a_pager['links'][] = [
                 'href' => $link,

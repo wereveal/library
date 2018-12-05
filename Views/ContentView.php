@@ -306,8 +306,8 @@ class ContentView implements ViewInterface
         $a_twig_values['has_versions'] = CONTENT_VCS ? 'true' : 'false';
         $tpl = $this->createTplString($a_twig_values);
           $log_message = 'twig values ' . var_export($a_twig_values, true);
-          $this->logIt($log_message, LOG_ON, $meth . __LINE__);
-          $this->logIt('TPL: ' . $tpl, LOG_ON, $meth . __LINE__);
+          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
+          $this->logIt('TPL: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
