@@ -27,10 +27,10 @@ use Ritc\Library\Services\Session;
  * Common functions for views.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.1
- * @date    2018-12-05 13:11:40
+ * @version v2.0.2
+ * @date    2018-12-06 12:43:43
  * @change_log
- * - v2.0.1         - bug fixes - createNumericPagerValues()                                    - 2018-12-05 wer
+ * - v2.0.2         - bug fixes                                                                 - 2018-12-06 wer
  * - v2.0.0         - Added caching of some data that is used commonly in a view.               - 2018-05-14 wer
  *                    Added a new method for setting the url_id based on record id
  *                    which fixes a bug.
@@ -560,10 +560,10 @@ trait ViewTraits
      */
     protected function createNewOrderNumber(array $a_used = [], $value = 0):int
     {
-        if (!\in_array($value, $a_used)) {
+        if (!\in_array($value, $a_used, false)) {
             return (int) $value;
         }
-        if (!\in_array($value + 1, $a_used)) {
+        if (!\in_array($value + 1, $a_used, false)) {
             return $value + 1;
         }
         return $this->createNewOrderNumber($a_used, $value + 1);
@@ -588,10 +588,11 @@ trait ViewTraits
     {
         $a_pager = [];
         $pager_key = 'pager.values.for.' . md5(json_encode($a_parameters));
-        if (!isset($a_parameters['start_record'])
-            || !isset($a_parameters['records_to_display'])
-            || !isset($a_parameters['total_records'])
-            || !isset($a_parameters['href'])
+        if (!isset($a_parameters['start_record'],
+                   $a_parameters['records_to_display'],
+                   $a_parameters['total_records'],
+                   $a_parameters['href']
+           )
         ) {
             if ($this->use_cache) {
                 $this->o_cache->clearKey($pager_key);
@@ -827,7 +828,7 @@ trait ViewTraits
             $order_number = !empty($a_link['nav_order'])
                 ? (int)$a_link['nav_order']
                 : 99;
-            if (\in_array($order_number, $a_used_order)) {
+            if (\in_array($order_number, $a_used_order, false)) {
                 $new_order_number = $this->createNewOrderNumber($a_used_order, $order_number);
                 $a_used_order[] = $new_order_number;
                 $a_new_nav[$new_order_number] = $a_link;
