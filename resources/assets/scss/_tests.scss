@@ -1,6 +1,7 @@
 ul.test-results {
+  @include listStyleNone;
+
+  ul {
     @include listStyleNone;
-    ul {
-        @include listStyleNone;
-    }
+  }
 }
