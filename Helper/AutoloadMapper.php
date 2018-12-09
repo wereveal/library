@@ -88,7 +88,7 @@ class AutoloadMapper
                 }
             }
             $value = str_replace($this->src_path . '/apps', '', $value);
-            $classmap_array_str .= "    '{$key}'{$padding} => " . APPS_PATH . " . '{$value}',\n";
+            $classmap_array_str .= "    '{$key}'{$padding} => APPS_PATH . '{$value}',\n";
             // echo $key . "\n";
 
             /* Next namespace map buildup */
@@ -104,25 +104,26 @@ class AutoloadMapper
                         $v_padding .= ' ';
                     }
                 }
-                $ns_map_array_str   .= "    '{$vendor_name}\\\\'{$v_padding} =>  " . APPS_PATH . " . '/{$vendor_name}',\n";
+                $ns_map_array_str   .= "    '{$vendor_name}\\\\'{$v_padding} => APPS_PATH . '/{$vendor_name}',\n";
                 // echo $vendor_name . "\n";
             }
         }
-
+        $ns_map_array_str = substr($ns_map_array_str, 0, -2);
+        $classmap_array_str = substr($classmap_array_str, 0, -2);
         $date = date('c');
         $classmap_text =<<<EOT
 <?php
 /* Generated on {$date} by AutoloadMapper */
-return array(
+return [
 {$classmap_array_str}
-);
+];
 EOT;
         $ns_map_text =<<<EOT
 <?php
 /* Generated on {$date} by AutoloadMapper */
-return array(
+return [ 
 {$ns_map_array_str}
-);
+];
 
 EOT;
         file_put_contents($this->config_path . '/autoload_classmap.php', $classmap_text);
