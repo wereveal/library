@@ -505,7 +505,7 @@ class DbCreator
         ";
         $a_table_info = [
             'table_name'  => $table_name,
-            'column_name' => 'nnm_id'
+            'column_name' => 'page_id'
         ];
         try {
             $o_pdo_stmt = $this->o_db->prepare($sql);
