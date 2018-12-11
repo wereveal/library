@@ -19,9 +19,10 @@ use Ritc\Library\Traits\LogitTraits;
  * twig_prefix, twig_dirs, twig_templates are used.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.1
- * @date    2017-12-15 22:47:39
+ * @version v1.0.1
+ * @date    2018-12-11 09:21:36
  * @change_log
+ * - v1.0.1         - Bug Fixes                     - 2018-12-11 wer
  * - v1.0.0         - Initial Production version    - 2018-05-29 wer
  * - v1.0.0-alpha.1 - lots of changes               - 2017-12-15 wer
  * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
@@ -133,10 +134,16 @@ class TwigComplexModel
      */
     public function createTwigForApp(array $a_values = []):array
     {
-        if (empty($a_values) || empty($a_values['tp_prefix']) || empty($a_values['tp_path'])) {
+        if (empty($a_values)
+         || empty($a_values['tp_prefix'])
+         || empty($a_values['tp_path'])
+        ) {
             $message = 'Missing required values.';
             throw new ModelException($message, 10);
         }
+        $tp_prefix_id = '';
+        $a_dir_ids = [];
+        $a_tpl_ids = [];
         $app_twig_prefix = $a_values['tp_prefix'];
         try {
             $results = $this->o_prefix->read(['tp_prefix' => $app_twig_prefix]);
@@ -150,13 +157,28 @@ class TwigComplexModel
         }
         if (!empty($results)) {
             $tp_prefix_id = $results[0]['tp_id'];
+            try {
+                $a_dir_ids = $this->o_dirs->read(['tp_id' => $tp_prefix_id]);
+            }
+            catch (ModelException $e) {
+                // silently let drop to next stuff
+            }
+            $a_tpl_ids = [];
+            foreach ($a_dir_ids as $key => $a_dir) {
+                try {
+                    $a_tpl_results = $this->o_tpls->read(['td_id' => $a_dir['td_id']]);
+                    foreach ($a_tpl_results as $a_tpl) {
+                        $a_tpl_ids[] = $a_tpl['tpl_id'];
+                    }
+                }
+                catch (ModelException $e) {
+                    // silently let drop to next stuff
+                }
+            }
         }
         else {
             if (empty($a_values['tp_active'])) {
                 $a_values['tp_active'] = 'true';
-            }
-            if (empty($a_values['tp_default'])) {
-                $a_values['tp_default'] = 'false';
             }
             if (empty($a_values['tp_default'])) {
                 $a_values['tp_default'] = 'false';
@@ -179,65 +201,69 @@ class TwigComplexModel
                 throw new ModelException('Unable to try to create the twig_prefix record', $e->getCode(), $e);
             }
         }
-        try {
-            $a_dir_ids = $this->o_dirs->createDefaultDirs($tp_prefix_id);
+        if (empty($a_dir_ids)) {
+            try {
+                $a_dir_ids = $this->o_dirs->createDefaultDirs($tp_prefix_id);
+                if (empty($results)) {
+                    throw new ModelException('Unable to create the default dir records. No results.', 110);
+                }
+            }
+            catch (ModelException $e) {
+                throw new ModelException('Unable to create the default dir records. ' . $e->getMessage(), $e->getCode());
+            }
+        }
+        if (empty($a_tpl_ids)) {
+            try {
+                $a_search_for = ['tp_id' => $tp_prefix_id, 'td_name' => 'pages'];
+                $a_params     = ['search_type' => 'AND'];
+                $results      = $this->o_dirs->read($a_search_for, $a_params);
+            }
+            catch (ModelException $e) {
+                $message  = 'Unable to get the pages directory id';
+                $message .= DEVELOPER_MODE
+                    ? ' ' . $e->errorMessage()
+                    : ' ' . $e->getMessage();
+                throw new ModelException($message, 210);
+            }
             if (empty($results)) {
-                throw new ModelException('Unable to create the default dir records. No results.', 110);
+                throw new ModelException('Unable to get the pages directory id', 210);
             }
-        }
-        catch (ModelException $e) {
-            throw new ModelException('Unable to create the default dir records. ' . $e->getMessage(), $e->getCode());
-        }
-        try {
-            $a_search_for = ['tp_id' => $tp_prefix_id, 'td_name' => 'pages'];
-            $a_params = ['search_type' => 'AND'];
-            $results = $this->o_dirs->read($a_search_for, $a_params);
-        }
-        catch (ModelException $e) {
-            $message = 'Unable to get the pages directory id';
-            $message .= DEVELOPER_MODE
-                ? ' ' . $e->errorMessage()
-                : ' ' . $e->getMessage();
-            throw new ModelException($message, 210);
-        }
-        if (empty($results)) {
-            throw new ModelException('Unable to get the pages directory id', 210);
-        }
-        $dir_id = $results[0]['td_id'];
-        $new_templates = [
-            ['td_id' => $dir_id, 'tpl_name' => 'index',   'tpl_immutable' => 'false'],
-            ['td_id' => $dir_id, 'tpl_name' => 'home',    'tpl_immutable' => 'false'],
-            ['td_id' => $dir_id, 'tpl_name' => 'manager', 'tpl_immutable' => 'false'],
-            ['td_id' => $dir_id, 'tpl_name' => 'error',   'tpl_immutable' => 'false'],
-            ['td_id' => $dir_id, 'tpl_name' => 'text',    'tpl_immutable' => 'false']
-        ];
-        $a_existing_tpls = [];
-        foreach ($new_templates as $key => $a_template) {
-            try {
-                $results = $this->o_tpls->read($a_template, ['search_type' => 'AND']);
-                if (!empty($results)) {
-                    $a_existing_tpls[] = $results[0];
-                    unset($new_templates[$key]);
+            $dir_id = $results[0]['td_id'];
+            $new_templates = [
+                ['td_id' => $dir_id, 'tpl_name' => 'index',   'tpl_immutable' => 'false'],
+                ['td_id' => $dir_id, 'tpl_name' => 'home',    'tpl_immutable' => 'false'],
+                ['td_id' => $dir_id, 'tpl_name' => 'manager', 'tpl_immutable' => 'false'],
+                ['td_id' => $dir_id, 'tpl_name' => 'error',   'tpl_immutable' => 'false'],
+                ['td_id' => $dir_id, 'tpl_name' => 'text',    'tpl_immutable' => 'false']
+            ];
+            $a_existing_tpls = [];
+            foreach ($new_templates as $key => $a_template) {
+                try {
+                    unset($a_template['tpl_immutable']);
+                    $results = $this->o_tpls->read($a_template, ['search_type' => 'AND']);
+                    if (!empty($results)) {
+                        $a_existing_tpls[] = $results[0];
+                        unset($new_templates[$key]);
+                    }
+                }
+                catch (ModelException $e) {
+                    throw new ModelException('Error trying to read the templates.', 210);
                 }
             }
-            catch (ModelException $e) {
-                throw new ModelException('Error trying to read the templates.', 210);
-            }
-        }
-        $a_tpl_ids = [];
-        if (!empty($new_templates)) {
-            sort($new_templates);
-            try {
-                $a_tpl_ids = $this->o_tpls->create($new_templates);
-                if (empty($a_tpl_ids)) {
-                    throw new ModelException('Could not create the template records. Empty Results.', 110);
+            if (!empty($new_templates)) {
+                sort($new_templates);
+                try {
+                    $a_tpl_ids = $this->o_tpls->create($new_templates);
+                    if (empty($a_tpl_ids)) {
+                        throw new ModelException('Could not create the template records. Empty Results.', 110);
+                    }
+                }
+                catch (ModelException $e) {
+                    throw new ModelException('Could not create the template records. ', $e->getCode(), $e);
                 }
             }
-            catch (ModelException $e) {
-                throw new ModelException('Could not create the template records. ', $e->getCode(), $e);
-            }
+            $a_tpl_ids = array_merge($a_existing_tpls, $a_tpl_ids);
         }
-        $a_tpl_ids = array_merge($a_existing_tpls, $a_tpl_ids);
         $a_return_this = [
             'tp_id'   => $tp_prefix_id,
             'td_ids'  => $a_dir_ids,

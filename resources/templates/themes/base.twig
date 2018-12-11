@@ -14,15 +14,15 @@
 {% endblock %}
 {% block meta %}{% endblock %}
 {% block vendorStylesheets %}
-{% set fontawesomePro = fonts_dir ~ '/fontawesome/js/fontawesome-all.min.js' %}
-{% set fontawesomeFree = vendor_dir ~ '/@fortawesome/fontawesome-free/js/all.js' %}
+{% set fontawesomePro = vendor_dir ~ '/@fortawesome/fontawesome-pro' %}
+{% set fontawesomeFree = vendor_dir ~ '/@fortawesome/fontawesome-free' %}
 {% if fontawesomePro is inPublic %}
-    <link href="{{ fonts_dir }}/fontawesome/css/fa-svg-with-js.css">
-    <script src="{{ fonts_dir }}/fontawesome/js/fontawesome-all.min.js"></script>
+    <link href="{{ fontawesomePro }}/css/svg-with-js.css">
+    <script src="{{ fontawesomePro }}/js/all.min.js"></script>
 {% else %}
     {% if fontawesomeFree is inPublic %}
-    <link href="{{ vendor_dir }}/@fortawesome/fontawesome-free/css/all.css">
-    <script src="{{ vendor_dir }}/@fortawesome/fontawesome-free/js/all.js"></script>
+    <link href="{{ fontawesomeFree }}/css/svg-with-js.min.css">
+    <script src="{{ fontawesomeFree }}/js/all.js"></script>
     {% endif %}
 {% endif %}
 {% endblock %}

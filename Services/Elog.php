@@ -99,6 +99,7 @@ class Elog
     /**
      * Create/use the instance.
      * Elog is a singleton and uses the start method to create/use the instance.
+     *
      * @return \Ritc\Library\Services\Elog - the instance
      * @throws \Ritc\Library\Exceptions\ServiceException
      */
@@ -211,6 +212,7 @@ class Elog
 
     /**
      * The function that is for custom logging with trigger_error and fallback to error_log().
+     *
      * @param int    $error_number required
      * @param string $error_string required
      * @return bool|int
@@ -266,6 +268,7 @@ class Elog
 
     /**
      * Returns the private/protected property by name.
+     *
      * @param $var_name
      * @return string
      */
@@ -280,6 +283,7 @@ class Elog
 
     /**
      * Getter for property debug_text.
+     *
      * @return string - the value of $debug_text
      */
     public function getText():string
@@ -289,6 +293,7 @@ class Elog
 
     /**
      * Getter for property last_message.
+     *
      * @return string - the value of $last_message
      */
     public function getLastMessage():string
@@ -302,79 +307,34 @@ class Elog
     private function setElogConstants():void
     {
         if (!\defined('LOG_OFF'))        {
-            /**
-             *
-             */
             \define('LOG_OFF', 0); }
         if (!\defined('LOG_PHP'))        {
-            /**
-             *
-             */
             \define('LOG_PHP', 1); }
         if (!\defined('LOG_BOTH'))       {
-            /**
-             *
-             */
             \define('LOG_BOTH', 2); }
         if (!\defined('LOG_EMAIL'))      {
-            /**
-             *
-             */
             \define('LOG_EMAIL', 3); }
         if (!\defined('LOG_ON'))         {
-            /**
-             *
-             */
             \define('LOG_ON', 4); }
         if (!\defined('LOG_CUSTOM'))     {
-            /**
-             *
-             */
             \define('LOG_CUSTOM', 4); }
         if (!\defined('LOG_JSON'))       {
-            /**
-             *
-             */
             \define('LOG_JSON', 5); }
         if (!\defined('LOG_DB'))         {
-            /**
-             *
-             */
             \define('LOG_DB', 6); }
         if (!\defined('LOG_HTML'))       {
-            /**
-             *
-             */
             \define('LOG_HTML', 7); }
         if (!\defined('LOG_ALWAYS'))     {
-            /**
-             *
-             */
             \define('LOG_ALWAYS', 8); }
         if (!\defined('LOG_WARN'))       {
-            /**
-             *
-             */
             \define('LOG_WARN', 9); }
         if (!\defined('LOG_ERROR'))      {
-            /**
-             *
-             */
             \define('LOG_ERROR', 10); }
         if (!\defined('LOG_NOTICE'))     {
-            /**
-             *
-             */
             \define('LOG_NOTICE', 11); }
         if (!\defined('LOG_DEPRECATED')) {
-            /**
-             *
-             */
             \define('LOG_DEPRECATED', 12); }
         if (!\defined('LOG_PATH'))       {
-            /**
-             *
-             */
             \define('LOG_PATH', BASE_PATH . '/logs'); }
     }
 
@@ -395,6 +355,7 @@ class Elog
     /**
      * A combo setter for 5 properties.
      * Setter for properties from_class, from_function, from_method, from_file, from_line
+     *
      * @param string $file file name
      * @param string $method method name
      * @param string $line line number
@@ -412,6 +373,7 @@ class Elog
 
     /**
      * Sets the property from_class.
+     *
      * @param string $class
      */
     public function setFromClass($class = ''):void
@@ -421,6 +383,7 @@ class Elog
 
     /**
      * Sets the property from_line.
+     *
      * @param string $line
      */
     public function setFromLine($line = ''):void
@@ -430,6 +393,7 @@ class Elog
 
     /**
      * Sets the property from_location.
+     *
      * @param string $location
      */
     public function setFromLocation($location = ''):void
@@ -439,6 +403,7 @@ class Elog
 
     /**
      * Sets the property from_function.
+     *
      * @param string $function
      */
     public function setFromFunction($function = ''):void
@@ -448,6 +413,7 @@ class Elog
 
     /**
      * Sets the property from_method.
+     *
      * @param string $method
      */
     public function setFromMethod($method = ''):void
@@ -457,6 +423,7 @@ class Elog
 
     /**
      * Sets the property from_file.
+     *
      * @param string $file
      */
     public function setFromFile($file = ''):void
@@ -466,6 +433,7 @@ class Elog
 
     /**
      * Sets the property handler_set.
+     *
      * @param bool $value
      */
     public function setHandlerSet($value = true):void
@@ -476,6 +444,7 @@ class Elog
     /**
      * Setter for the private property ignore_log_off.
      * Basically turns logging on globally.
+     *
      * @param bool $boolean
      */
     public function setIgnoreLogOff($boolean = false):void
@@ -485,6 +454,7 @@ class Elog
 
     /**
      * Sets the property log_method.
+     *
      * @param int $log_method
      */
     public function setLogMethod($log_method = LOG_CUSTOM):void
@@ -495,6 +465,7 @@ class Elog
     /**
      * Formats a string for display in html.
      * Can be either an html comment or a string that starts with COMMENT:.
+     *
      * @param string $the_string  the string to be formated
      * @param bool   $not_visible should it formated as an HTML comment
      * @return string the formated string
@@ -507,6 +478,7 @@ class Elog
 
     /**
      * Writes the error_message to the elog file.
+     *
      * @param string $error_string required to log anything.
      * @param string $error_type   optional, defaults to
      * @return bool|int

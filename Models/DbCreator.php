@@ -814,6 +814,7 @@ class DbCreator
 
     /**
      * Inserts data into the twig_templates table.
+     *
      * @param array $a_twig_tpls optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -963,9 +964,18 @@ class DbCreator
     {
         if (!empty($this->a_install_config['app_twig_prefix'])) {
             $app_twig_prefix = $this->a_install_config['app_twig_prefix'];
+            $master_twig = 'false';
+            if (!empty($this->a_install_config['master_twig'])
+              && $this->a_install_config['master_twig'] === 'true'
+            ) {
+                $master_twig = 'true';
+                foreach ($this->a_data['twig_prefix'] as $tp_key => $a_tp_values) {
+                    $this->a_data['twig_prefix'][$tp_key]['tp_default'] = 'false';
+                }
+            }
             $key_name = str_replace('_', '', $app_twig_prefix);
             if ($key_name !== '' && isset($this->a_data['twig_prefix']) && !isset($this->a_data['twig_prefix'][$key_name])) {
-                $tp_path = '/src/apps'
+                $tp_path = '/src/apps/'
                     . $this->a_install_config['namespace']
                     . '/'
                     . $this->a_install_config['app_name']
@@ -975,7 +985,7 @@ class DbCreator
                     'tp_prefix'  => $app_twig_prefix,
                     'tp_path'    => $tp_path,
                     'tp_active'  => 'true',
-                    'tp_default' => 'false'
+                    'tp_default' => $master_twig
                 ];
             }
             $a_dir_names = $this->a_data['twig_default_dirs'];
@@ -989,14 +999,22 @@ class DbCreator
                     ];
                 }
             }
-            $tpl_name = $app_twig_prefix . 'index';
-            if (isset($this->a_data['twig_templates']) && !isset($this->a_data['twig_templates'][$tpl_name])) {
-                /** @noinspection UnsupportedStringOffsetOperationsInspection */
-                $this->a_data['twig_templates'][$tpl_name] = [
-                    'td_id'         => $app_twig_prefix . 'pages',
-                    'tpl_name'      => 'index',
-                    'tpl_immutable' => 'false'
-                ];
+            $default_templates_path = SRC_PATH . '/templates/pages/';
+            $a_default_files = scandir($default_templates_path, SCANDIR_SORT_ASCENDING);
+            foreach ($a_default_files as $file) {
+                if (substr($file, -5) === '.twig' && $file !== 'no_file.twig') {
+                    $this_file = substr($file, 0, -5);
+                    $tpl_key   = $app_twig_prefix . $this_file;
+                    if (!isset($this->a_data['twig_templates'][$tpl_key])) {
+                        $this->a_data['twig_templates'][$tpl_key] = [
+                            'td_id'         => $app_twig_prefix . 'pages',
+                            'tpl_name'      => $this_file,
+                            'tpl_immutable' => 'false'
+                        ];
+                    }
+
+                }
+
             }
         }
     }
