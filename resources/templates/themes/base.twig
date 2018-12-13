@@ -43,9 +43,13 @@
 {% endblock %}
 {% block headJs %}{% endblock %}
 {% block headExtra %}{% endblock %}
-{% block mainContainer %}
+{% block endHead %}
 </head>
+{% endblock %}
+{% block bodyStart %}
 <body>
+{% endblock %}
+{% block mainContainer %}
     <div class="container container-main">
 {% endblock %}
 {% block header %}
@@ -164,7 +168,7 @@
     {% endif %}
         <p class="font-tiny">Library Base Tpl</p>
 {% endblock %}
-{% block endMain %}
+{% block endMainContainer %}
     </div>
 {% endblock %}
 {% block bottomVendorJs %}
