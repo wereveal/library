@@ -13,6 +13,7 @@ use Ritc\Library\Helper\CacheHelper;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Helper\ViewHelper;
+use Ritc\Library\Models\ContentComplexModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
@@ -27,10 +28,10 @@ use Ritc\Library\Services\Session;
  * Common functions for views.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.2
- * @date    2018-12-06 12:43:43
+ * @version v2.1.0
+ * @date    2018-12-18 17:10:27
  * @change_log
- * - v2.0.2         - bug fixes                                                                 - 2018-12-06 wer
+ * - v2.1.0         - Added the shared content to the default twig values                       - 2018-12-18 wer
  * - v2.0.0         - Added caching of some data that is used commonly in a view.               - 2018-05-14 wer
  *                    Added a new method for setting the url_id based on record id
  *                    which fixes a bug.
@@ -242,27 +243,24 @@ trait ViewTraits
      */
     public function createDefaultTwigValues(array $a_message = [], $url_id = -1):array
     {
-        $meth = __METHOD__ . '.';
         $a_page_values = [];
         $a_auth_levels = [];
         if ((int) $url_id < 1) {
             $url_id = $this->urlId($url_id);
         }
-        $cache_key = 'page.values.url_id.' . $url_id;
+        $page_cache_key = 'page.values.url_id.' . $url_id;
         $group_cache_key = 'groups.values.auth_levels';
         if ($this->use_cache) {
-            $a_page_values = $this->o_cache->get($cache_key);
-            $a_auth_levels = $this->o_cache->get($group_cache_key);
+            $a_page_values   = $this->o_cache->get($page_cache_key);
+            $a_auth_levels   = $this->o_cache->get($group_cache_key);
         }
         if (!\is_array($a_page_values) || empty($a_page_values)) {
             $a_page_values = $this->getPageValues($url_id);
             if ($this->use_cache) {
-                $this->o_cache->set($cache_key, $a_page_values, 'page');
+                $this->o_cache->set($page_cache_key, $a_page_values, 'page');
             }
         }
-          $log_message = 'page values ' . var_export($a_page_values, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        if (!is_array($a_auth_levels) || empty($a_auth_levels)) {
+        if (!\is_array($a_auth_levels) || empty($a_auth_levels)) {
             $a_auth_levels = [];
             $o_group = new GroupsModel($this->o_db);
             $o_group->setupElog($this->o_di);
@@ -483,6 +481,16 @@ trait ViewTraits
     }
 
     /**
+     * Retrieves the class property a_nav.
+     *
+     * @return array
+     */
+    public function getNav():array
+    {
+        return $this->a_nav;
+    }
+
+    /**
      * Returns an array with the values used primarily in the meta tags of the html.
      *
      * @param int|string $url_id
@@ -515,6 +523,7 @@ trait ViewTraits
                 'twig_dir'       => 'pages',
                 'tpl'            => 'index',
                 'a_content'      => [],
+                'a_shared'       => [],
                 'base_url'       => '/'
             ];
         }
@@ -536,18 +545,34 @@ trait ViewTraits
             'twig_dir'    => $a_page_values['twig_dir'],
             'tpl'         => $a_page_values['tpl_name'],
             'a_content'   => $a_page_values['a_content'],
+            'a_shared'    => $this->getSharedValues(),
             'base_url'    => $base_url
         ];
     }
 
     /**
-     * Retrieves the class property a_nav.
+     * Returns the content shared between all pages.
      *
      * @return array
      */
-    public function getNav():array
+    public function getSharedValues():array
     {
-        return $this->a_nav;
+        try {
+            $o_c = new ContentComplexModel($this->o_di);
+            $results = $o_c->readCurrentShared();
+            $a_shared_values = [];
+            foreach ($results as $a_record) {
+                $a_shared_values[$a_record['b_name']] = [
+                    'c_content' => $a_record['c_content'],
+                    'c_short_content' => $a_record['c_short_content'],
+                    'c_type'          => $a_record['c_type']
+                ];
+            }
+            return $a_shared_values;
+        }
+        catch (ModelException $e) {
+            return [];
+        }
     }
 
     ### Utilities ###

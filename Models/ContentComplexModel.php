@@ -17,9 +17,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Multi-table database operations and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0
- * @date    2018-06-02 14:12:27
+ * @version 1.0.2
+ * @date    2018-12-18 17:09:29
  * @change_log
+ * - v1.0.2 - Bug fixes                                                 - 2018-12-18 wer
  * - v1.0.0 - Initial version                                           - 2018-06-02 wer
  */
 class ContentComplexModel
@@ -317,20 +318,14 @@ class ContentComplexModel
      */
     public function readCurrentShared():array
     {
-        $meth = __METHOD__ . '.';
-        $blocks_extra = ' AND b.b_active = :b_active AND b.b_type = :b_type';
-        $where = '
-            WHERE c.c_current = :current';
-        $sql = str_replace($this->select_sql, $blocks_extra, $this->select_sql) . $where;
+        $blocks_extra = ['{{pbm_extra}}', '{{blocks_extra}}', '{{page_extra}}'];
+        $where = 'WHERE c.c_current = :c_current AND b.b_type = :b_type AND b.b_active = :b_active';
+        $sql = str_replace($blocks_extra, '', $this->select_sql) . $where;
         $a_search_for = [
-            ':b_active' => 'true',
-            ':b_type'   => 'shared',
-            ':current'  => 'true'
+            ':b_active'  => 'true',
+            ':b_type'    => 'shared',
+            ':c_current' => 'true'
         ];
-        $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
-        $log_message = 'Search For:  ' . var_export($a_search_for, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         try {
             $results = $this->o_db->search($sql, $a_search_for);
         }

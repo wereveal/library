@@ -11,3 +11,16 @@
                 {{ content | nl2br }}
             {% endif %}
         {% endif %}
+        {% if a_shared.footer %}
+            {% set ctype = a_shared.footer.c_type %}
+            {% set content = a_shared.footer.c_content %}
+            {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
+                {{ content | raw }}
+            {% elseif ctype == 'md' %}
+                {{ content | md }}
+            {% elseif ctype == 'mde' %}
+                {{ content | mde }}
+            {% else %}
+                {{ content | nl2br }}
+            {% endif %}
+        {% endif %}

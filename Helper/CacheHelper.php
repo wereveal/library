@@ -64,6 +64,8 @@ class CacheHelper
         if (empty($this->cache_type)) {
             return true;
         }
+        $this->o_cache->clear();
+        $this->o_cache->reset();
         return $this->o_cache->prune();
     }
 
