@@ -262,7 +262,8 @@ trait ViewTraits
         }
           $log_message = 'page values ' . var_export($a_page_values, TRUE);
           $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        if (empty($a_auth_levels)) {
+        if (!is_array($a_auth_levels) || empty($a_auth_levels)) {
+            $a_auth_levels = [];
             $o_group = new GroupsModel($this->o_db);
             $o_group->setupElog($this->o_di);
             try {
