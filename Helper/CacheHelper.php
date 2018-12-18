@@ -7,7 +7,7 @@ namespace Ritc\Library\Helper;
 
 use Psr\Cache\InvalidArgumentException as CacheException;
 use Psr\SimpleCache\InvalidArgumentException as SimpleCacheException ;
-use Ritc\Library\Services\Di;
+use Ritc\Library\Factories\CacheFactory;
 use Ritc\Library\Traits\LogitTraits;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
@@ -18,9 +18,10 @@ use Symfony\Component\Cache\Simple\AbstractCache;
  * Makes using cache easier by hidding differences btween psr-6 and psr-16 types..
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0
- * @date    2018-06-20 09:53:42
+ * @version 1.0.1
+ * @date    2018-12-18 13:49:30
  * @change_log
+ * - v1.0.1 - Bug Fixes                                         - 2018-12-18 wer
  * - v1.0.0 - Initial version                                   - 2018-06-20 wer
  */
 class CacheHelper
@@ -32,7 +33,7 @@ class CacheHelper
      *
      * @var string
      */
-    protected $cache_type;
+    protected $cache_type = '';
     /**
      * The cache object.
      *
@@ -43,18 +44,15 @@ class CacheHelper
     /**
      * CacheHelper constructor.
      *
-     * @param Di $o_di
+     * @param CacheFactory $o_cache
      */
-    public function __construct(Di $o_di)
+    public function __construct($o_cache)
     {
-        if (USE_CACHE) {
-            $o_cache = $o_di->get('cache');
-            if (\is_object($o_cache)) {
-                $this->o_cache = $o_cache;
-                $this->cache_type = strpos(CACHE_TYPE, 'Simple') !== false
-                    ? 'psr-16'
-                    : 'psr-6';
-            }
+        if (\is_object($o_cache)) {
+            $this->o_cache = $o_cache;
+            $this->cache_type = strpos(CACHE_TYPE, 'Simple') !== false
+                ? 'psr-16'
+                : 'psr-6';
         }
     }
 
@@ -116,6 +114,58 @@ class CacheHelper
     }
 
     /**
+     * Removes all key/value pairs with specified tags.
+     *
+     * @param string $tag
+     */
+    public function clearTags(array $a_tags = []):void
+    {
+        switch ($this->cache_type) {
+            case 'psr-6':
+                try{
+                    $this->o_cache->invalidateTags($a_tags);
+                }
+                catch (CacheException $e) {
+                    // do nothing
+                }
+                break;
+            case 'psr-16':
+            default:
+                // do nothing
+        }
+    }
+
+    /**
+     * Deletes a specified key=>value pair from cache.
+     *
+     * @param string $cache_key
+     */
+    public function deleteItem(string $cache_key = ''):void
+    {
+        try {
+            $this->o_cache->deleteItem($cache_key);
+        }
+        catch (CacheException $e) {
+            // do nothing
+        }
+    }
+
+    /**
+     * Delete specific key=>value pairs.
+     *
+     * @param array $a_keys
+     */
+    public function deleteItems(array $a_keys = []):void
+    {
+        try {
+            $this->o_cache->deleteItems($a_keys);
+        }
+        catch (CacheException $e) {
+            // do nothing
+        }
+    }
+
+    /**
      * Gets the value for a key.
      *
      * @param string $cache_key
@@ -158,6 +208,25 @@ class CacheHelper
     public function getCacheType():string
     {
         return $this->cache_type;
+    }
+
+    /**
+     * Checks to see if there is a cache key.
+     *
+     * @param string $cache_key
+     * @return bool
+     */
+    public function hasItem(string $cache_key = ''):bool
+    {
+        try {
+            return $this->o_cache->hasItem($cache_key);
+        }
+        catch(SimpleCacheException $e) {
+            return false;
+        }
+        catch(CacheException $e) {
+            return false;
+        }
     }
 
     /**
