@@ -158,6 +158,9 @@
             <p>Copyright &copy;&nbsp;{{ copyright_date }} <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved</p>
         </footer>
 {% endblock %}
+{% block endMainContainer %}
+    </div>
+{% endblock %}
 {% block debug %}
     {% if debug_text %}
         <div class="container">
@@ -167,9 +170,6 @@
         </div>
     {% endif %}
         <p class="font-tiny">Library Base Tpl</p>
-{% endblock %}
-{% block endMainContainer %}
-    </div>
 {% endblock %}
 {% block bottomVendorJs %}
     <script src="{{ vendor_dir }}/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
