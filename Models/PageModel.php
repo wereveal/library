@@ -15,9 +15,10 @@ use Ritc\Library\Services\DbModel;
  * Does all the database CRUD stuff for the page table plus other app/business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
- * @date    2018-06-15 09:16:14
+ * @version v3.0.1
+ * @date    2018-12-29 10:52:45
  * @change_log
+ * - v3.0.1   - Bug fix to read.                                        - 2018-12-29 wer
  * - v3.0.0   - Refactored to use ModelAbstract                         - 2018-06-15 wer
  * - v2.0.0   - Refactored to use ModelException                        - 2017-06-17 wer
  * - v1.2.0   - refactored to utilize the DbUtilityTraits               - 2016-04-01 wer
@@ -88,8 +89,11 @@ class PageModel extends ModelAbstract
             unset($a_search_params['starting_from']);
         }
         $where  = $this->buildSqlWhere($a_search_for, $a_search_params);
-        $where .= ' 
-            AND page_up <= :page_up 
+        $where .= $where === ''
+            ? 'WHERE '
+            : '
+            AND ';
+        $where .= 'page_up <= :page_up 
             AND page_down >= :page_down 
             ORDER BY ' . $order_by;
         if ($limit_to !== '') {

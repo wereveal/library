@@ -57,17 +57,17 @@
         {% if mainNavName is empty %}
             {% set mainNavName = 'mainNav' %}
         {% endif %}
-        <nav class="navbar navbar-expand-md navbar-dark bg-gray no-margin" role="navigation">
+        <nav class="navbar navbar-expand-md navbar-dark bg-green no-margin" role="navigation">
             {% block navbarToggler %}
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#{{ mainNavName }}">
              <span class="fa-layers fa-fw">
-                <span class="far fa-square fa-lg slate"></span>
-                <span class="fas fa-bars fa-lg slate" data-fa-transform="shrink-6"></span>
+                <span class="far fa-square fa-lg"></span>
+                <span class="fas fa-bars fa-lg" data-fa-transform="shrink-6"></span>
              </span>
             </button>
             {% endblock %}
             {% block navbarBrand %}
-            <a class="navbar-brand" href="#"><span class="far fa-cog fa-2x slate"></span></a>
+            <a class="navbar-brand" href="#"><span class="far fa-cog fa-2x"></span></a>
             {% endblock %}
             <div class="collapse navbar-collapse" id="{{ mainNavName }}">
                 <ul class="navbar-nav mr-auto">

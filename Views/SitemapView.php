@@ -40,15 +40,12 @@ class SitemapView implements ViewInterface
      */
     public function render():string
     {
-        $meth = __METHOD__ . '.';
         $a_message = [];
         $a_sitemap = $this->buildSitemapArray();
         if (!empty($a_sitemap['message'])) {
             $a_message = $a_sitemap;
             $a_sitemap = [];
         }
-        $log_message = 'sitemap ' . var_export($a_sitemap, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['a_sitemap'] = $a_sitemap;
         $tpl = $this->createTplString($a_twig_values);

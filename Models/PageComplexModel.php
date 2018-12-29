@@ -16,15 +16,11 @@ use Ritc\Library\Traits\LogitTraits;
  * Does multi-table queries and applies necessary business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.6
- * @date    2017-06-17 12:12:02
+ * @version v1.0.0
+ * @date    2018-12-29 10:48:35
  * @change_log
- * - v1.0.0-alpha.7 - bug fix                           - 2018-04-17 wer
- * - v1.0.0-alpha.6 - variable name clarification       - 2018-04-12 wer
- * - v1.0.0-alpha.5 - refactored to use ModelException  - 2017-06-17 wer
- * - v1.0.0-alpha.2 - refactoring reflected here        - 2017-01-27 wer
- * - v1.0.0-alpha.0 - Initial version                   - 2016-04-08 wer
- * @todo take out of alpha
+ * - v1.0.0         - Finally taken out of alpha (7 versions)   - 2018-12-29 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2016-04-08 wer
  */
 class PageComplexModel
 {
@@ -121,7 +117,7 @@ class PageComplexModel
         }
         $sql_where = '';
         foreach ($a_search_for as $key => $value) {
-            if (\in_array($key, $a_allowed_keys)) {
+            if (\in_array($key, $a_allowed_keys, false)) {
                 $search_for = $key[0] . '.' . $key;
                 $placeholder = ':' . $key;
                 $sql_where .= $sql_where === ''

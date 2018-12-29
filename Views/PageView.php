@@ -27,9 +27,10 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the Page Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.0
- * @date    2017-06-20 11:46:05
+ * @version v2.2.0
+ * @date    2018-12-29 10:55:35
  * @change_log
+ * - v2.2.0   - renderForm updated to match changes in data.                            - 2018-12-29 wer
  * - v2.1.0   - method name changed elsewhere changed here                              - 2017-06-20 wer
  *              ModelException handling added
  * - v2.0.0   - name refactoring                                                        - 2017-05-14 wer
@@ -74,7 +75,6 @@ class PageView
      * @param string $new_or_modify Defaults to new
      * @param int    $page_id
      * @return string
-     * @todo see inline todos in method
      */
     public function renderForm($new_or_modify = 'new_page', $page_id = -1):string
     {
@@ -183,24 +183,6 @@ class PageView
             'other_stuph' => ' required',
             'options'     => $a_ng_options
         ];
-        $o_blocks = new BlocksModel($this->o_db);
-        $o_blocks->setupElog($this->o_di);
-        try {
-            $a_block_list = [];
-            $a_blocks = $o_blocks->readActive();
-            foreach ($a_blocks as $a_block) {
-                $a_block_list[] = [
-                    'id'      => 'blocks[' . $a_block['b_id'] . ']',
-                    'name'    => 'blocks[' . $a_block['b_id'] . ']',
-                    'value'   => 'true',
-                    'checked' => '',
-                    'label'   => $a_block['b_name']
-                ];
-            }
-        }
-        catch (ModelException $e) {
-            $a_block_list = [];
-        }
         $a_options = [
             [
                 'value'       => '',
@@ -246,11 +228,58 @@ class PageView
             'page_lang'        => 'en',
             'page_charset'     => 'utf-8',
             'page_immutable'   => 'false',
+            'page_changefreq'  => 'yearly',
+            'page_priority'    => '0.5'
         ];
+        $a_changefreq = [
+            'always',
+            'hourly',
+            'daily',
+            'weekly',
+            'monthly',
+            'yearly',
+            'never'
+        ];
+        $a_changefreq_options = [
+            [
+                'value'       => '',
+                'label'       => '-Select Frequency-',
+                'other_stuph' => ''
+            ]
+        ];
+        $a_priority_options = [
+            [
+                'value'       => '',
+                'label'       => '-Select Priority-',
+                'other_stuph' => ''
+            ]
+        ];
+        for ($x = 0.0; $x <= 1.0; $x += 0.1) {
+            $other_stuph = $x === 0.5 ? ' selected' : '';
+            $option_value = (string) $x;
+            if ($option_value === '0') {
+                $option_value = '0.0';
+            }
+            if ($option_value === '1') {
+                $option_value = '1.0';
+            }
+            $a_priority_options[] = [
+                'value'       => $option_value,
+                'label'       => $option_value,
+                'other_stuph' => $other_stuph
+            ];
+        }
+        foreach ($a_changefreq as $changefreq) {
+            $other_stuph = $changefreq === 'yearly' ? ' selected' : '';
+            $a_changefreq_options[] = [
+                'value'       => $changefreq,
+                'label'       => $changefreq,
+                'other_stuph' => $other_stuph
+            ];
+        }
         $a_twig_values = $this->createDefaultTwigValues();
         $a_twig_values['url_select'] = $a_url_select;
         $a_twig_values['action']     = $new_or_modify === 'modify_page' ? 'update' : 'save';
-        $a_twig_values['a_page']     = $a_page;
         $a_twig_values['which_page'] = 'form';
         ### If we are trying to modify an existing page, grab its data and shove it into the form ###
         if ($new_or_modify === 'modify_page') {
@@ -262,25 +291,8 @@ class PageView
             catch (ModelException $e) {
                 $a_pages = [];
             }
-            $o_pbm = new PageBlocksMapModel($this->o_db);
-            $o_pbm->setupElog($this->o_di);
-            try {
-                $a_pbm = $o_pbm->readByPageId($page_id);
-            }
-            catch (ModelException $e) {
-                $a_pbm = [];
-            }
-            foreach ($a_pbm as $a_record) {
-                foreach ($a_block_list as $key => $a_block) {
-                    if ($a_block['id'] === 'blocks[' . $a_record['pbm_block_id'] . ']') {
-                        $a_block_list[$key]['checked'] = ' checked';
-                    }
-                }
-            }
             if (!empty($a_pages[0])) {
                 $a_page = $a_pages[0];
-                $a_twig_values['a_page'] = $a_page;
-
                 $label = $a_page['url_host'] === 'self'
                     ? $a_page['url_text']
                     : $a_page['url_host'] . $a_page['url_text'];
@@ -302,7 +314,6 @@ class PageView
                 $a_twig_values['url_select']['options'][0]['other_stuph'] = ''; // this should be the default --Select--
                 $o_tpl = new TwigTemplatesModel($this->o_db);
                 $o_tpl->setupElog($this->o_di);
-                /* @todo need to write code to set which twig prefix is being used and which directory is being used. */
                 try {
                     $a_tpls = $o_tpl->read(['tpl_id' => $a_page['tpl_id']]);
                     $a_tpl_select['options'] = [
@@ -331,14 +342,86 @@ class PageView
                 $a_twig_values['a_message'] = $a_message;
             }
         }
-        // TODO need to add page up and page down controls.
-        // TODO need to add created and updated info
+        $o_blocks = new BlocksModel($this->o_db);
+        $o_blocks->setupElog($this->o_di);
+        try {
+            $a_block_list = [];
+            $a_blocks = $o_blocks->readActive();
+            foreach ($a_blocks as $a_block) {
+                $a_block_list[] = [
+                    'id'      => 'blocks[' . $a_block['b_id'] . ']',
+                    'name'    => 'blocks[' . $a_block['b_id'] . ']',
+                    'value'   => 'true',
+                    'checked' => '',
+                    'label'   => $a_block['b_name']
+                ];
+            }
+        }
+        catch (ModelException $e) {
+            $a_block_list = [];
+        }
+        if (!empty($a_page['page_id'])) {
+            $o_pbm = new PageBlocksMapModel($this->o_db);
+            $o_pbm->setupElog($this->o_di);
+            try {
+                $a_pbm = $o_pbm->readByPageId($a_page['page_id']);
+            }
+            catch (ModelException $e) {
+                $a_pbm = [];
+            }
+            foreach ($a_pbm as $a_record) {
+                foreach ($a_block_list as $key => $a_block) {
+                    if ($a_block['id'] === 'blocks[' . $a_record['pbm_block_id'] . ']') {
+                        $a_block_list[$key]['checked'] = ' checked';
+                    }
+                }
+            }
+            foreach ($a_changefreq_options as $key => $a_changefreq_option) {
+                if ($a_changefreq_option['value'] === $a_page['page_changefreq']) {
+                    $a_changefreq_options[$key]['other_stuph'] = ' selected';
+                }
+                else {
+                    $a_changefreq_options[$key]['other_stuph'] = '';
+                }
+            }
+            foreach ($a_priority_options as $key => $a_priority_option) {
+                if ($a_priority_option['value'] === $a_page['page_priority']) {
+                    $a_priority_options[$key]['other_stuph'] = ' selected';
+                }
+                else {
+                    $a_priority_options[$key]['other_stuph'] = '';
+                }
+            }
+        }
+        $a_changefreq_select = [
+            'id'          => 'page[page_changefreq]',
+            'name'        => 'page[page_changefreq]',
+            'class'       => 'form-control',
+            'label_text'  => 'Sitemap Change Frequency: ',
+            'label_class' => 'form-label bold',
+            'label_extra' => '',
+            'other_stuph' => '',
+            'options'     => $a_changefreq_options
+        ];
+        $a_priority_select = [
+            'id'          => 'page[page_priority]',
+            'name'        => 'page[page_priority]',
+            'class'       => 'form-control',
+            'label_text'  => 'Sitemap Priority: ',
+            'label_class' => 'form-label bold',
+            'label_extra' => '',
+            'other_stuph' => '',
+            'options'     => $a_priority_options
+        ];
+        $a_twig_values['a_page']             = $a_page;
         $a_twig_values['ng_select']          = $a_ng_select;
         $a_twig_values['twig_prefix_select'] = $a_prefix_select;
         $a_twig_values['twig_dir_select']    = $a_dir_select;
         $a_twig_values['twig_tpl_select']    = $a_tpl_select;
         $a_twig_values['immutable_cbx']      = $a_immutable_cbx;
         $a_twig_values['a_blocks']           = $a_block_list;
+        $a_twig_values['changefreq_select']  = $a_changefreq_select;
+        $a_twig_values['priority_select']    = $a_priority_select;
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }

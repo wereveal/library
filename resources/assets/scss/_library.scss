@@ -16,3 +16,32 @@
     content : "\200B";
   }
 }
+.navbar {
+  &.bg-green {
+    @include linearGradient(180deg, $green-medium-dark, $green-medium);
+    color: $green-xlight;
+    a {
+      &.nav-link {
+        @include fontSmallCapsBold;
+        font-size: 1.25rem;
+        color: $green-xlight;
+        &.active {
+          color: $green-complement;
+        }
+      }
+    }
+    a:hover {
+      color: $color-white;
+    }
+    li {
+      &.show > .nav-link {
+        color: $green-medium-light;
+      }
+      &.nav-item {
+        a:hover {
+          color: $green-complement;
+        }
+      }
+    }
+  }
+}

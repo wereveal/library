@@ -16,9 +16,11 @@ use Ritc\Library\Traits\LogitTraits;
  * Does all the database CRUD stuff for the page table plus other app/business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
- * @date    2018-05-24 16:26:54
+ * @version v1.2.0
+ * @date    2018-12-29 10:46:41
  * @change_log
+ * - v1.2.0         - getSitemapForXml changed (removed an param which  - 2018-12-29 wer
+ *                    was causing a bug.
  * - v1.1.0         - Added new method to return site map links         - 2018-05-24 wer
  *                    Made a lot of changes to facilitate new method
  * - v1.0.0         - initial production version                        - 2017-12-12 wer
@@ -381,7 +383,6 @@ class NavComplexModel
      */
     public function getSitemap(array $a_navgroups = ['Sitemap'], $auth_level = 0, $child_levels = 'all'):array
     {
-        $meth = __METHOD__ . '.';
         $sql = $this->select_sql;
         $replace_this = 'ON ng.ng_id = map.ng_id';
         $with_this = '';
@@ -396,12 +397,10 @@ class NavComplexModel
         if (!empty($with_this)) {
             $with_this .= ')';
         }
-        $this->logIt('with this: ' . $with_this, LOG_OFF, $meth . __LINE__);
         $sql  = str_replace($replace_this, $with_this, $sql);
         $sql .= 'AND n.nav_level = :nav_level
             ORDER BY n.nav_order';
         $a_search_for[':nav_level'] = 1;
-        $this->logIt('sql: ' . $sql, LOG_OFF, $meth . __LINE__);
         try {
             $results = $this->o_db->search($sql, $a_search_for);
         }
@@ -409,8 +408,6 @@ class NavComplexModel
             $this->error_message = 'Could not get the record: ' . $this->o_db->getSqlErrorMessage();
             throw new ModelException($this->error_message, 210, $e);
         }
-        $log_message = 'Results ' . var_export($results, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_parents = [];
         foreach ($results as $key => $record) {
@@ -418,8 +415,6 @@ class NavComplexModel
                 $a_parents[$record['url']] = $record;
             }
         }
-        $log_message = 'Parents ' . var_export($a_parents, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         foreach ($a_parents as $key => $record) {
             if ($record['auth_level'] <= $auth_level && $record['nav_id'] === $record['parent_id']) {
@@ -450,10 +445,9 @@ class NavComplexModel
      * Creates an array that can be used with the sitemap_xml twig file.
      *
      * @param int   $auth_level optional, defaults to unregistered
-     * @param array $a_options  optional, ['changefreq' => 'yearly', 'priority' => 0.5]
      * @return array
      */
-    public function getSitemapForXml($auth_level = 0, array $a_options = []):array
+    public function getSitemapForXml($auth_level = 0):array
     {
         try {
             $a_results = $this->getNavListByName('Sitemap');
@@ -462,12 +456,6 @@ class NavComplexModel
             return [];
         }
         $a_urls = [];
-        $changefreq = empty($a_options['changefreq'])
-            ? ''
-            : $a_options['changefreq'];
-        $priority = empty($a_options['priority'])
-            ? ''
-            : $a_options['priority'];
         try {
             $o_page = new PageComplexModel($this->o_di);
         }
@@ -482,9 +470,9 @@ class NavComplexModel
                     if ($a_page['page_up'] <= $today && $a_page['page_down'] >= $today) {
                         $a_urls[] = [
                             'loc'        => $a_url['url'],
-                            'changefreq' => $changefreq,
+                            'changefreq' => $a_page['page_changefreq'],
                             'lastmod'    => $a_page['updated_on'],
-                            'priority'   => $priority
+                            'priority'   => $a_page['page_priority']
                         ];
                     }
                 }

@@ -80,34 +80,42 @@
         </div>
         <a data-toggle="collapse" aria-expanded="false" aria-controls="metadataCollapse" role="button" href="#metadataCollapse"><h4 class="mt-6 font-small-caps-bold">Other Metadata - <small>Defaults are normally OK</small> <span class="far fa-arrow-down"></span></h4></a>
         <div class="collapse" id="metadataCollapse">
-        <div class="row row-dark form-group form-group-row">
-            <label for="page_base_url" class="form-label bold">Base URL: <span class="text-danger">*</span></label>
-            <input type="text" id="page_base_url" name="page[page_base_url]" class="form-control colorful" maxlength="64" value="{{ a_page.page_base_url }}" required />
-            <div class="invalid-feedback">
-                A base URL must be specified. The default / should work.
+            <div class="row row-dark form-group form-group-row">
+                <label for="page_base_url" class="form-label bold">Base URL: <span class="text-danger">*</span></label>
+                <input type="text" id="page_base_url" name="page[page_base_url]" class="form-control colorful" maxlength="64" value="{{ a_page.page_base_url }}" required />
+                <div class="invalid-feedback">
+                    A base URL must be specified. The default / should work.
+                </div>
             </div>
-        </div>
-        <div class="row row-light border-left border-right form-group form-group-row">
-            <label for="page_type" class="form-label bold">MIME Type: <span class="text-danger">*</span></label>
-            <input type="text" id="page_type" name="page[page_type]" class="form-control colorful" maxlength="250" value="{{ a_page.page_type }}" required />
-            <div class="invalid-feedback">
-                MIME type must be specified, e.g. text/html.
+            <div class="row row-light border-left border-right form-group form-group-row">
+                <label for="page_type" class="form-label bold">MIME Type: <span class="text-danger">*</span></label>
+                <input type="text" id="page_type" name="page[page_type]" class="form-control colorful" maxlength="250" value="{{ a_page.page_type }}" required />
+                <div class="invalid-feedback">
+                    MIME type must be specified, e.g. text/html.
+                </div>
             </div>
-        </div>
-        <div class="row row-dark form-group form-group-row">
-            <label for="page_lang" class="form-label bold">Language: <span class="text-danger">*</span></label>
-            <input type="text" id="page_lang" name="page[page_lang]" class="form-control colorful" maxlength="4" value="{{ a_page.page_lang }}" required />
-            <div class="invalid-feedback">
-                Default language must be specified, e.g. en.
+            <div class="row row-dark form-group form-group-row">
+                <label for="page_lang" class="form-label bold">Language: <span class="text-danger">*</span></label>
+                <input type="text" id="page_lang" name="page[page_lang]" class="form-control colorful" maxlength="4" value="{{ a_page.page_lang }}" required />
+                <div class="invalid-feedback">
+                    Default language must be specified, e.g. en.
+                </div>
             </div>
-        </div>
-        <div class="row row-light border border-top-0 form-group form-group-row">
-            <label for="page_charset" class="form-label bold">Character Set: <span class="text-danger">*</span></label>
-            <input type="text" id="page_charset" name="page[page_charset]" class="form-control colorful" maxlength="20" value="{{ a_page.page_charset }}" required />
-            <div class="invalid-feedback">
-                Character set must be specified, utf8.
+            <div class="row row-light border border-top-0 form-group form-group-row">
+                <label for="page_charset" class="form-label bold">Character Set: <span class="text-danger">*</span></label>
+                <input type="text" id="page_charset" name="page[page_charset]" class="form-control colorful" maxlength="20" value="{{ a_page.page_charset }}" required />
+                <div class="invalid-feedback">
+                    Character set must be specified, utf8.
+                </div>
             </div>
-        </div>
+            <div class="row row-dark border border-top-0 form-group form-group-row">
+                {% set select = changefreq_select %}
+                {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select %}
+            </div>
+            <div class="row row-light border border-top-0 form-group form-group-row">
+                {% set select = priority_select %}
+                {% include '@' ~ lib_prefix ~ 'elements/select.twig' with select %}
+            </div>
         </div>
         <div class="row form-group form-group-row">
             <div class="col">
