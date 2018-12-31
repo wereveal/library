@@ -1,0 +1,12 @@
+/*! Default Font Face */
+@include fontFace('VeraSans', '/assets/fonts/Vera/Vera','','', woff);
+@include fontFace('VeraSansBold', '/assets/fonts/Vera/Vera-Bold','','', woff);
+@include fontFace('VeraSerif', '/assets/fonts/Vera/VeraSerif','','', woff);
+@include fontFace('VeraSerifBold', '/assets/fonts/Vera/VeraSerif-Bold','','', woff);
+@include fontFace('VeraMono', '/assets/fonts/Vera/VeraMono','','', woff);
+@include fontFace('DejaVuSans', '/assets/fonts/DejaVu/DejaVuSans', '','',woff);
+@include fontFace('DejaVuSerif', '/assets/fonts/DejaVu/DejaVuSerif', '','',woff);
+@include fontFace('DejaVuMono', '/assets/fonts/DejaVu/DejaVuSansMono', '','',woff);
+@include fontFace('DroidSans', '/assets/fronts/Droid/DroidSans','','',woff);
+@include fontFace('DroidSerif', '/assets/fronts/Droid/DroidSerif','','',woff);
+@include fontFace('DroidSansMono', '/assets/fronts/Droid/DroidSansMono','','',woff);

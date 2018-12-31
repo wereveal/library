@@ -1,0 +1,287 @@
+/*! Some general Form styling */
+input, textarea {
+  &.colorful {
+    @include makeColorful(true);
+  }
+  &.colorful:focus {
+    @include makeColorfulFocused(true);
+  }
+  &.flexible {
+    width: 95%;
+  }
+}
+
+select {
+  margin-top: .25rem;
+  &.colorful {
+    @include makeColorful(true);
+  }
+  &.colorful:focus {
+    @include makeColorfulFocused(true);
+  }
+}
+
+textarea {
+  &.colorful {
+    height: 6rem !important;
+    &.colorful-tall {
+      height: 12rem !important;
+    }
+  }
+}
+
+.form-inline {
+  &.dark-row {
+    @include colorRow($gray-darkest, $gray-med-light);
+  }
+  &.light-row {
+    @include colorRow($gray-darkest, $gray-barely);
+  }
+  &.even {
+    @include colorRow($gray-darkest, $gray-med-light);
+  }
+  &.odd {
+    @include colorRow($gray-darkest, $gray-barely);
+  }
+}
+
+.colorful-checkbox {
+  width: 15px;
+  margin: 0;
+  position: relative;
+  input[type=checkbox] {
+    visibility: hidden;
+  }
+  input[type=checkbox]:checked + label {
+    background: $blue-xlight;
+  }
+  input[type=checkbox]:checked + label:after {
+    opacity: 1;
+  }
+  label {
+    cursor: pointer;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    top: 0;
+    left: 0;
+    background: $white-color;
+    border: 1px solid $blue-dark;
+    border-radius: 3px;
+    box-shadow: 1px 1px 1px $color-shadow;
+  }
+  label:after {
+    opacity: 0;
+    content: '';
+    position: absolute;
+    width: 9px;
+    height: 5px;
+    background: transparent;
+    top: 2px;
+    left: 2px;
+    border: 3px solid $blue-dark;
+    border-top: none;
+    border-right: none;
+    transform: rotate(-45deg);
+  }
+  label:hover::after {
+    opacity: 0.5;
+  }
+  span {
+    position: absolute;
+    top: -5px;
+    left: 20px;
+    @include fontBold();
+  }
+}
+
+input[type=checkbox] {
+  &.padded {
+    margin-right: .5rem;
+  }
+}
+
+label {
+  &.error {
+    color: $color-red;
+    @include fontBoldItalic;
+  }
+  &.nice-label {
+    @include fontBold;
+    text-align: right;
+  }
+  &.col-form-label {
+    @include fontBold;
+    @include paddingSize(.5, 'top', 'true');
+  }
+}
+
+.nice-fieldset {
+  @include fancyFieldset;
+  legend {
+    float: left;
+    font-size: 1rem;
+    @include fontSmallCapsBold;
+    &.big-legend {
+      font-size: 1.5rem;
+      color: $gray-dark;
+      background-color: $gray90;
+      border-radius: $default-radius;
+      padding-left: 1rem;
+    }
+  }
+  &.search-for {
+    padding: .5rem;
+    input[type=text] {
+      width: 70%;
+      margin-right: 1rem;
+    }
+  }
+  div {
+    &.form-group {
+      margin-left: .75rem;
+      margin-right: .75rem;
+    }
+  }
+}
+
+.psuedo-label {
+  @include fontBold;
+  text-align: right;
+  padding-right: 1rem;
+}
+
+.checkbox-label {
+  display: inline-block;
+  width: 33%;
+  font-weight: 900;
+}
+
+.btn {
+  &.push-right-1 {
+    margin-left: 1rem;
+  }
+  &.push-right-2 {
+    margin-left: 2rem;
+  }
+  &.push-left-1 {
+    margin-right: 1rem;
+  }
+  &.push-left-2 {
+    margin-right: 2rem;
+  }
+}
+
+.btn-green {
+  @include button-variant($green-bs4, $green-bs4);
+}
+
+.btn-dark-green {
+  @include button-variant($green, $green);
+}
+
+.btn-blue {
+  @include button-variant($blue, $blue);
+}
+
+.btn-red {
+  @include button-variant($red, $red);
+}
+
+.btn-white {
+  @include button-variant($white, $white);
+}
+
+.btn-black {
+  @include button-variant($black, $black);
+}
+
+.btn-gray {
+  @include button-variant($gray60, $gray60);
+}
+
+.btn-brown {
+  @include button-variant($brown-medium, $brown-medium);
+}
+
+.btn-orange {
+  @include button-variant($orange, $orange);
+}
+
+.btn-purple {
+  @include button-variant($purple, $purple);
+}
+
+.btn-outline-green {
+  @include button-outline-variant($green);
+}
+
+.btn-outline-blue {
+  @include button-outline-variant($blue);
+}
+
+.btn-outline-red {
+  @include button-outline-variant($red);
+}
+
+.btn-outline-white {
+  @include button-outline-variant($white, $black);
+}
+
+.btn-outline-black {
+  @include button-outline-variant($black);
+}
+
+.btn-outline-gray {
+  @include button-outline-variant($gray60);
+}
+
+.btn-outline-brown {
+  @include button-outline-variant($brown-medium);
+}
+
+.btn-outline-orange {
+  @include button-outline-variant($orange);
+}
+
+.btn-outline-purple {
+  @include button-outline-variant($purple);
+}
+
+.datepicker {
+  display: inline-block;
+  width: 50%;
+}
+
+form {
+  label, input[type=text] {
+    &.hobbit {
+      display: none;
+    }
+  }
+  .form-group-row {
+    margin-bottom: 0 !important;
+    padding-bottom: .5rem !important;
+    padding-top: .5rem !important;
+  }
+  .form-group {
+    &.row-dark {
+      @include colorRow($gray-darkest, $gray-med-light);
+    }
+    &.row-darker {
+      @include colorRow($gray-barely, $gray-color);
+    }
+    &.row-darkest {
+      @include colorRow($gray-xlight, $gray-dark);
+    }
+    &.row-light {
+      @include colorRow($gray-darkest, $gray-barely);
+    }
+    &.row-medium {
+      @include colorRow($gray-darkest, $gray-light);
+    }
+    &.row-med-light {
+      @include colorRow($gray-darkest, $gray-xlight);
+    }
+  }
+}

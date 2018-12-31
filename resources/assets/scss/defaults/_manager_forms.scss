@@ -1,0 +1,16 @@
+/*! Form specific styles */
+#login-form {
+  label {
+    vertical-align: baseline;
+    padding-top: .25rem;
+    font-weight: 900;
+    text-align: right;
+    @include media-breakpoint-down(sm) {
+      text-align: left;
+    }
+  }
+  .form-group {
+    margin-bottom: 0;
+  }
+}
+

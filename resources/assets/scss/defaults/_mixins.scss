@@ -1,0 +1,424 @@
+/*! Various Mixins */
+@function strReplace($string, $search, $replace: "") {
+  $index: str-index($string, $search);
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + strReplace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+  @return $string;
+}
+
+@function isDirection($value) {
+  $is-keyword: index((to top, to top right, to right top, to right, to bottom right, to right bottom, to bottom, to bottom left, to left bottom, to left, to left top, to top left), $value);
+  $is-angle: type-of($value) == 'number' and index('deg' 'grad' 'turn' 'rad', unit($value));
+  @return $is-keyword or $is-angle;
+}
+
+@mixin rounded($radius) {
+  border-radius: $radius;
+}
+
+@mixin wide($width) {
+  width: $width;
+}
+
+@mixin wideRem($width) {
+  width: 1rem * $width;
+}
+
+@mixin borderSize($size, $where, $what, $when) {
+  $size: 1rem * $size;
+  @if $when != '' {
+    $size: $size !important;
+  }
+  @if $where == 'top' {
+    border-top: $size;
+  } @else if $where == 'bottom' {
+    border-bottom: $size;
+  } @else if $where == 'left' {
+    border-left: $size;
+  } @else if $where == 'right' {
+    border-right: $size;
+  } @else if $where == 'tb' {
+    border-top: $size;
+    border-bottom: $size;
+  } @else if $where == 'lr' {
+    border-left: $size;
+    border-right: $size;
+  } @else {
+    border: $size;
+  }
+  @if $what != '' {
+    border-style: $what;
+  }
+}
+
+@mixin contentBlockHead($colorText, $colorBg) {
+  color: $colorText;
+  background-color: $colorBg;
+  font-variant: small-caps;
+  padding-left: 1rem;
+  padding-top: .25rem;
+  padding-bottom: .25rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+@mixin contentBlock($colorScheme: 'gray') {
+  $borderSize: 0;
+  $borderRadius: .25rem;
+  $colorBg: $gray-medium-dark;
+  $colorText: $color-xlight;
+
+  @if $colorScheme == 'gray' {
+    $borderSize: 1px;
+    $colorBg: $gray-medium-dark;
+    $colorText: $color-xlight;
+  } @else if $colorScheme == 'green' {
+    $borderSize: 1px;
+    $colorBg: $green-dark;
+    $colorText: $green-xlight;
+  } @else if $colorScheme == 'blue' {
+    $borderSize: 1px;
+    $colorBg: $blue-dark;
+    $colorText: $blue-xlight;
+  } @else if $colorScheme == 'red' {
+    $borderSize: 1px;
+    $colorBg: $red-dark;
+    $colorText: $red-xlight;
+  } @else if $colorScheme == 'orange' {
+    $borderSize: 1px;
+    $colorBg: $orange-darker;
+    $colorText: $orange-xlight;
+  } @else if $colorScheme == 'light' {
+    $borderSize: 1px;
+    $colorBg: $color-xlight;
+    $colorText: $gray-medium-dark;
+  } @else if $colorScheme == 'dark' {
+    $borderSize: 1px;
+    $colorBg: $gray-medium-dark;
+    $colorText: $color-xlight;
+  }
+  border: $borderSize solid $colorBg;
+  border-radius: $borderRadius;
+  padding: 0;
+  h1, h2, h3, h4, h5, h6 {
+    @include contentBlockHead($colorText, $colorBg);
+  }
+}
+
+@mixin marginSize($size, $where, $when) {
+  $size: 1rem * $size;
+  @if $when != '' {
+    $size: $size !important;
+  }
+  @if $where == 'top' {
+    margin-top: $size;
+  } @else if $where == 'bottom' {
+    margin-bottom: $size;
+  } @else if $where == 'left' {
+    margin-left: $size;
+  } @else if $where == 'right' {
+    margin-right: $size;
+  } @else if $where == 'tb' {
+    margin-top: $size;
+    margin-bottom: $size;
+  } @else if $where == 'lr' {
+    margin-left: $size;
+    margin-right: $size;
+  } @else {
+    margin: $size;
+  }
+}
+
+@mixin marginSizePx($size, $where, $when) {
+  $size: $size * 1px;
+  @if $when != '' {
+    $size: $size !important;
+  }
+  @if $where == 'top' {
+    margin-top: $size;
+  } @else if $where == 'bottom' {
+    margin-bottom: $size;
+  } @else if $where == 'left' {
+    margin-left: $size;
+  } @else if $where == 'right' {
+    margin-right: $size;
+  } @else if $where == 'tb' {
+    margin-top: $size;
+    margin-bottom: $size;
+  } @else if $where == 'lr' {
+    margin-left: $size;
+    margin-right: $size;
+  } @else {
+    margin: $size;
+  }
+}
+
+@mixin paddingSize($size: 1, $where: 'top', $important: '') {
+  $size: 1rem * $size;
+  @if $important != '' {
+    $size: $size !important;
+  }
+  @if $where == 'top' {
+    padding-top: $size;
+  } @else if $where == 'bottom' {
+    padding-bottom: $size;
+  } @else if $where == 'left' {
+    padding-left: $size;
+  } @else if $where == 'right' {
+    padding-right: $size;
+  } @else if $where == 'tb' {
+    padding-top: $size;
+    padding-bottom: $size;
+  } @else if $where == 'lr' {
+    padding-left: $size;
+    padding-right: $size;
+  } @else {
+    padding: $size;
+  }
+}
+
+@mixin paddingSizePx($size, $where, $when) {
+  $size: $size * 1px;
+  @if $when != '' {
+    $size: $size !important;
+  }
+  @if $where == 'top' {
+    padding-top: $size;
+  } @else if $where == 'bottom' {
+    padding-bottom: $size;
+  } @else if $where == 'left' {
+    padding-left: $size;
+  } @else if $where == 'right' {
+    padding-right: $size;
+  } @else if $where == 'tb' {
+    padding-top: $size;
+    padding-bottom: $size;
+  } @else if $where == 'lr' {
+    padding-left: $size;
+    padding-right: $size;
+  } @else {
+    padding: $size;
+  }
+}
+
+@mixin setFont($size, $weight, $style, $variant) {
+  @if $size != '' {
+    font-size: $size;
+  }
+  @if $weight != '' {
+    font-weight: $weight;
+  }
+  @if $style != '' {
+    font-style: $style;
+  }
+  @if $variant != '' {
+    font-variant: $variant;
+  }
+}
+
+@mixin fontMedium {
+  font-weight: 500;
+  font-style: normal;
+}
+
+@mixin fontBold {
+  font-weight: 700;
+  font-style: normal;
+}
+
+@mixin fontExtraBold {
+  font-weight: 900;
+  font-style: normal;
+}
+
+@mixin fontItalic {
+  font-weight: 400;
+  font-style: italic;
+}
+
+@mixin fontMediumItalic {
+  font-weight: 500;
+  font-style: italic;
+
+}
+
+@mixin fontBoldItalic {
+  font-weight: 700;
+  font-style: italic;
+}
+
+@mixin fontExtraBoldItalic {
+  font-weight: 900;
+  font-style: italic;
+}
+
+@mixin fontSmallCaps {
+  font-weight: 500;
+  font-style: normal;
+  font-variant: small-caps;
+}
+
+@mixin fontSmallCapsBold {
+  font-weight: 700;
+  font-style: normal;
+  font-variant: small-caps;
+}
+
+@mixin fontSmallCapsExtraBold {
+  font-weight: 900;
+  font-style: normal;
+  font-variant: small-caps;
+}
+
+@mixin fontSmallCapsItalic {
+  font-weight: 400;
+  font-style: italic;
+  font-variant: small-caps;
+}
+
+@mixin fontSmallCapsBoldItalic {
+  font-weight: 700;
+  font-style: italic;
+  font-variant: small-caps;
+}
+
+@mixin fontSmallCapsXBoldItalic {
+  font-weight: 900;
+  font-style: italic;
+  font-variant: small-caps;
+}
+
+@mixin listStyleNone {
+  list-style-type: none;
+}
+
+@mixin messageColors($bkgd-color, $border-color, $body-color) {
+  border: 3px solid $border-color;
+  border-radius: $default-radius;
+  background-color: $bkgd-color;
+  color: $body-color;
+  padding: .5rem 1rem;
+
+  hr {
+    border-top-color: darken($border-color, 5%);
+  }
+  .message-link {
+    color: darken($body-color, 10%);
+  }
+  .icon {
+    margin-right: 1rem;
+    float: left;
+  }
+}
+
+@mixin fancyFieldset {
+  border: 1px solid $color-border;
+  border-radius: $default-radius;
+  padding: .75rem;
+  margin-bottom: .5rem;
+}
+
+@mixin fontFace($name, $path, $weight: false, $style: false, $exts: eot woff2 woff ttf svg) {
+  $src: null;
+
+  $extmods: (
+    eot: "?",
+    svg: "#" + strReplace($name, " ", "_")
+  );
+
+  $formats: (
+    otf: "opentype",
+    ttf: "truetype"
+  );
+
+  @each $ext in $exts {
+    $extmod: if(map-has-key($extmods, $ext), $ext + map-get($extmods, $ext), $ext);
+    $format: if(map-has-key($formats, $ext), map-get($formats, $ext), $ext);
+    $src: append($src, url(quote($path + "." + $extmod)) format(quote($format)), comma);
+  }
+
+  @font-face {
+    font-family: quote($name);
+    @if $weight != '' {
+      font-weight: $weight;
+    }
+    @if $style != '' {
+      font-style: $style;
+    }
+    src: $src;
+  }
+}
+
+@mixin linearGradient($direction, $colors...) {
+  @if isDirection($direction) == false {
+    $colors: $direction, $colors;
+    $direction: 180deg;
+  }
+  background: nth(nth($colors, 1), 1);
+  background: linear-gradient($direction, $colors) no-repeat;
+}
+
+@mixin linearGradientTwoColor($start_color: black, $end_color: white, $direction: 180deg, $midpoint: 50%) {
+  background: $start_color;
+  background: linear-gradient($direction, $start_color, $midpoint, $end_color) no-repeat;
+}
+
+@mixin makeColorful($important: false) {
+  @if $important {
+    $important: !important;
+  } @else {
+    $important: '';
+  }
+  background: $color-white $important;
+  border-bottom: 1px solid $color-black $important;
+  border-left: 1px solid $gray60 $important;
+  border-right: 1px solid $color-black $important;
+  border-top: 1px solid $gray60 $important;
+  border-radius: 3px $important;
+  @include paddingSize(.375, 'tb', 'true');
+  @include paddingSize(.5, 'left', 'true');
+}
+
+@mixin makeColorfulFocused($important: false) {
+  @if $important {
+    $important: !important;
+  } @else {
+    $important: '';
+  }
+  background: $blue-xlight $important;
+  border-bottom: 1px solid $blue-medium-dark $important;
+  border-left: 1px solid $blue-dark $important;
+  border-right: 1px solid $blue-medium-dark $important;
+  border-top: 1px solid $blue-dark $important;
+  border-radius: 3px $important;
+  @include paddingSize(.375, 'tb', 'true');
+  @include paddingSize(.5, 'left', 'true');
+}
+
+@mixin headerRowColors($color: $color-white, $bg-color: $gray-medium-dark, $force: true) {
+  $important: '';
+  @if $force {
+    $important: !important;
+  }
+  color: $color $important;
+  background-color: $bg-color $important;
+}
+
+@mixin colorRow($color: $color-black, $bg-color: $color-white) {
+  color: $color;
+  background-color: $bg-color;
+  [class*="col"] {
+    border: 0;
+    padding: 0 .25rem;
+    border-radius: 0;
+    margin-top: .25rem;
+    margin-bottom: .25rem;
+    background-color: $bg-color;
+    &.form-label {
+      text-align: right;
+      padding-right: 1rem;
+      font-weight: 700;
+    }
+  }
+}

@@ -1,0 +1,524 @@
+/* Main Common */
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  background-color: $color-body;
+}
+
+code {
+  &.pre {
+    font-family: VeraMono, monospace;
+    white-space: pre-wrap;
+  }
+}
+
+hr.item-card {
+  margin: .5rem 0;
+  width: 50%;
+}
+
+.aright {
+  text-align: right;
+}
+
+.aleft {
+  text-align: left;
+}
+
+.fleft {
+  float: left;
+}
+
+.fright {
+  float: right;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.xtra-bold {
+  font-weight: 900;
+}
+
+.italic {
+  font-style: italic;
+}
+
+.btn-xs {
+  padding: .15rem .75rem;
+  font-size: .85rem;
+  line-height: 1.1rem;
+  border-radius: .2rem;
+}
+
+.btn-xl {
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+}
+
+.btn-2xl, .btn-xxl {
+  font-size: 1.5rem;
+  line-height: 1.75rem;
+}
+
+.btn-xlt {
+  font-size: 1.75rem;
+  line-height: 2rem;
+}
+
+.btn-big {
+  font-size: 2.25rem;
+  font-weight: 300;
+  text-shadow: 1px 1px 1px $gray-500;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.header-small-caps {
+  @include fontSmallCapsExtraBold;
+}
+
+.header-sans, .font-sans {
+  font-family: VeraSansBold, sans-serif;
+}
+
+.hobbit {
+  display: none;
+}
+
+.font-huge {
+  font-size: 2rem;
+}
+
+.font-large {
+  font-size: 1.5rem;
+}
+
+.font-larger {
+  font-size: 1.25rem;
+}
+
+.font-smaller {
+  font-size: .85rem;
+}
+
+.font-small {
+  font-size: .75rem;
+}
+
+.font-tiny {
+  font-size: .5rem;
+}
+
+.font-small-caps {
+  @include fontSmallCaps;
+}
+
+.font-small-caps-bold {
+  @include fontSmallCapsBold;
+}
+
+.container {
+  background-color: $color-container;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+  @include media-breakpoint-down(sm) {
+    margin: .5rem;
+    padding-right: .5rem;
+    padding-left: .5rem;
+  }
+  &.container-main {
+    /* border: 1px solid $color-border; */
+    border-radius: .25rem;
+    box-shadow: 0.15rem 0.15rem 0.15rem $color-shadow;
+  }
+  &.container-bordered {
+    border: 1px solid $color-border;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+    border-radius: .25rem;
+  }
+  &.container-bordered-square {
+    border: 1px solid $color-border;
+  }
+  &.container-message {
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+  }
+  .row-fluid {
+    [class*="span"] {
+      background-color: $color-span;
+      border: 1px solid $color-border;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      padding: 1rem 2rem;
+    }
+    .no-box {
+      background-color: inherit;
+      border: 0;
+      padding: 0;
+      margin: 0 0 1rem 0;
+      div.no-box {
+        margin-right: 1rem;
+      }
+    }
+    div {
+      &.item-card {
+        a.item-link {
+          font-size: 1.2rem;
+          font-weight: 900;
+        }
+      }
+    }
+  }
+  .row {
+    background-color: $color-span;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    [class*="col"] {
+      background-color: $color-span;
+      border: 0;
+      border-radius: 0;
+      padding: 0 .25rem;
+      margin-top: .25rem;
+      margin-bottom: .25rem;
+      &.border-left-1 {
+        border-left: black 1px solid;
+      }
+      &.border-right-1 {
+        border-right: black 1px solid;
+      }
+      &.border-top-1 {
+        border-top: black 1px solid;
+      }
+      &.border-bottom-1 {
+        border-bottom: black 1px solid;
+      }
+    }
+    &.boxed {
+      [class*="col"] {
+        background-color: $color-span;
+        border: 1px solid $color-border;
+        border-radius: .25rem;
+        margin-bottom: 1rem;
+        padding: .25rem;
+      }
+    }
+    &.no-box {
+      [class*="col"] {
+        background-color: $color-span;
+        border: 0;
+        margin-bottom: 1rem;
+        padding: .25rem;
+        &.no-space {
+          margin: 0;
+          padding: 0;
+        }
+      }
+    }
+    &.row-black {
+      @include colorRow($gray-barely, $black-color);
+    }
+    &.row-blue {
+      @include colorRow($blue-xlight, $blue-medium);
+    }
+    &.row-blue-dark {
+      @include colorRow($blue-xlight, $blue-color);
+    }
+    &.row-blue-light {
+      @include colorRow($blue-dark, $blue-xlight);
+    }
+    &.row-dark {
+      @include colorRow($gray-darkest, $gray-med-light);
+    }
+    &.row-darker {
+      @include colorRow($gray-barely, $gray-color);
+    }
+    &.row-darkest {
+      @include colorRow($gray-xlight, $gray-dark);
+    }
+    &.row-green {
+      @include colorRow($green-xlight, $green-medium-light);
+    }
+    &.row-green-dark {
+      @include colorRow($green-xlight, $green-dark);
+    }
+    &.row-green-light {
+      @include colorRow($green-darker, $green-lighter);
+    }
+    &.row-light, &.odd, &.odd-inner-odd, &.even-inner-odd {
+      @include colorRow($gray-darkest, $gray-barely);
+    }
+    &.row-medium, &.even, &.even-inner-even {
+      @include colorRow($gray-darkest, $gray-light);
+    }
+    &.row-med-light, &.odd-inner-even {
+      @include colorRow($gray-darkest, $gray-xlight);
+    }
+    &.row-white {
+      @include colorRow($gray-darkest, $white-color);
+    }
+    &.upper {
+      border-radius: 0 2rem 0 0;
+      padding-top: 1rem;
+    }
+    &.lower {
+      border-radius: 0 0 2rem 0;
+    }
+    &.row-inside {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+  &.header {
+    @include contentBlock('none');
+  }
+  &.footer {
+    @include contentBlock('none');
+  }
+}
+
+.white {
+  color: $white-color;
+}
+
+.black {
+  color: $black-color;
+}
+
+.red {
+  color: $red-color;
+}
+
+.orange {
+  color: $orange-color;
+}
+
+.yellow {
+  color: $yellow-color;
+}
+
+.green {
+  color: $green-color;
+}
+
+.blue {
+  color: $blue-color;
+}
+
+.teal {
+  color: $teal-color;
+}
+
+.pink {
+  color: $pink-color;
+}
+
+.purple {
+  color: $purple-color;
+}
+
+.dark-grey {
+  color: $gunmetal-dark;
+}
+
+.slate {
+  color: $slate-medium;
+}
+
+.grey-lightest {
+  color: $grey-lightest;
+}
+
+.grey-lighter {
+  color: $grey-lighter;
+}
+
+.grey-light {
+  color: $grey-light;
+}
+
+.grey-med-light {
+  color: $grey-med-light;
+}
+
+.grey-medium {
+  color: $grey-medium;
+}
+
+.grey-med-dark {
+  color: $grey-med-dark;
+}
+
+.grey-dark {
+  color: $grey-dark;
+}
+
+.grey-darker {
+  color: $grey-darker;
+}
+
+.grey-darkest {
+  color: $grey-darkest;
+}
+
+.bg-white {
+  background-color: $white-color;
+}
+
+.bg-black {
+  background-color: $black-color;
+}
+
+.bg-red {
+  background-color: $red-color;
+}
+
+.bg-orange {
+  background-color: $orange-color;
+}
+
+.bg-yellow {
+  background-color: $yellow-color;
+}
+
+.bg-green {
+  background-color: $green-color;
+}
+
+.bg-blue {
+  background-color: $blue-color;
+}
+
+.bg-teal {
+  background-color: $teal-color;
+}
+
+.bg-pink {
+  background-color: $pink-color;
+}
+
+.bg-purple {
+  background-color: $purple-color;
+}
+
+.bg-dark-grey {
+  background-color: $gunmetal-dark;
+}
+
+.bg-slate {
+  background-color: $slate-medium;
+}
+
+.bg-grey-lightest {
+  background-color: $grey-lightest;
+}
+
+.bg-grey-lighter {
+  background-color: $grey-lighter;
+}
+
+.bg-grey-light {
+  background-color: $grey-light;
+}
+
+.bg-grey-med-light {
+  background-color: $grey-med-light;
+}
+
+.bg-grey-medium {
+  background-color: $grey-medium;
+}
+
+.bg-grey-med-dark {
+  background-color: $grey-med-dark;
+}
+
+.bg-grey-dark {
+  background-color: $grey-dark;
+}
+
+.bg-grey-darker {
+  background-color: $grey-darker;
+}
+
+.bg-grey-darkest {
+  background-color: $grey-darkest;
+}
+
+.border-radius-top-right {
+  border-top-right-radius: $default-radius;
+}
+
+.border-radius-bottom-right {
+  border-bottom-right-radius: $default-radius;
+}
+
+.border-radius-top-left {
+  border-top-left-radius: $default-radius;
+}
+
+.border-radius-bottom-left {
+  border-bottom-left-radius: $default-radius;
+}
+
+.border-radius-left {
+  border-top-left-radius: $default-radius;
+  border-bottom-left-radius: $default-radius;
+}
+
+.border-radius-right {
+  border-top-right-radius: $default-radius;
+  border-bottom-right-radius: $default-radius;
+}
+
+.border-radius-top {
+  border-top-left-radius: $default-radius;
+  border-top-right-radius: $default-radius;
+}
+
+.border-radius-bottom {
+  border-bottom-left-radius: $default-radius;
+  border-bottom-right-radius: $default-radius;
+}
+
+.clean-ul {
+  @include listStyleNone;
+}
+
+.list-header {
+  @include headerRowColors();
+  div {
+    @include headerRowColors();
+  }
+}
+
+.list-stripped {
+  &.odd, &.row-light {
+    @include colorRow($gray-darkest, $gray-barely);
+  }
+  &.even, &.row-dark {
+    @include colorRow($gray-darkest, $gray-med-light);;
+  }
+  &.row-med {
+    @include colorRow($gray-darkest, $gray-light)
+  }
+  a {
+    display: inline-block;
+    width: 100%;
+    padding: .25rem;
+    padding-left: .5rem;
+    &.odd {
+      @include colorRow($gray-darkest, $gray-barely);
+    }
+    &.even {
+      @include colorRow($gray-darkest, $gray-med-light);;
+
+    }
+  }
+}

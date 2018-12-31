@@ -1,0 +1,335 @@
+.margin-top-0 {
+  @include marginSize(0, 'top', 'yes');
+}
+
+.margin-top-1 {
+  @include marginSize(1, 'top', 'yes');
+}
+
+.margin-top-2 {
+  @include marginSize(2, 'top', 'yes');
+}
+
+.margin-top-half {
+  @include marginSize(.5, 'top', 'yes');
+}
+
+.margin-top-quarter {
+  @include marginSize(.25, 'top', 'yes');
+}
+
+.margin-bottom-0 {
+  @include marginSize(0, 'bottom', 'yes');
+}
+
+.margin-bottom-1 {
+  @include marginSize(1, 'bottom', 'yes');
+}
+
+.margin-bottom-2 {
+  @include marginSize(2, 'bottom', 'yes');
+}
+
+.margin-bottom-half {
+  @include marginSize(.5, 'bottom', 'yes');
+}
+
+.margin-bottom-quarter {
+  @include marginSize(.25, 'bottom', 'yes');
+}
+
+.margin-left-0 {
+  @include marginSize(0, 'left', 'yes');
+}
+
+.margin-left-1 {
+  @include marginSize(1, 'left', 'yes');
+}
+
+.margin-left-2 {
+  @include marginSize(2, 'left', 'yes');
+}
+
+.margin-left-half {
+  @include marginSize(.5, 'left', 'yes');
+}
+
+.margin-left-quarter {
+  @include marginSize(.25, 'left', 'yes');
+}
+
+.margin-right-0 {
+  @include marginSize(0, 'right', 'yes');
+}
+
+.margin-right-1 {
+  @include marginSize(1, 'right', 'yes');
+}
+
+.margin-right-2 {
+  @include marginSize(2, 'right', 'yes');
+}
+
+.margin-right-half {
+  @include marginSize(.5, 'right', 'yes');
+}
+
+.margin-right-quarter {
+  @include marginSize(.25, 'right', 'yes');
+}
+
+.margin-lr-0 {
+  @include marginSize(0, 'lr', 'yes');
+}
+
+.margin-lr-1 {
+  @include marginSize(1, 'lr', 'yes');
+}
+
+.margin-lr-2 {
+  @include marginSize(2, 'lr', 'yes');
+}
+
+.margin-lr-half {
+  @include marginSize(.5, 'lr', 'yes');
+}
+
+.margin-lr-quarter {
+  @include marginSize(.25, 'lr', 'yes');
+}
+
+.margin-tb-0 {
+  @include marginSize(0, 'tb', 'yes');
+}
+
+.margin-tb-1 {
+  @include marginSize(1, 'tb', 'yes');
+}
+
+.margin-tb-2 {
+  @include marginSize(2, 'tb', 'yes');
+}
+
+.margin-tb-half {
+  @include marginSize(.5, 'tb', 'yes');
+}
+
+.margin-tb-quarter {
+  @include marginSize(.25, 'tb', 'yes');
+}
+
+.margin-all-0 {
+  @include marginSize(0, 'all', 'important');
+}
+
+.margin-all-1 {
+  @include marginSize(1, 'all', 'yes');
+}
+
+.margin-all-2 {
+  @include marginSize(1, 'all', 'yes');
+}
+
+.margin-all-half {
+  @include marginSize(.5, 'all', 'yes');
+}
+
+.margin-all-quarter {
+  @include marginSize(.25, 'all', 'yes');
+}
+
+.pad-all-0, .pad-0 {
+  @include paddingSize(1, 'all', 'yes')
+}
+
+.pad-right-0 {
+  @include paddingSize(0, 'right', 'yes');
+}
+
+.pad-bottom-0 {
+  @include paddingSize(0, 'bottom', 'yes');
+}
+
+.pad-left-0 {
+  @include paddingSize(0, 'left', 'yes');
+}
+
+.pad-top-0 {
+  @include paddingSize(0, 'top', 'yes');
+}
+
+.pad-tb-0 {
+  @include paddingSize(0, 'tb', 'yes');
+}
+
+.pad-lr-0 {
+  @include paddingSize(0, 'lr', 'yes');
+}
+
+.pad-all, .pad-1 {
+  @include paddingSize(1, 'all', 'yes')
+}
+
+.pad-right {
+  @include paddingSize(1, 'right', 'yes');
+}
+
+.pad-bottom, .pad-bottom-1 {
+  @include paddingSize(1, 'bottom', 'yes');
+}
+
+.pad-left, .pad-left-1 {
+  @include paddingSize(1, 'left', 'yes');
+}
+
+.pad-top, .pad-top-1 {
+  @include paddingSize(1, 'top', 'yes');
+}
+
+.pad-tb, .pad-tb-1 {
+  @include paddingSize(1, 'tb', 'yes');
+}
+
+.pad-lr, .pad-lr-1 {
+  @include paddingSize(1, 'lr', 'yes');
+}
+
+.pad-half {
+  @include paddingSize(.5, 'all', 'yes');
+}
+
+.pad-top-half {
+  @include paddingSize(.5, 'top', 'yes');
+}
+
+.pad-bottom-half {
+  @include paddingSize(.5, 'bottom', 'yes');
+}
+
+.pad-tb-half {
+  @include paddingSize(.5, 'tb', 'yes');
+}
+
+.pad-left-half {
+  @include paddingSize(.5, 'left', 'yes');
+}
+
+.pad-lr-half {
+  @include paddingSize(.5, 'lr', 'yes');
+}
+
+.pad-right-half {
+  @include paddingSize(.5, 'right', 'yes');
+}
+
+.pad-quarter {
+  @include paddingSize(.25, 'all', 'yes');
+}
+
+.pad-top-quarter {
+  @include paddingSize(.25, 'top', 'yes');
+}
+
+.pad-tb-quarter {
+  @include paddingSize(.25, 'tb', 'yes');
+}
+
+.pad-lr-quarter {
+  @include paddingSize(.25, 'lr', 'yes');
+}
+
+.pad-bottom-quarter {
+  @include paddingSize(.25, 'bottom', 'yes');
+}
+
+.pad-right-quarter {
+  @include paddingSize(.25, 'right', 'yes');
+}
+
+.pad-left-quarter {
+  @include paddingSize(.25, 'left', 'yes');
+}
+
+.pad-2 {
+  @include paddingSize(2, 'all', 'yes');
+}
+
+.pad-top-2 {
+  @include paddingSize(2, 'top', 'yes');
+}
+
+.pad-right-2 {
+  @include paddingSize(2, 'right', 'yes');
+}
+
+.pad-bottom-2 {
+  @include paddingSize(2, 'bottom', 'yes');
+}
+
+.pad-left-2 {
+  @include paddingSize(2, 'left', 'yes');
+}
+
+.pad-tb-2 {
+  @include paddingSize(2, 'tb', 'yes');
+}
+
+.pad-lr-2 {
+  @include paddingSize(2, 'lr', 'yes');
+}
+
+.pad-3 {
+  @include paddingSize(3, 'all', 'yes');
+}
+
+.pad-top-3 {
+  @include paddingSize(3, 'top', 'yes');
+}
+
+.pad-right-3 {
+  @include paddingSize(3, 'right', 'yes');
+}
+
+.pad-bottom-3 {
+  @include paddingSize(3, 'bottom', 'yes');
+}
+
+.pad-left-3 {
+  @include paddingSize(3, 'left', 'yes');
+}
+
+.pad-tb-3 {
+  @include paddingSize(3, 'tb', 'yes');
+}
+
+.pad-lr-3 {
+  @include paddingSize(3, 'lr', 'yes');
+}
+
+.pad-4 {
+  @include paddingSize(4, 'all', 'yes');
+}
+
+.pad-top-4 {
+  @include paddingSize(4, 'top', 'yes');
+}
+
+.pad-right-4 {
+  @include paddingSize(4, 'right', 'yes');
+}
+
+.pad-bottom-4 {
+  @include paddingSize(4, 'bottom', 'yes');
+}
+
+.pad-left-4 {
+  @include paddingSize(4, 'left', 'yes');
+}
+
+.pad-tb-4 {
+  @include paddingSize(4, 'tb', 'yes');
+}
+
+.pad-lr-4 {
+  @include paddingSize(4, 'lr', 'yes');
+}

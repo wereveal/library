@@ -1,0 +1,240 @@
+/*!
+  Color variables - if intended to override any bootstrap variables,
+  must be included before
+**/
+/* True overrides */
+$blue:       #007bff;
+$indigo:     #6610f2;
+$purple:     #7b00c1;
+$pink:       #ff69b4;
+$red:        #c00;
+$orange:     #ffa500;
+$yellow:     #ff0;
+$green:      #006400;
+$teal:       #008080;
+$cyan:       #17a2b8;
+/* Original Bootstrap colors */
+$blue-bs4:   #007bff;
+$indigo-bs4: #6610f2;
+$purple-bs4: #6f42c1;
+$pink-bs4:   #e83e8c;
+$red-bs4:    #dc3545;
+$orange-bs4: #fd7e14;
+$yellow-bs4: #ffc107;
+$green-bs4:  #28a745;
+$teal-bs4:   #20c997;
+$cyan-bs4:   #17a2b8;
+
+/* alts to bootstrap */
+$black-color:     #000;
+$blue-color:      #006;
+$brown-color:     #68472e;
+$cyan-color:      #17a2b8;
+$gray-color:      #808080; // also gray50 - gray-medium
+$green-color:     #006400;
+$magenta-color:   #f0f;
+$orange-color:    #ffa500;
+$pink-color:      #ff69b4;
+$purple-color:    #7b00c1;
+$red-color:       #a00;
+$teal-color:      #008080;
+$violet-color:    #6d52ab;
+$white-color:     #fff;
+$yellow-color:    #ff0;
+
+$blue-pure:         #00f;
+$blue-dark:         #006;
+$blue-medium-dark:  #00c;
+$blue-medium:       #3f3fff;
+$blue-medium-light: #007bff;
+$blue-light:        #7fffff;
+$blue-lighter:      #dceaff;
+$blue-xlight:       #e5ffff;
+$blue-complement:   #9fc8e6;
+
+$gray20: #333;
+$gray25: #404040;
+$gray35: #595959;
+$gray40: #666;
+$gray50: #808080;
+$gray60: #999;
+$gray65: #a6a6a6;
+$gray75: #bfbfbf;
+$gray80: #ccc;
+$gray90: #e6e6e6;
+$gray95: #f2f2f2;
+
+$gray-darkest:     #262d35;
+$gray-dark:        #343a40;
+$gray-medium-dark: #495057;
+$gray-medium:      $gray-color;
+$gray-med-light:   #ced4da;
+$gray-light:       #dee2e6;
+$gray-xlight:      #e9ecef;
+$gray-lightest:    $gray-xlight;
+$gray-barely:      #f8f9fa;
+$gray-complement:  #276998;
+
+$grey: $gray-color;
+$grey-lightest: $gray-barely;
+$grey-lighter: darken($grey-lightest, 10%);
+$grey-light: darken($grey-lighter, 10%);
+$grey-med-light: darken($grey-light, 10%);
+$grey-medium: darken($grey-med-light, 10%);
+$grey-med-dark: darken($grey-medium, 10%);
+$grey-dark: darken($grey-med-dark, 10%);
+$grey-darker: darken($grey-dark, 10%);
+$grey-darkest: darken($grey-darker, 10%);
+
+$slate-dark:   #2f4f4f;
+$slate-medium: #708090;
+$slate-light:  #94a9be;
+$slate-xlight: #c4d2e0;
+$slate-color:  $slate-medium;
+
+$brown-dark:       $brown-color;
+$brown-medium:     #8b4513;
+$brown-light:      #cc9166;
+$brown-xlight:     #e6c883;
+$brown-complement: #13598b;
+
+$gunmetal-dark:       #2c3539;
+$gunmetal-medium:     #576870;
+$gunmetal-light:      #829ca8;
+$gunmetal-xlight:     #94b2bf;
+$gunmetal-complement: #382f2b;
+
+$green-darkest:      #003300;
+$green-darker:       #004000;
+$green-dark:         #005100;
+$green-medium-dark:  #006400;
+$green-medium:       #008000;
+$green-medium-light: #28a745;
+$green-light:        #9afa9c;
+$green-lighter:      #ccffcc;
+$green-xlight:       #e9ffe9;
+$green-lightest:     $green-xlight;
+$lime:               #00ff00;
+$mint:               #f5fffa;
+$forest-green:       #228b22;
+$green-complement:   #640032;
+
+$red-dark:   #760000;
+$red-medium: #ff0000;
+$red-light:  #ffcccc;
+$red-xlight: #ffecec;
+
+$orange-darker:       #e34234;
+$orange-dark:         #fc4a1a;
+$orange-pantone:      #ff5800;
+$orange-medium:       #fd7e14;
+$orange-medium-light: #ffa500;
+$orange-light:        #f7b733;
+$orange-xlight:       #ffefd5;
+$pumpkin:             #ff7518;
+
+$yellow-darkest: #daa520;
+$yellow-dark:#ffc107;
+$yellow-medium: $yellow;
+$yellow-light: #ffffc2;
+$yellow-xlight:#ffffe0;
+
+/* Whites */
+$off-white-color: #f5f5f5;
+$ivory:           #fffff0;
+$seashell:        #fff5ee;
+$snow:            #fffafa;
+
+/* Navbar */
+$navbar-gradient-start:  $gray80;
+$navbar-gradient-stop:   $gray95;
+$navbar-text-color:      $black-color;
+$navbar-link-active:     $gray40;
+$navbar-link-hover:      $gray-complement;
+$navbar-sub-bg:          $gray95;
+$navbar-sub-bg-hover:    $gray40;
+$navbar-sub-text-color:  $black-color;
+$navbar-sub-link-active: $gray40;
+$navbar-sub-link-hover:  $gray-complement;
+
+$color-black:      $black-color;
+$color-blue:       $blue-color;
+$color-gray:       $gray-color;
+$color-gray-trans: transparentize($gray90, .35);
+$color-green:      $green-color;
+$color-magenta:    $magenta-color;
+$color-off-white:  $off-white-color;
+$color-orange:     $orange-color;
+$color-pink:       $pink-color;
+$color-purple:     $purple-color;
+$color-red:        $red-color;
+$color-slate:      $slate-color;
+$color-teal:       $teal-color;
+$color-violet:     $violet-color;
+$color-white:      $white-color;
+$color-yellow:     $yellow-color;
+
+$color-default:     $gray-darkest;
+$color-dark:        $gray-dark;
+$color-medium:      $gray-medium;
+$color-light:       $gray-light;
+$color-xlight:      $gray-lightest;
+$color-complement:  $gray-complement;
+$color-body:        $gray-lightest;
+$color-container:   $off-white-color;
+$color-border:      $grey-darkest;
+$color-shadow:      transparentize($color-default, .35);
+$color-shadow-alt:  transparentize($color-complement, .35);
+$color-span:        $off-white-color;
+$color-heading:     $grey-darkest;
+$color-heading-alt: $gray-complement;
+
+/* More Boostrap Pure Overrides for semantic colors */
+@if variable_exists('blue')  {
+  $primary: $blue;
+}
+@else {
+  $primary: $blue-medium;
+}
+@if variable_exists('gray-600')  {
+  $secondary: $gray-600;
+}
+@else {
+  $secondary: $gray-color;
+}
+@if variable_exists('green')  {
+  $success: $green;
+}
+@else {
+  $success: $green-medium;
+}
+@if variable-exists('cyan') {
+  $info: $cyan;
+}
+@else {
+  $info: $cyan-color;
+}
+@if variable-exists('orange') {
+  $warning: $orange;
+}
+@else {
+  $warning: $orange-color;
+}
+@if variable-exists('red') {
+  $danger: $red;
+}
+@else {
+  $danger: $red-color;
+}
+@if variable_exists('gray-100')  {
+  $light: $gray-100;
+}
+@else {
+  $light: $grey-lightest;
+}
+@if variable_exists('gray-800')  {
+  $dark: $gray-800;
+}
+@else {
+  $dark: $gray-dark;
+}

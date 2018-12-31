@@ -1,6 +1,6 @@
 @import "styles_top";
 @import "tests";
 @import "library";
-@import "../../../../../../../src/scss/forms";
-@import "../../../../../../../src/scss/styles_bottom";
+@import "defaults/manager_forms";
+@import "styles_bottom";
 @import "media_queries";

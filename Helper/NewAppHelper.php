@@ -246,6 +246,37 @@ class NewAppHelper
                 return false;
             }
 
+            ### Create the default scss files for app ###
+            $app_name            = strtolower($this->a_config['app_name']);
+            $styles_text         = file_get_contents(SRC_CONFIG_PATH . '/install_files/styles.scss.txt');
+            $styles_manager_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/styles_manager.scss.txt');
+            $styles_text         = str_replace('{app_name}', $app_name, $styles_text);
+            $styles_manager_text = str_replace('{app_name}', $app_name, $styles_manager_text);
+            if ($styles_text) {
+                $file_name = 'styles_' . $app_name . '.scss';
+                if (!file_put_contents($this->app_path . '/resources/assets/scss/' . $file_name, $styles_text)) {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+            if ($styles_manager_text) {
+                $file_name = 'styles_' . $app_name . '_manager.scss';
+                if (!file_put_contents($this->app_path . '/resources/assets/scss/' . $file_name,
+                                       $styles_manager_text)) {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+            $more_text = '// App specific';
+            file_put_contents($this->app_path . '/resources/assets/scss/_colors.scss', $more_text . ' color');
+            file_put_contents($this->app_path . '/resources/assets/scss/_forms.scss', $more_text . ' forms');
+            file_put_contents($this->app_path . '/resources/assets/scss/_mixins.scss', $more_text . ' mixins');
+            file_put_contents($this->app_path . '/resources/assets/scss/_variables.scss', $more_text . ' variables');
+
             ### Create the twig_config file ###
             $twig_file = file_get_contents(SRC_CONFIG_PATH . '/install_files/twig_config.php.txt');
             if ($twig_file) {

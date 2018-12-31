@@ -1,0 +1,21 @@
+.message {
+    &.success {
+        @include messageColors($green-lighter, $green-dark, $green-color);
+    }
+    &.info {
+        @include messageColors($blue-light, $blue-dark, $blue-color);
+    }
+    &.warning {
+        @include messageColors($orange-xlight, $orange-darker, $orange-medium);
+    }
+    &.error {
+        @include messageColors($red-light, $red-dark, $red-color);
+    }
+    &.failure {
+        @include messageColors($red-light, $red-dark, $red-medium);
+    }
+    &.code {
+        font-family: $default-mono;
+        @include messageColors($color-container, $color-border, $color-dark);
+    }
+}
