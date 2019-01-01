@@ -1,0 +1,121 @@
+$success: #fcf8e3;
+$success-darker-5:  darken($success, 5%);
+$success-darker-10: darken($success, 10%);
+$success-darker-15: darken($success, 15%);
+$success-darker-20: darken($success, 20%);
+$success-darker-25: darken($success, 25%);
+$success-darker-30: darken($success, 30%);
+$success-darker-35: darken($success, 35%);
+$success-darker-40: darken($success, 40%);
+$success-darker-45: darken($success, 45%);
+$success-darker-50: darken($success, 50%);
+$success-darker-55: darken($success, 55%);
+$success-darker-60: darken($success, 60%);
+$success-darker-65: darken($success, 65%);
+$success-darker-70: darken($success, 70%);
+$success-darker-75: darken($success, 75%);
+$success-darker-80: darken($success, 80%);
+$success-darker-85: darken($success, 85%);
+$success-darker-90: darken($success, 90%);
+$success-darker-95: darken($success, 95%);
+
+.success {
+    background-color: $success;
+    color: change_color($success-darker-60, $green: 45);
+    border: 3px solid $success-darker-10;
+    &.dark5 {
+        background-color: $success-darker-5;
+        color: $success-darker-85;
+        border: 3px solid $success-darker-10;
+    }
+    &.dark10 {
+        background-color: $success-darker-10;
+        color: $success-darker-80;
+        border: 3px solid $success-darker-15;
+    }
+    &.dark15 {
+        background-color: $success-darker-15;
+        color: $success-darker-75;
+        border: 3px solid $success-darker-20;
+    }
+    &.dark20 {
+        background-color: $success-darker-20;
+        color: $success-darker-70;
+        border: 3px solid $success-darker-25;
+    }
+    &.dark25 {
+        background-color: $success-darker-25;
+        color: $success-darker-65;
+        border: 3px solid $success-darker-30;
+    }
+    &.dark30 {
+        background-color: $success-darker-30;
+        color: $success-darker-60;
+        border: 3px solid $success-darker-35;
+    }
+    &.dark35 {
+        background-color: $success-darker-35;
+        color: $success-darker-55;
+        border: 3px solid $success-darker-40;
+    }
+    &.dark40 {
+        background-color: $success-darker-40;
+        color: $success-darker-55;
+        border: 3px solid $success-darker-40;
+    }
+    &.dark45 {
+        background-color: $success-darker-45;
+        color: $success-darker-55;
+        border: 3px solid $success-darker-40;
+    }
+    &.dark50 {
+        background-color: $success-darker-50;
+        color: $success-darker-55;
+        border: 3px solid $success-darker-40;
+    }
+    &.dark55 {
+        background-color: $success-darker-55;
+        color: $success-darker-55;
+        border: 3px solid $success-darker-40;
+    }
+    &.dark60 {
+        background-color: $success-darker-60;
+        color: $success-darker-55;
+        border: 3px solid $success-darker-40;
+    }
+    &.dark65 {
+        background-color: $success-darker-65;
+        color: $success-darker-20;
+        border: 3px solid $success-darker-55;
+    }
+    &.dark70 {
+        background-color: $success-darker-70;
+        color: $success;
+        border: 3px solid $success-darker-60;
+    }
+    &.dark75 {
+        background-color: $success-darker-75;
+        color: $success;
+        border: 3px solid $success-darker-65;
+    }
+    &.dark80 {
+        background-color: $success-darker-80;
+        color: $success;
+        border: 3px solid $success-darker-70;
+    }
+    &.dark85 {
+        background-color: $success-darker-85;
+        color: $success;
+        border: 3px solid $success-darker-75;
+    }
+    &.dark90 {
+        background-color: $success-darker-90;
+        color: $success;
+        border: 3px solid $success-darker-80;
+    }
+    &.dark95 {
+        background-color: $success-darker-95;
+        color: $success;
+        border: 3px solid $success-darker-85;
+    }
+}
