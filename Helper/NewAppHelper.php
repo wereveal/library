@@ -58,6 +58,40 @@ class NewAppHelper
     }
 
     /**
+     * Updates the home page record with the app index template
+     */
+    public function changeHomePageTpl():void
+    {
+        $o_db = $this->o_di->get('db');
+        $o_page = new PageModel($o_db);
+        $o_page->setupElog($this->o_di);
+        $tpl_id = -1;
+        try {
+            $o_tc = new TwigComplexModel($this->di);
+            $a_tpl = $o_tc->readTplInfoByName('index', $this->a_values['app_twig_prefix']);
+            $tpl_id = $a_tpl['tpl_id'];
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->getMessage(), $e->getCode(), $e);
+        }
+        $table = $o_page->getDbTable();
+        $sql = "
+            UPDATE {$table}
+            SET tpl_id = :tpl_id
+            WHERE page_title LIKE :page_title
+        ";
+        $a_values = ['tpl_id' => $tpl_id, 'page_title' => '%Home%'];
+        try {
+            return $o_db->update($sql, $a_values, true);
+        }
+        catch (ModelException $e) {
+            $this->error_message = $e->getMessage();
+            $error_code = ExceptionHelper::getCodeNumberModel('update_unspecified');
+            throw new ModelException($this->error_message, $error_code, $e);
+        }
+    }
+
+    /**
      * Creates directories for the new app.
      *
      * @return bool
@@ -611,7 +645,6 @@ EOF;
      */
     private function setupProperties():void
     {
-
         $this->setAppPath();
         $this->setNewDirs();
         $this->setHtaccessText();

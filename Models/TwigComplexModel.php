@@ -382,7 +382,8 @@ class TwigComplexModel
     }
 
     /**
-     * Returns complete information regarding a template.
+     * Returns complete information regarding a template by id.
+
      * @param int $tpl_id
      * @return array|bool
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -407,6 +408,52 @@ class TwigComplexModel
             JOIN {$lib_prefix}twig_prefix as p
               ON d.tp_id = p.tp_id
             WHERE t.tpl_id = :tpl_id
+        ";
+        try {
+            $a_tpl_info = $this->o_db->search($sql, $a_values);
+            if (empty($a_tpl_info)) {
+                return [];
+            }
+
+            return $a_tpl_info[0];
+        }
+        catch (ModelException $e) {
+            $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
+            throw new ModelException($this->error_message, $e->getCode());
+        }
+    }
+
+    /**
+     * Returns complete information regarding a template by name and prefix.
+
+     * @param string $tpl_name   Required, throws exception if not provided.
+     * @param string $tpl_prefix Optional, defaults to site_
+     * @return array|bool
+     * @throws \Ritc\Library\Exceptions\ModelException
+     */
+    public function readTplInfoByName($tpl_name = '', $tpl_prefix = 'site_'):array
+    {
+        if (empty($tpl_name)) {
+            $err_num = ExceptionHelper::getCodeNumberModel('update missing value');
+            throw new ModelException('Template Name Required', $err_num);
+        }
+        $lib_prefix = $this->o_db->getLibPrefix();
+
+        $a_values = [
+            ':tpl_name'  => '%' . $tpl_name . '%',
+            ':tp_prefix' => '%' . $tpl_prefix . '%'
+        ];
+        $sql = /** @lang text */
+            "
+            SELECT t.tpl_id, t.tpl_name, t.tpl_immutable,
+              p.tp_id, p.tp_prefix as twig_prefix, p.tp_path as twig_path, p.tp_active, p.tp_default,
+              d.td_id, d.td_name as twig_dir
+            FROM {$lib_prefix}twig_templates as t
+            JOIN {$lib_prefix}twig_dirs as d
+              ON t.td_id = d.td_id
+            JOIN {$lib_prefix}twig_prefix as p
+              ON d.tp_id = p.tp_id AND p.tp_prefix LIKE :tp_prefix
+            WHERE t.tpl_name LIKE :tpl_name
         ";
         try {
             $a_tpl_info = $this->o_db->search($sql, $a_values);
