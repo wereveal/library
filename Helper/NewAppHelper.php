@@ -327,10 +327,12 @@ class NewAppHelper
                 return false;
             }
 
-            ### Copy two main twig files ###
+            ### Copy main twig files ###
             $base_twig = '/templates/themes/base.twig';
             $resource_path = $this->app_path . '/resources';
             $twig_text = file_get_contents(SRC_PATH . $base_twig);
+            $new_base_tpl = 'styles_' . strtolower($this->a_config['app_name']) . '.css';
+            $twig_text = str_replace('styles.css', $new_base_tpl, $twig_text);
             if ($twig_text && !file_put_contents($resource_path . $base_twig, $twig_text)) {
                 return false;
             }
@@ -339,17 +341,12 @@ class NewAppHelper
             $pages_path = $resource_path . '/templates/pages/';
             foreach ($a_default_files as $this_file) {
                 if ($this_file !== '.' && $this_file !== '..') {
-                    $twig_text = file_get_contents($default_templates_path . $this_file);
-                    if ($twig_text) {
-                        if (!file_put_contents($pages_path . $this_file, $twig_text)) {
-                            return false;
-                        }
-                    }
-                    else {
+                    if (!copy($default_templates_path . $this_file, $pages_path . $this_file)) {
                         return false;
                     }
                 }
             }
+
             if ($is_site) {
                 $a_find = [
                     '{NAMESPACE}',

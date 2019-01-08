@@ -1,5 +1,4 @@
-<?php
-
+<?php /** @noinspection PhpIncludeInspection */
 /**
  * Class DbCreator
  * @package Ritc_Library
@@ -999,8 +998,9 @@ class DbCreator
                     ];
                 }
             }
-            $default_templates_path = SRC_PATH . '/templates/pages/';
-            $a_default_files = scandir($default_templates_path, SCANDIR_SORT_ASCENDING);
+            // $default_templates_path = SRC_PATH . '/templates/pages/';
+            // $a_default_files = scandir($default_templates_path, SCANDIR_SORT_ASCENDING);
+            $a_default_files = $this->a_data['twig_default_files'];
             foreach ($a_default_files as $file) {
                 if (substr($file, -5) === '.twig' && $file !== 'no_file.twig') {
                     $this_file = substr($file, 0, -5);
