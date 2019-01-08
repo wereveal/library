@@ -8,6 +8,7 @@ namespace Ritc\Library\Helper;
 use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
+use Ritc\Library\Models\PageModel;
 use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Services\DbModel;
@@ -58,17 +59,19 @@ class NewAppHelper
     }
 
     /**
-     * Updates the home page record with the app index template
+     * Updates the home page record with the app index template.
+     *
+     * @throws ModelException
      */
     public function changeHomePageTpl():void
     {
+        /** @var DbModel $o_db */
         $o_db = $this->o_di->get('db');
         $o_page = new PageModel($o_db);
         $o_page->setupElog($this->o_di);
-        $tpl_id = -1;
         try {
-            $o_tc = new TwigComplexModel($this->di);
-            $a_tpl = $o_tc->readTplInfoByName('index', $this->a_values['app_twig_prefix']);
+            $o_tc = new TwigComplexModel($this->o_di);
+            $a_tpl = $o_tc->readTplInfoByName('index', $this->a_config['app_twig_prefix']);
             $tpl_id = $a_tpl['tpl_id'];
         }
         catch (ModelException $e) {
@@ -82,12 +85,12 @@ class NewAppHelper
         ";
         $a_values = ['tpl_id' => $tpl_id, 'page_title' => '%Home%'];
         try {
-            return $o_db->update($sql, $a_values, true);
+            $o_db->update($sql, $a_values, true);
         }
         catch (ModelException $e) {
-            $this->error_message = $e->getMessage();
+            $error_message = $e->getMessage();
             $error_code = ExceptionHelper::getCodeNumberModel('update_unspecified');
-            throw new ModelException($this->error_message, $error_code, $e);
+            throw new ModelException($error_message, $error_code, $e);
         }
     }
 
