@@ -57,7 +57,7 @@
         }
     }
     &.no-margin {
-        @include marginSizePx(-15, 'lr', 'important');
+        @include marginSizePx(-$grid-margin-width, 'lr', 'important');
     }
 }
 

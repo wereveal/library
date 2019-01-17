@@ -131,7 +131,6 @@
 }
 
 @mixin marginSizePx($size, $where, $when) {
-  $size: $size * 1px;
   @if $when != '' {
     $size: $size !important;
   }

@@ -1,40 +1,44 @@
 /** Overrides Boostrap vars and must come before any bootstrap include **/
-$default-body-font-size: 16px;
-$default-radius:         .25rem;
-$default-h1:             2rem;
-$default-sans:           "VeraSans", -apple-system, system-ui, BlinkMacSystemFont, Verdana, Helvetica, sans-serif;
-$default-sans-bold:      "VeraSansBold", sans-serif;
-$default-serif:          "VeraSerif", Georgia, "Times New Roman", Times, serif;
-$default-serif-bold:     "VeraSerifBold", serif;
-$default-mono:           "VeraMono", SFMono-Regular, Menlo, Monoco, Consolas, "Courier New", monospace;
+$default-body-font-size : 16px;
+$default-radius :         .25rem;
+$default-h1 :             2rem;
+$default-sans :           "VeraSans", -apple-system, system-ui, BlinkMacSystemFont, Verdana, Helvetica, sans-serif;
+$default-sans-bold :      "VeraSansBold", sans-serif;
+$default-serif :          "VeraSerif", Georgia, "Times New Roman", Times, serif;
+$default-serif-bold :     "VeraSerifBold", serif;
+$default-mono :           "VeraMono", SFMono-Regular, Menlo, Monoco, Consolas, "Courier New", monospace;
 
-$font-family-sans-serif: $default-sans;
-$font-family-serif: $default-serif;
-$font-family-monospace: $default-mono;
-$font-family-base: $default-sans;
+$font-family-sans-serif : $default-sans;
+$font-family-serif :      $default-serif;
+$font-family-monospace :  $default-mono;
+$font-family-base :       $default-sans;
 
-$h1-font-size: $default-body-font-size * 2;
-$h2-font-size: $default-body-font-size * 1.75;
-$h3-font-size: $default-body-font-size * 1.5;
-$h4-font-size: $default-body-font-size * 1.25;
-$h5-font-size: $default-body-font-size;
-$h6-font-size: $default-body-font-size * .85;
+$grid-columns :      12;
+$grid-gutter-width : 30px; // needs to be even number
+$grid-margin-width : $grid-gutter-width/2;
 
-/* legacy size variables */
-$font-size-h1: $h1-font-size;
-$font-size-h2: $h2-font-size;
-$font-size-h3: $h3-font-size;
-$font-size-h4: $h4-font-size;
-$font-size-h5: $h5-font-size;
-$font-size-h6: $h6-font-size;
+$h1-font-size : $default-body-font-size * 2;
+$h2-font-size : $default-body-font-size * 1.75;
+$h3-font-size : $default-body-font-size * 1.5;
+$h4-font-size : $default-body-font-size * 1.25;
+$h5-font-size : $default-body-font-size;
+$h6-font-size : $default-body-font-size * .85;
 
-$navbar-direction: 180deg;
-$navbar-midpoint:  50%;
+/* legacy size variables not sure they are still used */
+$font-size-h1 : $h1-font-size;
+$font-size-h2 : $h2-font-size;
+$font-size-h3 : $h3-font-size;
+$font-size-h4 : $h4-font-size;
+$font-size-h5 : $h5-font-size;
+$font-size-h6 : $h6-font-size;
 
-$spacer:   1rem;
-$spacer-x: $spacer;
-$spacer-y: $spacer;
-$spacers: (
+$navbar-direction : 180deg;
+$navbar-midpoint :  50%;
+
+$spacer : 1rem;
+$spacer-x : $spacer;
+$spacer-y : $spacer;
+$spacers : (
     0: 0,
     1: $spacer-x * .25,
     q: $spacer-x * .25,
@@ -50,4 +54,4 @@ $spacers: (
     two: $spacer-x * 2,
 );
 
-$zindex-dropdown: 1025;
+$zindex-dropdown : 1025;

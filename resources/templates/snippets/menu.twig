@@ -1,9 +1,9 @@
     <nav class="navbar navbar-dark bg-gray" role="navigation">
         <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#mainNav">
-            <span class="far fa-bars"></span>
+            <span class="{{ fav }} fa-bars"></span>
         </button>
         <div class="collapse navbar-toggleable-xs" id="mainNav">
-            <a class="navbar navbar-brand" href="#"><i class="far fa-book fa-3x"></i></a>
+            <a class="navbar navbar-brand" href="#"><i class="{{ fav }} fa-book fa-3x"></i></a>
             <ul class="nav nav-inline">
                 {% for menu in a_menus %}
                     {% if menu.nav_css != '' %}

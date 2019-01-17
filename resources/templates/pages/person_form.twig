@@ -117,7 +117,7 @@
                         {% if person.highest_role <= adm_level %}
                             {% include cbx_form with group.group_cbx %}
                         {% else %}
-                            <i class="far fa-check-square-o"></i>
+                            <i class="{{ fav }} fa-check-square-o"></i>
                         {% endif %}
                     {% else %}
                         {% include cbx_form with group.group_cbx %}
