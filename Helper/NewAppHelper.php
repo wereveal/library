@@ -312,6 +312,7 @@ class NewAppHelper
             file_put_contents($this->app_path . '/resources/assets/scss/_' . $app_name . '.scss', $more_text);
             file_put_contents($this->app_path . '/resources/assets/scss/_colors.scss', $more_text . ' color');
             file_put_contents($this->app_path . '/resources/assets/scss/_forms.scss', $more_text . ' forms');
+            file_put_contents($this->app_path . '/resources/assets/scss/_media_queries.scss', $more_text . ' forms');
             file_put_contents($this->app_path . '/resources/assets/scss/_mixins.scss', $more_text . ' mixins');
             file_put_contents($this->app_path . '/resources/assets/scss/_variables.scss', $more_text . ' variables');
 
