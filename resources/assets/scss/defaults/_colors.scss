@@ -145,9 +145,11 @@ $ivory:           #fffff0;
 $seashell:        #fff5ee;
 $snow:            #fffafa;
 
+/* Gradient */
+$gradient-start: $gray-med-light;
+$gradient-stop:  $gray-barely;
+
 /* Navbar */
-$navbar-gradient-start:  $gray80;
-$navbar-gradient-stop:   $gray95;
 $navbar-text-color:      $black-color;
 $navbar-link-active:     $gray40;
 $navbar-link-hover:      $gray-complement;

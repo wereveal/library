@@ -364,6 +364,9 @@ class NewAppHelper
                         return false;
                     }
                 }
+                $db_config_file = empty($this->a_config['db_file'])
+                    ? 'db_config'
+                    : $this->a_config['db_file'];
                 $public_path = empty($this->a_config['public_path'])
                     ? '$_SERVER["DOCUMENT_ROOT"]'
                     : $this->a_config['public_path'];
@@ -373,16 +376,16 @@ class NewAppHelper
                 $developer_mode = isset($this->a_config['developer_mode']) && $this->a_config['developer_mode'] === 'true'
                     ? 'true'
                     : 'false';
-                $http_host = empty($this->a_config['http_host'])
+                $server_http_host = empty($this->a_config['server_http_host'])
                     ? ''
-                    : $this->a_config['http_host'];
+                    : $this->a_config['server_http_host'];
                 $domain = empty($this->a_config['domain'])
                     ? ''
                     : $this->a_config['domain'];
                 $tld = empty($this->a_config['tld'])
                     ? 'com'
                     : $this->a_config['tld'];
-                $specific_host = empty($this->a_config['specific_host'])
+                $specific_host = empty($this->a_config['specific_host']) // used mostly with MAMP and single name urls e.g. https://testsite/
                     ? ''
                     : $this->a_config['specific_host'];
                 $a_find = [
@@ -390,25 +393,25 @@ class NewAppHelper
                     '{public_path}',
                     '{base_path}',
                     '{developer_mode}',
-                    '{http_host}',
+                    '{server_http_host}',
                     '{domain}',
                     '{tld}',
-                    '{specific_host}'
+                    '{specific_host}',
+                    '{host_text}'
                 ];
                 $a_replace = [
-                    $this->a_config['db_file'],
+                    $db_config_file,
                     $public_path,
                     $base_path,
                     $developer_mode,
-                    $http_host,
+                    $server_http_host,
                     $domain,
                     $tld,
-                    $specific_host
+                    $specific_host,
+                    ''
                 ];
-                if (!empty($http_host)) {
-                    $host_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/http_host.snippet');
-                    $host_text = str_replace($a_find, $a_replace, $host_text);
-                    $a_replace[7] = $host_text;
+                if (!empty($specific_host)) {
+                    $a_replace[8] = "\n    case '$specific_host':";
                 }
                 $setup_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/setup.php.txt');
                 $setup_text = str_replace($a_find, $a_replace, $setup_text);

@@ -2,7 +2,7 @@
 .navbar {
     @include paddingSize(.25, 'tb', '');
     &.navbar-color {
-        @include linearGradientTwoColor($navbar-gradient-start, $navbar-gradient-stop, $navbar-direction, $navbar-midpoint);
+        @include linearGradientTwoColor($gradient-start, $gradient-stop, $gradient-direction, $gradient-midpoint);
         color: $navbar-text-color;
         a {
             &.nav-link {
@@ -20,14 +20,14 @@
                     background-color: $navbar-text-color;
                     a {
                         &.dropdown-item {
-                            color: $navbar-gradient-start;
+                            color: $gradient-start;
                             &.active {
                                 color: $navbar-text-color;
-                                background-color: $navbar-gradient-stop;
+                                background-color: $gradient-stop;
                             }
                             &.active:active {
                                 color: $navbar-text-color;
-                                background-color: $navbar-gradient-stop;
+                                background-color: $gradient-stop;
                             }
                             &.active:hover {
                                 color: $navbar-sub-link-hover;

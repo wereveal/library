@@ -287,7 +287,9 @@ class Router
     public function setRequestUri($request_uri = ''):void
     {
         if ($request_uri === '') {
-            $request_uri = $_SERVER['REQUEST_URI'] ?? '/';
+            $request_uri = empty($_SERVER['REQUEST_URI'])
+                ? '/'
+                : $_SERVER['REQUEST_URI'];
         }
         if (strpos($request_uri, '?') !== false) {
             $this->request_uri = substr($request_uri, 0, strpos($request_uri, '?'));
