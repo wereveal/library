@@ -220,6 +220,7 @@ class ContentView implements ViewInterface
                 break;
             case 'by_c_id':
                 $err_msg = 'Unable to read the details for the content record.';
+                $content_id = -1;
                 if (!empty($a_post['c_id'])) {
                     $content_id = $a_post['c_id'];
                 }

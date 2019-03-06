@@ -402,6 +402,14 @@ class ConstantsCreator
             /** @var string 'TWIG_PREFIX' */
             \define('TWIG_PREFIX', $default_twig_prefix);
         }
+        if (!\defined('SITE_PREFIX')) { // left for legacy reasons
+            /** @var string 'SITE_PREFIX' */
+            \define('SITE_PREFIX', $default_twig_prefix);
+        }
+        if (!\defined('SITE_TWIG_PREFIX')) { // left for legacy reasons
+            /** @var string 'SITE_TWIG_PREFIX' */
+            \define('SITE_TWIG_PREFIX', $default_twig_prefix);
+        }
         if (!\defined('LIB_TWIG_PREFIX')) {
             /** @var string 'LIB_TWIG_PREFIX' */
             \define('LIB_TWIG_PREFIX', 'lib_');

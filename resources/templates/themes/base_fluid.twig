@@ -162,9 +162,6 @@
             <p>Copyright &copy;&nbsp;{{ copyright_date }} <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved</p>
         </footer>
 {% endblock %}
-{% block endMainContainer %}
-    </div>
-{% endblock %}
 {% block debug %}
     {% if debug_text %}
         <div class="container">
@@ -179,6 +176,9 @@
     <script src="{{ vendor_dir }}/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
 {% block bottomJs %}{% endblock %}
+{% block bodyContainerEnd %}
+    </div>
+{% endblock %}
 {% block finally %}
 </body>
 </html>

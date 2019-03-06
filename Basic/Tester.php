@@ -184,7 +184,8 @@ class Tester
 
     /**
      * Runs tests where method ends in Test.
-     * @param string $class_name  optional, name of the class to be tested - only really needed if
+     *
+     * @param string $class_name optional, name of the class to be tested - only really needed if
      *                            the class name doesn't match this class name minus Tester or Tests
      *                            e.g. MyClass and MyClassTester doesn't require $class_name
      *                            but MyClass and ThisClassTest requires a valid value for $class_name,
@@ -192,6 +193,7 @@ class Tester
      * @param array $a_test_order optional, if provided it ignores the class property $a_test_order
      *                            and won't try to build one from the class methods.
      * @return int number of failed tests.
+     * @throws \ReflectionException
      */
     public function runTests($class_name = '', array $a_test_order = []):int
     {
@@ -392,12 +394,15 @@ class Tester
     }
 
     ### Utility Methods ###
+
     /**
      * Checks to see if a method is public.
      * Fixes method names that end in Tester.
+     *
      * @param string $class_name required defaults to ''
      * @param string $method_name required defaults to ''
      * @return bool true or false
+     * @throws \ReflectionException
      */
     public function isPublicMethod($class_name = '', $method_name = ''):bool
     {

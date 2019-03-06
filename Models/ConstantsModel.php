@@ -63,7 +63,7 @@ class ConstantsModel extends ModelAbstract
      * @return array
      * @throws ModelException
      */
-    public function create(array $a_values = [], $allow_pin = false):array
+    public function create(array $a_values = [], bool $allow_pin = false):array
     {
         if (empty($a_values)) {
             $err_code = ExceptionHelper::getCodeNumberModel('create missing values');

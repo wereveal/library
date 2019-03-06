@@ -403,12 +403,15 @@ class RoutesComplexModel
      * Prepares the group array for use in create and update methods.
      *
      * @param array $a_groups
-     * @param       $route_id
+     * @param int   $route_id
      * @return array
      */
-    private function fixGroups(array $a_groups = [], $route_id):array
+    private function fixGroups(array $a_groups = [], int $route_id = -1):array
     {
         $a_new_groups = [];
+        if (empty($a_groups) || $route_id < 1) {
+            return $a_new_groups;
+        }
         foreach ($a_groups as $group_id => $value) {
             $a_new_groups[] = [
                 'group_id' => $group_id,

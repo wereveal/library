@@ -376,7 +376,7 @@ class Arrays
      * @param bool   $strict     Optional.
      * @return bool
      */
-    public static function inAssocArrayRecursive($key_name = '', $needle = '', array $a_haystack, $strict = false):bool
+    public static function inAssocArrayRecursive(string $key_name = '', string $needle = '', array $a_haystack = [], bool $strict = false):bool
     {
         if ($key_name === '' || $needle === '' || $a_haystack === []) {
             return false;
@@ -414,7 +414,7 @@ class Arrays
      * @param bool   $strict     Optional.
      * @return mixed|string|int|bool key of the found or false
      */
-    public static function inArrayRecursive($needle = '', array $a_haystack, $strict = false)
+    public static function inArrayRecursive(string $needle = '', array $a_haystack = [], bool $strict = false)
     {
         if ($needle === '' || $a_haystack === []) {
             return false;
@@ -444,7 +444,7 @@ class Arrays
      * @param mixed $a_pairs
      * @return bool
      */
-    public static function isAssocArray($a_pairs = []):bool
+    public static function isAssocArray(array $a_pairs = []):bool
     {
         return (
             \is_array($a_pairs)
@@ -523,7 +523,7 @@ class Arrays
      *                                                 found in allowed_keys.
      * @return array
      */
-    public static function removeBlankPairs(array $a_pairs = [], array $a_allowed_keys = [], $strict = true):array
+    public static function removeBlankPairs(array $a_pairs = [], array $a_allowed_keys = [], bool $strict = true):array
     {
         if ($a_pairs === [] || (empty($a_allowed_keys) && $strict)) {
             return [];
@@ -704,7 +704,7 @@ class Arrays
      * @param string $allowable_tags a string with allowed tags (see php strip_tags())
      * @return array $a_clean
      */
-    public static function stripTags(array $a_pairs = [], array $a_allowed_keys = [], $allowable_tags = ''):array
+    public static function stripTags(array $a_pairs = [], array $a_allowed_keys = [], string $allowable_tags = ''):array
     {
         $a_clean = [];
         if (\count($a_pairs) === 0) {

@@ -25,6 +25,8 @@ class ContentModelTester
 {
     use LogitTraits, TesterTraits;
 
+    private $o_model;
+
     /**
      * ContentModelTester constructor.
      *

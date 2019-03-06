@@ -141,9 +141,8 @@ class TwigComplexModel
             $message = 'Missing required values.';
             throw new ModelException($message, 10);
         }
-        $tp_prefix_id = '';
-        $a_dir_ids = [];
-        $a_tpl_ids = [];
+        $a_dir_ids       = [];
+        $a_tpl_ids       = [];
         $app_twig_prefix = $a_values['tp_prefix'];
         try {
             $results = $this->o_prefix->read(['tp_prefix' => $app_twig_prefix]);

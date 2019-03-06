@@ -37,7 +37,7 @@ class Di
      * @param        $object
      * @return bool
      */
-    public function set($object_name = '', $object):bool
+    public function set($object_name = '', $object = null):bool
     {
         if (!\is_object($object) || $object_name === '') {
             return false;

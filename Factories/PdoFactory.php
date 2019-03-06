@@ -72,8 +72,11 @@ class PdoFactory
      * @return \PDO|bool
      * @throws \Ritc\Library\Exceptions\FactoryException
      */
-    public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di)
+    public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di = null)
     {
+        if (!($o_di instanceof Di)) {
+            throw new FactoryException('An instance of Di is required.', 10);
+        }
         $org_config_file = $config_file;
         if (strpos($config_file, '/') !== false) {
             $a_parts = explode('/', $config_file);
