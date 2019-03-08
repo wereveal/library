@@ -444,7 +444,7 @@ class Arrays
      * @param mixed $a_pairs
      * @return bool
      */
-    public static function isAssocArray(array $a_pairs = []):bool
+    public static function isAssocArray($a_pairs = []):bool
     {
         return (
             \is_array($a_pairs)

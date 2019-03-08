@@ -149,6 +149,9 @@ class NewAppHelper
         if (!isset($this->a_config['app_twig_prefix'])) {
             $this->a_config['app_twig_prefix'] = 'main_';
         }
+        if (!isset($this->a_config['app_twig_prefix'])) {
+            $this->a_config['app_twig_theme'] = 'base_fluid';
+        }
         if (file_exists($this->app_path)) {
             if (file_put_contents($this->app_path . '/.htaccess', $this->htaccess_text)) {
                 foreach ($this->a_new_dirs as $dir) {
@@ -203,6 +206,7 @@ class NewAppHelper
                 date('Y-m-d H:i:s'),
                 date('Y-m-d'),
                 $this->a_config['app_twig_prefix']
+
             ];
 
             ### Create the main controller for the app ###
@@ -329,12 +333,22 @@ class NewAppHelper
             }
 
             ### Copy main twig files ###
-            $base_twig = '/templates/themes/base.twig';
+            $app_theme = $this->a_config['app_twig_theme'] ?? 'base_fluid';
+            $app_theme_file = '/templates/themes/' . $app_theme . '.twig';
+            if (strpos($app_theme, 'fluid')) {
+                $base_twig = '/templates/themes/base_fluid.twig';
+            }
+            elseif (strpos($app_theme, 'fixed')) {
+                $base_twig = '/templates/themes/base_fixed.twig';
+            }
+            else {
+                $base_twig = '/templates/themes/base_fluid.twig';
+            }
             $resource_path = $this->app_path . '/resources';
             $twig_text = file_get_contents(SRC_PATH . $base_twig);
             $new_base_tpl = 'styles_' . strtolower($this->a_config['app_name']) . '.css';
             $twig_text = str_replace('styles.css', $new_base_tpl, $twig_text);
-            if ($twig_text && !file_put_contents($resource_path . $base_twig, $twig_text)) {
+            if ($twig_text && !file_put_contents($resource_path . $app_theme_file, $twig_text)) {
                 return false;
             }
             $default_templates_path = SRC_PATH . '/templates/pages/';
