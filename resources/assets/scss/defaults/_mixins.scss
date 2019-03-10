@@ -52,7 +52,7 @@
   }
 }
 
-@mixin contentBlockHead($colorText, $colorBg) {
+@mixin contentBlockHeader($colorText, $colorBg) {
   color: $colorText;
   background-color: $colorBg;
   font-variant: small-caps;
@@ -68,6 +68,7 @@
   $borderRadius: .25rem;
   $colorBg: $gray-medium-dark;
   $colorText: $color-xlight;
+  $padding-size: 0;
 
   @if $colorScheme == 'gray' {
     $borderSize: 1px;
@@ -97,12 +98,21 @@
     $borderSize: 1px;
     $colorBg: $gray-medium-dark;
     $colorText: $color-xlight;
+  } @else if $colorScheme == 'footer' {
+    $padding-size: 1rem;
+    $borderRadius: 0;
+    p {
+      margin-bottom: 0;
+    }
+  } @else if $colorScheme == 'header' {
+    $padding-size: 1rem;
+    $borderRadius: 0;
   }
   border: $borderSize solid $colorBg;
   border-radius: $borderRadius;
-  padding: 0;
+  padding: $padding-size;
   h1, h2, h3, h4, h5, h6 {
-    @include contentBlockHead($colorText, $colorBg);
+    @include contentBlockHeader($colorText, $colorBg);
   }
 }
 

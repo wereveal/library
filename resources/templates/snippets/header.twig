@@ -1,4 +1,4 @@
-    <div class="container" id="header">
+    <header class="container header">
         {% if a_content.header %}
             {% set ctype = a_content.header.c_type %}
             {% set content = a_content.header.c_content %}
@@ -12,4 +12,4 @@
                 {{ content | nl2br }}
             {% endif %}
         {% endif %}
-    </div>
+    </header>

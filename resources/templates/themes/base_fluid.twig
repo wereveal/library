@@ -62,6 +62,7 @@
             {% set mainNavName = 'mainNav' %}
         {% endif %}
         <nav class="navbar navbar-expand-md navbar-dark navbar-color no-margin" role="navigation">
+            <div class="container container-nav">
         {% block navbarToggler %}
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#{{ mainNavName }}">
              <span class="fa-layers fa-fw">
@@ -117,6 +118,7 @@
                     {% endfor %}
                 </ul>
             </div>
+            </div>
         </nav>
     {% endblock %}
     {% if a_content.header %}
@@ -126,7 +128,7 @@
 {% endblock %}
 {% block search %}{% endblock %}
 {% block bodyTitle %}
-    {% if body_title %}
+    {% if body_title
         <h1>{{ body_title }}</h1>
     {% elseif title %}
         <h1>{{ title }}</h1>
