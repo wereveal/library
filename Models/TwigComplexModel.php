@@ -42,6 +42,8 @@ class TwigComplexModel
     private $o_page;
     /** @var  \Ritc\Library\Models\TwigPrefixModel */
     private $o_prefix;
+    /** @var TwigThemesModel */
+    private $o_themes;
     /** @var  \Ritc\Library\Models\TwigTemplatesModel */
     private $o_tpls;
 
@@ -399,7 +401,12 @@ class TwigComplexModel
         $prefix_select = $this->makePrefixSelect();
         $tpl_select    = $this->makeTplSelect();
         $dir_select    = $this->makeDirSelect();
-        $select_string = $tpl_select . ', ' . $prefix_select . ', ' . $dir_select;
+        $theme_select  = $this->makeThemesSelect();
+        $select_string = $tpl_select
+            . ', ' . $prefix_select
+            . ', ' . $dir_select
+            . ', ' . $theme_select
+        ;
         $sql = /** @lang text */
             "
             SELECT {$select_string} 
@@ -408,6 +415,8 @@ class TwigComplexModel
               ON t.td_id = d.td_id
             JOIN {$lib_prefix}twig_prefix as p
               ON d.tp_id = p.tp_id
+            JOIN {$lib_prefix}twig_themes as th
+              ON t.theme_id = th.theme_id
             WHERE t.tpl_id = :tpl_id
         ";
         try {
@@ -447,7 +456,11 @@ class TwigComplexModel
         $prefix_select = $this->makePrefixSelect();
         $tpl_select    = $this->makeTplSelect();
         $dir_select    = $this->makeDirSelect();
-        $select_string = $tpl_select . ', ' . $prefix_select . ', ' . $dir_select;
+        $theme_select  = $this->makeThemesSelect();
+        $select_string = $tpl_select
+            . ', ' . $prefix_select
+            . ', ' . $dir_select
+            . ', ' . $theme_select;
         $sql = /** @lang text */
             "
             SELECT {$select_string} 
@@ -456,6 +469,8 @@ class TwigComplexModel
               ON t.td_id = d.td_id
             JOIN {$lib_prefix}twig_prefix as p
               ON d.tp_id = p.tp_id AND p.tp_prefix LIKE :tp_prefix
+            JOIN {$lib_prefix}twig_themes as th
+              ON t.theme_id = th.theme_id
             WHERE t.tpl_name LIKE :tpl_name
         ";
         try {
@@ -474,6 +489,7 @@ class TwigComplexModel
 
     /**
      * Returns all active records for the twig configuration.
+     *
      * @param string $is_active
      * @return array
      * @throws \Ritc\Library\Exceptions\ModelException
@@ -630,13 +646,18 @@ class TwigComplexModel
      */
     public function saveTpl(array $a_values = [], $action = 'update'):bool
     {
-        $tpl_name  = Strings::makeSnakeCase($a_values['tpl_name']);
+        $tpl_name  = Strings::makeSnakeCase(trim($a_values['tpl_name']));
+        if (empty($tpl_name) || empty($a_values['td_id'])) {
+            $err_code = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException('Missing Required Values', $err_code);
+        }
+        $tpl_immutable = $a_values['tpl_immutable'] ?? 'false';
+        $tpl_theme     = $a_values['theme_id'] ?? 1;
         $a_save_values  = [
             'td_id'         => $a_values['td_id'],
             'tpl_name'      => $tpl_name,
-            'tpl_immutable' => empty($a_values['tpl_immutable'])
-                ? 'false'
-                : $a_values['tpl_immutable']
+            'theme_id'      => $tpl_theme,
+            'tpl_immutable' => $tpl_immutable
         ];
         try {
             if ($action === 'new') {
@@ -691,14 +712,17 @@ class TwigComplexModel
                 case 'tp_path':
                     $a_tp_fields[$field] = 'twig_path';
                     break;
-                case 'tp_theme':
-                    $a_tp_fields[$field] = 'twig_theme';
-                    break;
                 default:
                     $a_tp_fields[$field] = $field;
             }
         }
         return $this->buildSqlSelectFields($a_tp_fields, 'p');
+    }
+
+    public function makeThemesSelect():string
+    {
+        $themes_fields = $this->o_themes->getDbFields();
+        return $this->buildSqlSelectFields($themes_fields, 'th');
     }
 
     /**
@@ -729,10 +753,11 @@ class TwigComplexModel
      */
     private function setupDbs(DbModel $o_db):void
     {
-        $this->a_object_names = ['o_dirs', 'o_prefix', 'o_tpls', 'o_page'];
+        $this->a_object_names = ['o_dirs', 'o_prefix', 'o_tpls', 'o_themes', 'o_page'];
         $this->o_dirs   = new TwigDirsModel($o_db);
         $this->o_prefix = new TwigPrefixModel($o_db);
         $this->o_tpls   = new TwigTemplatesModel($o_db);
+        $this->o_themes = new TwigThemesModel($o_db);
         $this->o_page   = new PageModel($o_db);
         $this->setupElog($this->o_di);
     }

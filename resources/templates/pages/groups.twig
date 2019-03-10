@@ -1,4 +1,4 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
     {% set hidden_tpl = '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
     {% set cb_tpl = '@' ~ lib_prefix ~ 'elements/checkbox.twig' %}

@@ -9,7 +9,7 @@ use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Services\DbModel;
 
 /**
- * Does database operations on the twig_prefix table.
+ * Does database operations on the twig_templates table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v1.1.0

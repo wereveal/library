@@ -1,4 +1,4 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
     <div class="container">
         {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with rebuild_btn %}

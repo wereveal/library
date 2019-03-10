@@ -58,6 +58,8 @@ class DbCreator
     private $a_twig_dirs = [];
     /** @var  array $a_twig_prefix */
     private $a_twig_prefix = [];
+    /** @var array $a_twig_themes */
+    private $a_twig_themes = [];
     /** @var  array $a_twig_tpls */
     private $a_twig_tpls = [];
     /** @var  array $a_urls */
@@ -844,6 +846,7 @@ class DbCreator
             $a_twig_tpls = $this->a_data['twig_templates'];
         }
         $a_twig_dirs = $this->a_twig_dirs;
+        $a_twig_themes = $this->a_twig_themes;
         $table_name = $this->db_prefix . 'twig_templates';
         $a_strings = $this->createStrings($a_twig_tpls);
         $sql = "
@@ -864,9 +867,12 @@ class DbCreator
             return false;
         }
         foreach ($a_twig_tpls as $key => $a_record) {
-            $td_id                      = $a_twig_dirs[$a_record['td_id']]['td_id'];
-            $a_twig_tpls[$key]['td_id'] = $td_id;
-            $a_record['td_id']          = $td_id;
+            $td_id                         = $a_twig_dirs[$a_record['td_id']]['td_id'];
+            $theme_id                      = $a_twig_themes[$a_record['theme_id']]['theme_id'];
+            $a_twig_tpls[$key]['td_id']    = $td_id;
+            $a_twig_tpls[$key]['theme_id'] = $theme_id;
+            $a_record['td_id']             = $td_id;
+            $a_record['theme_id']          = $theme_id;
             try {
                 $this->o_db->resetNewIds();
                 $results = $this->o_db->executeInsert($a_record, $o_pdo_stmt, $a_table_info);
@@ -885,6 +891,31 @@ class DbCreator
             }
         }
         $this->a_twig_tpls = $a_twig_tpls;
+        return true;
+    }
+
+    /**
+     * Inserts the defaults into the twig_themes table.
+     *
+     * @param array $a_themes
+     * @return bool
+     */
+    public function insertTwigThemes(array $a_themes = []):bool
+    {
+        if (empty($a_themes)) {
+            if (empty($this->a_data['twig_themes'])) {
+                $this->error_message = 'Data for twig_dirs not provided.';
+                return false;
+            }
+            $a_themes = $this->a_data['twig_themes'];
+        }
+        $table_name = $this->db_prefix . 'twig_themes';
+        $a_table_info = [
+            'table_name'  => $table_name,
+            'column_name' => 'theme_id'
+        ];
+        $a_twig_themes = $this->genericInsert($a_themes, $a_table_info);
+        $this->a_twig_themes = $a_twig_themes;
         return true;
     }
 
@@ -983,7 +1014,7 @@ class DbCreator
     {
         if (!empty($this->a_install_config['app_twig_prefix'])) {
             $app_twig_prefix = $this->a_install_config['app_twig_prefix'];
-            $app_theme       = $this->a_install_config['app_twig_theme'] ?? 'base_fluid';
+            $app_theme       = $this->a_install_config['app_theme_name'] ?? 'base_fluid';
             $master_twig     = 'false';
             if (!empty($this->a_install_config['master_twig'])
               && $this->a_install_config['master_twig'] === 'true'
@@ -1005,7 +1036,6 @@ class DbCreator
                 $this->a_data['twig_prefix'][$key_name] = [
                     'tp_prefix'  => $app_twig_prefix,
                     'tp_path'    => $tp_path,
-                    'tp_theme'   => $app_theme,
                     'tp_active'  => 'true',
                     'tp_default' => $master_twig
                 ];
@@ -1030,6 +1060,7 @@ class DbCreator
                         /** @noinspection UnsupportedStringOffsetOperationsInspection */
                         $this->a_data['twig_templates'][$tpl_key] = [
                             'td_id'         => $app_twig_prefix . 'pages',
+                            'theme_id'      => $app_theme,
                             'tpl_name'      => $this_file,
                             'tpl_immutable' => 'false'
                         ];

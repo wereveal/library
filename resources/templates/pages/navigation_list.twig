@@ -1,4 +1,4 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
     <div class="container text-right">
         {% include '@' ~ lib_prefix ~ 'elements/anchor.twig' with navgroups_btn %}

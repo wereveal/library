@@ -150,7 +150,7 @@ class NewAppHelper
             $this->a_config['app_twig_prefix'] = 'main_';
         }
         if (!isset($this->a_config['app_twig_prefix'])) {
-            $this->a_config['app_twig_theme'] = 'base_fluid';
+            $this->a_config['app_theme_name'] = 'base_fluid';
         }
         if (file_exists($this->app_path)) {
             if (file_put_contents($this->app_path . '/.htaccess', $this->htaccess_text)) {
@@ -333,7 +333,7 @@ class NewAppHelper
             }
 
             ### Copy main twig files ###
-            $app_theme = $this->a_config['app_twig_theme'] ?? 'base_fluid';
+            $app_theme = $this->a_config['app_theme_name'] ?? 'base_fluid';
             $app_theme_file = '/templates/themes/' . $app_theme . '.twig';
             if (strpos($app_theme, 'fluid')) {
                 $base_twig = '/templates/themes/base_fluid.twig';
