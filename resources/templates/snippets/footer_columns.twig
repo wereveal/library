@@ -1,0 +1,47 @@
+        <div class="row">
+        {% if a_shared.footer_left %}
+            <div class="col">
+            {% set ctype = a_shared.footer_left.c_type %}
+            {% set content = a_shared.footer_left.c_content %}
+            {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
+                {{ content | raw }}
+            {% elseif ctype == 'md' %}
+                {{ content | md }}
+            {% elseif ctype == 'mde' %}
+                {{ content | mde }}
+            {% else %}
+                {{ content | nl2br }}
+            {% endif %}
+            </div>
+        {% endif %}
+        {% if a_shared.footer_middle %}
+            <div class="col">
+                {% set ctype = a_shared.footer_middle.c_type %}
+                {% set content = a_shared.footer_middle.c_content %}
+                {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
+                    {{ content | raw }}
+                {% elseif ctype == 'md' %}
+                    {{ content | md }}
+                {% elseif ctype == 'mde' %}
+                    {{ content | mde }}
+                {% else %}
+                    {{ content | nl2br }}
+                {% endif %}
+            </div>
+        {% endif %}
+        {% if a_shared.footer_right %}
+            <div class="col">
+                {% set ctype = a_shared.footer_right.c_type %}
+                {% set content = a_shared.footer_right.c_content %}
+                {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
+                    {{ content | raw }}
+                {% elseif ctype == 'md' %}
+                    {{ content | md }}
+                {% elseif ctype == 'mde' %}
+                    {{ content | mde }}
+                {% else %}
+                    {{ content | nl2br }}
+                {% endif %}
+            </div>
+        {% endif %}
+        </div>

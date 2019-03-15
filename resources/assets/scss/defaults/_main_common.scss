@@ -132,6 +132,9 @@ hr.item-card {
     padding-right: .5rem;
     padding-left: .5rem;
   }
+  &.container-body {
+    background-color: $gray-lightest;
+  }
   &.container-bordered {
     border: 1px solid $color-border;
     padding-top: .5rem;
@@ -141,8 +144,16 @@ hr.item-card {
   &.container-bordered-square {
     border: 1px solid $color-border;
   }
+  &.container-footer {
+    @include contentBlock('footer');
+    @include linearGradientTwoColor($gradient-stop, $gradient-start, $gradient-direction, $gradient-midpoint);
+  }
+  &.container-header {
+    @include contentBlock('header');
+  }
   &.container-main {
     /* border: 1px solid $color-border; */
+    background-color: $gray-barely;
     border-radius: .25rem;
     box-shadow: 0.15rem 0.15rem 0.15rem $color-shadow;
   }
@@ -153,6 +164,13 @@ hr.item-card {
   }
   &.container-nav {
     background-color: transparent;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  &.container-title {
+    margin-top: 0;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
   }
   .row-fluid {
     [class*="span"] {
@@ -279,11 +297,19 @@ hr.item-card {
       padding-right: 0;
     }
   }
-  &.header {
-    @include contentBlock('none');
-  }
-  &.footer {
+}
+
+.container-fluid {
+  &.container-footer {
     @include contentBlock('footer');
+    @include linearGradientTwoColor($gradient-stop, $gradient-start, $gradient-direction, $gradient-shortpoint);
+  }
+  &.container-header {
+    @include contentBlock('header');
+  }
+  &.container-body {
+    background-color: $gradient-stop;
+    padding: 0 !important;
   }
 }
 
@@ -453,6 +479,10 @@ hr.item-card {
 
 .bg-grey-darkest {
   background-color: $grey-darkest;
+}
+
+.bg-transparent {
+  background-color: transparent;
 }
 
 .border-radius-top-right {

@@ -101,9 +101,7 @@
   } @else if $colorScheme == 'footer' {
     $padding-size: 1rem;
     $borderRadius: 0;
-    p {
-      margin-bottom: 0;
-    }
+    display: flex !important;
   } @else if $colorScheme == 'header' {
     $padding-size: 1rem;
     $borderRadius: 0;
