@@ -58,7 +58,7 @@ class AutoloadMapper
             $this->apps_path =  $apps_path;
         }
         $o_dir = new DirectoryIterator($this->apps_path);
-        if (!\is_object($o_dir)) {
+        if (!is_object($o_dir)) {
             return false;
         }
         $a_classmap = $this->createMapArray($o_dir, array());
@@ -67,12 +67,12 @@ class AutoloadMapper
         $ns_str_length = 0;
         $vendor_str_length = 0;
         foreach ($a_classmap as $key => $value) {
-            $ns_str_length = \strlen($key) > $ns_str_length
-                ? \strlen($key)
+            $ns_str_length = strlen($key) > $ns_str_length
+                ? strlen($key)
                 : $ns_str_length;
             $a_ns_parts = explode('\\', $key);
-            $vendor_str_length = \strlen($a_ns_parts[0]) > $vendor_str_length
-                ? \strlen($a_ns_parts[0])
+            $vendor_str_length = strlen($a_ns_parts[0]) > $vendor_str_length
+                ? strlen($a_ns_parts[0])
                 : $vendor_str_length;
         }
         /* Go over the array again, now building the string */
@@ -80,7 +80,7 @@ class AutoloadMapper
         foreach ($a_classmap as $key => $value) {
             /* First classmap string buildup */
             $padding = '';
-            $key_length = \strlen($key);
+            $key_length = strlen($key);
             if ($key_length < $ns_str_length) {
                 $pad_length = $ns_str_length - $key_length;
                 for ($i = 1 ; $i <= $pad_length ; $i++) {
@@ -94,10 +94,10 @@ class AutoloadMapper
             /* Next namespace map buildup */
             $a_ns_parts = explode('\\', $key);
             $vendor_name = $a_ns_parts[0];
-            if (!\in_array($vendor_name, $a_existing_vendors)) {
+            if (!in_array($vendor_name, $a_existing_vendors, true)) {
                 $a_existing_vendors[] = $vendor_name;
                 $v_padding = '';
-                $v_length = \strlen($vendor_name);
+                $v_length = strlen($vendor_name);
                 if ($v_length < $vendor_str_length) {
                     $pad_length = $vendor_str_length - $v_length;
                     for ($i = 1 ; $i <= $pad_length ; $i++) {
@@ -132,8 +132,8 @@ EOT;
     }
 
     /**
-     * @param \DirectoryIterator $o_dir
-     * @param array              $a_classmap
+     * @param DirectoryIterator $o_dir
+     * @param array             $a_classmap
      * @return array
      */
     private function createMapArray(DirectoryIterator $o_dir, array $a_classmap):array
@@ -183,7 +183,7 @@ EOT;
     private function getClassName(array $a_tokens = array())
     {
         foreach ($a_tokens as $key => $a_token) {
-            if (\is_array($a_token)) {
+            if (is_array($a_token)) {
                 switch ($a_token[0]) {
                     case T_ABSTRACT:
                         return $a_tokens[$key+4][1];
@@ -210,7 +210,7 @@ EOT;
         $namespace = '';
         $line_number = -1;
         foreach ($a_tokens as $key => $a_token) {
-            if (\is_array($a_token) && $a_token[0] === T_NAMESPACE) {
+            if (is_array($a_token) && $a_token[0] === T_NAMESPACE) {
                 $line_number = $a_token[2];
                 break;
             }

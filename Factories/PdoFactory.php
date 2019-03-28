@@ -5,7 +5,11 @@
  */
 namespace Ritc\Library\Factories;
 
+use Error;
+use PDO;
+use PDOException;
 use Ritc\Library\Exceptions\FactoryException;
+use Ritc\Library\Exceptions\FactoryException as FactoryExceptionAlias;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbCommonTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -15,10 +19,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Several different \PDO objects can be created based on config files specified.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.1
- * @date    2017-06-13 12:17:42
+ * @version v3.0.1+
+ * @date    2019-03-28 12:07:13
  * @change_log
- * - v3.0.1 - primarily dealing with PhpStorm inspections                                            - 2018-03-30 wer
+ * - v3.0.1 - primarily dealing with PhpStorm inspections (+ = more the same)                        - 2019-03-28 wer
  * - v3.0.0 - Changed to set the \PDO::ATTR_ERRMODE, defaults to \PDO::ERRMODE_EXCEPTION             - 2017-06-13 wer
  * - v2.1.0 - Simplified the Factory                                                                 - 2017-01-25 wer
  * - v2.0.2 - fixed potential bug                                                                    - 2017-01-13 wer
@@ -44,10 +48,10 @@ class PdoFactory
     /** @var array */
     private $a_db_config;
     /** @var array */
-    private static $factory_rw_instance = array();
+    private static $factory_rw_instance = [];
     /** @var array */
-    private static $factory_ro_instance = array();
-    /** @var \PDO */
+    private static $factory_ro_instance = [];
+    /** @var PDO */
     private $o_db;
 
     /**
@@ -66,11 +70,12 @@ class PdoFactory
      * config file, read/write and read only and multiple configs can
      * be used to create all kinds of database connections - even if
      * to the same database simply by using different config file name.
+     *
      * @param string $config_file default 'db_config.php'
      * @param string $read_type   Default rw
      * @param Di     $o_di
-     * @return \PDO|bool
-     * @throws \Ritc\Library\Exceptions\FactoryException
+     * @return PDO|bool
+     * @throws FactoryExceptionAlias
      */
     public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di = null)
     {
@@ -80,7 +85,7 @@ class PdoFactory
         $org_config_file = $config_file;
         if (strpos($config_file, '/') !== false) {
             $a_parts = explode('/', $config_file);
-            $config_file = $a_parts[\count($a_parts) - 1];
+            $config_file = $a_parts[count($a_parts) - 1];
         }
         [$name, $extension] = explode('.', $config_file);
         if ($extension !== 'php' && $extension !== 'cfg') {
@@ -91,7 +96,7 @@ class PdoFactory
                 try {
                     self::$factory_ro_instance[$name] = new PdoFactory($o_di);
                 }
-                catch (\Error $e) {
+                catch (Error $e) {
                     throw new FactoryException($e->getMessage(), 10, $e);
                 }
             }
@@ -108,7 +113,7 @@ class PdoFactory
                 try {
                     self::$factory_rw_instance[$name] = new PdoFactory($o_di);
                 }
-                catch (\Error $e) {
+                catch (Error $e) {
                     throw new FactoryException($e->getMessage(), 10, $e);
                 }
             }
@@ -125,14 +130,15 @@ class PdoFactory
     /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * Creates the \PDO instance
+     *
      * @param string $config_file
      * @param string $read_type
-     * @return \PDO|bool
-     * @throws \Ritc\Library\Exceptions\FactoryException
+     * @return PDO|bool
+     * @throws FactoryExceptionAlias
      */
     private function createPdo($config_file = 'db_config.php', $read_type = 'rw')
     {
-        if (\is_object($this->o_db)) {
+        if (is_object($this->o_db)) {
             return $this->o_db;
         }
         /** @var array $a_db */
@@ -144,40 +150,40 @@ class PdoFactory
         $a_db['dsn'] = $this->createDsn($a_db);
         switch ($a_db['errmode']) {
             case 'silent':
-                $errmode = \PDO::ERRMODE_SILENT;
+                $errmode = PDO::ERRMODE_SILENT;
                 break;
             case 'warning':
-                $errmode = \PDO::ERRMODE_WARNING;
+                $errmode = PDO::ERRMODE_WARNING;
                 break;
             case 'exception':
             default:
-                $errmode = \PDO::ERRMODE_EXCEPTION;
+                $errmode = PDO::ERRMODE_EXCEPTION;
                 break;
         }
         try {
             $this->o_db = $read_type === 'ro'
-                ? new \PDO(
+                ? new PDO(
                     $a_db['dsn'],
                     $a_db['userro'],
                     $a_db['passro'],
                     [
-                        \PDO::ATTR_PERSISTENT => $a_db['persist'],
-                        \PDO::ATTR_ERRMODE    => $errmode
+                        PDO::ATTR_PERSISTENT => $a_db['persist'],
+                        PDO::ATTR_ERRMODE    => $errmode
                     ]
                 )
-                : new \PDO(
+                : new PDO(
                     $a_db['dsn'],
                     $a_db['user'],
                     $a_db['password'],
                     [
-                        \PDO::ATTR_PERSISTENT => $a_db['persist'],
-                        \PDO::ATTR_ERRMODE    => $errmode
+                        PDO::ATTR_PERSISTENT => $a_db['persist'],
+                        PDO::ATTR_ERRMODE    => $errmode
                     ]
                 );
             $this->a_db_config = $a_db;
             return $this->o_db;
         }
-        catch(\PDOException $e) {
+        catch(PDOException $e) {
             throw new FactoryException('Error! Could not connect to database: ' . $e->getMessage(), 100);
         }
     }
@@ -208,7 +214,8 @@ class PdoFactory
     ### Magic Method fixes
     /**
      * Magic Method Fix
-     * @throws \Ritc\Library\Exceptions\FactoryException
+     *
+     * @throws FactoryExceptionAlias
      */
     public function __clone()
     {

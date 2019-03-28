@@ -55,7 +55,7 @@ trait LogitTraits
     protected function logIt($message = '', $log_type = LOG_OFF, $location = ''):void
     {
         if ($this->o_elog instanceof Elog
-            && \is_int($log_type)
+            && is_int($log_type)
             && $log_type <= LOG_ALWAYS
             && $log_type > LOG_OFF
             && $message !== ''
@@ -98,7 +98,7 @@ trait LogitTraits
     {
         if ($this->o_elog instanceof Elog && !empty($this->a_object_names)) {
             foreach ($this->a_object_names as $object) {
-                if (\is_object($this->$object)) {
+                if (is_object($this->$object)) {
                     $this->$object->setElog($this->o_elog);
                 }
             }
@@ -107,11 +107,11 @@ trait LogitTraits
 
     /**
      * Quick Stub for a commonly called thing.
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function setupElog(Di $o_di):void
     {
-        if (\defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             $o_elog = $o_di->get('elog');
             $this->setElog($o_elog);
         }

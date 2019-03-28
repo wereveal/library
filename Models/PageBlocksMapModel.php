@@ -26,7 +26,7 @@ class PageBlocksMapModel extends ModelAbstract
     /**
      * PageBlocksMapModel constructor.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {

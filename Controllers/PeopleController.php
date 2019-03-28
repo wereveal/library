@@ -37,7 +37,7 @@ class PeopleController implements ManagerControllerInterface
 {
     use LogitTraits, ConfigControllerTraits;
 
-    /** @var \Ritc\Library\Models\PeopleComplexModel object */
+    /** @var PeopleComplexModel object */
     private $o_complex;
     /** @var PeopleModel model object */
     private $o_people;

@@ -47,7 +47,7 @@ trait DbTraits
     private function createDbParams($config_file = 'db_config.php'):void
     {
         $a_required_keys = ['driver', 'host', 'name', 'user', 'password'];
-        if (\is_array($config_file)) {
+        if (is_array($config_file)) {
             $a_db = $config_file;
         }
         else {

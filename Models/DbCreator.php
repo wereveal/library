@@ -5,7 +5,9 @@
  */
 namespace Ritc\Library\Models;
 
+use PDO;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -68,16 +70,16 @@ class DbCreator
     private $db_prefix;
     /** @var string $error_message */
     private $error_message;
-    /** @var \Ritc\Library\Services\DbModel $o_db */
+    /** @var DbModel $o_db */
     private $o_db;
-    /** @var \Ritc\Library\Services\Di $o_di */
-    /** @var \PDO $o_pdo */
+    /** @var Di $o_di */
+    /** @var PDO $o_pdo */
     private $o_pdo;
 
     /**
      * DbCreator constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -605,7 +607,7 @@ class DbCreator
             $a_people = $this->a_data['people'];
         }
         foreach ($a_people as $key => $a_person) {
-            $a_people[$key]['password'] = \defined('PASSWORD_ARGON2I')
+            $a_people[$key]['password'] = defined('PASSWORD_ARGON2I')
                 ? password_hash($a_person['password'], PASSWORD_ARGON2I)
                 : password_hash($a_person['password'], PASSWORD_DEFAULT);
         }

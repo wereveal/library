@@ -41,7 +41,7 @@ class NewAppHelper
     private $htaccess_text;
     /** @var  string $keep_me_text */
     private $keep_me_text;
-    /** @var \Ritc\Library\Services\Di $o_di */
+    /** @var Di $o_di */
     private $o_di;
     /** @var  string $tpl_text */
     private $tpl_text;
@@ -49,7 +49,7 @@ class NewAppHelper
     /**
      * NewAppHelper constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -356,6 +356,7 @@ class NewAppHelper
             $pages_path = $resource_path . '/templates/pages/';
             foreach ($a_default_files as $this_file) {
                 if ($this_file !== '.' && $this_file !== '..') {
+                    /** @noinspection NestedPositiveIfStatementsInspection */
                     if (!copy($default_templates_path . $this_file, $pages_path . $this_file)) {
                         return false;
                     }

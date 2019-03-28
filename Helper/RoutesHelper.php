@@ -11,6 +11,7 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RoutesComplexModel;
 use Ritc\Library\Models\RoutesGroupMapModel;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -39,9 +40,9 @@ class RoutesHelper
     private $cache_type;
     /** @var CacheHelper $o_cache */
     private $o_cache;
-    /** @var \Ritc\Library\Services\DbModel */
+    /** @var DbModel */
     private $o_db;
-    /** @var \Ritc\Library\Services\Di */
+    /** @var Di */
     private $o_di;
     /** @var string */
     private $route_path;
@@ -53,8 +54,8 @@ class RoutesHelper
     /**
      * RoutesHelper constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
-     * @param string                    $request_uri
+     * @param Di     $o_di
+     * @param string $request_uri
      */
     public function __construct(Di $o_di, $request_uri = '')
     {
@@ -63,7 +64,7 @@ class RoutesHelper
         $this->o_db = $o_di->get('db');
         if (USE_CACHE) {
             $o_cache = $o_di->get('cache');
-            if (\is_object($o_cache)) {
+            if (is_object($o_cache)) {
                 $this->o_cache    = $o_cache;
                 $this->cache_type = $this->o_cache->getCacheType();
                 $this->use_cache  = empty($this->cache_type) ? false : true;
@@ -117,7 +118,7 @@ class RoutesHelper
         }
         $first_slash         = strpos($request_uri, '/');
         $last_slash          = strrpos($request_uri, '/');
-        $possible_last_slash = \strlen($request_uri) - 1;
+        $possible_last_slash = strlen($request_uri) - 1;
 
         /* example 'test/test' */
         if ($first_slash !== 0 && ($last_slash !== $possible_last_slash)) {

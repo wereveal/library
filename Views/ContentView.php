@@ -37,7 +37,7 @@ class ContentView implements ViewInterface
     /**
      * ContentView constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      * @throws ViewException
      */
     public function __construct(Di $o_di)

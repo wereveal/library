@@ -39,8 +39,8 @@ class ContentComplexModel
     /**
      * ContentComplexModel constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @param Di $o_di
+     * @throws ModelException
      */
     public function __construct(Di $o_di)
     {
@@ -65,7 +65,7 @@ class ContentComplexModel
      * @param int $c_pbm_id
      * @throws ModelException
      */
-    public function deactivateAll($c_pbm_id = -1)
+    public function deactivateAll($c_pbm_id = -1): void
     {
         try {
             $this->o_content->setCurrentFalse($c_pbm_id);
@@ -94,7 +94,7 @@ class ContentComplexModel
         foreach ($a_results as $a_record) {
             $a_content_ids[] = ['c_id' => $a_record['c_id']];
         }
-        if (\count($a_content_ids) > 1) {
+        if (count($a_content_ids) > 1) {
             $delete_sql = "
                 DELETE FROM {$this->lib_prefix}content
                 WHERE c_id = :c_id
@@ -314,7 +314,7 @@ class ContentComplexModel
      * Returns the values of shared content.
      *
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readCurrentShared():array
     {

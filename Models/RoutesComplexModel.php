@@ -8,6 +8,7 @@ namespace Ritc\Library\Models;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\Strings;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -30,12 +31,12 @@ class RoutesComplexModel
 
     /**
      * RoutesComplexModel constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
         $this->o_di = $o_di;
-        /** @var \Ritc\Library\Services\DbModel $o_db */
+        /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
         $this->setupElog($o_di);
         $this->setupProperties($o_db);
@@ -81,7 +82,7 @@ class RoutesComplexModel
      *
      * @param int $route_id Optional, if omitted, all routes are returned.
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readAll(int $route_id = -1):array
     {
@@ -154,7 +155,7 @@ class RoutesComplexModel
      * A join between routes and urls tables.
      *
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readAllWithUrl()
     {
@@ -185,9 +186,10 @@ class RoutesComplexModel
 
     /**
      * Reads the route with the request uri.
+     *
      * @param string $request_uri normally obtained from $_SERVER['REQUEST_URI']
      * @return mixed
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readByRequestUri(string $request_uri = '')
     {
@@ -362,7 +364,7 @@ class RoutesComplexModel
             throw new ModelException('Unable to get existing groups assigned to the route.', $err_code, $e);
         }
         foreach ($a_old_groups as $old_key => $a_old_group) {
-            $key = array_search($a_old_group['group_id'], $a_group_ids);
+            $key = array_search($a_old_group['group_id'], $a_group_ids, true);
             if ($key) {
                 unset($a_group_ids[$key], $a_old_groups[$old_key]); // already has a record
                 // no need to delete map record

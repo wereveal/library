@@ -6,6 +6,7 @@
 namespace Ritc\Library\Models;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
 use Ritc\Library\Traits\LogitTraits;
@@ -26,12 +27,12 @@ class NavgroupsComplexModel
 
     /**
      * NavgroupsComplexModel constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);
-        /** @var \Ritc\Library\Services\DbModel $o_db */
+        /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
         $this->o_db = $o_db;
     }
@@ -41,7 +42,7 @@ class NavgroupsComplexModel
      * Also delete the relation record(s) in the map table.
      * @param int $ng_id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function deleteWithMap($ng_id = -1):bool
     {

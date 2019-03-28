@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Exceptions;
 
+use Exception;
 use Ritc\Library\Abstracts\CustomErrorAbstract;
 
 /**
@@ -26,9 +27,9 @@ class CustomErrorException extends CustomErrorAbstract
      * @param int        $severity
      * @param string     $filename
      * @param int        $lineno
-     * @param \Exception $previous
+     * @param Exception $previous
      */
-    public function __construct($message = '', $code = 0, $severity = 1, $filename = __FILE__, $lineno = __LINE__, \Exception $previous = null)
+    public function __construct($message = '', $code = 0, $severity = 1, $filename = __FILE__, $lineno = __LINE__, Exception $previous = null)
     {
         parent::__construct($message, $code, $severity, $filename, $lineno, $previous);
     }

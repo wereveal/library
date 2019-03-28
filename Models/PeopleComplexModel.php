@@ -31,18 +31,18 @@ class PeopleComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var \Ritc\Library\Models\PeopleModel */
+    /** @var PeopleModel */
     private $o_people;
-    /** @var \Ritc\Library\Models\GroupsModel */
+    /** @var GroupsModel */
     private $o_group;
-    /** @var \Ritc\Library\Models\PeopleGroupMapModel */
+    /** @var PeopleGroupMapModel */
     private $o_pgm;
 
     /**
      * PeopleComplexModel constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
-     * @throws \Ritc\Library\Exceptions\CustomException
+     * @param Di $o_di
+     * @throws CustomException
      */
     public function __construct(Di $o_di)
     {
@@ -63,7 +63,7 @@ class PeopleComplexModel
      *
      * @param int $people_id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function deletePerson($people_id = -1):bool
     {
@@ -119,7 +119,7 @@ class PeopleComplexModel
      *
      * @param int|string $people_id the people_id or login_id (as defined in the db)
      * @return array the records for the person
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readInfo($people_id = ''):array
     {
@@ -178,7 +178,7 @@ class PeopleComplexModel
             throw new ModelException($e->errorMessage(), $e->getCode());
         }
         $a_person = [];
-        if (isset($a_people[0]) && \is_array($a_people[0])) {
+        if (isset($a_people[0]) && is_array($a_people[0])) {
             if (($a_people[0]['people_id'] === $people_id) || ($a_people[0]['login_id'] === $people_id)) {
                 $a_groups = array();
                 foreach ($a_people as $key => $person) {
@@ -223,7 +223,7 @@ class PeopleComplexModel
      *
      * @param int $group_id
      * @return bool|mixed
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readByGroup($group_id = -1)
     {
@@ -461,10 +461,10 @@ class PeopleComplexModel
         $meth = __METHOD__ . '.';
         $a_person = $a_values['person'];
         $a_person = $this->o_people->setPersonValues($a_person);
-        if (!\is_array($a_person)) { // then it should be a string describing the error from setPersonValues.
+        if (!is_array($a_person)) { // then it should be a string describing the error from setPersonValues.
             return $a_person;
         }
-        if (!isset($a_values['groups']) || \count($a_values['groups']) < 1) {
+        if (!isset($a_values['groups']) || count($a_values['groups']) < 1) {
             return 'group-missing';
         }
         $a_person['groups'] = $a_values['groups'];
@@ -481,7 +481,7 @@ class PeopleComplexModel
      */
     public function makeGroupIdArray($group_id = '', $group_name = ''):array
     {
-        if (\is_array($group_id)) {
+        if (is_array($group_id)) {
             $a_group_ids = $group_id;
         }
         elseif ($group_id !== '') {
@@ -507,7 +507,7 @@ class PeopleComplexModel
         if (empty($a_group_ids)) {
             try {
                 $a_found_groups = $this->o_group->readByName('Registered');
-                $use_id = $a_found_groups !== false && \count($a_found_groups) > 0
+                $use_id = $a_found_groups !== false && count($a_found_groups) > 0
                     ? $a_found_groups[0]['group_id']
                     : 5;
                 $a_group_ids = [$use_id];

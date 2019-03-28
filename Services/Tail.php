@@ -58,7 +58,7 @@ class Tail
 
     /**
      * Tail constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -251,7 +251,7 @@ class Tail
             }
         }
         $this->a_lines = $a_lines;
-        $this->lines = \count($a_lines);
+        $this->lines = count($a_lines);
     }
 
     /**

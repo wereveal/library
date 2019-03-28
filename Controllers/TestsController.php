@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Controllers;
 
+use ReflectionException;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Tests\ConstantsModelTester;
 use Ritc\Library\Tests\NavgroupsModelTester;
@@ -56,7 +57,7 @@ class TestsController
      * Routes everything around from here.
      *
      * @return string
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function route():string
     {

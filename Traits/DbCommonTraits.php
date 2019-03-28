@@ -102,7 +102,7 @@ trait DbCommonTraits
             if (file_exists($config_file)) {
                 /** @noinspection PhpIncludeInspection */
                 $a_db = include $config_file;
-                if (\is_array($a_db)) {
+                if (is_array($a_db)) {
                     return $a_db;
                 }
                 return [];
@@ -113,13 +113,13 @@ trait DbCommonTraits
         $config_w_privpath = '';
         $config_w_pubpath = '';
         $config_w_path     = $_SERVER['DOCUMENT_ROOT'] . '/config/' . $config_file;
-        if (\defined('SRC_PATH')) {
+        if (defined('SRC_PATH')) {
             $config_w_apppath = SRC_PATH . '/config/' . $config_file;
         }
-        if (\defined('PRIVATE_PATH')) {
+        if (defined('PRIVATE_PATH')) {
             $config_w_privpath = PRIVATE_PATH . '/' . $config_file;
         }
-        if (\defined('PUBLIC_PATH')) {
+        if (defined('PUBLIC_PATH')) {
             $config_w_pubpath = PUBLIC_PATH . '/config/' . $config_file;
         }
         if ($config_w_privpath !== '' && file_exists($config_w_privpath)) {
@@ -136,7 +136,7 @@ trait DbCommonTraits
         }
         /** @noinspection PhpIncludeInspection */
         $a_db = include $config_w_path;
-        if (\is_array($a_db)) {
+        if (is_array($a_db)) {
             return $a_db;
         }
         return [];

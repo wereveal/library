@@ -156,7 +156,7 @@ class ConstantsController implements ConfigControllerInterface
             'form_action'  => '/manager/config/constants/',
             'btn_value'    => 'Constant',
             'hidden_name'  => 'const_id',
-            'hidden_value' => $this->a_post['constant']['const_id'],
+            'hidden_value' => $this->a_post['constant']['const_id']
         ];
         $a_options = [
             'tpl'      => 'verify_delete',

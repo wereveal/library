@@ -35,15 +35,15 @@ class UrlsController implements ConfigControllerInterface
 {
     use ControllerTraits, LogitTraits;
 
-    /** @var \Ritc\Library\Models\UrlsModel  */
+    /** @var UrlsModel */
     protected $o_urls_model;
-    /** @var \Ritc\Library\Views\UrlsView  */
+    /** @var UrlsView */
     protected $o_urls_view;
 
     /**
      * UrlsController constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -222,7 +222,7 @@ class UrlsController implements ConfigControllerInterface
         if (0 !== strpos($text, '/')) {
             $text = '/' . $text;
         }
-        if (strrpos($text, '.') === false && $text[\strlen($text) - 1] !== '/') {
+        if (strrpos($text, '.') === false && $text[strlen($text) - 1] !== '/') {
             $text .= '/';
         }
         $return_this = [

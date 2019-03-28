@@ -22,7 +22,7 @@ class TwigThemesModel extends ModelAbstract
     /**
      * TwigThemesModel constructor.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {

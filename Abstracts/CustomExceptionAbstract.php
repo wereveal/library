@@ -26,7 +26,7 @@ abstract class CustomExceptionAbstract extends \Exception implements CustomExcep
      */
     public function __toString()
     {
-        return \get_class($this) .
+        return get_class($this) .
         " '{$this->message}' in {$this->file}.{$this->line}\n" .
         $this->getTraceAsString();
     }
@@ -78,6 +78,6 @@ abstract class CustomExceptionAbstract extends \Exception implements CustomExcep
      */
     public function getClass():string
     {
-        return \get_class($this);
+        return get_class($this);
     }
 }

@@ -345,7 +345,7 @@ class LocateFile
         if ($file_name === '') {
             return ['path' => '', 'dir' => ''];
         }
-        $a_possible_locations = array(
+        $a_possible_locations = [
             'public_path'           => PUBLIC_PATH,
             'base_path'             => BASE_PATH,
             'src_path'              => SRC_PATH,
@@ -359,8 +359,8 @@ class LocateFile
             'fonts_path'            => PUBLIC_PATH . 'fonts',
             'themes_path'           => PUBLIC_PATH . '/assets/themes/' . $theme_name,
             'default_theme'         => PUBLIC_PATH . '/assets/themes/default',
-            'no_base'               => '',
-        );
+            'no_base'               => ''
+        ];
         if ($namespace === '') {
             $a_possible_locations['ns_path']               = SRC_PATH;
             $a_possible_locations['ns_res_path']           = SRC_PATH . '/resources';

@@ -36,7 +36,7 @@ class Router
     private $a_post;
     /** @var array $a_router_parts */
     private $a_router_parts;
-    /** @var \Ritc\Library\Helper\RoutesHelper $o_routes_helper */
+    /** @var RoutesHelper $o_routes_helper */
     private $o_routes_helper;
     /** @var string the action specified by a form */
     private $form_action;
@@ -56,7 +56,7 @@ class Router
     /**
      * Router constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -240,10 +240,10 @@ class Router
         $x_action = '';
         $y_action = '';
         foreach ($a_post as $key=>$value) {
-            if (substr($key, \strlen($key) - 2) === '_x') {
+            if (substr($key, strlen($key) - 2) === '_x') {
                 $x_action = substr($key, 0, strpos($key, '_x'));
             }
-            elseif (substr($key, \strlen($key) - 2) === '_y') {
+            elseif (substr($key, strlen($key) - 2) === '_y') {
                 $y_action = substr($key, 0, strpos($key, '_y'));
             }
         }

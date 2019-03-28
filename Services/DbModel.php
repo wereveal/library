@@ -6,6 +6,9 @@
  */
 namespace Ritc\Library\Services;
 
+use PDO;
+use PDOException;
+use PDOStatement;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ExceptionHelper;
@@ -73,7 +76,7 @@ class DbModel
     private $a_new_ids = [];
     /** @var int $affected_rows */
     private $affected_rows;
-    /** @var \PDO $o_pdo */
+    /** @var PDO $o_pdo */
     private $o_pdo;
     /** @var string $pgsql_sequence_name */
     private $pgsql_sequence_name = '';
@@ -85,11 +88,11 @@ class DbModel
     /**
      * On creating a new object, certain things happen.
      *
-     * @param  \PDO   $o_pdo       can be from PdoFactory or from a direct new PDO
+     * @param  PDO   $o_pdo       can be from PdoFactory or from a direct new PDO
      *                             This allows it to be independent of the PdoFactory.
      * @param  string $config_file name of the config file which is a returned array
      */
-    public function __construct(\PDO $o_pdo, $config_file = 'db_config.php')
+    public function __construct(PDO $o_pdo, $config_file = 'db_config.php')
     {
         $this->createDbParams($config_file);
         $this->o_pdo = $o_pdo;
@@ -106,7 +109,7 @@ class DbModel
      *                             If array then the INSERT string is for a prepared query
      * @param array  $a_table_info optional
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      * @internal param $array @a_table_info needed only if PostgreSQL is being used, Default array()
      *                             ['table_name' => '', 'column_name' => '', 'schema_name' => '']
      */
@@ -122,11 +125,11 @@ class DbModel
         if ($this->db_type === 'pgsql' && !empty($a_table_info)) {
             $sequence_name = $this->getPgsqlSequenceName($a_table_info);
         }
-        if (\count($a_values) === 0) {
+        if (count($a_values) === 0) {
             try {
                 $this->affected_rows = $this->o_pdo->exec($the_query);
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $this->error_message = $e->getMessage();
                 throw new ModelException($this->error_message, 110);
             }
@@ -141,12 +144,12 @@ class DbModel
                 $id = $this->o_pdo->lastInsertId($sequence_name);
                 $this->a_new_ids = [$id];
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $message = $e->getMessage();
                 throw new ModelException($message, 110);
             }
         }
-        elseif (\count($a_values) > 0) {
+        elseif (count($a_values) > 0) {
             try {
                 $o_pdo_stmt = $this->prepare($the_query);
                 try {
@@ -184,32 +187,32 @@ class DbModel
      * @param string $type      optional, type of results, num, both, assoc which
      *                          specifies the PDO formats, defaults to assoc
      * @return mixed results of search or false
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function search($the_query = '', array $a_values = [], $type = 'assoc')
     {
         $meth = __METHOD__ . '.';
         switch ($type) {
             case 'num':
-                $fetch_style = \PDO::FETCH_NUM;
+                $fetch_style = PDO::FETCH_NUM;
                 break;
             case 'both':
-                $fetch_style = \PDO::FETCH_BOTH;
+                $fetch_style = PDO::FETCH_BOTH;
                 break;
             case 'assoc':
             default:
-                $fetch_style = \PDO::FETCH_ASSOC;
+                $fetch_style = PDO::FETCH_ASSOC;
         }
         if ($the_query === '') {
             $this->error_message = 'The query must not be blank.';
             $this->logIt($this->error_message, LOG_ALWAYS, $meth . __LINE__);
             throw new ModelException($this->error_message, 220);
         }
-        if (\count($a_values) === 0) {
+        if (count($a_values) === 0) {
             try {
                 $o_pdo_stmt = $this->o_pdo->prepare($the_query);
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $this->error_message = $e->getMessage();
                 throw new ModelException($this->error_message, 15);
             }
@@ -221,17 +224,17 @@ class DbModel
                     $o_pdo_stmt->closeCursor();
                     return $a_results;
                 }
-                catch (\PDOException $e) {
+                catch (PDOException $e) {
                     $this->error_message = $e->getMessage();
                     throw new ModelException($this->error_message, 18);
                 }
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $this->error_message = $e->getMessage();
                 throw new ModelException($this->error_message, 18);
             }
         }
-        elseif (\is_array($a_values) && \count($a_values) > 0) {
+        elseif (is_array($a_values) && count($a_values) > 0) {
             try {
                 $o_pdo_stmt = $this->prepare($the_query);
                 try {
@@ -264,7 +267,7 @@ class DbModel
      * @param array  $a_values      associative array with paramaters default empty array
      * @param bool   $single_record default true specifies if only a single record should be deleted per query
      * @return bool success or failure
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function update($the_query = '', array $a_values = [], $single_record = true):?bool
     {
@@ -284,7 +287,7 @@ class DbModel
      * @param array  $a_values      associative array with where paramaters
      * @param bool   $single_record specifies if only a single record should be deleted per query
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function delete($the_query = '', array $a_values = [], $single_record = true):?bool
     {
@@ -303,14 +306,14 @@ class DbModel
      *
      * @param string $the_query
      * @return int
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function rawExec($the_query):?int
     {
         try {
             return $this->o_pdo->exec($the_query);
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             $this->error_message = 'Could not execute a PDO::exec operation.';
             throw new ModelException($this->error_message, 17, $e);
         }
@@ -322,7 +325,7 @@ class DbModel
      *
      * @param string $the_query
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function rawQuery($the_query = ''):?array
     {
@@ -333,14 +336,14 @@ class DbModel
         try {
             $pdo_stmt = $this->o_pdo->query($the_query);
             try {
-                return $pdo_stmt->fetchAll(\PDO::FETCH_ASSOC);
+                return $pdo_stmt->fetchAll(PDO::FETCH_ASSOC);
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $this->error_message = 'Unable to do a PDO::fetchAll operation.';
                 throw new ModelException($this->error_message, 18, $e);
             }
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             $this->error_message = 'Unable to do a PDO::query';
             throw new ModelException($this->error_message, 18, $e);
         }
@@ -382,9 +385,9 @@ class DbModel
     /**
      * Standard GETter for private property for the class.
      *
-     * @return \PDO
+     * @return PDO
      */
-    public function getPDO():\PDO
+    public function getPDO(): PDO
     {
         return $this->o_pdo;
     }
@@ -449,7 +452,7 @@ class DbModel
      *
      * @param array $a_table_info ['table_name', 'column_name', 'schema']
      * @return bool success or failure
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      * @note \verbatim
      *     'table_name'  value required,
      *     'column_name' value optional but recommended, defaults to 'id'
@@ -491,11 +494,11 @@ class DbModel
     /**
      * Sets the class propery error_message to a formated string.
      *
-     * @param $pdo null|\PDO|\PDOStatement
+     * @param $pdo null|PDO|PDOStatement
      */
     public function setSqlErrorMessage($pdo = null):void
     {
-        if ($pdo instanceof \PDOStatement || $pdo instanceof \PDO) {
+        if ($pdo instanceof PDOStatement || $pdo instanceof PDO) {
             $a_error_stuff = $pdo->errorInfo();
         }
         else {
@@ -509,7 +512,7 @@ class DbModel
     /**
      * Sets and gets the sql_error_message property.
      *
-     * @param $pdo null|\PDO|\PDOStatement
+     * @param $pdo null|PDO|PDOStatement
      * @return string
      */
     public function retrieveFormattedSqlErrorMessage($pdo = null):string
@@ -527,17 +530,17 @@ class DbModel
      * Retrieves the raw sql errors.
      * In the format of ['SQLSTATE Error Code', 'Driver Error Code', 'Driver Error Message'].
      *
-     * @param $pdo null|\PDO|\PDOStatement
+     * @param $pdo null|PDO|PDOStatement
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function retrieveRawSqlErrorInfo($pdo = null):?array
     {
-        if ($pdo instanceof \PDOStatement || $pdo instanceof \PDO) {
+        if ($pdo instanceof PDOStatement || $pdo instanceof PDO) {
             try {
                 return $pdo->errorInfo();
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $this->error_message = 'Could not get pdo::errorInfo';
                 throw new ModelException($this->error_message, 17, $e);
             }
@@ -546,7 +549,7 @@ class DbModel
             try {
                 return $this->o_pdo->errorInfo();
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $this->error_message = 'Could not get pdo::errorInfo';
                 throw new ModelException($this->error_message, 17, $e);
             }
@@ -569,11 +572,11 @@ class DbModel
      * Bind values from an assoc array to a prepared query.
      *
      * @param array                $a_values Keys must match the prepared query
-     * @param \PDOStatement $o_pdo_stmt
+     * @param PDOStatement $o_pdo_stmt
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function bindValues(array $a_values = [], \PDOStatement $o_pdo_stmt = null):?bool
+    public function bindValues(array $a_values = [], PDOStatement $o_pdo_stmt = null):?bool
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
@@ -583,14 +586,14 @@ class DbModel
         if (Arrays::isAssocArray($a_values)) {
             $a_values = $this->prepareKeys($a_values);
             foreach ($a_values as $key => $value) {
-                if (\is_array($key) || \is_array($value)) {
+                if (is_array($key) || is_array($value)) {
                     $this->error_message = 'Missing Values';
                     throw new ModelException($this->error_message, 900);
                 }
                 try {
                     $o_pdo_stmt->bindValue($key, $value);
                 }
-                catch (\PDOException $e) {
+                catch (PDOException $e) {
                     $a_error = $o_pdo_stmt->errorInfo();
                     $this->error_message = $a_error[2];
                     throw new ModelException($this->error_message, 18);
@@ -598,13 +601,13 @@ class DbModel
             }
             return true;
         }
-        if (\count($a_values) > 0) {
+        if (count($a_values) > 0) {
             $x = 1;
             foreach ($a_values as $value) {
                 try {
                     $o_pdo_stmt->bindValue($x++, $value);
                 }
-                catch (\PDOException $e) {
+                catch (PDOException $e) {
                     $a_error = $o_pdo_stmt->errorInfo();
                     $this->error_message = $a_error[2];
                     throw new ModelException($this->error_message, 18);
@@ -619,16 +622,16 @@ class DbModel
     /**
      * Shortcut for PDOStatement::closeCursor().
      *
-     * @param \PDOStatement $o_pdo_stmt
+     * @param PDOStatement $o_pdo_stmt
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function closeCursor(\PDOStatement $o_pdo_stmt):?bool
+    public function closeCursor(PDOStatement $o_pdo_stmt):?bool
     {
         try {
             return $o_pdo_stmt->closeCursor();
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             $this->error_message = 'Unable to close the pdo cursor';
             throw new ModelException($this->error_message, 18, $e);
         }
@@ -638,7 +641,7 @@ class DbModel
      * Commits the PDO transaction.
      *
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function commitTransaction():?bool
     {
@@ -648,7 +651,7 @@ class DbModel
             }
             throw new ModelException('Unable to commit the transaction.', 13);
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             throw new ModelException($e->getMessage(), 17, $e);
         }
     }
@@ -662,18 +665,18 @@ class DbModel
      *                                         array(":test"=>"test", ":food"=>"brains") for named parameters prepared statement
      *                                         '' when the values have been bound before calling this method
      *
-     * @param \PDOStatement $o_pdo_stmt - the object created from the prepare
+     * @param PDOStatement $o_pdo_stmt - the object created from the prepare
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function execute(array $a_values = [], \PDOStatement $o_pdo_stmt = null):?bool
+    public function execute(array $a_values = [], PDOStatement $o_pdo_stmt = null):?bool
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
             $err_code = ExceptionHelper::getCodeNumberModel('missing values');
             throw new ModelException($message, $err_code);
         }
-        if (\count($a_values) > 0) {
+        if (count($a_values) > 0) {
             if (Arrays::isAssocArray($a_values)) { // for a query with bind values
                 $a_values = $this->prepareKeys($a_values);
                 try {
@@ -687,12 +690,12 @@ class DbModel
                 try {
                     return $o_pdo_stmt->execute();
                 }
-                catch (\PDOException $e) {
+                catch (PDOException $e) {
                     $message = 'Unable to execute the sql.';
                     throw new ModelException($message, 18, $e);
                 }
             }
-            elseif (isset($a_values[0]) && \is_array($a_values[0])) { // is an array of arrays
+            elseif (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays
                 $message = 'The array cannot be an array of array.';
                 throw new ModelException($message, 22);
             }
@@ -706,7 +709,7 @@ class DbModel
                 try {
                     return $o_pdo_stmt->execute();
                 }
-                catch (\PDOException $e) {
+                catch (PDOException $e) {
                     $message = 'Unable to execute the sql.';
                     throw new ModelException($message, 18, $e);
                 }
@@ -716,7 +719,7 @@ class DbModel
             try {
                 return $o_pdo_stmt->execute();
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $message = 'Unable to execute the sql.';
                 throw new ModelException($message, 18, $e);
             }
@@ -727,16 +730,16 @@ class DbModel
      * Executes the pdo fetch method.
      *
      * @see \PDOStatment::fetch
-     * @param \PDOStatement $o_pdo_stmt     a \PDOStatement object
+     * @param PDOStatement $o_pdo_stmt     a \PDOStatement object
      * @param array                $a_fetch_config array('fetch_style'=>'ASSOC', 'cursor_orientation'=>'', 'cursor_offset'=>0)
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function fetchRow(\PDOStatement $o_pdo_stmt, array $a_fetch_config = []):?array
+    public function fetchRow(PDOStatement $o_pdo_stmt, array $a_fetch_config = []):?array
     {
         if ($a_fetch_config === array()) {
             $fetch_style = 'ASSOC';
-            $cursor_orientation = \PDO::FETCH_ORI_NEXT;
+            $cursor_orientation = PDO::FETCH_ORI_NEXT;
             $cursor_offset = 0;
         }
         else {
@@ -745,41 +748,41 @@ class DbModel
                 : 'ASSOC';
             $cursor_orientation = $a_fetch_config['cursor_orientation'] !== ''
                 ? $a_fetch_config['cursor_orientation']
-                : \PDO::FETCH_ORI_NEXT;
+                : PDO::FETCH_ORI_NEXT;
             $cursor_offset = $a_fetch_config['cursor_offset'] !== ''
                 ? $a_fetch_config['cursor_offset']
                 : 0;
         }
         switch ($fetch_style) {
             case 'BOTH':
-                $fetch_style = \PDO::FETCH_BOTH;
+                $fetch_style = PDO::FETCH_BOTH;
                 break;
             case 'BOUND':
-                $fetch_style = \PDO::FETCH_BOUND;
+                $fetch_style = PDO::FETCH_BOUND;
                 break;
             case 'CLASS':
-                $fetch_style = \PDO::FETCH_CLASS;
+                $fetch_style = PDO::FETCH_CLASS;
                 break;
             case 'INTO':
-                $fetch_style = \PDO::FETCH_INTO;
+                $fetch_style = PDO::FETCH_INTO;
                 break;
             case 'LAZY':
-                $fetch_style = \PDO::FETCH_LAZY;
+                $fetch_style = PDO::FETCH_LAZY;
                 break;
             case 'NUM':
-                $fetch_style = \PDO::FETCH_NUM;
+                $fetch_style = PDO::FETCH_NUM;
                 break;
             case 'OBJ':
-                $fetch_style = \PDO::FETCH_OBJ;
+                $fetch_style = PDO::FETCH_OBJ;
                 break;
             case 'ASSOC':
             default:
-                $fetch_style = \PDO::FETCH_ASSOC;
+                $fetch_style = PDO::FETCH_ASSOC;
         }
         try {
             return $o_pdo_stmt->fetch($fetch_style, $cursor_orientation, $cursor_offset);
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             $this->error_message = 'Unable to fetch the record(s).';
             throw new ModelException($this->error_message, 18, $e);
         }
@@ -788,43 +791,43 @@ class DbModel
     /**
      * Fetches all from a pdo statement.
      *
-     * @param \PDOStatement $o_pdo_stmt  a \PDOStatement object
+     * @param PDOStatement $o_pdo_stmt  a \PDOStatement object
      * @param string               $fetch_style @see \PDO (optional)
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function fetchAll(\PDOStatement $o_pdo_stmt, $fetch_style = 'ASSOC'):?array
+    public function fetchAll(PDOStatement $o_pdo_stmt, $fetch_style = 'ASSOC'):?array
     {
         switch ($fetch_style) {
             case 'BOTH':
-                $pdo_fetch_type = \PDO::FETCH_BOTH;
+                $pdo_fetch_type = PDO::FETCH_BOTH;
                 break;
             case 'BOUND':
-                $pdo_fetch_type = \PDO::FETCH_BOUND;
+                $pdo_fetch_type = PDO::FETCH_BOUND;
                 break;
             case 'CLASS':
-                $pdo_fetch_type = \PDO::FETCH_CLASS;
+                $pdo_fetch_type = PDO::FETCH_CLASS;
                 break;
             case 'INTO':
-                $pdo_fetch_type = \PDO::FETCH_INTO;
+                $pdo_fetch_type = PDO::FETCH_INTO;
                 break;
             case 'LAZY':
-                $pdo_fetch_type = \PDO::FETCH_LAZY;
+                $pdo_fetch_type = PDO::FETCH_LAZY;
                 break;
             case 'NUM':
-                $pdo_fetch_type = \PDO::FETCH_NUM;
+                $pdo_fetch_type = PDO::FETCH_NUM;
                 break;
             case 'OBJ':
-                $pdo_fetch_type = \PDO::FETCH_OBJ;
+                $pdo_fetch_type = PDO::FETCH_OBJ;
                 break;
             case 'ASSOC':
             default:
-                $pdo_fetch_type = \PDO::FETCH_ASSOC;
+                $pdo_fetch_type = PDO::FETCH_ASSOC;
         }
         try {
             return $o_pdo_stmt->fetchAll($pdo_fetch_type);
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             $this->error_message = 'Unable to fetch the record(s).';
             throw new ModelException($this->error_message, 18, $e);
         }
@@ -835,18 +838,18 @@ class DbModel
      *
      * @param string $the_query
      * @param string $cursor
-     * @return \PDOStatement
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @return PDOStatement
+     * @throws ModelException
      */
-    public function prepare($the_query = '', $cursor = ''):\PDOStatement
+    public function prepare($the_query = '', $cursor = ''): PDOStatement
     {
         if ($the_query !== '') {
             switch ($cursor) {
                 case 'SCROLL':
                     try {
-                        $o_pdo_stmt = $this->o_pdo->prepare($the_query, array(\PDO::ATTR_CURSOR =>  \PDO::CURSOR_SCROLL));
+                        $o_pdo_stmt = $this->o_pdo->prepare($the_query, array(PDO::ATTR_CURSOR =>  PDO::CURSOR_SCROLL));
                     }
-                    catch (\PDOException $e) {
+                    catch (PDOException $e) {
                         $this->error_message = 'Unable to prepare the statement.';
                         throw new ModelException($this->error_message, 15, $e);
                     }
@@ -854,9 +857,9 @@ class DbModel
                 case 'FWDONLY':
                 default:
                     try {
-                        $o_pdo_stmt = $this->o_pdo->prepare($the_query, array(\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY));
+                        $o_pdo_stmt = $this->o_pdo->prepare($the_query, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
                     }
-                    catch (\PDOException $e) {
+                    catch (PDOException $e) {
                         $this->error_message = 'Unable to prepare the statement.';
                         throw new ModelException($this->error_message, 15, $e);
                     }
@@ -872,7 +875,7 @@ class DbModel
      * Rolls back a PDO transaction.
      *
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function rollbackTransaction():?bool
     {
@@ -882,7 +885,7 @@ class DbModel
             }
             throw new ModelException('Could not rollback the transaction.', 14);
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             throw new ModelException($e->getMessage(), 17);
         }
     }
@@ -890,16 +893,16 @@ class DbModel
     /**
      * Executes PDOStatement::rowCount().
      *
-     * @param \PDOStatement $o_pdo_stmt
+     * @param PDOStatement $o_pdo_stmt
      * @return int
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function rowCount(\PDOStatement $o_pdo_stmt):?int
+    public function rowCount(PDOStatement $o_pdo_stmt):?int
     {
         try {
             return $o_pdo_stmt->rowCount();
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             throw new ModelException('Unable to get the row count.', 18, $e);
         }
     }
@@ -908,7 +911,7 @@ class DbModel
      * Starts a PDO transaction.
      *
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function startTransaction():?bool
     {
@@ -918,7 +921,7 @@ class DbModel
             }
             throw new ModelException('Unable to start the transaction.', 12);
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             throw new ModelException('Unable to start the transaction.', 17, $e);
         }
     }
@@ -931,7 +934,7 @@ class DbModel
      * @param array  $a_values
      * @param string $table_name
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function insertTransaction($the_query = '', array $a_values = [], $table_name = ''):?bool
     {
@@ -942,7 +945,7 @@ class DbModel
         try {
             $this->o_pdo->beginTransaction();
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             throw new ModelException('Unable to start the transaction.', 12, $e);
         }
         try {
@@ -951,7 +954,7 @@ class DbModel
                 $this->o_pdo->commit();
                 return true;
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $this->error_message = 'Could Not Commit the Transaction.';
                 throw new ModelException($this->error_message, 13, $e);
             }
@@ -970,14 +973,14 @@ class DbModel
      * @param array  $the_array
      * @param bool   $single_record
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function queryTransaction($the_query = '', array $the_array = [], $single_record = true):?bool
     {
         try {
             $this->o_pdo->beginTransaction();
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             $this->error_message = 'Could not start transaction so we could not execute the query, Please Try Again.';
             throw new ModelException($this->error_message, 12, $e);
         }
@@ -987,7 +990,7 @@ class DbModel
                 $this->o_pdo->commit();
                 return true;
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $this->error_message = 'Could Not Commit the Transaction.';
                 throw new ModelException($this->error_message, 12, $e);
 
@@ -1006,7 +1009,7 @@ class DbModel
      * @param array  $the_array
      * @param bool   $single_record
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function updateTransaction($the_query = '', array $the_array = [], $single_record = true):?bool
     {
@@ -1026,7 +1029,7 @@ class DbModel
      * @param array  $the_array
      * @param bool   $single_record
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function deleteTransaction($the_query = '', array $the_array = [], $single_record = true):?bool
     {
@@ -1044,19 +1047,19 @@ class DbModel
      * Does an insert based on a prepared query.
      *
      * @param array         $a_values   the values to be insert
-     * @param \PDOStatement $o_pdo_stmt the object pointing to the prepared statement
+     * @param PDOStatement $o_pdo_stmt the object pointing to the prepared statement
      * @param array         $a_table_info
      * @return bool success or failure
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function insertPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt = null, array $a_table_info = []):?bool
+    public function insertPrepared(array $a_values = [], PDOStatement $o_pdo_stmt = null, array $a_table_info = []):?bool
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
             $err_code = ExceptionHelper::getCodeNumberModel('missing values');
             throw new ModelException($message, $err_code);
         }
-        if (\count($a_values) > 0) {
+        if (count($a_values) > 0) {
             $this->resetNewIds();
             try {
                 $this->executeInsert($a_values, $o_pdo_stmt, $a_table_info);
@@ -1077,20 +1080,20 @@ class DbModel
      * Specialized version of execute which retains ids of each insert.
      *
      * @param array         $a_values see $this->execute for details
-     * @param \PDOStatement $o_pdo_stmt
+     * @param PDOStatement $o_pdo_stmt
      * @param array         $a_table_info
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function executeInsert(array $a_values = [], \PDOStatement $o_pdo_stmt = null, array $a_table_info = []):bool
+    public function executeInsert(array $a_values = [], PDOStatement $o_pdo_stmt = null, array $a_table_info = []):bool
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
             $err_code = ExceptionHelper::getCodeNumberModel('missing values');
             throw new ModelException($message, $err_code);
         }
-        if (\count($a_values) > 0) {
-            if (isset($a_values[0]) && \is_array($a_values[0])) { // is an array of arrays, can not be mixed
+        if (count($a_values) > 0) {
+            if (isset($a_values[0]) && is_array($a_values[0])) { // is an array of arrays, can not be mixed
                 foreach ($a_values as $a_stuph) {
                     try {
                         $this->executeInsert($a_stuph, $o_pdo_stmt, $a_table_info);
@@ -1112,7 +1115,7 @@ class DbModel
 		                }
                         $this->a_new_ids[] = $this->o_pdo->lastInsertId($sequence_name);
                     }
-                    catch (\PDOException $e) {
+                    catch (PDOException $e) {
                         $this->error_message = 'Could not get pdo->lastInsertId. Sequence Name: ' . $sequence_name . ' ' . $e->getMessage();
                         throw new ModelException($this->error_message, 110, $e);
                     }
@@ -1137,7 +1140,7 @@ class DbModel
      * @param array  $a_values      optional, formated values for a prepared sql statement, default is ''
      * @param bool   $single_record optional, if only a single record should be changed/deleted, default is true
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function mdQuery($the_query = '', array $a_values = [], $single_record = true):bool
     {
@@ -1157,13 +1160,13 @@ class DbModel
                     throw new ModelException($this->error_message, 10);
                 }
             }
-            catch (\PDOException $e) {
+            catch (PDOException $e) {
                 $this->setSqlErrorMessage($this->o_pdo);
                 $message = $this->getSqlErrorMessage();
                 throw new ModelException($message, 10, $e);
             }
         }
-        elseif (\count($a_values) > 0) {
+        elseif (count($a_values) > 0) {
             try {
                 $o_pdo_stmt = $this->prepare($the_query);
                 try {
@@ -1197,11 +1200,11 @@ class DbModel
      *
      * @param array         $a_values
      * @param bool          $single_record
-     * @param \PDOStatement $o_pdo_stmt
+     * @param PDOStatement $o_pdo_stmt
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function mdQueryPrepared(array $a_values = [], $single_record = true, \PDOStatement $o_pdo_stmt = null):?bool
+    public function mdQueryPrepared(array $a_values = [], $single_record = true, PDOStatement $o_pdo_stmt = null):?bool
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
@@ -1212,7 +1215,7 @@ class DbModel
             throw new ModelException('Missing array values', 20);
         }
 
-        if (isset($a_values[0]) && \is_array($a_values[0])) { // array of arrays
+        if (isset($a_values[0]) && is_array($a_values[0])) { // array of arrays
             foreach ($a_values as $row) {
                 try {
                     $this->mdQueryPrepared($row, $single_record, $o_pdo_stmt);
@@ -1247,7 +1250,7 @@ class DbModel
      *                                   'id, name, date' (str) - a string of fields to be returned in a search</pre>
      * @param  array       $where_values array(field_name => value) - paramaters used to find records for search or modify
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function query($query_params = '', $data = '', array $where_values = []):?bool
     {
@@ -1383,12 +1386,12 @@ class DbModel
      * Does a search with a prepared statement.
      *
      * @param array         $a_values
-     * @param \PDOStatement $o_pdo_stmt
+     * @param PDOStatement $o_pdo_stmt
      * @param string        $type
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
-    public function searchPrepared(array $a_values = [], \PDOStatement $o_pdo_stmt = null, $type = 'assoc'):?array
+    public function searchPrepared(array $a_values = [], PDOStatement $o_pdo_stmt = null, $type = 'assoc'):?array
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
@@ -1397,25 +1400,25 @@ class DbModel
         }
         switch ($type) {
             case 'num':
-                $fetch_style = \PDO::FETCH_NUM;
+                $fetch_style = PDO::FETCH_NUM;
                 break;
             case 'both':
-                $fetch_style = \PDO::FETCH_BOTH;
+                $fetch_style = PDO::FETCH_BOTH;
                 break;
             case 'assoc':
             default:
-                $fetch_style = \PDO::FETCH_ASSOC;
+                $fetch_style = PDO::FETCH_ASSOC;
         }
-        if (\count($a_values) > 0) {
+        if (count($a_values) > 0) {
             $a_results = [];
-            if (isset($a_values[0]) && \is_array($a_values[0])) {
+            if (isset($a_values[0]) && is_array($a_values[0])) {
                 foreach ($a_values as $row) {
                     try {
                         $this->execute($row, $o_pdo_stmt);
                         try {
                             $a_results[] = $o_pdo_stmt->fetchAll($fetch_style);
                         }
-                        catch (\PDOException $e) {
+                        catch (PDOException $e) {
                             throw new ModelException($e->getMessage(), 200, $e);
                         }
                     }
@@ -1430,7 +1433,7 @@ class DbModel
                     try {
                         $a_results = $o_pdo_stmt->fetchAll($fetch_style);
                     }
-                    catch (\PDOException $e) {
+                    catch (PDOException $e) {
                         throw new ModelException('Unable to fetch the records.', 299, $e);
                     }
                 }
@@ -1454,14 +1457,14 @@ class DbModel
     {
         switch ($type) {
             case 'num':
-                return \PDO::FETCH_NUM;
+                return PDO::FETCH_NUM;
                 break;
             case 'both':
-                return \PDO::FETCH_BOTH;
+                return PDO::FETCH_BOTH;
                 break;
             case 'assoc':
             default:
-                return \PDO::FETCH_ASSOC;
+                return PDO::FETCH_ASSOC;
         }
     }
 
@@ -1471,14 +1474,14 @@ class DbModel
      * @see \PDO::quote
      * @param $value (str)
      * @return string - quoted string
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function quoteString($value):?string
     {
         try {
             return $this->o_pdo->quote($value);
         }
-        catch (\PDOException $e) {
+        catch (PDOException $e) {
             throw new ModelException($e->getMessage(), 17);
         }
     }
@@ -1487,7 +1490,7 @@ class DbModel
      * Returns a list of the columns from a database table.
      * @param string $table_name required name of the table
      * @return array             field names
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function selectDbColumns($table_name = ''):?array
     {
@@ -1549,7 +1552,7 @@ class DbModel
     /**
      * Selects the table names from the database.
      * @return array $a_table_names
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function selectDbTables():?array
     {

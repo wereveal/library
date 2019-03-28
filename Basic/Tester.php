@@ -5,6 +5,9 @@
  */
 namespace Ritc\Library\Basic;
 
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 use Ritc\Library\Helper\LocateFile;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -149,11 +152,11 @@ class Tester
         $a_failed_test_names = array();
         $a_passed_test_names = array();
         if ($show_test_names === true) {
-            if (\count($this->passed_test_names) > 0) {
+            if (count($this->passed_test_names) > 0) {
                 $a_passed_test_names = $this->passed_test_names;
             }
             foreach ($this->failed_test_names as $name) {
-                if (\is_array($this->failed_subtests) && isset($this->failed_subtests[$name])) {
+                if (is_array($this->failed_subtests) && isset($this->failed_subtests[$name])) {
                     $a_subnames = $this->failed_subtests[$name];
                 }
                 else {
@@ -193,7 +196,7 @@ class Tester
      * @param array $a_test_order optional, if provided it ignores the class property $a_test_order
      *                            and won't try to build one from the class methods.
      * @return int number of failed tests.
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function runTests($class_name = '', array $a_test_order = []):int
     {
@@ -212,15 +215,15 @@ class Tester
                 return 999;
             }
         }
-        if (\count($a_test_order) === 0) {
-            if (\count($this->a_test_order) === 0) {
+        if (count($a_test_order) === 0) {
+            if (count($this->a_test_order) === 0) {
                 try {
-                    $o_ref = new \ReflectionClass($class_name);
+                    $o_ref = new ReflectionClass($class_name);
                 }
-                catch (\ReflectionException $e) {
+                catch (ReflectionException $e) {
                     return 999;
                 }
-                $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
+                $a_methods = $o_ref->getMethods(ReflectionMethod::IS_PUBLIC);
                 foreach ($a_methods as $a_method) {
                     switch($a_method->name) {
                         case '__construct':
@@ -336,7 +339,7 @@ class Tester
     {
         if ($method_name === '' || $test_name === '') { return; }
         $method_name = $this->shortenName($method_name);
-        if (\is_array($this->failed_subtests) === false) {
+        if (is_array($this->failed_subtests) === false) {
             $this->failed_subtests = array();
         }
         if (array_key_exists($method_name, $this->failed_subtests)) {
@@ -402,7 +405,7 @@ class Tester
      * @param string $class_name required defaults to ''
      * @param string $method_name required defaults to ''
      * @return bool true or false
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function isPublicMethod($class_name = '', $method_name = ''):bool
     {
@@ -417,9 +420,9 @@ class Tester
             $class_name = $this->class_name;
         }
         try {
-            $o_ref = new \ReflectionClass($class_name);
+            $o_ref = new ReflectionClass($class_name);
         }
-        catch (\ReflectionException $e) {
+        catch (ReflectionException $e) {
             return false;
         }
         $o_method = $o_ref->getMethod($method_name);

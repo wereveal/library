@@ -173,7 +173,7 @@ class Files implements LocationInterface
      */
     public function getConfigWithDir($file_name):bool
     {
-        $this->file_dir_name = \defined('CONFIG_DIR_NAME')
+        $this->file_dir_name = defined('CONFIG_DIR_NAME')
             ? CONFIG_DIR_NAME
             : self::CONFIG_DIR_NAME;
         return $this->getFileWithDir($file_name);
@@ -185,7 +185,7 @@ class Files implements LocationInterface
      */
     public function getConfigWithPath($file_name):bool
     {
-        $this->file_dir_name = \defined('CONFIG_DIR_NAME')
+        $this->file_dir_name = defined('CONFIG_DIR_NAME')
             ? CONFIG_DIR_NAME
             : self::CONFIG_DIR_NAME;
         return $this->getFileWithPath($file_name);
@@ -241,7 +241,7 @@ class Files implements LocationInterface
      */
     public function getCssWithDir($file_name):bool
     {
-        $this->file_dir_name = \defined('CSS_DIR_NAME')
+        $this->file_dir_name = defined('CSS_DIR_NAME')
             ? CSS_DIR_NAME
             : self::CSS_DIR_NAME;
         return $this->getFileWithDir($file_name);
@@ -253,7 +253,7 @@ class Files implements LocationInterface
      */
     public function getCssWithPath($file_name = ''):bool
     {
-        $this->file_dir_name = \defined('CSS_DIR_NAME')
+        $this->file_dir_name = defined('CSS_DIR_NAME')
             ? CSS_DIR_NAME
             : self::CSS_DIR_NAME;
         return $this->getFileWithPath($file_name);
@@ -317,7 +317,7 @@ class Files implements LocationInterface
      */
     public function getHtmlWithDir($file_name):bool
     {
-        $this->file_dir_name = \defined('HTML_DIR_NAME')
+        $this->file_dir_name = defined('HTML_DIR_NAME')
             ? HTML_DIR_NAME
             : self::HTML_DIR_NAME;
         return $this->getFileWithDir($file_name);
@@ -329,7 +329,7 @@ class Files implements LocationInterface
      */
     public function getHtmlWithPath($file_name):bool
     {
-        $this->file_dir_name = \defined('HTML_DIR_NAME')
+        $this->file_dir_name = defined('HTML_DIR_NAME')
             ? HTML_DIR_NAME
             : self::HTML_DIR_NAME;
         return $this->getFileWithPath($file_name);
@@ -341,7 +341,7 @@ class Files implements LocationInterface
      */
     public function getImageWithDir($file_name):bool
     {
-        $this->file_dir_name = \defined('IMAGES_DIR_NAME')
+        $this->file_dir_name = defined('IMAGES_DIR_NAME')
             ? IMAGES_DIR_NAME
             : self::IMAGES_DIR_NAME;
         return $this->getFileWithDir($file_name);
@@ -353,7 +353,7 @@ class Files implements LocationInterface
      */
     public function getImageWithPath($file_name):bool
     {
-        $this->file_dir_name = \defined('IMAGES_DIR_NAME')
+        $this->file_dir_name = defined('IMAGES_DIR_NAME')
             ? IMAGES_DIR_NAME
             : self::IMAGES_DIR_NAME;
         return $this->getFileWithPath($file_name);
@@ -365,7 +365,7 @@ class Files implements LocationInterface
      */
     public function getJsWithDir($file_name):bool
     {
-        $this->file_dir_name = \defined('JS_DIR_NAME')
+        $this->file_dir_name = defined('JS_DIR_NAME')
             ? JS_DIR_NAME
             : self::JS_DIR_NAME;
         $this->setFileLocations();
@@ -378,7 +378,7 @@ class Files implements LocationInterface
      */
     public function getJsWithPath($file_name):bool
     {
-        $this->file_dir_name = \defined('JS_DIR_NAME')
+        $this->file_dir_name = defined('JS_DIR_NAME')
             ? JS_DIR_NAME
             : self::JS_DIR_NAME;
         $this->setFileLocations();
@@ -391,7 +391,7 @@ class Files implements LocationInterface
      */
     public function getLibWithDir($file_name):bool
     {
-        $this->file_dir_name = \defined('LIBS_DIR_NAME')
+        $this->file_dir_name = defined('LIBS_DIR_NAME')
             ? LIBS_DIR_NAME
             : self::LIBS_DIR_NAME;
         return $this->getFileWithDir($file_name);
@@ -403,7 +403,7 @@ class Files implements LocationInterface
      */
     public function getLibWithPath($file_name):bool
     {
-        $this->file_dir_name = \defined('LIBS_DIR_NAME')
+        $this->file_dir_name = defined('LIBS_DIR_NAME')
             ? LIBS_DIR_NAME
             : self::LIBS_DIR_NAME;
         return $this->getFileWithPath($file_name);
@@ -443,7 +443,7 @@ class Files implements LocationInterface
      */
     public function getTemplateWithDir($file_name):bool
     {
-        $this->file_dir_name = \defined('TEMPLATES_DIR_NAME')
+        $this->file_dir_name = defined('TEMPLATES_DIR_NAME')
             ? TEMPLATES_DIR_NAME
             : self::TEMPLATES_DIR_NAME;
         return $this->getFileWithDir($file_name);
@@ -455,7 +455,7 @@ class Files implements LocationInterface
      */
     public function getTemplateWithPath($file_name):bool
     {
-        $this->file_dir_name = \defined('TEMPLATES_DIR_NAME')
+        $this->file_dir_name = defined('TEMPLATES_DIR_NAME')
             ? TEMPLATES_DIR_NAME
             : self::TEMPLATES_DIR_NAME;
         $this->setFileLocations();
@@ -518,7 +518,7 @@ class Files implements LocationInterface
         }
         $namespace    = str_replace('\\', '/', $namespace);
         $ns_path      = APPS_PATH . '/' . $namespace;
-        $a_possible_locations = array(
+        $a_possible_locations = [
             'public_path'    => PUBLIC_PATH,
             'base_path'      => BASE_PATH,
             'src_path'       => SRC_PATH,
@@ -531,8 +531,8 @@ class Files implements LocationInterface
             'assets_path'    => PUBLIC_PATH . '/assets',
             'themes_path'    => PUBLIC_PATH . '/assets/themes/' . $this->theme_name,
             'default_theme'  => PUBLIC_PATH . '/assets/themes/default',
-            'no_base'        => '',
-        );
+            'no_base'        => ''
+        ];
         $file_w_dir = '/';
         $file_w_dir .= $file_dir_name !== '' ? $file_dir_name . '/' : '';
         $file_w_dir .= $file_name;
@@ -556,7 +556,7 @@ class Files implements LocationInterface
         if (0 === strpos($value, '/')) {
             $value = substr($value, 1);
         }
-        if (substr($value, \strlen($value) - 1) === '/') {
+        if (substr($value, strlen($value) - 1) === '/') {
             $value = substr($value, 0, -1);
         }
         $this->file_dir_name = $value;

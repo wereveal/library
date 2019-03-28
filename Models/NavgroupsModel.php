@@ -30,7 +30,7 @@ class NavgroupsModel extends ModelAbstract
 {
     /**
      * NavgroupsModel constructor.
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -52,7 +52,7 @@ class NavgroupsModel extends ModelAbstract
      *
      * @param int $ng_id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function delete($ng_id = -1):bool
     {
@@ -92,7 +92,7 @@ class NavgroupsModel extends ModelAbstract
      *
      * @param string $name
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readByName($name = ''):array
     {
@@ -113,7 +113,7 @@ class NavgroupsModel extends ModelAbstract
      *
      * @param string $name
      * @return int
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readIdByName($name = ''):int
     {
@@ -138,7 +138,7 @@ class NavgroupsModel extends ModelAbstract
      * Gets the default navgroup by id.
      *
      * @return int
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function retrieveDefaultId():int
     {
@@ -163,7 +163,7 @@ class NavgroupsModel extends ModelAbstract
      * Returns the default navgroup by name.
      *
      * @return string
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function retrieveDefaultName():string
     {

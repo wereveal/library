@@ -30,7 +30,7 @@ class TestsView
 
     /**
      * TestsView constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -65,7 +65,7 @@ class TestsView
      */
     public function renderResults(array $a_result_values = array()):string
     {
-        if (\count($a_result_values) == 0) {
+        if (count($a_result_values) === 0) {
             $a_message = ViewHelper::failureMessage('No results were available.');
             $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/tests/');
         }

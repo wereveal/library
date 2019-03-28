@@ -150,7 +150,7 @@ class PageController implements ManagerControllerInterface
             ];
             $a_message = ViewHelper::fullMessage($a_msg_values);
         }
-        if (empty($this->a_post['blocks']) && empty($a_message)) {
+        if (empty($a_message) && empty($this->a_post['blocks'])) {
             $o_blocks = new BlocksModel($this->o_db);
             $o_blocks->setupElog($this->o_di);
             try {

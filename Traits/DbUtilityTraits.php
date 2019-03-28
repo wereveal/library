@@ -71,7 +71,7 @@ trait DbUtilityTraits
     protected $immutable_field = '';
     /** @var string */
     protected $lib_prefix = 'lib_';
-    /** @var \Ritc\Library\Services\DbModel */
+    /** @var DbModel */
     protected $o_db;
     /** @var  string */
     protected $primary_index_name = '';
@@ -94,7 +94,7 @@ trait DbUtilityTraits
      *  'allow_pin'       => false
      * ] \endcode
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      * @see  \ref createparams
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = []):array
@@ -132,7 +132,7 @@ trait DbUtilityTraits
             throw new ModelException($this->error_message, $error_code);
         }
         if (empty($a_parameters['allow_pin']) || $a_parameters['allow_pin'] !== true) {
-            $has_pin = array_search($this->primary_index_name, $a_field_names);
+            $has_pin = array_search($this->primary_index_name, $a_field_names, true);
             if ($has_pin !== false) {
                 unset($a_field_names[$has_pin]);
             }
@@ -182,7 +182,7 @@ SQL;
         try {
             $this->o_db->insert($sql, $a_values, $a_psql);
             $a_new_ids = $this->o_db->getNewIds();
-            if (\count($a_new_ids) < 1) {
+            if (count($a_new_ids) < 1) {
                 $this->error_message = 'No New Ids were returned in the create.';
                 $error_code = ExceptionHelper::getCodeNumberModel('create_unspecified');
                 throw new ModelException($this->error_message, $error_code);
@@ -212,7 +212,7 @@ SQL;
      * 'comparison_type' What kind of comparison operator to use for ALL WHEREs
      * 'where_exists'    Either true or false \endverbatim
      * @return bool|array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     protected function genericRead(array $a_parameters = [])
     {
@@ -281,7 +281,7 @@ SQL;
      *
      * @param array  $a_values Required may be be assoc array or an array of assoc arrays
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     protected function genericUpdate(array $a_values = []):?bool
     {
@@ -341,11 +341,11 @@ SQL;
      *                          If array, it passes the values to the genericDeleteMultiple. This provided backwards
      *                          compatibility when genericDelete only allowed int.
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     protected function genericDelete($record_ids = -1):?bool
     {
-        if (\is_array($record_ids)) {
+        if (is_array($record_ids)) {
            if (empty($record_ids)) {
                $this->error_message = 'No record ids were provided.';
                $error_code = ExceptionHelper::getCodeNumberModel('delete_missing_primary');
@@ -379,7 +379,7 @@ SQL;
      *
      * @param array $a_record_ids Required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     protected function genericDeleteMultiple(array $a_record_ids = []):?bool
     {
@@ -423,7 +423,7 @@ SQL;
      */
     protected function buildSqlInsert(array $a_values = [], array $a_allowed_keys = []):string
     {
-        if (\count($a_values) === 0 || \count($a_allowed_keys) === 0) {
+        if (count($a_values) === 0 || count($a_allowed_keys) === 0) {
             return '';
         }
         $a_values = $this->o_db->prepareKeys($a_values);
@@ -507,7 +507,7 @@ SQL;
         }
         $a_skip_keys = $this->prepareListArray($a_skip_keys);
         foreach ($a_values as $key => $value) {
-            if (!\in_array($key, $a_skip_keys)) {
+            if (!in_array($key, $a_skip_keys, false)) {
                 if ($set_sql === '' ) {
                     $set_sql = 'SET ' . str_replace(':', '', $key) . " = {$key} ";
                 }
@@ -540,7 +540,7 @@ SQL;
         $order_by = '';
         $where_exists = false;
         $where = '';
-        if (\count($a_search_parameters) > 0) {
+        if (count($a_search_parameters) > 0) {
             $a_allowed_parms = array(
                 'search_type',
                 'comparison_type',
@@ -550,7 +550,7 @@ SQL;
                 'where_exists'
             );
             foreach ($a_search_parameters as $key => $value) {
-                if (\in_array($key, $a_allowed_parms)) {
+                if (in_array($key, $a_allowed_parms, false)) {
                     $$key = $value;
                 }
             }
@@ -559,16 +559,16 @@ SQL;
             $a_allowed_keys = $this->a_db_fields;
         }
         /* set the $key to have a value compatible for a prepared statement */
-        if (\count($a_search_for) > 0) {
+        if (count($a_search_for) > 0) {
             $a_search_for = $this->o_db->prepareKeys($a_search_for);
         }
         /* remove any unwanted pairs from array */
-        if (\count($a_search_for) > 0 && \count($a_allowed_keys) > 0) {
+        if (count($a_search_for) > 0 && count($a_allowed_keys) > 0) {
             $a_allowed_keys = $this->prepareListArray($a_allowed_keys);
             $a_search_for = Arrays::removeUndesiredPairs($a_search_for, $a_allowed_keys);
         }
         /* after all that, if there are still pairs, go for it */
-        if (\count($a_search_for) > 0) {
+        if (count($a_search_for) > 0) {
             foreach ($a_search_for as $key => $value) {
                 $field_name = preg_replace('/^:/', '', $key);
                 if (strpos($key, '.') !== false) {
@@ -757,12 +757,12 @@ SQL;
         $a_field_names = $this->a_db_fields;
         if ($exclude_pin) {
             $pin = $this->primary_index_name;
-            $key = array_search($pin, $a_field_names);
+            $key = array_search($pin, $a_field_names, true);
             unset($a_field_names[$key]);
         }
         if (!empty($a_exclude)) {
             foreach ($a_exclude as $value) {
-                $key = array_search($value, $a_field_names);
+                $key = array_search($value, $a_field_names, true);
                 unset($a_field_names[$key]);
             }
         }
@@ -804,7 +804,7 @@ SQL;
      */
     protected function mysqliInstalled():bool
     {
-        if (\function_exists('mysqli_connect')) {
+        if (function_exists('mysqli_connect')) {
             return true;
         }
         return false;
@@ -894,9 +894,9 @@ SQL;
     {
         foreach ($a_values as $key => $value) {
             if (
-                !\in_array($key, $a_required_keys) &&
-                !\in_array(':' . $key, $a_required_keys) &&
-                !\in_array(str_replace(':', '', $key), $a_required_keys)
+                !in_array($key, $a_required_keys, false) &&
+                !in_array(':' . $key, $a_required_keys, false) &&
+                !in_array(str_replace(':', '', $key), $a_required_keys, false)
             ) {
                 unset($a_values[$key]);
             }
@@ -1004,8 +1004,8 @@ SQL;
     /**
      * Sets up the standard properties.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
-     * @param string                         $table_name
+     * @param DbModel $o_db
+     * @param string  $table_name
      */
     protected function setupProperties(DbModel $o_db, $table_name = ''):void
     {
@@ -1058,11 +1058,11 @@ SQL;
         catch (ModelException $e) {
             return false;
         }
-        if (!\in_array($table_name, $a_tables, true)) {
+        if (!in_array($table_name, $a_tables, false)) {
             $test_table_name = $this->db_prefix .$table_name;
-            if (!\in_array($test_table_name, $a_tables, true)) {
+            if (!in_array($test_table_name, $a_tables, false)) {
                 $test_table_name = $this->lib_prefix . $table_name;
-                if (!\in_array($test_table_name, $a_tables, true)) {
+                if (!in_array($test_table_name, $a_tables, false)) {
                     return false;
                 }
             }

@@ -39,7 +39,7 @@ class Di
      */
     public function set($object_name = '', $object = null):bool
     {
-        if (!\is_object($object) || $object_name === '') {
+        if (!is_object($object) || $object_name === '') {
             return false;
         }
         $this->a_objects[$object_name] = $object;
@@ -48,11 +48,11 @@ class Di
 
     /**
      * @param string $object_name
-     * @return bool|\Ritc\Library\Services\Di
+     * @return bool|Di
      */
     public function get($object_name = '')
     {
-        if ($object_name !== '' && isset($this->a_objects[$object_name]) && \is_object
+        if ($object_name !== '' && isset($this->a_objects[$object_name]) && is_object
             ($this->a_objects[$object_name])) {
             return $this->a_objects[$object_name];
         }
@@ -61,6 +61,7 @@ class Di
 
     /**
      * Returns the array of objects.
+     *
      * @return array
      */
     public function getObjects():array
@@ -70,6 +71,7 @@ class Di
 
     /**
      * Sets map pair in the a_vars array.
+     *
      * @param string $var_name
      * @param string $var_value
      */
@@ -89,13 +91,11 @@ class Di
 
     /**
      * Returns the value from the a_vars array based on the key name.
+     *
      * @param $var_name
      * @return mixed|string
      */
     public function getVar($var_name) {
-        if (isset($this->a_vars[$var_name])) {
-            return $this->a_vars[$var_name];
-        }
-        return '';
+        return $this->a_vars[$var_name] ?? '';
     }
 }

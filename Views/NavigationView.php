@@ -29,13 +29,13 @@ class NavigationView
 {
     use LogitTraits, ConfigViewTraits;
 
-    /** @var \Ritc\Library\Models\NavComplexModel */
+    /** @var NavComplexModel */
     private $o_nav_complex;
 
     /**
      * NavigationView constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -261,7 +261,7 @@ class NavigationView
                 'value'       => 0,
                 'label'       => '--Select Parent--',
                 'other_stuph' => (int)$nav_id === -1 ? ' selected' : ''
-            ],
+            ]
         ];
         $a_options[] = [
             'value'       => $nav_id > 0 ? $nav_id : -1,

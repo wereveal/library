@@ -33,13 +33,13 @@ class GroupsView
     use LogitTraits, ConfigViewTraits;
 
     /**
-     * @var \Ritc\Library\Models\GroupsModel
+     * @var GroupsModel
      */
     private $o_groups;
 
     /**
      * GroupsView constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {

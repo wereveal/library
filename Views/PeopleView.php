@@ -41,15 +41,15 @@ class PeopleView
 
     /** @var PeopleComplexModel */
     private $o_people_complex;
-    /** @var \Ritc\Library\Models\PeopleModel */
+    /** @var PeopleModel */
     private $o_people_model;
-    /** @var \Ritc\Library\Models\GroupsModel */
+    /** @var GroupsModel */
     private $o_group_model;
 
     /**
      * PeopleView constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {

@@ -30,13 +30,13 @@ class TwigController implements ControllerInterface
 
     /** @var TwigComplexModel $o_tc */
     private $o_tc;
-    /** @var \Ritc\Library\Views\TwigView  */
+    /** @var TwigView */
     private $o_view;
 
     /**
      * TwigController constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {

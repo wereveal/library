@@ -34,22 +34,23 @@ class TwigComplexModel
 
     /** @var array $a_ids The ids of the new records */
     private $a_ids;
-    /** @var \Ritc\Library\Services\Di  */
+    /** @var Di */
     private $o_di;
-    /** @var  \Ritc\Library\Models\TwigDirsModel */
+    /** @var  TwigDirsModel */
     private $o_dirs;
-    /** @var \Ritc\Library\Models\PageModel */
+    /** @var PageModel */
     private $o_page;
-    /** @var  \Ritc\Library\Models\TwigPrefixModel */
+    /** @var  TwigPrefixModel */
     private $o_prefix;
     /** @var TwigThemesModel */
     private $o_themes;
-    /** @var  \Ritc\Library\Models\TwigTemplatesModel */
+    /** @var  TwigTemplatesModel */
     private $o_tpls;
 
     /**
      * TwigComplexModel constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     *
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -131,9 +132,10 @@ class TwigComplexModel
 
     /**
      * Creates default records for the app in the three twig tables.
+     *
      * @param  array $a_values Required ['tp_prefix', 'tp_path', 'tp_active', 'tp_default']
      * @return array                    ['tp_id', 'td_ids', 'tpl_ids']
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function createTwigForApp(array $a_values = []):array
     {
@@ -353,9 +355,10 @@ class TwigComplexModel
 
     /**
      * Reads the records for the given prefix_id.
+     *
      * @param int $prefix_id Required
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readDirsForPrefix($prefix_id = -1):?array
     {
@@ -385,10 +388,11 @@ class TwigComplexModel
 
     /**
      * Returns complete information regarding a template by id.
+ *
 
      * @param int $tpl_id
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readTplInfo($tpl_id = -1)
     {
@@ -435,11 +439,12 @@ class TwigComplexModel
 
     /**
      * Returns complete information regarding a template by name and prefix.
+ *
 
      * @param string $tpl_name   Required, throws exception if not provided.
      * @param string $tpl_prefix Optional, defaults to site_
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readTplInfoByName($tpl_name = '', $tpl_prefix = 'site_'):array
     {
@@ -492,7 +497,7 @@ class TwigComplexModel
      *
      * @param string $is_active
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readTwigConfig($is_active = 'true'):?array
     {
@@ -599,7 +604,7 @@ class TwigComplexModel
         $tp_default = empty($a_values['tp_default'])
             ? 'false'
             : $a_values['tp_default'];
-        if (strrpos($tp_prefix, '_') !== \strlen($tp_prefix) - 1) {
+        if (strrpos($tp_prefix, '_') !== strlen($tp_prefix) - 1) {
             $tp_prefix .= '_';
         }
         if (strpos($tp_path, '/') !== 0) {
@@ -749,7 +754,7 @@ class TwigComplexModel
     /**
      * Creates the required properties containing instances of the respective database models.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     private function setupDbs(DbModel $o_db):void
     {

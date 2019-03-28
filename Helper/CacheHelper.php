@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Helper;
 
+use Exception;
 use Psr\Cache\CacheException as PsrException;
 use Psr\Cache\InvalidArgumentException as CacheException;
 use Psr\SimpleCache\InvalidArgumentException as SimpleCacheException ;
@@ -49,7 +50,7 @@ class CacheHelper
      */
     public function __construct($o_cache)
     {
-        if (\is_object($o_cache)) {
+        if (is_object($o_cache)) {
             $this->o_cache = $o_cache;
             $this->cache_type = strpos(CACHE_TYPE, 'Simple') !== false
                 ? 'psr-16'
@@ -263,7 +264,7 @@ class CacheHelper
                         catch (PsrException $e) {
                             return false;
                         }
-                        catch (\Exception $e) {
+                        catch (Exception $e) {
                            return false;
                         }
                     }

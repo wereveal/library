@@ -27,15 +27,15 @@ class NavigationController implements ManagerControllerInterface
 {
     use ConfigControllerTraits, LogitTraits;
 
-    /** @var \Ritc\Library\Models\NavComplexModel model object */
+    /** @var NavComplexModel model object */
     protected $o_model;
-    /** @var \Ritc\Library\Views\NavigationView view object */
+    /** @var NavigationView view object */
     protected $o_view;
 
     /**
      * NavigationController constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -115,8 +115,7 @@ class NavigationController implements ManagerControllerInterface
             'form_action'  => $this->o_router->getRequestUri(),
             'btn_value'    => 'Navigation',
             'hidden_name'  => 'nav_id',
-            'hidden_value' => $this->a_post['nav_id'],
-
+            'hidden_value' => $this->a_post['nav_id']
         ];
         $a_options = [
             'fallback' => 'renderList'

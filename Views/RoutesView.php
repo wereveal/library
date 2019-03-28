@@ -42,13 +42,13 @@ class RoutesView
 {
     use LogitTraits, ConfigViewTraits;
 
-    /** @var \Ritc\Library\Models\RoutesComplexModel */
+    /** @var RoutesComplexModel */
     private $o_model;
 
     /**
      * RoutesView constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {

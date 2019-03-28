@@ -30,7 +30,7 @@ class UrlsModel extends ModelAbstract
     /**
      * UrlsModel constructor.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -53,7 +53,7 @@ class UrlsModel extends ModelAbstract
      *
      * @param int|array $id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function delete($id = -1):bool
     {

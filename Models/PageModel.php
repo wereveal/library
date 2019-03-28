@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection NestedPositiveIfStatementsInspection */
+
 /**
  * Class PageModel
  * @package Ritc_Library
@@ -31,7 +32,7 @@ class PageModel extends ModelAbstract
     /**
      * PageModel constructor.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {

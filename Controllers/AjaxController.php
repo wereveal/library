@@ -33,7 +33,7 @@ class AjaxController
     /**
      * AjaxController constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -221,7 +221,7 @@ class AjaxController
      *
      * @return bool
      */
-    private function updateContentVcsConstant()
+    private function updateContentVcsConstant(): ?bool
     {
         $o_constants = new ConstantsModel($this->o_db);
         $o_constants->setupElog($this->o_di);

@@ -65,7 +65,7 @@ abstract class ModelAbstract implements ModelInterface
      * @param array $a_search_for    key pairs of field name => field value
      * @param array $a_search_params \ref searchparams \ref readparams
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function read(array $a_search_for = [], array $a_search_params = []):array
     {
@@ -90,7 +90,7 @@ abstract class ModelAbstract implements ModelInterface
      * @param array  $a_values        required
      * @param array  $a_do_not_change optional, list of field names which should be immutable.
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function update(array $a_values = [], array $a_do_not_change = []):bool
     {
@@ -115,7 +115,7 @@ abstract class ModelAbstract implements ModelInterface
      *
      * @param int $id required to be > 0
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function delete($id = -1):bool
     {

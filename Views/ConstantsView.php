@@ -35,13 +35,13 @@ class ConstantsView
 {
     use LogitTraits, ConfigViewTraits;
 
-    /** @var \Ritc\Library\Views\LibraryView */
+    /** @var LibraryView */
     private $o_view;
 
     /**
      * ConstantsView constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {

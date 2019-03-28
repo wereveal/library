@@ -27,7 +27,7 @@ class NavigationModel extends ModelAbstract
 {
     /**
      * PageModel constructor.
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -47,7 +47,7 @@ class NavigationModel extends ModelAbstract
      * It also deletes the relational records in the nav navgroup map table.
      * @param int $nav_id Required.
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function deleteWithMap($nav_id = -1):bool
     {
@@ -112,10 +112,10 @@ class NavigationModel extends ModelAbstract
             WHERE parent_id = :parent_id
             AND nav_id != parent_id
         ";
-        $a_search_values = [':parent_id' => $nav_id, ];
+        $a_search_values = [':parent_id' => $nav_id];
         try {
             $results = $this->o_db->search($sql, $a_search_values);
-            if (\count($results) > 0) {
+            if (count($results) > 0) {
                 return true;
             }
         }

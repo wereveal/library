@@ -38,7 +38,7 @@ class ConstantsModel extends ModelAbstract
     /**
      * ConstantsModel constructor.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -152,7 +152,7 @@ class ConstantsModel extends ModelAbstract
      *
      * @pre the fallback_constants_array.php file exists and has the desired constants.
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function createNewConstants():bool
     {
@@ -200,7 +200,7 @@ class ConstantsModel extends ModelAbstract
      * Creates the database table to store the constants.
      *
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function createTable():bool
     {
@@ -293,7 +293,7 @@ SQL;
      *                           ]
      *                           ]</code>
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function createConstantRecords(array $a_constants = array()):bool
     {
@@ -336,7 +336,7 @@ SQL;
      * Selects the constants records.
      *
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function selectConstantsList()
     {
@@ -360,7 +360,7 @@ SQL;
         $const_name = Strings::removeTagsWithDecode($const_name, ENT_QUOTES);
         $const_name = preg_replace('/[^a-zA-Z_ ]/', '', $const_name);
         $const_name = trim($const_name);
-        $const_name = preg_replace('/(\s+)/i', '_', $const_name);
+        $const_name = preg_replace('/(\s+)/', '_', $const_name);
         return strtoupper($const_name);
     }
 

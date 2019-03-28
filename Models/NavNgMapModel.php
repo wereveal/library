@@ -27,7 +27,7 @@ class NavNgMapModel extends ModelAbstract
 {
     /**
      * NavNgMapModel constructor.
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -90,7 +90,7 @@ class NavNgMapModel extends ModelAbstract
      * @note The obvious needs to be noted. If only one param is provided, all the records
      *       for that id will be deleted. This may be an unwanted consequence.
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function deleteWith($ng_id = -1, $nav_id = -1):bool
     {

@@ -220,7 +220,7 @@ class ContentController implements ConfigControllerInterface
             'form_action'   => '/manager/config/content/',
             'btn_value'     => 'Content',
             'hidden_name'   => 'c_id',
-            'hidden_value'  => $a_content['c_id'],
+            'hidden_value'  => $a_content['c_id']
         ];
         return $this->o_view->renderVerifyDelete($a_values);
     }

@@ -186,7 +186,7 @@ class RoutesController implements ManagerControllerInterface
             'form_action'   => '/manager/config/routes/',
             'btn_value'     => 'Route',
             'hidden_name'   => 'route_id',
-            'hidden_value'  => $route_id,
+            'hidden_value'  => $route_id
         ];
         $a_options = [
             'tpl'         => 'verify_delete',
