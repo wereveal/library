@@ -5,6 +5,10 @@
  */
 namespace Ritc\Library\Factories;
 
+use Error;
+use Exception;
+use Parsedown;
+use ParsedownExtra;
 use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
@@ -12,18 +16,22 @@ use Ritc\Library\Helper\LocateFile;
 use Ritc\Library\Helper\OopHelper;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Services\Di;
-use Twig_Loader_Filesystem;
-use Twig_Environment;
+use Twig\Loader\FilesystemLoader as TwigLoaderFilesystem;
+use Twig\Environment as TwigEnvironment;
+use Twig\Error\LoaderError as TwigErrorLoader;
+use Twig\TwigFilter;
+use Twig\TwigTest;
 
 /**
  * TwigFactory lets us create a twig object, specific to a configuration(s)
  * allowing multiple twig objects to render the html.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.2.0
- * @date    2018-05-01 15:18:58
+ * @version v3.3.0
+ * @date    2019-03-28 13:46:08
  * @change_log
- * - v3.2.0   - added a twig test to the factory - inPublic which tests to see if the file exists         - 2018-05-01 wer
+ * - v3.3.0   - Modified to match changes in Twig Namespace                                             - 2019-03-28 wer
+ * - v3.2.0   - added a twig test to the factory - inPublic which tests to see if the file exists       - 2018-05-01 wer
  * - v3.1.3   - Minor change in testing                                                                 - 2018-04-19 wer
  * - v3.1.2   - Class renamed elsewhere reflected here                                                  - 2018-04-04 wer
  * - v3.1.0   - Refactoring of TwigModel created the need for changes here.                             - 2017-06-20 wer
@@ -49,13 +57,13 @@ class TwigFactory
 {
     /** @var Di $o_di */
     private static $o_di;
-    /** @var \Twig_Loader_Filesystem $o_loader */
+    /** @var TwigLoaderFilesystem $o_loader */
     private $o_loader;
-    /** @var \Parsedown $o_md */
+    /** @var Parsedown $o_md */
     private $o_md;
-    /** @var \ParsedownExtra $o_mde */
+    /** @var ParsedownExtra $o_mde */
     private $o_mde;
-    /** @var Twig_Environment $o_twig */
+    /** @var TwigEnvironment $o_twig */
     private $o_twig;
     /** @var array $instance */
     private static $instance = array();
@@ -69,29 +77,30 @@ class TwigFactory
     private function __construct($a_twig_config)
     {
         $meth = __METHOD__ . '.';
-        $o_md = new \Parsedown();
-        if ($o_md instanceof \Parsedown) {
+        $o_md = new Parsedown();
+        if ($o_md instanceof Parsedown) {
             $this->o_md = $o_md;
             try {
-                $o_mde = new \ParsedownExtra();
-                if ($o_mde instanceof \ParsedownExtra) {
+                $o_mde = new ParsedownExtra();
+                if ($o_mde instanceof ParsedownExtra) {
                     $this->o_mde = $o_mde;
                 }
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
                 // silently ignore
             }
         }
         try {
-            $o_loader = new Twig_Loader_Filesystem($a_twig_config['default_path']);
-            if ($o_loader instanceof Twig_Loader_Filesystem) {
+            $o_loader = new TwigLoaderFilesystem($a_twig_config['default_path']);
+            // $o_loader = new Twig_Loader_Filesystem($a_twig_config['default_path']);
+            if ($o_loader instanceof TwigLoaderFilesystem) {
                 $this->o_loader = $o_loader;
                 $continue = true;
                 foreach ($a_twig_config['additional_paths'] as $path => $namespace ) {
                     try {
                         $o_loader->prependPath($path, $namespace);
                     }
-                    catch (\Twig_Error_Loader $e) {
+                    catch (TwigErrorLoader $e) {
                         /** @noinspection ForgottenDebugOutputInspection */
                         $msg = 'Unable to load paths with Twig Loader: ' . $e->getMessage() . ' -- ' . $meth;
                         throw new FactoryException($msg, $e->getCode(), $e);
@@ -100,15 +109,19 @@ class TwigFactory
                 }
                 if ($continue) {
                     try {
-                        $this->o_twig = new Twig_Environment($o_loader, $a_twig_config['environment_options']);
-                        $md_filter = new \Twig_Filter('md', [$this, 'mdFilter'], ['is_safe' => ['html']]);
-                        $this->o_twig->addFilter($md_filter);
-                        $mde_filter = new \Twig_Filter('mde', [$this, 'mdeFilter', ['is_safe' => ['html']]]);
-                        $this->o_twig->addFilter($mde_filter);
-                        $inPublic_test = new \Twig_Test('inPublic', [$this, 'inPublicTest']);
+                        $this->o_twig = new TwigEnvironment($o_loader, $a_twig_config['environment_options']);
+                        if ($this->o_md instanceof Parsedown) {
+                            $md_filter = new TwigFilter('md', [$this, 'mdFilter'], ['is_safe' => ['html']]);
+                            $this->o_twig->addFilter($md_filter);
+                        }
+                        if ($this->o_mde instanceof ParsedownExtra) {
+                            $mde_filter = new TwigFilter('mde', [$this, 'mdeFilter', ['is_safe' => ['html']]]);
+                            $this->o_twig->addFilter($mde_filter);
+                        }
+                        $inPublic_test = new TwigTest('inPublic', [$this, 'inPublicTest']);
                         $this->o_twig->addTest($inPublic_test);
                     }
-                    catch (\Error $e) {
+                    catch (Error $e) {
                         $msg = 'Twig Environment Error: ' . $e->getMessage() . ' -- ' . $meth;
                         $err_code = ExceptionHelper::getCodeNumberFactory('instance');
                         throw new FactoryException($msg, $err_code, $e);
@@ -116,7 +129,7 @@ class TwigFactory
                 }
             }
         }
-        catch (\Error $e) {
+        catch (Error $e) {
             $msg = 'Unable to create Twig Loader: ' . $meth;
             $err_code = ExceptionHelper::getCodeNumberFactory('instance');
             throw new FactoryException($msg, $err_code, $e);
@@ -129,14 +142,14 @@ class TwigFactory
      *
      * @param string|array|Di $param_one Optional sort of
      * @param string|bool     $param_two
-     * @return mixed|\Twig_Environment
+     * @return mixed|TwigEnvironment
      * @throws FactoryException
      */
     public static function getTwig($param_one = '', $param_two = '')
     {
         if ($param_one instanceof Di) {
             self::$o_di = $param_one;
-            if (!\is_bool($param_two)) {
+            if (!is_bool($param_two)) {
                 $param_two = false;
             }
             try {
@@ -147,7 +160,7 @@ class TwigFactory
             }
         }
 
-        if (\is_bool($param_two)) {
+        if (is_bool($param_two)) {
             $param_two = '';
         }
         try {
@@ -161,12 +174,12 @@ class TwigFactory
     /**
      * Returns the twig environment instance as configured from database values.
      *
-     * @param \Ritc\Library\Services\Di $o_di
-     * @param bool                      $use_cache
-     * @return \Twig_Environment
-     * @throws \Ritc\Library\Exceptions\FactoryException
+     * @param Di   $o_di
+     * @param bool $use_cache
+     * @return TwigEnvironment
+     * @throws FactoryException
      */
-    public static function getTwigByDb(Di $o_di, $use_cache = true): Twig_Environment
+    public static function getTwigByDb(Di $o_di, $use_cache = true): TwigEnvironment
     {
         $cache = $use_cache
             ? SRC_PATH . '/twig_cache'
@@ -208,7 +221,7 @@ class TwigFactory
                     catch (FactoryException $e) {
                         throw new FactoryException('Unable to create instance of the twig.' . $e->errorMessage());
                     }
-                    catch (\Error $e) {
+                    catch (Error $e) {
                         throw new FactoryException('Unable to create instace of the twig: ' . $e->getMessage());
                     }
                 }
@@ -217,7 +230,7 @@ class TwigFactory
                 $try_create = true;
             }
         }
-        catch (\Error $e) {
+        catch (Error $e) {
             $try_create = true;
         }
         if ($try_create || !($o_tf instanceof self)) {
@@ -234,14 +247,15 @@ class TwigFactory
 
     /**
      * Returns the twig environment object which we use to do all the template rendering.
+     *
      * @param string|array $config    Optional but highly recommended. \ref twigfactory
      * @param string       $namespace Optional, defaults to ''
-     * @return \Twig_Environment
-     * @throws \Ritc\Library\Exceptions\FactoryException
+     * @return TwigEnvironment
+     * @throws FactoryException
      */
-    public static function getTwigByFile($config = 'twig_config.php', $namespace = ''):Twig_Environment
+    public static function getTwigByFile($config = 'twig_config.php', $namespace = ''):TwigEnvironment
     {
-        if (\is_array($config)) {
+        if (is_array($config)) {
             if (empty($config)) {
                 $o_tf = self::create('twig_config.php', $namespace);
             }
@@ -280,14 +294,14 @@ class TwigFactory
      * @param string $namespace   Optional, defaults to no namespace (looks for the file in all the usual places).
      *                            If namespace is given, it looks for the file in the namespace.
      * @return TwigFactory
-     * @throws \Ritc\Library\Exceptions\FactoryException
+     * @throws FactoryException
      */
     protected static function create($config_file = 'twig_config.php', $namespace = ''): TwigFactory
     {
         $org_config_file = $config_file;
         if (strpos($config_file, '/') !== false) {
             $a_parts = explode('/', $config_file);
-            $config_file = $a_parts[\count($a_parts) - 1];
+            $config_file = $a_parts[count($a_parts) - 1];
         }
         [$name, $extension] = explode('.', $config_file);
         unset($extension);
@@ -300,7 +314,7 @@ class TwigFactory
             try {
                 self::$instance[$name] = new TwigFactory($a_twig_config);
             }
-            catch (\Error $e) {
+            catch (Error $e) {
                 throw new FactoryException('Unable to create a new TwigFactory: ' . $e->getMessage(), 100, $e);
             }
         }
@@ -317,7 +331,7 @@ class TwigFactory
      * @param string $name           Optional but recommended as it will only return the main twig environment if it has already been defined.
      * @param bool   $use_main_twig  Optional, defaults to true. If set to false, will only use the config files specified.
      * @return TwigFactory
-     * @throws \Ritc\Library\Exceptions\FactoryException
+     * @throws FactoryException
      */
     protected static function createMultiSource(array $a_config_files = [], $name = 'main', $use_main_twig = true):TwigFactory
     {
@@ -354,7 +368,7 @@ class TwigFactory
             try {
                 self::$instance[$name] = new TwigFactory($a_twig_config);
             }
-            catch (\Error $e) {
+            catch (Error $e) {
                 throw new FactoryException('Unable to create a new TwigFactory: ' . $e->getMessage(), 100, $e);
             }
         }
@@ -373,7 +387,7 @@ class TwigFactory
      *                                 cache, debug, and auto_reload options set.
      * @param string $name             Optional but recommended. Name to give the instance. Defaults to main.
      * @return TwigFactory
-     * @throws \Ritc\Library\Exceptions\FactoryException
+     * @throws FactoryException
      */
     protected static function createWithArray(array $a_twig_config = [], $name = 'main'):TwigFactory
     {
@@ -393,7 +407,7 @@ class TwigFactory
                 $err_code = ExceptionHelper::getCodeNumberFactory('instance');
                 throw new FactoryException($msg, $err_code, $e);
             }
-            catch (\Error $e) {
+            catch (Error $e) {
                 $msg = 'Unable to create a new TwigFactory: ' . $e->getMessage();
                 $err_code = ExceptionHelper::getCodeNumberFactory('instance');
                 throw new FactoryException($msg, $err_code, $e);
@@ -404,6 +418,7 @@ class TwigFactory
 
     /**
      * Returns the array from the config file.
+     *
      * @param string $config_file Required Can be a file name or file with path.
      * @param string $namespace   Optional. If omitted, looks in the SRC_CONFIG_PATH.
      *                            Use namespace format e.g. My\Namespace.
@@ -426,6 +441,7 @@ class TwigFactory
     ### Extensions to Twig ###
     /**
      * Determines if a file exists within the public directory specified.
+     *
      * @param string $value Path and filename starting from the public root directory.
      * @return bool
      */
@@ -437,12 +453,13 @@ class TwigFactory
 
     /**
      * Converts markdown into html.
+     *
      * @param string $value
      * @return string
      */
     public function mdFilter($value = ''):string
     {
-        if ($this->o_md instanceof \Parsedown) {
+        if ($this->o_md instanceof Parsedown) {
             $value = $this->o_md->text($value);
         }
         return $value;
@@ -450,37 +467,39 @@ class TwigFactory
 
     /**
      * Converts markdown extra into html.
+     *
      * @param string $value
-     * @return null|string|string[]
+     * @return string
      */
-    public function mdeFilter($value = '')
+    public function mdeFilter($value = ''):?string
     {
-        if ($this->o_mde instanceof \ParsedownExtra) {
+        if ($this->o_mde instanceof ParsedownExtra) {
+            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
             $value = $this->o_mde->text($value);
         }
         return $value;
     }
 
     /**
-     * @return Twig_Loader_Filesystem
+     * @return TwigLoaderFilesystem
      */
-    public function getLoader():Twig_Loader_Filesystem
+    public function getLoader():TwigLoaderFilesystem
     {
         return $this->o_loader;
     }
 
     /**
-     * @return \Parsedown
+     * @return Parsedown
      */
-    public function getMd():\Parsedown
+    public function getMd(): Parsedown
     {
         return $this->o_md;
     }
 
     /**
-     * @return \ParsedownExtra
+     * @return ParsedownExtra
      */
-    public function getMde():\ParsedownExtra
+    public function getMde(): ParsedownExtra
     {
         return $this->o_mde;
     }
