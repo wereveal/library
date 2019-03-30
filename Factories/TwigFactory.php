@@ -19,6 +19,7 @@ use Ritc\Library\Services\Di;
 use Twig\Loader\FilesystemLoader as TwigLoaderFilesystem;
 use Twig\Environment as TwigEnvironment;
 use Twig\Error\LoaderError as TwigErrorLoader;
+use Twig\Extension\DebugExtension as TwigExtensionDebug;
 use Twig\TwigFilter;
 use Twig\TwigTest;
 
@@ -120,6 +121,9 @@ class TwigFactory
                         }
                         $inPublic_test = new TwigTest('inPublic', [$this, 'inPublicTest']);
                         $this->o_twig->addTest($inPublic_test);
+                        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+                            $this->o_twig->addExtension(new TwigExtensionDebug());
+                        }
                     }
                     catch (Error $e) {
                         $msg = 'Twig Environment Error: ' . $e->getMessage() . ' -- ' . $meth;
@@ -184,13 +188,14 @@ class TwigFactory
         $cache = $use_cache
             ? SRC_PATH . '/twig_cache'
             : false;
+        $debug = defined('DEVELOPER_MODE') ? DEVELOPER_MODE : false;
         $a_config = [
             'default_path' => SRC_PATH . '/templates',
             'additional_paths' => [],
             'environment_options' => [
                 'cache'       => $cache,
                 'auto_reload' => true,
-                'debug'       => true
+                'debug'       => $debug
             ]
         ];
         $try_create = false;
