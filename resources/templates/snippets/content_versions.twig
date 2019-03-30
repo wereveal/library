@@ -23,14 +23,14 @@
                     <div class="col-12 col-md-2">
                         <button type="submit" name="submit" value="view_content" class="btn btn-primary btn-sm">View Version</button>
                         <input type="hidden" name="c_id" value="{{ row.c_id }}">
-                        {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                        {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                     </div>
                 </div>
             </form>
         {% endfor %}
         <div class="container">
             <form action="{{ public_dir }}/manager/config/content/" method="post" class="form-inline">
-                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                 <button type="submit" name="submit" value="edit_content_by_pbm" class="btn btn-primary">Edit Content for this Page/Block</button>
                 <input type="hidden" name="c_pbm_id" value="{{ c_pbm_id }}">
             </form>

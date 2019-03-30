@@ -152,7 +152,7 @@
                     </div>
                 </div>
             </form>
-    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {{ include(lib_snippets ~ 'instructions.twig') }}
         </div>
 {% endblock %}
 {# Expected Array

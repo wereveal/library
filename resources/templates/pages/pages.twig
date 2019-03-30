@@ -7,9 +7,9 @@
 {% endblock %}
 {% block body %}
     {% if which_page is same as('list') %}
-        {% include '@' ~ lib_prefix ~ 'snippets/page_list.twig' %}
+        {{ include(lib_snippets ~ 'page_list.twig') }}
     {% else %}
-        {% include '@' ~ lib_prefix ~ 'snippets/page_form.twig' %}
+        {{ include(lib_snippets ~ 'page_form.twig') }}
     {% endif %}
 {% endblock %}
 {% block bottomJs %}
@@ -17,6 +17,6 @@
     {% if which_page is not same as('list') %}
     <script src="{{ vendor_dir }}/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js"></script>
     <script src="{{ js_dir }}/config.js"></script>
-    {% include '@' ~ lib_prefix ~ 'snippets/form_validation_js.twig' %}
+    {{ include(lib_snippets ~ 'form_validation_js.twig') }}
     {% endif %}
 {% endblock %}

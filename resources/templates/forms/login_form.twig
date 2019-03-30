@@ -19,7 +19,7 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-10 offset-sm-2">
-                        {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                        {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                         <button type="submit" name="submit" value="verifyLogin" class="btn btn-primary">Log In</button>
                     </div>
                 </div>

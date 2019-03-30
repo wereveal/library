@@ -12,14 +12,14 @@
     </div>
     {% if a_message.message != '' %}
         <div class="container">
-            {% include '@' ~ lib_prefix ~ 'snippets/message.twig' %}
+            {{ include(lib_snippets ~ 'message.twig') }}
         </div>
     {% endif %}
     <div class="container">
-        {% include '@' ~ lib_prefix ~ 'forms/login_form.twig' %}
+        {{ include(lib_forms ~ 'login_form.twig') }}
     </div>
 {% endblock %}
 {% block bottomJs %}
  {{ parent() }}
-    {% include '@' ~ lib_prefix ~ 'snippets/form_validation_js.twig' %}
+    {{ include(lib_snippets ~ 'form_validation_js.twig') }}
 {% endblock %}

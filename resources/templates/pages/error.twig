@@ -2,7 +2,7 @@
 {% block title %}{{ parent() }}: Error{% endblock %}
 {% block body %}
     <p>The page could not be found. Please try one of these links.</p>
-    {% include '@' ~ lib_prefix ~ 'snippets/sitemap.twig' %}
+    {{ include(lib_snippets ~ 'sitemap.twig') }}
 {% endblock %}
 {% block footer %}
     <!-- Footer -->

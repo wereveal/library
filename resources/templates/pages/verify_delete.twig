@@ -16,14 +16,14 @@
         <form action="{{ public_dir }}{{ form_action }}" method="post" id="delete-form" class="col-lg-6 pad-bottom">
             <button type="submit" name="submit" value="{{ submit_value }}" class="btn btn-red btn-sm">Delete {{ btn_value }}</button>
             <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
-            {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+            {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
         </form>
         {% if cancel_action is empty %}
             {% set cancel_action = form_action %}
         {% endif %}
         <form action="{{ public_dir }}{{ cancel_action }}" method="post" class="col-lg-6 pad-bottom">
             <button type="submit" name="submit" value="cancel" class="btn btn-outline-blue btn-sm">Go Back, Don't Delete</button>
-            {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+            {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
             <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
         </form></div>
     </div>

@@ -1,7 +1,7 @@
 {% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
     <div class="container">
-        {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with rebuild_btn %}
+        {{ include(lib_forms ~ 'single_button_form.twig', rebuild_btn) }}
     </div>
     <div class="container">
         <p class="h4">Current Sitemap</p>
@@ -33,10 +33,10 @@
             <div class="col-12 col-lg-4"><span class="d-lg-none bold pad-right">Location:</span>{{ link.nav_text }}</div>
             <div class="col-12 col-lg-4"><span class="d-lg-none bold pad-right">URL:</span>{{ link.url }}</div>
             <div class="col-12 col-lg-4 aright">
-                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with link.action_btn %}
+                {{ include(lib_forms ~ 'single_button_form.twig', link.action_btn) }}
             </div>
         </div>
     {% endfor %}
     </div>
-{% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+{{ include(lib_snippets ~ 'instructions.twig') }}
 {% endblock %}

@@ -48,7 +48,7 @@
             </div>
         </div>
     </div>
-    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {{ include(lib_snippets ~ 'instructions.twig') }}
 {% endif %}
 </div>
 {% endblock %}

@@ -12,7 +12,7 @@
                 Description
             </div>
             <div class="col-lg-2">
-                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with new_btn %}
+                {{ include(lib_forms ~ 'single_button_form.twig', new_btn) }}
             </div>
         </div>
     {% for person in a_people %}
@@ -33,14 +33,14 @@
             </div>
             <div class="col-6 col-lg-1">
             {% if adm_lvl >= person.auth_level %}
-                {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with person.edit_btn %}
+                {{ include(lib_forms ~ 'single_button_form.twig', person.edit_btn) }}
             {% else %}
                 &nbsp;
             {% endif %}
             </div>
             <div class="col-6 col-lg-1">
                 {% if adm_lvl >= person.auth_level %}
-                    {% include '@' ~ lib_prefix ~ 'forms/single_button_form.twig' with person.delete_btn %}
+                    {{ include(lib_forms ~ 'single_button_form.twig', person.delete_btn) }}
                 {% endif %}
             </div>
         </div>

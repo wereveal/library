@@ -6,17 +6,17 @@
 {% block body %}
     <div class="container">
     {% if content_type == 'versions' %}
-        {% include '@' ~ lib_prefix ~ 'snippets/content_versions.twig' %}
+        {{ include(lib_snippets ~ 'content_versions.twig') }}
     {% elseif content_type == 'details' %}
-        {% include '@' ~ lib_prefix ~ 'snippets/content_details.twig' %}
+        {{ include(lib_snippets ~ 'content_details.twig') }}
     {% elseif content_type == 'ro_details' %}
-        {% include '@' ~ lib_prefix ~ 'snippets/content_ro_details.twig' %}
+        {{ include(lib_snippets ~ 'content_ro_details.twig') }}
     {% else %}
-        {% include '@' ~ lib_prefix ~ 'snippets/content_list.twig' %}
+        {{ include(lib_snippets ~ 'content_list.twig') }}
     {% endif %}
     </div>
     {% if content_type == 'details' %}
-    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {{ include(lib_snippets ~ 'instructions.twig') }}
     {% endif %}
 {% endblock %}
 {% block bottomJs %}

@@ -101,7 +101,7 @@
                     {% set checked = '' %}
                 {% endif %}
                 {% set cb_values = {'id':id_name~'[b_immutable]','name':'blocks[b_immutable]','value':'true','checked':checked,'label':'Immutable'} %}
-                {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+                {{ include(lib_elements ~ 'checkbox.twig', cb_values, with_context = false) }}
             {% endif %}
             </div>
             <div class="col-12 col-lg-2">
@@ -145,5 +145,5 @@
             </div>
         </form>
     </div>
-    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {{ include(lib_snippets ~ 'instructions.twig') }}
 {% endblock %}
