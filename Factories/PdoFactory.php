@@ -102,8 +102,7 @@ class PdoFactory
             }
             try {
                 return self::$factory_ro_instance[$name]->createPdo($org_config_file, $read_type);
-            }
-                /** @noinspection PhpRedundantCatchClauseInspection */
+            } /** @noinspection PhpRedundantCatchClauseInspection */
             catch (FactoryException $e) {
                 throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
             }
@@ -119,8 +118,7 @@ class PdoFactory
             }
             try {
                 return self::$factory_rw_instance[$name]->createPdo($org_config_file, $read_type);
-            }
-                /** @noinspection PhpRedundantCatchClauseInspection */
+            } /** @noinspection PhpRedundantCatchClauseInspection */
             catch (FactoryException $e) {
                 throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
             }
@@ -134,7 +132,7 @@ class PdoFactory
      * @param string $config_file
      * @param string $read_type
      * @return PDO|bool
-     * @throws FactoryExceptionAlias
+     * @throws FactoryException
      */
     private function createPdo($config_file = 'db_config.php', $read_type = 'rw')
     {
@@ -161,8 +159,8 @@ class PdoFactory
                 break;
         }
         try {
-            $this->o_db = $read_type === 'ro'
-                ? new PDO(
+            if ($read_type === 'ro') {
+                $this->o_db = new PDO(
                     $a_db['dsn'],
                     $a_db['userro'],
                     $a_db['passro'],
@@ -170,8 +168,10 @@ class PdoFactory
                         PDO::ATTR_PERSISTENT => $a_db['persist'],
                         PDO::ATTR_ERRMODE    => $errmode
                     ]
-                )
-                : new PDO(
+                );
+            }
+            else {
+                $this->o_db = new PDO(
                     $a_db['dsn'],
                     $a_db['user'],
                     $a_db['password'],
@@ -180,10 +180,10 @@ class PdoFactory
                         PDO::ATTR_ERRMODE    => $errmode
                     ]
                 );
-            $this->a_db_config = $a_db;
+            }
             return $this->o_db;
         }
-        catch(PDOException $e) {
+        catch (PDOException $e) {
             throw new FactoryException('Error! Could not connect to database: ' . $e->getMessage(), 100);
         }
     }
@@ -191,6 +191,7 @@ class PdoFactory
     /**
      * Creates the DSN string from the db config array.
      * Needed to connect to the database.
+     *
      * @param array $a_db ['port', 'driver', 'host', 'name']
      * @return string
      */
