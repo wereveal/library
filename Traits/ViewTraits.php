@@ -19,6 +19,8 @@ use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\PageComplexModel;
+use Ritc\Library\Models\TwigDirsModel;
+use Ritc\Library\Models\TwigPrefixModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -290,7 +292,7 @@ trait ViewTraits
         else {
             $a_message = ViewHelper::fullMessage($a_message);
         }
-
+        $a_twig_shortcuts = $this->createTwigShortcuts();
         $a_values = [
             'a_message'      => $a_message,
             'tolken'         => $_SESSION['token'],
@@ -314,7 +316,7 @@ trait ViewTraits
             'copyright_date' => COPYRIGHT_DATE,
             'debug_on'       => DEVELOPER_MODE ? 'true' : ''
         ];
-        $a_values = array_merge($a_values, $a_page_values);
+        $a_values = array_merge($a_values, $a_twig_shortcuts, $a_page_values);
         return $a_values;
     }
 
@@ -337,6 +339,35 @@ trait ViewTraits
             . '/'
             .  $a_twig_values['tpl']
             . '.twig';
+    }
+
+    public function createTwigShortcuts():array
+    {
+        $a_default = [
+            'lib_elements' => '@lib_elements/',
+            'lib_forms'    => '@lib_forms/',
+            'lib_pages'    => '@lib_pages/',
+            'lib_snippets' => '@lib_snippets/',
+            'lib_tests'    => '@lib_tests/',
+            'lib_themes'   => '@lib_themes/'
+        ];
+        $o_tp = new TwigPrefixModel($this->o_db);
+        $o_td = new TwigDirsModel($this->o_db);
+        $a_return_these = [];
+        try {
+            $a_tps = $o_tp->read();
+            foreach ($a_tps as $a_tp) {
+                $a_tds = $o_td->read(['tp_id' => $a_tp['tp_id']]);
+                foreach ($a_tds as $a_td) {
+                    $value = $a_tp['tp_prefix'] . $a_td['td_name'];
+                    $a_return_these[$value] = '@' . $value . '/';
+                }
+            }
+            return $a_return_these;
+        }
+        catch (ModelException $e) {
+            return $a_default;
+        }
     }
 
     ### SETters and GETters ###
