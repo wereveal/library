@@ -1,6 +1,6 @@
 {% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
-            <div class="container">
+            <div class="container container-main">
 {% for link in links %}
     {% if link.submenu %}
         {% for menu in link.submenu %}

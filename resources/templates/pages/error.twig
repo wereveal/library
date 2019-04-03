@@ -1,15 +1,17 @@
 {% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
-{% block title %}{{ parent() }}: Error{% endblock %}
+{% block bodyTitle %}
+    {% if title %}
+        {% set title = title ~ ': Error' %}
+    {% elseif body_title %}
+        {% set body_title = body_title ~ ': Error' %}
+    {% else %}
+        {% set title = 'Error' %}
+    {% endif %}
+    {{ parent() }}
+{% endblock bodyTitle %}
 {% block body %}
-    <p>The page could not be found. Please try one of these links.</p>
-    {{ include(lib_snippets ~ 'sitemap.twig') }}
-{% endblock %}
-{% block footer %}
-    <!-- Footer -->
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 footer">
-            <p>Copyright &copy;&nbsp;{{ copyright_date }}<strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved &reg;</p>
-        </div>
+    <div class="container container-main">
+        <p>The page could not be found. Please try one of these links.</p>
+        {{ include(lib_snippets ~ 'sitemap.twig') }}
     </div>
-    <!-- /footer -->
-{% endblock %}
+{% endblock body %}

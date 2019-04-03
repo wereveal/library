@@ -150,6 +150,7 @@ trait ViewTraits
     {
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['tpl'] = 'error';
+        $a_twig_values['a_sitemap'] = $this->readNav('Sitemap');
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }

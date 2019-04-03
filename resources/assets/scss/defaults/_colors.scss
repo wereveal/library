@@ -145,20 +145,6 @@ $ivory:           #fffff0;
 $seashell:        #fff5ee;
 $snow:            #fffafa;
 
-/* Gradient */
-$gradient-start: $gray-med-light;
-$gradient-stop:  $gray-barely;
-
-/* Navbar */
-$navbar-text-color:      $black-color;
-$navbar-link-active:     $gray40;
-$navbar-link-hover:      $gray-complement;
-$navbar-sub-bg:          $gray95;
-$navbar-sub-bg-hover:    $gray40;
-$navbar-sub-text-color:  $black-color;
-$navbar-sub-link-active: $gray40;
-$navbar-sub-link-hover:  $gray-complement;
-
 $color-black:      $black-color;
 $color-blue:       $blue-color;
 $color-gray:       $gray-color;
@@ -183,13 +169,26 @@ $color-light:       $gray-light;
 $color-xlight:      $gray-lightest;
 $color-complement:  $gray-complement;
 $color-body:        $gray-med-light;
-$color-container:   $off-white-color;
+$color-container:   $gray-barely;
 $color-border:      $grey-darkest;
 $color-shadow:      transparentize($color-default, .35);
 $color-shadow-alt:  transparentize($color-complement, .35);
-$color-span:        $off-white-color;
 $color-heading:     $grey-darkest;
 $color-heading-alt: $gray-complement;
+
+/* Gradient */
+$gradient-start: $color-body;
+$gradient-stop:  $color-container;
+
+/* Navbar */
+$navbar-text-color:      $black-color;
+$navbar-link-active:     $gray40;
+$navbar-link-hover:      $gray-complement;
+$navbar-sub-bg:          $gray95;
+$navbar-sub-bg-hover:    $gray40;
+$navbar-sub-text-color:  $black-color;
+$navbar-sub-link-active: $gray40;
+$navbar-sub-link-hover:  $gray-complement;
 
 /* More Boostrap Pure Overrides for semantic colors */
 @if variable_exists('blue')  {

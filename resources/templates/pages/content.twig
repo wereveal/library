@@ -4,7 +4,7 @@
     <script src="{{ vendor_dir }}/jquery-validation/dist/jquery.validate.min.js"></script>
 {% endblock %}
 {% block body %}
-    <div class="container">
+    <div class="container container-main">
     {% if content_type == 'versions' %}
         {{ include(lib_snippets ~ 'content_versions.twig') }}
     {% elseif content_type == 'details' %}
