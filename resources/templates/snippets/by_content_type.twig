@@ -1,0 +1,9 @@
+{% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
+{{ content | raw }}
+{% elseif ctype == 'md' %}
+{{ content | md }}
+{% elseif ctype == 'mde' %}
+{{ content | mde }}
+{% else %}
+{{ content | nl2br }}
+{% endif %}

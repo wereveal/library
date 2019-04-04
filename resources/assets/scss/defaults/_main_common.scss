@@ -142,6 +142,14 @@ hr.item-card {
     @include linearGradientTwoColor($gradient-stop, $gradient-start, $gradient-direction, $gradient-midpoint);
   }
 
+  &.container-gradient-down {
+    @include linearGradientTwoColor($gradient-start, $gradient-stop, $gradient-direction, $gradient-midpoint)
+  }
+
+  &.container-gradient-up {
+    @include linearGradientTwoColor($gradient-start, $gradient-stop, -$gradient-direction, $gradient-midpoint)
+  }
+
   &.container-header {
     @include contentBlock('header');
   }
@@ -331,6 +339,14 @@ hr.item-card {
   &.container-footer {
     @include contentBlock('footer');
     @include linearGradientTwoColor($gradient-stop, $gradient-start, $gradient-direction, $gradient-shortpoint);
+  }
+
+  &.container-gradient-down {
+    @include linearGradientTwoColor($gradient-start, $gradient-stop, $gradient-direction, $gradient-midpoint)
+  }
+
+  &.container-gradient-up {
+    @include linearGradientTwoColor($gradient-start, $gradient-stop, -$gradient-direction, $gradient-midpoint)
   }
 
   &.container-header {

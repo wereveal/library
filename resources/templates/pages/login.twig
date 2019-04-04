@@ -1,25 +1,28 @@
 {% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ css_dir }}/styles_library.css" media="screen">
-{% endblock %}
-{% block header %}{% endblock %}
+{% endblock stylesheets %}
+{% block header %}
+    <div class="container-fluid container-gradient-down">
+        <div class="container container-title bg-transparent">
+            <h1 class="smaller"><i class="{{ fav }} fa-book fa-2x pr-3"></i>  Welcome! Please Login</h1>
+        </div>
+    </div>
+{% endblock header %}
 {% block search %}{% endblock %}
 {% block bodyTitle %}{% endblock %}
 {% block message %}{% endblock %}
 {% block body %}
-    <div class="container container-main">
-        <h1 class="smaller"><i class="{{ fav }} fa-book fa-2x pr-3"></i>  Welcome! Please Login</h1>
+{% if a_message.message != '' %}
+    <div class="container container-message">
+        {{ include(lib_snippets ~ 'message.twig') }}
     </div>
-    {% if a_message.message != '' %}
-        <div class="container">
-            {{ include(lib_snippets ~ 'message.twig') }}
-        </div>
-    {% endif %}
-    <div class="container">
+{% endif %}
+    <div class="container container-main">
         {{ include(lib_forms ~ 'login_form.twig') }}
     </div>
-{% endblock %}
+{% endblock body %}
 {% block bottomJs %}
  {{ parent() }}
     {{ include(lib_snippets ~ 'form_validation_js.twig') }}
-{% endblock %}
+{% endblock bottomJs %}

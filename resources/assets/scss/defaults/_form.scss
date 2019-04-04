@@ -283,5 +283,8 @@ form {
     &.row-med-light {
       @include colorRow($gray-darkest, $gray-xlight);
     }
+    &.row-transparent {
+      @include colorRow($gray-darkest, transparent);
+    }
   }
 }
