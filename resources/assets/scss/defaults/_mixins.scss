@@ -66,13 +66,13 @@
 @mixin contentBlock($colorScheme: 'gray') {
   $borderSize: 0;
   $borderRadius: .25rem;
-  $colorBg: $gray-medium-dark;
+  $colorBg: $gray-med-dark;
   $colorText: $color-xlight;
   $padding-size: 0;
 
   @if $colorScheme == 'gray' {
     $borderSize: 1px;
-    $colorBg: $gray-medium-dark;
+    $colorBg: $gray-med-dark;
     $colorText: $color-xlight;
   } @else if $colorScheme == 'green' {
     $borderSize: 1px;
@@ -93,10 +93,10 @@
   } @else if $colorScheme == 'light' {
     $borderSize: 1px;
     $colorBg: $color-xlight;
-    $colorText: $gray-medium-dark;
+    $colorText: $gray-med-dark;
   } @else if $colorScheme == 'dark' {
     $borderSize: 1px;
-    $colorBg: $gray-medium-dark;
+    $colorBg: $gray-med-dark;
     $colorText: $color-xlight;
   } @else if $colorScheme == 'footer' {
     $padding-size: 1rem;
@@ -394,16 +394,16 @@
     $important: '';
   }
   background: $blue-xlight $important;
-  border-bottom: 1px solid $blue-medium-dark $important;
+  border-bottom: 1px solid $blue-med-dark $important;
   border-left: 1px solid $blue-dark $important;
-  border-right: 1px solid $blue-medium-dark $important;
+  border-right: 1px solid $blue-med-dark $important;
   border-top: 1px solid $blue-dark $important;
   border-radius: 3px $important;
   @include paddingSize(.375, 'tb', 'true');
   @include paddingSize(.5, 'left', 'true');
 }
 
-@mixin headerRowColors($color: $color-white, $bg-color: $gray-medium-dark, $force: true) {
+@mixin headerRowColors($color: $color-white, $bg-color: $gray-med-dark, $force: true) {
   $important: '';
   @if $force {
     $important: !important;

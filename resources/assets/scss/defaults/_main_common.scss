@@ -292,7 +292,7 @@ hr.item-card {
     }
 
     &.row-green {
-      @include colorRow($green-xlight, $green-medium-light);
+      @include colorRow($green-xlight, $green-med-light);
     }
 
     &.row-green-dark {

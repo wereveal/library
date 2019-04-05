@@ -1,7 +1,12 @@
 $color-default:    $green-darker;
+$color-darkest:    $green-darkest;
+$color-darker:     $green-darker;
 $color-dark:       $green-dark;
+$color-med-dark:   $green-med-dark;
 $color-medium:     $green-medium;
+$color-med-light:  $green-med-light;
 $color-light:      $green-light;
+$color-lighter:    $green-lighter;
 $color-lightest:   $green-lightest;
 $color-body:       $green-dark;
 $color-container:  $green-lightest;
@@ -9,8 +14,8 @@ $color-border:     $green-darker;
 $color-complement: $green-complement;
 
 /* Gradient */
-$gradient-start: $green-medium-dark;
-$gradient-stop:  $green-medium-light;
+$gradient-start: $green-med-dark;
+$gradient-stop:  $green-med-light;
 
 /* Navbar */
 $navbar-text-color:      $green-xlight;
@@ -20,5 +25,5 @@ $navbar-sub-bg:          $green-xlight;
 $navbar-sub-bg-hover:    $green-light;
 $navbar-sub-text-color:  $black-color;
 $navbar-sub-link-active: $green-light;
-$navbar-sub-link-hover:  $green-medium-dark;
+$navbar-sub-link-hover:  $green-med-dark;
 

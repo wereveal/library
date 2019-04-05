@@ -1,0 +1,29 @@
+$color-default    : #80aaff;
+$color-darkest    : #193869;
+$color-darker     : #244f9b;
+$color-dark       : #2e66cd;
+$color-med-dark   : #3882ff;
+$color-medium     : #80aaff;
+$color-med-light  : #96c4ff;
+$color-light      : #abd7ff;
+$color-lighter    : #c3ddff;
+$color-lightest   : #d2e0ff;
+$color-body       : $color-light;
+$color-container  : $color-lightest;
+$color-border     : $color-darkest;
+$color-complement : #751f10;
+
+/* Gradient */
+$gradient-start   : $color-light;
+$gradient-stop    : $color-lightest;
+
+/* Navbar */
+$navbar-text-color      : $color-darkest;
+$navbar-link-active     : $color-dark;
+$navbar-link-hover      : $color-med-dark;
+$navbar-sub-bg          : $color-lightest;
+$navbar-sub-bg-hover    : $color-light;
+$navbar-sub-text-color  : $color-darkest;
+$navbar-sub-link-active : $color-dark;
+$navbar-sub-link-hover  : $color-darkest;
+

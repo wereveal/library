@@ -61,63 +61,7 @@
         {% if mainNavName is empty %}
             {% set mainNavName = 'mainNav' %}
         {% endif %}
-        <nav class="navbar navbar-expand-md navbar-dark navbar-color no-margin" role="navigation">
-        {% block navbarToggler %}
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#{{ mainNavName }}">
-             <span class="fa-layers fa-fw">
-                <span class="{{ fav }} fa-square fa-lg"></span>
-                <span class="fas fa-bars fa-lg" data-fa-transform="shrink-6"></span>
-             </span>
-            </button>
-        {% endblock %}
-        {% block navbarBrand %}
-            <a class="navbar-brand" href="#"><span class="{{ fav }} fa-cog fa-2x"></span></a>
-        {% endblock %}
-            <div class="collapse navbar-collapse" id="{{ mainNavName }}">
-                <ul class="navbar-nav mr-auto">
-                    {% for menu in a_menus %}
-                        {% if menu.nav_css != '' %}
-                            {% set extra_css %}
-                                {{ ' ' ~ menu.nav_css }}
-                            {% endset %}
-                        {% else %}
-                            {% set extra_css = '' %}
-                        {% endif %}
-                        {% if menu.url == page_url %}
-                            {% set active_url = ' active' %}
-                        {% else %}
-                            {% set active_url = '' %}
-                        {% endif %}
-                        {% if menu.submenu is empty %}
-                            <li class="nav-item">
-                                <a class="nav-link{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ menu.url }}">{{ menu.nav_text }}</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle{{ menu.nav_css }}{{ active_url }}" data-toggle="dropdown" href="{{ public_dir }}{{ menu.url }}" role="button" aria-haspopup="true" aria-expanded="false">{{ menu.nav_text }}</a>
-                                <div class="dropdown-menu">
-                                    {% for child in menu.submenu %}
-                                        {% if child.nav_css != '' %}
-                                            {% set extra_css %}
-                                                {{ ' ' ~ child.nav_css }}
-                                            {% endset %}
-                                        {% else %}
-                                            {% set extra_css = '' %}
-                                        {% endif %}
-                                        {% if child.url == page_url %}
-                                            {% set active_url = ' active' %}
-                                        {% else %}
-                                            {% set active_url = '' %}
-                                        {% endif %}
-                                        <a class="dropdown-item{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ child.url }}">{{ child.nav_text }}</a>
-                                    {% endfor %}
-                                </div>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-            </div>
-        </nav>
+        {{ include(lib_snippets ~ 'navbar.twig') }}
     {% endblock %}
     {% if a_content.header %}
         {% include '@' ~ lib_prefix ~ 'snippets/header.twig' %}
