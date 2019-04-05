@@ -19,9 +19,10 @@ use Ritc\Library\Traits\LogitTraits;
  * twig_prefix, twig_dirs, twig_templates are used.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.1
- * @date    2018-12-11 09:21:36
+ * @version v1.1.0
+ * @date    2019-03-08 13:18:35
  * @change_log
+ * - v1.1.0         - Db changes reflected here.    - 2019-03-08 wer
  * - v1.0.1         - Bug Fixes                     - 2018-12-11 wer
  * - v1.0.0         - Initial Production version    - 2018-05-29 wer
  * - v1.0.0-alpha.1 - lots of changes               - 2017-12-15 wer
@@ -33,20 +34,23 @@ class TwigComplexModel
 
     /** @var array $a_ids The ids of the new records */
     private $a_ids;
-    /** @var \Ritc\Library\Services\Di  */
+    /** @var Di */
     private $o_di;
-    /** @var  \Ritc\Library\Models\TwigDirsModel */
+    /** @var  TwigDirsModel */
     private $o_dirs;
-    /** @var \Ritc\Library\Models\PageModel */
+    /** @var PageModel */
     private $o_page;
-    /** @var  \Ritc\Library\Models\TwigPrefixModel */
+    /** @var  TwigPrefixModel */
     private $o_prefix;
-    /** @var  \Ritc\Library\Models\TwigTemplatesModel */
+    /** @var TwigThemesModel */
+    private $o_themes;
+    /** @var  TwigTemplatesModel */
     private $o_tpls;
 
     /**
      * TwigComplexModel constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     *
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -128,9 +132,10 @@ class TwigComplexModel
 
     /**
      * Creates default records for the app in the three twig tables.
+     *
      * @param  array $a_values Required ['tp_prefix', 'tp_path', 'tp_active', 'tp_default']
      * @return array                    ['tp_id', 'td_ids', 'tpl_ids']
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function createTwigForApp(array $a_values = []):array
     {
@@ -141,9 +146,8 @@ class TwigComplexModel
             $message = 'Missing required values.';
             throw new ModelException($message, 10);
         }
-        $tp_prefix_id = '';
-        $a_dir_ids = [];
-        $a_tpl_ids = [];
+        $a_dir_ids       = [];
+        $a_tpl_ids       = [];
         $app_twig_prefix = $a_values['tp_prefix'];
         try {
             $results = $this->o_prefix->read(['tp_prefix' => $app_twig_prefix]);
@@ -351,9 +355,10 @@ class TwigComplexModel
 
     /**
      * Reads the records for the given prefix_id.
+     *
      * @param int $prefix_id Required
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readDirsForPrefix($prefix_id = -1):?array
     {
@@ -383,10 +388,11 @@ class TwigComplexModel
 
     /**
      * Returns complete information regarding a template by id.
+ *
 
      * @param int $tpl_id
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readTplInfo($tpl_id = -1)
     {
@@ -395,18 +401,26 @@ class TwigComplexModel
             return false;
         }
         $lib_prefix = $this->o_db->getLibPrefix();
-
-        $a_values = [':tpl_id' => $tpl_id];
+        $a_values   = [':tpl_id' => $tpl_id];
+        $prefix_select = $this->makePrefixSelect();
+        $tpl_select    = $this->makeTplSelect();
+        $dir_select    = $this->makeDirSelect();
+        $theme_select  = $this->makeThemesSelect();
+        $select_string = $tpl_select
+            . ', ' . $prefix_select
+            . ', ' . $dir_select
+            . ', ' . $theme_select
+        ;
         $sql = /** @lang text */
             "
-            SELECT t.tpl_id, t.tpl_name, t.tpl_immutable,
-              p.tp_id, p.tp_prefix as twig_prefix, p.tp_path as twig_path, p.tp_active, p.tp_default,
-              d.td_id, d.td_name as twig_dir
+            SELECT {$select_string} 
             FROM {$lib_prefix}twig_templates as t
             JOIN {$lib_prefix}twig_dirs as d
               ON t.td_id = d.td_id
             JOIN {$lib_prefix}twig_prefix as p
               ON d.tp_id = p.tp_id
+            JOIN {$lib_prefix}twig_themes as th
+              ON t.theme_id = th.theme_id
             WHERE t.tpl_id = :tpl_id
         ";
         try {
@@ -425,11 +439,12 @@ class TwigComplexModel
 
     /**
      * Returns complete information regarding a template by name and prefix.
+ *
 
      * @param string $tpl_name   Required, throws exception if not provided.
      * @param string $tpl_prefix Optional, defaults to site_
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readTplInfoByName($tpl_name = '', $tpl_prefix = 'site_'):array
     {
@@ -443,16 +458,24 @@ class TwigComplexModel
             ':tpl_name'  => '%' . $tpl_name . '%',
             ':tp_prefix' => '%' . $tpl_prefix . '%'
         ];
+        $prefix_select = $this->makePrefixSelect();
+        $tpl_select    = $this->makeTplSelect();
+        $dir_select    = $this->makeDirSelect();
+        $theme_select  = $this->makeThemesSelect();
+        $select_string = $tpl_select
+            . ', ' . $prefix_select
+            . ', ' . $dir_select
+            . ', ' . $theme_select;
         $sql = /** @lang text */
             "
-            SELECT t.tpl_id, t.tpl_name, t.tpl_immutable,
-              p.tp_id, p.tp_prefix as twig_prefix, p.tp_path as twig_path, p.tp_active, p.tp_default,
-              d.td_id, d.td_name as twig_dir
+            SELECT {$select_string} 
             FROM {$lib_prefix}twig_templates as t
             JOIN {$lib_prefix}twig_dirs as d
               ON t.td_id = d.td_id
             JOIN {$lib_prefix}twig_prefix as p
               ON d.tp_id = p.tp_id AND p.tp_prefix LIKE :tp_prefix
+            JOIN {$lib_prefix}twig_themes as th
+              ON t.theme_id = th.theme_id
             WHERE t.tpl_name LIKE :tpl_name
         ";
         try {
@@ -471,9 +494,10 @@ class TwigComplexModel
 
     /**
      * Returns all active records for the twig configuration.
+     *
      * @param string $is_active
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readTwigConfig($is_active = 'true'):?array
     {
@@ -484,10 +508,13 @@ class TwigComplexModel
             : 'false';
         $a_values = [':tp_active' => $is_active];
         $order_by = 'p.tp_default DESC, p.tp_id ASC';
+        $prefix_select = $this->makePrefixSelect();
+        $dir_select    = $this->makeDirSelect();
+        $select_string = $prefix_select . ', ' . $dir_select;
+
         $sql = /** @lang text */
             "
-            SELECT p.tp_id, p.tp_prefix as twig_prefix, p.tp_path as twig_path, p.tp_active, p.tp_default,
-              d.td_id, d.td_name as twig_dir
+            SELECT {$select_string} 
             FROM {$tp_prefix}twig_prefix as p
             JOIN {$td_prefix}twig_dirs as d
               ON d.tp_id = p.tp_id
@@ -577,7 +604,7 @@ class TwigComplexModel
         $tp_default = empty($a_values['tp_default'])
             ? 'false'
             : $a_values['tp_default'];
-        if (strrpos($tp_prefix, '_') !== \strlen($tp_prefix) - 1) {
+        if (strrpos($tp_prefix, '_') !== strlen($tp_prefix) - 1) {
             $tp_prefix .= '_';
         }
         if (strpos($tp_path, '/') !== 0) {
@@ -624,13 +651,18 @@ class TwigComplexModel
      */
     public function saveTpl(array $a_values = [], $action = 'update'):bool
     {
-        $tpl_name  = Strings::makeSnakeCase($a_values['tpl_name']);
+        $tpl_name  = Strings::makeSnakeCase(trim($a_values['tpl_name']));
+        if (empty($tpl_name) || empty($a_values['td_id'])) {
+            $err_code = ExceptionHelper::getCodeNumberModel('missing values');
+            throw new ModelException('Missing Required Values', $err_code);
+        }
+        $tpl_immutable = $a_values['tpl_immutable'] ?? 'false';
+        $tpl_theme     = $a_values['theme_id'] ?? 1;
         $a_save_values  = [
             'td_id'         => $a_values['td_id'],
             'tpl_name'      => $tpl_name,
-            'tpl_immutable' => empty($a_values['tpl_immutable'])
-                ? 'false'
-                : $a_values['tpl_immutable']
+            'theme_id'      => $tpl_theme,
+            'tpl_immutable' => $tpl_immutable
         ];
         try {
             if ($action === 'new') {
@@ -646,6 +678,69 @@ class TwigComplexModel
         }
     }
 
+    ### Utilities
+
+    /**
+     * Creates a string to be used in an sql select.
+     *
+     * @return string
+     */
+    public function makeDirSelect():string
+    {
+        $dir_fields = $this->o_dirs->getDbFields();
+        $a_dir_fields = [];
+        foreach ($dir_fields as $field) {
+            if ($field === 'td_name') {
+                $a_dir_fields[$field] = 'twig_dir';
+            }
+            else {
+                $a_dir_fields[$field] = $field;
+            }
+        }
+        return $this->buildSqlSelectFields($a_dir_fields, 'd');
+    }
+
+    /**
+     * Creates a string to be used in an sql select.
+     *
+     * @return string
+     */
+    public function makePrefixSelect():string
+    {
+        $tp_fields = $this->o_prefix->getDbFields();
+        $a_tp_fields = [];
+        foreach ($tp_fields as $field) {
+            switch ($field) {
+                case 'tp_prefix':
+                    $a_tp_fields[$field] = 'twig_prefix';
+                    break;
+                case 'tp_path':
+                    $a_tp_fields[$field] = 'twig_path';
+                    break;
+                default:
+                    $a_tp_fields[$field] = $field;
+            }
+        }
+        return $this->buildSqlSelectFields($a_tp_fields, 'p');
+    }
+
+    public function makeThemesSelect():string
+    {
+        $themes_fields = $this->o_themes->getDbFields();
+        return $this->buildSqlSelectFields($themes_fields, 'th');
+    }
+
+    /**
+     * Creates a string to be used in an sql select.
+     *
+     * @return string
+     */
+    public function makeTplSelect():string
+    {
+        $tpl_fields = $this->o_tpls->getDbFields();
+        return $this->buildSqlSelectFields($tpl_fields, 't');
+    }
+
     /**
      * Standard getter for the class property a_ids.
      *
@@ -659,14 +754,15 @@ class TwigComplexModel
     /**
      * Creates the required properties containing instances of the respective database models.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     private function setupDbs(DbModel $o_db):void
     {
-        $this->a_object_names = ['o_dirs', 'o_prefix', 'o_tpls', 'o_page'];
+        $this->a_object_names = ['o_dirs', 'o_prefix', 'o_tpls', 'o_themes', 'o_page'];
         $this->o_dirs   = new TwigDirsModel($o_db);
         $this->o_prefix = new TwigPrefixModel($o_db);
         $this->o_tpls   = new TwigTemplatesModel($o_db);
+        $this->o_themes = new TwigThemesModel($o_db);
         $this->o_page   = new PageModel($o_db);
         $this->setupElog($this->o_di);
     }

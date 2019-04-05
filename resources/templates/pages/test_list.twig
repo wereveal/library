@@ -1,4 +1,4 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
             <div class="row">
     {% for button in a_buttons %}
@@ -9,9 +9,7 @@
                 <div class="col-3">
                     <form action="/manager/config/tests/" method="post">
                         <button type="submit" name="submit" value="{{ button.value }}" class="btn btn-primary btn-xs">{{ button.label }}</button>
-                        <input type="hidden" name="tolken" value="{{ tolken }}" />
-                        <input type="hidden" name="form_ts" value="{{ form_ts }}" />
-                        <input type="text" name="hobbit" value="" size="2" maxlength="2" class="hobbit" />
+                        {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                         <input type="hidden" name="test" value="{{ button.test }}" />
                     </form>
                 </div>

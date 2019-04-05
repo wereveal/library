@@ -5,6 +5,8 @@
  */
 namespace Ritc\Library\Helper;
 
+use Exception;
+use Psr\Cache\CacheException as PsrException;
 use Psr\Cache\InvalidArgumentException as CacheException;
 use Psr\SimpleCache\InvalidArgumentException as SimpleCacheException ;
 use Ritc\Library\Factories\CacheFactory;
@@ -48,7 +50,7 @@ class CacheHelper
      */
     public function __construct($o_cache)
     {
-        if (\is_object($o_cache)) {
+        if (is_object($o_cache)) {
             $this->o_cache = $o_cache;
             $this->cache_type = strpos(CACHE_TYPE, 'Simple') !== false
                 ? 'psr-16'
@@ -86,7 +88,12 @@ class CacheHelper
                 }
                 break;
             case 'psr-16':
-                $this->o_cache->delete($cache_key);
+                try {
+                    $this->o_cache->delete($cache_key);
+                }
+                catch (CacheException $e) {
+                    break;
+                }
                 break;
             default:
                 // do nothing
@@ -118,7 +125,7 @@ class CacheHelper
     /**
      * Removes all key/value pairs with specified tags.
      *
-     * @param string $tag
+     * @param array $a_tags
      */
     public function clearTags(array $a_tags = []):void
     {
@@ -195,6 +202,9 @@ class CacheHelper
                     catch (SimpleCacheException $e) {
                         // do nothing
                     }
+                    catch (CacheException $e) {
+                        // do nothing
+                    }
                 }
                 break;
             default:
@@ -223,9 +233,6 @@ class CacheHelper
         try {
             return $this->o_cache->hasItem($cache_key);
         }
-        catch(SimpleCacheException $e) {
-            return false;
-        }
         catch(CacheException $e) {
             return false;
         }
@@ -236,8 +243,8 @@ class CacheHelper
      * Optionally will tag the pair.
      *
      * @param string $cache_key Required
-     * @param mixed  $value     Optional but if empty why?
-     * @param string $tag       Optional, only used if cache is PSR-6
+     * @param mixed $value Optional but if empty why?
+     * @param string $tag Optional, only used if cache is PSR-6
      * @return bool
      */
     public function set(string $cache_key = '', $value = '', string $tag = ''):bool
@@ -251,7 +258,15 @@ class CacheHelper
                     $o_item = $this->o_cache->getItem($cache_key);
                     $o_item->set($value);
                     if (!empty($tag)) {
-                        $o_item->tag($tag);
+                        try {
+                            $o_item->tag($tag);
+                        }
+                        catch (PsrException $e) {
+                            return false;
+                        }
+                        catch (Exception $e) {
+                           return false;
+                        }
                     }
                     $this->o_cache->save($o_item);
                     return true;

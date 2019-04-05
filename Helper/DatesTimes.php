@@ -1,10 +1,17 @@
-<?php
+<?php /** @noinspection CallableParameterUseCaseInTypeContextInspection */
+
 /**
  * Class DatesTimes
  *
  * @package Ritc_Library
  */
 namespace Ritc\Library\Helper;
+
+use DateInterval;
+use DateTime;
+use DateTimeZone;
+use Error;
+use Exception;
 
 /**
  * Class DatesTimes - provides a lot of normal date time functionality.
@@ -174,7 +181,7 @@ class DatesTimes
      * @param string    $time_string
      * @param bool|true $include_seconds
      * @param bool|true $include_meridiem
-     * @return null|string
+     * @return string
      */
     public static function change24hTo12h(string $time_string = '', $include_seconds = true, $include_meridiem = true):string
     {
@@ -184,24 +191,34 @@ class DatesTimes
         else {
             $time_format = $include_meridiem ? 'g:i a' : 'g:i' ;
         }
-        $timestring = empty($time_string)
-            ? @date('m/d/Y H:i:s e')
-            : $time_string;
+        try {
+            $timestring = empty($time_string)
+                ? date('m/d/Y H:i:s e')
+                : $time_string;
+        }
+        catch (Error $e) {
+            $timestring = '';
+        }
         if (self::isUnixTimestamp($timestring)) {
             $ts = self::convertToUnixTimestamp($timestring);
-            $timestring = @date('Y-m-d H:i:s e', $ts);
+            try {
+                $timestring = date('Y-m-d H:i:s e', $ts);
+            }
+            catch (Error $e) {
+                $timestring = '';
+            }
         }
         try {
-            $o_time = new \DateTime($timestring, new \DateTimeZone(date('e')));
+            $o_time = new DateTime($timestring, new DateTimeZone(date('e')));
             if ($o_time !== false) {
                 return $o_time->format($time_format);
             }
-            return null;
+            return '';
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             /** @noinspection ForgottenDebugOutputInspection */
             error_log('Caught exception: ' . $e->getMessage() . ' from: ' . __METHOD__ . '.' . __LINE__);
-            return null;
+            return '';
         }
     }
 
@@ -234,24 +251,34 @@ class DatesTimes
     {
         $date_format = self::isValidDateFormat($date_format)
             ? $date_format
-            : \DateTime::ATOM;
+            : DateTime::ATOM;
         if ($timestamp === '') {
-            $date = @date($date_format);
+            try {
+                $date = date($date_format);
+            }
+            catch (Error $e) {
+                $date = $timestamp;
+            }
         }
         elseif (self::isUnixTimestamp($timestamp)) {
-            $date = @date($date_format, (int) $timestamp);
+            try {
+                $date = date($date_format, (int) $timestamp);
+            }
+            catch (Error $e) {
+                $date = $timestamp;
+            }
         }
         else {
             $date = $timestamp;
         }
         $o_tz = self::isValidTimezone($timezone)
-            ? new \DateTimeZone($timezone)
+            ? new DateTimeZone($timezone)
             : false;
         try {
-            $o_time = new \DateTime($date);
+            $o_time = new DateTime($date);
         }
-        catch (\Exception $e) {
-            return null;
+        catch (Exception $e) {
+            return '';
         }
         if ($o_tz) {
             $o_time->setTimezone($o_tz);
@@ -285,16 +312,31 @@ class DatesTimes
         switch($format) {
             case 'j':
             case 'short': // no leading zero
-                $return_this = @date('j', $ts);
+                try {
+                    $return_this = date('j', $ts);
+                }
+                catch (Error $e) {
+                    $return_this = 'error';
+                }
                 break;
             case 'z':
             case 'doy': // day of year
-                $return_this = @date('z', $ts);
+                try {
+                    $return_this = date('z', $ts);
+                }
+                catch (Error $e) {
+                    $return_this = 'error';
+                }
                 break;
             case 'd':
             case 'default': // leading zero
             default:
-                $return_this = @date('d', $ts);
+                try {
+                    $return_this = date('d', $ts);
+                }
+                catch (Error $e) {
+                    $return_this = 'error';
+                }
         }
         return $return_this;
     }
@@ -304,30 +346,35 @@ class DatesTimes
      *
      * @param string $start_date
      * @param string $end_date
-     * @return \DateInterval
+     * @return DateInterval
      */
-    public static function getInterval(string $start_date = '', string $end_date = ''):\DateInterval
+    public static function getInterval(string $start_date = '', string $end_date = ''): DateInterval
     {
-        $start_date = $start_date === '' ? @date('m/d/Y H:i:s') : $start_date;
-        $end_date   = $end_date === ''   ? @date('m/d/Y H:i:s') : $end_date;
-        if (self::isUnixTimestamp($start_date)) {
-            $start_date = @date('m/d/Y H:i:s', (int) $start_date);
+        try {
+            $start_date = $start_date === '' ? date('m/d/Y H:i:s') : $start_date;
+            $end_date   = $end_date === ''   ? date('m/d/Y H:i:s') : $end_date;
+            if (self::isUnixTimestamp($start_date)) {
+                $start_date = date('m/d/Y H:i:s', (int) $start_date);
+            }
+            else {
+                $start_date = date('m/d/Y H:i:s', strtotime($start_date));
+            }
+            if (self::isUnixTimestamp($end_date)) {
+                $end_date = date('m/d/Y H:i:s', (int) $end_date);
+            }
+            else {
+                $end_date = date('m/d/Y H:i:s', strtotime($end_date));
+            }
         }
-        else {
-            $start_date = @date('m/d/Y H:i:s', strtotime($start_date));
-        }
-        if (self::isUnixTimestamp($end_date)) {
-            $end_date = @date('m/d/Y H:i:s', (int) $end_date);
-        }
-        else {
-            $end_date = @date('m/d/Y H:i:s', strtotime($end_date));
+        catch (Error $e) {
+            return null;
         }
         try {
-            $o_start = new \DateTime($start_date);
-            $o_end   = new \DateTime($end_date);
+            $o_start = new DateTime($start_date);
+            $o_end   = new DateTime($end_date);
             return $o_start->diff($o_end);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return null;
         }
     }
@@ -341,7 +388,12 @@ class DatesTimes
     public static function convertToLongDateTime(string $timestamp = ''):string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        return @date('l, F jS, Y g:i a', $ts);
+        try {
+            return date('l, F jS, Y g:i a', $ts);
+        }
+        catch (Error $e) {
+            return null;
+        }
     }
 
     /**
@@ -353,7 +405,12 @@ class DatesTimes
     public static function convertToLongDate(string $timestamp = ''):string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        return @date('l, F jS, Y', $ts);
+        try {
+            return date('l, F jS, Y', $ts);
+        }
+        catch (Error $e) {
+            return '';
+        }
     }
 
     /**
@@ -370,11 +427,11 @@ class DatesTimes
             return date($time_format, (int) $timestamp);
         }
         try {
-            $o_date = new \DateTime($timestamp);
+            $o_date = new DateTime($timestamp);
             $rt = $o_date->format($time_format);
             return $rt !== false ? $rt : date($time_format);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return date($time_format);
         }
     }
@@ -409,7 +466,12 @@ class DatesTimes
             default:
                 $format = 'm';
         }
-        return @date($format, $ts);
+        try {
+            return date($format, $ts);
+        }
+        catch (Error $e) {
+            return '';
+        }
     }
 
     /**
@@ -421,11 +483,11 @@ class DatesTimes
      */
     public static function convertToNextDay(string $timestamp = '', string $format = 'atom')
     {
-        $ts = self::convertDateTimeWith(\DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
         try {
-            $date = new \DateTime($ts);
+            $date = new DateTime($ts);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return '';
         }
         $date->modify('+1 day');
@@ -442,7 +504,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(\DateTime::ATOM);
+                return $date->format(DateTime::ATOM);
             case '':
             case 'timestamp':
                 return self::changeTimestampToMidnight($date->getTimestamp());
@@ -463,11 +525,11 @@ class DatesTimes
      */
     public static function convertToNextMonth(string $timestamp = '', string $format = 'timestamp')
     {
-        $ts = self::convertDateTimeWith(\DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
         try {
-            $date = new \DateTime($ts);
+            $date = new DateTime($ts);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return '';
         }
         $date->modify('+1 month');
@@ -481,7 +543,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(\DateTime::ATOM);
+                return $date->format(DateTime::ATOM);
             case '':
             case 'timestamp':
                 return self::changeTimestampToMidnight($date->getTimestamp());
@@ -501,11 +563,11 @@ class DatesTimes
      */
     public static function convertToNextWeek(string $timestamp = ''):string
     {
-        $ts = self::convertDateTimeWith(\DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
         try {
-            $date = new \DateTime($ts);
+            $date = new DateTime($ts);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return '';
         }
         $date->modify('+1 week');
@@ -521,11 +583,11 @@ class DatesTimes
      */
     public static function convertToNextYear(string $timestamp = '', string $format = 'timestamp'):string
     {
-        $timestamp = self::convertDateTimeWith(\DateTime::ATOM, $timestamp) ?? time();
+        $timestamp = self::convertDateTimeWith(DateTime::ATOM, $timestamp) ?? time();
         try {
-            $date = new \DateTime($timestamp);
+            $date = new DateTime($timestamp);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return '';
         }
         $date->modify('+1 year');
@@ -539,7 +601,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(\DateTime::ATOM);
+                return $date->format(DateTime::ATOM);
             case '':
             case 'timestamp':
                 return (string) self::changeTimestampToMidnight($date->getTimestamp());
@@ -560,11 +622,11 @@ class DatesTimes
      */
     public static function convertToPreviousDay(string $timestamp = '', string $format = 'timestamp')
     {
-        $ts = self::convertDateTimeWith(\DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
         try {
-            $date = new \DateTime($ts);
+            $date = new DateTime($ts);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return '';
         }
         $date->modify('-1 day');
@@ -578,7 +640,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(\DateTime::ATOM);
+                return $date->format(DateTime::ATOM);
             case '':
             case 'timestamp':
                 return self::changeTimestampToMidnight($date->getTimestamp());
@@ -599,11 +661,11 @@ class DatesTimes
      */
     public static function convertToPreviousMonth(string $timestamp = '', string $format = 'timestamp')
     {
-        $timestamp = self::convertDateTimeWith(\DateTime::ATOM, $timestamp) ?? time();
+        $timestamp = self::convertDateTimeWith(DateTime::ATOM, $timestamp) ?? time();
         try {
-            $date = new \DateTime($timestamp);
+            $date = new DateTime($timestamp);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return '';
         }
         $date->modify('-1 month');
@@ -617,7 +679,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(\DateTime::ATOM);
+                return $date->format(DateTime::ATOM);
             case 'timestamp':
             default:
                 return self::changeTimestampToMidnight($date->getTimestamp());
@@ -632,11 +694,11 @@ class DatesTimes
      */
     public static function convertToPreviousWeek(string $timestamp = ''):string
     {
-        $ts = self::convertDateTimeWith(\DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
         try {
-            $date = new \DateTime($ts);
+            $date = new DateTime($ts);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return '';
         }
         $date->modify('-1 week');
@@ -652,11 +714,11 @@ class DatesTimes
      */
     public static function convertToPreviousYear(string $timestamp = '', string $format = '')
     {
-        $ts = self::convertDateTimeWith(\DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
         try {
-            $date = new \DateTime($ts);
+            $date = new DateTime($ts);
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return '';
         }
         $date->modify('-1 year');
@@ -670,7 +732,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(\DateTime::ATOM);
+                return $date->format(DateTime::ATOM);
             case '':
             case 'timestamp':
                 return self::changeTimestampToMidnight($date->getTimestamp());
@@ -692,7 +754,12 @@ class DatesTimes
     public static function convertToShortDate(string $timestamp = ''):string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        return @date('m/d/Y', $ts);
+        try {
+            return date('m/d/Y', $ts);
+        }
+        catch (Error $e) {
+            return '';
+        }
     }
 
     /**
@@ -704,7 +771,12 @@ class DatesTimes
     public static function convertToShortDateTime(string $timestamp = '')
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        return @date('m/d/Y g:i a', $ts) ?? '';
+        try {
+            return date('m/d/Y g:i a', $ts) ?? '';
+        }
+        catch (Error $e) {
+            return '';
+        }
     }
 
     /**
@@ -716,7 +788,12 @@ class DatesTimes
     public static function convertToSqlDate(string $timestamp = ''):string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        return @date('Y-m-d', $ts) ?? '';
+        try {
+            return date('Y-m-d', $ts) ?? '';
+        }
+        catch (Error $e) {
+            return '';
+        }
     }
 
     /**
@@ -728,7 +805,12 @@ class DatesTimes
     public static function convertToSqlTimestamp(string $timestamp = ''):string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        return @date('Y-m-d H:i:s', $ts) ?? '';
+        try {
+            return date('Y-m-d H:i:s', $ts) ?? '';
+        }
+        catch (Error $e) {
+            return '';
+        }
     }
 
     /**
@@ -740,7 +822,12 @@ class DatesTimes
     public static function convertToTime(string $timestamp = ''):string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        return @date ('H:i:s', $ts) ?? '';
+        try {
+            return date ('H:i:s', $ts) ?? '';
+        }
+        catch (Error $e) {
+            return '';
+        }
     }
 
     /**
@@ -827,7 +914,12 @@ class DatesTimes
     public static function convertToWeek(string $timestamp = ''):string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        return @date('W', $ts) ?? '';
+        try {
+            return date('W', $ts) ?? '';
+        }
+        catch (Error $e) {
+            return '';
+        }
     }
 
     /**
@@ -839,7 +931,12 @@ class DatesTimes
     public static function convertToYear(string $timestamp = ''):string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        return @date('Y', $ts) ?? '';
+        try {
+            return date('Y', $ts) ?? '';
+        }
+        catch (Error $e) {
+            return '';
+        }
     }
 
     /**
@@ -865,7 +962,13 @@ class DatesTimes
     public static function convertToYmd(string $timestamp = ''):string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        return @date('Ymd', $ts) ?? '';
+        try {
+            $string = date('Ymd', $ts) ?? '';
+        }
+        catch (Error $e) {
+            $string =  '';
+        }
+        return $string;
     }
 
     /**
@@ -905,10 +1008,10 @@ class DatesTimes
             return false;
         }
         try {
-            new \DateTimeZone($timezone);
+            new DateTimeZone($timezone);
             return true;
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             return false;
         }
     }

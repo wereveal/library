@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection NestedTernaryOperatorInspection */
+
 /**
  * Trait ConfigViewTraits
  * @package Ritc_Library

@@ -124,8 +124,9 @@ class PageController implements ManagerControllerInterface
      */
     public function save():string
     {
-        $meth = __METHOD__ . '.';
-        $a_message = [];
+        $meth              = __METHOD__ . '.';
+        $a_blocks          = [];
+        $a_message         = [];
         $a_required_fields = [
             'url_id',
             'page_title',
@@ -135,8 +136,8 @@ class PageController implements ManagerControllerInterface
             'page_charset',
             'tpl_id'
         ];
-        $a_page = $this->a_post['page'];
-        $a_missing_keys = Arrays::findMissingKeys($a_page, $a_required_fields);
+        $a_page            = $this->a_post['page'];
+        $a_missing_keys    = Arrays::findMissingKeys($a_page, $a_required_fields);
         if (!empty($a_missing_keys)) {
             $message = 'Missing Values for the Page: ';
             foreach ($a_missing_keys as $the_key) {
@@ -149,7 +150,7 @@ class PageController implements ManagerControllerInterface
             ];
             $a_message = ViewHelper::fullMessage($a_msg_values);
         }
-        if (empty($this->a_post['blocks']) && empty($a_message)) {
+        if (empty($a_message) && empty($this->a_post['blocks'])) {
             $o_blocks = new BlocksModel($this->o_db);
             $o_blocks->setupElog($this->o_di);
             try {
@@ -172,8 +173,6 @@ class PageController implements ManagerControllerInterface
         }
         if (!empty($a_page['page_down'])) {
             $a_page['page_down'] = DatesTimes::convertDateTimeWith('Y-m-d H:i:s', $a_page['page_down']);
-        }
-        if (empty($a_page['created_on'])) {
             $a_page['created_on'] = date('Y-m-d H:i:s');
         }
         $a_page['updated_on'] = date('Y-m-d H:i:s');
@@ -184,7 +183,7 @@ class PageController implements ManagerControllerInterface
                 $a_page['a_blocks'][] = $block_id;
             }
         }
-        $this->logIt('Page Values' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
+          $this->logIt('Page Values' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
         if (empty($a_message)) {
             try {
                 $this->o_model->savePageValues($a_page);

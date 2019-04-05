@@ -5,8 +5,10 @@
  */
 namespace Ritc\Library\Models;
 
+use Error;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -50,13 +52,13 @@ class ConstantsCreator
     private $created = false;
     /** @var ConstantsCreator */
     private static $instance;
-    /** @var \Ritc\Library\Services\DbModel $o_db */
+    /** @var DbModel $o_db */
     private $o_db;
 
     /**
      * ConstantsCreator constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     private function __construct(Di $o_di)
     {
@@ -71,7 +73,7 @@ class ConstantsCreator
      *
      * @param Di $o_di
      * @return object - instance of Constants
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public static function start(Di $o_di)
     {
@@ -79,7 +81,7 @@ class ConstantsCreator
             try {
                 self::$instance = new ConstantsCreator($o_di);
             }
-            catch (\Error $e) {
+            catch (Error $e) {
                 throw new ModelException('Unable to create an instance of ConstantsCreator: ' . $e->getMessage());
             }
         }
@@ -89,7 +91,7 @@ class ConstantsCreator
     /**
      * Public function to create the constants.
      *
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function defineConstants():void
     {
@@ -101,7 +103,7 @@ class ConstantsCreator
                 $this->createTwigConstants();
             }
             else {
-                if (\defined('SRC_CONFIG_PATH')) {
+                if (defined('SRC_CONFIG_PATH')) {
                     if(file_exists(SRC_CONFIG_PATH . '/fallback_constants.php')) {
                         include_once SRC_CONFIG_PATH . '/fallback_constants.php';
                     }
@@ -117,7 +119,7 @@ class ConstantsCreator
                 try {
                     $o_const_model = new ConstantsModel($this->o_db);
                 }
-                catch (\Error $e) {
+                catch (Error $e) {
                     $message = 'Unable to create an instance of the ConstantsModel: ' . $e->getMessage();
                     $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
                     throw new ModelException($message, 800);
@@ -151,21 +153,21 @@ class ConstantsCreator
      * Creates the constants used throughout the website based on database values.
      *
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     private function createConstants():bool
     {
         $meth = __METHOD__ . '.';
-        if (!\defined('BASE_PATH')) {
+        if (!defined('BASE_PATH')) {
             throw new ModelException('BASE_PATH is not defined', ExceptionHelper::getCodeNumberModel('missing value'));
         }
-        if (!\defined('PUBLIC_PATH')) { // not sure why this would be true but here just in case
+        if (!defined('PUBLIC_PATH')) { // not sure why this would be true but here just in case
             throw new ModelException('PUBLIC_PATH is not defined', ExceptionHelper::getCodeNumberModel('missing value'));
         }
         try {
             $o_const_model = new ConstantsModel($this->o_db);
         }
-        catch (\Error $e) {
+        catch (Error $e) {
             $message = 'Unable to create an instance of the ConstantsModel: ' . $e->getMessage();
             $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
             throw new ModelException($message, 800);
@@ -184,92 +186,92 @@ class ConstantsCreator
             if (!empty($a_constants)) {
                 foreach ($a_constants as $row) {
                     $key = strtoupper($row['const_name']);
-                    if (!\defined($key)) {
+                    if (!defined($key)) {
                         switch ($row['const_value']) {
                             case 'true':
                                 /** @var bool $key */
-                                \define($key, true);
+                                define($key, true);
                                 break;
                             case 'false':
                                 /** @var bool $key */
-                                \define($key, false);
+                                define($key, false);
                                 break;
                             case 'null':
                                 /** @var null $key */
-                                \define($key, null);
+                                define($key, null);
                                 break;
                             case null:
                                 /** @var null $key */
-                                \define($key, null);
+                                define($key, null);
                                 break;
                             default:
                                 $value = $row['const_value'];
                                 /** @var string $key */
-                                \define($key, $value);
+                                define($key, $value);
                         }
                     }
                 }
-                if (!\defined('PUBLIC_DIR')) { // not sure why this would be true but here just in case
+                if (!defined('PUBLIC_DIR')) { // not sure why this would be true but here just in case
                     /** @var string PUBLIC_DIR */
-                    \define('PUBLIC_DIR', '');
+                    define('PUBLIC_DIR', '');
                 }
-                if (!\defined('PRIVATE_DIR_NAME')) {
+                if (!defined('PRIVATE_DIR_NAME')) {
                     /** @var string PRIVATE_DIR_NAME */
-                    \define('PRIVATE_DIR_NAME', 'private');
+                    define('PRIVATE_DIR_NAME', 'private');
                 }
-                if (!\defined('TMP_DIR_NAME')) {
+                if (!defined('TMP_DIR_NAME')) {
                     /** @var string TMP_DIR_NAME */
-                    \define('TMP_DIR_NAME', 'tmp');
+                    define('TMP_DIR_NAME', 'tmp');
                 }
-                if (!\defined('TMP_PATH')) {
+                if (!defined('TMP_PATH')) {
                     if (file_exists(BASE_PATH . '/' . TMP_DIR_NAME)) {
                         /** @var string TMP_PATH */
-                        \define('TMP_PATH', BASE_PATH . '/' . TMP_DIR_NAME);
+                        define('TMP_PATH', BASE_PATH . '/' . TMP_DIR_NAME);
                     }
                     elseif (file_exists(PUBLIC_PATH . '/' . TMP_DIR_NAME)) {
                         /** @var string TMP_PATH */
-                        \define('TMP_PATH', PUBLIC_PATH . '/' . TMP_DIR_NAME);
+                        define('TMP_PATH', PUBLIC_PATH . '/' . TMP_DIR_NAME);
                     }
                     else {
                         /** @var string TMP_PATH */
-                        \define('TMP_PATH', '/tmp');
+                        define('TMP_PATH', '/tmp');
                     }
                 }
-                if (!\defined('PRIVATE_PATH')) {
+                if (!defined('PRIVATE_PATH')) {
                     if (file_exists(BASE_PATH . '/' . PRIVATE_DIR_NAME)) {
                         /** @var string PRIVATE_PATH */
-                        \define('PRIVATE_PATH', BASE_PATH . '/' . PRIVATE_DIR_NAME);
+                        define('PRIVATE_PATH', BASE_PATH . '/' . PRIVATE_DIR_NAME);
                     }
                     elseif (file_exists(PUBLIC_PATH . '/' . PRIVATE_DIR_NAME)) {
                         /** @var string PRIVATE_PATH */
-                        \define('PRIVATE_PATH', PUBLIC_PATH . '/' . PRIVATE_DIR_NAME);
+                        define('PRIVATE_PATH', PUBLIC_PATH . '/' . PRIVATE_DIR_NAME);
                     }
                     else {
                         /** @var string PRIVATE_PATH */
-                        \define('PRIVATE_PATH', '');
+                        define('PRIVATE_PATH', '');
                     }
                 }
-                if (!\defined('ADMIN_DIR') && \defined('ADMIN_DIR_NAME')) {
+                if (!defined('ADMIN_DIR') && defined('ADMIN_DIR_NAME')) {
                     $the_dir = ADMIN_DIR_NAME === '' || null === ADMIN_DIR_NAME
                         ? PUBLIC_DIR
                         : PUBLIC_DIR . '/' . ADMIN_DIR_NAME;
                     /** @var string ADMIN_DIR */
-                    \define('ADMIN_DIR', $the_dir);
+                    define('ADMIN_DIR', $the_dir);
                 }
-                if (!\defined('ADMIN_PATH') && \defined('ADMIN_DIR')) {
+                if (!defined('ADMIN_PATH') && defined('ADMIN_DIR')) {
                     /** @var string ADMIN_PATH */
-                    \define('ADMIN_PATH',  PUBLIC_PATH . ADMIN_DIR);
+                    define('ADMIN_PATH',  PUBLIC_PATH . ADMIN_DIR);
                 }
-                if (!\defined('ASSETS_DIR') && \defined('ASSETS_DIR_NAME')) {
+                if (!defined('ASSETS_DIR') && defined('ASSETS_DIR_NAME')) {
                     $the_dir = ASSETS_DIR_NAME === '' || null === ASSETS_DIR_NAME
                         ? PUBLIC_DIR
                         : PUBLIC_DIR . '/' . ASSETS_DIR_NAME;
                     /** @var string ASSETS_DIR */
-                    \define('ASSETS_DIR', $the_dir);
+                    define('ASSETS_DIR', $the_dir);
                 }
-                if (!\defined('ASSETS_PATH') && \defined('ASSETS_DIR')) {
+                if (!defined('ASSETS_PATH') && defined('ASSETS_DIR')) {
                     /** @var string ASSETS_PATH */
-                    \define('ASSETS_PATH', PUBLIC_PATH . ASSETS_DIR);
+                    define('ASSETS_PATH', PUBLIC_PATH . ASSETS_DIR);
                 }
                 return true;
             }
@@ -289,84 +291,84 @@ class ConstantsCreator
      */
     private function createAssetsConstants():void
     {
-        if (!\defined('ASSETS_DIR')) {
+        if (!defined('ASSETS_DIR')) {
             return;
         }
-        if (!\defined('CSS_DIR_NAME')) {
+        if (!defined('CSS_DIR_NAME')) {
             /** @var string 'CSS_DIR_NAME' */
-            \define('CSS_DIR_NAME', 'css');
+            define('CSS_DIR_NAME', 'css');
         }
-        if (!\defined('FILES_DIR_NAME')) {
+        if (!defined('FILES_DIR_NAME')) {
             /** @var string 'FILES_DIR_NAME' */
-            \define('FILES_DIR_NAME', 'files');
+            define('FILES_DIR_NAME', 'files');
         }
-        if (!\defined('FONTS_DIR_NAME')) {
+        if (!defined('FONTS_DIR_NAME')) {
             /** @var string 'FONTS_DIR_NAME' */
-            \define('FONTS_DIR_NAME', 'fonts');
+            define('FONTS_DIR_NAME', 'fonts');
         }
-        if (!\defined('HTML_DIR_NAME')) {
+        if (!defined('HTML_DIR_NAME')) {
             /** @var string 'HTML_DIR_NAME' */
-            \define('HTML_DIR_NAME', 'html');
+            define('HTML_DIR_NAME', 'html');
         }
-        if (!\defined('IMAGES_DIR_NAME')) {
+        if (!defined('IMAGES_DIR_NAME')) {
             /** @var string 'IMAGES_DIR_NAME' */
-            \define('IMAGES_DIR_NAME', 'images');
+            define('IMAGES_DIR_NAME', 'images');
         }
-       if (!\defined('JS_DIR_NAME')) {
+       if (!defined('JS_DIR_NAME')) {
             /** @var string 'JS_DIR_NAME' */
-            \define('JS_DIR_NAME', 'js');
+            define('JS_DIR_NAME', 'js');
 
         }
-        if (!\defined('SCSS_DIR_NAME')) {
+        if (!defined('SCSS_DIR_NAME')) {
             /** @var string 'SCSS_DIR_NAME' */
-            \define('SCSS_DIR_NAME', 'scss');
+            define('SCSS_DIR_NAME', 'scss');
         }
-        if (!\defined('VENDOR_DIR_NAME')) {
+        if (!defined('VENDOR_DIR_NAME')) {
             /** @var string 'VENDOR_DIR_NAME' */
-            \define('VENDOR_DIR_NAME', 'vendor');
+            define('VENDOR_DIR_NAME', 'vendor');
         }
         /** @var string 'CSS_DIR' */
-        \define('CSS_DIR',       ASSETS_DIR . '/' . CSS_DIR_NAME);
+        define('CSS_DIR',       ASSETS_DIR . '/' . CSS_DIR_NAME);
         /** @var string 'FILES_DIR' */
-        \define('FILES_DIR',     ASSETS_DIR . '/' . FILES_DIR_NAME);
+        define('FILES_DIR',     ASSETS_DIR . '/' . FILES_DIR_NAME);
         /** @var string 'FONTS_DIR' */
-        \define('FONTS_DIR',     ASSETS_DIR . '/' . FONTS_DIR_NAME);
+        define('FONTS_DIR',     ASSETS_DIR . '/' . FONTS_DIR_NAME);
         /** @var string 'HTML_DIR' */
-        \define('HTML_DIR',      ASSETS_DIR . '/' . HTML_DIR_NAME);
+        define('HTML_DIR',      ASSETS_DIR . '/' . HTML_DIR_NAME);
         /** @var string 'IMAGES_DIR' */
-        \define('IMAGES_DIR',    ASSETS_DIR . '/' . IMAGES_DIR_NAME);
+        define('IMAGES_DIR',    ASSETS_DIR . '/' . IMAGES_DIR_NAME);
         /** @var string 'JS_DIR' */
-        \define('JS_DIR',        ASSETS_DIR . '/' . JS_DIR_NAME);
+        define('JS_DIR',        ASSETS_DIR . '/' . JS_DIR_NAME);
         /** @var string 'SCSS_DIR' */
-        \define('SCSS_DIR',      ASSETS_DIR . '/' . SCSS_DIR_NAME);
+        define('SCSS_DIR',      ASSETS_DIR . '/' . SCSS_DIR_NAME);
         /** @var string 'VENDOR_ASSETS' */
-        \define('VENDOR_ASSETS', ASSETS_DIR . '/' . VENDOR_DIR_NAME);
+        define('VENDOR_ASSETS', ASSETS_DIR . '/' . VENDOR_DIR_NAME);
         /** @var string 'CSS_PATH' */
-        \define('CSS_PATH',    PUBLIC_PATH . CSS_DIR);
+        define('CSS_PATH',    PUBLIC_PATH . CSS_DIR);
         /** @var string 'FILES_PATH' */
-        \define('FILES_PATH',  PUBLIC_PATH . FILES_DIR);
+        define('FILES_PATH',  PUBLIC_PATH . FILES_DIR);
         /** @var string 'FONTS_PATH' */
-        \define('FONTS_PATH',  PUBLIC_PATH . FONTS_DIR);
+        define('FONTS_PATH',  PUBLIC_PATH . FONTS_DIR);
         /** @var string 'HTML_PATH' */
-        \define('HTML_PATH',   PUBLIC_PATH . HTML_DIR);
+        define('HTML_PATH',   PUBLIC_PATH . HTML_DIR);
         /** @var string 'IMAGES_PATH' */
-        \define('IMAGES_PATH', PUBLIC_PATH . IMAGES_DIR);
+        define('IMAGES_PATH', PUBLIC_PATH . IMAGES_DIR);
         /** @var string 'JS_PATH' */
-        \define('JS_PATH',     PUBLIC_PATH . JS_DIR);
+        define('JS_PATH',     PUBLIC_PATH . JS_DIR);
         /** @var string 'SCSS_PATH' */
-        \define('SCSS_PATH',   PUBLIC_PATH . SCSS_DIR);
-        if (\defined('THUMBS_DIR_NAME')) {
+        define('SCSS_PATH',   PUBLIC_PATH . SCSS_DIR);
+        if (defined('THUMBS_DIR_NAME')) {
             /** @var string 'THUMBS_DIR' */
-            \define('THUMBS_DIR', IMAGES_DIR . '/' . THUMBS_DIR_NAME);
+            define('THUMBS_DIR', IMAGES_DIR . '/' . THUMBS_DIR_NAME);
             /** @var string 'THUMBS_PATH' */
-            \define('THUMBS_PATH', PUBLIC_PATH . THUMBS_DIR);
+            define('THUMBS_PATH', PUBLIC_PATH . THUMBS_DIR);
 
         }
-        if (\defined('STAFF_DIR_NAME')) {
+        if (defined('STAFF_DIR_NAME')) {
             /** @var string 'STAFF_DIR' */
-            \define('STAFF_DIR', IMAGES_DIR . '/' . STAFF_DIR_NAME);
+            define('STAFF_DIR', IMAGES_DIR . '/' . STAFF_DIR_NAME);
             /** @var string 'STAFF_PATH' */
-            \define('STAFF_PATH', PUBLIC_PATH . STAFF_DIR);
+            define('STAFF_PATH', PUBLIC_PATH . STAFF_DIR);
 
         }
     }
@@ -389,22 +391,30 @@ class ConstantsCreator
             foreach ($a_results as $a_record) {
                 $twig_prefix = $a_record['tp_prefix'];
                 $const_name = strtoupper($a_record['tp_prefix']) . 'TWIG_PREFIX';
-                if (!\defined($const_name)) {
+                if (!defined($const_name)) {
                     /** @var string $const_name */
-                    \define($const_name, $twig_prefix);
+                    define($const_name, $twig_prefix);
                 }
                 if ($a_record['tp_default'] === 'true') {
                     $default_twig_prefix = $twig_prefix;
                 }
             }
         }
-        if (!\defined('TWIG_PREFIX')) { // left for legacy reasons
+        if (!defined('TWIG_PREFIX')) { // left for legacy reasons
             /** @var string 'TWIG_PREFIX' */
-            \define('TWIG_PREFIX', $default_twig_prefix);
+            define('TWIG_PREFIX', $default_twig_prefix);
         }
-        if (!\defined('LIB_TWIG_PREFIX')) {
+        if (!defined('SITE_PREFIX')) { // left for legacy reasons
+            /** @var string 'SITE_PREFIX' */
+            define('SITE_PREFIX', $default_twig_prefix);
+        }
+        if (!defined('SITE_TWIG_PREFIX')) { // left for legacy reasons
+            /** @var string 'SITE_TWIG_PREFIX' */
+            define('SITE_TWIG_PREFIX', $default_twig_prefix);
+        }
+        if (!defined('LIB_TWIG_PREFIX')) {
             /** @var string 'LIB_TWIG_PREFIX' */
-            \define('LIB_TWIG_PREFIX', 'lib_');
+            define('LIB_TWIG_PREFIX', 'lib_');
         }
     }
 

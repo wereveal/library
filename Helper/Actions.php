@@ -13,16 +13,16 @@ use Ritc\Library\Traits\LogitTraits;
  *          or from a form element with a few select id names
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.2.7
- * @date    2015-01-27 15:15:06
+ * @version v3.0.0
+ * @date    2019-03-28 13:57:10
  * @change_log
- * - 2.2.7 - match refactoring of Strings and Arrays to static methods  - 01/27/2015 wer
- *
- * - 2.2.6 - moved file into Helper area                                - 11/15/2014 wer
- * - 2.2.5 - changed to implment the changes in Base class              - 09/23/2014 wer
- * - 2.2.4 - changed to match namespace change                          - 12/19/2013 wer
+ * - 3.0.0 - bug fixes and change version to match better semantic versioning   - 2019-03-28 wer
+ * - 2.2.7 - match refactoring of Strings and Arrays to static methods          - 01/27/2015 wer
+ * - 2.2.6 - moved file into Helper area                                        - 11/15/2014 wer
+ * - 2.2.5 - changed to implment the changes in Base class                      - 09/23/2014 wer
+ * - 2.2.4 - changed to match namespace change                                  - 12/19/2013 wer
  * - 2.2.3 - Changed to namespace reorge
- * - 2.2.2 - changed to new namespace                                   - 03/27/2013 wer
+ * - 2.2.2 - changed to new namespace                                           - 03/27/2013 wer
  * - 2.2.1 - added a bit more sanitation to uri actions,
  *           renamed action to form_action to be clearer what it was
  * - 2.2.0 - refactored to be closer to FIG standards
@@ -38,8 +38,8 @@ class Actions
     protected $a_uri_actions;
     /** @var string */
     protected $form_action;
-    /** @var bool */
-    protected $uri_no_get;
+    /** @var string */
+    protected $uri_no_get = '';
     /** @var string */
     protected $url_path;
 
@@ -76,10 +76,7 @@ class Actions
         if ($key_name === '') {
             return $this->a_clean_post;
         }
-        if (isset($this->a_clean_post[$key_name])) {
-            return $this->a_clean_post[$key_name];
-        }
-        return [];
+        return $this->a_clean_post[$key_name] ?? [];
     }
 
     /**
@@ -105,7 +102,7 @@ class Actions
     {
         /* returns the full path where a file is located */
         $a_file_path = explode('/', __FILE__);
-        $the_count = \count($a_file_path);
+        $the_count = count($a_file_path);
         $the_output = '/';
         for ($i = 0; $i<$the_count-1; $i++) {
             if ($a_file_path[$i] !== '') {
@@ -123,7 +120,7 @@ class Actions
     {
         if (!empty($array)) {
             foreach ($array as $key => $value) {
-                $x = \strlen($key) - 2;
+                $x = strlen($key) - 2;
                 if (substr($key, $x, 2) === '_x') {
                     return substr($key, 0, $x);
                 }
@@ -159,10 +156,10 @@ class Actions
         $x_action = '';
         $y_action = '';
         foreach ($a_clean_post as $key => $value) {
-            if (substr($key, \strlen($key) - 2) === '_x') {
+            if (substr($key, strlen($key) - 2) === '_x') {
                 $x_action = substr($key, 0, strpos($key, '_x'));
             }
-            elseif (substr($key, \strlen($key) - 2) === '_y') {
+            elseif (substr($key, strlen($key) - 2) === '_y') {
                 $y_action = substr($key, 0, strpos($key, '_y'));
             }
         }
@@ -193,7 +190,7 @@ class Actions
      */
     public function setCleanPost(array $array = array(), array $a_allowed_keys = array()):bool
     {
-        if (\count($array) === 0) {
+        if (count($array) === 0) {
             $this->a_clean_post = array();
             return true;
         }
@@ -226,16 +223,14 @@ class Actions
     {
         if ($request_uri === '') {
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */
-            $request_uri = $_SERVER['REQUEST_URI'];
+            $request_uri = $_SERVER['REQUEST_URI'] ?? '';
         }
-        $this->logIt('The pre-clean uri is: ' . $request_uri, LOG_OFF, __METHOD__);
         if (strpos($request_uri, '?') !== false) {
             $this->uri_no_get = substr($request_uri, 0, strpos($request_uri, '?'));
         }
         else {
             $this->uri_no_get = $request_uri;
         }
-        $this->logIt('The clean uri is: ' . $this->uri_no_get, LOG_OFF, __METHOD__);
     }
 
     /**
@@ -257,7 +252,7 @@ class Actions
             }
         }
         $uri_parts = array_merge($uri_parts);
-        $uri_count = \count($uri_parts);
+        $uri_count = count($uri_parts);
         if ($uri_count > 0) {
             $array_part = 0;
             for ($x=1; $x<=$uri_count; $x++) {
@@ -284,7 +279,7 @@ class Actions
     {
         $uri = ($uri === '') ? $this->uri_no_get : $uri;
         $a_file_path = explode('/', $uri);
-        $the_count = \count($a_file_path);
+        $the_count = count($a_file_path);
         $the_output = '/';
         for ($i=0; $i<$the_count-1; $i++) {
             if ($a_file_path[$i] !== '' && (strpos($a_file_path[$i], '.php') !== false))  {

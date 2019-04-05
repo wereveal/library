@@ -45,13 +45,13 @@ class PageView
 {
     use LogitTraits, ConfigViewTraits;
 
-    /** @var \Ritc\Library\Models\PageComplexModel */
+    /** @var PageComplexModel */
     private $o_model;
 
     /**
      * PageView constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      * @throws ViewException
      */
     public function __construct(Di $o_di)
@@ -483,14 +483,14 @@ class PageView
           $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_twig_values = $this->createDefaultTwigValues();
-        $a_values = array(
+        $a_values = [
             'what'         => 'Page ',
             'name'         => $a_page['page_title'],
             'where'        => 'pages',
             'btn_value'    => 'Page',
             'hidden_name'  => 'page_id',
-            'hidden_value' => $a_page['page_id'],
-        );
+            'hidden_value' => $a_page['page_id']
+        ];
         $a_twig_values = array_merge($a_twig_values, $a_values);
         $message = 'Twig Values: ' . var_export($a_twig_values, TRUE);
         $this->logIt($message, LOG_OFF, $meth . __LINE__);

@@ -128,7 +128,7 @@ class BlocksController implements ConfigControllerInterface
             'form_action'  => '/manager/config/blocks/',
             'btn_value'    => 'Block',
             'hidden_name'  => 'b_id',
-            'hidden_value' => $this->a_post['blocks']['b_id'],
+            'hidden_value' => $this->a_post['blocks']['b_id']
         ];
         $a_options = [
             'tpl'      => 'verify_delete',

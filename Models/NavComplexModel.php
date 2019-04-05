@@ -34,11 +34,11 @@ class NavComplexModel
 {
     use LogitTraits, DbUtilityTraits;
 
-    /** @var \Ritc\Library\Services\Di $o_di */
+    /** @var Di $o_di */
     private $o_di;
     /** @var NavigationModel $o_nav */
     private $o_nav;
-    /** @var \Ritc\Library\Models\NavgroupsModel $o_ng */
+    /** @var NavgroupsModel $o_ng */
     private $o_ng;
     /** @var NavNgMapModel $o_nnm */
     private $o_nnm;
@@ -50,7 +50,7 @@ class NavComplexModel
     /**
      * NavAllModel constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -108,9 +108,10 @@ class NavComplexModel
 
     /**
      * Creates the array used to build a nav
+     *
      * @param int $ng_id
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function createNavArray($ng_id = -1):array
     {
@@ -213,7 +214,7 @@ class NavComplexModel
      *
      * @param int $ng_id Optional, will use the default navgroup if not provided.
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function getNavList($ng_id = -1):array
     {
@@ -243,7 +244,7 @@ class NavComplexModel
      * Gets all the navigation records with related values.
      *
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function getNavListAll():array
     {
@@ -286,7 +287,7 @@ class NavComplexModel
      *
      * @param string $navgroup_name Optional, will use default navgroup if not supplied.
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function getNavListByName($navgroup_name = '')
     {
@@ -317,7 +318,7 @@ class NavComplexModel
      * @param int $parent_id Required. Parent id of the navigation record.
      * @param int $ng_id     Required. Id of the navigation group it belongs in.
      * @return bool|array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function getNavListByParent($parent_id = -1, $ng_id = -1)
     {
@@ -352,7 +353,7 @@ class NavComplexModel
      *
      * @param int $nav_id
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function getNavRecord($nav_id = -1)
     {
@@ -489,7 +490,7 @@ class NavComplexModel
      *
      * @param int $ng_id
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function getTopLevelNavList($ng_id = -1)
     {
@@ -626,7 +627,7 @@ class NavComplexModel
      *
      * @param array $a_post
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function save(array $a_post = []):bool
     {

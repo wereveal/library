@@ -28,13 +28,13 @@ class PageComplexModel
 
     /** @var ContentComplexModel  */
     private $o_content;
-    /** @var \Ritc\Library\Models\PageModel  */
+    /** @var PageModel */
     private $o_page;
     /** @var PageBlocksMapModel  */
     private $o_pbm;
-    /** @var \Ritc\Library\Models\TwigComplexModel  */
+    /** @var TwigComplexModel */
     private $o_tpls;
-    /** @var \Ritc\Library\Models\UrlsModel  */
+    /** @var UrlsModel */
     private $o_urls;
     /** @var string  */
     private $select_sql = '';
@@ -42,8 +42,8 @@ class PageComplexModel
     /**
      * PageComplexModel constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @param Di $o_di
+     * @throws ModelException
      */
     public function __construct(Di $o_di)
     {
@@ -102,7 +102,7 @@ class PageComplexModel
      * @param array $a_search_parameters Optional, defaults to ['order_by' => 'page_id ASC', 'search_type' => 'AND']
      *                                   Note that other values are ignored.
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readPageValues(array $a_search_for = [], array $a_search_parameters = [])
     {
@@ -117,7 +117,7 @@ class PageComplexModel
         }
         $sql_where = '';
         foreach ($a_search_for as $key => $value) {
-            if (\in_array($key, $a_allowed_keys, false)) {
+            if (in_array($key, $a_allowed_keys, false)) {
                 $search_for = $key[0] . '.' . $key;
                 $placeholder = ':' . $key;
                 $sql_where .= $sql_where === ''
@@ -139,7 +139,7 @@ class PageComplexModel
      *
      * @param int $url_id Required
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readPageValuesByUrlId($url_id = -1)
     {
@@ -193,7 +193,7 @@ class PageComplexModel
      *
      * @param string $url_text Required
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readPageValuesByUrlText($url_text = '')
     {

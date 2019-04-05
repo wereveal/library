@@ -1,6 +1,6 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
-    <div class="container">
+    <div class="container container-main">
         <div class="row list-header d-none d-lg-flex sticky-top">
             <div class="col-lg-3">Name</div>
             <div class="col-lg-5">Value</div>
@@ -20,11 +20,11 @@
             </div>
             <div class="col-12 col-lg-2">
                 {% set cb_values = {'id':'constant0[const_immutable]','name':'constant[const_immutable]','value':'true','checked':'','label':'Immutable'} %}
-                {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+                {{ include(lib_elements ~ 'checkbox.twig', cb_values, with_context = false) }}
             </div>
             <div class="col-12 col-lg-2">
                 <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
-                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
             </div>
         </div>
         </form>
@@ -55,7 +55,7 @@
                     {% set checked = '' %}
                 {% endif %}
                 {% set cb_values = {'id':id_name~'[const_immutable]','name':'constant[const_immutable]','value':'true','checked':checked,'label':'Immutable'} %}
-                {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+                {{ include(lib_elements ~ 'checkbox.twig', cb_values, with_context = false) }}
             {% endif %}
             </div>
             <div class="col-12 col-lg-2">
@@ -63,7 +63,7 @@
                 {% if row.const_immutable != 'true' %}
                 <button type="submit" name="submit" value="verify" class="btn btn-outline-danger btn-xs">Delete</button>
                 {% endif %}
-                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                 <input type="hidden" name="constant[const_id]" value="{{ row.const_id }}" />
             </div>
         </div>
@@ -82,14 +82,14 @@
                 </div>
                 <div class="col-12 col-lg-2">
                     {% set cb_values = {'id':'constant[const_immutable]','name':'constant[const_immutable]','value':'true','checked':'','label':'Immutable'} %}
-                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+                    {{ include(lib_elements ~ 'checkbox.twig', cb_values, with_context = false) }}
                 </div>
                 <div class="col-12 col-lg-2">
                     <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
-                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                 </div>
             </div>
         </form>
     </div>
-    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {{ include(lib_snippets ~ 'instructions.twig') }}
 {% endblock %}

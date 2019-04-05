@@ -1,4 +1,4 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
     <div class="container border border-dark">
         <form action="{{ public_dir }}/manager/config/navigation/" method="post" id="nav-form">
@@ -6,21 +6,21 @@
                 <label class="col-lg-2 d-none d-lg-block col-form-label aright">Nav Group</label>
                 <label class="col-12 d-lg-none col-form-label">Nav Group</label>
                 <div class="col-lg-10">
-                    {% include '@' ~ lib_prefix ~ 'elements/select.twig' with nav.a_ng_select %}
+                    {{ include(lib_elements ~ 'select.twig', nav.a_ng_select) }}
                 </div>
             </div>
             <div class="form-group row margin-bottom-0 pad-bottom-quarter even">
                 <label class="col-lg-2 d-none d-lg-block col-form-label aright">URL</label>
                 <label class="col-12 d-lg-none col-form-label">URL</label>
                 <div class="col-lg-10">
-                    {% include '@' ~ lib_prefix ~ 'elements/select.twig' with nav.a_url_select %}
+                    {{ include(lib_elements ~ 'select.twig', nav.a_url_select) }}
                 </div>
             </div>
             <div class="form-group row margin-bottom-0 pad-bottom-quarter odd">
                 <label class="col-lg-2 d-none d-lg-block col-form-label aright">Parent Nav</label>
                 <label class="col-12 d-lg-none col-form-label">Parent Nav</label>
                 <div class="col-lg-10">
-                    {% include '@' ~ lib_prefix ~ 'elements/select.twig' with nav.a_nav_select %}
+                    {{ include(lib_elements ~ 'select.twig', nav.a_nav_select) }}
                 </div>
             </div>
             <div class="form-group row margin-bottom-0 pad-bottom-quarter even">
@@ -55,7 +55,7 @@
                 <label for="nav_level" class="col-lg-2 d-none d-lg-block col-form-label aright">Nav Level</label>
                 <label for="nav_level" class="col-12 d-lg-none col-form-label">Nav Level</label>
                 <div class="col-lg-10">
-                    {% include '@' ~ lib_prefix ~ 'elements/select.twig' with nav.a_nav_lvl_select %}
+                    {{ include(lib_elements ~ 'select.twig', nav.a_nav_lvl_select) }}
                 </div>
             </div>
             <div class="form-group row margin-bottom-0 pad-bottom-quarter odd">
@@ -67,7 +67,7 @@
             </div>
             <div class="form-group row margin-bottom-0 even">
                 <div class="col-lg-10 offset-lg-2">
-                   {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with nav.nav_active_ckbx %}
+                   {{ include(lib_elements ~ 'checkbox.twig', nav.nav_active_ckbx) }}
                 </div>
             </div>
             <div class="form-group row margin-bottom-0 pad-bottom-quarter odd">
@@ -80,13 +80,13 @@
                     <button type="submit" name="submit" value="verify_delete" class="btn btn-outline-danger btn-xs">Delete</button>
                     {% endif %}
                 {% endif %}
-                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                     <input type="hidden" name="nav_id" id="nav_id" value="{{ nav.nav_id }}">
                 </div>
             </div>
         </form>
     </div>
-    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {{ include(lib_snippets ~ 'instructions.twig') }}
 {% endblock %}
 {% block bottomJs %}
     {{ parent() }}

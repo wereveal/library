@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Services;
 
+use Error;
 use Ritc\Library\Exceptions\ServiceException;
 
 /**
@@ -100,8 +101,8 @@ class Elog
      * Create/use the instance.
      * Elog is a singleton and uses the start method to create/use the instance.
      *
-     * @return \Ritc\Library\Services\Elog - the instance
-     * @throws \Ritc\Library\Exceptions\ServiceException
+     * @return Elog - the instance
+     * @throws ServiceException
      */
     public static function start():Elog
     {
@@ -110,7 +111,7 @@ class Elog
             try {
                 self::$instance = new $c;
             }
-            catch (\Error $e) {
+            catch (Error $e) {
                 throw new ServiceException('Unable to start the service.', 10, $e);
             }
         }
@@ -274,11 +275,7 @@ class Elog
      */
     public function getVar($var_name):string
     {
-        if (isset($this->$var_name)) {
-            return $this->$var_name;
-        }
-
-        return '';
+        return $this->$var_name ?? '';
     }
 
     /**
@@ -306,36 +303,36 @@ class Elog
      */
     private function setElogConstants():void
     {
-        if (!\defined('LOG_OFF'))        {
-            \define('LOG_OFF', 0); }
-        if (!\defined('LOG_PHP'))        {
-            \define('LOG_PHP', 1); }
-        if (!\defined('LOG_BOTH'))       {
-            \define('LOG_BOTH', 2); }
-        if (!\defined('LOG_EMAIL'))      {
-            \define('LOG_EMAIL', 3); }
-        if (!\defined('LOG_ON'))         {
-            \define('LOG_ON', 4); }
-        if (!\defined('LOG_CUSTOM'))     {
-            \define('LOG_CUSTOM', 4); }
-        if (!\defined('LOG_JSON'))       {
-            \define('LOG_JSON', 5); }
-        if (!\defined('LOG_DB'))         {
-            \define('LOG_DB', 6); }
-        if (!\defined('LOG_HTML'))       {
-            \define('LOG_HTML', 7); }
-        if (!\defined('LOG_ALWAYS'))     {
-            \define('LOG_ALWAYS', 8); }
-        if (!\defined('LOG_WARN'))       {
-            \define('LOG_WARN', 9); }
-        if (!\defined('LOG_ERROR'))      {
-            \define('LOG_ERROR', 10); }
-        if (!\defined('LOG_NOTICE'))     {
-            \define('LOG_NOTICE', 11); }
-        if (!\defined('LOG_DEPRECATED')) {
-            \define('LOG_DEPRECATED', 12); }
-        if (!\defined('LOG_PATH'))       {
-            \define('LOG_PATH', BASE_PATH . '/logs'); }
+        if (!defined('LOG_OFF'))        {
+            define('LOG_OFF', 0); }
+        if (!defined('LOG_PHP'))        {
+            define('LOG_PHP', 1); }
+        if (!defined('LOG_BOTH'))       {
+            define('LOG_BOTH', 2); }
+        if (!defined('LOG_EMAIL'))      {
+            define('LOG_EMAIL', 3); }
+        if (!defined('LOG_ON'))         {
+            define('LOG_ON', 4); }
+        if (!defined('LOG_CUSTOM'))     {
+            define('LOG_CUSTOM', 4); }
+        if (!defined('LOG_JSON'))       {
+            define('LOG_JSON', 5); }
+        if (!defined('LOG_DB'))         {
+            define('LOG_DB', 6); }
+        if (!defined('LOG_HTML'))       {
+            define('LOG_HTML', 7); }
+        if (!defined('LOG_ALWAYS'))     {
+            define('LOG_ALWAYS', 8); }
+        if (!defined('LOG_WARN'))       {
+            define('LOG_WARN', 9); }
+        if (!defined('LOG_ERROR'))      {
+            define('LOG_ERROR', 10); }
+        if (!defined('LOG_NOTICE'))     {
+            define('LOG_NOTICE', 11); }
+        if (!defined('LOG_DEPRECATED')) {
+            define('LOG_DEPRECATED', 12); }
+        if (!defined('LOG_PATH'))       {
+            define('LOG_PATH', BASE_PATH . '/logs'); }
     }
 
     /**

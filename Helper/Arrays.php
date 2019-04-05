@@ -54,20 +54,20 @@ class Arrays
     public static function cleanArrayValues(array $a_pairs = [], array $a_allowed_keys = [], $unsafe_php_commands = true, $ent_flag = ENT_QUOTES):array
     {
         $a_clean = [];
-        if (\count($a_pairs) === 0) {
+        if (count($a_pairs) === 0) {
             return $a_clean;
         }
         if ($unsafe_php_commands === true) {
             $a_pairs = self::stripUnsafePhp($a_pairs);
         }
         foreach ($a_pairs as $key => $value) {
-            if (\is_array($value)) {
+            if (is_array($value)) {
                 $a_clean[$key] = self::cleanArrayValues($value);
             }
             else {
                 $value = trim($value);
-                if (\count($a_allowed_keys) >= 1) {
-                    if (\in_array($key, $a_allowed_keys)) {
+                if (count($a_allowed_keys) >= 1) {
+                    if (in_array($key, $a_allowed_keys, false)) {
                         $a_clean[$key] = htmlentities($value, $ent_flag);
                     }
                 }
@@ -143,7 +143,7 @@ class Arrays
             return false;
         }
         foreach ($a_expected_values as $key => $value) {
-            if (\is_array($value)) {
+            if (is_array($value)) {
                 $results = self::compareArrays($value, $a_check_values[$key]);
                 if ($results === false) {
                     return false;
@@ -190,11 +190,11 @@ class Arrays
     public static function decodeEntities(array $a_pairs = [], $ent_flag = ENT_QUOTES):array
     {
         $a_clean = [];
-        if (\count($a_pairs) === 0) {
+        if (count($a_pairs) === 0) {
             return $a_clean;
         }
         foreach ($a_pairs as $key => $value) {
-            if (\is_array($value)) {
+            if (is_array($value)) {
                 $a_clean[$key] = self::decodeEntities($value, $ent_flag);
             }
             else {
@@ -219,7 +219,7 @@ class Arrays
             return $a_pairs;
         }
         foreach ($a_pairs as $key => $value) {
-            if (\is_array($value)) {
+            if (is_array($value)) {
                 $a_pairs[$key] = self::encodeValues($value, $sanitize_flags);
             }
             else {
@@ -298,7 +298,7 @@ class Arrays
      */
     public static function hasRequiredKeys(array $a_pairs = [], array $a_required_keys = []):bool
     {
-        if (\count($a_required_keys) === 0 || \count($a_pairs) === 0) {
+        if (count($a_required_keys) === 0 || count($a_pairs) === 0) {
             return false;
         }
         if (self::isArrayOfAssocArrays($a_pairs)) {
@@ -346,7 +346,7 @@ class Arrays
                 return true;
             }
             foreach ($a_pairs as $key => $value) {
-                if (\is_array($value)) {
+                if (is_array($value)) {
                     $results = self::hasBlankValues($value, $a_keys_to_check);
                     if ($results === true) {
                         return true;
@@ -354,7 +354,7 @@ class Arrays
                 }
                 elseif ($value === '') {
                     if ($a_keys_to_check !== []) {
-                        if (\in_array($key, $a_keys_to_check)) {
+                        if (in_array($key, $a_keys_to_check, false)) {
                             return true;
                         }
                     }
@@ -376,7 +376,7 @@ class Arrays
      * @param bool   $strict     Optional.
      * @return bool
      */
-    public static function inAssocArrayRecursive($key_name = '', $needle = '', array $a_haystack, $strict = false):bool
+    public static function inAssocArrayRecursive(string $key_name = '', string $needle = '', array $a_haystack = [], bool $strict = false):bool
     {
         if ($key_name === '' || $needle === '' || $a_haystack === []) {
             return false;
@@ -385,7 +385,7 @@ class Arrays
             return false;
         }
         foreach ($a_haystack as $key => $item) {
-            if (\is_array($item)) {
+            if (is_array($item)) {
                 $inner_key = self::inAssocArrayRecursive($key_name, $needle, $item, $strict);
                 if ($inner_key !== false) {
                     return true;
@@ -414,13 +414,13 @@ class Arrays
      * @param bool   $strict     Optional.
      * @return mixed|string|int|bool key of the found or false
      */
-    public static function inArrayRecursive($needle = '', array $a_haystack, $strict = false)
+    public static function inArrayRecursive(string $needle = '', array $a_haystack = [], bool $strict = false)
     {
         if ($needle === '' || $a_haystack === []) {
             return false;
         }
         foreach ($a_haystack as $key => $item) {
-            if (\is_array($item)) {
+            if (is_array($item)) {
                 $inner_key = self::inArrayRecursive($needle, $item, $strict);
                 if ($inner_key !== false) {
                     return $key . '.' . $inner_key;
@@ -447,11 +447,11 @@ class Arrays
     public static function isAssocArray($a_pairs = []):bool
     {
         return (
-            \is_array($a_pairs)
+            is_array($a_pairs)
             &&
-            \count($a_pairs) !== 0
+            count($a_pairs) !== 0
             &&
-            \count(array_diff_key($a_pairs, array_keys(array_keys($a_pairs)))) === \count($a_pairs)
+            count(array_diff_key($a_pairs, array_keys(array_keys($a_pairs)))) === count($a_pairs)
         );
     }
 
@@ -463,7 +463,7 @@ class Arrays
      */
     public static function isArrayOfAssocArrays(array $a_arrays = []):bool
     {
-        if (!\is_array($a_arrays) || empty($a_arrays)) {
+        if (!is_array($a_arrays) || empty($a_arrays)) {
             return false;
         }
         foreach ($a_arrays as $a_array) {
@@ -523,7 +523,7 @@ class Arrays
      *                                                 found in allowed_keys.
      * @return array
      */
-    public static function removeBlankPairs(array $a_pairs = [], array $a_allowed_keys = [], $strict = true):array
+    public static function removeBlankPairs(array $a_pairs = [], array $a_allowed_keys = [], bool $strict = true):array
     {
         if ($a_pairs === [] || (empty($a_allowed_keys) && $strict)) {
             return [];
@@ -563,11 +563,11 @@ class Arrays
     public static function removeSlashes(array $a_pairs = []):array
     {
         $a_stripped = [];
-        if (\count($a_pairs) === 0) {
+        if (count($a_pairs) === 0) {
             return $a_stripped;
         }
         foreach ($a_pairs as $key => $value) {
-            if (\is_array($value)) {
+            if (is_array($value)) {
                 $a_stripped[$key] = self::removeSlashes($value);
             }
             else {
@@ -590,7 +590,7 @@ class Arrays
     {
         if ($a_pairs === [] || $a_allowed_keys === []) { return []; }
         foreach ($a_pairs as $key => $value) {
-            if (!\in_array($key, $a_allowed_keys)) {
+            if (!in_array($key, $a_allowed_keys, false)) {
                 unset($a_pairs[$key]);
             }
         }
@@ -686,7 +686,7 @@ class Arrays
         ];
 
         foreach ($a_pairs as $key => $value) {
-            if (\is_array($value)) {
+            if (is_array($value)) {
                 $a_pairs[$key] = self::stripSQL($value);
             }
             else {
@@ -704,20 +704,20 @@ class Arrays
      * @param string $allowable_tags a string with allowed tags (see php strip_tags())
      * @return array $a_clean
      */
-    public static function stripTags(array $a_pairs = [], array $a_allowed_keys = [], $allowable_tags = ''):array
+    public static function stripTags(array $a_pairs = [], array $a_allowed_keys = [], string $allowable_tags = ''):array
     {
         $a_clean = [];
-        if (\count($a_pairs) === 0) {
+        if (count($a_pairs) === 0) {
             return $a_clean;
         }
         foreach ($a_pairs as $key => $value) {
-            if (\is_array($value)) {
+            if (is_array($value)) {
                 $a_clean[$key] = self::stripTags($value, $a_allowed_keys, $allowable_tags);
             }
             else {
                 $value = trim($value);
-                if (\count($a_allowed_keys) >= 1) {
-                    if (!\in_array($key, $a_allowed_keys)) {
+                if (count($a_allowed_keys) >= 1) {
+                    if (!in_array($key, $a_allowed_keys, false)) {
                         $a_clean[$key] = strip_tags($value, $allowable_tags);
                     }
                 }
@@ -751,7 +751,7 @@ class Arrays
         ];
         $a_return_this = [];
         foreach ($a_pairs as $key => $value) {
-            if (\is_array($value)) {
+            if (is_array($value)) {
                 $a_return_this[$key] = self::stripUnsafePhp($value);
             }
             else {

@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Models;
 
+use Exception;
 use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
@@ -34,7 +35,7 @@ class PeopleModel extends ModelAbstract
 {
     /**
      * PeopleModel constructor.
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -65,11 +66,11 @@ class PeopleModel extends ModelAbstract
      *
      * @param string|int|array $login_id
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readByLoginId($login_id = ''):?array
     {
-        if (\is_array($login_id)) {
+        if (is_array($login_id)) {
             $a_search_for = [];
             foreach ($login_id as $id) {
                 if ($id === '') {
@@ -97,7 +98,7 @@ class PeopleModel extends ModelAbstract
      *
      * @param string $login_id required
      * @return int $people_id
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function getPeopleId($login_id = ''):int
     {
@@ -121,7 +122,7 @@ class PeopleModel extends ModelAbstract
      *
      * @param int $people_id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function incrementBadLoginCount($people_id = -1):?bool
     {
@@ -151,7 +152,7 @@ class PeopleModel extends ModelAbstract
      *
      * @param int $people_id required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function incrementBadLoginTimestamp($people_id = -1):?bool
     {
@@ -241,7 +242,7 @@ class PeopleModel extends ModelAbstract
      *
      * @param int|string $user either user id or user name
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readPeopleRecord($user = ''):?array
     {
@@ -256,7 +257,7 @@ class PeopleModel extends ModelAbstract
         }
         try {
             $a_records = $this->read($a_search_by);
-            if (isset($a_records[0]) && \is_array($a_records[0])) {
+            if (isset($a_records[0]) && is_array($a_records[0])) {
                 return $a_records[0];
             }
             return [];
@@ -271,7 +272,7 @@ class PeopleModel extends ModelAbstract
      *
      * @param int $people_id required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function resetBadLoginCount($people_id = -1):?bool
     {
@@ -295,7 +296,7 @@ class PeopleModel extends ModelAbstract
      *
      * @param int $people_id required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function resetBadLoginTimestamp($people_id = -1):?bool
     {
@@ -319,7 +320,7 @@ class PeopleModel extends ModelAbstract
      *
      * @param int $people_id required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function setBadLoginTimestamp($people_id = -1):?bool
     {
@@ -343,7 +344,7 @@ class PeopleModel extends ModelAbstract
      *
      * @param int $people_id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function setLoggedIn($people_id = -1):?bool
     {
@@ -368,7 +369,7 @@ class PeopleModel extends ModelAbstract
      *
      * @param int $people_id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function setLoggedOut($people_id = -1):?bool
     {
@@ -393,7 +394,7 @@ class PeopleModel extends ModelAbstract
      * @param int    $people_id required
      * @param string $password  required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function updatePassword($people_id = -1, $password = ''):?bool
     {
@@ -418,7 +419,7 @@ class PeopleModel extends ModelAbstract
      * @param int    $people_id required id of a user
      * @param string $is_active optional defaults to inactive (false)
      * @return bool success or failure
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function updateActive($people_id = -1, $is_active = 'false'):?bool
     {
@@ -461,7 +462,7 @@ class PeopleModel extends ModelAbstract
             try {
                 $rand = random_int(0, 99);
             }
-            catch (\Exception $e) {
+            catch (Exception $e) {
                 $rand = 1;
             }
             $short_name = $this->createShortName(substr($short_name, 0, 6) . $rand);
@@ -619,7 +620,7 @@ class PeopleModel extends ModelAbstract
                     }
                 }
             }
-            if (\count($a_person) < 2) {
+            if (count($a_person) < 2) {
                 return 'nothing-to-update';
             }
         }
@@ -660,7 +661,7 @@ class PeopleModel extends ModelAbstract
         }
         $pass_info = password_get_info($password);
         if ($pass_info['algo'] === 0) {
-            if (\defined('PASSWORD_ARGON2I')) {
+            if (defined('PASSWORD_ARGON2I')) {
                 $password = password_hash($password, PASSWORD_ARGON2I);
             }
             else {

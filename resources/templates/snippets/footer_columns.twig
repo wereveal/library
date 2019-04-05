@@ -1,0 +1,34 @@
+        {% if a_shared.footer_left.c_content or a_shared.footer_middle.c_content or a_shared.footer_right.c_content %}
+        <div class="row">
+        {% if a_shared.footer_left.c_content %}
+            <div class="col">
+            {% set contentValues = {
+                'ctype': a_shared.footer_left.c_type,
+                'content': a_shared.footer_left.c_content
+            }
+            %}
+            {{ include(lib_snippets ~ 'by_content_type.twig', contentValues, with_context = false) }}
+            </div>
+        {% endif %}
+        {% if a_shared.footer_middle.c_content %}
+            <div class="col">
+                {% set contentValues = {
+                    'ctype': a_shared.footer_middle.c_type,
+                    'content': a_shared.footer_middle.c_content
+                }
+                %}
+                {{ include(lib_snippets ~ 'by_content_type.twig', contentValues, with_context = false) }}
+            </div>
+        {% endif %}
+        {% if a_shared.footer_right.c_content %}
+            <div class="col">
+                {% set contentValues = {
+                    'ctype': a_shared.footer_right.c_type,
+                    'content': a_shared.footer_right.c_content
+                }
+                %}
+                {{ include(lib_snippets ~ 'by_content_type.twig', contentValues, with_context = false) }}
+            </div>
+        {% endif %}
+        </div>
+        {% endif %}

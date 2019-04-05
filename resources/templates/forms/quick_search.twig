@@ -1,7 +1,9 @@
 <form action="/search/" method="post" id="quick-search">
     <fieldset class="search-set">
         <legend>Quick Search</legend>
-        <input type="text" name="searchTerms" value="{{ form.searchForText }}" /> {{ form.helpicon }}
+        <label>
+            <input type="text" name="searchTerms" value="{{ form.searchForText }}" />
+        </label> {{ form.helpicon }}
         <button type="submit" name="submit" class="btn medium {{ form.buttonColor }}" value="quick-search">{{ form.buttonText }}</button>
     </fieldset>
     <fieldset class="help">

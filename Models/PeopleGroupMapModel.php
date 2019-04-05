@@ -36,7 +36,7 @@ class PeopleGroupMapModel extends ModelAbstract
     /**
      * PeopleGroupMapModel constructor.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -78,7 +78,7 @@ class PeopleGroupMapModel extends ModelAbstract
      *
      * @param int|array $group_id either '1' or ['1', '2', '3']
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function deleteByGroupId($group_id = -1):?bool
     {
@@ -87,7 +87,7 @@ class PeopleGroupMapModel extends ModelAbstract
             WHERE group_id = :group_id
         ";
         $a_values = array();
-        if (\is_array($group_id)) {
+        if (is_array($group_id)) {
             foreach ($group_id as $id) {
                 $a_values[] = [':group_id' => $id];
             }
@@ -108,7 +108,7 @@ class PeopleGroupMapModel extends ModelAbstract
      *
      * @param int|array $people_id required either '1' or ['1', '2', '3']
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function deleteByPeopleId($people_id = -1):?bool
     {
@@ -117,7 +117,7 @@ class PeopleGroupMapModel extends ModelAbstract
             WHERE people_id = :people_id
         ";
         $a_values = [];
-        if (\is_array($people_id)) {
+        if (is_array($people_id)) {
             foreach ($people_id as $id) {
                 $a_values[] = [':people_id' => $id];
             }
@@ -138,7 +138,7 @@ class PeopleGroupMapModel extends ModelAbstract
      *
      * @param int $group_id
      * @return mixed
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readByGroupId($group_id = -1)
     {
@@ -159,7 +159,7 @@ class PeopleGroupMapModel extends ModelAbstract
      *
      * @param int $people_id
      * @return mixed
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readByPeopleId($people_id = -1)
     {

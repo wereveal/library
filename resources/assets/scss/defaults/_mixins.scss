@@ -52,7 +52,7 @@
   }
 }
 
-@mixin contentBlockHead($colorText, $colorBg) {
+@mixin contentBlockHeader($colorText, $colorBg) {
   color: $colorText;
   background-color: $colorBg;
   font-variant: small-caps;
@@ -66,12 +66,13 @@
 @mixin contentBlock($colorScheme: 'gray') {
   $borderSize: 0;
   $borderRadius: .25rem;
-  $colorBg: $gray-medium-dark;
+  $colorBg: $gray-med-dark;
   $colorText: $color-xlight;
+  $padding-size: 0;
 
   @if $colorScheme == 'gray' {
     $borderSize: 1px;
-    $colorBg: $gray-medium-dark;
+    $colorBg: $gray-med-dark;
     $colorText: $color-xlight;
   } @else if $colorScheme == 'green' {
     $borderSize: 1px;
@@ -92,17 +93,24 @@
   } @else if $colorScheme == 'light' {
     $borderSize: 1px;
     $colorBg: $color-xlight;
-    $colorText: $gray-medium-dark;
+    $colorText: $gray-med-dark;
   } @else if $colorScheme == 'dark' {
     $borderSize: 1px;
-    $colorBg: $gray-medium-dark;
+    $colorBg: $gray-med-dark;
     $colorText: $color-xlight;
+  } @else if $colorScheme == 'footer' {
+    $padding-size: 1rem;
+    $borderRadius: 0;
+    display: flex !important;
+  } @else if $colorScheme == 'header' {
+    $padding-size: 1rem;
+    $borderRadius: 0;
   }
   border: $borderSize solid $colorBg;
   border-radius: $borderRadius;
-  padding: 0;
+  padding: $padding-size;
   h1, h2, h3, h4, h5, h6 {
-    @include contentBlockHead($colorText, $colorBg);
+    @include contentBlockHeader($colorText, $colorBg);
   }
 }
 
@@ -386,16 +394,16 @@
     $important: '';
   }
   background: $blue-xlight $important;
-  border-bottom: 1px solid $blue-medium-dark $important;
+  border-bottom: 1px solid $blue-med-dark $important;
   border-left: 1px solid $blue-dark $important;
-  border-right: 1px solid $blue-medium-dark $important;
+  border-right: 1px solid $blue-med-dark $important;
   border-top: 1px solid $blue-dark $important;
   border-radius: 3px $important;
   @include paddingSize(.375, 'tb', 'true');
   @include paddingSize(.5, 'left', 'true');
 }
 
-@mixin headerRowColors($color: $color-white, $bg-color: $gray-medium-dark, $force: true) {
+@mixin headerRowColors($color: $color-white, $bg-color: $gray-med-dark, $force: true) {
   $important: '';
   @if $force {
     $important: !important;

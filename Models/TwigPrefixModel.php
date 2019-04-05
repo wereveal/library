@@ -26,7 +26,7 @@ class TwigPrefixModel extends ModelAbstract
 {
     /**
      * TwigPrefixModel constructor.
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -47,7 +47,7 @@ class TwigPrefixModel extends ModelAbstract
      *
      * @param array $a_values
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function clearDefaultPrefix(array $a_values = []):array
     {
@@ -95,7 +95,7 @@ class TwigPrefixModel extends ModelAbstract
      * Sets the records that are specified as default to not default.
      *
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function updateDefaultPrefixOff():bool
     {

@@ -1,0 +1,155 @@
+{% block start %}<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="{{ charset }}" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <base href="{{ base_url }}">
+{% endblock %}
+{% block title %}
+    <title>{{ title }}</title>
+{% endblock %}
+{% block description %}
+    <meta name="description" content="{{ description }}">
+{% endblock %}
+{% block meta %}{% endblock %}
+{% set fontawesomePro = vendor_dir ~ '/@fortawesome/fontawesome-pro' %}
+{% set fontawesomeFree = vendor_dir ~ '/@fortawesome/fontawesome-free' %}
+{% set fav = 'fas' %}
+{% set falv = 'fas' %}
+{% if fontawesomePro is inPublic %}
+{% set fav = 'far' %}
+{% set falv = 'fal' %}
+{% endif %}
+{% block vendorStylesheets %}
+    {% if fontawesomePro is inPublic %}
+    <link href="{{ fontawesomePro }}/css/svg-with-js.css">
+    <script src="{{ fontawesomePro }}/js/all.min.js"></script>
+    {% elseif fontawesomeFree is inPublic %}
+    <link href="{{ fontawesomeFree }}/css/svg-with-js.min.css">
+    <script src="{{ fontawesomeFree }}/js/all.js"></script>
+    {% endif %}
+{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ css_dir }}/styles_library.css" media="screen">
+{% endblock %}
+{% block icons %}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ images_dir }}/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="{{ images_dir }}/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="{{ images_dir }}/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="{{ images_dir }}/manifest.json">
+    <link rel="mask-icon" href="{{ images_dir }}/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="{{ images_dir }}/favicon.ico">
+    <meta name="msapplication-config" content="{{ images_dir }}/browserconfig.xml">
+{% endblock %}
+{% block vendorJs %}
+    <script src="{{ vendor_dir }}/jquery/dist/jquery.min.js"></script>
+{% endblock %}
+{% block headJs %}{% endblock %}
+{% block headExtra %}{% endblock %}
+{% block endHead %}
+</head>
+{% endblock %}
+{% block bodyStart %}
+<body>
+{% endblock %}
+{% block mainContainer %}
+    <div class="container container-main">
+{% endblock %}
+{% block header %}
+    {% block navbar %}
+        {% if mainNavName is empty %}
+            {% set mainNavName = 'mainNav' %}
+        {% endif %}
+        {{ include(lib_snippets ~ 'navbar.twig') }}
+    {% endblock %}
+    {% if a_content.header %}
+        {% include '@' ~ lib_prefix ~ 'snippets/header.twig' %}
+    {% endif %}
+    {% block otherHeader %}{% endblock %}
+{% endblock %}
+{% block search %}{% endblock %}
+{% block bodyTitle %}
+    {% if body_title %}
+        <h1>{{ body_title }}</h1>
+    {% elseif title %}
+        <h1>{{ title }}</h1>
+    {% endif %}
+{% endblock %}
+{% block message %}
+    {% if a_message.message %}
+        <div class="container container-message">
+            {% include '@' ~ lib_prefix ~ 'snippets/message.twig' %}
+        </div>
+    {% endif %}
+{% endblock %}
+{% block body %}
+        <div class="container">
+            {% if a_content.body %}
+                {% set ctype = a_content.body.c_type %}
+                {% set content = a_content.body.c_content %}
+                {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
+                    {{ content | raw }}
+                {% elseif ctype == 'md' %}
+                    {{ content | md }}
+                {% elseif ctype == 'mde' %}
+                    {{ content | mde }}
+                {% else %}
+                    {{ content | nl2br }}
+                {% endif %}
+            {% endif %}
+        </div>
+{% endblock %}
+{% block footer %}
+        <footer class="container container-footer">
+            {% include '@' ~ lib_prefix ~ 'snippets/footer.twig' %}
+            <p>Copyright &copy;&nbsp;{{ copyright_date }} <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved</p>
+        </footer>
+{% endblock %}
+{% block endMainContainer %}
+    </div>
+{% endblock %}
+{% block debug %}
+    {% if debug_text %}
+        <div class="container">
+            <code class="pre">
+                {{ debug_text }}
+            </code>
+        </div>
+    {% endif %}
+        <p class="font-tiny">Library Base Fixed Tpl</p>
+{% endblock %}
+{% block bottomVendorJs %}
+    <script src="{{ vendor_dir }}/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
+{% block bottomJs %}{% endblock %}
+{% block finally %}
+</body>
+</html>
+{% endblock %}
+{# possible keys in array [
+    'lang',
+    'charset',
+    'base_url',
+    'title',
+    'description',
+    'page_url',
+    'public_dir',
+    'css_dir',
+    'fonts_dir',
+    'images_dir',
+    'js_dir',
+    'vendor_dir',
+    'mainNavName',
+    'a_message',
+    'page_prefix',
+    'a_menus',
+    'body_title',
+    'body_text',
+    'a_content',
+    'copyright_date',
+    'site_url',
+    'rights_holder',
+    'debug_text'
+    ]
+#}

@@ -28,7 +28,7 @@ class GroupsModel extends ModelAbstract
 {
     /**
      * GroupsModel constructor.
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -47,7 +47,7 @@ class GroupsModel extends ModelAbstract
      *
      * @param int|array $group_id
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function deleteWithRelated($group_id = -1):bool
     {
@@ -57,7 +57,7 @@ class GroupsModel extends ModelAbstract
         }
         $o_ugm = new PeopleGroupMapModel($this->o_db);
         $o_people = new PeopleModel($this->o_db);
-        if (\is_array($group_id)) {
+        if (is_array($group_id)) {
             try {
                 $results = $o_ugm->read($group_id);
             }
@@ -126,7 +126,7 @@ class GroupsModel extends ModelAbstract
      *
      * @param string $group_name
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readByName($group_name = '')
     {

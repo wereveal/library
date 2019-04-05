@@ -6,6 +6,7 @@
  */
 namespace Ritc\Library\Controllers;
 
+use ReflectionException;
 use Ritc\Library\Exceptions\ControllerException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
@@ -53,9 +54,9 @@ class LibraryController implements ControllerInterface
         $this->setupManagerController($o_di);
         $this->o_view = new LibraryView($this->o_di);
         $this->setupElog($o_di);
-        if (!\defined('LIB_TWIG_PREFIX')) {
+        if (!defined('LIB_TWIG_PREFIX')) {
             /** @var string LIB_TWIG_PREFIX */
-            \define('LIB_TWIG_PREFIX', 'lib_');
+            define('LIB_TWIG_PREFIX', 'lib_');
         }
     }
 
@@ -134,11 +135,11 @@ class LibraryController implements ControllerInterface
                 default:
                     return $this->o_view->renderLandingPage();
             }
-            if (\is_object($o_c)) {
+            if (is_object($o_c)) {
                 try {
                     return $o_c->route();
                 }
-                catch (\ReflectionException $e) {
+                catch (ReflectionException $e) {
                     $a_message = ViewHelper::errorMessage('Could not find the page requested.');
                     return $this->o_view->renderError($a_message);
                 }

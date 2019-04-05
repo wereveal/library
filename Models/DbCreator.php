@@ -5,7 +5,9 @@
  */
 namespace Ritc\Library\Models;
 
+use PDO;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 
@@ -58,6 +60,8 @@ class DbCreator
     private $a_twig_dirs = [];
     /** @var  array $a_twig_prefix */
     private $a_twig_prefix = [];
+    /** @var array $a_twig_themes */
+    private $a_twig_themes = [];
     /** @var  array $a_twig_tpls */
     private $a_twig_tpls = [];
     /** @var  array $a_urls */
@@ -66,15 +70,16 @@ class DbCreator
     private $db_prefix;
     /** @var string $error_message */
     private $error_message;
-    /** @var \Ritc\Library\Services\DbModel $o_db */
+    /** @var DbModel $o_db */
     private $o_db;
-    /** @var \Ritc\Library\Services\Di $o_di */
-    /** @var \PDO $o_pdo */
+    /** @var Di $o_di */
+    /** @var PDO $o_pdo */
     private $o_pdo;
 
     /**
      * DbCreator constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     *
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -88,6 +93,7 @@ class DbCreator
 
     /**
      * Creates the default tables.
+     *
      * @param array $a_sql
      * @return bool
      */
@@ -98,7 +104,7 @@ class DbCreator
                 $this->error_message = 'sql values not provided.';
                 return false;
             }
-            $a_sql = $this->a_sql;
+            $a_sql = $this->getSql();
         }
         foreach ($a_sql as $sql) {
             $sql = str_replace('{dbPrefix}', $this->db_prefix, $sql);
@@ -117,6 +123,7 @@ class DbCreator
 
     /**
      * Inserts the blocks data into the blocks table;
+     *
      * @param array $a_blocks optional as long as it is set
      *                        in the property a_data['blocks'].
      * @return bool
@@ -146,6 +153,7 @@ class DbCreator
 
     /**
      * Adds the content records to db.
+     *
      * @param array $a_content Optional
      * @needs $this->a_page must be set
      * @return bool
@@ -205,6 +213,7 @@ class DbCreator
 
     /**
      * Inserts the constants data into the constants table;
+     *
      * @param array $a_constants optional as long as it is set
      *                           in the property a_data['constants'].
      * @return bool
@@ -233,6 +242,7 @@ class DbCreator
 
     /**
      * Inserts the groups into the groups data.
+     *
      * @param array $a_groups optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -259,6 +269,7 @@ class DbCreator
 
     /**
      * Inserts the data into the navgroups table.
+     *
      * @param array $a_navgroups optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -313,6 +324,7 @@ class DbCreator
 
     /**
      * Insert values into the navigation table.
+     *
      * @param array $a_navigation optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -390,6 +402,7 @@ class DbCreator
 
     /**
      * Inserts the navigation navgroups map data into its table.
+     *
      * @param array $a_nnm optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -482,6 +495,7 @@ class DbCreator
 
     /**
      * Inserts the page data.
+     *
      * @param array $a_page options, if not provided uses class property a_data['page'].
      * @return bool
      */
@@ -542,6 +556,7 @@ class DbCreator
 
     /**
      * Inserts pbm records.
+     *
      * @param array $a_pbm
      * @return bool
      */
@@ -578,6 +593,7 @@ class DbCreator
 
     /**
      * Inserts the people data into the people table.
+     *
      * @param array $a_people optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -591,7 +607,7 @@ class DbCreator
             $a_people = $this->a_data['people'];
         }
         foreach ($a_people as $key => $a_person) {
-            $a_people[$key]['password'] = \defined('PASSWORD_ARGON2I')
+            $a_people[$key]['password'] = defined('PASSWORD_ARGON2I')
                 ? password_hash($a_person['password'], PASSWORD_ARGON2I)
                 : password_hash($a_person['password'], PASSWORD_DEFAULT);
         }
@@ -609,6 +625,7 @@ class DbCreator
 
     /**
      * Inserts the values into the people_group_map table.
+     *
      * @param array $a_pgm optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -644,6 +661,7 @@ class DbCreator
 
     /**
      * Inserts data into the routes_group_map table.
+     *
      * @param array $a_rgm optional optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -674,6 +692,7 @@ class DbCreator
 
     /**
      * Inserts the data into the routes table.
+     *
      * @param array $a_routes optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -703,6 +722,7 @@ class DbCreator
 
     /**
      * Inserts the twig_dirs data into the table.
+     *
      * @param array $a_twig_dirs optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -762,6 +782,7 @@ class DbCreator
 
     /**
      * Inserts the twig prefixes data into the table.
+     *
      * @param array $a_twig_prefix optional, if not given takes values from class property $a_data.
      * @return bool
      */
@@ -827,6 +848,7 @@ class DbCreator
             $a_twig_tpls = $this->a_data['twig_templates'];
         }
         $a_twig_dirs = $this->a_twig_dirs;
+        $a_twig_themes = $this->a_twig_themes;
         $table_name = $this->db_prefix . 'twig_templates';
         $a_strings = $this->createStrings($a_twig_tpls);
         $sql = "
@@ -847,9 +869,12 @@ class DbCreator
             return false;
         }
         foreach ($a_twig_tpls as $key => $a_record) {
-            $td_id                      = $a_twig_dirs[$a_record['td_id']]['td_id'];
-            $a_twig_tpls[$key]['td_id'] = $td_id;
-            $a_record['td_id']          = $td_id;
+            $td_id                         = $a_twig_dirs[$a_record['td_id']]['td_id'];
+            $theme_id                      = $a_twig_themes[$a_record['theme_id']]['theme_id'];
+            $a_twig_tpls[$key]['td_id']    = $td_id;
+            $a_twig_tpls[$key]['theme_id'] = $theme_id;
+            $a_record['td_id']             = $td_id;
+            $a_record['theme_id']          = $theme_id;
             try {
                 $this->o_db->resetNewIds();
                 $results = $this->o_db->executeInsert($a_record, $o_pdo_stmt, $a_table_info);
@@ -872,7 +897,33 @@ class DbCreator
     }
 
     /**
+     * Inserts the defaults into the twig_themes table.
+     *
+     * @param array $a_themes
+     * @return bool
+     */
+    public function insertTwigThemes(array $a_themes = []):bool
+    {
+        if (empty($a_themes)) {
+            if (empty($this->a_data['twig_themes'])) {
+                $this->error_message = 'Data for twig_dirs not provided.';
+                return false;
+            }
+            $a_themes = $this->a_data['twig_themes'];
+        }
+        $table_name = $this->db_prefix . 'twig_themes';
+        $a_table_info = [
+            'table_name'  => $table_name,
+            'column_name' => 'theme_id'
+        ];
+        $a_twig_themes = $this->genericInsert($a_themes, $a_table_info);
+        $this->a_twig_themes = $a_twig_themes;
+        return true;
+    }
+
+    /**
      * Inserts the URLs into the urls table.
+     *
      * @param array $a_urls
      * @return bool
      */
@@ -899,6 +950,7 @@ class DbCreator
 
     /**
      * Generic Insert method used by the other insert methods.
+     *
      * @param array $a_values_list
      * @param array $a_table_info
      * @return array|bool
@@ -938,6 +990,7 @@ class DbCreator
     ### Utility Methods ###
     /**
      * Creates strings needed for the insert sql.
+     *
      * @param array $a_records
      * @return array
      */
@@ -963,12 +1016,14 @@ class DbCreator
     {
         if (!empty($this->a_install_config['app_twig_prefix'])) {
             $app_twig_prefix = $this->a_install_config['app_twig_prefix'];
-            $master_twig = 'false';
+            $app_theme       = $this->a_install_config['app_theme_name'] ?? 'base_fluid';
+            $master_twig     = 'false';
             if (!empty($this->a_install_config['master_twig'])
               && $this->a_install_config['master_twig'] === 'true'
             ) {
                 $master_twig = 'true';
                 foreach ($this->a_data['twig_prefix'] as $tp_key => $a_tp_values) {
+                    /** @noinspection UnsupportedStringOffsetOperationsInspection */
                     $this->a_data['twig_prefix'][$tp_key]['tp_default'] = 'false';
                 }
             }
@@ -1000,12 +1055,14 @@ class DbCreator
             }
             $a_default_files = $this->a_data['twig_default_files'];
             foreach ($a_default_files as $file) {
-                if (substr($file, -5) === '.twig' && $file !== 'no_file.twig') {
+                if ($file !== 'no_file.twig' && substr($file, -5) === '.twig') {
                     $this_file = substr($file, 0, -5);
                     $tpl_key   = $app_twig_prefix . $this_file;
                     if (!isset($this->a_data['twig_templates'][$tpl_key])) {
+                        /** @noinspection UnsupportedStringOffsetOperationsInspection */
                         $this->a_data['twig_templates'][$tpl_key] = [
                             'td_id'         => $app_twig_prefix . 'pages',
+                            'theme_id'      => $app_theme,
                             'tpl_name'      => $this_file,
                             'tpl_immutable' => 'false'
                         ];
@@ -1020,6 +1077,7 @@ class DbCreator
     ### GET and SET methods ###
     /**
      * Gets the property a_data.
+     *
      * @return array
      */
     public function getData():array
@@ -1029,6 +1087,7 @@ class DbCreator
 
     /**
      * Sets the property a_data.
+     *
      * @param array $a_data
      */
     public function setData(array $a_data = []):void
@@ -1038,6 +1097,7 @@ class DbCreator
 
     /**
      * Gets the property error_message.
+     *
      * @return string
      */
     public function getErrorMessage():string
@@ -1047,6 +1107,7 @@ class DbCreator
 
     /**
      * Sets the property error_message.
+     *
      * @param string $value
      */
     public function setErrorMessage($value = ''):void
@@ -1056,6 +1117,7 @@ class DbCreator
 
     /**
      * Gets the property a_install_config.
+     *
      * @return array
      */
     public function getInstallConfig():array
@@ -1065,6 +1127,7 @@ class DbCreator
 
     /**
      * Sets the property a_install_config.
+     *
      * @param array $a_values
      */
     public function setInstallConfig(array $a_values = []):void
@@ -1074,6 +1137,7 @@ class DbCreator
 
     /**
      * Gets the property a_sql.
+     *
      * @return array
      */
     public function getSql():array
@@ -1083,11 +1147,11 @@ class DbCreator
 
     /**
      * Sets the property a_sql.
+     *
      * @param array $a_sql
      */
     public function setSql(array $a_sql = []):void
     {
         $this->a_sql = $a_sql;
     }
-
 }

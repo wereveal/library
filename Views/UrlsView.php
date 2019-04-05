@@ -27,12 +27,12 @@ class UrlsView
 {
     use LogitTraits, ConfigViewTraits;
 
-    /** @var \Ritc\Library\Models\UrlsModel  */
+    /** @var UrlsModel */
     protected $o_urls_model;
 
     /**
      * UrlsView constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -44,6 +44,7 @@ class UrlsView
 
     /**
      * Renders the list of URLs.
+     *
      * @param array $a_message
      * @return string
      */

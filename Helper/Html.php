@@ -208,7 +208,7 @@ class Html
             $this->logIt('The Template or the array of values was empty', LOG_OFF);
             return false;
         }
-        if (\count($a_values) === 0) {
+        if (count($a_values) === 0) {
             $this->logIt('a_values was an empty array.', LOG_OFF);
             return false;
         }

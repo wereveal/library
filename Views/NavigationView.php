@@ -29,13 +29,13 @@ class NavigationView
 {
     use LogitTraits, ConfigViewTraits;
 
-    /** @var \Ritc\Library\Models\NavComplexModel */
+    /** @var NavComplexModel */
     private $o_nav_complex;
 
     /**
      * NavigationView constructor.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -86,7 +86,6 @@ class NavigationView
      */
     public function renderForm($nav_id = -1):string
     {
-        $meth = __METHOD__ . '.';
         $a_twig_values = $this->createDefaultTwigValues();
         $a_nav = [];
         if ($nav_id === -1) {
@@ -123,8 +122,6 @@ class NavigationView
                 catch (ModelException $e) {
                     $results = [];
                 }
-                $log_message = 'nav results   ' . var_export($results, true);
-                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
                 $a_nav['nav_active_ckbx']            = [];
                 $a_nav['a_url_select']['select']     = [];
                 $a_nav['a_nav_select']['select']     = [];
@@ -164,8 +161,6 @@ class NavigationView
         }
         $a_twig_values['nav'] = $a_nav;
         $a_twig_values['tpl'] = 'navigation_form';
-          $log_message = 'twig values ' . var_export($a_twig_values, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }
@@ -173,7 +168,7 @@ class NavigationView
     /**
      * Creates an array for the twig values to display a select listing the urls.
      *
-     * @param int $url_id      Optional, both $url_id and $navgroup_id need to be set if either is.
+     * @param int $url_id Optional, both $url_id and $navgroup_id need to be set if either is.
      * @param int $navgroup_id Optional, both $url_id and $navgroup_id need to be set if either is.
      * @return array
      */
@@ -266,7 +261,7 @@ class NavigationView
                 'value'       => 0,
                 'label'       => '--Select Parent--',
                 'other_stuph' => (int)$nav_id === -1 ? ' selected' : ''
-            ],
+            ]
         ];
         $a_options[] = [
             'value'       => $nav_id > 0 ? $nav_id : -1,
@@ -406,7 +401,7 @@ class NavigationView
      * @param array $a_values
      * @return array
      */
-    private function createTwigListArray(array $a_values = []):array
+    public function createTwigListArray(array $a_values = []):array
     {
         $a_twig_nav = [];
         foreach ($a_values as $nav) {

@@ -65,7 +65,7 @@ trait ControllerTraits
     /**
      * Does the common stuff that is normally done in the __contruct method.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     protected function setupController(Di $o_di):void
     {
@@ -76,7 +76,7 @@ trait ControllerTraits
     /**
      * Sets the class properties that are objects.
      *
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     protected function setObjects(Di $o_di):void
     {

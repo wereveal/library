@@ -78,7 +78,7 @@ class LibSitemapView implements ViewInterface
             $btn_values = [
                 'form_action' => '/manager/config/sitemap/',
                 'btn_size'    => 'btn-sm',
-                'hidden_name' => 'nav_id',
+                'hidden_name' => 'nav_id'
             ];
             foreach ($a_nav_list as $key => $item) {
                 if (empty($a_available[$item['nav_name']])) {

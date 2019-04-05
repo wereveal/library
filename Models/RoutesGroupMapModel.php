@@ -29,7 +29,7 @@ class RoutesGroupMapModel extends ModelAbstract
     /**
      * RoutesGroupMapModel constructor.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -136,7 +136,7 @@ class RoutesGroupMapModel extends ModelAbstract
      * Legacy method.
      *
      * @return array|bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readAll()
     {
@@ -169,7 +169,7 @@ class RoutesGroupMapModel extends ModelAbstract
      *
      * @param int $route_id Required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function deleteByRouteId($route_id = -1):?bool
     {
@@ -193,7 +193,7 @@ class RoutesGroupMapModel extends ModelAbstract
      *
      * @param int $group_id Required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function deleteByGroupId($group_id = -1):?bool
     {

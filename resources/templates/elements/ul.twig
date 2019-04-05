@@ -1,5 +1,5 @@
 <ul class="{{ ul.class }}"{{ ul.extras }}>
     {% for li in ul.list %}
-        {% include "@lib_elements/li.twig" %}
+        {% include(lib_elements ~ 'li.twig') %}
     {% endfor %}
 </ul>

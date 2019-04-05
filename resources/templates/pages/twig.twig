@@ -1,4 +1,4 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
     <h3 class="font-small-caps-bold">Templates</h3>
     <div class="container container-bordered-square">
@@ -39,7 +39,7 @@
                 <div class="col-lg even">
                     <button type="submit" name="submit" value="new_tpl" class="btn btn-green btn-xs">New</button>
                     <input type="hidden" id="tp_id0" name="tp_id" value="">
-                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                 </div>
             </div>
         </form>
@@ -103,7 +103,7 @@
                 <div class="col-lg {{ class }}">
                     <button type="submit" name="submit" value="update_tpl" class="btn btn-green btn-xs">Update</button>
                     <button type="submit" name="submit" value="verify_delete_tpl" class="btn btn-outline-red btn-xs">Delete</button>
-                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                     <input type="hidden" name="tpl_id" value="{{ tpl.tpl_id }}">
                 </div>
             {% else %}
@@ -165,7 +165,7 @@
                 </div>
                 <div class="col-lg-3 offset-lg-3">
                     <button type="submit" name="submit" value="new_dir" class="btn btn-green btn-xs">New</button>
-                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
 
                 </div>
             </div>
@@ -203,7 +203,7 @@
             </div>
             <div class="col-lg-3 offset-lg-5">
                 <button type="submit" name="submit" value="new_tp" class="btn btn-green btn-xs">New</button>
-                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                 <input type="hidden" name="tp_id" value="">
             </div>
         </div>
@@ -249,14 +249,14 @@
             <div class="col-lg-3 offset-lg-5">
                 <button type="submit" name="submit" value="update_tp" class="btn btn-green btn-xs">Update</button>
                 <button type="submit" name="submit" value="verify_delete_tp" class="btn btn-outline-red btn-xs">Delete</button>
-                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                 <input type="hidden" name="tp_id" value="{{ prefix.tp_id }}">
             </div>
         </div>
         </form>
     {% endfor %}
     </div>
-    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {{ include(lib_snippets ~ 'instructions.twig') }}
 {% endblock %}
 {% block bottomJs %}
     {{ parent() }}

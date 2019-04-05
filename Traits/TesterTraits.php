@@ -5,6 +5,12 @@
  */
 namespace Ritc\Library\Traits;
 
+use Error;
+use Exception;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
+use TypeError;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\LocateFile;
 
@@ -81,7 +87,7 @@ trait TesterTraits
      * Runs tests where method ends in Test.
      * @param bool $return_results optional, defaults to true which also returns test names.
      * @return array
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function runTests($return_results = true):array
     {
@@ -99,9 +105,9 @@ trait TesterTraits
         }
         $ns_class = $this->namespace . '\\' . $class_name;
         $a_test_order = [];
-        if (\count($this->a_test_order) === 0) {
-            $o_ref = new \ReflectionClass($ns_class);
-            $a_methods = $o_ref->getMethods(\ReflectionMethod::IS_PUBLIC);
+        if (count($this->a_test_order) === 0) {
+            $o_ref = new ReflectionClass($ns_class);
+            $a_methods = $o_ref->getMethods(ReflectionMethod::IS_PUBLIC);
             foreach ($a_methods as $a_method) {
                 switch($a_method->name) {
                     case '__construct':
@@ -190,7 +196,7 @@ trait TesterTraits
             $this->namespace = $namespace;
             $a_ns_part = explode('\\', $namespace);
             $short_ns = '';
-            for ($i = 0; $i < \count($a_ns_part) - 1; $i++) {
+            for ($i = 0; $i < count($a_ns_part) - 1; $i++) {
                 $short_ns .= empty($short_ns)
                     ? $a_ns_part[$i]
                     : '\\' . $a_ns_part[$i];
@@ -314,7 +320,7 @@ trait TesterTraits
                 $good_results = false;
             }
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             $this->setSubFailed($test, $subtest);
             $good_results = false;
         }
@@ -395,7 +401,7 @@ trait TesterTraits
                 $good_results = false;
             }
         }
-        catch (\TypeError $e) {
+        catch (TypeError $e) {
             if ($expected_results === false) {
                 $this->setSubPassed($test, $subtest);
             }
@@ -404,7 +410,7 @@ trait TesterTraits
                 $good_results = false;
             }
         }
-        catch (\Exception $e) {
+        catch (Exception $e) {
             if ($expected_results === false) {
                 $this->setSubPassed($test, $subtest);
             }
@@ -413,7 +419,7 @@ trait TesterTraits
                 $good_results = false;
             }
         }
-        catch (\Error $e) {
+        catch (Error $e) {
             if ($expected_results === false) {
                 $this->setSubPassed($test, $subtest);
             }
@@ -667,7 +673,7 @@ trait TesterTraits
     {
         if ($method_name === '' || $test_name === '') { return; }
         $method_name = $this->shortenName($method_name);
-        if (\is_array($this->failed_subtests) === false) {
+        if (is_array($this->failed_subtests) === false) {
             $this->failed_subtests = array();
         }
         if (array_key_exists($method_name, $this->failed_subtests)) {
@@ -736,14 +742,14 @@ trait TesterTraits
      *
      * @param string $method_name required defaults to ''
      * @return bool true or false
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function isPublicMethod($method_name = ''):bool
     {
         if ($method_name === '') {
             return false;
         }
-        $o_ref = new \ReflectionClass(__CLASS__);
+        $o_ref = new ReflectionClass(__CLASS__);
         $o_method = $o_ref->getMethod($method_name);
         return $o_method->isPublic();
     }

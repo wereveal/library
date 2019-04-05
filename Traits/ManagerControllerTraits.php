@@ -84,7 +84,7 @@ trait ManagerControllerTraits
     /**
      * Gets the o_auth property.
      *
-     * @return \Ritc\Library\Helper\AuthHelper
+     * @return AuthHelper
      */
     public function getAuth():AuthHelper
     {

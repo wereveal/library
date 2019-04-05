@@ -5,6 +5,10 @@
  */
 namespace Ritc\Library\Traits;
 
+use ReflectionClass;
+use ReflectionException;
+use ReflectionProperty;
+
 /**
  * A set of visibility methods to keep things protected and private.
  *
@@ -30,18 +34,18 @@ trait VisibilityTraits {
     protected function setPrivateProperties():void
     {
         try {
-            $o_class = new \ReflectionClass(__CLASS__);
+            $o_class = new ReflectionClass(__CLASS__);
         }
-        catch (\ReflectionException $e) {
+        catch (ReflectionException $e) {
             return;
         }
         $this->current_page = $o_class->getFileName();
         $class_properties = get_class_vars(__CLASS__);
         foreach ($class_properties as $property_name => $property_value) {
             try {
-                $o_prop = new \ReflectionProperty(__CLASS__, $property_name);
+                $o_prop = new ReflectionProperty(__CLASS__, $property_name);
             }
-            catch (\ReflectionException $e) {
+            catch (ReflectionException $e) {
                 return;
             }
             if ($o_prop->isPrivate() || $o_prop->isProtected()) {

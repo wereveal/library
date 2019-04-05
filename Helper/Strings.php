@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection NotOptimalRegularExpressionsInspection */
+
 /**
  * Class Strings
  * @package Ritc_Library
@@ -83,7 +84,7 @@ class Strings
     {
         if ($phone_number === '') { return ''; }
         $phone_number = preg_replace('/[^0-9]/', '', $phone_number);
-        $strlen = \strlen($phone_number);
+        $strlen = strlen($phone_number);
 
         switch ( $strlen ) {
             case 7:
@@ -135,7 +136,7 @@ class Strings
      */
     public static function isTrue($input = ''):?bool
     {
-        if (\is_bool($input)) {
+        if (is_bool($input)) {
             return $input;
         }
 
@@ -143,7 +144,7 @@ class Strings
             return false;
         }
 
-        if (\is_string($input)) {
+        if (is_string($input)) {
             $input = strtoupper(trim($input));
             if (ctype_digit($input)) {
                 $input = (int) $input === 0 ? 'false' : 'true';
@@ -163,10 +164,10 @@ class Strings
         elseif (ctype_digit((string) $input)) {
             return ((int)$input !== 0);
         }
-        elseif (\is_array($input)) {
+        elseif (is_array($input)) {
             return false;
         }
-        elseif (\is_object($input)){
+        elseif (is_object($input)){
             return false;
         }
         else {
@@ -346,12 +347,12 @@ class Strings
 
         if ((int) $num_of_words > 0) {
             $string_parts = explode(' ', $string);
-            if ($num_of_chars < 1 && \count($string_parts) <= $num_of_words) {
+            if ($num_of_chars < 1 && count($string_parts) <= $num_of_words) {
                 return $string;
             }
             for ($i = 0; $i < $num_of_words; $i++) {
                 $that_string .= $that_string ?? ' ';
-                if ($num_of_chars > 0 && \strlen($that_string . $string_parts[$i]) > $num_of_chars) {
+                if ($num_of_chars > 0 && strlen($that_string . $string_parts[$i]) > $num_of_chars) {
                     break;
                 }
                 $that_string .= $string_parts[$i];
@@ -414,10 +415,10 @@ class Strings
             $var++;
         }
         if ($var > 26) {
-            $letter = \chr((int)($var/26) + 64) . \chr(($var % 26) + 64);
+            $letter = chr((int)($var/26) + 64) . chr(($var % 26) + 64);
         }
         else {
-            $letter = \chr($var + 64);
+            $letter = chr($var + 64);
         }
         return $letter;
     }
@@ -460,8 +461,6 @@ class Strings
      */
     public static function removeTags($html = ''):string
     {
-        /** @noinspection BadExpressionStatementJS */
-        /** @noinspection JSUnresolvedVariable */
         $search = [
             '@<script[^>]*?>.*?</script>@si', // Strip out javascript
             '@<[\/\!]*?[^<>]*?>@si',          // Strip out HTML tags
@@ -481,8 +480,6 @@ class Strings
      */
     public static function removeTagsWithDecode($string = '', $ent_flag = ENT_QUOTES):string
     {
-        /** @noinspection BadExpressionStatementJS */
-        /** @noinspection JSUnresolvedVariable */
         $search = [
             '@<script[^>]*?>.*?</script>@si', // Strip out javascript
             '@<[\/\!]*?[^<>]*?>@si',          // Strip out HTML tags
@@ -504,11 +501,11 @@ class Strings
             $value = substr($value, 1);
         }
 
-        if (strrpos($value, '/') === \strlen($value) - 1) {
+        if (strrpos($value, '/') === strlen($value) - 1) {
             $value = substr($value, 0, -1);
         }
 
-        if (strpos($value, '/') === 0 || strrpos($value, '/') === \strlen($value) - 1) {
+        if (strpos($value, '/') === 0 || strrpos($value, '/') === strlen($value) - 1) {
             $value = self::trimSlashes($value);
         }
         return $value;

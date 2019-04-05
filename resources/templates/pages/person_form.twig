@@ -1,4 +1,4 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% set cbx_form = '@' ~ lib_prefix ~ 'elements/checkbox.twig' %}
 {% block body %}
     <div class="container container-bordered-square">
@@ -175,7 +175,7 @@
                     {% endif %}
                 </div>
                 <div class="col-lg-9">
-                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                     {% if person.people_id %}
                     <input type="hidden" name="person[people_id]" value="{{ person.people_id }}">
                     {% endif %}
@@ -183,7 +183,7 @@
             </div>
         </form>
     </div>
-    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {{ include(lib_snippets ~ 'instructions.twig') }}
 {% endblock %}
 {# expected array
     [

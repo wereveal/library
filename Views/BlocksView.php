@@ -61,7 +61,8 @@ class BlocksView implements ViewInterface
                 }
             }
             catch (ModelException $e) {
-                $a_message = ViewHelper::addMessage($a_message, $e->getMessage(), 'error');
+                $err_msg = $e->getMessage();
+                $a_message = ViewHelper::addMessage($a_message, $err_msg, 'error');
                 $results = [];
             }
         }

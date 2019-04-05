@@ -33,7 +33,7 @@ class TwigView implements ViewInterface
 
     /**
      * TwigView constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
@@ -261,7 +261,7 @@ class TwigView implements ViewInterface
         $o_tpl  = new TwigTemplatesModel($this->o_db);
         try {
             $a_results = $o_tpl->read(['tpl_id' => $tpl_id]);
-            if (\count($a_results) > 0) {
+            if (count($a_results) > 0) {
                 $a_tpl = $a_results[0];
             }
             else {

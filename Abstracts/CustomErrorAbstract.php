@@ -5,6 +5,8 @@
  */
 namespace Ritc\Library\Abstracts;
 
+use ErrorException;
+
 /**
  * Abstract which extends php Exception class.
  *
@@ -14,7 +16,7 @@ namespace Ritc\Library\Abstracts;
  * @change_log
  * - v1.0.0-alpha.0 - Initial version                                                                   - 2017-07-15 wer
  */
-abstract class CustomErrorAbstract extends \ErrorException
+abstract class CustomErrorAbstract extends ErrorException
 {
     /**
      * Overrides the base method.
@@ -22,7 +24,7 @@ abstract class CustomErrorAbstract extends \ErrorException
      */
     public function __toString()
     {
-        return \get_class($this) .
+        return get_class($this) .
         " '{$this->message}' in {$this->file}.{$this->line}\n" .
         $this->getTraceAsString();
     }
@@ -85,6 +87,6 @@ abstract class CustomErrorAbstract extends \ErrorException
      */
     public function getClass():string
     {
-        return \get_class($this);
+        return get_class($this);
     }
 }

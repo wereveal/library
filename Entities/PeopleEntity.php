@@ -50,7 +50,7 @@ class PeopleEntity implements EntityInterface
      */
     public function getAllProperties():array
     {
-        return array(
+        return [
             'people_id'       => $this->people_id,
             'login_id'        => $this->login_id,
             'real_name'       => $this->real_name,
@@ -61,8 +61,8 @@ class PeopleEntity implements EntityInterface
             'bad_login_ts'    => $this->bad_login_ts,
             'is_active'       => $this->is_active,
             'is_immutable'    => $this->is_immutable,
-            'created_on'      => $this->created_on,
-        );
+            'created_on'      => $this->created_on
+        ];
     }
 
     /**
@@ -73,7 +73,7 @@ class PeopleEntity implements EntityInterface
      */
     public function setAllProperties(array $a_entity = array()):bool
     {
-        $a_needed_keys = array(
+        $a_needed_keys = [
             'people_id'       => 0,
             'login_id'        => 0,
             'real_name'       => '',
@@ -84,8 +84,8 @@ class PeopleEntity implements EntityInterface
             'bad_login_ts'    => 0,
             'is_active'       => 'false',
             'is_immutable'    => 'false',
-            'created_on'      => 0,
-        );
+            'created_on'      => 0
+        ];
         foreach ($a_needed_keys as $key_name => $default_value) {
             if (array_key_exists($key_name, $a_entity)) {
                 $this->$key_name = $a_entity[$key_name];

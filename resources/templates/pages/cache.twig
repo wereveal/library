@@ -1,6 +1,6 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
-<div class="container">
+<div class="container container-main">
 {% if is_enabled == 'unknown' or is_enabled == '' %}
     <a href="/manager/config/constants/" class="btn btn-primary">Constants Manager</a>
 {% else %}
@@ -48,7 +48,7 @@
             </div>
         </div>
     </div>
-    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {{ include(lib_snippets ~ 'instructions.twig') }}
 {% endif %}
 </div>
 {% endblock %}

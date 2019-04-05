@@ -1,6 +1,6 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block body %}
-    <div class="container">
+    <div class="container container-main">
         <div class="row list-header d-none d-md-flex sticky-top">
             <div class="col-md-6">Url</div>
             <div class="col-md-3">Cannot be Changed</div>
@@ -9,17 +9,17 @@
         <form action="{{ public_id }}/manager/config/urls/" method="post" id="form-url-0">
         <div class="row odd">
             <div class="col-12 col-md-6">
-                <label for="url-0" class="form-label d-md-none bold mb-0">Url</label>
+                <label for="url0" class="form-label d-md-none bold mb-0">Url</label>
                 <input type="text" id="url0" name="url" class="flexible colorful" value="" required>
             </div>
             <div class="col-12 col-md-3">
                 {% set cb_values = {'id':'immutable-0','name':'immutable','value':'true','checked':'','label':'Immutable'} %}
-                {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+                {{ include(lib_elements ~ 'checkbox.twig', cb_values, with_context = false) }}
             </div>
             <div class="col-12 col-md-3">
                 <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
                 <input type="hidden" name="action" value="save_new">
-                {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
             </div>
         </div>
         </form>
@@ -43,13 +43,13 @@
                         {% set checked = '' %}
                     {% endif %}
                     {% set cb_values = {'id':immId,'name':'immutable','value':'true','checked':checked,'label':'Immutable'} %}
-                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+                    {{ include(lib_elements ~ 'checkbox.twig', cb_values, with_context = false) }}
                 </div>
                 <div class="col-12 col-md-3">
                     <button type="submit" name="submit" value="update" class="btn btn-primary btn-xs">Update</button>
                     <button type="submit" name="submit" value="verify_delete" class="btn btn-outline-danger btn-xs">Delete</button>
                     <input type="hidden" name="url_id" value="{{ row.url_id }}">
-                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                 </div>
             </div>
         </form>
@@ -78,17 +78,17 @@
                 </div>
                 <div class="col-12 col-md-3">
                     {% set cb_values = {'id':immId,'name':'immutable','value':'true','checked':'','label':'Immutable'} %}
-                    {% include '@' ~ lib_prefix ~ 'elements/checkbox.twig' with cb_values only %}
+                    {{ include(lib_elements ~ 'checkbox.twig', cb_values, with_context = false) }}
                 </div>
                 <div class="col-12 col-md-3">
                     <button type="submit" name="submit" value="save_new" class="btn btn-primary btn-xs">Save New</button>
                     <input type="hidden" name="action" value="save_new">
-                    {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+                    {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
                 </div>
             </div>
         </form>
     </div>
-    {% include '@' ~ lib_prefix ~ 'snippets/instructions.twig' %}
+    {{ include(lib_snippets ~ 'instructions.twig') }}
     <script>
         $().ready(function() {
             {% for i in 1..y %}

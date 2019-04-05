@@ -5,6 +5,8 @@
  */
 namespace Ritc\Library\Interfaces;
 
+use Ritc\Library\Exceptions\ModelException;
+
 /**
  * Interface ModelInterface
  *
@@ -35,7 +37,7 @@ interface ModelInterface {
      * @param array $a_search_for    key pairs of field name => field value
      * @param array $a_search_params \ref searchparams \ref readparams
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function read(array $a_search_for, array $a_search_params):array;
 
@@ -44,7 +46,7 @@ interface ModelInterface {
      *
      * @param array $a_values Required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function update(array $a_values):bool;
 
@@ -53,7 +55,7 @@ interface ModelInterface {
      *
      * @param int $id Required
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function delete($id):bool;
 }

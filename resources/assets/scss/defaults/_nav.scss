@@ -2,7 +2,7 @@
 .navbar {
     @include paddingSize(.25, 'tb', '');
     &.navbar-color {
-        @include linearGradientTwoColor($gradient-start, $gradient-stop, $gradient-direction, $gradient-midpoint);
+        @include linearGradientTwoColor($gradient-start, $gradient-stop, $gradient-direction, $gradient-longpoint);
         color: $navbar-text-color;
         a {
             &.nav-link {

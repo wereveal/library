@@ -1,9 +1,9 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 
 {% block prevnext %}
                     <div class="row">
                         <div class="col-md-12 prevnext">
-                            {% include "@lib_snippets/prevnext.twig" with { 'prevnext': prevnext } %}
+                            {{  include(lib_snippets ~ 'prevnext.twig', { 'prevnext': prevnext }) }}
                         </div>
                     </div>
 {% endblock %}

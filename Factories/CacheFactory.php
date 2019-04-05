@@ -49,11 +49,13 @@ class CacheFactory
      */
     private function __construct(array $a_cache_config = [])
     {
+        /** @noinspection NestedTernaryOperatorInspection */
         $cache_type = empty($a_cache_config['cache_type'])
-            ? \defined('CACHE_TYPE') ? CACHE_TYPE : 'PhpFiles'
+            ? defined('CACHE_TYPE') ? CACHE_TYPE : 'PhpFiles'
             : $a_cache_config['cache_type'];
-        $lifetime = empty($a_cache_config['lifetime'])
-            ? \defined('CACHE_TTL') ? CACHE_TTL : 604800
+        /** @noinspection NestedTernaryOperatorInspection */
+        $lifetime  = empty($a_cache_config['lifetime'])
+            ? defined('CACHE_TTL') ? CACHE_TTL : 604800
             : $a_cache_config['lifetime'];
         $namespace = empty($a_cache_config['namespace'])
             ? 'Ritc'
@@ -62,8 +64,8 @@ class CacheFactory
             ? BASE_PATH . '/cache'
             : $a_cache_config['directory']
         ;
-        $psr6 = strpos($cache_type, 'Simple') === false;
-        $o_cache = NULL;
+        $psr6      = strpos($cache_type, 'Simple') === false;
+        $o_cache   = NULL;
         switch ($cache_type) {
             case 'Array':
                 $o_cache = new ArrayAdapter($lifetime, $a_cache_config['store_serialized']);
@@ -123,7 +125,7 @@ class CacheFactory
                     error_log('Could not create the PhpFilesCache instance: ' . $e->getMessage());
                 }
         }
-        if ($psr6 && \is_object($o_cache)) {
+        if ($psr6 && is_object($o_cache)) {
             $o_cache = new TagAwareAdapter($o_cache, $o_cache);
         }
         /** @var ArrayAdapter|ChainAdapter|FilesystemAdapter|PdoAdapter|PhpArrayAdapter|PhpFilesAdapter|RedisAdapter

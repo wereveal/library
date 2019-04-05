@@ -25,7 +25,7 @@ class TwigDirsModel extends ModelAbstract
     /**
      * TwigDirsModel constructor.
      *
-     * @param \Ritc\Library\Services\DbModel $o_db
+     * @param DbModel $o_db
      */
     public function __construct(DbModel $o_db)
     {
@@ -46,7 +46,7 @@ class TwigDirsModel extends ModelAbstract
      *
      * @param int $prefix_id Required.
      * @return array
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function createDefaultDirs($prefix_id = -1):array
     {

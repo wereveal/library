@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Traits;
 
+use TypeError;
 use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Factories\TwigFactory;
@@ -18,11 +19,18 @@ use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\PageComplexModel;
+use Ritc\Library\Models\TwigDirsModel;
+use Ritc\Library\Models\TwigPrefixModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Services\Elog;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
+use Twig\Environment as TwigEnvironment;
+use Twig\Error\LoaderError as TwigErrorLoader;
+use Twig\Error\SyntaxError as TwigErrorSyntax;
+use Twig\Error\RuntimeError as TwigErrorRuntime;
 
 /**
  * Common functions for views.
@@ -64,11 +72,11 @@ trait ViewTraits
     protected $o_nav;
     /** @var Router */
     protected $o_router;
-    /** @var \Ritc\Library\Helper\RoutesHelper */
+    /** @var RoutesHelper */
     protected $o_routes_helper;
     /** @var  Session */
     protected $o_session;
-    /** @var \Twig_Environment */
+    /** @var TwigEnvironment */
     protected $o_twig;
     /** @var bool */
     private $use_cache;
@@ -98,29 +106,29 @@ trait ViewTraits
         if (empty($tpl) || empty($a_twig_values)) {
             return 'Error: missing values.';
         }
-        if ($this->o_twig instanceof \Twig_Environment) {
+        if ($this->o_twig instanceof TwigEnvironment) {
             try {
                 return $this->o_twig->render($tpl, $a_twig_values);
             }
-            catch (\Twig_Error_Loader $e) {
+            catch (TwigErrorLoader $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
                 return '';
             }
-            catch(\Twig_Error_Syntax $e) {
+            catch(TwigErrorSyntax $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
                 return '';
             }
-            catch(\Twig_Error_Runtime $e) {
+            catch(TwigErrorRuntime $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
                 return '';
             }
-            catch(\TypeError $e) {
+            catch(TypeError $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
@@ -142,6 +150,7 @@ trait ViewTraits
     {
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['tpl'] = 'error';
+        $a_twig_values['a_sitemap'] = $this->readNav('Sitemap');
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }
@@ -163,7 +172,7 @@ trait ViewTraits
         else {
             $a_nav = [];
         }
-        if (!\is_array($a_nav) || empty($a_nav)) {
+        if (!is_array($a_nav) || empty($a_nav)) {
             if ($this->adm_level === '') {
                 $this->setAdmLevel();
             }
@@ -254,13 +263,13 @@ trait ViewTraits
             $a_page_values   = $this->o_cache->get($page_cache_key);
             $a_auth_levels   = $this->o_cache->get($group_cache_key);
         }
-        if (!\is_array($a_page_values) || empty($a_page_values)) {
+        if (!is_array($a_page_values) || empty($a_page_values)) {
             $a_page_values = $this->getPageValues($url_id);
             if ($this->use_cache) {
                 $this->o_cache->set($page_cache_key, $a_page_values, 'page');
             }
         }
-        if (!\is_array($a_auth_levels) || empty($a_auth_levels)) {
+        if (!is_array($a_auth_levels) || empty($a_auth_levels)) {
             $a_auth_levels = [];
             $o_group = new GroupsModel($this->o_db);
             $o_group->setupElog($this->o_di);
@@ -284,7 +293,7 @@ trait ViewTraits
         else {
             $a_message = ViewHelper::fullMessage($a_message);
         }
-
+        $a_twig_shortcuts = $this->createTwigShortcuts();
         $a_values = [
             'a_message'      => $a_message,
             'tolken'         => $_SESSION['token'],
@@ -308,12 +317,12 @@ trait ViewTraits
             'copyright_date' => COPYRIGHT_DATE,
             'debug_on'       => DEVELOPER_MODE ? 'true' : ''
         ];
-        $a_values = array_merge($a_values, $a_page_values);
+        $a_values = array_merge($a_values, $a_twig_shortcuts, $a_page_values);
         return $a_values;
     }
 
     /**
-     * Creates the template string used by \Twig_Environment::render.
+     * Creates the template string used by TwigEnvironment::render.
      *
      * @param array $a_twig_values
      * @return string
@@ -331,6 +340,35 @@ trait ViewTraits
             . '/'
             .  $a_twig_values['tpl']
             . '.twig';
+    }
+
+    public function createTwigShortcuts():array
+    {
+        $a_default = [
+            'lib_elements' => '@lib_elements/',
+            'lib_forms'    => '@lib_forms/',
+            'lib_pages'    => '@lib_pages/',
+            'lib_snippets' => '@lib_snippets/',
+            'lib_tests'    => '@lib_tests/',
+            'lib_themes'   => '@lib_themes/'
+        ];
+        $o_tp = new TwigPrefixModel($this->o_db);
+        $o_td = new TwigDirsModel($this->o_db);
+        $a_return_these = [];
+        try {
+            $a_tps = $o_tp->read();
+            foreach ($a_tps as $a_tp) {
+                $a_tds = $o_td->read(['tp_id' => $a_tp['tp_id']]);
+                foreach ($a_tds as $a_td) {
+                    $value = $a_tp['tp_prefix'] . $a_td['td_name'];
+                    $a_return_these[$value] = '@' . $value . '/';
+                }
+            }
+            return $a_return_these;
+        }
+        catch (ModelException $e) {
+            return $a_default;
+        }
     }
 
     ### SETters and GETters ###
@@ -367,7 +405,7 @@ trait ViewTraits
         }
         if (USE_CACHE) {
             $o_cache = $o_di->get('cache');
-            if (\is_object($o_cache)) {
+            if (is_object($o_cache)) {
                 $this->o_cache    = $o_cache;
                 $this->cache_type = $this->o_cache->getCacheType();
                 $this->use_cache  = empty($this->cache_type)
@@ -380,8 +418,8 @@ trait ViewTraits
                 $this->use_cache = false;
             }
         }
-        if (\defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            /** @var \Ritc\Library\Services\Elog $o_elog */
+        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+            /** @var Elog $o_elog */
             $o_elog = $o_di->get('elog');
             $this->o_nav->setElog($o_elog);
         }
@@ -439,7 +477,7 @@ trait ViewTraits
     {
         $ng_id = -1;
         $cache_key = 'navgroup.id.by.' . $navgroup_name;
-        if (USE_CACHE && \is_object($this->o_cache)) {
+        if (USE_CACHE && is_object($this->o_cache)) {
             $ng_id = $this->o_cache->get($cache_key);
         }
         if ($ng_id < 1) {
@@ -463,7 +501,7 @@ trait ViewTraits
      *
      * @param string|array $twig_config \ref twigfactory
      * @param string       $name
-     * @throws \Ritc\Library\Exceptions\FactoryException
+     * @throws FactoryException
      */
     public function setTwig($twig_config = 'twig_config.php', $name = 'main'):void
     {
@@ -473,7 +511,7 @@ trait ViewTraits
         catch (FactoryException $e) {
             throw new FactoryException($e->errorMessage(), $e->getCode());
         }
-        if (!$o_twig instanceof \Twig_Environment) {
+        if (!$o_twig instanceof TwigEnvironment) {
             throw new FactoryException('Could not create twig object', ExceptionHelper::getCodeNumberFactory('start'));
         }
         $this->o_di->set('twig_' . $name, $o_twig);
@@ -521,6 +559,7 @@ trait ViewTraits
                 'charset'        => 'utf-8',
                 'page_prefix'    => SITE_TWIG_PREFIX,
                 'twig_dir'       => 'pages',
+                'theme_name'     => 'base_fluid',
                 'tpl'            => 'index',
                 'a_content'      => [],
                 'a_shared'       => [],
@@ -543,6 +582,7 @@ trait ViewTraits
             'charset'     => $a_page_values['page_charset'],
             'page_prefix' => $a_page_values['twig_prefix'],
             'twig_dir'    => $a_page_values['twig_dir'],
+            'theme_name'  => $a_page_values['theme_name'],
             'tpl'         => $a_page_values['tpl_name'],
             'a_content'   => $a_page_values['a_content'],
             'a_shared'    => $this->getSharedValues(),
@@ -586,10 +626,10 @@ trait ViewTraits
      */
     protected function createNewOrderNumber(array $a_used = [], $value = 0):int
     {
-        if (!\in_array($value, $a_used, false)) {
+        if (!in_array($value, $a_used, false)) {
             return (int) $value;
         }
-        if (!\in_array($value + 1, $a_used, false)) {
+        if (!in_array($value + 1, $a_used, false)) {
             return $value + 1;
         }
         return $this->createNewOrderNumber($a_used, $value + 1);
@@ -825,7 +865,7 @@ trait ViewTraits
     protected function removeUnauthorizedLinks(array $a_nav = []):array
     {
         foreach($a_nav as $key => $a_item) {
-            if (isset($a_item['submenu']) && \count($a_item['submenu']) > 0) {
+            if (isset($a_item['submenu']) && count($a_item['submenu']) > 0) {
                 $a_nav[$key]['submenu'] = $this->removeUnauthorizedLinks($a_item['submenu']);
             }
             else {
@@ -854,7 +894,7 @@ trait ViewTraits
             $order_number = !empty($a_link['nav_order'])
                 ? (int)$a_link['nav_order']
                 : 99;
-            if (\in_array($order_number, $a_used_order, false)) {
+            if (in_array($order_number, $a_used_order, false)) {
                 $new_order_number = $this->createNewOrderNumber($a_used_order, $order_number);
                 $a_used_order[] = $new_order_number;
                 $a_new_nav[$new_order_number] = $a_link;
@@ -879,7 +919,7 @@ trait ViewTraits
         $a_route_parts = $this->o_router->getRouteParts();
         $current_uri = $a_route_parts['request_uri'];
         foreach ($a_nav as $key => $a_item) {
-            if (\count($a_item['submenu']) > 0) {
+            if (count($a_item['submenu']) > 0) {
                 $a_nav[$key]['submenu'] = $this->specifyActiveMenu($a_item['submenu']);
             }
             else if ($a_item['url'] === $current_uri) {

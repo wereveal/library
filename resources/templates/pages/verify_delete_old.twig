@@ -1,9 +1,9 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ css_dir }}/styles_manager.css">
 {% endblock %}
 {% block body %}
-    <div class="container">
+    <div class="container container-main">
         <h1 class="smaller red">Please Verify</h1>
         <p class="alert alert-danger" role="alert">Please verify you wish to delete the {{ what }} '{{ name }}'.</p>
     {% if extra_message %}
@@ -12,11 +12,11 @@
         <form action="{{ public_dir }}/manager/{% if where %}{{ where }}/{% endif %}" method="post" id="delete-form" class="col-sm-6 pad-bottom">
             <button type="submit" name="submit" value="delete" class="btn btn-danger btn-sm">Delete {{ btn_value }}</button>
             <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
-            {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+            {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
         </form>
         <form action="{{ public_dir }}/manager/{% if where %}{{ where }}/{% endif %}" method="post" class="col-sm-6 pad-bottom">
             <button type="submit" name="submit" value="cancel" class="btn btn-primary btn-sm">Go Back, Don't Delete</button>
-            {% include '@' ~ lib_prefix ~ 'forms/hidden_form_stuff.twig' %}
+            {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
             <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />
         </form>
     </div>

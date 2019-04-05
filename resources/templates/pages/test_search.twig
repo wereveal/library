@@ -1,8 +1,8 @@
-{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% extends '@' ~ lib_prefix ~ 'themes/' ~ theme_name ~ '.twig' %}
 {% block searchSelections %}{% endblock %}
 {% block searchQuickForm %}
                 <div class="col-xs-6 col-sm-6 col-md-6 quick-form">
-                    {% include '@' ~ page_prefix ~ 'snippets/quickSearch.twig' %}
+                    {{ include(lib_snippets ~ 'quickSearch.twig') }}
                 </div>
 {% endblock %}
 

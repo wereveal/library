@@ -30,7 +30,7 @@ class ViewHelper
      * @param string $message_type Optional, defaults to message type of original message, or info if none provided.
      * @return array
      */
-    public static function addMessage(array $a_message = [], $message = '', $message_type = ''):?array
+    public static function addMessage(array $a_message = [], $message = '', $message_type = ''):array
     {
         if (empty($message)) {
             return $a_message;

@@ -5,6 +5,9 @@
  */
 namespace Ritc\Library\Helper;
 
+use RuntimeException;
+use UnexpectedValueException;
+
 /**
  * Helps with uploading files.
  *
@@ -42,19 +45,19 @@ class UploadHelper
     public static function uploadFile(array $a_values = [], $only_safe = true):bool
     {
         if (empty($a_values)) {
-            throw new \UnexpectedValueException('Required Values not provided.');
+            throw new UnexpectedValueException('Required Values not provided.');
         }
 
         if ($a_values['error'] !== 'OK') {
-            throw new \RuntimeException($a_values['error']);
+            throw new RuntimeException($a_values['error']);
         }
 
         if (!file_exists($a_values['save_path'])) {
-            throw new \UnexpectedValueException('File path invalid');
+            throw new UnexpectedValueException('File path invalid');
         }
 
         if (!is_uploaded_file($a_values['tmp_name'])) {
-            throw new \UnexpectedValueException('The file was not found. Possible file upload attack.');
+            throw new UnexpectedValueException('The file was not found. Possible file upload attack.');
         }
 
         // make sure the file type is safe and matches the files actual type.
@@ -62,19 +65,19 @@ class UploadHelper
             $r_finfo = finfo_open(FILEINFO_MIME_TYPE);
             if (!empty($a_values['real_type'])) {
                 if (!self::isAllowedFileType($a_values['real_type'])) {
-                    throw new \UnexpectedValueException('The file type may not be safe.');
+                    throw new UnexpectedValueException('The file type may not be safe.');
                 }
             }
             elseif (!empty($a_values['type'])) {
                 $found_file_mime_type = finfo_file($r_finfo, $a_values['tmp_name']);
                 if ($a_values['type'] !== $found_file_mime_type) {
-                    throw new \UnexpectedValueException("The file type specified doesn't match the file. Submitted: {$a_values['type']} vs found {$found_file_mime_type}");
+                    throw new UnexpectedValueException("The file type specified doesn't match the file. Submitted: {$a_values['type']} vs found {$found_file_mime_type}");
                 }
             }
             else {
                 $file_mime_type = finfo_file($r_finfo, $a_values['tmp_name']);
                 if (!self::isAllowedFileType($file_mime_type)) {
-                    throw new \UnexpectedValueException('The file type may not be safe.');
+                    throw new UnexpectedValueException('The file type may not be safe.');
                 }
             }
         }
@@ -88,12 +91,12 @@ class UploadHelper
             $max_filesize = str_replace('K', '000', $max_filesize);
         }
         if ($a_values['size'] >= $max_filesize) {
-            throw new \RuntimeException('The uploaded file exceeds the max filesize: ' . ini_get('upload_max_filesize'));
+            throw new RuntimeException('The uploaded file exceeds the max filesize: ' . ini_get('upload_max_filesize'));
         }
 
         $save_to = $a_values['save_path'] . '/' . $a_values['final_file_name'];
         if (!move_uploaded_file($a_values['tmp_name'], $save_to)) {
-            throw new \RuntimeException('The file was not able to be uploaded.');
+            throw new RuntimeException('The file was not able to be uploaded.');
         }
         return true;
     }
@@ -138,7 +141,7 @@ class UploadHelper
         if (empty(self::$a_allowed_file_types)) {
             self::setAllowedFileTypes();
         }
-        if (\in_array($file_type, self::$a_allowed_file_types)) {
+        if (in_array($file_type, self::$a_allowed_file_types, true)) {
             return true;
         }
         return false;
@@ -205,7 +208,7 @@ class UploadHelper
             $real_ext     = empty($a_extensions[0]) ? 'txt' : $a_extensions[0];
             $org_filename = $a_upload_values['name'];
             $filename_ext = substr(strrchr($org_filename,'.'),1);
-            if ($filename_ext != $real_ext) {
+            if ($filename_ext !== $real_ext) {
                 $final_filename = trim(str_replace($filename_ext, '', $org_filename) . $real_ext);
             }
             else {
@@ -265,7 +268,7 @@ class UploadHelper
     {
         $a_reorg_files = [];
         foreach ($_FILES as $field_name => $a_values) {
-            if (\is_array($a_values['tmp_name'])) {
+            if (is_array($a_values['tmp_name'])) {
                 $keys = [];
                 foreach ($a_values['tmp_name'] as $key => $value) {
                     $keys[] = $key;

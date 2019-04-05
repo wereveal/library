@@ -92,7 +92,7 @@ class Session
      * Returns the instance of the Session class.
      *
      * @param array $a_params
-     * @return \Ritc\Library\Services\Session
+     * @return Session
      * @throws ServiceException
      */
     public static function start(array $a_params = []):Session
@@ -117,7 +117,7 @@ class Session
     public function clear(array $a_not_these = array()):void
     {
         foreach ($_SESSION as $key=>$value) {
-            if (\in_array($key, $a_not_these) === false) {
+            if (in_array($key, $a_not_these, false) === false) {
                 unset($_SESSION[$key]);
             }
         }
@@ -348,7 +348,7 @@ class Session
      */
     public function setSessionVars(array $a_values = array()):void
     {
-        if (\count($a_values) === 0) {
+        if (count($a_values) === 0) {
             $this->setToken();
             $this->setIdleTime();
         }
@@ -389,8 +389,8 @@ class Session
     public function setVarsFromArray(array $a_vars = array(), array $a_allowed_keys = array()):void
     {
         foreach ($a_vars as $name=>$value) {
-            if (\count($a_allowed_keys) > 0) {
-                if (\in_array($name, $a_allowed_keys)) {
+            if (count($a_allowed_keys) > 0) {
+                if (in_array($name, $a_allowed_keys, false)) {
                     $_SESSION[$name] = $value;
                 }
             }
@@ -411,7 +411,7 @@ class Session
     public function setIdleTime($time = -1, $add = false):void
     {
         if ($time === -1) {
-            if (\defined('SESSION_IDLE_TIME')) {
+            if (defined('SESSION_IDLE_TIME')) {
                 $time = SESSION_IDLE_TIME;
             }
             else {
