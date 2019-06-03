@@ -59,58 +59,52 @@
             {% set mainNavName = 'mainNav' %}
         {% endif %}
         {{ include(lib_snippets ~ 'navbar.twig') }}
-    {% endblock %}
-    {% if a_content.header %}
-        {% include '@' ~ lib_prefix ~ 'snippets/header.twig' %}
-    {% endif %}
+    {% endblock navbar %}
+    {% block headerContent %}{{ include(lib_snippets ~ 'header.twig') }}{% endblock headerContent %}
     {% block otherHeader %}{% endblock %}
     {% block search %}{% endblock %}
-{% endblock %}
+{% endblock header %}
 {% block bodyContainer %}
     <div class="container-fluid container-body">
-{% endblock %}
+{% endblock bodyContainer %}
 {% block bodyTitle %}
 {% if body_title or title %}    <div class="container container-title">
     {% if body_title %}<h1>{{ body_title }}</h1>
     {% elseif title %}<h1>{{ title }}</h1>
     {% endif %}</div>
 {% endif %}
-{% endblock %}
+{% endblock bodyTitle %}
 {% block message %}
     {% if a_message.message %}
         <div class="container container-message">
-            {% include '@' ~ lib_prefix ~ 'snippets/message.twig' %}
+            {{ include(lib_snippets ~ 'message.twig') }}
         </div>
     {% endif %}
-{% endblock %}
+{% endblock message %}
 {% block body %}
         <div class="container container-main">
-            {% if a_content.body %}
-                {% set ctype = a_content.body.c_type %}
-                {% set content = a_content.body.c_content %}
-                {% if ctype == 'html' or ctype == 'xml' or ctype == 'raw' %}
-                    {{ content | raw }}
-                {% elseif ctype == 'md' %}
-                    {{ content | md }}
-                {% elseif ctype == 'mde' %}
-                    {{ content | mde }}
-                {% else %}
-                    {{ content | nl2br }}
-                {% endif %}
+            {% if a_content.body.c_content %}
+                {% set contentValues = {
+                    'ctype': a_content.body.c_type,
+                    'content': a_content.body.c_content
+                    }
+                %}
+                {{ include(lib_snippets ~ 'by_content_type.twig', contentValues, with_context = false) }}
             {% endif %}
         </div>
-{% endblock %}
+{% endblock body %}
 {% block bodyContainerEnd %}
     </div>
-{% endblock %}
+{% endblock bodyContainerEnd %}
 {% block footer %}
     <footer class="container-fluid container-footer">
         <div class="container bg-transparent margin-tb-0">
-        {% include '@' ~ lib_prefix ~ 'snippets/footer.twig' %}
+        {{ include(lib_snippets ~ 'footer.twig') }}
+        {{ include(lib_snippets ~ 'footer_columns.twig') }}
             <p class="font-small mb-0">Copyright &copy;&nbsp;{{ copyright_date }} <strong><a href="{{ site_url }}">{{ rights_holder }}</a></strong>, All Rights Reserved</p>
         </div>
     </footer>
-{% endblock %}
+{% endblock footer %}
 {% block debug %}
     {% if debug_text %}
         <div class="container">
