@@ -19,9 +19,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Helper for setting up a new app.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
- * @date    2018-05-29 19:11:01
+ * @version v1.1.2
+ * @date    2019-08-19 13:31:42
  * @change_log
+ * - v1.1.2         - Bug Fixes                                                     - 2019-08-19 wer
  * - v1.1.1         - Bug fixes                                                     - 2018-05-29 wer
  * - v1.1.0         - Create Default Files changed to use over all site variable    - 2018-04-14 wer
  * - v1.0.0         - Initial Production version                                    - 2017-12-15 wer
@@ -136,21 +137,6 @@ class NewAppHelper
             || empty($this->a_config['app_name'])
         ) {
             return false;
-        }
-        if (!isset($this->a_config['author'])) {
-            $this->a_config['author'] = '';
-        }
-        if (!isset($this->a_config['short_author'])) {
-            $this->a_config['short_author'] = '';
-        }
-        if (!isset($this->a_config['email'])) {
-            $this->a_config['email'] = '';
-        }
-        if (!isset($this->a_config['app_twig_prefix'])) {
-            $this->a_config['app_twig_prefix'] = 'main_';
-        }
-        if (!isset($this->a_config['app_twig_prefix'])) {
-            $this->a_config['app_theme_name'] = 'base_fluid';
         }
         if (file_exists($this->app_path)) {
             if (file_put_contents($this->app_path . '/.htaccess', $this->htaccess_text)) {
@@ -550,6 +536,7 @@ class NewAppHelper
     {
         $a_default = [
             'app_name'        => 'Main',                          // specify the primary app to which generates the home page
+            'app_them_name'   => 'base_fluid',                    // default theme for app
             'namespace'       => 'Ritc',                          // specify the root namespace the app will be in
             'author'          => 'William E Reveal',              // specify the author of the app
             'short_author'    => 'wer',                           // abbreviation for the author
@@ -569,12 +556,12 @@ class NewAppHelper
             $a_values = $a_default;
         }
         foreach ($a_default as $key => $value) {
-            if (!isset($a_values[$key])) {
+            if (empty($a_values[$key])) {
                 $a_values[$key] = $a_default[$key];
             }
         }
-        if (empty($a_values['app_twig_prefix'])) {
-            $a_values['app_twig_prefix'] = strtolower($a_values['app_name']) . '_';
+        if (empty($this->a_config['app_twig_prefix'])) {
+            $this->a_config['app_twig_prefix'] = strtolower($this->a_config['app_name']) . '_';
         }
         $this->a_config = $a_values;
     }

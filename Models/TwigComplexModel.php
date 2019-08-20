@@ -187,11 +187,13 @@ class TwigComplexModel
             if (empty($a_values['tp_default'])) {
                 $a_values['tp_default'] = 'false';
             }
-            try {
-                $this->o_prefix->clearDefaultPrefix($a_values);
-            }
-            catch (ModelException $e) {
-                throw new ModelException('Unable to clear the default prefix.');
+            if ($a_values['tp_default'] === 'true') {
+                try {
+                    $this->o_prefix->clearDefaultPrefix($a_values);
+                }
+                catch (ModelException $e) {
+                    throw new ModelException('Unable to clear the default prefix.');
+                }
             }
             try {
                 $results = $this->o_prefix->create($a_values);
