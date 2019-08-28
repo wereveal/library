@@ -543,7 +543,7 @@ class NewAppHelper
             'email'           => '<bill@revealitconsulting.com>', // email of the author
             'public_path'     => '',                              // leave blank for default setting
             'base_path'       => '',                              // leave blank for default setting
-            'http_host'       => '',                              // $_SERVER['HTTP_HOST'] results or leave blank for default
+            'sever_http_host' => '',                              // $_SERVER['HTTP_HOST'] results or leave blank for default
             'domain'          => 'revealitconsulting',            // domain name of site
             'tld'             => 'com',                           // top level domain, e.g., com, net, org
             'specific_host'   => '',                              // e.g. www, test
