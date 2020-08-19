@@ -109,7 +109,7 @@ class Elog
         if (self::$instance === null) {
             $c = __CLASS__;
             try {
-                self::$instance = new $c;
+                self::$instance = new $c();
             }
             catch (Error $e) {
                 throw new ServiceException('Unable to start the service.', 10, $e);

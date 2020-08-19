@@ -28,7 +28,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class AjaxController
 {
-    use ControllerTraits, LogitTraits;
+    use LogitTraits;
+    use ControllerTraits;
 
     /**
      * AjaxController constructor.

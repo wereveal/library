@@ -25,7 +25,8 @@ use Ritc\Library\Views\NavigationView;
  */
 class NavigationController implements ManagerControllerInterface
 {
-    use ConfigControllerTraits, LogitTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var NavComplexModel model object */
     protected $o_model;

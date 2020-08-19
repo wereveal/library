@@ -70,7 +70,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class DbModel
 {
-    use DbTraits, LogitTraits;
+    use LogitTraits;
+    use DbTraits;
 
     /** @var array $a_new_ids */
     private $a_new_ids = [];

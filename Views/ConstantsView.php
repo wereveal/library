@@ -33,7 +33,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ConstantsView
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /** @var LibraryView */
     private $o_view;

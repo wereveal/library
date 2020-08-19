@@ -26,7 +26,8 @@ use Ritc\Library\Views\RoutesGroupView;
  */
 class RoutesGroupController implements ManagerControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var RoutesGroupView  */
     private $o_view;

@@ -332,21 +332,23 @@ class Tester
 
     /**
      * Sets failed_subtests
+     *
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubFailed($method_name = '', $test_name = ''):void
+    public function setSubFailed($method_name, $test_name):void
     {
-        if ($method_name === '' || $test_name === '') { return; }
-        $method_name = $this->shortenName($method_name);
-        if (is_array($this->failed_subtests) === false) {
-            $this->failed_subtests = array();
-        }
-        if (array_key_exists($method_name, $this->failed_subtests)) {
-            $this->failed_subtests[$method_name][] = $test_name;
-        }
-        else {
-            $this->failed_subtests[$method_name] = array($test_name);
+        if (!empty($method_name) && !empty($test_name)) {
+            $method_name = $this->shortenName($method_name);
+            if (is_array($this->failed_subtests) === false) {
+                $this->failed_subtests = [];
+            }
+            if (array_key_exists($method_name, $this->failed_subtests)) {
+                $this->failed_subtests[$method_name][] = $test_name;
+            }
+            else {
+                $this->failed_subtests[$method_name] = array($test_name);
+            }
         }
     }
 
@@ -471,7 +473,7 @@ class Tester
         if (!empty($test_order_file)) {
             $this->a_test_order = include $test_order_file;
         }
-        else if (!empty($a_test_values)) {
+        elseif (!empty($a_test_values)) {
             $a_test_order = [];
             foreach ($a_test_values as $key => $test_values) {
                 $a_test_order[] = $key;

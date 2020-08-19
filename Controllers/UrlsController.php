@@ -33,7 +33,8 @@ use Ritc\Library\Views\UrlsView;
  */
 class UrlsController implements ConfigControllerInterface
 {
-    use ControllerTraits, LogitTraits;
+    use LogitTraits;
+    use ControllerTraits;
 
     /** @var UrlsModel */
     protected $o_urls_model;

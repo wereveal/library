@@ -29,7 +29,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ContentView implements ViewInterface
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /** @var ContentComplexModel $o_model */
     private $o_model;

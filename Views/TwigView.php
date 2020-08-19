@@ -29,7 +29,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class TwigView implements ViewInterface
 {
-    use ConfigViewTraits, LogitTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /**
      * TwigView constructor.

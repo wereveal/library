@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection UnusedConstructorDependenciesInspection */
+
 /**
  * Class GroupsModelTester
  * @package Ritc_Library
@@ -6,6 +7,8 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
+use Ritc\Library\Exceptions\FactoryException;
+use Ritc\Library\Exceptions\ServiceException;
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
@@ -38,8 +41,8 @@ class GroupsModelTester extends Tester
      * GroupsModelTester constructor.
      * @param array  $a_test_order
      * @param string $db_config
-     * @throws \Ritc\Library\Exceptions\FactoryException
-     * @throws \Ritc\Library\Exceptions\ServiceException
+     * @throws FactoryException
+     * @throws ServiceException
      */
     public function __construct(array $a_test_order = array(), $db_config = 'db_config.php')
     {

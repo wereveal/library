@@ -7,6 +7,7 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Models\ContentModel;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\TesterTraits;
@@ -23,7 +24,8 @@ use Ritc\Library\Traits\TesterTraits;
  */
 class ContentModelTester
 {
-    use LogitTraits, TesterTraits;
+    use LogitTraits;
+    use TesterTraits;
 
     private $o_model;
 
@@ -40,7 +42,7 @@ class ContentModelTester
             'instance_name' => 'o_model'
         ];
         $this->setupTests($a_test_params);
-        /** @var \Ritc\Library\Services\DbModel $o_db */
+        /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
         $this->o_model = new ContentModel($o_db);
         $this->a_object_names = ['o_model'];

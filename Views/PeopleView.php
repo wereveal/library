@@ -37,7 +37,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PeopleView
 {
-    use ConfigViewTraits, LogitTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /** @var PeopleComplexModel */
     private $o_people_complex;

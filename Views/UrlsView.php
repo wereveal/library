@@ -25,7 +25,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class UrlsView
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /** @var UrlsModel */
     protected $o_urls_model;

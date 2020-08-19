@@ -24,7 +24,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesComplexModel
 {
-    use LogitTraits, DbUtilityTraits;
+    use LogitTraits;
+    use DbUtilityTraits;
 
     /** @var Di $o_di */
     private $o_di;

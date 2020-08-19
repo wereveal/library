@@ -30,7 +30,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class GroupsView
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /**
      * @var GroupsModel

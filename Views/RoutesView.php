@@ -40,7 +40,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesView
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /** @var RoutesComplexModel */
     private $o_model;

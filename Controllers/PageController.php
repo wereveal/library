@@ -32,7 +32,8 @@ use Ritc\Library\Views\PageView;
  */
 class PageController implements ManagerControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var PageComplexModel */
     private $o_model;

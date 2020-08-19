@@ -22,7 +22,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavgroupsView implements ViewInterface
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /**
      * NavgroupsView constructor.

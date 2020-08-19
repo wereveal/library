@@ -27,7 +27,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavigationView
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /** @var NavComplexModel */
     private $o_nav_complex;
@@ -94,9 +95,9 @@ class NavigationView
                 $a_nav = $this->o_cache->get($cache_key);
             }
             if (empty($a_nav)) {
-                $a_nav['a_url_select']['select'] = $this->createUrlSelect();
-                $a_nav['a_nav_select']['select'] = $this->createNavSelect();
-                $a_nav['a_ng_select']['select']  = $this->createNgSelect();
+                $a_nav['a_url_select']['select']     = $this->createUrlSelect();
+                $a_nav['a_nav_select']['select']     = $this->createNavSelect();
+                $a_nav['a_ng_select']['select']      = $this->createNgSelect();
                 $a_nav['a_nav_lvl_select']['select'] = $this->createNavLvlSelect();
                 $a_chbx_values = [
                     'id'      => 'nav_active',

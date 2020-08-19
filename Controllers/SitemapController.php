@@ -22,7 +22,8 @@ use Ritc\Library\Views\SitemapView;
  */
 class SitemapController implements ControllerInterface
 {
-    use LogitTraits, ControllerTraits;
+    use LogitTraits;
+    use ControllerTraits;
 
     /**
      * SitemapController constructor.

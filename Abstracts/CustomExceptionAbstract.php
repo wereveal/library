@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Abstracts;
 
+use Exception;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Interfaces\CustomExceptionInterface;
 
@@ -17,7 +18,7 @@ use Ritc\Library\Interfaces\CustomExceptionInterface;
  * @change_log
  * - v1.0.0         - changed to production, added phpDoc                                               - 2018-03-07 wer
  */
-abstract class CustomExceptionAbstract extends \Exception implements CustomExceptionInterface
+abstract class CustomExceptionAbstract extends Exception implements CustomExceptionInterface
 {
     /**
      * Overrides \Exception

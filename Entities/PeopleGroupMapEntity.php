@@ -65,7 +65,7 @@ class PeopleGroupMapEntity implements EntityInterface
     }
 
     /**
-     * @param integer $group_id
+     * @param int $group_id
      */
     public function setGroupId($group_id = -1):void
     {
@@ -73,7 +73,7 @@ class PeopleGroupMapEntity implements EntityInterface
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getGroupId():int
     {
@@ -81,7 +81,7 @@ class PeopleGroupMapEntity implements EntityInterface
     }
 
     /**
-     * @param integer $pgm_id
+     * @param int $pgm_id
      */
     public function setPgmId($pgm_id = -1):void
     {
@@ -89,7 +89,7 @@ class PeopleGroupMapEntity implements EntityInterface
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getPgmId():int
     {
@@ -97,7 +97,7 @@ class PeopleGroupMapEntity implements EntityInterface
     }
 
     /**
-     * @param integer $people_id
+     * @param int $people_id
      */
     public function setPeopleId($people_id = -1):void
     {
@@ -105,7 +105,7 @@ class PeopleGroupMapEntity implements EntityInterface
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getPeopleId():int
     {

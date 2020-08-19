@@ -132,7 +132,7 @@ class ConstantsModel extends ModelAbstract
                 unset($a_values[$field_name]);
             }
         }
-        else if (!empty($a_values['const_name'])) {
+        elseif (!empty($a_values['const_name'])) {
             $a_values['const_name'] = $this->makeValidName($a_values['const_name']);
         }
         if (!empty($a_values['const_value'])) {

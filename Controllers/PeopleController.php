@@ -35,7 +35,8 @@ use Ritc\Library\Views\PeopleView;
  */
 class PeopleController implements ManagerControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var PeopleComplexModel object */
     private $o_complex;

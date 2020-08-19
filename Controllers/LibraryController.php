@@ -39,7 +39,8 @@ use Ritc\Library\Views\LibraryView;
  */
 class LibraryController implements ControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var LibraryView */
     protected $o_view;

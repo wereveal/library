@@ -76,7 +76,7 @@ class TwigPrefixModel extends ModelAbstract
             }
 
         }
-        else if (!empty($a_values['tp_default']) && $a_values['tp_default'] === 'true') {
+        elseif (!empty($a_values['tp_default']) && $a_values['tp_default'] === 'true') {
             try {
                 if (!$this->updateDefaultPrefixOff()) {
                     $this->error_message = 'Could not set other prefix as not default.';

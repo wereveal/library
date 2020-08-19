@@ -26,7 +26,8 @@ use Ritc\Library\Views\CacheManagerView;
  */
 class CacheManagerController implements ControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var int $cache_const_id */
     private $cache_const_id;

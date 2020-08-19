@@ -82,13 +82,14 @@ class Arrays
     /**
      * Modifies array values by removing php and mysql commands.
      *
-     * @param array   $a_pairs            optional, sort of, the array to clean.
-     * @param array   $a_allowed_keys     optional, allows only specified keys to be returned.
-     * @param array   $a_allowed_commands optional, defaults to []. Used values is ['php' => true, 'mysql' => true].
-     * @param integer $sanitize_flags     optional, defaults to 0. If provided, calls Array::encodeValues().
+     * @param array    $a_pairs            optional, sort of, the array to clean.
+     * @param array    $a_allowed_keys     optional, allows only specified keys to be returned.
+     * @param array    $a_allowed_commands optional, defaults to []. Used values is ['php' => true, 'mysql' => true].
+     * @param int|null $sanitize_flags     optional, defaults to 0. If provided, calls Array::encodeValues().
      * @return array
      */
-    public static function cleanValues(array $a_pairs = [], array $a_allowed_keys = [], array $a_allowed_commands = [], $sanitize_flags = 0):array
+    public static function cleanValues(array $a_pairs = [], array $a_allowed_keys = [], array $a_allowed_commands =
+    [], $sanitize_flags = null):array
     {
         if (empty($a_pairs)) {
             return [];
@@ -109,7 +110,7 @@ class Arrays
                 $a_pairs = self::stripSQL($a_pairs);
             }
         }
-        if ($sanitize_flags > 0) {
+        if ($sanitize_flags !== null) {
             $a_pairs = self::encodeValues($a_pairs, $sanitize_flags);
         }
         return $a_pairs;
@@ -278,7 +279,7 @@ class Arrays
                 array_key_exists(str_replace(':', '', $key), $a_pairs)
             )
             {
-                if ($a_pairs[$key] === '' || null === $a_pairs[$key]) {
+                if ($a_pairs[$key] === '' || $a_pairs[$key] === null) {
                     $a_keys[] = $key;
                 }
             }

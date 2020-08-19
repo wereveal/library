@@ -24,7 +24,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class CacheManagerView implements ViewInterface
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /**
      * CacheManagerView constructor.

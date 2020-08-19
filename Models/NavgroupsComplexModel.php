@@ -23,7 +23,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavgroupsComplexModel
 {
-    use LogitTraits, DbUtilityTraits;
+    use LogitTraits;
+    use DbUtilityTraits;
 
     /**
      * NavgroupsComplexModel constructor.

@@ -37,7 +37,8 @@ use Ritc\Library\Views\RoutesView;
  */
 class RoutesController implements ManagerControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var RoutesComplexModel $o_complex */
     private $o_complex;

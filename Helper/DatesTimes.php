@@ -245,7 +245,7 @@ class DatesTimes
      *                            date or UNIX timestamp
      * @param string $timezone    Optional, defaults to server tz. Converts
      *                            server date time tz to provided tz.
-     * @return string|null
+     * @return string
      */
     public static function convertDateTimeWith(string $date_format = '', string $timestamp = '', string $timezone = ''):string
     {
@@ -367,7 +367,7 @@ class DatesTimes
             }
         }
         catch (Error $e) {
-            return null;
+            return new DateInterval('PT0S');
         }
         try {
             $o_start = new DateTime($start_date);
@@ -375,7 +375,7 @@ class DatesTimes
             return $o_start->diff($o_end);
         }
         catch (Exception $e) {
-            return null;
+            return new DateInterval('PT0S');
         }
     }
 
@@ -392,7 +392,7 @@ class DatesTimes
             return date('l, F jS, Y g:i a', $ts);
         }
         catch (Error $e) {
-            return null;
+            return '0';
         }
     }
 
@@ -583,7 +583,10 @@ class DatesTimes
      */
     public static function convertToNextYear(string $timestamp = '', string $format = 'timestamp'):string
     {
-        $timestamp = self::convertDateTimeWith(DateTime::ATOM, $timestamp) ?? time();
+        $timestamp = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
+        if ($timestamp === '') {
+            $timestamp = time();
+        }
         try {
             $date = new DateTime($timestamp);
         }
@@ -661,7 +664,10 @@ class DatesTimes
      */
     public static function convertToPreviousMonth(string $timestamp = '', string $format = 'timestamp')
     {
-        $timestamp = self::convertDateTimeWith(DateTime::ATOM, $timestamp) ?? time();
+        $timestamp = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
+        if ($timestamp === '') {
+            $timestamp = time();
+        }
         try {
             $date = new DateTime($timestamp);
         }

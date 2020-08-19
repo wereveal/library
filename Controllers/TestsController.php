@@ -30,7 +30,8 @@ use Ritc\Library\Views\TestsView;
  */
 class TestsController
 {
-    use LogitTraits, ControllerTraits;
+    use LogitTraits;
+    use ControllerTraits;
 
     /** @var TestsView view object */
     private $o_view;

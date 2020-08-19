@@ -24,7 +24,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PageComplexModel
 {
-    use LogitTraits, DbUtilityTraits;
+    use LogitTraits;
+    use DbUtilityTraits;
 
     /** @var ContentComplexModel  */
     private $o_content;

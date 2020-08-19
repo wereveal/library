@@ -26,7 +26,8 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class TestsView
 {
-    use ViewTraits, LogitTraits;
+    use LogitTraits;
+    use ViewTraits;
 
     /**
      * TestsView constructor.

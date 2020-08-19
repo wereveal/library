@@ -150,7 +150,7 @@ class NewAppHelper
                                 return false;
                             }
                         }
-                        else if (!file_put_contents($new_file, $this->keep_me_text)) {
+                        elseif (!file_put_contents($new_file, $this->keep_me_text)) {
                             return false;
                         }
                     }

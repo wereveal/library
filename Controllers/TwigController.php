@@ -26,7 +26,8 @@ use Ritc\Library\Views\TwigView;
  */
 class TwigController implements ControllerInterface
 {
-    use ConfigControllerTraits, LogitTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var TwigComplexModel $o_tc */
     private $o_tc;

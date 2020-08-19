@@ -25,7 +25,8 @@ use Ritc\Library\Views\LibSitemapView;
  */
 class LibSitemapController implements ControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var NavComplexModel */
     private $o_nav;

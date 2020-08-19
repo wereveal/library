@@ -25,7 +25,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ContentComplexModel
 {
-    use LogitTraits, DbUtilityTraits;
+    use LogitTraits;
+    use DbUtilityTraits;
 
     /** @var string $select_sql */
     private $select_sql;

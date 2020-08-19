@@ -30,7 +30,8 @@ use Ritc\Library\Views\GroupsView;
  */
 class GroupsController implements ConfigControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var GroupsModel */
     private $o_model;

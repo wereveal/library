@@ -38,7 +38,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ConstantsController implements ConfigControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var ConstantsModel $o_model */
     private $o_model;

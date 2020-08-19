@@ -26,7 +26,8 @@ use Ritc\Library\Views\BlocksView;
  */
 class BlocksController implements ConfigControllerInterface
 {
-    use LogitTraits, ControllerTraits;
+    use LogitTraits;
+    use ControllerTraits;
 
     /** @var BlocksModel */
     private $o_model;

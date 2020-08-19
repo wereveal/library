@@ -24,7 +24,9 @@ use Ritc\Library\Traits\TesterTraits;
  */
 class ConstantsModelTester
 {
-    use LogitTraits, TesterTraits;
+    use LogitTraits;
+    use TesterTraits;
+
     /** @var ConstantsModel */
     private $o_model;
 

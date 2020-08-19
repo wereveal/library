@@ -43,7 +43,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PageView
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /** @var PageComplexModel */
     private $o_model;

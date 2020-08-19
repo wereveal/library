@@ -17,9 +17,10 @@ use Ritc\Library\Services\DbModel;
  * some work there.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
- * @date    2018-12-05 13:03:16
+ * @version v3.0.1
+ * @date    2020-08-18 20:44:05
  * @change_log
+ * - v3.0.1          - Minor bug, depreciated way of doing things fixed         - 2020-08-18 wer
  * - v3.0.0          - Changed readCount() method, not backwards compatible     - 2018-12-05 wer
  *                     readCount was relying on values that were not easily
  *                     created in places that needed the method.
@@ -45,7 +46,7 @@ use Ritc\Library\Services\DbModel;
  * - v1.0.0          - this went live a while back, guess it isn't alpha        - 2016-08-22 wer
  * - v1.0.0-alpha.9  - added functionality to buildSqlSelectFields method       - 2016-05-04 wer
  * - v1.0.0-alpha.0 - initial version                                           - 2016-03-18 wer
- * @todo Review to see where multi-table operations can be strenthened.
+ * @todo Review to see where multi-table operations can be strengthened.
  */
 trait DbUtilityTraits
 {
@@ -122,9 +123,9 @@ trait DbUtilityTraits
 
         $a_field_names = !empty($a_parameters['a_field_names'])
             ? $a_parameters['a_field_names']
-            : !empty($this->a_db_fields)
+            : (!empty($this->a_db_fields)
                 ? $this->a_db_fields
-                : [];
+                : []);
         // If a_field_names is empty, the sql cannot be built. Return false.
         if (empty($a_field_names)) {
             $this->error_message = 'Missing required values';
@@ -343,22 +344,17 @@ SQL;
      * @return bool
      * @throws ModelException
      */
-    protected function genericDelete($record_ids = -1):?bool
+    protected function genericDelete($record_ids = null):?bool
     {
-        if (is_array($record_ids)) {
-           if (empty($record_ids)) {
-               $this->error_message = 'No record ids were provided.';
-               $error_code = ExceptionHelper::getCodeNumberModel('delete_missing_primary');
-               throw new ModelException($this->error_message, $error_code);
-           }
-            return $this->genericDeleteMultiple($record_ids);
-        }
-
-        if (is_numeric($record_ids) && $record_ids < 1) {
-            $this->error_message = 'No valid record ids were provided.';
+        if (empty($record_ids) || $record_ids < 1) {
+            $this->error_message = 'No record ids were provided.';
             $error_code = ExceptionHelper::getCodeNumberModel('delete_missing_primary');
             throw new ModelException($this->error_message, $error_code);
         }
+        if (is_array($record_ids)) {
+            return $this->genericDeleteMultiple($record_ids);
+        }
+
         $piname = $this->primary_index_name;
         $sql = "
           DELETE FROM {$this->db_table}
@@ -466,7 +462,7 @@ SQL;
             return '';
         }
         $select_me = '';
-        if ($prefix !== '' && strpos($prefix, '.') === false) {
+        if (!empty($prefix) && strpos($prefix, '.') === false) {
             $prefix .= '.';
         }
         if (Arrays::isAssocArray($a_values)) {
@@ -643,7 +639,7 @@ SQL;
                         unset($a_values[$field]);
                     }
                 }
-            } /** @noinspection PhpRedundantCatchClauseInspection */
+            }
             catch (ModelException $e) {
                 $this->error_message = $e->errorMessage();
                 return false;
@@ -679,7 +675,7 @@ SQL;
             foreach ($a_values as $key => $a_record) {
                 try {
                     $results = $this->read($a_record);
-                } /** @noinspection PhpRedundantCatchClauseInspection */
+                }
                 catch (ModelException $e) {
                     return false;
                 }
@@ -691,7 +687,7 @@ SQL;
         else {
             try {
                 $results = $this->read($a_values);
-            } /** @noinspection PhpRedundantCatchClauseInspection */
+            }
             catch (ModelException $e) {
                 return false;
             }
@@ -819,7 +815,7 @@ SQL;
     protected function prepareListArray(array $array = []):array
     {
         foreach ($array as $key => $value) {
-            $array[$key] = 0 === strpos($value, ':')
+            $array[$key] = strpos($value, ':') === 0
                 ? $value
                 : ':' . $value;
         }

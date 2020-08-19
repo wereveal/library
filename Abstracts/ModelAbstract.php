@@ -25,7 +25,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 abstract class ModelAbstract implements ModelInterface
 {
-    use LogitTraits, DbUtilityTraits;
+    use LogitTraits;
+    use DbUtilityTraits;
 
     /**
      * Create a record using the values provided.

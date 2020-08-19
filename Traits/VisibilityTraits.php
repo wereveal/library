@@ -5,8 +5,8 @@
  */
 namespace Ritc\Library\Traits;
 
+use Exception;
 use ReflectionClass;
-use ReflectionException;
 use ReflectionProperty;
 
 /**
@@ -36,7 +36,7 @@ trait VisibilityTraits {
         try {
             $o_class = new ReflectionClass(__CLASS__);
         }
-        catch (ReflectionException $e) {
+        catch (Exception $e) {
             return;
         }
         $this->current_page = $o_class->getFileName();
@@ -45,7 +45,7 @@ trait VisibilityTraits {
             try {
                 $o_prop = new ReflectionProperty(__CLASS__, $property_name);
             }
-            catch (ReflectionException $e) {
+            catch (Exception $e) {
                 return;
             }
             if ($o_prop->isPrivate() || $o_prop->isProtected()) {
@@ -65,7 +65,7 @@ trait VisibilityTraits {
     public function __set($var, $val)
     {
         $a_backtrace = debug_backtrace();
-        if (null === $this->private_properties || $this->private_properties === []) {
+        if ($this->private_properties === null || $this->private_properties === []) {
             $this->$var = $val;
         }
         if (!array_key_exists($var, $this->private_properties)

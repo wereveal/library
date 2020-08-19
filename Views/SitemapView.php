@@ -21,7 +21,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class SitemapView implements ViewInterface
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /**
      * Sitemap constructor.

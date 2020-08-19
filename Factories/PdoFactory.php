@@ -43,7 +43,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PdoFactory
 {
-    use DbCommonTraits, LogitTraits;
+    use LogitTraits;
+    use DbCommonTraits;
 
     /** @var array */
     private $a_db_config;

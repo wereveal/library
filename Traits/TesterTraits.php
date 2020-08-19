@@ -223,7 +223,7 @@ trait TesterTraits
             $this->order_file = $test_order_file;
             $this->a_test_order = include $test_order_file;
         }
-        else if (!empty($this->a_test_values)) {
+        elseif (!empty($this->a_test_values)) {
             $a_test_order = [];
             foreach ($this->a_test_values as $key => $test_values) {
                 $a_test_order[] = $key;

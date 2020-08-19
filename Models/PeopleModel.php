@@ -512,9 +512,7 @@ class PeopleModel extends ModelAbstract
     public function setPersonValues(array $a_person = array())
     {
         $meth = __METHOD__ . '.';
-        $new_person = empty($a_person['people_id'])
-            ? true
-            : false;
+        $new_person = empty($a_person['people_id']);
         if (substr($a_person['password'], 1) !== '*') {
             $a_person['password'] = $this->hashPass($a_person['password']);
         }
@@ -656,7 +654,7 @@ class PeopleModel extends ModelAbstract
         if (empty($password)) {
             return '';
         }
-        if (0 === strpos($password, '***')) {
+        if (strpos($password, '***') === 0) {
             return '';
         }
         $pass_info = password_get_info($password);

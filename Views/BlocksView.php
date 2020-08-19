@@ -25,7 +25,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class BlocksView implements ViewInterface
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /**
      * BlocksView constructor.

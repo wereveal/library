@@ -379,28 +379,28 @@ trait ViewTraits
      */
     protected function setOProperties(Di $o_di):void
     {
-        if (null === $this->o_di) {
+        if ($this->o_di === null) {
             $this->o_di = $o_di;
         }
-        if (null === $this->o_router) {
+        if ($this->o_router === null) {
             $this->o_router = $o_di->get('router');
         }
-        if (null === $this->o_twig) {
+        if ($this->o_twig === null) {
             $this->o_twig = $o_di->get('twig');
         }
-        if (null === $this->o_db) {
+        if ($this->o_db === null) {
             $this->o_db = $o_di->get('db');
         }
-        if (null === $this->o_session) {
+        if ($this->o_session === null) {
             $this->o_session = $o_di->get('session');
         }
-        if (null === $this->o_auth) {
+        if ($this->o_auth === null) {
             $this->o_auth = new AuthHelper($o_di);
         }
-        if (null === $this->o_nav) {
+        if ($this->o_nav === null) {
             $this->o_nav = new NavComplexModel($this->o_di);
         }
-        if (null === $this->o_routes_helper) {
+        if ($this->o_routes_helper === null) {
             $this->o_routes_helper = new RoutesHelper($o_di);
         }
         if (USE_CACHE) {
@@ -783,6 +783,7 @@ trait ViewTraits
                         . $use_to_display
                         . '/' . $get_stuff;
             }
+            /** @noinspection UnsupportedStringOffsetOperationsInspection */
             $a_pager['links'][] = [
                 'href' => $link,
                 'text' => $text
@@ -922,7 +923,7 @@ trait ViewTraits
             if (count($a_item['submenu']) > 0) {
                 $a_nav[$key]['submenu'] = $this->specifyActiveMenu($a_item['submenu']);
             }
-            else if ($a_item['url'] === $current_uri) {
+            elseif ($a_item['url'] === $current_uri) {
                 $a_item['class'] .= ' menu-active';
             }
             else {

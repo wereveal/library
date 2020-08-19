@@ -22,7 +22,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesGroupView implements ViewInterface
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /**
      * RoutesGroupView constructor.

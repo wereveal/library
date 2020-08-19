@@ -29,7 +29,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PeopleComplexModel
 {
-    use LogitTraits, DbUtilityTraits;
+    use LogitTraits;
+    use DbUtilityTraits;
 
     /** @var PeopleModel */
     private $o_people;

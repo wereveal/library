@@ -30,7 +30,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class TwigComplexModel
 {
-    use LogitTraits, DbUtilityTraits;
+    use LogitTraits;
+    use DbUtilityTraits;
 
     /** @var array $a_ids The ids of the new records */
     private $a_ids;

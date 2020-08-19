@@ -24,7 +24,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class LibSitemapView implements ViewInterface
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /**
      * LibSitemapView constructor.

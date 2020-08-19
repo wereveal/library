@@ -22,7 +22,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavgroupsController implements ConfigControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /**
      * NavgroupsController constructor.

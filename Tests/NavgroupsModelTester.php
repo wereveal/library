@@ -7,6 +7,7 @@ namespace Ritc\Library\Tests;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\NavgroupsModel;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\TesterTraits;
@@ -23,7 +24,8 @@ use Ritc\Library\Traits\TesterTraits;
  */
 class NavgroupsModelTester
 {
-    use LogitTraits, TesterTraits;
+    use LogitTraits;
+    use TesterTraits;
 
     /** @var \Ritc\Library\Models\NavgroupsModel  */
     private $o_model;
@@ -43,7 +45,7 @@ class NavgroupsModelTester
             'class_name' => 'NavgroupsModel'
         ];
         $this->setupTests($a_test_params);
-        /** @var \Ritc\Library\Services\DbModel $o_db */
+        /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
         $this->o_model = new NavgroupsModel($o_db);
         $this->o_model->setElog($this->o_elog);

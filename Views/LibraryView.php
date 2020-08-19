@@ -27,7 +27,8 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class LibraryView
 {
-    use LogitTraits, ConfigViewTraits;
+    use LogitTraits;
+    use ConfigViewTraits;
 
     /**
      * LibraryView constructor.

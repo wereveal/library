@@ -27,7 +27,8 @@ use Ritc\Library\Views\ContentView;
  */
 class ContentController implements ConfigControllerInterface
 {
-    use LogitTraits, ConfigControllerTraits;
+    use LogitTraits;
+    use ConfigControllerTraits;
 
     /** @var string $instance_failure Lets me know if the instance had a failure. */
     private $instance_failure = '';
