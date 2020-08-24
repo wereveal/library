@@ -18,12 +18,12 @@ use Ritc\Library\Traits\LogitTraits;
  * The view class for the navigation manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.2
- * @date    2017-06-19 13:11:34
+ * @version v1.0.0
+ * @date    2020-08-24 10:30:12
  * @change_log
- * - v1.0.0-alpha.2 - refactoring in model   - 2017-06-19 wer
- * - v1.0.0-alpha.1 - Name refactoring       - 2017-05-14 wer
- * - v1.0.0-alpha.0 - Initial version        - 2016-04-15 wer
+ * - v1.0.0         - bug fixes            - 2020-08-24 wer
+ * - v1.0.0-alpha.2 - refactoring in model - 2017-06-19 wer
+ * - v1.0.0-alpha.0 - Initial version      - 2016-04-15 wer
  */
 class NavigationView
 {
@@ -95,10 +95,10 @@ class NavigationView
                 $a_nav = $this->o_cache->get($cache_key);
             }
             if (empty($a_nav)) {
-                $a_nav['a_url_select']['select']     = $this->createUrlSelect();
-                $a_nav['a_nav_select']['select']     = $this->createNavSelect();
-                $a_nav['a_ng_select']['select']      = $this->createNgSelect();
-                $a_nav['a_nav_lvl_select']['select'] = $this->createNavLvlSelect();
+                $a_nav['a_url_select']     = ['select' => $this->createUrlSelect()];
+                $a_nav['a_nav_select']     = ['select' => $this->createNavSelect()];
+                $a_nav['a_ng_select']      = ['select' => $this->createNgSelect()];
+                $a_nav['a_nav_lvl_select'] = ['select' => $this->createNavLvlSelect()];
                 $a_chbx_values = [
                     'id'      => 'nav_active',
                     'name'    => 'nav_active',
@@ -123,11 +123,11 @@ class NavigationView
                 catch (ModelException $e) {
                     $results = [];
                 }
-                $a_nav['nav_active_ckbx']            = [];
-                $a_nav['a_url_select']['select']     = [];
-                $a_nav['a_nav_select']['select']     = [];
-                $a_nav['a_nav_lvl_select']['select'] = [];
-                $a_nav['a_ng_select']['select']      = [];
+                $a_nav['nav_active_ckbx']  = [];
+                $a_nav['a_url_select']     = ['select' => []];
+                $a_nav['a_nav_select']     = ['select' => []];
+                $a_nav['a_nav_lvl_select'] = ['select' => []];
+                $a_nav['a_ng_select']      = ['select' => []];
                 foreach ($results as $nav_label => $nav_value) {
                     switch ($nav_label) {
                         case 'nav_active':
@@ -140,16 +140,16 @@ class NavigationView
                             $a_nav['nav_active_ckbx'] = FormHelper::checkbox($a_chbx_values);
                             break;
                         case 'url_id':
-                            $a_nav['a_url_select']['select'] = $this->createUrlSelect($nav_value);
+                            $a_nav['a_url_select'] = ['select' => $this->createUrlSelect($nav_value)];
                             break;
                         case 'parent_id':
-                            $a_nav['a_nav_select']['select'] = $this->createNavSelect($nav_value);
+                            $a_nav['a_nav_select'] = ['select' => $this->createNavSelect($nav_value)];
                             break;
                         case 'ng_id':
-                            $a_nav['a_ng_select']['select']  = $this->createNgSelect($nav_value);
+                            $a_nav['a_ng_select']  = ['select' => $this->createNgSelect($nav_value)];
                             break;
                         case 'nav_level':
-                            $a_nav['a_nav_lvl_select']['select'] = $this->createNavLvlSelect($nav_value);
+                            $a_nav['a_nav_lvl_select'] = ['select' => $this->createNavLvlSelect($nav_value)];
                             break;
                         default:
                             $a_nav[$nav_label] = $nav_value;
