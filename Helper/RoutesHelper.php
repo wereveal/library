@@ -298,8 +298,7 @@ class RoutesHelper
         if ($this->use_cache) {
             $a_groups_json = $this->o_cache->get($cache_key);
             if (!empty($a_groups_json)) {
-                $a_groups = json_decode($a_groups_json);
-                return $a_groups;
+                return json_decode($a_groups_json, true);
             }
         }
         $o_rgm = new RoutesGroupMapModel($this->o_db);

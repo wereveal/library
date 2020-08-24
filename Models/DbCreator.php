@@ -1,4 +1,5 @@
-<?php /** @noinspection PhpIncludeInspection */
+<?php /** @noinspection PhpPrivateFieldCanBeLocalVariableInspection */
+/** @noinspection PhpIncludeInspection */
 /**
  * Class DbCreator
  * @package Ritc_Library

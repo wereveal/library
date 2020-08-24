@@ -188,9 +188,7 @@ EOT;
                     case T_ABSTRACT:
                         return $a_tokens[$key+4][1];
                     case T_CLASS:
-                        return $a_tokens[$key+2][1];
                     case T_INTERFACE:
-                        return $a_tokens[$key+2][1];
                     case T_TRAIT:
                         return $a_tokens[$key+2][1];
                     default:

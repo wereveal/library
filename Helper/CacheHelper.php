@@ -14,7 +14,6 @@ use Ritc\Library\Traits\LogitTraits;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Adapter\TagAwareAdapter;
 use Symfony\Component\Cache\CacheItem;
-use Symfony\Component\Cache\Simple\AbstractCache;
 
 /**
  * Makes using cache easier by hidding differences btween psr-6 and psr-16 types..
@@ -39,7 +38,7 @@ class CacheHelper
     /**
      * The cache object.
      *
-     * @var AbstractAdapter|AbstractCache|CacheItem|TagAwareAdapter
+     * @var AbstractAdapter|CacheItem|TagAwareAdapter
      */
     protected $o_cache;
 
@@ -195,16 +194,20 @@ class CacheHelper
                 }
                 break;
             case 'psr-16':
-                if ($this->o_cache->has($cache_key)) {
-                    try {
-                        return $this->o_cache->get($cache_key);
+                try {
+                    if ($this->o_cache->has($cache_key)) {
+                        try {
+                            return $this->o_cache->get($cache_key);
+                        }
+                        catch (SimpleCacheException $e) {
+                            // do nothing
+                        }
+                        catch (CacheException $e) {
+                            // do nothing
+                        }
                     }
-                    catch (SimpleCacheException $e) {
-                        // do nothing
-                    }
-                    catch (CacheException $e) {
-                        // do nothing
-                    }
+                }
+                catch (SimpleCacheException $e) {
                 }
                 break;
             default:

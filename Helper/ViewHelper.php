@@ -45,8 +45,6 @@ class ViewHelper
         switch ($message_type) {
             case 'success':
                 return self::successMessage($new_message);
-            case 'info':
-                return self::infoMessage($new_message);
             case 'warning':
                 return self::warningMessage($new_message);
             case 'error':
@@ -55,6 +53,7 @@ class ViewHelper
                 return self::failureMessage($new_message);
             case 'code':
                 return self::codeMessage($new_message);
+            case 'info':
             default:
                 return self::infoMessage($new_message);
         }

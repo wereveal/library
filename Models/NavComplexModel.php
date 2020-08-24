@@ -333,7 +333,7 @@ class NavComplexModel
             AND n.parent_id = :parent_id
             AND n.nav_id != :parent_nav_id
         ';
-        $sql = $sql . $where . $this->select_order_sql;
+        $sql .= $where . $this->select_order_sql;
         $a_search_for = [
             ':parent_id'     => $parent_id,
             ':parent_nav_id' => $parent_id,

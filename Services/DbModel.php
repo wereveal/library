@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnreachableStatementInspection */
 /**
  * Class DbModel
  *
@@ -20,9 +20,10 @@ use Ritc\Library\Traits\LogitTraits;
  * For read/write access to the database based on PDO.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v5.2.2
+ * @version v5.3.0
  * @date    2018-09-17 17:16:20
  * @change_log
+ * - v5.3.0 - Code clean up based on code inspections                                       - 2020-08-24 wer
  * - v5.2.2 - Bug fixes                                                                     - 2018-09-17 wer
  * - v5.2.0 - Method added to get the pdo object                                            - 2017-12-14 wer
  * - v5.1.3 - ModelException changes reflected here                                         - 2017-12-12 wer
@@ -193,17 +194,7 @@ class DbModel
     public function search($the_query = '', array $a_values = [], $type = 'assoc')
     {
         $meth = __METHOD__ . '.';
-        switch ($type) {
-            case 'num':
-                $fetch_style = PDO::FETCH_NUM;
-                break;
-            case 'both':
-                $fetch_style = PDO::FETCH_BOTH;
-                break;
-            case 'assoc':
-            default:
-                $fetch_style = PDO::FETCH_ASSOC;
-        }
+        $fetch_style = $this->determineFetchStyle($type);
         if ($the_query === '') {
             $this->error_message = 'The query must not be blank.';
             $this->logIt($this->error_message, LOG_ALWAYS, $meth . __LINE__);
@@ -471,7 +462,6 @@ class DbModel
         if (!isset($a_table_info['schema']) || $a_table_info['schema'] === '') {
             $a_table_info['schema'] = 'public';
         }
-        /** @noinspection SqlResolve */
         $query = '
             SELECT column_default
             FROM information_schema.columns
@@ -518,7 +508,7 @@ class DbModel
      */
     public function retrieveFormattedSqlErrorMessage($pdo = null):string
     {
-        if (null !== $pdo) {
+        if ($pdo !== null) {
             $this->setSqlErrorMessage($pdo);
         }
         elseif ($this->sql_error_message === '') {
@@ -572,8 +562,8 @@ class DbModel
     /**
      * Bind values from an assoc array to a prepared query.
      *
-     * @param array                $a_values Keys must match the prepared query
-     * @param PDOStatement $o_pdo_stmt
+     * @param array             $a_values Keys must match the prepared query
+     * @param PDOStatement|null $o_pdo_stmt
      * @return bool
      * @throws ModelException
      */
@@ -660,13 +650,13 @@ class DbModel
     /**
      * Executes a prepared query.
      *
-     * @param array                $a_values   <pre>
+     * @param array             $a_values      <pre>
      *                                         $a_values could be:
      *                                         array("test", "brains") for question mark place holders prepared statement
      *                                         array(":test"=>"test", ":food"=>"brains") for named parameters prepared statement
      *                                         '' when the values have been bound before calling this method
      *
-     * @param PDOStatement $o_pdo_stmt - the object created from the prepare
+     * @param PDOStatement|null $o_pdo_stmt    - the object created from the prepare
      * @return bool
      * @throws ModelException
      */
@@ -754,32 +744,7 @@ class DbModel
                 ? $a_fetch_config['cursor_offset']
                 : 0;
         }
-        switch ($fetch_style) {
-            case 'BOTH':
-                $fetch_style = PDO::FETCH_BOTH;
-                break;
-            case 'BOUND':
-                $fetch_style = PDO::FETCH_BOUND;
-                break;
-            case 'CLASS':
-                $fetch_style = PDO::FETCH_CLASS;
-                break;
-            case 'INTO':
-                $fetch_style = PDO::FETCH_INTO;
-                break;
-            case 'LAZY':
-                $fetch_style = PDO::FETCH_LAZY;
-                break;
-            case 'NUM':
-                $fetch_style = PDO::FETCH_NUM;
-                break;
-            case 'OBJ':
-                $fetch_style = PDO::FETCH_OBJ;
-                break;
-            case 'ASSOC':
-            default:
-                $fetch_style = PDO::FETCH_ASSOC;
-        }
+        $fetch_style = $this->determineFetchStyle($fetch_style);
         try {
             return $o_pdo_stmt->fetch($fetch_style, $cursor_orientation, $cursor_offset);
         }
@@ -799,32 +764,7 @@ class DbModel
      */
     public function fetchAll(PDOStatement $o_pdo_stmt, $fetch_style = 'ASSOC'):?array
     {
-        switch ($fetch_style) {
-            case 'BOTH':
-                $pdo_fetch_type = PDO::FETCH_BOTH;
-                break;
-            case 'BOUND':
-                $pdo_fetch_type = PDO::FETCH_BOUND;
-                break;
-            case 'CLASS':
-                $pdo_fetch_type = PDO::FETCH_CLASS;
-                break;
-            case 'INTO':
-                $pdo_fetch_type = PDO::FETCH_INTO;
-                break;
-            case 'LAZY':
-                $pdo_fetch_type = PDO::FETCH_LAZY;
-                break;
-            case 'NUM':
-                $pdo_fetch_type = PDO::FETCH_NUM;
-                break;
-            case 'OBJ':
-                $pdo_fetch_type = PDO::FETCH_OBJ;
-                break;
-            case 'ASSOC':
-            default:
-                $pdo_fetch_type = PDO::FETCH_ASSOC;
-        }
+        $pdo_fetch_type = $this->determineFetchStyle($fetch_style);
         try {
             return $o_pdo_stmt->fetchAll($pdo_fetch_type);
         }
@@ -950,7 +890,7 @@ class DbModel
             throw new ModelException('Unable to start the transaction.', 12, $e);
         }
         try {
-            $this->insert($the_query, $a_values, $table_name);
+            $this->insert($the_query, $a_values, ['table_name' => $table_name]);
             try {
                 $this->o_pdo->commit();
                 return true;
@@ -1044,12 +984,13 @@ class DbModel
     }
 
     ### Complex Commands
+
     /**
      * Does an insert based on a prepared query.
      *
-     * @param array         $a_values   the values to be insert
-     * @param PDOStatement $o_pdo_stmt the object pointing to the prepared statement
-     * @param array         $a_table_info
+     * @param array             $a_values   the values to be insert
+     * @param PDOStatement|null $o_pdo_stmt the object pointing to the prepared statement
+     * @param array             $a_table_info
      * @return bool success or failure
      * @throws ModelException
      */
@@ -1080,9 +1021,9 @@ class DbModel
     /**
      * Specialized version of execute which retains ids of each insert.
      *
-     * @param array         $a_values see $this->execute for details
-     * @param PDOStatement $o_pdo_stmt
-     * @param array         $a_table_info
+     * @param array             $a_values see $this->execute for details
+     * @param PDOStatement|null $o_pdo_stmt
+     * @param array             $a_table_info
      * @return bool
      * @throws ModelException
      */
@@ -1199,9 +1140,9 @@ class DbModel
      * Question: why is it called mdQueryPrepared? You can tell this is an old method,
      * with its mysterious name. md stands for modify delete.
      *
-     * @param array         $a_values
-     * @param bool          $single_record
-     * @param PDOStatement $o_pdo_stmt
+     * @param array             $a_values
+     * @param bool              $single_record
+     * @param PDOStatement|null $o_pdo_stmt
      * @return bool
      * @throws ModelException
      */
@@ -1304,7 +1245,6 @@ class DbModel
                         throw new ModelException($e->errorMessage(), $e->getCode(), $e);
                     }
                 }
-                $query = "INSERT INTO {$query_params['table_name']} ";
                 $field_names = '(';
                 $values = '(';
                 $field_data = $this->prepareValues($data);
@@ -1316,7 +1256,8 @@ class DbModel
                 }
                 $field_names .= ')';
                 $values .= ')';
-                $query = $query . $field_names . ' VALUES ' . $values;
+                $query = "INSERT INTO {$query_params['table_name']} 
+                    {$field_names} VALUES . {$values}";
                 $a_data = $this->prepareKeys($data);
                 try {
                     return $this->insert($query, $a_data, $query_params['table_name']);
@@ -1386,9 +1327,9 @@ class DbModel
     /**
      * Does a search with a prepared statement.
      *
-     * @param array         $a_values
-     * @param PDOStatement $o_pdo_stmt
-     * @param string        $type
+     * @param array             $a_values
+     * @param PDOStatement|null $o_pdo_stmt
+     * @param string            $type
      * @return array
      * @throws ModelException
      */
@@ -1399,17 +1340,7 @@ class DbModel
             $err_code = ExceptionHelper::getCodeNumberModel('missing values');
             throw new ModelException($message, $err_code);
         }
-        switch ($type) {
-            case 'num':
-                $fetch_style = PDO::FETCH_NUM;
-                break;
-            case 'both':
-                $fetch_style = PDO::FETCH_BOTH;
-                break;
-            case 'assoc':
-            default:
-                $fetch_style = PDO::FETCH_ASSOC;
-        }
+        $fetch_style = $this->determineFetchStyle($type);
         if (count($a_values) > 0) {
             $a_results = [];
             if (isset($a_values[0]) && is_array($a_values[0])) {
@@ -1456,13 +1387,27 @@ class DbModel
      */
     public function determineFetchStyle($type = 'assoc'):?int
     {
+        $type = strtolower($type);
         switch ($type) {
+            case 'bound':
+                return PDO::FETCH_BOUND;
+                break;
+            case 'class':
+                return PDO::FETCH_CLASS;
+                break;
+            case 'into':
+                return PDO::FETCH_INTO;
+                break;
+            case 'lazy':
+                return PDO::FETCH_LAZY;
+                break;
+            case 'obj':
+                return PDO::FETCH_OBJ;
+                break;
             case 'num':
                 return PDO::FETCH_NUM;
-                break;
             case 'both':
                 return PDO::FETCH_BOTH;
-                break;
             case 'assoc':
             default:
                 return PDO::FETCH_ASSOC;
@@ -1499,7 +1444,6 @@ class DbModel
             $a_column_names = [];
             switch ($this->db_type) {
                 case 'pgsql':
-                    /** @noinspection SqlResolve */
                     $sql = "
                         SELECT column_name
                         FROM information_schema.columns
@@ -1559,14 +1503,12 @@ class DbModel
     {
         switch ($this->db_type) {
             case 'pgsql':
-                /** @noinspection SqlResolve */
                 $sql = '
                     SELECT table_name
                     FROM information_schema.tables
                 ';
                 break;
             case 'sqlite':
-                /** @noinspection SqlResolve */
                 $sql = "
                     SELECT name
                     FROM sqlite_master
@@ -1595,7 +1537,6 @@ class DbModel
     {
         switch ($this->db_type) {
             case 'pgsql':
-                /** @noinspection SqlResolve */
                 $sql =
                     "
                     SELECT count(table_name) as count
@@ -1605,7 +1546,6 @@ class DbModel
                 ";
                 break;
             case 'sqlite':
-                /** @noinspection SqlResolve */
                 $sql =
                     "
                     SELECT count(*) as count
@@ -1616,8 +1556,7 @@ class DbModel
                 break;
             case 'mysql':
             default:
-                /** @noinspection SqlResolve */
-                $sql =
+            $sql =
                     "
                     SELECT count(*) as count
                     FROM information_schema.tables

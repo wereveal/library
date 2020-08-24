@@ -196,11 +196,8 @@ class ConstantsCreator
                                 /** @var bool $key */
                                 define($key, false);
                                 break;
-                            case 'null':
-                                /** @var null $key */
-                                define($key, null);
-                                break;
                             case null:
+                            case 'null':
                                 /** @var null $key */
                                 define($key, null);
                                 break;
@@ -392,7 +389,6 @@ class ConstantsCreator
                 $twig_prefix = $a_record['tp_prefix'];
                 $const_name = strtoupper($a_record['tp_prefix']) . 'TWIG_PREFIX';
                 if (!defined($const_name)) {
-                    /** @var string $const_name */
                     define($const_name, $twig_prefix);
                 }
                 if ($a_record['tp_default'] === 'true') {

@@ -180,10 +180,9 @@ class Elog
                           'From: error_' . $this->error_email_address
                     . "\r\nX-Mailer: PHP/" . PHP_VERSION
                 );
-            case LOG_JSON:
-                return trigger_error($the_string, E_USER_NOTICE);
-            case LOG_ON:
             case LOG_CUSTOM:
+            case LOG_ON:
+            case LOG_JSON:
                 return trigger_error($the_string, E_USER_NOTICE);
             case LOG_WARN:
                 return trigger_error($the_string, E_USER_WARNING);

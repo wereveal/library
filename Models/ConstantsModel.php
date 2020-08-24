@@ -304,7 +304,7 @@ SQL;
             INSERT INTO {$this->db_table} (const_name, const_value, const_immutable)
             VALUES (?, ?, ?)";
         try {
-            return $this->o_db->insert($query, $a_constants, $this->db_table);
+            return $this->o_db->insert($query, $a_constants, ['table_name' => $this->db_table]);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode(), $e);

@@ -553,7 +553,7 @@ class Files implements LocationInterface
     public function setFileDirName($value = ''):bool
     {
         if ($value === '') { return false; }
-        if (0 === strpos($value, '/')) {
+        if (strpos($value, '/') === 0) {
             $value = substr($value, 1);
         }
         if (substr($value, strlen($value) - 1) === '/') {
@@ -591,7 +591,7 @@ class Files implements LocationInterface
      * @param string $theme_name
      * @return null
      */
-    public function setThemeName($theme_name = 'default')
+    public function setThemeName($theme_name = 'default'): ?bool
     {
         $this->theme_name = $theme_name;
         $this->setFileLocations();

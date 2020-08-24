@@ -271,12 +271,11 @@ class TwigComplexModel
             }
             $a_tpl_ids = array_merge($a_existing_tpls, $a_tpl_ids);
         }
-        $a_return_this = [
+        return [
             'tp_id'   => $tp_prefix_id,
             'td_ids'  => $a_dir_ids,
             'tpl_ids' => $a_tpl_ids
         ];
-        return $a_return_this;
     }
 
     /**
