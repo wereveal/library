@@ -1,6 +1,5 @@
 {
   "name": "ritc/library",
-  "version": "6.0.0",
   "require": {
     "php": ">=7.2.0",
     "ext-fileinfo": "*",
@@ -17,5 +16,8 @@
     "symfony/cache": "^4.0",
     "twig/twig": ">1.2-stable",
     "roave/security-advisories": "dev-master"
+  },
+  "autoload": {
+    "psr-4": { "Ritc\\": ""}
   }
 }
