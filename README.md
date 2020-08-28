@@ -5,7 +5,7 @@ This README would normally document whatever steps are necessary to get your app
 ## The Reveal IT Consulting PHP Library ##
 
 - Quick summary -- This provides a library of classes used to build an app.
-- Version -- 5.5.0
+- Version -- 6.1.0
 
 ## How do I get set up? ##
 
