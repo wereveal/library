@@ -1,11 +1,19 @@
 /* Main Common */
+@use "mixins" as m;
+@use "../variables" as v;
+@use "colors" as dc;
+@use "../../../../../../../twbs/bootstrap/scss/mixins/breakpoints" as bs-bp;
+@use "../../../../../../../twbs/bootstrap/scss/variables" as bs-v;
+
+$gradient_direction: v.$gradient-direction;
+
 html {
   height: 100%;
 }
 
 body {
   height:           100%;
-  background-color: $color-body;
+  background-color: dc.$color-body;
 }
 
 code {
@@ -73,14 +81,14 @@ hr.item-card {
 .btn-big {
   font-size:     2.25rem;
   font-weight:   300;
-  text-shadow:   1px 1px 1px $gray-500;
+  text-shadow:   1px 1px 1px dc.$gray50;
   margin-top:    1rem;
   margin-bottom: 1rem;
   width:         100%;
 }
 
 .header-small-caps {
-  @include fontSmallCapsExtraBold;
+  @include m.fontSmallCapsExtraBold;
 }
 
 .header-sans, .font-sans {
@@ -116,18 +124,18 @@ hr.item-card {
 }
 
 .font-small-caps {
-  @include fontSmallCaps;
+  @include m.fontSmallCaps;
 }
 
 .font-small-caps-bold {
-  @include fontSmallCapsBold;
+  @include m.fontSmallCapsBold;
 }
 
 .container {
-  background-color: $color-container;
+  background-color: dc.$color-container;
   margin-bottom:    2rem;
   margin-top:       1rem;
-  @include media-breakpoint-down(sm) {
+  @include bs-bp.media-breakpoint-down(sm) {
     margin:        .5rem;
     padding-right: .5rem;
     padding-left:  .5rem;
@@ -138,20 +146,20 @@ hr.item-card {
   }
 
   &.container-footer {
-    @include contentBlock('footer');
-    @include linearGradientTwoColor($gradient-stop, $gradient-start, $gradient-direction, $gradient-midpoint);
+    @include m.contentBlock('footer');
+    @include m.linearGradientTwoColor(dc.$gradient-stop, dc.$gradient-start, v.$gradient-direction, v.$gradient-midpoint);
   }
 
   &.container-gradient-down {
-    @include linearGradientTwoColor($gradient-start, $gradient-stop, $gradient-direction, $gradient-midpoint)
+    @include m.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, v.$gradient-direction, v.$gradient-midpoint)
   }
 
   &.container-gradient-up {
-    @include linearGradientTwoColor($gradient-start, $gradient-stop, -$gradient-direction, $gradient-midpoint)
+    @include m.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, -$gradient_direction, v.$gradient-midpoint)
   }
 
   &.container-header {
-    @include contentBlock('header');
+    @include m.contentBlock('header');
   }
 
   &.container-main {
@@ -181,8 +189,8 @@ hr.item-card {
 
   .row-fluid {
     [class*="span"] {
-      background-color: $color-body;
-      border:           1px solid $color-border;
+      background-color: dc.$color-body;
+      border:           1px solid dc.$color-border;
       border-radius:    10px;
       margin-bottom:    1rem;
       padding:          1rem 2rem;
@@ -210,12 +218,12 @@ hr.item-card {
   }
 
   .row {
-    background-color: $color-body;
+    background-color: dc.$color-body;
     padding-left:     1rem;
     padding-right:    1rem;
 
     [class*="col"] {
-      background-color: $color-body;
+      background-color: dc.$color-body;
       border:           0;
       border-radius:    0;
       padding:          0 .25rem;
@@ -241,8 +249,8 @@ hr.item-card {
 
     &.boxed {
       [class*="col"] {
-        background-color: $color-body;
-        border:           1px solid $color-border;
+        background-color: dc.$color-body;
+        border:           1px solid dc.$color-border;
         border-radius:    .25rem;
         margin-bottom:    1rem;
         padding:          .25rem;
@@ -251,7 +259,7 @@ hr.item-card {
 
     &.no-box {
       [class*="col"] {
-        background-color: $color-body;
+        background-color: dc.$color-body;
         border:           0;
         margin-bottom:    1rem;
         padding:          .25rem;
@@ -264,59 +272,59 @@ hr.item-card {
     }
 
     &.row-black {
-      @include colorRow($gray-barely, $black-color);
+      @include m.colorRow(dc.$gray-barely, dc.$black-color);
     }
 
     &.row-blue {
-      @include colorRow($blue-xlight, $blue-medium);
+      @include m.colorRow(dc.$blue-lightest, dc.$blue-medium);
     }
 
     &.row-blue-dark {
-      @include colorRow($blue-xlight, $blue-color);
+      @include m.colorRow(dc.$blue-lightest, dc.$blue-color);
     }
 
     &.row-blue-light {
-      @include colorRow($blue-dark, $blue-xlight);
+      @include m.colorRow(dc.$blue-dark, dc.$blue-lightest);
     }
 
     &.row-dark {
-      @include colorRow($gray-darkest, $gray-med-light);
+      @include m.colorRow(dc.$gray-darkest, dc.$gray-med-light);
     }
 
     &.row-darker {
-      @include colorRow($gray-barely, $gray-color);
+      @include m.colorRow(dc.$gray-barely, dc.$gray-color);
     }
 
     &.row-darkest {
-      @include colorRow($gray-xlight, $gray-dark);
+      @include m.colorRow(dc.$gray-lightest, dc.$gray-dark);
     }
 
     &.row-green {
-      @include colorRow($green-xlight, $green-med-light);
+      @include m.colorRow(dc.$green-lightest, dc.$green-med-light);
     }
 
     &.row-green-dark {
-      @include colorRow($green-xlight, $green-dark);
+      @include m.colorRow(dc.$green-lightest, dc.$green-dark);
     }
 
     &.row-green-light {
-      @include colorRow($green-darker, $green-lighter);
+      @include m.colorRow(dc.$green-darker, dc.$green-lighter);
     }
 
     &.row-light, &.odd, &.odd-inner-odd, &.even-inner-odd {
-      @include colorRow($gray-darkest, $gray-barely);
+      @include m.colorRow(dc.$gray-darkest, dc.$gray-barely);
     }
 
     &.row-medium, &.even, &.even-inner-even {
-      @include colorRow($gray-darkest, $gray-light);
+      @include m.colorRow(dc.$gray-darkest, dc.$gray-light);
     }
 
     &.row-med-light, &.odd-inner-even {
-      @include colorRow($gray-darkest, $gray-xlight);
+      @include m.colorRow(dc.$gray-darkest, dc.$gray-lightest);
     }
 
     &.row-white {
-      @include colorRow($gray-darkest, $white-color);
+      @include m.colorRow(dc.$gray-darkest, dc.$white-color);
     }
 
     &.upper {
@@ -337,209 +345,209 @@ hr.item-card {
 
 .container-fluid {
   &.container-footer {
-    @include contentBlock('footer');
-    @include linearGradientTwoColor($gradient-stop, $gradient-start, $gradient-direction, $gradient-shortpoint);
+    @include m.contentBlock('footer');
+    @include m.linearGradientTwoColor(dc.$gradient-stop, dc.$gradient-start, v.$gradient-direction, v.$gradient-shortpoint);
   }
 
   &.container-gradient-down {
-    @include linearGradientTwoColor($gradient-start, $gradient-stop, $gradient-direction, $gradient-midpoint)
+    @include m.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, v.$gradient-direction, v.$gradient-midpoint)
   }
 
   &.container-gradient-up {
-    @include linearGradientTwoColor($gradient-start, $gradient-stop, -$gradient-direction, $gradient-midpoint)
+    @include m.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, -$gradient_direction, v.$gradient-midpoint)
   }
 
   &.container-header {
-    @include contentBlock('header');
+    @include m.contentBlock('header');
   }
 
   &.container-body {
-    background-color: $gradient-stop;
+    background-color: dc.$gradient-stop;
     padding:          0 !important;
   }
 }
 
 .bordered-rounded, .bordered {
-  border:         1px solid $color-border;
+  border:         1px solid dc.$color-border;
   padding-top:    .5rem;
   padding-bottom: .5rem;
   border-radius:  .25rem;
 }
 
 .bordered-square {
-  border: 1px solid $color-border;
+  border: 1px solid dc.$color-border;
 }
 
 .shadowed {
-  box-shadow: 0.15rem 0.15rem 0.15rem $color-shadow;
+  box-shadow: 0.15rem 0.15rem 0.15rem dc.$color-shadow;
 }
 
 .white {
-  color: $white-color;
+  color: dc.$white-color;
 }
 
 .black {
-  color: $black-color;
+  color: dc.$black-color;
 }
 
 .red {
-  color: $red-color;
+  color: dc.$red-color;
 }
 
 .orange {
-  color: $orange-color;
+  color: dc.$orange-color;
 }
 
 .yellow {
-  color: $yellow-color;
+  color: dc.$yellow-color;
 }
 
 .green {
-  color: $green-color;
+  color: dc.$green-color;
 }
 
 .blue {
-  color: $blue-color;
+  color: dc.$blue-color;
 }
 
 .teal {
-  color: $teal-color;
+  color: dc.$teal-color;
 }
 
 .pink {
-  color: $pink-color;
+  color: dc.$pink-color;
 }
 
 .purple {
-  color: $purple-color;
+  color: dc.$purple-color;
 }
 
 .dark-grey {
-  color: $gunmetal-dark;
+  color: dc.$gunmetal-dark;
 }
 
 .slate {
-  color: $slate-medium;
+  color: dc.$slate-medium;
 }
 
 .grey-lightest {
-  color: $grey-lightest;
+  color: dc.$grey-lightest;
 }
 
 .grey-lighter {
-  color: $grey-lighter;
+  color: dc.$grey-lighter;
 }
 
 .grey-light {
-  color: $grey-light;
+  color: dc.$grey-light;
 }
 
 .grey-med-light {
-  color: $grey-med-light;
+  color: dc.$grey-med-light;
 }
 
 .grey-medium {
-  color: $grey-medium;
+  color: dc.$grey-medium;
 }
 
 .grey-med-dark {
-  color: $grey-med-dark;
+  color: dc.$grey-med-dark;
 }
 
 .grey-dark {
-  color: $grey-dark;
+  color: dc.$grey-dark;
 }
 
 .grey-darker {
-  color: $grey-darker;
+  color: dc.$grey-darker;
 }
 
 .grey-darkest {
-  color: $grey-darkest;
+  color: dc.$grey-darkest;
 }
 
 .bg-white {
-  background-color: $white-color;
+  background-color: dc.$white-color;
 }
 
 .bg-black {
-  background-color: $black-color;
+  background-color: dc.$black-color;
 }
 
 .bg-red {
-  background-color: $red-color;
+  background-color: dc.$red-color;
 }
 
 .bg-orange {
-  background-color: $orange-color;
+  background-color: dc.$orange-color;
 }
 
 .bg-yellow {
-  background-color: $yellow-color;
+  background-color: dc.$yellow-color;
 }
 
 .bg-green {
-  background-color: $green-color;
+  background-color: dc.$green-color;
 }
 
 .bg-blue {
-  background-color: $blue-color;
+  background-color: dc.$blue-color;
 }
 
 .bg-teal {
-  background-color: $teal-color;
+  background-color: dc.$teal-color;
 }
 
 .bg-pink {
-  background-color: $pink-color;
+  background-color: dc.$pink-color;
 }
 
 .bg-purple {
-  background-color: $purple-color;
+  background-color: dc.$purple-color;
 }
 
 .bg-dark-grey {
-  background-color: $gunmetal-dark;
+  background-color: dc.$gunmetal-dark;
 }
 
 .bg-slate {
-  background-color: $slate-medium;
+  background-color: dc.$slate-medium;
 }
 
 .bg-grey-lightest {
-  background-color: $grey-lightest;
+  background-color: dc.$grey-lightest;
 }
 
 .bg-grey-lighter {
-  background-color: $grey-lighter;
+  background-color: dc.$grey-lighter;
 }
 
 .bg-grey-light {
-  background-color: $grey-light;
+  background-color: dc.$grey-light;
 }
 
 .bg-grey-med-light {
-  background-color: $grey-med-light;
+  background-color: dc.$grey-med-light;
 }
 
 .bg-grey-medium {
-  background-color: $grey-medium;
+  background-color: dc.$grey-medium;
 }
 
 .bg-grey-med-dark {
-  background-color: $grey-med-dark;
+  background-color: dc.$grey-med-dark;
 }
 
 .bg-grey-dark {
-  background-color: $grey-dark;
+  background-color: dc.$grey-dark;
 }
 
 .bg-grey-darker {
-  background-color: $grey-darker;
+  background-color: dc.$grey-darker;
 }
 
 .bg-grey-darkest {
-  background-color: $grey-darkest;
+  background-color: dc.$grey-darkest;
 }
 
 .bg-transparent {
@@ -547,78 +555,77 @@ hr.item-card {
 }
 
 .border-radius-top-right {
-  border-top-right-radius: $default-radius;
+  border-top-right-radius: v.$default-radius;
 }
 
 .border-radius-bottom-right {
-  border-bottom-right-radius: $default-radius;
+  border-bottom-right-radius: v.$default-radius;
 }
 
 .border-radius-top-left {
-  border-top-left-radius: $default-radius;
+  border-top-left-radius: v.$default-radius;
 }
 
 .border-radius-bottom-left {
-  border-bottom-left-radius: $default-radius;
+  border-bottom-left-radius: v.$default-radius;
 }
 
 .border-radius-left {
-  border-top-left-radius:    $default-radius;
-  border-bottom-left-radius: $default-radius;
+  border-top-left-radius:    v.$default-radius;
+  border-bottom-left-radius: v.$default-radius;
 }
 
 .border-radius-right {
-  border-top-right-radius:    $default-radius;
-  border-bottom-right-radius: $default-radius;
+  border-top-right-radius:    v.$default-radius;
+  border-bottom-right-radius: v.$default-radius;
 }
 
 .border-radius-top {
-  border-top-left-radius:  $default-radius;
-  border-top-right-radius: $default-radius;
+  border-top-left-radius:  v.$default-radius;
+  border-top-right-radius: v.$default-radius;
 }
 
 .border-radius-bottom {
-  border-bottom-left-radius:  $default-radius;
-  border-bottom-right-radius: $default-radius;
+  border-bottom-left-radius:  v.$default-radius;
+  border-bottom-right-radius: v.$default-radius;
 }
 
 .clean-ul {
-  @include listStyleNone;
+  @include m.listStyleNone;
 }
 
 .list-header {
-  @include headerRowColors();
+  @include m.headerRowColors();
 
   div {
-    @include headerRowColors();
+    @include m.headerRowColors();
   }
 }
 
 .list-stripped {
   &.odd, &.row-light {
-    @include colorRow($gray-darkest, $gray-barely);
+    @include m.colorRow(dc.$gray-darkest, dc.$gray-barely);
   }
 
   &.even, &.row-dark {
-    @include colorRow($gray-darkest, $gray-med-light);;
+    @include m.colorRow(dc.$gray-darkest, dc.$gray-med-light);;
   }
 
   &.row-med {
-    @include colorRow($gray-darkest, $gray-light)
+    @include m.colorRow(dc.$gray-darkest, dc.$gray-light)
   }
 
   a {
     display:      inline-block;
     width:        100%;
-    padding:      .25rem;
-    padding-left: .5rem;
+    padding:      .25rem .25rem .25rem .5rem;
 
     &.odd {
-      @include colorRow($gray-darkest, $gray-barely);
+      @include m.colorRow(dc.$gray-darkest, dc.$gray-barely);
     }
 
     &.even {
-      @include colorRow($gray-darkest, $gray-med-light);;
+      @include m.colorRow(dc.$gray-darkest, dc.$gray-med-light);;
 
     }
   }

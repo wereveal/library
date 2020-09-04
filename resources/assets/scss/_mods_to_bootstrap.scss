@@ -1,0 +1,62 @@
+/*! Changes to Bootstrap use after the Bootstrap use to override */
+/*! note, change the use colors to the correct color palette */
+@use "variables" as v;
+@use "colors_blue" as c;
+@use "../../../../../twbs/bootstrap/scss/mixins/breakpoints" as bs-bp;
+
+html {
+    font-size: v.$default-body-font-size;
+}
+
+body {
+    font-family: v.$default-sans;
+    font-weight: 400;
+    background-color: c.$color-body;
+    @include bs-bp.media-breakpoint-down(sm) {
+        padding: 0;
+    }
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: v.$default-serif;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+h1 {
+    &.smaller {
+        font-size: v.$h2-font-size;
+    }
+}
+
+h2 {
+    &.smaller {
+        font-size: v.$h3-font-size;
+    }
+}
+
+h3 {
+    &.smaller {
+        font-size: v.$h4-font-size;
+    }
+}
+
+h4 {
+    &.smaller {
+        font-size: v.$h5-font-size;
+    }
+}
+
+h1, h3, h5 { color: c.$color-heading; }
+
+h2, h4, h6 { color: c.$color-heading-alt; }
+
+p {
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+.pagination {
+    margin-top: 0;
+    margin-bottom: 0;
+}

@@ -1,4 +1,7 @@
 /*! Various Mixins */
+@use "colors" as default-colors;
+@use "variables" as default-vars;
+
 @function strReplace($string, $search, $replace: "") {
   $index: str-index($string, $search);
   @if $index {
@@ -66,38 +69,38 @@
 @mixin contentBlock($colorScheme: 'gray') {
   $borderSize: 0;
   $borderRadius: .25rem;
-  $colorBg: $gray-med-dark;
-  $colorText: $color-xlight;
+  $colorBg: default-colors.$gray-med-dark;
+  $colorText: default-colors.$color-lightest;
   $padding-size: 0;
 
   @if $colorScheme == 'gray' {
     $borderSize: 1px;
-    $colorBg: $gray-med-dark;
-    $colorText: $color-xlight;
+    $colorBg: default-colors.$gray-med-dark;
+    $colorText: default-colors.$color-lightest;
   } @else if $colorScheme == 'green' {
     $borderSize: 1px;
-    $colorBg: $green-dark;
-    $colorText: $green-xlight;
+    $colorBg: default-colors.$green-dark;
+    $colorText: default-colors.$green-lightest;
   } @else if $colorScheme == 'blue' {
     $borderSize: 1px;
-    $colorBg: $blue-dark;
-    $colorText: $blue-xlight;
+    $colorBg: default-colors.$blue-dark;
+    $colorText: default-colors.$blue-lightest;
   } @else if $colorScheme == 'red' {
     $borderSize: 1px;
-    $colorBg: $red-dark;
-    $colorText: $red-xlight;
+    $colorBg: default-colors.$red-dark;
+    $colorText: default-colors.$red-lightest;
   } @else if $colorScheme == 'orange' {
     $borderSize: 1px;
-    $colorBg: $orange-darker;
-    $colorText: $orange-xlight;
+    $colorBg: default-colors.$orange-darker;
+    $colorText: default-colors.$orange-lightest;
   } @else if $colorScheme == 'light' {
     $borderSize: 1px;
-    $colorBg: $color-xlight;
-    $colorText: $gray-med-dark;
+    $colorBg: default-colors.$color-lightest;
+    $colorText: default-colors.$gray-med-dark;
   } @else if $colorScheme == 'dark' {
     $borderSize: 1px;
-    $colorBg: $gray-med-dark;
-    $colorText: $color-xlight;
+    $colorBg: default-colors.$gray-med-dark;
+    $colorText: default-colors.$color-lightest;
   } @else if $colorScheme == 'footer' {
     $padding-size: 1rem;
     $borderRadius: 0;
@@ -302,7 +305,7 @@
 
 @mixin messageColors($bkgd-color, $border-color, $body-color) {
   border: 3px solid $border-color;
-  border-radius: $default-radius;
+  border-radius: default-vars.$default-radius;
   background-color: $bkgd-color;
   color: $body-color;
   padding: .5rem 1rem;
@@ -320,8 +323,8 @@
 }
 
 @mixin fancyFieldset {
-  border: 1px solid $color-border;
-  border-radius: $default-radius;
+  border: 1px solid default-colors.$color-border;
+  border-radius: default-vars.$default-radius;
   padding: .75rem;
   margin-bottom: .5rem;
 }
@@ -377,11 +380,11 @@
   } @else {
     $important: '';
   }
-  background: $color-white $important;
-  border-bottom: 1px solid $color-black $important;
-  border-left: 1px solid $gray60 $important;
-  border-right: 1px solid $color-black $important;
-  border-top: 1px solid $gray60 $important;
+  background: default-colors.$color-white $important;
+  border-bottom: 1px solid default-colors.$color-black $important;
+  border-left: 1px solid default-colors.$gray60 $important;
+  border-right: 1px solid default-colors.$color-black $important;
+  border-top: 1px solid default-colors.$gray60 $important;
   border-radius: 3px $important;
   @include paddingSize(.375, 'tb', 'true');
   @include paddingSize(.5, 'left', 'true');
@@ -393,11 +396,11 @@
   } @else {
     $important: '';
   }
-  background: $blue-xlight $important;
-  border-bottom: 1px solid $blue-med-dark $important;
-  border-left: 1px solid $blue-dark $important;
-  border-right: 1px solid $blue-med-dark $important;
-  border-top: 1px solid $blue-dark $important;
+  background: default-colors.$blue-lightest $important;
+  border-bottom: 1px solid default-colors.$blue-med-dark $important;
+  border-left: 1px solid default-colors.$blue-dark $important;
+  border-right: 1px solid default-colors.$blue-med-dark $important;
+  border-top: 1px solid default-colors.$blue-dark $important;
   border-radius: 3px $important;
   @include paddingSize(.375, 'tb', 'true');
   @include paddingSize(.5, 'left', 'true');

@@ -1,10 +1,16 @@
 /*! Some general Form styling */
+@use "colors";
+@use "mixins";
+@use "variables" as default-vars;
+@use "../../../../../../twbs/bootstrap/scss/mixins/buttons" as bs-btns;
+@use "../../../../../../twbs/bootstrap/scss/variables" as bs-vars;
+
 input, textarea {
   &.colorful {
-    @include makeColorful(true);
+    @include mixins.makeColorful(true);
   }
   &.colorful:focus {
-    @include makeColorfulFocused(true);
+    @include mixins.makeColorfulFocused(true);
   }
   &.flexible {
     width: 95%;
@@ -14,10 +20,10 @@ input, textarea {
 select {
   margin-top: .25rem;
   &.colorful {
-    @include makeColorful(true);
+    @include mixins.makeColorful(true);
   }
   &.colorful:focus {
-    @include makeColorfulFocused(true);
+    @include mixins.makeColorfulFocused(true);
   }
 }
 
@@ -32,16 +38,16 @@ textarea {
 
 .form-inline {
   &.dark-row {
-    @include colorRow($gray-darkest, $gray-med-light);
+    @include mixins.colorRow(colors.$gray-darkest, colors.$gray-med-light);
   }
   &.light-row {
-    @include colorRow($gray-darkest, $gray-barely);
+    @include mixins.colorRow(colors.$gray-darkest, colors.$gray-barely);
   }
   &.even {
-    @include colorRow($gray-darkest, $gray-med-light);
+    @include mixins.colorRow(colors.$gray-darkest, colors.$gray-med-light);
   }
   &.odd {
-    @include colorRow($gray-darkest, $gray-barely);
+    @include mixins.colorRow(colors.$gray-darkest, colors.$gray-barely);
   }
 }
 
@@ -53,7 +59,7 @@ textarea {
     visibility: hidden;
   }
   input[type=checkbox]:checked + label {
-    background: $blue-xlight;
+    background: colors.$blue-lightest;
   }
   input[type=checkbox]:checked + label:after {
     opacity: 1;
@@ -65,10 +71,10 @@ textarea {
     height: 15px;
     top: 0;
     left: 0;
-    background: $white-color;
-    border: 1px solid $blue-dark;
+    background: colors.$white-color;
+    border: 1px solid colors.$blue-dark;
     border-radius: 3px;
-    box-shadow: 1px 1px 1px $color-shadow;
+    box-shadow: 1px 1px 1px colors.$color-shadow;
   }
   label:after {
     opacity: 0;
@@ -79,7 +85,7 @@ textarea {
     background: transparent;
     top: 2px;
     left: 2px;
-    border: 3px solid $blue-dark;
+    border: 3px solid colors.$blue-dark;
     border-top: none;
     border-right: none;
     transform: rotate(-45deg);
@@ -91,7 +97,7 @@ textarea {
     position: absolute;
     top: -5px;
     left: 20px;
-    @include fontBold();
+    @include mixins.fontBold();
   }
 }
 
@@ -103,30 +109,30 @@ input[type=checkbox] {
 
 label {
   &.error {
-    color: $color-red;
-    @include fontBoldItalic;
+    color: colors.$color-red;
+    @include mixins.fontBoldItalic;
   }
   &.nice-label {
-    @include fontBold;
+    @include mixins.fontBold;
     text-align: right;
   }
   &.col-form-label {
-    @include fontBold;
-    @include paddingSize(.5, 'top', 'true');
+    @include mixins.fontBold;
+    @include mixins.paddingSize(.5, 'top', 'true');
   }
 }
 
 .nice-fieldset {
-  @include fancyFieldset;
+  @include mixins.fancyFieldset;
   legend {
     float: left;
     font-size: 1rem;
-    @include fontSmallCapsBold;
+    @include mixins.fontSmallCapsBold;
     &.big-legend {
       font-size: 1.5rem;
-      color: $gray-dark;
-      background-color: $gray90;
-      border-radius: $default-radius;
+      color: colors.$gray-dark;
+      background-color: colors.$gray90;
+      border-radius: default-vars.$default-radius;
       padding-left: 1rem;
     }
   }
@@ -146,7 +152,7 @@ label {
 }
 
 .psuedo-label {
-  @include fontBold;
+  @include mixins.fontBold;
   text-align: right;
   padding-right: 1rem;
 }
@@ -173,79 +179,79 @@ label {
 }
 
 .btn-green {
-  @include button-variant($green-bs4, $green-bs4);
+  @include bs-btns.button-variant(colors.$green-bs4, colors.$green-bs4);
 }
 
 .btn-dark-green {
-  @include button-variant($green, $green);
+  @include bs-btns.button-variant(colors.$green, colors.$green);
 }
 
 .btn-blue {
-  @include button-variant($blue, $blue);
+  @include bs-btns.button-variant(colors.$blue, colors.$blue);
 }
 
 .btn-red {
-  @include button-variant($red, $red);
+  @include bs-btns.button-variant(colors.$red, colors.$red);
 }
 
 .btn-white {
-  @include button-variant($white, $white);
+  @include bs-btns.button-variant(colors.$white, colors.$white);
 }
 
 .btn-black {
-  @include button-variant($black, $black);
+  @include bs-btns.button-variant(colors.$black, colors.$black);
 }
 
 .btn-gray {
-  @include button-variant($gray60, $gray60);
+  @include bs-btns.button-variant(colors.$gray60, colors.$gray60);
 }
 
 .btn-brown {
-  @include button-variant($brown-medium, $brown-medium);
+  @include bs-btns.button-variant(colors.$brown-medium, colors.$brown-medium);
 }
 
 .btn-orange {
-  @include button-variant($orange, $orange);
+  @include bs-btns.button-variant(colors.$orange, colors.$orange);
 }
 
 .btn-purple {
-  @include button-variant($purple, $purple);
+  @include bs-btns.button-variant(colors.$purple, colors.$purple);
 }
 
 .btn-outline-green {
-  @include button-outline-variant($green);
+  @include bs-btns.button-outline-variant(colors.$green);
 }
 
 .btn-outline-blue {
-  @include button-outline-variant($blue);
+  @include bs-btns.button-outline-variant(colors.$blue);
 }
 
 .btn-outline-red {
-  @include button-outline-variant($red);
+  @include bs-btns.button-outline-variant(colors.$red);
 }
 
 .btn-outline-white {
-  @include button-outline-variant($white, $black);
+  @include bs-btns.button-outline-variant(colors.$white, colors.$black);
 }
 
 .btn-outline-black {
-  @include button-outline-variant($black);
+  @include bs-btns.button-outline-variant(colors.$black);
 }
 
 .btn-outline-gray {
-  @include button-outline-variant($gray60);
+  @include bs-btns.button-outline-variant(colors.$gray60);
 }
 
 .btn-outline-brown {
-  @include button-outline-variant($brown-medium);
+  @include bs-btns.button-outline-variant(colors.$brown-medium);
 }
 
 .btn-outline-orange {
-  @include button-outline-variant($orange);
+  @include bs-btns.button-outline-variant(colors.$orange);
 }
 
 .btn-outline-purple {
-  @include button-outline-variant($purple);
+  @include bs-btns.button-outline-variant(colors.$purple);
 }
 
 .datepicker {
@@ -266,25 +272,25 @@ form {
   }
   .form-group {
     &.row-dark {
-      @include colorRow($gray-darkest, $gray-med-light);
+      @include mixins.colorRow(colors.$gray-darkest, colors.$gray-med-light);
     }
     &.row-darker {
-      @include colorRow($gray-barely, $gray-color);
+      @include mixins.colorRow(colors.$gray-barely, colors.$gray-color);
     }
     &.row-darkest {
-      @include colorRow($gray-xlight, $gray-dark);
+      @include mixins.colorRow(colors.$gray-lightest, colors.$gray-dark);
     }
     &.row-light {
-      @include colorRow($gray-darkest, $gray-barely);
+      @include mixins.colorRow(colors.$gray-darkest, colors.$gray-barely);
     }
     &.row-medium {
-      @include colorRow($gray-darkest, $gray-light);
+      @include mixins.colorRow(colors.$gray-darkest, colors.$gray-light);
     }
     &.row-med-light {
-      @include colorRow($gray-darkest, $gray-xlight);
+      @include mixins.colorRow(colors.$gray-darkest, colors.$gray-lightest);
     }
     &.row-transparent {
-      @include colorRow($gray-darkest, transparent);
+      @include mixins.colorRow(colors.$gray-darkest, transparent);
     }
   }
 }

@@ -1,17 +1,24 @@
-$color-default    : #80aaff;
-$color-darkest    : #193869;
-$color-darker     : #244f9b;
-$color-dark       : #2e66cd;
-$color-med-dark   : #3882ff;
-$color-medium     : #80aaff;
-$color-med-light  : #96c4ff;
-$color-light      : #abd7ff;
-$color-lighter    : #c3ddff;
-$color-lightest   : #d2e0ff;
-$color-body       : $color-light;
-$color-container  : $color-lightest;
-$color-border     : $color-darkest;
-$color-complement : #751f10;
+@use "sass:color";
+@use "defaults/colors" as dc;
+
+$color-default    : dc.$blue-medium;
+$color-darkest    : dc.$blue-darkest;
+$color-darker     : dc.$blue-darker;
+$color-dark       : dc.$blue-dark;
+$color-med-dark   : dc.$blue-med-dark;
+$color-medium     : dc.$blue-medium;
+$color-med-light  : dc.$blue-med-light;
+$color-light      : dc.$blue-light;
+$color-lighter    : dc.$blue-lighter;
+$color-lightest   : dc.$blue-lightest;
+$color-body       : dc.$blue-lighter;
+$color-container  : dc.$blue-lightest;
+$color-border     : dc.$blue-darkest;
+$color-complement : dc.$blue-complement;
+$color-shadow      : transparentize(dc.$gray-darkest, .35);
+$color-shadow-alt  : transparentize(dc.$gray-complement, .35);
+$color-heading     : dc.$blue-darkest;
+$color-heading-alt : dc.$blue-complement;
 
 /* Gradient */
 $gradient-start   : $color-light;

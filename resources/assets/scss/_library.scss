@@ -1,5 +1,7 @@
+@use 'defaults/mixins';
+
 .instructions {
-  @include contentBlock('gray');
+  @include mixins.contentBlock('gray');
 
   ul {
     list-style : disc;

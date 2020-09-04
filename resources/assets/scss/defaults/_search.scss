@@ -1,4 +1,6 @@
 /* The Alpha List Menu */
+@use "colors" as c;
+
 .container {
 	div.selections {
 		border: 0 !important;
@@ -7,8 +9,7 @@
 		    font-weight: 900;
 		    display: inline-block;
 		    vertical-align: top;
-		    margin: 0;
-		    margin-right: .75rem;
+			margin: 0 .75rem 0 0;
 		}
 		select {
 			height: 2rem;
@@ -45,13 +46,13 @@
 
 	}
 	div.alpha {
-		margin-left: 0px !important;
-		margin-bottom: 0px !important;
-		border: 0px !important;
-		padding: 0px !important;
+		margin-left: 0 !important;
+		margin-bottom: 0 !important;
+		border: 0 !important;
+		padding: 0 !important;
 		#alphaListMenu {
 		    list-style-type: none;
-		    margin-left: 0px;
+		    margin-left: 0;
 		    margin-bottom: 1rem;
 		    li {
 		        float: left;
@@ -59,19 +60,19 @@
 		        padding-right: 3px;
 		        font-weight: 900;
 		        &.firstLetter {
-		            border-left: 1px solid $color-medium;
-		            border-right: 1px solid $color-medium;
+		            border-left: 1px solid c.$color-medium;
+		            border-right: 1px solid c.$color-medium;
 		        }
 		        &.otherLetter {
-		            border-right: 1px solid $color-medium;
+		            border-right: 1px solid c.$color-medium;
 		        }
 		        &.lastLetter {
-		            border-right: 1px solid $color-medium;
+		            border-right: 1px solid c.$color-medium;
 		        }
 		        &.noLink {
-		            color: $color-medium;
+		            color: c.$color-medium;
 		            font-weight: 400;
-		            border-right: 1px solid $color-medium;
+		            border-right: 1px solid c.$color-medium;
 		        }
 		    }
 		}

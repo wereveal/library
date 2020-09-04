@@ -1,3 +1,6 @@
+@use 'colors';
+@use 'mixins';
+
 .btn-custom {
     display: inline-block;
     zoom: 1;
@@ -61,14 +64,14 @@
     }
 }
 .btn-gray {
-    color: $gray90;
-    border: solid 1px $gray35;
-    @include linearGradient($gray60, $gray35);
+    color: colors.$gray90;
+    border: solid 1px colors.$gray35;
+    @include mixins.linearGradient(colors.$gray60, colors.$gray35);
     &:hover {
-        @include linearGradient($gray50, $gray25);
+        @include mixins.linearGradient(colors.$gray50, colors.$gray25);
     }
     &:active {
-        @include linearGradient($gray25, $gray50);
+        @include mixins.linearGradient(colors.$gray25, colors.$gray50);
     }
 }
 .btn-white {

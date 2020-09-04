@@ -1,21 +1,25 @@
+@use "variables" as v;
+@use "mixins" as m;
+@use "colors" as c;
+
 .message {
     &.success {
-        @include messageColors($green-lighter, $green-dark, $green-color);
+        @include m.messageColors(c.$green-lighter, c.$green-dark, c.$green-color);
     }
     &.info {
-        @include messageColors($blue-light, $blue-dark, $blue-color);
+        @include m.messageColors(c.$blue-light, c.$blue-dark, c.$blue-color);
     }
     &.warning {
-        @include messageColors($orange-xlight, $orange-darker, $orange-medium);
+        @include m.messageColors(c.$orange-xlight, c.$orange-darker, c.$orange-medium);
     }
     &.error {
-        @include messageColors($red-light, $red-dark, $red-color);
+        @include m.messageColors(c.$red-light, c.$red-dark, c.$red-color);
     }
     &.failure {
-        @include messageColors($red-light, $red-dark, $red-medium);
+        @include m.messageColors(c.$red-light, c.$red-dark, c.$red-medium);
     }
     &.code {
-        font-family: $default-mono;
-        @include messageColors($color-container, $color-border, $color-dark);
+        font-family: v.$default-mono;
+        @include m.messageColors(c.$color-container, c.$color-border, c.$color-dark);
     }
 }

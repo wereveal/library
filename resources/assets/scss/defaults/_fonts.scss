@@ -1,12 +1,14 @@
 /*! Default Font Face */
-@include fontFace('VeraSans', '/assets/fonts/Vera/Vera','','', woff);
-@include fontFace('VeraSansBold', '/assets/fonts/Vera/Vera-Bold','','', woff);
-@include fontFace('VeraSerif', '/assets/fonts/Vera/VeraSerif','','', woff);
-@include fontFace('VeraSerifBold', '/assets/fonts/Vera/VeraSerif-Bold','','', woff);
-@include fontFace('VeraMono', '/assets/fonts/Vera/VeraMono','','', woff);
-@include fontFace('DejaVuSans', '/assets/fonts/DejaVu/DejaVuSans', '','',woff);
-@include fontFace('DejaVuSerif', '/assets/fonts/DejaVu/DejaVuSerif', '','',woff);
-@include fontFace('DejaVuMono', '/assets/fonts/DejaVu/DejaVuSansMono', '','',woff);
-@include fontFace('DroidSans', '/assets/fronts/Droid/DroidSans','','',woff);
-@include fontFace('DroidSerif', '/assets/fronts/Droid/DroidSerif','','',woff);
-@include fontFace('DroidSansMono', '/assets/fronts/Droid/DroidSansMono','','',woff);
+@use "mixins";
+
+@include mixins.fontFace('VeraSans', '/assets/fonts/Vera/Vera','','', woff);
+@include mixins.fontFace('VeraSansBold', '/assets/fonts/Vera/Vera-Bold','','', woff);
+@include mixins.fontFace('VeraSerif', '/assets/fonts/Vera/VeraSerif','','', woff);
+@include mixins.fontFace('VeraSerifBold', '/assets/fonts/Vera/VeraSerif-Bold','','', woff);
+@include mixins.fontFace('VeraMono', '/assets/fonts/Vera/VeraMono','','', woff);
+@include mixins.fontFace('DejaVuSans', '/assets/fonts/DejaVu/DejaVuSans', '','',woff);
+@include mixins.fontFace('DejaVuSerif', '/assets/fonts/DejaVu/DejaVuSerif', '','',woff);
+@include mixins.fontFace('DejaVuMono', '/assets/fonts/DejaVu/DejaVuSansMono', '','',woff);
+@include mixins.fontFace('DroidSans', '/assets/fronts/Droid/DroidSans','','',woff);
+@include mixins.fontFace('DroidSerif', '/assets/fronts/Droid/DroidSerif','','',woff);
+@include mixins.fontFace('DroidSansMono', '/assets/fronts/Droid/DroidSansMono','','',woff);
