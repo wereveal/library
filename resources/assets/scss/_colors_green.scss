@@ -1,29 +1,32 @@
-$color-default:    $green-darker;
-$color-darkest:    $green-darkest;
-$color-darker:     $green-darker;
-$color-dark:       $green-dark;
-$color-med-dark:   $green-med-dark;
-$color-medium:     $green-medium;
-$color-med-light:  $green-med-light;
-$color-light:      $green-light;
-$color-lighter:    $green-lighter;
-$color-lightest:   $green-lightest;
-$color-body:       $green-dark;
-$color-container:  $green-lightest;
-$color-border:     $green-darker;
-$color-complement: $green-complement;
+@use "sass:color";
+@use "defaults/colors" as dc;
+
+$color-default:    dc.$green-darker;
+$color-darkest:    dc.$green-darkest;
+$color-darker:     dc.$green-darker;
+$color-dark:       dc.$green-dark;
+$color-med-dark:   dc.$green-med-dark;
+$color-medium:     dc.$green-medium;
+$color-med-light:  dc.$green-med-light;
+$color-light:      dc.$green-light;
+$color-lighter:    dc.$green-lighter;
+$color-lightest:   dc.$green-lightest;
+$color-body:       dc.$green-dark;
+$color-container:  dc.$green-lightest;
+$color-border:     dc.$green-darker;
+$color-complement: dc.$green-complement;
 
 /* Gradient */
-$gradient-start: $green-med-dark;
-$gradient-stop:  $green-med-light;
+$gradient-start: dc.$green-med-dark;
+$gradient-stop:  dc.$green-med-light;
 
 /* Navbar */
-$navbar-text-color:      $green-xlight;
-$navbar-link-active:     $green-light;
-$navbar-link-hover:      $color-white;
-$navbar-sub-bg:          $green-xlight;
-$navbar-sub-bg-hover:    $green-light;
-$navbar-sub-text-color:  $black-color;
-$navbar-sub-link-active: $green-light;
-$navbar-sub-link-hover:  $green-med-dark;
+$navbar-text-color:      dc.$green-xlight;
+$navbar-link-active:     dc.$green-light;
+$navbar-link-hover:      dc.$color-white;
+$navbar-sub-bg:          dc.$green-xlight;
+$navbar-sub-bg-hover:    dc.$green-light;
+$navbar-sub-text-color:  dc.$black-color;
+$navbar-sub-link-active: dc.$green-light;
+$navbar-sub-link-hover:  dc.$green-med-dark;
 

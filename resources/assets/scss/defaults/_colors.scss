@@ -3,16 +3,16 @@
   must be included before
 **/
 /* True overrides */
-$blue   : #007bff;
-$indigo : #6610f2;
-$purple : #7b00c1;
-$pink   : #ff69b4;
-$red    : #c00;
-$orange : #ffa500;
-$yellow : #ff0;
-$green  : #006400;
-$teal   : #008080;
-$cyan   : #17a2b8;
+$blue   : #007bff !default;
+$indigo : #6610f2 !default;
+$purple : #7b00c1 !default;
+$pink   : #ff69b4 !default;
+$red    : #c00 !default;
+$orange : #ffa500 !default;
+$yellow : #ff0 !default;
+$green  : #006400 !default;
+$teal   : #008080 !default;
+$cyan   : #17a2b8 !default;
 /* Original Bootstrap colors */
 $blue-bs4   : #007bff;
 $indigo-bs4 : #6610f2;
@@ -26,130 +26,144 @@ $teal-bs4   : #20c997;
 $cyan-bs4   : #17a2b8;
 
 /* alts to bootstrap */
-$black-color   : #000;
-$blue-color    : #006;
-$brown-color   : #68472e;
-$cyan-color    : #17a2b8;
-$gray-color    : #808080; // also gray50 - gray-medium
-$green-color   : #006400;
-$magenta-color : #f0f;
-$orange-color  : #ffa500;
-$pink-color    : #ff69b4;
-$purple-color  : #7b00c1;
-$red-color     : #a00;
-$teal-color    : #008080;
-$violet-color  : #6d52ab;
-$white-color   : #fff;
-$yellow-color  : #ff0;
+$black-color   : #000 !default;
+$blue-color    : #006 !default;
+$brown-color   : #68472e !default;
+$cyan-color    : #17a2b8 !default;
+$gray-color    : #808080 !default; // also gray50 - gray-medium
+$green-color   : #006400 !default;
+$magenta-color : #f0f !default;
+$orange-color  : #ffa500 !default;
+$pink-color    : #ff69b4 !default;
+$purple-color  : #7b00c1 !default;
+$red-color     : #a00 !default;
+$teal-color    : #008080 !default;
+$violet-color  : #6d52ab !default;
+$white-color   : #fff !default;
+$yellow-color  : #ff0 !default;
 
-$blue-pure       : #00f;
-$blue-darkest    : #003;
-$blue-darker     : #006;
-$blue-dark       : #009;
-$blue-med-dark   : #00c;
-$blue-medium     : #3f3fff;
-$blue-med-light  : #007bff;
-$blue-light      : #7fffff;
-$blue-lighter    : #c1fffd;
-$blue-xlight     : #e5ffff;
-$blue-lightest   : #e9ffff;
-$blue-complement : #9fc8e6;
+$blue-pure       : #00f !default;
+$blue-darkest    : #193869 !default;
+$blue-darker     : #244f9b !default;
+$blue-dark       : #2e66cd !default;
+$blue-med-dark   : #3882ff !default;
+$blue-medium     : #80aaff !default;
+$blue-med-light  : #96c4ff !default;
+$blue-light      : #abd7ff !default;
+$blue-lighter    : #c3ddff !default;
+$blue-lightest   : #d2e0ff !default;
+$blue-complement : #751f10 !default;
+$blue-alt-darkest    : #003 !default;
+$blue-alt-darker     : #006 !default;
+$blue-alt-dark       : #009 !default;
+$blue-alt-med-dark   : #00c !default;
+$blue-alt-medium     : #3f3fff !default;
+$blue-alt-med-light  : #007bff !default;
+$blue-alt-light      : #7fffff !default;
+$blue-alt-lighter    : #c1fffd !default;
+$blue-alt-xlight     : #e5ffff !default;
+$blue-alt-lightest   : #e9ffff !default;
+$blue-alt-complement : #9fc8e6 !default;
 
-$gray20 : #333;
-$gray25 : #404040;
-$gray35 : #595959;
-$gray40 : #666;
-$gray50 : #808080;
-$gray60 : #999;
-$gray65 : #a6a6a6;
-$gray75 : #bfbfbf;
-$gray80 : #ccc;
-$gray90 : #e6e6e6;
-$gray95 : #f2f2f2;
+$gray20 : #333 !default;
+$gray25 : #404040 !default;
+$gray35 : #595959 !default;
+$gray40 : #666 !default;
+$gray50 : #808080 !default;
+$gray60 : #999 !default;
+$gray65 : #a6a6a6 !default;
+$gray75 : #bfbfbf !default;
+$gray80 : #ccc !default;
+$gray90 : #e6e6e6 !default;
+$gray95 : #f2f2f2 !default;
 
-$gray-darkest    : #262d35;
-$gray-dark       : #343a40;
-$gray-med-dark   : #495057;
-$gray-medium     : $gray-color;
-$gray-med-light  : #ced4da;
-$gray-light      : #dee2e6;
-$gray-lighter    : #e7ebef;
-$gray-xlight     : #e9ecef;
-$gray-lightest   : $gray-xlight;
-$gray-barely     : #f8f9fa;
-$gray-complement : #276998;
+$gray-darkest    : #262d35 !default;
+$gray-dark       : #343a40 !default;
+$gray-med-dark   : #495057 !default;
+$gray-medium     : $gray-color !default;
+$gray-med-light  : #ced4da !default;
+$gray-light      : #dee2e6 !default;
+$gray-lighter    : #e7ebef !default;
+$gray-xlight     : #e9ecef !default;
+$gray-lightest   : $gray-xlight !default;
+$gray-barely     : #f8f9fa !default;
+$gray-complement : #276998 !default;
 
-$grey           : $gray-color;
-$grey-lightest  : $gray-barely;
-$grey-lighter   : darken($grey-lightest, 10%);
-$grey-light     : darken($grey-lighter, 10%);
-$grey-med-light : darken($grey-light, 10%);
-$grey-medium    : darken($grey-med-light, 10%);
-$grey-med-dark  : darken($grey-medium, 10%);
-$grey-dark      : darken($grey-med-dark, 10%);
-$grey-darker    : darken($grey-dark, 10%);
-$grey-darkest   : darken($grey-darker, 10%);
+$grey           : $gray-color !default;
+$grey-lightest  : $gray-barely !default;
+$grey-lighter   : darken($grey-lightest, 10%) !default;
+$grey-light     : darken($grey-lighter, 10%) !default;
+$grey-med-light : darken($grey-light, 10%) !default;
+$grey-medium    : darken($grey-med-light, 10%) !default;
+$grey-med-dark  : darken($grey-medium, 10%) !default;
+$grey-dark      : darken($grey-med-dark, 10%) !default;
+$grey-darker    : darken($grey-dark, 10%) !default;
+$grey-darkest   : darken($grey-darker, 10%) !default;
 
-$slate-darkest  : #132828;
-$slate-darker   : #1B3737;
-$slate-dark     : #2f4f4f;
-$slate-medium   : #708090;
-$slate-light    : #94a9be;
-$slate-lighter  : #a3b8cd;
-$slate-lightest : #c5d3e1;
-$slate-xlight   : #c4d2e0;
-$slate-color    : $slate-medium;
+$slate-darkest  : #132828 !default;
+$slate-darker   : #1B3737 !default;
+$slate-dark     : #2f4f4f !default;
+$slate-medium   : #708090 !default;
+$slate-light    : #94a9be !default;
+$slate-lighter  : #a3b8cd !default;
+$slate-lightest : #c5d3e1 !default;
+$slate-xlight   : #c4d2e0 !default;
+$slate-color    : $slate-medium !default;
 
-$brown-darkest    : #2d1616;
-$brown-darker     : #503027;
-$brown-dark       : $brown-color;
-$brown-medium     : #8b4513;
-$brown-light      : #cc9166;
-$brown-lighter    : #dca176;
-$brown-lightest   : #ffd7bb;
-$brown-xlight     : #ffd7bb;
-$brown-complement : #13598b;
+$brown-darkest    : #2d1616 !default;
+$brown-darker     : #503027 !default;
+$brown-dark       : $brown-color !default;
+$brown-medium     : #8b4513 !default;
+$brown-light      : #cc9166 !default;
+$brown-lighter    : #dca176 !default;
+$brown-lightest   : #ffd7bb !default;
+$brown-xlight     : #ffd7bb !default; // legacy name
+$brown-complement : #13598b !default;
 
-$gunmetal-dark       : #2c3539;
-$gunmetal-medium     : #576870;
-$gunmetal-light      : #829ca8;
-$gunmetal-xlight     : #94b2bf;
-$gunmetal-complement : #382f2b;
+$gunmetal-dark       : #2c3539 !default;
+$gunmetal-medium     : #576870 !default;
+$gunmetal-light      : #829ca8 !default;
+$gunmetal-xlight     : #94b2bf !default;
+$gunmetal-lightest   : #94b2bf !default;
+$gunmetal-complement : #382f2b !default;
 
-$green-darkest    : #030;
-$green-darker     : #004000;
-$green-dark       : #005100;
-$green-med-dark   : #006400;
-$green-medium     : #008000;
-$green-med-light  : #28a745;
-$green-light      : #9afa9c;
-$green-lighter    : #cfc;
-$green-xlight     : #e9ffe9;
-$green-lightest   : $green-xlight;
-$lime             : #0f0;
-$mint             : #f5fffa;
-$forest-green     : #228b22;
-$green-complement : #640032;
+$green-darkest    : #030 !default;
+$green-darker     : #004000 !default;
+$green-dark       : #005100 !default;
+$green-med-dark   : #006400 !default;
+$green-medium     : #008000 !default;
+$green-med-light  : #28a745 !default;
+$green-light      : #9afa9c !default;
+$green-lighter    : #cfc !default;
+$green-xlight     : #e9ffe9 !default; // legacy name
+$green-lightest   : #e9ffe9 !default;
+$lime             : #0f0 !default;
+$mint             : #f5fffa !default;
+$forest-green     : #228b22 !default;
+$green-complement : #640032 !default;
 
-$red-dark   : #760000;
-$red-medium : #f00;
-$red-light  : #fcc;
-$red-xlight : #ffecec;
+$red-dark     : #760000 !default;
+$red-medium   : #f00 !default;
+$red-light    : #fcc !default;
+$red-lightest : #ffecec !default;
+$red-xlight   : #ffecec !default;
 
-$orange-darker    : #e34234;
-$orange-dark      : #fc4a1a;
-$orange-pantone   : #ff5800;
-$orange-medium    : #fd7e14;
-$orange-med-light : #ffa500;
-$orange-light     : #f7b733;
-$orange-xlight    : #ffefd5;
-$pumpkin          : #ff7518;
+$orange-darker    : #e34234 !default;
+$orange-dark      : #fc4a1a !default;
+$orange-pantone   : #ff5800 !default;
+$orange-medium    : #fd7e14 !default;
+$orange-med-light : #ffa500 !default;
+$orange-light     : #f7b733 !default;
+$orange-lightest  : #ffefd5 !default;
+$orange-xlight    : #ffefd5 !default;
+$pumpkin          : #ff7518 !default;
 
-$yellow-darkest : #daa520;
-$yellow-dark    : #ffc107;
-$yellow-medium  : $yellow;
-$yellow-light   : #ffffc2;
-$yellow-xlight  : #ffffe0;
+$yellow-darkest  : #daa520 !default;
+$yellow-dark     : #ffc107 !default;
+$yellow-medium   : $yellow !default;
+$yellow-light    : #ffffc2 !default;
+$yellow-lightest : #ffffe0 !default;
+$yellow-xlight   : #ffffe0 !default;
 
 /* Whites */
 $off-white-color : #f5f5f5;
@@ -157,98 +171,59 @@ $ivory           : #fffff0;
 $seashell        : #fff5ee;
 $snow            : #fffafa;
 
-$color-black      : $black-color;
-$color-blue       : $blue-color;
-$color-gray       : $gray-color;
-$color-gray-trans : transparentize($gray90, .35);
-$color-green      : $green-color;
-$color-magenta    : $magenta-color;
-$color-off-white  : $off-white-color;
-$color-orange     : $orange-color;
-$color-pink       : $pink-color;
-$color-purple     : $purple-color;
-$color-red        : $red-color;
-$color-slate      : $slate-color;
-$color-teal       : $teal-color;
-$color-violet     : $violet-color;
-$color-white      : $white-color;
-$color-yellow     : $yellow-color;
+$color-black      : $black-color !default;
+$color-blue       : $blue-color !default;
+$color-gray       : $gray-color !default;
+$color-gray-trans : transparentize($gray90, .35) !default;
+$color-green      : $green-color !default;
+$color-magenta    : $magenta-color !default;
+$color-off-white  : $off-white-color !default;
+$color-orange     : $orange-color !default;
+$color-pink       : $pink-color !default;
+$color-purple     : $purple-color !default;
+$color-red        : $red-color !default;
+$color-slate      : $slate-color !default;
+$color-teal       : $teal-color !default;
+$color-violet     : $violet-color !default;
+$color-white      : $white-color !default;
+$color-yellow     : $yellow-color !default;
 
-$color-default     : $gray-darkest;
-$color-dark        : $gray-dark;
-$color-medium      : $gray-medium;
-$color-light       : $gray-light;
-$color-lighter     : $gray-lighter;
-$color-lightest    : $gray-lightest;
+$color-default     : $gray-darkest !default;
+$color-dark        : $gray-dark !default;
+$color-medium      : $gray-medium !default;
+$color-light       : $gray-light !default;
+$color-lighter     : $gray-lighter !default;
+$color-lightest    : $gray-lightest !default;
 $color-xlight      : $gray-lightest; // legacy
-$color-complement  : $gray-complement;
-$color-body        : $gray-med-light;
-$color-container   : $gray-barely;
-$color-border      : $grey-darkest;
-$color-shadow      : transparentize($color-default, .35);
-$color-shadow-alt  : transparentize($color-complement, .35);
-$color-heading     : $grey-darkest;
-$color-heading-alt : $gray-complement;
+$color-complement  : $gray-complement !default;
+$color-body        : $gray-med-light !default;
+$color-container   : $gray-barely !default;
+$color-border      : $grey-darkest !default;
+$color-shadow      : transparentize($color-default, .35) !default;
+$color-shadow-alt  : transparentize($color-complement, .35) !default;
+$color-heading     : $grey-darkest !default;
+$color-heading-alt : $gray-complement !default;
 
 /* Gradient */
-$gradient-start : $color-body;
-$gradient-stop  : $color-container;
+$gradient-start : $color-body !default;
+$gradient-stop  : $color-container !default;
 
 /* Navbar */
-$navbar-text-color      : $black-color;
-$navbar-link-active     : $gray40;
-$navbar-link-hover      : $gray-complement;
-$navbar-sub-bg          : $gray95;
-$navbar-sub-bg-hover    : $gray40;
-$navbar-sub-text-color  : $black-color;
-$navbar-sub-link-active : $gray40;
-$navbar-sub-link-hover  : $gray-complement;
+$navbar-text-color      : $black-color !default;
+$navbar-link-active     : $gray40 !default;
+$navbar-link-hover      : $gray-complement !default;
+$navbar-sub-bg          : $gray95 !default;
+$navbar-sub-bg-hover    : $gray40 !default;
+$navbar-sub-text-color  : $black-color !default;
+$navbar-sub-link-active : $gray40 !default;
+$navbar-sub-link-hover  : $gray-complement !default;
 
 /* More Boostrap Pure Overrides for semantic colors */
-@if variable_exists('blue') {
-  $primary : $blue;
-} @else {
-  $primary : $blue-medium;
-}
-
-@if variable_exists('gray-600') {
-  $secondary : $gray-600;
-} @else {
-  $secondary : $gray-color;
-}
-
-@if variable_exists('green') {
-  $success : $green;
-} @else {
-  $success : $green-medium;
-}
-
-@if variable-exists('cyan') {
-  $info : $cyan;
-} @else {
-  $info : $cyan-color;
-}
-
-@if variable-exists('orange') {
-  $warning : $orange;
-} @else {
-  $warning : $orange-color;
-}
-
-@if variable-exists('red') {
-  $danger : $red;
-} @else {
-  $danger : $red-color;
-}
-
-@if variable_exists('gray-100') {
-  $light : $gray-100;
-} @else {
-  $light : $grey-lightest;
-}
-
-@if variable_exists('gray-800') {
-  $dark : $gray-800;
-} @else {
-  $dark : $gray-dark;
-}
+$primary   : $blue !default;
+$secondary : $gray-color !default;
+$success   : $green !default;
+$info      : $cyan !default;
+$warning   : $orange !default;
+$danger    : $red !default;
+$light     : $grey-lightest !default;
+$dark      : $gray-dark !default;

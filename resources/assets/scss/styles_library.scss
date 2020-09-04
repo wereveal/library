@@ -1,6 +1,6 @@
-@import "styles_top";
-@import "tests";
-@import "library";
-@import "defaults/manager_forms";
-@import "styles_bottom";
-@import "media_queries";
+@use "styles_top";
+@use "tests";
+@use "library";
+@use "defaults/manager_forms";
+@use "styles_bottom";
+@use "media_queries";

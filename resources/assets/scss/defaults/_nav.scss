@@ -1,73 +1,81 @@
 /*! menu bar */
+@use "mixins" as m;
+@use "colors" as c;
+@use "variables" as v;
+@use "../../../../../../twbs/bootstrap/variables" as bs-v;
+
+$pagination_border_width: bs-v.$pagination-border-width;
+
+$grid_margin_width: bs-v.$grid-margin-width;
 .navbar {
-    @include paddingSize(.25, 'tb', '');
+    @include m.paddingSize(.25, 'tb', '');
     &.navbar-color {
-        @include linearGradientTwoColor($gradient-start, $gradient-stop, $gradient-direction, $gradient-longpoint);
-        color: $navbar-text-color;
+        @include m.linearGradientTwoColor(c.$gradient-start, c.$gradient-stop, v.$gradient-direction, v.$gradient-longpoint);
+        color: c.$navbar-text-color;
         a {
             &.nav-link {
-                @include fontSmallCapsBold;
+                @include m.fontSmallCapsBold;
                 font-size: 1.25rem;
-                color: $navbar-text-color;
+                color: c.$navbar-text-color;
                 &.active {
-                    color: $navbar-link-active;
+                    color: c.$navbar-link-active;
                 }
             }
         }
         div {
             &.dropdown-menu {
                 &.show {
-                    background-color: $navbar-text-color;
+                    background-color: c.$navbar-text-color;
                     a {
                         &.dropdown-item {
-                            color: $gradient-start;
+                            color: c.$gradient-start;
                             &.active {
-                                color: $navbar-text-color;
-                                background-color: $gradient-stop;
+                                color: c.$navbar-text-color;
+                                background-color: c.$gradient-stop;
                             }
                             &.active:active {
-                                color: $navbar-text-color;
-                                background-color: $gradient-stop;
+                                color: c.$navbar-text-color;
+                                background-color: c.$gradient-stop;
                             }
                             &.active:hover {
-                                color: $navbar-sub-link-hover;
-                                background-color: $navbar-sub-bg-hover;
+                                color: c.$navbar-sub-link-hover;
+                                background-color: c.$navbar-sub-bg-hover;
                             }
                         }
                         &.dropdown-item:hover {
-                            color: $navbar-sub-link-hover;
-                            background-color: $navbar-sub-bg-hover;
+                            color: c.$navbar-sub-link-hover;
+                            background-color: c.$navbar-sub-bg-hover;
                         }
                     }
                 }
             }
         }
         a:hover {
-            color: $navbar-link-hover;
+            color: c.$navbar-link-hover;
         }
         li {
             &.show > .nav-link {
-                color: $navbar-text-color;
+                color: c.$navbar-text-color;
             }
             &.nav-item {
                 a:hover {
-                    color: $navbar-link-hover;
+                    color: c.$navbar-link-hover;
                 }
             }
         }
     }
     &.no-margin {
-        @include marginSizePx(-$grid-margin-width, 'lr', 'important');
+        @include m.marginSizePx(-$grid_margin_width, 'lr', 'important');
     }
 }
 
 .manager-links {
-    @include listStyleNone;
+    @include m.listStyleNone;
     a {
-        @include fontSmallCapsExtraBold;
+        @include m.fontSmallCapsExtraBold;
     }
     ul {
-        @include listStyleNone;
+        @include m.listStyleNone;
         padding-left: 2rem;
     }
 }
@@ -75,15 +83,15 @@
 span.no-link {
     position: relative;
     display: block;
-    padding: $pagination-padding-y $pagination-padding-x;
-    margin-left: -$pagination-border-width;
-    line-height: $pagination-line-height;
-    color: $green-medium;
-    background-color: $pagination-bg;
-    border: $pagination-border-width solid $pagination-border-color;
+    padding: bs-v.$pagination-padding-y bs-v.$pagination-padding-x;
+    margin-left: -$pagination_border_width;
+    line-height: bs-v.$pagination-line-height;
+    color: c.$green-medium;
+    background-color: bs-v.$pagination-bg;
+    border: $pagination_border_width solid bs-v.$pagination-border-color;
     &.no-link-sm {
-        padding: $pagination-padding-y-sm $pagination-padding-x-sm;
-        font-size: $font-size-sm;
+        padding: bs-v.$pagination-padding-y-sm bs-v.$pagination-padding-x-sm;
+        font-size: v.$font-size-sm;
         line-height: $line-height-sm;
     }
 }

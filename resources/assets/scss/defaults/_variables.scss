@@ -1,45 +1,49 @@
 /** Overrides Boostrap vars and must come before any bootstrap include **/
-$default-body-font-size : 16px;
-$default-radius :         .25rem;
-$default-h1 :             2rem;
-$default-sans :           "VeraSans", -apple-system, system-ui, BlinkMacSystemFont, Verdana, Helvetica, sans-serif;
-$default-sans-bold :      "VeraSansBold", sans-serif;
-$default-serif :          "VeraSerif", Georgia, "Times New Roman", Times, serif;
-$default-serif-bold :     "VeraSerifBold", serif;
-$default-mono :           "VeraMono", SFMono-Regular, Menlo, Monoco, Consolas, "Courier New", monospace;
+$default-body-font-size : 16px !default;
+$default-radius :         .25rem !default;
+$default-h1 :             2rem !default;
+$default-sans :           "VeraSans", -apple-system, system-ui, BlinkMacSystemFont, Verdana, Helvetica, sans-serif !default;
+$default-sans-bold :      "VeraSansBold", sans-serif !default;
+$default-serif :          "VeraSerif", Georgia, "Times New Roman", Times, serif !default;
+$default-serif-bold :     "VeraSerifBold", serif !default;
+$default-mono :           "VeraMono", SFMono-Regular, Menlo, Monoco, Consolas, "Courier New", monospace !default;
 
-$font-family-sans-serif : $default-sans;
-$font-family-serif :      $default-serif;
-$font-family-monospace :  $default-mono;
-$font-family-base :       $default-sans;
+$font-family-sans-serif : $default-sans !default;
+$font-family-serif :      $default-serif !default;
+$font-family-monospace :  $default-mono !default;
+$font-family-base :       $default-sans !default;
 
-$grid-columns :      12;
-$grid-gutter-width : 30px; // needs to be even number
-$grid-margin-width : $grid-gutter-width/2;
+$font-size-base: $default-body-font-size;
+$font-size-lg  : $font-size-base * 1.25;
+$font-size-sm  : $font-size-base * .875;
 
-$h1-font-size : $default-body-font-size * 2;
-$h2-font-size : $default-body-font-size * 1.75;
-$h3-font-size : $default-body-font-size * 1.5;
-$h4-font-size : $default-body-font-size * 1.25;
-$h5-font-size : $default-body-font-size;
-$h6-font-size : $default-body-font-size * .85;
+$grid-columns :      12 !default;
+$grid-gutter-width : 30px !default; // needs to be even number
+$grid-margin-width : $grid-gutter-width/2 !default;
 
-/* legacy size variables not sure they are still used */
-$font-size-h1 : $h1-font-size;
-$font-size-h2 : $h2-font-size;
-$font-size-h3 : $h3-font-size;
-$font-size-h4 : $h4-font-size;
-$font-size-h5 : $h5-font-size;
-$font-size-h6 : $h6-font-size;
+$h1-font-size : $default-body-font-size * 2 !default;
+$h2-font-size : $default-body-font-size * 1.75 !default;
+$h3-font-size : $default-body-font-size * 1.5 !default;
+$h4-font-size : $default-body-font-size * 1.25 !default;
+$h5-font-size : $default-body-font-size !default;
+$h6-font-size : $default-body-font-size * .85 !default;
 
-$gradient-direction : 180deg;
-$gradient-longpoint:  65%;
-$gradient-midpoint :  50%;
-$gradient-shortpoint: 35%;
+/* legacy size variables */
+$font-size-h1 : $h1-font-size !default;
+$font-size-h2 : $h2-font-size !default;
+$font-size-h3 : $h3-font-size !default;
+$font-size-h4 : $h4-font-size !default;
+$font-size-h5 : $h5-font-size !default;
+$font-size-h6 : $h6-font-size !default;
 
-$spacer : 1rem;
-$spacer-x : $spacer;
-$spacer-y : $spacer;
+$gradient-direction : 180deg !default;
+$gradient-longpoint:  65% !default;
+$gradient-midpoint :  50% !default;
+$gradient-shortpoint: 35% !default;
+
+$spacer : 1rem !default;
+$spacer-x : $spacer !default;
+$spacer-y : $spacer !default;
 $spacers : (
     0: 0,
     1: $spacer-x * .25,
@@ -54,6 +58,6 @@ $spacers : (
     tre: $spacer-x * 3,
     6: $spacer-x * 2,
     two: $spacer-x * 2,
-);
+) !default;
 
-$zindex-dropdown : 1025;
+$zindex-dropdown : 1025 !default;
