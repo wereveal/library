@@ -9,6 +9,7 @@
   "license": "MIT",
   "homepage": "",
   "dependencies": {
+    "bootstrap-icons": "^1.0.0",
     "@fortawesome/fontawesome-free": "^5.6.0",
     "@popperjs/core": "^2.4.4",
     "bulma": "^0.7.5",
