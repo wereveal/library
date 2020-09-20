@@ -13,9 +13,10 @@ use Ritc\Library\Traits\LogitTraits;
  * For basic management of sessions.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.5.0
- * @date    2018-11-29 21:32:03
+ * @version v1.6.0
+ * @date    2020-09-20 14:49:20
  * @change_log
+ * - v1.6.0 - Needed to make sure a session isn't already started   - 2020-09-20 wer
  * - v1.5.0 - Changed to set the cookie parameters before the       - 2018-11-29 wer
  *            session is started when parameters are provided.
  * - v1.4.1 - bug fix                                               - 2017-07-06 wer
@@ -47,32 +48,41 @@ class Session
      */
     private function __construct(array $a_params = [])
     {
-        if (!empty($a_params['session_id'])) {
-            session_id($a_params['session_id']);
-        }
-        if (!empty($a_params['session_name'])) {
-            session_name($a_params['session_name']);
-        }
-        else {
-            session_name('RITCSESSID');
-        }
-        if (!empty($a_params['cookie'])) {
-            if (PHP_VERSION_ID >= 70300) {
-                session_set_cookie_params($a_params['cookie']);
+        $session_status = session_status();
+        if ($session_status === PHP_SESSION_NONE) {
+            if (!empty($a_params['session_id'])) {
+                session_id($a_params['session_id']);
+            }
+            if (!empty($a_params['session_name'])) {
+                session_name($a_params['session_name']);
             }
             else {
-                $lifetime = 0;
-                $path     = '/';
-                $domain   = '';
-                $secure   = false;
-                $httponly = false;
-                foreach ($a_params['cookie'] as $cookie_key => $cookie_value) {
-                    $$cookie_key = $cookie_value;
-                }
-                session_set_cookie_params($lifetime, $path, $domain, $secure, $httponly);
+                session_name('RITCSESSID');
             }
+            if (!empty($a_params['cookie'])) {
+                if (PHP_VERSION_ID >= 70300) {
+                    session_set_cookie_params($a_params['cookie']);
+                }
+                else {
+                    $lifetime = 0;
+                    $path     = '/';
+                    $domain   = '';
+                    $secure   = false;
+                    $httponly = false;
+                    foreach ($a_params['cookie'] as $cookie_key => $cookie_value) {
+                        $$cookie_key = $cookie_value;
+                    }
+                    session_set_cookie_params($lifetime, $path, $domain, $secure, $httponly);
+                }
+            }
+            $this->session_started = session_start();
         }
-        $this->session_started = session_start();
+        elseif ($session_status === PHP_SESSION_DISABLED) {
+            $this->session_started = false;
+        }
+        else {
+            $this->session_started = true;
+        }
         if ($this->session_started) {
             $this->session_id   = session_id();
             $this->session_name = session_name();
