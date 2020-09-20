@@ -63,7 +63,6 @@ class CacheFactory
             ? BASE_PATH . '/cache'
             : $a_cache_config['directory']
         ;
-        $psr6      = strpos($cache_type, 'Simple') === false;
         $o_cache   = NULL;
         switch ($cache_type) {
             case 'Array':
@@ -120,12 +119,6 @@ class CacheFactory
                     $o_cache = null;
                 }
         }
-        if ($psr6 && is_object($o_cache)) {
-            $o_cache = new TagAwareAdapter($o_cache, $o_cache);
-        }
-        /** @var ArrayAdapter|ChainAdapter|FilesystemAdapter|PdoAdapter|PhpArrayAdapter|PhpFilesAdapter|RedisAdapter
-         *       $this->o_cache
-         */
         $this->o_cache = $o_cache;
     }
 
