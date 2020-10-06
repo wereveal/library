@@ -79,6 +79,9 @@ class ImportDataHelper
         }
         $a_db_values = [];
         for ($row = 1; $row <= $highest_row; ++$row) {
+            if ($firstLineKeys && $row === 1 && $highest_row > 1) {
+                $row++;
+            }
             $a_columns = [];
             for ($col = 1; $col <= $highest_col_index; ++$col) {
                 $a_columns[$this->a_keys[$col]] = $o_work->getCellByColumnAndRow($col, $row)->getValue();
