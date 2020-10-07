@@ -406,7 +406,7 @@
   @include paddingSize(.5, 'left', 'true');
 }
 
-@mixin headerRowColors($color: $color-white, $bg-color: $gray-med-dark, $force: true) {
+@mixin headerRowColors($color: default-colors.$color-white, $bg-color: default-colors.$gray-med-dark, $force: true) {
   $important: '';
   @if $force {
     $important: !important;
@@ -415,7 +415,7 @@
   background-color: $bg-color $important;
 }
 
-@mixin colorRow($color: $color-black, $bg-color: $color-white) {
+@mixin colorRow($color: default-colors.$color-black, $bg-color: default-colors.$color-white) {
   color: $color;
   background-color: $bg-color;
   [class*="col"] {

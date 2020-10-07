@@ -1,8 +1,6 @@
-/*! Changes to Bootstrap use after the Bootstrap use to override */
-/*! note, change the use colors to the correct color palette */
 @use "variables" as v;
-@use "colors_blue" as c;
-@use "../../../../../twbs/bootstrap/scss/mixins/breakpoints" as bs-bp;
+@use "../defaults/variables" as dv;
+@use "../colors/blue" as c;
 
 html {
     font-size: v.$default-body-font-size;
@@ -12,7 +10,7 @@ body {
     font-family: v.$default-sans;
     font-weight: 400;
     background-color: c.$color-body;
-    @include bs-bp.media-breakpoint-down(sm) {
+    @media screen and (max-width: v.$tablet - 2) {
         padding: 0;
     }
 }
@@ -25,25 +23,25 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
     &.smaller {
-        font-size: v.$h2-font-size;
+        font-size: dv.$h2-font-size;
     }
 }
 
 h2 {
     &.smaller {
-        font-size: v.$h3-font-size;
+        font-size: dv.$h3-font-size;
     }
 }
 
 h3 {
     &.smaller {
-        font-size: v.$h4-font-size;
+        font-size: dv.$h4-font-size;
     }
 }
 
 h4 {
     &.smaller {
-        font-size: v.$h5-font-size;
+        font-size: dv.$h5-font-size;
     }
 }
 
@@ -55,7 +53,13 @@ p {
     font-weight: 400;
     font-size: 1rem;
 }
-
+.container {
+  @media screen and (max-width: v.$tablet - 2) {
+    margin:        .5rem;
+    padding-right: .5rem;
+    padding-left:  .5rem;
+  }
+}
 .pagination {
     margin-top: 0;
     margin-bottom: 0;

@@ -1,5 +1,5 @@
 @use "sass:color";
-@use "defaults/colors" as dc;
+@use "../defaults/colors" as dc;
 
 $color-default    : dc.$blue-medium;
 $color-darkest    : dc.$blue-darkest;

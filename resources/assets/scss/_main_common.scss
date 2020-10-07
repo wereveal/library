@@ -1,9 +1,7 @@
 /* Main Common */
-@use "mixins" as m;
-@use "../variables" as v;
-@use "colors" as dc;
-@use "../../../../../../../twbs/bootstrap/scss/mixins/breakpoints" as bs-bp;
-@use "../../../../../../../twbs/bootstrap/scss/variables" as bs-v;
+@use "defaults/mixins" as m;
+@use "bootstrap/variables" as v;
+@use "defaults/colors" as dc;
 
 $gradient_direction: v.$gradient-direction;
 
@@ -135,11 +133,6 @@ hr.item-card {
   background-color: dc.$color-container;
   margin-bottom:    2rem;
   margin-top:       1rem;
-  @include bs-bp.media-breakpoint-down(sm) {
-    margin:        .5rem;
-    padding-right: .5rem;
-    padding-left:  .5rem;
-  }
 
   &.container-body {
     // placeholder

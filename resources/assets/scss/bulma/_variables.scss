@@ -1,0 +1,26 @@
+/*! Variable overrides */
+$default-body-font-size : 16px;
+$default-radius :         .25rem;
+$default-h1 :             2rem;
+$default-sans :           "VeraSans", -apple-system, system-ui, BlinkMacSystemFont, Verdana, Helvetica, sans-serif;
+$default-sans-bold :      "VeraSansBold", sans-serif;
+$default-serif :          "VeraSerif", Georgia, "Times New Roman", Times, serif;
+$default-serif-bold :     "VeraSerifBold", serif;
+$default-mono :           "VeraMono", SFMono-Regular, Menlo, Monoco, Consolas, "Courier New", monospace;
+
+$gradient-direction : 180deg;
+$gradient-longpoint:  65%;
+$gradient-midpoint :  50%;
+$gradient-shortpoint: 35%;
+
+/*! Bulma Variable overrides (if want to change) */
+// The container horizontal gap, which acts as the offset for breakpoints
+$gap: 32px;                       // Bulma default 32px;
+// 960, 1152, and 1344 have been chosen because they are divisible by both 12 and 16
+$tablet: 769px;                   // Bulma default 769px;
+$desktop: 960px + (2 * $gap);     // Bulma default 960px + (2 * $gap)
+$widescreen: 1152px + (2 * $gap); // Bulma default 1152px + (2 * $gap)
+$widescreen-enabled: true;        // Bulma default true
+$fullhd: 1344px + (2 * $gap);     // Bulma default 1344px + (2 * $gap)
+$fullhd-enabled: true;            // Bulma default true
+
