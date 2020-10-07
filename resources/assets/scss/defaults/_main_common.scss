@@ -1,9 +1,9 @@
 /* Main Common */
-@use "defaults/mixins" as m;
-@use "bootstrap/variables" as v;
-@use "defaults/colors" as dc;
+@use "mixins" as dm;
+@use "variables" as dv;
+@use "colors" as dc;
 
-$gradient_direction: v.$gradient-direction;
+$gradient_dir: dv.$gradient-direction;
 
 html {
   height: 100%;
@@ -86,7 +86,7 @@ hr.item-card {
 }
 
 .header-small-caps {
-  @include m.fontSmallCapsExtraBold;
+  @include dm.fontSmallCapsExtraBold;
 }
 
 .header-sans, .font-sans {
@@ -122,11 +122,11 @@ hr.item-card {
 }
 
 .font-small-caps {
-  @include m.fontSmallCaps;
+  @include dm.fontSmallCaps;
 }
 
 .font-small-caps-bold {
-  @include m.fontSmallCapsBold;
+  @include dm.fontSmallCapsBold;
 }
 
 .container {
@@ -139,20 +139,20 @@ hr.item-card {
   }
 
   &.container-footer {
-    @include m.contentBlock('footer');
-    @include m.linearGradientTwoColor(dc.$gradient-stop, dc.$gradient-start, v.$gradient-direction, v.$gradient-midpoint);
+    @include dm.contentBlock('footer');
+    @include dm.linearGradientTwoColor(dc.$gradient-stop, dc.$gradient-start, dv.$gradient-direction, dv.$gradient-midpoint);
   }
 
   &.container-gradient-down {
-    @include m.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, v.$gradient-direction, v.$gradient-midpoint)
+    @include dm.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, dv.$gradient-direction, dv.$gradient-midpoint)
   }
 
   &.container-gradient-up {
-    @include m.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, -$gradient_direction, v.$gradient-midpoint)
+    @include dm.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, -$gradient_dir, dv.$gradient-midpoint)
   }
 
   &.container-header {
-    @include m.contentBlock('header');
+    @include dm.contentBlock('header');
   }
 
   &.container-main {
@@ -265,59 +265,59 @@ hr.item-card {
     }
 
     &.row-black {
-      @include m.colorRow(dc.$gray-barely, dc.$black-color);
+      @include dm.colorRow(dc.$gray-barely, dc.$black-color);
     }
 
     &.row-blue {
-      @include m.colorRow(dc.$blue-lightest, dc.$blue-medium);
+      @include dm.colorRow(dc.$blue-lightest, dc.$blue-medium);
     }
 
     &.row-blue-dark {
-      @include m.colorRow(dc.$blue-lightest, dc.$blue-color);
+      @include dm.colorRow(dc.$blue-lightest, dc.$blue-color);
     }
 
     &.row-blue-light {
-      @include m.colorRow(dc.$blue-dark, dc.$blue-lightest);
+      @include dm.colorRow(dc.$blue-dark, dc.$blue-lightest);
     }
 
     &.row-dark {
-      @include m.colorRow(dc.$gray-darkest, dc.$gray-med-light);
+      @include dm.colorRow(dc.$gray-darkest, dc.$gray-med-light);
     }
 
     &.row-darker {
-      @include m.colorRow(dc.$gray-barely, dc.$gray-color);
+      @include dm.colorRow(dc.$gray-barely, dc.$gray-color);
     }
 
     &.row-darkest {
-      @include m.colorRow(dc.$gray-lightest, dc.$gray-dark);
+      @include dm.colorRow(dc.$gray-lightest, dc.$gray-dark);
     }
 
     &.row-green {
-      @include m.colorRow(dc.$green-lightest, dc.$green-med-light);
+      @include dm.colorRow(dc.$green-lightest, dc.$green-med-light);
     }
 
     &.row-green-dark {
-      @include m.colorRow(dc.$green-lightest, dc.$green-dark);
+      @include dm.colorRow(dc.$green-lightest, dc.$green-dark);
     }
 
     &.row-green-light {
-      @include m.colorRow(dc.$green-darker, dc.$green-lighter);
+      @include dm.colorRow(dc.$green-darker, dc.$green-lighter);
     }
 
     &.row-light, &.odd, &.odd-inner-odd, &.even-inner-odd {
-      @include m.colorRow(dc.$gray-darkest, dc.$gray-barely);
+      @include dm.colorRow(dc.$gray-darkest, dc.$gray-barely);
     }
 
     &.row-medium, &.even, &.even-inner-even {
-      @include m.colorRow(dc.$gray-darkest, dc.$gray-light);
+      @include dm.colorRow(dc.$gray-darkest, dc.$gray-light);
     }
 
     &.row-med-light, &.odd-inner-even {
-      @include m.colorRow(dc.$gray-darkest, dc.$gray-lightest);
+      @include dm.colorRow(dc.$gray-darkest, dc.$gray-lightest);
     }
 
     &.row-white {
-      @include m.colorRow(dc.$gray-darkest, dc.$white-color);
+      @include dm.colorRow(dc.$gray-darkest, dc.$white-color);
     }
 
     &.upper {
@@ -338,20 +338,20 @@ hr.item-card {
 
 .container-fluid {
   &.container-footer {
-    @include m.contentBlock('footer');
-    @include m.linearGradientTwoColor(dc.$gradient-stop, dc.$gradient-start, v.$gradient-direction, v.$gradient-shortpoint);
+    @include dm.contentBlock('footer');
+    @include dm.linearGradientTwoColor(dc.$gradient-stop, dc.$gradient-start, dv.$gradient-direction, dv.$gradient-shortpoint);
   }
 
   &.container-gradient-down {
-    @include m.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, v.$gradient-direction, v.$gradient-midpoint)
+    @include dm.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, dv.$gradient-direction, dv.$gradient-midpoint)
   }
 
   &.container-gradient-up {
-    @include m.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, -$gradient_direction, v.$gradient-midpoint)
+    @include dm.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, -$gradient_dir, dv.$gradient-midpoint)
   }
 
   &.container-header {
-    @include m.contentBlock('header');
+    @include dm.contentBlock('header');
   }
 
   &.container-body {
@@ -548,64 +548,64 @@ hr.item-card {
 }
 
 .border-radius-top-right {
-  border-top-right-radius: v.$default-radius;
+  border-top-right-radius: dv.$default-radius;
 }
 
 .border-radius-bottom-right {
-  border-bottom-right-radius: v.$default-radius;
+  border-bottom-right-radius: dv.$default-radius;
 }
 
 .border-radius-top-left {
-  border-top-left-radius: v.$default-radius;
+  border-top-left-radius: dv.$default-radius;
 }
 
 .border-radius-bottom-left {
-  border-bottom-left-radius: v.$default-radius;
+  border-bottom-left-radius: dv.$default-radius;
 }
 
 .border-radius-left {
-  border-top-left-radius:    v.$default-radius;
-  border-bottom-left-radius: v.$default-radius;
+  border-top-left-radius:    dv.$default-radius;
+  border-bottom-left-radius: dv.$default-radius;
 }
 
 .border-radius-right {
-  border-top-right-radius:    v.$default-radius;
-  border-bottom-right-radius: v.$default-radius;
+  border-top-right-radius:    dv.$default-radius;
+  border-bottom-right-radius: dv.$default-radius;
 }
 
 .border-radius-top {
-  border-top-left-radius:  v.$default-radius;
-  border-top-right-radius: v.$default-radius;
+  border-top-left-radius:  dv.$default-radius;
+  border-top-right-radius: dv.$default-radius;
 }
 
 .border-radius-bottom {
-  border-bottom-left-radius:  v.$default-radius;
-  border-bottom-right-radius: v.$default-radius;
+  border-bottom-left-radius:  dv.$default-radius;
+  border-bottom-right-radius: dv.$default-radius;
 }
 
 .clean-ul {
-  @include m.listStyleNone;
+  @include dm.listStyleNone;
 }
 
 .list-header {
-  @include m.headerRowColors();
+  @include dm.headerRowColors();
 
   div {
-    @include m.headerRowColors();
+    @include dm.headerRowColors();
   }
 }
 
 .list-stripped {
   &.odd, &.row-light {
-    @include m.colorRow(dc.$gray-darkest, dc.$gray-barely);
+    @include dm.colorRow(dc.$gray-darkest, dc.$gray-barely);
   }
 
   &.even, &.row-dark {
-    @include m.colorRow(dc.$gray-darkest, dc.$gray-med-light);;
+    @include dm.colorRow(dc.$gray-darkest, dc.$gray-med-light);;
   }
 
   &.row-med {
-    @include m.colorRow(dc.$gray-darkest, dc.$gray-light)
+    @include dm.colorRow(dc.$gray-darkest, dc.$gray-light)
   }
 
   a {
@@ -614,11 +614,11 @@ hr.item-card {
     padding:      .25rem .25rem .25rem .5rem;
 
     &.odd {
-      @include m.colorRow(dc.$gray-darkest, dc.$gray-barely);
+      @include dm.colorRow(dc.$gray-darkest, dc.$gray-barely);
     }
 
     &.even {
-      @include m.colorRow(dc.$gray-darkest, dc.$gray-med-light);;
+      @include dm.colorRow(dc.$gray-darkest, dc.$gray-med-light);;
 
     }
   }
