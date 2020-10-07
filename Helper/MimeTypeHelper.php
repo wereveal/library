@@ -9,11 +9,12 @@ namespace Ritc\Library\Helper;
  * Class MimeTypeHelper - Helps with mime types.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.2
- * @date    2018-04-18 14:26:04
+ * @version v1.1.0
+ * @date    2020-10-07 12:42:24
  * @change_log
- * - v1.0.2 - bug fix                - 2018-04-18 wer
- * - v1.0.0 - Initial version        - 2017-11-10 wer
+ * - v1.1.0 - changed mime.type file source - 2020-10-07 wer
+ * - v1.0.2 - bug fix                       - 2018-04-18 wer
+ * - v1.0.0 - Initial version               - 2017-11-10 wer
  */
 class MimeTypeHelper
 {
@@ -127,7 +128,7 @@ class MimeTypeHelper
      */
     public static function mapMimeToExtension():array
     {
-        $mime_type_path = PUBLIC_PATH . '/assets/vendor/jquery-ui/node_modules/testswarm/node_modules/request/node_modules/mime/types/mime.types';
+        $mime_type_path = LIBRARY_PATH . '/resources/assets/files/mime.types';
         if (file_exists($mime_type_path)) {
             $r_file = fopen($mime_type_path, 'rb');
             $a_map = [];
@@ -141,7 +142,20 @@ class MimeTypeHelper
             }
             return $a_map;
         }
-
         return [];
+    }
+
+    /**
+     * Gets the latest version of the mime.types file from Apache.
+     *
+     * @param string $url   Optional, if desires to use a different file than from Apache.
+     */
+    public static function updateMimeFile(string $url):void
+    {
+        if (empty($url)) {
+            $url = 'https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types';
+        }
+        $mimetypes = file_get_contents($url);
+        file_put_contents(LIBRARY_PATH . '/resources/assets/files/mime.types');
     }
 }

@@ -12,9 +12,10 @@ use UnexpectedValueException;
  * Helps with uploading files.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.0
- * @date    2018-03-29 14:13:03
+ * @version v3.0.0
+ * @date    2020-10-07 12:44:14
  * @change_log
+ * - v3.0.0 - Moved away from being a static based class    - 2020-10-07 wer
  * - v2.1.0 - added new methods to handle file types not    - 2018-03-29 wer
  *            specified in the sort of safe method. Changed
  *            default check for safe file types to new
@@ -26,7 +27,7 @@ use UnexpectedValueException;
 class UploadHelper
 {
     /** @var array  */
-    private static $a_allowed_file_types = [];
+    private $a_allowed_file_types = [];
 
     /**
      * Does all the stuff that is required to upload a single file.
@@ -42,7 +43,7 @@ class UploadHelper
      * @param bool  $only_safe optional, defaults to true. Only allow safe, per self::isAllowedFileType
      * @return bool
      */
-    public static function uploadFile(array $a_values = [], $only_safe = true):bool
+    public function uploadFile(array $a_values = [], $only_safe = true):bool
     {
         if (empty($a_values)) {
             throw new UnexpectedValueException('Required Values not provided.');
@@ -64,7 +65,7 @@ class UploadHelper
         if ($only_safe) {
             $r_finfo = finfo_open(FILEINFO_MIME_TYPE);
             if (!empty($a_values['real_type'])) {
-                if (!self::isAllowedFileType($a_values['real_type'])) {
+                if (!$this->isAllowedFileType($a_values['real_type'])) {
                     throw new UnexpectedValueException('The file type may not be safe.');
                 }
             }
@@ -106,7 +107,7 @@ class UploadHelper
      * @param int $error
      * @return string
      */
-    public static function getError($error = -1):?string
+    public function getError($error = -1):?string
     {
         switch ($error) {
             case UPLOAD_ERR_OK:
@@ -128,20 +129,20 @@ class UploadHelper
             default:
                 return 'Unknown error';
         }
-
     }
 
     /**
      * Checks to see if the file type is allowed for uploading.
+     *
      * @param string $file_type
      * @return bool
      */
-    public static function isAllowedFileType($file_type = ''):bool
+    public function isAllowedFileType($file_type = ''):bool
     {
-        if (empty(self::$a_allowed_file_types)) {
-            self::setAllowedFileTypes();
+        if (empty($this->a_allowed_file_types)) {
+            $this->setAllowedFileTypes();
         }
-        if (in_array($file_type, self::$a_allowed_file_types, true)) {
+        if (in_array($file_type, $this->a_allowed_file_types, true)) {
             return true;
         }
         return false;
@@ -149,10 +150,12 @@ class UploadHelper
 
     /**
      * Looks to see if the extension is "semi-safe".
+     *
      * @param string $file_type
+     * @deprecated 2020-10-07
      * @return bool
      */
-    public static function isSortOfSafeFileType($file_type = ''):?bool
+    public function isSortOfSafeFileType($file_type = ''):?bool
     {
         switch ($file_type) {
             case 'image/jpg':
@@ -173,7 +176,8 @@ class UploadHelper
 
     /**
      * Creates the values used for uploading a single file.
-     * Can be $_FILES[form_field_name] or self::reorganizeFilesGlobal[first_one].
+     * Can be $_FILES[form_field_name] or $this->reorganizeFilesGlobal[first_one].
+     *
      * @param array  $a_upload_values required ['name','type','tmp_name','error','size']
      * @param string $file_path optional, defaults to '/files'
      * @param bool   $only_safe optional, defaults to true
@@ -188,7 +192,7 @@ class UploadHelper
      *                        'save_path'       => ''
      *                        ]
      */
-    public static function createUploadValues(array $a_upload_values = [], $file_path = '/files', $only_safe = true):array
+    public function createUploadValues(array $a_upload_values = [], $file_path = '/files', $only_safe = true):array
     {
         if (   empty($a_upload_values)
             || empty($a_upload_values['name'])
@@ -198,10 +202,10 @@ class UploadHelper
         ) {
             return ViewHelper::errorMessage('Required Value(s) not provided.');
         }
-        $error = self::getError($a_upload_values['error']);
+        $error = $this->getError($a_upload_values['error']);
         if ($error === 'OK') {
             $uploaded_mime_type = MimeTypeHelper::getMimeFromFile($a_upload_values['tmp_name']);
-            if ($only_safe && self::isAllowedFileType($uploaded_mime_type)) {
+            if ($only_safe && $this->isAllowedFileType($uploaded_mime_type)) {
                 return ViewHelper::errorMessage('The file type is not allowed.');
             }
             $a_extensions = MimeTypeHelper::getExtensionFromMime($uploaded_mime_type);
@@ -262,9 +266,10 @@ class UploadHelper
      *       2 => [],
      *     ]
      * </pre>
+     *
      * @return array
      */
-    public static function reorganizeFilesGlobal():array
+    public function reorganizeFilesGlobal():array
     {
         $a_reorg_files = [];
         foreach ($_FILES as $field_name => $a_values) {
@@ -290,12 +295,13 @@ class UploadHelper
 
     /**
      * Adds an additional extension to the class property a_allowed_file_types.
+     *
      * @param string $value
      */
-    public static function addAllowedFileType($value = ''):void
+    public function addAllowedFileType($value = ''):void
     {
-        if (!empty($value) && !isset(self::$a_allowed_file_types['value'])) {
-            self::$a_allowed_file_types[] = $value;
+        if (!empty($value) && !isset($this->a_allowed_file_types['value'])) {
+            $this->a_allowed_file_types[] = $value;
         }
     }
 
@@ -303,7 +309,7 @@ class UploadHelper
      * Standard setter for class property a_allowed_file_types.
      * @param array $a_values
      */
-    public static function setAllowedFileTypes(array $a_values = []):void
+    public function setAllowedFileTypes(array $a_values = []):void
     {
         if (empty($a_values)) {
             $a_values = [
@@ -320,15 +326,15 @@ class UploadHelper
                 'application/pdf'
             ];
         }
-        self::$a_allowed_file_types = $a_values;
+        $this->a_allowed_file_types = $a_values;
     }
 
     /**
      * Standard getter for class property a_allowed_file_types;
      * @return array
      */
-    public static function getAllowedFileTypes():array
+    public function getAllowedFileTypes():array
     {
-        return self::$a_allowed_file_types;
+        return $this->a_allowed_file_types;
     }
 }
