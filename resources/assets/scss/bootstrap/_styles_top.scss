@@ -4,9 +4,9 @@
 @use "../defaults/variables" as dv;
 @use "../defaults/colors" as dc;
 @use "../defaults/mixins" as dm;
-@use "../../../../../../twbs/bootstrap/scss/bootstrap";
 @use "mods_to_bootstrap";
 @use "../defaults/fonts" as dfonts;
-@use "../main_common";
+@use "../defaults/main_common" as dmc;
 @use "../defaults/nav" as dn;
 @use "../defaults/form" as dform;
+@use "../../../../../../twbs/bootstrap/scss/bootstrap";

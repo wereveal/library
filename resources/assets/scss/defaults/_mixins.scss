@@ -1,20 +1,9 @@
 /*! Various Mixins */
+@use "sass:map";
+@use "sass:color";
 @use "colors" as default-colors;
 @use "variables" as default-vars;
-
-@function strReplace($string, $search, $replace: "") {
-  $index: str-index($string, $search);
-  @if $index {
-    @return str-slice($string, 1, $index - 1) + $replace + strReplace(str-slice($string, $index + str-length($search)), $search, $replace);
-  }
-  @return $string;
-}
-
-@function isDirection($value) {
-  $is-keyword: index((to top, to top right, to right top, to right, to bottom right, to right bottom, to bottom, to bottom left, to left bottom, to left, to left top, to top left), $value);
-  $is-angle: type-of($value) == 'number' and index('deg' 'grad' 'turn' 'rad', unit($value));
-  @return $is-keyword or $is-angle;
-}
+@use "functions" as dfun;
 
 @mixin rounded($radius) {
   border-radius: $radius;
@@ -311,10 +300,10 @@
   padding: .5rem 1rem;
 
   hr {
-    border-top-color: darken($border-color, 5%);
+    border-top-color: color.scale($border-color, $lightness: -5%);
   }
   .message-link {
-    color: darken($body-color, 10%);
+    color: color.scale($body-color, $lightness: -10%);
   }
   .icon {
     margin-right: 1rem;
@@ -334,7 +323,7 @@
 
   $extmods: (
     eot: "?",
-    svg: "#" + strReplace($name, " ", "_")
+    svg: "#" + dfun.strReplace($name, " ", "_")
   );
 
   $formats: (
@@ -361,7 +350,7 @@
 }
 
 @mixin linearGradient($direction, $colors...) {
-  @if isDirection($direction) == false {
+  @if dfun.isDirection($direction) == false {
     $colors: $direction, $colors;
     $direction: 180deg;
   }
@@ -431,4 +420,128 @@
       font-weight: 700;
     }
   }
+}
+
+@mixin setMediaSize($type: max, $max-bp: sm, $min-bp: xl, $breakpoints: default-vars.$grid-breakpoints) {
+  $max: map.get($breakpoints, $max-bp);
+  $min: map.get($breakpoints, $min-bp);
+  @if ($type == 'max') {
+    @media (max-width: $max) {
+      @content;
+    }
+  } @else if ($type == 'min') {
+    @media (min-width: $min) {
+      @content;
+    }
+  } @else if ($type == 'both') {
+    @media (min-width: $min) and (max-width: $max) {
+      @content;
+    }
+  }
+}
+
+@mixin btn-variant($background, $border, $hover-background: color.scale($background, $lightness: -7.5%), $hover-border: color.scale($border, $lightness: -10%), $active-background: color.scale($background, $lightness: -10%), $active-border: color.scale($border, $lightness: -12.5%)) {
+  color: dfun.contrastOf($background);
+  @include linearGradient('to bottom', $background);
+  border-color: $border;
+  @include box-shadow($btn-box-shadow);
+
+  &:hover {
+    color: dfun.contrastOf($hover-background);
+    @include linearGradient('to bottom', $hover-background);
+    border-color: $hover-border;
+  }
+
+  &:focus,
+  &.focus {
+    color: dfun.contrastOf($hover-background);
+    @include gradient-bg($hover-background);
+    border-color: $hover-border;
+    @if $enable-shadows {
+      @include box-shadow($btn-box-shadow, 0 0 0 $btn-focus-width rgba(mix(dfun.contrastOf($background), $border, 15%), .5));
+    } @else {
+      // Avoid using mixin so we can pass custom focus shadow properly
+      box-shadow: 0 0 0 $btn-focus-width rgba(mix(dfun.contrastOf($background), $border, 15%), .5);
+    }
+  }
+
+  // Disabled comes first so active can properly restyle
+  &.disabled,
+  &:disabled {
+    color: dfun.contrastOf($background);
+    background-color: $background;
+    border-color: $border;
+    // Remove CSS gradients if they're enabled
+    @if $enable-gradients {
+      background-image: none;
+    }
+  }
+
+  &:not(:disabled):not(.disabled):active,
+  &:not(:disabled):not(.disabled).active,
+  .show > &.dropdown-toggle {
+    color: dfun.contrastOf($active-background);
+    background-color: $active-background;
+    @if $enable-gradients {
+      background-image: none; // Remove the gradient for the pressed/active state
+    }
+    border-color: $active-border;
+
+    &:focus {
+      @if $enable-shadows and $btn-active-box-shadow != none {
+        @include box-shadow($btn-active-box-shadow, 0 0 0 $btn-focus-width rgba(mix(dfun.contrastOf($background), $border, 15%), .5));
+      } @else {
+        // Avoid using mixin so we can pass custom focus shadow properly
+        box-shadow: 0 0 0 $btn-focus-width rgba(mix(dfun.contrastOf($background), $border, 15%), .5);
+      }
+    }
+  }
+}
+
+@mixin btn-outline-variant($color, $color-hover: dfun.contrastOf($color), $active-background: $color, $active-border: $color) {
+  color: $color;
+  border-color: $color;
+
+  &:hover {
+    color: $color-hover;
+    background-color: $active-background;
+    border-color: $active-border;
+  }
+
+  &:focus,
+  &.focus {
+    box-shadow: 0 0 0 $btn-focus-width rgba($color, .5);
+  }
+
+  &.disabled,
+  &:disabled {
+    color: $color;
+    background-color: transparent;
+  }
+
+  &:not(:disabled):not(.disabled):active,
+  &:not(:disabled):not(.disabled).active,
+  .show > &.dropdown-toggle {
+    color: dfun.contrastOf($active-background);
+    background-color: $active-background;
+    border-color: $active-border;
+
+    &:focus {
+      @if $enable-shadows and $btn-active-box-shadow != none {
+        @include box-shadow($btn-active-box-shadow, 0 0 0 $btn-focus-width rgba($color, .5));
+      } @else {
+        // Avoid using mixin so we can pass custom focus shadow properly
+        box-shadow: 0 0 0 $btn-focus-width rgba($color, .5);
+      }
+    }
+  }
+}
+
+// Button sizes
+@mixin button-size($padding-y, $padding-x, $font-size, $line-height, $border-radius) {
+  padding: $padding-y $padding-x;
+  @include font-size($font-size);
+  line-height: $line-height;
+  // Manually declare to provide an override to the browser default
+  @include border-radius($border-radius, 0);
 }

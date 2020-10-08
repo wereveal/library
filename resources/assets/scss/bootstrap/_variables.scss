@@ -1,27 +1,27 @@
 /*! Variable overrides */
-$default-body-font-size : 16px;
-$default-radius :         .25rem;
-$default-h1 :             2rem;
-$default-sans :           "VeraSans", -apple-system, system-ui, BlinkMacSystemFont, Verdana, Helvetica, sans-serif;
-$default-sans-bold :      "VeraSansBold", sans-serif;
-$default-serif :          "VeraSerif", Georgia, "Times New Roman", Times, serif;
-$default-serif-bold :     "VeraSerifBold", serif;
-$default-mono :           "VeraMono", SFMono-Regular, Menlo, Monoco, Consolas, "Courier New", monospace;
+$default-body-font-size : 16px !default;
+$default-radius :         .25rem !default;
+$default-h1 :             2rem !default;
+$default-sans :           "VeraSans", -apple-system, system-ui, BlinkMacSystemFont, Verdana, Helvetica, sans-serif !default;
+$default-sans-bold :      "VeraSansBold", sans-serif !default;
+$default-serif :          "VeraSerif", Georgia, "Times New Roman", Times, serif !default;
+$default-serif-bold :     "VeraSerifBold", serif !default;
+$default-mono :           "VeraMono", SFMono-Regular, Menlo, Monoco, Consolas, "Courier New", monospace !default;
 
-$gradient-direction : 180deg;
-$gradient-longpoint:  65%;
-$gradient-midpoint :  50%;
-$gradient-shortpoint: 35%;
+$gradient-direction : 180deg !default;
+$gradient-longpoint:  65% !default;
+$gradient-midpoint :  50% !default;
+$gradient-shortpoint: 35% !default;
 
 /*! Bootstrap variable overrides */
-$font-size-base: $default-body-font-size;
-$font-size-lg  : $font-size-base * 1.25;
-$font-size-sm  : $font-size-base * .875;
+$font-size-base: $default-body-font-size !default;
+$font-size-lg  : $font-size-base * 1.25 !default;
+$font-size-sm  : $font-size-base * .875 !default;
 
-$h1-font-size : $default-body-font-size * 2;
-$h2-font-size : $default-body-font-size * 1.75;
-$h3-font-size : $default-body-font-size * 1.5;
-$h4-font-size : $default-body-font-size * 1.25;
-$h5-font-size : $default-body-font-size;
-$h6-font-size : $default-body-font-size * .85;
+$h1-font-size : $default-body-font-size * 2 !default;
+$h2-font-size : $default-body-font-size * 1.75 !default;
+$h3-font-size : $default-body-font-size * 1.5 !default;
+$h4-font-size : $default-body-font-size * 1.25 !default;
+$h5-font-size : $default-body-font-size !default;
+$h6-font-size : $default-body-font-size * .85 !default;
 

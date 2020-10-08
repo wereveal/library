@@ -1,9 +1,7 @@
 /*! Some general Form styling */
 @use "colors";
 @use "mixins";
-@use "variables" as default-vars;
-@use "../../../../../../twbs/bootstrap/scss/mixins/buttons" as bs-btns;
-@use "../../../../../../twbs/bootstrap/scss/variables" as bs-vars;
+@use "variables" as dvars;
 
 input, textarea {
   &.colorful {
@@ -132,7 +130,7 @@ label {
       font-size: 1.5rem;
       color: colors.$gray-dark;
       background-color: colors.$gray90;
-      border-radius: default-vars.$default-radius;
+      border-radius: dvars.$default-radius;
       padding-left: 1rem;
     }
   }
@@ -179,79 +177,79 @@ label {
 }
 
 .btn-green {
-  @include bs-btns.button-variant(colors.$green-bs4, colors.$green-bs4);
+  @include mixins.btn-variant(colors.$green-bs4, colors.$green-bs4);
 }
 
 .btn-dark-green {
-  @include bs-btns.button-variant(colors.$green, colors.$green);
+  @include mixins.btn-variant(colors.$green, colors.$green);
 }
 
 .btn-blue {
-  @include bs-btns.button-variant(colors.$blue, colors.$blue);
+  @include mixins.btn-variant(colors.$blue, colors.$blue);
 }
 
 .btn-red {
-  @include bs-btns.button-variant(colors.$red, colors.$red);
+  @include mixins.btn-variant(colors.$red, colors.$red);
 }
 
 .btn-white {
-  @include bs-btns.button-variant(colors.$white, colors.$white);
+  @include mixins.btn-variant(colors.$white, colors.$white);
 }
 
 .btn-black {
-  @include bs-btns.button-variant(colors.$black, colors.$black);
+  @include mixins.btn-variant(colors.$black, colors.$black);
 }
 
 .btn-gray {
-  @include bs-btns.button-variant(colors.$gray60, colors.$gray60);
+  @include mixins.btn-variant(colors.$gray60, colors.$gray60);
 }
 
 .btn-brown {
-  @include bs-btns.button-variant(colors.$brown-medium, colors.$brown-medium);
+  @include mixins.btn-variant(colors.$brown-medium, colors.$brown-medium);
 }
 
 .btn-orange {
-  @include bs-btns.button-variant(colors.$orange, colors.$orange);
+  @include mixins.btn-variant(colors.$orange, colors.$orange);
 }
 
 .btn-purple {
-  @include bs-btns.button-variant(colors.$purple, colors.$purple);
+  @include mixins.btn-variant(colors.$purple, colors.$purple);
 }
 
 .btn-outline-green {
-  @include bs-btns.button-outline-variant(colors.$green);
+  @include mixins.btn-outline-variant(colors.$green);
 }
 
 .btn-outline-blue {
-  @include bs-btns.button-outline-variant(colors.$blue);
+  @include mixins.btn-outline-variant(colors.$blue);
 }
 
 .btn-outline-red {
-  @include bs-btns.button-outline-variant(colors.$red);
+  @include mixins.btn-outline-variant(colors.$red);
 }
 
 .btn-outline-white {
-  @include bs-btns.button-outline-variant(colors.$white, colors.$black);
+  @include mixins.btn-outline-variant(colors.$white, colors.$black);
 }
 
 .btn-outline-black {
-  @include bs-btns.button-outline-variant(colors.$black);
+  @include mixins.btn-outline-variant(colors.$black);
 }
 
 .btn-outline-gray {
-  @include bs-btns.button-outline-variant(colors.$gray60);
+  @include mixins.btn-outline-variant(colors.$gray60);
 }
 
 .btn-outline-brown {
-  @include bs-btns.button-outline-variant(colors.$brown-medium);
+  @include mixins.btn-outline-variant(colors.$brown-medium);
 }
 
 .btn-outline-orange {
-  @include bs-btns.button-outline-variant(colors.$orange);
+  @include mixins.btn-outline-variant(colors.$orange);
 }
 
 .btn-outline-purple {
-  @include bs-btns.button-outline-variant(colors.$purple);
+  @include mixins.btn-outline-variant(colors.$purple);
 }
 
 .datepicker {

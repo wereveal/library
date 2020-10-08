@@ -2,11 +2,15 @@
 @use "mixins" as m;
 @use "colors" as c;
 @use "variables" as v;
-@use "../../../../../../twbs/bootstrap/variables" as bs-v;
 
-$pagination_border_width: bs-v.$pagination-border-width;
+$p_border_width    : v.$pagination-border-width;
+$p_line_height     : v.$pagination-line-height;
+$grid-gutter-width : v.$grid-gutter-width; // seems to be needed to do a negative
+$pad-x             : v.$pagination-padding-x;
+$pad-x-sm          : v.$pagination-padding-x-sm;
+$pad-y             : v.$pagination-padding-y;
+$pad-y-sm          : v.$pagination-padding-y-sm;
 
-$grid_margin_width: bs-v.$grid-margin-width;
 .navbar {
     @include m.paddingSize(.25, 'tb', '');
     &.navbar-color {
@@ -65,7 +69,7 @@ $grid_margin_width: bs-v.$grid-margin-width;
         }
     }
     &.no-margin {
-        @include m.marginSizePx(-$grid_margin_width, 'lr', 'important');
+        @include m.marginSizePx(-$grid-gutter-width, 'lr', 'important');
     }
 }
 
@@ -83,15 +87,15 @@ $grid_margin_width: bs-v.$grid-margin-width;
 span.no-link {
     position: relative;
     display: block;
-    padding: bs-v.$pagination-padding-y bs-v.$pagination-padding-x;
-    margin-left: -$pagination_border_width;
-    line-height: bs-v.$pagination-line-height;
+    padding: $pad-y $pad-x;
+    margin-left: -$p_border_width;
+    line-height: $p_line_height;
     color: c.$green-medium;
-    background-color: bs-v.$pagination-bg;
-    border: $pagination_border_width solid bs-v.$pagination-border-color;
+    background-color: c.$color-body;
+    border:  solid c.$border-color;
     &.no-link-sm {
-        padding: bs-v.$pagination-padding-y-sm bs-v.$pagination-padding-x-sm;
+        padding: $pad-y-sm $pad-x-sm;
         font-size: v.$font-size-sm;
-        line-height: $line-height-sm;
+        line-height: v.$line-height-sm;
     }
 }
