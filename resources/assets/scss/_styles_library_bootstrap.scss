@@ -1,5 +1,6 @@
-@use "bootstrap/styles_top";
-@use "library";
+@use "bootstrap/styles_top" as bstop;
+@use "defaults/styles_bottom" as dbottom;
 @use "defaults/manager_forms";
-@use "styles_bottom";
-@use "media_queries" as mq;
+@use "defaults/library" as dlib;
+@use "bootstrap/media_queries" as bsmq;
+@use "app/media_queries" as amq;

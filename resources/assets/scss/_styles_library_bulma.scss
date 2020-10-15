@@ -1,5 +1,5 @@
-@use "bulma/styles_top";
-@use "library";
-@use "defaults/manager_forms";
-@use "styles_bottom";
-@use "media_queries";
+@use "bulma/styles_top" as bul_st;
+@use "defaults/styles_bottom" as d_sb;
+@use "defaults/library" as d_lib;
+@use "defaults/manager_forms" as d_mf;
+@use "bulma/media_queries" as bul_mq;

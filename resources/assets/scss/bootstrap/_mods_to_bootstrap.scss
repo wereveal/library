@@ -1,9 +1,8 @@
 /*! Changes to Bootstrap use after the Bootstrap use to override */
 /*! note, change the use colors to the correct color palette */
-@use "sass:map";
-@use "variables" as v;
-@use "../defaults/variables" as dv;
+/*! note, change the use variables to the correct variables file if not the defaults */
 @use "../defaults/mixins" as dm;
+@use "../defaults/variables" as v;
 @use "../colors/blue" as c;
 
 html {

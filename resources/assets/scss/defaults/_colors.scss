@@ -1,5 +1,5 @@
 /*!
-  Color variables - if intended to override any bootstrap variables,
+  Color variables - if intended to override any bootstrap/bulma variables,
   must be included before
 **/
 @use "sass:color";
@@ -26,6 +26,15 @@ $yellow-bs4:             #ffc107;
 $green-bs4:              #28a745;
 $teal-bs4:               #20c997;
 $cyan-bs4:               #17a2b8;
+
+$orange-bul:       hsl(14,  100%, 53%);
+$yellow-bul:       hsl(48,  100%, 67%);
+$green-bul:        hsl(141, 71%,  48%);
+$turquoise-bul:    hsl(171, 100%, 41%);
+$cyan-bul:         hsl(204, 86%,  53%);
+$blue-bul:         hsl(217, 71%,  53%);
+$purple-bul:       hsl(271, 100%, 71%);
+$red-bul:          hsl(348, 100%, 61%);
 
 /* alts to bootstrap */
 $black-color:            #000 !default;
@@ -168,10 +177,12 @@ $yellow-lightest:        #ffffe0 !default;
 $yellow-xlight:          #ffffe0 !default;
 
 /* Whites */
+$white:                  $white-color;
 $off-white-color:        #f5f5f5;
 $ivory:                  #fffff0;
 $seashell:               #fff5ee;
 $snow:                   #fffafa;
+$black:                  $black-color; // absence of white?
 
 $color-black:            $black-color !default;
 $color-blue:             $blue-color !default;
@@ -201,9 +212,9 @@ $color-complement:       $gray-complement !default;
 $color-body:             $gray-med-light !default;
 $color-container:        $gray-barely !default;
 $color-border:           $grey-darkest !default;
-$color-shadow:           transparentize($color-default, .35) !default;
-$color-shadow-alt:       transparentize($color-complement, .35) !default;
-$color-heading:          $grey-darkest !default;
+$color-shadow:           color.scale($color-default, $alpha: -35%) !default;
+$color-shadow-alt:       color.scale($color-complement, $alpha: -35%) !default;
+$color-heading:          $gray-darkest !default;
 $color-heading-alt:      $gray-complement !default;
 
 /* Gradient */
@@ -234,5 +245,5 @@ $dark:                   $gray-dark !default;
 
 /* Contrast colors - idea from Bootstrap */
 $contrast-threshold:     150 !default;
-$contrast-dark:          $gray-darkest !default;
-$contrast-light:         $white-color !default;
+$contrast-dark:          $color-black !default;
+$contrast-light:         $color-white !default;

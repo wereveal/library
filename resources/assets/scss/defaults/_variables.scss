@@ -1,5 +1,7 @@
 /** Overrides Boostrap vars and must come before any bootstrap include **/
 @use "sass:map";
+@use "colors" as c;
+
 $default-body-font-size:  16px !default;
 $default-radius:          .25rem !default;
 $default-h1:              2rem !default;
@@ -8,6 +10,10 @@ $default-sans-bold:       "VeraSansBold", sans-serif !default;
 $default-serif:           "VeraSerif", Georgia, "Times New Roman", Times, serif !default;
 $default-serif-bold:      "VeraSerifBold", serif !default;
 $default-mono:            "VeraMono", SFMono-Regular, Menlo, Monoco, Consolas, "Courier New", monospace !default;
+
+$enable-rounded:          true !default;
+$enable-shadows:          false !default;
+$enable-gradients:        false !default;
 
 $font-family-sans-serif:  $default-sans !default;
 $font-family-serif:       $default-serif !default;
@@ -68,6 +74,15 @@ $pagination-padding-x-lg: 1.5rem !default;
 $pagination-line-height:  1.25 !default;
 $pagination-border-width: $border-width !default;
 
+$shadow-blur:             2px;
+$shadow-color:            c.$black-color;
+$shadow-x:                2px;
+$shadow-y:                2px;
+$btn-shadow-blur:         1px;
+$btn-shadow-color:        c.$black-color;
+$btn-shadow-x:            1px;
+$btn-shadow-y:            1px;
+
 $spacer:                  1rem !default;
 $spacer-x:                $spacer !default;
 $spacer-y:                $spacer !default;
@@ -88,3 +103,4 @@ $spacers:                 (
                           ) !default;
 
 $zindex-dropdown:         1025 !default;
+

@@ -1,60 +1,107 @@
-@use "variables" as v;
+@use "sass:map";
+@use "sass:meta";
+@use "variables" as bulv;
 @use "../defaults/variables" as dv;
-@use "../colors/blue" as c;
+@use "colors" as bulc;
+@use "../defaults/colors" as dc;
+
+$bulv_map: meta.module-variables("bulv");
+$dv_map: meta.module-variables("dv");
+$bulc_map: meta.module-variables("bulc");
+$dc_map: meta.module-variables("dc");
+$default-body-font-size: null;
+$default-sans: null;
+$default-serif: null;
+$color-body: null;
+$h2-font-size: null;
+$h3-font-size: null;
+$h4-font-size: null;
+$h5-font-size: null;
+$h6-font-size: null;
+$color-heading: null;
+$color-heading-alt: null;
+$tablet: bulv.$tablet;
+
+@if(map.has-key($bulv_map, "default-body-font-size")) { $default-body-font-size: bulv.$default-body-font-size; }
+@else { $default-body-font-size: dv.$default-body-font-size; }
+
+@if(map.has-key($bulv_map, "default-sans")) { $default-sans: bulv.$default-sans; }
+@else { $default-sans: dv.$default-sans; }
+
+@if(map.has-key($bulv_map, "default-serif")) { $default-serif: bulv.$default-serif; }
+@else { $default-serif: dv.$default-serif; }
+
+@if(map.has-key($bulc_map, "color-body")) { $color-body: bulc.$color-body }
+@else { $color-body: dc.$color-body }
+
+@if(map.has-key($bulv_map, "h2-font-size")) { $h2-font-size: bulv.$h2-font-size; }
+@else { $h2-font-size: dv.$h2-font-size; }
+
+@if(map.has-key($bulv_map, "h3-font-size")) { $h3-font-size: bulv.$h3-font-size; }
+@else { $h3-font-size: dv.$h3-font-size; }
+
+@if(map.has-key($bulv_map, "h4-font-size")) { $h4-font-size: bulv.$h4-font-size; }
+@else { $h4-font-size: dv.$h4-font-size; }
+
+@if(map.has-key($bulv_map, "h5-font-size")) { $h5-font-size: bulv.$h5-font-size; }
+@else { $h5-font-size: dv.$h5-font-size; }
+
+@if(map.has-key($bulv_map, "h6-font-size")) { $h6-font-size: bulv.$h6-font-size; }
+@else { $h6-font-size: dv.$h6-font-size; }
 
 html {
-    font-size: v.$default-body-font-size;
+    font-size: $default-body-font-size;
 }
 
 body {
-    font-family: v.$default-sans;
+    font-family: $default-sans;
     font-weight: 400;
-    background-color: c.$color-body;
-    @media screen and (max-width: v.$tablet - 2) {
+    background-color: $color-body;
+    @media screen and (max-width: $tablet - 2) {
         padding: 0;
     }
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: v.$default-serif;
+    font-family: $default-serif;
     margin-top: 0;
     padding-top: 0;
 }
 
 h1 {
     &.smaller {
-        font-size: dv.$h2-font-size;
+        font-size: $h2-font-size;
     }
 }
 
 h2 {
     &.smaller {
-        font-size: dv.$h3-font-size;
+        font-size: $h3-font-size;
     }
 }
 
 h3 {
     &.smaller {
-        font-size: dv.$h4-font-size;
+        font-size: $h4-font-size;
     }
 }
 
 h4 {
     &.smaller {
-        font-size: dv.$h5-font-size;
+        font-size: $h5-font-size;
     }
 }
 
-h1, h3, h5 { color: c.$color-heading; }
+h1, h3, h5 { color: $color-heading; }
 
-h2, h4, h6 { color: c.$color-heading-alt; }
+h2, h4, h6 { color: $color-heading-alt; }
 
 p {
     font-weight: 400;
     font-size: 1rem;
 }
 .container {
-  @media screen and (max-width: v.$tablet - 2) {
+  @media screen and (max-width: $tablet - 2) {
     margin:        .5rem;
     padding-right: .5rem;
     padding-left:  .5rem;

@@ -1,12 +1,16 @@
-@use "../mixins" as m;
-@use "variables" as v;
-@use "../colors/blue";
-@use "../defaults/variables" as dv;
-@use "../defaults/colors" as dc;
-@use "../defaults/mixins" as dm;
-@use "mods_to_bulma";
-@use "../../../../../../public/assets/node_modules/bulma/bulma";
-@use "../defaults/fonts" as df;
-@use "../main_common";
+/** Order pretty important, need to go from most specific vars to generic bulma */
+@use "../app/variables" as avar;
+@use "variables" as bulvar;
+@use "../defaults/variables" as dvar;
+@use "../app/colors" as acolor;
+@use "../colors/blue" as blue;
+@use "../defaults/colors" as dcolor;
+@use "../../../../../../../public/assets/node_modules/bulma/bulma";
+@use "mods_to_bulma" as bulmods;
+@use "../defaults/mixins" as dmix;
+@use "mixins" as bulmix;
+@use "../app/mixins" as amix;
+@use "../defaults/fonts" as dfonts;
+@use "../defaults/main_common" as dmc;
 @use "../defaults/nav" as dn;
-@use "../defaults/form" as df;
+@use "../defaults/form" as dform;

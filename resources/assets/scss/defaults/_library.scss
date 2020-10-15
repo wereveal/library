@@ -1,4 +1,4 @@
-@use 'defaults/mixins';
+@use 'mixins';
 
 .instructions {
   @include mixins.contentBlock('gray');

@@ -1,11 +1,12 @@
 /*! Form specific styles */
+@use "mixins";
 #login-form {
   label {
     vertical-align: baseline;
     padding-top: .25rem;
     font-weight: 900;
     text-align: right;
-    @include media-breakpoint-down(sm) {
+    @include mixins.setMediaSize(sm) {
       text-align: left;
     }
   }
