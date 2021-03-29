@@ -12,9 +12,10 @@ use UnexpectedValueException;
  * Helps with uploading files.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
- * @date    2020-10-07 12:44:14
+ * @version v3.0.1
+ * @date    2021-03-29 17:54:25
  * @change_log
+ * - v3.0.1 - Bug fix                                       - 2021-03-29 wer
  * - v3.0.0 - Moved away from being a static based class    - 2020-10-07 wer
  * - v2.1.0 - added new methods to handle file types not    - 2018-03-29 wer
  *            specified in the sort of safe method. Changed
@@ -49,7 +50,7 @@ class UploadHelper
             throw new UnexpectedValueException('Required Values not provided.');
         }
 
-        if ($a_values['error'] !== 'OK') {
+        if ($a_values['error'] !== 'OK' && $a_values['error'] !== 0) {
             throw new RuntimeException($a_values['error']);
         }
 
@@ -77,7 +78,7 @@ class UploadHelper
             }
             else {
                 $file_mime_type = finfo_file($r_finfo, $a_values['tmp_name']);
-                if (!self::isAllowedFileType($file_mime_type)) {
+                if (!$this->isAllowedFileType($file_mime_type)) {
                     throw new UnexpectedValueException('The file type may not be safe.');
                 }
             }
