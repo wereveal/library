@@ -11,20 +11,21 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class GroupsEntity.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2015-07-29 11:41:03
+ * @version v1.1.0
+ * @date    2021-11-26 16:18:21
  * @change_log
- * - v1.0.0 - finished        - 07/29/2015 wer
- * - v0.1.0 - Initial version - 09/11/2014 wer
+ * - v1.1.0 - updated for php8                                  - 2021-11-26 wer
+ * - v1.0.0 - finished                                          - 07/29/2015 wer
+ * - v0.1.0 - Initial version                                   - 09/11/2014 wer
  */
 class GroupsEntity implements EntityInterface
 {
     /** @var int $group_id entity */
-    private $group_id;
+    private int $group_id;
     /** @var string entity */
-    private $group_name;
+    private string $group_name;
     /** @var string entity */
-    private $group_description;
+    private string $group_description;
 
     /**
      * Gets all the entity properties.
@@ -65,9 +66,9 @@ class GroupsEntity implements EntityInterface
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getGroupId()
+    public function getGroupId():int
     {
         return $this->group_id;
     }
@@ -75,15 +76,15 @@ class GroupsEntity implements EntityInterface
     /**
      * @param mixed $group_id
      */
-    public function setGroupId($group_id):void
+    public function setGroupId(mixed $group_id):void
     {
         $this->group_id = $group_id;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getGroupName()
+    public function getGroupName(): string
     {
         return $this->group_name;
     }
@@ -91,15 +92,15 @@ class GroupsEntity implements EntityInterface
     /**
      * @param mixed $group_name
      */
-    public function setGroupName($group_name):void
+    public function setGroupName(mixed $group_name):void
     {
         $this->group_name = $group_name;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getGroupDescription()
+    public function getGroupDescription(): string
     {
         return $this->group_description;
     }
@@ -107,7 +108,7 @@ class GroupsEntity implements EntityInterface
     /**
      * @param mixed $group_description
      */
-    public function setGroupDescription($group_description):void
+    public function setGroupDescription(mixed $group_description):void
     {
         $this->group_description = $group_description;
     }

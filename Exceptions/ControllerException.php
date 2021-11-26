@@ -13,9 +13,10 @@ use Ritc\Library\Helper\ExceptionHelper;
  * Class ControllerException - Custom Exceptions for Controllers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2018-09-11 09:59:06
+ * @version v1.1.0
+ * @date    2021-11-26 16:32:59
  * @change_log
+ * - v1.1.0 - updated for php8                                  - 2021-11-26 wer
  * - v1.0.0 - Initial version                                   - 2018-09-11 wer
  */
 class ControllerException extends CustomExceptionAbstract
@@ -23,12 +24,12 @@ class ControllerException extends CustomExceptionAbstract
     /**
      * Returns the exception error code for the string provided.
      *
-     * @param string $failure_string
+     * @param string $value
      * @return int
      */
-    public function getCodeNumber($failure_string = ''):int
+    public function getCodeNumber($value = ''):int
     {
-        return ExceptionHelper::getCodeNumberService($failure_string);
+        return ExceptionHelper::getCodeNumberService($value);
     }
 
     /**
@@ -37,7 +38,7 @@ class ControllerException extends CustomExceptionAbstract
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1):string
+    public function getCodeText(int $code = -1):string
     {
         return ExceptionHelper::getCodeTextService($code);
     }

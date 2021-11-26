@@ -19,27 +19,27 @@ use Ritc\Library\Traits\LogitTraits;
  * Several different \PDO objects can be created based on config files specified.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.1+
- * @date    2019-03-28 12:07:13
+ * @version v3.1.0
+ * @date    2021-11-26 16:46:20
  * @change_log
- * - v3.0.1 - primarily dealing with PhpStorm inspections (+ = more the same)                        - 2019-03-28 wer
- * - v3.0.0 - Changed to set the \PDO::ATTR_ERRMODE, defaults to \PDO::ERRMODE_EXCEPTION             - 2017-06-13 wer
- * - v2.1.0 - Simplified the Factory                                                                 - 2017-01-25 wer
- * - v2.0.2 - fixed potential bug                                                                    - 2017-01-13 wer
- * - v2.0.1 - refactoring of DbTraits reflected here (caused strict standards error).                - 2016-03-19 wer
- * - v2.0.0 - realized a stupid error in thinking, this should produce                               - 08/28/2015 wer
+ * - v3.1.0 - updatd for php8                                                                           - 2021-11-26 wer
+ * - v3.0.0 - Changed to set the \PDO::ATTR_ERRMODE, defaults to \PDO::ERRMODE_EXCEPTION                - 2017-06-13 wer
+ * - v2.1.0 - Simplified the Factory                                                                    - 2017-01-25 wer
+ * - v2.0.2 - fixed potential bug                                                                       - 2017-01-13 wer
+ * - v2.0.1 - refactoring of DbTraits reflected here (caused strict standards error).                   - 2016-03-19 wer
+ * - v2.0.0 - realized a stupid error in thinking, this should produce                                  - 08/28/2015 wer
  *            an instance of the PDO not an instance of the factory itself duh!
  *            I believe this was a result of not thinking how to do it correctly.
  *            Renamed class to match what the factory produces.
- * - v1.6.0 - no longer extends Base class, uses DbTraits and LogitTraits                            - 08/19/2015 wer
- * - v1.5.3 - moved to the Factories namespace                                                       - 01/27/2015 wer
- * - v1.5.2 - moved to Services namespace                                                            - 11/15/2014 wer
- * - v1.5.1 - changed to implement the changes to the Base class                                     - 09/23/2014 wer
- * - v1.5.0 - massive change to the factory, cutting out the fat                                     - 03/25/2014 wer
- * - v1.0.0 - figured it was time to take this out of beta, with one addition.                       - 02/24/2014 wer
- * - v0.1.2 - minor package change required minor modification                                       - 12/19/2013 wer
- * - v0.1.1 - added two additional places the config files can exist                                 - 2013-11-08 wer
- * - v0.1.0 - initial file creation                                                                  - 2013-11-06 wer
+ * - v1.6.0 - no longer extends Base class, uses DbTraits and LogitTraits                               - 08/19/2015 wer
+ * - v1.5.3 - moved to the Factories namespace                                                          - 01/27/2015 wer
+ * - v1.5.2 - moved to Services namespace                                                               - 11/15/2014 wer
+ * - v1.5.1 - changed to implement the changes to the Base class                                        - 09/23/2014 wer
+ * - v1.5.0 - massive change to the factory, cutting out the fat                                        - 03/25/2014 wer
+ * - v1.0.0 - figured it was time to take this out of beta, with one addition.                          - 02/24/2014 wer
+ * - v0.1.2 - minor package change required minor modification                                          - 12/19/2013 wer
+ * - v0.1.1 - added two additional places the config files can exist                                    - 2013-11-08 wer
+ * - v0.1.0 - initial file creation                                                                     - 2013-11-06 wer
  */
 class PdoFactory
 {
@@ -47,17 +47,18 @@ class PdoFactory
     use DbCommonTraits;
 
     /** @var array */
-    private $a_db_config;
+    private array $a_db_config;
     /** @var array */
-    private static $factory_rw_instance = [];
+    private static array $factory_rw_instance = [];
     /** @var array */
-    private static $factory_ro_instance = [];
+    private static array $factory_ro_instance = [];
     /** @var PDO */
-    private $o_db;
+    private PDO $o_db;
 
     /**
      * PdoFactory constructor.
-     * @param $o_di
+     *
+     * @param Di $o_di
      */
     private function __construct(Di $o_di)
     {
@@ -72,19 +73,19 @@ class PdoFactory
      * be used to create all kinds of database connections - even if
      * to the same database simply by using different config file name.
      *
-     * @param string $config_file default 'db_config.php'
-     * @param string $read_type   Default rw
-     * @param Di     $o_di
+     * @param string  $config_file default 'db_config.php'
+     * @param string  $read_type   Default rw
+     * @param Di|null $o_di
      * @return PDO|bool
      * @throws FactoryExceptionAlias
      */
-    public static function start($config_file = 'db_config.php', $read_type = 'rw', Di $o_di = null)
+    public static function start(string $config_file = 'db_config.php', string $read_type = 'rw', Di $o_di = null): PDO|bool
     {
         if (!($o_di instanceof Di)) {
             throw new FactoryException('An instance of Di is required.', 10);
         }
         $org_config_file = $config_file;
-        if (strpos($config_file, '/') !== false) {
+        if (str_contains($config_file, '/')) {
             $a_parts = explode('/', $config_file);
             $config_file = $a_parts[count($a_parts) - 1];
         }
@@ -133,32 +134,24 @@ class PdoFactory
      * @param string $config_file
      * @param string $read_type
      * @return PDO|bool
-     * @throws FactoryException
+     * @throws FactoryExceptionAlias
      */
-    private function createPdo($config_file = 'db_config.php', $read_type = 'rw')
+    private function createPdo(string $config_file = 'db_config.php', string $read_type = 'rw'): PDO|bool
     {
         if (is_object($this->o_db)) {
             return $this->o_db;
         }
-        /** @var array $a_db */
         $a_db = $this->retrieveDbConfig($config_file);
         if (empty($a_db)) {
             $message = 'Could not retrieve the db config file.';
             throw new FactoryException($message, 40);
         }
         $a_db['dsn'] = $this->createDsn($a_db);
-        switch ($a_db['errmode']) {
-            case 'silent':
-                $errmode = PDO::ERRMODE_SILENT;
-                break;
-            case 'warning':
-                $errmode = PDO::ERRMODE_WARNING;
-                break;
-            case 'exception':
-            default:
-                $errmode = PDO::ERRMODE_EXCEPTION;
-                break;
-        }
+        $errmode     = match ($a_db['errmode']) {
+            'silent'  => PDO::ERRMODE_SILENT,
+            'warning' => PDO::ERRMODE_WARNING,
+            default   => PDO::ERRMODE_EXCEPTION,
+        };
         try {
             if ($read_type === 'ro') {
                 $this->o_db = new PDO(
@@ -196,7 +189,7 @@ class PdoFactory
      * @param array $a_db ['port', 'driver', 'host', 'name']
      * @return string
      */
-    private function createDsn(array $a_db = array()):?string
+    private function createDsn(array $a_db = array()): string
     {
         if ($a_db === []) {
             return '';

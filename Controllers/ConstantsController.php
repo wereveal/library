@@ -18,23 +18,24 @@ use Ritc\Library\Traits\LogitTraits;
  * Class ConstantsController - controller for the Configuration page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.4.0
- * @date    2018-06-06 11:26:30
+ * @version v1.5.0
+ * @date    2021-11-26 14:25:39
  * @change_log
- * - v1.4.0        - Production version                              - 2018-06-06 wer
- * - v1.4.0-beta.4 - Refactoring of Trait reflected here             - 2018-04-21 wer
- * - v1.4.0-beta.3 - Name change of Trait.                           - 2017-06-20 wer
- * - v1.4.0-beta.2 - Refactoring of model reflected here             - 2017-06-19 wer
- * - v1.4.0-beta.1 - Refactoring elsewhere reflected here.           - 2017-06-07 wer
- * - v1.3.0        - added immutable code                            - 10/07/2015 wer
- * - v1.2.1        - code clean up                                   - 09/25/2015 wer
- * - v1.2.0        - No longer extends Base class, uses LogitTraits  - 08/19/2015 wer
- * - v1.1.0        - changed to implement ManagerControllerInterface - 01/16/2015 wer
+ * - v1.5.0        - updated for php 8                                          - 2021-11-26 wer
+ * - v1.4.0        - Production version                                         - 2018-06-06 wer
+ * - v1.4.0-beta.4 - Refactoring of Trait reflected here                        - 2018-04-21 wer
+ * - v1.4.0-beta.3 - Name change of Trait.                                      - 2017-06-20 wer
+ * - v1.4.0-beta.2 - Refactoring of model reflected here                        - 2017-06-19 wer
+ * - v1.4.0-beta.1 - Refactoring elsewhere reflected here.                      - 2017-06-07 wer
+ * - v1.3.0        - added immutable code                                       - 10/07/2015 wer
+ * - v1.2.1        - code clean up                                              - 09/25/2015 wer
+ * - v1.2.0        - No longer extends Base class, uses LogitTraits             - 08/19/2015 wer
+ * - v1.1.0        - changed to implement ManagerControllerInterface            - 01/16/2015 wer
  *                   This class should only be called from the main
  *                   manager controller which does session validation.
- * - v1.0.2        - changed to use the new Di class                 - 11/17/2014 wer
- * - v1.0.1        - Adjusted to match file name change              - 11/13/2014 wer
- * - v1.0.0        - Initial version                                 - 04/02/2014 wer
+ * - v1.0.2        - changed to use the new Di class                            - 11/17/2014 wer
+ * - v1.0.1        - Adjusted to match file name change                         - 11/13/2014 wer
+ * - v1.0.0        - Initial version                                            - 04/02/2014 wer
  */
 class ConstantsController implements ConfigControllerInterface
 {
@@ -42,9 +43,9 @@ class ConstantsController implements ConfigControllerInterface
     use ConfigControllerTraits;
 
     /** @var ConstantsModel $o_model */
-    private $o_model;
+    private ConstantsModel $o_model;
     /** @var ConstantsView $o_view */
-    private $o_view;
+    private ConstantsView $o_view;
 
     /**
      * ConstantsController constructor.
@@ -66,18 +67,13 @@ class ConstantsController implements ConfigControllerInterface
      */
     public function route():string
     {
-        switch ($this->form_action) {
-            case 'verify':
-                return $this->verifyDelete();
-            case 'update':
-                return $this->update();
-            case 'save_new':
-                return $this->save();
-            case 'delete':
-                return $this->delete();
-            default:
-                return $this->o_view->renderList();
-        }
+        return match ($this->form_action) {
+            'verify'   => $this->verifyDelete(),
+            'update'   => $this->update(),
+            'save_new' => $this->save(),
+            'delete'   => $this->delete(),
+            default    => $this->o_view->renderList(),
+        };
     }
 
     ### Required by Interface ###
@@ -108,7 +104,7 @@ class ConstantsController implements ConfigControllerInterface
                 }
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new constant could not be saved.');
         }
         return $this->o_view->renderList($a_message);
@@ -136,7 +132,7 @@ class ConstantsController implements ConfigControllerInterface
                 }
                 $a_message = ViewHelper::successMessage();
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_message = ViewHelper::failureMessage('A Problem Has Occurred. The constant could not be updated.');
             }
         }
@@ -194,7 +190,7 @@ class ConstantsController implements ConfigControllerInterface
                 $a_message = ViewHelper::failureMessage($message);
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::failureMessage('The record was not deleted.');
         }
         return $this->o_view->renderList($a_message);

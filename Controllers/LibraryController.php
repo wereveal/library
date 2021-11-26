@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class LibraryController
  *
@@ -6,6 +7,7 @@
  */
 namespace Ritc\Library\Controllers;
 
+use JsonException;
 use ReflectionException;
 use Ritc\Library\Exceptions\ControllerException;
 use Ritc\Library\Helper\ViewHelper;
@@ -19,9 +21,10 @@ use Ritc\Library\Views\LibraryView;
  * Main controller for the config manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.1
- * @date    2017-05-14 14:35:02
+ * @version v2.2.0
+ * @date    2021-11-26 15:02:42
  * @change_log
+ * - v2.2.0   - Updated for php8                      - 2021-11-26 wer
  * - v2.1.1   - bug fix                               - 2017-05-14 wer
  * - v2.1.0   - Added UrlAdminController              - 2016-04-11 wer
  * - v2.0.0   - Renamed Class to be more specific     - 2016-03-31 wer
@@ -43,7 +46,7 @@ class LibraryController implements ControllerInterface
     use ConfigControllerTraits;
 
     /** @var LibraryView */
-    protected $o_view;
+    protected LibraryView $o_view;
 
     /**
      * LibraryController constructor.
@@ -65,6 +68,7 @@ class LibraryController implements ControllerInterface
      * Default page for the library manager and login.
      *
      * @return string
+     * @throws JsonException
      */
     public function route():string
     {
@@ -73,7 +77,6 @@ class LibraryController implements ControllerInterface
             switch ($this->route_action) {
                 case 'login':
                     return $this->o_view->renderLogin();
-                    break;
                 case 'logout':
                     $this->o_auth->logout($_SESSION['login_id']);
                     header('Location: ' . SITE_URL . '/manager/');
@@ -140,7 +143,7 @@ class LibraryController implements ControllerInterface
                 try {
                     return $o_c->route();
                 }
-                catch (ReflectionException $e) {
+                catch (ReflectionException) {
                     $a_message = ViewHelper::errorMessage('Could not find the page requested.');
                     return $this->o_view->renderError($a_message);
                 }

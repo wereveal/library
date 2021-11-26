@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class ContentController.
  * @package Ritc_Library
@@ -20,10 +21,11 @@ use Ritc\Library\Views\ContentView;
  * Manages the Content.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.0
- * @date    2018-05-30 16:58:04
+ * @version 1.0.0
+ * @date    2021-11-26 14:55:22
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2018-05-30 wer
+ * - v1.0.0         - Production, updated for php8              - 2021-11-26 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2018-05-30 wer
  */
 class ContentController implements ConfigControllerInterface
 {
@@ -31,11 +33,11 @@ class ContentController implements ConfigControllerInterface
     use ConfigControllerTraits;
 
     /** @var string $instance_failure Lets me know if the instance had a failure. */
-    private $instance_failure = '';
+    private string $instance_failure = '';
     /** @var ContentComplexModel  */
-    private $o_model;
+    private ContentComplexModel $o_model;
     /** @var ContentView $o_view view for content. */
-    private $o_view;
+    private ContentView $o_view;
 
     /**
      * ContentController constructor.
@@ -71,28 +73,18 @@ class ContentController implements ConfigControllerInterface
         if (!empty($this->instance_failure)) {
             return $this->instance_failure;
         }
-        switch ($this->form_action) {
-            case 'delete':
-                return $this->delete();
-            case 'edit_content':
-                return $this->o_view->renderForm('by_c_id');
-            case 'edit_content_by_pbm':
-                return $this->o_view->renderForm('by_pbm_id');
-            case 'new_content':
-                return $this->o_view->renderForm('new');
-            case 'save_new':
-                return $this->save();
-            case 'update':
-                return $this->update();
-            case 'verify':
-                return $this->verifyDelete();
-            case 'view_content':
-                return $this->o_view->renderDetails();
-            case 'view_all':
-                return $this->o_view->renderAllVersions($this->a_post['content']['c_pbm_id']);
-            default:
-                return $this->o_view->render();
-        }
+        return match ($this->form_action) {
+            'delete'              => $this->delete(),
+            'edit_content'        => $this->o_view->renderForm('by_c_id'),
+            'edit_content_by_pbm' => $this->o_view->renderForm('by_pbm_id'),
+            'new_content'         => $this->o_view->renderForm(),
+            'save_new'            => $this->save(),
+            'update'              => $this->update(),
+            'verify'              => $this->verifyDelete(),
+            'view_content'        => $this->o_view->renderDetails(),
+            'view_all'            => $this->o_view->renderAllVersions($this->a_post['content']['c_pbm_id']),
+            default               => $this->o_view->render(),
+        };
     }
 
     /**
@@ -111,7 +103,7 @@ class ContentController implements ConfigControllerInterface
                 $a_results = $this->o_model->readByContentId($this->a_post['c_id']);
                 $pbm_id = $a_results['c_pbm_id'];
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $msg = 'Unable to delete the record: could not get all the records needed to delete.';
                 $a_message = ViewHelper::errorMessage($msg);
                 return $this->o_view->render($a_message);
@@ -121,7 +113,7 @@ class ContentController implements ConfigControllerInterface
                     $this->o_model->deactivateAll($pbm_id);
                     $a_message = ViewHelper::successMessage();
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     $msg = 'Unable to delete the record: with version control, 
                         records are set to "not current" but unable to do that.';
                     $a_message = ViewHelper::errorMessage($msg);
@@ -180,7 +172,7 @@ class ContentController implements ConfigControllerInterface
         try {
             $a_record = $this->o_model->readByContentId($a_content['c_id']);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::errorMessage('Could not update the record. Unknown error.');
             return $this->o_view->render($a_message);
         }
@@ -211,7 +203,7 @@ class ContentController implements ConfigControllerInterface
         try {
             $a_content = $this->o_model->readByContentId($c_id);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::errorMessage('Could not determine the content to delete.');
             return $this->o_view->render($a_message);
         }

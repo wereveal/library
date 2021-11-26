@@ -210,10 +210,7 @@ class DatesTimes
         }
         try {
             $o_time = new DateTime($timestring, new DateTimeZone(date('e')));
-            if ($o_time !== false) {
-                return $o_time->format($time_format);
-            }
-            return '';
+            return $o_time->format($time_format);
         }
         catch (Exception $e) {
             /** @noinspection ForgottenDebugOutputInspection */

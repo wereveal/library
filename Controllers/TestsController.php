@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class TestsController
  * @package Ritc_Library
@@ -22,11 +23,12 @@ use Ritc\Library\Views\TestsView;
  * Class TestsController - Controller for the Test page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.1
- * @date    2017-02-15 15:23:02
+ * @version v1.0.0-alpha.2
+ * @date    2021-11-26 15:22:23
  * @change_log
- * - v1.0.0-alpha.1 - Refactoring                                   - 2017-02-15 wer
- * - v1.0.0-alpha.0 - Initial version                               - 10/23/2015 wer
+ * - v1.0.0-alpha.2 - php8 compatibility                        - 2021-11-26 wer
+ * - v1.0.0-alpha.1 - Refactoring                               - 2017-02-15 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 10/23/2015 wer
  */
 class TestsController
 {
@@ -34,13 +36,15 @@ class TestsController
     use ControllerTraits;
 
     /** @var TestsView view object */
-    private $o_view;
+    private TestsView $o_view;
     /** @var string path to the config file */
-    private $test_configs_path;
+    private string $test_configs_path;
 
     /**
      * TestsController constructor.
+     *
      * @param Di $o_di
+     * @noinspection UnusedConstructorDependenciesInspection
      */
     public function __construct(Di $o_di)
     {

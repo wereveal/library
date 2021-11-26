@@ -11,10 +11,10 @@ use ErrorException;
  * Abstract which extends php Exception class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @date    2017-07-15 12:42:53
- * @version v1.0.0-alpha.0
+ * @date    2021-11-26 13:49:17
+ * @version v1.0.0
  * @change_log
- * - v1.0.0-alpha.0 - Initial version                                                                   - 2017-07-15 wer
+ * - v1.0.0 - Initial Reworked version for php 8                - 2021-11-26 wer
  */
 abstract class CustomErrorAbstract extends ErrorException
 {
@@ -59,25 +59,16 @@ abstract class CustomErrorAbstract extends ErrorException
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1):string
+    public function getCodeText(int $code = -1):string
     {
-        switch ($code) {
-            ### Business Logic Errors ###
-            case 600:
-                return 'General Business Logic Error.';
-            ### Application Rule Errors ###
-            case 700:
-                return 'General Application Rule Error.';
-            ### Generic Errors ###
-            case 800:
-                return 'Unable to create the instance';
-            case 900:
-                return 'General Error, see error message';
-            case 999:
-                return 'Unspecified Error.';
-            default:
-                return 'Unspecified error';
-        }
+        return match ($code) {
+            600 => 'General Business Logic Error.',
+            700 => 'General Application Rule Error.',
+            800 => 'Unable to create the instance',
+            900 => 'General Error, see error message',
+            999 => 'Unspecified Error.',
+            default => 'Unspecified error',
+        };
     }
 
     /**

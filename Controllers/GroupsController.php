@@ -5,6 +5,7 @@
  */
 namespace Ritc\Library\Controllers;
 
+use JsonException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
@@ -19,9 +20,10 @@ use Ritc\Library\Views\GroupsView;
  * Controller for the Groups Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.0
- * @date    2018-05-19 15:07:53
+ * @version v2.2.0
+ * @date    2021-11-26 14:59:27
  * @change_log
+ * - v2.2.0   - updated for php8                        - 2021-11-26 wer
  * - v2.1.0   - updated to use ModelException           - 2018-05-19 wer
  *              Updated to use ConfigControllerTraits
  * - v2.0.0   - name refactoring                        - 2017-05-14 wer
@@ -34,9 +36,9 @@ class GroupsController implements ConfigControllerInterface
     use ConfigControllerTraits;
 
     /** @var GroupsModel */
-    private $o_model;
+    private GroupsModel $o_model;
     /** @var GroupsView */
-    private $o_view;
+    private GroupsView $o_view;
 
     /**
      * GroupsController constructor.
@@ -59,18 +61,13 @@ class GroupsController implements ConfigControllerInterface
      */
     public function route():string
     {
-        switch ($this->form_action) {
-            case 'save_new':
-                return $this->save();
-            case 'update':
-                return $this->update();
-            case 'verify':
-                return $this->verifyDelete();
-            case 'delete':
-                return $this->delete();
-            default:
-                return $this->o_view->renderList();
-        }
+        return match ($this->form_action) {
+            'save_new' => $this->save(),
+            'update'   => $this->update(),
+            'verify'   => $this->verifyDelete(),
+            'delete'   => $this->delete(),
+            default    => $this->o_view->renderList(),
+        };
     }
 
     ### Required by Interface ###
@@ -117,7 +114,7 @@ class GroupsController implements ConfigControllerInterface
             }
             $a_message = ViewHelper::successMessage();
         }
-        catch (ModelException $e) {
+        catch (ModelException | JsonException $e) {
             $a_message = ViewHelper::errorMessage($e->getMessage());
         }
         return $this->o_view->renderList($a_message);

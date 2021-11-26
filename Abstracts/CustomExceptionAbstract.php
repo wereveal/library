@@ -13,10 +13,11 @@ use Ritc\Library\Interfaces\CustomExceptionInterface;
  * Class CustomExceptionAbstract Abstract which extends php Exception class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2018-03-07 08:48:27
+ * @version v1.1.0
+ * @date    2021-11-26 13:53:45
  * @change_log
- * - v1.0.0         - changed to production, added phpDoc                                               - 2018-03-07 wer
+ * - v1.1.0 - compatibility to php 8                            - 2021-11-26 wer
+ * - v1.0.0 - changed to production, added phpDoc               - 2018-03-07 wer
  */
 abstract class CustomExceptionAbstract extends Exception implements CustomExceptionInterface
 {
@@ -67,7 +68,7 @@ abstract class CustomExceptionAbstract extends Exception implements CustomExcept
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1):string
+    public function getCodeText(int $code = -1):string
     {
         return ExceptionHelper::getCodeText($code);
     }

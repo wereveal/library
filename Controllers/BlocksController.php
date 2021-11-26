@@ -6,6 +6,7 @@
 
 namespace Ritc\Library\Controllers;
 
+use JsonException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ConfigControllerInterface;
@@ -19,10 +20,11 @@ use Ritc\Library\Views\BlocksView;
  * Manages Blocks.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0
- * @date    2018-06-03 16:35:26
+ * @version 1.1.0
+ * @date    2021-11-26 14:18:27
  * @change_log
- * - v1.0.0 - Initial version.                                    - 2018-06-03 wer
+ * - v1.1.0 - Updated for php 8                                 - 2021-11-26 wer
+ * - v1.0.0 - Initial version.                                  - 2018-06-03 wer
  */
 class BlocksController implements ConfigControllerInterface
 {
@@ -30,9 +32,9 @@ class BlocksController implements ConfigControllerInterface
     use ControllerTraits;
 
     /** @var BlocksModel */
-    private $o_model;
+    private BlocksModel $o_model;
     /** @var BlocksView  */
-    private $o_view;
+    private BlocksView $o_view;
 
     /**
      * BlocksController constructor.
@@ -54,18 +56,13 @@ class BlocksController implements ConfigControllerInterface
      */
     public function route():string
     {
-        switch ($this->form_action) {
-            case 'verify':
-                return $this->verifyDelete();
-            case 'update':
-                return $this->update();
-            case 'save_new':
-                return $this->save();
-            case 'delete':
-                return $this->delete();
-            default:
-                return $this->o_view->render();
-        }
+        return match ($this->form_action) {
+            'verify'   => $this->verifyDelete(),
+            'update'   => $this->update(),
+            'save_new' => $this->save(),
+            'delete'   => $this->delete(),
+            default    => $this->o_view->render(),
+        };
     }
 
     /**
@@ -83,8 +80,11 @@ class BlocksController implements ConfigControllerInterface
                 $this->o_cache->clearTag('blocks');
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::failureMessage('Unable to save the new block.');
+        }
+        catch (JsonException $e) {
+            $a_message = ViewHelper::failureMessage($e->getMessage());
         }
         return $this->o_view->render($a_message);
     }
@@ -110,7 +110,7 @@ class BlocksController implements ConfigControllerInterface
             }
             $a_message = ViewHelper::successMessage();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::failureMessage('Unable to update the block.');
         }
         return $this->o_view->render($a_message);
@@ -153,7 +153,7 @@ class BlocksController implements ConfigControllerInterface
                 $this->o_cache->clearTag('blocks');
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::failureMessage('Unable to delete the block.');
         }
         return $this->o_view->render($a_message);

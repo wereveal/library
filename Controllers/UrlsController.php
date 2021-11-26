@@ -1,10 +1,12 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class UrlsController
  * @package Ritc_Library
  */
 namespace Ritc\Library\Controllers;
 
+use JsonException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
@@ -19,9 +21,10 @@ use Ritc\Library\Views\UrlsView;
  * Controller for Urls admin.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
- * @date    2018-06-06 11:28:33
+ * @version v1.2.0
+ * @date    2021-11-26 16:12:25
  * @change_log
+ * - v1.2.0         - updated for php8                                  - 2021-11-26 wer
  * - v1.1.0         - put into production                               - 2018-06-06 wer
  * - v1.1.0-beta.1  - Refactored to match refactoring of model          - 2017-06-19 wer
  * - v1.0.0         - Out of beta                                       - 2017-06-03 wer
@@ -37,9 +40,9 @@ class UrlsController implements ConfigControllerInterface
     use ControllerTraits;
 
     /** @var UrlsModel */
-    protected $o_urls_model;
+    protected UrlsModel $o_urls_model;
     /** @var UrlsView */
-    protected $o_urls_view;
+    protected UrlsView $o_urls_view;
 
     /**
      * UrlsController constructor.
@@ -59,28 +62,25 @@ class UrlsController implements ConfigControllerInterface
      * Main method used to render the page.
      *
      * @return string
+     * @throws JsonException
      */
     public function route():string
     {
         $this->setProperties();
-        switch ($this->form_action) {
-            case 'verify_delete':
-                return $this->verifyDelete();
-            case 'update':
-                return $this->update();
-            case 'save_new':
-                return $this->save();
-            case 'delete':
-                return $this->delete();
-            default:
-                return $this->o_urls_view->renderList();
-        }
+        return match ($this->form_action) {
+            'verify_delete' => $this->verifyDelete(),
+            'update'        => $this->update(),
+            'save_new'      => $this->save(),
+            'delete'        => $this->delete(),
+            default         => $this->o_urls_view->renderList(),
+        };
     }
 
     /**
      * Method for saving data.
      *
      * @return string
+     * @throws JsonException
      */
     public function save():string
     {
@@ -91,7 +91,7 @@ class UrlsController implements ConfigControllerInterface
         $url = $this->a_post['url'];
         $url = Strings::makeGoodUrl($url);
         if (empty($url)) {
-            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
+            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. https://www.mydomain.com/fred/');
             return $this->o_urls_view->renderList($a_message);
         }
         $a_values  = $this->splitUrl($url);
@@ -104,7 +104,7 @@ class UrlsController implements ConfigControllerInterface
             }
             $a_message = ViewHelper::successMessage();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The new url could not be saved.');
         }
         return $this->o_urls_view->renderList($a_message);
@@ -124,12 +124,12 @@ class UrlsController implements ConfigControllerInterface
         $url = $this->a_post['url'];
         $url = Strings::makeGoodUrl($url);
         if (empty($url)) {
-            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/');
+            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. https://www.mydomain.com/fred/');
             return $this->o_urls_view->renderList($a_message);
         }
         $a_values = $this->splitUrl($url);
-        if ($a_values === false) {
-            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. http://www.mydomain.com/fred/ or /fred/ or /fred.html');
+        if ($a_values['url_host'] === '') {
+            $a_message = ViewHelper::failureMessage('The URL must be a valid URL format, e.g. https://www.mydomain.com/fred/ or /fred/ or /fred.html');
             return $this->o_urls_view->renderList($a_message);
         }
         $a_values['url_id'] = $this->a_post['url_id'];
@@ -142,7 +142,7 @@ class UrlsController implements ConfigControllerInterface
             }
             $a_message = ViewHelper::successMessage();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::failureMessage('A Problem Has Occured. The url could not be updated.');
         }
         return $this->o_urls_view->renderList($a_message);
@@ -157,9 +157,7 @@ class UrlsController implements ConfigControllerInterface
     {
         $url_id = $this->a_post['url_id'];
         $url = $this->a_post['url'];
-        $immutable = empty($this->a_post['immutable'])
-            ? false
-            : true;
+        $immutable = !empty($this->a_post['immutable']);
         if ($immutable) {
             $msg = ViewHelper::errorMessage('Unable to delete an immutable record.');
             return $this->o_urls_view->renderList($msg);
@@ -205,7 +203,7 @@ class UrlsController implements ConfigControllerInterface
      * @param string $url
      * @return array
      */
-    private function splitUrl($url = ''):array
+    private function splitUrl(string $url = ''):array
     {
         if (empty(strpos($url, '://'))) {
             $scheme = SITE_PROTOCOL;
@@ -220,17 +218,16 @@ class UrlsController implements ConfigControllerInterface
             $text = substr($text, $first_slash);
         }
 
-        if (0 !== strpos($text, '/')) {
+        if (!str_starts_with($text, '/')) {
             $text = '/' . $text;
         }
         if (strrpos($text, '.') === false && $text[strlen($text) - 1] !== '/') {
             $text .= '/';
         }
-        $return_this = [
+        return [
             'url_scheme' => $scheme,
             'url_host'   => $host,
             'url_text'   => $text
         ];
-        return $return_this;
     }
 }

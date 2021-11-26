@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+/** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class TwigFactory
  * @package Ritc_Library
@@ -57,17 +59,17 @@ use Twig\TwigTest;
 class TwigFactory
 {
     /** @var Di $o_di */
-    private static $o_di;
+    protected static Di $o_di;
     /** @var TwigLoaderFilesystem $o_loader */
-    private $o_loader;
+    private TwigLoaderFilesystem $o_loader;
     /** @var Parsedown $o_md */
-    private $o_md;
+    private Parsedown $o_md;
     /** @var ParsedownExtra $o_mde */
-    private $o_mde;
+    private ParsedownExtra $o_mde;
     /** @var TwigEnvironment $o_twig */
-    private $o_twig;
+    private TwigEnvironment $o_twig;
     /** @var array $instance */
-    private static $instance = array();
+    private static array $instance = array();
 
     /**
      * TwigFactory constructor.
@@ -87,7 +89,7 @@ class TwigFactory
                     $this->o_mde = $o_mde;
                 }
             }
-            catch (Exception $e) {
+            catch (Exception) {
                 // silently ignore
             }
         }
@@ -144,12 +146,12 @@ class TwigFactory
      * Primary method for the factory. see \ref twigfactory
      * Created to provide backwards compatibility.
      *
-     * @param string|array|Di $param_one Optional sort of
-     * @param string|bool     $param_two
+     * @param array|string|Di $param_one Optional sort of
+     * @param bool|string     $param_two
      * @return mixed|TwigEnvironment
      * @throws FactoryException
      */
-    public static function getTwig($param_one = '', $param_two = '')
+    public static function getTwig(array|string|Di $param_one = '', bool|string $param_two = ''): mixed
     {
         if ($param_one instanceof Di) {
             self::$o_di = $param_one;
@@ -183,7 +185,7 @@ class TwigFactory
      * @return TwigEnvironment
      * @throws FactoryException
      */
-    public static function getTwigByDb(Di $o_di, $use_cache = true): TwigEnvironment
+    public static function getTwigByDb(Di $o_di, bool $use_cache = true): TwigEnvironment
     {
         $cache = $use_cache
             ? SRC_PATH . '/twig_cache'
@@ -231,11 +233,11 @@ class TwigFactory
                     }
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $try_create = true;
             }
         }
-        catch (Error $e) {
+        catch (Error) {
             $try_create = true;
         }
         if ($try_create || !($o_tf instanceof self)) {
@@ -253,12 +255,12 @@ class TwigFactory
     /**
      * Returns the twig environment object which we use to do all the template rendering.
      *
-     * @param string|array $config    Optional but highly recommended. \ref twigfactory
+     * @param array|string $config    Optional but highly recommended. \ref twigfactory
      * @param string       $namespace Optional, defaults to ''
      * @return TwigEnvironment
      * @throws FactoryException
      */
-    public static function getTwigByFile($config = 'twig_config.php', $namespace = ''):TwigEnvironment
+    public static function getTwigByFile(array|string $config = 'twig_config.php', string $namespace = ''):TwigEnvironment
     {
         if (is_array($config)) {
             if (empty($config)) {
@@ -301,7 +303,7 @@ class TwigFactory
      * @return TwigFactory
      * @throws FactoryException
      */
-    protected static function create($config_file = 'twig_config.php', $namespace = ''): TwigFactory
+    protected static function create(string $config_file = 'twig_config.php', string $namespace = ''): TwigFactory
     {
         $org_config_file = $config_file;
         if (strpos($config_file, '/') !== false) {
@@ -338,7 +340,7 @@ class TwigFactory
      * @return TwigFactory
      * @throws FactoryException
      */
-    protected static function createMultiSource(array $a_config_files = [], $name = 'main', $use_main_twig = true):TwigFactory
+    protected static function createMultiSource(array $a_config_files = [], string $name = 'main', bool $use_main_twig = true):TwigFactory
     {
         if (!isset(self::$instance[$name])) {
             # No config files specified
@@ -394,7 +396,7 @@ class TwigFactory
      * @return TwigFactory
      * @throws FactoryException
      */
-    protected static function createWithArray(array $a_twig_config = [], $name = 'main'):TwigFactory
+    protected static function createWithArray(array $a_twig_config = [], string $name = 'main'):TwigFactory
     {
         if (!isset(self::$instance[$name])) {
             if (   empty($a_twig_config)
@@ -429,7 +431,7 @@ class TwigFactory
      *                            Use namespace format e.g. My\Namespace.
      * @return array
      */
-    private static function retrieveTwigConfigArray($config_file = 'twig_config.php', $namespace = ''):array
+    private static function retrieveTwigConfigArray(string $config_file = 'twig_config.php', string $namespace = ''):array
     {
         if (strpos($config_file, '/') !== false) {
             $config_w_path = $config_file;
@@ -450,7 +452,7 @@ class TwigFactory
      * @param string $value Path and filename starting from the public root directory.
      * @return bool
      */
-    public function inPublicTest($value = ''):bool
+    public function inPublicTest(string $value = ''):bool
     {
         $file_w_path = PUBLIC_PATH . $value;
         return file_exists($file_w_path);
@@ -462,7 +464,7 @@ class TwigFactory
      * @param string $value
      * @return string
      */
-    public function mdFilter($value = ''):string
+    public function mdFilter(string $value = ''):string
     {
         if ($this->o_md instanceof Parsedown) {
             $value = $this->o_md->text($value);
@@ -476,7 +478,7 @@ class TwigFactory
      * @param string $value
      * @return string
      */
-    public function mdeFilter($value = ''):?string
+    public function mdeFilter(string $value = ''):?string
     {
         if ($this->o_mde instanceof ParsedownExtra) {
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */

@@ -1,10 +1,11 @@
-<?php
+<?php /** @noinspection PhpClassHasTooManyDeclaredMembersInspection */
 /**
  * Trait DbUtilityTraits
  * @package Ritc_Library
  */
 namespace Ritc\Library\Traits;
 
+use JsonException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ExceptionHelper;
@@ -17,9 +18,10 @@ use Ritc\Library\Services\DbModel;
  * some work there.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.1
- * @date    2020-08-18 20:44:05
+ * @version v4.0.0
+ * @date    2021-11-26 13:29:36
  * @change_log
+ * - v4.0.0          - Refactoring for PHP 8 and phpStorm inspections           - 2021-11-26 wer
  * - v3.0.1          - Minor bug, depreciated way of doing things fixed         - 2020-08-18 wer
  * - v3.0.0          - Changed readCount() method, not backwards compatible     - 2018-12-05 wer
  *                     readCount was relying on values that were not easily
@@ -53,29 +55,29 @@ trait DbUtilityTraits
     use DbCommonTraits;
 
     /** @var array */
-    protected $a_db_config = [];
+    protected array $a_db_config = [];
     /** @var array  */
-    protected $a_db_fields = [];
+    protected array $a_db_fields = [];
     /** @var array  */
-    protected $a_prefix = [];
+    protected array $a_prefix = [];
     /** @var array  */
-    protected $a_required_keys = [];
+    protected array $a_required_keys = [];
     /** @var string */
-    protected $db_prefix = '';
+    protected string $db_prefix = '';
     /** @var  string */
-    protected $db_table = '';
+    protected string $db_table = '';
     /** @var string Can be 'mysql', 'pgsql', 'sqlite' */
-    protected $db_type = 'mysql';
+    protected string $db_type = 'mysql';
     /** @var  string */
-    protected $error_message = '';
+    protected string $error_message = '';
     /** @var string $immutable_field */
-    protected $immutable_field = '';
+    protected string $immutable_field = '';
     /** @var string */
-    protected $lib_prefix = 'lib_';
+    protected string $lib_prefix = 'lib_';
     /** @var DbModel */
-    protected $o_db;
+    protected DbModel $o_db;
     /** @var  string */
-    protected $primary_index_name = '';
+    protected string $primary_index_name = '';
 
     #### Generic CRUD calls ####
     /**
@@ -86,16 +88,17 @@ trait DbUtilityTraits
      *
      * @param array $a_values     Required, the values to be saved in a new record.
      * @param array $a_parameters \code
-     * ['a_required_keys' => [],
-     *  'a_field_names'   => [],
-     *  'a_psql'          => [
-     *      'table_name'  => string,
-     *      'column_name' => string
-     *  ],
-     *  'allow_pin'       => false
-     * ] \endcode
+     *                            ['a_required_keys' => [],
+     *                            'a_field_names'   => [],
+     *                            'a_psql'          => [
+     *                            'table_name'  => string,
+     *                            'column_name' => string
+     *                            ],
+     *                            'allow_pin'       => false
+     *                            ] \endcode
      * @return array
      * @throws ModelException
+     * @throws JsonException
      * @see  \ref createparams
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = []):array
@@ -144,7 +147,8 @@ trait DbUtilityTraits
                 if (!empty($a_required_keys)) {
                     $a_missing_values = Arrays::findMissingValues($a_value, $a_required_keys);
                     if (!empty($a_missing_values)) {
-                        $this->error_message = 'Missing required keys: ' . json_encode($a_missing_values);
+                        $this->error_message = 'Missing required keys: ' .
+                                               json_encode($a_missing_values, JSON_THROW_ON_ERROR);
                         $error_code = ExceptionHelper::getCodeNumberModel('create_missing_values');
                         throw new ModelException($this->error_message, $error_code);
                     }
@@ -159,7 +163,8 @@ trait DbUtilityTraits
             if (!empty($a_required_keys)) {
                 $a_missing_values = Arrays::findMissingValues($a_values, $a_required_keys);
                 if (!empty($a_missing_values)) {
-                    $this->error_message = 'Missing required keys: ' . json_encode($a_missing_values);
+                    $this->error_message = 'Missing required keys: ' .
+                                           json_encode($a_missing_values, JSON_THROW_ON_ERROR);
                     $error_code = ExceptionHelper::getCodeNumberModel('create_missing_values');
                     throw new ModelException($this->error_message, $error_code);
                 }
@@ -215,7 +220,7 @@ SQL;
      * @return bool|array
      * @throws ModelException
      */
-    protected function genericRead(array $a_parameters = [])
+    protected function genericRead(array $a_parameters = []): bool|array
     {
         if ($this->db_table === '' && !isset($a_parameters['table_name'])) {
             $this->error_message = 'The table name must be specified.';
@@ -280,11 +285,11 @@ SQL;
      * Needs the primary index name. The primary index value also needs to
      * be in the $a_values. It only updates record(s) WHERE the primary index = primary index value.
      *
-     * @param array  $a_values Required may be be assoc array or an array of assoc arrays
+     * @param array  $a_values Required may be an assoc array or an array of assoc arrays
      * @return bool
      * @throws ModelException
      */
-    protected function genericUpdate(array $a_values = []):?bool
+    protected function genericUpdate(array $a_values = []):bool
     {
         if ($a_values === []) {
             $this->error_message = 'No values provided to update.';
@@ -336,7 +341,7 @@ SQL;
     /**
      * Deletes record(s) based on the primary index value.
      *
-     * @param mixed $record_ids Required
+     * @param mixed|null $record_ids Required
      *                          Can be an int, string or array. If array is list of record ids to delete, e.g.
      *                          [1, 2, 3, 4] or ['fred', 'barney', 'wilma', 'betty'], matching primary index type.
      *                          If array, it passes the values to the genericDeleteMultiple. This provided backwards
@@ -344,7 +349,7 @@ SQL;
      * @return bool
      * @throws ModelException
      */
-    protected function genericDelete($record_ids = null):?bool
+    protected function genericDelete(mixed $record_ids = null):bool
     {
         if (empty($record_ids) || $record_ids < 1) {
             $this->error_message = 'No record ids were provided.';
@@ -377,7 +382,7 @@ SQL;
      * @return bool
      * @throws ModelException
      */
-    protected function genericDeleteMultiple(array $a_record_ids = []):?bool
+    protected function genericDeleteMultiple(array $a_record_ids = []):bool
     {
         if (empty($a_record_ids)) {
             $this->error_message = 'No record ids were provided.';
@@ -399,7 +404,7 @@ SQL;
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             $error_code = ExceptionHelper::getCodeNumberModel('delete_unspecified');
-            throw new ModelException($this->error_message, $error_code);
+            throw new ModelException($this->error_message, $error_code, $e);
         }
     }
 
@@ -428,7 +433,7 @@ SQL;
         $insert_names = '';
         $value_names  = '';
         foreach ($a_values as $key => $value) {
-            if (strpos($key, ':') !== false) {
+            if (str_contains($key, ':')) {
                 $insert_name = str_replace(':', '', $key);
                 $value_name  = $key;
             }
@@ -452,17 +457,17 @@ SQL;
      * the name of the field in the array key, the name to be as is the array value, e.g.,
      * ['ngv' => 'general] becomes the string "ngv as 'general'".
      *
-     * @param array $a_values Required
-     * @param string $prefix  Optional. Allows a table name or table alias to be added to the select name.
+     * @param array  $a_values Required
+     * @param string $prefix   Optional. Allows a table name or table alias to be added to the select name.
      * @return string
      */
-    protected function buildSqlSelectFields(array $a_values = [], $prefix = ''):string
+    protected function buildSqlSelectFields(array $a_values = [], string $prefix = ''):string
     {
         if (empty($a_values)) {
             return '';
         }
         $select_me = '';
-        if (!empty($prefix) && strpos($prefix, '.') === false) {
+        if (!empty($prefix) && !str_contains($prefix, '.')) {
             $prefix .= '.';
         }
         if (Arrays::isAssocArray($a_values)) {
@@ -537,17 +542,26 @@ SQL;
         $where_exists = false;
         $where = '';
         if (count($a_search_parameters) > 0) {
-            $a_allowed_parms = array(
-                'search_type',
-                'comparison_type',
-                'starting_from',
-                'limit_to',
-                'order_by',
-                'where_exists'
-            );
             foreach ($a_search_parameters as $key => $value) {
-                if (in_array($key, $a_allowed_parms, false)) {
-                    $$key = $value;
+                switch ($key) {
+                    case 'search_type':
+                        $search_type = $value;
+                        break;
+                    case 'comparison_type':
+                        $comparison_type = $value;
+                        break;
+                    case 'starting_from':
+                        $starting_from = $value;
+                        break;
+                    case 'limit_to':
+                        $limit_to = $value;
+                        break;
+                    case 'order_by':
+                        $order_by = $value;
+                        break;
+                    case 'where_exists':
+                        $where_exists = $value;
+                        break;
                 }
             }
         }
@@ -567,7 +581,7 @@ SQL;
         if (count($a_search_for) > 0) {
             foreach ($a_search_for as $key => $value) {
                 $field_name = preg_replace('/^:/', '', $key);
-                if (strpos($key, '.') !== false) {
+                if (str_contains($key, '.')) {
                     $key = preg_replace('/^:(.*)\.(.*)/', ':$2', $key);
                 }
                 if ($where_exists === false) {
@@ -588,10 +602,10 @@ SQL;
                 if($starting_from > 0) {
                     --$starting_from; // limit offset starts at 0 so if we want to start at record 6 the LIMIT offset is 5
                 }
-                $where .= "LIMIT {$starting_from}, {$limit_to}";
+                $where .= "LIMIT $starting_from, $limit_to";
             }
             else {
-                $where .= "LIMIT {$limit_to}";
+                $where .= "LIMIT $limit_to";
             }
         }
         return $where;
@@ -605,7 +619,9 @@ SQL;
      * @param array  $a_immutable_fields
      * @return array|bool
      */
-    protected function fixUpdateValues(array $a_values = [], $immutable_field = '', array $a_immutable_fields = [])
+    protected function fixUpdateValues(array $a_values = [],
+                                       string $immutable_field = '',
+                                       array $a_immutable_fields = []): bool|array
     {
         $meth = __METHOD__ . '.';
         $log_message = 'a values ' . var_export($a_values, true);
@@ -658,7 +674,7 @@ SQL;
      * @param string $primary_index_name
      * @return bool
      */
-    protected function hasPrimaryId(array $a_values = [], $primary_index_name = ''):bool
+    protected function hasPrimaryId(array $a_values = [], string $primary_index_name = ''):bool
     {
         return !(empty($a_values[$primary_index_name]) || (!is_numeric($a_values[$primary_index_name])));
     }
@@ -672,11 +688,11 @@ SQL;
     protected function hasRecords(array $a_values = []):bool
     {
         if (Arrays::isArrayOfAssocArrays($a_values)) {
-            foreach ($a_values as $key => $a_record) {
+            foreach ($a_values as $a_record) {
                 try {
                     $results = $this->read($a_record);
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     return false;
                 }
                 if (empty($results)) {
@@ -688,7 +704,7 @@ SQL;
             try {
                 $results = $this->read($a_values);
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 return false;
             }
             if (empty($results)) {
@@ -706,16 +722,16 @@ SQL;
      * @param int $record_id
      * @return bool
      */
-    public function isImmutable($record_id = -1):?bool
+    public function isImmutable(int $record_id = -1):bool
     {
         if ($record_id < 1 || empty($this->immutable_field)) {
-            false;
+            return false;
         }
         try {
             $results = $this->readById($record_id);
             return !empty($results[$this->immutable_field]) && $results[$this->immutable_field] === 'true';
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return true;
         }
     }
@@ -726,17 +742,17 @@ SQL;
      * @param string $id
      * @return bool
      */
-    public function isValidId($id = ''):?bool
+    public function isValidId(string $id = ''):bool
     {
         if (empty($id)) {
-            false;
+            return false;
         }
         try {
             $results = $this->readById($id);
             return !empty($results[$this->primary_index_name]) &&
                    $results[$this->primary_index_name] === $id;
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return false;
         }
     }
@@ -748,7 +764,7 @@ SQL;
      * @param array $a_exclude   Optional, defaults to empty
      * @param bool  $exclude_pin Optional, defaults to true
      */
-    protected function makeRequiredKeys(array $a_exclude = [], $exclude_pin = true):void
+    protected function makeRequiredKeys(array $a_exclude = [], bool $exclude_pin = true):void
     {
         $a_field_names = $this->a_db_fields;
         if ($exclude_pin) {
@@ -772,7 +788,7 @@ SQL;
      * @param bool  $remove_duplicates Optional, defaults to false. Removes duplicate field names and ignores prefix.
      * @return string
      */
-    public function mergeAndBuildSqlSelect(array $a_values = [], $remove_duplicates = false):string
+    public function mergeAndBuildSqlSelect(array $a_values, bool $remove_duplicates):string
     {
         if ($remove_duplicates) {
             $a_final = [];
@@ -815,7 +831,7 @@ SQL;
     protected function prepareListArray(array $array = []):array
     {
         foreach ($array as $key => $value) {
-            $array[$key] = strpos($value, ':') === 0
+            $array[$key] = str_starts_with($value, ':')
                 ? $value
                 : ':' . $value;
         }
@@ -830,7 +846,7 @@ SQL;
      * @return array|bool
      * @throws ModelException
      */
-    public function readById($primary_id = -1, $pi_name = '')
+    public function readById(int $primary_id = -1, string $pi_name = ''): bool|array
     {
         if (is_numeric($primary_id) && $primary_id > 0) {
             if ($pi_name === '') {
@@ -862,7 +878,7 @@ SQL;
      * @param array $a_params Optional, @see DbUtilityTraits::buildSqlWhere()
      * @return int
      */
-    public function readCount(array $a_where = [], array $a_params = []):?int
+    public function readCount(array $a_where = [], array $a_params = []):int
     {
         $sql = "SELECT count(*) as 'count' FROM " . $this->db_table;
         $where = '';
@@ -874,7 +890,7 @@ SQL;
             $results = $this->o_db->search($sql, $a_where);
             return $results[0]['count'];
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return 0;
         }
     }
@@ -905,7 +921,7 @@ SQL;
      *
      * @param string $value
      */
-    public function setErrorMessage($value = ''):void
+    public function setErrorMessage(string $value = ''):void
     {
         if ($value === '') {
             $value = $this->o_db->retrieveFormattedSqlErrorMessage();
@@ -919,7 +935,7 @@ SQL;
     protected function setImmutableField():void
     {
        foreach ($this->a_db_fields as $field) {
-           if (strpos($field, 'immutable') !== false) {
+           if (str_contains($field, 'immutable')) {
                $this->immutable_field = $field;
                break;
            }
@@ -1003,7 +1019,7 @@ SQL;
      * @param DbModel $o_db
      * @param string  $table_name
      */
-    protected function setupProperties(DbModel $o_db, $table_name = ''):void
+    protected function setupProperties(DbModel $o_db, string $table_name = ''):void
     {
         $this->o_db        = $o_db;
         $this->a_db_config = $o_db->getDbConfig();
@@ -1046,12 +1062,12 @@ SQL;
      * @param string $table_name Required, prefix may be omitted if = db_prefix or lib_prefix.
      * @return bool
      */
-    public function tableExists($table_name = ''):bool
+    public function tableExists(string $table_name = ''):bool
     {
         try {
             $a_tables = $this->o_db->selectDbTables();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return false;
         }
         if (!in_array($table_name, $a_tables, false)) {
@@ -1162,7 +1178,7 @@ SQL;
      *
      * @param string $key_name
      */
-    public function setRequiredKey($key_name = ''):void
+    public function setRequiredKey(string $key_name = ''):void
     {
         if ($key_name !== '' && !array_key_exists($key_name, $this->a_required_keys)) {
             $this->a_required_keys[] = $key_name;

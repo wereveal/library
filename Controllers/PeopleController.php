@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class PeopleController
  * @package Ritc_Library
@@ -20,18 +21,19 @@ use Ritc\Library\Views\PeopleView;
  * Class PeopleController - Controller for the Configuration page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.2
- * @date    2018-04-21 13:29:13
+ * @version v1.2.0
+ * @date    2021-11-26 15:12:16
  * @change_log
- * - v1.1.2   - trait change reflected here                      - 2018-04-21 wer
- * - v1.1.0   - updated to use ConfigControllerTraits            - 2017-11-28 wer
- * - v1.0.0   - initial working version                          - 11/12/2015 wer
- * - v1.0.0β4 - Realized this is nowhere near done               - 01/06/2015 wer
+ * - v1.2.0   - updated for php8                                - 2021-11-26 wer
+ * - v1.1.2   - trait change reflected here                     - 2018-04-21 wer
+ * - v1.1.0   - updated to use ConfigControllerTraits           - 2017-11-28 wer
+ * - v1.0.0   - initial working version                         - 11/12/2015 wer
+ * - v1.0.0β4 - Realized this is nowhere near done              - 01/06/2015 wer
  *              This code was copied from somewhere else and
  *              not modified to fit the need.
- * - v1.0.0β3 - refactoring of namespaces                        - 12/05/2014 wer
- * - v1.0.0β2 - Adjusted to match file name change               - 11/13/2014 wer
- * - v1.0.0β1 - Initial version                                  - 04/02/2014 wer
+ * - v1.0.0β3 - refactoring of namespaces                       - 12/05/2014 wer
+ * - v1.0.0β2 - Adjusted to match file name change              - 11/13/2014 wer
+ * - v1.0.0β1 - Initial version                                 - 04/02/2014 wer
  */
 class PeopleController implements ManagerControllerInterface
 {
@@ -39,11 +41,11 @@ class PeopleController implements ManagerControllerInterface
     use ConfigControllerTraits;
 
     /** @var PeopleComplexModel object */
-    private $o_complex;
+    private PeopleComplexModel $o_complex;
     /** @var PeopleModel model object */
-    private $o_people;
+    private PeopleModel $o_people;
     /** @var PeopleView view object */
-    private $o_view;
+    private PeopleView $o_view;
 
     /**
      * PeopleController constructor.
@@ -243,7 +245,7 @@ class PeopleController implements ManagerControllerInterface
                     $this->o_cache->set($cache_key, $a_person, 'people');
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_message = ViewHelper::errorMessage('An error occurred and the person was not deleted.');
                 return $this->o_view->renderList($a_message);
             }

@@ -12,32 +12,33 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class PagesEntity.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-beta.1
- * @date    2015-10-30 08:14:03
+ * @version v1.0.0-beta.2
+ * @date    2021-11-26 16:20:57
  * @change_log
- * - v1.0.0-beta.1 - Initial version                                      - 10/30/2015 wer
+ * - v1.0.0-beta.2 - updated for php8                           - 2021-11-26 wer
+ * - v1.0.0-beta.1 - Initial version                            - 10/30/2015 wer
  */
 class PagesEntity implements EntityInterface
 {
 
     /** @var array $a_entity */
-    private $a_entity;
+    private array $a_entity;
     /** @var string $page_base_url */
-    private $page_base_url;
+    private string $page_base_url;
     /** @var string $page_charset */
-    private $page_charset;
+    private string $page_charset;
     /** @var string $page_description */
-    private $page_description;
+    private string $page_description;
     /** @var int $page_id */
-    private $page_id;
+    private int $page_id;
     /** @var string $page_lang */
-    private $page_lang;
+    private string $page_lang;
     /** @var string $page_title */
-    private $page_title;
+    private string $page_title;
     /** @var string $page_type */
-    private $page_type;
+    private string $page_type;
     /** @var string $page_url */
-    private $page_url;
+    private string $page_url;
 
     /**
      * @return array
@@ -82,7 +83,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_base_url
      */
-    public function setPageBaseUrl($page_base_url):void
+    public function setPageBaseUrl(string $page_base_url):void
     {
         $this->page_base_url = $page_base_url;
     }
@@ -98,7 +99,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_charset
      */
-    public function setPageCharset($page_charset):void
+    public function setPageCharset(string $page_charset):void
     {
         $this->page_charset = $page_charset;
     }
@@ -114,7 +115,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_description
      */
-    public function setPageDescription($page_description):void
+    public function setPageDescription(string $page_description):void
     {
         $this->page_description = $page_description;
     }
@@ -130,7 +131,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param int $page_id
      */
-    public function setPageId($page_id = -1):void
+    public function setPageId(int $page_id = -1):void
     {
         if ($page_id !== -1) {
             $this->page_id = $page_id;
@@ -148,7 +149,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_lang
      */
-    public function setPageLang($page_lang):void
+    public function setPageLang(string $page_lang):void
     {
         $this->page_lang = $page_lang;
     }
@@ -164,7 +165,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_title
      */
-    public function setPageTitle($page_title):void
+    public function setPageTitle(string $page_title):void
     {
         $this->page_title = $page_title;
     }
@@ -180,7 +181,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_type
      */
-    public function setPageType($page_type):void
+    public function setPageType(string $page_type):void
     {
         $this->page_type = $page_type;
     }
@@ -196,7 +197,7 @@ class PagesEntity implements EntityInterface
     /**
      * @param string $page_url
      */
-    public function setPageUrl($page_url):void
+    public function setPageUrl(string $page_url):void
     {
         $this->page_url = $page_url;
     }

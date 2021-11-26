@@ -168,7 +168,7 @@ class ContentView implements ViewInterface
      * @param string $action
      * @return string
      */
-    public function renderForm($action = 'new'): string
+    public function renderForm(string $action = 'new'): string
     {
         $meth = __METHOD__ . '.';
         $a_post = $this->o_router->getPost();

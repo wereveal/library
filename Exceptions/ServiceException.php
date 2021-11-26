@@ -22,12 +22,12 @@ class ServiceException extends CustomExceptionAbstract
     /**
      * Returns the exception error code for the string provided.
      *
-     * @param string $failure_string
+     * @param string $value
      * @return int
      */
-    public function getCodeNumber($failure_string = ''):int
+    public function getCodeNumber($value = ''):int
     {
-        return ExceptionHelper::getCodeNumberService($failure_string);
+        return ExceptionHelper::getCodeNumberService($value);
     }
 
     /**
@@ -36,7 +36,7 @@ class ServiceException extends CustomExceptionAbstract
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1):string
+    public function getCodeText(int $code = -1):string
     {
         return ExceptionHelper::getCodeTextService($code);
     }
