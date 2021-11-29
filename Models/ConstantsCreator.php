@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class ConstantsCreator
  * @package Ritc_Library
@@ -16,9 +17,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Defines Constants from the constants database used by the app.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v5.1.1
- * @date    2018-04-09 10:45:22
+ * @version v5.2.0
+ * @date    2021-11-29 17:22:32
  * @change_log
+ * - v5.2.0 - updated for php8                                                      - 2021-11-29 wer
  * - v5.1.1 - Bug fix                                                               - 2018-04-09 wer
  * - v5.1.0 - Added additional constants for Lib and Admin                          - 2018-04-03 wer
  *            Added method to build TWIG_PREFIXES on the fly from the
@@ -49,20 +51,21 @@ class ConstantsCreator
     use LogitTraits;
 
     /** @var bool */
-    private $created = false;
+    private bool $created = false;
     /** @var ConstantsCreator */
-    private static $instance;
+    private static ConstantsCreator $instance;
     /** @var DbModel $o_db */
-    private $o_db;
+    private DbModel $o_db;
 
     /**
      * ConstantsCreator constructor.
      *
      * @param Di $o_di
+     * @noinspection PhpFieldAssignmentTypeMismatchInspection
      */
     private function __construct(Di $o_di)
     {
-        $this->o_db = $o_di->get('db');
+        $this->o_db   = $o_di->get('db');
         $this->o_elog = $o_di->get('elog');
     }
 
@@ -72,10 +75,10 @@ class ConstantsCreator
      * Never should more than one instance of the constants ever be allowed to be created
      *
      * @param Di $o_di
-     * @return object - instance of Constants
+     * @return ConstantsCreator - instance of Constants
      * @throws ModelException
      */
-    public static function start(Di $o_di)
+    public static function start(Di $o_di): ConstantsCreator
     {
         if (self::$instance === null) {
             try {
@@ -203,7 +206,6 @@ class ConstantsCreator
                                 break;
                             default:
                                 $value = $row['const_value'];
-                                /** @var string $key */
                                 define($key, $value);
                         }
                     }
@@ -380,7 +382,7 @@ class ConstantsCreator
         try {
             $a_results = $o_twig_prefix->read();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             /** @noinspection ForgottenDebugOutputInspection */
             error_log('Unable to create TwigPrefixModel instance.');
         }

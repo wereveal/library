@@ -13,9 +13,10 @@ use Ritc\Library\Services\DbModel;
  * Basic model class based on the blocks table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.1.0
- * @date    2018-12-29 10:41:31
+ * @version 1.2.0
+ * @date    2021-11-29 17:16:38
  * @change_log
+ * - v1.2.0 - updated for php8 standards                        - 2021-11-29 wer
  * - v1.1.0 - Changed readActive method to work correctly :)    - 2018-12-29 wer
  * - v1.0.0 - Initial version                                   - 2018-06-02 wer
  */
@@ -49,7 +50,7 @@ class BlocksModel extends ModelAbstract
      * @return array
      * @throws ModelException
      */
-    public function readActive($b_type = 'solo'):array
+    public function readActive(string $b_type = 'solo'):array
     {
         $a_search_for = ['b_active' => 'true'];
         switch ($b_type) {

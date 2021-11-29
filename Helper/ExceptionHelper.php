@@ -9,12 +9,13 @@ namespace Ritc\Library\Helper;
  * Class ExceptionHelper - Helps developer with exception error codes.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.2.0
- * @date    2018-04-26 07:01:46
+ * @version v1.3.0
+ * @date    2021-11-29 15:46:12
  * @change_log
- * - v1.2.0 additional message to code                                                - 2018-04-26 wer
- * - v1.1.0 additional error code and message                                         - 2018-04-03 wer
- * - v1.0.0 Initial version                                                           - 2017-12-12 wer
+ * - v1.3.0 updated to php8                                     - 2021-11-29 wer
+ * - v1.2.0 additional message to code                          - 2018-04-26 wer
+ * - v1.1.0 additional error code and message                   - 2018-04-03 wer
+ * - v1.0.0 Initial version                                     - 2017-12-12 wer
  */
 class ExceptionHelper
 {
@@ -24,26 +25,18 @@ class ExceptionHelper
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumber($failure_string = ''):int
+    public static function getCodeNumber(string $failure_string = ''):int
     {
         $failure_string = self::fixFailureString($failure_string);
-        switch ($failure_string) {
-            case 'business':
-                return 600;
-            case 'application':
-                return 700;
-            case 'application dependencies':
-                return 710;
-            case 'application instances':
-            case 'application objects':
-                return 720;
-            case 'instance':
-                return 800;
-            case 'general':
-                return 900;
-            default:
-                return 999;
-        }
+        return match ($failure_string) {
+            'business'                                     => 600,
+            'application'                                  => 700,
+            'application dependencies'                     => 710,
+            'application instances', 'application objects' => 720,
+            'instance'                                     => 800,
+            'general'                                      => 900,
+            default                                        => 999,
+        };
     }
 
     /**
@@ -52,25 +45,18 @@ class ExceptionHelper
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumberFactory($failure_string = ''):int
+    public static function getCodeNumberFactory(string $failure_string = ''):int
     {
         $failure_string = self::fixFailureString($failure_string);
-        switch ($failure_string) {
-            case 'start':
-                return 10;
-            case 'clone':
-                return 20;
-            case 'invalid_file_type':
-                return 30;
-            case 'no_configuration':
-                return 40;
-            case 'instance':
-                return 100;
-            case 'instance_objects':
-                return 110;
-            default:
-                return self::getCodeNumber($failure_string);
-        }
+        return match ($failure_string) {
+            'start'             => 10,
+            'clone'             => 20,
+            'invalid_file_type' => 30,
+            'no_configuration'  => 40,
+            'instance'          => 100,
+            'instance_objects'  => 110,
+            default             => self::getCodeNumber($failure_string),
+        };
     }
 
     /**
@@ -79,206 +65,101 @@ class ExceptionHelper
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumberModel($failure_string = ''):int
+    public static function getCodeNumberModel(string $failure_string = ''):int
     {
         $failure_string = self::fixFailureString($failure_string);
-        switch ($failure_string) {
-            case 'create':
-                return 1;
-            case 'read':
-                return 2;
-            case 'update':
-                return 3;
-            case 'delete':
-                return 4;
-            case 'operation':
-                return 10;
-            case 'connect':
-                return 11;
-            case 'transaction_start':
-                return 12;
-            case 'transaction_commit':
-                return 13;
-            case 'transaction_rollback':
-                return 14;
-            case 'prepare':
-                return 15;
-            case 'execute':
-                return 16;
-            case 'pdo':
-                return 17;
-            case 'pdostatement':
-                return 18;
-            case 'structure':
-                return 19;
-            case 'missing_values':
-                return 20;
-            case 'invalid_values':
-                return 22;
-            case 'missing_primary_key':
-                return 25;
-            case 'unique_exists':
-                return 27;
-            case 'record_not_found':
-                return 30;
-            case 'records_not_found':
-                return 31;
-            case 'record_exists':
-                return 32;
-            case 'record_immutable':
-                return 34;
-            case 'record_immutable_undetermined':
-                return 35;
-            case 'has_children':
-                return 36;
-            case 'too_many_records':
-                return 37;
-            case 'field_missing':
-                return 40;
-            case 'field_not_valid':
-                return 42;
-            case 'field_value_immutable':
-                return 44;
-            case 'not_permitted':
-                return 50;
-            case 'see_previous':
-                return 99;
-            # Create Codes
-            case 'create_unknown':
-            case 'create_unspecified':
-                return 110;
-            case 'create_missing_value':
-            case 'create_missing_values':
-                return 120;
-            case 'create_invalid_value':
-                return 122;
-            case 'create_unique_key_exists':
-                return 127;
-            case 'create_record_not_created':
-                return 130;
-            case 'create_record_exists':
-                return 132;
-            case 'create_not_permitted':
-                return 150;
-            case 'create_see_previous':
-                return 199;
-            # Read codes
-            case 'read_unknown':
-            case 'read_unspecified':
-                return 210;
-            case 'read_missing_value':
-            case 'read_missing_values':
-                return 220;
-            case 'read_invalid_value':
-                return 222;
-            case 'read_no_records':
-                return 230;
-            case 'read_too_many_records':
-                return 237;
-            case 'read_not_permitted':
-                return 250;
-            case 'read_see_previous':
-                return 299;
-            # Update codes
-            case 'update_unknown':
-            case 'update_unspecified':
-                return 310;
-            case 'update_invalid_field':
-                return 319;
-            case 'update_missing_value':
-            case 'update_missing_values':
-                return 320;
-            case 'update_missing_primary':
-                return 325;
-            case 'update_no_records':
-                return 330;
-            case 'update_immutable':
-                return 344;
-            case 'update_not_permitted':
-                return 350;
-            case 'update_see_previous':
-                return 399;
-            # delete codes
-            case 'delete_unknown':
-            case 'delete_unspecified':
-                return 410;
-            case 'delete_missing_value':
-                return 420;
-            case 'delete_missing_primary':
-                return 425;
-            case 'delete_no_record':
-                return 430;
-            case 'delete_immutable':
-                return 434;
-            case 'delete_immutable_unknown':
-                return 435;
-            case 'delete_has_children':
-                return 436;
-            case 'delete_not_permitted':
-                return 450;
-            case 'delete_see_previous':
-                return 499;
-            # Definition Codes
-            case 'definition_change_structure_failure':
-                return 500;
-            case 'definition_create_database':
-                return 510;
-            case 'definition_alter_database':
-                return 511;
-            case 'definition_drop_database':
-                return 512;
-            case 'definition_create_event':
-                return 520;
-            case 'definition_alter_event':
-                return 521;
-            case 'definition_drop_event':
-                return 522;
-            case 'definition_create_function':
-            case 'definition_create_procedure':
-                return 530;
-            case 'definition_alter_function':
-            case 'definition_alter_procedure':
-                return 531;
-            case 'definition_drop_function':
-            case 'definition_drop_procedure':
-                return 532;
-            case 'definition_create_index':
-                return 540;
-            case 'definition_alter_index':
-                return 541;
-            case 'definition_drop_index':
-                return 542;
-            case 'definition_create_logfile':
-                return 550;
-            case 'definition_alter_logfile':
-                return 551;
-            case 'definition_drop_logfile':
-                return 552;
-            case 'definition_create_table':
-                return 560;
-            case 'definition_alter_table':
-                return 561;
-            case 'definition_drop_table':
-                return 562;
-            case 'definition_rename_table':
-                return 564;
-            case 'definition_truncate_table':
-                return 565;
-            case 'definition_create_trigger':
-                return 570;
-            case 'definition_alter_trigger':
-                return 571;
-            case 'definition_drop_trigger':
-                return 572;
-            case 'definition_create_view':
-                return 580;
-            case 'definition_alter_view':
-                return 581;
-            case 'definition_drop_view':
-                return 582;
-            default:
-                return self::getCodeNumber($failure_string);
-        }
+        return match ($failure_string) {
+            'create'                                                    => 1,
+            'read'                                                      => 2,
+            'update'                                                    => 3,
+            'delete'                                                    => 4,
+            'operation'                                                 => 10,
+            'connect'                                                   => 11,
+            'transaction_start'                                         => 12,
+            'transaction_commit'                                        => 13,
+            'transaction_rollback'                                      => 14,
+            'prepare'                                                   => 15,
+            'execute'                                                   => 16,
+            'pdo'                                                       => 17,
+            'pdostatement'                                              => 18,
+            'structure'                                                 => 19,
+            'missing_values'                                            => 20,
+            'invalid_values'                                            => 22,
+            'missing_primary_key'                                       => 25,
+            'unique_exists'                                             => 27,
+            'record_not_found'                                          => 30,
+            'records_not_found'                                         => 31,
+            'record_exists'                                             => 32,
+            'record_immutable'                                          => 34,
+            'record_immutable_undetermined'                             => 35,
+            'has_children'                                              => 36,
+            'too_many_records'                                          => 37,
+            'field_missing'                                             => 40,
+            'field_not_valid'                                           => 42,
+            'field_value_immutable'                                     => 44,
+            'not_permitted'                                             => 50,
+            'see_previous'                                              => 99,
+            'create_unknown', 'create_unspecified'                      => 110,
+            'create_missing_value', 'create_missing_values'             => 120,
+            'create_invalid_value'                                      => 122,
+            'create_unique_key_exists'                                  => 127,
+            'create_record_not_created'                                 => 130,
+            'create_record_exists'                                      => 132,
+            'create_not_permitted'                                      => 150,
+            'create_see_previous'                                       => 199,
+            'read_unknown', 'read_unspecified'                          => 210,
+            'read_missing_value', 'read_missing_values'                 => 220,
+            'read_invalid_value'                                        => 222,
+            'read_no_records'                                           => 230,
+            'read_too_many_records'                                     => 237,
+            'read_not_permitted'                                        => 250,
+            'read_see_previous'                                         => 299,
+            'update_unknown', 'update_unspecified'                      => 310,
+            'update_invalid_field'                                      => 319,
+            'update_missing_value', 'update_missing_values'             => 320,
+            'update_missing_primary'                                    => 325,
+            'update_no_records'                                         => 330,
+            'update_immutable'                                          => 344,
+            'update_not_permitted'                                      => 350,
+            'update_see_previous'                                       => 399,
+            'delete_unknown', 'delete_unspecified'                      => 410,
+            'delete_missing_value'                                      => 420,
+            'delete_missing_primary'                                    => 425,
+            'delete_no_record'                                          => 430,
+            'delete_immutable'                                          => 434,
+            'delete_immutable_unknown'                                  => 435,
+            'delete_has_children'                                       => 436,
+            'delete_not_permitted'                                      => 450,
+            'delete_see_previous'                                       => 499,
+            'definition_change_structure_failure'                       => 500,
+            'definition_create_database'                                => 510,
+            'definition_alter_database'                                 => 511,
+            'definition_drop_database'                                  => 512,
+            'definition_create_event'                                   => 520,
+            'definition_alter_event'                                    => 521,
+            'definition_drop_event'                                     => 522,
+            'definition_create_function', 'definition_create_procedure' => 530,
+            'definition_alter_function', 'definition_alter_procedure'   => 531,
+            'definition_drop_function', 'definition_drop_procedure'     => 532,
+            'definition_create_index'                                   => 540,
+            'definition_alter_index'                                    => 541,
+            'definition_drop_index'                                     => 542,
+            'definition_create_logfile'                                 => 550,
+            'definition_alter_logfile'                                  => 551,
+            'definition_drop_logfile'                                   => 552,
+            'definition_create_table'                                   => 560,
+            'definition_alter_table'                                    => 561,
+            'definition_drop_table'                                     => 562,
+            'definition_rename_table'                                   => 564,
+            'definition_truncate_table'                                 => 565,
+            'definition_create_trigger'                                 => 570,
+            'definition_alter_trigger'                                  => 571,
+            'definition_drop_trigger'                                   => 572,
+            'definition_create_view'                                    => 580,
+            'definition_alter_view'                                     => 581,
+            'definition_drop_view'                                      => 582,
+            default                                                     => self::getCodeNumber($failure_string),
+        };
     }
 
     /**
@@ -287,16 +168,13 @@ class ExceptionHelper
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumberService($failure_string = ''):int
+    public static function getCodeNumberService(string $failure_string = ''):int
     {
-        switch ($failure_string) {
-            case 'service start':
-                return 10;
-            case 'service clone':
-                return 20;
-            default:
-                return self::getCodeNumber($failure_string);
-        }
+        return match ($failure_string) {
+            'service start' => 10,
+            'service clone' => 20,
+            default         => self::getCodeNumber($failure_string),
+        };
     }
 
     /**
@@ -305,21 +183,15 @@ class ExceptionHelper
      * @param string $failure_string
      * @return int
      */
-    public static function getCodeNumberView($failure_string = ''):int
+    public static function getCodeNumberView(string $failure_string = ''):int
     {
-        switch ($failure_string) {
-            case 'view':
-                return '700';
-            case 'view dependencies':
-                return 710;
-            case 'view instances':
-            case 'view objects':
-                return 720;
-            case 'view twig':
-                return 750;
-            default:
-                return self::getCodeNumber($failure_string);
-        }
+        return match ($failure_string) {
+            'view'                           => '700',
+            'view dependencies'              => 710,
+            'view instances', 'view objects' => 720,
+            'view twig'                      => 750,
+            default                          => self::getCodeNumber($failure_string),
+        };
     }
 
     /**
@@ -328,29 +200,18 @@ class ExceptionHelper
      * @param int $code
      * @return string
      */
-    public static function getCodeText($code = -1):string
+    public static function getCodeText(int $code = -1):string
     {
-        switch ($code) {
-            ### Business Logic Errors ###
-            case 600:
-                return 'General Business Logic Error.';
-            ### Application Rule Errors ###
-            case 700:
-                return 'General Application Rule Error.';
-            case 710:
-                return 'Unable to load required dependencies.';
-            case 720:
-                return 'Unable to create required instance.';
-            ### Generic Errors ###
-            case 800:
-                return 'Unable to create the instance';
-            case 900:
-                return 'General Error, see error message';
-            case 999:
-                return 'Unspecified Error.';
-            default:
-                return 'Unspecified error';
-        }
+        return match ($code) {
+            600     => 'General Business Logic Error.',
+            700     => 'General Application Rule Error.',
+            710     => 'Unable to load required dependencies.',
+            720     => 'Unable to create required instance.',
+            800     => 'Unable to create the instance',
+            900     => 'General Error, see error message',
+            999     => 'Unspecified Error.',
+            default => 'Unspecified error',
+        };
     }
 
     /**
@@ -359,24 +220,17 @@ class ExceptionHelper
      * @param int $code
      * @return string
      */
-    public static function getCodeTextFactory($code = -1):string
+    public static function getCodeTextFactory(int $code = -1):string
     {
-        switch ($code) {
-            case 10:
-                return 'Unable to start the factory.';
-            case 20:
-                return '__clone not allowed for this factory.';
-            case 30:
-                return 'Invalid file type for configuration.';
-            case 40:
-                return 'Unable to get configuration for factory.';
-            case 100:
-                return 'Factory unable to create the object instance.';
-            case 110:
-                return 'Factory unable to create an object needed to create the object instance.';
-            default:
-                return self::getCodeText($code);
-        }
+        return match ($code) {
+            10      => 'Unable to start the factory.',
+            20      => '__clone not allowed for this factory.',
+            30      => 'Invalid file type for configuration.',
+            40      => 'Unable to get configuration for factory.',
+            100     => 'Factory unable to create the object instance.',
+            110     => 'Factory unable to create an object needed to create the object instance.',
+            default => self::getCodeText($code),
+        };
     }
 
     /**
@@ -385,178 +239,91 @@ class ExceptionHelper
      * @param int $code
      * @return string
      */
-    public static function getCodeTextModel($code = -1):string
+    public static function getCodeTextModel(int $code = -1):string
     {
-        switch ($code) {
-            # Generic Database failures
-            case 10:
-                return 'Unable to do the database operation';
-            case 11:
-                return 'Unable to connect to the database';
-            case 12:
-                return 'Unable to start a transaction.';
-            case 13:
-                return 'Unable to commit a transaction.';
-            case 14:
-                return 'Unable to rollback a transaction.';
-            case 15:
-                return 'Unable to prepare the statement.';
-            case 16:
-                return 'Unable to execute the prepared statement.';
-            case 17:
-                return 'Unable to do a PDO operation.';
-            case 18:
-                return 'Unable to do a PDOStatement operation.';
-            case 19:
-                return 'Invalid database structure';
-            case 20:
-                return 'Missing required values';
-            case 22:
-                return 'Invalid values.';
-            case 25:
-                return 'Missing required primary key';
-            case 27:
-                return 'Unique key value exists';
-            case 30:
-                return 'Record(s) not found';
-            case 31:
-                return 'Records not found';
-            case 32:
-                return 'Record already exits';
-            case 34:
-                return 'Record immutable';
-            case 40:
-                return 'Required field not provided';
-            case 42:
-                return 'Field specified does not exist';
-            case 44:
-                return 'Field value is immutable';
-            case 50:
-                return 'Operation not permitted';
-            case 99:
-                return 'see previous message';
-            # Create Codes
-            case 110:
-                return 'Unable to create a new record: unspecified reason.';
-            case 120:
-                return 'Unable to create a new record: missing a required value.';
-            case 122:
-                return 'Unable to create a new record: invalid value provided.';
-            case 127:
-                return 'Unable to create a new record: unique key value exists.';
-            case 130:
-                return 'Unable to create a new record: did not create a new primary index.';
-            case 132:
-                return 'Unable to create a new record: The record already exists.';
-            case 150:
-                return 'Unable to create a new record: the operation was not permitted.';
-            case 199:
-                return 'Unable to create a new record: see previous message.';
-            # Read codes
-            case 210:
-                return 'Unable to read the record(s):unspecified reason.';
-            case 220:
-                return 'Unable to read the record(s):a required field is missing.';
-            case 222:
-                return 'unable to read the record(s):invalid search term provided.';
-            case 230:
-                return 'Unable to read the record(s):No record exists with values given.';
-            case 250:
-                return 'Unable to read the record(s):the opperation was not permitted.';
-            case 299:
-                return 'Unable to read the record(s):see the previous exception message.';
-            # Update Codes
-            case 310:
-                return 'Unable to update the record';
-            case 319:
-                return 'Unable to update the record: a field given does not exist in the database.';
-            case 320:
-                return 'Unable to update the record: a required field is missing from the values';
-            case 325:
-                return 'Unable to update the record: the primary key field is missing from the values';
-            case 330:
-                return 'Unable to update the record: no record with that id exists.';
-            case 344:
-                return 'Unable to update the record: a field being changed is immutable';
-            case 350:
-                return 'Unable to update the record: Update not permitted.';
-            case 399:
-                return 'Unable to update the record: see previous.';
-            # Delete codes
-            case 410:
-                return 'Unable to delete the record.';
-            case 420:
-                return 'Unable to delete the record: missing the record primary id';
-            case 430:
-                return 'Unable to delete the record: no record with that id exists.';
-            case 434:
-                return 'Unable to delete the record: record is immutable.';
-            case 435:
-                return 'Unable to delete the record: unable to determine if the record is immutable.';
-            case 436:
-                return 'Unable to delete the record: has child records.';
-            case 450;
-                return 'Unable to delete the record: may not be deleted.';
-            case 499;
-                return 'Unable to delete the record: see previous error message.';
-            # Database Definition code
-            case 500:
-                return 'Unable to change the structure of the database.';
-            case 510:
-                return 'Unable to CREATE the database.';
-            case 511:
-                return 'Unable to ALTER the database.';
-            case 512:
-                return 'Unable to DROP the database.';
-            case 520:
-                return 'Unable to CREATE the event.';
-            case 521:
-                return 'Unable to ALTER the event.';
-            case 522:
-                return 'Unable to DROP the event.';
-            case 530:
-                return 'Unable to CREATE the function or procedure.';
-            case 531:
-                return 'Unable to ALTER the function or procedure.';
-            case 532:
-                return 'Unable to DROP the function or procedure.';
-            case 540:
-                return 'Unable to CREATE the index.';
-            case 541:
-                return 'Invalid error code';
-            case 542:
-                return 'Unable to DROP the index.';
-            case 550:
-                return 'Unable to CREATE the logfile group.';
-            case 551:
-                return 'Unable to ALTER the logfile group.';
-            case 552:
-                return 'Unable to DROP the logfile group.';
-            case 560:
-                return 'Unable to CREATE the table.';
-            case 561:
-                return 'Unable to ALTER the table.';
-            case 562:
-                return 'Unable to DROP the table.';
-            case 564:
-                return 'Unable to RENAME the table.';
-            case 565:
-                return 'Unable to TRUNCATE the table.';
-            case 570:
-                return 'Unable to CREATE the trigger.';
-            case 571:
-                return 'Unable to ALTER the trigger.';
-            case 572:
-                return 'Unable to DROP the trigger.';
-            case 580:
-                return 'Unable to CREATE the view.';
-            case 581:
-                return 'Unable to ALTER the view.';
-            case 582:
-                return 'Unable to DROP the view.';
-            default:
-                return self::getCodeText($code);
-        }
+        return match ($code) {
+            10      => 'Unable to do the database operation',
+            11      => 'Unable to connect to the database',
+            12      => 'Unable to start a transaction.',
+            13      => 'Unable to commit a transaction.',
+            14      => 'Unable to rollback a transaction.',
+            15      => 'Unable to prepare the statement.',
+            16      => 'Unable to execute the prepared statement.',
+            17      => 'Unable to do a PDO operation.',
+            18      => 'Unable to do a PDOStatement operation.',
+            19      => 'Invalid database structure',
+            20      => 'Missing required values',
+            22      => 'Invalid values.',
+            25      => 'Missing required primary key',
+            27      => 'Unique key value exists',
+            30      => 'Record(s) not found',
+            31      => 'Records not found',
+            32      => 'Record already exits',
+            34      => 'Record immutable',
+            40      => 'Required field not provided',
+            42      => 'Field specified does not exist',
+            44      => 'Field value is immutable',
+            50      => 'Operation not permitted',
+            99      => 'see previous message',
+            110     => 'Unable to create a new record: unspecified reason.',
+            120     => 'Unable to create a new record: missing a required value.',
+            122     => 'Unable to create a new record: invalid value provided.',
+            127     => 'Unable to create a new record: unique key value exists.',
+            130     => 'Unable to create a new record: did not create a new primary index.',
+            132     => 'Unable to create a new record: The record already exists.',
+            150     => 'Unable to create a new record: the operation was not permitted.',
+            199     => 'Unable to create a new record: see previous message.',
+            210     => 'Unable to read the record(s):unspecified reason.',
+            220     => 'Unable to read the record(s):a required field is missing.',
+            222     => 'unable to read the record(s):invalid search term provided.',
+            230     => 'Unable to read the record(s):No record exists with values given.',
+            250     => 'Unable to read the record(s):the opperation was not permitted.',
+            299     => 'Unable to read the record(s):see the previous exception message.',
+            310     => 'Unable to update the record',
+            319     => 'Unable to update the record: a field given does not exist in the database.',
+            320     => 'Unable to update the record: a required field is missing from the values',
+            325     => 'Unable to update the record: the primary key field is missing from the values',
+            330     => 'Unable to update the record: no record with that id exists.',
+            344     => 'Unable to update the record: a field being changed is immutable',
+            350     => 'Unable to update the record: Update not permitted.',
+            399     => 'Unable to update the record: see previous.',
+            410     => 'Unable to delete the record.',
+            420     => 'Unable to delete the record: missing the record primary id',
+            430     => 'Unable to delete the record: no record with that id exists.',
+            434     => 'Unable to delete the record: record is immutable.',
+            435     => 'Unable to delete the record: unable to determine if the record is immutable.',
+            436     => 'Unable to delete the record: has child records.',
+            450     => 'Unable to delete the record: may not be deleted.',
+            499     => 'Unable to delete the record: see previous error message.',
+            500     => 'Unable to change the structure of the database.',
+            510     => 'Unable to CREATE the database.',
+            511     => 'Unable to ALTER the database.',
+            512     => 'Unable to DROP the database.',
+            520     => 'Unable to CREATE the event.',
+            521     => 'Unable to ALTER the event.',
+            522     => 'Unable to DROP the event.',
+            530     => 'Unable to CREATE the function or procedure.',
+            531     => 'Unable to ALTER the function or procedure.',
+            532     => 'Unable to DROP the function or procedure.',
+            540     => 'Unable to CREATE the index.',
+            541     => 'Invalid error code',
+            542     => 'Unable to DROP the index.',
+            550     => 'Unable to CREATE the logfile group.',
+            551     => 'Unable to ALTER the logfile group.',
+            552     => 'Unable to DROP the logfile group.',
+            560     => 'Unable to CREATE the table.',
+            561     => 'Unable to ALTER the table.',
+            562     => 'Unable to DROP the table.',
+            564     => 'Unable to RENAME the table.',
+            565     => 'Unable to TRUNCATE the table.',
+            570     => 'Unable to CREATE the trigger.',
+            571     => 'Unable to ALTER the trigger.',
+            572     => 'Unable to DROP the trigger.',
+            580     => 'Unable to CREATE the view.',
+            581     => 'Unable to ALTER the view.',
+            582     => 'Unable to DROP the view.',
+            default => self::getCodeText($code),
+        };
     }
 
     /**
@@ -565,16 +332,13 @@ class ExceptionHelper
      * @param int $code
      * @return string
      */
-    public static function getCodeTextService($code = -1):string
+    public static function getCodeTextService(int $code = -1):string
     {
-        switch ($code) {
-            case 10:
-                return 'Unable to start the service.';
-            case 20:
-                return '__clone not allowed for this service.';
-            default:
-                return self::getCodeText($code);
-        }
+        return match ($code) {
+            10      => 'Unable to start the service.',
+            20      => '__clone not allowed for this service.',
+            default => self::getCodeText($code),
+        };
     }
 
     /**
@@ -583,20 +347,15 @@ class ExceptionHelper
      * @param int $code
      * @return string
      */
-    public static function getCodeTextView($code = -1):string
+    public static function getCodeTextView(int $code = -1):string
     {
-        switch ($code) {
-            case 700:
-                return 'General View Exception.';
-            case 710:
-                return 'Unable to load required dependencies.';
-            case 720:
-                return 'Unable to create required instances/objects.';
-            case 750:
-                return 'A Twig exception occurred.';
-            default:
-                return self::getCodeText($code);
-        }
+        return match ($code) {
+            700     => 'General View Exception.',
+            710     => 'Unable to load required dependencies.',
+            720     => 'Unable to create required instances/objects.',
+            750     => 'A Twig exception occurred.',
+            default => self::getCodeText($code),
+        };
     }
 
     /**
@@ -605,7 +364,7 @@ class ExceptionHelper
      * @param string $failure_string
      * @return string
      */
-    public static function fixFailureString($failure_string = ''):string
+    public static function fixFailureString(string $failure_string = ''):string
     {
         return Strings::makeAlphanumericPlus(strtolower($failure_string));
     }

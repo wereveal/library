@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
 /**
  * Class Files
  *
@@ -13,12 +13,13 @@ use Ritc\Library\Traits\LogitTraits;
  * Determines the path to the file
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.3.1+1
- * @date    2016-04-21 10:27:57
+ * @version v4.4.0
+ * @date    2021-11-29 15:51:06
  * @note The constants with _DIR_NAME should correspond to dir names in
  *       the site theme or namespace (e.g. templates are in namespace). If a directory
  *       is missing, this could cause a fatal error.
  * @change_log
+ * - v4.4.0 - updated for php8                                                      - 2021-11-29 wer
  * - v4.3.1 - fixed bug (long standing)                                             - 2016-04-21 wer
  * - v4.3.0 - added an addition possible file location                              - 2016-04-20 wer
  * - v4.2.1 - moved to the namespace Ritc\Library\Helper                            - 11/15/2014 wer
@@ -100,46 +101,47 @@ class Files implements LocationInterface
      *
      * @var string
      */
-    protected $file_name     = 'no_file.tpl';
+    protected string $file_name = 'no_file.tpl';
     /**
      * Name of the directory the file is located.
      *
      * @var string
      */
-    protected $file_dir_name = '';
+    protected string $file_dir_name = '';
     /**
      * Namespace the file is located in.
      *
      * @var string
      */
-    protected $namespace;
+    protected string $namespace;
     /**
      * File with the directory path from base path.
      *
      * @var string
      */
-    protected $file_w_dir;
+    protected string $file_w_dir;
     /**
      * File with the path from the root of the server.
      *
      * @var string
      */
-    protected $file_w_path;
+    protected string $file_w_path;
     /**
      * Name of the theme.
      *
      * @var string
      */
-    protected $theme_name = '';
+    protected string $theme_name = '';
 
     /**
      * Files constructor.
+     *
      * @param string $file_name
      * @param string $the_directory
      * @param string $theme_name
      * @param string $namespace
      */
-    public function __construct($file_name = '', $the_directory = '', $theme_name = '', $namespace = '')
+    public function __construct(string $file_name = '', string $the_directory = '', string $theme_name = '', string $namespace = '')
     {
         if ($file_name !== '') {
             $this->file_name = $file_name;
@@ -162,7 +164,7 @@ class Files implements LocationInterface
      * @param $var_name
      * @return mixed
      */
-    public function getVar($var_name)
+    public function getVar($var_name): mixed
     {
         return $this->$var_name;
     }
@@ -196,19 +198,20 @@ class Files implements LocationInterface
      * Does more than the php function of file_get_contents in that
      * file_get_contents requires a full path where as this only requires
      * a file name. The path can be specified either directly or indirectly.
+     *
      * @note Examples:
      *     getContents('test.tpl');\n
      *     getContents('test.css', 'css');\n
      *     getContents('test/test.tpl', 'templates');\n
      *     getContents('fred.html', 'my/file/path');
-     * @param $file_name (str) - name of file - required - can include
+     * @param string $file_name     (str) - name of file - required - can include
      *     sub-paths to work with one of the several file_dir_name types,
      *     especially useful when using sub-dirs of templates and other
      *     sections of the theme.
-     * @param $file_dir_name (str) - one of several types or raw path - optional
+     * @param string $file_dir_name (str) - one of several types or raw path - optional
      * @return string - the contents of the file or false.
      */
-    public function getContents($file_name = '', $file_dir_name = ''):string
+    public function getContents(string $file_name = '', string $file_dir_name = ''):string
     {
         if($file_name === '' && $this->file_name === 'no_file.tpl') {
             $this->logIt('File name was blank.', LOG_OFF, __METHOD__);
@@ -226,7 +229,7 @@ class Files implements LocationInterface
             }
         }
         $file_path = $this->getFileWithPath($file_name);
-        $file_contents = $file_path !== false ? file_get_contents($file_path) : false ;
+        $file_contents = !empty($file_path) ? file_get_contents($file_path) : false ;
         if($file_contents !== false) {
             return $file_contents;
         }
@@ -251,7 +254,7 @@ class Files implements LocationInterface
      * @param string $file_name
      * @return bool
      */
-    public function getCssWithPath($file_name = ''):bool
+    public function getCssWithPath(string $file_name = ''):bool
     {
         $this->file_dir_name = defined('CSS_DIR_NAME')
             ? CSS_DIR_NAME
@@ -279,7 +282,7 @@ class Files implements LocationInterface
      * @param string $file_name
      * @return string
      */
-    public function getFileWithDir($file_name = ''):string
+    public function getFileWithDir(string $file_name = ''):string
     {
         if ($file_name !== '') {
             $this->setFileName($file_name);
@@ -297,7 +300,7 @@ class Files implements LocationInterface
      * @param string $file_name
      * @return string
      */
-    public function getFileWithPath($file_name = ''):string
+    public function getFileWithPath(string $file_name = ''):string
     {
         if ($file_name !== '') {
             $this->setFileName($file_name);
@@ -413,7 +416,7 @@ class Files implements LocationInterface
      * @param string $file_name
      * @return bool|string
      */
-    public function getPrivateFile($file_name = '')
+    public function getPrivateFile(string $file_name = ''): bool|string
     {
         $private_path = $_SERVER['DOCUMENT_ROOT'] . '/../' . self::PRIVATE_DIR_NAME;
         $file_w_path = $private_path . '/' . $file_name;
@@ -428,7 +431,7 @@ class Files implements LocationInterface
      * @param string $file_name
      * @return bool|string
      */
-    public function getTmpFile($file_name = '')
+    public function getTmpFile(string $file_name = ''): bool|string
     {
         $file_w_path = TMP_PATH . '/' . $file_name;
         if (file_exists($file_w_path)) {
@@ -466,7 +469,7 @@ class Files implements LocationInterface
      * @param string $which_one
      * @return array
      */
-    public function getFileLocations($which_one = ''):array
+    public function getFileLocations(string $which_one = ''):array
     {
         $a_file_locations = array();
         switch($which_one) {
@@ -500,12 +503,13 @@ class Files implements LocationInterface
      *     SRC_PATH/config/$file_name
      *     SRC_PATH/$file_dir_name/$file_name
      *     SRC_PATH/str_replace('Ritc\', '', $namespace)/$file_name
-         * @param string $file_name required
-     * @param string $namespace optional defaults to $this->namespace
-     * @param string $file_dir_name optional default to none
-     * @return mixed str $path_of_file or false
+         *
+         * @param string $file_name     required
+     * @param string     $namespace     optional defaults to $this->namespace
+     * @param string     $file_dir_name optional default to none
+     * @return string|array|bool        str $path_of_file or false
      */
-    public function locateFile($file_name = '', $namespace = '', $file_dir_name = '')
+    public function locateFile(string $file_name = '', string $namespace = '', string $file_dir_name = ''): string|array|bool
     {
         if ($file_name === '') {
             $file_name = $this->file_name;
@@ -553,7 +557,7 @@ class Files implements LocationInterface
     public function setFileDirName($value = ''):bool
     {
         if ($value === '') { return false; }
-        if (strpos($value, '/') === 0) {
+        if (str_starts_with($value, '/')) {
             $value = substr($value, 1);
         }
         if (substr($value, strlen($value) - 1) === '/') {
@@ -579,7 +583,7 @@ class Files implements LocationInterface
      * @param string $value
      * @return bool
      */
-    public function setNamespace($value = ''):bool
+    public function setNamespace(string $value = ''):bool
     {
         $this->namespace = $value;
         $this->setFileLocations();
@@ -588,10 +592,11 @@ class Files implements LocationInterface
 
     /**
      * Sets the themename variable
+     *
      * @param string $theme_name
-     * @return null
+     * @return bool
      */
-    public function setThemeName($theme_name = 'default'): ?bool
+    public function setThemeName(string $theme_name = 'default'): bool
     {
         $this->theme_name = $theme_name;
         $this->setFileLocations();

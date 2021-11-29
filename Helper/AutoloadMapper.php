@@ -5,30 +5,31 @@
  */
 namespace Ritc\Library\Helper;
 
-use \DirectoryIterator;
-use \SplFileInfo;
+use DirectoryIterator;
+use SplFileInfo;
 
 /**
  * Creates the autoload_classmap.php file.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.2.3
- * @date    2017-01-10 12:26:57
+ * @version v1.4.0
+ * @date    2021-11-29 15:10:51
  * @change_log
- *     v1.3.0 - refactoring of file structure reflected here  - 2017-02-15 wer
- *     v1.2.1 - refactored var names to be more descriptive   - 12/07/2015 wer
- *     v1.2.0 - added code to not include archives            - 11/06/2015 wer
- *     v1.1.0 - added traits                                  - 09/01/2015 wer
- *     v1.0.0 - initial version
+ * - v1.4.0 - updated for php8                                  - 2021-11-29 wer
+ * - v1.3.0 - refactoring of file structure reflected here      - 2017-02-15 wer
+ * - v1.2.1 - refactored var names to be more descriptive       - 12/07/2015 wer
+ * - v1.2.0 - added code to not include archives                - 11/06/2015 wer
+ * - v1.1.0 - added traits                                      - 09/01/2015 wer
+ * - v1.0.0 - initial version
  */
 class AutoloadMapper
 {
     /** @var string */
-    private $src_path;
+    private mixed $src_path;
     /** @var string */
-    private $config_path;
+    private mixed $config_path;
     /** @var string */
-    private $apps_path;
+    private mixed $apps_path;
 
     /**
      * Constructor for the class.
@@ -50,7 +51,7 @@ class AutoloadMapper
      * @param string $apps_path
      * @return bool
      */
-    public function generateMapFiles($apps_path = ''):bool
+    public function generateMapFiles(string $apps_path = ''):bool
     {
         $classmap_array_str = '';
         $ns_map_array_str   = '';
@@ -144,7 +145,7 @@ EOT;
             if ($name !== '.' && $name !== '..') {
                 if ($o_dir->isFile()) {
                     $path = $o_dir->getPath();
-                    if (strpos($path, '/archive') === false) {
+                    if (!str_contains($path, '/archive')) {
 	                    $file_name = $path . '/' . $name;
 	                    // echo $file_name . "\n";
 	                    $o_file_info = new SplFileInfo($file_name);
@@ -180,7 +181,7 @@ EOT;
      * @param array $a_tokens
      * @return mixed
      */
-    private function getClassName(array $a_tokens = array())
+    private function getClassName(array $a_tokens = array()): mixed
     {
         foreach ($a_tokens as $key => $a_token) {
             if (is_array($a_token)) {
@@ -207,7 +208,7 @@ EOT;
     {
         $namespace = '';
         $line_number = -1;
-        foreach ($a_tokens as $key => $a_token) {
+        foreach ($a_tokens as $a_token) {
             if (is_array($a_token) && $a_token[0] === T_NAMESPACE) {
                 $line_number = $a_token[2];
                 break;
@@ -216,16 +217,10 @@ EOT;
         foreach($a_tokens as $a_token) {
             if (isset($a_token[2]) && $a_token[2] === $line_number) {
                 // echo $a_token[0] . '  ' . token_name($a_token[0]) . "\n";
-                switch ($a_token[0]) {
-                    case T_STRING:
-                        $namespace .= $a_token[1];
-                        break;
-                    case T_NS_SEPARATOR:
-                        $namespace .= $a_token[1];
-                        break;
-                    default:
-                        $namespace .= '';
-                }
+                $namespace .= match ($a_token[0]) {
+                    T_NS_SEPARATOR, T_STRING => $a_token[1],
+                    default                  => '',
+                };
             }
         }
         return $namespace;
@@ -242,9 +237,10 @@ EOT;
 
     /**
      * Sets the app path.
+     *
      * @param string $value
      */
-    public function setSrcPath($value = ''):void
+    public function setSrcPath(string $value = ''):void
     {
         $this->src_path = $value !== ''
             ? $value
@@ -262,9 +258,10 @@ EOT;
 
     /**
      * Sets the config path.
+     *
      * @param string $value
      */
-    public function setConfigPath($value = ''):void
+    public function setConfigPath(string $value = ''):void
     {
         $this->config_path = $value !== ''
             ? $value
@@ -282,9 +279,10 @@ EOT;
 
     /**
      * Sets the apps path.
+     *
      * @param string $value
      */
-    public function setAppsPath($value = ''):void
+    public function setAppsPath(string $value = ''):void
     {
         $this->apps_path = $value !== ''
             ? $value

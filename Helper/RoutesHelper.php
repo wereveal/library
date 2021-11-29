@@ -7,6 +7,7 @@
 
 namespace Ritc\Library\Helper;
 
+use JsonException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RoutesComplexModel;
@@ -19,9 +20,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Helper for routing.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
- * @date    2018-05-14 19:52:39
+ * @version v3.2.0
+ * @date    2021-11-29 16:57:46
  * @change_log
+ * - v3.2.0   - updated for php8                                    - 2021-11-29 wer
  * - v3.1.0   - Bug fix that added value to a_route_parts           - 2019-01-28 wer
  * - v3.0.0   - Changed to use cache for some database values       - 2018-05-14 wer
  * - v2.1.0   - Changed to handle ModelExceptions                   - 2017-06-20 wer
@@ -35,29 +37,31 @@ class RoutesHelper
     use LogitTraits;
 
     /** @var array */
-    private $a_route_parts;
+    private array $a_route_parts;
     /** @var string $cache_type */
-    private $cache_type;
+    private string $cache_type;
     /** @var CacheHelper $o_cache */
-    private $o_cache;
+    private CacheHelper $o_cache;
     /** @var DbModel */
-    private $o_db;
+    private DbModel $o_db;
     /** @var Di */
-    private $o_di;
+    private Di $o_di;
     /** @var string */
-    private $route_path;
+    private string $route_path;
     /** @var string */
-    private $request_uri;
+    private string $request_uri;
     /** @var bool */
-    private $use_cache;
+    private bool $use_cache;
 
     /**
      * RoutesHelper constructor.
      *
      * @param Di     $o_di
      * @param string $request_uri
+     * @noinspection PhpUndefinedConstantInspection
+     * @noinspection PhpFieldAssignmentTypeMismatchInspection
      */
-    public function __construct(Di $o_di, $request_uri = '')
+    public function __construct(Di $o_di, string $request_uri = '')
     {
         $this->setupElog($o_di);
         $this->o_di = $o_di;
@@ -67,7 +71,7 @@ class RoutesHelper
             if (is_object($o_cache)) {
                 $this->o_cache    = $o_cache;
                 $this->cache_type = $this->o_cache->getCacheType();
-                $this->use_cache  = empty($this->cache_type) ? false : true;
+                $this->use_cache  = !empty($this->cache_type);
             }
         }
         $this->route_path = $request_uri;
@@ -82,7 +86,7 @@ class RoutesHelper
      * @param string $route_path  required
      * @return bool
      */
-    public function compareUriToRoute($request_uri = '', $route_path = ''): bool
+    public function compareUriToRoute(string $request_uri = '', string $route_path = ''): bool
     {
         if ($request_uri === $route_path) {
             return true;
@@ -102,7 +106,7 @@ class RoutesHelper
      * @param string $request_uri
      * @return array
      */
-    private function createComparisonUri($request_uri = ''): array
+    private function createComparisonUri(string $request_uri = ''): array
     {
         if ($request_uri === '') {
             return [
@@ -192,8 +196,9 @@ class RoutesHelper
      *
      * @param string $route_path
      * @return array
+     * @throws JsonException
      */
-    public function createRouteParts($route_path = ''): array
+    public function createRouteParts(string $route_path = ''): array
     {
         $this->setRouteParts($route_path);
         return $this->getRouteParts();
@@ -209,7 +214,7 @@ class RoutesHelper
      * @param string $request_uri
      * @return array
      */
-    public function findValidRoute($request_uri = ''): array
+    public function findValidRoute(string $request_uri = ''): array
     {
         $cache_key = 'route.valid.by.request_uri.';
         $cache_key .= Strings::uriToCache($request_uri);
@@ -222,7 +227,7 @@ class RoutesHelper
         }
         $o_routes     = new RoutesComplexModel($this->o_di);
         $a_search_for = $this->createComparisonUri($request_uri);
-        foreach ($a_search_for as $key => $value) {
+        foreach ($a_search_for as $value) {
             try {
                 $a_results = $o_routes->readByRequestUri($value);
                 if (!empty($a_results[0])) {
@@ -232,7 +237,7 @@ class RoutesHelper
                     return $a_results[0];
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 if ($request_uri === '/') {
                     return [];
                 }
@@ -262,7 +267,7 @@ class RoutesHelper
      * @param string $route_path  required.
      * @return string
      */
-    private function prepareToExplode($request_uri = '', $route_path = ''): string
+    private function prepareToExplode(string $request_uri = '', string $route_path = ''): string
     {
         $meth = __METHOD__ . '.';
         if ($request_uri === '/' || $request_uri === '' || $route_path === '') {
@@ -284,12 +289,13 @@ class RoutesHelper
     }
 
     /**
-     * Gets the groups gor a given route.
+     * Gets the groups for a given route.
      *
      * @param int $route_id
-     * @return array|mixed
+     * @return array
+     * @throws JsonException
      */
-    public function getGroups($route_id = -1)
+    public function getGroups(int $route_id = -1): array
     {
         if ($route_id === -1) {
             return [];
@@ -298,7 +304,7 @@ class RoutesHelper
         if ($this->use_cache) {
             $a_groups_json = $this->o_cache->get($cache_key);
             if (!empty($a_groups_json)) {
-                return json_decode($a_groups_json, true);
+                return json_decode($a_groups_json, true, 512, JSON_THROW_ON_ERROR);
             }
         }
         $o_rgm = new RoutesGroupMapModel($this->o_db);
@@ -311,14 +317,14 @@ class RoutesHelper
                     $a_groups[] = $a_rgm['group_id'];
                 }
                 if ($this->use_cache) {
-                    $json = json_encode($a_groups);
+                    $json = json_encode($a_groups, JSON_THROW_ON_ERROR);
                     $this->o_cache->set($cache_key, $json, 'groups');
                 }
                 return $a_groups;
             }
             return [];
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return [];
         }
     }
@@ -330,11 +336,12 @@ class RoutesHelper
      *
      * @param array $a_groups
      * @return int
+     * @throws JsonException
      */
     public function getMinAuthLevel(array $a_groups = []): int
     {
         $meth = __METHOD__ . '.';
-        $hash = md5(json_encode($a_groups));
+        $hash = md5(json_encode($a_groups, JSON_THROW_ON_ERROR));
         $key  = 'route.minauthlevel.' . $hash;
         if ($this->use_cache) {
             $results = $this->o_cache->get($key);
@@ -370,8 +377,9 @@ class RoutesHelper
      *
      * @param int $route_id if not supplied an auth level of 10 is returned.
      * @return int
+     * @throws JsonException
      */
-    public function getMinAuthLevelForRoute($route_id = -1): int
+    public function getMinAuthLevelForRoute(int $route_id = -1): int
     {
         if ($route_id === -1) {
             return 10;
@@ -415,8 +423,9 @@ class RoutesHelper
      * a_route_parts provides a lot of information regarding the route/page to be displayed.
      *
      * @param string $request_uri
+     * @throws JsonException
      */
-    public function setRouteParts($request_uri = ''): void
+    public function setRouteParts(string $request_uri = ''): void
     {
         $meth          = __METHOD__ . '.';
         $a_route_parts = [
@@ -484,7 +493,7 @@ class RoutesHelper
      *
      * @param string $route_path
      */
-    public function setRoutePath($route_path = ''): void
+    public function setRoutePath(string $route_path = ''): void
     {
         $this->route_path = $route_path;
     }

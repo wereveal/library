@@ -9,10 +9,11 @@ namespace Ritc\Library\Interfaces;
  * Interface for location based helpers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2011-06-14 15:11:26
+ * @version v1.1.0
+ * @date    2021-11-29 17:13:13
  * @change_log
- * - v1.0.0 Initial Version             - 2011-06-14 wer
+ * - v1.1.0 - updated for php8                                  - 2021-11-29 wer
+ * - v1.0.0 - Initial Version                                   - 2011-06-14 wer
  */
 interface LocationInterface
 {
@@ -20,25 +21,25 @@ interface LocationInterface
      * Returns the file directory name.
      * @return mixed
      */
-    public function getFileDirName();
+    public function getFileDirName(): mixed;
 
     /**
      * Returns the file name.
      * @return mixed
      */
-    public function getFileName();
+    public function getFileName(): mixed;
 
     /**
      * Sets the file directory name.
      * @param $value
      * @return mixed
      */
-    public function setFileDirName($value);
+    public function setFileDirName($value): mixed;
 
     /**
      * Sets the file name.
      * @param $value
      * @return mixed
      */
-    public function setFileName($value);
+    public function setFileName($value): mixed;
 }

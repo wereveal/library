@@ -30,31 +30,32 @@ use Twig\TwigTest;
  * allowing multiple twig objects to render the html.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.3.0
- * @date    2019-03-28 13:46:08
+ * @version v3.4.0.beta.1
+ * @date    2021-11-29 14:55:43
+ * @todo    Need to test this seriously since there have been potential hidden changes
  * @change_log
- * - v3.3.0   - Modified to match changes in Twig Namespace                                             - 2019-03-28 wer
- * - v3.2.0   - added a twig test to the factory - inPublic which tests to see if the file exists       - 2018-05-01 wer
- * - v3.1.3   - Minor change in testing                                                                 - 2018-04-19 wer
- * - v3.1.2   - Class renamed elsewhere reflected here                                                  - 2018-04-04 wer
- * - v3.1.0   - Refactoring of TwigModel created the need for changes here.                             - 2017-06-20 wer
- * - v3.0.0   - Renamed getTwig to getTwigByFile and rewrote getTwig to use either getTwigByDb          - 2017-05-15 wer
- *              or getTwigByFile, defaulting to getTwigByFile. getTwigDb was renamed to getTwigByDb
- *              Theoretically backward compatible but the getTwig method was completely rewritten.
- * - v2.1.0   - Added method to create a twig object from database config.                              - 2017-05-13 wer
- * - v2.0.0   - added 2 new create methods, createMultiSource, createFromArray                          - 2017-03-13 wer
- *              getTwig() rewritten to used the new methods but has backwards
- *              compatibility with version 1.
- *              Deleted getLoader as it did not provide any usefulness.
- * - v1.2.0   - changed to allow config file to include a path.                                         - 2017-02-09 wer
- * - v1.1.0   - added the ability to get the loader used to add additional twig namespaces              - 2017-02-08 wer
- * - v1.0.0   - not sure why this is beta. Removed Base abstract class                                  - 09/01/2015 wer
- * - v1.0.0ß2 - moved to the Factories namespace
- * - v1.0.0ß1 - moved to the Services namespace                                                         - 11/15/2014 wer
- * - v0.2.0   - changed the name of the method which is used to create/return the object                - 09/25/2014 wer
- *              and cleaned up some code.
- * - v0.1.1   - changed to implment the changes in Base class                                           - 09/23/2014 wer
- * - v0.1.0   - initial file creation                                                                   - 2013-11-11 wer
+ * - v3.4.0.beta.1  - updated for php8
+ * - v3.3.0         - Modified to match changes in Twig Namespace                                             - 2019-03-28 wer
+ * - v3.2.0         - added a twig test to the factory - inPublic which tests to see if the file exists       - 2018-05-01 wer
+ * - v3.1.3         - Minor change in testing                                                                 - 2018-04-19 wer
+ * - v3.1.2         - Class renamed elsewhere reflected here                                                  - 2018-04-04 wer
+ * - v3.1.0         - Refactoring of TwigModel created the need for changes here.                             - 2017-06-20 wer
+ * - v3.0.0         - Renamed getTwig to getTwigByFile and rewrote getTwig to use either getTwigByDb          - 2017-05-15 wer
+ *                    or getTwigByFile, defaulting to getTwigByFile. getTwigDb was renamed to getTwigByDb
+ *                    Theoretically backward compatible but the getTwig method was completely rewritten.
+ * - v2.1.0         - Added method to create a twig object from database config.                              - 2017-05-13 wer
+ * - v2.0.0         - added 2 new create methods, createMultiSource, createFromArray                          - 2017-03-13 wer
+ *                    getTwig() rewritten to used the new methods but has backwards
+ *                    compatibility with version 1.
+ *                    Deleted getLoader as it did not provide any usefulness.
+ * - v1.2.0         - changed to allow config file to include a path.                                         - 2017-02-09 wer
+ * - v1.1.0         - added the ability to get the loader used to add additional twig namespaces              - 2017-02-08 wer
+ * - v1.0.0         - not sure why this is beta. Removed Base abstract class                                  - 09/01/2015 wer
+ * - v1.0.0ß2       - moved to the Factories namespace
+ * - v0.2.0         - changed the name of the method which is used to create/return the object                - 09/25/2014 wer
+ *                    and cleaned up some code.
+ * - v0.1.1         - changed to implment the changes in Base class                                           - 09/23/2014 wer
+ * - v0.1.0         - initial file creation                                                                   - 2013-11-11 wer
  */
 class TwigFactory
 {
@@ -81,58 +82,48 @@ class TwigFactory
     {
         $meth = __METHOD__ . '.';
         $o_md = new Parsedown();
-        if ($o_md instanceof Parsedown) {
-            $this->o_md = $o_md;
-            try {
-                $o_mde = new ParsedownExtra();
-                if ($o_mde instanceof ParsedownExtra) {
-                    $this->o_mde = $o_mde;
-                }
-            }
-            catch (Exception) {
-                // silently ignore
-            }
+        $this->o_md = $o_md;
+        try {
+            $o_mde = new ParsedownExtra();
+            $this->o_mde = $o_mde;
+        }
+        catch (Exception) {
+            // silently ignore
         }
         try {
             $o_loader = new TwigLoaderFilesystem($a_twig_config['default_path']);
             // $o_loader = new Twig_Loader_Filesystem($a_twig_config['default_path']);
-            if ($o_loader instanceof TwigLoaderFilesystem) {
-                $this->o_loader = $o_loader;
-                $continue = true;
-                foreach ($a_twig_config['additional_paths'] as $path => $namespace ) {
-                    try {
-                        $o_loader->prependPath($path, $namespace);
-                    }
-                    catch (TwigErrorLoader $e) {
-                        /** @noinspection ForgottenDebugOutputInspection */
-                        $msg = 'Unable to load paths with Twig Loader: ' . $e->getMessage() . ' -- ' . $meth;
-                        throw new FactoryException($msg, $e->getCode(), $e);
-                    }
+            $this->o_loader = $o_loader;
+            foreach ($a_twig_config['additional_paths'] as $path => $namespace ) {
+                try {
+                    $o_loader->prependPath($path, $namespace);
+                }
+                catch (TwigErrorLoader $e) {
+                    /** @noinspection ForgottenDebugOutputInspection */
+                    $msg = 'Unable to load paths with Twig Loader: ' . $e->getMessage() . ' -- ' . $meth;
+                    throw new FactoryException($msg, $e->getCode(), $e);
+                }
 
+            }
+            try {
+                $this->o_twig = new TwigEnvironment($o_loader, $a_twig_config['environment_options']);
+                $md_filter = new TwigFilter('md', [$this, 'mdFilter'], ['is_safe' => ['html']]);
+                $this->o_twig->addFilter($md_filter);
+                /** @noinspection PhpTypedPropertyMightBeUninitializedInspection */
+                if ($this->o_mde instanceof ParsedownExtra) {
+                    $mde_filter = new TwigFilter('mde', [$this, 'mdeFilter', ['is_safe' => ['html']]]);
+                    $this->o_twig->addFilter($mde_filter);
                 }
-                if ($continue) {
-                    try {
-                        $this->o_twig = new TwigEnvironment($o_loader, $a_twig_config['environment_options']);
-                        if ($this->o_md instanceof Parsedown) {
-                            $md_filter = new TwigFilter('md', [$this, 'mdFilter'], ['is_safe' => ['html']]);
-                            $this->o_twig->addFilter($md_filter);
-                        }
-                        if ($this->o_mde instanceof ParsedownExtra) {
-                            $mde_filter = new TwigFilter('mde', [$this, 'mdeFilter', ['is_safe' => ['html']]]);
-                            $this->o_twig->addFilter($mde_filter);
-                        }
-                        $inPublic_test = new TwigTest('inPublic', [$this, 'inPublicTest']);
-                        $this->o_twig->addTest($inPublic_test);
-                        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-                            $this->o_twig->addExtension(new TwigExtensionDebug());
-                        }
-                    }
-                    catch (Error $e) {
-                        $msg = 'Twig Environment Error: ' . $e->getMessage() . ' -- ' . $meth;
-                        $err_code = ExceptionHelper::getCodeNumberFactory('instance');
-                        throw new FactoryException($msg, $err_code, $e);
-                    }
+                $inPublic_test = new TwigTest('inPublic', [$this, 'inPublicTest']);
+                $this->o_twig->addTest($inPublic_test);
+                if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
+                    $this->o_twig->addExtension(new TwigExtensionDebug());
                 }
+            }
+            catch (Error $e) {
+                $msg = 'Twig Environment Error: ' . $e->getMessage() . ' -- ' . $meth;
+                $err_code = ExceptionHelper::getCodeNumberFactory('instance');
+                throw new FactoryException($msg, $err_code, $e);
             }
         }
         catch (Error $e) {
@@ -148,10 +139,10 @@ class TwigFactory
      *
      * @param array|string|Di $param_one Optional sort of
      * @param bool|string     $param_two
-     * @return mixed|TwigEnvironment
+     * @return TwigEnvironment
      * @throws FactoryException
      */
-    public static function getTwig(array|string|Di $param_one = '', bool|string $param_two = ''): mixed
+    public static function getTwig(array|string|Di $param_one = '', bool|string $param_two = ''): TwigEnvironment
     {
         if ($param_one instanceof Di) {
             self::$o_di = $param_one;
@@ -222,7 +213,6 @@ class TwigFactory
                     }
                     $a_config['additional_paths'] = $additional_paths;
                     try {
-                        /** @var TwigFactory $o_tf */
                         $o_tf = self::createWithArray($a_config, 'db');
                     }
                     catch (FactoryException $e) {
@@ -284,7 +274,6 @@ class TwigFactory
             }
         }
         else {
-            /** @var TwigFactory $o_tf */
             $o_tf = self::create($config, $namespace);
         }
         return $o_tf->o_twig;
@@ -306,7 +295,7 @@ class TwigFactory
     protected static function create(string $config_file = 'twig_config.php', string $namespace = ''): TwigFactory
     {
         $org_config_file = $config_file;
-        if (strpos($config_file, '/') !== false) {
+        if (str_contains($config_file, '/')) {
             $a_parts = explode('/', $config_file);
             $config_file = $a_parts[count($a_parts) - 1];
         }
@@ -345,11 +334,11 @@ class TwigFactory
         if (!isset(self::$instance[$name])) {
             # No config files specified
             if (empty($a_config_files)) {
-                return self::create('twig_config.php');
+                return self::create();
             }
             if ($use_main_twig) {
                 # Use /src/config/twig_config.php to create the $a_twig_config array
-                $a_twig_config = self::retrieveTwigConfigArray('twig_config.php');
+                $a_twig_config = self::retrieveTwigConfigArray();
             }
             else {
                 # Use the first key=>value pair in $a_config_files to create the $a_twig_config_array
@@ -409,12 +398,7 @@ class TwigFactory
             try {
                 self::$instance[$name] = new TwigFactory($a_twig_config);
             }
-            catch (FactoryException $e) {
-                $msg = 'Unable to create a new TwigFactory: ' . $e->getMessage();
-                $err_code = ExceptionHelper::getCodeNumberFactory('instance');
-                throw new FactoryException($msg, $err_code, $e);
-            }
-            catch (Error $e) {
+            catch (FactoryException | Error $e) {
                 $msg = 'Unable to create a new TwigFactory: ' . $e->getMessage();
                 $err_code = ExceptionHelper::getCodeNumberFactory('instance');
                 throw new FactoryException($msg, $err_code, $e);
@@ -433,7 +417,7 @@ class TwigFactory
      */
     private static function retrieveTwigConfigArray(string $config_file = 'twig_config.php', string $namespace = ''):array
     {
-        if (strpos($config_file, '/') !== false) {
+        if (str_contains($config_file, '/')) {
             $config_w_path = $config_file;
         }
         else {
@@ -478,7 +462,7 @@ class TwigFactory
      * @param string $value
      * @return string
      */
-    public function mdeFilter(string $value = ''):?string
+    public function mdeFilter(string $value = ''): string
     {
         if ($this->o_mde instanceof ParsedownExtra) {
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */

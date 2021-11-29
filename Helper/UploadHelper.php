@@ -12,27 +12,29 @@ use UnexpectedValueException;
  * Helps with uploading files.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.1
- * @date    2021-03-29 17:54:25
+ * @version v3.1.0
+ * @date    2021-11-29 17:00:54
  * @change_log
- * - v3.0.1 - Bug fix                                       - 2021-03-29 wer
- * - v3.0.0 - Moved away from being a static based class    - 2020-10-07 wer
- * - v2.1.0 - added new methods to handle file types not    - 2018-03-29 wer
+ * - v3.1.0 - updated for php8                                  - 2021-11-29 wer
+ * - v3.0.1 - Bug fix                                           - 2021-03-29 wer
+ * - v3.0.0 - Moved away from being a static based class        - 2020-10-07 wer
+ * - v2.1.0 - added new methods to handle file types not        - 2018-03-29 wer
  *            specified in the sort of safe method. Changed
  *            default check for safe file types to new
  *            method, depreciating sortOfSafe method.
- * - v2.0.0 - major rewrite to accommodate multiple files   - 2018-03-23 wer
+ * - v2.0.0 - major rewrite to accommodate multiple files       - 2018-03-23 wer
  *            Backwards compatibility questionable.
- * - v1.0.0 - Initial version                               - 2017-11-10 wer
+ * - v1.0.0 - Initial version                                   - 2017-11-10 wer
  */
 class UploadHelper
 {
     /** @var array  */
-    private $a_allowed_file_types = [];
+    private array $a_allowed_file_types = [];
 
     /**
      * Does all the stuff that is required to upload a single file.
-     * @param array $a_values required $a_values = [
+     *
+     * @param array $a_values  required $a_values = [
      *                        'tmp_name'        => '',
      *                        'error'           => '',
      *                        'size'            => '',
@@ -44,7 +46,7 @@ class UploadHelper
      * @param bool  $only_safe optional, defaults to true. Only allow safe, per self::isAllowedFileType
      * @return bool
      */
-    public function uploadFile(array $a_values = [], $only_safe = true):bool
+    public function uploadFile(array $a_values = [], bool $only_safe = true):bool
     {
         if (empty($a_values)) {
             throw new UnexpectedValueException('Required Values not provided.');
@@ -86,10 +88,10 @@ class UploadHelper
 
         // May be redundant since $_FILES should have already spotted the error.
         $max_filesize = ini_get('upload_max_filesize');
-        if (strpos($max_filesize, 'M') !== false) {
+        if (str_contains($max_filesize, 'M')) {
             $max_filesize = str_replace('M', '000000', $max_filesize);
         }
-        elseif (strpos($max_filesize, 'K') !== false) {
+        elseif (str_contains($max_filesize, 'K')) {
             $max_filesize = str_replace('K', '000', $max_filesize);
         }
         if ($a_values['size'] >= $max_filesize) {
@@ -105,31 +107,23 @@ class UploadHelper
 
     /**
      * Returns the $_FILES error reformatted to more human readable.
+     *
      * @param int $error
      * @return string
      */
-    public function getError($error = -1):?string
+    public function getError(int $error = -1): string
     {
-        switch ($error) {
-            case UPLOAD_ERR_OK:
-                return 'OK';
-            case UPLOAD_ERR_INI_SIZE:
-                return 'The uploaded file exceeds the max filesize: ' . ini_get('upload_max_filesize');
-            case UPLOAD_ERR_FORM_SIZE:
-                return 'The uploaded file exceeds the max upload size: ' . ini_get('post_max_size');
-            case UPLOAD_ERR_PARTIAL:
-                return 'The file was only partially uploaded.';
-            case UPLOAD_ERR_NO_FILE:
-                return 'The file was not uploaded.';
-            case UPLOAD_ERR_NO_TMP_DIR:
-                return 'The setting for the temporary directory is invalid.';
-            case UPLOAD_ERR_CANT_WRITE:
-                return "Can't write to disk.";
-            case UPLOAD_ERR_EXTENSION:
-                return 'An extension stopped the file upload.';
-            default:
-                return 'Unknown error';
-        }
+        return match ($error) {
+            UPLOAD_ERR_OK         => 'OK',
+            UPLOAD_ERR_INI_SIZE   => 'The uploaded file exceeds the max filesize: ' . ini_get('upload_max_filesize'),
+            UPLOAD_ERR_FORM_SIZE  => 'The uploaded file exceeds the max upload size: ' . ini_get('post_max_size'),
+            UPLOAD_ERR_PARTIAL    => 'The file was only partially uploaded.',
+            UPLOAD_ERR_NO_FILE    => 'The file was not uploaded.',
+            UPLOAD_ERR_NO_TMP_DIR => 'The setting for the temporary directory is invalid.',
+            UPLOAD_ERR_CANT_WRITE => "Can't write to disk.",
+            UPLOAD_ERR_EXTENSION  => 'An extension stopped the file upload.',
+            default               => 'Unknown error',
+        };
     }
 
     /**
@@ -138,7 +132,7 @@ class UploadHelper
      * @param string $file_type
      * @return bool
      */
-    public function isAllowedFileType($file_type = ''):bool
+    public function isAllowedFileType(string $file_type = ''):bool
     {
         if (empty($this->a_allowed_file_types)) {
             $this->setAllowedFileTypes();
@@ -153,26 +147,15 @@ class UploadHelper
      * Looks to see if the extension is "semi-safe".
      *
      * @param string $file_type
-     * @deprecated 2020-10-07
      * @return bool
+     *@deprecated 2020-10-07
      */
-    public function isSortOfSafeFileType($file_type = ''):?bool
+    public function isSortOfSafeFileType(string $file_type = ''): bool
     {
-        switch ($file_type) {
-            case 'image/jpg':
-            case 'image/jpeg':
-            case 'image/png':
-            case 'image/gif':
-            case 'audio/mp3':
-            case 'text/plain':
-            case 'audio/wav':
-            case 'image/tif':
-            case 'image/tiff':
-            case 'application/pdf':
-                return true;
-            default:
-                return false;
-        }
+        return match ($file_type) {
+            'image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'audio/mp3', 'text/plain', 'audio/wav', 'image/tif', 'image/tiff', 'application/pdf' => true,
+            default                                                                                                                                   => false,
+        };
     }
 
     /**
@@ -180,8 +163,8 @@ class UploadHelper
      * Can be $_FILES[form_field_name] or $this->reorganizeFilesGlobal[first_one].
      *
      * @param array  $a_upload_values required ['name','type','tmp_name','error','size']
-     * @param string $file_path optional, defaults to '/files'
-     * @param bool   $only_safe optional, defaults to true
+     * @param string $file_path       optional, defaults to '/files'
+     * @param bool   $only_safe       optional, defaults to true
      * @return array $a_values = [
      *                        'name'            => '',
      *                        'type'            => '',
@@ -192,8 +175,9 @@ class UploadHelper
      *                        'final_file_name' => '',
      *                        'save_path'       => ''
      *                        ]
+     * @noinspection PhpUndefinedConstantInspection
      */
-    public function createUploadValues(array $a_upload_values = [], $file_path = '/files', $only_safe = true):array
+    public function createUploadValues(array $a_upload_values = [], string $file_path = '/files', bool $only_safe = true):array
     {
         if (   empty($a_upload_values)
             || empty($a_upload_values['name'])
@@ -299,7 +283,7 @@ class UploadHelper
      *
      * @param string $value
      */
-    public function addAllowedFileType($value = ''):void
+    public function addAllowedFileType(string $value = ''):void
     {
         if (!empty($value) && !isset($this->a_allowed_file_types['value'])) {
             $this->a_allowed_file_types[] = $value;

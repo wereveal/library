@@ -9,9 +9,10 @@ namespace Ritc\Library\Helper;
  * Various helper functions for views.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 2.1.0
- * @date    2018-05-16 19:37:35
+ * @version 2.2.0
+ * @date    2021-11-29 17:03:38
  * @change_log
+ * - v2.2.0 - updated to php8                   - 2021-11-29 wer
  * - v2.1.0 - Added addMessage method           - 2018-05-16 wer
  * - v2.0.0 - Renamed 'the' method              - 2017-06-20 wer
  * - v1.1.1 - little sensitization of values    - 11/05/2015 wer
@@ -30,7 +31,7 @@ class ViewHelper
      * @param string $message_type Optional, defaults to message type of original message, or info if none provided.
      * @return array
      */
-    public static function addMessage(array $a_message = [], $message = '', $message_type = ''):array
+    public static function addMessage(array $a_message = [], string $message = '', string $message_type = ''):array
     {
         if (empty($message)) {
             return $a_message;
@@ -42,21 +43,14 @@ class ViewHelper
         $new_message = empty($a_message['message'])
             ? $message
             : $a_message['message'] . '<br>' . $message;
-        switch ($message_type) {
-            case 'success':
-                return self::successMessage($new_message);
-            case 'warning':
-                return self::warningMessage($new_message);
-            case 'error':
-                return self::errorMessage($new_message);
-            case 'failure':
-                return self::failureMessage($new_message);
-            case 'code':
-                return self::codeMessage($new_message);
-            case 'info':
-            default:
-                return self::infoMessage($new_message);
-        }
+        return match ($message_type) {
+            'success' => self::successMessage($new_message),
+            'warning' => self::warningMessage($new_message),
+            'error'   => self::errorMessage($new_message),
+            'failure' => self::failureMessage($new_message),
+            'code'    => self::codeMessage($new_message),
+            default   => self::infoMessage($new_message),
+        };
     }
 
     /**
@@ -149,7 +143,7 @@ class ViewHelper
 				$alt_text  = $alt_text  !== '' ? $alt_text  : 'Code';
 				$image_src = $image_src !== '' ? $image_src : $image_dir . '/code.png';
                 $msg_class = $msg_class !== '' ? $msg_class : 'message code';
-                if (strpos($message, '<pre>') === false) {
+                if (!str_contains($message, '<pre>')) {
                     $message = '<pre>' . $message . '</pre>';
                 }
 				break;
@@ -173,10 +167,11 @@ class ViewHelper
 
     /**
      * Lazy man's way of creating array used by self::fullMessage method.
+     *
      * @param string $message
      * @return array
      */
-    public static function codeMessage($message = ''):array
+    public static function codeMessage(string $message = ''):array
     {
         if ($message === '') {
             $message = 'Insert code here.';
@@ -189,10 +184,11 @@ class ViewHelper
 
     /**
      * Lazy man's way of creating array used by self::fullMessage method.
+     *
      * @param string $message
      * @return array
      */
-    public static function errorMessage($message = ''):array
+    public static function errorMessage(string $message = ''):array
     {
         if ($message === '') {
             $message = 'An Error Has Occured. Please Try Again.';
@@ -205,10 +201,11 @@ class ViewHelper
 
 	/**
 	 * Lazy man's way of creating array used by self::fullMessage method.
+	 *
 	 * @param string $message
 	 * @return array
 	 */
-	public static function failureMessage($message = ''):array
+	public static function failureMessage(string $message = ''):array
     {
 		if ($message === '') {
 			$message = 'A Problem Has Occured. Please Try Again.';
@@ -221,10 +218,11 @@ class ViewHelper
 
     /**
      * Lazy man's way of creating array used by self::fullMessage method.
+     *
      * @param string $message
      * @return array
      */
-    public static function infoMessage($message = ''):array
+    public static function infoMessage(string $message = ''):array
     {
         if ($message === '') {
             $message = 'Insert helpful info here.';
@@ -237,10 +235,11 @@ class ViewHelper
 
 	/**
 	 * Lazy man's way of creating array used by self::fullMessage method.
+	 *
 	 * @param string $message
 	 * @return array
 	 */
-	public static function successMessage($message = ''):array
+	public static function successMessage(string $message = ''):array
     {
 		if ($message === '') {
 			$message = 'Success!';
@@ -253,10 +252,11 @@ class ViewHelper
 
     /**
      * Lazy man's way of creating array used by self::fullMessage method.
+     *
      * @param string $message
      * @return array
      */
-    public static function warningMessage($message = ''):array
+    public static function warningMessage(string $message = ''):array
     {
         if ($message === '') {
             $message = 'A Problem Has Occured. Please Try Again.';

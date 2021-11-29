@@ -16,10 +16,13 @@ use Ritc\Library\Traits\LogitTraits;
  * Abstract which gives a basic setup for a model class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.3.0
+ * @version v1.4.0
  * @date    2021-11-26 13:55:54
  * @change_log
- * - v1.3.0         - compatibility with php 8                                  - 2021-11-26 wer
+ * - v1.4.0         - changed property a_do_not_change to a_immutable           - 2021-11-29 wer
+ *                    to match most children which extends this abstract
+ *                    per compatibility with php8
+ * - v1.3.0         - compatibility with php8                                   - 2021-11-26 wer
  * - v1.2.0         - Added allow_pin to create as required by interface        - 2018-10-24 wer
  * - v1.1.0         - Changed delete to verify the record is not immutable      - 2018-06-15 wer
  * - v1.0.0         - Initial Production version                                - 2018-06-06 wer
@@ -90,17 +93,16 @@ abstract class ModelAbstract implements ModelInterface
     /**
      * Update for a record using the values provided.
      *
-     * @param array  $a_values        required
-     * @param array  $a_do_not_change optional, list of field names which should be immutable.
+     * @param array  $a_values    required
+     * @param array  $a_immutable optional, list of field names which should be immutable.
      * @return bool
      * @throws ModelException
      */
-    public function update(array $a_values = [], array $a_do_not_change = []):bool
+    public function update(array $a_values = [], array $a_immutable = []):bool
     {
-        if (!empty($this->immutable_field) && !empty($a_do_not_change)) {
-            $results = $this->fixUpdateValues($a_values, $this->immutable_field , $a_do_not_change);
+        if (!empty($this->immutable_field) && !empty($a_immutable)) {
+            $results = $this->fixUpdateValues($a_values, $this->immutable_field , $a_immutable);
             if ($results !== false) {
-                /** @var array $results */
                 $a_values = $results;
             }
         }

@@ -1,4 +1,13 @@
 <?php
+/**
+ * @noinspection PhpPossiblePolymorphicInvocationInspection
+ * @noinspection PhpUndefinedConstantInspection
+ */
+
+/**
+ * Class ImportDataHelper
+ * @package Ritc_Library
+ */
 namespace Ritc\Library\Helper;
 
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate as PS_Coord;
@@ -6,16 +15,26 @@ use PhpOffice\PhpSpreadsheet\Exception as PS_Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception as PSR_Exception;
 
+/**
+ * Helper for importing data into PhpOffice\PhpSpreadsheet instance.
+ *
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version 1.0.0-alpha.1
+ * @date    2021-11-29 16:09:26
+ * @change_log
+ * - v1.0.0-alpha.1 - updated for php8                          - 2021-11-29 wer
+ * - v1.0.0-alpha.0 - initial
+ */
 class ImportDataHelper
 {
     /** @var array */
-    private $a_keys;
+    private array $a_keys;
     /** @var string */
-    private $delimiter;
+    private string $delimiter;
     /** @var string */
-    private $enclosure;
+    private string $enclosure;
     /** @var string */
-    private $import_path;
+    private string $import_path;
 
     /**
      * ImportDataHelper constructor.
@@ -41,12 +60,12 @@ class ImportDataHelper
     {
         $file_w_path = $this->import_path . '/' . $file_name;
         $a_file_name_parts = explode('.', $file_name);
-        $ext = $a_file_name_parts[\count($a_file_name_parts) - 1];
+        $ext = $a_file_name_parts[count($a_file_name_parts) - 1];
         $reader_type = ucwords($ext);
         try {
             $o_reader = IOFactory::createReader($reader_type);
         }
-        catch (PSR_Exception $e) {
+        catch (PSR_Exception) {
             return [];
         }
         if ($ext === 'xslx' || $ext === 'xsl') {
@@ -56,25 +75,15 @@ class ImportDataHelper
             $o_reader->setDelimiter($this->delimiter);
             $o_reader->setEnclosure($this->enclosure);
         }
-        try {
-            $o_file = $o_reader->load($file_w_path);
-        }
-        catch (PSR_Exception $e) {
-            return [];
-        }
-        try {
-            $o_work = $o_file->getActiveSheet();
-        }
-        catch (PS_Exception $e) {
-            return [];
-        }
+        $o_file = $o_reader->load($file_w_path);
+        $o_work = $o_file->getActiveSheet();
         // $the_string = '';
         $highest_row = $o_work->getHighestRow();
         $highest_col = $o_work->getHighestColumn();
         try {
             $highest_col_index = PS_Coord::columnIndexFromString($highest_col);
         }
-        catch (PS_Exception $e) {
+        catch (PS_Exception) {
             return [];
         }
         $a_db_values = [];

@@ -7,6 +7,7 @@
 
 namespace Ritc\Library\Models;
 
+use JsonException;
 use Ritc\Library\Abstracts\ModelAbstract;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
@@ -61,7 +62,7 @@ class ConstantsModel extends ModelAbstract
      * @param array $a_values
      * @param bool  $allow_pin
      * @return array
-     * @throws ModelException
+     * @throws ModelException|JsonException
      */
     public function create(array $a_values = [], bool $allow_pin = false):array
     {
@@ -153,6 +154,7 @@ class ConstantsModel extends ModelAbstract
      * @pre the fallback_constants_array.php file exists and has the desired constants.
      * @return bool
      * @throws ModelException
+     * @noinspection PhpUndefinedConstantInspection
      */
     public function createNewConstants():bool
     {

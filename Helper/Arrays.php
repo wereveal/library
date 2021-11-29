@@ -9,33 +9,34 @@ namespace Ritc\Library\Helper;
  * Does stuff with arrays.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 3.4.0
- * @date    2018-05-18 13:45:25
+ * @version 3.5.0
+ * @date    2021-11-29 15:00:20
  * @change_log
- * - v3.4.0 - Changed method to remove blank pairs to not required allowed_keys           - 2018-05-18 wer
- * - v3.3.0 - Added new method to do muliple sort on database array                       - 2018-04-09 wer
- * - v3.2.0 - New method to removed key/value pairs where value is empty                  - 2017-12-05 wer
- * - v3.1.0 - Moved a couple methods from DbCommonTraits to Arrays                        - 2016-09-23 wer
- * - v3.0.0 - Depreciated clearArrayValues in favor of two new methods.                   - 2016-09-19 wer
+ * - v3.5.0 - updated to php8, maybe fixed previously undetected bug                    - 2021-11-29 wer
+ * - v3.4.0 - Changed method to remove blank pairs to not required allowed_keys         - 2018-05-18 wer
+ * - v3.3.0 - Added new method to do muliple sort on database array                     - 2018-04-09 wer
+ * - v3.2.0 - New method to removed key/value pairs where value is empty                - 2017-12-05 wer
+ * - v3.1.0 - Moved a couple methods from DbCommonTraits to Arrays                      - 2016-09-23 wer
+ * - v3.0.0 - Depreciated clearArrayValues in favor of two new methods.                 - 2016-09-19 wer
  * -          Arrays::cleanValues() by default removes php and mysql commands from
  * -          the values in the array. Optionally it can call Arrays::encodeValues().
  * -          Arrays::encodeValues() encodes the values of the array using filter_var
  * -          and with the FILTER_SANITIZE_STRING filter and optional flags.
- * - v2.8.0 - Added new method inAssocArrayRecursive()                                    - 2016-04-12 wer
- * - v2.7.0 - Changed entity coding/decoding to be definable via parameter.               - 11/25/2015 wer
+ * - v2.8.0 - Added new method inAssocArrayRecursive()                                  - 2016-04-12 wer
+ * - v2.7.0 - Changed entity coding/decoding to be definable via parameter.             - 11/25/2015 wer
  * -          Defaults to ENT_QUOTES.
- * - v2.6.0 - new method, moved from Tester class, can be more generic.                   - 11/02/2015 wer
- * - v2.5.0 - new method, createRequiredPairs                                             - 10/06/2015 wer
- * - v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                        - 09/12/2015 wer
- * - v2.3.0 - New method, inArrayRecursive                                                - 09/10/2015 wer
- * - v2.2.0 - Removed use of abstract class Base                                          - 09/03/2015 wer
- * - v2.1.0 - After looking at the inconsistency, changed to be more consistent           - 07/31/2015 wer
+ * - v2.6.0 - new method, moved from Tester class, can be more generic.                 - 11/02/2015 wer
+ * - v2.5.0 - new method, createRequiredPairs                                           - 10/06/2015 wer
+ * - v2.4.0 - new methods, isArrayOfAssocArrays and hasBlankValues                      - 09/12/2015 wer
+ * - v2.3.0 - New method, inArrayRecursive                                              - 09/10/2015 wer
+ * - v2.2.0 - Removed use of abstract class Base                                        - 09/03/2015 wer
+ * - v2.1.0 - After looking at the inconsistency, changed to be more consistent         - 07/31/2015 wer
  * -          Also changed variable name to be more descriptive than array.
- * - v2.0.0 - changed methods to be static                                                - 01/27/2015 wer
- * - v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it         - 12/05/2014 wer
- * - v1.2.0 - new method added                                                            - 12/30/2013 wer
- * - v1.1.0 - namespace changes                                                           - 07/30/2013 wer
- * - v1.0.0 - moved array methods from class Strings to here                              - 03/27/2013 wer
+ * - v2.0.0 - changed methods to be static                                              - 01/27/2015 wer
+ * - v1.3.0 - added stripUnsafePhp method and modified cleanArrayValues to use it       - 12/05/2014 wer
+ * - v1.2.0 - new method added                                                          - 12/30/2013 wer
+ * - v1.1.0 - namespace changes                                                         - 07/30/2013 wer
+ * - v1.0.0 - moved array methods from class Strings to here                            - 03/27/2013 wer
  */
 class Arrays
 {
@@ -51,7 +52,7 @@ class Arrays
      * @param int   $ent_flag            sets the entity coding defaults to ENT_QUOTES
      * @return array                     the cleaned array
      */
-    public static function cleanArrayValues(array $a_pairs = [], array $a_allowed_keys = [], $unsafe_php_commands = true, $ent_flag = ENT_QUOTES):array
+    public static function cleanArrayValues(array $a_pairs = [], array $a_allowed_keys = [], bool $unsafe_php_commands = true, int $ent_flag = ENT_QUOTES):array
     {
         $a_clean = [];
         if (count($a_pairs) === 0) {
@@ -89,7 +90,7 @@ class Arrays
      * @return array
      */
     public static function cleanValues(array $a_pairs = [], array $a_allowed_keys = [], array $a_allowed_commands =
-    [], $sanitize_flags = null):array
+    [], int                                  $sanitize_flags = null):array
     {
         if (empty($a_pairs)) {
             return [];
@@ -150,7 +151,7 @@ class Arrays
                     return false;
                 }
             }
-            elseif ($a_expected_values[$key] !== $a_check_values[$key]) {
+            elseif ($value !== $a_check_values[$key]) {
                 return false;
             }
         }
@@ -160,12 +161,12 @@ class Arrays
     /**
      * Returns an array which has only the required keys and has all of them.
      *
-     * @param array $a_pairs
-     * @param array $a_required_keys
-     * @param mixed $delete_undesired
+     * @param array     $a_pairs
+     * @param array     $a_required_keys
+     * @param bool|null $delete_undesired
      * @return array
      */
-    public static function createRequiredPairs(array $a_pairs = [], array $a_required_keys = [], $delete_undesired = false):array
+    public static function createRequiredPairs(array $a_pairs = [], array $a_required_keys = [], bool|null $delete_undesired = false):array
     {
         if ($delete_undesired) {
             $a_pairs = self::removeUndesiredPairs($a_pairs, $a_required_keys);
@@ -188,7 +189,7 @@ class Arrays
      * @param int   $ent_flag sets the entity decoding defaults to ENT_QUOTES
      * @return array
      */
-    public static function decodeEntities(array $a_pairs = [], $ent_flag = ENT_QUOTES):array
+    public static function decodeEntities(array $a_pairs = [], int $ent_flag = ENT_QUOTES):array
     {
         $a_clean = [];
         if (count($a_pairs) === 0) {
@@ -214,7 +215,7 @@ class Arrays
      * @param int   $sanitize_flags Optional, defaults to 0 (i.e. default filtering).
      * @return array
      */
-    public static function encodeValues(array $a_pairs = [], $sanitize_flags = 0):array
+    public static function encodeValues(array $a_pairs = [], int $sanitize_flags = 0):array
     {
         if (empty($a_pairs)) {
             return $a_pairs;
@@ -413,9 +414,9 @@ class Arrays
      * @param string $needle     Required.
      * @param array  $a_haystack Required.
      * @param bool   $strict     Optional.
-     * @return mixed|string|int|bool key of the found or false
+     * @return string|int|bool   key of the found or false
      */
-    public static function inArrayRecursive(string $needle = '', array $a_haystack = [], bool $strict = false)
+    public static function inArrayRecursive(string $needle = '', array $a_haystack = [], bool $strict = false): string|int|bool
     {
         if ($needle === '' || $a_haystack === []) {
             return false;
@@ -442,10 +443,10 @@ class Arrays
      * Determines that the value passed in is an associative array with all non-numeric keys.
      * Also determines that the array is not empty.
      *
-     * @param mixed $a_pairs
+     * @param null|array $a_pairs
      * @return bool
      */
-    public static function isAssocArray($a_pairs = []):bool
+    public static function isAssocArray(null|array $a_pairs = []):bool
     {
         return (
             is_array($a_pairs)
@@ -480,9 +481,9 @@ class Arrays
      *
      * @param array $a_data
      * @param array $a_criteria
-     * @return array|mixed
+     * @return mixed
      */
-    public static function multiSort(array $a_data = [], array $a_criteria = [])
+    public static function multiSort(array $a_data = [], array $a_criteria = []): mixed
     {
         if (empty($a_data) || empty($a_criteria)) {
             return $a_data;
@@ -505,7 +506,7 @@ class Arrays
             else {
                 $next = true;
             }
-            $this_criteria = $sort_criteria = 'ASC'
+            $this_criteria = $sort_criteria === 'ASC'
                 ? SORT_ASC
                 : SORT_DESC;
             $eval_statement .= '$a_columns[' . "'" . $column_name . "'], " . $this_criteria;
