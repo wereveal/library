@@ -13,10 +13,10 @@ namespace Ritc\Library\Helper;
  * However, this one uses all static functions.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.2.0
+ * @version v2.0.0
  * @date    2021-11-29 16:14:08
  * @change_log
- * - v1.2.0 - updated for php8                                      - 2021-11-29 wer
+ * - v2.0.0 - updated for php8                                      - 2021-11-29 wer
  * - v1.1.0 - Removed references to constants of THEME variations   - 2018-04-12 wer
  * - v1.0.0 - Initial Version                                       - 2017-02-08 wer
  */

@@ -11,10 +11,10 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class RoutesEntity - Basic accessors for a routes entity.
  *
  * @author  William E Reveal
- * @version v1.1.0
+ * @version v2.0.0
  * @date    2021-11-26 16:24:50
  * @change_log
- * - v1.1.0 - updated for php8                                  - 2021-11-26 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
  * - v1.0.0 - Initial version                                   - 2015-10-06 wer
  */
 class RoutesEntity implements EntityInterface

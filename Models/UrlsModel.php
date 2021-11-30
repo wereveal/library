@@ -15,9 +15,10 @@ use Ritc\Library\Services\DbModel;
  * Handles all the CRUD for the urls table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
- * @date    2018-06-14 10:58:23
+ * @version v3.0.0
+ * @date    2021-11-30 15:12:20
  * @change_log
+ * - v3.0.0         - updated for php8 only                 - 2021-11-30 wer
  * - v2.0.0         - Refactored to extend ModelAbstact     - 2018-06-14 wer
  * - v1.1.1         - ModelException changes reflected here - 2017-12-12 wer
  * - v1.1.0         - should have stayed in beta            - 2017-06-19 wer
@@ -54,12 +55,13 @@ class UrlsModel extends ModelAbstract
      * @param int|array $id
      * @return bool
      * @throws ModelException
+     * @noinspection PhpUndefinedConstantInspection
      */
     public function delete($id = -1):bool
     {
         if (Arrays::isArrayOfAssocArrays($id)) {
             $a_search_for_route = [];
-            foreach ($id as $key => $a_record) {
+            foreach ($id as $a_record) {
                 if ($this->isValidId($a_record['url_id'])) {
                     if ($this->isImmutable($a_record['url_id'])) {
                         $immut_err_code = ExceptionHelper::getCodeNumberModel('delete immutable');
@@ -133,7 +135,7 @@ class UrlsModel extends ModelAbstract
      * @return mixed
      * @throws ModelException
      */
-    public function readNoRoute()
+    public function readNoRoute(): mixed
     {
         $sql = "
             SELECT * from {$this->lib_prefix}urls as u
@@ -158,7 +160,7 @@ class UrlsModel extends ModelAbstract
      * @return mixed
      * @throws ModelException
      */
-    public function readNotInNavgroup($navgroup_id = -1)
+    public function readNotInNavgroup(int $navgroup_id = -1): mixed
     {
         $sql = /** @lang text */
         "

@@ -11,9 +11,9 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class PeopleEntity
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.0
+ * @version v3.0.0
  * @date    2021-11-26 16:22:17
- * - v2.1.0 - updated for php8                                                      - 2021-11-26 wer
+ * - v3.0.0 - updated for php8                                                      - 2021-11-26 wer
  * - v2.0.0 - changed values of is_active, is_logged_in, is_immutable to string     - 2017-12-13 wer
  * - v1.1.0 - changed is_default to is_immutable to be more descriptive             - 09/03/2015 wer
  * - v1.0.0 - finalized                                                             - 07/29/2015 wer

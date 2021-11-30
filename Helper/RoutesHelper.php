@@ -20,10 +20,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Helper for routing.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.2.0
+ * @version v4.0.0
  * @date    2021-11-29 16:57:46
  * @change_log
- * - v3.2.0   - updated for php8                                    - 2021-11-29 wer
+ * - v4.0.0   - updated for php8                                    - 2021-11-29 wer
  * - v3.1.0   - Bug fix that added value to a_route_parts           - 2019-01-28 wer
  * - v3.0.0   - Changed to use cache for some database values       - 2018-05-14 wer
  * - v2.1.0   - Changed to handle ModelExceptions                   - 2017-06-20 wer

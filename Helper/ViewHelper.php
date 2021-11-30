@@ -9,10 +9,10 @@ namespace Ritc\Library\Helper;
  * Various helper functions for views.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 2.2.0
+ * @version 3.0.0
  * @date    2021-11-29 17:03:38
  * @change_log
- * - v2.2.0 - updated to php8                   - 2021-11-29 wer
+ * - v3.0.0 - updated to php8                   - 2021-11-29 wer
  * - v2.1.0 - Added addMessage method           - 2018-05-16 wer
  * - v2.0.0 - Renamed 'the' method              - 2017-06-20 wer
  * - v1.1.1 - little sensitization of values    - 11/05/2015 wer

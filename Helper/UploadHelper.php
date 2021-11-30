@@ -12,10 +12,10 @@ use UnexpectedValueException;
  * Helps with uploading files.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.1.0
+ * @version v4.0.0
  * @date    2021-11-29 17:00:54
  * @change_log
- * - v3.1.0 - updated for php8                                  - 2021-11-29 wer
+ * - v4.0.0 - updated for php8                                  - 2021-11-29 wer
  * - v3.0.1 - Bug fix                                           - 2021-03-29 wer
  * - v3.0.0 - Moved away from being a static based class        - 2020-10-07 wer
  * - v2.1.0 - added new methods to handle file types not        - 2018-03-29 wer

@@ -5,7 +5,6 @@
  */
 namespace Ritc\Library\Abstracts;
 
-use JsonException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Interfaces\ModelInterface;
@@ -16,13 +15,13 @@ use Ritc\Library\Traits\LogitTraits;
  * Abstract which gives a basic setup for a model class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.4.0
+ * @version v2.1.0
  * @date    2021-11-26 13:55:54
  * @change_log
- * - v1.4.0         - changed property a_do_not_change to a_immutable           - 2021-11-29 wer
+ * - v2.1.0         - changed property a_do_not_change to a_immutable           - 2021-11-29 wer
  *                    to match most children which extends this abstract
  *                    per compatibility with php8
- * - v1.3.0         - compatibility with php8                                   - 2021-11-26 wer
+ * - v2.0.0         - compatibility with php8                                   - 2021-11-26 wer
  * - v1.2.0         - Added allow_pin to create as required by interface        - 2018-10-24 wer
  * - v1.1.0         - Changed delete to verify the record is not immutable      - 2018-06-15 wer
  * - v1.0.0         - Initial Production version                                - 2018-06-06 wer
@@ -43,7 +42,7 @@ abstract class ModelAbstract implements ModelInterface
      *                         to true and specifying the value. Otherwise,
      *                         strips out any values attempted to be set.
      * @return array The ids of new records.
-     * @throws ModelException|JsonException
+     * @throws ModelException
      */
     public function create(array $a_values = [], bool $allow_pin = false):array
     {
@@ -122,7 +121,7 @@ abstract class ModelAbstract implements ModelInterface
      * @return bool
      * @throws ModelException
      */
-    public function delete($id = -1):bool
+    public function delete(int $id = -1):bool
     {
         if (!empty($this->immutable_field)) {
             try {

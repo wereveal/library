@@ -20,9 +20,10 @@ use Ritc\Library\Traits\LogitTraits;
  * For read/write access to the database based on PDO.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v5.3.0
- * @date    2018-09-17 17:16:20
+ * @version v6.0.0
+ * @date    2021-11-30 15:25:47
  * @change_log
+ * - v6.0.0 - Updated for php 8 standards only                                              - 2021-11-30 wer
  * - v5.3.0 - Code clean up based on code inspections                                       - 2020-08-24 wer
  * - v5.2.2 - Bug fixes                                                                     - 2018-09-17 wer
  * - v5.2.0 - Method added to get the pdo object                                            - 2017-12-14 wer
@@ -75,26 +76,26 @@ class DbModel
     use DbTraits;
 
     /** @var array $a_new_ids */
-    private $a_new_ids = [];
+    private array $a_new_ids = [];
     /** @var int $affected_rows */
-    private $affected_rows;
+    private int $affected_rows;
     /** @var PDO $o_pdo */
-    private $o_pdo;
+    private PDO $o_pdo;
     /** @var string $pgsql_sequence_name */
-    private $pgsql_sequence_name = '';
+    private string $pgsql_sequence_name = '';
     /** @var mixed $sql_error_message */
-    private $sql_error_message;
+    private mixed $sql_error_message;
     /** @var int $success */
-    private $success;
+    private int $success;
 
     /**
      * On creating a new object, certain things happen.
      *
-     * @param  PDO   $o_pdo       can be from PdoFactory or from a direct new PDO
+     * @param  PDO   $o_pdo        can be from PdoFactory or from a direct new PDO
      *                             This allows it to be independent of the PdoFactory.
-     * @param  string $config_file name of the config file which is a returned array
+     * @param string $config_file  name of the config file which is a returned array
      */
-    public function __construct(PDO $o_pdo, $config_file = 'db_config.php')
+    public function __construct(PDO $o_pdo, string $config_file = 'db_config.php')
     {
         $this->createDbParams($config_file);
         $this->o_pdo = $o_pdo;
@@ -115,7 +116,7 @@ class DbModel
      * @internal param $array @a_table_info needed only if PostgreSQL is being used, Default array()
      *                             ['table_name' => '', 'column_name' => '', 'schema_name' => '']
      */
-    public function insert($the_query = '', array $a_values = [], array $a_table_info = []):bool
+    public function insert(string $the_query = '', array $a_values = [], array $a_table_info = []):bool
     {
         $meth = __METHOD__ . '.';
         if ($the_query === '') {
@@ -188,10 +189,10 @@ class DbModel
      *                          format preferred e.g., [':id'=>1, ':name'=>'fred'] but optional.
      * @param string $type      optional, type of results, num, both, assoc which
      *                          specifies the PDO formats, defaults to assoc
-     * @return mixed results of search or false
+     * @return array|bool results of search or false
      * @throws ModelException
      */
-    public function search($the_query = '', array $a_values = [], $type = 'assoc')
+    public function search(string $the_query = '', array $a_values = [], string $type = 'assoc'): array|bool
     {
         $meth = __METHOD__ . '.';
         $fetch_style = $this->determineFetchStyle($type);
@@ -230,8 +231,7 @@ class DbModel
             try {
                 $o_pdo_stmt = $this->prepare($the_query);
                 try {
-                    $a_results = $this->searchPrepared($a_values, $o_pdo_stmt, $type);
-                    return $a_results;
+                    return $this->searchPrepared($a_values, $o_pdo_stmt, $type);
                 }
                 catch (ModelException $e) {
                     $this->error_message = $e->errorMessage();
@@ -261,7 +261,7 @@ class DbModel
      * @return bool success or failure
      * @throws ModelException
      */
-    public function update($the_query = '', array $a_values = [], $single_record = true):?bool
+    public function update(string $the_query = '', array $a_values = [], bool $single_record = true): bool
     {
         try {
             return $this->mdQuery($the_query, $a_values, $single_record);
@@ -281,7 +281,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function delete($the_query = '', array $a_values = [], $single_record = true):?bool
+    public function delete(string $the_query = '', array $a_values = [], bool $single_record = true): bool
     {
         try {
             return $this->mdQuery($the_query, $a_values, $single_record);
@@ -300,7 +300,7 @@ class DbModel
      * @return int
      * @throws ModelException
      */
-    public function rawExec($the_query):?int
+    public function rawExec(string $the_query): int
     {
         try {
             return $this->o_pdo->exec($the_query);
@@ -319,7 +319,7 @@ class DbModel
      * @return array
      * @throws ModelException
      */
-    public function rawQuery($the_query = ''):?array
+    public function rawQuery(string $the_query = ''): array
     {
         if ($the_query === '') {
             $this->error_message = 'Missing the query to query.';
@@ -349,7 +349,7 @@ class DbModel
      * @return mixed value of the property
      * @note - this is normally set to private so not to be used
      */
-    protected function getVar($var_name)
+    protected function getVar(string $var_name): mixed
     {
         return $this->$var_name;
     }
@@ -357,9 +357,9 @@ class DbModel
     /**
      * GETter for the class property affected_rows.
      *
-     * @return mixed
+     * @return int
      */
-    public function getAffectedRows()
+    public function getAffectedRows(): int
     {
         return $this->affected_rows;
     }
@@ -408,9 +408,9 @@ class DbModel
     /**
      * GETter for class property success.
      *
-     * @return mixed
+     * @return int
      */
-    public function getSuccess()
+    public function getSuccess(): int
     {
         return $this->success;
     }
@@ -420,7 +420,7 @@ class DbModel
      *
      * @return mixed
      */
-    public function getSqlErrorMessage()
+    public function getSqlErrorMessage(): mixed
     {
         return $this->sql_error_message;
     }
@@ -431,7 +431,7 @@ class DbModel
      * @param string $value
      * @return bool
      */
-    public function setNewId($value = ''):bool
+    public function setNewId(string $value = ''):bool
     {
         if ($value !== '') {
             $this->a_new_ids[] = $value;
@@ -450,7 +450,7 @@ class DbModel
      *     'column_name' value optional but recommended, defaults to 'id'
      *     'schema'      value optional, defaults to 'public' \endverbatim
      */
-    public function setPgsqlSequenceName(array $a_table_info = []):?bool
+    public function setPgsqlSequenceName(array $a_table_info = []): bool
     {
         if (empty($a_table_info) || empty($a_table_info['table_name'])) {
             $this->error_message = 'Missing required values.';
@@ -485,9 +485,9 @@ class DbModel
     /**
      * Sets the class propery error_message to a formated string.
      *
-     * @param $pdo null|PDO|PDOStatement
+     * @param $pdo PDO|PDOStatement|null
      */
-    public function setSqlErrorMessage($pdo = null):void
+    public function setSqlErrorMessage(PDO|PDOStatement $pdo = null):void
     {
         if ($pdo instanceof PDOStatement || $pdo instanceof PDO) {
             $a_error_stuff = $pdo->errorInfo();
@@ -503,10 +503,10 @@ class DbModel
     /**
      * Sets and gets the sql_error_message property.
      *
-     * @param $pdo null|PDO|PDOStatement
+     * @param $pdo PDO|PDOStatement|null
      * @return string
      */
-    public function retrieveFormattedSqlErrorMessage($pdo = null):string
+    public function retrieveFormattedSqlErrorMessage(PDO|PDOStatement $pdo = null):string
     {
         if ($pdo !== null) {
             $this->setSqlErrorMessage($pdo);
@@ -521,11 +521,11 @@ class DbModel
      * Retrieves the raw sql errors.
      * In the format of ['SQLSTATE Error Code', 'Driver Error Code', 'Driver Error Message'].
      *
-     * @param $pdo null|PDO|PDOStatement
+     * @param $pdo PDO|PDOStatement|null
      * @return array
      * @throws ModelException
      */
-    public function retrieveRawSqlErrorInfo($pdo = null):?array
+    public function retrieveRawSqlErrorInfo(PDO|PDOStatement $pdo = null): array
     {
         if ($pdo instanceof PDOStatement || $pdo instanceof PDO) {
             try {
@@ -567,7 +567,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function bindValues(array $a_values = [], PDOStatement $o_pdo_stmt = null):?bool
+    public function bindValues(array $a_values = [], PDOStatement $o_pdo_stmt = null): bool
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
@@ -584,7 +584,7 @@ class DbModel
                 try {
                     $o_pdo_stmt->bindValue($key, $value);
                 }
-                catch (PDOException $e) {
+                catch (PDOException) {
                     $a_error = $o_pdo_stmt->errorInfo();
                     $this->error_message = $a_error[2];
                     throw new ModelException($this->error_message, 18);
@@ -598,7 +598,7 @@ class DbModel
                 try {
                     $o_pdo_stmt->bindValue($x++, $value);
                 }
-                catch (PDOException $e) {
+                catch (PDOException) {
                     $a_error = $o_pdo_stmt->errorInfo();
                     $this->error_message = $a_error[2];
                     throw new ModelException($this->error_message, 18);
@@ -617,7 +617,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function closeCursor(PDOStatement $o_pdo_stmt):?bool
+    public function closeCursor(PDOStatement $o_pdo_stmt): bool
     {
         try {
             return $o_pdo_stmt->closeCursor();
@@ -634,7 +634,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function commitTransaction():?bool
+    public function commitTransaction(): bool
     {
         try {
             if ($this->o_pdo->commit()) {
@@ -660,7 +660,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function execute(array $a_values = [], PDOStatement $o_pdo_stmt = null):?bool
+    public function execute(array $a_values = [], PDOStatement $o_pdo_stmt = null): bool
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
@@ -726,7 +726,7 @@ class DbModel
      * @return array
      * @throws ModelException
      */
-    public function fetchRow(PDOStatement $o_pdo_stmt, array $a_fetch_config = []):?array
+    public function fetchRow(PDOStatement $o_pdo_stmt, array $a_fetch_config = []): array
     {
         if ($a_fetch_config === array()) {
             $fetch_style = 'ASSOC';
@@ -758,11 +758,11 @@ class DbModel
      * Fetches all from a pdo statement.
      *
      * @param PDOStatement $o_pdo_stmt  a \PDOStatement object
-     * @param string               $fetch_style @see \PDO (optional)
+     * @param string       $fetch_style @see \PDO (optional)
      * @return array
      * @throws ModelException
      */
-    public function fetchAll(PDOStatement $o_pdo_stmt, $fetch_style = 'ASSOC'):?array
+    public function fetchAll(PDOStatement $o_pdo_stmt, string $fetch_style = 'ASSOC'): array
     {
         $pdo_fetch_type = $this->determineFetchStyle($fetch_style);
         try {
@@ -782,7 +782,7 @@ class DbModel
      * @return PDOStatement
      * @throws ModelException
      */
-    public function prepare($the_query = '', $cursor = ''): PDOStatement
+    public function prepare(string $the_query = '', string $cursor = ''): PDOStatement
     {
         if ($the_query !== '') {
             switch ($cursor) {
@@ -818,7 +818,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function rollbackTransaction():?bool
+    public function rollbackTransaction(): bool
     {
         try {
             if ($this->o_pdo->rollBack()) {
@@ -838,7 +838,7 @@ class DbModel
      * @return int
      * @throws ModelException
      */
-    public function rowCount(PDOStatement $o_pdo_stmt):?int
+    public function rowCount(PDOStatement $o_pdo_stmt): int
     {
         try {
             return $o_pdo_stmt->rowCount();
@@ -854,7 +854,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function startTransaction():?bool
+    public function startTransaction(): bool
     {
         try {
             if ($this->o_pdo->beginTransaction()) {
@@ -877,7 +877,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function insertTransaction($the_query = '', array $a_values = [], $table_name = ''):?bool
+    public function insertTransaction(string $the_query = '', array $a_values = [], string $table_name = ''): bool
     {
         if ($the_query === '') {
             $this->error_message = 'The Query was blank.';
@@ -916,7 +916,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function queryTransaction($the_query = '', array $the_array = [], $single_record = true):?bool
+    public function queryTransaction(string $the_query = '', array $the_array = [], bool $single_record = true): bool
     {
         try {
             $this->o_pdo->beginTransaction();
@@ -952,7 +952,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function updateTransaction($the_query = '', array $the_array = [], $single_record = true):?bool
+    public function updateTransaction(string $the_query = '', array $the_array = [], bool $single_record = true): bool
     {
         try {
             return $this->queryTransaction($the_query, $the_array, $single_record);
@@ -972,7 +972,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function deleteTransaction($the_query = '', array $the_array = [], $single_record = true):?bool
+    public function deleteTransaction(string $the_query = '', array $the_array = [], bool $single_record = true): bool
     {
         try {
             return $this->queryTransaction($the_query, $the_array, $single_record);
@@ -994,7 +994,7 @@ class DbModel
      * @return bool success or failure
      * @throws ModelException
      */
-    public function insertPrepared(array $a_values = [], PDOStatement $o_pdo_stmt = null, array $a_table_info = []):?bool
+    public function insertPrepared(array $a_values = [], PDOStatement $o_pdo_stmt = null, array $a_table_info = []): bool
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
@@ -1084,7 +1084,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function mdQuery($the_query = '', array $a_values = [], $single_record = true):bool
+    public function mdQuery(string $the_query = '', array $a_values = [], bool $single_record = true):bool
     {
         if ($the_query === '') {
             $this->error_message = 'The query must not be blank.';
@@ -1146,7 +1146,7 @@ class DbModel
      * @return bool
      * @throws ModelException
      */
-    public function mdQueryPrepared(array $a_values = [], $single_record = true, PDOStatement $o_pdo_stmt = null):?bool
+    public function mdQueryPrepared(array $a_values = [], bool $single_record = true, PDOStatement $o_pdo_stmt = null): bool
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
@@ -1184,17 +1184,17 @@ class DbModel
      * Has three params. The first is required.
      * The second is required if the first param doesn't include a valid sql statement.
      *
-     * @param string|array $query_params default is empty str.  - required
+     * @param array|string $query_params default is empty str.  - required
      *                                   Should correspond to something like
      *                                   ['type'=>'search', 'table_name'=>'test_table', 'single_record'=>false, 'sql'=>'']
-     * @param string|array $data         <pre>
+     * @param array|string $data         <pre>
      *                                   array(field_name => value) - data to be insert or modified
      *                                   'id, name, date' (str) - a string of fields to be returned in a search</pre>
      * @param  array       $where_values array(field_name => value) - paramaters used to find records for search or modify
      * @return bool
      * @throws ModelException
      */
-    public function query($query_params = '', $data = '', array $where_values = []):?bool
+    public function query(array|string $query_params = '', array|string $data = '', array $where_values = []): bool
     {
         $default_params = [
             'type'          => '',
@@ -1333,7 +1333,7 @@ class DbModel
      * @return array
      * @throws ModelException
      */
-    public function searchPrepared(array $a_values = [], PDOStatement $o_pdo_stmt = null, $type = 'assoc'):?array
+    public function searchPrepared(array $a_values = [], PDOStatement $o_pdo_stmt = null, string $type = 'assoc'): array
     {
         if ($o_pdo_stmt === null) {
             $message = 'PDO must be passed into the execute';
@@ -1382,36 +1382,23 @@ class DbModel
     ### Utility Functions
     /**
      * Gets the variable for the fetch style
+     *
      * @param string $type
      * @return int
      */
-    public function determineFetchStyle($type = 'assoc'):?int
+    public function determineFetchStyle(string $type = 'assoc'): int
     {
         $type = strtolower($type);
-        switch ($type) {
-            case 'bound':
-                return PDO::FETCH_BOUND;
-                break;
-            case 'class':
-                return PDO::FETCH_CLASS;
-                break;
-            case 'into':
-                return PDO::FETCH_INTO;
-                break;
-            case 'lazy':
-                return PDO::FETCH_LAZY;
-                break;
-            case 'obj':
-                return PDO::FETCH_OBJ;
-                break;
-            case 'num':
-                return PDO::FETCH_NUM;
-            case 'both':
-                return PDO::FETCH_BOTH;
-            case 'assoc':
-            default:
-                return PDO::FETCH_ASSOC;
-        }
+        return match ($type) {
+            'bound' => PDO::FETCH_BOUND,
+            'class' => PDO::FETCH_CLASS,
+            'into'  => PDO::FETCH_INTO,
+            'lazy'  => PDO::FETCH_LAZY,
+            'obj'   => PDO::FETCH_OBJ,
+            'num'   => PDO::FETCH_NUM,
+            'both'  => PDO::FETCH_BOTH,
+            default => PDO::FETCH_ASSOC,
+        };
     }
 
     /**
@@ -1422,7 +1409,7 @@ class DbModel
      * @return string - quoted string
      * @throws ModelException
      */
-    public function quoteString($value):?string
+    public function quoteString($value): string
     {
         try {
             return $this->o_pdo->quote($value);
@@ -1434,11 +1421,12 @@ class DbModel
 
     /**
      * Returns a list of the columns from a database table.
+     *
      * @param string $table_name required name of the table
      * @return array             field names
      * @throws ModelException
      */
-    public function selectDbColumns($table_name = ''):?array
+    public function selectDbColumns(string $table_name = ''): array
     {
         if ($table_name !== '') {
             $a_column_names = [];
@@ -1499,27 +1487,21 @@ class DbModel
      * @return array $a_table_names
      * @throws ModelException
      */
-    public function selectDbTables():?array
+    public function selectDbTables(): array
     {
-        switch ($this->db_type) {
-            case 'pgsql':
-                $sql = '
+        $sql = match ($this->db_type) {
+            'pgsql'  => '
                     SELECT table_name
                     FROM information_schema.tables
-                ';
-                break;
-            case 'sqlite':
-                $sql = "
+                ',
+            'sqlite' => "
                     SELECT name
                     FROM sqlite_master
                     WHERE type='table'
                     ORDER BY name
-                ";
-                break;
-            case 'mysql':
-            default:
-                $sql = 'SHOW TABLES';
-        }
+                ",
+            default  => 'SHOW TABLES',
+        };
         try {
             return $this->search($sql, array(), 'num');
         }
@@ -1530,46 +1512,38 @@ class DbModel
 
     /**
      * Checks to see if the table exists.
+     *
      * @param string $table_name
      * @return bool
      */
-    public function tableExists($table_name = ''):?bool
+    public function tableExists(string $table_name = ''): bool
     {
-        switch ($this->db_type) {
-            case 'pgsql':
-                $sql =
-                    "
+        $sql = match ($this->db_type) {
+            'pgsql'  => "
                     SELECT count(table_name) as count
                     FROM information_schema.tables
                     WHERE table_name = '{$table_name}'
                     AND table_catalog = '{$this->a_db_config['name']}'
-                ";
-                break;
-            case 'sqlite':
-                $sql =
-                    "
+                ",
+            'sqlite' => "
                     SELECT count(*) as count
                     FROM sqlite_master
                     WHERE type='table'
                     AND name='{$table_name}'
-                ";
-                break;
-            case 'mysql':
-            default:
-            $sql =
-                    "
+                ",
+            default  => "
                     SELECT count(*) as count
                     FROM information_schema.tables
                     WHERE TABLE_SCHEMA = '{$this->a_db_config['name']}'
                     AND TABLE_NAME = '{$table_name}'
-                ";
-        }
+                ",
+        };
 
         try {
-            $results = $this->search($sql, [], 'assoc');
+            $results = $this->search($sql, []);
             return $results[0]['count'] > 0;
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return false;
         }
     }

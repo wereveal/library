@@ -18,10 +18,10 @@ use Ritc\Library\Views\LibSitemapView;
  * Manager for Sitemap.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.1.0
+ * @version 2.0.0
  * @date    2021-11-26 15:04:57
  * @change_log
- * - v1.1.0 - updated for php8                                  - 2021-11-26 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
  * - v1.0.0 - Initial version                                   - 2018-05-27 wer
  */
 class LibSitemapController implements ControllerInterface

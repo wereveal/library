@@ -13,10 +13,10 @@ use Ritc\Library\Traits\LogitTraits;
  *          or from a form element with a few select id names
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.1.0
+ * @version v4.0.0
  * @date    2021-11-29 14:55:18
  * @change_log
- * - 3.1.0 - updated for php8                                                   - 2021-11-29 wer
+ * - 4.0.0 - updated for php8                                                   - 2021-11-29 wer
  * - 3.0.0 - bug fixes and change version to match better semantic versioning   - 2019-03-28 wer
  * - 2.2.7 - match refactoring of Strings and Arrays to static methods          - 01/27/2015 wer
  * - 2.2.6 - moved file into Helper area                                        - 11/15/2014 wer

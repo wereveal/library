@@ -21,10 +21,10 @@ use Ritc\Library\Views\PeopleView;
  * Class PeopleController - Controller for the Configuration page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.2.0
+ * @version v2.0.0
  * @date    2021-11-26 15:12:16
  * @change_log
- * - v1.2.0   - updated for php8                                - 2021-11-26 wer
+ * - v2.0.0   - updated for php8                                - 2021-11-26 wer
  * - v1.1.2   - trait change reflected here                     - 2018-04-21 wer
  * - v1.1.0   - updated to use ConfigControllerTraits           - 2017-11-28 wer
  * - v1.0.0   - initial working version                         - 11/12/2015 wer

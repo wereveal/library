@@ -18,10 +18,10 @@ use Ritc\Library\Views\NavigationView;
  * Class NavigationController - for the Navigation Management.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version v1.0.0-alpha.1
  * @date    2021-11-26 15:07:20
  * @change_log
- * - v1.0.0         - Updated for php8, turned to production    - 2021-11-26 wer
+ * - v1.0.0-alpha.1 - Updated for php8, still has bugs          - 2021-11-26 wer
  * - v1.0.0-alpha.0 - Initial version                           - 2016-04-15 wer
  */
 class NavigationController implements ManagerControllerInterface

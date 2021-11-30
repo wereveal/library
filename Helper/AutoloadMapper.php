@@ -12,10 +12,10 @@ use SplFileInfo;
  * Creates the autoload_classmap.php file.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.4.0
+ * @version v2.0.0
  * @date    2021-11-29 15:10:51
  * @change_log
- * - v1.4.0 - updated for php8                                  - 2021-11-29 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-29 wer
  * - v1.3.0 - refactoring of file structure reflected here      - 2017-02-15 wer
  * - v1.2.1 - refactored var names to be more descriptive       - 12/07/2015 wer
  * - v1.2.0 - added code to not include archives                - 11/06/2015 wer

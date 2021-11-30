@@ -11,10 +11,10 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class GroupsEntity.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
+ * @version v2.0.0
  * @date    2021-11-26 16:18:21
  * @change_log
- * - v1.1.0 - updated for php8                                  - 2021-11-26 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
  * - v1.0.0 - finished                                          - 07/29/2015 wer
  * - v0.1.0 - Initial version                                   - 09/11/2014 wer
  */

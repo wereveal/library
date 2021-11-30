@@ -16,9 +16,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Does all the database CRUD stuff for the page table plus other app/business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.2.0
- * @date    2018-12-29 10:46:41
+ * @version v2.0.0
+ * @date    2021-11-30 13:52:05
  * @change_log
+ * - v2.0.0         - updated for php8 standards and inspections        - 2021-11-30 wer
  * - v1.2.0         - getSitemapForXml changed (removed an param which  - 2018-12-29 wer
  *                    was causing a bug.
  * - v1.1.0         - Added new method to return site map links         - 2018-05-24 wer
@@ -36,17 +37,17 @@ class NavComplexModel
     use DbUtilityTraits;
 
     /** @var Di $o_di */
-    private $o_di;
+    private Di $o_di;
     /** @var NavigationModel $o_nav */
-    private $o_nav;
+    private NavigationModel $o_nav;
     /** @var NavgroupsModel $o_ng */
-    private $o_ng;
+    private NavgroupsModel $o_ng;
     /** @var NavNgMapModel $o_nnm */
-    private $o_nnm;
+    private NavNgMapModel $o_nnm;
     /** @var string $select_sql */
-    private $select_sql;
+    private string $select_sql;
     /** @var string $select_order_sql */
-    private $select_order_sql;
+    private string $select_order_sql;
 
     /**
      * NavAllModel constructor.
@@ -77,7 +78,7 @@ class NavComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function addNavToSitemap($nav_id = -1):bool
+    public function addNavToSitemap(int $nav_id = -1):bool
     {
         if ($nav_id < 1) {
             $err = ExceptionHelper::getCodeNumberModel('create missing value');
@@ -114,7 +115,7 @@ class NavComplexModel
      * @return array
      * @throws ModelException
      */
-    public function createNavArray($ng_id = -1):array
+    public function createNavArray(int $ng_id = -1):array
     {
         if ($ng_id === -1) {
             $ng_id = $this->o_ng->retrieveDefaultId();
@@ -151,7 +152,7 @@ class NavComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function delete($nav_id = -1):bool
+    public function delete(int $nav_id = -1):bool
     {
         if ($nav_id < 1) {
             $err_code = ExceptionHelper::getCodeNumberModel('delete missing primary');
@@ -178,7 +179,7 @@ class NavComplexModel
      * @return array
      * @throws ModelException
      */
-    public function getChildrenRecursive($parent_id = -1, $ng_id = -1, $levels = 'all'):array
+    public function getChildrenRecursive(int $parent_id = -1, int $ng_id = -1, string $levels = 'all'):array
     {
         if ($parent_id === -1 || $ng_id === -1) {
             $error_code = ExceptionHelper::getCodeNumberModel('missing value');
@@ -217,7 +218,7 @@ class NavComplexModel
      * @return array
      * @throws ModelException
      */
-    public function getNavList($ng_id = -1):array
+    public function getNavList(int $ng_id = -1):array
     {
         if ($ng_id === -1) {
             try {
@@ -265,10 +266,10 @@ class NavComplexModel
      * Returns the nav records that have an auth level equal or less than value provided.
      *
      * @param int $auth_level
-     * @return array|mixed
+     * @return array|bool
      * @throws ModelException
      */
-    public function getNavListByAuthLevel($auth_level = 0)
+    public function getNavListByAuthLevel(int $auth_level = 0): array|bool
     {
         $replace_this = 'ON g.group_id = rgm.group_id';
         $with_this = 'ON g.group_id = rgm.group_id AND g.group_auth_level <= :auth_level';
@@ -290,13 +291,13 @@ class NavComplexModel
      * @return array|bool
      * @throws ModelException
      */
-    public function getNavListByName($navgroup_name = '')
+    public function getNavListByName(string $navgroup_name = ''): bool|array
     {
         if ($navgroup_name === '') {
             try {
                 $navgroup_name = $this->o_ng->retrieveDefaultName();
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $navgroup_name = 'Main';
             }
         }
@@ -321,7 +322,7 @@ class NavComplexModel
      * @return bool|array
      * @throws ModelException
      */
-    public function getNavListByParent($parent_id = -1, $ng_id = -1)
+    public function getNavListByParent(int $parent_id = -1, int $ng_id = -1): bool|array
     {
         if ($parent_id === -1 || $ng_id === -1) {
             return false;
@@ -356,7 +357,7 @@ class NavComplexModel
      * @return array|bool
      * @throws ModelException
      */
-    public function getNavRecord($nav_id = -1)
+    public function getNavRecord(int $nav_id = -1): bool|array
     {
         if ($nav_id === -1) {
             return false;
@@ -383,7 +384,7 @@ class NavComplexModel
      * @return array
      * @throws ModelException
      */
-    public function getSitemap(array $a_navgroups = ['Sitemap'], $auth_level = 0, $child_levels = 'all'):array
+    public function getSitemap(array $a_navgroups = ['Sitemap'], int $auth_level = 0, string $child_levels = 'all'):array
     {
         $sql = $this->select_sql;
         $replace_this = 'ON ng.ng_id = map.ng_id';
@@ -412,7 +413,7 @@ class NavComplexModel
         }
 
         $a_parents = [];
-        foreach ($results as $key => $record) {
+        foreach ($results as $record) {
             if (!empty($record['url']) && empty($a_parents[$record['url']])) {
                 $a_parents[$record['url']] = $record;
             }
@@ -420,14 +421,10 @@ class NavComplexModel
 
         foreach ($a_parents as $key => $record) {
             if ($record['auth_level'] <= $auth_level && $record['nav_id'] === $record['parent_id']) {
-                switch ($child_levels) {
-                    case 'one':
-                        $levels = 'none';
-                        break;
-                    case 'all':
-                    default:
-                        $levels = 'all';
-                }
+                $levels     = match ($child_levels) {
+                    'one'   => 'none',
+                    default => 'all',
+                };
                 $a_children = $this->getChildrenRecursive($record['nav_id'], $record['ng_id'], $levels);
                 foreach ($a_children as $child_key => $child_record) {
                     if ($child_record['auth_level'] > $auth_level) {
@@ -446,25 +443,25 @@ class NavComplexModel
     /**
      * Creates an array that can be used with the sitemap_xml twig file.
      *
-     * @param int   $auth_level optional, defaults to unregistered
+     * @param int $auth_level optional, defaults to unregistered
      * @return array
      */
-    public function getSitemapForXml($auth_level = 0):array
+    public function getSitemapForXml(int $auth_level = 0):array
     {
         try {
             $a_results = $this->getNavListByName('Sitemap');
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return [];
         }
         $a_urls = [];
         try {
             $o_page = new PageComplexModel($this->o_di);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return [];
         }
-        foreach ($a_results as $key => $a_url) {
+        foreach ($a_results as $a_url) {
             if ($a_url['auth_level'] <= $auth_level) {
                 try {
                     $a_page = $o_page->readPageValuesByUrlId($a_url['url_id']);
@@ -478,7 +475,7 @@ class NavComplexModel
                         ];
                     }
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     // do nothing
                 }
             }
@@ -493,7 +490,7 @@ class NavComplexModel
      * @return array|bool
      * @throws ModelException
      */
-    public function getTopLevelNavList($ng_id = -1)
+    public function getTopLevelNavList(int $ng_id = -1): bool|array
     {
         if ($ng_id === -1) {
             throw new ModelException('Missing required id.', 220);
@@ -611,7 +608,7 @@ class NavComplexModel
             try {
                 $this->o_nnm->delete($nnm_id);
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
 
             }
         }
@@ -793,7 +790,7 @@ class NavComplexModel
             $this->o_db->rollbackTransaction();
             throw new ModelException($this->error_message, 10);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             throw new ModelException('Unable to do the operation', 17);
         }
     }
@@ -814,7 +811,7 @@ class NavComplexModel
      *
      * @param string $select_sql normally not set.
      */
-    public function setSelectSql($select_sql = ''):void
+    public function setSelectSql(string $select_sql = ''):void
     {
         if ($select_sql === '') {
             $nav_select = $this->buildSqlSelectFields($this->a_db_fields, 'n');
@@ -860,7 +857,7 @@ class NavComplexModel
      *
      * @param string $string optional
      */
-    public function setSelectOrderSql($string = ''):void
+    public function setSelectOrderSql(string $string = ''):void
     {
         if (empty($string)) {
             $string =<<<EOT

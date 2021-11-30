@@ -10,10 +10,10 @@ namespace Ritc\Library\Helper;
  * Class MimeTypeHelper - Helps with mime types.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.2.0
+ * @version v2.0.0
  * @date    2021-11-29 16:17:56
  * @change_log
- * - v1.2.0 - updated to php8, fixed bug    - 2021-11-29 wer
+ * - v2.0.0 - updated to php8, fixed bug    - 2021-11-29 wer
  * - v1.1.0 - changed mime.type file source - 2020-10-07 wer
  * - v1.0.2 - bug fix                       - 2018-04-18 wer
  * - v1.0.0 - Initial version               - 2017-11-10 wer

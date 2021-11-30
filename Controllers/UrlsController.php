@@ -21,10 +21,10 @@ use Ritc\Library\Views\UrlsView;
  * Controller for Urls admin.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.2.0
+ * @version v2.0.0
  * @date    2021-11-26 16:12:25
  * @change_log
- * - v1.2.0         - updated for php8                                  - 2021-11-26 wer
+ * - v2.0.0         - updated for php8                                  - 2021-11-26 wer
  * - v1.1.0         - put into production                               - 2018-06-06 wer
  * - v1.1.0-beta.1  - Refactored to match refactoring of model          - 2017-06-19 wer
  * - v1.0.0         - Out of beta                                       - 2017-06-03 wer

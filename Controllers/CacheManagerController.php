@@ -18,10 +18,10 @@ use Ritc\Library\Views\CacheManagerView;
  * Main router for Symfony based cache..
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.1.0
+ * @version 2.0.0
  * @date    2021-11-26 14:21:32
  * @change_log
- * - v1.1.0         - Updated for php 8                         - 2021-11-26 wer
+ * - v2.0.0         - Updated for php 8                         - 2021-11-26 wer
  * - v1.0.0         - Initial production                        - 2018-06-06 wer
  * - v1.0.0-alpha.0 - Initial version                           - 2018-05-30 wer
  */

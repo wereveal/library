@@ -21,10 +21,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Helper for setting up a new app.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.2.0
+ * @version v2.0.0
  * @date    2021-11-29 16:36:21
  * @change_log
- * - v1.2.0         - updated for php8                                              - 2021-11-29 wer
+ * - v2.0.0         - updated for php8                                              - 2021-11-29 wer
  * - v1.1.2         - Bug Fixes                                                     - 2019-08-19 wer
  * - v1.1.1         - Bug fixes                                                     - 2018-05-29 wer
  * - v1.1.0         - Create Default Files changed to use over all site variable    - 2018-04-14 wer

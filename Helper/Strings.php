@@ -18,10 +18,10 @@ namespace Ritc\Library\Helper;
  * Renamed and modified version of old class Output which was the class name before v5.0.0.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 6.10.0
+ * @version 7.0.0
  * @date    2021-11-26 16:06:45
  * @change_log
- * - v6.10.0 - updated for php8                                                 - 2021-11-26 wer
+ * - v7.0.0  - updated for php8                                                 - 2021-11-26 wer
  * - v6.9.0  - added new method to strip characters from the end of a string    - 2018-11-06 wer
  * - v6.8.0  - added new methods makeGoodUrl, makeValidUrlScheme                - 2018-06-13 wer
  * - v6.7.0  - changed makeInternetUsable, backwards compatible                 - 2018-06-08 wer

@@ -11,10 +11,10 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class MenusEntity
  *
  * @author  William E Reveal
- * @version v1.1.0
+ * @version v2.0.0
  * @date    2021-11-26 16:19:44
  * @change_log
- * - v1.1.0 - updated for php8                                  - 2021-11-26 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
  * - v1.0.0 - Initial Version                                   - 2016-02-23 wer
  */
 class MenusEntity implements EntityInterface

@@ -23,10 +23,10 @@ use Ritc\Library\Traits\LogitTraits;
  * more finely grained access with be handled there or in a sub-controller.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v5.4.0
+ * @version v6.0.0
  * @date    2021-11-29 15:07:17
  * @change_log
- * - v5.4.0 - updated for php8, fixed a potential bug               - 2021-11-29 wer
+ * - v6.0.0 - updated for php8, fixed a potential bug               - 2021-11-29 wer
  * - v5.3.0 - Refactored due to refactoring of models               - 2017-06-20 wer
  * - v5.2.0 - Adding DbUtilityTraits only pointed out problems.     - 2016-03-19 wer
  *            - Removed DbUtilityTraits

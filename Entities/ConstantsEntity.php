@@ -12,11 +12,11 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class ConstantsEntity - Basic accessors for a constants entity.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
+ * @version v2.0.0
  * @date    2015-10-06 14:20:33
  * @todo add class properties that are missing.
  * @change_log
- * - v1.1.0 - updated for php8                                  - 2021-11-26 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
  * - v1.0.0 - initial version                                   - 2015-10-06 wer
  */
 class ConstantsEntity implements EntityInterface

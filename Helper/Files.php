@@ -13,13 +13,13 @@ use Ritc\Library\Traits\LogitTraits;
  * Determines the path to the file
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.4.0
+ * @version v5.0.0
  * @date    2021-11-29 15:51:06
  * @note The constants with _DIR_NAME should correspond to dir names in
  *       the site theme or namespace (e.g. templates are in namespace). If a directory
  *       is missing, this could cause a fatal error.
  * @change_log
- * - v4.4.0 - updated for php8                                                      - 2021-11-29 wer
+ * - v5.0.0 - updated for php8                                                      - 2021-11-29 wer
  * - v4.3.1 - fixed bug (long standing)                                             - 2016-04-21 wer
  * - v4.3.0 - added an addition possible file location                              - 2016-04-20 wer
  * - v4.2.1 - moved to the namespace Ritc\Library\Helper                            - 11/15/2014 wer

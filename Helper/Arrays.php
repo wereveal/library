@@ -9,10 +9,10 @@ namespace Ritc\Library\Helper;
  * Does stuff with arrays.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 3.5.0
+ * @version 4.0.0
  * @date    2021-11-29 15:00:20
  * @change_log
- * - v3.5.0 - updated to php8, maybe fixed previously undetected bug                    - 2021-11-29 wer
+ * - v4.0.0 - updated to php8, maybe fixed previously undetected bug                    - 2021-11-29 wer
  * - v3.4.0 - Changed method to remove blank pairs to not required allowed_keys         - 2018-05-18 wer
  * - v3.3.0 - Added new method to do muliple sort on database array                     - 2018-04-09 wer
  * - v3.2.0 - New method to removed key/value pairs where value is empty                - 2017-12-05 wer

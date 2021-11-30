@@ -18,10 +18,10 @@ use Exception;
  * Class DatesTimes - provides a lot of normal date time functionality.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.1.0
+ * @version v5.0.0
  * @date    2021-11-29 15:44:46
  * @change_log
- * - v4.1.0 - updated to php8                           - 2021-11-29 wer
+ * - v5.0.0 - updated to php8                           - 2021-11-29 wer
  * - v4.0.0 - Refactored and tested good                - 2018-07-02 wer
  * - v3.1.0 - new method to convert timestamp to Y-m-d  - 2017-11-28 wer
  * - v3.0.1 - moved to Ritc\Library\Helper namespace    - 11/15/2014 wer

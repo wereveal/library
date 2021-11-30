@@ -16,9 +16,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Does multi-table queries and applies necessary business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2018-12-29 10:48:35
+ * @version v2.0.0
+ * @date    2021-11-30 14:46:24
  * @change_log
+ * - v2.0.0         - updated to php8 only                      - 2021-11-30 wer
  * - v1.0.0         - Finally taken out of alpha (7 versions)   - 2018-12-29 wer
  * - v1.0.0-alpha.0 - Initial version                           - 2016-04-08 wer
  */
@@ -28,17 +29,17 @@ class PageComplexModel
     use DbUtilityTraits;
 
     /** @var ContentComplexModel  */
-    private $o_content;
+    private ContentComplexModel $o_content;
     /** @var PageModel */
-    private $o_page;
+    private PageModel $o_page;
     /** @var PageBlocksMapModel  */
-    private $o_pbm;
+    private PageBlocksMapModel $o_pbm;
     /** @var TwigComplexModel */
-    private $o_tpls;
+    private TwigComplexModel $o_tpls;
     /** @var UrlsModel */
-    private $o_urls;
+    private UrlsModel $o_urls;
     /** @var string  */
-    private $select_sql = '';
+    private string $select_sql = '';
 
     /**
      * PageComplexModel constructor.
@@ -76,7 +77,7 @@ class PageComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function deletePageValues($page_id = -1):bool
+    public function deletePageValues(int $page_id = -1):bool
     {
         if ($page_id === -1) {
             $message = 'Missing Required Values';
@@ -105,7 +106,7 @@ class PageComplexModel
      * @return array|bool
      * @throws ModelException
      */
-    public function readPageValues(array $a_search_for = [], array $a_search_parameters = [])
+    public function readPageValues(array $a_search_for = [], array $a_search_parameters = []): bool|array
     {
         $a_allowed_keys = ['url_id', 'url_text', 'page_id', 'page_title'];
         $order_by = 'p.page_id ASC';
@@ -142,7 +143,7 @@ class PageComplexModel
      * @return array|bool
      * @throws ModelException
      */
-    public function readPageValuesByUrlId($url_id = -1)
+    public function readPageValuesByUrlId(int $url_id = -1): bool|array
     {
         if ($url_id === -1) {
             return false;
@@ -195,8 +196,9 @@ class PageComplexModel
      * @param string $url_text Required
      * @return array|bool
      * @throws ModelException
+     * @noinspection PhpUndefinedConstantInspection
      */
-    public function readPageValuesByUrlText($url_text = '')
+    public function readPageValuesByUrlText(string $url_text = ''): bool|array
     {
         if ($url_text === '') {
             return false;
@@ -298,7 +300,7 @@ class PageComplexModel
      *
      * @param string $the_string Optional, normally not specified.
      */
-    private function setSelectSql($the_string = ''):void
+    private function setSelectSql(string $the_string = ''):void
     {
         if ($the_string !== '') {
             $this->select_sql = $the_string;

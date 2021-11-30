@@ -14,9 +14,10 @@ use Ritc\Library\Services\DbModel;
  * Does database operations on the twig_prefix table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
- * @date    2018-06-15 11:45:29
+ * @version v2.0.0
+ * @date    2021-11-30 15:13:55
  * @change_log
+ * - v2.0.0         - updated for php8 only             - 2021-11-30 wer
  * - v1.1.0         - Refactored to use ModelAbstract   - 2018-06-15 wer
  * - v1.0.1         - bug fixes                         - 2018-04-03 wer
  * - v1.0.0         - Initial production version        - 2017-12-12 wer
@@ -64,7 +65,7 @@ class TwigPrefixModel extends ModelAbstract
                                 throw new ModelException($this->error_message . $meth, 110);
                             }
                         }
-                        catch (ModelException $e) {
+                        catch (ModelException) {
                             $this->error_message = 'Could not set other prefix as not default.';
                             throw new ModelException($this->error_message . $meth, 110);
                         }
@@ -83,7 +84,7 @@ class TwigPrefixModel extends ModelAbstract
                     throw new ModelException($this->error_message . $meth, 110);
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $this->error_message = 'Could not set other prefix as not default.';
                 throw new ModelException($this->error_message . $meth, 110);
             }

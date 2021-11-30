@@ -11,10 +11,10 @@ use Ritc\Library\Exceptions\ModelException;
  * Interface ModelInterface
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.5.0
+ * @version v2.0.0
  * @date    2021-11-29 17:14:57
  * @change_log
- * - v1.5.0 updated for php8                                                    - 2021-11-29 wer
+ * - v2.0.0 updated for php8                                                    - 2021-11-29 wer
  * - v1.4.0 Added new param to create                                           - 2018-10-24 wer
  * - v1.3.0 Added throws phpDoc line to remind one to use it                    - 2018-04-26 wer
  * - v1.2.0 Added new param to read, one that is used almost always anyway      - 2016-03-24 wer

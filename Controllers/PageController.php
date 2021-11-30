@@ -24,10 +24,10 @@ use Ritc\Library\Views\PageView;
  * Class PageController - Page Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.0
+ * @version v3.0.0
  * @date    2021-11-26 15:10:45
  * @change_log
- * - v2.1.0 - Updated for php8                                  - 2021-11-26 wer
+ * - v3.0.0 - Updated for php8                                  - 2021-11-26 wer
  * - v2.0.0 - Refactored to use ConfigControllerTraits          - 2018-06-21 wer
  * - v1.0.0 - First working version                             - 11/27/2015 wer
  */

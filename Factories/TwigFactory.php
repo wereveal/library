@@ -30,11 +30,11 @@ use Twig\TwigTest;
  * allowing multiple twig objects to render the html.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.4.0.beta.1
+ * @version v4.0.0.beta.1
  * @date    2021-11-29 14:55:43
  * @todo    Need to test this seriously since there have been potential hidden changes
  * @change_log
- * - v3.4.0.beta.1  - updated for php8
+ * - v4.0.0.beta.1  - updated for php8
  * - v3.3.0         - Modified to match changes in Twig Namespace                                             - 2019-03-28 wer
  * - v3.2.0         - added a twig test to the factory - inPublic which tests to see if the file exists       - 2018-05-01 wer
  * - v3.1.3         - Minor change in testing                                                                 - 2018-04-19 wer
@@ -99,7 +99,6 @@ class TwigFactory
                     $o_loader->prependPath($path, $namespace);
                 }
                 catch (TwigErrorLoader $e) {
-                    /** @noinspection ForgottenDebugOutputInspection */
                     $msg = 'Unable to load paths with Twig Loader: ' . $e->getMessage() . ' -- ' . $meth;
                     throw new FactoryException($msg, $e->getCode(), $e);
                 }
@@ -238,7 +237,6 @@ class TwigFactory
                 throw new FactoryException($e->getMessage(), $e->getCode(), $e);
             }
         }
-        /** @noinspection PhpUndefinedFieldInspection */
         return $o_tf->o_twig;
     }
 
@@ -354,7 +352,6 @@ class TwigFactory
                     : '';
                 $a_twig_config_next = self::retrieveTwigConfigArray($config_file, $namespace);
                 if (!empty($a_twig_config_next['additional_paths'])) {
-                    /** @noinspection SlowArrayOperationsInLoopInspection */
                     $a_twig_config['additional_paths'] = array_merge(
                         $a_twig_config['additional_paths'],
                         $a_twig_config_next['additional_paths']

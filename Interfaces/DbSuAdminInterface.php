@@ -9,10 +9,10 @@ namespace Ritc\Library\Interfaces;
  * Interface for the superuser admin controller.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
+ * @version v2.0.0
  * @date    2021-11-29 17:11:51
  * @change_log
- * - v1.1.0 - updated for php8                                  - 2021-11-29 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-29 wer
  * - v1.0.0 - initial version                                   - 01/30/2014 wer
  */
 interface DbSuAdminInterface

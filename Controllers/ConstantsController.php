@@ -18,10 +18,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Class ConstantsController - controller for the Configuration page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.5.0
+ * @version v2.0.0
  * @date    2021-11-26 14:25:39
  * @change_log
- * - v1.5.0        - updated for php 8                                          - 2021-11-26 wer
+ * - v2.0.0        - updated for php 8                                          - 2021-11-26 wer
  * - v1.4.0        - Production version                                         - 2018-06-06 wer
  * - v1.4.0-beta.4 - Refactoring of Trait reflected here                        - 2018-04-21 wer
  * - v1.4.0-beta.3 - Name change of Trait.                                      - 2017-06-20 wer

@@ -15,9 +15,10 @@ use Ritc\Library\Services\DbModel;
  * Does all the Model expected operations, database CRUD and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
- * @date    2018-06-12 08:10:59
+ * @version v3.0.0
+ * @date    2021-11-30 15:10:49
  * @change_log
+ * - v3.0.0         - Updated for php8 only                     - 2021-11-30 wer
  * - v2.0.0         - Refactored to extend ModelAbstract        - 2018-06-12 wer
  * - v1.0.0         - Initial production version                - 2017-12-12 wer
  * - v1.0.0-alpha.4 - Refactored to use ModelException          - 2017-06-18 wer
@@ -54,11 +55,11 @@ class RoutesGroupMapModel extends ModelAbstract
      *   a new one added. That is what this function actually does.
      *
      * @param array  $a_values   Required ['rgm_id, group_id, route_id] all three
-     * @param array  $a_not_used As named, not used. required by abstract.
+     * @param array  $a_immutable not used. required by abstract.
      * @return bool
      * @throws ModelException
      */
-    public function update(array $a_values = [], array $a_not_used = []):bool
+    public function update(array $a_values = [], array $a_immutable = []):bool
     {
         $a_required_keys = [
             'rgm_id',
@@ -96,7 +97,9 @@ class RoutesGroupMapModel extends ModelAbstract
         try {
             $this->o_db->startTransaction();
             try {
-                $this->delete($a_delete_ids);
+                foreach ($a_delete_ids as $delete_id) {
+                    $this->delete($delete_id);
+                }
                 try {
                     $this->create($create_values);
                     try {
@@ -138,7 +141,7 @@ class RoutesGroupMapModel extends ModelAbstract
      * @return array|bool
      * @throws ModelException
      */
-    public function readAll()
+    public function readAll(): bool|array
     {
         return $this->read();
     }
@@ -150,7 +153,7 @@ class RoutesGroupMapModel extends ModelAbstract
      * @return array
      * @throws ModelException
      */
-    public function readByRouteId($route_id = -1):?array
+    public function readByRouteId(int $route_id = -1): array
     {
         $a_search_for = ['route_id' => $route_id];
         if ($route_id < 1) {
@@ -171,7 +174,7 @@ class RoutesGroupMapModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function deleteByRouteId($route_id = -1):?bool
+    public function deleteByRouteId(int $route_id = -1): bool
     {
         if ($route_id === -1) {
             throw new ModelException('Missing required value for route_id.', 420);
@@ -195,7 +198,7 @@ class RoutesGroupMapModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function deleteByGroupId($group_id = -1):?bool
+    public function deleteByGroupId(int $group_id = -1): bool
     {
         if ($group_id === -1) {
             throw new ModelException('Missing required value for route_id.', 420);
@@ -220,7 +223,7 @@ class RoutesGroupMapModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function deleteByRouteGroup(int $route_id = -1, int $group_id = -1):?bool
+    public function deleteByRouteGroup(int $route_id = -1, int $group_id = -1): bool
     {
         if ($route_id < 1 || $group_id < 1) {
             $err_code = ExceptionHelper::getCodeNumberModel('delete missing value');

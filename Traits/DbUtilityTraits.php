@@ -1,11 +1,11 @@
-<?php /** @noinspection PhpClassHasTooManyDeclaredMembersInspection */
+<?php /** @noinspection JsonEncodingApiUsageInspection */
+/** @noinspection PhpClassHasTooManyDeclaredMembersInspection */
 /**
  * Trait DbUtilityTraits
  * @package Ritc_Library
  */
 namespace Ritc\Library\Traits;
 
-use JsonException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ExceptionHelper;
@@ -22,6 +22,7 @@ use Ritc\Library\Services\DbModel;
  * @date    2021-11-26 13:29:36
  * @change_log
  * - v4.0.0          - Refactoring for PHP 8 and phpStorm inspections           - 2021-11-26 wer
+ *                     NOTE: intentionally not using JSON_THROW_ON_ERROR
  * - v3.0.1          - Minor bug, depreciated way of doing things fixed         - 2020-08-18 wer
  * - v3.0.0          - Changed readCount() method, not backwards compatible     - 2018-12-05 wer
  *                     readCount was relying on values that were not easily
@@ -98,7 +99,6 @@ trait DbUtilityTraits
      *                            ] \endcode
      * @return array
      * @throws ModelException
-     * @throws JsonException
      * @see  \ref createparams
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = []):array
@@ -148,7 +148,7 @@ trait DbUtilityTraits
                     $a_missing_values = Arrays::findMissingValues($a_value, $a_required_keys);
                     if (!empty($a_missing_values)) {
                         $this->error_message = 'Missing required keys: ' .
-                                               json_encode($a_missing_values, JSON_THROW_ON_ERROR);
+                                               json_encode($a_missing_values, JSON_PARTIAL_OUTPUT_ON_ERROR);
                         $error_code = ExceptionHelper::getCodeNumberModel('create_missing_values');
                         throw new ModelException($this->error_message, $error_code);
                     }
@@ -164,7 +164,7 @@ trait DbUtilityTraits
                 $a_missing_values = Arrays::findMissingValues($a_values, $a_required_keys);
                 if (!empty($a_missing_values)) {
                     $this->error_message = 'Missing required keys: ' .
-                                           json_encode($a_missing_values, JSON_THROW_ON_ERROR);
+                                           json_encode($a_missing_values, JSON_PARTIAL_OUTPUT_ON_ERROR);
                     $error_code = ExceptionHelper::getCodeNumberModel('create_missing_values');
                     throw new ModelException($this->error_message, $error_code);
                 }

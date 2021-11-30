@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection DuplicatedCode */
+/** @noinspection DuplicatedCode */
+
 /**
  * Class RoutesComplexModel
  * @package Ritc_Library
@@ -17,10 +19,11 @@ use Ritc\Library\Traits\LogitTraits;
  * Does all the Model expected operations, database CRUD and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2017-06-18 14:23:31
+ * @version v1.0.0-alpha.1
+ * @date    2021-11-30 15:04:59
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2017-06-18 wer
+ * - v1.0.0-alpha.1 - updated for php 8 only                    - 2021-11-30 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2017-06-18 wer
  */
 class RoutesComplexModel
 {
@@ -28,7 +31,7 @@ class RoutesComplexModel
     use DbUtilityTraits;
 
     /** @var Di $o_di */
-    private $o_di;
+    private Di $o_di;
 
     /**
      * RoutesComplexModel constructor.
@@ -158,7 +161,7 @@ class RoutesComplexModel
      * @return array|bool
      * @throws ModelException
      */
-    public function readAllWithUrl()
+    public function readAllWithUrl(): bool|array
     {
         $o_url = new UrlsModel($this->o_db);
         $o_route = new RoutesModel($this->o_db);
@@ -189,10 +192,10 @@ class RoutesComplexModel
      * Reads the route with the request uri.
      *
      * @param string $request_uri normally obtained from $_SERVER['REQUEST_URI']
-     * @return mixed
+     * @return array|bool
      * @throws ModelException
      */
-    public function readByRequestUri(string $request_uri = '')
+    public function readByRequestUri(string $request_uri = ''): array|bool
     {
         if ($request_uri === '') {
             throw new ModelException('Missing required value: request uri', 220);
@@ -309,7 +312,7 @@ class RoutesComplexModel
         }
 
         $a_groups = $this->fixGroups($a_from_post['group'], -1);
-        if ($a_groups === false) {
+        if (empty($a_groups)) {
             $message = 'A Problem Has Occured. Required group values missing.';
             $err_code = ExceptionHelper::getCodeNumberModel('create missing values');
             throw new ModelException($message, $err_code);
@@ -430,7 +433,7 @@ class RoutesComplexModel
      * @param array $a_route Required ['url_id','route_class','route_method'].
      * @return array|bool
      */
-    private function fixRoute(array $a_route = [])
+    private function fixRoute(array $a_route = []): bool|array
     {
         if (empty($a_route) ||
             empty($a_route['url_id']) ||

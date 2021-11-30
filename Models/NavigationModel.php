@@ -13,9 +13,10 @@ use Ritc\Library\Services\DbModel;
  * Does all the database CRUD stuff for the page table plus other app/business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
- * @date    2018-06-15 11:02:54
+ * @version v2.0.0
+ * @date    2021-11-30 15:37:27
  * @change_log
+ * - v2.0.0         - updated to php 8 only                         - 2021-11-30 wer
  * - v1.1.0         - Refactored to extend ModelAbstract            - 2018-06-15 wer
  * - v1.0.0         - Initial production version                    - 2017-12-12 wer
  * - v1.0.0-alpha.3 - Refactored to use ModelException              - 2017-06-15 wer
@@ -45,11 +46,12 @@ class NavigationModel extends ModelAbstract
     /**
      * Deletes a record based on the id provided.
      * It also deletes the relational records in the nav navgroup map table.
+     *
      * @param int $nav_id Required.
      * @return bool
      * @throws ModelException
      */
-    public function deleteWithMap($nav_id = -1):bool
+    public function deleteWithMap(int $nav_id = -1):bool
     {
         if ($nav_id === -1) {
             $this->error_message = 'Missing required nav id.';
@@ -66,7 +68,7 @@ class NavigationModel extends ModelAbstract
         try {
             $o_map->deleteWith(-1, $nav_id); // -1 specifies delete all map records with the nav_id
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $this->error_message = $o_map->getErrorMessage();
             $this->o_db->rollbackTransaction();
             throw new ModelException($this->error_message, 410);
@@ -96,10 +98,11 @@ class NavigationModel extends ModelAbstract
 
     /**
      * Checks to see the the nav has children.
+     *
      * @param int $nav_id
      * @return bool
      */
-    public function navHasChildren($nav_id = -1):bool
+    public function navHasChildren(int $nav_id = -1):bool
     {
         if ($nav_id === -1) {
             $this->error_message = 'Missing required nav id';
@@ -119,7 +122,7 @@ class NavigationModel extends ModelAbstract
                 return true;
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
         }
         return false;

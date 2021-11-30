@@ -17,10 +17,10 @@ use Ritc\Library\Traits\LogitTraits;
  * e.g. MyClassTester or MyClassTests.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.8.0
+ * @version v4.0.0
  * @date    2021-11-26 14:01:47
  * @change_log
- * - v3.8.0 - Updated for php 8                                                         - 2021-11-26 wer
+ * - v4.0.0 - Updated for php 8                                                         - 2021-11-26 wer
  * - v3.7.0 - Updated to handle ReflectionException                                     - 2018-05-19 wer
  * - v3.6.0 - Refactoring of subtest methods                                            - 2017-06-09 wer
  * - v3.5.0 - modified setupTests to create test order from test values                 - 2017-05-12 wer

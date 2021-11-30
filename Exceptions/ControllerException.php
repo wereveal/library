@@ -13,10 +13,10 @@ use Ritc\Library\Helper\ExceptionHelper;
  * Class ControllerException - Custom Exceptions for Controllers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
+ * @version v2.0.0
  * @date    2021-11-26 16:32:59
  * @change_log
- * - v1.1.0 - updated for php8                                  - 2021-11-26 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
  * - v1.0.0 - Initial version                                   - 2018-09-11 wer
  */
 class ControllerException extends CustomExceptionAbstract
