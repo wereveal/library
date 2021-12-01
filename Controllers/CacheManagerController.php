@@ -18,11 +18,12 @@ use Ritc\Library\Views\CacheManagerView;
  * Main router for Symfony based cache..
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0
- * @date    2018-06-06 11:30:29
+ * @version 2.0.0
+ * @date    2021-11-26 14:21:32
  * @change_log
- * - v1.0.0         - Initial production     - 2018-06-06 wer
- * - v1.0.0-alpha.0 - Initial version        - 2018-05-30 wer
+ * - v2.0.0         - Updated for php 8                         - 2021-11-26 wer
+ * - v1.0.0         - Initial production                        - 2018-06-06 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2018-05-30 wer
  */
 class CacheManagerController implements ControllerInterface
 {
@@ -30,9 +31,9 @@ class CacheManagerController implements ControllerInterface
     use ConfigControllerTraits;
 
     /** @var int $cache_const_id */
-    private $cache_const_id;
+    private int $cache_const_id;
     /** @var ConstantsModel $o_const */
-    private $o_const;
+    private ConstantsModel $o_const;
 
     /**
      * CacheManagerController constructor.
@@ -46,9 +47,9 @@ class CacheManagerController implements ControllerInterface
     }
 
     /**
-     * @return mixed|string
+     * @return string
      */
-    public function route()
+    public function route(): string
     {
         $a_message = ViewHelper::infoMessage('The cache can speed things up but can also temporarily mask changes.');
         $message = 'Form Action: ' . $this->form_action;
@@ -75,7 +76,7 @@ class CacheManagerController implements ControllerInterface
                 }
                 break;
             case 'disable_cache':
-                if ($this->updateCacheRecord('false')) {
+                if ($this->updateCacheRecord()) {
                     $a_message = ViewHelper::successMessage();
                 }
                 else {
@@ -105,16 +106,16 @@ class CacheManagerController implements ControllerInterface
                 : $a_results[0]['const_id']
             ;
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $this->cache_const_id = -1;
         }
     }
 
     /**
      * @param string $which_way
-     * @return bool
+     * @return bool|null
      */
-    private function updateCacheRecord($which_way = 'false'):?bool
+    private function updateCacheRecord(string $which_way = 'false'):?bool
     {
         if ($this->cache_const_id < 1 || !ini_get('opcache.enable')) {
             return false;
@@ -126,7 +127,7 @@ class CacheManagerController implements ControllerInterface
         try {
             return $this->o_const->update($a_values);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return false;
         }
     }

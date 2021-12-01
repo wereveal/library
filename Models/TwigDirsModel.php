@@ -13,9 +13,10 @@ use Ritc\Library\Services\DbModel;
  * Does database operations on the twig_prefix table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.1
- * @date    2018-05-28 12:44:18
+ * @version v2.0.0
+ * @date    2021-11-30 15:15:30
  * @change_log
+ * - v2.0.0         - updated for php8 only         - 2021-11-30 wer
  * - v1.0.1         - fixed default dir names       - 2018-05-28 wer
  * - v1.0.0         - Initial Production version    - 2017-12-15 wer
  * - v1.0.0-alpha.0 - Initial version               - 2017-05-13 wer
@@ -47,8 +48,9 @@ class TwigDirsModel extends ModelAbstract
      * @param int $prefix_id Required.
      * @return array
      * @throws ModelException
+     * @noinspection PhpUndefinedConstantInspection
      */
-    public function createDefaultDirs($prefix_id = -1):array
+    public function createDefaultDirs(int $prefix_id = -1):array
     {
         $meth = ' — ' . __METHOD__;
         if ($prefix_id < 1) {

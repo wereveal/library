@@ -7,6 +7,7 @@ namespace Ritc\Library\Tests;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\ConstantsModel;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\TesterTraits;
@@ -15,12 +16,13 @@ use Ritc\Library\Traits\TesterTraits;
  * Tests the Constants Model Class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2017-06-14 16:27:15
+ * @version 2.0.0
+ * @date    2021-12-01 14:07:02
  * @change_log
- * - v1.0.0         - Initial working version        - 2017-06-14 wer
- * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
- * - v0.1.0         - Initial version                - unknown wer
+ * - 2.0.0          - updated for php 8 standards               - 2021-12-01 wer
+ * - 1.0.0          - Initial working version                   - 2017-06-14 wer
+ * - 1.0.0-alpha.0  - Initial rewrite version                   - 2016-03-05 wer
+ * - 0.1.0          - Initial version                           - unknown wer
  */
 class ConstantsModelTester
 {
@@ -28,7 +30,7 @@ class ConstantsModelTester
     use TesterTraits;
 
     /** @var ConstantsModel */
-    private $o_model;
+    private ConstantsModel $o_model;
 
     /**
      * ConstantsModelTester constructor.
@@ -44,7 +46,7 @@ class ConstantsModelTester
             'instance_name' => 'o_model'
         ];
         $this->setupTests($a_test_params);
-        /** @var \Ritc\Library\Services\DbModel $o_db */
+        /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
         $this->o_model = new ConstantsModel($o_db);
         $this->o_model->setElog($this->o_elog);

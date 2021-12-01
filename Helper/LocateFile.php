@@ -1,4 +1,6 @@
 <?php
+/** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class LocateFile
  * @package Ritc_Library
@@ -11,9 +13,10 @@ namespace Ritc\Library\Helper;
  * However, this one uses all static functions.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
- * @date    2018-04-12 11:32:47
+ * @version v2.0.0
+ * @date    2021-11-29 16:14:08
  * @change_log
+ * - v2.0.0 - updated for php8                                      - 2021-11-29 wer
  * - v1.1.0 - Removed references to constants of THEME variations   - 2018-04-12 wer
  * - v1.0.0 - Initial Version                                       - 2017-02-08 wer
  */
@@ -21,11 +24,12 @@ class LocateFile
 {
     /**
      * Return config filename with path within the server document root.
+     *
      * @param string $file_name
      * @param string $namespace
      * @return string
      */
-    public static function getConfigWithDir($file_name = '', $namespace = ''):string
+    public static function getConfigWithDir(string $file_name = '', string $namespace = ''):string
     {
         $file_w_path = self::getConfigWithPath($file_name, $namespace);
         if ($file_w_path !== '') {
@@ -36,11 +40,12 @@ class LocateFile
 
     /**
      * Return filename with server file path.
+     *
      * @param string $file_name
      * @param string $namespace
      * @return string
      */
-    public static function getConfigWithPath($file_name = '', $namespace = ''):string
+    public static function getConfigWithPath(string $file_name = '', string $namespace = ''):string
     {
         if ($namespace === '') {
             $path = SRC_CONFIG_PATH;
@@ -59,11 +64,12 @@ class LocateFile
 
     /**
      * Return css filename with path within the server document root.
+     *
      * @param string $file_name
      * @param string $namespace
      * @return string
      */
-    public static function getCssWithDir($file_name = '', $namespace = ''):string
+    public static function getCssWithDir(string $file_name = '', string $namespace = ''):string
     {
         $file_w_path = self::getCssWithPath($file_name, $namespace);
         return str_replace(PUBLIC_PATH, '', $file_w_path);
@@ -71,11 +77,12 @@ class LocateFile
 
     /**
      * Return css filename with path within the server document root.
+     *
      * @param string $file_name
      * @param string $namespace
      * @return string
      */
-    public static function getCssWithPath($file_name = '', $namespace = ''):string
+    public static function getCssWithPath(string $file_name = '', string $namespace = ''):string
     {
         if ($namespace === '') {
             $a_optional_paths = [
@@ -104,11 +111,12 @@ class LocateFile
 
     /**
      * Return a file in the files directory, filename with path within the server document root.
+     *
      * @param string $file_name
      * @param string $namespace
      * @return string
      */
-    public static function getFileWithDir($file_name = '', $namespace = ''):string
+    public static function getFileWithDir(string $file_name = '', string $namespace = ''):string
     {
         $file_w_path = self::getFileWithPath($file_name, $namespace);
         if ($file_w_path !== '') {
@@ -119,11 +127,12 @@ class LocateFile
 
     /**
      * Returns filename and path within the server document root for a file in the files directory.
+     *
      * @param string $file_name
      * @param string $namespace
      * @return string
      */
-    public static function getFileWithPath($file_name = '', $namespace = ''):string
+    public static function getFileWithPath(string $file_name = '', string $namespace = ''):string
     {
         if ($namespace === '') {
             $path = PUBLIC_PATH;
@@ -142,11 +151,12 @@ class LocateFile
 
     /**
      * Get the full path and file name for an image.
+     *
      * @param string $file_name
      * @param string $namespace
      * @return string
      */
-    public static function getImageWithPath($file_name = '', $namespace = ''):string
+    public static function getImageWithPath(string $file_name = '', string $namespace = ''):string
     {
         if ($namespace === '') {
             $a_optional_paths = [
@@ -175,11 +185,12 @@ class LocateFile
 
     /**
      * Return image filename with path within the server document root.
+     *
      * @param string $namespace
      * @param string $file_name
      * @return string
      */
-    public static function getImageWithDir($file_name = '', $namespace = ''):string
+    public static function getImageWithDir(string $file_name = '', string $namespace = ''):string
     {
         $file_w_path = self::getImageWithPath($file_name, $namespace);
         return str_replace(PUBLIC_PATH, '', $file_w_path);
@@ -187,11 +198,12 @@ class LocateFile
 
     /**
      * Returns a javascript file with server path.
+     *
      * @param string $file_name
      * @param string $namespace
      * @return string
      */
-    public static function getJsWithPath($file_name = '', $namespace = ''):string
+    public static function getJsWithPath(string $file_name = '', string $namespace = ''):string
     {
         if ($namespace === '') {
             $a_optional_paths = [
@@ -220,11 +232,12 @@ class LocateFile
 
     /**
      * Return config filename with path within the server document root.
+     *
      * @param string $file_name
      * @param string $namespace
      * @return string
      */
-    public static function getJsWithDir($file_name = '', $namespace = ''):string
+    public static function getJsWithDir(string $file_name = '', string $namespace = ''):string
     {
         $file_w_path = self::getJsWithPath($file_name, $namespace);
         return str_replace(PUBLIC_PATH, '', $file_w_path);
@@ -232,10 +245,11 @@ class LocateFile
 
     /**
      * Returns the filename with path of a file in the private directory.
+     *
      * @param string $file_name
      * @return string
      */
-    public static function getPrivateFile($file_name = ''):string
+    public static function getPrivateFile(string $file_name = ''):string
     {
         $private_path = $_SERVER['DOCUMENT_ROOT'] . '/../private';
         $file_w_path = $private_path . '/' . $file_name;
@@ -247,10 +261,11 @@ class LocateFile
 
     /**
      * Returns the filename and path of a file in the tmp directory.
+     *
      * @param string $file_name
      * @return string
      */
-    public static function getTmpFile($file_name = ''):string
+    public static function getTmpFile(string $file_name = ''):string
     {
         $file_w_path = TMP_PATH . '/' . $file_name;
         if (file_exists($file_w_path)) {
@@ -261,12 +276,13 @@ class LocateFile
 
     /**
      * Return template filename with path within the server document root.
+     *
      * @param string $file_name
      * @param string $namespace
      * @param string $sub_dir
      * @return string
      */
-    public static function getTemplateWithDir($file_name = '', $namespace = '', $sub_dir = ''):string
+    public static function getTemplateWithDir(string $file_name = '', string $namespace = '', string $sub_dir = ''):string
     {
         $path = self::getTemplateWithPath($file_name, $namespace, $sub_dir);
         if ($path !== '') {
@@ -277,12 +293,13 @@ class LocateFile
 
     /**
      * Returns filename with path of a template file.
+     *
      * @param string $file_name
      * @param string $namespace
      * @param string $sub_dir
      * @return string
      */
-    public static function getTemplateWithPath($file_name = '', $namespace = '', $sub_dir = ''):string
+    public static function getTemplateWithPath(string $file_name = '', string $namespace = '', string $sub_dir = ''):string
     {
         if ($file_name === '' || $namespace === '') { return ''; }
         $path = APPS_PATH . '/';
@@ -297,12 +314,13 @@ class LocateFile
 
     /**
      * Returns the full path and file name for file.
+     *
      * @param string $file_name
      * @param string $namespace
      * @param string $sub_dir
      * @return string
      */
-    public static function getTestFileWithPath($file_name = '', $namespace = '', $sub_dir = ''):string
+    public static function getTestFileWithPath(string $file_name = '', string $namespace = '', string $sub_dir = ''):string
     {
         if ($file_name === '' || $namespace === '') { return ''; }
         $path = APPS_PATH . '/';
@@ -334,13 +352,14 @@ class LocateFile
      *     SRC_PATH/config/$file_name
      *     SRC_PATH/$file_dir_name/$file_name
      *     SRC_PATH/str_replace('Ritc\', '', $namespace)/$file_name
+     *
      * @param string $file_name     required
      * @param string $namespace     optional defaults to Ritc/Library
      * @param string $file_dir_name optional default to none
      * @param string $theme_name    optional
      * @return array
      */
-    public static function locateFile($file_name = '', $namespace = '', $file_dir_name = '', $theme_name = 'default'):array
+    public static function locateFile(string $file_name = '', string $namespace = '', string $file_dir_name = '', string $theme_name = 'default'):array
     {
         if ($file_name === '') {
             return ['path' => '', 'dir' => ''];
@@ -386,17 +405,16 @@ class LocateFile
             $full_path = $location . $file_w_dir;
             $full_path = str_replace('//', '/', $full_path);
             if (file_exists($full_path)) {
-                if (strpos($full_path, PUBLIC_PATH) !== false) {
+                if (str_contains($full_path, PUBLIC_PATH)) {
                     $dir = str_replace(PUBLIC_PATH, '', $full_path);
                 }
                 else {
                     $dir = '';
                 }
-                $a_file_paths = [
+                return [
                     'path' => $full_path,
                     'dir'  => $dir
                 ];
-                return $a_file_paths;
             }
         }
         return ['path' => '', 'dir' => ''];

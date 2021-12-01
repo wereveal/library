@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class TwigComplexModel
  * @package Ritc_Library
@@ -19,9 +20,10 @@ use Ritc\Library\Traits\LogitTraits;
  * twig_prefix, twig_dirs, twig_templates are used.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
- * @date    2019-03-08 13:18:35
+ * @version v2.0.0
+ * @date    2021-11-30 15:21:51
  * @change_log
+ * - v2.0.0         - updated for php8 only         - 2021-11-30 wer
  * - v1.1.0         - Db changes reflected here.    - 2019-03-08 wer
  * - v1.0.1         - Bug Fixes                     - 2018-12-11 wer
  * - v1.0.0         - Initial Production version    - 2018-05-29 wer
@@ -34,19 +36,19 @@ class TwigComplexModel
     use DbUtilityTraits;
 
     /** @var array $a_ids The ids of the new records */
-    private $a_ids;
+    private array $a_ids;
     /** @var Di */
-    private $o_di;
+    private Di $o_di;
     /** @var  TwigDirsModel */
-    private $o_dirs;
+    private TwigDirsModel $o_dirs;
     /** @var PageModel */
-    private $o_page;
+    private PageModel $o_page;
     /** @var  TwigPrefixModel */
-    private $o_prefix;
+    private TwigPrefixModel $o_prefix;
     /** @var TwigThemesModel */
-    private $o_themes;
+    private TwigThemesModel $o_themes;
     /** @var  TwigTemplatesModel */
-    private $o_tpls;
+    private TwigTemplatesModel $o_tpls;
 
     /**
      * TwigComplexModel constructor.
@@ -70,7 +72,7 @@ class TwigComplexModel
      * @param int    $id
      * @return bool
      */
-    public function canBeDeleted($which_one = '', $id = -1):?bool
+    public function canBeDeleted(string $which_one = '', int $id = -1): bool
     {
         $meth = __METHOD__ . '.';
         if (empty($which_one) || $id < 1) {
@@ -86,7 +88,7 @@ class TwigComplexModel
                     }
                     return false;
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     return false;
                 }
             case 'td':
@@ -99,10 +101,9 @@ class TwigComplexModel
                     }
                     return false;
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     return false;
                 }
-                break;
             case 'tpl':
             case 'template':
                 try {
@@ -111,7 +112,7 @@ class TwigComplexModel
                     $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
                     if (empty($a_results)) {
-                        if ($this->o_tpls->isImmutable([$id])) {
+                        if ($this->o_tpls->isImmutable($id)) {
                             $o_auth = new AuthHelper($this->o_di);
                             $login_id = $_SESSION['login_id'];
                             if (!$o_auth->hasMinimumAuthLevel($login_id, 9)) {
@@ -122,10 +123,9 @@ class TwigComplexModel
                     }
                     return false;
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     return false;
                 }
-                break;
             default:
                 return false;
         }
@@ -165,18 +165,18 @@ class TwigComplexModel
             try {
                 $a_dir_ids = $this->o_dirs->read(['tp_id' => $tp_prefix_id]);
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 // silently let drop to next stuff
             }
             $a_tpl_ids = [];
-            foreach ($a_dir_ids as $key => $a_dir) {
+            foreach ($a_dir_ids as $a_dir) {
                 try {
                     $a_tpl_results = $this->o_tpls->read(['td_id' => $a_dir['td_id']]);
                     foreach ($a_tpl_results as $a_tpl) {
                         $a_tpl_ids[] = $a_tpl['tpl_id'];
                     }
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     // silently let drop to next stuff
                 }
             }
@@ -192,7 +192,7 @@ class TwigComplexModel
                 try {
                     $this->o_prefix->clearDefaultPrefix($a_values);
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     throw new ModelException('Unable to clear the default prefix.');
                 }
             }
@@ -253,7 +253,7 @@ class TwigComplexModel
                         unset($new_templates[$key]);
                     }
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     throw new ModelException('Error trying to read the templates.', 210);
                 }
             }
@@ -285,7 +285,7 @@ class TwigComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function deleteDir($td_id = -1):bool
+    public function deleteDir(int $td_id = -1):bool
     {
         if ($this->canBeDeleted('dir', $td_id)) {
             try {
@@ -310,7 +310,7 @@ class TwigComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function deletePrefix($tp_id = -1):bool
+    public function deletePrefix(int $tp_id = -1):bool
     {
         if ($this->canBeDeleted('prefix', $tp_id)) {
             $this->o_prefix->setupElog($this->o_di);
@@ -336,7 +336,7 @@ class TwigComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function deleteTpl($tpl_id = -1):bool
+    public function deleteTpl(int $tpl_id = -1):bool
     {
         if ($this->canBeDeleted('tpl', $tpl_id)) {
             $this->o_tpls->setupElog($this->o_di);
@@ -362,7 +362,7 @@ class TwigComplexModel
      * @return array
      * @throws ModelException
      */
-    public function readDirsForPrefix($prefix_id = -1):?array
+    public function readDirsForPrefix(int $prefix_id = -1): array
     {
         if ($prefix_id < 1) {
             return [];
@@ -396,7 +396,7 @@ class TwigComplexModel
      * @return array|bool
      * @throws ModelException
      */
-    public function readTplInfo($tpl_id = -1)
+    public function readTplInfo(int $tpl_id = -1): bool|array
     {
         if (empty($tpl_id) || !is_numeric($tpl_id)) {
             $this->error_message = 'Must supply a template id';
@@ -441,14 +441,13 @@ class TwigComplexModel
 
     /**
      * Returns complete information regarding a template by name and prefix.
- *
-
+     *
      * @param string $tpl_name   Required, throws exception if not provided.
      * @param string $tpl_prefix Optional, defaults to site_
-     * @return array|bool
+     * @return array
      * @throws ModelException
      */
-    public function readTplInfoByName($tpl_name = '', $tpl_prefix = 'site_'):array
+    public function readTplInfoByName(string $tpl_name = '', string $tpl_prefix = 'site_'):array
     {
         if (empty($tpl_name)) {
             $err_num = ExceptionHelper::getCodeNumberModel('update missing value');
@@ -501,7 +500,7 @@ class TwigComplexModel
      * @return array
      * @throws ModelException
      */
-    public function readTwigConfig($is_active = 'true'):?array
+    public function readTwigConfig(string $is_active = 'true'): array
     {
         $tp_prefix = $this->o_tpls->getLibPrefix();
         $td_prefix = $this->o_dirs->getLibPrefix();
@@ -541,7 +540,7 @@ class TwigComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function saveDir(array $a_values = [], $action = 'update'):bool
+    public function saveDir(array $a_values = [], string $action = 'update'):bool
     {
         $meth = __METHOD__ . '.';
         $log_message = 'Values ' . var_export($a_values, TRUE);
@@ -596,7 +595,7 @@ class TwigComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function savePrefix(array $a_values = [], $action = 'update'):bool
+    public function savePrefix(array $a_values = [], string $action = 'update'):bool
     {
         $tp_prefix = $a_values['tp_prefix'];
         $tp_path = $a_values['tp_path'];
@@ -609,7 +608,7 @@ class TwigComplexModel
         if (strrpos($tp_prefix, '_') !== strlen($tp_prefix) - 1) {
             $tp_prefix .= '_';
         }
-        if (strpos($tp_path, '/') !== 0) {
+        if (!str_starts_with($tp_path, '/')) {
             $tp_path = '/' . $tp_path;
         }
         $a_real_values = [
@@ -651,7 +650,7 @@ class TwigComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function saveTpl(array $a_values = [], $action = 'update'):bool
+    public function saveTpl(array $a_values = [], string $action = 'update'):bool
     {
         $tpl_name  = Strings::makeSnakeCase(trim($a_values['tpl_name']));
         if (empty($tpl_name) || empty($a_values['td_id'])) {
@@ -712,16 +711,11 @@ class TwigComplexModel
         $tp_fields = $this->o_prefix->getDbFields();
         $a_tp_fields = [];
         foreach ($tp_fields as $field) {
-            switch ($field) {
-                case 'tp_prefix':
-                    $a_tp_fields[$field] = 'twig_prefix';
-                    break;
-                case 'tp_path':
-                    $a_tp_fields[$field] = 'twig_path';
-                    break;
-                default:
-                    $a_tp_fields[$field] = $field;
-            }
+            $a_tp_fields[$field] = match ($field) {
+                'tp_prefix' => 'twig_prefix',
+                'tp_path'   => 'twig_path',
+                default     => $field,
+            };
         }
         return $this->buildSqlSelectFields($a_tp_fields, 'p');
     }

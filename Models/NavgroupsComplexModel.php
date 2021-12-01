@@ -15,11 +15,12 @@ use Ritc\Library\Traits\LogitTraits;
  * Class NavgroupsComplexModel - Multi-table model manipulations associated with the navgoups.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2017-12-12 10:07:24
+ * @version v2.0.0
+ * @date    2021-11-30 13:53:16
  * @change_log
- * - v1.0.0         - taking it into production     - 2017-12-12 wer
- * - v1.0.0-alpha.0 - Initial version               - 2017-06-11 wer
+ * - v2.0.0         - updated for php8                          - 2021-11-30 wer
+ * - v1.0.0         - taking it into production                 - 2017-12-12 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2017-06-11 wer
  */
 class NavgroupsComplexModel
 {
@@ -41,11 +42,12 @@ class NavgroupsComplexModel
     /**
      * Deletes a record based on the id provided.
      * Also delete the relation record(s) in the map table.
+     *
      * @param int $ng_id
      * @return bool
      * @throws ModelException
      */
-    public function deleteWithMap($ng_id = -1):bool
+    public function deleteWithMap(int $ng_id = -1):bool
     {
         if ($ng_id === -1) {
             $this->error_message = 'Missing Navgroup id.';
@@ -54,7 +56,7 @@ class NavgroupsComplexModel
         try {
             $this->o_db->startTransaction();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $this->error_message = 'Could not start transaction.';
             throw new ModelException($this->error_message, 12);
         }

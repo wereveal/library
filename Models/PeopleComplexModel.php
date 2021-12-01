@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class PeopleComplexModel
  * @package Ritc_Library
@@ -17,9 +18,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Does all the Model expected operations, database CRUD and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.7
+ * @version v1.0.0-alpha.8
  * @date    2017-12-12 10:08:19
  * @change_log
+ * - v1.0.0-alpha.8 - Updated to be php8 only                               - 2021-11-30 wer
  * - v1.0.0-alpha.7 - ModelException change reflected here                  - 2017-12-12 wer
  * - v1.0.0-alpha.6 - Moved some methods from here to PeopleModel           - 2017-12-05 wer
  * - v1.0.0-alpha.5 - Moved some business logic from controller to here     - 2017-12-02 wer
@@ -33,11 +35,11 @@ class PeopleComplexModel
     use DbUtilityTraits;
 
     /** @var PeopleModel */
-    private $o_people;
+    private PeopleModel $o_people;
     /** @var GroupsModel */
-    private $o_group;
+    private GroupsModel $o_group;
     /** @var PeopleGroupMapModel */
-    private $o_pgm;
+    private PeopleGroupMapModel $o_pgm;
 
     /**
      * PeopleComplexModel constructor.
@@ -66,7 +68,7 @@ class PeopleComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function deletePerson($people_id = -1):bool
+    public function deletePerson(int $people_id = -1):bool
     {
         $meth = __METHOD__ . '.';
         if ($people_id === -1) {
@@ -122,7 +124,7 @@ class PeopleComplexModel
      * @return array the records for the person
      * @throws ModelException
      */
-    public function readInfo($people_id = ''):array
+    public function readInfo(int|string $people_id = ''):array
     {
         if ($people_id === '') {
             $this->error_message = 'People ID not provided.';
@@ -182,7 +184,7 @@ class PeopleComplexModel
         if (isset($a_people[0]) && is_array($a_people[0])) {
             if (($a_people[0]['people_id'] === $people_id) || ($a_people[0]['login_id'] === $people_id)) {
                 $a_groups = array();
-                foreach ($a_people as $key => $person) {
+                foreach ($a_people as $person) {
                     $a_groups[] = [
                         'group_id'          => $person['group_id'],
                         'group_name'        => $person['group_name'],
@@ -223,22 +225,22 @@ class PeopleComplexModel
      * Reads the people in the group provided.
      *
      * @param int $group_id
-     * @return bool|mixed
+     * @return mixed
      * @throws ModelException
      */
-    public function readByGroup($group_id = -1)
+    public function readByGroup(int $group_id = -1): mixed
     {
         try {
             $a_people_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'people');
             try {
                 $a_group_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'groups');
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
                 throw new ModelException($this->error_message, 220);
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
             throw new ModelException($this->error_message, 220);
         }
@@ -324,7 +326,7 @@ class PeopleComplexModel
             try {
                 $this->o_db->startTransaction();
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 throw new ModelException('Could not start the transaction', 12);
             }
             try {
@@ -455,9 +457,9 @@ class PeopleComplexModel
      * Values passed in are normally from a POSTed form that have been sanitized.
      *
      * @param array $a_values
-     * @return array|bool|mixed|string
+     * @return string|array
      */
-    public function createNewPersonArray(array $a_values = [])
+    public function createNewPersonArray(array $a_values = []): string|array
     {
         $meth = __METHOD__ . '.';
         $a_person = $a_values['person'];
@@ -476,11 +478,11 @@ class PeopleComplexModel
     /**
      * Returns an array used in the creation of people group map records.
      *
-     * @param string|array $group_id   Optional, if $group_name is empty then Registered group is assigned.
+     * @param array|string $group_id   Optional, if $group_name is empty then Registered group is assigned.
      * @param string       $group_name Optional, used if $group_id is empty
      * @return array
      */
-    public function makeGroupIdArray($group_id = '', $group_name = ''):array
+    public function makeGroupIdArray(array|string $group_id = '', string $group_name = ''):array
     {
         if (is_array($group_id)) {
             $a_group_ids = $group_id;
@@ -501,19 +503,19 @@ class PeopleComplexModel
                     $a_group_ids = array($a_group[0]['group_id']);
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_group_ids = [];
             }
         }
         if (empty($a_group_ids)) {
             try {
                 $a_found_groups = $this->o_group->readByName('Registered');
-                $use_id = $a_found_groups !== false && count($a_found_groups) > 0
+                $use_id = count($a_found_groups) > 0
                     ? $a_found_groups[0]['group_id']
                     : 5;
                 $a_group_ids = [$use_id];
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_group_ids = ['5'];
             }
         }
@@ -527,7 +529,7 @@ class PeopleComplexModel
      * @param array  $a_groups
      * @return array
      */
-    public function makePgmArray($people_id = '', array $a_groups = array()):array
+    public function makePgmArray(string $people_id = '', array $a_groups = array()):array
     {
         if ($people_id === '' || $a_groups === array()) {
             return array();

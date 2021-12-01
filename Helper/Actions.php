@@ -13,9 +13,10 @@ use Ritc\Library\Traits\LogitTraits;
  *          or from a form element with a few select id names
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
- * @date    2019-03-28 13:57:10
+ * @version v4.0.0
+ * @date    2021-11-29 14:55:18
  * @change_log
+ * - 4.0.0 - updated for php8                                                   - 2021-11-29 wer
  * - 3.0.0 - bug fixes and change version to match better semantic versioning   - 2019-03-28 wer
  * - 2.2.7 - match refactoring of Strings and Arrays to static methods          - 01/27/2015 wer
  * - 2.2.6 - moved file into Helper area                                        - 11/15/2014 wer
@@ -31,17 +32,17 @@ class Actions
 {
     use LogitTraits;
     /** @var array */
-    protected $a_clean_post;
+    protected array $a_clean_post;
     /** @var array */
-    protected $a_clean_get;
+    protected array $a_clean_get;
     /** @var array */
-    protected $a_uri_actions;
+    protected array $a_uri_actions;
     /** @var string */
-    protected $form_action;
+    protected string $form_action;
     /** @var string */
-    protected $uri_no_get = '';
+    protected string $uri_no_get = '';
     /** @var string */
-    protected $url_path;
+    protected string $url_path;
 
     /**
      * Actions constructor.
@@ -71,7 +72,7 @@ class Actions
      * @param string $key_name
      * @return array
      */
-    public function getCleanPost($key_name = ''):array
+    public function getCleanPost(string $key_name = ''):array
     {
         if ($key_name === '') {
             return $this->a_clean_post;
@@ -83,7 +84,7 @@ class Actions
      * @param string $value
      * @return string|array
      */
-    public function getCleanGet($value = '')
+    public function getCleanGet(string $value = ''): array|string
     {
         if ($value === '') {
             return $this->a_clean_get;
@@ -114,9 +115,9 @@ class Actions
 
     /**
      * @param array $array
-     * @return bool|string
+     * @return string
      */
-    public function getImageSubmit(array $array = [])
+    public function getImageSubmit(array $array = []): string
     {
         if (!empty($array)) {
             foreach ($array as $key => $value) {
@@ -131,17 +132,17 @@ class Actions
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getUriActions()
+    public function getUriActions(): array
     {
         return $this->a_uri_actions;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getUrlPath()
+    public function getUrlPath(): string
     {
         return $this->url_path;
     }
@@ -219,13 +220,13 @@ class Actions
      *
      * @param string $request_uri
      */
-    public function setUriNoGet($request_uri = ''):void
+    public function setUriNoGet(string $request_uri = ''):void
     {
         if ($request_uri === '') {
             /** @noinspection CallableParameterUseCaseInTypeContextInspection */
             $request_uri = $_SERVER['REQUEST_URI'] ?? '';
         }
-        if (strpos($request_uri, '?') !== false) {
+        if (str_contains($request_uri, '?')) {
             $this->uri_no_get = substr($request_uri, 0, strpos($request_uri, '?'));
         }
         else {
@@ -237,7 +238,7 @@ class Actions
      * @param string $root_dir
      * @return bool
      */
-    public function setUriActions($root_dir = ''):bool
+    public function setUriActions(string $root_dir = ''):bool
     {
         /* $root_dir defines what isn't an action in the URI */
         $log_from = __METHOD__ . '.' . __LINE__;
@@ -247,7 +248,7 @@ class Actions
         $uri_actions = str_replace($root_dir, '', $this->uri_no_get);
         $uri_parts   = explode('/', $uri_actions);
         foreach ($uri_parts as $key => $value) {
-            if (($value === '') || (strpos($value, '.php') !== false)) {
+            if (($value === '') || (str_contains($value, '.php'))) {
                 unset($uri_parts[$key]);
             }
         }
@@ -282,7 +283,7 @@ class Actions
         $the_count = count($a_file_path);
         $the_output = '/';
         for ($i=0; $i<$the_count-1; $i++) {
-            if ($a_file_path[$i] !== '' && (strpos($a_file_path[$i], '.php') !== false))  {
+            if ($a_file_path[$i] !== '' && (str_contains($a_file_path[$i], '.php')))  {
                 $the_output .= $a_file_path[$i] . '/';
             }
         }

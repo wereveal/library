@@ -9,6 +9,7 @@ namespace Ritc\Library\Helper;
 
 use DateInterval;
 use DateTime;
+use DateTimeInterface;
 use DateTimeZone;
 use Error;
 use Exception;
@@ -17,9 +18,10 @@ use Exception;
  * Class DatesTimes - provides a lot of normal date time functionality.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
- * @date    2018-07-02 16:28:09
+ * @version v5.0.0
+ * @date    2021-11-29 15:44:46
  * @change_log
+ * - v5.0.0 - updated to php8                           - 2021-11-29 wer
  * - v4.0.0 - Refactored and tested good                - 2018-07-02 wer
  * - v3.1.0 - new method to convert timestamp to Y-m-d  - 2017-11-28 wer
  * - v3.0.1 - moved to Ritc\Library\Helper namespace    - 11/15/2014 wer
@@ -58,7 +60,7 @@ class DatesTimes
      *
      * @param string $start_date
      * @param string $end_date
-     * @return bool|string
+     * @return string
      */
     public static function diffInDays(string $start_date = '', string $end_date = ''):string
     {
@@ -74,7 +76,7 @@ class DatesTimes
      *
      * @param string $start_date
      * @param string $end_date
-     * @return bool|string
+     * @return string
      */
     public static function diffInMonths(string $start_date = '', string $end_date = ''):string
     {
@@ -93,7 +95,7 @@ class DatesTimes
      *
      * @param string $start_date
      * @param string $end_date
-     * @return bool|string
+     * @return string
      */
     public static function diffInYears(string $start_date = '', string $end_date = ''):string
     {
@@ -109,7 +111,7 @@ class DatesTimes
      *
      * @param string $start_time
      * @param string $end_time
-     * @return bool|string
+     * @return string
      */
     public static function diffInHours(string $start_time = '', string $end_time = ''):string
     {
@@ -130,14 +132,13 @@ class DatesTimes
      *
      * @param string $start_time
      * @param string $end_time
-     * @return bool|string
+     * @return string
      */
     public static function diffInMinutes(string $start_time = '', string $end_time = ''):string
     {
         $o_int = self::getInterval($start_time, $end_time);
         if ($o_int !== null) {
             $minus = $o_int->format('%r');
-            /** @noinspection SummerTimeUnsafeTimeManipulationInspection */
             return $minus . (
                 ($o_int->y * 365 * 24 * 60) +
                 ($o_int->m * 30 * 24 * 60) +
@@ -154,7 +155,7 @@ class DatesTimes
      *
      * @param string $start_time
      * @param string $end_time
-     * @return bool|string
+     * @return string
      */
     public static function diffInSeconds(string $start_time = '', string $end_time = ''):string
     {
@@ -162,7 +163,6 @@ class DatesTimes
         if ($o_int !== null) {
             // print_r($o_int);
             $minus = $o_int->format('%r');
-            /** @noinspection SummerTimeUnsafeTimeManipulationInspection */
             return $minus . (
                 ($o_int->y * 365 * 24 * 60 * 60) +
                 ($o_int->m * 30 * 24 * 60 * 60) +
@@ -183,7 +183,7 @@ class DatesTimes
      * @param bool|true $include_meridiem
      * @return string
      */
-    public static function change24hTo12h(string $time_string = '', $include_seconds = true, $include_meridiem = true):string
+    public static function change24hTo12h(string $time_string = '', bool $include_seconds = true, bool $include_meridiem = true):string
     {
         if ($include_seconds) {
             $time_format = $include_meridiem ? 'g:i:s a' : 'g:i:s' ;
@@ -196,7 +196,7 @@ class DatesTimes
                 ? date('m/d/Y H:i:s e')
                 : $time_string;
         }
-        catch (Error $e) {
+        catch (Error) {
             $timestring = '';
         }
         if (self::isUnixTimestamp($timestring)) {
@@ -204,16 +204,13 @@ class DatesTimes
             try {
                 $timestring = date('Y-m-d H:i:s e', $ts);
             }
-            catch (Error $e) {
+            catch (Error) {
                 $timestring = '';
             }
         }
         try {
             $o_time = new DateTime($timestring, new DateTimeZone(date('e')));
-            if ($o_time !== false) {
-                return $o_time->format($time_format);
-            }
-            return '';
+            return $o_time->format($time_format);
         }
         catch (Exception $e) {
             /** @noinspection ForgottenDebugOutputInspection */
@@ -229,8 +226,8 @@ class DatesTimes
      * @param string $date_format
      * @param string $timestamp
      * @param string $timezone
+     * @return string
      * @deprecated v3.2.0
-     * @return null|string
      */
     public static function convertDateWith(string $date_format = '', string $timestamp = '', string $timezone = ''):string
     {
@@ -251,12 +248,12 @@ class DatesTimes
     {
         $date_format = self::isValidDateFormat($date_format)
             ? $date_format
-            : DateTime::ATOM;
+            : DateTimeInterface::ATOM;
         if ($timestamp === '') {
             try {
                 $date = date($date_format);
             }
-            catch (Error $e) {
+            catch (Error) {
                 $date = $timestamp;
             }
         }
@@ -264,7 +261,7 @@ class DatesTimes
             try {
                 $date = date($date_format, (int) $timestamp);
             }
-            catch (Error $e) {
+            catch (Error) {
                 $date = $timestamp;
             }
         }
@@ -277,7 +274,7 @@ class DatesTimes
         try {
             $o_time = new DateTime($date);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return '';
         }
         if ($o_tz) {
@@ -293,7 +290,7 @@ class DatesTimes
      * @param string $format
      * @return bool|string
      */
-    public static function getDayName(string $timestamp = '', string $format = 'long')
+    public static function getDayName(string $timestamp = '', string $format = 'long'): bool|string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
         return ($format === 'short' ? date('D', $ts) : date('l', $ts));
@@ -315,7 +312,7 @@ class DatesTimes
                 try {
                     $return_this = date('j', $ts);
                 }
-                catch (Error $e) {
+                catch (Error) {
                     $return_this = 'error';
                 }
                 break;
@@ -324,7 +321,7 @@ class DatesTimes
                 try {
                     $return_this = date('z', $ts);
                 }
-                catch (Error $e) {
+                catch (Error) {
                     $return_this = 'error';
                 }
                 break;
@@ -334,7 +331,7 @@ class DatesTimes
                 try {
                     $return_this = date('d', $ts);
                 }
-                catch (Error $e) {
+                catch (Error) {
                     $return_this = 'error';
                 }
         }
@@ -366,7 +363,7 @@ class DatesTimes
                 $end_date = date('m/d/Y H:i:s', strtotime($end_date));
             }
         }
-        catch (Error $e) {
+        catch (Error) {
             return new DateInterval('PT0S');
         }
         try {
@@ -374,7 +371,7 @@ class DatesTimes
             $o_end   = new DateTime($end_date);
             return $o_start->diff($o_end);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return new DateInterval('PT0S');
         }
     }
@@ -391,7 +388,7 @@ class DatesTimes
         try {
             return date('l, F jS, Y g:i a', $ts);
         }
-        catch (Error $e) {
+        catch (Error) {
             return '0';
         }
     }
@@ -408,7 +405,7 @@ class DatesTimes
         try {
             return date('l, F jS, Y', $ts);
         }
-        catch (Error $e) {
+        catch (Error) {
             return '';
         }
     }
@@ -428,10 +425,9 @@ class DatesTimes
         }
         try {
             $o_date = new DateTime($timestamp);
-            $rt = $o_date->format($time_format);
-            return $rt !== false ? $rt : date($time_format);
+            return $o_date->format($time_format);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return date($time_format);
         }
     }
@@ -443,33 +439,19 @@ class DatesTimes
      * @param string $format
      * @return bool|string
      */
-    public static function convertToMonth(string $timestamp = '', string $format = 'default')
+    public static function convertToMonth(string $timestamp = '', string $format = 'default'): bool|string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
-        switch ($format) {
-            case 'F':
-            case 'full':
-            case 'long':
-                $format = 'F';
-                break;
-            case 'M':
-            case 'short':
-                $format = 'M';
-                break;
-            case 'n':
-            case 'int':
-            case 'number':
-                $format = 'n';
-                break;
-            case 'm':
-            case 'default':
-            default:
-                $format = 'm';
-        }
+        $format = match ($format) {
+            'F', 'full', 'long'  => 'F',
+            'M', 'short'         => 'M',
+            'n', 'int', 'number' => 'n',
+            default              => 'm',
+        };
         try {
             return date($format, $ts);
         }
-        catch (Error $e) {
+        catch (Error) {
             return '';
         }
     }
@@ -481,13 +463,13 @@ class DatesTimes
      * @param string $format
      * @return int|string
      */
-    public static function convertToNextDay(string $timestamp = '', string $format = 'atom')
+    public static function convertToNextDay(string $timestamp = '', string $format = 'atom'): int|string
     {
-        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTimeInterface::ATOM, $timestamp);
         try {
             $date = new DateTime($ts);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return '';
         }
         $date->modify('+1 day');
@@ -504,7 +486,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(DateTime::ATOM);
+                return $date->format(DateTimeInterface::ATOM);
             case '':
             case 'timestamp':
                 return self::changeTimestampToMidnight($date->getTimestamp());
@@ -523,13 +505,13 @@ class DatesTimes
      * @param string $format
      * @return int|string
      */
-    public static function convertToNextMonth(string $timestamp = '', string $format = 'timestamp')
+    public static function convertToNextMonth(string $timestamp = '', string $format = 'timestamp'): int|string
     {
-        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTimeInterface::ATOM, $timestamp);
         try {
             $date = new DateTime($ts);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return '';
         }
         $date->modify('+1 month');
@@ -543,7 +525,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(DateTime::ATOM);
+                return $date->format(DateTimeInterface::ATOM);
             case '':
             case 'timestamp':
                 return self::changeTimestampToMidnight($date->getTimestamp());
@@ -563,11 +545,11 @@ class DatesTimes
      */
     public static function convertToNextWeek(string $timestamp = ''):string
     {
-        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTimeInterface::ATOM, $timestamp);
         try {
             $date = new DateTime($ts);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return '';
         }
         $date->modify('+1 week');
@@ -583,14 +565,14 @@ class DatesTimes
      */
     public static function convertToNextYear(string $timestamp = '', string $format = 'timestamp'):string
     {
-        $timestamp = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
+        $timestamp = self::convertDateTimeWith(DateTimeInterface::ATOM, $timestamp);
         if ($timestamp === '') {
             $timestamp = time();
         }
         try {
             $date = new DateTime($timestamp);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return '';
         }
         $date->modify('+1 year');
@@ -604,7 +586,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(DateTime::ATOM);
+                return $date->format(DateTimeInterface::ATOM);
             case '':
             case 'timestamp':
                 return (string) self::changeTimestampToMidnight($date->getTimestamp());
@@ -623,13 +605,13 @@ class DatesTimes
      * @param string $format
      * @return int|string
      */
-    public static function convertToPreviousDay(string $timestamp = '', string $format = 'timestamp')
+    public static function convertToPreviousDay(string $timestamp = '', string $format = 'timestamp'): int|string
     {
-        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTimeInterface::ATOM, $timestamp);
         try {
             $date = new DateTime($ts);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return '';
         }
         $date->modify('-1 day');
@@ -643,7 +625,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(DateTime::ATOM);
+                return $date->format(DateTimeInterface::ATOM);
             case '':
             case 'timestamp':
                 return self::changeTimestampToMidnight($date->getTimestamp());
@@ -662,34 +644,27 @@ class DatesTimes
      * @param string $format
      * @return string|int
      */
-    public static function convertToPreviousMonth(string $timestamp = '', string $format = 'timestamp')
+    public static function convertToPreviousMonth(string $timestamp = '', string $format = 'timestamp'): int|string
     {
-        $timestamp = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
+        $timestamp = self::convertDateTimeWith(DateTimeInterface::ATOM, $timestamp);
         if ($timestamp === '') {
             $timestamp = time();
         }
         try {
             $date = new DateTime($timestamp);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return '';
         }
         $date->modify('-1 month');
-        switch ($format) {
-            case 'name':
-                return $date->format('F');
-            case 'short_name':
-                return $date->format('M');
-            case 'number':
-                return $date->format('m');
-            case 'short_date':
-                return $date->format('m/d/Y');
-            case 'atom':
-                return $date->format(DateTime::ATOM);
-            case 'timestamp':
-            default:
-                return self::changeTimestampToMidnight($date->getTimestamp());
-        }
+        return match ($format) {
+            'name'       => $date->format('F'),
+            'short_name' => $date->format('M'),
+            'number'     => $date->format('m'),
+            'short_date' => $date->format('m/d/Y'),
+            'atom'       => $date->format(DateTimeInterface::ATOM),
+            default      => self::changeTimestampToMidnight($date->getTimestamp()),
+        };
     }
 
     /**
@@ -700,11 +675,11 @@ class DatesTimes
      */
     public static function convertToPreviousWeek(string $timestamp = ''):string
     {
-        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTimeInterface::ATOM, $timestamp);
         try {
             $date = new DateTime($ts);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return '';
         }
         $date->modify('-1 week');
@@ -718,13 +693,13 @@ class DatesTimes
      * @param string $format
      * @return int|string
      */
-    public static function convertToPreviousYear(string $timestamp = '', string $format = '')
+    public static function convertToPreviousYear(string $timestamp = '', string $format = ''): int|string
     {
-        $ts = self::convertDateTimeWith(DateTime::ATOM, $timestamp);
+        $ts = self::convertDateTimeWith(DateTimeInterface::ATOM, $timestamp);
         try {
             $date = new DateTime($ts);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return '';
         }
         $date->modify('-1 year');
@@ -738,7 +713,7 @@ class DatesTimes
             case 'short_date':
                 return $date->format('m/d/Y');
             case 'atom':
-                return $date->format(DateTime::ATOM);
+                return $date->format(DateTimeInterface::ATOM);
             case '':
             case 'timestamp':
                 return self::changeTimestampToMidnight($date->getTimestamp());
@@ -763,7 +738,7 @@ class DatesTimes
         try {
             return date('m/d/Y', $ts);
         }
-        catch (Error $e) {
+        catch (Error) {
             return '';
         }
     }
@@ -774,13 +749,13 @@ class DatesTimes
      * @param string $timestamp
      * @return bool|string
      */
-    public static function convertToShortDateTime(string $timestamp = '')
+    public static function convertToShortDateTime(string $timestamp = ''): bool|string
     {
         $ts = self::convertToUnixTimestamp($timestamp);
         try {
             return date('m/d/Y g:i a', $ts) ?? '';
         }
-        catch (Error $e) {
+        catch (Error) {
             return '';
         }
     }
@@ -797,7 +772,7 @@ class DatesTimes
         try {
             return date('Y-m-d', $ts) ?? '';
         }
-        catch (Error $e) {
+        catch (Error) {
             return '';
         }
     }
@@ -814,7 +789,7 @@ class DatesTimes
         try {
             return date('Y-m-d H:i:s', $ts) ?? '';
         }
-        catch (Error $e) {
+        catch (Error) {
             return '';
         }
     }
@@ -831,7 +806,7 @@ class DatesTimes
         try {
             return date ('H:i:s', $ts) ?? '';
         }
-        catch (Error $e) {
+        catch (Error) {
             return '';
         }
     }
@@ -841,7 +816,7 @@ class DatesTimes
      *
      * @param string $timestamp
      * @param string $timezone
-     * @return null|string
+     * @return string
      */
     public static function convertToTimeWithTz(string $timestamp = '', string $timezone = ''):string
     {
@@ -854,7 +829,7 @@ class DatesTimes
      *
      * @param string $timestamp
      * @param string $timezone
-     * @return null|string
+     * @return string
      */
     public static function convertToTimeWithTzOffset(string $timestamp = '', string $timezone = ''):string
     {
@@ -868,7 +843,7 @@ class DatesTimes
      * @param string $time_format
      * @param string $timestamp
      * @param string $timezone
-     * @return null|string
+     * @return string
      */
     public static function convertToTimeWith(string $time_format = '',
                                              string $timestamp = '',
@@ -884,7 +859,7 @@ class DatesTimes
      * Gets date for tomorrow.
      *
      * @param string $format
-     * @return string|int
+     * @return string
      */
     public static function getTomorrow(string $format = 'm/d/Y'):string
     {
@@ -923,7 +898,7 @@ class DatesTimes
         try {
             return date('W', $ts) ?? '';
         }
-        catch (Error $e) {
+        catch (Error) {
             return '';
         }
     }
@@ -932,7 +907,7 @@ class DatesTimes
      * Converts the timestamp to the year.
      *
      * @param string $timestamp
-     * @return bool|string
+     * @return string
      */
     public static function convertToYear(string $timestamp = ''):string
     {
@@ -940,7 +915,7 @@ class DatesTimes
         try {
             return date('Y', $ts) ?? '';
         }
-        catch (Error $e) {
+        catch (Error) {
             return '';
         }
     }
@@ -971,7 +946,7 @@ class DatesTimes
         try {
             $string = date('Ymd', $ts) ?? '';
         }
-        catch (Error $e) {
+        catch (Error) {
             $string =  '';
         }
         return $string;
@@ -1017,7 +992,7 @@ class DatesTimes
             new DateTimeZone($timezone);
             return true;
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return false;
         }
     }

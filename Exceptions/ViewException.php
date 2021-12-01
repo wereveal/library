@@ -29,7 +29,7 @@ class ViewException extends CustomExceptionAbstract
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1):string
+    public function getCodeText(int $code = -1):string
     {
         return ExceptionHelper::getCodeTextView($code);
     }

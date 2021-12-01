@@ -11,9 +11,10 @@ use Ritc\Library\Helper\Arrays;
  * Common functions that could be used in several database classes.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.1.0
- * @date    2017-01-25 13:45:50
+ * @version v4.0.0
+ * @date    2021-11-30 17:48:35
  * @change_log
+ * - v4.0.0   - updated to php8 (only)                              - 2021-11-30 wer
  * - v3.1.0   - moved retrieveDbConfig to DbCommonTraits            - 2017-01-25 wer
  * - v3.0.0   - changed the db prefix way of working                - 2017-01-14 wer
  * - v2.2.0   - added new property lib_prefix and fixed bug         - 2017-01-13 wer
@@ -27,24 +28,24 @@ trait DbTraits
     use DbCommonTraits;
 
     /** @var array */
-    private $a_db_config;
+    private array $a_db_config;
     /** @var  array */
-    protected $a_prefix;
+    protected array $a_prefix;
     /** @var  string */
-    protected $db_prefix;
+    protected string $db_prefix;
     /** @var string */
-    protected $db_type;
+    protected string $db_type;
     /** @var  string */
-    protected $error_message;
+    protected string $error_message;
 
     ### Db Config Utilities ###
     /**
      * Creates the class properties of a_db_config, db_type and db_prefix from config file or array if passed in.
      * Prefer config file but array is allowed so this can be called without a config file.
      *
-     * @param string|array $config_file
+     * @param array|string $config_file
      */
-    private function createDbParams($config_file = 'db_config.php'):void
+    private function createDbParams(array|string $config_file = 'db_config.php'):void
     {
         $a_required_keys = ['driver', 'host', 'name', 'user', 'password'];
         if (is_array($config_file)) {
@@ -64,7 +65,7 @@ trait DbTraits
         }
         $a_prefix = [];
         foreach ($a_db as $key => $value) {
-            if (substr($key, -7) === '_prefix') {
+            if (str_ends_with($key, '_prefix')) {
                 $short_key = str_replace('_prefix', '', $key);
                 $a_prefix[$short_key] = $value;
             }
@@ -102,7 +103,7 @@ trait DbTraits
      *
      * @param string $config_file
      */
-    public function reloadDbConfig($config_file = 'db_config.php'):void
+    public function reloadDbConfig(string $config_file = 'db_config.php'):void
     {
         $this->createDbParams($config_file);
     }
@@ -122,15 +123,15 @@ trait DbTraits
      * @param string $prefix optional, default to db
      * @return mixed
      */
-    public function getDbPrefix($prefix = 'db')
+    public function getDbPrefix(string $prefix = 'db'): mixed
     {
         return $this->a_prefix[$prefix];
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getDbType()
+    public function getDbType(): string
     {
         return $this->db_type;
     }
@@ -171,7 +172,7 @@ trait DbTraits
      * @param string $name
      * @param string $value
      */
-    protected function setDbPrefix($name = 'db' , $value = 'ritc_'):void
+    protected function setDbPrefix(string $name = 'db' , string $value = 'ritc_'):void
     {
         $this->a_prefix[$name] = $value;
     }

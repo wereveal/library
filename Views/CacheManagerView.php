@@ -17,10 +17,11 @@ use Ritc\Library\Traits\LogitTraits;
  * Manager for Symfony based cache..
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0
+ * @version 2.0.0
  * @date    2018-05-30 15:43:15
  * @change_log
- * - v1.0.0 - Initial version                                   - 2018-05-30 wer
+ * - 2.0.0 - updated to be php8 only compatible                 - 2021-11-30 wer
+ * - 1.0.0 - Initial version                                    - 2018-05-30 wer
  */
 class CacheManagerView implements ViewInterface
 {
@@ -62,7 +63,7 @@ class CacheManagerView implements ViewInterface
                     $this->o_cache->set($cache_key, $a_record, 'constants');
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_record = [];
             }
         }

@@ -14,14 +14,15 @@ use Ritc\Library\Services\DbModel;
  * Does all the database CRUD stuff for the navigation to navgroups mapping.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.4
- * @date    2018-06-07 16:34:47
+ * @version v1.0.0-alpha.5
+ * @date    2021-11-30 14:30:54
  * @change_log
- * - v1.0.0-alpha.4 - Refactored to use ModelAbstract              - 2018-06-07 wer
- * - v1.0.0-alpha.3 - Refactored to use ModelException             - 2017-06-15 wer
- * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here        - 2017-05-09 wer
- * - v1.0.0-alpha.1 - Refactoring reflected here                   - 2017-01-27 wer
- * - v1.0.0-alpha.0 - Initial version                              - 02/25/2016 wer
+ * - v1.0.0-alpha.5 - updated for php8 only                     - 2021-11-30 wer
+ * - v1.0.0-alpha.4 - Refactored to use ModelAbstract           - 2018-06-07 wer
+ * - v1.0.0-alpha.3 - Refactored to use ModelException          - 2017-06-15 wer
+ * - v1.0.0-alpha.2 - DbUtilityTraits change reflected here     - 2017-05-09 wer
+ * - v1.0.0-alpha.1 - Refactoring reflected here                - 2017-01-27 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 02/25/2016 wer
  */
 class NavNgMapModel extends ModelAbstract
 {
@@ -42,10 +43,11 @@ class NavNgMapModel extends ModelAbstract
      * To change, a DELETE/INSERT thing has to be done. This method should be wrapped
      * in a transaction. It doesn't itself so that it can be used in a larger transaction.
      *
-     * @param array  $a_new_values Required, not like abstract. ['nav_id', 'ng_id']
-     * @param array  $a_old_values Required, not like abstract. ['nnm_id', 'nav_id', 'ng_id']
+     * @param array $a_new_values Required, not like abstract. ['nav_id', 'ng_id']
+     * @param array $a_old_values Required, not like abstract. ['nnm_id', 'nav_id', 'ng_id']
      * @return bool
      * @throws ModelException
+     * @noinspection PhpParameterNameChangedDuringInheritanceInspection
      */
     public function update(array $a_new_values = [], array $a_old_values = []):bool
     {
@@ -92,7 +94,7 @@ class NavNgMapModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function deleteWith($ng_id = -1, $nav_id = -1):bool
+    public function deleteWith(int $ng_id = -1, int $nav_id = -1):bool
     {
         if ($ng_id === -1 && $nav_id === -1) {
             return false;
@@ -143,7 +145,7 @@ class NavNgMapModel extends ModelAbstract
                     return true;
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $this->error_message = 'The Navigation record does not exist.';
                 return true;
             }
@@ -156,7 +158,7 @@ class NavNgMapModel extends ModelAbstract
                     return true;
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $this->error_message = 'The Navgroup record does not exist.';
                 return true;
             }

@@ -11,20 +11,21 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class PeopleGroupMapEntity
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2015-07-29 11:43:02
+ * @version v2.0.0
+ * @date    2021-11-26 16:23:18
  * @change_log
- * - v1.0.0 - Finished        - 07/29/2015 wer
- * - v0.1.0 - Initial version - 09/11/2014 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
+ * - v1.0.0 - Finished                                          - 07/29/2015 wer
+ * - v0.1.0 - Initial version                                   - 09/11/2014 wer
  */
 class PeopleGroupMapEntity implements EntityInterface
 {
     /** @var int */
-    private $pgm_id;
+    private int $pgm_id;
     /** @var int */
-    private $people_id;
+    private int $people_id;
     /** @var int */
-    private $group_id;
+    private int $group_id;
 
     /**
      * Gets all the entity properties.
@@ -67,7 +68,7 @@ class PeopleGroupMapEntity implements EntityInterface
     /**
      * @param int $group_id
      */
-    public function setGroupId($group_id = -1):void
+    public function setGroupId(int $group_id = -1):void
     {
         $this->group_id = $group_id;
     }
@@ -83,7 +84,7 @@ class PeopleGroupMapEntity implements EntityInterface
     /**
      * @param int $pgm_id
      */
-    public function setPgmId($pgm_id = -1):void
+    public function setPgmId(int $pgm_id = -1):void
     {
         $this->pgm_id = $pgm_id;
     }
@@ -99,7 +100,7 @@ class PeopleGroupMapEntity implements EntityInterface
     /**
      * @param int $people_id
      */
-    public function setPeopleId($people_id = -1):void
+    public function setPeopleId(int $people_id = -1):void
     {
         $this->people_id = $people_id;
     }

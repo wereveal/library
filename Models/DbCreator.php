@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpPrivateFieldCanBeLocalVariableInspection */
-/** @noinspection PhpIncludeInspection */
+<?php
 /**
  * Class DbCreator
  * @package Ritc_Library
@@ -16,9 +15,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Installs default database tables and data.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0+1
- * @date    2018-11-21 09:26:26
+ * @version v2.0.0
+ * @date    2021-11-30 13:43:34
  * @change_log
+ * - v2.0.0         - updated for php8
  * - v1.1.0         - added new method for content, bug fixes   - 2018-05-30 wer
  * - v1.0.0         - Initial Production version                - 2017-12-15 wer
  * - v1.0.0-alpha.0 - Initial version                           - 2017-11-23 wer
@@ -28,54 +28,55 @@ class DbCreator
     use LogitTraits;
 
     /** @var array $a_blocks */
-    private $a_blocks = [];
+    private array $a_blocks = [];
     /** @var array $a_content */
-    private $a_content = [];
+    private array $a_content = [];
     /** @var array $a_data */
-    private $a_data;
+    private mixed $a_data;
     /** @var  array $a_groups */
-    private $a_groups = [];
+    private array $a_groups = [];
     /** @var  array $a_install_config */
-    private $a_install_config;
+    private mixed $a_install_config;
     /** @var  array $a_navgroups */
-    private $a_navgroups = [];
+    private array $a_navgroups = [];
     /** @var  array $a_navigation */
-    private $a_navigation = [];
+    private array $a_navigation = [];
     /** @var  array $a_nnm */
-    private $a_nnm = [];
+    private array $a_nnm = [];
     /** @var  array $a_page */
-    private $a_page = [];
+    private array $a_page = [];
     /** @var  array $a_pbm */
-    private $a_pbm = [];
+    private array $a_pbm = [];
     /** @var  array $a_people */
-    private $a_people = [];
+    private array $a_people = [];
     /** @var  array $a_pgm */
-    private $a_pgm = [];
+    private array $a_pgm = [];
     /** @var  array $a_rgm */
-    private $a_rgm = [];
+    private array $a_rgm = [];
     /** @var  array $a_routes */
-    private $a_routes = [];
+    private array $a_routes = [];
     /** @var array $a_sql */
-    private $a_sql;
+    private mixed $a_sql;
     /** @var  array $a_twig_dirs */
-    private $a_twig_dirs = [];
+    private array $a_twig_dirs = [];
     /** @var  array $a_twig_prefix */
-    private $a_twig_prefix = [];
+    private array $a_twig_prefix = [];
     /** @var array $a_twig_themes */
-    private $a_twig_themes = [];
+    private array $a_twig_themes = [];
     /** @var  array $a_twig_tpls */
-    private $a_twig_tpls = [];
+    private array $a_twig_tpls = [];
     /** @var  array $a_urls */
-    private $a_urls = [];
+    private array $a_urls = [];
     /** @var string $db_prefix */
-    private $db_prefix;
+    private string $db_prefix;
     /** @var string $error_message */
-    private $error_message;
-    /** @var DbModel $o_db */
-    private $o_db;
+    private string $error_message;
+    /** @var bool|DbModel $o_db */
+    private DbModel|bool $o_db;
     /** @var Di $o_di */
-    /** @var PDO $o_pdo */
-    private $o_pdo;
+    private Di $o_di;
+    /** @var PDO|bool $o_pdo */
+    private bool|PDO $o_pdo;
 
     /**
      * DbCreator constructor.
@@ -112,7 +113,7 @@ class DbCreator
             try {
                 $this->o_db->rawExec($sql);
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $error_message = $this->o_db->getSqlErrorMessage();
                 $error_message = "Database failure\n" . var_export($this->o_pdo->errorInfo(), true) . " \nother: " . $error_message . "\n" . $sql . "\n";
                 $this->error_message = $error_message;
@@ -219,7 +220,7 @@ class DbCreator
      *                           in the property a_data['constants'].
      * @return bool
      */
-    public function insertConstants(array $a_constants = []):?bool
+    public function insertConstants(array $a_constants = []):bool
     {
         if (empty($a_constants)) {
             if (empty($this->a_data['constants'])) {
@@ -247,7 +248,7 @@ class DbCreator
      * @param array $a_groups optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertGroups(array $a_groups = []):?bool
+    public function insertGroups(array $a_groups = []):bool
     {
         if (empty($a_groups)) {
             if (empty($this->a_data['groups'])) {
@@ -385,7 +386,7 @@ class DbCreator
             }
         }
         //  Updating nav records with parent ids:
-        foreach ($a_navigation as $key => $a_record) {
+        foreach ($a_navigation as $a_record) {
             $update_values = ['nav_id' => $a_record['nav_id'], 'parent_id' => $a_navigation[$a_record['nav_parent_name']]['nav_id']];
             try {
                 $results = $this->o_db->execute($update_values, $o_update_stmt);
@@ -439,7 +440,7 @@ class DbCreator
             return false;
         }
         $a_new_nnm = [];
-        foreach ($a_nnm as $key => $a_record) {
+        foreach ($a_nnm as $a_record) {
             $a_new_nnm[] = [
                 'ng_id'  => $this->a_navgroups[$a_record['ng_id']]['ng_id'],
                 'nav_id' => $this->a_navigation[$a_record['nav_id']]['nav_id']
@@ -546,7 +547,7 @@ class DbCreator
                     return false;
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $this->error_message = 'Could not insert a page record.';
                 return false;
             }
@@ -561,7 +562,7 @@ class DbCreator
      * @param array $a_pbm
      * @return bool
      */
-    public function insertPBM(array $a_pbm = []):?bool
+    public function insertPBM(array $a_pbm = []):bool
     {
         if (empty($a_pbm)) {
             if (empty($this->a_data['page_block_map'])) {
@@ -598,7 +599,7 @@ class DbCreator
      * @param array $a_people optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertPeople(array $a_people = []):?bool
+    public function insertPeople(array $a_people = []): bool
     {
         if (empty($a_people)) {
             if (empty($this->a_data['people'])) {
@@ -630,7 +631,7 @@ class DbCreator
      * @param array $a_pgm optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertPGM(array $a_pgm = []):?bool
+    public function insertPGM(array $a_pgm = []): bool
     {
         if (empty($a_pgm)) {
             if (empty($this->a_data['people_group_map'])) {
@@ -666,7 +667,7 @@ class DbCreator
      * @param array $a_rgm optional optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertRGM(array $a_rgm = []):?bool
+    public function insertRGM(array $a_rgm = []): bool
     {
         if (empty($a_rgm)) {
             if (empty($this->a_data['routes_group_map'])) {
@@ -697,7 +698,7 @@ class DbCreator
      * @param array $a_routes optional, if not given takes values from class property $a_data.
      * @return bool
      */
-    public function insertRoutes(array $a_routes = []):?bool
+    public function insertRoutes(array $a_routes = []): bool
     {
         if (empty($a_routes)) {
             if (empty($this->a_data['routes'])) {
@@ -772,7 +773,7 @@ class DbCreator
                     return false;
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $this->error_message = 'Could not insert tp dir record.';
                 return false;
             }
@@ -824,7 +825,7 @@ class DbCreator
                     $a_twig_prefix[$key]['tp_id'] = $ids[0];
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $this->error_message = 'Could not insert new twig prefix record.';
                 return false;
             }
@@ -888,7 +889,7 @@ class DbCreator
                     return false;
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $this->error_message = 'Could not insert a new twig template record';
                 return false;
             }
@@ -928,7 +929,7 @@ class DbCreator
      * @param array $a_urls
      * @return bool
      */
-    public function insertUrls(array $a_urls = []):?bool
+    public function insertUrls(array $a_urls = []): bool
     {
         if (empty($a_urls)) {
             if (empty($this->a_data['urls'])) {
@@ -956,7 +957,7 @@ class DbCreator
      * @param array $a_table_info
      * @return array|bool
      */
-    private function genericInsert(array $a_values_list = [], array $a_table_info = [])
+    private function genericInsert(array $a_values_list = [], array $a_table_info = []): bool|array
     {
         if (empty($a_values_list) || empty($a_table_info)) {
             $this->error_message = 'Missing required information';
@@ -1024,7 +1025,6 @@ class DbCreator
             ) {
                 $master_twig = 'true';
                 foreach ($this->a_data['twig_prefix'] as $tp_key => $a_tp_values) {
-                    /** @noinspection UnsupportedStringOffsetOperationsInspection */
                     $this->a_data['twig_prefix'][$tp_key]['tp_default'] = 'false';
                 }
             }
@@ -1035,7 +1035,6 @@ class DbCreator
                     . '/'
                     . $this->a_install_config['app_name']
                     . '/resources/templates';
-                /** @noinspection UnsupportedStringOffsetOperationsInspection */
                 $this->a_data['twig_prefix'][$key_name] = [
                     'tp_prefix'  => $app_twig_prefix,
                     'tp_path'    => $tp_path,
@@ -1047,7 +1046,6 @@ class DbCreator
             foreach ($a_dir_names as $name) {
                 $dir_name = $app_twig_prefix . $name;
                 if (isset($this->a_data['twig_dirs']) && !isset($this->a_data['twig_dirs'][$dir_name])) {
-                    /** @noinspection UnsupportedStringOffsetOperationsInspection */
                     $this->a_data['twig_dirs'][$dir_name] = [
                         'tp_id'   => $key_name,
                         'td_name' => $name
@@ -1056,11 +1054,10 @@ class DbCreator
             }
             $a_default_files = $this->a_data['twig_default_files'];
             foreach ($a_default_files as $file) {
-                if ($file !== 'no_file.twig' && substr($file, -5) === '.twig') {
+                if ($file !== 'no_file.twig' && str_ends_with($file, '.twig')) {
                     $this_file = substr($file, 0, -5);
                     $tpl_key   = $app_twig_prefix . $this_file;
                     if (!isset($this->a_data['twig_templates'][$tpl_key])) {
-                        /** @noinspection UnsupportedStringOffsetOperationsInspection */
                         $this->a_data['twig_templates'][$tpl_key] = [
                             'td_id'         => $app_twig_prefix . 'pages',
                             'theme_id'      => $app_theme,
@@ -1111,7 +1108,7 @@ class DbCreator
      *
      * @param string $value
      */
-    public function setErrorMessage($value = ''):void
+    public function setErrorMessage(string $value = ''):void
     {
         $this->error_message = $value;
     }

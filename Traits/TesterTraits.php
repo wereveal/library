@@ -20,7 +20,8 @@ use Ritc\Library\Helper\LocateFile;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version v4.2.0
  * @date    2017-10-19 14:03:18
- * ## Change log
+ * @todo    get this working or delete it
+ * @change_log
  * - v4.2.0 - updated setValues and setOrder to not use an empty parameter              - 2017-10-19 wer
  * - v4.1.0 - Added new methods specific to model testing                               - 2017-06-20 wer
  * - v4.0.0 - Turned the class into a trait to maybe remove a hidden bug                - 2017-06-09 wer
@@ -45,51 +46,52 @@ use Ritc\Library\Helper\LocateFile;
 trait TesterTraits
 {
     /** @var array specifies the order of tests */
-    protected $a_test_order       = [];
+    protected array $a_test_order = [];
     /** @var array values that will be tested */
-    protected $a_test_values      = [];
+    protected array $a_test_values = [];
     /** @var string name of the class */
-    protected $class_name         = '';
+    protected string $class_name = '';
     /** @var bool the output will show which sub-tests are passed  */
-    protected $show_passed_subs   = false;
+    protected bool $show_passed_subs = false;
     /** @var array which sub-tests were failed */
-    protected $failed_subtests    = [];
+    protected array $failed_subtests = [];
     /** @var array names of the failed tests */
-    protected $failed_test_names  = [];
+    protected array $failed_test_names = [];
     /** @var int number of failed tests */
-    protected $failed_tests       = 0;
+    protected int $failed_tests = 0;
     /** @var  string name of the instance */
-    protected $instance_name      = '';
+    protected string $instance_name = '';
     /** @var string name of the namespace */
-    protected $namespace          = '';
+    protected string $namespace = '';
     /** @var int the new id of the record created */
-    protected $new_id             = -1;
+    protected int $new_id = -1;
     /** @var int number of tests run */
-    protected $num_o_tests        = 0;
+    protected int $num_o_tests = 0;
     /** @var string name of the file which specifies the order of tests */
-    protected $order_file         = 'test_order.php';
+    protected string $order_file = 'test_order.php';
     /** @var array names of passed sub-tests */
-    protected $passed_subtests    = [];
+    protected array $passed_subtests = [];
     /** @var array names of passed tests */
-    protected $passed_test_names  = [];
+    protected array $passed_test_names = [];
     /** @var int number of passed tests */
-    protected $passed_tests       = 0;
+    protected int $passed_tests = 0;
     /** @var array names of test to skip */
-    protected $skipped_test_names = [];
+    protected array $skipped_test_names = [];
     /** @var int numbe of skipped tests */
-    protected $skipped_tests      = 0;
+    protected int $skipped_tests = 0;
     /** @var string name of the file which contains the values to be tested */
-    protected $values_file        = 'test_values.php';
+    protected string $values_file = 'test_values.php';
 
     ### Main Methods for Testing ###
 
     /**
      * Runs tests where method ends in Test.
+     *
      * @param bool $return_results optional, defaults to true which also returns test names.
      * @return array
      * @throws ReflectionException
      */
-    public function runTests($return_results = true):array
+    public function runTests(bool $return_results = true):array
     {
         if ($this->class_name !== '') {
             $class_name = $this->class_name;
@@ -240,7 +242,7 @@ trait TesterTraits
      *
      * @param string $instance
      */
-    public function cleanupDbTests($instance = ''):void
+    public function cleanupDbTests(string $instance = ''):void
     {
         if ($this->new_id > 0) {
             $new_id = $this->new_id;
@@ -320,7 +322,7 @@ trait TesterTraits
                 $good_results = false;
             }
         }
-        catch (Exception $e) {
+        catch (Exception) {
             $this->setSubFailed($test, $subtest);
             $good_results = false;
         }
@@ -401,25 +403,7 @@ trait TesterTraits
                 $good_results = false;
             }
         }
-        catch (TypeError $e) {
-            if ($expected_results === false) {
-                $this->setSubPassed($test, $subtest);
-            }
-            else {
-                $this->setSubFailed($test, $subtest);
-                $good_results = false;
-            }
-        }
-        catch (Exception $e) {
-            if ($expected_results === false) {
-                $this->setSubPassed($test, $subtest);
-            }
-            else {
-                $this->setSubFailed($test, $subtest);
-                $good_results = false;
-            }
-        }
-        catch (Error $e) {
+        catch (TypeError | Exception | Error) {
             if ($expected_results === false) {
                 $this->setSubPassed($test, $subtest);
             }
@@ -484,10 +468,11 @@ trait TesterTraits
     ### All the other methods needed to run tests ###
     /**
      * Returns an array showing the number and optionally names of tests success and failure
+     *
      * @param bool $show_test_names optional defaults to showing names
      * @return array
      */
-    public function returnTestResults($show_test_names = true):array
+    public function returnTestResults(bool $show_test_names = true):array
     {
         $a_failed_test_names = array();
         $a_passed_test_names = array();
@@ -540,10 +525,11 @@ trait TesterTraits
 
     /**
      * Adds a method name to the test order.
+     *
      * @param string $method_name
      * @return bool
      */
-    public function addMethodToTestOrder($method_name = ''):bool
+    public function addMethodToTestOrder(string $method_name = ''):bool
     {
         if ($method_name === '') { return false; }
         $this->a_test_order[] = $method_name;
@@ -552,10 +538,11 @@ trait TesterTraits
 
     /**
      * Adds a single key=>value pair to the a_test_values array
-     * @param string $key the key name
-     * @param mixed $value  the value assigned to the key
+     *
+     * @param string      $key   the key name
+     * @param null|string $value the value assigned to the key
      */
-    public function addTestValue($key = '', $value = ''):void
+    public function addTestValue(string $key = '', null|string $value = ''):void
     {
         if ($key === '') { return; }
         $this->a_test_values[$key] = $value;
@@ -617,10 +604,11 @@ trait TesterTraits
 
     /**
      * Removes Tester or Test from method name
-     * @param  string $method_name defaults to 'Tester'
+     *
+     * @param string $method_name defaults to 'Tester'
      * @return string
      */
-    public function shortenName($method_name = 'Tester'):string
+    public function shortenName(string $method_name = 'Tester'):string
     {
         if (strpos($method_name, '::')) {
             $a_parts = explode('::', $method_name);
@@ -637,18 +625,20 @@ trait TesterTraits
 
     /**
      * Standard Setter for the property $class_name;
+     *
      * @param string $class_name
      */
-    public function setClassName($class_name = ''):void
+    public function setClassName(string $class_name = ''):void
     {
         $this->class_name = $class_name;
     }
 
     /**
      * Sets three properties, num_o_test++, failed_tests++, and failed test names.
+     *
      * @param string $method_name
      */
-    public function setFailures($method_name = ''):void
+    public function setFailures(string $method_name = ''):void
     {
         $this->num_o_tests++;
         $this->failed_tests++;
@@ -657,19 +647,21 @@ trait TesterTraits
 
     /**
      * Standard setter for the propery $namespace.
+     *
      * @param string $namespace
      */
-    public function setNamespace($namespace = ''):void
+    public function setNamespace(string $namespace = ''):void
     {
         $this->namespace = $namespace;
     }
 
     /**
      * Sets failed_subtests
+     *
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubFailed($method_name = '', $test_name = ''):void
+    public function setSubFailed(string $method_name = '', string $test_name = ''):void
     {
         if ($method_name === '' || $test_name === '') { return; }
         $method_name = $this->shortenName($method_name);
@@ -686,10 +678,11 @@ trait TesterTraits
 
     /**
      * Records the names of the subtests passed for a test.
+     *
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubPassed($method_name = '', $test_name = ''):void
+    public function setSubPassed(string $method_name = '', string $test_name = ''):void
     {
         if ($method_name !== '' && $test_name !== '') {
             $method_name = $this->shortenName($method_name);
@@ -744,7 +737,7 @@ trait TesterTraits
      * @return bool true or false
      * @throws ReflectionException
      */
-    public function isPublicMethod($method_name = ''):bool
+    public function isPublicMethod(string $method_name = ''):bool
     {
         if ($method_name === '') {
             return false;

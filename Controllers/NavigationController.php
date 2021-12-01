@@ -18,9 +18,10 @@ use Ritc\Library\Views\NavigationView;
  * Class NavigationController - for the Navigation Management.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2016-04-15 11:53:36
+ * @version v1.0.0-alpha.1
+ * @date    2021-11-26 15:07:20
  * @change_log
+ * - v1.0.0-alpha.1 - Updated for php8, still has bugs          - 2021-11-26 wer
  * - v1.0.0-alpha.0 - Initial version                           - 2016-04-15 wer
  */
 class NavigationController implements ManagerControllerInterface
@@ -29,9 +30,9 @@ class NavigationController implements ManagerControllerInterface
     use ConfigControllerTraits;
 
     /** @var NavComplexModel model object */
-    protected $o_model;
+    protected NavComplexModel $o_model;
     /** @var NavigationView view object */
-    protected $o_view;
+    protected NavigationView $o_view;
 
     /**
      * NavigationController constructor.
@@ -53,22 +54,15 @@ class NavigationController implements ManagerControllerInterface
      */
     public function route():string
     {
-        switch($this->form_action) {
-            case 'new':
-                return $this->o_view->renderForm();
-            case 'modify':
-                return $this->o_view->renderForm($this->a_post['nav_id']);
-            case 'update':
-                return $this->update();
-            case 'verify_delete':
-                return $this->verifyDelete();
-            case 'save':
-                return $this->save();
-            case 'delete':
-                return $this->delete();
-            default:
-                return $this->o_view->renderList();
-        }
+        return match ($this->form_action) {
+            'new'           => $this->o_view->renderForm(),
+            'modify'        => $this->o_view->renderForm($this->a_post['nav_id']),
+            'update'        => $this->update(),
+            'verify_delete' => $this->verifyDelete(),
+            'save'          => $this->save(),
+            'delete'        => $this->delete(),
+            default         => $this->o_view->renderList(),
+        };
     }
 
     ### Required by Interface ###
@@ -83,7 +77,7 @@ class NavigationController implements ManagerControllerInterface
             $this->o_model->save($this->a_post);
             $a_msg = ViewHelper::successMessage();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_msg = ViewHelper::failureMessage('Unable to save the record.');
         }
         if ($this->use_cache) {
@@ -135,7 +129,7 @@ class NavigationController implements ManagerControllerInterface
             $this->o_model->delete($this->a_post);
             $a_msg = ViewHelper::successMessage();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_msg = ViewHelper::failureMessage('Unable to delete the nav record.');
         }
         if ($this->use_cache) {

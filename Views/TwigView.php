@@ -21,11 +21,13 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the Twig manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.1
- * @date    2018-05-20 14:59:17
+ * @version 1.0.0-alpha.2
+ * @date    2021-12-01 13:29:42
+ * @todo get finalized to get out of alpha.
  * @change_log
- * - v1.0.0-alpha.1 - Bug fix                - 2018-05-20 wer
- * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
+ * - 1.0.0-alpha.2 - updated for php 8 standards                - 2021-12-01 wer
+ * - 1.0.0-alpha.1 - Bug fix                                    - 2018-05-20 wer
+ * - 1.0.0-alpha.0 - Initial version                            - 2017-05-14 wer
  */
 class TwigView implements ViewInterface
 {
@@ -34,6 +36,7 @@ class TwigView implements ViewInterface
 
     /**
      * TwigView constructor.
+     *
      * @param Di $o_di
      */
     public function __construct(Di $o_di)
@@ -143,7 +146,7 @@ class TwigView implements ViewInterface
      * @param int $td_id
      * @return string
      */
-    public function renderDeleteDir($td_id = -1):string
+    public function renderDeleteDir(int $td_id = -1):string
     {
         if ($td_id === -1) {
             $a_message = ViewHelper::warningMessage('Unable to delete the directory: a directory must be specified by id.');
@@ -187,10 +190,11 @@ class TwigView implements ViewInterface
 
     /**
      * Returns the verify delete form with prefix values.
+     *
      * @param int $tp_id
      * @return string
      */
-    public function renderDeleteTp($tp_id = -1):string
+    public function renderDeleteTp(int $tp_id = -1):string
     {
         if ($tp_id === -1) {
             $a_message = ViewHelper::warningMessage('Unable to delete the twig prefix: it must be specified by id.');
@@ -242,10 +246,11 @@ class TwigView implements ViewInterface
 
     /**
      * Renders the verify delete form with template variables.
+     *
      * @param int $tpl_id
      * @return string
      */
-    public function renderDeleteTpl($tpl_id = -1):string
+    public function renderDeleteTpl(int $tpl_id = -1):string
     {
         $meth = __METHOD__ . '.';
         if ($tpl_id === -1) {

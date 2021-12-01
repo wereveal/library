@@ -28,7 +28,7 @@ class OopHelper
         }
         $a_classes = get_declared_classes();
         foreach ($a_classes as $class) {
-            if (strpos($class, $namespace) !== false) {
+            if (str_contains($class, $namespace)) {
                 return true;
             }
         }

@@ -24,11 +24,12 @@ use Ritc\Library\Views\PageView;
  * Class PageController - Page Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
- * @date    2018-06-21 07:04:13
+ * @version v3.0.0
+ * @date    2021-11-26 15:10:45
  * @change_log
- * - v2.0.0   - Refactored to use ConfigControllerTraits     - 2018-06-21 wer
- * - v1.0.0   - First working version                        - 11/27/2015 wer
+ * - v3.0.0 - Updated for php8                                  - 2021-11-26 wer
+ * - v2.0.0 - Refactored to use ConfigControllerTraits          - 2018-06-21 wer
+ * - v1.0.0 - First working version                             - 11/27/2015 wer
  */
 class PageController implements ManagerControllerInterface
 {
@@ -36,9 +37,9 @@ class PageController implements ManagerControllerInterface
     use ConfigControllerTraits;
 
     /** @var PageComplexModel */
-    private $o_model;
+    private PageComplexModel $o_model;
     /** @var PageView */
-    private $o_view;
+    private PageView $o_view;
 
     /**
      * PageController constructor.
@@ -82,7 +83,7 @@ class PageController implements ManagerControllerInterface
                 return $this->verifyDelete();
             case 'new':
             case 'new_page':
-                return $this->o_view->renderForm('new_page');
+                return $this->o_view->renderForm();
             case 'modify':
                 $page_id = $this->a_post['page']['page_id'];
                 return $this->o_view->renderForm('modify_page', $page_id);
@@ -158,7 +159,7 @@ class PageController implements ManagerControllerInterface
                 $a_block_results = $o_blocks->read(['b_name' => 'body'], ['a_fields' => ['b_id']]);
                 $a_blocks = [$a_block_results[0]['b_id'] => 'true'];
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_msg_values = [
                     'message' => 'A problem with the blocks occurred. Please try again.',
                     'type'    => 'error'

@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class ContentComplexModel.
  * @package Ritc_Library
@@ -17,11 +18,11 @@ use Ritc\Library\Traits\LogitTraits;
  * Multi-table database operations and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.2
- * @date    2018-12-18 17:09:29
+ * @version 2.0.0
+ * @date    2021-11-30 13:32:23
  * @change_log
- * - v1.0.2 - Bug fixes                                                 - 2018-12-18 wer
- * - v1.0.0 - Initial version                                           - 2018-06-02 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-30 wer
+ * - v1.0.0 - Initial version                                   - 2018-06-02 wer
  */
 class ContentComplexModel
 {
@@ -29,13 +30,13 @@ class ContentComplexModel
     use DbUtilityTraits;
 
     /** @var string $select_sql */
-    private $select_sql;
+    private string $select_sql;
     /** @var BlocksModel $o_blocks */
-    private $o_blocks;
+    private BlocksModel $o_blocks;
     /** @var ContentModel $o_content */
-    private $o_content;
+    private ContentModel $o_content;
     /** @var PageModel $o_page */
-    private $o_page;
+    private PageModel $o_page;
 
     /**
      * ContentComplexModel constructor.
@@ -66,7 +67,7 @@ class ContentComplexModel
      * @param int $c_pbm_id
      * @throws ModelException
      */
-    public function deactivateAll($c_pbm_id = -1): void
+    public function deactivateAll(int $c_pbm_id = -1): void
     {
         try {
             $this->o_content->setCurrentFalse($c_pbm_id);
@@ -117,7 +118,7 @@ class ContentComplexModel
      * @return bool
      * @throws ModelException
      */
-    public function deleteById($c_id = -1):bool
+    public function deleteById(int $c_id = -1):bool
     {
         try {
             return $this->o_content->delete($c_id);
@@ -192,7 +193,7 @@ class ContentComplexModel
      * @return array
      * @throws ModelException
      */
-    public function readAllByUrlId($url_id = -1):array
+    public function readAllByUrlId(int $url_id = -1):array
     {
         try {
             $a_results = $this->o_page->readByUrlId($url_id);
@@ -276,7 +277,7 @@ class ContentComplexModel
      * @return array
      * @throws ModelException
      */
-    public function readByContentId($id = -1):array
+    public function readByContentId(int $id = -1):array
     {
         $pin = $this->o_content->getPrimaryIndexName();
         $sql = str_replace(

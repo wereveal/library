@@ -16,10 +16,10 @@ use Ritc\Library\Services\DbModel;
  * Does all the database CRUD stuff for the page table plus other app/business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.1
- * @date    2018-12-29 10:52:45
+ * @version v4.0.0
+ * @date    2021-11-30 14:47:36
  * @change_log
- * - v3.0.1   - Bug fix to read.                                        - 2018-12-29 wer
+ * - v4.0.0   - Updated to php8 only                                    - 2021-11-30 wer
  * - v3.0.0   - Refactored to use ModelAbstract                         - 2018-06-15 wer
  * - v2.0.0   - Refactored to use ModelException                        - 2017-06-17 wer
  * - v1.2.0   - refactored to utilize the DbUtilityTraits               - 2016-04-01 wer
@@ -128,11 +128,11 @@ class PageModel extends ModelAbstract
     /**
      * Reads the page record that corresponds to the url id.
      *
-     * @param  int $url_id Required
+     * @param int $url_id Required
      * @return array
      * @throws ModelException
      */
-    public function readByUrlId($url_id = -1):array
+    public function readByUrlId(int $url_id = -1):array
     {
         if ($url_id < 1) {
             $err_num = ExceptionHelper::getCodeNumberModel('read missing value');

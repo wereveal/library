@@ -19,11 +19,14 @@ use Symfony\Component\Cache\CacheItem;
  * Makes using cache easier by hidding differences btween psr-6 and psr-16 types..
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.1
- * @date    2018-12-18 13:49:30
+ * @version 1.0.0-alpha.2
+ * @date    2021-11-29 15:26:22
+ * @todo    Bug fixes, compatibility to latest version of Symfony\Cache
  * @change_log
- * - v1.0.1 - Bug Fixes                                         - 2018-12-18 wer
- * - v1.0.0 - Initial version                                   - 2018-06-20 wer
+ * - v1.0.0-alpha.2 - Changed whole thing to alpha, updated for php8    - 2021-11-29 wer
+ *                    Lots of figuring out how to make sure this works
+ * - v1.0.0-alpha.1 - Bug Fixes                                         - 2018-12-18 wer
+ * - v1.0.0-alpha.0 - Initial version                                   - 2018-06-20 wer
  */
 class CacheHelper
 {
@@ -34,33 +37,32 @@ class CacheHelper
      *
      * @var string
      */
-    protected $cache_type = '';
+    protected string $cache_type = '';
     /**
      * The cache object.
      *
      * @var AbstractAdapter|CacheItem|TagAwareAdapter
      */
-    protected $o_cache;
+    protected AbstractAdapter|CacheItem|TagAwareAdapter $o_cache;
 
     /**
      * CacheHelper constructor.
      *
      * @param CacheFactory $o_cache
+     * @noinspection PhpUndefinedConstantInspection
      */
-    public function __construct($o_cache)
+    public function __construct(CacheFactory $o_cache)
     {
-        if (is_object($o_cache)) {
-            $this->o_cache = $o_cache;
-            $this->cache_type = strpos(CACHE_TYPE, 'Simple') !== false
-                ? 'psr-16'
-                : 'psr-6';
-        }
+        $this->o_cache = $o_cache;
+        $this->cache_type = str_contains(CACHE_TYPE, 'Simple')
+            ? 'psr-16'
+            : 'psr-6';
     }
 
     /**
      * Removes all cache key/values.
      */
-    public function clearAll()
+    public function clearAll(): bool
     {
         if (empty($this->cache_type)) {
             return true;
@@ -82,7 +84,7 @@ class CacheHelper
                 try {
                     $this->o_cache->deleteItem($cache_key);
                 }
-                catch (CacheException $e) {
+                catch (CacheException) {
                     break;
                 }
                 break;
@@ -90,7 +92,7 @@ class CacheHelper
                 try {
                     $this->o_cache->delete($cache_key);
                 }
-                catch (CacheException $e) {
+                catch (CacheException) {
                     break;
                 }
                 break;
@@ -111,7 +113,7 @@ class CacheHelper
                 try{
                     $this->o_cache->invalidateTags([$tag]);
                 }
-                catch (CacheException $e) {
+                catch (CacheException) {
                     // do nothing
                 }
                 break;
@@ -133,7 +135,7 @@ class CacheHelper
                 try{
                     $this->o_cache->invalidateTags($a_tags);
                 }
-                catch (CacheException $e) {
+                catch (CacheException) {
                     // do nothing
                 }
                 break;
@@ -153,7 +155,7 @@ class CacheHelper
         try {
             $this->o_cache->deleteItem($cache_key);
         }
-        catch (CacheException $e) {
+        catch (CacheException) {
             // do nothing
         }
     }
@@ -168,7 +170,7 @@ class CacheHelper
         try {
             $this->o_cache->deleteItems($a_keys);
         }
-        catch (CacheException $e) {
+        catch (CacheException) {
             // do nothing
         }
     }
@@ -179,7 +181,7 @@ class CacheHelper
      * @param string $cache_key
      * @return mixed
      */
-    public function get(string $cache_key = '')
+    public function get(string $cache_key = ''): mixed
     {
         switch ($this->cache_type) {
             case 'psr-6':
@@ -189,7 +191,7 @@ class CacheHelper
                         return $o_item->get();
                     }
                 }
-                catch (CacheException $e) {
+                catch (CacheException) {
                     // do nothing
                 }
                 break;
@@ -199,15 +201,12 @@ class CacheHelper
                         try {
                             return $this->o_cache->get($cache_key);
                         }
-                        catch (SimpleCacheException $e) {
-                            // do nothing
-                        }
-                        catch (CacheException $e) {
+                        catch (CacheException) {
                             // do nothing
                         }
                     }
                 }
-                catch (SimpleCacheException $e) {
+                catch (SimpleCacheException) {
                 }
                 break;
             default:
@@ -236,7 +235,7 @@ class CacheHelper
         try {
             return $this->o_cache->hasItem($cache_key);
         }
-        catch(CacheException $e) {
+        catch(CacheException) {
             return false;
         }
     }
@@ -246,11 +245,11 @@ class CacheHelper
      * Optionally will tag the pair.
      *
      * @param string $cache_key Required
-     * @param mixed $value Optional but if empty why?
-     * @param string $tag Optional, only used if cache is PSR-6
+     * @param mixed $value      Optional but if empty why?
+     * @param string $tag       Optional, only used if cache is PSR-6
      * @return bool
      */
-    public function set(string $cache_key = '', $value = '', string $tag = ''):bool
+    public function set(string $cache_key = '', mixed $value = '', string $tag = ''):bool
     {
         if (empty($cache_key)) {
             return false;
@@ -264,28 +263,19 @@ class CacheHelper
                         try {
                             $o_item->tag($tag);
                         }
-                        catch (PsrException $e) {
+                        catch (PsrException | Exception) {
                             return false;
-                        }
-                        catch (Exception $e) {
-                           return false;
                         }
                     }
                     $this->o_cache->save($o_item);
                     return true;
                 }
-                catch (CacheException $e) {
+                catch (CacheException) {
                     return false;
                 }
             case 'psr-16':
-                try {
-                    $this->o_cache->set($cache_key, $value);
-                    return true;
-                }
-                catch (SimpleCacheException $e) {
-                    return false;
-                }
-                break;
+                $this->o_cache->set($value);
+                return true;
             default:
                 return false;
         }

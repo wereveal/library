@@ -10,18 +10,26 @@ use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 
 /**
- * Class UrlsModelTester
- * @package Ritc\Library\Tests
+ * Tests the Group Model Class.
+ *
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version 1.0.0-alpha.1
+ * @date    2021-12-01 14:25:17
+ * @todo.   Rewrite it all
+ * @change_log
+ * - 1.0.0-alpha.1  - updated for php 8 standards               - 2021-12-01 wer
+ * - 1.0.0-alpha.0  - initial version                           - unknown wer
  */
 class UrlsModelTester extends Tester
 {
-    /** @var \Ritc\Library\Models\UrlsModel  */
-    private $o_model;
+    /** @var UrlsModel */
+    private UrlsModel $o_model;
 
     /**
      * UrlsModelTester constructor.
      *
      * @param Di $o_di
+     * @noinspection UnusedConstructorDependenciesInspection
      */
     public function __construct(Di $o_di)
     {

@@ -13,20 +13,22 @@ use Ritc\Library\Helper\ViewHelper;
  * Expands on Controller Traits.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.3
- * @date    2017-07-13 11:40:17
+ * @version v1.0.0-alpha.4
+ * @date    2021-11-30 17:53:33
+ * @todo    Get this thing tested and out of alpha
  * @change_log
- * - v1.0.0-alpha.3 - Removed SetOAuth and renamed getOAuth to getAuth.                   - 2017-07-13 wer
- * - v1.0.0-alpha.2 - Reverted back to ManagerControllerTraits                            - 2017-07-04 wer
- * - v1.0.0-alpha.1 - Renamed Trait                                                       - 2017-06-20 wer
- * - v1.0.0-alpha.0 - Initial version                                                     - 2017-05-10 wer
+ * - v1.0.0-alpha.4 - updated to php 8                                          - 2021-11-30 wer
+ * - v1.0.0-alpha.3 - Removed SetOAuth and renamed getOAuth to getAuth.         - 2017-07-13 wer
+ * - v1.0.0-alpha.2 - Reverted back to ManagerControllerTraits                  - 2017-07-04 wer
+ * - v1.0.0-alpha.1 - Renamed Trait                                             - 2017-06-20 wer
+ * - v1.0.0-alpha.0 - Initial version                                           - 2017-05-10 wer
  */
 trait ManagerControllerTraits
 {
     use ControllerTraits;
 
     /** @var AuthHelper */
-    protected $o_auth;
+    protected AuthHelper $o_auth;
 
     /**
      * Verifies that the person is logged in and is valid

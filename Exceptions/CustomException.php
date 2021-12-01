@@ -12,18 +12,20 @@ use Throwable;
  * Class CustomErrorException - generic custom errors.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2017-07-15 12:41:34
+ * @version v1.0.0-alpha.1
+ * @date    2021-11-26 16:37:06
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2017-07-15 wer
+ * - v1.0.0-alpha.1 - updated to php8                           - 2021-11-26 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2017-07-15 wer
  */
 class CustomException extends CustomExceptionAbstract
 {
     /**
      * CustomException constructor.
-     * @param string     $message
-     * @param int        $code
-     * @param Throwable $previous
+     *
+     * @param string         $message
+     * @param int            $code
+     * @param Throwable|null $previous
      */
     public function __construct($message = '', $code = 0, Throwable $previous = null)
     {
@@ -34,17 +36,13 @@ class CustomException extends CustomExceptionAbstract
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1):string
+    public function getCodeText(int $code = -1):string
     {
-        switch ($code) {
-            case 900:
-                return 'General Error, see error message';
-            case 999:
-                return 'Unspecified Error.';
-            default:
-                return parent::getCodeText($code);
-
-        }
+        return match ($code) {
+            900     => 'General Error, see error message',
+            999     => 'Unspecified Error.',
+            default => parent::getCodeText($code),
+        };
     }
 
 }

@@ -11,10 +11,11 @@ use Ritc\Library\Abstracts\CustomExceptionAbstract;
  * Class HelperException - Handles custom exceptions for helpers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2017-07-16 08:18:12
+ * @version v1.0.0-alpha.1
+ * @date    2021-11-26 16:38:17
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2017-07-16 wer
+ * - v1.0.0-alpha.1 - updated for php8                          - 2021-11-26 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2017-07-16 wer
  */
 class HelperException extends CustomExceptionAbstract
 {
@@ -24,15 +25,12 @@ class HelperException extends CustomExceptionAbstract
      * @param int $code
      * @return string
      */
-    public function getCodeText($code = -1):string
+    public function getCodeText(int $code = -1):string
     {
-        switch ($code) {
-            case 10:
-                return 'Unable to start the helper.';
-            case 20:
-                return '__clone not allowed for this service.';
-            default:
-                return parent::getCodeText($code);
-        }
+        return match ($code) {
+            10      => 'Unable to start the helper.',
+            20      => '__clone not allowed for this service.',
+            default => parent::getCodeText($code),
+        };
     }
 }

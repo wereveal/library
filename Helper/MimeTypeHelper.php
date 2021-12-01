@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class MimeTypeHelper
  * @package Ritc_Library
@@ -9,9 +10,10 @@ namespace Ritc\Library\Helper;
  * Class MimeTypeHelper - Helps with mime types.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
- * @date    2020-10-07 12:42:24
+ * @version v2.0.0
+ * @date    2021-11-29 16:17:56
  * @change_log
+ * - v2.0.0 - updated to php8, fixed bug    - 2021-11-29 wer
  * - v1.1.0 - changed mime.type file source - 2020-10-07 wer
  * - v1.0.2 - bug fix                       - 2018-04-18 wer
  * - v1.0.0 - Initial version               - 2017-11-10 wer
@@ -23,9 +25,9 @@ class MimeTypeHelper
      * Since multiple extensions can be associated with a mime type, must return an array.
      *
      * @param string $mime_type
-     * @return array|mixed
+     * @return mixed
      */
-    public static function getExtensionFromMime($mime_type = '')
+    public static function getExtensionFromMime(string $mime_type = ''): mixed
     {
         if ($mime_type === '') {
             return [];
@@ -39,9 +41,9 @@ class MimeTypeHelper
      * File must exist and be in the path.
      *
      * @param string $file_with_path
-     * @return mixed|string
+     * @return string|bool
      */
-    public static function getMimeFromFile($file_with_path = '')
+    public static function getMimeFromFile(string $file_with_path = ''): string|bool
     {
         if (file_exists($file_with_path)) {
             $r_finfo = finfo_open(FILEINFO_MIME_TYPE);
@@ -59,7 +61,7 @@ class MimeTypeHelper
      * @param string $filename
      * @return int|string
      */
-    public static function getMimeFromFilename($filename = '')
+    public static function getMimeFromFilename(string $filename = ''): int|string
     {
         if ($filename === '') {
             return '';
@@ -74,7 +76,8 @@ class MimeTypeHelper
      * @param $ext
      * @return int|string
      */
-    public static function getMimeFromExtension($ext) {
+    public static function getMimeFromExtension($ext): int|string
+    {
         if ($ext === '') {
             return '';
         }
@@ -94,7 +97,7 @@ class MimeTypeHelper
      * @param string $ext
      * @return bool
      */
-    public static function isMimeForExtension($mime_type = '', $ext = ''):bool
+    public static function isMimeForExtension(string $mime_type = '', string $ext = ''):bool
     {
         if ($mime_type === '' || $ext === '') {
             return false;
@@ -110,7 +113,7 @@ class MimeTypeHelper
      * @param string $ext
      * @return bool
      */
-    public static function isExtensionForMime($mime_type = '', $ext = ''):bool
+    public static function isExtensionForMime(string $mime_type = '', string $ext = ''):bool
     {
         if ($mime_type === '' || $ext === '') {
             return false;
@@ -133,7 +136,7 @@ class MimeTypeHelper
             $r_file = fopen($mime_type_path, 'rb');
             $a_map = [];
             while (($line = fgets($r_file)) !== false) {
-                if (strpos($line, '#') === false) {
+                if (!str_contains($line, '#')) {
                     $line = preg_replace('/(\t+)/', '|', $line);
                     $parts = explode('|', $line);
                     $a_ext = explode(' ', $parts[1]);
@@ -156,6 +159,6 @@ class MimeTypeHelper
             $url = 'https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types';
         }
         $mimetypes = file_get_contents($url);
-        file_put_contents(LIBRARY_PATH . '/resources/assets/files/mime.types');
+        file_put_contents(LIBRARY_PATH . '/resources/assets/files/mime.types', $mimetypes);
     }
 }

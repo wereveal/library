@@ -6,6 +6,7 @@
  */
 namespace Ritc\Library\Controllers;
 
+use JsonException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Models\TwigComplexModel;
@@ -20,9 +21,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Does Ajax Calls used by the Config manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
- * @date    2018-09-29 13:53:43
+ * @version v2.0.0
+ * @date    2021-11-26 14:09:35
  * @change_log
+ * - v2.0.0 - Updated for php 8                                 - 2021-11-26 wer
  * - v1.1.0 - Additional methods for the Page Manger            - 2018-09-29 wer
  * - v1.0.0 - Initial version                                   - 2018-04-10 wer
  */
@@ -46,25 +48,19 @@ class AjaxController
      * Main router for class.
      *
      * @return string
+     * @throws JsonException
      */
     public function route():string
     {
-        switch ($this->url_action_one) {
-            case 'twig_dirs';
-                return $this->doTwigDirs(false);
-            case 'for_directories';
-                return $this->forDirectories();
-            case 'urls_available':
-                return $this->urlsAvailableForNavgroups();
-            case 'page_dirs_tpls':
-                return $this->doTwigTpls();
-            case 'page_prefix_dirs':
-                return $this->doTwigDirs(true);
-            case 'content_vcs':
-                return $this->updateContentVcsConstant();
-            default:
-                return json_encode([]);
-        }
+        return match ($this->url_action_one) {
+            'twig_dirs' => $this->doTwigDirs(),
+            'for_directories' => $this->forDirectories(),
+            'urls_available' => $this->urlsAvailableForNavgroups(),
+            'page_dirs_tpls' => $this->doTwigTpls(),
+            'page_prefix_dirs' => $this->doTwigDirs(true),
+            'content_vcs' => $this->updateContentVcsConstant(),
+            default => json_encode([], JSON_THROW_ON_ERROR),
+        };
     }
 
     /**
@@ -74,15 +70,16 @@ class AjaxController
      * @param bool $has_tpls Optional, defaults to false.
      *                       Specifies if return only dirs that has templates.
      * @return string
+     * @throws JsonException
      */
-    private function doTwigDirs($has_tpls = false):string
+    private function doTwigDirs(bool $has_tpls = false):string
     {
         $prefix_id = $this->o_router->getPost('prefix_id');
         $bad_results = [
             'td_id' => '',
             'value' => 'Not Available'
         ];
-        $bad_results = json_encode([$bad_results]);
+        $bad_results = json_encode([$bad_results], JSON_THROW_ON_ERROR);
         if (empty($prefix_id)) {
             return $bad_results;
         }
@@ -109,7 +106,7 @@ class AjaxController
                             unset($a_results[$key]);
                         }
                     }
-                    catch (ModelException $e) {
+                    catch (ModelException) {
                         unset($a_results[$key]);
                     }
                 }
@@ -121,13 +118,13 @@ class AjaxController
                     'td_name' => $a_result['td_name']
                 ];
             }
-            $json = json_encode($a_encode_this);
+            $json = json_encode($a_encode_this, JSON_THROW_ON_ERROR);
             if ($this->use_cache) {
                 $this->o_cache->set($cache_key, $json, 'ajax');
             }
             return $json;
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return $bad_results;
         }
     }
@@ -137,6 +134,7 @@ class AjaxController
      * templates select options.
      *
      * @return string
+     * @throws JsonException
      */
     private function doTwigTpls():string
     {
@@ -145,7 +143,7 @@ class AjaxController
             'tpl_id' => '',
             'value'  => 'Not Available'
         ];
-        $bad_results = json_encode([$bad_results]);
+        $bad_results = json_encode([$bad_results], JSON_THROW_ON_ERROR);
         if (empty($dir_id)) {
             return $bad_results;
         }
@@ -167,13 +165,13 @@ class AjaxController
                     'tpl_name' => $a_result['tpl_name']
                 ];
             }
-            $json = json_encode($a_encode_this);
+            $json = json_encode($a_encode_this, JSON_THROW_ON_ERROR);
             if ($this->use_cache) {
                 $this->o_cache->set($cache_key, $json, 'ajax');
             }
             return $json;
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return $bad_results;
         }
     }
@@ -183,11 +181,12 @@ class AjaxController
      * This one is to display the list of directories to be modified or deleted.
      *
      * @return string
+     * @throws JsonException
      */
     private function forDirectories():string
     {
         $prefix_id = $this->o_router->getPost('prefix_id');
-        $bad_results = json_encode([[]]);
+        $bad_results = json_encode([[]], JSON_THROW_ON_ERROR);
         if (empty($prefix_id)) {
             return $bad_results;
         }
@@ -206,14 +205,17 @@ class AjaxController
                 $a_results[$key]['tolken']  = $_SESSION['token'];
                 $a_results[$key]['form_ts'] = $_SESSION['idle_timestamp'];
             }
-            $json = json_encode($a_results);
+            $json = json_encode($a_results, JSON_THROW_ON_ERROR);
             if ($this->use_cache) {
                 $this->o_cache->set($cache_key, $json, 'ajax');
             }
             return $json;
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return $bad_results;
+        }
+        catch (JsonException) {
+            return '';
         }
     }
 
@@ -222,7 +224,7 @@ class AjaxController
      *
      * @return bool
      */
-    private function updateContentVcsConstant(): ?bool
+    private function updateContentVcsConstant():bool
     {
         $o_constants = new ConstantsModel($this->o_db);
         $o_constants->setupElog($this->o_di);
@@ -235,7 +237,7 @@ class AjaxController
             $o_constants->update($a_update_values);
             return true;
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return false;
         }
     }
@@ -245,9 +247,10 @@ class AjaxController
      * List consists of urls not in a navgroup. Assumes a url should only
      * be assigned to one navigation link.
      *
-     * @return array|mixed|string
+     * @return mixed
+     * @throws JsonException
      */
-    private function urlsAvailableForNavgroups()
+    private function urlsAvailableForNavgroups(): mixed
     {
         $meth = __METHOD__ . '.';
         $navgroup_id = $this->o_router->getPost('navgroup_id');
@@ -257,7 +260,7 @@ class AjaxController
             'url_text' => 'Not Available'
         ];
         $results = '';
-        $bad_results = json_encode([$bad_results]);
+        $bad_results = json_encode([$bad_results], JSON_THROW_ON_ERROR);
         if (empty($navgroup_id)) {
             return $bad_results;
         }
@@ -281,14 +284,17 @@ class AjaxController
                   $log_message = 'urls results ' . var_export($a_encode_this, true);
                   $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
-                $results = trim(json_encode($a_encode_this));
+                $results = trim(json_encode($a_encode_this, JSON_THROW_ON_ERROR));
                 if ($this->use_cache) {
                     $this->o_cache->set($cache_key, $results, 'ajax');
                 }
                 $this->logIt('JSON: ' . $results, LOG_OFF, $meth . __LINE__);
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 return $bad_results;
+            }
+            catch (JsonException) {
+                return '';
             }
         }
         return $results;

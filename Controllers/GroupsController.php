@@ -5,10 +5,12 @@
  */
 namespace Ritc\Library\Controllers;
 
+use JsonException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ConfigControllerInterface;
+use Ritc\Library\Models\GroupsComplexModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
@@ -19,24 +21,30 @@ use Ritc\Library\Views\GroupsView;
  * Controller for the Groups Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.0
- * @date    2018-05-19 15:07:53
+ * @version v3.1.0
+ * @date    2021-11-26 14:59:27
  * @change_log
- * - v2.1.0   - updated to use ModelException           - 2018-05-19 wer
+ * - v3.1.0  - refactored due to change in models              - 2021-11-30 wer
+ *              GroupsModel was split into GroupsModel and
+ *              GroupsModelComplex
+ * - v3.0.0   - updated for php8                                - 2021-11-26 wer
+ * - v2.1.0   - updated to use ModelException                   - 2018-05-19 wer
  *              Updated to use ConfigControllerTraits
- * - v2.0.0   - name refactoring                        - 2017-05-14 wer
- * - v1.0.0   - First working version                   - 11/27/2015 wer
- * - v1.0.0β1 - Initial version                         - 01/28/2015 wer
+ * - v2.0.0   - name refactoring                                - 2017-05-14 wer
+ * - v1.0.0   - First working version                           - 11/27/2015 wer
+ * - v1.0.0β1 - Initial version                                 - 01/28/2015 wer
  */
 class GroupsController implements ConfigControllerInterface
 {
     use LogitTraits;
     use ConfigControllerTraits;
 
-    /** @var GroupsModel */
-    private $o_model;
-    /** @var GroupsView */
-    private $o_view;
+    /** @var GroupsModel $o_model */
+    private GroupsModel $o_model;
+    /** @var GroupsView  $o_view */
+    private GroupsView         $o_view;
+    /** @var GroupsComplexModel $o_gc_model */
+    private GroupsComplexModel $o_gc_model;
 
     /**
      * GroupsController constructor.
@@ -46,9 +54,10 @@ class GroupsController implements ConfigControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
-        $this->o_model = new GroupsModel($this->o_db);
-        $this->o_view = new GroupsView($o_di);
-        $this->a_object_names = ['o_model'];
+        $this->o_model        = new GroupsModel($this->o_db);
+        $this->o_gc_model     = new GroupsComplexModel($this->o_db);
+        $this->o_view         = new GroupsView($o_di);
+        $this->a_object_names = ['o_model', 'o_gc_model'];
         $this->setupElog($o_di);
     }
 
@@ -59,18 +68,13 @@ class GroupsController implements ConfigControllerInterface
      */
     public function route():string
     {
-        switch ($this->form_action) {
-            case 'save_new':
-                return $this->save();
-            case 'update':
-                return $this->update();
-            case 'verify':
-                return $this->verifyDelete();
-            case 'delete':
-                return $this->delete();
-            default:
-                return $this->o_view->renderList();
-        }
+        return match ($this->form_action) {
+            'save_new' => $this->save(),
+            'update'   => $this->update(),
+            'verify'   => $this->verifyDelete(),
+            'delete'   => $this->delete(),
+            default    => $this->o_view->renderList(),
+        };
     }
 
     ### Required by Interface ###
@@ -87,7 +91,7 @@ class GroupsController implements ConfigControllerInterface
             return $this->o_view->renderList($a_message);
         }
         try {
-            $this->o_model->deleteWithRelated($group_id);
+            $this->o_gc_model->deleteWithRelated($group_id);
             if ($this->use_cache) {
                 $this->o_cache->clearTag('groups');
             }
@@ -117,7 +121,7 @@ class GroupsController implements ConfigControllerInterface
             }
             $a_message = ViewHelper::successMessage();
         }
-        catch (ModelException $e) {
+        catch (ModelException | JsonException $e) {
             $a_message = ViewHelper::errorMessage($e->getMessage());
         }
         return $this->o_view->renderList($a_message);

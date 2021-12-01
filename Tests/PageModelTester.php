@@ -6,7 +6,9 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Models\PageModel;
 
@@ -14,31 +16,33 @@ use Ritc\Library\Models\PageModel;
  * Class PageModelTester.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2016-03-05 10:44:05
+ * @version 1.0.0-alpha.1
+ * @date    2021-12-01 14:18:44
  * @todo    Rewrite it all
  * @change_log
- * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
- * - v0.1.0         - Initial version                - unknown wer
+ * - 1.0.0-alpha.1  - updated for php 8 standards   - 2021-12-01 wer
+ * - 1.0.0-alpha.0  - Initial rewrite version       - 2016-03-05 wer
+ * - 0.1.0          - Initial version               - unknown wer
  */
 class PageModelTester extends Tester
 {
-    /** @var \Ritc\Library\Services\DbModel */
-    private $o_db;
+    /** @var DbModel */
+    private DbModel $o_db;
     /** @var PageModel */
-    private $o_model;
+    private PageModel $o_model;
 
     /**
      * PageModelTester constructor.
+     *
      * @param Di $o_di
+     * @noinspection PhpFieldAssignmentTypeMismatchInspection
+     * @noinspection UnusedConstructorDependenciesInspection
      */
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);
-        /** @var \Ritc\Library\Services\DbModel o_db */
-        /** @noinspection UnusedConstructorDependenciesInspection */
+        /** @var DbModel o_db */
         $this->o_db = $o_di->get('db');
-        /** @noinspection UnusedConstructorDependenciesInspection */
         $this->o_model = new PageModel($this->o_db);
         $this->o_model->setupElog($o_di);
     }
@@ -54,7 +58,7 @@ class PageModelTester extends Tester
 
     /**
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readTester():bool
     {

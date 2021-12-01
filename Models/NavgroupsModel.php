@@ -50,17 +50,17 @@ class NavgroupsModel extends ModelAbstract
      * Generic deletes a record based on the id provided.
      * Checks to see if a map record exists, if so, throws exception;
      *
-     * @param int $ng_id
+     * @param int $id
      * @return bool
      * @throws ModelException
      */
-    public function delete($ng_id = -1):bool
+    public function delete(int $id = -1):bool
     {
-        if ($ng_id === -1) {
+        if ($id === -1) {
             throw new ModelException('The navgroup id was not provided');
         }
         $o_map = new NavNgMapModel($this->o_db);
-        $results = $o_map->readById($ng_id);
+        $results = $o_map->readById($id);
         if (!empty($results)) {
             $this->error_message = 'The nav_ng_map record(s) must be deleted first.';
             $err_code = ExceptionHelper::getCodeNumberModel('delete has children');
@@ -73,13 +73,13 @@ class NavgroupsModel extends ModelAbstract
             $this->error_message = 'Unable to retrieve the default record.';
             throw new ModelException($this->error_message, $e->getCode(), $e);
         }
-        if ($results === $ng_id) {
+        if ($results === $id) {
             $this->error_message = 'This is the default navgroup. Change a different record to be default and try again.';
             $err_code = ExceptionHelper::getCodeNumberModel('delete not permitted');
             throw new ModelException($this->error_message, $err_code);
         }
         try {
-            $this->genericDelete($ng_id);
+            $this->genericDelete($id);
         }
         catch (ModelException $e) {
             throw new ModelException($e->getMessage(), $e->getCode(), $e);
@@ -94,7 +94,7 @@ class NavgroupsModel extends ModelAbstract
      * @return array
      * @throws ModelException
      */
-    public function readByName($name = ''):array
+    public function readByName(string $name = ''):array
     {
         if ($name === '') {
             throw new ModelException('A record name must be provided.', 220);
@@ -115,7 +115,7 @@ class NavgroupsModel extends ModelAbstract
      * @return int
      * @throws ModelException
      */
-    public function readIdByName($name = ''):int
+    public function readIdByName(string $name = ''):int
     {
         $a_values = [':ng_name' => $name];
         $a_search_parms = [

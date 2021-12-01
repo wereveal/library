@@ -17,9 +17,10 @@ use Ritc\Library\Traits\LogitTraits;
  * e.g. MyClassTester or MyClassTests.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.7.0
- * @date    2018-05-19 14:12:33
+ * @version v4.0.0
+ * @date    2021-11-26 14:01:47
  * @change_log
+ * - v4.0.0 - Updated for php 8                                                         - 2021-11-26 wer
  * - v3.7.0 - Updated to handle ReflectionException                                     - 2018-05-19 wer
  * - v3.6.0 - Refactoring of subtest methods                                            - 2017-06-09 wer
  * - v3.5.0 - modified setupTests to create test order from test values                 - 2017-05-12 wer
@@ -45,38 +46,39 @@ class Tester
     use LogitTraits;
 
     /** @var array the test order */
-    protected $a_test_order       = [];
+    protected array $a_test_order = [];
     /** @var array the test values */
-    protected $a_test_values      = [];
+    protected array $a_test_values = [];
     /** @var string name of the class being tested */
-    protected $class_name         = '';
+    protected string $class_name = '';
     /** @var array list of failed sub-tests */
-    protected $failed_subtests    = [];
+    protected array $failed_subtests = [];
     /** @var array list of failed tests */
-    protected $failed_test_names  = [];
+    protected array $failed_test_names = [];
     /** @var int number of failed tests */
-    protected $failed_tests       = 0;
+    protected int $failed_tests = 0;
     /** @var string namespace being tested */
-    protected $namespace          = '';
+    protected string $namespace = '';
     /** @var int number of tests */
-    protected $num_o_tests        = 0;
+    protected int $num_o_tests = 0;
     /** @var array list of passed sub-tests */
-    protected $passed_subtests    = [];
+    protected array $passed_subtests = [];
     /** @var array list of passed tests */
-    protected $passed_test_names  = [];
+    protected array $passed_test_names = [];
     /** @var int number of passed tests */
-    protected $passed_tests       = 0;
+    protected int $passed_tests = 0;
     /** @var array list of skipped tests */
-    protected $skipped_test_names = [];
+    protected array $skipped_test_names = [];
     /** @var int number of skipped tests */
-    protected $skipped_tests      = 0;
+    protected int $skipped_tests = 0;
 
     /**
      * Adds a method name to the test order.
+     *
      * @param string $method_name
      * @return bool
      */
-    public function addMethodToTestOrder($method_name = ''):bool
+    public function addMethodToTestOrder(string $method_name = ''):bool
     {
         if ($method_name === '') { return false; }
         $this->a_test_order[] = $method_name;
@@ -85,10 +87,11 @@ class Tester
 
     /**
      * Adds a single key=>value pair to the a_test_values array
-     * @param string $key the key name
-     * @param mixed $value  the value assigned to the key
+     *
+     * @param string $key   the key name
+     * @param mixed  $value the value assigned to the key
      */
-    public function addTestValue($key = '', $value = ''):void
+    public function addTestValue(string $key = '', mixed $value = ''):void
     {
         if ($key === '') { return; }
         $this->a_test_values[$key] = $value;
@@ -144,10 +147,11 @@ class Tester
 
     /**
      * Returns an array showing the number and optionally names of tests success and failure
+     *
      * @param bool $show_test_names optional defaults to showing names
      * @return array
      */
-    public function returnTestResults($show_test_names = true):array
+    public function returnTestResults(bool $show_test_names = true):array
     {
         $a_failed_test_names = array();
         $a_passed_test_names = array();
@@ -188,26 +192,26 @@ class Tester
     /**
      * Runs tests where method ends in Test.
      *
-     * @param string $class_name optional, name of the class to be tested - only really needed if
+     * @param string $class_name   optional, name of the class to be tested - only really needed if
      *                            the class name doesn't match this class name minus Tester or Tests
      *                            e.g. MyClass and MyClassTester doesn't require $class_name
      *                            but MyClass and ThisClassTest requires a valid value for $class_name,
      *                            i.e., $class_name = MyClass
-     * @param array $a_test_order optional, if provided it ignores the class property $a_test_order
+     * @param array  $a_test_order optional, if provided it ignores the class property $a_test_order
      *                            and won't try to build one from the class methods.
      * @return int number of failed tests.
      * @throws ReflectionException
      */
-    public function runTests($class_name = '', array $a_test_order = []):int
+    public function runTests(string $class_name = '', array $a_test_order = []):int
     {
         if ($class_name === '') {
             if ($this->class_name !== '') {
                 $class_name = $this->class_name;
             }
-            elseif (substr(__CLASS__, -5) === 'Tests') {
+            elseif (str_ends_with(__CLASS__, 'Tests')) {
                 $class_name = str_replace('Tests','',__CLASS__);
             }
-            elseif (substr(__CLASS__, -6) === 'Tester') {
+            elseif (str_ends_with(__CLASS__, 'Tester')) {
                 $class_name = str_replace('Tester','',__CLASS__);
                 $this->class_name = $class_name;
             }
@@ -220,7 +224,7 @@ class Tester
                 try {
                     $o_ref = new ReflectionClass($class_name);
                 }
-                catch (ReflectionException $e) {
+                catch (ReflectionException) {
                     return 999;
                 }
                 $a_methods = $o_ref->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -234,7 +238,7 @@ class Tester
                         case '__clone':
                             break;
                         default:
-                            if (substr($a_method->name, -6) === 'Tester') {
+                            if (str_ends_with($a_method->name, 'Tester')) {
                                 $a_test_order[] = $a_method->name;
                             }
                     }
@@ -254,7 +258,7 @@ class Tester
         $failed_tests = 0;
         foreach ($a_test_order as $method_name) {
             $this->logIt($method_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
-            if (substr($method_name, -6) === 'Tester') {
+            if (str_ends_with($method_name, 'Tester')) {
                 $tester_name = $method_name;
                 $method_name = $this->shortenName($method_name);
             } else {
@@ -290,12 +294,13 @@ class Tester
 
     /**
      * Removes Tester or Test from method name
-     * @param  string $method_name defaults to 'Tester'
+     *
+     * @param string $method_name defaults to 'Tester'
      * @return string
      */
-    public function shortenName($method_name = 'Tester'):string
+    public function shortenName(string $method_name = 'Tester'):string
     {
-        if (substr($method_name, -6) === 'Tester') {
+        if (str_ends_with($method_name, 'Tester')) {
             return substr($method_name, 0, -6);
         }
         return $method_name;
@@ -303,18 +308,20 @@ class Tester
 
     /**
      * Standard Setter for the property $class_name;
+     *
      * @param string $class_name
      */
-    public function setClassName($class_name = ''):void
+    public function setClassName(string $class_name = ''):void
     {
         $this->class_name = $class_name;
     }
 
     /**
      * Sets three properties, num_o_test++, failed_tests++, and failed test names.
+     *
      * @param string $method_name
      */
-    public function setFailures($method_name = ''):void
+    public function setFailures(string $method_name = ''):void
     {
         $this->num_o_tests++;
         $this->failed_tests++;
@@ -323,9 +330,10 @@ class Tester
 
     /**
      * Standard setter for the propery $namespace.
+     *
      * @param string $namespace
      */
-    public function setNamespace($namespace = ''):void
+    public function setNamespace(string $namespace = ''):void
     {
         $this->namespace = $namespace;
     }
@@ -336,7 +344,7 @@ class Tester
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubFailed($method_name, $test_name):void
+    public function setSubFailed(string $method_name, string $test_name):void
     {
         if (!empty($method_name) && !empty($test_name)) {
             $method_name = $this->shortenName($method_name);
@@ -354,10 +362,11 @@ class Tester
 
     /**
      * Records the names of the subtests passed for a test.
+     *
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubPassed($method_name = '', $test_name = ''):void
+    public function setSubPassed(string $method_name = '', string $test_name = ''):void
     {
         if ($method_name === '' || $test_name === '') {
             return;
@@ -404,12 +413,12 @@ class Tester
      * Checks to see if a method is public.
      * Fixes method names that end in Tester.
      *
-     * @param string $class_name required defaults to ''
+     * @param string $class_name  required defaults to ''
      * @param string $method_name required defaults to ''
      * @return bool true or false
      * @throws ReflectionException
      */
-    public function isPublicMethod($class_name = '', $method_name = ''):bool
+    public function isPublicMethod(string $class_name = '', string $method_name = ''):bool
     {
         if ($method_name === '') {
             return false;
@@ -424,7 +433,7 @@ class Tester
         try {
             $o_ref = new ReflectionClass($class_name);
         }
-        catch (ReflectionException $e) {
+        catch (ReflectionException) {
             return false;
         }
         $o_method = $o_ref->getMethod($method_name);

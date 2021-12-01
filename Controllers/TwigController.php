@@ -19,10 +19,11 @@ use Ritc\Library\Views\TwigView;
  * Controller admin for Twig config.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2017-05-14 14:36:29
+ * @version v1.0.0-alpha.1
+ * @date    2021-11-26 15:26:31
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2017-05-14 wer
+ * - v1.0.0-alpha.1 - updated for php8                          - 2021-11-26 wer
+ * - v1.0.0-alpha.0 - Initial version                           - 2017-05-14 wer
  */
 class TwigController implements ControllerInterface
 {
@@ -30,9 +31,9 @@ class TwigController implements ControllerInterface
     use ConfigControllerTraits;
 
     /** @var TwigComplexModel $o_tc */
-    private $o_tc;
+    private TwigComplexModel $o_tc;
     /** @var TwigView */
-    private $o_view;
+    private TwigView $o_view;
 
     /**
      * TwigController constructor.
@@ -58,36 +59,21 @@ class TwigController implements ControllerInterface
         $action = empty($this->form_action)
             ? 'renderList'
             : $this->form_action;
-        switch ($action) {
-            case 'delete_dir':
-                return $this->deleteDir();
-            case 'delete_tp':
-                return $this->deletePrefix();
-            case 'delete_tpl':
-                return $this->deleteTpl();
-            case 'new_dir':
-                return $this->saveDir('new');
-            case 'update_dir':
-                return $this->saveDir('update');
-            case 'new_tp':
-                return $this->savePrefix('new');
-            case 'update_tp':
-                return $this->savePrefix('update');
-            case 'new_tpl':
-                return $this->saveTpl('new');
-            case 'update_tpl':
-                return $this->saveTpl('update');
-            case 'verify_delete_tpl':
-                return $this->verifyDelete('tpl');
-            case 'verify_delete_tp':
-                return $this->verifyDelete('tp');
-            case 'verify_delete_dir':
-                return $this->verifyDelete('dir');
-            case 'renderList':
-            default:
-                // just render the list
-        }
-        return $this->o_view->render($a_message);
+        return match ($action) {
+            'delete_dir'        => $this->deleteDir(),
+            'delete_tp'         => $this->deletePrefix(),
+            'delete_tpl'        => $this->deleteTpl(),
+            'new_dir'           => $this->saveDir('new'),
+            'update_dir'        => $this->saveDir(),
+            'new_tp'            => $this->savePrefix('new'),
+            'update_tp'         => $this->savePrefix(),
+            'new_tpl'           => $this->saveTpl('new'),
+            'update_tpl'        => $this->saveTpl(),
+            'verify_delete_tpl' => $this->verifyDelete('tpl'),
+            'verify_delete_tp'  => $this->verifyDelete('tp'),
+            'verify_delete_dir' => $this->verifyDelete('dir'),
+            default             => $this->o_view->render($a_message),
+        };
     }
 
     ### Model calls ###
@@ -97,7 +83,7 @@ class TwigController implements ControllerInterface
      * @param string $action
      * @return string
      */
-    private function saveDir($action = 'update'):string
+    private function saveDir(string $action = 'update'):string
     {
         try {
             $this->o_tc->saveDir($this->a_post, $action);
@@ -121,7 +107,7 @@ class TwigController implements ControllerInterface
      * @param string $action
      * @return string
      */
-    private function savePrefix($action = 'update'):string
+    private function savePrefix(string $action = 'update'):string
     {
         try {
             $this->o_tc->savePrefix($this->a_post, $action);
@@ -145,7 +131,7 @@ class TwigController implements ControllerInterface
      * @param string $action
      * @return string
      */
-    private function saveTpl($action = 'update'):string
+    private function saveTpl(string $action = 'update'):string
     {
         try {
             $this->o_tc->saveTpl($this->a_post, $action);
@@ -220,7 +206,7 @@ class TwigController implements ControllerInterface
      * @param string $which_one
      * @return string
      */
-    private function verifyDelete($which_one = ''):string
+    private function verifyDelete(string $which_one = ''):string
     {
         switch ($which_one) {
             case 'tpl':

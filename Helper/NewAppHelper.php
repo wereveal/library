@@ -1,10 +1,12 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class NewAppHelper
  * @package Ritc_Library
  */
 namespace Ritc\Library\Helper;
 
+use JsonException;
 use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
@@ -19,9 +21,10 @@ use Ritc\Library\Traits\LogitTraits;
  * Helper for setting up a new app.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.2
- * @date    2019-08-19 13:31:42
+ * @version v2.0.0
+ * @date    2021-11-29 16:36:21
  * @change_log
+ * - v2.0.0         - updated for php8                                              - 2021-11-29 wer
  * - v1.1.2         - Bug Fixes                                                     - 2019-08-19 wer
  * - v1.1.1         - Bug fixes                                                     - 2018-05-29 wer
  * - v1.1.0         - Create Default Files changed to use over all site variable    - 2018-04-14 wer
@@ -33,19 +36,19 @@ class NewAppHelper
     use LogitTraits;
 
     /** @var array $a_config */
-    private $a_config;
+    private array $a_config;
     /** @var  array $a_new_dirs */
-    private $a_new_dirs;
+    private array $a_new_dirs;
     /** @var  string $app_path */
-    private $app_path;
+    private string $app_path;
     /** @var  string $htaccess_text */
-    private $htaccess_text;
+    private string $htaccess_text;
     /** @var  string $keep_me_text */
-    private $keep_me_text;
+    private string $keep_me_text;
     /** @var Di $o_di */
-    private $o_di;
+    private Di $o_di;
     /** @var  string $tpl_text */
-    private $tpl_text;
+    private string $tpl_text;
 
     /**
      * NewAppHelper constructor.
@@ -125,8 +128,9 @@ class NewAppHelper
      *
      * @param bool $is_site optional, defaults to false
      * @return bool
+     * @noinspection PhpComplexFunctionInspection
      */
-    public function createDefaultFiles($is_site = false):bool
+    public function createDefaultFiles(bool $is_site):bool
     {
         if (empty($this->a_new_dirs)
             || empty($this->app_path)
@@ -145,7 +149,7 @@ class NewAppHelper
                     $new_file = $dir . '/.keepme';
                     $new_tpl  = $dir . '/no_file.twig';
                     if (file_exists($dir)) {
-                        if (strpos($dir, 'templates') !== false) {
+                        if (str_contains($dir, 'templates')) {
                             if (!file_put_contents($new_tpl, $this->tpl_text)) {
                                 return false;
                             }
@@ -426,7 +430,7 @@ class NewAppHelper
     /**
      * @return array|string
      */
-    public function createTwigDbRecords()
+    public function createTwigDbRecords(): array|string
     {
         $o_tcm = new TwigComplexModel($this->o_di);
         $app_resource_dir = str_replace(BASE_PATH, '', $this->app_path) . '/resources/templates';
@@ -448,6 +452,7 @@ class NewAppHelper
      * Creates Users and possibly groups from the the data.
      *
      * @return array
+     * @throws JsonException
      */
     public function createUsers(): array
     {
@@ -475,14 +480,13 @@ class NewAppHelper
             try {
                 $a_found_groups = $o_groups->read();
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 return ViewHelper::errorMessage('A problem occurred retrieving groups');
             }
-            foreach ($a_found_groups as $key => $a_found_group) {
+            foreach ($a_found_groups as $a_found_group) {
                 $value = $a_found_group['group_name'];
                 $found_key = Arrays::inArrayRecursive($value, $a_groups, true);
-                if (!$found_key) {
-                    $found_key = $found_key[0];
+                if ($found_key !== false) {
                     unset($a_groups[$found_key]);
                 }
             }
@@ -494,7 +498,7 @@ class NewAppHelper
             }
         }
         if (!empty($a_people)) {
-            foreach ($a_people as $person_key => $a_person) {
+            foreach ($a_people as $a_person) {
                 try {
                     $a_groups = $o_groups->readByName($a_person['group_name']);
                     unset($a_person['group_name']);
@@ -515,7 +519,7 @@ class NewAppHelper
      *
      * @param string $value
      */
-    public function setAppPath($value = ''):void
+    public function setAppPath(string $value = ''):void
     {
         if ($value === '') {
             $value = APPS_PATH
@@ -557,7 +561,7 @@ class NewAppHelper
         }
         foreach ($a_default as $key => $value) {
             if (empty($a_values[$key])) {
-                $a_values[$key] = $a_default[$key];
+                $a_values[$key] = $value;
             }
         }
         if (empty($this->a_config['app_twig_prefix'])) {
@@ -568,9 +572,10 @@ class NewAppHelper
 
     /**
      * Standard class property SETter, htaccess_text.
+     *
      * @param string $value
      */
-    public function setHtaccessText($value = ''):void
+    public function setHtaccessText(string $value = ''):void
     {
         if ($value === '') {
             $value =<<<EOF
@@ -588,9 +593,10 @@ EOF;
 
     /**
      * Standard class property SETter, keepme_text.
+     *
      * @param string $value
      */
-    public function setKeepMeText($value = ''):void
+    public function setKeepMeText(string $value = ''):void
     {
         if ($value === '') {
             $value = 'Place Holder';
@@ -636,9 +642,10 @@ EOF;
 
     /**
      * Standard class property SETter, tpl_text.
+     *
      * @param string $value
      */
-    public function setTplText($value = ''):void
+    public function setTplText(string $value = ''):void
     {
         if ($value === '') {
             $value = '<h3>An Error Has Occurred</h3>';

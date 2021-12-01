@@ -12,14 +12,17 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class ConstantsEntity - Basic accessors for a constants entity.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version v2.0.0
  * @date    2015-10-06 14:20:33
  * @todo add class properties that are missing.
+ * @change_log
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
+ * - v1.0.0 - initial version                                   - 2015-10-06 wer
  */
 class ConstantsEntity implements EntityInterface
 {
     /** @var array  */
-    private $a_properties;
+    private array $a_properties;
 
     /**
      * ConstantsEntity constructor.
@@ -41,7 +44,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @param int $value
      */
-    public function setId($value):void
+    public function setId(int $value):void
     {
         $this->a_properties['const_id'] = $value;
     }
@@ -57,7 +60,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @param string $value
      */
-    public function setName($value):void
+    public function setName(string $value):void
     {
         $this->a_properties['const_name'] = $value;
     }
@@ -65,7 +68,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->a_properties['const_value'];
     }
@@ -73,7 +76,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @param mixed $value
      */
-    public function setValue($value):void
+    public function setValue(mixed $value):void
     {
         $this->a_properties['const_value'] = $value;
     }
@@ -89,7 +92,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @param int $value
      */
-    public function setImmutable($value):void
+    public function setImmutable(int $value):void
     {
         $this->a_properties['const_immutable'] = $value;
     }
@@ -105,6 +108,7 @@ class ConstantsEntity implements EntityInterface
     /**
      * @param array $a_properties
      * @return bool
+     * @noinspection PhpParameterNameChangedDuringInheritanceInspection
      */
     public function setAllProperties(array $a_properties = array()):bool
     {

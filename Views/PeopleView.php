@@ -20,20 +20,21 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the People Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
- * @date    2017-12-02 09:15:58
+ * @version 4.0.0
+ * @date    2021-12-01 13:23:28
  * @change_log
- * - v3.0.0   - major changes to utilize the ConfigViewTraits                           - 2017-12-02 wer
+ * - 4.0.0   - updated to php 8 standards                                               - 2021-12-01 wer
+ * - 3.0.0   - major changes to utilize the ConfigViewTraits                            - 2017-12-02 wer
  *              This should make the view more portable.
- * - v2.1.0   - method name changed elsewhere forced change here.                       - 2017-06-20 wer
+ * - 2.1.0   - method name changed elsewhere forced change here.                        - 2017-06-20 wer
  *              ModelException handling added.
- * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
- * - v1.3.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v1.2.0   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
- * - v1.1.0   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.0.0   - Initial non-beta version                                                - 11/12/2015 wer
- * - v1.0.0β2 - Changed to use DI/IOC                                                   - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                                                         - 11/13/2014 wer
+ * - 2.0.0   - Name refactoring                                                         - 2017-05-14 wer
+ * - 1.3.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here     - 2016-04-11 wer
+ * - 1.2.0   - Bug fix for implementation of LIB_TWIG_PREFIX                            - 2016-04-10 wer
+ * - 1.1.0   - Implement LIB_TWIG_PREFIX                                                - 12/12/2015 wer
+ * - 1.0.0   - Initial non-beta version                                                 - 11/12/2015 wer
+ * - 1.0.0β2 - Changed to use DI/IOC                                                    - 11/15/2014 wer
+ * - 1.0.0β1 - Initial version                                                          - 11/13/2014 wer
  */
 class PeopleView
 {
@@ -41,16 +42,17 @@ class PeopleView
     use ConfigViewTraits;
 
     /** @var PeopleComplexModel */
-    private $o_people_complex;
+    private PeopleComplexModel $o_people_complex;
     /** @var PeopleModel */
-    private $o_people_model;
+    private PeopleModel $o_people_model;
     /** @var GroupsModel */
-    private $o_group_model;
+    private GroupsModel $o_group_model;
 
     /**
      * PeopleView constructor.
      *
      * @param Di $o_di
+     * @noinspection PhpUndefinedConstantInspection
      */
     public function __construct(Di $o_di)
     {
@@ -205,7 +207,7 @@ class PeopleView
      * @param int $people_id
      * @return string
      */
-    public function renderModify($people_id = -1):string
+    public function renderModify(int $people_id = -1):string
     {
         $meth = __METHOD__ . '.';
         if ($people_id === -1) {
@@ -247,7 +249,7 @@ class PeopleView
                 'value' => $a_group['group_id']
             ];
             foreach ($a_person['groups'] as $a_person_group) {
-                if ($a_person_group['group_id'] === $a_groups[$key]['group_id']) {
+                if ($a_person_group['group_id'] === $a_group['group_id']) {
                     $a_groups_cbx['checked'] = ' checked';
                 }
             }

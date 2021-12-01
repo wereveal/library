@@ -18,20 +18,21 @@ use Ritc\Library\Services\DbModel;
  * other app/business logic that sets up the app with a bunch of required constants.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.1.0
- * @date    2018-11-09 12:44:47
+ * @version v5.0.0
+ * @date    2021-11-30 13:25:04
  * @change_log
- * - v4.1.0 - New method to retrieve record by the constant name            - 2018-11-09 wer
- * - v4.0.0 - Refactored to extend ModelException                           - 2018-06-15 wer
- * - v3.0.0 - Refactored to use ModelException and bug fixes                - 2017-06-14 wer
- * - v2.5.0 - Removed unused property and setting of same                   - 2017-05-18 wer
- * - v2.4.0 - Implementing more of the DbUtilityTraits                      - 2017-01-27 wer
- * - v2.3.0 - Refactoring of DbModel reflected here                         - 2016-03-18 wer
- * - v2.2.0 - Refactoring to provide better pgsql compatibility             - 11/22/2015 wer
- * - v2.1.0 - No longer extends Base class but uses LogitTraits             - 08/19/2015 wer
- * - v2.0.0 - Renamed to match functionality                                - 01/17/2015 wer
- * - v1.1.0 - Changed from Entity to Model                                  - 11/13/2014 wer
- * - v1.0.0 - Initial version                                               - 04/01/2014 wer
+ * - v5.0.0 - updated for php8                                      - 2021-11-30 wer
+ * - v4.1.0 - New method to retrieve record by the constant name    - 2018-11-09 wer
+ * - v4.0.0 - Refactored to extend ModelException                   - 2018-06-15 wer
+ * - v3.0.0 - Refactored to use ModelException and bug fixes        - 2017-06-14 wer
+ * - v2.5.0 - Removed unused property and setting of same           - 2017-05-18 wer
+ * - v2.4.0 - Implementing more of the DbUtilityTraits              - 2017-01-27 wer
+ * - v2.3.0 - Refactoring of DbModel reflected here                 - 2016-03-18 wer
+ * - v2.2.0 - Refactoring to provide better pgsql compatibility     - 11/22/2015 wer
+ * - v2.1.0 - No longer extends Base class but uses LogitTraits     - 08/19/2015 wer
+ * - v2.0.0 - Renamed to match functionality                        - 01/17/2015 wer
+ * - v1.1.0 - Changed from Entity to Model                          - 11/13/2014 wer
+ * - v1.0.0 - Initial version                                       - 04/01/2014 wer
  */
 class ConstantsModel extends ModelAbstract
 {
@@ -99,7 +100,7 @@ class ConstantsModel extends ModelAbstract
 
     /**
      * Updates a record using the values provided.
-     * Filters values which is not available in abstract method.
+     * This filters values which are not available in abstract method.
      *
      * @param array $a_values
      * @param array $a_immutable Optional, param required by abstract.
@@ -153,6 +154,7 @@ class ConstantsModel extends ModelAbstract
      * @pre the fallback_constants_array.php file exists and has the desired constants.
      * @return bool
      * @throws ModelException
+     * @noinspection PhpUndefinedConstantInspection
      */
     public function createNewConstants():bool
     {
@@ -318,7 +320,7 @@ SQL;
      * @return array
      * @throws ModelException
      */
-    public function selectByConstantName($const_name = ''):array
+    public function selectByConstantName(string $const_name = ''):array
     {
         try {
             $a_results = $this->read(['const_name' => $const_name]);
@@ -335,10 +337,10 @@ SQL;
     /**
      * Selects the constants records.
      *
-     * @return array|bool
+     * @return array
      * @throws ModelException
      */
-    public function selectConstantsList()
+    public function selectConstantsList(): array
     {
         try {
             return $this->read();
@@ -352,10 +354,10 @@ SQL;
     /**
      * Changes the string to be a valid constant name.
      *
-     * @param $const_name
+     * @param string $const_name
      * @return string
      */
-    public function makeValidName($const_name = ''):string
+    public function makeValidName(string $const_name = ''):string
     {
         $const_name = Strings::removeTagsWithDecode($const_name, ENT_QUOTES);
         $const_name = preg_replace('/[^a-zA-Z_ ]/', '', $const_name);
@@ -370,7 +372,7 @@ SQL;
      * @param string $const_value
      * @return string
      */
-    public function makeValidValue($const_value = ''):string
+    public function makeValidValue(string $const_value = ''):string
     {
         $const_value = Strings::removeTagsWithDecode($const_value, ENT_QUOTES);
         return htmlentities($const_value, ENT_QUOTES);

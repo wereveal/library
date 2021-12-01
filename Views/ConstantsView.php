@@ -16,20 +16,21 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the Configuration page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.2.0
- * @date    2017-06-20 11:43:56
+ * @version 3.0.0
+ * @date    2021-12-01 13:04:39
  * @change_log
- * - v2.2.0   - refactoring elsewhere made changes here.                                - 2017-06-20 wer
- * - v2.1.0   - Updated to match ViewTraits and fix misc bugs.                          - 2017-06-07 wer
- * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
- * - v1.2.4   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v1.2.2   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.2.0   - Immutable code added                                                    - 10/07/2015 wer
- * - v1.1.0   - removed abstract class Base, added LogitTraits                          - 09/01/2015 wer
- * - v1.0.0   - first fully working version                                             - 01/28/2015 wer
- * - v1.0.0β3 - changed to use the new Di class                                         - 11/17/2014 wer
- * - v1.0.0β2 - changed to use Base class and inject database object                    - 09/24/2014 wer
- * - v1.0.0β1 - Initial version                                                         - 04/02/2014 wer
+ * - 3.0.0   - updated to php 8                                                        - 2021-12-01 wer
+ * - 2.2.0   - refactoring elsewhere made changes here.                                - 2017-06-20 wer
+ * - 2.1.0   - Updated to match ViewTraits and fix misc bugs.                          - 2017-06-07 wer
+ * - 2.0.0   - Name refactoring                                                        - 2017-05-14 wer
+ * - 1.2.4   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - 1.2.2   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
+ * - 1.2.0   - Immutable code added                                                    - 10/07/2015 wer
+ * - 1.1.0   - removed abstract class Base, added LogitTraits                          - 09/01/2015 wer
+ * - 1.0.0   - first fully working version                                             - 01/28/2015 wer
+ * - 1.0.0β3 - changed to use the new Di class                                         - 11/17/2014 wer
+ * - 1.0.0β2 - changed to use Base class and inject database object                    - 09/24/2014 wer
+ * - 1.0.0β1 - Initial version                                                         - 04/02/2014 wer
  */
 class ConstantsView
 {
@@ -37,12 +38,13 @@ class ConstantsView
     use ConfigViewTraits;
 
     /** @var LibraryView */
-    private $o_view;
+    private LibraryView $o_view;
 
     /**
      * ConstantsView constructor.
      *
      * @param Di $o_di
+     * @noinspection UnusedConstructorDependenciesInspection
      */
     public function __construct(Di $o_di)
     {
@@ -80,7 +82,7 @@ class ConstantsView
                     $this->o_cache->set($cache_key, $a_constants, 'constants');
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_twig_values['a_constants'] = [];
             }
         }

@@ -23,10 +23,10 @@ use Ritc\Library\Traits\LogitTraits;
  * more finely grained access with be handled there or in a sub-controller.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v5.3.1
- * @date    2018-04-14 15:06:36
+ * @version v6.0.0
+ * @date    2021-11-29 15:07:17
  * @change_log
- * - v5.3.1 - Bug fix                                               - 2018-04-14 wer
+ * - v6.0.0 - updated for php8, fixed a potential bug               - 2021-11-29 wer
  * - v5.3.0 - Refactored due to refactoring of models               - 2017-06-20 wer
  * - v5.2.0 - Adding DbUtilityTraits only pointed out problems.     - 2016-03-19 wer
  *            - Removed DbUtilityTraits
@@ -77,20 +77,21 @@ class AuthHelper
     use LogitTraits;
 
     /** @var PeopleComplexModel $o_complex */
-    private $o_complex;
+    private PeopleComplexModel $o_complex;
     /** @var GroupsModel $o_groups */
-    private $o_groups;
+    private GroupsModel $o_groups;
     /** @var Router $o_router */
-    private $o_router;
+    private Router $o_router;
     /** @var Session $o_session */
-    private $o_session;
+    private Session $o_session;
     /** @var PeopleModel $o_people */
-    private $o_people;
+    private PeopleModel $o_people;
 
     /**
      * AuthHelper constructor.
+     *
      * @param Di $o_di
-     */
+     * @noinspection PhpFieldAssignmentTypeMismatchInspection*/
     public function __construct(Di $o_di)
     {
         /** @var DbModel $o_db */
@@ -142,16 +143,11 @@ class AuthHelper
             $a_missing_keys = Arrays::findMissingKeys($a_person_post, $a_required);
             $missing_info = '';
             foreach ($a_missing_keys as $key) {
-               switch ($key) {
-                   case 'login_id':
-                       $missing_info .= $missing_info === '' ? 'Login ID' : ', Login ID';
-                       break;
-                   case 'password':
-                       $missing_info .= $missing_info === '' ? 'Password' : ', Password';
-                       break;
-                   default:
-                       $missing_info .= $missing_info === '' ? 'Unknown Problem' : '';
-               }
+                $missing_info .= match ($key) {
+                    'login_id' => $missing_info === '' ? 'Login ID' : ', Login ID',
+                    'password' => $missing_info === '' ? 'Password' : ', Password',
+                    default    => $missing_info === '' ? 'Unknown Problem' : '',
+                };
             }
             return [
                 'login_id' => $a_person_post['login_id'] ?? '',
@@ -164,7 +160,7 @@ class AuthHelper
             try {
                 $a_person = $this->o_people->readPeopleRecord($a_person_post['login_id']);
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_person = [];
             }
             if (empty($a_person)) {
@@ -251,10 +247,10 @@ class AuthHelper
     /**
      * Logs the person out and resets session.
      *
-     * @param string|int $people_id either login_id or people_id
+     * @param int|string $people_id either login_id or people_id
      * @return array
      */
-    public function logout($people_id = ''):array
+    public function logout(int|string $people_id = ''):array
     {
         if ($people_id !== '') {
             if (!ctype_digit($people_id)) {
@@ -285,10 +281,10 @@ class AuthHelper
      * Note that this is not associated with a route or page, just the highest
      * auth level that the person has based on groups the person is in.
      *
-     * @param string|int $people_id and be either db field people_id or login_id
+     * @param int|string $people_id and be either db field people_id or login_id
      * @return int
      */
-    public function getHighestAuthLevel($people_id = ''):int
+    public function getHighestAuthLevel(int|string $people_id = ''):int
     {
         $meth = __METHOD__ . '.';
         if ($people_id === '') {
@@ -316,10 +312,10 @@ class AuthHelper
      * Verifies the person has an auth level greater than or equal to specified level.
      *
      * @param string $people_id
-     * @param int $auth_level
+     * @param int    $auth_level
      * @return bool
      */
-    public function hasMinimumAuthLevel($people_id = '', $auth_level = 0):bool
+    public function hasMinimumAuthLevel(string $people_id = '', int $auth_level = 0):bool
     {
         $highest_auth_level = $this->getHighestAuthLevel($people_id);
         return $auth_level <= $highest_auth_level;
@@ -335,7 +331,7 @@ class AuthHelper
      * @param bool   $logged_in
      * @return bool
      */
-    public function isAllowedAccess($people_id = '', $auth_level = 0, $logged_in = false):bool
+    public function isAllowedAccess(string $people_id = '', int $auth_level = 0, bool $logged_in = false):bool
     {
         return ($logged_in || $this->isLoggedIn())
             && ($this->hasMinimumAuthLevel($people_id, $auth_level) ||
@@ -352,7 +348,7 @@ class AuthHelper
      * @param int    $auth_level
      * @return bool
      */
-    public function isDeniedAccess($people_id = '', $auth_level = 0):bool
+    public function isDeniedAccess(string $people_id = '', int $auth_level = 0):bool
     {
         if ($this->isAllowedAccess($people_id, $auth_level + 1)) {
             return false;
@@ -363,10 +359,10 @@ class AuthHelper
     /**
      * Figures out if the person is specified as a default person.
      *
-     * @param string|int $person can be the person id or the person name.
+     * @param int|string $person can be the person id or the person name.
      * @return bool true false
      */
-    public function isImmutablePerson($person = -1):bool
+    public function isImmutablePerson(int|string $person = -1):bool
     {
         if ($person === -1) {
             return false;
@@ -416,7 +412,7 @@ class AuthHelper
      * @param int|string $people_id
      * @return bool
      */
-    public function isRouteAllowed($people_id = -1):bool
+    public function isRouteAllowed(int|string $people_id = -1):bool
     {
         if ($people_id === -1 || $people_id === '') { return false; }
         $meth = __METHOD__ . '.';
@@ -445,7 +441,7 @@ class AuthHelper
      * @param int|string $people_id required
      * @return bool - true = is a super admin, false = not a super admin
      */
-    public function isSuperAdmin($people_id = ''):bool
+    public function isSuperAdmin(int|string $people_id = ''):bool
     {
         if ($people_id === '') {
             return false;
@@ -470,7 +466,7 @@ class AuthHelper
      * @param int|string $group
      * @return bool true or false
      */
-    public function isValidGroup($group = -1):bool
+    public function isValidGroup(int|string $group = -1):bool
     {
         if ($group === -1) { return false; }
         if (ctype_digit($group)) {
@@ -497,7 +493,7 @@ class AuthHelper
      * @param int $group
      * @return bool
      */
-    public function isValidGroupId($group = -1):bool
+    public function isValidGroupId(int $group = -1):bool
     {
         if ($group === -1) { return false; }
         if (ctype_digit($group)) {
@@ -512,7 +508,7 @@ class AuthHelper
      * @param int|string $person person id or login name
      * @return bool
      */
-    public function isValidPerson($person = ''):bool
+    public function isValidPerson(int|string $person = ''):bool
     {
         if ($person === '') { return false; }
         try {
@@ -531,10 +527,11 @@ class AuthHelper
      * Checks to see if the person by id exists.
      *
      * Uses the isValidPerson method.
+     *
      * @param int $people_id required
      * @return bool
      */
-    public function isValidPeopleId($people_id = -1):bool
+    public function isValidPeopleId(int $people_id = -1):bool
     {
         if ($people_id === -1) { return false; }
         if (ctype_digit($people_id)) {
@@ -549,13 +546,13 @@ class AuthHelper
      * @param int $people_id
      * @return bool true false
      */
-    public function peopleIdExists($people_id = -1):bool
+    public function peopleIdExists(int $people_id = -1):bool
     {
         if ($people_id !== -1 && ctype_digit($people_id)) {
             try {
                 $results = $this->o_people->read(['people_id' => $people_id]);
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 return false;
             }
             if (!empty($results[0]['people_id']) && $results[0]['people_id'] === $people_id) {
@@ -572,7 +569,7 @@ class AuthHelper
      * @param int|string $group
      * @return bool
      */
-    public function personInGroup($person = -1, $group = ''):bool
+    public function personInGroup(int|string $person = -1, int|string $group = ''):bool
     {
         if ($person === -1 || $group === '') {
             return false;
@@ -580,7 +577,7 @@ class AuthHelper
         try {
             $a_people = $this->o_complex->readInfo($person);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_people = [];
         }
         if (!empty($a_people['groups'])) {
@@ -599,13 +596,13 @@ class AuthHelper
      * @param string $login_id
      * @return bool
      */
-    public function loginIdExists($login_id = ''):bool
+    public function loginIdExists(string $login_id = ''):bool
     {
         if ($login_id === '') { return false; }
         try {
             $results = $this->o_people->read(array('login_id' => $login_id));
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $results = false;
         }
         return !empty($results['login_id']) && ($results['login_id'] === $login_id);

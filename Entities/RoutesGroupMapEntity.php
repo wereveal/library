@@ -11,19 +11,20 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class RoutesGroupMapEntity - Entity to map the Router to the Groups.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-beta.1
- * @date    2015-09-03 12:47:56
+ * @version v1.0.0-beta.2
+ * @date    2021-11-26 16:27:52
  * @change_log
- *      v1.0.0-beta.1 - Initial version                             - 09/03/2015 wer
+ * - v1.0.0-beta.2 - updated for php8                           - 2021-11-26 wer
+ * - v1.0.0-beta.1 - Initial version                            - 09/03/2015 wer
  */
 class RoutesGroupMapEntity implements EntityInterface
 {
     /** @var int $rgm_id */
-    private $rgm_id;
+    private int $rgm_id;
     /** @var int $route_id */
-    private $route_id;
+    private int $route_id;
     /** @var int $group_id */
-    private $group_id;
+    private int $group_id;
 
     /**
      * @return array
@@ -38,9 +39,9 @@ class RoutesGroupMapEntity implements EntityInterface
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getRrmId()
+    public function getRrmId(): int
     {
         return $this->rgm_id;
     }
@@ -48,15 +49,15 @@ class RoutesGroupMapEntity implements EntityInterface
     /**
      * @param mixed $rgm_id
      */
-    public function setRrmId($rgm_id):void
+    public function setRrmId(mixed $rgm_id):void
     {
         $this->rgm_id = $rgm_id;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getRouteId()
+    public function getRouteId(): int
     {
         return $this->route_id;
     }
@@ -64,15 +65,15 @@ class RoutesGroupMapEntity implements EntityInterface
     /**
      * @param mixed $route_id
      */
-    public function setRouteId($route_id):void
+    public function setRouteId(mixed $route_id):void
     {
         $this->route_id = $route_id;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getGroupId()
+    public function getGroupId(): int
     {
         return $this->group_id;
     }
@@ -80,7 +81,7 @@ class RoutesGroupMapEntity implements EntityInterface
     /**
      * @param mixed $group_id
      */
-    public function setGroupId($group_id):void
+    public function setGroupId(mixed $group_id):void
     {
         $this->group_id = $group_id;
     }

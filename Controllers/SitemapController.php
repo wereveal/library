@@ -15,9 +15,10 @@ use Ritc\Library\Views\SitemapView;
  * Sitemap router.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0
- * @date    2018-05-27 18:46:57
+ * @version 2.0.0
+ * @date    2021-11-26 15:18:18
  * @change_log
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
  * - v1.0.0 - Initial version                                   - 2018-05-27 wer
  */
 class SitemapController implements ControllerInterface
@@ -39,9 +40,10 @@ class SitemapController implements ControllerInterface
 
     /**
      * Main method to route to the appropriate controller/view/model
-     * @return mixed
+     *
+     * @return string
      */
-    public function route()
+    public function route(): string
     {
         $o_view = new SitemapView($this->o_di);
         return $o_view->render();

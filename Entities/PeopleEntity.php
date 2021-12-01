@@ -11,8 +11,9 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class PeopleEntity
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
- * @date    2017-12-13 16:42:22
+ * @version v3.0.0
+ * @date    2021-11-26 16:22:17
+ * - v3.0.0 - updated for php8                                                      - 2021-11-26 wer
  * - v2.0.0 - changed values of is_active, is_logged_in, is_immutable to string     - 2017-12-13 wer
  * - v1.1.0 - changed is_default to is_immutable to be more descriptive             - 09/03/2015 wer
  * - v1.0.0 - finalized                                                             - 07/29/2015 wer
@@ -21,27 +22,27 @@ use Ritc\Library\Interfaces\EntityInterface;
 class PeopleEntity implements EntityInterface
 {
     /** @var string $people_id */
-    private $people_id = '';
+    private string $people_id = '';
     /** @var string $login_id */
-    private $login_id = '';
+    private string $login_id = '';
     /** @var string $real_name */
-    private $real_name = '';
+    private string $real_name = '';
     /** @var string $short_name */
-    private $short_name = '';
+    private string $short_name = '';
     /** @var string $password */
-    private $password = '';
+    private string $password = '';
     /** @var int $is_logged_in */
-    private $is_logged_in = 'false';
+    private string|int $is_logged_in = 'false';
     /** @var int $bad_login_count */
-    private $bad_login_count = 0;
+    private int $bad_login_count = 0;
     /** @var int $bad_login_ts */
-    private $bad_login_ts = 0;
+    private int $bad_login_ts = 0;
     /** @var int $is_active */
-    private $is_active = 'false';
+    private string|int $is_active = 'false';
     /** @var int $is_immutable */
-    private $is_immutable = 'false';
+    private string|int $is_immutable = 'false';
     /** @var int $created_on */
-    private $created_on = 0;
+    private int $created_on = 0;
 
     /**
      * Gets all the entity properties.
@@ -100,7 +101,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $bad_login_count
      */
-    public function setBadLoginCount($bad_login_count):void
+    public function setBadLoginCount(int $bad_login_count):void
     {
         $this->bad_login_count = $bad_login_count;
     }
@@ -116,7 +117,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $bad_login_ts
      */
-    public function setBadLoginTs($bad_login_ts):void
+    public function setBadLoginTs(int $bad_login_ts):void
     {
         $this->bad_login_ts = $bad_login_ts;
     }
@@ -132,7 +133,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $created_on
      */
-    public function setCreatedOn($created_on):void
+    public function setCreatedOn(int $created_on):void
     {
         $this->created_on = $created_on;
     }
@@ -148,7 +149,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $is_active
      */
-    public function setIsActive($is_active):void
+    public function setIsActive(int $is_active):void
     {
         $this->is_active = $is_active;
     }
@@ -164,7 +165,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $is_immutable
      */
-    public function setIsImmutable($is_immutable):void
+    public function setIsImmutable(int $is_immutable):void
     {
         $this->$is_immutable = $is_immutable;
     }
@@ -180,7 +181,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param string $password
      */
-    public function setPassword($password):void
+    public function setPassword(string $password):void
     {
         $this->password = $password;
     }
@@ -196,7 +197,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param string $real_name
      */
-    public function setRealName($real_name):void
+    public function setRealName(string $real_name):void
     {
         $this->real_name = $real_name;
     }
@@ -212,7 +213,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param string $short_name
      */
-    public function setShortName($short_name):void
+    public function setShortName(string $short_name):void
     {
         $this->short_name = $short_name;
     }
@@ -228,7 +229,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param string $people_id
      */
-    public function setPeopleId($people_id):void
+    public function setPeopleId(string $people_id):void
     {
         $this->people_id = $people_id;
     }
@@ -252,7 +253,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param int $value
      */
-    public function setIsLoggedIn($value):void
+    public function setIsLoggedIn(int $value):void
     {
         $this->is_logged_in = $value;
     }
@@ -260,7 +261,7 @@ class PeopleEntity implements EntityInterface
     /**
      * @param string $login_id
      */
-    public function setLoginId($login_id):void
+    public function setLoginId(string $login_id):void
     {
         $this->login_id = $login_id;
     }

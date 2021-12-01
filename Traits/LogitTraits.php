@@ -12,10 +12,11 @@ use Ritc\Library\Services\Elog;
  * Common functions that inject and use the Elog class service.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.3.1
- * @date    2018-03-29 15:44:43
+ * @version v2.0.0
+ * @date    2021-11-30 17:51:39
  * @note    this is derived from the abstract class Base which it replaced.
  * @change_log
+ * - v2.0.0 - updated to php8                                                - 2021-11-30 wer
  * - v1.3.1 - bug fix                                                        - 2018-03-29 wer
  * - v1.3.0 - added method and property to set elog for multiple object      - 2017-12-05 wer
  *            based on the names of the objects saved in the property
@@ -30,14 +31,14 @@ use Ritc\Library\Services\Elog;
 trait LogitTraits
 {
     /** @var array */
-    protected $a_object_names = [];
-    /** @var Elog */
-    protected $o_elog = '';
+    protected array $a_object_names = [];
+    /** @var string|Elog */
+    protected Elog|string $o_elog = '';
 
     /**
      * @return Elog|string
      */
-    public function getElog()
+    public function getElog(): string|Elog
     {
         if ($this->o_elog instanceof Elog) {
             return $this->o_elog;
@@ -48,11 +49,12 @@ trait LogitTraits
     /**
      * Logs the $message as defined by $log_type.
      * Does some checking if it should be written to log first.
-     * @param  string $message
-     * @param  int    $log_type see Elog Class for allowed values
-     * @param  string $location
+     *
+     * @param string $message
+     * @param int    $log_type see Elog Class for allowed values
+     * @param string $location
      */
-    protected function logIt($message = '', $log_type = LOG_OFF, $location = ''):void
+    protected function logIt(string $message = '', int $log_type = LOG_OFF, string $location = ''):void
     {
         if ($this->o_elog instanceof Elog
             && is_int($log_type)
@@ -80,9 +82,10 @@ trait LogitTraits
 
     /**
      * Injects the Elog object into the class that uses LogitTraits.
+     *
      * @param Elog|null $o_elog
      */
-    public function setElog($o_elog = null):void
+    public function setElog(Elog $o_elog = null):void
     {
         if ($o_elog instanceof Elog) {
             $this->o_elog = $o_elog;
@@ -107,8 +110,9 @@ trait LogitTraits
 
     /**
      * Quick Stub for a commonly called thing.
+     *
      * @param Di $o_di
-     */
+     * @noinspection PhpParamsInspection*/
     public function setupElog(Di $o_di):void
     {
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {

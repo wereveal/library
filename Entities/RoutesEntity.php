@@ -11,25 +11,26 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class RoutesEntity - Basic accessors for a routes entity.
  *
  * @author  William E Reveal
- * @version v1.0.0
- * @date    14:20:33
+ * @version v2.0.0
+ * @date    2021-11-26 16:24:50
  * @change_log
- * - Initial version                                - 2015-10-06 wer
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
+ * - v1.0.0 - Initial version                                   - 2015-10-06 wer
  */
 class RoutesEntity implements EntityInterface
 {
     /** @var int */
-    private $route_id;
+    private int $route_id;
     /** @var string */
-    private $route_path;
+    private string $route_path;
     /** @var string */
-    private $route_class;
+    private string $route_class;
     /** @var string */
-    private $route_method;
+    private string $route_method;
     /** @var string */
-    private $route_action;
+    private string $route_action;
     /** @var int */
-    private $route_immutable;
+    private int $route_immutable;
 
     /**
      * Gets all the entity properties.
@@ -86,7 +87,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param int $route_id
      */
-    public function setRouteId($route_id):void
+    public function setRouteId(int $route_id):void
     {
         $this->route_id = $route_id;
     }
@@ -102,7 +103,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param string $route_path
      */
-    public function setRoutePath($route_path):void
+    public function setRoutePath(string $route_path):void
     {
         $this->route_path = $route_path;
     }
@@ -118,7 +119,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param string $route_class
      */
-    public function setRouteClass($route_class):void
+    public function setRouteClass(string $route_class):void
     {
         $this->route_class = $route_class;
     }
@@ -134,7 +135,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param string $route_method
      */
-    public function setRouteMethod($route_method):void
+    public function setRouteMethod(string $route_method):void
     {
         $this->route_method = $route_method;
     }
@@ -150,7 +151,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param string $route_action
      */
-    public function setRouteAction($route_action):void
+    public function setRouteAction(string $route_action):void
     {
         $this->route_action = $route_action;
     }
@@ -166,7 +167,7 @@ class RoutesEntity implements EntityInterface
     /**
      * @param int $route_immutable
      */
-    public function setRouteDefault($route_immutable):void
+    public function setRouteDefault(int $route_immutable):void
     {
         $this->route_immutable = $route_immutable;
     }

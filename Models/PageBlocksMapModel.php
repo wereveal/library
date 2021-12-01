@@ -16,10 +16,11 @@ use Ritc\Library\Services\DbModel;
  * Basic model class based on the page_blocks_map table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0
- * @date    2018-06-02 14:36:41
+ * @version 2.0.0
+ * @date    2021-11-30 15:39:29
  * @change_log
- * - v1.0.0 - Initial version                                       - 2018-06-02 wer
+ * - v2.0.0 - updated for php8 only                             - 2021-11-30 wer
+ * - v1.0.0 - Initial version                                   - 2018-06-02 wer
  */
 class PageBlocksMapModel extends ModelAbstract
 {
@@ -48,7 +49,7 @@ class PageBlocksMapModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function deleteAllByPageId($page_id = -1):bool
+    public function deleteAllByPageId(int $page_id = -1):bool
     {
         if ($page_id === -1) {
             $err_num = ExceptionHelper::getCodeNumberModel('missing values');
@@ -71,7 +72,7 @@ class PageBlocksMapModel extends ModelAbstract
      * @return array
      * @throws ModelException
      */
-    public function readByPageId($page_id = -1):array
+    public function readByPageId(int $page_id = -1):array
     {
         if ($page_id === -1) {
             $err_num = ExceptionHelper::getCodeNumberModel('missing values');
@@ -95,7 +96,7 @@ class PageBlocksMapModel extends ModelAbstract
      * @return array
      * @throws ModelException
      */
-    public function readByPbmId($pbm_id = -1):array
+    public function readByPbmId(int $pbm_id = -1):array
     {
         if ($pbm_id === -1) {
             $err_num = ExceptionHelper::getCodeNumberModel('missing values');
@@ -152,7 +153,7 @@ class PageBlocksMapModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function createByPageId($page_id = -1, array $a_blocks = []):bool
+    public function createByPageId(int $page_id = -1, array $a_blocks = []):bool
     {
         if ($page_id === -1 || empty($a_blocks)) {
             $err_num = ExceptionHelper::getCodeNumberModel('missing values');

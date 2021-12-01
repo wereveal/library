@@ -14,9 +14,10 @@ use Ritc\Library\Services\DbModel;
  * Does all the database operations and business logic for content.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0
- * @date    2018-06-15 10:40:35
+ * @version 2.0.0
+ * @date    2021-11-30 13:34:50
  * @change_log
+ * - v2.0.0 - updated for php8                                  - 2021-11-30 wer
  * - v1.0.0 - Initial version                                   - 2018-06-15 wer
  */
 class ContentModel extends ModelAbstract
@@ -39,7 +40,7 @@ class ContentModel extends ModelAbstract
      * @return array
      * @throws ModelException
      */
-    public function readByPbm($pbm_id = -1):array
+    public function readByPbm(int $pbm_id = -1):array
     {
         $a_find = [
             'c_pbm_id' => $pbm_id
@@ -62,7 +63,7 @@ class ContentModel extends ModelAbstract
      * @return array
      * @throws ModelException
      */
-    public function readCurrent($record_id = -1):array
+    public function readCurrent(int $record_id = -1):array
     {
         $a_find = [
             'c_current' => 'true'
@@ -85,7 +86,7 @@ class ContentModel extends ModelAbstract
      * @return bool
      * @throws ModelException
      */
-    public function setCurrentFalse($pbm_id = -1):bool
+    public function setCurrentFalse(int $pbm_id = -1):bool
     {
         if ($pbm_id <= 0) {
             $err_code = ExceptionHelper::getCodeNumberModel('update missing value');

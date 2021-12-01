@@ -18,9 +18,10 @@ use Ritc\Library\Views\LibSitemapView;
  * Manager for Sitemap.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0
- * @date    2018-05-27 18:46:57
+ * @version 2.0.0
+ * @date    2021-11-26 15:04:57
  * @change_log
+ * - v2.0.0 - updated for php8                                  - 2021-11-26 wer
  * - v1.0.0 - Initial version                                   - 2018-05-27 wer
  */
 class LibSitemapController implements ControllerInterface
@@ -29,9 +30,9 @@ class LibSitemapController implements ControllerInterface
     use ConfigControllerTraits;
 
     /** @var NavComplexModel */
-    private $o_nav;
+    private NavComplexModel $o_nav;
     /** @var LibSitemapView */
-    private $o_view;
+    private LibSitemapView $o_view;
 
     /**
      * LibSitemapController constructor.
@@ -47,23 +48,16 @@ class LibSitemapController implements ControllerInterface
     }
 
     /**
-     * @return mixed|string
+     * @return string
      */
-    public function route()
+    public function route(): string
     {
-        switch ($this->form_action) {
-            case 'build_xml':
-                $a_message = $this->o_view->createXmlSitemap();
-                break;
-            case 'add_to':
-                $a_message = $this->addTo();
-                break;
-            case 'remove_from':
-                $a_message = $this->removeFrom();
-                break;
-            default:
-                $a_message = [];
-        }
+        $a_message = match ($this->form_action) {
+            'build_xml'   => $this->o_view->createXmlSitemap(),
+            'add_to'      => $this->addTo(),
+            'remove_from' => $this->removeFrom(),
+            default       => [],
+        };
         return $this->o_view->render($a_message);
     }
 

@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class RoutesController
  * @package Ritc_Library
@@ -21,19 +22,20 @@ use Ritc\Library\Views\RoutesView;
  * should not be able to be deleted.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
- * @date    2018-06-20 13:56:13
+ * @version v4.0.0
+ * @date    2021-11-26 15:14:42
  * @change_log
- * - v3.0.0   - Working version after a lot of refactoring.  - 2018-06-20 wer
- * - v2.2.0   - Refactored to work with the Urls class/model - 2016-04-13 wer
- * - v2.1.1   - bug fix                                      - 2016-03-08 wer
- * - v2.1.0   - Route Paths all have to start with a slash.  - 10/06/2015 wer
+ * - v4.0.0   - updated for php8                                - 2021-11-26 wer
+ * - v3.0.0   - Working version after a lot of refactoring.     - 2018-06-20 wer
+ * - v2.2.0   - Refactored to work with the Urls class/model    - 2016-04-13 wer
+ * - v2.1.1   - bug fix                                         - 2016-03-08 wer
+ * - v2.1.0   - Route Paths all have to start with a slash.     - 10/06/2015 wer
  *                If the route doesn't end with a file ext
  *                add a slash to the end as well.
- * - v2.0.0   - renamed                                      - 09/26/2015 wer
- * - v1.0.0   - first working version                        - 01/28/2015 wer
- * - v1.0.0β2 - refactored for namespaces                    - 12/05/2014 wer
- * - v1.0.0β1 - Initial version                              - 11/14/2014 wer
+ * - v2.0.0   - renamed                                         - 09/26/2015 wer
+ * - v1.0.0   - first working version                           - 01/28/2015 wer
+ * - v1.0.0β2 - refactored for namespaces                       - 12/05/2014 wer
+ * - v1.0.0β1 - Initial version                                 - 11/14/2014 wer
  */
 class RoutesController implements ManagerControllerInterface
 {
@@ -41,9 +43,9 @@ class RoutesController implements ManagerControllerInterface
     use ConfigControllerTraits;
 
     /** @var RoutesComplexModel $o_complex */
-    private $o_complex;
+    private RoutesComplexModel $o_complex;
     /** @var RoutesView $o_view */
-    private $o_view;
+    private RoutesView $o_view;
 
     /**
      * RoutesController constructor.
@@ -65,19 +67,13 @@ class RoutesController implements ManagerControllerInterface
      */
     public function route():string
     {
-        switch ($this->form_action) {
-            case 'delete':
-                return $this->delete();
-            case 'save_new':
-                return $this->save();
-            case 'update':
-                 return $this->update();
-            case 'verify':
-                return $this->verifyDelete();
-            case '':
-            default:
-                return $this->o_view->renderList();
-        }
+        return match ($this->form_action) {
+            'delete'   => $this->delete(),
+            'save_new' => $this->save(),
+            'update'   => $this->update(),
+            'verify'   => $this->verifyDelete(),
+            default    => $this->o_view->renderList(),
+        };
     }
 
     ### Required by Interface ###
@@ -175,7 +171,7 @@ class RoutesController implements ManagerControllerInterface
                     $this->o_cache->set($cache_key, $url, 'route');
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_message = ViewHelper::errorMessage('Unable to delete the record');
                 return $this->o_view->renderList($a_message);
             }
