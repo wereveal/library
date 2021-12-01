@@ -13,32 +13,34 @@ use Ritc\Library\Traits\LogitTraits;
  * For basic management of sessions.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.6.0
- * @date    2020-09-20 14:49:20
+ * @version 2.0.0
+ * @date    2021-12-01 14:00:00
  * @change_log
- * - v1.6.0 - Needed to make sure a session isn't already started   - 2020-09-20 wer
- * - v1.5.0 - Changed to set the cookie parameters before the       - 2018-11-29 wer
+ * - 2.0.0 - updated to php 8 standards                             - 2021-12-01 wer
+ *           also fixed some potential bugs
+ * - 1.6.0 - Needed to make sure a session isn't already started    - 2020-09-20 wer
+ * - 1.5.0 - Changed to set the cookie parameters before the        - 2018-11-29 wer
  *            session is started when parameters are provided.
- * - v1.4.1 - bug fix                                               - 2017-07-06 wer
- * - v1.4.0 - added the ability to use the global constant          - 10/06/2015 wer
+ * - 1.4.1 - bug fix                                                - 2017-07-06 wer
+ * - 1.4.0 - added the ability to use the global constant           - 10/06/2015 wer
  *            SESSION_IDLE_TIME if it is set.
- * - v1.3.0 - removed abstract class Base, added LogitTraits        - 09/01/2015 wer
- * - v1.2.0 - added a couple new method to unset a session var      - 01/16/2015 wer
+ * - 1.3.0 - removed abstract class Base, added LogitTraits         - 09/01/2015 wer
+ * - 1.2.0 - added a couple new method to unset a session var       - 01/16/2015 wer
  *            and a shortcut to reset the session.
- * - v1.1.0 - Unknown Changes                                       - 06/14/2011 wer
+ * - 1.1.0 - Unknown Changes                                        - 06/14/2011 wer
  */
 class Session
 {
     use LogitTraits;
 
     /** @var Session */
-    private static $instance;
+    private static Session $instance;
     /** @var string */
-    private $session_id;
+    private string $session_id;
     /** @var string */
-    private $session_name;
+    private string $session_name;
     /** @var bool */
-    private $session_started;
+    private bool $session_started;
 
     /**
      * Session constructor.
@@ -177,7 +179,7 @@ class Session
      */
     public function isNotIdle():bool
     {
-        return $this->isIdle() ? false : true;
+        return !$this->isIdle();
     }
 
     /**
@@ -187,16 +189,16 @@ class Session
      *
      * @pre session variables token and idle_timestamp
      *      as well as the session id matches cookie name
-     * @param array $a_values  <pre>array(
+     * @param array $a_values        <pre>array(
      *     'token'   => SESSION['token'],
      *     'tolken'  => SESSION['token'], // optional, if set and token isn't, token = tolken
      *     'form_ts' => SESSION['idle_timestamp'],
      *     'hobbit   => '' // optional anti-spam measure, if not blank, invalidate session
      *     )</pre>
-     * @param bool $use_form_values specifies if to use form data for validation
+     * @param bool  $use_form_values specifies if to use form data for validation
      * @return bool, true or false if valid
      */
-    public function isValidSession(array $a_values = array(), $use_form_values = false):bool
+    public function isValidSession(array $a_values, bool $use_form_values):bool
     {
         if (isset($_SESSION['token']) === false
             || isset($_SESSION['idle_timestamp']) === false
@@ -254,13 +256,13 @@ class Session
      * Tells you if it is not a valid session.
      * returns the opposite of isValidSession method. See its comments for more info
      *
-     * @param array $a_values <pre>array(
+     * @param array $a_values        <pre>array(
      *      'token'=>_SESSION['token'],
      *      'form_ts'=>_SESSION['idle_timestamp'])</pre>
-     * @param bool $use_form_values specifies if to use form data for validation
+     * @param bool  $use_form_values specifies if to use form data for validation
      * @return bool true or false
      */
-    public function isNotValidSession(array $a_values = array(), $use_form_values = false):bool
+    public function isNotValidSession(array $a_values, bool $use_form_values):bool
     {
         if ($this->isValidSession($a_values, $use_form_values)) {
             return false;
@@ -282,7 +284,7 @@ class Session
      * @param string $id
      * @return string
      */
-    public function id($id = ''):string
+    public function id(string $id = ''):string
     {
         if ($id !== '') {
             return session_id($id);
@@ -296,7 +298,7 @@ class Session
      * @param string $name
      * @return string
      */
-    public function name($name = ''):string
+    public function name(string $name = ''):string
     {
         if ($name !== '') {
             return session_name($name);
@@ -310,7 +312,7 @@ class Session
      * @param bool $delete_old
      * @return bool
      */
-    public function regenerateId($delete_old = false):bool
+    public function regenerateId(bool $delete_old):bool
     {
         return session_regenerate_id($delete_old);
     }
@@ -330,7 +332,7 @@ class Session
      * @param string $var_name
      * @return mixed whatever the value is of the session variable.
      */
-    public function getVar($var_name = '')
+    public function getVar(string $var_name = ''): mixed
     {
         return $var_name === ''
             ? ''
@@ -344,7 +346,7 @@ class Session
      * @param string $var_value
      * @return bool
      */
-    public function setVar($var_name = '', $var_value = ''):bool
+    public function setVar(string $var_name = '', string $var_value = ''):bool
     {
         if ($var_name === '') { return false; }
         $_SESSION[$var_name] = $var_value;
@@ -415,10 +417,10 @@ class Session
      * Can either be passed in or defaults to the constant SESSION_IDLE_TIME
      * if set or 1800 if not.
      *
-     * @param int $time
+     * @param int  $time
      * @param bool $add
      */
-    public function setIdleTime($time = -1, $add = false):void
+    public function setIdleTime(int $time = -1, bool $add = false):void
     {
         if ($time === -1) {
             if (defined('SESSION_IDLE_TIME')) {
@@ -444,7 +446,7 @@ class Session
      *
      * @param string $var_name name of the var to unset
      */
-    public function unsetVar($var_name = ''):void
+    public function unsetVar(string $var_name = ''):void
     {
         if ($var_name !== '' && isset($_SESSION[$var_name])) {
             unset($_SESSION[$var_name]);
@@ -455,17 +457,14 @@ class Session
      * Sets the php ini session.use_cookies variable.
      *
      * @param bool $use_cookies
-     * @return bool|string
+     * @return bool
      */
-    public function useCookies($use_cookies = true)
+    public function useCookies(bool $use_cookies = true): bool
     {
-        switch ($use_cookies) {
-            case false:
-                return ini_set('session.use_cookies', 0) && ini_set('session.use_only_cookies', 0);
-            case true:
-            default:
-                return ini_set('session.use_cookies', 1) && ini_set('session.use_only_cookies', 1);
-        }
+        return match ($use_cookies) {
+            false   => ini_set('session.use_cookies', 0) && ini_set('session.use_only_cookies', 0),
+            default => ini_set('session.use_cookies', 1) && ini_set('session.use_only_cookies', 1),
+        };
     }
 
     /**
@@ -474,9 +473,9 @@ class Session
      * @param bool $use_trans
      * @return bool|string
      */
-    public function useTransSid($use_trans = false)
+    public function useTransSid(bool $use_trans): bool|string
     {
-        $old_use_trans = ini_get('session.use_trans_sid') ? true : false;
+        $old_use_trans = (bool)ini_get('session.use_trans_sid');
         if ($old_use_trans !== $use_trans) {
             return ini_set('session.use_trans_sid', $use_trans ? 1 : 0);
         }
@@ -556,7 +555,7 @@ class Session
      *
      * @return mixed
      */
-    public function getToken()
+    public function getToken(): mixed
     {
         return $_SESSION['token'];
     }

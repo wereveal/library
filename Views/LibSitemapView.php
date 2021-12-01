@@ -17,10 +17,11 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the sitemap manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0
- * @date    2018-06-07 15:33:18
+ * @version 2.0.0
+ * @date    2021-12-01 13:14:23
  * @change_log
- * - v1.0.0        - Initial version                            - 2018-06-07 wer
+ * - 2.0.0 - updated to php8 standards                          - 2021-12-01 wer
+ * - 1.0.0 - Initial version                                    - 2018-06-07 wer
  */
 class LibSitemapView implements ViewInterface
 {
@@ -66,12 +67,12 @@ class LibSitemapView implements ViewInterface
         }
         if (empty($a_nav_list)) {
             try {
-                $a_nav_list = $this->o_nav->getNavListByAuthLevel(0);
+                $a_nav_list = $this->o_nav->getNavListByAuthLevel();
                 if ($this->use_cache) {
                     $this->o_cache->set($list_cache_key, $a_nav_list, 'nav');
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_nav_list = [];
             }
         }
@@ -81,7 +82,7 @@ class LibSitemapView implements ViewInterface
                 'btn_size'    => 'btn-sm',
                 'hidden_name' => 'nav_id'
             ];
-            foreach ($a_nav_list as $key => $item) {
+            foreach ($a_nav_list as $item) {
                 if (empty($a_available[$item['nav_name']])) {
                     $in_sitemap = false;
                     foreach ($a_results as $a_this) {
@@ -123,6 +124,7 @@ class LibSitemapView implements ViewInterface
      * Creates the sitemap.xml file.
      *
      * @return array
+     * @noinspection PhpUndefinedConstantInspection
      */
     public function createXmlSitemap():array
     {

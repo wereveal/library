@@ -12,49 +12,50 @@ use Ritc\Library\Traits\ViewTraits;
  * When on a web page, use the meta refresh to keep tailing a file.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.2.0
- * @date    2016-03-11 09:01:12
+ * @version 3.0.0
+ * @date    2021-12-01 14:03:35
  * @change_log
- * - v2.2.0 - Changed method names to reflect current coding standards    - 2016-03-11 wer
- * - v2.1.1 - Moved to Services namespace                                 - 11/15/2014 wer
- * - v2.1.0 - Changed to work in the ritc_library                         - 04/22/2013 wer
+ * - 3.0.0  - updated to php 8 standards                                - 2021-12-01 wer
+ * - 2.2.0  - Changed method names to reflect current coding standards  - 2016-03-11 wer
+ * - 2.1.1  - Moved to Services namespace                               - 11/15/2014 wer
+ * - 2.1.0  - Changed to work in the ritc_library                       - 04/22/2013 wer
  */
 class Tail
 {
     use ViewTraits;
 
     /** @var int $timestamp */
-    private $timestamp           = 0;
+    private int $timestamp = 0;
     /** @var int $file_size */
-    private $file_size           = 0;
+    private int $file_size = 0;
     /** @var string $file_name */
-    private $file_name           = ''; // requires full path
+    private mixed $file_name = ''; // requires full path
     /** @var array $a_lines */
-    private $a_lines             = array();
+    private array $a_lines = array();
     /** @var int $lines */
-    private $lines               = 0;
+    private int $lines = 0;
     /** @var int $show_lines */
-    private $show_lines          = 10;
+    private mixed $show_lines = 10;
     /** @var string $search_string */
-    private $search_string       = '';
+    private string $search_string = '';
     /** @var string $search_string_regex */
-    private $search_string_regex = '';
+    private string $search_string_regex = '';
     /** @var bool $changed */
-    private $changed             = false;
+    private bool $changed = false;
     /** @var string $pre_highlight */
-    private $pre_highlight       = '<span style="color: red; font-weight: 900;">';
+    private string $pre_highlight = '<span style="color: red; font-weight: 900;">';
     /** @var string $post_highlight */
-    private $post_highlight      = '</span>';
+    private string $post_highlight = '</span>';
     /** @var bool $newest_first */
-    private $newest_first        = true;
+    private mixed $newest_first = true;
     /** @var string $output_format */
-    private $output_format       = 'BR';
+    private string $output_format = 'BR';
     /** @var string $pre_output */
-    private $pre_output          = '';
+    private string $pre_output = '';
     /** @var string $post_output */
-    private $post_output         = '';
+    private string $post_output = '';
     /** @var string $tpl */
-    private $tpl                 = '';
+    private mixed $tpl = '';
 
     /**
      * Tail constructor.
@@ -77,9 +78,10 @@ class Tail
 
     ### Public Methods ###
     /**
-     * @return bool|string
+     * @return string
+     * @noinspection PhpUndefinedConstantInspection
      */
-    public function output()
+    public function output(): string
     {
         $this->updateStats();
         $a_twig_values = [
@@ -215,7 +217,7 @@ class Tail
     /**
      * @param string $string
      */
-    public function setHighlightCode($string= '<b>'):void
+    public function setHighlightCode(string $string= '<b>'):void
     {
         $this->pre_highlight = $string;
         $a_string = explode(' ', $string);
@@ -224,9 +226,10 @@ class Tail
 
     /**
      * Sets the lines from the log file to be displayed.
+     *
      * @param int $num_of_lines
      */
-    public function setLines($num_of_lines = 0):void
+    public function setLines(int $num_of_lines = 0):void
     {
         $show_lines = $num_of_lines === 0
             ? $this->show_lines
@@ -257,7 +260,7 @@ class Tail
     /**
      * @param bool $value
      */
-    public function setNewestFirst($value=TRUE):void
+    public function setNewestFirst(bool $value=TRUE):void
     {
         $this->newest_first = $value !== false;
     }
@@ -265,7 +268,7 @@ class Tail
     /**
      * @param int $lines
      */
-    public function setNumberOfLines($lines=20):void
+    public function setNumberOfLines(int $lines=20):void
     {
         $this->show_lines = $lines;
         $this->setLines();
@@ -274,7 +277,7 @@ class Tail
     /**
      * @param string $value
      */
-    public function setOutputFormat($value = 'BR'):void
+    public function setOutputFormat(string $value = 'BR'):void
     {
         $this->output_format = $value;
     }
@@ -282,7 +285,7 @@ class Tail
     /**
      * @param string $value
      */
-    public function setPostOutput($value = ''):void
+    public function setPostOutput(string $value = ''):void
     {
         $this->post_output = $value;
     }
@@ -290,7 +293,7 @@ class Tail
     /**
      * @param string $value
      */
-    public function setPreOutput($value = ''):void
+    public function setPreOutput(string $value = ''):void
     {
         $this->pre_output = $value;
     }
@@ -298,7 +301,7 @@ class Tail
     /**
      * @param string $search_string
      */
-    public function setSearchString($search_string = ''):void
+    public function setSearchString(string $search_string = ''):void
     {
         $this->search_string = $search_string;
     }
@@ -306,7 +309,7 @@ class Tail
     /**
      * @param string $search_string
      */
-    public function setSearchStringRegex($search_string = ''):void
+    public function setSearchStringRegex(string $search_string = ''):void
     {
         /* overrides setSearchString */
         $this->search_string_regex = $search_string;
@@ -314,9 +317,10 @@ class Tail
 
     /**
      * SETs the class property tpl.
+     *
      * @param string $tpl
      */
-    public function setTpl($tpl = ''):void
+    public function setTpl(string $tpl = ''):void
     {
             $this->tpl = $tpl !== ''
                 ? $tpl

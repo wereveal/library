@@ -6,32 +6,39 @@
 namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
+use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Models\PeopleModel;
+use Ritc\Library\Services\Elog;
 
 /**
  * Tests the Group Model Class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2016-03-05 10:44:05
+ * @version v1.0.0-alpha.1
+ * @date    2021-12-01 14:33:12
  * @todo.   Rewrite it all
  * @change_log
- * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
- * - v0.1.0         - Initial version                - unknown wer
+ * - 1.0.0-alpha.1  - updated to php 8 standards                - 2021-12-01 wer
+ * - 1.0.0-alpha.0  - Initial rewrite version                   - 2016-03-05 wer
+ * - 0.1.0          - Initial version                           - unknown wer
  */
 class PeopleModelTester extends Tester
 {
     /** @var DbModel */
-    private $o_db;
+    protected DbModel $o_db;
+    /** @var string|Elog */
+    protected Elog|string $o_elog;
     /** @var PeopleModel */
-    private $o_model;
+    protected PeopleModel $o_model;
 
     /**
      * PeopleModelTester constructor.
+     *
      * @param Di $o_di
+     * @noinspection PhpFieldAssignmentTypeMismatchInspection
      */
     public function __construct(Di $o_di)
     {
@@ -52,7 +59,7 @@ class PeopleModelTester extends Tester
 
     /**
      * @return bool
-     * @throws \Ritc\Library\Exceptions\ModelException
+     * @throws ModelException
      */
     public function readTester():bool
     {

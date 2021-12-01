@@ -16,10 +16,11 @@ use Ritc\Library\Traits\TesterTraits;
  * Tests the ContentModel class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.0
- * @date    2018-07-25 13:17:33
+ * @version 1.0.0-alpha.1
+ * @date    2021-12-01 14:08:32
  * @change_log
- * - v1.0.0-alpha.0 - Initial version.                               - 2018-07-25 wer
+ * - 1.0.0-alpha.1 - updated to php 8 standards                 - 2021-12-01 wer
+ * - 1.0.0-alpha.0 - Initial version.                           - 2018-07-25 wer
  * @todo ContentModelTester.php - Everything
  */
 class ContentModelTester
@@ -27,7 +28,7 @@ class ContentModelTester
     use LogitTraits;
     use TesterTraits;
 
-    private $o_model;
+    protected ContentModel $o_model;
 
     /**
      * ContentModelTester constructor.

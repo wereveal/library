@@ -19,32 +19,34 @@ use Ritc\Library\Models\GroupsModel;
  * Tests the Group Model Class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2016-03-05 10:44:05
+ * @version 1.0.0-alpha.1
+ * @date    2021-12-01 14:11:20
  * @change_log
- * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
- * - v0.1.0         - Initial version                - unknown wer
+ * - 1.0.0-alpha.1  - php 8 update                              - 2021-12-01 wer
+ * - 1.0.0-alpha.0  - Initial rewrite version                   - 2016-03-05 wer
+ * - 0.1.0          - Initial version                           - unknown wer
  * @todo Everything
  */
 class GroupsModelTester extends Tester
 {
     /** @var int  */
-    protected $new_id;
+    protected int $new_id;
     /** @var DbModel */
-    private $o_db;
+    protected DbModel $o_db;
     /** @var Di */
-    private $o_di;
+    protected Di $o_di;
     /** @var GroupsModel */
-    private $o_group;
+    protected GroupsModel $o_group;
 
     /**
      * GroupsModelTester constructor.
+     *
      * @param array  $a_test_order
      * @param string $db_config
      * @throws FactoryException
      * @throws ServiceException
      */
-    public function __construct(array $a_test_order = array(), $db_config = 'db_config.php')
+    public function __construct(array $a_test_order = array(), string $db_config = 'db_config.php')
     {
         $this->a_test_order = $a_test_order;
         $this->o_elog = Elog::start();
@@ -54,11 +56,11 @@ class GroupsModelTester extends Tester
         $o_pdo = PdoFactory::start($db_config, 'rw', $o_di);
         if ($o_pdo !== false) {
             $this->o_db = new DbModel($o_pdo, $db_config);
+            $this->o_group = new GroupsModel($this->o_db);
         }
         else {
             $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
         }
-        $this->o_group = new GroupsModel($this->o_db);
     }
 
     ### Tests ###

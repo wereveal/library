@@ -1,4 +1,5 @@
-<?php /** @noinspection NestedTernaryOperatorInspection */
+<?php /** @noinspection DuplicatedCode */
+/** @noinspection NestedTernaryOperatorInspection */
 
 /**
  * Trait ConfigViewTraits

@@ -9,9 +9,11 @@ namespace Ritc\Library\Traits;
  * Functions that could be used in several people related cases.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2016-12-08 12:17:39
+ * @version v1.0.0-alpha.1
+ * @date    2021-11-30 17:55:20
+ * @todo    test and determine if this is needed.
  * @change_log
+ * - v1.0.0-alpha.1 - updated for php 8      - 2021-11-30 wer
  * - v1.0.0-alpha.0 - Initial version        - 2016-12-08 wer
  */
 trait PeopleTraits
@@ -23,7 +25,7 @@ trait PeopleTraits
      * @param array  $a_groups
      * @return array
      */
-    public function makePgmArray($people_id = '', array $a_groups = array()):array
+    public function makePgmArray(string $people_id = '', array $a_groups = array()):array
     {
         if ($people_id === '' || $a_groups === []) {
             return array();

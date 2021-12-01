@@ -7,7 +7,6 @@
 
 namespace Ritc\Library\Helper;
 
-use JsonException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\RoutesComplexModel;
@@ -196,7 +195,6 @@ class RoutesHelper
      *
      * @param string $route_path
      * @return array
-     * @throws JsonException
      */
     public function createRouteParts(string $route_path = ''): array
     {
@@ -293,7 +291,6 @@ class RoutesHelper
      *
      * @param int $route_id
      * @return array
-     * @throws JsonException
      */
     public function getGroups(int $route_id = -1): array
     {
@@ -304,7 +301,7 @@ class RoutesHelper
         if ($this->use_cache) {
             $a_groups_json = $this->o_cache->get($cache_key);
             if (!empty($a_groups_json)) {
-                return json_decode($a_groups_json, true, 512, JSON_THROW_ON_ERROR);
+                return json_decode($a_groups_json, true, 512, JSON_PARTIAL_OUTPUT_ON_ERROR);
             }
         }
         $o_rgm = new RoutesGroupMapModel($this->o_db);
@@ -317,7 +314,7 @@ class RoutesHelper
                     $a_groups[] = $a_rgm['group_id'];
                 }
                 if ($this->use_cache) {
-                    $json = json_encode($a_groups, JSON_THROW_ON_ERROR);
+                    $json = json_encode($a_groups, JSON_PARTIAL_OUTPUT_ON_ERROR);
                     $this->o_cache->set($cache_key, $json, 'groups');
                 }
                 return $a_groups;
@@ -336,12 +333,11 @@ class RoutesHelper
      *
      * @param array $a_groups
      * @return int
-     * @throws JsonException
      */
     public function getMinAuthLevel(array $a_groups = []): int
     {
         $meth = __METHOD__ . '.';
-        $hash = md5(json_encode($a_groups, JSON_THROW_ON_ERROR));
+        $hash = md5(json_encode($a_groups, JSON_PARTIAL_OUTPUT_ON_ERROR));
         $key  = 'route.minauthlevel.' . $hash;
         if ($this->use_cache) {
             $results = $this->o_cache->get($key);
@@ -377,7 +373,6 @@ class RoutesHelper
      *
      * @param int $route_id if not supplied an auth level of 10 is returned.
      * @return int
-     * @throws JsonException
      */
     public function getMinAuthLevelForRoute(int $route_id = -1): int
     {
@@ -423,7 +418,6 @@ class RoutesHelper
      * a_route_parts provides a lot of information regarding the route/page to be displayed.
      *
      * @param string $request_uri
-     * @throws JsonException
      */
     public function setRouteParts(string $request_uri = ''): void
     {

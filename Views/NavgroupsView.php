@@ -14,10 +14,10 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the Navgroups Manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.0
+ * @version 1.0.0-alpha.0+
  * @date    2018-06-19 12:11:51
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2018-06-19 wer
+ * - 1.0.0-alpha.0 - Initial version                            - 2018-06-19 wer
  * @todo NavgroupsView.php - Everything
  */
 class NavgroupsView implements ViewInterface

@@ -7,6 +7,7 @@ namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
 use Ritc\Library\Models\NavigationModel;
+use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 
 /**
@@ -21,17 +22,17 @@ use Ritc\Library\Services\Di;
  */
 class NavigationModelTester extends Tester
 {
-    /** @var \Ritc\Library\Models\NavigationModel  */
-    private $o_nav_db;
+    /** @var NavigationModel */
+    private NavigationModel $o_nav_db;
 
     /**
      * NavigationModelTester constructor.
-     * @param \Ritc\Library\Services\Di $o_di
+     * @param Di $o_di
      */
     public function __construct(Di $o_di)
     {
         $this->setupElog($o_di);
-        /** @var \Ritc\Library\Services\DbModel $o_db */
+        /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
         /** @noinspection UnusedConstructorDependenciesInspection */
         $this->o_nav_db = new NavigationModel($o_db);

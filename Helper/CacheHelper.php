@@ -21,6 +21,7 @@ use Symfony\Component\Cache\CacheItem;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 1.0.0-alpha.2
  * @date    2021-11-29 15:26:22
+ * @todo    Bug fixes, compatibility to latest version of Symfony\Cache
  * @change_log
  * - v1.0.0-alpha.2 - Changed whole thing to alpha, updated for php8    - 2021-11-29 wer
  *                    Lots of figuring out how to make sure this works
@@ -244,11 +245,11 @@ class CacheHelper
      * Optionally will tag the pair.
      *
      * @param string $cache_key Required
-     * @param string $value     Optional but if empty why?
+     * @param mixed $value      Optional but if empty why?
      * @param string $tag       Optional, only used if cache is PSR-6
      * @return bool
      */
-    public function set(string $cache_key = '', string $value = '', string $tag = ''):bool
+    public function set(string $cache_key = '', mixed $value = '', string $tag = ''):bool
     {
         if (empty($cache_key)) {
             return false;

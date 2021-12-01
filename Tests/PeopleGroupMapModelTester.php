@@ -18,23 +18,24 @@ use Ritc\Library\Models\PeopleGroupMapModel;
  * Tests the Group Model Class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2016-03-05 10:44:05
+ * @version v1.0.0-alpha.1
+ * @date    2021-12-01 14:21:34
  * @todo    Rewrite the whole thing
  * @change_log
- * - v1.0.0-alpha.0 - Initial rewrite version        - 2016-03-05 wer
- * - v0.1.0         - Initial version                - unknown wer
+ * - 1.0.0-alpha.1  - updated for php 8 standard    - 2021-12-01 wer
+ * - 1.0.0-alpha.0  - Initial rewrite version       - 2016-03-05 wer
+ * - 0.1.0          - Initial version               - unknown wer
  */
 class PeopleGroupMapModelTester extends Tester
 {
     /** @var int */
-    protected $new_id;
+    protected int $new_id;
     /** @var DbModel */
-    private $o_db;
-    /** @var \Ritc\Library\Services\Di  */
-    private $o_di;
+    protected DbModel $o_db;
+    /** @var Di */
+    protected Di $o_di;
     /** @var PeopleGroupMapModel */
-    private $o_ugm;
+    protected PeopleGroupMapModel $o_ugm;
 
     /**
      * PeopleGroupMapModelTester constructor.
@@ -42,7 +43,7 @@ class PeopleGroupMapModelTester extends Tester
      * @param array  $a_test_order
      * @param string $db_config
      */
-    public function __construct(array $a_test_order = array(), $db_config = 'db_config.php')
+    public function __construct(array $a_test_order = array(), string $db_config = 'db_config.php')
     {
         $this->a_test_order = $a_test_order;
         try {
@@ -55,7 +56,8 @@ class PeopleGroupMapModelTester extends Tester
         try {
             $o_pdo = PdoFactory::start($db_config, 'rw', $this->o_di);
             if ($o_pdo !== false) {
-                $this->o_db = new DbModel($o_pdo, $db_config);
+                $this->o_db  = new DbModel($o_pdo, $db_config);
+                $this->o_ugm = new PeopleGroupMapModel($this->o_db);
             }
             else {
                 $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
@@ -64,7 +66,6 @@ class PeopleGroupMapModelTester extends Tester
         catch (FactoryException $e) {
             die('Unable to create the pdo instance.');
         }
-        $this->o_ugm = new PeopleGroupMapModel($this->o_db);
     }
 
     ### Tests ###

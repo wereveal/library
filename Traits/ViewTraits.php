@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Trait ViewTraits
  * @package Ritc_Library
@@ -36,9 +37,11 @@ use Twig\Error\RuntimeError as TwigErrorRuntime;
  * Common functions for views.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.0
- * @date    2018-12-18 17:10:27
+ * @version v3.0.0-alpha.1
+ * @date    2021-11-30 18:08:09
+ * @todo    Fix all the bugs, figure out how to work with Symfony\Cache
  * @change_log
+ * - v3.0.0-alpha.1 - updating to php 8 finding a lot of bugs, failure                          - 2021-11-30 wer
  * - v2.1.0         - Added the shared content to the default twig values                       - 2018-12-18 wer
  * - v2.0.0         - Added caching of some data that is used commonly in a view.               - 2018-05-14 wer
  *                    Added a new method for setting the url_id based on record id
@@ -55,31 +58,31 @@ use Twig\Error\RuntimeError as TwigErrorRuntime;
 trait ViewTraits
 {
     /** @var array */
-    protected $a_nav;
+    protected array $a_nav;
     /** @var int */
-    protected $adm_level;
+    protected int $adm_level;
     /** @var string $cache_type */
-    protected $cache_type;
+    protected string $cache_type;
     /** @var AuthHelper */
-    protected $o_auth;
+    protected AuthHelper $o_auth;
     /** @var CacheHelper $o_cache */
-    protected $o_cache;
+    protected CacheHelper $o_cache;
     /** @var DbModel */
-    protected $o_db;
+    protected DbModel $o_db;
     /** @var Di */
-    protected $o_di;
+    protected Di $o_di;
     /** @var NavComplexModel */
-    protected $o_nav;
+    protected NavComplexModel $o_nav;
     /** @var Router */
-    protected $o_router;
+    protected Router $o_router;
     /** @var RoutesHelper */
-    protected $o_routes_helper;
+    protected RoutesHelper $o_routes_helper;
     /** @var  Session */
-    protected $o_session;
+    protected Session $o_session;
     /** @var TwigEnvironment */
-    protected $o_twig;
+    protected TwigEnvironment $o_twig;
     /** @var bool */
-    private $use_cache;
+    private bool $use_cache;
 
     ### Main Public Methods ###
     /**
@@ -101,7 +104,7 @@ trait ViewTraits
      * @param array  $a_twig_values
      * @return string
      */
-    public function renderIt($tpl = '', array $a_twig_values = []):?string
+    public function renderIt(string $tpl = '', array $a_twig_values = []): string
     {
         if (empty($tpl) || empty($a_twig_values)) {
             return 'Error: missing values.';
@@ -110,19 +113,7 @@ trait ViewTraits
             try {
                 return $this->o_twig->render($tpl, $a_twig_values);
             }
-            catch (TwigErrorLoader $e) {
-                if (DEVELOPER_MODE) {
-                    return 'Error: ' . $e->getMessage();
-                }
-                return '';
-            }
-            catch(TwigErrorSyntax $e) {
-                if (DEVELOPER_MODE) {
-                    return 'Error: ' . $e->getMessage();
-                }
-                return '';
-            }
-            catch(TwigErrorRuntime $e) {
+            catch (TwigErrorLoader | TwigErrorSyntax | TwigErrorRuntime $e) {
                 if (DEVELOPER_MODE) {
                     return 'Error: ' . $e->getMessage();
                 }
@@ -159,11 +150,11 @@ trait ViewTraits
      * Retrieves the navigation info for the nav group.
      * Does not set the class property a_nav. Use the setNav method to do that.
      *
-     * @param string|int $nav_group Defaults to the default navgroup.
+     * @param int|string $nav_group Defaults to the default navgroup.
      *                              This can be either the navgroup id or name.
      * @return array
      */
-    public function retrieveNav($nav_group = ''):array
+    public function retrieveNav(int|string $nav_group = ''):array
     {
         $cache_key = 'nav.values.ng_id.' . $nav_group;
         if ($this->use_cache) {
@@ -173,7 +164,7 @@ trait ViewTraits
             $a_nav = [];
         }
         if (!is_array($a_nav) || empty($a_nav)) {
-            if ($this->adm_level === '') {
+            if (empty($this->adm_level)) {
                 $this->setAdmLevel();
             }
             $a_nav = $this->readNav($nav_group);
@@ -195,7 +186,7 @@ trait ViewTraits
      *                             Note that for now, only two children levels are available.
      * @return array
      */
-    public function buildSitemapArray($child_levels = 'all'):array
+    public function buildSitemapArray(string $child_levels = 'all'):array
     {
         $a_sitemap = [];
         $date_key = 'sitemap.html.date';
@@ -250,7 +241,7 @@ trait ViewTraits
      * @param int|string $url_id    Optional, defaults to -1 which then uses current url_id.
      * @return array
      */
-    public function createDefaultTwigValues(array $a_message = [], $url_id = -1):array
+    public function createDefaultTwigValues(array $a_message = [], int|string $url_id = -1):array
     {
         $a_page_values = [];
         $a_auth_levels = [];
@@ -431,7 +422,7 @@ trait ViewTraits
      *
      * @param string $login_id Optional, if empty tries to use $_SESSION['login_id'].
      */
-    protected function setAdmLevel($login_id = ''):void
+    protected function setAdmLevel(string $login_id = ''):void
     {
         $login_id = empty($login_id)
             ? empty($_SESSION['login_id'])
@@ -463,7 +454,7 @@ trait ViewTraits
      *
      * @param int|string $nav_group optional, defaults to 1
      */
-    protected function setNav($nav_group = 1):void
+    protected function setNav(int|string $nav_group = 1):void
     {
         $this->a_nav = $this->retrieveNav($nav_group);
     }
@@ -473,7 +464,7 @@ trait ViewTraits
      *
      * @param string $navgroup_name
      */
-    protected function setNavByNgName($navgroup_name = ''):void
+    protected function setNavByNgName(string $navgroup_name = ''):void
     {
         $ng_id = -1;
         $cache_key = 'navgroup.id.by.' . $navgroup_name;
@@ -499,11 +490,11 @@ trait ViewTraits
      * Creates and sets the o_twig property.
      * See the TwigFactory::getTwig method for details.
      *
-     * @param string|array $twig_config \ref twigfactory
+     * @param array|string $twig_config \ref twigfactory
      * @param string       $name
      * @throws FactoryException
      */
-    public function setTwig($twig_config = 'twig_config.php', $name = 'main'):void
+    public function setTwig(array|string $twig_config = 'twig_config.php', string $name = 'main'):void
     {
         try {
             $o_twig = TwigFactory::getTwig($twig_config, $name);
@@ -534,7 +525,7 @@ trait ViewTraits
      * @param int|string $url_id
      * @return array
      */
-    public function getPageValues($url_id = -1):array
+    public function getPageValues(int|string $url_id = -1):array
     {
         if ((int) $url_id < 1) {
             $url_id = $this->urlId((string) $url_id);
@@ -624,7 +615,7 @@ trait ViewTraits
      * @param int   $value
      * @return int
      */
-    protected function createNewOrderNumber(array $a_used = [], $value = 0):int
+    protected function createNewOrderNumber(array $a_used = [], int $value = 0):int
     {
         if (!in_array($value, $a_used, false)) {
             return (int) $value;
@@ -823,11 +814,11 @@ trait ViewTraits
     /**
      * Retrieves the raw nav records for the nav group.
      *
-     * @param string|int $navgroup Defaults to the default navgroup.
+     * @param int|string $navgroup Defaults to the default navgroup.
      *                             This can be either the navgroup id or name.
      * @return array
      */
-    protected function readNav($navgroup = ''):array
+    protected function readNav(int|string $navgroup = ''):array
     {
         $o_ng = new NavgroupsModel($this->o_db);
         if (empty($navgroup)) {
@@ -942,7 +933,7 @@ trait ViewTraits
      *                           url id as specified by o_router.
      * @return int
      */
-    public function urlId($url_string = ''):int
+    public function urlId(string $url_string = ''):int
     {
         if ((string) $url_string === '-1') {
             $url_string = '';

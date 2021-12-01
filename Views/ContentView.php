@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Class ContentView.
  *
@@ -22,10 +23,11 @@ use Ritc\Library\Traits\LogitTraits;
  * Manager for Content View.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.0
- * @date    2018-06-01 11:44:46
+ * @version 1.0.0-alpha.1
+ * @date    2021-12-01 13:08:52
  * @change_log
- * - v1.0.0-alpha.0 - Initial version.                                    - 2018-06-01 wer
+ * - 1.0.0-alpha.1                                              - 2021-12-01 wer
+ * - 1.0.0-alpha.0 - Initial version.                           - 2018-06-01 wer
  */
 class ContentView implements ViewInterface
 {
@@ -33,7 +35,7 @@ class ContentView implements ViewInterface
     use ConfigViewTraits;
 
     /** @var ContentComplexModel $o_model */
-    private $o_model;
+    private ContentComplexModel $o_model;
 
     /**
      * ContentView constructor.
@@ -98,7 +100,7 @@ class ContentView implements ViewInterface
      * @param int $pbm_id Required
      * @return string
      */
-    public function renderAllVersions($pbm_id = -1): string
+    public function renderAllVersions(int $pbm_id = -1): string
     {
         if ($pbm_id < 1) {
             $message = 'Missing required value for the page/block combo.';
@@ -110,7 +112,7 @@ class ContentView implements ViewInterface
             $a_search_for = ['pbm_id' => $pbm_id, 'order_by' => 'DESC'];
             $a_results = $this->o_model->readAllByPage($a_search_for);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $message = 'A problem occurred retreiving a list of all versions for the page';
             $a_message = ViewHelper::errorMessage($message);
         }
@@ -129,31 +131,19 @@ class ContentView implements ViewInterface
         try {
             $a_results = $this->o_model->readByContentId($c_id);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $message = 'Could not get the details for the record.';
             $a_message = ViewHelper::errorMessage($message);
             return $this->render($a_message);
         }
-        switch ($a_results['c_type']) {
-            case 'text':
-                $a_results['content_type'] = 'Text';
-                break;
-            case 'html':
-                $a_results['content_type'] = 'HTML';
-                break;
-            case 'mde':
-                $a_results['content_type'] = 'Markdown Extra';
-                break;
-            case 'xml':
-                $a_results['content_type'] = 'XML';
-                break;
-            case 'raw':
-                $a_results['content_type'] = 'Raw';
-                break;
-            case 'md':
-            default:
-                $a_results['content_type'] = 'Markdown';
-        }
+        $a_results['content_type'] = match ($a_results['c_type']) {
+            'text'  => 'Text',
+            'html'  => 'HTML',
+            'mde'   => 'Markdown Extra',
+            'xml'   => 'XML',
+            'raw'   => 'Raw',
+            default => 'Markdown',
+        };
         $a_twig_values                 = $this->createDefaultTwigValues();
         $a_twig_values['a_record']     = $a_results;
         $a_twig_values['content_type'] = 'ro_details';
@@ -215,7 +205,7 @@ class ContentView implements ViewInterface
                         $a_message = ViewHelper::errorMessage('Unable to read the details for the content record.');
                     }
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     $a_message = ViewHelper::errorMessage('Unable to read the details for the content record.');
                 }
                 break;
@@ -236,7 +226,7 @@ class ContentView implements ViewInterface
                         $a_record = $this->o_model->readByContentId($content_id);
                         $a_pbm_select = [];
                     }
-                    catch (ModelException $e) {
+                    catch (ModelException) {
                         $a_message = ViewHelper::errorMessage($err_msg);
                     }
                 }
@@ -260,7 +250,7 @@ class ContentView implements ViewInterface
                         ];
                     }
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     $a_message = ViewHelper::errorMessage('Unable to determine the pages that exist.');
                 }
                 $a_pbm_select = [

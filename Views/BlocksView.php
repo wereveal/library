@@ -17,10 +17,12 @@ use Ritc\Library\Traits\LogitTraits;
  * View class for the blocks manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.0
+ * @version 1.0.0-alpha.1
  * @date    2018-06-03 16:45:44
+ * @todo    Get out of alpha
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2018-06-03 wer
+ * - 1.0.0-alpha.1 - updated to php8       - 2021-11-30 wer
+ * - 1.0.0-alpha.0 - Initial version        - 2018-06-03 wer
  * @todo BlocksView.php - Everything
  */
 class BlocksView implements ViewInterface

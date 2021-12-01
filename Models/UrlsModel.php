@@ -132,10 +132,10 @@ class UrlsModel extends ModelAbstract
     /**
      * Finds Urls that are not assigned to a route.
      *
-     * @return mixed
+     * @return array|bool
      * @throws ModelException
      */
-    public function readNoRoute(): mixed
+    public function readNoRoute(): array|bool
     {
         $sql = "
             SELECT * from {$this->lib_prefix}urls as u
@@ -157,10 +157,10 @@ class UrlsModel extends ModelAbstract
      * Read the URLs that are not in the navgroup.
      *
      * @param int $navgroup_id
-     * @return mixed
+     * @return array|bool
      * @throws ModelException
      */
-    public function readNotInNavgroup(int $navgroup_id = -1): mixed
+    public function readNotInNavgroup(int $navgroup_id = -1): array|bool
     {
         $sql = /** @lang text */
         "

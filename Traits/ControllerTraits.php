@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedConstantInspection */
+
 /**
  * Trait ControllerTraits
  * @package Ritc_Library
@@ -15,9 +16,10 @@ use Ritc\Library\Services\Session;
  * Common functions used by controllers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.4.1
- * @date    2018-12-18 13:50:52
+ * @version v2.0.0
+ * @date    2021-11-30 17:42:40
  * @change_log
+ * - v2.0.0         - updated for php 8 use, bug fix too                        - 2021-11-30 wer
  * - v1.4.1         - bug fix with the cache                                    - 2018-12-18 wer
  * - v1.4.0         - added the cache property for injection                    - 2018-06-13 wer
  * - v1.3.0         - added a commonly used property route_class                - 2017-05-10 wer
@@ -30,37 +32,37 @@ use Ritc\Library\Services\Session;
 trait ControllerTraits
 {
     /** @var  array */
-    protected $a_post = [];
+    protected array $a_post = [];
     /** @var  array */
-    protected $a_router_parts = [];
+    protected array $a_router_parts = [];
     /** @var array */
-    protected $a_url_actions = [];
+    protected array $a_url_actions = [];
     /** @var string $cache_type */
-    protected $cache_type = '';
+    protected string $cache_type = '';
     /** @var  string */
-    protected $form_action = '';
+    protected string $form_action = '';
     /** @var  string */
-    protected $main_action = '';
+    protected string $main_action = '';
     /** @var CacheHelper $o_cache */
-    protected $o_cache;
+    protected CacheHelper $o_cache;
     /** @var  DbModel */
-    protected $o_db;
+    protected DbModel $o_db;
     /** @var  Di */
-    protected $o_di;
+    protected Di $o_di;
     /** @var  Router */
-    protected $o_router;
+    protected Router $o_router;
     /** @var  Session */
-    protected $o_session;
+    protected Session $o_session;
     /** @var  string */
-    protected $route_action;
+    protected string $route_action;
     /** @var  string */
-    protected $route_class;
+    protected string $route_class;
     /** @var  string */
-    protected $route_method = '';
+    protected string $route_method = '';
     /** @var  string */
-    protected $url_action_one = '';
+    protected string $url_action_one = '';
     /** @var bool */
-    protected $use_cache = false;
+    protected bool $use_cache = false;
 
     /**
      * Does the common stuff that is normally done in the __contruct method.
@@ -77,6 +79,7 @@ trait ControllerTraits
      * Sets the class properties that are objects.
      *
      * @param Di $o_di
+     * @noinspection PhpFieldAssignmentTypeMismatchInspection
      */
     protected function setObjects(Di $o_di):void
     {
@@ -95,10 +98,7 @@ trait ControllerTraits
         if (USE_CACHE) {
             $this->o_cache    = $o_di->get('cache');
             $this->cache_type = $this->o_cache->getCacheType();
-            $this->use_cache  = empty($this->cache_type)
-                ? false
-                : true
-            ;
+            $this->use_cache  = !empty($this->cache_type);
         }
     }
 

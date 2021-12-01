@@ -18,12 +18,13 @@ use Ritc\Library\Traits\LogitTraits;
  * The view class for the navigation manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2020-08-24 10:30:12
+ * @version 2.0.0
+ * @date    2021-12-01 13:17:21
  * @change_log
- * - v1.0.0         - bug fixes            - 2020-08-24 wer
- * - v1.0.0-alpha.2 - refactoring in model - 2017-06-19 wer
- * - v1.0.0-alpha.0 - Initial version      - 2016-04-15 wer
+ * - 2.0.0          - updated for php 8 standards               - 2021-12-01 wer
+ * - 1.0.0          - bug fixes                                 - 2020-08-24 wer
+ * - 1.0.0-alpha.2  - refactoring in model                      - 2017-06-19 wer
+ * - 1.0.0-alpha.0  - Initial version                           - 2016-04-15 wer
  */
 class NavigationView
 {
@@ -31,7 +32,7 @@ class NavigationView
     use ConfigViewTraits;
 
     /** @var NavComplexModel */
-    private $o_nav_complex;
+    private NavComplexModel $o_nav_complex;
 
     /**
      * NavigationView constructor.
@@ -85,7 +86,7 @@ class NavigationView
      * @param int $nav_id Required.
      * @return string
      */
-    public function renderForm($nav_id = -1):string
+    public function renderForm(int $nav_id = -1):string
     {
         $a_twig_values = $this->createDefaultTwigValues();
         $a_nav = [];
@@ -120,7 +121,7 @@ class NavigationView
                 try {
                     $results = $this->o_nav_complex->getNavRecord($nav_id);
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     $results = [];
                 }
                 $a_nav['nav_active_ckbx']  = [];
@@ -169,11 +170,11 @@ class NavigationView
     /**
      * Creates an array for the twig values to display a select listing the urls.
      *
-     * @param int $url_id Optional, both $url_id and $navgroup_id need to be set if either is.
+     * @param int $url_id      Optional, both $url_id and $navgroup_id need to be set if either is.
      * @param int $navgroup_id Optional, both $url_id and $navgroup_id need to be set if either is.
      * @return array
      */
-    private function createUrlSelect($url_id = -1, $navgroup_id = -1):array
+    private function createUrlSelect(int $url_id = -1, int $navgroup_id = -1):array
     {
         $a_select = [
             'id'          => 'url_id',
@@ -217,7 +218,7 @@ class NavigationView
                         'label'       => $url['url_text'],
                         'other_stuph' => ''
                     ];
-                    if ($url['url_id'] === (int)$url_id) {
+                    if ($url['url_id'] === $url_id) {
                         $a_temp['other_stuph'] = ' selected';
                     }
                     if (!empty($a_temp['value'])) {
@@ -230,7 +231,7 @@ class NavigationView
                 }
                 return $a_select;
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 return [];
             }
         }
@@ -245,7 +246,7 @@ class NavigationView
      * @param int $nav_id
      * @return array
      */
-    private function createNavSelect($nav_id = -1):array
+    private function createNavSelect(int $nav_id = -1):array
     {
         $a_nav = $this->getNavUrlTree();
         $a_select = [
@@ -261,7 +262,7 @@ class NavigationView
             [
                 'value'       => 0,
                 'label'       => '--Select Parent--',
-                'other_stuph' => (int)$nav_id === -1 ? ' selected' : ''
+                'other_stuph' => $nav_id === -1 ? ' selected' : ''
             ]
         ];
         $a_options[] = [
@@ -275,7 +276,7 @@ class NavigationView
                 'label'       => $nav['nav_text'] . ' (level ' . $nav['nav_level'] . ')',
                 'other_stuph' => ''
             ];
-            if ($nav['nav_id'] === (int)$nav_id) {
+            if ($nav['nav_id'] === $nav_id) {
                 $a_temp['other_stuph'] = ' selected';
             }
             $a_options[] = $a_temp;
@@ -286,7 +287,7 @@ class NavigationView
                         'label'       => $submenu['nav_text'] . ' (level ' . $submenu['nav_level'] . ')',
                         'other_stuph' => ''
                     ];
-                    if ($submenu['nav_id'] === (int)$nav_id) {
+                    if ($submenu['nav_id'] === $nav_id) {
                         $a_temp['other_stuph'] = ' selected';
                     }
                     $a_options[] = $a_temp;
@@ -297,7 +298,7 @@ class NavigationView
                                 'label'       => $ssmenu['nav_text'] . ' (level ' . $ssmenu['nav_level'] . ')',
                                 'other_stuph' => ''
                             ];
-                            if ($ssmenu['nav_id'] === (int)$nav_id) {
+                            if ($ssmenu['nav_id'] === $nav_id) {
                                 $a_temp['other_stuph'] = ' selected';
                             }
                             $a_options[] = $a_temp;
@@ -316,15 +317,15 @@ class NavigationView
      * @param int $nav_level
      * @return array
      */
-    private function createNavLvlSelect($nav_level = 0):array
+    private function createNavLvlSelect(int $nav_level = 0):array
     {
         $a_options = [[
             'value'       => 0,
             'label'       => '--Select Nav Level--',
-            'other_stuph' => (int)$nav_level === 0 ? ' selected' : ''
+            'other_stuph' => $nav_level === 0 ? ' selected' : ''
         ]];
         for ($x = 1; $x <= 3; $x++) {
-            $other_stuph = (int)$nav_level === $x ? ' selected' : '';
+            $other_stuph = $nav_level === $x ? ' selected' : '';
             $a_options[] = [
                 'value'       => $x,
                 'label'       => 'Nav Level ' . $x,
@@ -348,7 +349,7 @@ class NavigationView
      * @param int $ng_id Optional, the navigation group id
      * @return array
      */
-    private function createNgSelect($ng_id = -1):array
+    private function createNgSelect(int $ng_id = -1):array
     {
         $cache_key = 'nav.select.navgroups';
         $results = '';
@@ -363,7 +364,7 @@ class NavigationView
                     $this->o_cache->set($cache_key, $results, 'nav');
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $results = [];
             }
         }
@@ -445,7 +446,7 @@ class NavigationView
                     $this->o_cache->set($cache_key, $a_nav, 'nav');
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_nav = [];
             }
         }

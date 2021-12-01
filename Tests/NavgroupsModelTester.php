@@ -16,10 +16,11 @@ use Ritc\Library\Traits\TesterTraits;
  * Tests the NavgroupsModel class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
- * @date    2017-06-09 10:14:17
+ * @version 1.0.0-alpha.1
+ * @date    2021-12-01 14:13:41
  * @change_log
- * - v1.0.0-alpha.0 - Initial version        - 2017-06-09 wer
+ * - 1.0.0-alpha.1 - updated to php 8 standards                 - 2021-12-01 wer
+ * - 1.0.0-alpha.0 - Initial version                            - 2017-06-09 wer
  * @todo Ritc/Library/Tests/NavgroupsModelTester.php - Everything
  */
 class NavgroupsModelTester
@@ -27,10 +28,10 @@ class NavgroupsModelTester
     use LogitTraits;
     use TesterTraits;
 
-    /** @var \Ritc\Library\Models\NavgroupsModel  */
-    private $o_model;
+    /** @var NavgroupsModel */
+    private NavgroupsModel $o_model;
     /** @var int  */
-    private $created_id = -1;
+    private int $created_id = -1;
 
     /**
      * NavgroupsModelTester constructor.
@@ -66,9 +67,7 @@ class NavgroupsModelTester
             $subtest_name = $key;
             $expected_results = $a_values['expected_results'];
             $a_results = $this->o_model->$test_name($a_values['test_values']);
-            $results = empty($a_results)
-                ? false
-                : true;
+            $results = !empty($a_results);
             if ($results === $expected_results) {
                 $this->setSubPassed($test_name, $subtest_name);
                 if ($subtest_name === 'valid_values') {
@@ -111,9 +110,7 @@ class NavgroupsModelTester
             }
             $expected_results = $a_values['expected_results'];
             $a_results = $this->o_model->$test_name($test_value);
-            $results = empty($a_results)
-                ? false
-                : true
+            $results = !empty($a_results)
             ;
             if ($results === $expected_results) {
                 $this->setSubPassed($test_name, $subtest_name);
@@ -280,9 +277,7 @@ class NavgroupsModelTester
             }
             $expected_results = $a_values['expected_results'];
             $a_results = $this->o_model->$test_name($test_value);
-            $results = empty($a_results)
-                ? false
-                : true
+            $results = !empty($a_results)
             ;
             if ($results === $expected_results) {
                 $this->setSubPassed($test_name, $subtest_name);
@@ -323,9 +318,7 @@ class NavgroupsModelTester
             }
             $expected_results = $a_values['expected_results'];
             $a_results = $this->o_model->$test_name($test_value);
-            $results = empty($a_results)
-                ? false
-                : true
+            $results = !empty($a_results)
             ;
             if ($results === $expected_results) {
                 $this->setSubPassed($test_name, $subtest_name);
@@ -365,9 +358,7 @@ class NavgroupsModelTester
             }
             $expected_results = $a_values['expected_results'];
             $a_results = $this->o_model->$test_name($test_value);
-            $results = empty($a_results)
-                ? false
-                : true
+            $results = !empty($a_results)
             ;
             if ($results === $expected_results) {
                 $this->setSubPassed($test_name, $subtest_name);
@@ -415,9 +406,7 @@ class NavgroupsModelTester
         }
         $expected_results = $this->a_test_values[$test_name]['expected_results'];
         $results = $this->o_model->$test_name();
-        $results = empty($results)
-            ? false
-            : true
+        $results = !empty($results)
         ;
         if ($results !== $expected_results) {
             return 'failed';

@@ -16,16 +16,17 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the Groups Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.0
- * @date    2017-06-20 11:44:34
+ * @version 3.0.0
+ * @date    2021-12-01 13:10:55
  * @change_log
- * - v2.1.0   - Name changes elsewhere updated here.                                    - 2017-06-20 wer
- * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
- * - v1.3.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v1.2.0   - Bug fix to implementation of LIB_TWIG_PREFIX                            - 2016-04-10 wer
- * - v1.1.0   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.0.0   - First working version                                                   - 11/27/2015 wer
- * - v1.0.0β1 - Initial version                                                         - 01/28/2015 wer
+ * - 3.0.0   - Updated to php8 standards                                                - 2021-12-01 wer
+ * - 2.1.0   - Name changes elsewhere updated here.                                     - 2017-06-20 wer
+ * - 2.0.0   - Name refactoring                                                         - 2017-05-14 wer
+ * - 1.3.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here     - 2016-04-11 wer
+ * - 1.2.0   - Bug fix to implementation of LIB_TWIG_PREFIX                             - 2016-04-10 wer
+ * - 1.1.0   - Implement LIB_TWIG_PREFIX                                                - 12/12/2015 wer
+ * - 1.0.0   - First working version                                                    - 11/27/2015 wer
+ * - 1.0.0β1 - Initial version                                                          - 01/28/2015 wer
  * @todo rewrite the verify
  */
 class GroupsView
@@ -36,7 +37,7 @@ class GroupsView
     /**
      * @var GroupsModel
      */
-    private $o_groups;
+    private GroupsModel $o_groups;
 
     /**
      * GroupsView constructor.
@@ -76,7 +77,7 @@ class GroupsView
                     }
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_groups = [];
             }
         }

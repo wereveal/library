@@ -13,18 +13,19 @@ use ReflectionProperty;
  * A set of visibility methods to keep things protected and private.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
- * @date    2015-08-19 12:18:25
+ * @version 2.0.0
+ * @date    2021-11-30 18:11:06
  * @note    This was a part of the Base abstract class. Spun it out so it could
  *          be used independently, only in classes where it is important.
  * @change_log
- * - v1.0.0 - initial version - 08/19/2015 wer
+ * - 2.0.0 - updated to php 8                                   - 2021-11-30 wer
+ * - 1.0.0 - initial version                                    - 08/19/2015 wer
  */
 trait VisibilityTraits {
-    /** @var */
-    protected $current_page;
+    /** @var string */
+    protected string $current_page;
     /** @var array */
-    protected $private_properties = array();
+    protected array $private_properties = array();
 
     /**
      * Creates an array that lists the protected and private properties.
@@ -36,7 +37,7 @@ trait VisibilityTraits {
         try {
             $o_class = new ReflectionClass(__CLASS__);
         }
-        catch (Exception $e) {
+        catch (Exception) {
             return;
         }
         $this->current_page = $o_class->getFileName();
@@ -45,7 +46,7 @@ trait VisibilityTraits {
             try {
                 $o_prop = new ReflectionProperty(__CLASS__, $property_name);
             }
-            catch (Exception $e) {
+            catch (Exception) {
                 return;
             }
             if ($o_prop->isPrivate() || $o_prop->isProtected()) {
@@ -62,7 +63,7 @@ trait VisibilityTraits {
      * @param string $var name of property being set
      * @param string $val value of the property to be set
      */
-    public function __set($var, $val)
+    public function __set(string $var, string $val)
     {
         $a_backtrace = debug_backtrace();
         if ($this->private_properties === null || $this->private_properties === []) {
@@ -83,7 +84,7 @@ trait VisibilityTraits {
      * @param string $var name of property being get
      * @return mixed - value of the property being get
      */
-    public function __get($var)
+    public function __get(string $var)
     {
         $a_backtrace = debug_backtrace();
         if (isset($this->$var)) {
@@ -105,7 +106,7 @@ trait VisibilityTraits {
      * @param string $var name of property being evaluated
      * @return bool
      */
-    public function __isset($var)
+    public function __isset(string $var)
     {
         $a_backtrace = debug_backtrace();
         if (isset($this->$var)) {
@@ -122,7 +123,7 @@ trait VisibilityTraits {
      *
      * @param string $var name of property being unset
      */
-    public function __unset($var)
+    public function __unset(string $var)
     {
         $a_backtrace = debug_backtrace();
         if (isset($this->$var)) {

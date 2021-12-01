@@ -27,19 +27,20 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the Page Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.2.0
- * @date    2018-12-29 10:55:35
+ * @version 3.0.0
+ * @date    2021-12-01 13:20:06
  * @change_log
- * - v2.2.0   - renderForm updated to match changes in data.                            - 2018-12-29 wer
- * - v2.1.0   - method name changed elsewhere changed here                              - 2017-06-20 wer
+ * - 3.0.0   - updated for php 8 standards                                              - 2021-12-01 wer
+ * - 2.2.0   - renderForm updated to match changes in data.                             - 2018-12-29 wer
+ * - 2.1.0   - method name changed elsewhere changed here                               - 2017-06-20 wer
  *              ModelException handling added
- * - v2.0.0   - name refactoring                                                        - 2017-05-14 wer
- * - v1.4.0   - Lot of fixes due to the addition of URLs                                - 2016-04-13 wer
- * - v1.3.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v1.2.0   - Bug fix for implementation of LIB_TWIG_PREFIX                           - 2016-04-10 wer
- * - v1.1.0   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.0.0   - take out of beta                                                        - 11/27/2015 wer
- * - v1.0.0β1 - Initial version                                                         - 10/30/2015 wer
+ * - 2.0.0   - name refactoring                                                         - 2017-05-14 wer
+ * - 1.4.0   - Lot of fixes due to the addition of URLs                                 - 2016-04-13 wer
+ * - 1.3.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here     - 2016-04-11 wer
+ * - 1.2.0   - Bug fix for implementation of LIB_TWIG_PREFIX                            - 2016-04-10 wer
+ * - 1.1.0   - Implement LIB_TWIG_PREFIX                                                - 12/12/2015 wer
+ * - 1.0.0   - take out of beta                                                         - 11/27/2015 wer
+ * - 1.0.0β1 - Initial version                                                          - 10/30/2015 wer
  */
 class PageView
 {
@@ -47,7 +48,7 @@ class PageView
     use ConfigViewTraits;
 
     /** @var PageComplexModel */
-    private $o_model;
+    private PageComplexModel $o_model;
 
     /**
      * PageView constructor.
@@ -62,7 +63,7 @@ class PageView
             $this->o_model = new PageComplexModel($this->o_di);
             $this->o_model->setupElog($o_di);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $message  = 'Unable to create an instance of PageComplexModel.';
             $err_code = ExceptionHelper::getCodeNumberModel('instance');
             throw new ViewException($message, $err_code);
@@ -77,7 +78,7 @@ class PageView
      * @param int    $page_id
      * @return string
      */
-    public function renderForm($new_or_modify = 'new_page', $page_id = -1):string
+    public function renderForm(string $new_or_modify = 'new_page', int $page_id = -1):string
     {
         $meth = __METHOD__ . '.';
         /**

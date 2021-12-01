@@ -13,17 +13,17 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the Config Manager page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.2.0
+ * @version 2.2.0+
  * @date    2018-05-21 16:39:50
  * @change_log
- * - v2.2.0   - Removed unused method                                                   - 2018-05-21 wer
- * - v2.1.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v2.0.0   - Refactored - name change.                                               - 2016-03-31 wer
- * - v1.2.0   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.1.0   - removed abstract class Base, use LogitTraits                            - 09/01/2015 wer
- * - v1.0.0   - First stable version                                                    - 01/16/2015 wer
- * - v1.0.0β2 - changed to match DI/IOC                                                 - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                                                         - 11/08/2014 wer
+ * - 2.2.0   - Removed unused method                                                   - 2018-05-21 wer
+ * - 2.1.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
+ * - 2.0.0   - Refactored - name change.                                               - 2016-03-31 wer
+ * - 1.2.0   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
+ * - 1.1.0   - removed abstract class Base, use LogitTraits                            - 09/01/2015 wer
+ * - 1.0.0   - First stable version                                                    - 01/16/2015 wer
+ * - 1.0.0β2 - changed to match DI/IOC                                                 - 11/15/2014 wer
+ * - 1.0.0β1 - Initial version                                                         - 11/08/2014 wer
  */
 class LibraryView
 {

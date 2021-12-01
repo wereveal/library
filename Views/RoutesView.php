@@ -22,21 +22,22 @@ use Ritc\Library\Traits\LogitTraits;
  * View for the Router Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 2.2.0
- * @date    2018-05-16 17:55:29
+ * @version 3.0.0
+ * @date    2021-12-01 13:26:29
  * @change_log
- * - v2.2.0   - Switching code to use more of the ViewTraits (bug fixes)                - 2018-05-16 wer
- * - v2.1.0   - two changes, switch to using RoutesComplexModel and method in           - 2017-06-20 wer
+ * - 3.0.0    - updated to php 8 standards                                              - 2021-12-01 wer
+ * - 2.2.0   - Switching code to use more of the ViewTraits (bug fixes)                 - 2018-05-16 wer
+ * - 2.1.0   - two changes, switch to using RoutesComplexModel and method in            - 2017-06-20 wer
  *              ViewHelper refactored so updated here.
- * - v2.0.0   - Name refactoring                                                        - 2017-05-14 wer
- * - v1.5.0   - Refactoring elsewhere forced changes here                               - 2016-04-13 wer
- * - v1.4.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here    - 2016-04-11 wer
- * - v1.3.0   - Change in implementation of LIB_TWIG_PREFIX                             - 2016-04-10 wer
- * - v1.2.0   - Implement LIB_TWIG_PREFIX                                               - 12/12/2015 wer
- * - v1.1.0   - change in database structure forced change here                         - 09/03/2015 wer
- * - v1.0.0   - first working version                                                   - 01/28/2015 wer
- * - v1.0.0β2 - changed to use DI/IOC                                                   - 11/15/2014 wer
- * - v1.0.0β1 - Initial version                                                         - 11/14/2014 wer
+ * - 2.0.0   - Name refactoring                                                         - 2017-05-14 wer
+ * - 1.5.0   - Refactoring elsewhere forced changes here                                - 2016-04-13 wer
+ * - 1.4.0   - Refactored the tpls to implement LIB_TWIG_PREFIX pushed changes here     - 2016-04-11 wer
+ * - 1.3.0   - Change in implementation of LIB_TWIG_PREFIX                              - 2016-04-10 wer
+ * - 1.2.0   - Implement LIB_TWIG_PREFIX                                                - 12/12/2015 wer
+ * - 1.1.0   - change in database structure forced change here                          - 09/03/2015 wer
+ * - 1.0.0   - first working version                                                    - 01/28/2015 wer
+ * - 1.0.0β2 - changed to use DI/IOC                                                    - 11/15/2014 wer
+ * - 1.0.0β1 - Initial version                                                          - 11/14/2014 wer
  */
 class RoutesView
 {
@@ -44,7 +45,7 @@ class RoutesView
     use ConfigViewTraits;
 
     /** @var RoutesComplexModel */
-    private $o_model;
+    private RoutesComplexModel $o_model;
 
     /**
      * RoutesView constructor.
@@ -172,7 +173,7 @@ class RoutesView
             $a_routes[$key]['groups'] = $a_groups;
             foreach ($a_routes[$key]['groups'] as $g_key => $a_group) {
                 $a_routes[$key]['groups'][$g_key]['id'] = 'group' . $x . $a_group['id'];
-                $replace_this                           = '/group\[(.*)\]/i';
+                $replace_this                           = '/group\[(.*)]/i';
                 $with_this                              = '$1';
                 $group_id                               = preg_replace($replace_this, $with_this, $a_group['name']);
                 foreach ($a_rgm_results as $r_key => $a_rgm) {
