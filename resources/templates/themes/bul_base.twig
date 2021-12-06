@@ -14,21 +14,11 @@
 {% endblock %}
 {% block meta %}{% endblock %}
 {% set fontawesomePro = vendor_dir ~ '/@fortawesome/fontawesome-pro' %}
-{% set fontawesomeFree = vendor_dir ~ '/@fortawesome/fontawesome-free' %}
-{% set fav = 'fas' %}
-{% set falv = 'fas' %}
-{% if fontawesomePro is inPublic %}
 {% set fav = 'far' %}
 {% set falv = 'fal' %}
-{% endif %}
 {% block vendorStylesheets %}
-    {% if fontawesomePro is inPublic %}
     <link href="{{ fontawesomePro }}/css/svg-with-js.css">
     <script src="{{ fontawesomePro }}/js/all.min.js"></script>
-    {% elseif fontawesomeFree is inPublic %}
-    <link href="{{ fontawesomeFree }}/css/svg-with-js.min.css">
-    <script src="{{ fontawesomeFree }}/js/all.js"></script>
-    {% endif %}
 {% endblock %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ css_dir }}/styles_library_bulma.css" media="screen">

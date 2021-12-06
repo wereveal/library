@@ -278,7 +278,7 @@ class NewAppHelper
 
             ### Create the default scss files for app ###
             $app_name            = strtolower($this->a_config['app_name']);
-            $styles_text         = file_get_contents(SRC_CONFIG_PATH . '/install_files/styles.scss.txt');
+            $styles_text         = file_get_contents(SRC_CONFIG_PATH . '/install_files/styles.scss.txt.txt');
             $styles_manager_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/styles_manager.scss.txt');
             $styles_text         = str_replace('{app_name}', $app_name, $styles_text);
             $styles_manager_text = str_replace('{app_name}', $app_name, $styles_manager_text);

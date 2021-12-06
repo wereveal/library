@@ -1,6 +1,6 @@
-@use "bs4/styles_top" as bstop;
+@use "bootstrap/styles_top" as bstop;
 @use "defaults/styles_bottom" as dbottom;
 @use "defaults/manager_forms";
 @use "defaults/library" as dlib;
-@use "bs4/media_queries" as bsmq;
+@use "bootstrap/media_queries" as bsmq;
 @use "app/media_queries" as amq;
