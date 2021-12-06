@@ -76,10 +76,10 @@ class PdoFactory
      * @param string  $config_file default 'db_config.php'
      * @param string  $read_type   Default rw
      * @param Di|null $o_di
-     * @return PDO|bool
+     * @return PDO
      * @throws FactoryExceptionAlias
      */
-    public static function start(string $config_file = 'db_config.php', string $read_type = 'rw', Di $o_di = null): PDO|bool
+    public static function start(string $config_file = 'db_config.php', string $read_type = 'rw', Di $o_di = null): PDO
     {
         if (!($o_di instanceof Di)) {
             throw new FactoryException('An instance of Di is required.', 10);
@@ -104,7 +104,7 @@ class PdoFactory
             }
             try {
                 return self::$factory_ro_instance[$name]->createPdo($org_config_file, $read_type);
-            } /** @noinspection PhpRedundantCatchClauseInspection */
+            }
             catch (FactoryException $e) {
                 throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
             }
@@ -120,25 +120,24 @@ class PdoFactory
             }
             try {
                 return self::$factory_rw_instance[$name]->createPdo($org_config_file, $read_type);
-            } /** @noinspection PhpRedundantCatchClauseInspection */
+            }
             catch (FactoryException $e) {
                 throw new FactoryException($e->errorMessage(), $e->getCode(), $e);
             }
         }
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
-     * Creates the \PDO instance
+     * Creates the PDO instance
      *
      * @param string $config_file
      * @param string $read_type
-     * @return PDO|bool
+     * @return PDO
      * @throws FactoryExceptionAlias
      */
-    private function createPdo(string $config_file = 'db_config.php', string $read_type = 'rw'): PDO|bool
+    private function createPdo(string $config_file = 'db_config.php', string $read_type = 'rw'): PDO
     {
-        if (is_object($this->o_db)) {
+        if (!empty($this->o_db)) {
             return $this->o_db;
         }
         $a_db = $this->retrieveDbConfig($config_file);

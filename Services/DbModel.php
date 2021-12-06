@@ -348,6 +348,7 @@ class DbModel
      * @param string $var_name
      * @return mixed value of the property
      * @note - this is normally set to private so not to be used
+     * @noinspection PhpVariableVariableInspection
      */
     protected function getVar(string $var_name): mixed
     {

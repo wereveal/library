@@ -6,7 +6,6 @@
  */
 namespace Ritc\Library\Helper;
 
-use JsonException;
 use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
@@ -452,7 +451,6 @@ class NewAppHelper
      * Creates Users and possibly groups from the the data.
      *
      * @return array
-     * @throws JsonException
      */
     public function createUsers(): array
     {
