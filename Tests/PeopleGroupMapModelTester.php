@@ -54,7 +54,7 @@ class PeopleGroupMapModelTester extends Tester
         $this->o_di = new Di();
         $this->o_di->set('elog', $this->o_elog);
         try {
-            $o_pdo = PdoFactory::start($db_config, 'rw', $this->o_di);
+            $o_pdo = PdoFactory::start($db_config, 'rw');
             if ($o_pdo !== false) {
                 $this->o_db  = new DbModel($o_pdo, $db_config);
                 $this->o_ugm = new PeopleGroupMapModel($this->o_db);

@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpVariableVariableInspection */
 /**
  * @noinspection PhpPropertyOnlyWrittenInspection
  * @noinspection JsonEncodingApiUsageInspection
@@ -64,8 +64,8 @@ class Elog
     private string $from_line = '';
     /** @var bool is the handler set */
     private bool $handler_set = false;
-    /** @var Elog the elog object instance */
-    private static Elog $instance;
+    /** @var Elog|null the elog object instance */
+    private static ?Elog $instance;
     /** @var string the name of the json file to log to */
     private string $json_file = 'json.log';
     /** @var bool has the json log been used */
@@ -113,16 +113,19 @@ class Elog
      */
     public static function start():Elog
     {
-        if (self::$instance === null) {
+        try {
+            return self::$instance;
+        }
+        catch (Error) {
             $c = __CLASS__;
             try {
                 self::$instance = new $c();
+                return self::$instance;
             }
             catch (Error $e) {
                 throw new ServiceException('Unable to start the service.', 10, $e);
             }
         }
-        return self::$instance;
     }
 
     /**
@@ -306,8 +309,7 @@ class Elog
 
     /**
      * Sets Constants for use whenever Elog is used.
-     *
-     * @noinspection PhpUndefinedConstantInspection*/
+     **/
     private function setElogConstants():void
     {
         if (!defined('LOG_OFF'))        {

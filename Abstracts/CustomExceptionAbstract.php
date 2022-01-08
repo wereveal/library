@@ -57,7 +57,7 @@ abstract class CustomExceptionAbstract extends Exception implements CustomExcept
         return $error_message;
     }
 
-    public function getCodeNumber($value = ''):int
+    public function getCodeNumber(string $value = ''):int
     {
         return ExceptionHelper::getCodeNumber($value);
     }

@@ -53,7 +53,7 @@ class GroupsModelTester extends Tester
         $o_di = new Di();
         $o_di->set('elog', $this->o_elog);
         $this->o_di = $o_di;
-        $o_pdo = PdoFactory::start($db_config, 'rw', $o_di);
+        $o_pdo = PdoFactory::start($db_config, 'rw');
         if ($o_pdo !== false) {
             $this->o_db = new DbModel($o_pdo, $db_config);
             $this->o_group = new GroupsModel($this->o_db);

@@ -1,5 +1,4 @@
 <?php /** @noinspection PhpUndefinedConstantInspection */
-
 /**
  * Class ContentController.
  * @package Ritc_Library

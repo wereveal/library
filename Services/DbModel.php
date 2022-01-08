@@ -84,7 +84,7 @@ class DbModel
     /** @var string $pgsql_sequence_name */
     private string $pgsql_sequence_name = '';
     /** @var mixed $sql_error_message */
-    private mixed $sql_error_message;
+    private mixed $sql_error_message = '';
     /** @var int $success */
     private int $success;
 
@@ -348,6 +348,7 @@ class DbModel
      * @param string $var_name
      * @return mixed value of the property
      * @note - this is normally set to private so not to be used
+     * @noinspection PhpVariableVariableInspection
      */
     protected function getVar(string $var_name): mixed
     {
@@ -1453,7 +1454,7 @@ class DbModel
                     try {
                         $results = $this->search($sql);
                         foreach ($results as $row) {
-                            $a_column_names[] = $row['Field'];
+                            $a_column_names[] = $row['name'];
                         }
                     }
                     catch (ModelException $e) {

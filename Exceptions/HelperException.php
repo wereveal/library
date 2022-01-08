@@ -20,6 +20,18 @@ use Ritc\Library\Abstracts\CustomExceptionAbstract;
 class HelperException extends CustomExceptionAbstract
 {
     /**
+     * @param string $value
+     * @return int
+     */
+    public function getCodeNumber(string $value = ''):int
+    {
+        return match($value) {
+            'missing_values', 'invalid_values'  => 100,
+            default                             => parent::getCodeNumber($value)
+        };
+    }
+
+    /**
      * Returns the text string associated with the error code.
      *
      * @param int $code
@@ -30,6 +42,7 @@ class HelperException extends CustomExceptionAbstract
         return match ($code) {
             10      => 'Unable to start the helper.',
             20      => '__clone not allowed for this service.',
+            100     => 'Missing or invalid values.',
             default => parent::getCodeText($code),
         };
     }

@@ -1,5 +1,4 @@
 <?php /** @noinspection PhpUndefinedConstantInspection */
-
 /**
  * Class TwigComplexModel
  * @package Ritc_Library
@@ -134,7 +133,7 @@ class TwigComplexModel
     /**
      * Creates default records for the app in the three twig tables.
      *
-     * @param  array $a_values Required ['tp_prefix', 'tp_path', 'tp_active', 'tp_default']
+     * @param  array $a_values Required ['tp_prefix', 'tp_path', 'tp_active', 'tp_default', 'theme_name']
      * @return array                    ['tp_id', 'td_ids', 'tpl_ids']
      * @throws ModelException
      */
@@ -143,6 +142,7 @@ class TwigComplexModel
         if (empty($a_values)
          || empty($a_values['tp_prefix'])
          || empty($a_values['tp_path'])
+         || empty($a_values['theme_name'])
         ) {
             $message = 'Missing required values.';
             throw new ModelException($message, 10);
@@ -150,6 +150,12 @@ class TwigComplexModel
         $a_dir_ids       = [];
         $a_tpl_ids       = [];
         $app_twig_prefix = $a_values['tp_prefix'];
+        try {
+            $theme_id = $this->o_themes->readIdByName($a_values['theme_name']);
+        }
+        catch (ModelException $e) {
+            throw new ModelException($e->errorMessage(), $e->getCode(), $e);
+        }
         try {
             $results = $this->o_prefix->read(['tp_prefix' => $app_twig_prefix]);
         }
@@ -168,7 +174,6 @@ class TwigComplexModel
             catch (ModelException) {
                 // silently let drop to next stuff
             }
-            $a_tpl_ids = [];
             foreach ($a_dir_ids as $a_dir) {
                 try {
                     $a_tpl_results = $this->o_tpls->read(['td_id' => $a_dir['td_id']]);
@@ -197,7 +202,13 @@ class TwigComplexModel
                 }
             }
             try {
-                $results = $this->o_prefix->create($a_values);
+                $a_prefix_values = [
+                    'tp_prefix'  => $a_values['tp_prefix'],
+                    'tp_path'    => $a_values['tp_path'],
+                    'tp_active'  => $a_values['tp_active'],
+                    'tp_default' => $a_values['tp_default']
+                ];
+                $results = $this->o_prefix->create($a_prefix_values);
                 if (empty($results)) {
                     $err_code = ExceptionHelper::getCodeNumberModel('create unknown');
                     throw new ModelException('Unable to create the twig_prefix record.', $err_code);
@@ -237,11 +248,36 @@ class TwigComplexModel
             }
             $dir_id = $results[0]['td_id'];
             $new_templates = [
-                ['td_id' => $dir_id, 'tpl_name' => 'index',   'tpl_immutable' => 'false'],
-                ['td_id' => $dir_id, 'tpl_name' => 'home',    'tpl_immutable' => 'false'],
-                ['td_id' => $dir_id, 'tpl_name' => 'manager', 'tpl_immutable' => 'false'],
-                ['td_id' => $dir_id, 'tpl_name' => 'error',   'tpl_immutable' => 'false'],
-                ['td_id' => $dir_id, 'tpl_name' => 'text',    'tpl_immutable' => 'false']
+                [
+                    'td_id'         => $dir_id,
+                    'theme_id'      => $theme_id,
+                    'tpl_name'      => 'index',
+                    'tpl_immutable' => 'false'
+                ],
+                [
+                    'td_id'         => $dir_id,
+                    'theme_id'      => $theme_id,
+                    'tpl_name'      => 'home',
+                    'tpl_immutable' => 'false'
+                ],
+                [
+                    'td_id'         => $dir_id,
+                    'theme_id'      => $theme_id,
+                    'tpl_name'      => 'manager',
+                    'tpl_immutable' => 'false'
+                ],
+                [
+                    'td_id'         => $dir_id,
+                    'theme_id'      => $theme_id,
+                    'tpl_name'      => 'error',
+                    'tpl_immutable' => 'false'
+                ],
+                [
+                    'td_id'         => $dir_id,
+                    'theme_id'      => $theme_id,
+                    'tpl_name'      => 'text',
+                    'tpl_immutable' => 'false'
+                ]
             ];
             $a_existing_tpls = [];
             foreach ($new_templates as $key => $a_template) {

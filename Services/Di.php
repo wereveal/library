@@ -49,9 +49,9 @@ class Di
 
     /**
      * @param string $object_name
-     * @return bool|Di
+     * @return object
      */
-    public function get(string $object_name = ''): bool|Di
+    public function get(string $object_name = ''): object
     {
         if ($object_name !== '' && isset($this->a_objects[$object_name]) && is_object
             ($this->a_objects[$object_name])) {
@@ -74,9 +74,9 @@ class Di
      * Sets map pair in the a_vars array.
      *
      * @param string $var_name
-     * @param string $var_value
+     * @param mixed $var_value
      */
-    public function setVar(string $var_name = '', string $var_value = ''):void
+    public function setVar(string $var_name = '', mixed $var_value = ''):void
     {
         if (!empty($var_name)) {
             if (empty($var_value)) {

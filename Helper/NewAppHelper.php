@@ -1,13 +1,12 @@
 <?php /** @noinspection PhpUndefinedConstantInspection */
-
 /**
  * Class NewAppHelper
  * @package Ritc_Library
  */
 namespace Ritc\Library\Helper;
 
-use JsonException;
 use Ritc\Library\Exceptions\CustomException;
+use Ritc\Library\Exceptions\HelperException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Models\PageModel;
@@ -36,7 +35,7 @@ class NewAppHelper
     use LogitTraits;
 
     /** @var array $a_config */
-    private array $a_config;
+    private array $a_config = [];
     /** @var  array $a_new_dirs */
     private array $a_new_dirs;
     /** @var  string $app_path */
@@ -58,8 +57,6 @@ class NewAppHelper
     public function __construct(Di $o_di)
     {
         $this->o_di = $o_di;
-        $this->setConfig($o_di->getVar('a_install_config'));
-        $this->setupProperties();
     }
 
     /**
@@ -326,13 +323,13 @@ class NewAppHelper
             $app_theme = $this->a_config['app_theme_name'] ?? 'base_fluid';
             $app_theme_file = '/templates/themes/' . $app_theme . '.twig';
             if (strpos($app_theme, 'fluid')) {
-                $base_twig = '/templates/themes/base_fluid.twig';
+                $base_twig = '/templates/themes/base_bs.twig';
             }
             elseif (strpos($app_theme, 'fixed')) {
                 $base_twig = '/templates/themes/base_fixed.twig';
             }
             else {
-                $base_twig = '/templates/themes/base_fluid.twig';
+                $base_twig = '/templates/themes/base_bs.twig';
             }
             $resource_path = $this->app_path . '/resources';
             $twig_text = file_get_contents(SRC_PATH . $base_twig);
@@ -428,9 +425,10 @@ class NewAppHelper
     }
 
     /**
-     * @return array|string
+     * @return array
+     * @throws HelperException
      */
-    public function createTwigDbRecords(): array|string
+    public function createTwigDbRecords(): array
     {
         $o_tcm = new TwigComplexModel($this->o_di);
         $app_resource_dir = str_replace(BASE_PATH, '', $this->app_path) . '/resources/templates';
@@ -438,29 +436,32 @@ class NewAppHelper
            'tp_prefix'  => $this->a_config['app_twig_prefix'],
            'tp_path'    => $app_resource_dir,
            'tp_active'  => 'true',
-           'tp_default' => $this->a_config['master_twig']
+           'tp_default' => $this->a_config['master_twig'],
+           'theme_name' => $this->a_config['app_theme_name']
         ];
         try {
             return $o_tcm->createTwigForApp($a_values);
         }
         catch (ModelException $e) {
-            return $e->errorMessage();
+            $error_message = $e->getMessage();
+            $error_code = ExceptionHelper::getCodeNumberModel('update_unspecified');
+            throw new HelperException($error_message, $error_code, $e);
         }
     }
 
     /**
      * Creates Users and possibly groups from the the data.
      *
-     * @return array
-     * @throws JsonException
+     * @return string
+     * @throws HelperException
      */
-    public function createUsers(): array
+    public function createUsers(): string
     {
         try {
             $o_people = new PeopleComplexModel($this->o_di);
         }
         catch (CustomException $e) {
-            return ViewHelper::errorMessage($e->getMessage());
+            throw new HelperException($e->getMessage(), $e->getCode(), $e);
         }
         /** @var DbModel $o_db */
         $o_db = $this->o_di->get('db');
@@ -474,14 +475,14 @@ class NewAppHelper
             ? []
             : $this->a_config['a_groups'];
         if (empty($a_people) && empty($a_groups)) {
-            return ViewHelper::infoMessage('Nothing to save');
+            return 'No users to save';
         }
         if (!empty($a_groups)) {
             try {
                 $a_found_groups = $o_groups->read();
             }
-            catch (ModelException) {
-                return ViewHelper::errorMessage('A problem occurred retrieving groups');
+            catch (ModelException $e) {
+                throw new HelperException('Could not read the groups: ' . $e->getMessage(), $e->getCode(), $e);
             }
             foreach ($a_found_groups as $a_found_group) {
                 $value = $a_found_group['group_name'];
@@ -494,7 +495,7 @@ class NewAppHelper
                 $o_groups->create($a_groups);
             }
             catch (ModelException $e) {
-                return ViewHelper::errorMessage('Could not save the groups: ' . $e->getMessage());
+                throw new HelperException('Could not save the groups: ' . $e->getMessage(), $e->getCode(), $e);
             }
         }
         if (!empty($a_people)) {
@@ -506,12 +507,15 @@ class NewAppHelper
                     $o_people->savePerson($a_person);
                 }
                 catch (ModelException $e) {
-                    return ViewHelper::errorMessage('A problem occurred trying to save the person: ' . $e->errorMessage());
+                    throw new HelperException('A problem occurred trying to save the person: ' . $e->errorMessage(),
+                                              $e->getCode(),
+                                              $e
+                    );
                 }
             }
-            return ViewHelper::successMessage();
+            return 'Success!';
         }
-        return ViewHelper::errorMessage('Unknown error occurred.');
+        throw new HelperException('Unknown error occurred.', 999);
     }
 
     /**
@@ -521,14 +525,20 @@ class NewAppHelper
      */
     public function setAppPath(string $value = ''):void
     {
-        if ($value === '') {
-            $value = APPS_PATH
-                   . '/'
-                   . $this->a_config['namespace']
-                   . '/'
-                   . $this->a_config['app_name'];
+        if (!empty($value)) {
+            $this->app_path = $value;
         }
-        $this->app_path = $value;
+        elseif (!empty($this->a_config['app_path'])) {
+            $this->app_path = $this->a_config['app_path'];
+        }
+        elseif (!empty($this->a_config['namespace'])
+                && !empty($this->a_config['app_name'])) {
+            $this->app_path = APPS_PATH
+                     . '/'
+                     . $this->a_config['namespace']
+                     . '/'
+                     . $this->a_config['app_name'];
+        }
     }
 
     /**
@@ -564,8 +574,8 @@ class NewAppHelper
                 $a_values[$key] = $value;
             }
         }
-        if (empty($this->a_config['app_twig_prefix'])) {
-            $this->a_config['app_twig_prefix'] = strtolower($this->a_config['app_name']) . '_';
+        if (empty($a_values['app_twig_prefix'])) {
+            $a_values['app_twig_prefix'] = strtolower($a_values['app_name']) . '_';
         }
         $this->a_config = $a_values;
     }
@@ -655,9 +665,16 @@ EOF;
 
     /**
      * Sets the class properties that are needed.
+     *
+     * @param array $a_config
+     * @throws HelperException
      */
-    private function setupProperties():void
+    public function setupProperties(array $a_config):void
     {
+        if (empty($a_config)) {
+            throw new HelperException('Required value missing.', 100);
+        }
+        $this->a_config = $a_config;
         $this->setAppPath();
         $this->setNewDirs();
         $this->setHtaccessText();
