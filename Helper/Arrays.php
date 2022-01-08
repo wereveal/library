@@ -300,8 +300,11 @@ class Arrays
      */
     public static function hasRequiredKeys(array $a_pairs = [], array $a_required_keys = []):bool
     {
-        if (count($a_required_keys) === 0 || count($a_pairs) === 0) {
-            return false;
+        if (count($a_required_keys) === 0) {
+            return true; // if there are no required keys, then *shrug* get this over fast
+        }
+        if (count($a_pairs) === 0) {
+            return false; // obviously, it can't have the required keys
         }
         if (self::isArrayOfAssocArrays($a_pairs)) {
             foreach ($a_pairs as $a_values) {
@@ -460,20 +463,17 @@ class Arrays
     /**
      * Sees if the array passed in is an array of assoc arrays.
      *
-     * @param mixed
+     * @param array $a_arrays
      * @return bool
      */
     public static function isArrayOfAssocArrays(array $a_arrays = []):bool
     {
-        if (!is_array($a_arrays) || empty($a_arrays)) {
-            return false;
-        }
         foreach ($a_arrays as $a_array) {
-            if (!self::isAssocArray($a_array)) {
-                return false;
+            if (is_array($a_array) && self::isAssocArray($a_array)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**

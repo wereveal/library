@@ -977,7 +977,7 @@ SQL;
                     $results = $this->o_db->rawQuery($query);
                     if (!empty($results)) {
                         foreach ($results as $a_row) {
-                            if ($a_row['pk'] === 1) {
+                            if ((int) $a_row['pk'] === 1) {
                                 $this->primary_index_name = $a_row['name'];
                             }
                         }

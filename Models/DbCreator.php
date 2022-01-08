@@ -71,25 +71,25 @@ class DbCreator
     private string $db_prefix;
     /** @var string $error_message */
     private string $error_message;
-    /** @var bool|DbModel $o_db */
-    private DbModel|bool $o_db;
+    /** @var DbModel $o_db */
+    private DbModel $o_db;
     /** @var Di $o_di */
     private Di $o_di;
     /** @var PDO|bool $o_pdo */
     private bool|PDO $o_pdo;
+    /** @var string  */
+    private string $db_type;
 
     /**
      * DbCreator constructor.
      *
      * @param Di $o_di
+     * @noinspection PhpFieldAssignmentTypeMismatchInspection
      */
     public function __construct(Di $o_di)
     {
         $this->o_db             = $o_di->get('db');
         $this->o_pdo            = $o_di->get('pdo');
-        $this->a_sql            = $o_di->getVar('a_sql');
-        $this->a_data           = $o_di->getVar('a_data');
-        $this->a_install_config = $o_di->getVar('a_install_config');
         $this->db_prefix        = $this->o_db->getLibPrefix();
     }
 
@@ -1152,4 +1152,21 @@ class DbCreator
     {
         $this->a_sql = $a_sql;
     }
+
+    /**
+     * @return string
+     */
+    public function getDbType(): string
+    {
+        return $this->db_type;
+    }
+
+    /**
+     * @param string $db_type
+     */
+    public function setDbType(string $db_type): void
+    {
+        $this->db_type = $db_type;
+    }
+
 }

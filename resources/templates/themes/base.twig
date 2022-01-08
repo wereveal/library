@@ -106,14 +106,16 @@
     </footer>
 {% endblock footer %}
 {% block debug %}
-    {% if debug_text %}
-        <div class="container">
-            <code class="pre">
-                {{ debug_text }}
-            </code>
-        </div>
+    {% if use_debug %}
+        {% if debug_text %}
+<div class="container">
+    <code class="pre">
+        {{ debug_text }}
+    </code>
+</div>
+        {% endif %}
+<p class="font-tiny">Library Base Tpl</p>
     {% endif %}
-        <p class="font-tiny">Library Base (fluid) Tpl</p>
 {% endblock %}
 {% block bottomVendorJs %}
     <script src="{{ vendor_dir }}/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -123,6 +125,34 @@
 </body>
 </html>
 {% endblock %}
+{# Blocks
+    start,
+    title,
+    description,
+    meta,
+    vendorStylesheets,
+    stylesheets,
+    icons,
+    vendorJs
+    HeadJs
+    headExtra
+    bodyStart
+    header
+    navbar
+    headerContent
+    otherHeader
+    search
+    bodyContainer
+    bodyTitle
+    message
+    body
+    bodyContainerEnd
+    footer
+    debug
+    bottomVendorJs
+    bottomJs
+    finally
+#}
 {# possible keys in array [
     'lang',
     'charset',
@@ -146,6 +176,7 @@
     'copyright_date',
     'site_url',
     'rights_holder',
+    'use_debug',
     'debug_text'
     ]
 #}

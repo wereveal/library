@@ -1,0 +1,70 @@
+{% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ css_dir }}/styles_library_bulma.css" media="screen">
+{% endblock %}
+{% block debug %}
+    {% if use_debug %}
+        {% if debug_text %}
+<div class="container">
+    <code class="pre">
+        {{ debug_text }}
+    </code>
+</div>
+        {% endif %}
+<p class="font-tiny">Library Base Bulma Based Tpl</p>
+    {% endif %}
+{% endblock %}
+{# Blocks
+    start,
+    title,
+    description,
+    meta,
+    vendorStylesheets,
+    stylesheets,
+    icons,
+    vendorJs
+    HeadJs
+    headExtra
+    bodyStart
+    header
+    navbar
+    headerContent
+    otherHeader
+    search
+    bodyContainer
+    bodyTitle
+    message
+    body
+    bodyContainerEnd
+    footer
+    debug
+    bottomVendorJs
+    bottomJs
+    finally
+#}
+{# possible keys in array [
+    'lang',
+    'charset',
+    'base_url',
+    'title',
+    'description',
+    'page_url',
+    'public_dir',
+    'css_dir',
+    'fonts_dir',
+    'images_dir',
+    'js_dir',
+    'vendor_dir',
+    'mainNavName',
+    'a_message',
+    'page_prefix',
+    'a_menus',
+    'body_title',
+    'body_text',
+    'a_content',
+    'copyright_date',
+    'site_url',
+    'rights_holder',
+    'debug_text'
+    ]
+#}

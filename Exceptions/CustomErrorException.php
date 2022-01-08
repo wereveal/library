@@ -30,7 +30,12 @@ class CustomErrorException extends CustomErrorAbstract
      * @param int            $lineno
      * @param Exception|null $previous
      */
-    public function __construct($message = '', $code = 0, $severity = 1, $filename = __FILE__, $lineno = __LINE__, Exception $previous = null)
+    public function __construct(string $message = '',
+                                int    $code = 0,
+                                int    $severity = 1,
+                                string $filename = __FILE__,
+                                int    $lineno = __LINE__,
+                                Exception $previous = null)
     {
         parent::__construct($message, $code, $severity, $filename, $lineno, $previous);
     }

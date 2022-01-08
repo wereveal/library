@@ -9,18 +9,20 @@ use DirectoryIterator;
 use SplFileInfo;
 
 /**
- * Creates the autoload_classmap.php file.
+ * Creates the autoload_classmap.php and autoload_namespaces.php files.
+ * Used during the setup phase of a page. See /src/setup.php.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
- * @date    2021-11-29 15:10:51
+ * @version 2.1.0
+ * @date    2021-12-07 16:48:05 
  * @change_log
- * - v2.0.0 - updated for php8                                  - 2021-11-29 wer
- * - v1.3.0 - refactoring of file structure reflected here      - 2017-02-15 wer
- * - v1.2.1 - refactored var names to be more descriptive       - 12/07/2015 wer
- * - v1.2.0 - added code to not include archives                - 11/06/2015 wer
- * - v1.1.0 - added traits                                      - 09/01/2015 wer
- * - v1.0.0 - initial version
+ * - 2.1.0  - refactored names of two private methods           - 2021-12-07 wer
+ * - 2.0.0  - updated for php8                                  - 2021-11-29 wer
+ * - 1.3.0  - refactoring of file structure reflected here      - 2017-02-15 wer
+ * - 1.2.1  - refactored var names to be more descriptive       - 12/07/2015 wer
+ * - 1.2.0  - added code to not include archives                - 11/06/2015 wer
+ * - 1.1.0  - added traits                                      - 09/01/2015 wer
+ * - 1.0.0  - initial version
  */
 class AutoloadMapper
 {
@@ -33,6 +35,7 @@ class AutoloadMapper
 
     /**
      * Constructor for the class.
+     *
      * @param array $a_dirs should be <pre>[
      *     'src_path'    => '/some_path',
      *     'config_path' => '/some_path',
@@ -48,6 +51,8 @@ class AutoloadMapper
     }
 
     /**
+     * Creates the Autoload map files for Composer's Autoloader.
+     *
      * @param string $apps_path
      * @return bool
      */
@@ -68,11 +73,11 @@ class AutoloadMapper
         $ns_str_length = 0;
         $vendor_str_length = 0;
         foreach ($a_classmap as $key => $value) {
-            $ns_str_length = strlen($key) > $ns_str_length
+            $ns_str_length = (strlen($key) > $ns_str_length)
                 ? strlen($key)
                 : $ns_str_length;
             $a_ns_parts = explode('\\', $key);
-            $vendor_str_length = strlen($a_ns_parts[0]) > $vendor_str_length
+            $vendor_str_length = (strlen($a_ns_parts[0]) > $vendor_str_length)
                 ? strlen($a_ns_parts[0])
                 : $vendor_str_length;
         }
@@ -133,6 +138,8 @@ EOT;
     }
 
     /**
+     * Creates a file used by Composer's Autoloader.
+     *
      * @param DirectoryIterator $o_dir
      * @param array             $a_classmap
      * @return array
@@ -155,11 +162,12 @@ EOT;
 	                        $a_tokens = token_get_all($file_contents);
 	                        // print_r($a_tokens);
 	                        // echo 'File real path: ' . $file_real_path . "\n";
-	                        $namespace = $this->getNamespace($a_tokens);
-	                        $classname = $this->getClassName($a_tokens);
+	                        $namespace = $this->returnNamespace($a_tokens);
+	                        $classname = $this->returnClassName($a_tokens);
 	                        // echo 'Namespace: ' . $namespace . "\n";
+                            // echo 'Class: ' . $classname . "\n";
 	                        if (trim($namespace) !== '' && trim($classname) !== '') {
-	                            // echo $namespace . "\\" . $classname . " => " . $file_real_path . "\n";
+	                            // echo "to be saved: " . $namespace . "\\" . $classname . " => " . $file_real_path .  "\n";
 	                            $left_side = trim($namespace) . "\\" . trim($classname);
 	                            $a_classmap[$left_side] = $file_real_path;
 	                        }
@@ -178,10 +186,12 @@ EOT;
     }
 
     /**
+     * Returns the class name specified in the array.
+     *
      * @param array $a_tokens
      * @return mixed
      */
-    private function getClassName(array $a_tokens = array()): mixed
+    private function returnClassName(array $a_tokens = array()): mixed
     {
         foreach ($a_tokens as $key => $a_token) {
             if (is_array($a_token)) {
@@ -201,26 +211,19 @@ EOT;
     }
 
     /**
+     * Returns the namespace specified in the array.
+     *
      * @param array $a_tokens
      * @return string
      */
-    private function getNamespace(array $a_tokens = array()):string
+    private function returnNamespace(array $a_tokens = array()):string
     {
         $namespace = '';
-        $line_number = -1;
-        foreach ($a_tokens as $a_token) {
+        foreach ($a_tokens as $key => $a_token) {
             if (is_array($a_token) && $a_token[0] === T_NAMESPACE) {
-                $line_number = $a_token[2];
-                break;
-            }
-        }
-        foreach($a_tokens as $a_token) {
-            if (isset($a_token[2]) && $a_token[2] === $line_number) {
-                // echo $a_token[0] . '  ' . token_name($a_token[0]) . "\n";
-                $namespace .= match ($a_token[0]) {
-                    T_NS_SEPARATOR, T_STRING => $a_token[1],
-                    default                  => '',
-                };
+                $namespace = is_string($a_tokens[$key+2][1])
+                    ? $a_tokens[$key+2][1]
+                    : '';
             }
         }
         return $namespace;

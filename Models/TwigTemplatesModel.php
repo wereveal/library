@@ -30,6 +30,6 @@ class TwigTemplatesModel extends ModelAbstract
     public function __construct(DbModel $o_db)
     {
         $this->setupProperties($o_db, 'twig_templates');
-        $this->setRequiredKeys(['td_id', 'tpl_name']);
+        $this->setRequiredKeys(['td_id', 'tpl_name', 'theme_id']);
     }
 }
