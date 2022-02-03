@@ -109,7 +109,7 @@ class Session
      */
     public static function start(array $a_params = []):Session
     {
-        if (self::$instance === null) {
+        if (empty(self::$instance)) {
             try {
                 self::$instance = new Session($a_params);
             }

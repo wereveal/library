@@ -1,6 +1,7 @@
 // in mixins so only needed if used where mixins isn't
 @use "sass:color";
 @use "sass:map";
+@use "sass:math";
 @use "sass:meta";
 @use "colors";
 @use "linear_channel_values" as lcv;
@@ -50,9 +51,9 @@
  * See https://www.w3.org/TR/WCAG20-TECHS/G17.html#G17-tests
  */
 @function contrast($back, $front) {
-    $backLum: luminance($back) + .05;
-    $foreLum: luminance($front) + .05;
-    @return max($backLum, $foreLum) / min($backLum, $foreLum);
+    $backlum: luminance($back) + .05;
+    $forelum: luminance($front) + .05;
+    @return math.div(math.max($backlum, $forelum), math.min($backlum, $forelum));
 }
 
 /**

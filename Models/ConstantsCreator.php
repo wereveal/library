@@ -80,7 +80,7 @@ class ConstantsCreator
      */
     public static function start(Di $o_di): ConstantsCreator
     {
-        if (self::$instance === null) {
+        if (empty(self::$instance)) {
             try {
                 self::$instance = new ConstantsCreator($o_di);
             }

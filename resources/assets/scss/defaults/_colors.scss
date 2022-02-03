@@ -1,5 +1,5 @@
 /*!
-  Color variables - if intended to override any bootstrap/bulma variables,
+  Color variables - if intended to override any bs4/bulma variables,
   must be included before
 **/
 @use "sass:color";
@@ -36,7 +36,7 @@ $blue-bul:         hsl(217, 71%,  53%);
 $purple-bul:       hsl(271, 100%, 71%);
 $red-bul:          hsl(348, 100%, 61%);
 
-/* alts to bootstrap */
+/* alts to bs4 */
 $black-color:            #000 !default;
 $blue-color:             #006 !default;
 $brown-color:            #68472e !default;

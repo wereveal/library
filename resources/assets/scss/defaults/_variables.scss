@@ -1,5 +1,6 @@
 /** Overrides Bootstrap vars and must come before any Bootstrap include **/
 @use "sass:map";
+@use "sass:math";
 @use "colors" as c;
 
 $default-body-font-size:  16px !default;
@@ -29,7 +30,7 @@ $line-height-sm:          1 !default;
 
 $grid-columns:            12 !default;
 $grid-gutter-width:       30px !default; // needs to be even number
-$grid-margin-width:       $grid-gutter-width/2 !default;
+$grid-margin-width:       math.div($grid-gutter-width, 2) !default;
 
 $grid-breakpoints:        (
                             xs: 0,

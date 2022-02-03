@@ -14,21 +14,11 @@
 {% endblock %}
 {% block meta %}{% endblock %}
 {% set fontawesomePro = vendor_dir ~ '/@fortawesome/fontawesome-pro' %}
-{% set fontawesomeFree = vendor_dir ~ '/@fortawesome/fontawesome-free' %}
-{% set fav = 'fas' %}
-{% set falv = 'fas' %}
-{% if fontawesomePro is inPublic %}
 {% set fav = 'far' %}
 {% set falv = 'fal' %}
-{% endif %}
 {% block vendorStylesheets %}
-    {% if fontawesomePro is inPublic %}
     <link href="{{ fontawesomePro }}/css/svg-with-js.css">
     <script src="{{ fontawesomePro }}/js/all.min.js"></script>
-    {% elseif fontawesomeFree is inPublic %}
-    <link href="{{ fontawesomeFree }}/css/svg-with-js.min.css">
-    <script src="{{ fontawesomeFree }}/js/all.js"></script>
-    {% endif %}
 {% endblock %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ css_dir }}/styles_library.css" media="screen">
@@ -42,9 +32,7 @@
     <link rel="shortcut icon" href="{{ images_dir }}/favicon.ico">
     <meta name="msapplication-config" content="{{ images_dir }}/browserconfig.xml">
 {% endblock %}
-{% block vendorJs %}
-    <script src="{{ vendor_dir }}/jquery/dist/jquery.min.js"></script>
-{% endblock %}
+{% block vendorJs %}{% endblock %}
 {% block headJs %}{% endblock %}
 {% block headExtra %}{% endblock %}
 {% block endHead %}
@@ -117,7 +105,7 @@
             </code>
         </div>
     {% endif %}
-        <p class="font-tiny">Library Base Fixed Tpl</p>
+        <p class="font-tiny">Library Base Bootstrap Fixed Tpl</p>
 {% endblock %}
 {% block bottomVendorJs %}
     <script src="{{ vendor_dir }}/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

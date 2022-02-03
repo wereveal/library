@@ -1,1 +1,18 @@
 {% extends '@' ~ lib_prefix ~ 'themes/base.twig' %}
+{% block vendorStylesheets %}
+    <link href="{{ fontawesomePro }}/css/svg-with-js.css">
+    <script src="{{ fontawesomePro }}/js/all.min.js"></script>
+{% endblock %}
+{% block vendorJs %}{% endblock %}
+{% block debug %}
+    {% if use_debug %}
+        {% if debug_text %}
+            <div class="container">
+                <code class="pre">
+                    {{ debug_text }}
+                </code>
+            </div>
+        {% endif %}
+        <p class="font-tiny">Library Base Bootstrap Tpl</p>
+    {% endif %}
+{% endblock %}
