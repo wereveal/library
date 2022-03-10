@@ -49,7 +49,6 @@ class CacheHelper
      * CacheHelper constructor.
      *
      * @param CacheFactory $o_cache
-     * @noinspection PhpUndefinedConstantInspection
      */
     public function __construct(CacheFactory $o_cache)
     {

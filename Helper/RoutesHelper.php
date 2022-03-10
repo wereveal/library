@@ -37,7 +37,6 @@ class RoutesHelper
 
     /** @var array */
     private array $a_route_parts;
-    /** @var string $cache_type */
     private string $cache_type;
     /** @var CacheHelper $o_cache */
     private CacheHelper $o_cache;
@@ -50,14 +49,13 @@ class RoutesHelper
     /** @var string */
     private string $request_uri;
     /** @var bool */
-    private bool $use_cache;
+    private bool $use_cache = false;
 
     /**
      * RoutesHelper constructor.
      *
      * @param Di     $o_di
      * @param string $request_uri
-     * @noinspection PhpUndefinedConstantInspection
      * @noinspection PhpFieldAssignmentTypeMismatchInspection
      */
     public function __construct(Di $o_di, string $request_uri = '')
@@ -67,7 +65,7 @@ class RoutesHelper
         $this->o_db = $o_di->get('db');
         if (USE_CACHE) {
             $o_cache = $o_di->get('cache');
-            if (is_object($o_cache)) {
+            if (!empty($o_cache)) {
                 $this->o_cache    = $o_cache;
                 $this->cache_type = $this->o_cache->getCacheType();
                 $this->use_cache  = !empty($this->cache_type);
