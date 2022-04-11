@@ -1,8 +1,9 @@
 /*! Changes to Bootstrap use after the Bootstrap use to override */
 /*! note, change the use colors to the correct color palette */
-@use "variables" as v;
-@use "colors_blue" as c;
-@use "../../../../../../../public/assets/node_modules/bootstrap/scss/mixins/breakpoints" as bs-bp;
+/*! note, change the use variables to the correct variables file if not the defaults */
+@use "../defaults/mixins" as dm;
+@use "../defaults/variables" as v;
+@use "../colors/blue" as c;
 
 html {
     font-size: v.$default-body-font-size;
@@ -12,9 +13,9 @@ body {
     font-family: v.$default-sans;
     font-weight: 400;
     background-color: c.$color-body;
-    @include bs-bp.media-breakpoint-down(sm) {
+    @include dm.setMediaSize("max", "sm") {
         padding: 0;
-    }
+    };
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -55,7 +56,13 @@ p {
     font-weight: 400;
     font-size: 1rem;
 }
-
+.container {
+    @include dm.setMediaSize("max", "sm") {
+        margin:        .5rem;
+        padding-right: .5rem;
+        padding-left:  .5rem;
+    }
+}
 .pagination {
     margin-top: 0;
     margin-bottom: 0;

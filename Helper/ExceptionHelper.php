@@ -40,6 +40,26 @@ class ExceptionHelper
     }
 
     /**
+     * @param string $failure_string
+     * @return int
+     */
+    public static function getCodeNumberCache(string $failure_string): int
+    {
+        $failure_string = self::fixFailureString($failure_string);
+        return match ($failure_string) {
+            'create'           => 1,
+            'read'             => 2,
+            'update'           => 3,
+            'delete'           => 4,
+            'database'         => 5,
+            'operation'        => 10,
+            'missing_value'    => 20,
+            'missing_key'      => 21,
+            'invalid_argument' => 22,
+        };
+    }
+
+    /**
      * Gets the code number for a factory error.
      *
      * @param string $failure_string
@@ -214,6 +234,25 @@ class ExceptionHelper
         };
     }
 
+    /**
+     * @param int $code
+     * @return string
+     */
+    public static function getCodeTextCache(int $code = -1): string
+    {
+        return match ($code) {
+            1   => 'Create Error',
+            2   => 'Read Error',
+            3   => 'Update Error',
+            4   => 'Delete Error',
+            5   => 'Unknown Database Error',
+            10  => 'Operation Error',
+            20  => 'Missing Required Value',
+            21  => 'Missing Key Value',
+            22  => 'Invalid Argument',
+            default => self::getCodeText($code)
+        };
+    }
     /**
      * Gets the text for the error code provided for factory exceptions.
      *
