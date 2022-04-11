@@ -38,8 +38,8 @@ class RoutesHelper
     /** @var array */
     private array $a_route_parts;
     private string $cache_type;
-    /** @var CacheHelper $o_cache */
-    private CacheHelper $o_cache;
+    /** @var CacheHelperSymfony $o_cache */
+    private CacheHelperSymfony $o_cache;
     /** @var DbModel */
     private DbModel $o_db;
     /** @var Di */
@@ -507,17 +507,17 @@ class RoutesHelper
     }
 
     /**
-     * @return CacheHelper
+     * @return CacheHelperSymfony
      */
-    public function getCache(): CacheHelper
+    public function getCache(): CacheHelperSymfony
     {
         return $this->o_cache;
     }
 
     /**
-     * @param CacheHelper $o_cache
+     * @param CacheHelperSymfony $o_cache
      */
-    public function setCache(CacheHelper $o_cache): void
+    public function setCache(CacheHelperSymfony $o_cache): void
     {
         $this->o_cache = $o_cache;
     }

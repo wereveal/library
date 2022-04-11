@@ -96,10 +96,10 @@ trait TesterTraits
         if ($this->class_name !== '') {
             $class_name = $this->class_name;
         }
-        elseif (substr(__CLASS__, -5) === 'Tests') {
+        elseif (str_ends_with(__CLASS__, 'Tests')) {
             $class_name = str_replace('Tests','',__CLASS__);
         }
-        elseif (substr(__CLASS__, -6) === 'Tester') {
+        elseif (str_ends_with(__CLASS__, 'Tester')) {
             $class_name = str_replace('Tester','',__CLASS__);
         }
         else {
@@ -130,7 +130,7 @@ trait TesterTraits
             $a_test_order = $this->a_test_order;
         }
         foreach ($a_test_order as $method_name) {
-            if (substr($method_name, -6) === 'Tester') {
+            if (str_ends_with($method_name, 'Tester')) {
                 $tester_name = $method_name;
                 $method_name = $this->shortenName($method_name);
             } else {

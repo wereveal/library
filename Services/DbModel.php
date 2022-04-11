@@ -6,6 +6,7 @@
  */
 namespace Ritc\Library\Services;
 
+use JetBrains\PhpStorm\NoReturn;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -1553,7 +1554,7 @@ class DbModel
     /**
      * Prevents cloning of the class.
      */
-    public function __clone()
+    #[NoReturn] public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);
     }

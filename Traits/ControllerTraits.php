@@ -6,7 +6,6 @@
  */
 namespace Ritc\Library\Traits;
 
-use Ritc\Library\Helper\CacheHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Services\Router;
@@ -43,8 +42,8 @@ trait ControllerTraits
     protected string $form_action = '';
     /** @var  string */
     protected string $main_action = '';
-    /** @var CacheHelper $o_cache */
-    protected CacheHelper $o_cache;
+    /** @var mixed  */
+    protected mixed $o_cache;
     /** @var  DbModel */
     protected DbModel $o_db;
     /** @var  Di */
@@ -83,18 +82,10 @@ trait ControllerTraits
      */
     protected function setObjects(Di $o_di):void
     {
-        if (!$this->o_di instanceof Di) {
-            $this->o_di = $o_di;
-        }
-        if (!$this->o_router instanceof Router) {
-            $this->o_router = $o_di->get('router');
-        }
-        if (!$this->o_db instanceof DbModel) {
-            $this->o_db = $o_di->get('db');
-        }
-        if (!$this->o_session instanceof Session) {
-            $this->o_session = $o_di->get('session');
-        }
+        $this->o_di = $o_di;
+        $this->o_router = $o_di->get('router');
+        $this->o_db = $o_di->get('db');
+        $this->o_session = $o_di->get('session');
         if (USE_CACHE) {
             $this->o_cache    = $o_di->get('cache');
             $this->cache_type = $this->o_cache->getCacheType();

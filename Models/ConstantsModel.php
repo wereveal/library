@@ -154,7 +154,6 @@ class ConstantsModel extends ModelAbstract
      * @pre the fallback_constants_array.php file exists and has the desired constants.
      * @return bool
      * @throws ModelException
-     * @noinspection PhpUndefinedConstantInspection
      */
     public function createNewConstants():bool
     {

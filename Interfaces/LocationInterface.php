@@ -19,27 +19,31 @@ interface LocationInterface
 {
     /**
      * Returns the file directory name.
-     * @return mixed
+     *
+     * @return string
      */
-    public function getFileDirName(): mixed;
+    public function getFileDirName(): string;
 
     /**
      * Returns the file name.
-     * @return mixed
+     *
+     * @return string
      */
-    public function getFileName(): mixed;
+    public function getFileName(): string;
 
     /**
      * Sets the file directory name.
+     *
      * @param $value
-     * @return mixed
+     * @return string
      */
-    public function setFileDirName($value): mixed;
+    public function setFileDirName($value): string;
 
     /**
      * Sets the file name.
+     *
      * @param $value
-     * @return mixed
+     * @return string
      */
-    public function setFileName($value): mixed;
+    public function setFileName($value): string;
 }

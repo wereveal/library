@@ -11,7 +11,7 @@ use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Factories\TwigFactory;
 use Ritc\Library\Helper\AuthHelper;
-use Ritc\Library\Helper\CacheHelper;
+use Ritc\Library\Helper\CacheHelperSymfony;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Helper\ViewHelper;
@@ -65,8 +65,8 @@ trait ViewTraits
     protected string $cache_type;
     /** @var AuthHelper */
     protected AuthHelper $o_auth;
-    /** @var CacheHelper $o_cache */
-    protected CacheHelper $o_cache;
+    /** @var CacheHelperSymfony $o_cache */
+    protected CacheHelperSymfony $o_cache;
     /** @var DbModel */
     protected DbModel $o_db;
     /** @var Di */
