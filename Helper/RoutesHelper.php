@@ -19,7 +19,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Helper for routing.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
+ * @version 4.0.0
  * @date    2021-11-29 16:57:46
  * @change_log
  * - v4.0.0   - updated for php8                                    - 2021-11-29 wer
@@ -424,7 +424,7 @@ class RoutesHelper
             'route_id'       => 0,
             'route_path'     => $request_uri,
             'request_uri'    => $request_uri,
-            'route_class'    => 'MasterController',
+            'route_class'    => 'MainController',
             'route_method'   => '',
             'route_action'   => '',
             'url_id'         => -1,

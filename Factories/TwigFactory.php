@@ -30,7 +30,7 @@ use Twig\TwigTest;
  * allowing multiple twig objects to render the html.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0.beta.1
+ * @version 4.0.0.beta.1
  * @date    2021-11-29 14:55:43
  * @todo    Need to test this seriously since there have been potential hidden changes
  * @change_log

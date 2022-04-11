@@ -19,7 +19,7 @@ use Ritc\Library\Exceptions\ServiceException;
  * A singleton pattern because that is what I want. pfffttttt!
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
+ * @version 4.0.0
  * @date    2021-11-30 15:31:54
  * @change_log
  * - v4.0.0 - Updated to be php 8 only                                          - 2021-11-30 wer

@@ -15,7 +15,7 @@ use Ritc\Library\Services\DbModel;
  * Handles all the CRUD for the urls table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
+ * @version 3.0.0
  * @date    2021-11-30 15:12:20
  * @change_log
  * - v3.0.0         - updated for php8 only                 - 2021-11-30 wer

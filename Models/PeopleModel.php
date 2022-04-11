@@ -17,7 +17,7 @@ use Ritc\Library\Services\DbModel;
  * Does all the Model expected operations, database CRUD and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
+ * @version 3.0.0
  * @date    2021-11-30 15:02:40
  * @change_log
  * - v3.0.0    - Updated to use php 8 only                      - 2021-11-30 wer

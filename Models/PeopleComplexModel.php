@@ -18,7 +18,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Does all the Model expected operations, database CRUD and business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.8
+ * @version 1.0.0-alpha.8
  * @date    2017-12-12 10:08:19
  * @change_log
  * - v1.0.0-alpha.8 - Updated to be php8 only                               - 2021-11-30 wer

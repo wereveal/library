@@ -22,7 +22,7 @@ use Ritc\Library\Views\RoutesView;
  * should not be able to be deleted.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
+ * @version 4.0.0
  * @date    2021-11-26 15:14:42
  * @change_log
  * - v4.0.0   - updated for php8                                - 2021-11-26 wer

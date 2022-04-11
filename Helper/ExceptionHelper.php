@@ -9,7 +9,7 @@ namespace Ritc\Library\Helper;
  * Class ExceptionHelper - Helps developer with exception error codes.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-29 15:46:12
  * @change_log
  * - v2.0.0 updated to php8                                     - 2021-11-29 wer

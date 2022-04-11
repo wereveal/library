@@ -9,7 +9,7 @@ namespace Ritc\Library\Traits;
  * Commonly used functions used in Library Controllers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.2
+ * @version 1.0.0-alpha.2
  * @date    2017-07-04 14:28:39
  * @change_log
  * - v1.0.0-alpha.2 - Forked from ManagerControllerTraits.                      - 2017-07-04 wer

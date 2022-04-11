@@ -16,7 +16,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Does multi-table queries and applies necessary business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-30 14:46:24
  * @change_log
  * - v2.0.0         - updated to php8 only                      - 2021-11-30 wer

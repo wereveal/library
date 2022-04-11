@@ -18,7 +18,7 @@ use Exception;
  * Class DatesTimes - provides a lot of normal date time functionality.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v5.0.0
+ * @version 5.0.0
  * @date    2021-11-29 15:44:46
  * @change_log
  * - v5.0.0 - updated to php8                           - 2021-11-29 wer

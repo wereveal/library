@@ -12,7 +12,7 @@ use Ritc\Library\Services\Elog;
  * Common functions that inject and use the Elog class service.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-30 17:51:39
  * @note    this is derived from the abstract class Base which it replaced.
  * @change_log

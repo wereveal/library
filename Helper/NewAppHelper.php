@@ -20,7 +20,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Helper for setting up a new app.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-29 16:36:21
  * @change_log
  * - v2.0.0         - updated for php8                                              - 2021-11-29 wer
@@ -198,9 +198,9 @@ class NewAppHelper
 
             ### Create the main controller for the app ###
             if ($is_site) {
-                $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/MasterController.php.txt');
+                $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/MainController.php.txt');
                 $controller_text = str_replace($a_find, $a_replace, $controller_text);
-                if (!file_put_contents($this->app_path . '/Controllers/MasterController.php', $controller_text)) {
+                if (!file_put_contents($this->app_path . '/Controllers/MainController.php', $controller_text)) {
                     return false;
                 }
             }
@@ -562,7 +562,7 @@ class NewAppHelper
             'tld'             => 'com',                           // top level domain, e.g., com, net, org
             'specific_host'   => '',                              // e.g. www, test
             'developer_mode'  => 'false',                         // affects debugging messages
-            'master_app'      => 'false',                         // specifies if this app is the one called by /index.php and specifies the MasterController
+            'master_app'      => 'false',                         // specifies if this app is the one called by /index.php and specifies the MainController
             'master_twig'     => 'false'                          // specifies if this app's twig prefix is the default (if false, site_ is default)
         ];
 

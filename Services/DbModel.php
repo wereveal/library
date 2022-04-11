@@ -21,7 +21,7 @@ use Ritc\Library\Traits\LogitTraits;
  * For read/write access to the database based on PDO.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v6.0.0
+ * @version 6.0.0
  * @date    2021-11-30 15:25:47
  * @change_log
  * - v6.0.0 - Updated for php 8 standards only                                              - 2021-11-30 wer

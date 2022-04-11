@@ -13,7 +13,7 @@ use Ritc\Library\Services\DbModel;
  * Does database operations on the twig_prefix table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-30 15:15:30
  * @change_log
  * - v2.0.0         - updated for php8 only         - 2021-11-30 wer

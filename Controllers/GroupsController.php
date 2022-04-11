@@ -21,7 +21,7 @@ use Ritc\Library\Views\GroupsView;
  * Controller for the Groups Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.1.0
+ * @version 3.1.0
  * @date    2021-11-26 14:59:27
  * @change_log
  * - v3.1.0  - refactored due to change in models              - 2021-11-30 wer

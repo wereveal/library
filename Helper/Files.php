@@ -13,7 +13,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Determines the path to the file
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v5.0.0
+ * @version 5.0.0
  * @date    2021-11-29 15:51:06
  * @note The constants with _DIR_NAME should correspond to dir names in
  *       the site theme or namespace (e.g. templates are in namespace). If a directory

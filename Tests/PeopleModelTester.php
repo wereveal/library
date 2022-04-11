@@ -17,7 +17,7 @@ use Ritc\Library\Services\Elog;
  * Tests the Group Model Class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.1
+ * @version 1.0.0-alpha.1
  * @date    2021-12-01 14:33:12
  * @todo.   Rewrite it all
  * @change_log

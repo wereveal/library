@@ -18,7 +18,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Class ConstantsController - controller for the Configuration page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-26 14:25:39
  * @change_log
  * - v2.0.0        - updated for php 8                                          - 2021-11-26 wer

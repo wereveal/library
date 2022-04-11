@@ -12,7 +12,7 @@ use Ritc\Library\Helper\ExceptionHelper;
  * Class ServiceException - Custom Exceptions for Services.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
+ * @version 1.0.0-alpha.0
  * @date    2017-07-16 08:18:12
  * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2017-07-16 wer

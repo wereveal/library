@@ -13,7 +13,7 @@ use Ritc\Library\Services\DbModel;
  * Does all the database CRUD stuff for the groups table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.1.0
+ * @version 3.1.0
  * @date    2021-11-30 13:45:56
  * @change_log
  * - v4.0.0   - Refactored to only do stuff for the groups table                - 2021-11-30 wer

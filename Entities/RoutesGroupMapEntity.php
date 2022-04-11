@@ -11,7 +11,7 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class RoutesGroupMapEntity - Entity to map the Router to the Groups.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-beta.2
+ * @version 1.0.0-beta.2
  * @date    2021-11-26 16:27:52
  * @change_log
  * - v1.0.0-beta.2 - updated for php8                           - 2021-11-26 wer

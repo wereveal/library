@@ -24,7 +24,7 @@ use Ritc\Library\Views\PageView;
  * Class PageController - Page Admin page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
+ * @version 3.0.0
  * @date    2021-11-26 15:10:45
  * @change_log
  * - v3.0.0 - Updated for php8                                  - 2021-11-26 wer

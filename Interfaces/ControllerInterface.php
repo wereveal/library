@@ -9,7 +9,7 @@ namespace Ritc\Library\Interfaces;
  * Interface ControllerInterface
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.1
+ * @version 2.0.1
  * @date    2021-11-29 17:09:36
  * @change_log
  * - v2.0.1 - fixed return value of route, needed to be string                          - 2021-11-29 wer

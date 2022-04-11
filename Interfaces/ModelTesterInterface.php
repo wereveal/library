@@ -10,7 +10,7 @@ namespace Ritc\Library\Interfaces;
  * Model classes should be implementing the ModelInterface to match.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version 1.0.0
  * @date    2017-10-18 12:10:55
  * @change_log
  * - v1.0.0 initial version                                  - 2017-10-18 wer

@@ -12,7 +12,7 @@ use Ritc\Library\Helper\ExceptionHelper;
  * Exceptions specific to database, application rules and business logic operations.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.2
+ * @version 1.0.0-alpha.2
  * @date    2017-12-12 11:32:33
  * @change_log
  * - v1.0.0-alpha.2 - Renumbered codes to be more consistent    - 2017-12-12 wer

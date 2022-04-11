@@ -9,7 +9,7 @@ namespace Ritc\Library\Interfaces;
  * Interface for the superuser admin controller.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-29 17:11:51
  * @change_log
  * - v2.0.0 - updated for php8                                  - 2021-11-29 wer

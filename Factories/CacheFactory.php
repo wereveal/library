@@ -21,7 +21,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Class CacheFactory - creates one of several cache service objects.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.3
+ * @version 1.0.0-alpha.3
  * @date    2022-03-08 19:30:06
  * @change_log
  * - v1.0.0-alpha.3 - removed all Symfony cache adapters, tired of having   - 2022-03-08 wer

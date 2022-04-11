@@ -9,7 +9,7 @@ namespace Ritc\Library\Interfaces;
  * Interface for location based helpers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-29 17:13:13
  * @change_log
  * - v2.0.0 - updated for php8                                  - 2021-11-29 wer

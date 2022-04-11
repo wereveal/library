@@ -37,7 +37,7 @@ use Twig\Error\RuntimeError as TwigErrorRuntime;
  * Common functions for views.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0-alpha.1
+ * @version 3.0.0-alpha.1
  * @date    2021-11-30 18:08:09
  * @todo    Fix all the bugs, figure out how to work with Symfony\Cache
  * @change_log

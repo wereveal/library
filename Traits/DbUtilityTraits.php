@@ -18,7 +18,7 @@ use Ritc\Library\Services\DbModel;
  * some work there.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
+ * @version 4.0.0
  * @date    2021-11-26 13:29:36
  * @change_log
  * - v4.0.0          - Refactoring for PHP 8 and phpStorm inspections           - 2021-11-26 wer

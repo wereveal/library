@@ -13,7 +13,7 @@ use Ritc\Library\Services\DbModel;
  * Does multi-table database actions to use app/business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version 1.0.0
  * @date    2021-11-30 13:45:56
  * @change_log
  * - v1.0.0 - Initial version, split off from GroupsModel

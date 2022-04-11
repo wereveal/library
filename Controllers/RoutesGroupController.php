@@ -18,7 +18,7 @@ use Ritc\Library\Views\RoutesGroupView;
  * The route has to be in the database and should not be able to be deleted.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version 1.0.0
  * @date    2021-11-26 15:16:56
  * @change_log
  * - v1.0.0         - Production version finally? php8 too      - 2021-11-26 wer

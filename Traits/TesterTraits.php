@@ -18,7 +18,7 @@ use Ritc\Library\Helper\LocateFile;
  * Provides all the basic commands which are extended by specific testers for specific classes.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.2.0
+ * @version 4.2.0
  * @date    2017-10-19 14:03:18
  * @todo    get this working or delete it
  * @change_log

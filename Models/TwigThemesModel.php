@@ -14,7 +14,7 @@ use Ritc\Library\Services\DbModel;
  * Does database operations on the twig_themes table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version 1.0.0
  * @date    2019-03-09 07:02:34
  * @change_log
  * - v1.0.0         - Initial version                           - 2019-03-09 wer

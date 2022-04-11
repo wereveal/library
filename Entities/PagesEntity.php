@@ -12,7 +12,7 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class PagesEntity.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-beta.2
+ * @version 1.0.0-beta.2
  * @date    2021-11-26 16:20:57
  * @change_log
  * - v1.0.0-beta.2 - updated for php8                           - 2021-11-26 wer

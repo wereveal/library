@@ -9,7 +9,7 @@ namespace Ritc\Library\Interfaces;
  * Interface EntityInterface
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version 1.0.0
  * @date    2014-01-30 14:18:05
  * @change_log
  * - v1.0.0 initial version                      - 01/30/2014 wer

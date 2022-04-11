@@ -15,7 +15,7 @@ use Ritc\Library\Services\Session;
  * Common functions used by controllers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-30 17:42:40
  * @change_log
  * - v2.0.0         - updated for php 8 use, bug fix too                        - 2021-11-30 wer
