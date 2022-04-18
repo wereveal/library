@@ -9,7 +9,7 @@ namespace Ritc\Library\Traits;
  * Functions that could be used in several people related cases.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.1
+ * @version 1.0.0-alpha.1
  * @date    2021-11-30 17:55:20
  * @todo    test and determine if this is needed.
  * @change_log

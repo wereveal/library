@@ -16,7 +16,7 @@ use Ritc\Library\Services\DbModel;
  * Does all the database CRUD stuff for the page table plus other app/business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
+ * @version 4.0.0
  * @date    2021-11-30 14:47:36
  * @change_log
  * - v4.0.0   - Updated to php8 only                                    - 2021-11-30 wer

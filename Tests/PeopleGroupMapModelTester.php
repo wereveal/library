@@ -18,7 +18,7 @@ use Ritc\Library\Models\PeopleGroupMapModel;
  * Tests the Group Model Class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.1
+ * @version 1.0.0-alpha.1
  * @date    2021-12-01 14:21:34
  * @todo    Rewrite the whole thing
  * @change_log

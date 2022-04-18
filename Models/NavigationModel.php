@@ -13,7 +13,7 @@ use Ritc\Library\Services\DbModel;
  * Does all the database CRUD stuff for the page table plus other app/business logic.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-30 15:37:27
  * @change_log
  * - v2.0.0         - updated to php 8 only                         - 2021-11-30 wer

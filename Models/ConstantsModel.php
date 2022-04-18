@@ -18,7 +18,7 @@ use Ritc\Library\Services\DbModel;
  * other app/business logic that sets up the app with a bunch of required constants.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v5.0.0
+ * @version 5.0.0
  * @date    2021-11-30 13:25:04
  * @change_log
  * - v5.0.0 - updated for php8                                      - 2021-11-30 wer
@@ -154,7 +154,6 @@ class ConstantsModel extends ModelAbstract
      * @pre the fallback_constants_array.php file exists and has the desired constants.
      * @return bool
      * @throws ModelException
-     * @noinspection PhpUndefinedConstantInspection
      */
     public function createNewConstants():bool
     {

@@ -14,7 +14,7 @@ use Ritc\Library\Services\DbModel;
  * Does all the database CRUD stuff for the page table plus other app/business logic.\
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
+ * @version 1.1.0
  * @date    2018-06-15 10:59:39
  * @change_log
  * - v1.1.0         - Refactored to extend ModelAbstract            - 2018-06-15 wer

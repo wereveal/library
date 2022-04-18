@@ -9,7 +9,7 @@ namespace Ritc\Library\Interfaces;
  * Interface for manager controllers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version 1.0.0
  * @date    2018-06-06 11:19:39
  * @change_log
  * - v1.0.0 - initial version                                                       - 2018-06-06 wer

@@ -13,7 +13,7 @@ use Ritc\Library\Interfaces\CustomExceptionInterface;
  * Class CustomExceptionAbstract Abstract which extends php Exception class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-26 13:53:45
  * @change_log
  * - v2.0.0 - compatibility to php 8                            - 2021-11-26 wer

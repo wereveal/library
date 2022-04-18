@@ -14,7 +14,7 @@ use Ritc\Library\Services\Di;
  * NavigationModel class tester.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.0
+ * @version 1.0.0-alpha.0
  * @date    2017-06-09 10:15:23
  * @change_log
  * - v1.0.0-alpha.0 - Initial version        - 2017-06-09 wer

@@ -15,7 +15,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Abstract which gives a basic setup for a model class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.0
+ * @version 2.1.0
  * @date    2021-11-26 13:55:54
  * @change_log
  * - v2.1.0         - changed property a_do_not_change to a_immutable           - 2021-11-29 wer

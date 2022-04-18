@@ -11,7 +11,7 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class MenusEntity
  *
  * @author  William E Reveal
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2021-11-26 16:19:44
  * @change_log
  * - v2.0.0 - updated for php8                                  - 2021-11-26 wer

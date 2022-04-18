@@ -23,7 +23,7 @@ use Ritc\Library\Traits\LogitTraits;
  * more finely grained access with be handled there or in a sub-controller.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v6.0.0
+ * @version 6.0.0
  * @date    2021-11-29 15:07:17
  * @change_log
  * - v6.0.0 - updated for php8, fixed a potential bug               - 2021-11-29 wer

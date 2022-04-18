@@ -14,7 +14,7 @@ use Ritc\Library\Traits\ViewTraits;
  * View for the Tests page.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.1.0
+ * @version 2.1.0
  * @date    2017-06-10 07:25:13
  * @change_log
  * - v2.1.0   - Added additional tests, bug fixes            - 2017-06-10 wer

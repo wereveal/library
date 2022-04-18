@@ -14,7 +14,7 @@ use Ritc\Library\Services\DbModel;
  * Does all the database CRUD stuff for the navigation to navgroups mapping.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.5
+ * @version 1.0.0-alpha.5
  * @date    2021-11-30 14:30:54
  * @change_log
  * - v1.0.0-alpha.5 - updated for php8 only                     - 2021-11-30 wer

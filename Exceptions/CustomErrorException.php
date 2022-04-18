@@ -12,7 +12,7 @@ use Ritc\Library\Abstracts\CustomErrorAbstract;
  * Class CustomErrorException - generic custom errors.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version 1.0.0
  * @date    2021-11-26 16:35:09
  * @change_log
  * - v1.0.0         - production and updated to php8            - 2021-11-26 wer

@@ -11,7 +11,7 @@ use Ritc\Library\Helper\Arrays;
  * Common methods for the db traits.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-beta.3
+ * @version 1.0.0-beta.3
  * @date    2021-11-30 17:47:10
  * @todo    test this and get out of beta.
  * @change_log

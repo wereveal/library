@@ -11,7 +11,7 @@ use Ritc\Library\Helper\Arrays;
  * Common functions that could be used in several database classes.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
+ * @version 4.0.0
  * @date    2021-11-30 17:48:35
  * @change_log
  * - v4.0.0   - updated to php8 (only)                              - 2021-11-30 wer

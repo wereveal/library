@@ -12,7 +12,7 @@ use ErrorException;
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @date    2021-11-26 13:49:17
- * @version v1.0.0
+ * @version 1.0.0
  * @change_log
  * - v1.0.0 - Initial Reworked version for php 8                - 2021-11-26 wer
  */

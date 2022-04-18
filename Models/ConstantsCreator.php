@@ -17,7 +17,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Defines Constants from the constants database used by the app.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v6.0.0
+ * @version 6.0.0
  * @date    2021-11-29 17:22:32
  * @change_log
  * - v6.0.0 - updated for php8                                                      - 2021-11-29 wer

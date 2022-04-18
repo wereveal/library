@@ -19,7 +19,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Helper for routing.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
+ * @version 4.0.0
  * @date    2021-11-29 16:57:46
  * @change_log
  * - v4.0.0   - updated for php8                                    - 2021-11-29 wer
@@ -38,8 +38,8 @@ class RoutesHelper
     /** @var array */
     private array $a_route_parts;
     private string $cache_type;
-    /** @var CacheHelper $o_cache */
-    private CacheHelper $o_cache;
+    /** @var CacheHelperSymfony $o_cache */
+    private CacheHelperSymfony $o_cache;
     /** @var DbModel */
     private DbModel $o_db;
     /** @var Di */
@@ -424,7 +424,7 @@ class RoutesHelper
             'route_id'       => 0,
             'route_path'     => $request_uri,
             'request_uri'    => $request_uri,
-            'route_class'    => 'MasterController',
+            'route_class'    => 'WebController',
             'route_method'   => '',
             'route_action'   => '',
             'url_id'         => -1,
@@ -507,17 +507,17 @@ class RoutesHelper
     }
 
     /**
-     * @return CacheHelper
+     * @return CacheHelperSymfony
      */
-    public function getCache(): CacheHelper
+    public function getCache(): CacheHelperSymfony
     {
         return $this->o_cache;
     }
 
     /**
-     * @param CacheHelper $o_cache
+     * @param CacheHelperSymfony $o_cache
      */
-    public function setCache(CacheHelper $o_cache): void
+    public function setCache(CacheHelperSymfony $o_cache): void
     {
         $this->o_cache = $o_cache;
     }

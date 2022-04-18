@@ -13,7 +13,7 @@ use Ritc\Library\Traits\LogitTraits;
  *          or from a form element with a few select id names
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
+ * @version 4.0.0
  * @date    2021-11-29 14:55:18
  * @change_log
  * - 4.0.0 - updated for php8                                                   - 2021-11-29 wer

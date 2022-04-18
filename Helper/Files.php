@@ -13,7 +13,7 @@ use Ritc\Library\Traits\LogitTraits;
  * Determines the path to the file
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v5.0.0
+ * @version 5.0.0
  * @date    2021-11-29 15:51:06
  * @note The constants with _DIR_NAME should correspond to dir names in
  *       the site theme or namespace (e.g. templates are in namespace). If a directory
@@ -42,65 +42,14 @@ class Files implements LocationInterface
 {
     use LogitTraits;
 
-    /**
-     * Name of the config dir.
-     *
-     * @var 'CONFIG_DIR_NAME'
-     */
     public const CONFIG_DIR_NAME = 'config';
-    /**
-     * Name of the css dir.
-     *
-     * @var 'CSS_DIR_NAME'
-     */
     public const CSS_DIR_NAME = 'css';
-    /**
-     * Name of the HTML dir.
-     *
-     * @var 'HTML_DIR_NAME' a class const
-     */
     public const HTML_DIR_NAME = 'html';
-    /**
-     * Name of the Images dir.
-     *
-     * @var 'IMAGES_DIR_NAME'
-     */
     public const IMAGES_DIR_NAME = 'images';
-    /**
-     * Name of the javascript directory.
-     *
-     * @var 'JS_DIR_NAME'
-     */
     public const JS_DIR_NAME = 'js';
-    /**
-     * Name of the Library dir. Not sure which dir this is actually referring to.
-     *
-     * @var 'LIBS_DIR_NAME'
-     */
-    public const LIBS_DIR_NAME = 'library';
-    /**
-     * Name of the directory for private files.
-     *
-     * @var 'PRIVATE_DIR_NAME'
-     */
     public const PRIVATE_DIR_NAME = 'private';
-    /**
-     * Name of the directory for templates.
-     *
-     * @var 'TEMPLATES_DIR_NAME'
-     */
     public const TEMPLATES_DIR_NAME = 'templates';
-    /**
-     * Name of the directory for temporary files.
-     *
-     * @var 'TMP_DIR_NAME'
-     */
     public const TMP_DIR_NAME = 'tmp';
-    /**
-     * Name of the file to find.
-     *
-     * @var string
-     */
     protected string $file_name = 'no_file.tpl';
     /**
      * Name of the directory the file is located.

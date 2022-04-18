@@ -6,6 +6,7 @@
  */
 namespace Ritc\Library\Services;
 
+use JetBrains\PhpStorm\NoReturn;
 use PDO;
 use PDOException;
 use PDOStatement;
@@ -20,7 +21,7 @@ use Ritc\Library\Traits\LogitTraits;
  * For read/write access to the database based on PDO.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v6.0.0
+ * @version 6.0.0
  * @date    2021-11-30 15:25:47
  * @change_log
  * - v6.0.0 - Updated for php 8 standards only                                              - 2021-11-30 wer
@@ -1497,7 +1498,7 @@ class DbModel
                 ',
             'sqlite' => "
                     SELECT name
-                    FROM sqlite_master
+                    FROM sqlite_main
                     WHERE type='table'
                     ORDER BY name
                 ",
@@ -1528,7 +1529,7 @@ class DbModel
                 ",
             'sqlite' => "
                     SELECT count(*) as count
-                    FROM sqlite_master
+                    FROM sqlite_main
                     WHERE type='table'
                     AND name='{$table_name}'
                 ",
@@ -1553,7 +1554,7 @@ class DbModel
     /**
      * Prevents cloning of the class.
      */
-    public function __clone()
+    #[NoReturn] public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);
     }

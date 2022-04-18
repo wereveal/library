@@ -12,7 +12,7 @@ use Ritc\Library\Helper\ExceptionHelper;
  * Class FactoryException.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.1
+ * @version 1.0.0-alpha.1
  * @date    2017-12-12 14:57:04
  * @change_log
  * - v1.0.0-alpha.1 - implements ExceptionHelper            - 2017-12-12 wer

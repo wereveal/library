@@ -12,7 +12,7 @@ use Ritc\Library\Interfaces\EntityInterface;
  * Class ConstantsEntity - Basic accessors for a constants entity.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v2.0.0
+ * @version 2.0.0
  * @date    2015-10-06 14:20:33
  * @todo add class properties that are missing.
  * @change_log

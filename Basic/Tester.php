@@ -17,7 +17,7 @@ use Ritc\Library\Traits\LogitTraits;
  * e.g. MyClassTester or MyClassTests.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v4.0.0
+ * @version 4.0.0
  * @date    2021-11-26 14:01:47
  * @change_log
  * - v4.0.0 - Updated for php 8                                                         - 2021-11-26 wer

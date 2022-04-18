@@ -11,7 +11,7 @@ use Ritc\Library\Abstracts\CustomExceptionAbstract;
  * Class HelperException - Handles custom exceptions for helpers.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.1
+ * @version 1.0.0-alpha.1
  * @date    2021-11-26 16:38:17
  * @change_log
  * - v1.0.0-alpha.1 - updated for php8                          - 2021-11-26 wer

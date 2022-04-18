@@ -9,7 +9,7 @@ namespace Ritc\Library\Interfaces;
  * Interface CustomExceptionInterface
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version 1.0.0
  * @date    2018-03-07 08:50:58
  * @change_log
  * - v1.0.0         Production, no changes had taken place since initial                                - 2018-03-07 wer

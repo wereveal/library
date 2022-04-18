@@ -13,7 +13,7 @@ use Ritc\Library\Helper\ViewHelper;
  * Expands on Controller Traits.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.4
+ * @version 1.0.0-alpha.4
  * @date    2021-11-30 17:53:33
  * @todo    Get this thing tested and out of alpha
  * @change_log

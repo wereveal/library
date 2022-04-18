@@ -19,7 +19,7 @@ use Ritc\Library\Views\TwigView;
  * Controller admin for Twig config.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0-alpha.1
+ * @version 1.0.0-alpha.1
  * @date    2021-11-26 15:26:31
  * @change_log
  * - v1.0.0-alpha.1 - updated for php8                          - 2021-11-26 wer

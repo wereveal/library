@@ -12,7 +12,7 @@ use Ritc\Library\Services\DbModel;
  * Does database operations on the twig_templates table.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.1.0
+ * @version 1.1.0
  * @date    2018-06-15 11:49:14
  * @change_log
  * - v1.1.0         - Refactored to extend ModelAbstract        - 2018-06-15 wer

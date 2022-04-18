@@ -15,7 +15,7 @@ use Twig\Environment as TwigEnvironment;
  *
  * @deprecated v1.0.0
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v1.0.0
+ * @version 1.0.0
  * @date    2015-09-03 14:19:00
  * @change_log
  * - v1.0.0   - took out of beta, removed abstract class Base                - 09/03/2015 wer
