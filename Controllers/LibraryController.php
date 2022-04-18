@@ -1,7 +1,7 @@
 <?php /** @noinspection PhpUndefinedConstantInspection */
 
 /**
- * Class MainController
+ * Class LibraryController
  *
  * @package Ritc_Library
  */
@@ -21,10 +21,9 @@ use Ritc\Library\Views\LibraryView;
  * Main controller for the config manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 4.0.0
- * @date    2022-04-11 13:22:07
+ * @version v3.0.0
+ * @date    2021-11-26 15:02:42
  * @change_log
- * - 4.0.0
  * - v3.0.0   - Updated for php8                      - 2021-11-26 wer
  * - v2.1.1   - bug fix                               - 2017-05-14 wer
  * - v2.1.0   - Added UrlAdminController              - 2016-04-11 wer
@@ -41,7 +40,7 @@ use Ritc\Library\Views\LibraryView;
  * - v1.0.0β1 - changed to use IOC                    - 11/17/2014 wer
  * - v1.0.0α1 - Initial version                       - 11/14/2014 wer
  */
-class MainController implements ControllerInterface
+class LibraryController implements ControllerInterface
 {
     use LogitTraits;
     use ConfigControllerTraits;
@@ -50,7 +49,7 @@ class MainController implements ControllerInterface
     protected LibraryView $o_view;
 
     /**
-     * MainController constructor.
+     * LibraryController constructor.
      *
      * @param Di $o_di
      */

@@ -1019,11 +1019,11 @@ class DbCreator
         if (!empty($this->a_install_config['app_twig_prefix'])) {
             $app_twig_prefix = $this->a_install_config['app_twig_prefix'];
             $app_theme       = $this->a_install_config['app_theme_name'] ?? 'base_fluid';
-            $master_twig     = 'false';
-            if (!empty($this->a_install_config['master_twig'])
-              && $this->a_install_config['master_twig'] === 'true'
+            $main_twig     = 'false';
+            if (!empty($this->a_install_config['main_twig'])
+              && $this->a_install_config['main_twig'] === 'true'
             ) {
-                $master_twig = 'true';
+                $main_twig = 'true';
                 foreach ($this->a_data['twig_prefix'] as $tp_key => $a_tp_values) {
                     $this->a_data['twig_prefix'][$tp_key]['tp_default'] = 'false';
                 }
@@ -1039,7 +1039,7 @@ class DbCreator
                     'tp_prefix'  => $app_twig_prefix,
                     'tp_path'    => $tp_path,
                     'tp_active'  => 'true',
-                    'tp_default' => $master_twig
+                    'tp_default' => $main_twig
                 ];
             }
             $a_dir_names = $this->a_data['twig_default_dirs'];

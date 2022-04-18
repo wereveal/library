@@ -1498,7 +1498,7 @@ class DbModel
                 ',
             'sqlite' => "
                     SELECT name
-                    FROM sqlite_master
+                    FROM sqlite_main
                     WHERE type='table'
                     ORDER BY name
                 ",
@@ -1529,7 +1529,7 @@ class DbModel
                 ",
             'sqlite' => "
                     SELECT count(*) as count
-                    FROM sqlite_master
+                    FROM sqlite_main
                     WHERE type='table'
                     AND name='{$table_name}'
                 ",

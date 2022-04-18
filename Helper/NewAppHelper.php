@@ -86,7 +86,7 @@ class NewAppHelper
         ";
         $a_values = ['tpl_id' => $tpl_id, 'page_title' => '%Home%'];
         try {
-            $o_db->update($sql, $a_values, true);
+            $o_db->update($sql, $a_values);
         }
         catch (ModelException $e) {
             $error_message = $e->getMessage();
@@ -197,23 +197,19 @@ class NewAppHelper
             ];
 
             ### Create the main controller for the app ###
+            $controller_file = ucfirst(strtolower($this->a_config['app_name'])) . 'Controller.php';
             if ($is_site) {
                 $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/MainController.php.txt');
-                $controller_text = str_replace($a_find, $a_replace, $controller_text);
-                if (!file_put_contents($this->app_path . '/Controllers/MainController.php', $controller_text)) {
-                    return false;
-                }
             }
             else {
-                $a_replace[4] = 'Main';
+                $a_replace[4] = $this->a_config['app_name'];
                 $a_replace[5] = file_get_contents(SRC_CONFIG_PATH . '/install_files/main_controller.snippet');
                 $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/controller.php.txt');
-                $controller_text = str_replace($a_find, $a_replace, $controller_text);
-                if (!file_put_contents($this->app_path . '/Controllers/MainController.php', $controller_text)) {
-                    return false;
-                }
             }
-
+            $controller_text = str_replace($a_find, $a_replace, $controller_text);
+            if (!file_put_contents($this->app_path . '/Controllers/' . $controller_file, $controller_text)) {
+                return false;
+            }
             ### Create the home controller for the app ###
             $controller_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/HomeController.php.txt');
             if ($controller_text) {
@@ -255,18 +251,6 @@ class NewAppHelper
             if ($view_text) {
                 $view_text = str_replace($a_find, $a_replace, $view_text);
                 if (!file_put_contents($this->app_path . '/Views/ManagerView.php', $view_text)) {
-                    return false;
-                }
-            }
-            else {
-                return false;
-            }
-
-            ### Create the doxygen config for the app ###
-            $doxy_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/doxygen_config.php.txt');
-            if ($doxy_text) {
-                $doxy_text = str_replace($a_find, $a_replace, $doxy_text);
-                if (!file_put_contents($this->app_path . '/resources/config/doxygen_config.php', $doxy_text)) {
                     return false;
                 }
             }
@@ -436,7 +420,7 @@ class NewAppHelper
            'tp_prefix'  => $this->a_config['app_twig_prefix'],
            'tp_path'    => $app_resource_dir,
            'tp_active'  => 'true',
-           'tp_default' => $this->a_config['master_twig'],
+           'tp_default' => $this->a_config['main_twig'],
            'theme_name' => $this->a_config['app_theme_name']
         ];
         try {
@@ -562,8 +546,8 @@ class NewAppHelper
             'tld'             => 'com',                           // top level domain, e.g., com, net, org
             'specific_host'   => '',                              // e.g. www, test
             'developer_mode'  => 'false',                         // affects debugging messages
-            'master_app'      => 'false',                         // specifies if this app is the one called by /index.php and specifies the MainController
-            'master_twig'     => 'false'                          // specifies if this app's twig prefix is the default (if false, site_ is default)
+            'main_app'      => 'false',                         // specifies if this app is the one called by /index.php and specifies the WebController
+            'main_twig'     => 'false'                          // specifies if this app's twig prefix is the default (if false, site_ is default)
         ];
 
         if (empty($a_values)) {
