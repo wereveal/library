@@ -58,19 +58,19 @@ class PeopleGroupMapModel extends ModelAbstract
      * Method is required by interface.
      * Update is not allowed! Always return false.
      *     Reasoning. The group_id and people_id form a unique index. As such,
-     *     they should not be modified. The record should always be deleted and
-     *     a new one added.
+     *     they should not be modified.
      *
      * @param array $a_values
      * @param array $a_immutable
-     * @return void
+     * @return bool
      * @throws ModelException
-     * @todo Change to do the delete create workflow
-     * @noinspection PhpHierarchyChecksInspection
      */
-    public function update(array $a_values = [], array $a_immutable = []):void
+    public function update(array $a_values = [], array $a_immutable = []):bool
     {
-        throw new ModelException('Operation not permitted', 350);
+        if (!empty($a_values)) {
+            throw new ModelException('Operation not permitted', 350);
+        }
+        return false;
     }
 
     ### Specialized Methods ###

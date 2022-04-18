@@ -1529,7 +1529,7 @@ class DbModel
                 ",
             'sqlite' => "
                     SELECT count(*) as count
-                    FROM sqlite_main
+                    FROM sqlite_schema 
                     WHERE type='table'
                     AND name='{$table_name}'
                 ",

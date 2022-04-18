@@ -108,11 +108,8 @@ class TwigFactory
                 $this->o_twig = new TwigEnvironment($o_loader, $a_twig_config['environment_options']);
                 $md_filter = new TwigFilter('md', [$this, 'mdFilter'], ['is_safe' => ['html']]);
                 $this->o_twig->addFilter($md_filter);
-                /** @noinspection PhpTypedPropertyMightBeUninitializedInspection */
-                if ($this->o_mde instanceof ParsedownExtra) {
-                    $mde_filter = new TwigFilter('mde', [$this, 'mdeFilter', ['is_safe' => ['html']]]);
-                    $this->o_twig->addFilter($mde_filter);
-                }
+                $mde_filter = new TwigFilter('mde', [$this, 'mdeFilter', ['is_safe' => ['html']]]);
+                $this->o_twig->addFilter($mde_filter);
                 $inPublic_test = new TwigTest('inPublic', [$this, 'inPublicTest']);
                 $this->o_twig->addTest($inPublic_test);
                 if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
@@ -180,7 +177,7 @@ class TwigFactory
         $cache = $use_cache
             ? SRC_PATH . '/twig_cache'
             : false;
-        $debug = defined('DEVELOPER_MODE') ? DEVELOPER_MODE : false;
+        $debug = defined('DEVELOPER_MODE') && DEVELOPER_MODE;
         $a_config = [
             'default_path' => SRC_PATH . '/templates',
             'additional_paths' => [],
@@ -447,10 +444,7 @@ class TwigFactory
      */
     public function mdFilter(string $value = ''):string
     {
-        if ($this->o_md instanceof Parsedown) {
-            $value = $this->o_md->text($value);
-        }
-        return $value;
+        return $this->o_md->text($value);
     }
 
     /**
@@ -461,11 +455,7 @@ class TwigFactory
      */
     public function mdeFilter(string $value = ''): string
     {
-        if ($this->o_mde instanceof ParsedownExtra) {
-            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
-            $value = $this->o_mde->text($value);
-        }
-        return $value;
+        return $this->o_mde->text($value);
     }
 
     /**

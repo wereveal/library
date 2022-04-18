@@ -128,4 +128,12 @@ class CacheFactory
         }
         return self::$instance[$name]->o_cache;
     }
+
+    /**
+     * @return CacheApcu|CacheByFile|CacheByFileJson|CacheByFilePhp|CacheByFilePhpArray|CacheDb|null
+     */
+    public function getCache(): CacheDb|CacheByFileJson|CacheByFilePhpArray|CacheByFilePhp|CacheByFile|CacheApcu|null
+    {
+        return $this->o_cache;
+    }
 }

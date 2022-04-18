@@ -11,7 +11,6 @@ use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Factories\TwigFactory;
 use Ritc\Library\Helper\AuthHelper;
-use Ritc\Library\Helper\CacheHelperSymfony;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Helper\ViewHelper;
@@ -39,7 +38,7 @@ use Twig\Error\RuntimeError as TwigErrorRuntime;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 3.0.0-alpha.1
  * @date    2021-11-30 18:08:09
- * @todo    Fix all the bugs, figure out how to work with Symfony\Cache
+ * @todo    Fix all the bugs
  * @change_log
  * - v3.0.0-alpha.1 - updating to php 8 finding a lot of bugs, failure                          - 2021-11-30 wer
  * - v2.1.0         - Added the shared content to the default twig values                       - 2018-12-18 wer
@@ -65,8 +64,7 @@ trait ViewTraits
     protected string $cache_type;
     /** @var AuthHelper */
     protected AuthHelper $o_auth;
-    /** @var CacheHelperSymfony $o_cache */
-    protected CacheHelperSymfony $o_cache;
+    protected $o_cache;
     /** @var DbModel */
     protected DbModel $o_db;
     /** @var Di */
@@ -109,25 +107,20 @@ trait ViewTraits
         if (empty($tpl) || empty($a_twig_values)) {
             return 'Error: missing values.';
         }
-        if ($this->o_twig instanceof TwigEnvironment) {
-            try {
-                return $this->o_twig->render($tpl, $a_twig_values);
-            }
-            catch (TwigErrorLoader | TwigErrorSyntax | TwigErrorRuntime $e) {
-                if (DEVELOPER_MODE) {
-                    return 'Error: ' . $e->getMessage();
-                }
-                return '';
-            }
-            catch(TypeError $e) {
-                if (DEVELOPER_MODE) {
-                    return 'Error: ' . $e->getMessage();
-                }
-                return '';
-            }
+        try {
+            return $this->o_twig->render($tpl, $a_twig_values);
         }
-        else {
-            return 'Error: instance of Twig not created.';
+        catch (TwigErrorLoader | TwigErrorSyntax | TwigErrorRuntime $e) {
+            if (DEVELOPER_MODE) {
+                return 'Error: ' . $e->getMessage();
+            }
+            return '';
+        }
+        catch(TypeError $e) {
+            if (DEVELOPER_MODE) {
+                return 'Error: ' . $e->getMessage();
+            }
+            return '';
         }
     }
 
@@ -367,47 +360,23 @@ trait ViewTraits
      * Sets the standard used objects from the object injector.
      *
      * @param Di $o_di
+     * @noinspection PhpFieldAssignmentTypeMismatchInspection
      */
     protected function setOProperties(Di $o_di):void
     {
-        if ($this->o_di === null) {
-            $this->o_di = $o_di;
-        }
-        if ($this->o_router === null) {
-            $this->o_router = $o_di->get('router');
-        }
-        if ($this->o_twig === null) {
-            $this->o_twig = $o_di->get('twig');
-        }
-        if ($this->o_db === null) {
-            $this->o_db = $o_di->get('db');
-        }
-        if ($this->o_session === null) {
-            $this->o_session = $o_di->get('session');
-        }
-        if ($this->o_auth === null) {
-            $this->o_auth = new AuthHelper($o_di);
-        }
-        if ($this->o_nav === null) {
-            $this->o_nav = new NavComplexModel($this->o_di);
-        }
-        if ($this->o_routes_helper === null) {
-            $this->o_routes_helper = new RoutesHelper($o_di);
-        }
+        $this->o_di            = $o_di;
+        $this->o_router        = $o_di->get('router');
+        $this->o_twig          = $o_di->get('twig');
+        $this->o_db            = $o_di->get('db');
+        $this->o_session       = $o_di->get('session');
+        $this->o_auth          = new AuthHelper($o_di);
+        $this->o_nav           = new NavComplexModel($this->o_di);
+        $this->o_routes_helper = new RoutesHelper($o_di);
         if (USE_CACHE) {
             $o_cache = $o_di->get('cache');
-            if (is_object($o_cache)) {
-                $this->o_cache    = $o_cache;
-                $this->cache_type = $this->o_cache->getCacheType();
-                $this->use_cache  = empty($this->cache_type)
-                    ? false
-                    : true
-                ;
-            }
-            else {
-                $this->o_cache = null;
-                $this->use_cache = false;
-            }
+            $this->o_cache    = $o_cache;
+            $this->cache_type = $this->o_cache->getCacheType();
+            $this->use_cache  = !empty($this->cache_type);
         }
         if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
             /** @var Elog $o_elog */
@@ -774,7 +743,6 @@ trait ViewTraits
                         . $use_to_display
                         . '/' . $get_stuff;
             }
-            /** @noinspection UnsupportedStringOffsetOperationsInspection */
             $a_pager['links'][] = [
                 'href' => $link,
                 'text' => $text
