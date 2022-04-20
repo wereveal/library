@@ -10,7 +10,6 @@ use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the Configuration page.
@@ -34,7 +33,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ConstantsView
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /** @var LibraryView */
@@ -48,7 +46,6 @@ class ConstantsView
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupView($o_di);
         $this->o_view = new LibraryView($o_di);
     }
@@ -75,7 +72,6 @@ class ConstantsView
         }
         if (empty($a_constants)) {
             $o_const = new ConstantsModel($this->o_db);
-            $o_const->setElog($this->o_elog);
             try {
                 $a_constants = $o_const->read([], ['order_by' => 'const_name']);
                 if ($this->use_cache) {

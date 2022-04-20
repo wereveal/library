@@ -13,7 +13,6 @@ use Ritc\Library\Models\RoutesComplexModel;
 use Ritc\Library\Models\RoutesGroupMapModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Helper for routing.
@@ -33,13 +32,10 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesHelper
 {
-    use LogitTraits;
-
     /** @var array */
     private array $a_route_parts;
     private string $cache_type;
-    /** @var CacheHelperSymfony $o_cache */
-    private CacheHelperSymfony $o_cache;
+    private object $o_cache;
     /** @var DbModel */
     private DbModel $o_db;
     /** @var Di */
@@ -60,7 +56,6 @@ class RoutesHelper
      */
     public function __construct(Di $o_di, string $request_uri = '')
     {
-        $this->setupElog($o_di);
         $this->o_di = $o_di;
         $this->o_db = $o_di->get('db');
         if (USE_CACHE) {
@@ -265,7 +260,6 @@ class RoutesHelper
      */
     private function prepareToExplode(string $request_uri = '', string $route_path = ''): string
     {
-        $meth = __METHOD__ . '.';
         if ($request_uri === '/' || $request_uri === '' || $route_path === '') {
             return '';
         }
@@ -275,12 +269,10 @@ class RoutesHelper
         }
 
         $route_path = Strings::trimSlashes($route_path);
-        $this->logIt("Request: {$request_uri} and Route: {$route_path}", LOG_OFF, $meth . __LINE__);
 
         if ($route_path !== '/' && $route_path !== '') {
             $request_uri = str_replace($route_path, '', $request_uri);
         }
-
         return Strings::trimSlashes($request_uri);
     }
 
@@ -303,7 +295,6 @@ class RoutesHelper
             }
         }
         $o_rgm = new RoutesGroupMapModel($this->o_db);
-        $o_rgm->setElog($this->o_elog);
         try {
             $a_rgm_results = $o_rgm->read(['route_id' => $route_id]);
             if (!empty($a_rgm_results)) {
@@ -334,7 +325,6 @@ class RoutesHelper
      */
     public function getMinAuthLevel(array $a_groups = []): int
     {
-        $meth = __METHOD__ . '.';
         $hash = md5(json_encode($a_groups, JSON_PARTIAL_OUTPUT_ON_ERROR));
         $key  = 'route.minauthlevel.' . $hash;
         if ($this->use_cache) {
@@ -356,8 +346,8 @@ class RoutesHelper
                     }
                 }
             }
-            catch (ModelException $e) {
-                $this->logIt('DB problem: ' . $e->errorMessage(), LOG_ALWAYS, $meth . __LINE__);
+            catch (ModelException) {
+                return $min_auth_level;
             }
         }
         if ($this->use_cache) {
@@ -419,7 +409,6 @@ class RoutesHelper
      */
     public function setRouteParts(string $request_uri = ''): void
     {
-        $meth          = __METHOD__ . '.';
         $a_route_parts = [
             'route_id'       => 0,
             'route_path'     => $request_uri,
@@ -452,8 +441,6 @@ class RoutesHelper
         if (!empty($a_route)) {
             $a_route_parts = $a_route;
         }
-        $log_message = 'Route Found:  ' . var_export($a_route, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         if ($a_route_parts['route_id'] !== 0) {
             $this->request_uri            = $request_uri;
@@ -463,7 +450,6 @@ class RoutesHelper
             $a_url_actions = [];
             if ($this->compareUriToRoute($this->request_uri, $this->route_path) === false) {
                 $uri_actions = $this->prepareToExplode($this->request_uri, $this->route_path);
-                $this->logIt("URI Actions string: {$uri_actions}", LOG_OFF, $meth . __LINE__);
                 $a_url_actions = explode('/', $uri_actions);
             }
 
@@ -472,8 +458,6 @@ class RoutesHelper
             $a_route_parts['min_auth_level'] = $this->getMinAuthLevel($a_route_parts['groups']);
         }
 
-        $log_message = 'Route parts:  ' . var_export($a_route_parts, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if ($this->use_cache) {
             $this->o_cache->set($cache_key, $a_route_parts, 'route');
         }
@@ -507,17 +491,17 @@ class RoutesHelper
     }
 
     /**
-     * @return CacheHelperSymfony
+     * @return object
      */
-    public function getCache(): CacheHelperSymfony
+    public function getCache(): object
     {
         return $this->o_cache;
     }
 
     /**
-     * @param CacheHelperSymfony $o_cache
+     * @param object $o_cache
      */
-    public function setCache(CacheHelperSymfony $o_cache): void
+    public function setCache(object $o_cache): void
     {
         $this->o_cache = $o_cache;
     }

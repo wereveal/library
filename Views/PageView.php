@@ -21,7 +21,6 @@ use Ritc\Library\Models\TwigTemplatesModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the Page Admin page.
@@ -44,7 +43,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PageView
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /** @var PageComplexModel */
@@ -61,14 +59,12 @@ class PageView
         $this->setupView($o_di);
         try {
             $this->o_model = new PageComplexModel($this->o_di);
-            $this->o_model->setupElog($o_di);
         }
         catch (ModelException) {
             $message  = 'Unable to create an instance of PageComplexModel.';
             $err_code = ExceptionHelper::getCodeNumberModel('instance');
             throw new ViewException($message, $err_code);
         }
-        $this->setupElog($o_di);
     }
 
     /**
@@ -80,7 +76,6 @@ class PageView
      */
     public function renderForm(string $new_or_modify = 'new_page', int $page_id = -1):string
     {
-        $meth = __METHOD__ . '.';
         /**
          * Because I couldn't remember, documenting this here.
          * Coming to this method, there are two possible form actions, 'new_page' or 'modify_page'.
@@ -88,27 +83,24 @@ class PageView
          * and if we do a lookup of the page values that we are modifying.
          */
         $o_urls = new UrlsModel($this->o_db);
-        $o_urls->setupElog($this->o_di);
         try {
             $a_urls = $o_urls->read();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_urls = [];
         }
         $o_page = new PageModel($this->o_db);
-        $o_page->setupElog($this->o_di);
         try {
             $a_page_list = $o_page->read();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_page_list = [];
         }
         $o_ng = new NavgroupsModel($this->o_db);
-        $o_ng->setupElog($this->o_di);
         try {
             $a_ng_list = $o_ng->read(['ng_active' => 'true']);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_ng_list = [];
         }
         $a_ng_options = [[
@@ -122,11 +114,10 @@ class PageView
             ];
         }
         $o_twig_prefix = new TwigPrefixModel($this->o_db);
-        $o_twig_prefix->setupElog($this->o_di);
         try {
             $a_prefixes = $o_twig_prefix->read();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_prefixes = [];
         }
         $a_options = [[
@@ -192,7 +183,7 @@ class PageView
                 'other_stuph' => ' selected'
             ]
         ];
-        foreach ($a_urls as $key => $a_url) {
+        foreach ($a_urls as $a_url) {
             $results = Arrays::inAssocArrayRecursive('url_id', $a_url['url_id'], $a_page_list);
             if (!$results) {
                 $a_options[] = [
@@ -290,7 +281,7 @@ class PageView
                     ['page_id' => $page_id]
                 );
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_pages = [];
             }
             if (!empty($a_pages[0])) {
@@ -315,7 +306,6 @@ class PageView
                 }
                 $a_twig_values['url_select']['options'][0]['other_stuph'] = ''; // this should be the default --Select--
                 $o_tpl = new TwigTemplatesModel($this->o_db);
-                $o_tpl->setupElog($this->o_di);
                 try {
                     $a_tpls = $o_tpl->read(['tpl_id' => $a_page['tpl_id']]);
                     $a_tpl_select['options'] = [
@@ -331,11 +321,16 @@ class PageView
                     ];
                 }
                 catch (ModelException $e) {
-                    $this->logIt($e->errorMessage(), LOG_OFF, __METHOD__);
+                    $a_msg_values = [
+                        'message' => 'Could not get the page values! ' . $e->getMessage(),
+                        'type'    => 'error'
+                    ];
+                    $a_message = ViewHelper::fullMessage($a_msg_values);
+                    $a_twig_values['a_message'] = $a_message;
+
                 }
             }
             else {
-                $this->logIt('Could not get the page values!', LOG_OFF, $meth . __LINE__);
                 $a_msg_values = [
                     'message' => 'Could not get the page values!',
                     'type'    => 'error'
@@ -345,9 +340,8 @@ class PageView
             }
         }
         $o_blocks = new BlocksModel($this->o_db);
-        $o_blocks->setupElog($this->o_di);
+        $a_block_list = [];
         try {
-            $a_block_list = [];
             $a_blocks = $o_blocks->readActive();
             foreach ($a_blocks as $a_block) {
                 $a_block_list[] = [
@@ -359,16 +353,15 @@ class PageView
                 ];
             }
         }
-        catch (ModelException $e) {
-            $a_block_list = [];
+        catch (ModelException) {
+            // do nothing
         }
         if (!empty($a_page['page_id'])) {
             $o_pbm = new PageBlocksMapModel($this->o_db);
-            $o_pbm->setupElog($this->o_di);
             try {
                 $a_pbm = $o_pbm->readByPageId($a_page['page_id']);
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_pbm = [];
             }
             foreach ($a_pbm as $a_record) {
@@ -436,13 +429,12 @@ class PageView
      */
     public function renderList(array $a_message = []):string
     {
-        $meth = __METHOD__ . '.';
         $a_search_for = [];
         $a_search_params = ['order_by' => 'page_immutable DESC, url_text ASC'];
         try {
             $a_pages = $this->o_model->readPageValues($a_search_for, $a_search_params);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_pages = [];
         }
         foreach($a_pages as $key => $a_page) {
@@ -465,9 +457,6 @@ class PageView
         ];
         $a_twig_values['new_btn'] = FormHelper::singleBtnForm($a_btn_form);
         $tpl = $this->createTplString($a_twig_values);
-        $log_message = 'Twig Values ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $this->logIt('tpl: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
@@ -478,11 +467,8 @@ class PageView
      */
     public function renderVerify():string
     {
-        $meth = __METHOD__ . '.';
         $a_post_values = $this->o_router->getPost();
         $a_page = $a_post_values['page'];
-          $log_message = 'Post Values ' . var_export($a_post_values, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_twig_values = $this->createDefaultTwigValues();
         $a_values = [
@@ -494,8 +480,6 @@ class PageView
             'hidden_value' => $a_page['page_id']
         ];
         $a_twig_values = array_merge($a_twig_values, $a_values);
-        $message = 'Twig Values: ' . var_export($a_twig_values, TRUE);
-        $this->logIt($message, LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }

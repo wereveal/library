@@ -10,7 +10,6 @@ use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does all the database CRUD stuff for the page table plus other app/business logic.
@@ -33,7 +32,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavComplexModel
 {
-    use LogitTraits;
     use DbUtilityTraits;
 
     /** @var Di $o_di */
@@ -59,13 +57,10 @@ class NavComplexModel
         $this->o_di = $o_di;
         /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
-        $this->o_db = $o_db;
         $this->setupProperties($o_db, 'navigation');
         $this->o_nav = new NavigationModel($o_db);
         $this->o_ng = new NavgroupsModel($o_db);
         $this->o_nnm = new NavNgMapModel($o_db);
-        $this->a_object_names = ['o_nav', 'o_ng', 'o_nnm'];
-        $this->setupElog($o_di);
         $this->setSelectSql();
         $this->setSelectOrderSql();
     }
@@ -252,7 +247,6 @@ class NavComplexModel
     {
         $select_sql = trim(str_replace("WHERE n.nav_active = 'true'", '', $this->select_sql));
         $sql = $select_sql . "\n" . $this->select_order_sql;
-        $this->logIt('sql: ' . $sql, LOG_OFF, __METHOD__);
         try {
             return $this->o_db->search($sql);
         }
@@ -534,7 +528,6 @@ class NavComplexModel
      */
     public function readAllNavUrlTree():array
     {
-        $meth = __METHOD__ . '.';
         $select_sql = 'SELECT ' . $this->buildSqlSelectFields($this->a_db_fields, 'n');
         $select_sql = str_replace('n.url_id,', '', $select_sql);
         $a_url_fields = [
@@ -553,8 +546,6 @@ class NavComplexModel
         $prepare_sql = $select_sql . '
             AND n.parent_id = :parent_id
         ' . $order_by;
-        $this->logIt('top sql: ' . $top_sql, LOG_OFF, $meth . __LINE__);
-        $this->logIt('prepare sql: ' . $prepare_sql, LOG_OFF, $meth . __LINE__);
         try {
             $a_search_for = [':nav_level' => 1];
             $a_top_levels = $this->o_db->search($top_sql, $a_search_for);
@@ -673,14 +664,14 @@ class NavComplexModel
                     }
                     break;
                 case 'nav_name':
-                    if (!isset($a_post[$key_name]) || empty($a_post[$key_name])) {
+                    if (empty($a_post[$key_name])) {
                         $action = 'error';
                         $this->error_message .= 'A Name must be given for the navigation record. ';
                     }
                     break;
                 case 'nav_text':
                 case 'nav_description':
-                    if (!isset($a_post[$key_name]) || empty($a_post[$key_name])) {
+                    if (empty($a_post[$key_name])) {
                         $a_post[$key_name] = $a_post['nav_name'];
                     }
                     break;

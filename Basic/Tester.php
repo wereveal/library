@@ -9,7 +9,6 @@ use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use Ritc\Library\Helper\LocateFile;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class provides a base class of which one extends specific testers for specific classes.
@@ -43,8 +42,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class Tester
 {
-    use LogitTraits;
-
     /** @var array the test order */
     protected array $a_test_order = [];
     /** @var array the test values */
@@ -160,7 +157,7 @@ class Tester
                 $a_passed_test_names = $this->passed_test_names;
             }
             foreach ($this->failed_test_names as $name) {
-                if (is_array($this->failed_subtests) && isset($this->failed_subtests[$name])) {
+                if (!empty($this->failed_subtests) && isset($this->failed_subtests[$name])) {
                     $a_subnames = $this->failed_subtests[$name];
                 }
                 else {
@@ -248,23 +245,20 @@ class Tester
                 $a_test_order = $this->a_test_order;
             }
         }
-        $this->logIt(var_export($a_test_order, true), LOG_OFF, __METHOD__);
+        /*
         $message = "Before -- num_o_tests: {$this->num_o_tests}
             passed tests: {$this->passed_tests}
             failed tests: {$this->failed_tests}
             test names: " . var_export($this->failed_test_names, true);
-
-        $this->logIt($message, LOG_OFF, __METHOD__);
+        */
         $failed_tests = 0;
         foreach ($a_test_order as $method_name) {
-            $this->logIt($method_name, LOG_OFF, __METHOD__ . '.' . __LINE__);
             if (str_ends_with($method_name, 'Tester')) {
                 $tester_name = $method_name;
                 $method_name = $this->shortenName($method_name);
             } else {
                 $tester_name = $method_name . 'Tester';
             }
-            $this->logIt("method name: {$method_name} - tester name: {$tester_name}", LOG_OFF, __METHOD__ . '.' . __LINE__);
             if ($this->isPublicMethod($class_name, $tester_name)) {
                 $results = $this->$tester_name();
                 switch ($results) {
@@ -277,8 +271,8 @@ class Tester
                         $this->skipped_tests++;
                         $this->skipped_test_names[] = $method_name;
                         break;
-                    case false:
                     case 'failed':
+                    case false:
                     default:
                         $failed_tests++;
                         $this->failed_tests++;
@@ -288,7 +282,6 @@ class Tester
                 $this->num_o_tests++;
             }
         }
-        $this->logIt("num_o_tests: {$this->num_o_tests} passed tests: {$this->passed_tests} failed tests: {$this->failed_tests} test names: " . var_export($this->failed_test_names, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         return $failed_tests;
     }
 
@@ -348,7 +341,7 @@ class Tester
     {
         if (!empty($method_name) && !empty($test_name)) {
             $method_name = $this->shortenName($method_name);
-            if (is_array($this->failed_subtests) === false) {
+            if (empty($this->failed_subtests)) {
                 $this->failed_subtests = [];
             }
             if (array_key_exists($method_name, $this->failed_subtests)) {
@@ -436,8 +429,7 @@ class Tester
         catch (ReflectionException) {
             return false;
         }
-        $o_method = $o_ref->getMethod($method_name);
-        return $o_method->isPublic();
+        return $o_ref->getMethod($method_name)->isPublic();
     }
 
     /**

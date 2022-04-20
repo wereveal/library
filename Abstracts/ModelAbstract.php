@@ -9,15 +9,15 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Interfaces\ModelInterface;
 use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Abstract which gives a basic setup for a model class.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 2.1.0
- * @date    2021-11-26 13:55:54
+ * @version 2.1.1
+ * @date    2022-04-19 15:51:33
  * @change_log
+ * - v2.1.1         - removed Elog                                              - 2022-04-19 wer
  * - v2.1.0         - changed property a_do_not_change to a_immutable           - 2021-11-29 wer
  *                    to match most children which extends this abstract
  *                    per compatibility with php8
@@ -29,7 +29,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 abstract class ModelAbstract implements ModelInterface
 {
-    use LogitTraits;
     use DbUtilityTraits;
 
     /**

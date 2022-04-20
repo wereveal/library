@@ -11,7 +11,6 @@ use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Models\PeopleModel;
-use Ritc\Library\Services\Elog;
 
 /**
  * Tests the Group Model Class.
@@ -29,8 +28,6 @@ class PeopleModelTester extends Tester
 {
     /** @var DbModel */
     protected DbModel $o_db;
-    /** @var string|Elog */
-    protected Elog|string $o_elog;
     /** @var PeopleModel */
     protected PeopleModel $o_model;
 
@@ -44,8 +41,6 @@ class PeopleModelTester extends Tester
     {
         $this->o_db    = $o_di->get('db');
         $this->o_model = new PeopleModel($this->o_db);
-        $this->o_elog  = $o_di->get('elog');
-        $this->o_model->setElog($this->o_elog);
     }
 
     ### Tests ###

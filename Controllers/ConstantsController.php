@@ -12,7 +12,6 @@ use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\ConstantsView;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class ConstantsController - controller for the Configuration page.
@@ -39,7 +38,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ConstantsController implements ConfigControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var ConstantsModel $o_model */
@@ -54,10 +52,8 @@ class ConstantsController implements ConfigControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
-        $this->setupElog($o_di);
         $this->o_model = new ConstantsModel($this->o_db);
         $this->o_view  = new ConstantsView($this->o_di);
-        $this->o_model->setElog($this->o_elog);
     }
 
     /**

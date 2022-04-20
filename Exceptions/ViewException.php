@@ -8,7 +8,6 @@ namespace Ritc\Library\Exceptions;
 
 use Ritc\Library\Abstracts\CustomExceptionAbstract;
 use Ritc\Library\Helper\ExceptionHelper;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Exceptions class for views.
@@ -21,8 +20,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ViewException extends CustomExceptionAbstract
 {
-    use LogitTraits;
-
     /**
      * Returns the text string for the error code.
      *

@@ -8,7 +8,6 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the Navgroups Manager.
@@ -22,7 +21,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavgroupsView implements ViewInterface
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /**
@@ -33,7 +31,6 @@ class NavgroupsView implements ViewInterface
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
-        $this->setupElog($o_di);
     }
 
     /**

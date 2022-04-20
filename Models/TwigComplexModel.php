@@ -12,7 +12,6 @@ use Ritc\Library\Helper\Strings;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does multi-table operations for twig.
@@ -31,7 +30,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class TwigComplexModel
 {
-    use LogitTraits;
     use DbUtilityTraits;
 
     /** @var array $a_ids The ids of the new records */
@@ -73,7 +71,6 @@ class TwigComplexModel
      */
     public function canBeDeleted(string $which_one = '', int $id = -1): bool
     {
-        $meth = __METHOD__ . '.';
         if (empty($which_one) || $id < 1) {
             return false;
         }
@@ -107,8 +104,6 @@ class TwigComplexModel
             case 'template':
                 try {
                     $a_results = $this->o_page->read(['tpl_id' => $id]);
-                    $log_message = 'template reslts ' . var_export($a_results, TRUE);
-                    $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
                     if (empty($a_results)) {
                         if ($this->o_tpls->isImmutable($id)) {
@@ -349,7 +344,6 @@ class TwigComplexModel
     public function deletePrefix(int $tp_id = -1):bool
     {
         if ($this->canBeDeleted('prefix', $tp_id)) {
-            $this->o_prefix->setupElog($this->o_di);
             try {
                 return $this->o_prefix->delete($tp_id);
             }
@@ -375,7 +369,6 @@ class TwigComplexModel
     public function deleteTpl(int $tpl_id = -1):bool
     {
         if ($this->canBeDeleted('tpl', $tpl_id)) {
-            $this->o_tpls->setupElog($this->o_di);
             try {
                 return $this->o_tpls->delete($tpl_id);
             }
@@ -578,10 +571,6 @@ class TwigComplexModel
      */
     public function saveDir(array $a_values = [], string $action = 'update'):bool
     {
-        $meth = __METHOD__ . '.';
-        $log_message = 'Values ' . var_export($a_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         $td_name = $a_values['td_name'];
         try {
             $results = $this->o_prefix->readById($a_values['tp_id']);
@@ -790,12 +779,10 @@ class TwigComplexModel
      */
     private function setupDbs(DbModel $o_db):void
     {
-        $this->a_object_names = ['o_dirs', 'o_prefix', 'o_tpls', 'o_themes', 'o_page'];
         $this->o_dirs   = new TwigDirsModel($o_db);
         $this->o_prefix = new TwigPrefixModel($o_db);
         $this->o_tpls   = new TwigTemplatesModel($o_db);
         $this->o_themes = new TwigThemesModel($o_db);
         $this->o_page   = new PageModel($o_db);
-        $this->setupElog($this->o_di);
     }
 }

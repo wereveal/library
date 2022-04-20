@@ -9,7 +9,6 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class NavgroupsComplexModel - Multi-table model manipulations associated with the navgoups.
@@ -24,7 +23,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavgroupsComplexModel
 {
-    use LogitTraits;
     use DbUtilityTraits;
 
     /**
@@ -33,10 +31,7 @@ class NavgroupsComplexModel
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         /** @var DbModel $o_db */
-        $o_db = $o_di->get('db');
-        $this->o_db = $o_db;
     }
 
     /**

@@ -5,8 +5,6 @@
  */
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Traits\LogitTraits;
-
 /**
  * Class Actions - Extracts the action to use for the page.
  * @details Can get the action from the URL - htaccess required
@@ -30,7 +28,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class Actions
 {
-    use LogitTraits;
     /** @var array */
     protected array $a_clean_post;
     /** @var array */
@@ -89,11 +86,7 @@ class Actions
         if ($value === '') {
             return $this->a_clean_get;
         }
-        if (isset($this->a_clean_get[$value])) {
-            return $this->a_clean_get[$value];
-        }
-        $this->logIt(var_export($this->a_clean_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return '';
+        return $this->a_clean_get[$value] ?? '';
     }
 
     /**
@@ -153,14 +146,13 @@ class Actions
      */
     public function setFormAction($a_clean_post):bool
     {     // used $a_clean_post as a not so subtle hint to use a safe array and not raw $_POST/$_GET/$_REQUEST etc
-        $this->logIt('Starting with: ' . var_export($a_clean_post, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
         $x_action = '';
         $y_action = '';
         foreach ($a_clean_post as $key => $value) {
-            if (substr($key, strlen($key) - 2) === '_x') {
+            if (str_ends_with($key, '_x')) {
                 $x_action = substr($key, 0, strpos($key, '_x'));
             }
-            elseif (substr($key, strlen($key) - 2) === '_y') {
+            elseif (str_ends_with($key, '_y')) {
                 $y_action = substr($key, 0, strpos($key, '_y'));
             }
         }
@@ -179,7 +171,6 @@ class Actions
         else {
             $action = '';
         }
-        $this->logIt("Action is: {$action}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $this->form_action = $action;
         return true;
     }
@@ -241,9 +232,6 @@ class Actions
     public function setUriActions(string $root_dir = ''):bool
     {
         /* $root_dir defines what isn't an action in the URI */
-        $log_from = __METHOD__ . '.' . __LINE__;
-        $this->logIt('Root Dir is: ' . $root_dir, LOG_OFF, $log_from);
-        $this->logIt('Request URI is: ' . $this->uri_no_get, LOG_OFF, $log_from);
         $a_actions   = [];
         $uri_actions = str_replace($root_dir, '', $this->uri_no_get);
         $uri_parts   = explode('/', $uri_actions);
@@ -265,9 +253,6 @@ class Actions
             $this->a_uri_actions = array();
             return false;
         }
-        $log_from = __METHOD__ . '.' . __LINE__;
-        $this->logIt('URI parts is: ' . var_export($uri_parts, true), LOG_OFF, $log_from);
-        $this->logIt('a_actions is: ' . var_export($a_actions, true), LOG_OFF, $log_from);
         $this->a_uri_actions = $this->filterUriActions($a_actions);
         return true;
     }

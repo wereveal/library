@@ -9,7 +9,6 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\TesterTraits;
 
 /**
@@ -25,7 +24,6 @@ use Ritc\Library\Traits\TesterTraits;
  */
 class NavgroupsModelTester
 {
-    use LogitTraits;
     use TesterTraits;
 
     /** @var NavgroupsModel */
@@ -40,7 +38,6 @@ class NavgroupsModelTester
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $a_test_params = [
             'namespace'  => 'Ritc\Library\Models',
             'class_name' => 'NavgroupsModel'
@@ -49,7 +46,6 @@ class NavgroupsModelTester
         /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
         $this->o_model = new NavgroupsModel($o_db);
-        $this->o_model->setElog($this->o_elog);
     }
 
     /**
@@ -199,7 +195,7 @@ class NavgroupsModelTester
         try {
             $default_ng_id = $this->o_model->retrieveDefaultId();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $this->setSubFailed($test_name, 'Unknown error: could not retrieve default id.');
             return 'failed';
         }
@@ -229,7 +225,7 @@ class NavgroupsModelTester
                     $failed++;
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $this->setSubFailed($test_name, $key);
                 $failed++;
             }

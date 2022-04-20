@@ -9,7 +9,6 @@ use PDO;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Installs default database tables and data.
@@ -25,8 +24,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class DbCreator
 {
-    use LogitTraits;
-
     /** @var array $a_blocks */
     private array $a_blocks = [];
     /** @var array $a_content */
@@ -73,8 +70,6 @@ class DbCreator
     private string $error_message;
     /** @var DbModel $o_db */
     private DbModel $o_db;
-    /** @var Di $o_di */
-    private Di $o_di;
     /** @var PDO|bool $o_pdo */
     private bool|PDO $o_pdo;
     /** @var string  */
@@ -1169,4 +1164,67 @@ class DbCreator
         $this->db_type = $db_type;
     }
 
+    /**
+     * @return array
+     */
+    public function getContent(): array
+    {
+        return $this->a_content;
+    }
+
+    /**
+     * @param array $a_content
+     */
+    public function setContent(array $a_content): void
+    {
+        $this->a_content = $a_content;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNnm(): array
+    {
+        return $this->a_nnm;
+    }
+
+    /**
+     * @param array $a_nnm
+     */
+    public function setNnm(array $a_nnm): void
+    {
+        $this->a_nnm = $a_nnm;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPgm(): array
+    {
+        return $this->a_pgm;
+    }
+
+    /**
+     * @param array $a_pgm
+     */
+    public function setPgm(array $a_pgm): void
+    {
+        $this->a_pgm = $a_pgm;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRgm(): array
+    {
+        return $this->a_rgm;
+    }
+
+    /**
+     * @param array $a_rgm
+     */
+    public function setRgm(array $a_rgm): void
+    {
+        $this->a_rgm = $a_rgm;
+    }
 }

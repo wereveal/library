@@ -7,11 +7,9 @@ namespace Ritc\Library\Tests;
 
 use Ritc\Library\Basic\Tester;
 use Ritc\Library\Exceptions\FactoryException;
-use Ritc\Library\Exceptions\ServiceException;
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Elog;
 use Ritc\Library\Models\PeopleGroupMapModel;
 
 /**
@@ -46,24 +44,13 @@ class PeopleGroupMapModelTester extends Tester
     public function __construct(array $a_test_order = array(), string $db_config = 'db_config.php')
     {
         $this->a_test_order = $a_test_order;
-        try {
-            $this->o_elog = Elog::start();
-        }
-        catch (ServiceException $e) {
-        }
         $this->o_di = new Di();
-        $this->o_di->set('elog', $this->o_elog);
         try {
-            $o_pdo = PdoFactory::start($db_config, 'rw');
-            if ($o_pdo !== false) {
-                $this->o_db  = new DbModel($o_pdo, $db_config);
-                $this->o_ugm = new PeopleGroupMapModel($this->o_db);
-            }
-            else {
-                $this->o_elog->write('Could not connect to the database', LOG_ALWAYS, __METHOD__ . '.' . __LINE__);
-            }
+            $o_pdo = PdoFactory::start($db_config);
+            $this->o_db  = new DbModel($o_pdo, $db_config);
+            $this->o_ugm = new PeopleGroupMapModel($this->o_db);
         }
-        catch (FactoryException $e) {
+        catch (FactoryException) {
             die('Unable to create the pdo instance.');
         }
     }

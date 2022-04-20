@@ -5,8 +5,6 @@
  */
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Traits\LogitTraits;
-
 /**
  * Creates HTML strings.
  * Methods which start with make_ return a modified version
@@ -27,20 +25,18 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class Html
 {
-    use LogitTraits;
-
     /** @var Arrays  */
-    protected $o_arrays;
+    protected Arrays $o_arrays;
     /** @var Files  */
-    protected $o_files;
+    protected Files $o_files;
     /** @var string  */
-    protected $the_original_string = 'Start';
+    protected string $the_original_string = 'Start';
     /** @var string */
-    protected $the_modified_string = '';
+    protected string $the_modified_string = '';
     /** @var string  */
-    protected $template_name     = 'default.twig';
+    protected string $template_name = 'default.twig';
     /** @var string  */
-    protected $namespace = 'Ritc';
+    protected string $namespace = 'Ritc';
 
     /**
      * Html constructor.
@@ -94,10 +90,9 @@ class Html
      * @param string $css_media
      * @return string
      */
-    public function cssLink($css_file = '', $css_dir = 'css', $css_media = 'screen'):string
+    public function cssLink(string $css_file = '', string $css_dir = 'css', string $css_media = 'screen'):string
     {
         if($css_file === '') {
-            $this->logIt('A Problem Has Occurred. The css file must be specified', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return '';
         }
         $this->o_files->setFileDirName($css_dir);
@@ -112,7 +107,7 @@ class Html
      * @param string $image_file
      * @return string
      */
-    public function failure($message = 'A Problem Has Occurred. Please Try Again.', $image_file = ''):string
+    public function failure(string $message = 'A Problem Has Occurred. Please Try Again.', string $image_file = ''):string
     {
         if ($image_file === '') {
             $image = $this->o_files->getImageWithDir('icons/failure.png');
@@ -122,7 +117,6 @@ class Html
                 $image = $this->o_files->getImageWithDir('icons/failure.png');
             }
         }
-        $this->logIt("Image w Dir: {$image}", LOG_OFF, __METHOD__ . '.' . __LINE__);
         $a_stuff = array('message' => $message, 'image'=>$image, 'class'=>'msg-failure', 'alt'=>'A Problem Has Occurred');
         return $this->render('message.tpl', $a_stuff, true);
     }
@@ -132,10 +126,9 @@ class Html
      * @param string $js_dir
      * @return string
      */
-    public function jsLink($js_file = '', $js_dir = 'js'):string
+    public function jsLink(string $js_file = '', string $js_dir = 'js'):string
     {
         if($js_file === '') {
-            $this->logIt('A Problem Has Occurred. The JavaScript File must be specified', LOG_OFF, __METHOD__ . '.' . __LINE__);
             return '';
         }
         $this->o_files->setFileDirName($js_dir);
@@ -145,11 +138,12 @@ class Html
 
     /**
      * Returns a formatted string for a success message.
+     *
      * @param string $message
      * @param string $image_file
      * @return string
      */
-    public function success($message = 'Success!', $image_file = ''):string
+    public function success(string $message = 'Success!', string $image_file = ''):string
     {
         if ($image_file === '') {
             $image = $this->o_files->getImageWithDir('icons/success.png');
@@ -165,11 +159,12 @@ class Html
 
     /**
      * Returns formated html for a warning message.
+     *
      * @param string $message
      * @param string $image_file
      * @return string
      */
-    public function warning($message = 'Warning!', $image_file = ''):string
+    public function warning(string $message = 'Warning!', string $image_file = ''):string
     {
         if ($image_file === '') {
             $image = $this->o_files->getImageWithDir('icons/warning.png');
@@ -185,40 +180,27 @@ class Html
 
     /**
      * Fill the template with the values passed in.
-     * @param mixed $template may be the name of a file or a string. If
+     *
+     * @param mixed|string $template may be the name of a file or a string. If
      *     a name of a file, the file must be in the templates directory
      *     of the in use theme. Suggestion is simple, if the same template
      *     is being used multiple time consecutively, put the template in
      *     a string once and pass it into the fill template method.
-     * @param array $a_values the values to insert into the template in
+     * @param array        $a_values the values to insert into the template in
      *     an assoc array. $key is the string to find $value is the replacement.
-     * @param bool $is_file the template is the path to a file, defaults to false
+     * @param bool         $is_file  the template is the path to a file, defaults to false
      * @return string - the filled in template
      */
-    public function render($template = '', array $a_values = array(), $is_file = false):string
+    public function render(string $template = '', array $a_values = array(), bool $is_file = false):string
     {
-        if ($is_file) {
-            $file_with_path = $this->o_files->getFileWithPath($template);
-            if (file_exists($file_with_path)) {
-                $this->logIt('Template: ' . $template . ' == file_with_path ' . $file_with_path, LOG_OFF, __METHOD__ . '.' . __LINE__);
-            }
-        }
-        $this->logIt('array of values: ' . var_export($a_values, true), LOG_OFF);
         if ($template === '' || $a_values === []) {
-            $this->logIt('The Template or the array of values was empty', LOG_OFF);
             return false;
         }
         if (count($a_values) === 0) {
-            $this->logIt('a_values was an empty array.', LOG_OFF);
             return false;
         }
         if ($is_file) {
             $tpl_content = $this->o_files->getContents($template, 'templates');
-            if ($tpl_content === '') {
-                $this->logIt("The template is empty: '{$template}'", LOG_OFF);
-            } elseif ($tpl_content === false) {
-                $this->logIt('file_get_contents failed', LOG_OFF);
-            }
         }
         else {
             $tpl_content = $template;
@@ -231,8 +213,6 @@ class Html
             }
             // now cleanup any vars without values
             $tpl_content = preg_replace('/{\$(.*)}/', '', $tpl_content);
-        } else {
-            $this->logIt('The template was empty.', LOG_OFF);
         }
         return $tpl_content;
     }
@@ -241,7 +221,7 @@ class Html
     /**
      * @param string $value
      */
-    public function updateFilesNamespace($value = 'Ritc'):void
+    public function updateFilesNamespace(string $value = 'Ritc'):void
     {
         $this->o_files->setNamespace($value);
     }
@@ -250,7 +230,7 @@ class Html
     /**
      * @param string $value
      */
-    public function setNamespace($value = 'Ritc'):void
+    public function setNamespace(string $value = 'Ritc'):void
     {
         $this->namespace = $value;
         $this->updateFilesNamespace($value);

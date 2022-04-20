@@ -7,7 +7,6 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the Config Manager page.
@@ -27,7 +26,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class LibraryView
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /**
@@ -37,7 +35,6 @@ class LibraryView
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupView($o_di);
     }
 
@@ -49,15 +46,11 @@ class LibraryView
      */
     public function renderLandingPage(array $a_message = []):string
     {
-        $meth = __METHOD__ . '.';
         $this->setAdmLevel($_SESSION['login_id']);
         $a_values = $this->createDefaultTwigValues($a_message);
         $a_nav = $this->retrieveNav('ConfigLinks');
         $a_values['links'] = $a_nav;
         $tpl = $this->createTplString($a_values);
-          $log_message = 'twig values ' . var_export($a_values, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-          $this->logIt('Template: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_values);
     }
 }

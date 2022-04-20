@@ -12,7 +12,6 @@ use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\TwigView;
 
 /**
@@ -27,7 +26,6 @@ use Ritc\Library\Views\TwigView;
  */
 class TwigController implements ControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var TwigComplexModel $o_tc */
@@ -45,7 +43,6 @@ class TwigController implements ControllerInterface
         $this->setupManagerController($o_di);
         $this->o_view = new TwigView($this->o_di);
         $this->o_tc = new TwigComplexModel($this->o_di);
-        $this->setupElog($o_di);
     }
 
     /**

@@ -17,7 +17,6 @@ use Ritc\Library\Models\BlocksModel;
 use Ritc\Library\Models\PageComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PageView;
 
 /**
@@ -33,7 +32,6 @@ use Ritc\Library\Views\PageView;
  */
 class PageController implements ManagerControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var PageComplexModel */
@@ -62,7 +60,6 @@ class PageController implements ManagerControllerInterface
         catch (ViewException $e) {
             throw new ControllerException($e->getMessage(), $e->getCode(), $e);
         }
-        $this->setupElog($o_di);
     }
 
     /**
@@ -126,7 +123,6 @@ class PageController implements ManagerControllerInterface
      */
     public function save():string
     {
-        $meth              = __METHOD__ . '.';
         $a_blocks          = [];
         $a_message         = [];
         $a_required_fields = [
@@ -154,7 +150,6 @@ class PageController implements ManagerControllerInterface
         }
         if (empty($a_message) && empty($this->a_post['blocks'])) {
             $o_blocks = new BlocksModel($this->o_db);
-            $o_blocks->setupElog($this->o_di);
             try {
                 $a_block_results = $o_blocks->read(['b_name' => 'body'], ['a_fields' => ['b_id']]);
                 $a_blocks = [$a_block_results[0]['b_id'] => 'true'];
@@ -185,7 +180,6 @@ class PageController implements ManagerControllerInterface
                 $a_page['a_blocks'][] = $block_id;
             }
         }
-          $this->logIt('Page Values' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
         if (empty($a_message)) {
             try {
                 $this->o_model->savePageValues($a_page);
@@ -212,7 +206,6 @@ class PageController implements ManagerControllerInterface
      */
     public function update():string
     {
-        $meth = __METHOD__ . '.';
         $a_page['a_page']   = $this->a_post['page'];
         $a_page['a_blocks'] = [];
         foreach ($this->a_post['blocks'] as $block_id => $value) {
@@ -220,7 +213,6 @@ class PageController implements ManagerControllerInterface
                 $a_page['a_blocks'][] = $block_id;
             }
         }
-        $this->logIt('Posted Page: ' . var_export($a_page, TRUE), LOG_OFF, $meth . __LINE__);
         if (!isset($a_page['page_immutable'])) {
             $a_page['page_immutable'] = 'false';
         }

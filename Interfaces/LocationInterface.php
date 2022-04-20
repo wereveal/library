@@ -35,15 +35,13 @@ interface LocationInterface
      * Sets the file directory name.
      *
      * @param $value
-     * @return string
      */
-    public function setFileDirName($value): string;
+    public function setFileDirName($value): void;
 
     /**
      * Sets the file name.
      *
      * @param $value
-     * @return string
      */
-    public function setFileName($value): string;
+    public function setFileName($value): void;
 }

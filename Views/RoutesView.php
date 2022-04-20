@@ -16,7 +16,6 @@ use Ritc\Library\Models\RoutesGroupMapModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the Router Admin page.
@@ -41,7 +40,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesView
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /** @var RoutesComplexModel */
@@ -54,10 +52,8 @@ class RoutesView
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupView($o_di);
         $this->o_model = new RoutesComplexModel($o_di);
-        $this->o_model->setupElog($o_di);
     }
 
     /**
@@ -68,14 +64,10 @@ class RoutesView
      */
     public function renderList(array $a_message = array()): string
     {
-        $meth     = __METHOD__ . '.';
         $message  = 'Changing router values can result in unexpected results. If you are not sure, do not do it.';
         $o_urls   = new UrlsModel($this->o_db);
         $o_rgm    = new RoutesGroupMapModel($this->o_db);
         $o_groups = new GroupsModel($this->o_db);
-        $o_urls->setupElog($this->o_di);
-        $o_rgm->setupElog($this->o_di);
-        $o_groups->setupElog($this->o_di);
         if (empty($a_message)) {
             $a_message = ViewHelper::warningMessage($message);
         }
@@ -132,7 +124,7 @@ class RoutesView
 
         $a_groups        = [];
         $a_groups_bottom = [];
-        foreach ($a_available_groups as $key => $a_group) {
+        foreach ($a_available_groups as $a_group) {
             $id_bottom         = 'group00[' . $a_group['group_id'] . ']';
             $a_g               = FormHelper::checkbox(
                 [
@@ -176,7 +168,7 @@ class RoutesView
                 $replace_this                           = '/group\[(.*)]/i';
                 $with_this                              = '$1';
                 $group_id                               = preg_replace($replace_this, $with_this, $a_group['name']);
-                foreach ($a_rgm_results as $r_key => $a_rgm) {
+                foreach ($a_rgm_results as $a_rgm) {
                     if ($group_id === $a_rgm['group_id']) {
                         $a_routes[$key]['groups'][$g_key]['checked'] = ' checked';
                     }
@@ -194,10 +186,7 @@ class RoutesView
         $a_twig_values['groups_bottom']        = $a_groups_bottom;
         $a_twig_values['a_urls_select']        = $a_urls_select;
         $a_twig_values['a_urls_select_bottom'] = $a_urls_select_bottom;
-        $log_message                           = 'a_twig_values ' . var_export($a_twig_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
-        $this->logIt('tpl: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
@@ -209,10 +198,6 @@ class RoutesView
      */
     public function renderVerify(array $a_values = array()): string
     {
-        $meth        = __METHOD__ . '.';
-        $log_message = 'Posted Values: ' . var_export($a_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         if ($a_values === array()) {
             return $this->renderList(['message' => 'An Error Has Occurred. Please Try Again.', 'type' => 'failure']);
         }
@@ -226,8 +211,6 @@ class RoutesView
             'hidden_value' => $a_values['route']['route_id']
         ];
         $a_twig_values = array_merge($a_twig_values, $a_more_values);
-        $log_message   = 'Twig Values: ' . var_export($a_twig_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);

@@ -9,7 +9,6 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\TesterTraits;
 
 /**
@@ -26,7 +25,6 @@ use Ritc\Library\Traits\TesterTraits;
  */
 class ConstantsModelTester
 {
-    use LogitTraits;
     use TesterTraits;
 
     /** @var ConstantsModel */
@@ -39,7 +37,6 @@ class ConstantsModelTester
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $a_test_params = [
             'namespace'     => 'Ritc\Library\Models',
             'class_name'    => 'ConstantsModel',
@@ -49,7 +46,6 @@ class ConstantsModelTester
         /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
         $this->o_model = new ConstantsModel($o_db);
-        $this->o_model->setElog($this->o_elog);
     }
 
     ### TESTS ###
@@ -142,7 +138,7 @@ class ConstantsModelTester
                 try {
                     $results = $this->o_model->update(['const_id' => $new_id, 'const_immutable' => 'false']);
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     $results = false;
                 }
                 if ($results !== false) {

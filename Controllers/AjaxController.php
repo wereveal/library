@@ -15,7 +15,6 @@ use Ritc\Library\Models\TwigTemplatesModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does Ajax Calls used by the Config manager.
@@ -30,7 +29,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class AjaxController
 {
-    use LogitTraits;
     use ControllerTraits;
 
     /**
@@ -41,7 +39,6 @@ class AjaxController
     public function __construct(Di $o_di)
     {
         $this->setupController($o_di);
-        $this->setupElog($o_di);
     }
 
     /**
@@ -227,7 +224,6 @@ class AjaxController
     private function updateContentVcsConstant():bool
     {
         $o_constants = new ConstantsModel($this->o_db);
-        $o_constants->setupElog($this->o_di);
         try {
             $a_results = $o_constants->selectByConstantName('CONTENT_VCS');
             $a_update_values = [
@@ -252,7 +248,6 @@ class AjaxController
      */
     private function urlsAvailableForNavgroups(): mixed
     {
-        $meth = __METHOD__ . '.';
         $navgroup_id = $this->o_router->getPost('navgroup_id');
         $cache_key = 'ajax.urlsAvailableFor.navgroup.' . $navgroup_id;
         $bad_results = [
@@ -281,14 +276,10 @@ class AjaxController
                       'url_text' => $a_result['url_text']
                     ];
                 }
-                  $log_message = 'urls results ' . var_export($a_encode_this, true);
-                  $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
                 $results = trim(json_encode($a_encode_this, JSON_THROW_ON_ERROR));
                 if ($this->use_cache) {
                     $this->o_cache->set($cache_key, $results, 'ajax');
                 }
-                $this->logIt('JSON: ' . $results, LOG_OFF, $meth . __LINE__);
             }
             catch (ModelException) {
                 return $bad_results;

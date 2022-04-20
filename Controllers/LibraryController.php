@@ -13,7 +13,6 @@ use Ritc\Library\Exceptions\ControllerException;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\LibraryView;
 
@@ -21,9 +20,10 @@ use Ritc\Library\Views\LibraryView;
  * Main controller for the config manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version v3.0.0
- * @date    2021-11-26 15:02:42
+ * @version 3.1.0
+ * @date    2022-04-19 15:25:25
  * @change_log
+ * - v3.1.0   - Removed Elog                          - 2022-04-19 wer
  * - v3.0.0   - Updated for php8                      - 2021-11-26 wer
  * - v2.1.1   - bug fix                               - 2017-05-14 wer
  * - v2.1.0   - Added UrlAdminController              - 2016-04-11 wer
@@ -42,7 +42,6 @@ use Ritc\Library\Views\LibraryView;
  */
 class LibraryController implements ControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var LibraryView */
@@ -57,7 +56,6 @@ class LibraryController implements ControllerInterface
     {
         $this->setupManagerController($o_di);
         $this->o_view = new LibraryView($this->o_di);
-        $this->setupElog($o_di);
         if (!defined('LIB_TWIG_PREFIX')) {
             /** @var string LIB_TWIG_PREFIX */
             define('LIB_TWIG_PREFIX', 'lib_');
@@ -68,7 +66,6 @@ class LibraryController implements ControllerInterface
      * Default page for the library manager and login.
      *
      * @return string
-     * @throws JsonException
      */
     public function route():string
     {
@@ -143,7 +140,7 @@ class LibraryController implements ControllerInterface
                 try {
                     return $o_c->route();
                 }
-                catch (ReflectionException) {
+                catch (ReflectionException|JsonException) {
                     $a_message = ViewHelper::errorMessage('Could not find the page requested.');
                     return $this->o_view->renderError($a_message);
                 }

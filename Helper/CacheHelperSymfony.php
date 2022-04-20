@@ -21,7 +21,6 @@ use Symfony\Component\Cache\CacheItem;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 1.0.0-alpha.2
  * @date    2021-11-29 15:26:22
- * @todo    Bug fixes, compatibility to latest version of Symfony\Cache
  * @deprecated 2022-03-14 13:54:07
  * @change_log
  * - v1.0.0-alpha.2 - Changed whole thing to alpha, updated for php8    - 2021-11-29 wer

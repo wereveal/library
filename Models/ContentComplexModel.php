@@ -12,7 +12,6 @@ use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Multi-table database operations and business logic.
@@ -26,7 +25,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ContentComplexModel
 {
-    use LogitTraits;
     use DbUtilityTraits;
 
     /** @var string $select_sql */
@@ -52,11 +50,9 @@ class ContentComplexModel
             $error_code = ExceptionHelper::getCodeNumber('instance');
             throw new ModelException($message, $error_code);
         }
-        $this->a_object_names = ['o_blocks', 'o_content', 'o_page'];
         $this->o_blocks       = new BlocksModel($o_db);
         $this->o_content      = new ContentModel($o_db);
         $this->o_page         = new PageModel($o_db);
-        $this->setupElog($o_di);
         $this->setupProperties($o_db);
         $this->buildBasicSelectSql();
     }
@@ -213,7 +209,6 @@ class ContentComplexModel
      */
     public function readAllCurrent():array
     {
-        $meth  = __METHOD__ . '.';
         $where = '
             WHERE c_current = :c_current
             ORDER BY p.page_title ASC, b.b_name ASC
@@ -224,7 +219,6 @@ class ContentComplexModel
             $this->select_sql
         );
         $sql   .= $where;
-        $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
         $a_search_for = [':c_current' => 'true'];
         try {
             $a_results = $this->o_db->search($sql, $a_search_for);
@@ -243,7 +237,6 @@ class ContentComplexModel
      */
     public function readAllFeatured():array
     {
-        $meth = __METHOD__ . '.';
         $where = '
             WHERE c.c_current = :c_current
             AND c.c_featured = :c_featured';
@@ -254,7 +247,6 @@ class ContentComplexModel
             ['', '', $page_extra],
             $this->select_sql
         ) . $where;
-        $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
         $a_search_for = [
             ':c_current'  => 'true',
             ':c_featured' => 'true',

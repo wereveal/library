@@ -12,7 +12,6 @@ use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does all the Model expected operations, database CRUD and business logic.
@@ -31,7 +30,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PeopleComplexModel
 {
-    use LogitTraits;
     use DbUtilityTraits;
 
     /** @var PeopleModel */
@@ -57,8 +55,6 @@ class PeopleComplexModel
         $this->o_people = new PeopleModel($o_db);
         $this->o_group  = new GroupsModel($o_db);
         $this->o_pgm    = new PeopleGroupMapModel($o_db);
-        $this->setObjectNames(['o_people', 'o_group', 'o_pgm']);
-        $this->setupElog($o_di);
     }
 
     /**
@@ -70,7 +66,6 @@ class PeopleComplexModel
      */
     public function deletePerson(int $people_id = -1):bool
     {
-        $meth = __METHOD__ . '.';
         if ($people_id === -1) {
             throw new ModelException('Missing required people id', 420);
         }
@@ -80,14 +75,10 @@ class PeopleComplexModel
         catch (ModelException $e) {
             throw new ModelException('Unable to start transaction', $e->getCode(), $e);
         }
-        $o_pdo = $this->o_db->getPDO();
-          $this->logIt('In Transaction 1: ' . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
         try {
             $this->o_pgm->deleteByPeopleId($people_id);
-              $this->logIt('In Transaction 2: ' . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
             try {
                 $this->o_people->delete($people_id);
-                  $this->logIt('In Transaction 3: ' . $o_pdo->inTransaction(), LOG_OFF, $meth . __LINE__);
                 try {
                     $this->o_db->commitTransaction();
                 }
@@ -104,7 +95,6 @@ class PeopleComplexModel
                 $this->error_message .= DEVELOPER_MODE
                     ? $e->errorMessage()
                     : $e->getMessage();
-                $this->logIt($this->error_message, LOG_OFF, $meth . __LINE__);
                 $this->o_db->rollbackTransaction();
                 throw new ModelException($this->error_message, $e->getCode(), $e);
             }
@@ -225,10 +215,10 @@ class PeopleComplexModel
      * Reads the people in the group provided.
      *
      * @param int $group_id
-     * @return mixed
+     * @return array|bool
      * @throws ModelException
      */
-    public function readByGroup(int $group_id = -1): mixed
+    public function readByGroup(int $group_id = -1): array|bool
     {
         try {
             $a_people_fields = $this->o_db->selectDbColumns($this->lib_prefix . 'people');
@@ -298,8 +288,6 @@ class PeopleComplexModel
      */
     public function savePerson(array $a_person = []):int
     {
-          $log_message = 'person to save ' . var_export($a_person, TRUE);
-          $this->logIt($log_message, LOG_OFF, __METHOD__);
         if (!isset($a_person['people_id']) || $a_person['people_id'] === '') { // New User
             $a_required_keys = array(
                 'login_id',
@@ -461,7 +449,6 @@ class PeopleComplexModel
      */
     public function createNewPersonArray(array $a_values = []): string|array
     {
-        $meth = __METHOD__ . '.';
         $a_person = $a_values['person'];
         $a_person = $this->o_people->setPersonValues($a_person);
         if (!is_array($a_person)) { // then it should be a string describing the error from setPersonValues.
@@ -471,7 +458,6 @@ class PeopleComplexModel
             return 'group-missing';
         }
         $a_person['groups'] = $a_values['groups'];
-        $this->logIt('Person values: ' . var_export($a_person, TRUE), LOG_OFF, $meth . __LINE__);
         return $a_person;
     }
 

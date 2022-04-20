@@ -10,9 +10,7 @@ use PDO;
 use PDOException;
 use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\FactoryException as FactoryExceptionAlias;
-use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbCommonTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class PdoFactory - The factory returns a \PDO object.

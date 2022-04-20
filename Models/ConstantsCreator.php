@@ -7,11 +7,11 @@
 namespace Ritc\Library\Models;
 
 use Error;
+use JetBrains\PhpStorm\NoReturn;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Defines Constants from the constants database used by the app.
@@ -48,8 +48,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ConstantsCreator
 {
-    use LogitTraits;
-
     /** @var bool */
     private bool $created = false;
     /** @var ConstantsCreator */
@@ -66,7 +64,6 @@ class ConstantsCreator
     private function __construct(Di $o_di)
     {
         $this->o_db   = $o_di->get('db');
-        $this->o_elog = $o_di->get('elog');
     }
 
     /**
@@ -98,7 +95,6 @@ class ConstantsCreator
      */
     public function defineConstants():void
     {
-        $meth = __METHOD__ . '.';
         try {
             $results = $this->createConstants();
             if ($results) {
@@ -106,17 +102,10 @@ class ConstantsCreator
                 $this->createTwigConstants();
             }
             else {
-                if (defined('SRC_CONFIG_PATH')) {
-                    if(file_exists(SRC_CONFIG_PATH . '/fallback_constants.php')) {
-                        include_once SRC_CONFIG_PATH . '/fallback_constants.php';
-                    }
-                    else {
-                        $this->logIt('File: ' . SRC_CONFIG_PATH . '/fallback_constants.php does not exist.', LOG_ALWAYS);
-                        throw new ModelException('A fatal error has occured. Please contact your web site administrator.');
-                    }
+                if (defined('SRC_CONFIG_PATH') && file_exists(SRC_CONFIG_PATH . '/fallback_constants.php')) {
+                    include_once SRC_CONFIG_PATH . '/fallback_constants.php';
                 }
                 else {
-                    $this->logIt('SRC_CONFIG_PATH is not defined.', LOG_ALWAYS, $meth . __LINE__);
                     throw new ModelException('A fatal error has occured. Please contact your web site administrator.');
                 }
                 try {
@@ -124,15 +113,13 @@ class ConstantsCreator
                 }
                 catch (Error $e) {
                     $message = 'Unable to create an instance of the ConstantsModel: ' . $e->getMessage();
-                    $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
                     throw new ModelException($message, 800);
                 }
                 try {
                     $o_const_model->createNewConstants();
                     $this->createAssetsConstants();
                 }
-                catch (ModelException $e) {
-                    $this->logIt($e->errorMessage(), LOG_ALWAYS, $meth . __LINE__);
+                catch (ModelException) {
                     throw new ModelException('A fatal error has occurred. Please contact your web site administrator.');
                 }
             }
@@ -160,7 +147,6 @@ class ConstantsCreator
      */
     private function createConstants():bool
     {
-        $meth = __METHOD__ . '.';
         if (!defined('BASE_PATH')) {
             throw new ModelException('BASE_PATH is not defined', ExceptionHelper::getCodeNumberModel('missing value'));
         }
@@ -172,17 +158,14 @@ class ConstantsCreator
         }
         catch (Error $e) {
             $message = 'Unable to create an instance of the ConstantsModel: ' . $e->getMessage();
-            $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
             throw new ModelException($message, 800);
         }
-        $o_const_model->setElog($this->o_elog);
         if ($this->created === false) {
             try {
                 $a_constants = $o_const_model->selectConstantsList();
             }
             catch (ModelException $e) {
                 $log_message = 'Error:  ' . $e->errorMessage();
-                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
                 throw new ModelException($log_message, ExceptionHelper::getCodeNumberModel('records_not_found'));
 
             }
@@ -276,7 +259,6 @@ class ConstantsCreator
             }
 
             $log_message = 'Error: Unable to retrieve the list of constants.';
-            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             throw new ModelException($log_message, ExceptionHelper::getCodeNumberModel('records_not_found'));
         }
         return true;
@@ -420,7 +402,7 @@ class ConstantsCreator
     /**
      * Clone is not allowed.
      */
-    public function __clone()
+    #[NoReturn] public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);
     }

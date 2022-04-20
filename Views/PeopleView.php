@@ -14,7 +14,6 @@ use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the People Admin page.
@@ -38,7 +37,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PeopleView
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /** @var PeopleComplexModel */
@@ -52,7 +50,6 @@ class PeopleView
      * PeopleView constructor.
      *
      * @param Di $o_di
-     * @noinspection PhpUndefinedConstantInspection
      */
     public function __construct(Di $o_di)
     {
@@ -67,8 +64,6 @@ class PeopleView
             error_log('A fatal problem has occurred: ' . $e->getMessage());
             header('Location: ' . SITE_URL);
         }
-        $this->a_object_names = ['o_people_model', 'o_group_model'];
-        $this->setupElog($o_di);
     }
 
     /**
@@ -82,7 +77,7 @@ class PeopleView
         try {
             $a_people = $this->o_people_model->read();
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_people = [];
             $message = 'A problem occurred and the list could not be retrieved.';
             if (empty($a_message)) {
@@ -138,7 +133,6 @@ class PeopleView
      */
     public function renderNew():string
     {
-        $meth = __METHOD__ . '.';
         $a_message = [];
         $a_groups = [];
         try {
@@ -147,8 +141,6 @@ class PeopleView
                 $a_message = ViewHelper::errorMessage('A problem occurred. Please try again.');
             }
             else {
-                $log_message = 'A group values: ' . var_export($a_groups, true);
-                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
                 foreach ($a_groups as $key => $a_group) {
                     $a_groups_cbx = [
                         'id'    => 'groups' . $key,
@@ -160,7 +152,7 @@ class PeopleView
                 }
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::errorMessage('A problem occurred. Please try again.');
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message);
@@ -194,7 +186,6 @@ class PeopleView
         $a_twig_values['action'] = 'create';
         $a_twig_values['tpl'] = 'person_form';
         $log_message = 'A twig values: ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         print $log_message;
         $tpl = $this->createTplString($a_twig_values);
         print 'Template: ' . $tpl . "\n";
@@ -209,35 +200,29 @@ class PeopleView
      */
     public function renderModify(int $people_id = -1):string
     {
-        $meth = __METHOD__ . '.';
         if ($people_id === -1) {
             $a_message = ViewHelper::errorMessage('A Problem Has Occured. Please Try Again.');
             return $this->renderList($a_message);
         }
         try {
             $a_person = $this->o_people_complex->readInfo($people_id);
-              $log_message = 'person ' . var_export($a_person, TRUE);
-              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             if (empty($a_person)) {
                 $a_message = ViewHelper::errorMessage('The person was not found. Please Try Again.');
                 return $this->renderList($a_message);
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::errorMessage('The person was not found. Please Try Again.');
-            $this->logIt('Exception Error: ' . $e->errorMessage(), LOG_OFF, $meth . __LINE__);
             return $this->renderList($a_message);
         }
         try {
             $a_groups = $this->o_group_model->read([], ['order_by' => 'group_auth_level DESC']);
-              $log_message = 'Groups:  ' . var_export($a_groups, TRUE);
-              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             if (empty($a_groups)) {
                 $a_message = ViewHelper::errorMessage('An error occurred, please try again.');
                 return $this->renderList($a_message);
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::errorMessage('An error occurred, please try again.');
             return $this->renderList($a_message);
         }
@@ -275,14 +260,11 @@ class PeopleView
         $a_person['active_cbx'] = $a_active_cbx;
         $a_person['immutable_cbx'] = $a_immutable_cbx;
         $a_person['password'] = '************';
-          $this->logIt('Person: ' . var_export($a_person, true), LOG_OFF, $meth . __LINE__);
         $a_twig_values = $this->createDefaultTwigValues();
         $a_twig_values['person'] = $a_person;
         $a_twig_values['action'] = 'update';
         $a_twig_values['tpl'] = 'person_form';
-          $this->logIt('twig values' . var_export($a_twig_values, TRUE), LOG_OFF, $meth . __LINE__);
         $tpl = $this->createTplString($a_twig_values);
-        $this->logIt('tpl: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 }

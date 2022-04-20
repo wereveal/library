@@ -15,7 +15,6 @@ use Ritc\Library\Models\TwigPrefixModel;
 use Ritc\Library\Models\TwigTemplatesModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the Twig manager.
@@ -31,7 +30,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class TwigView implements ViewInterface
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /**
@@ -41,7 +39,6 @@ class TwigView implements ViewInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupView($o_di);
     }
 
@@ -53,15 +50,10 @@ class TwigView implements ViewInterface
      */
     public function render(array $a_message = []):string
     {
-        $meth = __METHOD__ . '.';
         $o_tp = new TwigPrefixModel($this->o_db);
         $o_td = new TwigDirsModel($this->o_db);
         $o_tt = new TwigTemplatesModel($this->o_db);
         $o_tc = new TwigComplexModel($this->o_di);
-        $o_tp->setupElog($this->o_di);
-        $o_td->setupElog($this->o_di);
-        $o_tt->setupElog($this->o_di);
-        $o_tc->setupElog($this->o_di);
         $continue = true;
         $a_tt_results = [];
         $a_td_results = [];
@@ -73,7 +65,7 @@ class TwigView implements ViewInterface
                 try {
                     $a_tp_results = $o_tp->read();
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     $message = 'Unable to retrieve the Twig prefix records';
                     $message = empty($a_message['message'])
                         ? $message
@@ -82,7 +74,7 @@ class TwigView implements ViewInterface
                     $continue = false;
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $message = 'Unable to retrieve the Twig dir records';
                 $message = empty($a_message['message'])
                     ? $message
@@ -91,7 +83,7 @@ class TwigView implements ViewInterface
                 $continue = false;
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $message = 'Unable to retrieve the Twig tpl records';
             $message = empty($a_message['message'])
                 ? $message
@@ -107,7 +99,7 @@ class TwigView implements ViewInterface
                     $a_tt_results[$key]['twig_prefix'] = $a_tc_results['twig_prefix'];
                     $a_tt_results[$key]['tp_id']       = $a_tc_results['tp_id'];
                 }
-                catch (ModelException $e) {
+                catch (ModelException) {
                     $message = 'Unable to read the template information';
                     $message = empty($a_message['message'])
                         ? $message
@@ -124,8 +116,6 @@ class TwigView implements ViewInterface
                     'tpl_name' => 'ASC'
                 ];
                 $a_tt_results = Arrays::multiSort($a_tt_results, $a_sort_order);
-                $log_message = 'a_tt_results ' . var_export($a_tt_results, true);
-                $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             }
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/twig/');
@@ -134,9 +124,6 @@ class TwigView implements ViewInterface
         $a_twig_values['a_prefix'] = $a_tp_results;
 
         $tpl = $this->createTplString($a_twig_values);
-        $log_message = 'twig values ' . var_export($a_twig_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-        $this->logIt('TPL: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 
@@ -166,7 +153,7 @@ class TwigView implements ViewInterface
                 return $this->render($a_message);
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::errorMessage('Unable to delete the directory: an error occurred.');
             return $this->render($a_message);
         }
@@ -221,7 +208,7 @@ class TwigView implements ViewInterface
                 return $this->render($a_message);
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::errorMessage('Unable to delete the twig prefix: an error has occurred.');
             return $this->render($a_message);
         }
@@ -252,7 +239,6 @@ class TwigView implements ViewInterface
      */
     public function renderDeleteTpl(int $tpl_id = -1):string
     {
-        $meth = __METHOD__ . '.';
         if ($tpl_id === -1) {
             $a_message = ViewHelper::warningMessage('Unable to delete the template: it must be specified by id.');
             return $this->render($a_message);
@@ -277,12 +263,10 @@ class TwigView implements ViewInterface
                 return $this->render($a_message);
             }
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_message = ViewHelper::errorMessage('Unable to delete the template: could not find it.');
             return $this->render($a_message);
         }
-        $log_message = 'template results ' . var_export($a_tpl, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $login_id = $this->o_session->getVar('login_id');
         if ($a_tpl['tpl_immutable'] === 'true' && $this->o_auth->hasMinimumAuthLevel($login_id, 9)) {

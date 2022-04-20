@@ -11,7 +11,6 @@ use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\CacheManagerView;
 
 /**
@@ -27,7 +26,6 @@ use Ritc\Library\Views\CacheManagerView;
  */
 class CacheManagerController implements ControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var int $cache_const_id */
@@ -41,7 +39,6 @@ class CacheManagerController implements ControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupManagerController($o_di);
         $this->setupConst();
     }
@@ -52,8 +49,6 @@ class CacheManagerController implements ControllerInterface
     public function route(): string
     {
         $a_message = ViewHelper::infoMessage('The cache can speed things up but can also temporarily mask changes.');
-        $message = 'Form Action: ' . $this->form_action;
-        $this->logIt($message, LOG_OFF, __METHOD__);
         switch ($this->form_action) {
             case 'clear_cache':
                 if ($this->o_cache->clearAll()) {
@@ -87,8 +82,7 @@ class CacheManagerController implements ControllerInterface
             default:
                 // do nothing
         }
-        $o_view = new CacheManagerView($this->o_di);
-        return $o_view->render($a_message);
+        return (new CacheManagerView($this->o_di))->render($a_message);
     }
 
     /**
@@ -97,7 +91,6 @@ class CacheManagerController implements ControllerInterface
     private function setupConst():void
     {
         $o_const = new ConstantsModel($this->o_db);
-        $o_const->setupElog($this->o_di);
         $this->o_const = $o_const;
         try {
             $a_results = $o_const->read(['const_name' => 'USE_CACHE']);

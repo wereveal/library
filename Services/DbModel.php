@@ -14,7 +14,6 @@ use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Traits\DbTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class DbModel makes using the PDO stuff easier.
@@ -73,7 +72,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class DbModel
 {
-    use LogitTraits;
     use DbTraits;
 
     /** @var array $a_new_ids */
@@ -119,10 +117,8 @@ class DbModel
      */
     public function insert(string $the_query = '', array $a_values = [], array $a_table_info = []):bool
     {
-        $meth = __METHOD__ . '.';
         if ($the_query === '') {
             $this->error_message = 'The query must not be blank.';
-            $this->logIt($this->error_message, LOG_ALWAYS, $meth . __LINE__);
             throw new ModelException($this->error_message, 120);
         }
         $sequence_name = '';
@@ -139,7 +135,6 @@ class DbModel
             }
             if ($this->affected_rows === 0) {
                 $message = 'The INSERT affected no records.';
-                $this->logIt($message, LOG_ALWAYS, $meth . __LINE__);
                 throw new ModelException($message, 110);
             }
 
@@ -195,11 +190,9 @@ class DbModel
      */
     public function search(string $the_query = '', array $a_values = [], string $type = 'assoc'): array|bool
     {
-        $meth = __METHOD__ . '.';
         $fetch_style = $this->determineFetchStyle($type);
         if ($the_query === '') {
             $this->error_message = 'The query must not be blank.';
-            $this->logIt($this->error_message, LOG_ALWAYS, $meth . __LINE__);
             throw new ModelException($this->error_message, 220);
         }
         if (count($a_values) === 0) {
@@ -399,8 +392,7 @@ class DbModel
             try {
                 $this->setPgsqlSequenceName($a_table_info);
             }
-            catch (ModelException $e) {
-                $this->logIt('ModelException: ' . $e->errorMessage(), LOG_OFF, __METHOD__);
+            catch (ModelException) {
                 return '';
             }
         }

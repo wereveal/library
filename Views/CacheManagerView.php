@@ -11,7 +11,6 @@ use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Manager for Symfony based cache..
@@ -25,7 +24,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class CacheManagerView implements ViewInterface
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /**
@@ -35,7 +33,6 @@ class CacheManagerView implements ViewInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupView($o_di);
     }
 
@@ -53,7 +50,6 @@ class CacheManagerView implements ViewInterface
         }
         if (empty($a_record)) {
             $o_constants = new ConstantsModel($this->o_db);
-            $o_constants->setupElog($this->o_di);
             try {
                 $a_results = $o_constants->read(['const_name' => 'USE_CACHE']);
                 $a_record = empty($a_results[0])
@@ -77,14 +73,10 @@ class CacheManagerView implements ViewInterface
         else {
             $is_enabled = 'false';
         }
-        $log_message = 'message: ' . var_export($a_message, TRUE);
-        $this->logIt($log_message, LOG_OFF, __METHOD__);
 
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['is_enabled'] = $is_enabled;
         $tpl = $this->createTplString($a_twig_values);
-        $log_message = 'final twig values ' . var_export($a_twig_values, TRUE);
-        $this->logIt($log_message, LOG_OFF, __METHOD__);
 
         return $this->renderIt($tpl, $a_twig_values);
     }

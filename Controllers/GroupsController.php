@@ -14,7 +14,6 @@ use Ritc\Library\Models\GroupsComplexModel;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\GroupsView;
 
 /**
@@ -36,7 +35,6 @@ use Ritc\Library\Views\GroupsView;
  */
 class GroupsController implements ConfigControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var GroupsModel $o_model */
@@ -57,8 +55,6 @@ class GroupsController implements ConfigControllerInterface
         $this->o_model        = new GroupsModel($this->o_db);
         $this->o_gc_model     = new GroupsComplexModel($this->o_db);
         $this->o_view         = new GroupsView($o_di);
-        $this->a_object_names = ['o_model', 'o_gc_model'];
-        $this->setupElog($o_di);
     }
 
     /**

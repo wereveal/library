@@ -14,7 +14,6 @@ use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\UrlsView;
 
 /**
@@ -36,7 +35,6 @@ use Ritc\Library\Views\UrlsView;
  */
 class UrlsController implements ConfigControllerInterface
 {
-    use LogitTraits;
     use ControllerTraits;
 
     /** @var UrlsModel */
@@ -54,8 +52,6 @@ class UrlsController implements ConfigControllerInterface
         $this->setupController($o_di);
         $this->o_urls_model = new UrlsModel($this->o_db);
         $this->o_urls_view  = new UrlsView($o_di);
-        $this->a_object_names = ['o_urls_model'];
-        $this->setupElog($o_di);
     }
 
     /**
@@ -84,10 +80,6 @@ class UrlsController implements ConfigControllerInterface
      */
     public function save():string
     {
-        $meth = __METHOD__ . '.';
-        $log_message = 'post:  ' . var_export($this->a_post, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         $url = $this->a_post['url'];
         $url = Strings::makeGoodUrl($url);
         if (empty($url)) {

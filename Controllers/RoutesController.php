@@ -13,7 +13,6 @@ use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\RoutesComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RoutesView;
 
 /**
@@ -39,7 +38,6 @@ use Ritc\Library\Views\RoutesView;
  */
 class RoutesController implements ManagerControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var RoutesComplexModel $o_complex */
@@ -57,7 +55,6 @@ class RoutesController implements ManagerControllerInterface
         $this->setupManagerController($o_di);
         $this->o_view         = new RoutesView($o_di);
         $this->o_complex      = new RoutesComplexModel($o_di);
-        $this->setupElog($o_di);
     }
 
     /**

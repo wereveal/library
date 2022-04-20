@@ -7,7 +7,6 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ViewTraits;
 
 /**
@@ -26,7 +25,6 @@ use Ritc\Library\Traits\ViewTraits;
  */
 class TestsView
 {
-    use LogitTraits;
     use ViewTraits;
 
     /**
@@ -35,7 +33,6 @@ class TestsView
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupView($o_di);
     }
 

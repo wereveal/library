@@ -8,7 +8,6 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Controller for the Navgroups manager.
@@ -22,7 +21,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavgroupsController implements ConfigControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /**
@@ -33,7 +31,6 @@ class NavgroupsController implements ConfigControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
-        $this->setupElog($o_di);
     }
 
     /**

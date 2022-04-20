@@ -7,7 +7,6 @@ namespace Ritc\Library\Services;
 
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Helper\RoutesHelper;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Figures out the routes and route parts.
@@ -29,8 +28,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class Router
 {
-    use LogitTraits;
-
     /** @var array values from a $_GET */
     private array $a_get;
     /** @var array values from a $_POST */
@@ -61,7 +58,6 @@ class Router
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->o_routes_helper = new RoutesHelper($o_di);
         $this->setRouteParts();
     }
@@ -82,15 +78,11 @@ class Router
      */
     public function setRouteParts(string $request_uri = ''):void
     {
-        $meth = __METHOD__ . '.';
         $this->setRequestUri($request_uri);
         $this->setGet();
         $this->setPost();
         $this->setFormAction();
-        $this->logIt('Request URI: ' . $this->request_uri, LOG_OFF, $meth . __LINE__);
         $a_router_parts = $this->o_routes_helper->createRouteParts($this->request_uri);
-        $log_message = 'a_router_parts ' . var_export($a_router_parts, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $a_router_parts['get']         = $this->a_get;
         $a_router_parts['post']        = $this->a_post;
         $a_router_parts['form_action'] = $this->form_action;
@@ -135,12 +127,7 @@ class Router
         if ($value === '') {
             return $this->a_get;
         }
-
-        if (isset($this->a_get[$value])) {
-            return $this->a_get[$value];
-        }
-        $this->logIt(var_export($this->a_get, true), LOG_OFF, __METHOD__ . '.' . __LINE__);
-        return '';
+        return $this->a_get[$value] ?? '';
     }
 
     /**
@@ -151,18 +138,10 @@ class Router
      */
     public function getPost(string $value = ''): array|string
     {
-        $meth = __METHOD__ . '.';
         if ($value === '') {
             return $this->a_post;
         }
-
-        $this->logIt("Name to look for is: {$value}", LOG_OFF, $meth . __LINE__);
-        if (isset($this->a_post[$value])) {
-            return $this->a_post[$value];
-        }
-
-        $this->logIt("The Value Doesn't Exist. " . var_export($this->a_post, true), LOG_OFF, $meth . __LINE__);
-        return '';
+        return $this->a_post[$value] ?? '';
     }
 
     /**
@@ -241,10 +220,10 @@ class Router
         $x_action = '';
         $y_action = '';
         foreach ($a_post as $key=>$value) {
-            if (substr($key, strlen($key) - 2) === '_x') {
+            if (str_ends_with($key, '_x')) {
                 $x_action = substr($key, 0, strpos($key, '_x'));
             }
-            elseif (substr($key, strlen($key) - 2) === '_y') {
+            elseif (str_ends_with($key, '_y')) {
                 $y_action = substr($key, 0, strpos($key, '_y'));
             }
         }
@@ -323,9 +302,20 @@ class Router
         $this->a_post = Arrays::cleanValues($_POST, $a_allowed_keys, $a_allowed_commands, $filter_flags);
     }
 
-    /* From LogItTraits
-        protected function getElog
-        protected function logIt
-        protected function setElog
-   */
+    /**
+     * @return string
+     */
+    public function getRouteMethod(): string
+    {
+        return $this->route_method;
+    }
+
+    /**
+     * @param string $route_method
+     */
+    public function setRouteMethod(string $route_method): void
+    {
+        $this->route_method = $route_method;
+    }
+
 }

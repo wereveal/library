@@ -10,7 +10,6 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ConfigControllerTraits;
 use Ritc\Library\Views\NavigationView;
 
@@ -26,7 +25,6 @@ use Ritc\Library\Views\NavigationView;
  */
 class NavigationController implements ManagerControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var NavComplexModel model object */
@@ -41,7 +39,6 @@ class NavigationController implements ManagerControllerInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupManagerController($o_di);
         $this->o_view = new NavigationView($o_di);
         $this->o_model = new NavComplexModel($o_di);

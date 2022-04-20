@@ -10,7 +10,6 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the Groups Admin page.
@@ -31,7 +30,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class GroupsView
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /**
@@ -45,10 +43,8 @@ class GroupsView
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupView($o_di);
         $this->o_groups = new GroupsModel($this->o_db);
-        $this->o_groups->setElog($this->o_elog);
     }
 
     /**
@@ -58,7 +54,6 @@ class GroupsView
      */
     public function renderList(array $a_message = []):string
     {
-        $meth = __METHOD__ . '.';
         $cache_key = 'groups.read.all';
         if ($this->use_cache) {
             $a_groups = $this->o_cache->get($cache_key);
@@ -83,8 +78,6 @@ class GroupsView
         }
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['a_groups'] = $a_groups;
-        $log_message = 'Twig values ' . var_export($a_twig_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);

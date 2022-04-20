@@ -103,7 +103,6 @@ trait DbUtilityTraits
      */
     protected function genericCreate(array $a_values = [], array $a_parameters = []):array
     {
-        $meth = __METHOD__ . '.';
         if (empty($a_values)) {
             $this->error_message = 'No Values Provided';
             $error_code = ExceptionHelper::getCodeNumberModel('create missing values');
@@ -183,8 +182,6 @@ INSERT INTO {$db_table} (
 )
 
 SQL;
-        $this->logIt('SQL: ' . $sql, LOG_OFF, $meth . __LINE__);
-        $this->logIt('Values: ' . var_export($a_values, true), LOG_OFF, $meth . __LINE__);
         try {
             $this->o_db->insert($sql, $a_values, $a_psql);
             $a_new_ids = $this->o_db->getNewIds();
@@ -329,7 +326,7 @@ SQL;
             WHERE {$primary_index_name} = :{$primary_index_name}
         ";
         try {
-            return $this->o_db->update($sql, $a_values, true);
+            return $this->o_db->update($sql, $a_values);
         }
         catch (ModelException $e) {
             $this->error_message = $e->getMessage();
@@ -367,7 +364,7 @@ SQL;
         ";
         $delete_this = [$piname => $record_ids];
         try {
-            return $this->o_db->delete($sql, $delete_this, true);
+            return $this->o_db->delete($sql, $delete_this);
         }
         catch (ModelException $e) {
             $this->error_message = $this->o_db->retrieveFormattedSqlErrorMessage();
@@ -623,12 +620,6 @@ SQL;
                                        string $immutable_field = '',
                                        array $a_immutable_fields = []): bool|array
     {
-        $meth = __METHOD__ . '.';
-        $log_message = 'a values ' . var_export($a_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
-        $log_message = 'a immut: ' . var_export($a_immutable_fields, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         if (Arrays::isArrayOfAssocArrays($a_values)) {
             foreach ($a_values as $key => $a_record) {
                 $results = $this->fixUpdateValues($a_record);
@@ -661,9 +652,6 @@ SQL;
                 return false;
             }
         }
-        $log_message = 'final values ' . var_export($a_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         return $a_values;
     }
 

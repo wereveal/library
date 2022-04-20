@@ -10,7 +10,6 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class UrlsView.
@@ -27,7 +26,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class UrlsView
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /** @var UrlsModel */
@@ -39,10 +37,8 @@ class UrlsView
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupView($o_di);
         $this->o_urls_model = new UrlsModel($this->o_db);
-        $this->o_urls_model->setupElog($o_di);
     }
 
     /**
@@ -53,7 +49,6 @@ class UrlsView
      */
     public function renderList(array $a_message = []):string
     {
-        $meth = __METHOD__ . '.';
         try {
             $a_urls = $this->o_urls_model->read();
         }
@@ -91,8 +86,6 @@ class UrlsView
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/urls/');
         $a_twig_values['a_urls'] = $a_new_urls;
         $tpl = $this->createTplString($a_twig_values);
-        $log_message = 'twig values ' . var_export($a_twig_values, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         return $this->renderIt($tpl, $a_twig_values);
     }

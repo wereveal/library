@@ -14,7 +14,6 @@ use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Helper for setting up a new app.
@@ -32,8 +31,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NewAppHelper
 {
-    use LogitTraits;
-
     /** @var array $a_config */
     private array $a_config = [];
     /** @var  array $a_new_dirs */
@@ -69,7 +66,6 @@ class NewAppHelper
         /** @var DbModel $o_db */
         $o_db = $this->o_di->get('db');
         $o_page = new PageModel($o_db);
-        $o_page->setupElog($this->o_di);
         try {
             $o_tc = new TwigComplexModel($this->o_di);
             $a_tpl = $o_tc->readTplInfoByName('index', $this->a_config['app_twig_prefix']);
@@ -450,7 +446,6 @@ class NewAppHelper
         /** @var DbModel $o_db */
         $o_db = $this->o_di->get('db');
         $o_groups = new GroupsModel($o_db);
-        $o_groups->setupElog($this->o_di);
 
         $a_people = empty($this->a_config['a_users'])
             ? []

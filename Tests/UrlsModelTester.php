@@ -34,9 +34,7 @@ class UrlsModelTester extends Tester
     public function __construct(Di $o_di)
     {
         $o_db = $o_di->getVar('db');
-        $this->setupElog($o_di);
         $this->o_model = new UrlsModel($o_db);
-        $this->o_model->setupElog($o_di);
     }
 
     /**

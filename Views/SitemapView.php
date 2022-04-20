@@ -8,7 +8,6 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Various sitemap views.
@@ -21,7 +20,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class SitemapView implements ViewInterface
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /**
@@ -30,7 +28,6 @@ class SitemapView implements ViewInterface
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupView($o_di);
     }
 

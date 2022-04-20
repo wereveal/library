@@ -12,7 +12,6 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Models\BlocksModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Traits\ControllerTraits;
 use Ritc\Library\Views\BlocksView;
 
@@ -28,7 +27,6 @@ use Ritc\Library\Views\BlocksView;
  */
 class BlocksController implements ConfigControllerInterface
 {
-    use LogitTraits;
     use ControllerTraits;
 
     /** @var BlocksModel */
@@ -43,10 +41,8 @@ class BlocksController implements ConfigControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupController($o_di);
-        $this->a_object_names = ['o_model'];
         $this->o_view = new BlocksView($o_di);
         $this->o_model = new BlocksModel($this->o_db);
-        $this->setupElog($o_di);
     }
 
     /**

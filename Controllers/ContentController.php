@@ -13,7 +13,6 @@ use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Models\ContentComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\ContentView;
 
 /**
@@ -28,7 +27,6 @@ use Ritc\Library\Views\ContentView;
  */
 class ContentController implements ConfigControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var string $instance_failure Lets me know if the instance had a failure. */
@@ -52,7 +50,6 @@ class ContentController implements ConfigControllerInterface
         catch (ModelException $e) {
             $this->instance_failure .= $e->getMessage();
         }
-        $this->setupElog($o_di);
         try {
             $this->o_view = new ContentView($o_di);
         }

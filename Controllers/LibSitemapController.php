@@ -11,7 +11,6 @@ use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\LibSitemapView;
 
 /**
@@ -26,7 +25,6 @@ use Ritc\Library\Views\LibSitemapView;
  */
 class LibSitemapController implements ControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var NavComplexModel */
@@ -44,7 +42,6 @@ class LibSitemapController implements ControllerInterface
         $this->setupController($o_di);
         $this->o_view = new LibSitemapView($o_di);
         $this->o_nav  = new NavComplexModel($o_di);
-        $this->setupElog($o_di);
     }
 
     /**

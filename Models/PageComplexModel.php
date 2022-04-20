@@ -10,7 +10,6 @@ use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does multi-table queries and applies necessary business logic.
@@ -25,7 +24,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class PageComplexModel
 {
-    use LogitTraits;
     use DbUtilityTraits;
 
     /** @var ContentComplexModel  */
@@ -49,9 +47,9 @@ class PageComplexModel
      */
     public function __construct(Di $o_di)
     {
-        $this->a_object_names = ['o_page', 'o_urls', 'o_pbm'];
         /** @var DbModel $o_db */
         $o_db         = $o_di->get('db');
+        /** @noinspection TraitsPropertiesConflictsInspection */
         $this->o_db   = $o_db;
         $this->o_page = new PageModel($o_db);
         $this->o_urls = new UrlsModel($o_db);
@@ -65,7 +63,6 @@ class PageComplexModel
             throw new ModelException($message, $error_code, $e);
         }
         $this->o_tpls = new TwigComplexModel($o_di);
-        $this->setupElog($o_di);
         $this->setSelectSql();
     }
 
@@ -176,8 +173,6 @@ class PageComplexModel
         try {
             $a_content = [];
             $a_content_results = $this->o_content->readCurrent(['page_id' => $a_record['page_id']]);
-            $log_message = 'Content ' . var_export($a_content_results, true);
-            $this->logIt($log_message, LOG_OFF, __METHOD__);
 
             foreach ($a_content_results as $a_row) {
                 $a_content[$a_row['b_name']] = $a_row;
@@ -196,7 +191,6 @@ class PageComplexModel
      * @param string $url_text Required
      * @return array|bool
      * @throws ModelException
-     * @noinspection PhpUndefinedConstantInspection
      */
     public function readPageValuesByUrlText(string $url_text = ''): bool|array
     {

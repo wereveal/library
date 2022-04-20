@@ -14,7 +14,6 @@ use Ritc\Library\Models\PeopleComplexModel;
 use Ritc\Library\Models\PeopleModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\PeopleView;
 
 /**
@@ -37,7 +36,6 @@ use Ritc\Library\Views\PeopleView;
  */
 class PeopleController implements ManagerControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var PeopleComplexModel object */
@@ -65,8 +63,6 @@ class PeopleController implements ManagerControllerInterface
             error_log('A fatal problem has occurred: ' . $e->getMessage());
             header('Location: ' . SITE_URL);
         }
-        $this->a_object_names = ['o_people'];
-        $this->setupElog($o_di);
     }
 
     /**
@@ -78,8 +74,6 @@ class PeopleController implements ManagerControllerInterface
     {
         $a_post        = $this->a_post;
         $form_action   = $this->form_action;
-          $this->logIt('Post: ' . var_export($a_post, TRUE), LOG_OFF, __METHOD__);
-          $this->logIt('form action: ' . $form_action, LOG_OFF, __METHOD__);
         switch ($form_action) {
             case 'new':
                 return $this->o_view->renderNew();
@@ -159,11 +153,7 @@ class PeopleController implements ManagerControllerInterface
      */
     public function update():string
     {
-        $meth = __METHOD__ . '.';
         $error_message = 'Opps, the person was not updated.';
-          $log_message = 'Post ' . var_export($this->a_post, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-
         $a_person = $this->a_post['person'];
         if (empty($this->a_post['groups'])) {
             $a_msg = ViewHelper::failureMessage($error_message . ' The person must be assigned to at least one group.');
@@ -201,8 +191,6 @@ class PeopleController implements ManagerControllerInterface
         }
         $a_person['groups'] = $this->a_post['groups'];
         try {
-            $log_message = 'Person to update ' . var_export($a_person, TRUE);
-            $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             $this->o_complex->savePerson($a_person);
             if ($this->use_cache) {
                 $this->o_cache->clearTag('people');

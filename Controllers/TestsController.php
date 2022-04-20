@@ -16,7 +16,6 @@ use Ritc\Library\Tests\PageModelTester;
 use Ritc\Library\Tests\PeopleModelTester;
 use Ritc\Library\Tests\UrlsModelTester;
 use Ritc\Library\Traits\ControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\TestsView;
 
 /**
@@ -32,7 +31,6 @@ use Ritc\Library\Views\TestsView;
  */
 class TestsController
 {
-    use LogitTraits;
     use ControllerTraits;
 
     /** @var TestsView view object */
@@ -50,8 +48,6 @@ class TestsController
     {
         $this->setupController($o_di);
         $this->o_view   = new TestsView($o_di);
-        $this->a_object_names = [];
-        $this->setupElog($o_di);
         if (file_exists(LIBRARY_CONFIG_PATH . '/tests')) {
             $this->test_configs_path = LIBRARY_CONFIG_PATH . '/tests';
         }

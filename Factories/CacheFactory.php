@@ -15,7 +15,6 @@ use Ritc\Library\Services\CacheByFilePhp;
 use Ritc\Library\Services\CacheByFilePhpArray;
 use Ritc\Library\Services\CacheDb;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Class CacheFactory - creates one of several cache service objects.
@@ -32,8 +31,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class CacheFactory
 {
-    use LogitTraits;
-
     private static array $instance = [];
     private object $o_cache;
 

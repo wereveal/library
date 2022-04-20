@@ -8,7 +8,6 @@ namespace Ritc\Library\Views;
 use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for Route Group mapping admin.
@@ -22,7 +21,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesGroupView implements ViewInterface
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /**
@@ -32,8 +30,6 @@ class RoutesGroupView implements ViewInterface
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
-        $this->a_object_names = [];
-        $this->setupElog($o_di);
     }
 
     /**

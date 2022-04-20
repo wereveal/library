@@ -1,4 +1,5 @@
-<?php /** @noinspection PhpUndefinedConstantInspection */
+<?php /** @noinspection PhpUndefinedClassConstantInspection */
+
 /**
  * Class Files
  *
@@ -7,7 +8,6 @@
 namespace Ritc\Library\Helper;
 
 use Ritc\Library\Interfaces\LocationInterface;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Determines the path to the file
@@ -40,8 +40,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class Files implements LocationInterface
 {
-    use LogitTraits;
-
     public const CONFIG_DIR_NAME = 'config';
     public const CSS_DIR_NAME = 'css';
     public const HTML_DIR_NAME = 'html';
@@ -163,7 +161,6 @@ class Files implements LocationInterface
     public function getContents(string $file_name = '', string $file_dir_name = ''):string
     {
         if($file_name === '' && $this->file_name === 'no_file.tpl') {
-            $this->logIt('File name was blank.', LOG_OFF, __METHOD__);
             return false;
         }
         if ($file_dir_name !== '') {
@@ -183,7 +180,6 @@ class Files implements LocationInterface
             return $file_contents;
         }
 
-        $this->logIt('Could not get File Contents. File Path: ' . $file_path, LOG_OFF, __METHOD__);
         return false;
     }
 
@@ -240,8 +236,6 @@ class Files implements LocationInterface
             return $this->file_w_dir;
         }
 
-        $log_from = __METHOD__ . '.' . __LINE__;
-        $this->logIt("Couldn't get file on the following paths: $this->file_w_path", LOG_OFF, $log_from);
         return '';
     }
 
@@ -258,8 +252,6 @@ class Files implements LocationInterface
             return $this->file_w_path;
         }
 
-        $log_from = __METHOD__ . '.' . __LINE__;
-        $this->logIt("The file doesn't exist on the following paths: {$this->file_w_path}", LOG_OFF, $log_from);
         return '';
     }
 
@@ -372,7 +364,6 @@ class Files implements LocationInterface
         if (file_exists($file_w_path)) {
             return $file_w_path;
         }
-        $this->logIt("The File w/ Path didn't exist: '$file_w_path'. It is possible the Constant PRIVATE_PATH isn't set.", LOG_OFF, __METHOD__ . '.' . __LINE__);
         return false;
     }
 
@@ -501,55 +492,46 @@ class Files implements LocationInterface
 
     /**
      * @param string $value
-     * @return bool
      */
-    public function setFileDirName($value = ''):bool
+    public function setFileDirName($value = ''):void
     {
-        if ($value === '') { return false; }
         if (str_starts_with($value, '/')) {
             $value = substr($value, 1);
         }
-        if (substr($value, strlen($value) - 1) === '/') {
+        if (str_ends_with($value, '/')) {
             $value = substr($value, 0, -1);
         }
         $this->file_dir_name = $value;
         $this->setFileLocations();
-        return true;
     }
 
     /**
      * @param $value
-     * @return bool
      */
-    public function setFileName($value):bool
+    public function setFileName($value): void
     {
         $this->file_name = $value;
         $this->setFileLocations();
-        return true;
     }
 
     /**
      * @param string $value
-     * @return bool
      */
-    public function setNamespace(string $value = ''):bool
+    public function setNamespace(string $value = ''): void
     {
         $this->namespace = $value;
         $this->setFileLocations();
-        return true;
     }
 
     /**
      * Sets the themename variable
      *
      * @param string $theme_name
-     * @return bool
      */
-    public function setThemeName(string $theme_name = 'default'): bool
+    public function setThemeName(string $theme_name = 'default'): void
     {
         $this->theme_name = $theme_name;
         $this->setFileLocations();
-        return true;
     }
 
     /**
@@ -557,13 +539,6 @@ class Files implements LocationInterface
      */
     protected function setFileLocations():void
     {
-        $this->logIt(
-            'File name: '  . $this->file_name .
-            ' Namespace: ' . $this->namespace .
-            ' file dir '   . $this->file_dir_name,
-            LOG_OFF,
-            __METHOD__ . '.' . __LINE__
-        );
         $found_file = $this->locateFile($this->file_name, $this->namespace, $this->file_dir_name);
         $file_w_dir = str_replace(PUBLIC_PATH, '', $found_file);
         if (file_exists(PUBLIC_PATH . '/' . $file_w_dir)) {

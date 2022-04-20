@@ -17,7 +17,6 @@ use Ritc\Library\Models\ContentComplexModel;
 use Ritc\Library\Models\PageBlocksMapModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Manager for Content View.
@@ -31,7 +30,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class ContentView implements ViewInterface
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /** @var ContentComplexModel $o_model */
@@ -54,7 +52,6 @@ class ContentView implements ViewInterface
             $err_no  = ExceptionHelper::getCodeTextView('view object');
             throw new ViewException($message, $err_no, $e);
         }
-        $this->setupElog($o_di);
     }
 
     /**
@@ -77,8 +74,6 @@ class ContentView implements ViewInterface
             }
             $a_message = ViewHelper::errorMessage($message);
         }
-          $log_message = 'Records:  ' . var_export($a_records, true);
-          $this->logIt($log_message, LOG_OFF, __METHOD__);
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['a_content_list'] = $a_records;
         $a_twig_values['content_type'] = 'list';
@@ -160,7 +155,6 @@ class ContentView implements ViewInterface
      */
     public function renderForm(string $action = 'new'): string
     {
-        $meth = __METHOD__ . '.';
         $a_post = $this->o_router->getPost();
         $a_record        = [
             'c_id'            => '',
@@ -199,7 +193,6 @@ class ContentView implements ViewInterface
                     $a_records = $this->o_model->readCurrent(['pbm_id' => $c_pbm_id]);
                     if (!empty($a_records[0])) {
                         $a_record = $a_records[0];
-                        $a_pbm_select = [];
                     }
                     else {
                         $a_message = ViewHelper::errorMessage('Unable to read the details for the content record.');
@@ -224,7 +217,6 @@ class ContentView implements ViewInterface
                 if (empty($a_message)) {
                     try {
                         $a_record = $this->o_model->readByContentId($content_id);
-                        $a_pbm_select = [];
                     }
                     catch (ModelException) {
                         $a_message = ViewHelper::errorMessage($err_msg);
@@ -234,7 +226,6 @@ class ContentView implements ViewInterface
             case 'new':
             default:
                 $o_pbm = new PageBlocksMapModel($this->o_db);
-                $o_pbm->setupElog($this->o_di);
                 $a_pbm_options = [[
                                       'value'       => '',
                                       'other_stuph' => ' selected',
@@ -297,9 +288,6 @@ class ContentView implements ViewInterface
         $a_twig_values['content_type'] = 'details';
         $a_twig_values['has_versions'] = CONTENT_VCS ? 'true' : 'false';
         $tpl = $this->createTplString($a_twig_values);
-          $log_message = 'twig values ' . var_export($a_twig_values, true);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-          $this->logIt('TPL: ' . $tpl, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 

@@ -13,7 +13,6 @@ use Ritc\Library\Helper\Strings;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\DbUtilityTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * Does all the Model expected operations, database CRUD and business logic.
@@ -27,11 +26,7 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class RoutesComplexModel
 {
-    use LogitTraits;
     use DbUtilityTraits;
-
-    /** @var Di $o_di */
-    private Di $o_di;
 
     /**
      * RoutesComplexModel constructor.
@@ -39,10 +34,8 @@ class RoutesComplexModel
      */
     public function __construct(Di $o_di)
     {
-        $this->o_di = $o_di;
         /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
-        $this->setupElog($o_di);
         $this->setupProperties($o_db);
     }
 
@@ -60,13 +53,11 @@ class RoutesComplexModel
             throw new ModelException('Missing route id.', $err_code);
         }
         $o_route = new RoutesModel($this->o_db);
-        $o_route->setupElog($this->o_di);
         if ($o_route->isImmutable($route_id)) {
             $err_code = ExceptionHelper::getCodeNumberModel('delete immutable');
             throw new ModelException('Route immutable.', $err_code);
         }
         $o_rgm = new RoutesGroupMapModel($this->o_db);
-        $o_rgm->setupElog($this->o_di);
         try {
             $this->o_db->startTransaction();
             $o_rgm->deleteByRouteId($route_id);
@@ -92,8 +83,6 @@ class RoutesComplexModel
     {
         $o_url = new UrlsModel($this->o_db);
         $o_route = new RoutesModel($this->o_db);
-        $o_url->setupElog($this->o_di);
-        $o_route->setupElog($this->o_di);
         $route_fields = $o_route->getDbFields();
         unset($route_fields['url_id']);
         $url_fields   = $o_url->getDbFields();
@@ -122,7 +111,6 @@ class RoutesComplexModel
             throw new ModelException($e->errorMessage(), $e->getCode());
         }
         $o_groups = new GroupsModel($this->o_db);
-        $o_groups->setupElog($this->o_di);
         $group_fields = $o_groups->getDbFields();
         $group_fields = $this->buildSqlSelectFields($group_fields, 'g');
         $sql = "
@@ -165,8 +153,6 @@ class RoutesComplexModel
     {
         $o_url = new UrlsModel($this->o_db);
         $o_route = new RoutesModel($this->o_db);
-        $o_url->setElog($this->o_elog);
-        $o_route->setElog($this->o_elog);
         $route_fields = $o_route->getDbFields();
         unset($route_fields['url_id']);
         $url_fields   = $o_url->getDbFields();
@@ -203,8 +189,6 @@ class RoutesComplexModel
         $a_search_params = [':url_text' => $request_uri];
         $o_url = new UrlsModel($this->o_db);
         $o_route = new RoutesModel($this->o_db);
-        $o_url->setElog($this->o_elog);
-        $o_route->setElog($this->o_elog);
         $route_fields = $o_route->getDbFields();
         $url_fields   = $o_url->getDbFields();
         $route_fields = $this->buildSqlSelectFields($route_fields, 'r');
@@ -268,8 +252,6 @@ class RoutesComplexModel
         }
         $o_url = new UrlsModel($this->o_db);
         $o_route = new RoutesModel($this->o_db);
-        $o_url->setElog($this->o_elog);
-        $o_route->setElog($this->o_elog);
         $route_fields = $o_route->getDbFields();
         unset($route_fields['url_id']);
         $url_fields   = $o_url->getDbFields();
@@ -303,7 +285,6 @@ class RoutesComplexModel
      */
     public function saveNew(array $a_from_post = []):bool
     {
-        $meth = __METHOD__ . '.';
         $a_route = $this->fixRoute($a_from_post['route']);
         if ($a_route === false) {
             $message = 'A Problem Has Occured. Required values missing.';
@@ -317,12 +298,8 @@ class RoutesComplexModel
             $err_code = ExceptionHelper::getCodeNumberModel('create missing values');
             throw new ModelException($message, $err_code);
         }
-        $log_message = 'route ' . var_export($a_route, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         $o_routes = new RoutesModel($this->o_db);
-        $o_routes->setupElog($this->o_di);
         $o_rgm = new RoutesGroupMapModel($this->o_db);
-        $o_rgm->setupElog($this->o_di);
         try {
             $this->o_db->startTransaction();
             $results = $o_routes->create($a_route);
@@ -330,8 +307,6 @@ class RoutesComplexModel
             foreach ($a_groups as $key => $a_group) {
                 $a_groups[$key]['route_id'] = $route_id;
             }
-              $log_message = 'groups ' . var_export($a_groups, TRUE);
-              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             $o_rgm->create($a_groups);
             $this->o_db->commitTransaction();
         }
@@ -352,7 +327,6 @@ class RoutesComplexModel
      */
     public function update(array $a_from_post = []):bool
     {
-        $meth = __METHOD__ . '.';
         $a_route = $this->fixRoute($a_from_post['route']);
         $a_groups = [];
         if (empty($a_route['route_id'])) {
@@ -377,13 +351,9 @@ class RoutesComplexModel
         if (!empty($a_group_ids)) { // we have new map records to create
             $a_groups = $this->fixGroups($a_group_ids, $a_route['route_id']);
         }
-        $log_message = 'groups ' . var_export($a_groups, TRUE);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $o_rgm = new RoutesGroupMapModel($this->o_db);
         $o_routes = new RoutesModel($this->o_db);
-        $o_rgm->setupElog($this->o_di);
-        $o_routes->setupElog($this->o_di);
         try {
             $this->o_db->startTransaction();
             if (!empty($a_old_groups)) { // need to delete unassigned
@@ -451,7 +421,7 @@ class RoutesComplexModel
         $a_route['route_class'] = Strings::removeTagsWithDecode($a_route['route_class'], ENT_QUOTES);
         $a_route['route_class'] = Strings::makeCamelCase($a_route['route_class'], false);
         $a_route['route_method'] = Strings::removeTagsWithDecode($a_route['route_method'], ENT_QUOTES);
-        $a_route['route_method'] = Strings::makeCamelCase($a_route['route_method'], true);
+        $a_route['route_method'] = Strings::makeCamelCase($a_route['route_method']);
         return $a_route;
     }
 }

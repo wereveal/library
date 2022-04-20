@@ -7,7 +7,6 @@
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Exceptions\ServiceException;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * For basic management of sessions.
@@ -31,8 +30,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class Session
 {
-    use LogitTraits;
-
     /** @var Session */
     private static Session $instance;
     /** @var string */
@@ -69,12 +66,10 @@ class Session
                     $lifetime = 0;
                     $path     = '/';
                     $domain   = '';
-                    $secure   = false;
-                    $httponly = false;
                     foreach ($a_params['cookie'] as $cookie_key => $cookie_value) {
                         $$cookie_key = $cookie_value;
                     }
-                    session_set_cookie_params($lifetime, $path, $domain, $secure, $httponly);
+                    session_set_cookie_params($lifetime, $path, $domain, false, false);
                 }
             }
             $this->session_started = session_start();
@@ -189,12 +184,12 @@ class Session
      *
      * @pre session variables token and idle_timestamp
      *      as well as the session id matches cookie name
-     * @param array $a_values        <pre>array(
+     * @param array $a_values [
      *     'token'   => SESSION['token'],
      *     'tolken'  => SESSION['token'], // optional, if set and token isn't, token = tolken
      *     'form_ts' => SESSION['idle_timestamp'],
      *     'hobbit   => '' // optional anti-spam measure, if not blank, invalidate session
-     *     )</pre>
+     * ]
      * @param bool  $use_form_values specifies if to use form data for validation
      * @return bool, true or false if valid
      */
@@ -256,9 +251,7 @@ class Session
      * Tells you if it is not a valid session.
      * returns the opposite of isValidSession method. See its comments for more info
      *
-     * @param array $a_values        <pre>array(
-     *      'token'=>_SESSION['token'],
-     *      'form_ts'=>_SESSION['idle_timestamp'])</pre>
+     * @param array $a_values        ['token' => $value, 'form_ts' => $value]
      * @param bool  $use_form_values specifies if to use form data for validation
      * @return bool true or false
      */

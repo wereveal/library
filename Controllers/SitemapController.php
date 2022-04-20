@@ -8,7 +8,6 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Interfaces\ControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\SitemapView;
 
 /**
@@ -23,7 +22,6 @@ use Ritc\Library\Views\SitemapView;
  */
 class SitemapController implements ControllerInterface
 {
-    use LogitTraits;
     use ControllerTraits;
 
     /**
@@ -34,8 +32,6 @@ class SitemapController implements ControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupController($o_di);
-        $this->a_object_names = [];
-        $this->setupElog($o_di);
     }
 
     /**
@@ -45,7 +41,6 @@ class SitemapController implements ControllerInterface
      */
     public function route(): string
     {
-        $o_view = new SitemapView($this->o_di);
-        return $o_view->render();
+        return (new SitemapView($this->o_di))->render();
     }
 }

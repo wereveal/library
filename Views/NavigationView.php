@@ -12,7 +12,6 @@ use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * The view class for the navigation manager.
@@ -28,7 +27,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class NavigationView
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /** @var NavComplexModel */
@@ -41,7 +39,6 @@ class NavigationView
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         $this->setupView($o_di);
         $this->o_nav_complex = new NavComplexModel($o_di);
     }
@@ -54,10 +51,7 @@ class NavigationView
      */
     public function renderList(array $a_message = []):string
     {
-        $meth = __METHOD__ . '.';
         $a_nav = $this->getNavUrlTree();
-        $log_message = 'a_nav' . var_export($a_nav, true);
-        $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
 
         $a_twig_values = $this->createDefaultTwigValues($a_message, '/manager/config/navigation/');
         $a_twig_values['a_nav'] = $a_nav;
@@ -255,8 +249,7 @@ class NavigationView
             'label_text'  => '',
             'name'        => 'parent_id',
             'class'       => 'form-control',
-            'other_stuph' => '',
-            'options'     => []
+            'other_stuph' => ''
         ];
         $a_options = [
             [
@@ -374,8 +367,7 @@ class NavigationView
             'label_text'  => '',
             'name'        => 'ng_id',
             'class'       => 'form-control',
-            'other_stuph' => ' onchange="urlsForNavgroup(this)"',
-            'options'     => []
+            'other_stuph' => ' onchange="urlsForNavgroup(this)"'
         ];
         $a_options = [[
             'value'       => 0,

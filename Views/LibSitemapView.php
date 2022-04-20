@@ -11,7 +11,6 @@ use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigViewTraits;
-use Ritc\Library\Traits\LogitTraits;
 
 /**
  * View for the sitemap manager.
@@ -25,7 +24,6 @@ use Ritc\Library\Traits\LogitTraits;
  */
 class LibSitemapView implements ViewInterface
 {
-    use LogitTraits;
     use ConfigViewTraits;
 
     /**
@@ -36,7 +34,6 @@ class LibSitemapView implements ViewInterface
     public function __construct(Di $o_di)
     {
         $this->setupView($o_di);
-        $this->setupElog($o_di);
     }
 
     /**
@@ -124,7 +121,6 @@ class LibSitemapView implements ViewInterface
      * Creates the sitemap.xml file.
      *
      * @return array
-     * @noinspection PhpUndefinedConstantInspection
      */
     public function createXmlSitemap():array
     {

@@ -8,7 +8,6 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
-use Ritc\Library\Traits\LogitTraits;
 use Ritc\Library\Views\RoutesGroupView;
 
 /**
@@ -27,7 +26,6 @@ use Ritc\Library\Views\RoutesGroupView;
  */
 class RoutesGroupController implements ManagerControllerInterface
 {
-    use LogitTraits;
     use ConfigControllerTraits;
 
     /** @var RoutesGroupView  */
@@ -42,8 +40,6 @@ class RoutesGroupController implements ManagerControllerInterface
     {
         $this->setupManagerController($o_di);
         $this->o_view = new RoutesGroupView($o_di);
-        $this->a_object_names = [];
-        $this->setupElog($o_di);
     }
 
     /**
