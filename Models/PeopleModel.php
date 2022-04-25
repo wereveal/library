@@ -136,7 +136,7 @@ class PeopleModel extends ModelAbstract
         ";
         $a_values = array(':people_id' => $people_id);
         try {
-            $results = $this->o_db->update($sql, $a_values, true);
+            $results = $this->o_db->update($sql, $a_values);
             if ($results) {
                 return true;
             }
@@ -580,7 +580,7 @@ class PeopleModel extends ModelAbstract
                 'is_active',
                 'is_immutable'
             ];
-            $a_person = Arrays::removeBlankPairs($a_person, $a_allowed_keys, true);
+            $a_person = Arrays::removeBlankPairs($a_person, $a_allowed_keys);
             if (!Arrays::hasRequiredKeys($a_person, ['people_id'])) {
                 return 'people_id-missing';
             }

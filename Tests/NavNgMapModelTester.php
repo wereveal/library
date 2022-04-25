@@ -25,7 +25,7 @@ class NavNgMapModelTester extends Tester
 
 {
     /** @var NavNgMapModel */
-    private NavNgMapModel $o_db;
+    protected NavNgMapModel $o_db;
 
     /**
      * NavNgMapModelTester constructor.
@@ -33,12 +33,9 @@ class NavNgMapModelTester extends Tester
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
-        /** @noinspection UnusedConstructorDependenciesInspection */
         $this->o_db = new NavNgMapModel($o_db);
-        $this->o_db->setElog($this->o_elog);
     }
 
     /**

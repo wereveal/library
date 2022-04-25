@@ -40,11 +40,9 @@ class PageModelTester extends Tester
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         /** @var DbModel o_db */
         $this->o_db = $o_di->get('db');
         $this->o_model = new PageModel($this->o_db);
-        $this->o_model->setupElog($o_di);
     }
 
     ### Tests ###

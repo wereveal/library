@@ -167,7 +167,7 @@ class PageBlocksMapModel extends ModelAbstract
             ];
         }
         try {
-            $this->create($a_save_values, false);
+            $this->create($a_save_values);
         }
         catch (ModelException $e) {
             $this->o_db->rollbackTransaction();

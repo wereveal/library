@@ -116,7 +116,7 @@ class NavNgMapModel extends ModelAbstract
             DELETE FROM {$this->db_table}
             WHERE {$where}";
         try {
-            return $this->o_db->delete($sql, $a_values, true);
+            return $this->o_db->delete($sql, $a_values);
         }
         catch (ModelException $e) {
             $this->error_message = 'Unable to delete the record: ' . $this->o_db->getSqlErrorMessage();

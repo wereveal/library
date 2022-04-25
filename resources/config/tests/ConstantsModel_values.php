@@ -2,7 +2,7 @@
 return [
     'makeValidName' => [
         'tag' => [
-            'test_value'       => '<a href="http://go.to.bad.place/">my name</a>',
+            'test_value'       => '<a href="https:///go.to.bad.place/">my name</a>',
             'expected_results' => 'MY_NAME'
         ],
         'spaces' => [

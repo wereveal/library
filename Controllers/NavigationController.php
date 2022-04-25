@@ -123,7 +123,7 @@ class NavigationController implements ManagerControllerInterface
     public function delete():string
     {
         try {
-            $this->o_model->delete($this->a_post);
+            $this->o_model->delete($this->a_post['nav_id']);
             $a_msg = ViewHelper::successMessage();
         }
         catch (ModelException) {

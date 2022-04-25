@@ -72,20 +72,18 @@ class Tail
             $this->file_name    = $file_name;
         }
         else {
-            die('elog file does not exist.');
+            die('log file does not exist.');
         }
     }
 
     ### Public Methods ###
     /**
      * @return string
-     * @noinspection PhpUndefinedConstantInspection
      */
     public function output(): string
     {
         $this->updateStats();
         $a_twig_values = [
-            'content'        => '',
             'lang'           => 'en',
             'charset'        => 'utf8',
             'title'          => 'Tail Log File',
@@ -110,7 +108,6 @@ class Tail
             $post_line = "\n";
             switch ($this->output_format) {
                 case 'BR':
-                    $pre_line = '';
                     $post_line = '<br />';
                     break;
                 case 'P':

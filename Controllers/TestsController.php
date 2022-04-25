@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpUndefinedConstantInspection */
-
+<?php
 /**
  * Class TestsController
  * @package Ritc_Library

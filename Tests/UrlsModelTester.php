@@ -23,13 +23,12 @@ use Ritc\Library\Services\Di;
 class UrlsModelTester extends Tester
 {
     /** @var UrlsModel */
-    private UrlsModel $o_model;
+    protected UrlsModel $o_model;
 
     /**
      * UrlsModelTester constructor.
      *
      * @param Di $o_di
-     * @noinspection UnusedConstructorDependenciesInspection
      */
     public function __construct(Di $o_di)
     {

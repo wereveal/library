@@ -106,10 +106,8 @@ class GroupsController implements ConfigControllerInterface
      */
     public function save():string
     {
-        $meth = __METHOD__ . '.';
         $a_group = $this->a_post['groups'];
         $a_group['group_name'] = Strings::makeCamelCase($a_group['group_name'], false);
-        $this->logIt(var_export($a_group, true), LOG_OFF, $meth . __LINE__);
         try {
             $this->o_model->create($a_group);
             if ($this->use_cache) {
@@ -130,13 +128,11 @@ class GroupsController implements ConfigControllerInterface
      */
     public function update():string
     {
-        $meth = __METHOD__ . '.';
         $a_group = $this->a_post['groups'];
         $a_group['group_name'] = Strings::makeCamelCase($a_group['group_name'], false);
         $a_group['group_immutable'] = empty($a_group['group_immutable'])
             ? 'false'
             : 'true';
-        $this->logIt('Update vars: ' . var_export($a_group, true), LOG_OFF, $meth . __LINE__);
         try {
             $this->o_model->update($a_group, ['group_name', 'group_auth_level']);
             if ($this->use_cache) {

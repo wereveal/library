@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUndefinedConstantInspection */
+<?php
 
 /**
  * Trait ViewTraits
@@ -11,7 +11,6 @@ use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Factories\TwigFactory;
 use Ritc\Library\Helper\AuthHelper;
-use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Helper\RoutesHelper;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\ContentComplexModel;
@@ -24,7 +23,6 @@ use Ritc\Library\Models\TwigPrefixModel;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
-use Ritc\Library\Services\Elog;
 use Ritc\Library\Services\Router;
 use Ritc\Library\Services\Session;
 use Twig\Environment as TwigEnvironment;
@@ -64,7 +62,7 @@ trait ViewTraits
     protected string $cache_type;
     /** @var AuthHelper */
     protected AuthHelper $o_auth;
-    protected $o_cache;
+    protected object $o_cache;
     /** @var DbModel */
     protected DbModel $o_db;
     /** @var Di */
@@ -80,7 +78,7 @@ trait ViewTraits
     /** @var TwigEnvironment */
     protected TwigEnvironment $o_twig;
     /** @var bool */
-    private bool $use_cache;
+    private bool $use_cache = false;
 
     ### Main Public Methods ###
     /**
@@ -216,7 +214,7 @@ trait ViewTraits
             try {
                 $a_sitemap = $this->o_nav->getSitemap($a_navgroups, $auth_level, $child_levels);
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_sitemap = ViewHelper::errorMessage('Unable to retrieve the sitemap.');
             }
             if ($this->use_cache && empty($a_sitemap['message'])) {
@@ -256,7 +254,6 @@ trait ViewTraits
         if (!is_array($a_auth_levels) || empty($a_auth_levels)) {
             $a_auth_levels = [];
             $o_group = new GroupsModel($this->o_db);
-            $o_group->setupElog($this->o_di);
             try {
                 $a_groups = $o_group->read();
                 foreach ($a_groups as $a_group) {
@@ -266,7 +263,7 @@ trait ViewTraits
                     $this->o_cache->set($group_cache_key, $a_auth_levels, 'groups');
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $a_auth_levels = [];
             }
         }
@@ -301,8 +298,7 @@ trait ViewTraits
             'copyright_date' => COPYRIGHT_DATE,
             'debug_on'       => DEVELOPER_MODE ? 'true' : ''
         ];
-        $a_values = array_merge($a_values, $a_twig_shortcuts, $a_page_values);
-        return $a_values;
+        return array_merge($a_values, $a_twig_shortcuts, $a_page_values);
     }
 
     /**
@@ -350,7 +346,7 @@ trait ViewTraits
             }
             return $a_return_these;
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return $a_default;
         }
     }
@@ -378,11 +374,6 @@ trait ViewTraits
             $this->cache_type = $this->o_cache->getCacheType();
             $this->use_cache  = !empty($this->cache_type);
         }
-        if (defined('DEVELOPER_MODE') && DEVELOPER_MODE) {
-            /** @var Elog $o_elog */
-            $o_elog = $o_di->get('elog');
-            $this->o_nav->setElog($o_elog);
-        }
     }
 
     /**
@@ -400,7 +391,7 @@ trait ViewTraits
             : $login_id;
         $cache_key = 'adm.level.for.' . $login_id;
         $adm_level = 0;
-        if ($this->use_cache) {
+        if (USE_CACHE) {
             $adm_level = $this->o_cache->get($cache_key);
         }
         if (empty($adm_level)) {
@@ -437,7 +428,7 @@ trait ViewTraits
     {
         $ng_id = -1;
         $cache_key = 'navgroup.id.by.' . $navgroup_name;
-        if (USE_CACHE && is_object($this->o_cache)) {
+        if (USE_CACHE && method_exists($this->o_cache,'get')) {
             $ng_id = $this->o_cache->get($cache_key);
         }
         if ($ng_id < 1) {
@@ -445,7 +436,7 @@ trait ViewTraits
             try {
                 $ng_id = $o_ng->readIdByName($navgroup_name);
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 $ng_id = 1;
             }
             if ($this->use_cache) {
@@ -470,9 +461,6 @@ trait ViewTraits
         }
         catch (FactoryException $e) {
             throw new FactoryException($e->errorMessage(), $e->getCode());
-        }
-        if (!$o_twig instanceof TwigEnvironment) {
-            throw new FactoryException('Could not create twig object', ExceptionHelper::getCodeNumberFactory('start'));
         }
         $this->o_di->set('twig_' . $name, $o_twig);
         $this->o_twig = $o_twig;
@@ -503,7 +491,7 @@ trait ViewTraits
             $o_page_model = new PageComplexModel($this->o_di);
             $a_page_values = $o_page_model->readPageValuesByUrlId($url_id);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $a_page_values = [];
         }
         if (empty($a_page_values)) {
@@ -570,7 +558,7 @@ trait ViewTraits
             }
             return $a_shared_values;
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return [];
         }
     }
@@ -587,7 +575,7 @@ trait ViewTraits
     protected function createNewOrderNumber(array $a_used = [], int $value = 0):int
     {
         if (!in_array($value, $a_used, false)) {
-            return (int) $value;
+            return $value;
         }
         if (!in_array($value + 1, $a_used, false)) {
             return $value + 1;
@@ -654,9 +642,7 @@ trait ViewTraits
         if (isset($a_parameters['use_to_display']) && $a_parameters['use_to_display']) {
             $use_to_display = '/' . $records_to_display;
         }
-        $use_page_numbers   = !empty($a_parameters['use_page_numbers'])
-            ? $a_parameters['use_page_numbers']
-            : true;
+        $use_page_numbers   = $a_parameters['use_page_numbers'] ?? true;
         $previous_value     = $start_record === 1 || $start_record - $records_to_display < 1
             ? 1
             : $start_record - $records_to_display;
@@ -708,9 +694,7 @@ trait ViewTraits
         }
         $i_end = $i_start + $display_links;
         if ($i_end > $number_of_pages) {
-            $i_start = $number_of_pages - 10 < 1
-                ? 1
-                : $number_of_pages - 10;
+            $i_start = max($number_of_pages - 10, 1);
             $i_end = $number_of_pages;
             if ((int)$i_end === (int)$this_page) {
                 $a_pager['next'] = '';
@@ -793,7 +777,7 @@ trait ViewTraits
             try {
                 $navgroup = $o_ng->retrieveDefaultId();
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 return [];
             }
         }
@@ -804,14 +788,14 @@ trait ViewTraits
                     return [];
                 }
             }
-            catch (ModelException $e) {
+            catch (ModelException) {
                 return [];
             }
         }
         try {
             return $this->o_nav->getNavList($navgroup);
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             return [];
         }
     }
@@ -850,7 +834,7 @@ trait ViewTraits
         // first see if the links have duplicate sort order
         $a_used_order = [];
         $a_new_nav = [];
-        foreach ($a_nav as $key => $a_link) {
+        foreach ($a_nav as $a_link) {
             $order_number = !empty($a_link['nav_order'])
                 ? (int)$a_link['nav_order']
                 : 99;
@@ -903,7 +887,7 @@ trait ViewTraits
      */
     public function urlId(string $url_string = ''):int
     {
-        if ((string) $url_string === '-1') {
+        if ($url_string === '-1') {
             $url_string = '';
         }
         $url_id = $this->o_router->getUrlId();
@@ -920,7 +904,7 @@ trait ViewTraits
                 ? $this->o_router->getUrlId()
                 : $a_urls[0]['url_id'];
         }
-        catch (ModelException $e) {
+        catch (ModelException) {
             $url_id = $this->o_router->getUrlId();
         }
         return $url_id;

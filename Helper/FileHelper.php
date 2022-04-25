@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpUndefinedMethodInspection */
+
 namespace Ritc\Library\Helper;
 
 use RecursiveDirectoryIterator;
@@ -45,13 +46,13 @@ class FileHelper
     ): array
     {
         $a_files = [];
-        $o_files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory_path));
+        $o_files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory_path), RecursiveIteratorIterator::LEAVES_ONLY);
         $o_files->rewind();
         while ($o_files->valid()) {
             if (!$o_files->isDot()) {
                 $filename = $o_files->getFileName();
-                $file_ext = $o_files->getExtension;
-                $go = true;
+                $file_ext = '.' . $o_files->getExtension();
+                $go       = true;
                 if (!empty($file_starts_with) && !str_starts_with($filename, $file_starts_with)) {
                     $go = false;
                 }
@@ -63,7 +64,7 @@ class FileHelper
                         'filename'      => $filename,
                         'file_ext'      => $file_ext,
                         'filename_base' => $o_files->getBasename($file_ext),
-                        'file_w_path'   => $o_files->current(),
+                        'file_w_path'   => $o_files->getRealPath(),
                         'file_in_cache' => $o_files->getSubPathName(),
                         'path_in_cache' => $o_files->getSubPath(),
                         'file_type'     => $o_files->getType(),
@@ -72,11 +73,12 @@ class FileHelper
                         'writable'      => $o_files->isWritable(),
                         'mime_type'     => finfo_file(
                             finfo_open(FILEINFO_MIME_TYPE),
-                            $o_files->current()
+                            $o_files->getRealPath()
                         )
                     ];
                 }
             }
+            $o_files->next();
         }
         return $a_files;
     }

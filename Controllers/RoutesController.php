@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpUndefinedConstantInspection */
-
+<?php
 /**
  * Class RoutesController
  * @package Ritc_Library

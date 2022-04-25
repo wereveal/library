@@ -216,7 +216,7 @@ class Elog
                         . $the_string;
                     $this->php_log_used = true;
                 }
-                return error_log($the_string, 0);
+                return error_log($the_string);
         }
     }
 
@@ -233,7 +233,7 @@ class Elog
             return false;
         }
         if (empty($error_string)) {
-            return error_log('Unspecified error - ' . $this->from_location, 0);
+            return error_log('Unspecified error - ' . $this->from_location);
         }
         switch ($this->log_method) {
             case LOG_DB:
@@ -272,7 +272,7 @@ class Elog
                         . $error_string;
                     $this->php_log_used = true;
                 }
-                return error_log($error_string, 0);
+                return error_log($error_string);
         }
     }
 

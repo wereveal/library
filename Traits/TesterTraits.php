@@ -120,7 +120,7 @@ trait TesterTraits
                     case '__clone':
                         break;
                     default:
-                        if (substr($a_method->name, -6) === 'Tester') {
+                        if (str_ends_with($a_method->name, 'Tester')) {
                             $a_test_order[] = $a_method->name;
                         }
                 }
@@ -164,7 +164,9 @@ trait TesterTraits
 
     /**
      * Sets up the two main arrays the tests uses.
+     *
      * @param array $a_values ['namespace', 'class_name', 'order_file', 'values_file', 'extra_dir']
+     * @noinspection PhpConditionAlreadyCheckedInspection
      */
     public function setupTests(array $a_values = []):void
     {
@@ -386,9 +388,7 @@ trait TesterTraits
         }
         try {
             $a_results = $this->$instance->$test($test_this);
-            $results = empty($a_results)
-                ? false
-                : true;
+            $results = !empty($a_results);
             if ($results === $expected_results) {
                 $this->setSubPassed($test, $subtest);
                 if ($test === 'create') {
@@ -455,9 +455,7 @@ trait TesterTraits
         $expected_results = $a_test_values['expected_results'];
         $test_this = $a_test_values['test_values'];
         $a_results = $this->$instance->$test($test_this);
-        $results = empty($a_results)
-            ? false
-            : true;
+        $results = !empty($a_results);
         if ($results === $expected_results) {
             return 'passed';
         }
@@ -614,10 +612,10 @@ trait TesterTraits
             $a_parts = explode('::', $method_name);
             $method_name = $a_parts[1];
         }
-        if (substr($method_name, -6) === 'Tester') {
+        if (str_ends_with($method_name, 'Tester')) {
             return substr($method_name, 0, -6);
         }
-        if (substr($method_name, -5) === 'Tests') {
+        if (str_ends_with($method_name, 'Tests')) {
             return substr($method_name, 0, -5);
         }
         return $method_name;
@@ -665,9 +663,6 @@ trait TesterTraits
     {
         if ($method_name === '' || $test_name === '') { return; }
         $method_name = $this->shortenName($method_name);
-        if (is_array($this->failed_subtests) === false) {
-            $this->failed_subtests = array();
-        }
         if (array_key_exists($method_name, $this->failed_subtests)) {
             $this->failed_subtests[$method_name][] = $test_name;
         }
@@ -743,7 +738,6 @@ trait TesterTraits
             return false;
         }
         $o_ref = new ReflectionClass(__CLASS__);
-        $o_method = $o_ref->getMethod($method_name);
-        return $o_method->isPublic();
+        return $o_ref->getMethod($method_name)->isPublic();
     }
 }

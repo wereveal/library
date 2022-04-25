@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection RegExpRedundantEscape */
 /**
  * @noinspection PhpUndefinedConstantInspection
  * @noinspection NotOptimalRegularExpressionsInspection
@@ -77,50 +77,50 @@ class Strings
     public static function formatPhoneNumber(string $phone_number = '', string $phone_format = 'AAA-BBB-CCCC'): string|array|null
     {
         if ($phone_number === '') { return ''; }
-        $phone_number = preg_replace('/[^0-9]/', '', $phone_number);
+        $phone_number = preg_replace('/\D/', '', $phone_number);
         $strlen = strlen($phone_number);
         return match ($strlen) {
-            7       => preg_replace('/([0-9]{3})([0-9]{4})/', '$1-$2', $phone_number),
+            7       => preg_replace('/(\d{3})(\d{4})/', '$1-$2', $phone_number),
             10      => match ($phone_format) {
                 '(XXX) XXX-XXXX', '(AAA) BBB-CCCC' => preg_replace(
-                    '/([0-9]{3})([0-9]{3})([0-9]{4})/',
+                    '/(\d{3})(\d{3})(\d{4})/',
                     '($1) $2-$3',
                     $phone_number
                 ),
                 'XXX XXX XXXX', 'AAA BBB CCCC'     => preg_replace(
-                    '/([0-9]{3})([0-9]{3})([0-9]{4})/',
+                    '/(\d{3})(\d{3})(\d{4})/',
                     '$1 $2 $3',
                     $phone_number
                 ),
                 'XXX.XXX.XXXX', 'AAA.BBB.CCCC'     => preg_replace(
-                    '/([0-9]{3})([0-9]{3})([0-9]{4})/',
+                    '/(\d{3})(\d{3})(\d{4})/',
                     '$1.$2.$3',
                     $phone_number
                 ),
                 default                            => preg_replace(
-                    '/([0-9]{3})([0-9]{3})([0-9]{4})/',
+                    '/(\d{3})(\d{3})(\d{4})/',
                     '$1-$2-$3',
                     $phone_number
                 ),
             },
             11      => match ($phone_format) {
                 '(XXX) XXX-XXXX', '(AAA) BBB-CCCC' => preg_replace(
-                    '/([0-9])([0-9]{3})([0-9]{3})([0-9]{4})/',
+                    '/(\d)(\d{3})(\d{3})(\d{4})/',
                     '$1 ($2) $3-$4',
                     $phone_number
                 ),
                 'XXX XXX XXXX', 'AAA BBB CCCC'     => preg_replace(
-                    '/([0-9])([0-9]{3})([0-9]{3})([0-9]{4})/',
+                    '/(\d)(\d{3})(\d{3})(\d{4})/',
                     '$1 $2 $3 $4',
                     $phone_number
                 ),
                 'XXX.XXX.XXXX', 'AAA.BBB.CCCC'     => preg_replace(
-                    '/([0-9])([0-9]{3})([0-9]{3})([0-9]{4})/',
+                    '/(\d)(\d{3})(\d{3})(\d{4})/',
                     '$1.$2.$3.$4',
                     $phone_number
                 ),
                 default                            => preg_replace(
-                    '/([0-9])([0-9]{3})([0-9]{3})([0-9]{4})/',
+                    '/(\d)(\d{3})(\d{3})(\d{4})/',
                     '$1 $2-$3-$4',
                     $phone_number
                 ),
@@ -133,10 +133,10 @@ class Strings
      * Takes the input and makes it a boolean.
      * Basically, looks for the boolean false, int 0, or string of false (case insensitive).
      *
-     * @param null|string $input the value to turn to a boolean
+     * @param mixed $input the value to turn to a boolean
      * @return bool        the changed value
      */
-    public static function isTrue(null|string $input):bool
+    public static function isTrue(mixed $input):bool
     {
         if (is_bool($input)) {
             return $input;
@@ -185,7 +185,7 @@ class Strings
      */
     public static function makeAlphanumeric(string $the_string = ''):string
     {
-        return preg_replace('/[^a-zA-Z0-9]/', '', $the_string);
+        return preg_replace('/[^a-zA-Z\d]/', '', $the_string);
     }
 
     /**
@@ -200,7 +200,7 @@ class Strings
     {
         $the_string = self::removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
-        return preg_replace('/[^a-zA-Z0-9_\-]/', '', $the_string);
+        return preg_replace('/[^a-zA-Z\d_\-]/', '', $the_string);
     }
 
     /**
@@ -287,7 +287,7 @@ class Strings
         $the_string = self::removeTags($the_string);
         $the_string = str_replace(' ', '_', $the_string);
         $the_string = filter_var($the_string, FILTER_SANITIZE_URL);
-        $the_string = preg_replace('/[^a-zA-Z0-9_.+!\-~]/', '', $the_string);
+        $the_string = preg_replace('/[^a-zA-Z\d_.+!\-~]/', '', $the_string);
         return strtolower($the_string);
     }
 
@@ -348,7 +348,6 @@ class Strings
             }
             for ($i = 0; $i < $num_of_words; $i++) {
                 $that_string .= $that_string ?? ' ';
-                /** @noinspection NotOptimalIfConditionsInspection */
                 if ($num_of_chars > 0 && strlen($that_string . $string_parts[$i]) > $num_of_chars) {
                     break;
                 }
@@ -423,9 +422,9 @@ class Strings
     public static function removeImages(string $string = ''):string
     {
         $search = [
-            '@<img[^>]*?>@si',
-            '@<img[^>]*? />@si',
-            '@<img[^>]*?/>@si'
+            '@<img[^>]*?>@i',
+            '@<img[^>]*? />@i',
+            '@<img[^>]*?/>@i'
         ];
         $replace = ['', ''];
         return preg_replace($search, $replace, $string);
@@ -454,8 +453,8 @@ class Strings
     {
         $search = [
             '@<script[^>]*?>.*?</script>@si', // Strip out javascript
-            '@<[\/\!]*?[^<>]*?>@si',          // Strip out HTML tags
-            '@([\r\n])[\s]+@'                 // evaluate as php
+            '@<[\/\!]*?[^<>]*?>@i',          // Strip out HTML tags
+            '@([\r\n])\s+@'                 // evaluate as php
         ];
         $replace = ['', '', '\1'];
         return preg_replace($search, $replace, $html);
@@ -474,8 +473,8 @@ class Strings
     {
         $search = [
             '@<script[^>]*?>.*?</script>@si', // Strip out javascript
-            '@<[\/\!]*?[^<>]*?>@si',          // Strip out HTML tags
-            '@([\r\n])[\s]+@'                 // evaluate as php
+            '@<[\/\!]*?[^<>]*?>@i',          // Strip out HTML tags
+            '@([\r\n])\s+@'                 // evaluate as php
         ];
         $replace = ['', '', '\1'];
         $string = html_entity_decode($string, $ent_flag);

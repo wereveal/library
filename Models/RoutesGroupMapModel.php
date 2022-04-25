@@ -184,7 +184,7 @@ class RoutesGroupMapModel extends ModelAbstract
             WHERE route_id = :route_id
         ";
         try {
-            return $this->o_db->delete($sql, ['route_id' => $route_id], true);
+            return $this->o_db->delete($sql, ['route_id' => $route_id]);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode());
@@ -208,7 +208,7 @@ class RoutesGroupMapModel extends ModelAbstract
             WHERE group_id = :group_id
         ";
         try {
-            return $this->o_db->delete($sql, [':group_id' => $group_id], true);
+            return $this->o_db->delete($sql, [':group_id' => $group_id]);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode());
@@ -242,7 +242,7 @@ class RoutesGroupMapModel extends ModelAbstract
                 ':group_id' => $group_id,
                 ':route_id' => $route_id
             ];
-            return $this->o_db->delete($sql, $a_values, true);
+            return $this->o_db->delete($sql, $a_values);
         }
         catch (ModelException $e) {
             throw new ModelException($e->errorMessage(), $e->getCode());

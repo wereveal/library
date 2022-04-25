@@ -25,7 +25,7 @@ class ServiceException extends CustomExceptionAbstract
      * @param string $value
      * @return int
      */
-    public function getCodeNumber($value = ''):int
+    public function getCodeNumber(string $value = ''):int
     {
         return ExceptionHelper::getCodeNumberService($value);
     }

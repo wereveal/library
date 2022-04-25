@@ -64,11 +64,7 @@ class DatesTimes
      */
     public static function diffInDays(string $start_date = '', string $end_date = ''):string
     {
-        $interval = self::getInterval($start_date, $end_date);
-        if ($interval !== null) {
-            return $interval->format('%r%a');
-        }
-        return '0';
+        return self::getInterval($start_date, $end_date)->format('%r%a');
     }
 
     /**
@@ -81,13 +77,7 @@ class DatesTimes
     public static function diffInMonths(string $start_date = '', string $end_date = ''):string
     {
         $o_int = self::getInterval($start_date, $end_date);
-        if ($o_int !== null) {
-            return $o_int->format('%r') . (
-                    ($o_int->y * 12) +
-                    $o_int->m
-                );
-        }
-        return '0';
+        return $o_int->format('%r') . (($o_int->y * 12) + $o_int->m);
     }
 
     /**
@@ -100,10 +90,7 @@ class DatesTimes
     public static function diffInYears(string $start_date = '', string $end_date = ''):string
     {
         $o_int = self::getInterval($start_date, $end_date);
-        if ($o_int !== null) {
-            return $o_int->format('%r') . ($o_int->y + (($o_int->m/12) + ($o_int->d/30)));
-        }
-        return '0';
+        return $o_int->format('%r') . ($o_int->y + (($o_int->m/12) + ($o_int->d/30)));
     }
 
     /**
@@ -116,15 +103,12 @@ class DatesTimes
     public static function diffInHours(string $start_time = '', string $end_time = ''):string
     {
         $o_int = self::getInterval($start_time, $end_time);
-        if ($o_int !== null) {
-            return $o_int->format('%r') . (
-                ($o_int->y * 365 * 24) +
-                ($o_int->m * 30 * 24) +
-                ($o_int->d * 24) +
-                $o_int->h
-            );
-        }
-        return '0';
+        return $o_int->format('%r') . (
+            ($o_int->y * 365 * 24) +
+            ($o_int->m * 30 * 24) +
+            ($o_int->d * 24) +
+            $o_int->h
+        );
     }
 
     /**
@@ -137,17 +121,14 @@ class DatesTimes
     public static function diffInMinutes(string $start_time = '', string $end_time = ''):string
     {
         $o_int = self::getInterval($start_time, $end_time);
-        if ($o_int !== null) {
-            $minus = $o_int->format('%r');
-            return $minus . (
-                ($o_int->y * 365 * 24 * 60) +
-                ($o_int->m * 30 * 24 * 60) +
-                ($o_int->d * 24 * 60) +
-                ($o_int->h * 60) +
-                $o_int->i
-            );
-        }
-        return '0';
+        $minus = $o_int->format('%r');
+        return $minus . (
+            ($o_int->y * 365 * 24 * 60) +
+            ($o_int->m * 30 * 24 * 60) +
+            ($o_int->d * 24 * 60) +
+            ($o_int->h * 60) +
+            $o_int->i
+        );
     }
 
     /**
@@ -160,19 +141,15 @@ class DatesTimes
     public static function diffInSeconds(string $start_time = '', string $end_time = ''):string
     {
         $o_int = self::getInterval($start_time, $end_time);
-        if ($o_int !== null) {
-            // print_r($o_int);
-            $minus = $o_int->format('%r');
-            return $minus . (
-                ($o_int->y * 365 * 24 * 60 * 60) +
-                ($o_int->m * 30 * 24 * 60 * 60) +
-                ($o_int->d * 24 * 60 * 60) +
-                ($o_int->h * 60 * 60) +
-                ($o_int->i * 60) +
-                $o_int->s
-            );
-        }
-        return '0';
+        $minus = $o_int->format('%r');
+        return $minus . (
+            ($o_int->y * 365 * 24 * 60 * 60) +
+            ($o_int->m * 30 * 24 * 60 * 60) +
+            ($o_int->d * 24 * 60 * 60) +
+            ($o_int->h * 60 * 60) +
+            ($o_int->i * 60) +
+            $o_int->s
+        );
     }
 
     /**
@@ -209,8 +186,7 @@ class DatesTimes
             }
         }
         try {
-            $o_time = new DateTime($timestring, new DateTimeZone(date('e')));
-            return $o_time->format($time_format);
+            return (new DateTime($timestring, new DateTimeZone(date('e'))))->format($time_format);
         }
         catch (Exception $e) {
             /** @noinspection ForgottenDebugOutputInspection */
@@ -424,8 +400,7 @@ class DatesTimes
             return date($time_format, (int) $timestamp);
         }
         try {
-            $o_date = new DateTime($timestamp);
-            return $o_date->format($time_format);
+            return (new DateTime($timestamp))->format($time_format);
         }
         catch (Exception) {
             return date($time_format);

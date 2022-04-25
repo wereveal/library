@@ -31,15 +31,15 @@ class PeopleEntity implements EntityInterface
     private string $short_name = '';
     /** @var string $password */
     private string $password = '';
-    /** @var int $is_logged_in */
+    /** @var string|int $is_logged_in */
     private string|int $is_logged_in = 'false';
     /** @var int $bad_login_count */
     private int $bad_login_count = 0;
     /** @var int $bad_login_ts */
     private int $bad_login_ts = 0;
-    /** @var int $is_active */
+    /** @var string|int $is_active */
     private string|int $is_active = 'false';
-    /** @var int $is_immutable */
+    /** @var string|int $is_immutable */
     private string|int $is_immutable = 'false';
     /** @var int $created_on */
     private int $created_on = 0;

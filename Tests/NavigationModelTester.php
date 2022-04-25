@@ -23,7 +23,7 @@ use Ritc\Library\Services\Di;
 class NavigationModelTester extends Tester
 {
     /** @var NavigationModel */
-    private NavigationModel $o_nav_db;
+    protected NavigationModel $o_nav_db;
 
     /**
      * NavigationModelTester constructor.
@@ -31,12 +31,9 @@ class NavigationModelTester extends Tester
      */
     public function __construct(Di $o_di)
     {
-        $this->setupElog($o_di);
         /** @var DbModel $o_db */
         $o_db = $o_di->get('db');
-        /** @noinspection UnusedConstructorDependenciesInspection */
         $this->o_nav_db = new NavigationModel($o_db);
-        $this->o_nav_db->setElog($this->o_elog);
     }
 
     /**

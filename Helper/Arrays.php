@@ -225,7 +225,7 @@ class Arrays
                 $a_pairs[$key] = self::encodeValues($value, $sanitize_flags);
             }
             else {
-                $a_pairs[$key] = filter_var($value, FILTER_SANITIZE_STRING, $sanitize_flags);
+                $a_pairs[$key] = filter_var($value, FILTER_SANITIZE_FULL_SPECIAL_CHARS, $sanitize_flags);
             }
         }
         return $a_pairs;

@@ -38,7 +38,6 @@ trait ConfigViewTraits
      */
     public function renderLogin(array $a_values = []):string
     {
-        $meth = __METHOD__ . '.';
         $this->o_session->resetSession();
         $location = empty($a_values['location'])
             ? '/manager/config/'
@@ -55,10 +54,6 @@ trait ConfigViewTraits
             : $a_values['tpl'];
         $a_twig_values['login_url'] = $location;
         $tpl = $this->createTplString($a_twig_values);
-          $log_message = 'twig values:  ' . var_export($a_twig_values, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-          $log_message = 'Session:  ' . var_export($_SESSION, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $this->renderIt($tpl, $a_twig_values);
     }
 

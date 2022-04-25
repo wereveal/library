@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpUndefinedConstantInspection */
-
+<?php
 /**
  * Class PeopleController
  * @package Ritc_Library
