@@ -5,7 +5,7 @@
 @use "../app/colors" as acolor;
 @use "../colors/blue" as blue;
 @use "../defaults/colors" as dcolor;
-@use "../../../../../../../../public/assets/node_modules/bulma/bulma";
+@use "../../../../../../../../node_modules/bulma/bulma";
 @use "mods_to_bulma" as bulmods;
 @use "../defaults/mixins" as dmix;
 @use "mixins" as bulmix;

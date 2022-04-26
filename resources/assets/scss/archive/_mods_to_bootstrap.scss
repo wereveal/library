@@ -2,7 +2,7 @@
 /*! note, change the use colors to the correct color palette */
 @use "variables" as v;
 @use "colors_blue" as c;
-@use "../../../../../../../public/assets/node_modules/bootstrap/scss/mixins/breakpoints" as bs-bp;
+@use "../../../../../../node_modules/bootstrap/scss/mixins/breakpoints" as bs-bp;
 
 html {
     font-size: v.$default-body-font-size;

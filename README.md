@@ -6,10 +6,11 @@ This README would normally document whatever steps are necessary to get your app
 
 - Quick summary -- This provides a library of classes used to build an app.
 - Version -- 6.1.0
+- Requires Php 8.x
 
 ## How do I get set up? ##
 
-- Normally this is setup in the ritc framework.
+- Normally this is setup in the RITC framework.
 - There are setup resources in the resources dir
 
 ## Contributing ##
