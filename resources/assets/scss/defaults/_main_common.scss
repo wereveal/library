@@ -1,6 +1,7 @@
 /* Main Common */
 @use "mixins" as dm;
 @use "variables" as dv;
+@use "../app/variables" as av;
 @use "colors" as dc;
 
 $gradient_dir: dv.$gradient-direction;
@@ -11,7 +12,7 @@ html {
 
 body {
   height:           100%;
-  background-color: dc.$color-body;
+  background-color: av.$tc-color-body;
 }
 
 code {
@@ -79,7 +80,7 @@ hr.item-card {
 .btn-big {
   font-size:     2.25rem;
   font-weight:   300;
-  text-shadow:   1px 1px 1px dc.$gray50;
+  text-shadow:   1px 1px 1px av.$tc-color-shadow;
   margin-top:    1rem;
   margin-bottom: 1rem;
   width:         100%;
@@ -130,7 +131,7 @@ hr.item-card {
 }
 
 .container {
-  background-color: dc.$color-container;
+  background-color: av.$tc-color-container;
   margin-bottom:    2rem;
   margin-top:       1rem;
 
@@ -140,15 +141,15 @@ hr.item-card {
 
   &.container-footer {
     @include dm.contentBlock('footer');
-    @include dm.linearGradientTwoColor(dc.$gradient-stop, dc.$gradient-start, dv.$gradient-direction, dv.$gradient-midpoint);
+    @include dm.linearGradientTwoColor(av.$tc-gradient-stop, av.$tc-gradient-start, dv.$gradient-direction, dv.$gradient-midpoint);
   }
 
   &.container-gradient-down {
-    @include dm.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, dv.$gradient-direction, dv.$gradient-midpoint)
+    @include dm.linearGradientTwoColor(av.$tc-gradient-start, av.$tc-gradient-stop, dv.$gradient-direction, dv.$gradient-midpoint)
   }
 
   &.container-gradient-up {
-    @include dm.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, -$gradient_dir, dv.$gradient-midpoint)
+    @include dm.linearGradientTwoColor(av.$tc-gradient-start, av.$tc-gradient-stop, -$gradient_dir, dv.$gradient-midpoint)
   }
 
   &.container-header {
@@ -182,8 +183,8 @@ hr.item-card {
 
   .row-fluid {
     [class*="span"] {
-      background-color: dc.$color-body;
-      border:           1px solid dc.$color-border;
+      background-color: av.$tc-color-body;
+      border:           1px solid av.$tc-color-border;
       border-radius:    10px;
       margin-bottom:    1rem;
       padding:          1rem 2rem;
@@ -211,12 +212,12 @@ hr.item-card {
   }
 
   .row {
-    background-color: dc.$color-body;
+    background-color: av.$tc-color-body;
     padding-left:     1rem;
     padding-right:    1rem;
 
     [class*="col"] {
-      background-color: dc.$color-body;
+      background-color: av.$tc-color-body;
       border:           0;
       border-radius:    0;
       padding:          0 .25rem;
@@ -242,8 +243,8 @@ hr.item-card {
 
     &.boxed {
       [class*="col"] {
-        background-color: dc.$color-body;
-        border:           1px solid dc.$color-border;
+        background-color: av.$tc-color-body;
+        border:           1px solid av.$tc-color-border;
         border-radius:    .25rem;
         margin-bottom:    1rem;
         padding:          .25rem;
@@ -252,7 +253,7 @@ hr.item-card {
 
     &.no-box {
       [class*="col"] {
-        background-color: dc.$color-body;
+        background-color: av.$tc-color-body;
         border:           0;
         margin-bottom:    1rem;
         padding:          .25rem;
@@ -339,15 +340,15 @@ hr.item-card {
 .container-fluid {
   &.container-footer {
     @include dm.contentBlock('footer');
-    @include dm.linearGradientTwoColor(dc.$gradient-stop, dc.$gradient-start, dv.$gradient-direction, dv.$gradient-shortpoint);
+    @include dm.linearGradientTwoColor(av.$tc-gradient-stop, av.$tc-gradient-start, dv.$gradient-direction, dv.$gradient-shortpoint);
   }
 
   &.container-gradient-down {
-    @include dm.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, dv.$gradient-direction, dv.$gradient-midpoint)
+    @include dm.linearGradientTwoColor(av.$tc-gradient-start, av.$tc-gradient-stop, dv.$gradient-direction, dv.$gradient-midpoint)
   }
 
   &.container-gradient-up {
-    @include dm.linearGradientTwoColor(dc.$gradient-start, dc.$gradient-stop, -$gradient_dir, dv.$gradient-midpoint)
+    @include dm.linearGradientTwoColor(av.$tc-gradient-start, av.$tc-gradient-stop, -$gradient_dir, dv.$gradient-midpoint)
   }
 
   &.container-header {
@@ -355,24 +356,24 @@ hr.item-card {
   }
 
   &.container-body {
-    background-color: dc.$gradient-stop;
+    background-color: av.$tc-gradient-stop;
     padding:          0 !important;
   }
 }
 
 .bordered-rounded, .bordered {
-  border:         1px solid dc.$color-border;
+  border:         1px solid av.$tc-color-border;
   padding-top:    .5rem;
   padding-bottom: .5rem;
   border-radius:  .25rem;
 }
 
 .bordered-square {
-  border: 1px solid dc.$color-border;
+  border: 1px solid av.$tc-color-border;
 }
 
 .shadowed {
-  box-shadow: 0.15rem 0.15rem 0.15rem dc.$color-shadow;
+  box-shadow: 0.15rem 0.15rem 0.15rem av.$tc-color-shadow;
 }
 
 .white {

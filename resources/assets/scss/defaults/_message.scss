@@ -1,4 +1,5 @@
 @use "variables" as v;
+@use "../app/variables" as av;
 @use "mixins" as m;
 @use "colors" as c;
 
@@ -20,6 +21,6 @@
     }
     &.code {
         font-family: v.$default-mono;
-        @include m.messageColors(c.$color-container, c.$color-border, c.$color-dark);
+        @include m.messageColors(av.$tc-color-container, av.$tc-color-border, av.$tc-color-dark);
     }
 }

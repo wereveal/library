@@ -1,5 +1,5 @@
 /* The Alpha List Menu */
-@use "colors" as c;
+@use "../app/variables" as av;
 
 .container {
 	div.selections {
@@ -60,19 +60,19 @@
 		        padding-right: 3px;
 		        font-weight: 900;
 		        &.firstLetter {
-		            border-left: 1px solid c.$color-medium;
-		            border-right: 1px solid c.$color-medium;
+		            border-left: 1px solid av.$tc-color-medium;
+		            border-right: 1px solid av.$tc-color-medium;
 		        }
 		        &.otherLetter {
-		            border-right: 1px solid c.$color-medium;
+		            border-right: 1px solid av.$tc-color-medium;
 		        }
 		        &.lastLetter {
-		            border-right: 1px solid c.$color-medium;
+		            border-right: 1px solid av.$tc-color-medium;
 		        }
 		        &.noLink {
-		            color: c.$color-medium;
+		            color: av.$tc-color-medium;
 		            font-weight: 400;
-		            border-right: 1px solid c.$color-medium;
+		            border-right: 1px solid av.$tc-color-medium;
 		        }
 		    }
 		}

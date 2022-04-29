@@ -183,7 +183,7 @@ class Html
      *
      * @param mixed|string $template may be the name of a file or a string. If
      *     a name of a file, the file must be in the templates directory
-     *     of the in use theme. Suggestion is simple, if the same template
+     *     of the in use colors. Suggestion is simple, if the same template
      *     is being used multiple time consecutively, put the template in
      *     a string once and pass it into the fill template method.
      * @param array        $a_values the values to insert into the template in

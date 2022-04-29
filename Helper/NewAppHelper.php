@@ -529,7 +529,7 @@ class NewAppHelper
     {
         $a_default = [
             'app_name'        => 'Main',                          // specify the primary app to which generates the home page
-            'app_them_name'   => 'base_fluid',                    // default theme for app
+            'app_them_name'   => 'base_fluid',                    // default colors for app
             'namespace'       => 'Ritc',                          // specify the root namespace the app will be in
             'author'          => 'William E Reveal',              // specify the author of the app
             'short_author'    => 'wer',                           // abbreviation for the author

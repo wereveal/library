@@ -1,34 +1,39 @@
 @use "sass:color";
 @use "../defaults/colors" as dc;
 
-$color-default:    dc.$green-darker;
-$color-darkest:    dc.$green-darkest;
-$color-darker:     dc.$green-darker;
-$color-dark:       dc.$green-dark;
-$color-med-dark:   dc.$green-med-dark;
-$color-medium:     dc.$green-medium;
-$color-med-light:  dc.$green-med-light;
-$color-light:      dc.$green-light;
-$color-lighter:    dc.$green-lighter;
-$color-lightest:   dc.$green-lightest;
-$color-body:       dc.$green-dark;
-$color-container:  dc.$green-lightest;
-$color-border:     dc.$green-darker;
-$color-complement: dc.$green-complement;
-$color-shadow      : color.scale(dc.$green-darkest, $alpha: -35%);
-$color-shadow-alt  : color.scale(dc.$green-complement, $alpha: -35%);
+$color-default:    dc.$green-darker !default;
+$color-darkest:    dc.$green-darkest !default;
+$color-darker:     dc.$green-darker !default;
+$color-dark:       dc.$green-dark !default;
+$color-med-dark:   dc.$green-med-dark !default;
+$color-medium:     dc.$green-medium !default;
+$color-med-light:  dc.$green-med-light !default;
+$color-light:      dc.$green-light !default;
+$color-lighter:    dc.$green-lighter !default;
+$color-lightest:   dc.$green-lightest !default;
+$color-body:       dc.$green-dark !default;
+$color-container:  dc.$green-lightest !default;
+$color-border:     dc.$green-darker !default;
+$color-complement: dc.$green-complement !default;
+$color-shadow      : color.scale(dc.$gray-darkest, $alpha: -35%) !default;
+$color-shadow-alt  : color.scale(dc.$gray-complement, $alpha: -35%) !default;
+$color-heading     : dc.$green-darkest !default;
+$color-heading-alt : dc.$green-complement !default;
 
 /* Gradient */
-$gradient-start: dc.$green-med-dark;
-$gradient-stop:  dc.$green-med-light;
+$gradient-start: dc.$green-med-dark !default;
+$gradient-stop:  dc.$green-med-light !default;
+
+/* Misc */
+$border-color     : dc.$blue-light !default;
 
 /* Navbar */
-$navbar-text-color:      dc.$green-xlight;
-$navbar-link-active:     dc.$green-light;
-$navbar-link-hover:      dc.$color-white;
-$navbar-sub-bg:          dc.$green-xlight;
-$navbar-sub-bg-hover:    dc.$green-light;
-$navbar-sub-text-color:  dc.$black-color;
-$navbar-sub-link-active: dc.$green-light;
-$navbar-sub-link-hover:  dc.$green-med-dark;
+$navbar-text-color:      dc.$green-xlight !default;
+$navbar-link-active:     dc.$green-light !default;
+$navbar-link-hover:      dc.$color-white !default;
+$navbar-sub-bg:          dc.$green-xlight !default;
+$navbar-sub-bg-hover:    dc.$green-light !default;
+$navbar-sub-text-color:  dc.$black-color !default;
+$navbar-sub-link-active: dc.$green-light !default;
+$navbar-sub-link-hover:  dc.$green-med-dark !default;
 

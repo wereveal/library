@@ -27,14 +27,14 @@ $green-bs4:              #28a745;
 $teal-bs4:               #20c997;
 $cyan-bs4:               #17a2b8;
 
-$orange-bul:       hsl(14,  100%, 53%);
-$yellow-bul:       hsl(48,  100%, 67%);
-$green-bul:        hsl(141, 71%,  48%);
-$turquoise-bul:    hsl(171, 100%, 41%);
-$cyan-bul:         hsl(204, 86%,  53%);
-$blue-bul:         hsl(217, 71%,  53%);
-$purple-bul:       hsl(271, 100%, 71%);
-$red-bul:          hsl(348, 100%, 61%);
+$orange-bul:             hsl(14, 100%, 53%);
+$yellow-bul:             hsl(48, 100%, 67%);
+$green-bul:              hsl(141, 71%, 48%);
+$turquoise-bul:          hsl(171, 100%, 41%);
+$cyan-bul:               hsl(204, 86%, 53%);
+$blue-bul:               hsl(217, 71%, 53%);
+$purple-bul:             hsl(271, 100%, 71%);
+$red-bul:                hsl(348, 100%, 61%);
 
 /* alts to bs4 */
 $black-color:            #000 !default;
@@ -79,26 +79,27 @@ $blue-alt-complement:    #9fc8e6 !default;
 $gray20:                 #333 !default;
 $gray25:                 #404040 !default;
 $gray35:                 #595959 !default;
-$gray40:                 #666 !default;
-$gray50:                 #808080 !default;
-$gray60:                 #999 !default;
-$gray65:                 #a6a6a6 !default;
-$gray75:                 #bfbfbf !default;
-$gray80:                 #ccc !default;
-$gray90:                 #e6e6e6 !default;
-$gray95:                 #f2f2f2 !default;
+$gray40:          #666 !default;
+$gray50:          #808080 !default;
+$gray60:          #999 !default;
+$gray65:          #a6a6a6 !default;
+$gray75:          #bfbfbf !default;
+$gray80:          #ccc !default;
+$gray90:          #e6e6e6 !default;
+$gray95:          #f2f2f2 !default;
 
-$gray-darkest:           #262d35 !default;
-$gray-dark:              #343a40 !default;
-$gray-med-dark:          #495057 !default;
-$gray-medium:            $gray-color !default;
-$gray-med-light:         #ced4da !default;
-$gray-light:             #dee2e6 !default;
-$gray-lighter:           #e7ebef !default;
-$gray-xlight:            #e9ecef !default;
-$gray-lightest:          $gray-xlight !default;
-$gray-barely:            #f8f9fa !default;
-$gray-complement:        #276998 !default;
+$gray-darkest:    #262d35 !default;
+$gray-darker:     #2e3338 !default;
+$gray-dark:       #343a40 !default;
+$gray-med-dark:   #495057 !default;
+$gray-medium:     $gray-color !default;
+$gray-med-light:  #ced4da !default;
+$gray-light:      #dee2e6 !default;
+$gray-lighter:    #e7ebef !default;
+$gray-xlight:     #e9ecef !default;
+$gray-lightest:   $gray-xlight !default;
+$gray-barely:     #f8f9fa !default;
+$gray-complement: #276998 !default;
 
 $grey:                   $gray-color !default;
 $grey-lightest:          $gray-barely !default;
@@ -114,11 +115,14 @@ $grey-darkest:           color.scale($grey-darker, $lightness: -10%) !default;
 $slate-darkest:          #132828 !default;
 $slate-darker:           #1b3737 !default;
 $slate-dark:             #2f4f4f !default;
-$slate-medium:           #708090 !default;
-$slate-light:            #94a9be !default;
-$slate-lighter:          #a3b8cd !default;
-$slate-lightest:         #c5d3e1 !default;
-$slate-xlight:           #c4d2e0 !default;
+$slate-med-dark:         #485f60 !default;
+$slate-medium:           #557172 !default;
+$slate-med-light:        #6f9293 !default;
+$slate-light:            #94bebe !default;
+$slate-lighter:          #a5d3d3 !default;
+$slate-lightest:         #b7e8e8 !default;
+$slate-xlight:           #cdf6f6 !default;
+$slate-complement:       #276998 !default;
 $slate-color:            $slate-medium !default;
 
 $brown-darkest:          #2d1616 !default;
@@ -200,38 +204,6 @@ $color-teal:             $teal-color !default;
 $color-violet:           $violet-color !default;
 $color-white:            $white-color !default;
 $color-yellow:           $yellow-color !default;
-
-$color-default:          $gray-darkest !default;
-$color-dark:             $gray-dark !default;
-$color-medium:           $gray-medium !default;
-$color-light:            $gray-light !default;
-$color-lighter:          $gray-lighter !default;
-$color-lightest:         $gray-lightest !default;
-$color-xlight:           $gray-lightest; // legacy
-$color-complement:       $gray-complement !default;
-$color-body:             $gray-med-light !default;
-$color-container:        $gray-barely !default;
-$color-border:           $grey-darkest !default;
-$color-shadow:           color.scale($color-default, $alpha: -35%) !default;
-$color-shadow-alt:       color.scale($color-complement, $alpha: -35%) !default;
-$color-heading:          $gray-darkest !default;
-$color-heading-alt:      $gray-complement !default;
-
-/* Gradient */
-$gradient-start:         $color-body !default;
-$gradient-stop:          $color-container !default;
-
-$border-color:           $gray-light !default;
-
-/* Navbar */
-$navbar-text-color:      $black-color !default;
-$navbar-link-active:     $gray40 !default;
-$navbar-link-hover:      $gray-complement !default;
-$navbar-sub-bg:          $gray95 !default;
-$navbar-sub-bg-hover:    $gray40 !default;
-$navbar-sub-text-color:  $black-color !default;
-$navbar-sub-link-active: $gray40 !default;
-$navbar-sub-link-hover:  $gray-complement !default;
 
 /* More Boostrap Pure Overrides for semantic colors */
 $primary:                $blue !default;

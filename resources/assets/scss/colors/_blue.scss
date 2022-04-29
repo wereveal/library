@@ -21,18 +21,19 @@ $color-heading     : dc.$blue-darkest !default;
 $color-heading-alt : dc.$blue-complement !default;
 
 /* Gradient */
-$gradient-start   : $color-light !default;
-$gradient-stop    : $color-lightest !default;
+$gradient-start   : dc.$blue-light !default;
+$gradient-stop    : dc.$blue-lightest !default;
 
+/* Misc */
 $border-color     : dc.$blue-light !default;
 
 /* Navbar */
-$navbar-text-color      : $color-darkest !default;
-$navbar-link-active     : $color-dark !default;
-$navbar-link-hover      : $color-med-dark !default;
-$navbar-sub-bg          : $color-lightest !default;
-$navbar-sub-bg-hover    : $color-light !default;
-$navbar-sub-text-color  : $color-darkest !default;
-$navbar-sub-link-active : $color-dark !default;
-$navbar-sub-link-hover  : $color-darkest !default;
+$navbar-text-color      : dc.$blue-darkest !default;
+$navbar-link-active     : dc.$blue-dark !default;
+$navbar-link-hover      : dc.$blue-med-dark !default;
+$navbar-sub-bg          : dc.$blue-lightest !default;
+$navbar-sub-bg-hover    : dc.$blue-light !default;
+$navbar-sub-text-color  : dc.$blue-darkest !default;
+$navbar-sub-link-active : dc.$blue-dark !default;
+$navbar-sub-link-hover  : dc.$blue-darkest !default;
 

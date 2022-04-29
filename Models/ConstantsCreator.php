@@ -41,7 +41,7 @@ use Ritc\Library\Services\Di;
  *            the db_prefix variable set from the db confuration
  *            (created in PdoFactory, passed on to DbModel).
  * - v3.1.0 - made it so it will create the constants table if it does not exist.   - 01/31/2014 wer
- *            Other changes to adjust to not having a theme based app.
+ *            Other changes to adjust to not having a colors based app.
  * - v3.0.1 - refactoring for database class change                                 - 2013-11-06 wer
  * - v3.0.0 - Modified for new framework file hierarchy                             - 2013-04-30 wer
  * - v2.3.0 - mostly changes for FIG-standards
@@ -265,8 +265,8 @@ class ConstantsCreator
     }
 
     /**
-     * Creates constants referring to the main assets for the primary (single) theme.
-     * A theme may be unnamed, i.e. there is no theme. It uses the basic
+     * Creates constants referring to the main assets for the primary (single) colors.
+     * A colors may be unnamed, i.e. there is no colors. It uses the basic
      *     assets directory for everything. If there is a defined THEMES_DIR,
      *     that overrides the assets directory e.g. /themes
      */

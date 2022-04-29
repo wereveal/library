@@ -3,6 +3,7 @@
 @use "sass:math";
 @use "colors" as c;
 
+$app_theme:               "blue" !default;
 $default-body-font-size:  16px !default;
 $default-radius:          .25rem !default;
 $default-h1:              2rem !default;

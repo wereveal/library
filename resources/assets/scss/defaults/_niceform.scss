@@ -1,11 +1,11 @@
 /* A nice form format */
+@use "colors" as c;
 ul.niceform {
   font-family: Arial, Tahoma, Helvetica, Geneva, sans-serif;
   list-style: none;
-  margin: 1px;
-  margin-bottom: 12px;
+  margin: 1px 1px 12px;
   padding: 0;
-  border: 1px solid $blue-medium;
+  border: 1px solid c.$blue-medium;
   &:after {
     content: ".";
     display: block;
@@ -47,14 +47,14 @@ ul.niceform {
         padding-right: 6px;
       }
       &.bright {
-        border-right: 1px solid $blue-medium;
+        border-right: 1px solid c.$blue-medium;
       }
     }
     &.row-dark div {
-      background-color: $gray-xlight;
+      background-color: c.$gray-xlight;
     }
     &.default-row div {
-      background-color: $color-white;
+      background-color: c.$color-white;
     }
     &.skinny {
       min-height: 1em;

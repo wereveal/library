@@ -16,7 +16,7 @@ use Ritc\Library\Interfaces\LocationInterface;
  * @version 5.0.0
  * @date    2021-11-29 15:51:06
  * @note The constants with _DIR_NAME should correspond to dir names in
- *       the site theme or namespace (e.g. templates are in namespace). If a directory
+ *       the site colors or namespace (e.g. templates are in namespace). If a directory
  *       is missing, this could cause a fatal error.
  * @change_log
  * - v5.0.0 - updated for php8                                                      - 2021-11-29 wer
@@ -74,7 +74,7 @@ class Files implements LocationInterface
      */
     protected string $file_w_path;
     /**
-     * Name of the theme.
+     * Name of the colors.
      *
      * @var string
      */
@@ -154,7 +154,7 @@ class Files implements LocationInterface
      * @param string $file_name     (str) - name of file - required - can include
      *     sub-paths to work with one of the several file_dir_name types,
      *     especially useful when using sub-dirs of templates and other
-     *     sections of the theme.
+     *     sections of the colors.
      * @param string $file_dir_name (str) - one of several types or raw path - optional
      * @return string - the contents of the file or false.
      */

@@ -2,6 +2,7 @@
 @use "sass:map";
 @use "sass:color";
 @use "colors" as dc;
+@use "../app/variables" as av;
 @use "variables" as dvars;
 @use "functions" as dfun;
 
@@ -58,14 +59,14 @@
 @mixin contentBlock($colorScheme: 'gray') {
   $borderSize: 0;
   $borderRadius: .25rem;
-  $colorBg: dc.$gray-med-dark;
-  $colorText: dc.$color-lightest;
+  $colorBg: dc.$gray-lightest;
+  $colorText: dc.$gray-dark;
   $padding-size: 0;
 
   @if $colorScheme == 'gray' {
     $borderSize: 1px;
-    $colorBg: dc.$gray-med-dark;
-    $colorText: dc.$color-lightest;
+    $colorBg: dc.$gray-dark;
+    $colorText: dc.$gray-lightest;
   } @else if $colorScheme == 'green' {
     $borderSize: 1px;
     $colorBg: dc.$green-dark;
@@ -84,12 +85,12 @@
     $colorText: dc.$orange-lightest;
   } @else if $colorScheme == 'light' {
     $borderSize: 1px;
-    $colorBg: dc.$color-lightest;
-    $colorText: dc.$gray-med-dark;
+    $colorBg: dc.$gray-lightest;
+    $colorText: dc.$gray-dark;
   } @else if $colorScheme == 'dark' {
     $borderSize: 1px;
     $colorBg: dc.$gray-med-dark;
-    $colorText: dc.$color-lightest;
+    $colorText: dc.$gray-lightest;
   } @else if $colorScheme == 'footer' {
     $padding-size: 1rem;
     $borderRadius: 0;
@@ -312,7 +313,7 @@
 }
 
 @mixin fancyFieldset {
-  border: 1px solid dc.$color-border;
+  border: 1px solid av.$tc-color-border;
   border-radius: dvars.$default-radius;
   padding: .75rem;
   margin-bottom: .5rem;
@@ -500,8 +501,8 @@
     border-color: $color;
     &:hover, &.hover, &:focus, &.focus {
       color: $color-hover;
-      border-color: $active-bg;
-      border-color: $active-border;
+      border-color: $active-bg !important;
+      border-color: $active-border !important;
     }
     &:focus, &.focus {
       @if (dvars.$enable-shadows) {
