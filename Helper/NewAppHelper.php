@@ -94,17 +94,21 @@ class NewAppHelper
     /**
      * Creates directories for the new app.
      *
+     * @param array $a_new_dirs optional, defaults to class property $a_new_dirs
      * @return bool
      */
-    public function createDirectories():bool
+    public function createDirectories(array $a_new_dirs):bool
     {
+        if (empty($a_new_dirs)) {
+            $a_new_dirs = $this->a_new_dirs;
+        }
         if (!file_exists($this->app_path) &&
             !mkdir($this->app_path, 0755, true) &&
             !is_dir($this->app_path)
         ) {
             return false;
         }
-        foreach ($this->a_new_dirs as $dir) {
+        foreach ($a_new_dirs as $dir) {
             $new_dir = $this->app_path . '/' . $dir;
             if (!file_exists($new_dir) &&
                 !mkdir($new_dir, 0755, true) &&
@@ -280,12 +284,12 @@ class NewAppHelper
                 return false;
             }
             $more_text = '// App specific';
-            file_put_contents($this->app_path . '/resources/assets/scss/_' . $app_name . '.scss', $more_text);
-            file_put_contents($this->app_path . '/resources/assets/scss/_colors.scss', $more_text . ' color');
-            file_put_contents($this->app_path . '/resources/assets/scss/_forms.scss', $more_text . ' forms');
-            file_put_contents($this->app_path . '/resources/assets/scss/_media_queries.scss', $more_text . ' forms');
-            file_put_contents($this->app_path . '/resources/assets/scss/_mixins.scss', $more_text . ' mixins');
-            file_put_contents($this->app_path . '/resources/assets/scss/_variables.scss', $more_text . ' variables');
+            file_put_contents($this->app_path . '/resources/assets/scss/app/_' . $app_name . '.scss', $more_text);
+            file_put_contents($this->app_path . '/resources/assets/scss/app/_colors.scss', $more_text . ' color');
+            file_put_contents($this->app_path . '/resources/assets/scss/app/_forms.scss', $more_text . ' forms');
+            file_put_contents($this->app_path . '/resources/assets/scss/app/_media_queries.scss', $more_text . ' forms');
+            file_put_contents($this->app_path . '/resources/assets/scss/app/_mixins.scss', $more_text . ' mixins');
+            file_put_contents($this->app_path . '/resources/assets/scss/app/_variables.scss', $more_text . ' variables');
 
             ### Create the twig_config file ###
             $twig_file = file_get_contents(SRC_CONFIG_PATH . '/install_files/twig_config.php.txt');
@@ -614,6 +618,7 @@ EOF;
                 'resources/assets/images',
                 'resources/assets/js',
                 'resources/assets/scss',
+                'resources/assets/scss/app',
                 'resources/assets/txt',
                 'resources/config',
                 'resources/sql',
