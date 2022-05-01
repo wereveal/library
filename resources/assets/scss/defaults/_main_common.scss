@@ -1,10 +1,7 @@
-/* Main Common */
-@use "mixins" as dm;
-@use "variables" as dv;
-@use "../app/variables" as av;
-@use "colors" as dc;
+/*! lib/defaults/main_common */
+@use "../app/variables" as v;
 
-$gradient_dir: dv.$gradient-direction;
+$gradient_dir: v.$dv-gradient-direction;
 
 html {
   height: 100%;
@@ -12,7 +9,7 @@ html {
 
 body {
   height:           100%;
-  background-color: av.$tc-color-body;
+  background-color: v.$tc-color-body;
 }
 
 code {
@@ -80,14 +77,14 @@ hr.item-card {
 .btn-big {
   font-size:     2.25rem;
   font-weight:   300;
-  text-shadow:   1px 1px 1px av.$tc-color-shadow;
+  text-shadow:   1px 1px 1px v.$tc-color-shadow;
   margin-top:    1rem;
   margin-bottom: 1rem;
   width:         100%;
 }
 
 .header-small-caps {
-  @include dm.fontSmallCapsExtraBold;
+  @include v.dm-fontSmallCapsExtraBold;
 }
 
 .header-sans, .font-sans {
@@ -123,15 +120,15 @@ hr.item-card {
 }
 
 .font-small-caps {
-  @include dm.fontSmallCaps;
+  @include v.dm-fontSmallCaps;
 }
 
 .font-small-caps-bold {
-  @include dm.fontSmallCapsBold;
+  @include v.dm-fontSmallCapsBold;
 }
 
 .container {
-  background-color: av.$tc-color-container;
+  background-color: v.$tc-color-container;
   margin-bottom:    2rem;
   margin-top:       1rem;
 
@@ -140,20 +137,20 @@ hr.item-card {
   }
 
   &.container-footer {
-    @include dm.contentBlock('footer');
-    @include dm.linearGradientTwoColor(av.$tc-gradient-stop, av.$tc-gradient-start, dv.$gradient-direction, dv.$gradient-midpoint);
+    @include v.dm-contentBlock('footer');
+    @include v.dm-linearGradientTwoColor(v.$tc-gradient-stop, v.$tc-gradient-start, v.$dv-gradient-direction, v.$dv-gradient-midpoint);
   }
 
   &.container-gradient-down {
-    @include dm.linearGradientTwoColor(av.$tc-gradient-start, av.$tc-gradient-stop, dv.$gradient-direction, dv.$gradient-midpoint)
+    @include v.dm-linearGradientTwoColor(v.$tc-gradient-start, v.$tc-gradient-stop, v.$dv-gradient-direction, v.$dv-gradient-midpoint)
   }
 
   &.container-gradient-up {
-    @include dm.linearGradientTwoColor(av.$tc-gradient-start, av.$tc-gradient-stop, -$gradient_dir, dv.$gradient-midpoint)
+    @include v.dm-linearGradientTwoColor(v.$tc-gradient-start, v.$tc-gradient-stop, -$gradient_dir, v.$dv-gradient-midpoint)
   }
 
   &.container-header {
-    @include dm.contentBlock('header');
+    @include v.dm-contentBlock('header');
   }
 
   &.container-main {
@@ -183,8 +180,8 @@ hr.item-card {
 
   .row-fluid {
     [class*="span"] {
-      background-color: av.$tc-color-body;
-      border:           1px solid av.$tc-color-border;
+      background-color: v.$tc-color-body;
+      border:           1px solid v.$tc-color-border;
       border-radius:    10px;
       margin-bottom:    1rem;
       padding:          1rem 2rem;
@@ -212,12 +209,12 @@ hr.item-card {
   }
 
   .row {
-    background-color: av.$tc-color-body;
+    background-color: v.$tc-color-body;
     padding-left:     1rem;
     padding-right:    1rem;
 
     [class*="col"] {
-      background-color: av.$tc-color-body;
+      background-color: v.$tc-color-body;
       border:           0;
       border-radius:    0;
       padding:          0 .25rem;
@@ -243,8 +240,8 @@ hr.item-card {
 
     &.boxed {
       [class*="col"] {
-        background-color: av.$tc-color-body;
-        border:           1px solid av.$tc-color-border;
+        background-color: v.$tc-color-body;
+        border:           1px solid v.$tc-color-border;
         border-radius:    .25rem;
         margin-bottom:    1rem;
         padding:          .25rem;
@@ -253,7 +250,7 @@ hr.item-card {
 
     &.no-box {
       [class*="col"] {
-        background-color: av.$tc-color-body;
+        background-color: v.$tc-color-body;
         border:           0;
         margin-bottom:    1rem;
         padding:          .25rem;
@@ -266,59 +263,59 @@ hr.item-card {
     }
 
     &.row-black {
-      @include dm.colorRow(dc.$gray-barely, dc.$black-color);
+      @include v.dm-colorRow(v.$dc-gray-barely, v.$dc-black-color);
     }
 
     &.row-blue {
-      @include dm.colorRow(dc.$blue-lightest, dc.$blue-medium);
+      @include v.dm-colorRow(v.$dc-blue-lightest, v.$dc-blue-medium);
     }
 
     &.row-blue-dark {
-      @include dm.colorRow(dc.$blue-lightest, dc.$blue-color);
+      @include v.dm-colorRow(v.$dc-blue-lightest, v.$dc-blue-color);
     }
 
     &.row-blue-light {
-      @include dm.colorRow(dc.$blue-dark, dc.$blue-lightest);
+      @include v.dm-colorRow(v.$dc-blue-dark, v.$dc-blue-lightest);
     }
 
     &.row-dark {
-      @include dm.colorRow(dc.$gray-darkest, dc.$gray-med-light);
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-med-light);
     }
 
     &.row-darker {
-      @include dm.colorRow(dc.$gray-barely, dc.$gray-color);
+      @include v.dm-colorRow(v.$dc-gray-barely, v.$dc-gray-color);
     }
 
     &.row-darkest {
-      @include dm.colorRow(dc.$gray-lightest, dc.$gray-dark);
+      @include v.dm-colorRow(v.$dc-gray-lightest, v.$dc-gray-dark);
     }
 
     &.row-green {
-      @include dm.colorRow(dc.$green-lightest, dc.$green-med-light);
+      @include v.dm-colorRow(v.$dc-green-lightest, v.$dc-green-med-light);
     }
 
     &.row-green-dark {
-      @include dm.colorRow(dc.$green-lightest, dc.$green-dark);
+      @include v.dm-colorRow(v.$dc-green-lightest, v.$dc-green-dark);
     }
 
     &.row-green-light {
-      @include dm.colorRow(dc.$green-darker, dc.$green-lighter);
+      @include v.dm-colorRow(v.$dc-green-darker, v.$dc-green-lighter);
     }
 
     &.row-light, &.odd, &.odd-inner-odd, &.even-inner-odd {
-      @include dm.colorRow(dc.$gray-darkest, dc.$gray-barely);
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-barely);
     }
 
     &.row-medium, &.even, &.even-inner-even {
-      @include dm.colorRow(dc.$gray-darkest, dc.$gray-light);
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-light);
     }
 
     &.row-med-light, &.odd-inner-even {
-      @include dm.colorRow(dc.$gray-darkest, dc.$gray-lightest);
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-lightest);
     }
 
     &.row-white {
-      @include dm.colorRow(dc.$gray-darkest, dc.$white-color);
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-white-color);
     }
 
     &.upper {
@@ -339,209 +336,209 @@ hr.item-card {
 
 .container-fluid {
   &.container-footer {
-    @include dm.contentBlock('footer');
-    @include dm.linearGradientTwoColor(av.$tc-gradient-stop, av.$tc-gradient-start, dv.$gradient-direction, dv.$gradient-shortpoint);
+    @include v.dm-contentBlock('footer');
+    @include v.dm-linearGradientTwoColor(v.$tc-gradient-stop, v.$tc-gradient-start, v.$dv-gradient-direction, v.$dv-gradient-shortpoint);
   }
 
   &.container-gradient-down {
-    @include dm.linearGradientTwoColor(av.$tc-gradient-start, av.$tc-gradient-stop, dv.$gradient-direction, dv.$gradient-midpoint)
+    @include v.dm-linearGradientTwoColor(v.$tc-gradient-start, v.$tc-gradient-stop, v.$dv-gradient-direction, v.$dv-gradient-midpoint)
   }
 
   &.container-gradient-up {
-    @include dm.linearGradientTwoColor(av.$tc-gradient-start, av.$tc-gradient-stop, -$gradient_dir, dv.$gradient-midpoint)
+    @include v.dm-linearGradientTwoColor(v.$tc-gradient-start, v.$tc-gradient-stop, -$gradient_dir, v.$dv-gradient-midpoint)
   }
 
   &.container-header {
-    @include dm.contentBlock('header');
+    @include v.dm-contentBlock('header');
   }
 
   &.container-body {
-    background-color: av.$tc-gradient-stop;
+    background-color: v.$tc-gradient-stop;
     padding:          0 !important;
   }
 }
 
 .bordered-rounded, .bordered {
-  border:         1px solid av.$tc-color-border;
+  border:         1px solid v.$tc-color-border;
   padding-top:    .5rem;
   padding-bottom: .5rem;
   border-radius:  .25rem;
 }
 
 .bordered-square {
-  border: 1px solid av.$tc-color-border;
+  border: 1px solid v.$tc-color-border;
 }
 
 .shadowed {
-  box-shadow: 0.15rem 0.15rem 0.15rem av.$tc-color-shadow;
+  box-shadow: 0.15rem 0.15rem 0.15rem v.$tc-color-shadow;
 }
 
 .white {
-  color: dc.$white-color;
+  color: v.$dc-white-color;
 }
 
 .black {
-  color: dc.$black-color;
+  color: v.$dc-black-color;
 }
 
 .red {
-  color: dc.$red-color;
+  color: v.$dc-red-color;
 }
 
 .orange {
-  color: dc.$orange-color;
+  color: v.$dc-orange-color;
 }
 
 .yellow {
-  color: dc.$yellow-color;
+  color: v.$dc-yellow-color;
 }
 
 .green {
-  color: dc.$green-color;
+  color: v.$dc-green-color;
 }
 
 .blue {
-  color: dc.$blue-color;
+  color: v.$dc-blue-color;
 }
 
 .teal {
-  color: dc.$teal-color;
+  color: v.$dc-teal-color;
 }
 
 .pink {
-  color: dc.$pink-color;
+  color: v.$dc-pink-color;
 }
 
 .purple {
-  color: dc.$purple-color;
+  color: v.$dc-purple-color;
 }
 
 .dark-grey {
-  color: dc.$gunmetal-dark;
+  color: v.$dc-gunmetal-dark;
 }
 
 .slate {
-  color: dc.$slate-medium;
+  color: v.$dc-slate-medium;
 }
 
 .grey-lightest {
-  color: dc.$grey-lightest;
+  color: v.$dc-grey-lightest;
 }
 
 .grey-lighter {
-  color: dc.$grey-lighter;
+  color: v.$dc-grey-lighter;
 }
 
 .grey-light {
-  color: dc.$grey-light;
+  color: v.$dc-grey-light;
 }
 
 .grey-med-light {
-  color: dc.$grey-med-light;
+  color: v.$dc-grey-med-light;
 }
 
 .grey-medium {
-  color: dc.$grey-medium;
+  color: v.$dc-grey-medium;
 }
 
 .grey-med-dark {
-  color: dc.$grey-med-dark;
+  color: v.$dc-grey-med-dark;
 }
 
 .grey-dark {
-  color: dc.$grey-dark;
+  color: v.$dc-grey-dark;
 }
 
 .grey-darker {
-  color: dc.$grey-darker;
+  color: v.$dc-grey-darker;
 }
 
 .grey-darkest {
-  color: dc.$grey-darkest;
+  color: v.$dc-grey-darkest;
 }
 
 .bg-white {
-  background-color: dc.$white-color;
+  background-color: v.$dc-white-color;
 }
 
 .bg-black {
-  background-color: dc.$black-color;
+  background-color: v.$dc-black-color;
 }
 
 .bg-red {
-  background-color: dc.$red-color;
+  background-color: v.$dc-red-color;
 }
 
 .bg-orange {
-  background-color: dc.$orange-color;
+  background-color: v.$dc-orange-color;
 }
 
 .bg-yellow {
-  background-color: dc.$yellow-color;
+  background-color: v.$dc-yellow-color;
 }
 
 .bg-green {
-  background-color: dc.$green-color;
+  background-color: v.$dc-green-color;
 }
 
 .bg-blue {
-  background-color: dc.$blue-color;
+  background-color: v.$dc-blue-color;
 }
 
 .bg-teal {
-  background-color: dc.$teal-color;
+  background-color: v.$dc-teal-color;
 }
 
 .bg-pink {
-  background-color: dc.$pink-color;
+  background-color: v.$dc-pink-color;
 }
 
 .bg-purple {
-  background-color: dc.$purple-color;
+  background-color: v.$dc-purple-color;
 }
 
 .bg-dark-grey {
-  background-color: dc.$gunmetal-dark;
+  background-color: v.$dc-gunmetal-dark;
 }
 
 .bg-slate {
-  background-color: dc.$slate-medium;
+  background-color: v.$dc-slate-medium;
 }
 
 .bg-grey-lightest {
-  background-color: dc.$grey-lightest;
+  background-color: v.$dc-grey-lightest;
 }
 
 .bg-grey-lighter {
-  background-color: dc.$grey-lighter;
+  background-color: v.$dc-grey-lighter;
 }
 
 .bg-grey-light {
-  background-color: dc.$grey-light;
+  background-color: v.$dc-grey-light;
 }
 
 .bg-grey-med-light {
-  background-color: dc.$grey-med-light;
+  background-color: v.$dc-grey-med-light;
 }
 
 .bg-grey-medium {
-  background-color: dc.$grey-medium;
+  background-color: v.$dc-grey-medium;
 }
 
 .bg-grey-med-dark {
-  background-color: dc.$grey-med-dark;
+  background-color: v.$dc-grey-med-dark;
 }
 
 .bg-grey-dark {
-  background-color: dc.$grey-dark;
+  background-color: v.$dc-grey-dark;
 }
 
 .bg-grey-darker {
-  background-color: dc.$grey-darker;
+  background-color: v.$dc-grey-darker;
 }
 
 .bg-grey-darkest {
-  background-color: dc.$grey-darkest;
+  background-color: v.$dc-grey-darkest;
 }
 
 .bg-transparent {
@@ -549,64 +546,64 @@ hr.item-card {
 }
 
 .border-radius-top-right {
-  border-top-right-radius: dv.$default-radius;
+  border-top-right-radius: v.$dv-default-radius;
 }
 
 .border-radius-bottom-right {
-  border-bottom-right-radius: dv.$default-radius;
+  border-bottom-right-radius: v.$dv-default-radius;
 }
 
 .border-radius-top-left {
-  border-top-left-radius: dv.$default-radius;
+  border-top-left-radius: v.$dv-default-radius;
 }
 
 .border-radius-bottom-left {
-  border-bottom-left-radius: dv.$default-radius;
+  border-bottom-left-radius: v.$dv-default-radius;
 }
 
 .border-radius-left {
-  border-top-left-radius:    dv.$default-radius;
-  border-bottom-left-radius: dv.$default-radius;
+  border-top-left-radius:    v.$dv-default-radius;
+  border-bottom-left-radius: v.$dv-default-radius;
 }
 
 .border-radius-right {
-  border-top-right-radius:    dv.$default-radius;
-  border-bottom-right-radius: dv.$default-radius;
+  border-top-right-radius:    v.$dv-default-radius;
+  border-bottom-right-radius: v.$dv-default-radius;
 }
 
 .border-radius-top {
-  border-top-left-radius:  dv.$default-radius;
-  border-top-right-radius: dv.$default-radius;
+  border-top-left-radius:  v.$dv-default-radius;
+  border-top-right-radius: v.$dv-default-radius;
 }
 
 .border-radius-bottom {
-  border-bottom-left-radius:  dv.$default-radius;
-  border-bottom-right-radius: dv.$default-radius;
+  border-bottom-left-radius:  v.$dv-default-radius;
+  border-bottom-right-radius: v.$dv-default-radius;
 }
 
 .clean-ul {
-  @include dm.listStyleNone;
+  @include v.dm-listStyleNone;
 }
 
 .list-header {
-  @include dm.headerRowColors();
+  @include v.dm-headerRowColors();
 
   div {
-    @include dm.headerRowColors();
+    @include v.dm-headerRowColors();
   }
 }
 
 .list-stripped {
   &.odd, &.row-light {
-    @include dm.colorRow(dc.$gray-darkest, dc.$gray-barely);
+    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-barely);
   }
 
   &.even, &.row-dark {
-    @include dm.colorRow(dc.$gray-darkest, dc.$gray-med-light);;
+    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-med-light);;
   }
 
   &.row-med {
-    @include dm.colorRow(dc.$gray-darkest, dc.$gray-light)
+    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-light)
   }
 
   a {
@@ -615,11 +612,11 @@ hr.item-card {
     padding:      .25rem .25rem .25rem .5rem;
 
     &.odd {
-      @include dm.colorRow(dc.$gray-darkest, dc.$gray-barely);
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-barely);
     }
 
     &.even {
-      @include dm.colorRow(dc.$gray-darkest, dc.$gray-med-light);;
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-med-light);;
 
     }
   }

@@ -2,7 +2,7 @@
 @use "sass:map";
 @use "sass:color";
 @use "colors" as dc;
-@use "../app/variables" as av;
+@use "../colors/blue" as tc;
 @use "variables" as dvars;
 @use "functions" as dfun;
 
@@ -313,7 +313,7 @@
 }
 
 @mixin fancyFieldset {
-  border: 1px solid av.$tc-color-border;
+  border: 1px solid tc.$color-border;
   border-radius: dvars.$default-radius;
   padding: .75rem;
   margin-bottom: .5rem;

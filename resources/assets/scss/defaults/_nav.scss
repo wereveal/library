@@ -1,86 +1,83 @@
-/*! menu bar */
-@use "mixins" as m;
-@use "colors" as c;
-@use "variables" as v;
-@use "../app/variables" as av;
+/*! lib/defaults/nav   menu bar */
+@use "../app/variables" as v;
 
-$p_border_width    : v.$pagination-border-width;
-$p_line_height     : v.$pagination-line-height;
-$grid-gutter-width : v.$grid-gutter-width; // seems to be needed to do a negative
-$pad-x             : v.$pagination-padding-x;
-$pad-x-sm          : v.$pagination-padding-x-sm;
-$pad-y             : v.$pagination-padding-y;
-$pad-y-sm          : v.$pagination-padding-y-sm;
+$p_border_width    : v.$dv-pagination-border-width;
+$p_line_height     : v.$dv-pagination-line-height;
+$grid-gutter-width : v.$dv-grid-gutter-width; // seems to be needed to do a negative
+$pad-x             : v.$dv-pagination-padding-x;
+$pad-x-sm          : v.$dv-pagination-padding-x-sm;
+$pad-y             : v.$dv-pagination-padding-y;
+$pad-y-sm          : v.$dv-pagination-padding-y-sm;
 
 .navbar {
-    @include m.paddingSize(.25, 'tb', '');
+    @include v.dm-paddingSize(.25, 'tb', '');
     &.navbar-color {
-        @include m.linearGradientTwoColor(av.$tc-gradient-start, av.$tc-gradient-stop, v.$gradient-direction, v.$gradient-longpoint);
-        color: av.$tc-navbar-text-color;
+        @include v.dm-linearGradientTwoColor(v.$tc-gradient-start, v.$tc-gradient-stop, v.$dv-gradient-direction, v.$dv-gradient-longpoint);
+        color: v.$tc-navbar-text-color;
         a {
             &.nav-link {
-                @include m.fontSmallCapsBold;
+                @include v.dm-fontSmallCapsBold;
                 font-size: 1.25rem;
-                color: av.$tc-navbar-text-color;
+                color: v.$tc-navbar-text-color;
                 &.active {
-                    color: av.$tc-navbar-link-active;
+                    color: v.$tc-navbar-link-active;
                 }
             }
         }
         div {
             &.dropdown-menu {
                 &.show {
-                    background-color: av.$tc-navbar-text-color;
+                    background-color: v.$tc-navbar-text-color;
                     a {
                         &.dropdown-item {
-                            color: av.$tc-gradient-start;
+                            color: v.$tc-gradient-start;
                             &.active {
-                                color: av.$tc-navbar-text-color;
-                                background-color: av.$tc-gradient-stop;
+                                color: v.$tc-navbar-text-color;
+                                background-color: v.$tc-gradient-stop;
                             }
                             &.active:active {
-                                color: av.$tc-navbar-text-color;
-                                background-color: av.$tc-gradient-stop;
+                                color: v.$tc-navbar-text-color;
+                                background-color: v.$tc-gradient-stop;
                             }
                             &.active:hover {
-                                color: av.$tc-navbar-sub-link-hover;
-                                background-color: av.$tc-navbar-sub-bg-hover;
+                                color: v.$tc-navbar-sub-link-hover;
+                                background-color: v.$tc-navbar-sub-bg-hover;
                             }
                         }
                         &.dropdown-item:hover {
-                            color: av.$tc-navbar-sub-link-hover;
-                            background-color: av.$tc-navbar-sub-bg-hover;
+                            color: v.$tc-navbar-sub-link-hover;
+                            background-color: v.$tc-navbar-sub-bg-hover;
                         }
                     }
                 }
             }
         }
         a:hover {
-            color: av.$tc-navbar-link-hover;
+            color: v.$tc-navbar-link-hover;
         }
         li {
             &.show > .nav-link {
-                color: av.$tc-navbar-text-color;
+                color: v.$tc-navbar-text-color;
             }
             &.nav-item {
                 a:hover {
-                    color: av.$tc-navbar-link-hover;
+                    color: v.$tc-navbar-link-hover;
                 }
             }
         }
     }
     &.no-margin {
-        @include m.marginSizePx(-$grid-gutter-width, 'lr', 'important');
+        @include v.dm-marginSizePx(-$grid-gutter-width, 'lr', 'important');
     }
 }
 
 .manager-links {
-    @include m.listStyleNone;
+    @include v.dm-listStyleNone;
     a {
-        @include m.fontSmallCapsExtraBold;
+        @include v.dm-fontSmallCapsExtraBold;
     }
     ul {
-        @include m.listStyleNone;
+        @include v.dm-listStyleNone;
         padding-left: 2rem;
     }
 }
@@ -91,12 +88,12 @@ span.no-link {
     padding: $pad-y $pad-x;
     margin-left: -$p_border_width;
     line-height: $p_line_height;
-    color: c.$green-medium;
-    background-color: av.$tc-color-body;
-    border:  solid av.$tc-border-color;
+    color: v.$dc-green-medium;
+    background-color: v.$tc-color-body;
+    border:  solid v.$tc-border-color;
     &.no-link-sm {
         padding: $pad-y-sm $pad-x-sm;
-        font-size: v.$font-size-sm;
-        line-height: v.$line-height-sm;
+        font-size: v.$dv-font-size-sm;
+        line-height: v.$dv-line-height-sm;
     }
 }

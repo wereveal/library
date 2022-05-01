@@ -1,7 +1,8 @@
-@use "mixins" as mix;
-@use "colors" as blue;
-@use "variables";
-@use "fonts";
-@use "main_common";
-@use "nav";
-@use "form";
+/*! lib/defaults/styles_top */
+@use "mixins" as dmix;
+@use "colors" as dcolors;
+@use "variables" as dvar;
+@use "fonts" as dfont;
+@use "main_common" as dmc;
+@use "nav" as dnav;
+@use "form" as dform;

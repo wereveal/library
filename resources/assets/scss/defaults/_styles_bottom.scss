@@ -1,4 +1,5 @@
-@use "message";
-@use "spacing";
-@use "search";
-@use "media_queries";
+/*! lib/defaults/styles_bottom */
+@use "message" as dmsg;
+@use "spacing" as dspace;
+@use "search" as dsearch;
+@use "media_queries" as dmq;

@@ -1,5 +1,6 @@
+/*! lib/styles_library_bs5 */
 @use "bs5/styles_top" as bstop;
 @use "defaults/styles_bottom" as dbottom;
-@use "defaults/manager_forms";
+@use "defaults/manager_forms" as dmforms;
 @use "defaults/library" as dlib;
 @use "app/media_queries" as amq;

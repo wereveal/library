@@ -1,31 +1,32 @@
+/*! lib/colors/slate */
 @use "sass:color";
-@use "../defaults/colors" as dc;
+@use "../app/variables" as v;
 
-$color-default    : dc.$slate-medium !default;
-$color-darkest    : dc.$slate-darkest !default;
-$color-darker     : dc.$slate-darker !default;
-$color-dark       : dc.$slate-dark !default;
-$color-med-dark   : dc.$slate-med-dark !default;
-$color-medium     : dc.$slate-medium !default;
-$color-med-light  : dc.$slate-med-light !default;
-$color-light      : dc.$slate-light !default;
-$color-lighter    : dc.$slate-lighter !default;
-$color-lightest   : dc.$slate-lightest !default;
-$color-body       : dc.$slate-lighter !default;
-$color-container  : dc.$slate-lightest !default;
-$color-border     : dc.$slate-darkest !default;
-$color-complement : dc.$slate-complement !default;
-$color-shadow      : color.scale(dc.$gray-darkest, $alpha: -35%) !default;
-$color-shadow-alt  : color.scale(dc.$gray-complement, $alpha: -35%) !default;
-$color-heading     : dc.$slate-darkest !default;
-$color-heading-alt : dc.$slate-complement !default;
+$color-default    : v.$dc-slate-medium !default;
+$color-darkest    : v.$dc-slate-darkest !default;
+$color-darker     : v.$dc-slate-darker !default;
+$color-dark       : v.$dc-slate-dark !default;
+$color-med-dark   : v.$dc-slate-med-dark !default;
+$color-medium     : v.$dc-slate-medium !default;
+$color-med-light  : v.$dc-slate-med-light !default;
+$color-light      : v.$dc-slate-light !default;
+$color-lighter    : v.$dc-slate-lighter !default;
+$color-lightest   : v.$dc-slate-lightest !default;
+$color-body       : v.$dc-slate-lighter !default;
+$color-container  : v.$dc-slate-lightest !default;
+$color-border     : v.$dc-slate-darkest !default;
+$color-complement : v.$dc-slate-complement !default;
+$color-shadow      : color.scale(v.$dc-gray-darkest, $alpha: -35%) !default;
+$color-shadow-alt  : color.scale(v.$dc-gray-complement, $alpha: -35%) !default;
+$color-heading     : v.$dc-slate-darkest !default;
+$color-heading-alt : v.$dc-slate-complement !default;
 
 /* Gradient */
 $gradient-start   : $color-light !default;
 $gradient-stop    : $color-lightest !default;
 
 /* Misc */
-$border-color     : dc.$slate-light !default;
+$border-color     : v.$dc-slate-light !default;
 
 /* Navbar */
 $navbar-text-color      : $color-darkest !default;

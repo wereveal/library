@@ -1,15 +1,14 @@
-/*! Some general Form styling */
-@use "colors";
-@use "mixins";
-@use "variables" as dvars;
-@use "../app/variables" as av;
+/*! lib/defaults/form
+    Some general Form styling
+ */
+@use "../app/variables" as v;
 
 input, textarea {
   &.colorful {
-    @include mixins.makeColorful(true);
+    @include v.dm-makeColorful(true);
   }
   &.colorful:focus {
-    @include mixins.makeColorfulFocused(true);
+    @include v.dm-makeColorfulFocused(true);
   }
   &.flexible {
     width: 95%;
@@ -19,10 +18,10 @@ input, textarea {
 select {
   margin-top: .25rem;
   &.colorful {
-    @include mixins.makeColorful(true);
+    @include v.dm-makeColorful(true);
   }
   &.colorful:focus {
-    @include mixins.makeColorfulFocused(true);
+    @include v.dm-makeColorfulFocused(true);
   }
 }
 
@@ -37,16 +36,16 @@ textarea {
 
 .form-inline {
   &.dark-row {
-    @include mixins.colorRow(colors.$gray-darkest, colors.$gray-med-light);
+    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-med-light);
   }
   &.light-row {
-    @include mixins.colorRow(colors.$gray-darkest, colors.$gray-barely);
+    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-barely);
   }
   &.even {
-    @include mixins.colorRow(colors.$gray-darkest, colors.$gray-med-light);
+    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-med-light);
   }
   &.odd {
-    @include mixins.colorRow(colors.$gray-darkest, colors.$gray-barely);
+    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-barely);
   }
 }
 
@@ -58,7 +57,7 @@ textarea {
     visibility: hidden;
   }
   input[type=checkbox]:checked + label {
-    background: colors.$blue-lightest;
+    background: v.$dc-blue-lightest;
   }
   input[type=checkbox]:checked + label:after {
     opacity: 1;
@@ -70,10 +69,10 @@ textarea {
     height: 15px;
     top: 0;
     left: 0;
-    background: colors.$white-color;
-    border: 1px solid colors.$blue-dark;
+    background: v.$dc-white-color;
+    border: 1px solid v.$dc-blue-dark;
     border-radius: 3px;
-    box-shadow: 1px 1px 1px av.$tc-color-shadow;
+    box-shadow: 1px 1px 1px v.$tc-color-shadow;
   }
   label:after {
     opacity: 0;
@@ -84,7 +83,7 @@ textarea {
     background: transparent;
     top: 2px;
     left: 2px;
-    border: 3px solid colors.$blue-dark;
+    border: 3px solid v.$dc-blue-dark;
     border-top: none;
     border-right: none;
     transform: rotate(-45deg);
@@ -96,7 +95,7 @@ textarea {
     position: absolute;
     top: -5px;
     left: 20px;
-    @include mixins.fontBold();
+    @include v.dm-fontBold();
   }
 }
 
@@ -108,30 +107,30 @@ input[type=checkbox] {
 
 label {
   &.error {
-    color: colors.$color-red;
-    @include mixins.fontBoldItalic;
+    color: v.$dc-color-red;
+    @include v.dm-fontBoldItalic;
   }
   &.nice-label {
-    @include mixins.fontBold;
+    @include v.dm-fontBold;
     text-align: right;
   }
   &.col-form-label {
-    @include mixins.fontBold;
-    @include mixins.paddingSize(.5, 'top', 'true');
+    @include v.dm-fontBold;
+    @include v.dm-paddingSize(.5, 'top', 'true');
   }
 }
 
 .nice-fieldset {
-  @include mixins.fancyFieldset;
+  @include v.dm-fancyFieldset;
   legend {
     float: left;
     font-size: 1rem;
-    @include mixins.fontSmallCapsBold;
+    @include v.dm-fontSmallCapsBold;
     &.big-legend {
       font-size: 1.5rem;
-      color: colors.$gray-dark;
-      background-color: colors.$gray90;
-      border-radius: dvars.$default-radius;
+      color: v.$dc-gray-dark;
+      background-color: v.$dc-gray90;
+      border-radius: v.$dv-default-radius;
       padding-left: 1rem;
     }
   }
@@ -151,7 +150,7 @@ label {
 }
 
 .psuedo-label {
-  @include mixins.fontBold;
+  @include v.dm-fontBold;
   text-align: right;
   padding-right: 1rem;
 }
@@ -178,79 +177,79 @@ label {
 }
 
 .btn-green {
-  @include mixins.createBtn(colors.$green-bs4, colors.$green-bs4);
+  @include v.dm-createBtn(v.$dc-green-bs4, v.$dc-green-bs4);
 }
 
 .btn-dark-green {
-  @include mixins.createBtn(colors.$green, colors.$green);
+  @include v.dm-createBtn(v.$dc-green, v.$dc-green);
 }
 
 .btn-blue {
-  @include mixins.createBtn(colors.$blue, colors.$blue);
+  @include v.dm-createBtn(v.$dc-blue, v.$dc-blue);
 }
 
 .btn-red {
-  @include mixins.createBtn(colors.$red, colors.$red);
+  @include v.dm-createBtn(v.$dc-red, v.$dc-red);
 }
 
 .btn-white {
-  @include mixins.createBtn(colors.$white, colors.$white);
+  @include v.dm-createBtn(v.$dc-white, v.$dc-white);
 }
 
 .btn-black {
-  @include mixins.createBtn(colors.$black, colors.$black);
+  @include v.dm-createBtn(v.$dc-black, v.$dc-black);
 }
 
 .btn-gray {
-  @include mixins.createBtn(colors.$gray60, colors.$gray60);
+  @include v.dm-createBtn(v.$dc-gray60, v.$dc-gray60);
 }
 
 .btn-brown {
-  @include mixins.createBtn(colors.$brown-medium, colors.$brown-medium);
+  @include v.dm-createBtn(v.$dc-brown-medium, v.$dc-brown-medium);
 }
 
 .btn-orange {
-  @include mixins.createBtn(colors.$orange, colors.$orange);
+  @include v.dm-createBtn(v.$dc-orange, v.$dc-orange);
 }
 
 .btn-purple {
-  @include mixins.createBtn(colors.$purple, colors.$purple);
+  @include v.dm-createBtn(v.$dc-purple, v.$dc-purple);
 }
 
 .btn-outline-green {
-  @include mixins.createBtnOutline(colors.$green);
+  @include v.dm-createBtnOutline(v.$dc-green);
 }
 
 .btn-outline-blue {
-  @include mixins.createBtnOutline(colors.$blue);
+  @include v.dm-createBtnOutline(v.$dc-blue);
 }
 
 .btn-outline-red {
-  @include mixins.createBtnOutline(colors.$red);
+  @include v.dm-createBtnOutline(v.$dc-red);
 }
 
 .btn-outline-white {
-  @include mixins.createBtnOutline(colors.$white, colors.$black);
+  @include v.dm-createBtnOutline(v.$dc-white, v.$dc-black);
 }
 
 .btn-outline-black {
-  @include mixins.createBtnOutline(colors.$black);
+  @include v.dm-createBtnOutline(v.$dc-black);
 }
 
 .btn-outline-gray {
-  @include mixins.createBtnOutline(colors.$gray60);
+  @include v.dm-createBtnOutline(v.$dc-gray60);
 }
 
 .btn-outline-brown {
-  @include mixins.createBtnOutline(colors.$brown-medium);
+  @include v.dm-createBtnOutline(v.$dc-brown-medium);
 }
 
 .btn-outline-orange {
-  @include mixins.createBtnOutline(colors.$orange);
+  @include v.dm-createBtnOutline(v.$dc-orange);
 }
 
 .btn-outline-purple {
-  @include mixins.createBtnOutline(colors.$purple);
+  @include v.dm-createBtnOutline(v.$dc-purple);
 }
 
 .datepicker {
@@ -271,25 +270,25 @@ form {
   }
   .form-group {
     &.row-dark {
-      @include mixins.colorRow(colors.$gray-darkest, colors.$gray-med-light);
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-med-light);
     }
     &.row-darker {
-      @include mixins.colorRow(colors.$gray-barely, colors.$gray-color);
+      @include v.dm-colorRow(v.$dc-gray-barely, v.$dc-gray-color);
     }
     &.row-darkest {
-      @include mixins.colorRow(colors.$gray-lightest, colors.$gray-dark);
+      @include v.dm-colorRow(v.$dc-gray-lightest, v.$dc-gray-dark);
     }
     &.row-light {
-      @include mixins.colorRow(colors.$gray-darkest, colors.$gray-barely);
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-barely);
     }
     &.row-medium {
-      @include mixins.colorRow(colors.$gray-darkest, colors.$gray-light);
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-light);
     }
     &.row-med-light {
-      @include mixins.colorRow(colors.$gray-darkest, colors.$gray-lightest);
+      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-lightest);
     }
     &.row-transparent {
-      @include mixins.colorRow(colors.$gray-darkest, transparent);
+      @include v.dm-colorRow(v.$dc-gray-darkest, transparent);
     }
   }
 }

@@ -1,11 +1,10 @@
+/*! lib/defaults/library */
 @use 'mixins';
 
 .instructions {
   @include mixins.contentBlock('gray');
-
   ul {
     list-style : disc;
-
     li {
       ul {
         list-style  : square;
