@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection JsonEncodingApiUsageInspection */
+
 namespace Ritc\Library\Services;
 
 use Ritc\Library\Exceptions\CacheException;
@@ -48,7 +49,7 @@ class CacheByFileJson extends CacheByFile
      * @param string $key   Required, The key of the item to store
      * @param string $value Optional, default to '' which is a value in itself.
      * @param int    $ttl   Optional, default to 0=no expiration
-     * @return bool         True on success, false elsewise.
+     * @return bool         True on success, false otherwise.
      * @throws CacheException
      */
     public function set(string $key, string $value, int $ttl = 0): bool

@@ -22,7 +22,7 @@ class CacheByFile implements CacheInterface
     use CacheTraits;
 
     /**
-     * Contructor for class.
+     * Constructor for class.
      *
      * @param array $a_cache_config
      * @throws CacheException
@@ -67,7 +67,7 @@ class CacheByFile implements CacheInterface
      * @param string $key   Required, The key of the item to store
      * @param string $value Optional, default to '' which is a value in itself.
      * @param int    $ttl   Optional, default to 0=no expiration
-     * @return bool         True on success, false elsewise.
+     * @return bool         True on success, false otherwise.
      * @throws CacheException
      */
     public function set(string $key, string $value, int $ttl = 0): bool

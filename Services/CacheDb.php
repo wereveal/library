@@ -23,17 +23,17 @@ use Ritc\Library\Models\CacheModel;
  */
 class CacheDb implements CacheInterface
 {
-    private int $default_ttl = CACHE_TTL;
-    private CacheModel $o_cache_model;
+    protected array      $a_cache_config;
+    protected int        $default_ttl;
+    protected CacheModel $o_cache_model;
 
     public function __construct(Di $o_di, array $a_cache_config)
     {
         /** @var DbModel $o_db */
-        $o_db          = $o_di->get('db');
-        $this->o_cache_model = new CacheModel($o_db);
-        if (!empty($a_cache_config['ttl'])) {
-            $this->default_ttl = $a_cache_config['ttl'];
-        }
+        $o_db                 = $o_di->get('db');
+        $this->o_cache_model  = new CacheModel($o_db);
+        $this->default_ttl    = $a_cache_config['ttl'] ?? CACHE_TTL;
+        $this->a_cache_config = $a_cache_config;
     }
 
     /**
@@ -66,7 +66,7 @@ class CacheDb implements CacheInterface
      * @param string $key   Required, The key of the item to store
      * @param string $value Optional, default to '' which is a value in itself.
      * @param int    $ttl   Optional, default to 0=no expiration
-     * @return bool         True on success, false elsewise.
+     * @return bool         True on success, false else-wise.
      * @throws CacheException
      */
     public function set(string $key, string $value, int $ttl = 0): bool
@@ -152,7 +152,7 @@ class CacheDb implements CacheInterface
     /**
      * Fetches multiple cache items by their unique keys.
      *
-     * @param array  $a_keys  Required. An array of keys that can be obtained in a single opperation
+     * @param array  $a_keys  Required. An array of keys that can be obtained in a single operation
      * @param mixed  $default Optional. Default value to return for keys that do not exist.
      * @return array          An array of the values obtained.
      * @throws  CacheException
@@ -250,7 +250,7 @@ class CacheDb implements CacheInterface
     }
 
     /**
-     * Determins whether an item is present in the cache.
+     * Determines whether an item is present in the cache.
      *
      * NOTE: It is recommended by PSR that has() is only to be used for cache warming type purposes
      * and not to be used within your live applications operations for get/set, as this method
@@ -274,6 +274,22 @@ class CacheDb implements CacheInterface
                 $e
             );
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCachePath(): string
+    {
+        return $this->a_cache_config['cache_path'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheType(): string
+    {
+        return $this->a_cache_config['cache_type'];
     }
 
     /**

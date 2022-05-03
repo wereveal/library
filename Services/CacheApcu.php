@@ -4,6 +4,7 @@ namespace Ritc\Library\Services;
 use Ritc\Library\Exceptions\CacheException;
 use Ritc\Library\Helper\ExceptionHelper;
 use Ritc\Library\Interfaces\CacheInterface;
+use Ritc\Library\Traits\CacheTraits;
 
 /**
  * Class CacheApcu.
@@ -16,11 +17,22 @@ use Ritc\Library\Interfaces\CacheInterface;
  */
 class CacheApcu implements CacheInterface
 {
-    private int $ttl;
+    use CacheTraits;
 
-    public function __construct(array $a_config)
+    /**
+     * Constructor for class.
+     *
+     * @param array $a_cache_config
+     * @throws CacheException
+     */
+    public function __construct(array $a_cache_config)
     {
-        $this->ttl = $a_config['ttl'];
+        try {
+            $this->setUpCache($a_cache_config);
+        }
+        catch (CacheException $e) {
+            throw new CacheException($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
@@ -50,7 +62,7 @@ class CacheApcu implements CacheInterface
             );
         }
         if ($ttl === 0) {
-            $ttl = $this->ttl;
+            $ttl = $this->default_ttl;
         }
         return apcu_store($key, $value, $ttl);
     }
@@ -121,7 +133,7 @@ class CacheApcu implements CacheInterface
     public function setMultiple(array $a_value_pairs, int $ttl = 0): bool
     {
         if ($ttl <= 0) {
-            $ttl = $this->ttl;
+            $ttl = $this->default_ttl;
         }
         foreach ($a_value_pairs as $a_value_pair) {
             try {
@@ -181,5 +193,37 @@ class CacheApcu implements CacheInterface
             }
         }
         return $a_keys;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCachePath(): string
+    {
+        return $this->a_cache_config['cache_path'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheType(): string
+    {
+        return $this->a_cache_config['cache_type'];
+    }
+
+    /**
+     * @return int
+     */
+    public function getDefaultTtl(): int
+    {
+        return $this->default_ttl;
+    }
+
+    /**
+     * @param int $default_ttl
+     */
+    public function setDefaultTtl(int $default_ttl): void
+    {
+        $this->default_ttl = $default_ttl ?? CACHE_TTL;
     }
 }

@@ -24,9 +24,9 @@ use Ritc\Library\Services\Di;
  * @date    2022-03-08 19:30:06
  * @change_log
  * - v1.0.0-alpha.3 - removed all Symfony cache adapters, tired of having   - 2022-03-08 wer
- *                    to change everything everytime they chaned something.
+ *                    to change everything everytime they changed something.
  *                    Will slowly add cache service classes.
- * - v1.0.0-alpha.2 - Changed to latest version of Symfony\Component\Cache  - 2020-09-20 wer
+ * - v1.0.0-alpha.2 - Changed to the latest version of Symfony\Component\Cache  - 2020-09-20 wer
  * - v1.0.0-alpha.0 - Initial version                                       - 2018-05-12 wer
  */
 class CacheFactory
@@ -124,13 +124,5 @@ class CacheFactory
             }
         }
         return self::$instance[$name]->o_cache;
-    }
-
-    /**
-     * @return CacheApcu|CacheByFile|CacheByFileJson|CacheByFilePhp|CacheByFilePhpArray|CacheDb|null
-     */
-    public function getCache(): CacheDb|CacheByFileJson|CacheByFilePhpArray|CacheByFilePhp|CacheByFile|CacheApcu|null
-    {
-        return $this->o_cache;
     }
 }

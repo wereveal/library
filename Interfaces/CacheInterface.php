@@ -31,7 +31,7 @@ interface CacheInterface
      * @param string $key   Required, The key of the item to store
      * @param string $value Optional, default to '' which is a value in itself.
      * @param int    $ttl   Optional, default to 0=no expiration
-     * @return bool         True on success, false elsewise.
+     * @return bool         True on success, false otherwise.
      * @throws CacheException
      */
     public function set(string $key, string $value, int $ttl = 0): bool;
@@ -66,7 +66,7 @@ interface CacheInterface
     /**
      * Fetches multiple cache items by their unique keys.
      *
-     * @param array  $a_keys  Required. An array of keys that can be obtained in a single opperation
+     * @param array  $a_keys  Required. An array of keys that can be obtained in a single operation
      * @param mixed  $default Optional. Default value to return for keys that do not exist.
      * @return array          An array of the values obtained.
      * @throws  CacheException
@@ -102,7 +102,7 @@ interface CacheInterface
     public function deleteMultiple(array $a_keys): bool;
 
     /**
-     * Determins whether an item is present in the cache.
+     * Determines whether an item is present in the cache.
      *
      * NOTE: It is recommended by PSR that has() is only to be used for cache warming type purposes
      * and not to be used within your live applications operations for get/set, as this method
@@ -114,4 +114,9 @@ interface CacheInterface
      * @throws  CacheException
      */
     public function has(string $key): bool;
+
+    public function getCachePath(): string;
+    public function getCacheType(): string;
+    public function getDefaultTtl(): int;
+    public function setDefaultTtl(int $default_ttl): void;
 }

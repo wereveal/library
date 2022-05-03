@@ -5,10 +5,21 @@ use Ritc\Library\Exceptions\CacheException;
 use Ritc\Library\Helper\CacheHelper;
 use Ritc\Library\Helper\ExceptionHelper;
 
+/**
+ * CacheTraits is used by the file based caching services.
+ *
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version 1.0.0-beta.1
+ * @date    2022-03-14 14:14:58
+ * @change_log
+ * - v1.0.0-beta.1 - initial version                            - 2022-03-14 wer
+ */
 trait CacheTraits
 {
     /** @var string */
     protected string $cache_path;
+    /** @var string  */
+    protected string $cache_type;
     /** @var int */
     protected int $default_ttl;
     /** @var string  */
@@ -297,6 +308,7 @@ trait CacheTraits
                       ?? defined(CACHE_PATH)
                           ? CACHE_PATH
                           : BASE_PATH . '/config';
+        $cache_type = $a_cache_config['cache_type'] ?? defined(CACHE_TYPE) ? CACHE_TYPE : 'Db';
         if (!file_exists($cache_path) && !mkdir($cache_path, 0755, true) && !is_dir($cache_path)) {
             throw new CacheException(
                 sprintf('Directory "%s" was not created', $cache_path),
@@ -304,6 +316,40 @@ trait CacheTraits
             );
         }
         $this->cache_path = $cache_path;
-        $this->file_ext  = $a_cache_config['file_ext'] ?? 'txt';
+        $this->file_ext   = $a_cache_config['file_ext'] ?? 'txt';
+        $this->cache_type = $cache_type;
     }
+
+    /**
+     * @return string
+     */
+    public function getCachePath(): string
+    {
+        return $this->cache_path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheType(): string
+    {
+        return $this->cache_type;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDefaultTtl(): int
+    {
+        return $this->default_ttl;
+    }
+
+    /**
+     * @param int $default_ttl
+     */
+    public function setDefaultTtl(int $default_ttl): void
+    {
+        $this->default_ttl = $default_ttl ?? CACHE_TTL;
+    }
+
 }

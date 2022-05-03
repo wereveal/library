@@ -3,34 +3,30 @@ namespace Ritc\Library\Services;
 
 use Ritc\Library\Exceptions\CacheException;
 use Ritc\Library\Helper\CacheHelper;
-use Ritc\Library\Interfaces\CacheInterface;
-use Ritc\Library\Traits\CacheTraits;
 
 /**
  * Class CacheByFilePhp
  * Returns a string saved in the file
+ *
+ * @author  William E Reveal <bill@revealitconsulting.com>
+ * @version 1.0.0-beta.1
+ * @date    2022-03-14 14:14:58
+ * @change_log
+ * - v1.0.0-beta.1 - initial version                            - 2022-03-14 wer
  */
-class CacheByFilePhp implements CacheInterface
+class CacheByFilePhp extends CacheByFile
 {
-    use CacheTraits;
-
     protected string $file_starting_text;
 
     /**
-     * Contructor for class.
+     * Constructor for class.
      *
      * @param array $a_cache_config
      * @throws CacheException
      */
     public function __construct(array $a_cache_config)
     {
-        try {
-            $this->setupCache($a_cache_config);
-            $this->cleanExpiredFiles($this->cache_path);
-        }
-        catch (CacheException $e) {
-            throw new CacheException($e->getMessage(), $e->getCode(), $e);
-        }
+        parent::__construct($a_cache_config);
         $this->file_starting_text =<<<STARTTXT
  <?php
 return 
@@ -62,7 +58,7 @@ STARTTXT;
      * @param string $key   Required, The key of the item to store
      * @param string $value Optional, default to '' which is a value in itself.
      * @param int    $ttl   Optional, default to 0=no expiration
-     * @return bool         True on success, false elsewise.
+     * @return bool         True on success, false otherwise.
      * @throws CacheException
      */
     public function set(string $key, string $value, int $ttl = 0): bool
@@ -80,20 +76,4 @@ STARTTXT;
         return (bool)file_put_contents($file_w_path, $value);
     }
 
-    /**
-     * Deletes an item from the cache.
-     *
-     * @param string $key Required. The unique key of cache.
-     * @return bool
-     * @throws  CacheException
-     */
-    public function delete(string $key): bool
-    {
-        try {
-            return $this->deleteFiles($key, $this->file_ext);
-        }
-        catch (CacheException $e) {
-            throw new CacheException($e->getMessage(), $e->getCode(), $e);
-        }
-    }
 }
