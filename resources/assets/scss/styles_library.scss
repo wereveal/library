@@ -1,4 +1,12 @@
-/* a stub to make it easier to decide which css framework to use */
+/*! styles_library.scss a stub to make it easier to decide which css framework to use */
+/* Key to working with Bootstrap/Bulma is "simple". Define all variables you
+ * want to change before you @use bootstrap/bulma.
+ * Everything rests on the !default flag.
+ * It means that if a variable already has a value assigned to it,
+ * when you try to re-assign it to a variable with !default, it will ignore
+ * that assignment. If a variable has an assignment with the !default flag
+ * and no value has been assigned, then it will get the new assignment
+ */
 @use "styles_library_bs5";
 // @use "styles_library_bulma";
 // @use "styles_library_bs4";
