@@ -1,7 +1,9 @@
-<?php
+<?php /** @noinspection ALL */
+
 /**
  * Class CacheHelperSymfony.
  * @package Ritc_Library
+ * @deprecated 2022-03-14 13:54:07
  */
 namespace Ritc\Library\Helper;
 

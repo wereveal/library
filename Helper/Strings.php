@@ -1,5 +1,6 @@
-<?php /** @noinspection RegExpRedundantEscape */
+<?php
 /**
+ * @noinspection RegExpRedundantEscape
  * @noinspection PhpUndefinedConstantInspection
  * @noinspection NotOptimalRegularExpressionsInspection
  */
@@ -9,6 +10,8 @@
  * @package Ritc_Library
  */
 namespace Ritc\Library\Helper;
+
+use JsonException;
 
 /**
  * Modifies strings.
@@ -40,6 +43,24 @@ namespace Ritc\Library\Helper;
  */
 class Strings
 {
+    /**
+     * Converts an array to a JSON string.
+     * If encode fails, returns an empty string.
+     *
+     * @param array $a_value
+     * @return string
+     */
+    public static function arrayToJsonString(array $a_value): string
+    {
+        try {
+            $return_this = json_encode($a_value, JSON_THROW_ON_ERROR);
+        }
+        catch (JsonException) {
+            $return_this = '';
+        }
+        return $return_this;
+    }
+
     /**
      * Returns the English string for the digit, e.g., 1 = 'one'
      *

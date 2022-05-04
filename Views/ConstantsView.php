@@ -6,6 +6,7 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Services\Di;
@@ -69,13 +70,15 @@ class ConstantsView
         $a_constants = [];
         if ($this->use_cache) {
             $a_constants = $this->o_cache->get($cache_key);
+            $a_constants = json_decode($a_constants, true);
         }
         if (empty($a_constants)) {
             $o_const = new ConstantsModel($this->o_db);
             try {
                 $a_constants = $o_const->read([], ['order_by' => 'const_name']);
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $a_constants, 'constants');
+                    $cache_value = Strings::arrayToJsonString($a_constants);
+                    $this->o_cache->set($cache_key,  $cache_value);
                 }
             }
             catch (ModelException) {

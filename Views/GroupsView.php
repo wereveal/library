@@ -6,6 +6,7 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Models\GroupsModel;
 use Ritc\Library\Services\Di;
@@ -57,6 +58,7 @@ class GroupsView
         $cache_key = 'groups.read.all';
         if ($this->use_cache) {
             $a_groups = $this->o_cache->get($cache_key);
+            $a_groups = json_decode($a_groups, true);
         }
         if (empty($a_groups)) {
             try {
@@ -68,7 +70,8 @@ class GroupsView
                         $a_groups[$a_group_key][$selected_key_name] = ' selected';
                     }
                     if ($this->use_cache) {
-                        $this->o_cache->set($cache_key, $a_groups, 'groups');
+                        $a_groups = Strings::arrayToJsonString($a_groups);
+                        $this->o_cache->set($cache_key,  $a_groups);
                     }
                 }
             }

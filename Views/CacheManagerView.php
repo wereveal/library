@@ -6,6 +6,7 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Models\ConstantsModel;
@@ -46,7 +47,8 @@ class CacheManagerView implements ViewInterface
     {
         $cache_key = 'constants.read.const_name.use_cache';
         if ($this->use_cache) {
-            $a_record = $this->o_cache->get($cache_key);
+            $cache_value = $this->o_cache->get($cache_key);
+            $a_record    = json_decode($cache_value, true);
         }
         if (empty($a_record)) {
             $o_constants = new ConstantsModel($this->o_db);
@@ -56,7 +58,8 @@ class CacheManagerView implements ViewInterface
                     ? []
                     : $a_results[0];
                 if (!empty($a_record) && $this->use_cache) {
-                    $this->o_cache->set($cache_key, $a_record, 'constants');
+                    $cache_value = Strings::arrayToJsonString($a_record);
+                    $this->o_cache->set($cache_key,  $cache_value);
                 }
             }
             catch (ModelException) {

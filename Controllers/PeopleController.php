@@ -7,6 +7,7 @@ namespace Ritc\Library\Controllers;
 
 use Ritc\Library\Exceptions\CustomException;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ManagerControllerInterface;
 use Ritc\Library\Models\PeopleComplexModel;
@@ -224,12 +225,14 @@ class PeopleController implements ManagerControllerInterface
             return $this->o_view->renderList($a_message);
         }
         $cache_key = 'people.by.id.' . $people_id;
-        $a_person = $this->o_cache->get($cache_key);
+        $cache_value = $this->o_cache->get($cache_key);
+        $a_person = json_decode($cache_value, true);
         if (empty($a_person)) {
             try {
                 $a_person = $this->o_people->readById($people_id);
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $a_person, 'people');
+                    $cache_value = Strings::arrayToJsonString($a_person);
+                    $this->o_cache->set($cache_key,  $cache_value);
                 }
             }
             catch (ModelException) {

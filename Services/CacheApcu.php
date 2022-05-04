@@ -200,7 +200,7 @@ class CacheApcu implements CacheInterface
      */
     public function getCachePath(): string
     {
-        return $this->a_cache_config['cache_path'];
+        return $this->cache_path;
     }
 
     /**
@@ -208,7 +208,7 @@ class CacheApcu implements CacheInterface
      */
     public function getCacheType(): string
     {
-        return $this->a_cache_config['cache_type'];
+        return $this->cache_type;
     }
 
     /**

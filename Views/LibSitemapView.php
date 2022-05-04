@@ -7,6 +7,7 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\FormHelper;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Services\Di;
@@ -47,26 +48,30 @@ class LibSitemapView implements ViewInterface
         $xml_cache_key       = 'nav.sitemap.for.xml';
         $list_cache_key      = 'nav.list.by.auth_level.0';
         $available_cache_key = 'nav.available.for.sitemap';
-        $tag                 = 'nav';
         $a_results           = [];
         $a_nav_list          = [];
         $a_available         = [];
         if ($this->use_cache) {
             $a_results   = $this->o_cache->get($xml_cache_key);
+            $a_results   = json_decode($a_results, true);
             $a_nav_list  = $this->o_cache->get($list_cache_key);
+            $a_nav_list  = json_decode($a_nav_list, true);
             $a_available = $this->o_cache->get($available_cache_key);
+            $a_available = json_decode($a_available, true);
         }
         if (empty($a_results)) {
             $a_results = $this->o_nav->getSitemapForXml();
             if ($this->use_cache) {
-                $this->o_cache->set($xml_cache_key, $a_results, $tag);
+                $cache_value = Strings::arrayToJsonString($a_results);
+                $this->o_cache->set($xml_cache_key, $cache_value);
             }
         }
         if (empty($a_nav_list)) {
             try {
                 $a_nav_list = $this->o_nav->getNavListByAuthLevel();
                 if ($this->use_cache) {
-                    $this->o_cache->set($list_cache_key, $a_nav_list, 'nav');
+                    $cache_value = Strings::arrayToJsonString($a_nav_list);
+                    $this->o_cache->set($list_cache_key,  $cache_value);
                 }
             }
             catch (ModelException) {
@@ -101,7 +106,8 @@ class LibSitemapView implements ViewInterface
                 }
             }
             if ($this->use_cache) {
-                $this->o_cache->set($available_cache_key, $a_available, 'nav');
+                $cache_value = Strings::arrayToJsonString($a_available);
+                $this->o_cache->set($available_cache_key,  $cache_value);
             }
         }
         $rebuild_btn = [
@@ -127,12 +133,14 @@ class LibSitemapView implements ViewInterface
         $xml_cache_key = 'nav.sitemap.for.xml';
         $a_sitemap = [];
         if ($this->use_cache) {
-            $a_sitemap = $this->o_cache->get($xml_cache_key);
+            $cache_value = $this->o_cache->get($xml_cache_key);
+            $a_sitemap = json_decode($cache_value, true);
         }
         if (empty($a_sitemap)) {
             $a_sitemap = $this->o_nav->getSitemapForXml();
             if ($this->use_cache) {
-                $this->o_cache->set($xml_cache_key, $a_sitemap, 'nav');
+                $cache_value = Strings::arrayToJsonString($a_sitemap);
+                $this->o_cache->set($xml_cache_key,  $cache_value);
             }
         }
         $a_tpl_values = [

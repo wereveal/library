@@ -73,12 +73,12 @@ class CacheDb implements CacheInterface
     {
         if (!empty($key)) {
             try {
-                $ttl = $ttl ?? $this->default_ttl;
+                $ttl = $ttl > 0 ? $ttl : $this->default_ttl;
                 $expires = time() + $ttl;
                 $a_values = [
-                    'cache_name'      => $key,
-                    'cache_value'     => $value,
-                    'cache_expires'   => $expires
+                    'cache_key'     => $key,
+                    'cache_value'   => $value,
+                    'cache_expires' => $expires
                 ];
                 return $this->o_cache_model->updateOrCreate($a_values);
             }
@@ -102,9 +102,9 @@ class CacheDb implements CacheInterface
     {
         if (!empty($key)) {
             try {
-                return $this->o_cache_model->delete($key);
+                return $this->o_cache_model->deleteByKey($key);
             }
-            catch (ModelException $e) {
+            catch (CacheException $e) {
                 throw new CacheException('Database Error: ' . $e->errorMessage(),
                                          ExceptionHelper::getCodeNumberCache('delete'),
                                          $e);

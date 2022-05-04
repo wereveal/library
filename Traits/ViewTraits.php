@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection SpellCheckingInspection */
 
 /**
  * Trait ViewTraits
@@ -6,6 +6,7 @@
  */
 namespace Ritc\Library\Traits;
 
+use Ritc\Library\Helper\Strings;
 use TypeError;
 use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Exceptions\ModelException;
@@ -149,7 +150,8 @@ trait ViewTraits
     {
         $cache_key = 'nav.values.ng_id.' . $nav_group;
         if ($this->use_cache) {
-            $a_nav = $this->o_cache->get($cache_key);
+            $cache_value = $this->o_cache->get($cache_key);
+            $a_nav = json_decode($cache_value, true);
         }
         else {
             $a_nav = [];
@@ -163,7 +165,8 @@ trait ViewTraits
             $a_nav = $this->createSubmenu($a_nav);
             $a_nav = $this->sortTopLevel($a_nav);
             if ($this->use_cache) {
-                $this->o_cache->set($cache_key, $a_nav, 'nav');
+                $cache_value = Strings::arrayToJsonString($a_nav);
+                $this->o_cache->set($cache_key, $cache_value);
             }
         }
         return $a_nav;
@@ -185,9 +188,9 @@ trait ViewTraits
         if ($this->use_cache) {
             $date = $this->o_cache->get($date_key);
             if ($date === date('Ymd')) {
-                $a_values = $this->o_cache->get($value_key);
-                if (!empty($a_values)) {
-                    $a_sitemap = $a_values;
+                $cache_value = $this->o_cache->get($value_key);
+                if (!empty($cache_value)) {
+                    $a_sitemap = json_decode($cache_value, true);
                 }
             }
         }
@@ -218,8 +221,9 @@ trait ViewTraits
                 $a_sitemap = ViewHelper::errorMessage('Unable to retrieve the sitemap.');
             }
             if ($this->use_cache && empty($a_sitemap['message'])) {
-                $this->o_cache->set($date_key, date('Ymd'), 'sitemap');
-                $this->o_cache->set($value_key, $a_sitemap, 'sitemap');
+                $this->o_cache->set($date_key, date('Ymd'));
+                $cache_value = Strings::arrayToJsonString($a_sitemap);
+                $this->o_cache->set($value_key, $cache_value);
             }
         }
         return $a_sitemap;
@@ -242,13 +246,16 @@ trait ViewTraits
         $page_cache_key = 'page.values.url_id.' . $url_id;
         $group_cache_key = 'groups.values.auth_levels';
         if ($this->use_cache) {
-            $a_page_values   = $this->o_cache->get($page_cache_key);
-            $a_auth_levels   = $this->o_cache->get($group_cache_key);
+            $cache_value   = $this->o_cache->get($page_cache_key);
+            $a_page_values = json_decode($cache_value, true);
+            $cache_value   = $this->o_cache->get($group_cache_key);
+            $a_auth_levels = json_decode($cache_value, true);
         }
         if (!is_array($a_page_values) || empty($a_page_values)) {
             $a_page_values = $this->getPageValues($url_id);
             if ($this->use_cache) {
-                $this->o_cache->set($page_cache_key, $a_page_values, 'page');
+                $cache_value = Strings::arrayToJsonString($a_page_values);
+                $this->o_cache->set($page_cache_key, $cache_value);
             }
         }
         if (!is_array($a_auth_levels) || empty($a_auth_levels)) {
@@ -260,7 +267,8 @@ trait ViewTraits
                     $a_auth_levels[strtolower($a_group['group_name'])] = $a_group['group_auth_level'];
                 }
                 if ($this->use_cache) {
-                    $this->o_cache->set($group_cache_key, $a_auth_levels, 'groups');
+                    $cache_value = Strings::arrayToJsonString($a_auth_levels);
+                    $this->o_cache->set($group_cache_key, $cache_value);
                 }
             }
             catch (ModelException) {
@@ -403,7 +411,7 @@ trait ViewTraits
             }
         }
         if ($this->use_cache) {
-            $this->o_cache->set($cache_key, $adm_level, 'adm');
+            $this->o_cache->set($cache_key, $adm_level);
         }
         $this->adm_level = $adm_level;
     }
@@ -440,7 +448,7 @@ trait ViewTraits
                 $ng_id = 1;
             }
             if ($this->use_cache) {
-                $this->o_cache->set($cache_key, $ng_id, 'navgroup');
+                $this->o_cache->set($cache_key, $ng_id);
             }
         }
         $this->setNav($ng_id);
@@ -614,7 +622,9 @@ trait ViewTraits
             return [];
         }
         if ($this->use_cache) {
-            $a_pager = $this->o_cache->get($pager_key);
+
+            $cache_value = $this->o_cache->get($pager_key);
+            $a_pager = json_decode($cache_value, true);
         }
         if (!empty($a_pager)) {
             return $a_pager;
@@ -625,7 +635,7 @@ trait ViewTraits
         $href               = (string)$a_parameters['href'] === '' ? '/' : (string)$a_parameters['href'];
         if ($records_to_display >= $total_records) {
             if ($this->use_cache) {
-                $this->o_cache->set($pager_key, [], 'pager');
+                $this->o_cache->set($pager_key, '');
             }
             return [];
         }
@@ -733,7 +743,8 @@ trait ViewTraits
             ];
         }
         if ($this->use_cache) {
-            $this->o_cache->set($pager_key, $a_pager, 'pager');
+            $cache_value = Strings::arrayToJsonString($a_pager);
+            $this->o_cache->set($pager_key, $cache_value);
         }
         return $a_pager;
     }

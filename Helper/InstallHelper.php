@@ -6,9 +6,6 @@
  */
 namespace Ritc\Library\Helper;
 
-use Ritc\Library\Services\Di;
-use Ritc\Library\Traits\LogitTraits;
-
 /**
  * Helper for installing a new or update an existing framework.
  *

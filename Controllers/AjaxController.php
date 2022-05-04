@@ -6,8 +6,8 @@
  */
 namespace Ritc\Library\Controllers;
 
-use JsonException;
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Models\ConstantsModel;
 use Ritc\Library\Models\TwigComplexModel;
 use Ritc\Library\Models\TwigDirsModel;
@@ -17,7 +17,7 @@ use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ControllerTraits;
 
 /**
- * Does Ajax Calls used by the Config manager.
+ * Does Ajax "Calls" used by the Config manager.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 2.0.0
@@ -45,18 +45,18 @@ class AjaxController
      * Main router for class.
      *
      * @return string
-     * @throws JsonException
      */
     public function route():string
     {
+        $default_value = Strings::arrayToJsonString([]);
         return match ($this->url_action_one) {
-            'twig_dirs' => $this->doTwigDirs(),
-            'for_directories' => $this->forDirectories(),
-            'urls_available' => $this->urlsAvailableForNavgroups(),
-            'page_dirs_tpls' => $this->doTwigTpls(),
+            'twig_dirs'        => $this->doTwigDirs(),
+            'for_directories'  => $this->forDirectories(),
+            'urls_available'   => $this->urlsAvailableForNavgroups(),
+            'page_dirs_tpls'   => $this->doTwigTpls(),
             'page_prefix_dirs' => $this->doTwigDirs(true),
-            'content_vcs' => $this->updateContentVcsConstant(),
-            default => json_encode([], JSON_THROW_ON_ERROR),
+            'content_vcs'      => $this->updateContentVcsConstant(),
+            default            => $default_value,
         };
     }
 
@@ -67,7 +67,6 @@ class AjaxController
      * @param bool $has_tpls Optional, defaults to false.
      *                       Specifies if return only dirs that has templates.
      * @return string
-     * @throws JsonException
      */
     private function doTwigDirs(bool $has_tpls = false):string
     {
@@ -76,7 +75,7 @@ class AjaxController
             'td_id' => '',
             'value' => 'Not Available'
         ];
-        $bad_results = json_encode([$bad_results], JSON_THROW_ON_ERROR);
+        $bad_results = Strings::arrayToJsonString([$bad_results]);
         if (empty($prefix_id)) {
             return $bad_results;
         }
@@ -115,9 +114,9 @@ class AjaxController
                     'td_name' => $a_result['td_name']
                 ];
             }
-            $json = json_encode($a_encode_this, JSON_THROW_ON_ERROR);
+            $json = Strings::arrayToJsonString($a_encode_this);
             if ($this->use_cache) {
-                $this->o_cache->set($cache_key, $json, 'ajax');
+                $this->o_cache->set($cache_key,  $json);
             }
             return $json;
         }
@@ -131,7 +130,6 @@ class AjaxController
      * templates select options.
      *
      * @return string
-     * @throws JsonException
      */
     private function doTwigTpls():string
     {
@@ -140,7 +138,7 @@ class AjaxController
             'tpl_id' => '',
             'value'  => 'Not Available'
         ];
-        $bad_results = json_encode([$bad_results], JSON_THROW_ON_ERROR);
+        $bad_results = Strings::arrayToJsonString([$bad_results]);
         if (empty($dir_id)) {
             return $bad_results;
         }
@@ -162,9 +160,9 @@ class AjaxController
                     'tpl_name' => $a_result['tpl_name']
                 ];
             }
-            $json = json_encode($a_encode_this, JSON_THROW_ON_ERROR);
+            $json = Strings::arrayToJsonString($a_encode_this);
             if ($this->use_cache) {
-                $this->o_cache->set($cache_key, $json, 'ajax');
+                $this->o_cache->set($cache_key,  $json);
             }
             return $json;
         }
@@ -178,12 +176,11 @@ class AjaxController
      * This one is to display the list of directories to be modified or deleted.
      *
      * @return string
-     * @throws JsonException
      */
     private function forDirectories():string
     {
         $prefix_id = $this->o_router->getPost('prefix_id');
-        $bad_results = json_encode([[]], JSON_THROW_ON_ERROR);
+        $bad_results = Strings::arrayToJsonString([[]]);
         if (empty($prefix_id)) {
             return $bad_results;
         }
@@ -202,17 +199,14 @@ class AjaxController
                 $a_results[$key]['tolken']  = $_SESSION['token'];
                 $a_results[$key]['form_ts'] = $_SESSION['idle_timestamp'];
             }
-            $json = json_encode($a_results, JSON_THROW_ON_ERROR);
+            $json = Strings::arrayToJsonString($a_results);
             if ($this->use_cache) {
-                $this->o_cache->set($cache_key, $json, 'ajax');
+                $this->o_cache->set($cache_key,  $json);
             }
             return $json;
         }
         catch (ModelException) {
             return $bad_results;
-        }
-        catch (JsonException) {
-            return '';
         }
     }
 
@@ -240,11 +234,10 @@ class AjaxController
 
     /**
      * Create json string from a list of urls.
-     * List consists of urls not in a navgroup. Assumes a url should only
+     * List consists of urls not in a navgroup. Assumes an url should only
      * be assigned to one navigation link.
      *
      * @return mixed
-     * @throws JsonException
      */
     private function urlsAvailableForNavgroups(): mixed
     {
@@ -255,7 +248,7 @@ class AjaxController
             'url_text' => 'Not Available'
         ];
         $results = '';
-        $bad_results = json_encode([$bad_results], JSON_THROW_ON_ERROR);
+        $bad_results = Strings::arrayToJsonString([$bad_results]);
         if (empty($navgroup_id)) {
             return $bad_results;
         }
@@ -276,16 +269,13 @@ class AjaxController
                       'url_text' => $a_result['url_text']
                     ];
                 }
-                $results = trim(json_encode($a_encode_this, JSON_THROW_ON_ERROR));
+                $results = Strings::arrayToJsonString($a_encode_this);
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $results, 'ajax');
+                    $this->o_cache->set($cache_key,  $results);
                 }
             }
             catch (ModelException) {
                 return $bad_results;
-            }
-            catch (JsonException) {
-                return '';
             }
         }
         return $results;

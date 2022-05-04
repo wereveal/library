@@ -5,7 +5,7 @@
  */
 namespace Ritc\Library\Services;
 
-use Ritc\Library\Exceptions\FactoryException;
+use Ritc\Library\Exceptions\{FactoryException};
 use Ritc\Library\Factories\TwigFactory;
 use Twig\Environment as TwigEnvironment;
 
@@ -25,15 +25,16 @@ class Tpl
 {
     /**
      * Returns the twig environment object which we use to do all the template rendering.
+     *
      * @param string $config_file
      * @return TwigEnvironment|null
      */
-    public function getTwig($config_file = 'twig_config.php'):?TwigEnvironment
+    public function getTwig(string $config_file = 'twig_config.php'):?TwigEnvironment
     {
         try {
             return TwigFactory::getTwig($config_file);
         }
-        catch(FactoryException $e) {
+        catch(FactoryException) {
             return null;
         }
     }

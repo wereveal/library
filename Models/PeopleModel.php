@@ -512,7 +512,6 @@ class PeopleModel extends ModelAbstract
      */
     public function setPersonValues(array $a_person = array()): array|string
     {
-        $meth = __METHOD__ . '.';
         $new_person = empty($a_person['people_id']);
         if (substr($a_person['password'], 1) !== '*') {
             $a_person['password'] = $this->hashPass($a_person['password']);
@@ -594,10 +593,6 @@ class PeopleModel extends ModelAbstract
             catch (ModelException) {
                 return 'people_id-invalid';
             }
-              $log_message = 'New Person ' . var_export($a_person, TRUE);
-              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
-              $log_message = 'Old Person ' . var_export($a_old_person, TRUE);
-              $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
             foreach ($a_allowed_keys as $key) {
                 if ($key !== 'people_id' && isset($a_person[$key])) {
                     $old_value = $a_old_person[$key];
@@ -623,8 +618,6 @@ class PeopleModel extends ModelAbstract
                 return 'nothing-to-update';
             }
         }
-          $log_message = 'Person modified ' . var_export($a_person, TRUE);
-          $this->logIt($log_message, LOG_OFF, $meth . __LINE__);
         return $a_person;
     }
 
@@ -635,11 +628,9 @@ class PeopleModel extends ModelAbstract
      */
     private function fixCheckBoxes(array $a_person = []):array
     {
-          $this->logIt(var_export($a_person, true), LOG_OFF, __METHOD__);
         $a_person['is_logged_in'] = isset($a_person['is_logged_in']) ? 'true' : 'false';
         $a_person['is_active']    = isset($a_person['is_active'])    ? 'true' : 'false';
         $a_person['is_immutable'] = isset($a_person['is_immutable']) ? 'true' : 'false';
-          $this->logIt(var_export($a_person, true), LOG_OFF, __METHOD__);
         return $a_person;
     }
 

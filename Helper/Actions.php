@@ -214,7 +214,6 @@ class Actions
     public function setUriNoGet(string $request_uri = ''):void
     {
         if ($request_uri === '') {
-            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
             $request_uri = $_SERVER['REQUEST_URI'] ?? '';
         }
         if (str_contains($request_uri, '?')) {

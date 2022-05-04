@@ -6,6 +6,7 @@
 namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Helper\ViewHelper;
 use Ritc\Library\Interfaces\ViewInterface;
 use Ritc\Library\Models\BlocksModel;
@@ -49,13 +50,15 @@ class BlocksView implements ViewInterface
         $cache_key = 'blocks.read.all';
         if ($this->use_cache) {
             $results = $this->o_cache->get($cache_key);
+            $results = json_decode($results, true);
         }
         if (empty($results)) {
             $o_model = new BlocksModel($this->o_db);
             try {
                 $results = $o_model->read([],['order_by' => 'b_name ASC']);
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $results, 'blocks');
+                    $cache_value = Strings::arrayToJsonString($results);
+                    $this->o_cache->set($cache_key, $cache_value);
                 }
             }
             catch (ModelException $e) {

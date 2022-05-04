@@ -7,6 +7,7 @@ namespace Ritc\Library\Views;
 
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\FormHelper;
+use Ritc\Library\Helper\Strings;
 use Ritc\Library\Models\NavComplexModel;
 use Ritc\Library\Models\NavgroupsModel;
 use Ritc\Library\Models\UrlsModel;
@@ -88,6 +89,7 @@ class NavigationView
             $cache_key = 'nav.form.by.new';
             if ($this->use_cache) {
                 $a_nav = $this->o_cache->get($cache_key);
+                $a_nav = json_decode($a_nav, true);
             }
             if (empty($a_nav)) {
                 $a_nav['a_url_select']     = ['select' => $this->createUrlSelect()];
@@ -102,7 +104,8 @@ class NavigationView
                 $a_nav['nav_active_ckbx'] = FormHelper::checkbox($a_chbx_values);
                 $a_nav['nav_id'] = '';
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $a_nav, 'nav');
+                    $cache_value = Strings::arrayToJsonString($a_nav);
+                    $this->o_cache->set($cache_key, $cache_value);
                 }
             }
         }
@@ -110,6 +113,7 @@ class NavigationView
             $cache_key = 'nav.form.by.id.' . $nav_id;
             if ($this->use_cache) {
                 $a_nav = $this->o_cache->get($cache_key);
+                $a_nav = json_decode($a_nav, true);
             }
             if (empty($a_nav)) {
                 try {
@@ -151,7 +155,8 @@ class NavigationView
                     }
                 }
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $a_nav, 'nav');
+                    $a_nav = Strings::arrayToJsonString($a_nav);
+                    $this->o_cache->set($cache_key, $a_nav);
                 }
             }
         }
@@ -194,6 +199,7 @@ class NavigationView
         $results = '';
         if ($this->use_cache) {
             $results = $this->o_cache->get($cache_key);
+            $results = json_decode($results, true);
         }
         if (empty($results)) {
             $o_urls = new UrlsModel($this->o_db);
@@ -221,7 +227,8 @@ class NavigationView
                 }
                 $a_select['options'] = $a_options;
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $a_select, 'nav');
+                    $cache_value = Strings::arrayToJsonString($a_select);
+                    $this->o_cache->set($cache_key, $cache_value);
                 }
                 return $a_select;
             }
@@ -348,13 +355,15 @@ class NavigationView
         $results = '';
         if ($this->use_cache) {
             $results = $this->o_cache->get($cache_key);
+            $results = json_decode($results, true);
         }
         if (empty($results)) {
             $o_ng = new NavgroupsModel($this->o_db);
             try {
                 $results = $o_ng->read();
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $results, 'nav');
+                    $cache_value = Strings::arrayToJsonString($results);
+                    $this->o_cache->set($cache_key, $cache_value);
                 }
             }
             catch (ModelException) {
@@ -430,12 +439,14 @@ class NavigationView
         $cache_key = 'nav.url.tree';
         if ($this->use_cache) {
             $a_nav = $this->o_cache->get($cache_key);
+            $a_nav = json_decode($a_nav, true);
         }
         if (empty($a_nav)) {
             try {
                 $a_nav = $this->o_nav_complex->readAllNavUrlTree();
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $a_nav, 'nav');
+                    $cache_value = Strings::arrayToJsonString($a_nav);
+                    $this->o_cache->set($cache_key, $cache_value);
                 }
             }
             catch (ModelException) {

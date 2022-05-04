@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection SpellCheckingInspection */
+
 /**
  * Class RoutesHelper
  *
@@ -204,11 +205,14 @@ class RoutesHelper
      *
      * @param string $request_uri
      * @return array
+     * @noinspection GrazieInspection
      */
     public function findValidRoute(string $request_uri = ''): array
     {
         $cache_key = 'route.valid.by.request_uri.';
-        $cache_key .= Strings::uriToCache($request_uri);
+        $cache_key .= $request_uri !== '/'
+            ? Strings::uriToCache($request_uri)
+            : 'home';
         if ($this->use_cache) {
             /** @var array $valid_route */
             $valid_route = $this->o_cache->get($cache_key);
@@ -223,7 +227,8 @@ class RoutesHelper
                 $a_results = $o_routes->readByRequestUri($value);
                 if (!empty($a_results[0])) {
                     if ($this->use_cache) {
-                        $this->o_cache->set($cache_key, $a_results[0], 'route');
+                        $cache_value = Strings::arrayToJsonString($a_results[0]);
+                        $this->o_cache->set($cache_key, $cache_value);
                     }
                     return $a_results[0];
                 }
@@ -257,6 +262,7 @@ class RoutesHelper
      * @param string $request_uri required.
      * @param string $route_path  required.
      * @return string
+     * @noinspection GrazieInspection
      */
     private function prepareToExplode(string $request_uri = '', string $route_path = ''): string
     {
@@ -303,8 +309,8 @@ class RoutesHelper
                     $a_groups[] = $a_rgm['group_id'];
                 }
                 if ($this->use_cache) {
-                    $json = json_encode($a_groups, JSON_PARTIAL_OUTPUT_ON_ERROR);
-                    $this->o_cache->set($cache_key, $json, 'groups');
+                    $json = Strings::arrayToJsonString($a_groups);
+                    $this->o_cache->set($cache_key, $json);
                 }
                 return $a_groups;
             }
@@ -325,12 +331,13 @@ class RoutesHelper
      */
     public function getMinAuthLevel(array $a_groups = []): int
     {
-        $hash = md5(json_encode($a_groups, JSON_PARTIAL_OUTPUT_ON_ERROR));
+        $hash_this = Strings::arrayToJsonString($a_groups) ?? 'json_error';
+        $hash = hash('crc32c', $hash_this);
         $key  = 'route.minauthlevel.' . $hash;
         if ($this->use_cache) {
             $results = $this->o_cache->get($key);
             if (!empty($results)) {
-                return $results;
+                return (int) $results;
             }
         }
         $min_auth_level = 0;
@@ -351,7 +358,8 @@ class RoutesHelper
             }
         }
         if ($this->use_cache) {
-            $this->o_cache->set($key, $min_auth_level, 'route');
+            $cache_value = (string) $min_auth_level;
+            $this->o_cache->set($key, $cache_value);
         }
         return $min_auth_level;
     }
@@ -431,7 +439,8 @@ class RoutesHelper
             ? Strings::uriToCache($request_uri)
             : 'home';
         if ($this->use_cache) {
-            $a_route_parts = $this->o_cache->get($cache_key);
+            $cache_value = $this->o_cache->get($cache_key);
+            $a_route_parts = json_decode($cache_value, true);
             if (!empty($a_route_parts)) {
                 $this->a_route_parts = $a_route_parts;
             }
@@ -459,7 +468,8 @@ class RoutesHelper
         }
 
         if ($this->use_cache) {
-            $this->o_cache->set($cache_key, $a_route_parts, 'route');
+            $cache_value = Strings::arrayToJsonString($a_route_parts);
+            $this->o_cache->set($cache_key, $cache_value);
         }
         $this->a_route_parts = $a_route_parts;
     }

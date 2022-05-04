@@ -49,9 +49,9 @@ class Di
 
     /**
      * @param string $object_name
-     * @return object
+     * @return false|object
      */
-    public function get(string $object_name = ''): object
+    public function get(string $object_name = ''): object|bool
     {
         if ($object_name !== '' && isset($this->a_objects[$object_name]) && is_object
             ($this->a_objects[$object_name])) {

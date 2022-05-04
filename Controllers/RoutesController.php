@@ -164,7 +164,7 @@ class RoutesController implements ManagerControllerInterface
                 $a_route = $this->o_complex->readWithUrl($route_id);
                 $url = $a_route[0]['url_text'];
                 if ($this->use_cache) {
-                    $this->o_cache->set($cache_key, $url, 'route');
+                    $this->o_cache->set($cache_key,  $url);
                 }
             }
             catch (ModelException) {
