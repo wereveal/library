@@ -4,7 +4,7 @@
 @use "sass:map";
 @use "sass:math";
 @use "sass:meta";
-@use "colors";
+@use "../app/colors" as c;
 @use "linear_channel_values" as lcv;
 @function str-replace($string, $search, $replace: "") {
     $index: str-index($string, $search);
@@ -61,13 +61,13 @@
  * Determine whether to use dark or light text on top of given color.
  */
 @function chooseContrastColor($color) {
-    $lightContrast: contrast($color, colors.$contrast-light);
-    $darkContrast: contrast($color, colors.$contrast-dark);
+    $lightContrast: contrast($color, c.$dc-contrast-light);
+    $darkContrast: contrast($color, c.$dc-contrast-dark);
 
     @if ($lightContrast > $darkContrast) {
-        @return colors.$contrast-light;
+        @return c.$dc-contrast-light;
     }
     @else {
-        @return colors.$contrast-dark;
+        @return c.$dc-contrast-dark;
     }
 }

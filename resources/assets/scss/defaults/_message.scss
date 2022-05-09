@@ -1,24 +1,26 @@
 /*! lib/defaults/message */
 @use "../app/variables" as v;
+@use "../app/mixins" as m;
+@use "../app/colors" as c;
 
 .message {
     &.success {
-        @include v.dm-messageColors(v.$dc-green-lighter, v.$dc-green-dark, v.$dc-green-color);
+        @include m.dm-messageColors(c.$dc-green-lighter, c.$dc-green-dark, c.$dc-green-color);
     }
     &.info {
-        @include v.dm-messageColors(v.$dc-blue-light, v.$dc-blue-dark, v.$dc-blue-color);
+        @include m.dm-messageColors(c.$dc-blue-light, c.$dc-blue-dark, c.$dc-blue-color);
     }
     &.warning {
-        @include v.dm-messageColors(v.$dc-orange-xlight, v.$dc-orange-darker, v.$dc-orange-medium);
+        @include m.dm-messageColors(c.$dc-orange-xlight, c.$dc-orange-darker, c.$dc-orange-medium);
     }
     &.error {
-        @include v.dm-messageColors(v.$dc-red-light, v.$dc-red-dark, v.$dc-red-color);
+        @include m.dm-messageColors(c.$dc-red-light, c.$dc-red-dark, c.$dc-red-color);
     }
     &.failure {
-        @include v.dm-messageColors(v.$dc-red-light, v.$dc-red-dark, v.$dc-red-medium);
+        @include m.dm-messageColors(c.$dc-red-light, c.$dc-red-dark, c.$dc-red-medium);
     }
     &.code {
         font-family: v.$dv-default-mono;
-        @include v.dm-messageColors(v.$tc-color-container, v.$tc-color-border, v.$tc-color-dark);
+        @include m.dm-messageColors(c.$tc-color-container, c.$tc-color-border, c.$tc-color-dark);
     }
 }

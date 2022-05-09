@@ -1,6 +1,9 @@
 /*! lib/bs5/styles_top */
 /* Order pretty important, need to go from most specific vars to generic bs5 */
 @use "../app/variables" as avar;
+@use "../app/colors" as acolor;
+// @use "../app/functions" as afunc;
+// @use "../app/mixins" as amix;
 @use "../../../../../../../../node_modules/bootstrap/scss/bootstrap" as boot;
 @use "mods_to_bootstrap" as bsmods;
 @use "../defaults/fonts" as dfonts;

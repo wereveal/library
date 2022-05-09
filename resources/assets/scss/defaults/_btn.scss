@@ -1,6 +1,7 @@
 /*! lib/defaults/btn */
 /* possibly depreciated in favor of mixin createBtn and createBtnOutline */
-@use "../app/variables" as v;
+@use "../app/colors" as c;
+@use "../app/mixins" as m;
 
 .btn-custom {
     display: inline-block;
@@ -65,14 +66,14 @@
     }
 }
 .btn-gray {
-    color: v.$dc-gray90;
-    border: solid 1px v.$dc-gray35;
-    @include v.dm-linearGradient(v.$dc-gray60, v.$dc-gray35);
+    color: c.$dc-gray90;
+    border: solid 1px c.$dc-gray35;
+    @include m.dm-linearGradient(c.$dc-gray60, c.$dc-gray35);
     &:hover {
-        @include v.dm-linearGradient(v.$dc-gray50, v.$dc-gray25);
+        @include m.dm-linearGradient(c.$dc-gray50, c.$dc-gray25);
     }
     &:active {
-        @include v.dm-linearGradient(v.$dc-gray25, v.$dc-gray50);
+        @include m.dm-linearGradient(c.$dc-gray25, c.$dc-gray50);
     }
 }
 .btn-white {

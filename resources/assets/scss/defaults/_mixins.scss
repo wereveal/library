@@ -1,10 +1,10 @@
 /*! Various Mixins */
 @use "sass:map";
 @use "sass:color";
-@use "colors" as dc;
-@use "../colors/blue" as tc;
-@use "variables" as dvars;
-@use "functions" as dfun;
+@use "../app/variables" as v;
+@use "../app/colors" as c;
+@use "../app/mixins" as m;
+@use "../app/functions" as f;
 
 @mixin rounded($radius) {
   border-radius: $radius;
@@ -59,38 +59,38 @@
 @mixin contentBlock($colorScheme: 'gray') {
   $borderSize: 0;
   $borderRadius: .25rem;
-  $colorBg: dc.$gray-lightest;
-  $colorText: dc.$gray-dark;
+  $colorBg: c.$dc-gray-lightest;
+  $colorText: c.$dc-gray-dark;
   $padding-size: 0;
 
   @if $colorScheme == 'gray' {
     $borderSize: 1px;
-    $colorBg: dc.$gray-dark;
-    $colorText: dc.$gray-lightest;
+    $colorBg: c.$dc-gray-dark;
+    $colorText: c.$dc-gray-lightest;
   } @else if $colorScheme == 'green' {
     $borderSize: 1px;
-    $colorBg: dc.$green-dark;
-    $colorText: dc.$green-lightest;
+    $colorBg: c.$dc-green-dark;
+    $colorText: c.$dc-green-lightest;
   } @else if $colorScheme == 'blue' {
     $borderSize: 1px;
-    $colorBg: dc.$blue-dark;
-    $colorText: dc.$blue-lightest;
+    $colorBg: c.$dc-blue-dark;
+    $colorText: c.$dc-blue-lightest;
   } @else if $colorScheme == 'red' {
     $borderSize: 1px;
-    $colorBg: dc.$red-dark;
-    $colorText: dc.$red-lightest;
+    $colorBg: c.$dc-red-dark;
+    $colorText: c.$dc-red-lightest;
   } @else if $colorScheme == 'orange' {
     $borderSize: 1px;
-    $colorBg: dc.$orange-darker;
-    $colorText: dc.$orange-lightest;
+    $colorBg: c.$dc-orange-darker;
+    $colorText: c.$dc-orange-lightest;
   } @else if $colorScheme == 'light' {
     $borderSize: 1px;
-    $colorBg: dc.$gray-lightest;
-    $colorText: dc.$gray-dark;
+    $colorBg: c.$dc-gray-lightest;
+    $colorText: c.$dc-gray-dark;
   } @else if $colorScheme == 'dark' {
     $borderSize: 1px;
-    $colorBg: dc.$gray-med-dark;
-    $colorText: dc.$gray-lightest;
+    $colorBg: c.$dc-gray-med-dark;
+    $colorText: c.$dc-gray-lightest;
   } @else if $colorScheme == 'footer' {
     $padding-size: 1rem;
     $borderRadius: 0;
@@ -295,7 +295,7 @@
 
 @mixin messageColors($bkgd-color, $border-color, $body-color) {
   border: 3px solid $border-color;
-  border-radius: dvars.$default-radius;
+  border-radius: v.$dv-default-radius;
   background-color: $bkgd-color;
   color: $body-color;
   padding: .5rem 1rem;
@@ -313,8 +313,8 @@
 }
 
 @mixin fancyFieldset {
-  border: 1px solid tc.$color-border;
-  border-radius: dvars.$default-radius;
+  border: 1px solid c.$tc-color-border;
+  border-radius: v.$dv-default-radius;
   padding: .75rem;
   margin-bottom: .5rem;
 }
@@ -324,7 +324,7 @@
 
   $extmods: (
     eot: "?",
-    svg: "#" + dfun.strReplace($name, " ", "_")
+    svg: "#" + f.df-strReplace($name, " ", "_")
   );
 
   $formats: (
@@ -351,7 +351,7 @@
 }
 
 @mixin linearGradient($direction, $colors...) {
-  @if dfun.isDirection($direction) == false {
+  @if f.df-isDirection($direction) == false {
     $colors: $direction, $colors;
     $direction: 180deg;
   }
@@ -370,11 +370,11 @@
   } @else {
     $important: '';
   }
-  background: dc.$color-white $important;
-  border-bottom: 1px solid dc.$color-black $important;
-  border-left: 1px solid dc.$gray60 $important;
-  border-right: 1px solid dc.$color-black $important;
-  border-top: 1px solid dc.$gray60 $important;
+  background: c.$dc-color-white $important;
+  border-bottom: 1px solid c.$dc-color-black $important;
+  border-left: 1px solid c.$dc-gray60 $important;
+  border-right: 1px solid c.$dc-color-black $important;
+  border-top: 1px solid c.$dc-gray60 $important;
   border-radius: 3px $important;
   @include paddingSize(.375, 'tb', 'true');
   @include paddingSize(.5, 'left', 'true');
@@ -386,17 +386,17 @@
   } @else {
     $important: '';
   }
-  background: dc.$blue-lightest $important;
-  border-bottom: 1px solid dc.$blue-med-dark $important;
-  border-left: 1px solid dc.$blue-dark $important;
-  border-right: 1px solid dc.$blue-med-dark $important;
-  border-top: 1px solid dc.$blue-dark $important;
+  background: c.$dc-blue-lightest $important;
+  border-bottom: 1px solid c.$dc-blue-med-dark $important;
+  border-left: 1px solid c.$dc-blue-dark $important;
+  border-right: 1px solid c.$dc-blue-med-dark $important;
+  border-top: 1px solid c.$dc-blue-dark $important;
   border-radius: 3px $important;
   @include paddingSize(.375, 'tb', 'true');
   @include paddingSize(.5, 'left', 'true');
 }
 
-@mixin headerRowColors($color: dc.$color-white, $bg-color: dc.$gray-med-dark, $force: true) {
+@mixin headerRowColors($color: c.$dc-color-white, $bg-color: c.$dc-gray-med-dark, $force: true) {
   $important: '';
   @if $force {
     $important: !important;
@@ -405,7 +405,7 @@
   background-color: $bg-color $important;
 }
 
-@mixin colorRow($color: dc.$color-black, $bg-color: dc.$color-white) {
+@mixin colorRow($color: c.$dc-color-black, $bg-color: c.$dc-color-white) {
   color: $color;
   background-color: $bg-color;
   [class*="col"] {
@@ -423,7 +423,7 @@
   }
 }
 
-@mixin setMediaSize($type: max, $max-bp: sm, $min-bp: xl, $breakpoints: dvars.$grid-breakpoints) {
+@mixin setMediaSize($type: max, $max-bp: sm, $min-bp: xl, $breakpoints: v.$dv-grid-breakpoints) {
   $max: map.get($breakpoints, $max-bp);
   $min: map.get($breakpoints, $min-bp);
   @if ($type == 'max') {
@@ -448,29 +448,29 @@
   $hover-border: color.scale($border, $lightness: -10%),
   $active-bg: color.scale($background, $lightness: -10%),
   $active-border: color.scale($border, $lightness: -12.5%)) {
-  color: dfun.chooseContrastColor($background);
+  color: f.df-chooseContrastColor($background);
   border-color: $border;
   @include linearGradientTwoColor($background,
     color.scale($background, $lightness: -10%));
-  @if (dvars.$enable-shadows) {
-    box-shadow: dvars.$btn-shadow-x, dvars.$btn-shadow-y, dvars.$btn-shadow-blur, dvars.$btn-shadow-color;
+  @if (v.$dv-enable-shadows) {
+    box-shadow: v.$dv-btn-shadow-x, v.$dv-btn-shadow-y, v.$dv-btn-shadow-blur, v.$dv-btn-shadow-color;
   }
   &:hover, &.hover, &:focus, &.focus {
-    color: dfun.chooseContrastColor($hover-bg);
+    color: f.df-chooseContrastColor($hover-bg);
     @include linearGradientTwoColor($hover-bg,
       color.scale($hover-bg, $lightness: -10%));
     border-color: $hover-border;
   }
   &:focus, &.focus {
-    @if (dvars.$enable-shadows) {
-      box-shadow: dvars.$btn-shadow-x, dvars.$btn-shadow-y, dvars.$btn-shadow-blur, dvars.$btn-shadow-color;
+    @if (v.$dv-enable-shadows) {
+      box-shadow: v.$dv-btn-shadow-x, v.$dv-btn-shadow-y, v.$dv-btn-shadow-blur, v.$dv-btn-shadow-color;
     }
     @else {
       box-shadow: none;
     }
   }
   &.disabled, &:disabled {
-    color: dfun.chooseContrastColor($background);
+    color: f.df-chooseContrastColor($background);
     background-color: $background;
     border-color: $border;
     background-image: none;
@@ -478,13 +478,13 @@
   &:not(:disabled):not(.disabled):active,
   &:not(:disabled):not(.disabled).active,
   .show > &.dropdown-toggle {
-    color: dfun.chooseContrastColor($active-bg);
+    color: f.df-chooseContrastColor($active-bg);
     background-color: $active-bg;
     background-image: none;
     border-color: $active-border;
     &:focus {
-      @if (dvars.$enable-shadows) {
-        box-shadow: dvars.$btn-shadow-x, dvars.$btn-shadow-y, dvars.$btn-shadow-blur, dvars.$btn-shadow-color;
+      @if (v.$dv-enable-shadows) {
+        box-shadow: v.$dv-btn-shadow-x, v.$dv-btn-shadow-y, v.$dv-btn-shadow-blur, v.$dv-btn-shadow-color;
       }
       @else {
         box-shadow: none;
@@ -494,19 +494,19 @@
 }
 @mixin createBtnOutline(
   $color,
-  $color-hover: dfun.chooseContrastColor($color),
+  $color-hover: f.df-chooseContrastColor($color),
   $active-bg: color.scale($color, $lightness: -10%),
   $active-border: color.scale($color, $lightness: -12.5%)) {
     color: $color;
     border-color: $color;
     &:hover, &.hover, &:focus, &.focus {
       color: $color-hover;
-      border-color: $active-bg !important;
+      background-color: $active-bg !important;
       border-color: $active-border !important;
     }
     &:focus, &.focus {
-      @if (dvars.$enable-shadows) {
-        box-shadow: dvars.$btn-shadow-x, dvars.$btn-shadow-y, dvars.$btn-shadow-blur, dvars.$btn-shadow-color;
+      @if (v.$dv-enable-shadows) {
+        box-shadow: v.$dv-btn-shadow-x, v.$dv-btn-shadow-y, v.$dv-btn-shadow-blur, v.$dv-btn-shadow-color;
       }
       @else {
         box-shadow: none;
@@ -518,13 +518,13 @@
     &:not(:disabled):not(.disabled):active,
     &:not(:disabled):not(.disabled).active,
     .show > &.dropdown-toggle {
-      color: dfun.chooseContrastColor($active-bg);
+      color: f.df-chooseContrastColor($active-bg);
       background-color: $active-bg;
       background-image: none;
       border-color: $active-border;
       &:focus {
-        @if (dvars.$enable-shadows) {
-          box-shadow: dvars.$btn-shadow-x, dvars.$btn-shadow-y, dvars.$btn-shadow-blur, dvars.$btn-shadow-color;
+        @if (v.$dv-enable-shadows) {
+          box-shadow: v.$dv-btn-shadow-x, v.$dv-btn-shadow-y, v.$dv-btn-shadow-blur, v.$dv-btn-shadow-color;
         }
         @else {
           box-shadow: none;

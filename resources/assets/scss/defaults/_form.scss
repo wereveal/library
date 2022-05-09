@@ -2,13 +2,15 @@
     Some general Form styling
  */
 @use "../app/variables" as v;
+@use "../app/colors" as c;
+@use "../app/mixins" as m;
 
 input, textarea {
   &.colorful {
-    @include v.dm-makeColorful(true);
+    @include m.dm-makeColorful(true);
   }
   &.colorful:focus {
-    @include v.dm-makeColorfulFocused(true);
+    @include m.dm-makeColorfulFocused(true);
   }
   &.flexible {
     width: 95%;
@@ -18,10 +20,10 @@ input, textarea {
 select {
   margin-top: .25rem;
   &.colorful {
-    @include v.dm-makeColorful(true);
+    @include m.dm-makeColorful(true);
   }
   &.colorful:focus {
-    @include v.dm-makeColorfulFocused(true);
+    @include m.dm-makeColorfulFocused(true);
   }
 }
 
@@ -36,16 +38,16 @@ textarea {
 
 .form-inline {
   &.dark-row {
-    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-med-light);
+    @include m.dm-colorRow(c.$dc-gray-darkest, c.$dc-gray-med-light);
   }
   &.light-row {
-    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-barely);
+    @include m.dm-colorRow(c.$dc-gray-darkest, c.$dc-gray-barely);
   }
   &.even {
-    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-med-light);
+    @include m.dm-colorRow(c.$dc-gray-darkest, c.$dc-gray-med-light);
   }
   &.odd {
-    @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-barely);
+    @include m.dm-colorRow(c.$dc-gray-darkest, c.$dc-gray-barely);
   }
 }
 
@@ -57,7 +59,7 @@ textarea {
     visibility: hidden;
   }
   input[type=checkbox]:checked + label {
-    background: v.$dc-blue-lightest;
+    background: c.$dc-blue-lightest;
   }
   input[type=checkbox]:checked + label:after {
     opacity: 1;
@@ -69,10 +71,10 @@ textarea {
     height: 15px;
     top: 0;
     left: 0;
-    background: v.$dc-white-color;
-    border: 1px solid v.$dc-blue-dark;
+    background: c.$dc-white-color;
+    border: 1px solid c.$dc-blue-dark;
     border-radius: 3px;
-    box-shadow: 1px 1px 1px v.$tc-color-shadow;
+    box-shadow: 1px 1px 1px c.$tc-color-shadow;
   }
   label:after {
     opacity: 0;
@@ -83,7 +85,7 @@ textarea {
     background: transparent;
     top: 2px;
     left: 2px;
-    border: 3px solid v.$dc-blue-dark;
+    border: 3px solid c.$dc-blue-dark;
     border-top: none;
     border-right: none;
     transform: rotate(-45deg);
@@ -95,7 +97,7 @@ textarea {
     position: absolute;
     top: -5px;
     left: 20px;
-    @include v.dm-fontBold();
+    @include m.dm-fontBold();
   }
 }
 
@@ -107,29 +109,29 @@ input[type=checkbox] {
 
 label {
   &.error {
-    color: v.$dc-color-red;
-    @include v.dm-fontBoldItalic;
+    color: c.$dc-color-red;
+    @include m.dm-fontBoldItalic;
   }
   &.nice-label {
-    @include v.dm-fontBold;
+    @include m.dm-fontBold;
     text-align: right;
   }
   &.col-form-label {
-    @include v.dm-fontBold;
-    @include v.dm-paddingSize(.5, 'top', 'true');
+    @include m.dm-fontBold;
+    @include m.dm-paddingSize(.5, 'top', 'true');
   }
 }
 
 .nice-fieldset {
-  @include v.dm-fancyFieldset;
+  @include m.dm-fancyFieldset;
   legend {
     float: left;
     font-size: 1rem;
-    @include v.dm-fontSmallCapsBold;
+    @include m.dm-fontSmallCapsBold;
     &.big-legend {
       font-size: 1.5rem;
-      color: v.$dc-gray-dark;
-      background-color: v.$dc-gray90;
+      color: c.$dc-gray-dark;
+      background-color: c.$dc-gray90;
       border-radius: v.$dv-default-radius;
       padding-left: 1rem;
     }
@@ -150,7 +152,7 @@ label {
 }
 
 .psuedo-label {
-  @include v.dm-fontBold;
+  @include m.dm-fontBold;
   text-align: right;
   padding-right: 1rem;
 }
@@ -177,79 +179,79 @@ label {
 }
 
 .btn-green {
-  @include v.dm-createBtn(v.$dc-green-bs4, v.$dc-green-bs4);
+  @include m.dm-createBtn(c.$dc-green-bs4, c.$dc-green-bs4);
 }
 
 .btn-dark-green {
-  @include v.dm-createBtn(v.$dc-green, v.$dc-green);
+  @include m.dm-createBtn(c.$dc-green, c.$dc-green);
 }
 
 .btn-blue {
-  @include v.dm-createBtn(v.$dc-blue, v.$dc-blue);
+  @include m.dm-createBtn(c.$dc-blue, c.$dc-blue);
 }
 
 .btn-red {
-  @include v.dm-createBtn(v.$dc-red, v.$dc-red);
+  @include m.dm-createBtn(c.$dc-red, c.$dc-red);
 }
 
 .btn-white {
-  @include v.dm-createBtn(v.$dc-white, v.$dc-white);
+  @include m.dm-createBtn(c.$dc-white, c.$dc-white);
 }
 
 .btn-black {
-  @include v.dm-createBtn(v.$dc-black, v.$dc-black);
+  @include m.dm-createBtn(c.$dc-black, c.$dc-black);
 }
 
 .btn-gray {
-  @include v.dm-createBtn(v.$dc-gray60, v.$dc-gray60);
+  @include m.dm-createBtn(c.$dc-gray60, c.$dc-gray60);
 }
 
 .btn-brown {
-  @include v.dm-createBtn(v.$dc-brown-medium, v.$dc-brown-medium);
+  @include m.dm-createBtn(c.$dc-brown-medium, c.$dc-brown-medium);
 }
 
 .btn-orange {
-  @include v.dm-createBtn(v.$dc-orange, v.$dc-orange);
+  @include m.dm-createBtn(c.$dc-orange, c.$dc-orange);
 }
 
 .btn-purple {
-  @include v.dm-createBtn(v.$dc-purple, v.$dc-purple);
+  @include m.dm-createBtn(c.$dc-purple, c.$dc-purple);
 }
 
 .btn-outline-green {
-  @include v.dm-createBtnOutline(v.$dc-green);
+  @include m.dm-createBtnOutline(c.$dc-green);
 }
 
 .btn-outline-blue {
-  @include v.dm-createBtnOutline(v.$dc-blue);
+  @include m.dm-createBtnOutline(c.$dc-blue);
 }
 
 .btn-outline-red {
-  @include v.dm-createBtnOutline(v.$dc-red);
+  @include m.dm-createBtnOutline(c.$dc-red);
 }
 
 .btn-outline-white {
-  @include v.dm-createBtnOutline(v.$dc-white, v.$dc-black);
+  @include m.dm-createBtnOutline(c.$dc-white, c.$dc-black);
 }
 
 .btn-outline-black {
-  @include v.dm-createBtnOutline(v.$dc-black);
+  @include m.dm-createBtnOutline(c.$dc-black);
 }
 
 .btn-outline-gray {
-  @include v.dm-createBtnOutline(v.$dc-gray60);
+  @include m.dm-createBtnOutline(c.$dc-gray60);
 }
 
 .btn-outline-brown {
-  @include v.dm-createBtnOutline(v.$dc-brown-medium);
+  @include m.dm-createBtnOutline(c.$dc-brown-medium);
 }
 
 .btn-outline-orange {
-  @include v.dm-createBtnOutline(v.$dc-orange);
+  @include m.dm-createBtnOutline(c.$dc-orange);
 }
 
 .btn-outline-purple {
-  @include v.dm-createBtnOutline(v.$dc-purple);
+  @include m.dm-createBtnOutline(c.$dc-purple);
 }
 
 .datepicker {
@@ -270,25 +272,25 @@ form {
   }
   .form-group {
     &.row-dark {
-      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-med-light);
+      @include m.dm-colorRow(c.$dc-gray-darkest, c.$dc-gray-med-light);
     }
     &.row-darker {
-      @include v.dm-colorRow(v.$dc-gray-barely, v.$dc-gray-color);
+      @include m.dm-colorRow(c.$dc-gray-barely, c.$dc-gray-color);
     }
     &.row-darkest {
-      @include v.dm-colorRow(v.$dc-gray-lightest, v.$dc-gray-dark);
+      @include m.dm-colorRow(c.$dc-gray-lightest, c.$dc-gray-dark);
     }
     &.row-light {
-      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-barely);
+      @include m.dm-colorRow(c.$dc-gray-darkest, c.$dc-gray-barely);
     }
     &.row-medium {
-      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-light);
+      @include m.dm-colorRow(c.$dc-gray-darkest, c.$dc-gray-light);
     }
     &.row-med-light {
-      @include v.dm-colorRow(v.$dc-gray-darkest, v.$dc-gray-lightest);
+      @include m.dm-colorRow(c.$dc-gray-darkest, c.$dc-gray-lightest);
     }
     &.row-transparent {
-      @include v.dm-colorRow(v.$dc-gray-darkest, transparent);
+      @include m.dm-colorRow(c.$dc-gray-darkest, transparent);
     }
   }
 }

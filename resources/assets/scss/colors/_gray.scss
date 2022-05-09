@@ -1,40 +1,40 @@
 /*! lib/colors/gray */
 @use "sass:color";
-@use "../app/variables" as v;
+@use "../defaults/colors" as c;
 
-$color-default    : v.$dc-gray-darkest !default;
-$color-darkest    : v.$dc-gray-darkest !default;
-$color-darker     : v.$dc-gray-darker !default;
-$color-dark       : v.$dc-gray-dark !default;
-$color-med-dark   : v.$dc-gray-med-dark !default;
-$color-medium     : v.$dc-gray-medium !default;
-$color-med-light  : v.$dc-gray-med-light !default;
-$color-light      : v.$dc-gray-light !default;
-$color-lighter    : v.$dc-gray-lighter !default;
-$color-lightest   : v.$dc-gray-lightest !default;
-$color-body       : v.$dc-gray-lighter !default;
-$color-container  : v.$dc-gray-lightest !default;
-$color-border     : v.$dc-gray-darkest !default;
-$color-complement : v.$dc-gray-complement !default;
-$color-shadow      : color.scale(v.$dc-gray-darkest, $alpha: -35%) !default;
-$color-shadow-alt  : color.scale(v.$dc-gray-complement, $alpha: -35%) !default;
-$color-heading     : v.$dc-gray-darkest !default;
-$color-heading-alt : v.$dc-gray-complement !default;
+$color-default    : c.$gray-darkest !default;
+$color-darkest    : c.$gray-darkest !default;
+$color-darker     : c.$gray-darker !default;
+$color-dark       : c.$gray-dark !default;
+$color-med-dark   : c.$gray-med-dark !default;
+$color-medium     : c.$gray-medium !default;
+$color-med-light  : c.$gray-med-light !default;
+$color-light      : c.$gray-light !default;
+$color-lighter    : c.$gray-lighter !default;
+$color-lightest   : c.$gray-lightest !default;
+$color-body       : c.$gray-lighter !default;
+$color-container  : c.$gray-lightest !default;
+$color-border     : c.$gray-darkest !default;
+$color-complement : c.$gray-complement !default;
+$color-shadow      : color.scale(c.$gray-darkest, $alpha: -35%) !default;
+$color-shadow-alt  : color.scale(c.$gray-complement, $alpha: -35%) !default;
+$color-heading     : c.$gray-darkest !default;
+$color-heading-alt : c.$gray-complement !default;
 
 /* Gradient */
-$gradient-start   : v.$dc-gray-med-light !default;
-$gradient-stop    : v.$dc-gray-barely !default;
+$gradient-start   : c.$gray-med-light !default;
+$gradient-stop    : c.$gray-barely !default;
 
 /* Misc */
-$border-color     : v.$dc-gray-light !default;
+$border-color     : c.$gray-light !default;
 
 /* Navbar */
-$navbar-text-color      : v.$dc-black-color !default;
-$navbar-link-active     : v.$dc-gray-dark !default;
-$navbar-link-hover      : v.$dc-gray-complement !default;
-$navbar-sub-bg          : v.$dc-gray-lightest !default;
-$navbar-sub-bg-hover    : v.$dc-gray-medium !default;
-$navbar-sub-text-color  : v.$dc-black-color !default;
-$navbar-sub-link-active : v.$dc-gray-med-dark !default;
-$navbar-sub-link-hover  : v.$dc-gray-complement !default;
+$navbar-text-color      : c.$black-color !default;
+$navbar-link-active     : c.$gray-dark !default;
+$navbar-link-hover      : c.$gray-complement !default;
+$navbar-sub-bg          : c.$gray-lightest !default;
+$navbar-sub-bg-hover    : c.$gray-medium !default;
+$navbar-sub-text-color  : c.$black-color !default;
+$navbar-sub-link-active : c.$gray-med-dark !default;
+$navbar-sub-link-hover  : c.$gray-complement !default;
 
