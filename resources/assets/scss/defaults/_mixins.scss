@@ -1,10 +1,9 @@
 /*! Various Mixins */
 @use "sass:map";
 @use "sass:color";
-@use "../app/variables" as v;
-@use "../app/colors" as c;
-@use "../app/mixins" as m;
-@use "../app/functions" as f;
+@use "../variables" as v;
+@use "../colors" as c;
+@use "../functions" as f;
 
 @mixin rounded($radius) {
   border-radius: $radius;

@@ -1,7 +1,7 @@
 /*! lib/defaults/main_common */
-@use "../app/variables" as v;
-@use "../app/colors" as c;
-@use "../app/mixins" as m;
+@use "../variables" as v;
+@use "../colors" as c;
+@use "../mixins" as m;
 
 $gradient_dir: v.$dv-gradient-direction;
 

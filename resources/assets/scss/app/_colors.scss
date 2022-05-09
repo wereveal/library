@@ -1,8 +1,2 @@
 /*! lib/app/colors */
 /* Overrides forwarded colors, should come after other color definitions */
-@forward "../defaults/colors" as dc-*;
-@forward "../colors/green" as tc-*; // change this to the color file to set the themes color
-
-// instead of adding overrides here, create a color file in the colors dir with all the overrides and
-// change the forward in ../colors/* to the file you have changed.
-// this is because other scss files use the tc-* colors for the theme.

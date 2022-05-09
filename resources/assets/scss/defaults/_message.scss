@@ -1,7 +1,7 @@
 /*! lib/defaults/message */
-@use "../app/variables" as v;
-@use "../app/mixins" as m;
-@use "../app/colors" as c;
+@use "../variables" as v;
+@use "../mixins" as m;
+@use "../colors" as c;
 
 .message {
     &.success {

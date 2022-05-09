@@ -1,9 +1,9 @@
 /*! lib/defaults/form
     Some general Form styling
  */
-@use "../app/variables" as v;
-@use "../app/colors" as c;
-@use "../app/mixins" as m;
+@use "../variables" as v;
+@use "../colors" as c;
+@use "../mixins" as m;
 
 input, textarea {
   &.colorful {

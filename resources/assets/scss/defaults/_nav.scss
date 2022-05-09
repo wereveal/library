@@ -1,5 +1,7 @@
 /*! lib/defaults/nav   menu bar */
-@use "../app/variables" as v;
+@use "../variables" as v;
+@use "../mixins" as m;
+@use "../colors" as c;
 
 $p_border_width    : v.$dv-pagination-border-width;
 $p_line_height     : v.$dv-pagination-line-height;
@@ -10,74 +12,74 @@ $pad-y             : v.$dv-pagination-padding-y;
 $pad-y-sm          : v.$dv-pagination-padding-y-sm;
 
 .navbar {
-    @include v.dm-paddingSize(.25, 'tb', '');
+    @include m.dm-paddingSize(.25, 'tb', '');
     &.navbar-color {
-        @include v.dm-linearGradientTwoColor(v.$tc-gradient-start, v.$tc-gradient-stop, v.$dv-gradient-direction, v.$dv-gradient-longpoint);
-        color: v.$tc-navbar-text-color;
+        @include m.dm-linearGradientTwoColor(c.$tc-gradient-start, c.$tc-gradient-stop, v.$dv-gradient-direction, v.$dv-gradient-longpoint);
+        color: c.$tc-navbar-text-color;
         a {
             &.nav-link {
-                @include v.dm-fontSmallCapsBold;
+                @include m.dm-fontSmallCapsBold;
                 font-size: 1.25rem;
-                color: v.$tc-navbar-text-color;
+                color: c.$tc-navbar-text-color;
                 &.active {
-                    color: v.$tc-navbar-link-active;
+                    color: c.$tc-navbar-link-active;
                 }
             }
         }
         div {
             &.dropdown-menu {
                 &.show {
-                    background-color: v.$tc-navbar-text-color;
+                    background-color: c.$tc-navbar-text-color;
                     a {
                         &.dropdown-item {
-                            color: v.$tc-gradient-start;
+                            color: c.$tc-gradient-start;
                             &.active {
-                                color: v.$tc-navbar-text-color;
-                                background-color: v.$tc-gradient-stop;
+                                color: c.$tc-navbar-text-color;
+                                background-color: c.$tc-gradient-stop;
                             }
                             &.active:active {
-                                color: v.$tc-navbar-text-color;
-                                background-color: v.$tc-gradient-stop;
+                                color: c.$tc-navbar-text-color;
+                                background-color: c.$tc-gradient-stop;
                             }
                             &.active:hover {
-                                color: v.$tc-navbar-sub-link-hover;
-                                background-color: v.$tc-navbar-sub-bg-hover;
+                                color: c.$tc-navbar-sub-link-hover;
+                                background-color: c.$tc-navbar-sub-bg-hover;
                             }
                         }
                         &.dropdown-item:hover {
-                            color: v.$tc-navbar-sub-link-hover;
-                            background-color: v.$tc-navbar-sub-bg-hover;
+                            color: c.$tc-navbar-sub-link-hover;
+                            background-color: c.$tc-navbar-sub-bg-hover;
                         }
                     }
                 }
             }
         }
         a:hover {
-            color: v.$tc-navbar-link-hover;
+            color: c.$tc-navbar-link-hover;
         }
         li {
             &.show > .nav-link {
-                color: v.$tc-navbar-text-color;
+                color: c.$tc-navbar-text-color;
             }
             &.nav-item {
                 a:hover {
-                    color: v.$tc-navbar-link-hover;
+                    color: c.$tc-navbar-link-hover;
                 }
             }
         }
     }
     &.no-margin {
-        @include v.dm-marginSizePx(-$grid-gutter-width, 'lr', 'important');
+        @include m.dm-marginSizePx(-$grid-gutter-width, 'lr', 'important');
     }
 }
 
 .manager-links {
-    @include v.dm-listStyleNone;
+    @include m.dm-listStyleNone;
     a {
-        @include v.dm-fontSmallCapsExtraBold;
+        @include m.dm-fontSmallCapsExtraBold;
     }
     ul {
-        @include v.dm-listStyleNone;
+        @include m.dm-listStyleNone;
         padding-left: 2rem;
     }
 }
@@ -88,9 +90,9 @@ span.no-link {
     padding: $pad-y $pad-x;
     margin-left: -$p_border_width;
     line-height: $p_line_height;
-    color: v.$dc-green-medium;
-    background-color: v.$tc-color-body;
-    border:  solid v.$tc-border-color;
+    color: c.$dc-green-medium;
+    background-color: c.$tc-color-body;
+    border:  solid c.$tc-border-color;
     &.no-link-sm {
         padding: $pad-y-sm $pad-x-sm;
         font-size: v.$dv-font-size-sm;

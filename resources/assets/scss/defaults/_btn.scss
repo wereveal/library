@@ -1,7 +1,7 @@
 /*! lib/defaults/btn */
 /* possibly depreciated in favor of mixin createBtn and createBtnOutline */
-@use "../app/colors" as c;
-@use "../app/mixins" as m;
+@use "../colors" as c;
+@use "../mixins" as m;
 
 .btn-custom {
     display: inline-block;

@@ -1,6 +1,7 @@
 /*! lib/defaults/search */
 /* The Alpha List Menu */
-@use "../app/variables" as v;
+@use "../variables" as v;
+@use "../colors" as c;
 
 .container {
 	div.selections {
@@ -61,19 +62,19 @@
 		        padding-right: 3px;
 		        font-weight: 900;
 		        &.firstLetter {
-		            border-left: 1px solid v.$tc-color-medium;
-		            border-right: 1px solid v.$tc-color-medium;
+		            border-left: 1px solid c.$tc-color-medium;
+		            border-right: 1px solid c.$tc-color-medium;
 		        }
 		        &.otherLetter {
-		            border-right: 1px solid v.$tc-color-medium;
+		            border-right: 1px solid c.$tc-color-medium;
 		        }
 		        &.lastLetter {
-		            border-right: 1px solid v.$tc-color-medium;
+		            border-right: 1px solid c.$tc-color-medium;
 		        }
 		        &.noLink {
-		            color: v.$tc-color-medium;
+		            color: c.$tc-color-medium;
 		            font-weight: 400;
-		            border-right: 1px solid v.$tc-color-medium;
+		            border-right: 1px solid c.$tc-color-medium;
 		        }
 		    }
 		}

@@ -4,7 +4,7 @@
 @use "sass:map";
 @use "sass:math";
 @use "sass:meta";
-@use "../app/colors" as c;
+@use "../colors" as c;
 @use "linear_channel_values" as lcv;
 @function str-replace($string, $search, $replace: "") {
     $index: str-index($string, $search);

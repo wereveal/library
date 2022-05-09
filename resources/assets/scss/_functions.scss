@@ -1,0 +1,3 @@
+/*! lib/scss/_functions.scss - main forwarder */
+@forward "defaults/functions" as df-*;
+@forward "app/functions" as af-*;

@@ -2,7 +2,7 @@
 /** Overrides Bootstrap vars and must come before any Bootstrap include **/
 @use "sass:map";
 @use "sass:math";
-@use "colors" as c;
+@use "../colors" as c;
 
 $app_theme:               "blue" !default;
 $default-body-font-size:  16px !default;
@@ -77,14 +77,14 @@ $pagination-padding-x-lg: 1.5rem !default;
 $pagination-line-height:  1.25 !default;
 $pagination-border-width: $border-width !default;
 
-$shadow-blur:             2px;
-$shadow-color:            c.$black-color;
-$shadow-x:                2px;
-$shadow-y:                2px;
-$btn-shadow-blur:         1px;
-$btn-shadow-color:        c.$black-color;
-$btn-shadow-x:            1px;
-$btn-shadow-y:            1px;
+$shadow-blur:             2px !default;
+$shadow-color:            c.$dc-black-color !default;
+$shadow-x:                2px !default;
+$shadow-y:                2px !default;
+$btn-shadow-blur:         1px !default;
+$btn-shadow-color:        c.$dc-black-color !default;
+$btn-shadow-x:            1px !default;
+$btn-shadow-y:            1px !default;
 
 $spacer:                  1rem !default;
 $spacer-x:                $spacer !default;

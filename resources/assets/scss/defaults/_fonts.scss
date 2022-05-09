@@ -1,7 +1,7 @@
 /*! lib/defaults/fonts
     Default Font Face
  */
-@use "../app/mixins" as m;
+@use "../mixins" as m;
 
 @include m.dm-fontFace('VeraSans', '/assets/fonts/Vera/Vera','','', woff);
 @include m.dm-fontFace('VeraSansBold', '/assets/fonts/Vera/Vera-Bold','','', woff);
