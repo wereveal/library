@@ -1,6 +1,6 @@
 /*! lib/scss/_colors.scss main forwarder */
 @forward "defaults/colors" as dc-*;
-@forward "colors/green" as tc-*; // change this to the color file to set the themes color
+@forward "colors/blue" as tc-*; // change this to the color file to set the themes color
 /* Note: if you want a different theme color that doesn't exist in colors dir
          create a new colors/_theme_color.scss file and then forward it instead, i.e.,
          @forward "app/colors" as tc-*;

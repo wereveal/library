@@ -255,41 +255,45 @@ class NewAppHelper
                 }
             }
             else {
-                return false;
-            }
+                return false; }
 
             ### Create the default scss files for app ###
             $app_name            = strtolower($this->a_config['app_name']);
+            $scss_path           = $this->app_path . '/resources/assets/scss/';
             $styles_text         = file_get_contents(SRC_CONFIG_PATH . '/install_files/styles.scss.txt');
             $styles_manager_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/styles_manager.scss.txt');
+            $colors_forward_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/_colors.scss.txt');
+            $mq_forward_text     = file_get_contents(SRC_CONFIG_PATH . '/install_files/_media_queries.scss.txt');
+            $mixins_forward_text = file_get_contents(SRC_CONFIG_PATH . '/install_files/_mixins.scss.txt');
+            $vars_forward_text   = file_get_contents(SRC_CONFIG_PATH . '/install_files/_variables.scss.txt');
+            $common_text         = file_get_contents(SRC_CONFIG_PATH . '/install_files/app_common.scss.txt');
+            $vars_text           = file_get_contents(SRC_CONFIG_PATH . '/install_files/app_variables.scss.txt');
+            $colors_text         = file_get_contents(SRC_CONFIG_PATH . '/install_files/app_colors.scss.txt');
             $styles_text         = str_replace('{app_name}', $app_name, $styles_text);
             $styles_manager_text = str_replace('{app_name}', $app_name, $styles_manager_text);
-            if ($styles_text) {
-                $file_name = 'styles_' . $app_name . '.scss';
-                if (!file_put_contents($this->app_path . '/resources/assets/scss/' . $file_name, $styles_text)) {
-                    return false;
-                }
-            }
-            else {
-                return false;
-            }
-            if ($styles_manager_text) {
-                $file_name = 'styles_' . $app_name . '_manager.scss';
-                if (!file_put_contents($this->app_path . '/resources/assets/scss/' . $file_name,
-                                       $styles_manager_text)) {
-                    return false;
-                }
-            }
-            else {
-                return false;
-            }
+            $vars_text           = str_replace('{app_name}', $app_name, $vars_text);
+            $colors_text         = str_replace('{app_name}', $app_name, $colors_text);
+            $colors_forward_text = str_replace('{app_name}', $app_name, $colors_forward_text);
+            $mixins_forward_text = str_replace('{app_name}', $app_name, $mixins_forward_text);
+            $vars_forward_text   = str_replace('{app_name}', $app_name, $vars_forward_text);
+            $mq_forward_text     = str_replace('{app_name}', $app_name, $mq_forward_text);
+            $file_name = 'styles_' . $app_name . '.scss';
+            file_put_contents($scss_path . $file_name, $styles_text);
+            $file_name = 'styles_' . $app_name . '_manager.scss';
+            file_put_contents($scss_path . $file_name, $styles_manager_text);
+            file_put_contents($scss_path . '_colors.scss', $colors_forward_text);
+            file_put_contents($scss_path . '_mixins.scss', $mixins_forward_text);
+            file_put_contents($scss_path . '_variables.scss', $vars_forward_text);
+            file_put_contents($scss_path . '_media_queries.scss', $mq_forward_text);
             $more_text = '// App specific';
-            file_put_contents($this->app_path . '/resources/assets/scss/app/_' . $app_name . '.scss', $more_text);
-            file_put_contents($this->app_path . '/resources/assets/scss/app/_colors.scss', $more_text . ' color');
-            file_put_contents($this->app_path . '/resources/assets/scss/app/_forms.scss', $more_text . ' forms');
-            file_put_contents($this->app_path . '/resources/assets/scss/app/_media_queries.scss', $more_text . ' forms');
-            file_put_contents($this->app_path . '/resources/assets/scss/app/_mixins.scss', $more_text . ' mixins');
-            file_put_contents($this->app_path . '/resources/assets/scss/app/_variables.scss', $more_text . ' variables');
+            file_put_contents($scss_path . 'app/_' . $app_name . '.scss', $more_text);
+            file_put_contents($scss_path . 'app/_colors.scss', $colors_text);
+            file_put_contents($scss_path . 'app/_forms.scss', $more_text . ' forms');
+            file_put_contents($scss_path . 'app/_functions.scss', $more_text . ' functions');
+            file_put_contents($scss_path . 'app/_media_queries.scss', $more_text . ' media queries');
+            file_put_contents($scss_path . 'app/_mixins.scss', $more_text . ' mixins');
+            file_put_contents($scss_path . 'app/_common.scss', $common_text);
+            file_put_contents($scss_path . 'app/_variables.scss', $vars_text);
 
             ### Create the twig_config file ###
             $twig_file = file_get_contents(SRC_CONFIG_PATH . '/install_files/twig_config.php.txt');

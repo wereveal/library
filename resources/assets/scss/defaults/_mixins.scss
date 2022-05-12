@@ -358,9 +358,9 @@
   background: linear-gradient($direction, $colors) no-repeat;
 }
 
-@mixin linearGradientTwoColor($start_color: black, $end_color: white, $direction: 180deg, $midpoint: 50%) {
+@mixin linearGradientTwoColor($start_color: black, $end_color: white, $direction: 180deg, $midpoint: 100%) {
   background: $start_color;
-  background: linear-gradient($direction, $start_color, $midpoint, $end_color) no-repeat;
+  background: linear-gradient($direction, $start_color, $end_color $midpoint) no-repeat;
 }
 
 @mixin makeColorful($important: false) {

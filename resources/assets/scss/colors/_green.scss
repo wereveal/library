@@ -2,31 +2,34 @@
 @use "sass:color";
 @use "../defaults/colors" as c;
 
-$color-default:    c.$green-darker !default;
-$color-darkest:    c.$green-darkest !default;
-$color-darker:     c.$green-darker !default;
-$color-dark:       c.$green-dark !default;
-$color-med-dark:   c.$green-med-dark !default;
-$color-medium:     c.$green-medium !default;
-$color-med-light:  c.$green-med-light !default;
-$color-light:      c.$green-light !default;
-$color-lighter:    c.$green-lighter !default;
-$color-lightest:   c.$green-lightest !default;
-$color-body:       c.$green-dark !default;
-$color-container:  c.$green-lightest !default;
-$color-border:     c.$green-darker !default;
-$color-complement: c.$green-complement !default;
-$color-shadow      : color.scale(c.$gray-darkest, $alpha: -35%) !default;
-$color-shadow-alt  : color.scale(c.$gray-complement, $alpha: -35%) !default;
-$color-heading     : c.$green-darkest !default;
-$color-heading-alt : c.$green-complement !default;
+$color-default:          c.$green-darker !default;
+$color-darkest:          c.$green-darkest !default;
+$color-darker:           c.$green-darker !default;
+$color-dark:             c.$green-dark !default;
+$color-med-dark:         c.$green-med-dark !default;
+$color-medium:           c.$green-medium !default;
+$color-med-light:        c.$green-med-light !default;
+$color-light:            c.$green-light !default;
+$color-lighter:          c.$green-lighter !default;
+$color-lightest:         c.$green-lightest !default;
+$color-body:             c.$green-dark !default;
+$color-container:        c.$green-lightest !default;
+$color-border:           c.$green-darker !default;
+$color-complement:       c.$green-complement !default;
+$color-shadow:           color.scale(c.$gray-darkest, $alpha: -35%) !default;
+$color-shadow-alt:       color.scale(c.$gray-complement, $alpha: -35%) !default;
+$color-heading:          c.$green-darkest !default;
+$color-heading-alt:      c.$green-complement !default;
 
 /* Gradient */
-$gradient-start: c.$green-med-dark !default;
-$gradient-stop:  c.$green-med-light !default;
+$gradient-start:         c.$green-med-dark !default;
+$gradient-stop:          c.$green-med-light !default;
 
 /* Misc */
-$border-color     : c.$blue-light !default;
+$border-color:           c.$blue-light !default;
+$row-light:              $color-lightest;
+$row-medium:             $color-light;
+$row-dark:               $color-darkest;
 
 /* Navbar */
 $navbar-text-color:      c.$green-xlight !default;

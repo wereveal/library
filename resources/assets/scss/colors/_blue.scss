@@ -2,39 +2,42 @@
 @use "sass:color";
 @use "../defaults/colors" as c;
 
-$color-default    : c.$blue-medium !default;
-$color-darkest    : c.$blue-darkest !default;
-$color-darker     : c.$blue-darker !default;
-$color-dark       : c.$blue-dark !default;
-$color-med-dark   : c.$blue-med-dark !default;
-$color-medium     : c.$blue-medium !default;
-$color-med-light  : c.$blue-med-light !default;
-$color-light      : c.$blue-light !default;
-$color-lighter    : c.$blue-lighter !default;
-$color-lightest   : c.$blue-lightest !default;
-$color-body       : c.$blue-lighter !default;
-$color-container  : c.$blue-lightest !default;
-$color-border     : c.$blue-darkest !default;
-$color-complement : c.$blue-complement !default;
-$color-shadow      : color.scale(c.$gray-darkest, $alpha: -35%) !default;
-$color-shadow-alt  : color.scale(c.$gray-complement, $alpha: -35%) !default;
-$color-heading     : c.$blue-darkest !default;
-$color-heading-alt : c.$blue-complement !default;
+$color-default:          c.$blue-medium !default;
+$color-darkest:          c.$blue-darkest !default;
+$color-darker:           c.$blue-darker !default;
+$color-dark:             c.$blue-dark !default;
+$color-med-dark:         c.$blue-med-dark !default;
+$color-medium:           c.$blue-medium !default;
+$color-med-light:        c.$blue-med-light !default;
+$color-light:            c.$blue-light !default;
+$color-lighter:          c.$blue-lighter !default;
+$color-lightest:         c.$blue-lightest !default;
+$color-body:             c.$blue-lighter !default;
+$color-container:        c.$blue-lightest !default;
+$color-border:           c.$blue-darkest !default;
+$color-complement:       c.$blue-complement !default;
+$color-shadow:           color.scale(c.$gray-darkest, $alpha: -35%) !default;
+$color-shadow-alt:       color.scale(c.$gray-complement, $alpha: -35%) !default;
+$color-heading:          c.$blue-darkest !default;
+$color-heading-alt:      c.$blue-complement !default;
 
 /* Gradient */
-$gradient-start   : c.$blue-light !default;
-$gradient-stop    : c.$blue-lightest !default;
+$gradient-start:         c.$blue-light !default;
+$gradient-stop:          c.$blue-lightest !default;
 
 /* Misc */
-$border-color     : c.$blue-light !default;
+$border-color:           c.$blue-light !default;
+$row-light:              $color-lightest;
+$row-medium:             $color-light;
+$row-dark:               $color-darkest;
 
 /* Navbar */
-$navbar-text-color      : c.$blue-darkest !default;
-$navbar-link-active     : c.$blue-dark !default;
-$navbar-link-hover      : c.$blue-med-dark !default;
-$navbar-sub-bg          : c.$blue-lightest !default;
-$navbar-sub-bg-hover    : c.$blue-light !default;
-$navbar-sub-text-color  : c.$blue-darkest !default;
-$navbar-sub-link-active : c.$blue-dark !default;
-$navbar-sub-link-hover  : c.$blue-darkest !default;
+$navbar-text-color:      c.$blue-darkest !default;
+$navbar-link-active:     c.$blue-dark !default;
+$navbar-link-hover:      c.$blue-med-dark !default;
+$navbar-sub-bg:          c.$blue-lightest !default;
+$navbar-sub-bg-hover:    c.$blue-light !default;
+$navbar-sub-text-color:  c.$blue-darkest !default;
+$navbar-sub-link-active: c.$blue-dark !default;
+$navbar-sub-link-hover:  c.$blue-darkest !default;
 
