@@ -78,7 +78,7 @@ class NavigationController implements ManagerControllerInterface
             $a_msg = ViewHelper::failureMessage('Unable to save the record.');
         }
         if ($this->use_cache) {
-            $this->o_cache->clearTag('nav');
+            $this->o_cache->clearByKeyPrefix('nav');
         }
         return $this->o_view->renderList($a_msg);
     }
@@ -130,7 +130,7 @@ class NavigationController implements ManagerControllerInterface
             $a_msg = ViewHelper::failureMessage('Unable to delete the nav record.');
         }
         if ($this->use_cache) {
-            $this->o_cache->clearTag('nav');
+            $this->o_cache->clearByKeyPrefix('nav');
         }
         return $this->o_view->renderList($a_msg);
     }

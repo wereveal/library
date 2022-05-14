@@ -91,7 +91,7 @@ class UrlsController implements ConfigControllerInterface
         try {
             $this->o_urls_model->create($a_values);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('urls');
+                $this->o_cache->clearByKeyPrefix('urls');
             }
             $a_message = ViewHelper::successMessage();
         }
@@ -129,7 +129,7 @@ class UrlsController implements ConfigControllerInterface
         try {
             $this->o_urls_model->update($a_values, ['url_text', 'url_host']);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('urls');
+                $this->o_cache->clearByKeyPrefix('urls');
             }
             $a_message = ViewHelper::successMessage();
         }
@@ -178,7 +178,7 @@ class UrlsController implements ConfigControllerInterface
         try {
             $this->o_urls_model->delete($url_id);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('urls');
+                $this->o_cache->clearByKeyPrefix('urls');
             }
             $a_message = ViewHelper::successMessage();
         }

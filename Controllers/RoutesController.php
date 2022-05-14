@@ -88,7 +88,7 @@ class RoutesController implements ManagerControllerInterface
         try {
             $this->o_complex->delete($route_id);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('route');
+                $this->o_cache->clearByKeyPrefix('route');
             }
             $a_message = ViewHelper::successMessage();
         }
@@ -109,7 +109,7 @@ class RoutesController implements ManagerControllerInterface
             $this->o_complex->saveNew($this->a_post);
             $a_message = ViewHelper::successMessage();
             if ($this->use_cache) {
-                $this->o_cache->clearTag('route');
+                $this->o_cache->clearByKeyPrefix('route');
             }
         }
         catch (ModelException $e) {
@@ -133,7 +133,7 @@ class RoutesController implements ManagerControllerInterface
             $this->o_complex->update($this->a_post);
             $a_message = ViewHelper::successMessage();
             if ($this->use_cache) {
-                $this->o_cache->clearTag('route');
+                $this->o_cache->clearByKeyPrefix('route');
             }
         }
         catch (ModelException $e) {

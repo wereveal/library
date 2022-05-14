@@ -1,5 +1,4 @@
 <?php /** @noinspection PhpUndefinedConstantInspection */
-
 /**
  * Class ContentView.
  *
@@ -8,6 +7,8 @@
 
 namespace Ritc\Library\Views;
 
+use JsonException;
+use Ritc\Library\Exceptions\CacheException;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Exceptions\ViewException;
 use Ritc\Library\Helper\ExceptionHelper;
@@ -22,10 +23,10 @@ use Ritc\Library\Traits\ConfigViewTraits;
  * Manager for Content View.
  *
  * @author  William E Reveal <bill@revealitconsulting.com>
- * @version 1.0.0-alpha.1
- * @date    2021-12-01 13:08:52
+ * @version 1.0.0-alpha.2
+ * @date    2022-05-13 15:58:45
  * @change_log
- * - 1.0.0-alpha.1                                              - 2021-12-01 wer
+ * - 1.0.0-alpha.2 - added caching                              - 2022-05-13 wer
  * - 1.0.0-alpha.0 - Initial version.                           - 2018-06-01 wer
  */
 class ContentView implements ViewInterface
@@ -64,16 +65,33 @@ class ContentView implements ViewInterface
     public function render(array $a_message = []): string
     {
         $a_records = [];
-        try {
-            $a_records = $this->o_model->readAllCurrent();
+        $cache_key = 'content.get.all';
+        if (USE_CACHE) {
+            $records_json = $this->o_cache->get($cache_key);
+            $a_records = json_decode($records_json, true);
         }
-        catch (ModelException $e) {
-            $message = 'Unable to read the current content records.';
-            if (DEVELOPER_MODE) {
-                $message .= ' -- ' . $e->getMessage();
+        if (empty($a_records)) {
+            try {
+                $a_records = $this->o_model->readAllCurrent();
             }
-            $a_message = ViewHelper::errorMessage($message);
+            catch (ModelException $e) {
+                $message = 'Unable to read the current content records.';
+                if (DEVELOPER_MODE) {
+                    $message .= ' -- ' . $e->getMessage();
+                }
+                $a_message = ViewHelper::errorMessage($message);
+            }
+            if (USE_CACHE) {
+                try {
+                    $records_json = json_encode($a_records, JSON_THROW_ON_ERROR);
+                    $this->o_cache->set($cache_key, $records_json);
+                }
+                catch (JsonException|CacheException) {
+                    // do nothing
+                }
+            }
         }
+
         $a_twig_values = $this->createDefaultTwigValues($a_message);
         $a_twig_values['a_content_list'] = $a_records;
         $a_twig_values['content_type'] = 'list';
@@ -103,13 +121,29 @@ class ContentView implements ViewInterface
         }
         $a_message = [];
         $a_results = [];
-        try {
-            $a_search_for = ['pbm_id' => $pbm_id, 'order_by' => 'DESC'];
-            $a_results = $this->o_model->readAllByPage($a_search_for);
+        $cache_key = 'content.get.all.versions.for.pbm.' . $pbm_id;
+        if (USE_CACHE) {
+            $values = $this->o_cache->get($cache_key);
+            $a_results = json_decode($values, true);
         }
-        catch (ModelException) {
-            $message = 'A problem occurred retreiving a list of all versions for the page';
-            $a_message = ViewHelper::errorMessage($message);
+        if (empty($a_results)) {
+            try {
+                $a_search_for = ['pbm_id' => $pbm_id, 'order_by' => 'DESC'];
+                $a_results = $this->o_model->readAllByPage($a_search_for);
+                if (USE_CACHE) {
+                    try {
+                        $values = json_encode($a_results, JSON_THROW_ON_ERROR);
+                        $this->o_cache->set($cache_key, $values);
+                    }
+                    catch (JsonException|CacheException) {
+                        // do nothing for now
+                    }
+                }
+            }
+            catch (ModelException) {
+                $message = 'A problem occurred retreiving a list of all versions for the page';
+                $a_message = ViewHelper::errorMessage($message);
+            }
         }
         $a_twig_values                   = $this->createDefaultTwigValues($a_message);
         $a_twig_values['content_type']   = 'versions';
@@ -123,13 +157,29 @@ class ContentView implements ViewInterface
     {
         $a_post = $this->o_router->getPost();
         $c_id = $a_post['c_id'];
-        try {
-            $a_results = $this->o_model->readByContentId($c_id);
+        $cache_key = 'content.get.by.id.' . $c_id;
+        if (USE_CACHE) {
+            $value = $this->o_cache->get($cache_key);
+            $a_results = json_decode($value, true);
         }
-        catch (ModelException) {
-            $message = 'Could not get the details for the record.';
-            $a_message = ViewHelper::errorMessage($message);
-            return $this->render($a_message);
+        if (empty($a_results)) {
+            try {
+                $a_results = $this->o_model->readByContentId($c_id);
+            }
+            catch (ModelException) {
+                $message = 'Could not get the details for the record.';
+                $a_message = ViewHelper::errorMessage($message);
+                return $this->render($a_message);
+            }
+            if (USE_CACHE) {
+                try {
+                    $value = json_encode($a_results, JSON_THROW_ON_ERROR);
+                    $this->o_cache->set($cache_key, $value);
+                }
+                catch (JsonException|CacheException) {
+                    // do nothing for now but needed
+                }
+            }
         }
         $a_results['content_type'] = match ($a_results['c_type']) {
             'text'  => 'Text',
@@ -189,17 +239,33 @@ class ContentView implements ViewInterface
         switch ($action) {
             case 'by_pbm_id':
                 $c_pbm_id = $a_post['c_pbm_id'];
-                try {
-                    $a_records = $this->o_model->readCurrent(['pbm_id' => $c_pbm_id]);
-                    if (!empty($a_records[0])) {
-                        $a_record = $a_records[0];
+                $cache_key = 'content.get.by.pbm_id.' . $c_pbm_id;
+                if (USE_CACHE) {
+                    $value = $this->o_cache->get($cache_key);
+                    $a_record = json_decode($value, true);
+                }
+                if (empty($a_record)) {
+                    try {
+                        $a_records = $this->o_model->readCurrent(['pbm_id' => $c_pbm_id]);
+                        if (!empty($a_records[0])) {
+                            $a_record = $a_records[0];
+                            if (USE_CACHE) {
+                                try {
+                                    $value = json_encode($a_record, JSON_THROW_ON_ERROR);
+                                    $this->o_cache->set($cache_key, $value);
+                                }
+                                catch (JsonException|CacheException) {
+                                    // do nothing for now
+                                }
+                            }
+                        }
+                        else {
+                            $a_message = ViewHelper::errorMessage('Unable to read the details for the content record.');
+                        }
                     }
-                    else {
+                    catch (ModelException) {
                         $a_message = ViewHelper::errorMessage('Unable to read the details for the content record.');
                     }
-                }
-                catch (ModelException) {
-                    $a_message = ViewHelper::errorMessage('Unable to read the details for the content record.');
                 }
                 break;
             case 'by_c_id':
@@ -214,9 +280,23 @@ class ContentView implements ViewInterface
                 else {
                     $a_message = ViewHelper::errorMessage($err_msg);
                 }
-                if (empty($a_message)) {
+                $cache_key = 'content.get.by.content_id.' . $content_id;
+                if (USE_CACHE) {
+                    $value = $this->o_cache->get($cache_key);
+                    $a_record = json_decode($value, true);
+                }
+                if (empty($a_message) && empty($a_record)) {
                     try {
                         $a_record = $this->o_model->readByContentId($content_id);
+                        if (USE_CACHE) {
+                            try {
+                                $value = json_encode($a_record, JSON_THROW_ON_ERROR);
+                                $this->o_cache->set($cache_key, $value);
+                            }
+                            catch (JsonException|CacheException) {
+                                // do nothing for now
+                            }
+                        }
                     }
                     catch (ModelException) {
                         $a_message = ViewHelper::errorMessage($err_msg);
@@ -231,28 +311,36 @@ class ContentView implements ViewInterface
                                       'other_stuph' => ' selected',
                                       'label'       => '-Select Page/Block for Content-'
                                   ]];
-                try {
-                    $a_pbms = $o_pbm->readPbmWithoutContent();
-                    foreach ($a_pbms as $a_pbm) {
-                        $a_pbm_options[] = [
-                            'value'       => $a_pbm['pbm_id'],
-                            'other_stuph' => '',
-                            'label'       => $a_pbm['page_title'] . '/' . $a_pbm['b_name']
-                        ];
+                $cache_key = 'pbm.get.without.content';
+                $a_pbms = [];
+                if (USE_CACHE) {
+                    $value = $this->o_cache->get($cache_key);
+                    $a_pbms = json_decode($value, true);
+                }
+                if (empty($a_pbms)) {
+                    try {
+                        $a_pbms = $o_pbm->readPbmWithoutContent();
+                    }
+                    catch (ModelException) {
+                        $a_message = ViewHelper::errorMessage('Unable to determine the pages that exist.');
                     }
                 }
-                catch (ModelException) {
-                    $a_message = ViewHelper::errorMessage('Unable to determine the pages that exist.');
+                foreach ($a_pbms as $a_pbm) {
+                    $a_pbm_options[] = [
+                        'value'       => $a_pbm['pbm_id'],
+                        'other_stuph' => '',
+                        'label'       => $a_pbm['page_title'] . '/' . $a_pbm['b_name']
+                    ];
                 }
                 $a_pbm_select = [
                     'id'          => 'content[c_pbm_id]',
-                    'name'        => 'content[c_pbm_id]',
-                    'class'       => 'form-control colorful',
-                    'other_stuph' => '',
-                    'label_class' => 'form-label bold',
-                    'label_text'  => 'Available Page/Block Combinations without Content',
-                    'options'     => $a_pbm_options
-                ];
+                        'name'        => 'content[c_pbm_id]',
+                        'class'       => 'form-control colorful',
+                        'other_stuph' => '',
+                        'label_class' => 'form-label bold',
+                        'label_text'  => 'Available Page/Block Combinations without Content',
+                        'options'     => $a_pbm_options
+                    ];
             // end default/new
         }
         if (!empty($a_message)) {
@@ -290,5 +378,4 @@ class ContentView implements ViewInterface
         $tpl = $this->createTplString($a_twig_values);
         return $this->renderIt($tpl, $a_twig_values);
     }
-
 }

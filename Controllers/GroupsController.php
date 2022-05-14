@@ -89,7 +89,7 @@ class GroupsController implements ConfigControllerInterface
         try {
             $this->o_gc_model->deleteWithRelated($group_id);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('groups');
+                $this->o_cache->clearByKeyPrefix('groups');
             }
             $a_message = ViewHelper::successMessage();
         }
@@ -111,7 +111,7 @@ class GroupsController implements ConfigControllerInterface
         try {
             $this->o_model->create($a_group);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('groups');
+                $this->o_cache->clearByKeyPrefix('groups');
             }
             $a_message = ViewHelper::successMessage();
         }
@@ -136,7 +136,7 @@ class GroupsController implements ConfigControllerInterface
         try {
             $this->o_model->update($a_group, ['group_name', 'group_auth_level']);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('groups');
+                $this->o_cache->clearByKeyPrefix('groups');
             }
             $a_message = ViewHelper::successMessage();
         }

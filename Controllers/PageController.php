@@ -106,7 +106,7 @@ class PageController implements ManagerControllerInterface
         try {
             $this->o_model->deletePageValues($page_id);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('page');
+                $this->o_cache->clearByKeyPrefix('page');
             }
             $a_results = ViewHelper::successMessage();
         }
@@ -184,7 +184,7 @@ class PageController implements ManagerControllerInterface
             try {
                 $this->o_model->savePageValues($a_page);
                 if ($this->use_cache) {
-                    $this->o_cache->clearTag('page');
+                    $this->o_cache->clearByKeyPrefix('page');
                 }
                 $a_message = ViewHelper::successMessage();
             }
@@ -219,7 +219,7 @@ class PageController implements ManagerControllerInterface
         try {
             $this->o_model->updatePageValues($a_page);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('page');
+                $this->o_cache->clearByKeyPrefix('page');
             }
             $a_message = ViewHelper::successMessage();
         }

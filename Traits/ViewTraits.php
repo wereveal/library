@@ -1,5 +1,4 @@
-<?php /** @noinspection SpellCheckingInspection */
-
+<?php
 /**
  * Trait ViewTraits
  * @package Ritc_Library

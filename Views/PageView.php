@@ -40,6 +40,7 @@ use Ritc\Library\Traits\ConfigViewTraits;
  * - 1.1.0   - Implement LIB_TWIG_PREFIX                                                - 12/12/2015 wer
  * - 1.0.0   - take out of beta                                                         - 11/27/2015 wer
  * - 1.0.0β1 - Initial version                                                          - 10/30/2015 wer
+ * @todo add cache abilities
  */
 class PageView
 {

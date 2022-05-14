@@ -8,6 +8,7 @@ namespace Ritc\Library\Controllers;
 use Ritc\Library\Interfaces\ConfigControllerInterface;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Traits\ConfigControllerTraits;
+use Ritc\Library\Views\NavgroupsView;
 
 /**
  * Controller for the Navgroups manager.
@@ -23,6 +24,8 @@ class NavgroupsController implements ConfigControllerInterface
 {
     use ConfigControllerTraits;
 
+    private NavgroupsView $o_view;
+
     /**
      * NavgroupsController constructor.
      *
@@ -31,6 +34,7 @@ class NavgroupsController implements ConfigControllerInterface
     public function __construct(Di $o_di)
     {
         $this->setupManagerController($o_di);
+        $this->o_view = new NavgroupsView($o_di);
     }
 
     /**
@@ -40,7 +44,15 @@ class NavgroupsController implements ConfigControllerInterface
      */
     public function route():string
     {
-        return 'ToDo';
+        return match ($this->form_action) {
+            'new'    => $this->o_view->renderForm(),
+            'modify' => $this->o_view->renderForm($this->a_post),
+            'verify' => $this->verifyDelete(),
+            'save'   => $this->save(),
+            'update' => $this->update(),
+            'delete' => $this->delete(),
+            default  => $this->o_view->render()
+        };
     }
 
     /**
@@ -50,7 +62,8 @@ class NavgroupsController implements ConfigControllerInterface
      */
     public function save():string
     {
-        return '';
+        $a_message = [];
+        return $this->o_view->render($a_message);
     }
 
     /**

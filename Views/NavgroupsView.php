@@ -36,9 +36,19 @@ class NavgroupsView implements ViewInterface
     /**
      * Default method for rendering the html.
      *
+     * @param array $a_message
      * @return string
      */
-    public function render():string
+    public function render(array $a_message = []):string
+    {
+        return '';
+    }
+
+    /**
+     * @param array $a_post
+     * @return string
+     */
+    public function renderForm(array $a_post = [])
     {
         return '';
     }

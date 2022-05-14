@@ -73,7 +73,7 @@ class BlocksController implements ConfigControllerInterface
             $this->o_model->create($a_blocks);
             $a_message = ViewHelper::successMessage();
             if ($this->use_cache) {
-                $this->o_cache->clearTag('blocks');
+                $this->o_cache->clearByKeyPrefix('blocks');
             }
         }
         catch (ModelException) {
@@ -102,7 +102,7 @@ class BlocksController implements ConfigControllerInterface
         try {
             $this->o_model->update($a_blocks, ['b_name', 'b_type']);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('blocks');
+                $this->o_cache->clearByKeyPrefix('blocks');
             }
             $a_message = ViewHelper::successMessage();
         }
@@ -146,7 +146,7 @@ class BlocksController implements ConfigControllerInterface
             $this->o_model->delete($b_id);
             $a_message = ViewHelper::successMessage();
             if ($this->use_cache) {
-                $this->o_cache->clearTag('blocks');
+                $this->o_cache->clearByKeyPrefix('blocks');
             }
         }
         catch (ModelException) {

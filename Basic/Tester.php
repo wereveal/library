@@ -1,8 +1,10 @@
 <?php
 /**
  * Class Tester
+ *
  * @package Ritc_Library
  */
+
 namespace Ritc\Library\Basic;
 
 use ReflectionClass;
@@ -38,7 +40,6 @@ use Ritc\Library\Helper\LocateFile;
  *      - allows the test results to display individual subtests
  *      - within the method tester
  * - v1.0.0 - updated to match new framework                                            - 2013-04-03 wer
- * @todo add a todo test type, i.e. a way to say, this method needs to be written so don't run a test, just list it.
  */
 class Tester
 {
@@ -68,6 +69,10 @@ class Tester
     protected array $skipped_test_names = [];
     /** @var int number of skipped tests */
     protected int $skipped_tests = 0;
+    /** @var array */
+    protected array $unwritten_method_names = [];
+    /** @var int */
+    protected int $unwritten_method_tests = 0;
 
     /**
      * Adds a method name to the test order.
@@ -75,9 +80,11 @@ class Tester
      * @param string $method_name
      * @return bool
      */
-    public function addMethodToTestOrder(string $method_name = ''):bool
+    public function addMethodToTestOrder(string $method_name = ''): bool
     {
-        if ($method_name === '') { return false; }
+        if ($method_name === '') {
+            return false;
+        }
         $this->a_test_order[] = $method_name;
         return true;
     }
@@ -88,16 +95,18 @@ class Tester
      * @param string $key   the key name
      * @param mixed  $value the value assigned to the key
      */
-    public function addTestValue(string $key = '', mixed $value = ''):void
+    public function addTestValue(string $key = '', mixed $value = ''): void
     {
-        if ($key === '') { return; }
+        if ($key === '') {
+            return;
+        }
         $this->a_test_values[$key] = $value;
     }
 
     /**
      * @return array
      */
-    public function getFailedTestNames():array
+    public function getFailedTestNames(): array
     {
         return $this->failed_test_names;
     }
@@ -105,7 +114,7 @@ class Tester
     /**
      * @return int
      */
-    public function getFailedTests():int
+    public function getFailedTests(): int
     {
         return $this->failed_tests;
     }
@@ -113,7 +122,7 @@ class Tester
     /**
      * @return int
      */
-    public function getNumOTests():int
+    public function getNumOTests(): int
     {
         return $this->num_o_tests;
     }
@@ -121,7 +130,7 @@ class Tester
     /**
      * @return int
      */
-    public function getPassedTests():int
+    public function getPassedTests(): int
     {
         return $this->passed_tests;
     }
@@ -129,7 +138,7 @@ class Tester
     /**
      * @return array
      */
-    public function getPassedTestNames():array
+    public function getPassedTestNames(): array
     {
         return $this->passed_test_names;
     }
@@ -137,7 +146,7 @@ class Tester
     /**
      * @return array
      */
-    public function getTestOrder():array
+    public function getTestOrder(): array
     {
         return $this->a_test_order;
     }
@@ -148,7 +157,7 @@ class Tester
      * @param bool $show_test_names optional defaults to showing names
      * @return array
      */
-    public function returnTestResults(bool $show_test_names = true):array
+    public function returnTestResults(bool $show_test_names = true): array
     {
         $a_failed_test_names = array();
         $a_passed_test_names = array();
@@ -164,7 +173,7 @@ class Tester
                     $a_subnames = array();
                 }
                 $a_failed_test_names[] = array(
-                    'name' => $name,
+                    'name'          => $name,
                     'subtest_names' => $a_subnames
                 );
             }
@@ -176,7 +185,6 @@ class Tester
                 'passed_test_names' => $a_passed_test_names
             );
         }
-
         return array(
             'failed_tests'      => $this->failed_tests,
             'passed_tests'      => $this->passed_tests,
@@ -190,26 +198,26 @@ class Tester
      * Runs tests where method ends in Test.
      *
      * @param string $class_name   optional, name of the class to be tested - only really needed if
-     *                            the class name doesn't match this class name minus Tester or Tests
-     *                            e.g. MyClass and MyClassTester doesn't require $class_name
-     *                            but MyClass and ThisClassTest requires a valid value for $class_name,
-     *                            i.e., $class_name = MyClass
+     *                             the class name doesn't match this class name minus Tester or Tests
+     *                             e.g. MyClass and MyClassTester doesn't require $class_name
+     *                             but MyClass and ThisClassTest requires a valid value for $class_name,
+     *                             i.e., $class_name = MyClass
      * @param array  $a_test_order optional, if provided it ignores the class property $a_test_order
-     *                            and won't try to build one from the class methods.
+     *                             and won't try to build one from the class methods.
      * @return int number of failed tests.
      * @throws ReflectionException
      */
-    public function runTests(string $class_name = '', array $a_test_order = []):int
+    public function runTests(string $class_name = '', array $a_test_order = []): int
     {
         if ($class_name === '') {
             if ($this->class_name !== '') {
                 $class_name = $this->class_name;
             }
             elseif (str_ends_with(__CLASS__, 'Tests')) {
-                $class_name = str_replace('Tests','',__CLASS__);
+                $class_name = str_replace('Tests', '', __CLASS__);
             }
             elseif (str_ends_with(__CLASS__, 'Tester')) {
-                $class_name = str_replace('Tester','',__CLASS__);
+                $class_name       = str_replace('Tester', '', __CLASS__);
                 $this->class_name = $class_name;
             }
             else {
@@ -226,7 +234,7 @@ class Tester
                 }
                 $a_methods = $o_ref->getMethods(ReflectionMethod::IS_PUBLIC);
                 foreach ($a_methods as $a_method) {
-                    switch($a_method->name) {
+                    switch ($a_method->name) {
                         case '__construct':
                         case '__set':
                         case '__get':
@@ -256,7 +264,8 @@ class Tester
             if (str_ends_with($method_name, 'Tester')) {
                 $tester_name = $method_name;
                 $method_name = $this->shortenName($method_name);
-            } else {
+            }
+            else {
                 $tester_name = $method_name . 'Tester';
             }
             if ($this->isPublicMethod($class_name, $tester_name)) {
@@ -270,6 +279,10 @@ class Tester
                     case 'skipped':
                         $this->skipped_tests++;
                         $this->skipped_test_names[] = $method_name;
+                        break;
+                    case 'unwritten':
+                        $this->unwritten_method_tests++;
+                        $this->unwritten_method_names[] = $method_name;
                         break;
                     case 'failed':
                     case false:
@@ -291,7 +304,7 @@ class Tester
      * @param string $method_name defaults to 'Tester'
      * @return string
      */
-    public function shortenName(string $method_name = 'Tester'):string
+    public function shortenName(string $method_name = 'Tester'): string
     {
         if (str_ends_with($method_name, 'Tester')) {
             return substr($method_name, 0, -6);
@@ -304,7 +317,7 @@ class Tester
      *
      * @param string $class_name
      */
-    public function setClassName(string $class_name = ''):void
+    public function setClassName(string $class_name = ''): void
     {
         $this->class_name = $class_name;
     }
@@ -314,7 +327,7 @@ class Tester
      *
      * @param string $method_name
      */
-    public function setFailures(string $method_name = ''):void
+    public function setFailures(string $method_name = ''): void
     {
         $this->num_o_tests++;
         $this->failed_tests++;
@@ -326,7 +339,7 @@ class Tester
      *
      * @param string $namespace
      */
-    public function setNamespace(string $namespace = ''):void
+    public function setNamespace(string $namespace = ''): void
     {
         $this->namespace = $namespace;
     }
@@ -337,7 +350,7 @@ class Tester
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubFailed(string $method_name, string $test_name):void
+    public function setSubFailed(string $method_name, string $test_name): void
     {
         if (!empty($method_name) && !empty($test_name)) {
             $method_name = $this->shortenName($method_name);
@@ -359,7 +372,7 @@ class Tester
      * @param string $method_name
      * @param string $test_name
      */
-    public function setSubPassed(string $method_name = '', string $test_name = ''):void
+    public function setSubPassed(string $method_name = '', string $test_name = ''): void
     {
         if ($method_name === '' || $test_name === '') {
             return;
@@ -375,27 +388,30 @@ class Tester
 
     /**
      * Sets the array a_test_order to the array passed in
+     *
      * @param array $a_test_order optional, defaults to an empty array
      */
-    public function setTestOrder(array $a_test_order = array()):void
+    public function setTestOrder(array $a_test_order = array()): void
     {
         $this->a_test_order = $a_test_order;
     }
 
     /**
      * Sets the array a_test_value to the array passed in
+     *
      * @param array $a_test_values optional, defaults to an empty array
      */
-    public function setTestValues(array $a_test_values = array()):void
+    public function setTestValues(array $a_test_values = array()): void
     {
         $this->a_test_values = $a_test_values;
     }
 
     /**
      * Return the values in $this->a_test_values
+     *
      * @return array $a_test_values
      */
-    public function getTestValues():array
+    public function getTestValues(): array
     {
         return $this->a_test_values;
     }
@@ -411,7 +427,7 @@ class Tester
      * @return bool true or false
      * @throws ReflectionException
      */
-    public function isPublicMethod(string $class_name = '', string $method_name = ''):bool
+    public function isPublicMethod(string $class_name = '', string $method_name = ''): bool
     {
         if ($method_name === '') {
             return false;
@@ -419,7 +435,6 @@ class Tester
         if ($class_name === '' && $this->class_name === '') {
             return false;
         }
-
         if ($class_name === '') {
             $class_name = $this->class_name;
         }
@@ -434,16 +449,16 @@ class Tester
 
     /**
      * Sets up the two main arrays the tests uses.
+     *
      * @param array $a_values ['class_name', 'order_file', 'values_file', 'extra_dir', 'namespace']
      */
-    public function setupTests(array $a_values = []):void
+    public function setupTests(array $a_values = []): void
     {
         $class_name  = '';
         $order_file  = 'test_order.php';
         $values_file = 'test_values.php';
         $extra_dir   = '';
         $namespace   = '';
-
         $a_expected_keys = [
             'class_name',
             'order_file',
@@ -460,15 +475,14 @@ class Tester
             }
         }
         $this->class_name = $class_name;
-
         $test_values_file = LocateFile::getTestFileWithPath($values_file, $namespace, $extra_dir);
         if (empty($test_values_file)) {
-           $this->a_test_values = [];
-           $a_test_values = [];
+            $this->a_test_values = [];
+            $a_test_values       = [];
         }
         else {
             $this->a_test_values = include $test_values_file;
-            $a_test_values = $this->a_test_values;
+            $a_test_values       = $this->a_test_values;
         }
         $test_order_file = LocateFile::getTestFileWithPath($order_file, $namespace, $extra_dir);
         if (!empty($test_order_file)) {

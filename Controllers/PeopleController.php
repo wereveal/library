@@ -33,6 +33,7 @@ use Ritc\Library\Views\PeopleView;
  * - v1.0.0β3 - refactoring of namespaces                       - 12/05/2014 wer
  * - v1.0.0β2 - Adjusted to match file name change              - 11/13/2014 wer
  * - v1.0.0β1 - Initial version                                 - 04/02/2014 wer
+ * @todo PeopleController: add cache abilities
  */
 class PeopleController implements ManagerControllerInterface
 {
@@ -132,7 +133,7 @@ class PeopleController implements ManagerControllerInterface
                 try {
                     $this->o_complex->savePerson($a_person);
                     if ($this->use_cache) {
-                        $this->o_cache->clearTag('people');
+                        $this->o_cache->clearByKeyPrefix('people');
                     }
                     $a_msg = ViewHelper::successMessage('Success, the person was saved.');
                 }
@@ -193,7 +194,7 @@ class PeopleController implements ManagerControllerInterface
         try {
             $this->o_complex->savePerson($a_person);
             if ($this->use_cache) {
-                $this->o_cache->clearTag('people');
+                $this->o_cache->clearByKeyPrefix('people');
             }
             $message = 'Success, the person was saved.' . $addendum;
             $a_msg = ViewHelper::successMessage($message);
@@ -282,7 +283,7 @@ class PeopleController implements ManagerControllerInterface
         try {
             if ($this->o_complex->deletePerson($this->a_post['people_id'])) {
                 if ($this->use_cache) {
-                    $this->o_cache->clearTag('people');
+                    $this->o_cache->clearByKeyPrefix('people');
                 }
                 $a_msg = ViewHelper::successMessage();
             }
