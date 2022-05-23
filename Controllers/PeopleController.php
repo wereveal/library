@@ -33,7 +33,6 @@ use Ritc\Library\Views\PeopleView;
  * - v1.0.0β3 - refactoring of namespaces                       - 12/05/2014 wer
  * - v1.0.0β2 - Adjusted to match file name change              - 11/13/2014 wer
  * - v1.0.0β1 - Initial version                                 - 04/02/2014 wer
- * @todo PeopleController: add cache abilities
  */
 class PeopleController implements ManagerControllerInterface
 {

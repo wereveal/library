@@ -385,7 +385,7 @@ class RoutesComplexModel
     private function fixGroups(array $a_groups = [], int $route_id = -1):array
     {
         $a_new_groups = [];
-        if (empty($a_groups) || $route_id < 1) {
+        if (empty($a_groups)) {
             return $a_new_groups;
         }
         foreach ($a_groups as $group_id => $value) {

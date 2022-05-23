@@ -308,16 +308,16 @@ class NewAppHelper
             }
 
             ### Copy main twig files ###
-            $app_theme = $this->a_config['app_theme_name'] ?? 'base_fluid';
+            $app_theme = $this->a_config['app_theme_name'] ?? 'base';
             $app_theme_file = '/templates/themes/' . $app_theme . '.twig';
-            if (strpos($app_theme, 'fluid')) {
-                $base_twig = '/templates/themes/base_bs.twig';
-            }
-            elseif (strpos($app_theme, 'fixed')) {
+            if (strpos($app_theme, 'fixed')) {
                 $base_twig = '/templates/themes/base_fixed.twig';
             }
+            elseif (strpos($app_theme, 'bul')) {
+                $base_twig = '/templates/themes/base_bul.twig';
+            }
             else {
-                $base_twig = '/templates/themes/base_bs.twig';
+                $base_twig = '/templates/themes/base.twig';
             }
             $resource_path = $this->app_path . '/resources';
             $twig_text = file_get_contents(SRC_PATH . $base_twig);
@@ -537,7 +537,7 @@ class NewAppHelper
     {
         $a_default = [
             'app_name'        => 'Main',                          // specify the primary app to which generates the home page
-            'app_them_name'   => 'base_fluid',                    // default colors for app
+            'app_them_name'   => 'base',                          // default colors for app
             'namespace'       => 'Ritc',                          // specify the root namespace the app will be in
             'author'          => 'William E Reveal',              // specify the author of the app
             'short_author'    => 'wer',                           // abbreviation for the author

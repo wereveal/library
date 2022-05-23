@@ -1,5 +1,5 @@
 <form action="{{ form_action }}" method="post"{% if form_class != '' %} class="{{ form_class }}{% endif %}">
     <button type="submit" name="submit" value="{{ btn_value }}" class="btn {{ btn_color }}{% if btn_size != '' %} {{ btn_size }}{% endif %}">{{ btn_label }}</button>
-    {{ include(lib_forms ~ 'hidden_form_stuff.twig' %}{% if hidden_name != '') }}
-    <input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />{% endif %}
+    {{ include(lib_forms ~ 'hidden_form_stuff.twig') }}
+    {% if hidden_name  %}<input type="hidden" name="{{ hidden_name }}" value="{{ hidden_value }}" />{% endif %}
 </form>

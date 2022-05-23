@@ -16,58 +16,67 @@
                 &nbsp;
             </div>
         </div>
-        <form action="{{ public_id }}/manager/config/navgroups/" method="post" id="navgroups-new">
+        <form action="{{ page_url }}" method="post" id="navgroups-new">
             <div class="row {{ class }}">
                 <div class="col-12 col-md-6">
                     <label for="ng_name" class="hidden-md-up pr-1">Name</label>
                     <input type="text" class="colorful pw100" name="ng_name" id="ng_name" value="">
                 </div>
-                <div class="col-3 col-md-1">
+                <div class="col-2 col-md-1">
                     {{ include(lib_elements ~ 'checkbox.twig', blank_active) }}
                 </div>
-                <div class="col-3 col-md-1">
+                <div class="col-2 col-md-1">
                     {{ include(lib_elements ~ 'checkbox.twig', blank_default) }}
+                </div>
+                <div class="col-2 col-md-1">
+                    {{ include(lib_elements ~ 'checkbox.twig', blank_immutable) }}
                 </div>
                 <div class="col-6 col-md-4">
                     {{ include(lib_forms ~ 'new_btn.twig', blank_new ) }}
                 </div>
             </div>
         </form>
-    {% for nav in a_nav %}
+    {% for ng in a_ng %}
         {% set class = class == 'odd' ? 'even' : 'odd' %}
-        <form action="{{ public_id }}/manager/config/navgroups/" method="post" id="navgroups-update">
+        <form action="{{ page_url }}" method="post" id="navgroups-update">
             <div class="row {{ class }}">
                 <div class="col-12 col-md-6">
                     <label for="ng_name" class="hidden-md-up pr-1">Name</label>
-                    <input type="text" class="colorful pw100" name="ng_name" id="ng_name" value="{{ nav.name }}">
+                    <input type="text" class="colorful pw100" name="ng_name" id="ng_name" value="{{ ng.name }}">
                 </div>
-                <div class="col-3 col-md-1">
-                    {{ include(lib_elements ~ 'checkbox.twig', nav.active_btn) }}
+                <div class="col-2 col-md-1">
+                    {{ include(lib_elements ~ 'checkbox.twig', ng.active_btn) }}
                 </div>
-                <div class="col-3 col-md-1">
-                    {{ include(lib_elements ~ 'checkbox.twig', nav.default_btn) }}
+                <div class="col-2 col-md-1">
+                    {{ include(lib_elements ~ 'checkbox.twig', ng.default_btn) }}
                 </div>
-                <div class="col-6 col-md-4">
-                    {{ include(lib_forms ~ 'update_delete_btns.twig', nav.action_btns) }}
+                <div class="col-2 col-md-1">
+                    {{ include(lib_elements ~ 'checkbox.twig', ng.immutable_btn) }}
+                </div>
+                <div class="col-6 col-md-3">
+                    {{ include(lib_forms ~ 'update_delete_btns.twig', ng.action_btns) }}
                 </div>
             </div>
         </form>
     {% endfor %}
         {% set class = class == 'odd' ? 'even' : 'odd' %}
-        <form>
+        <form action="{{ page_url }}" method="post" id="navgroups-new">
             <div class="row {{ class }}">
                 <div class="col-12 col-md-6">
                     <label for="ng_name" class="hidden-md-up pr-1">Name</label>
                     <input type="text" class="colorful pw100" name="ng_name" id="ng_name" value="">
                 </div>
-                <div class="col-3 col-md-1">
-                    {{ include(lib_elements ~ 'checkbox.twig', blank_active) }}
+                <div class="col-2 col-md-1">
+                    {{ include(lib_elements ~ 'checkbox.twig', blank_active_b) }}
                 </div>
-                <div class="col-3 col-md-1">
-                    {{ include(lib_elements ~ 'checkbox.twig', blank_default) }}
+                <div class="col-2 col-md-1">
+                    {{ include(lib_elements ~ 'checkbox.twig', blank_default_b) }}
+                </div>
+                <div class="col-2 col-md-1">
+                    {{ include(lib_elements ~ 'checkbox.twig', blank_immutable_b) }}
                 </div>
                 <div class="col-6 col-md-4">
-                    {{ include(lib_forms ~ 'new_btn.twig', blank_new ) }}
+                    {{ include(lib_forms ~ 'new_btn.twig', blank_new) }}
                 </div>
             </div>
         </form>

@@ -514,7 +514,7 @@ trait ViewTraits
                 'charset'        => 'utf-8',
                 'page_prefix'    => SITE_TWIG_PREFIX,
                 'twig_dir'       => 'pages',
-                'theme_name'     => 'base_fluid',
+                'theme_name'     => 'base',
                 'tpl'            => 'index',
                 'a_content'      => [],
                 'a_shared'       => [],

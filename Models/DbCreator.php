@@ -1013,7 +1013,7 @@ class DbCreator
     {
         if (!empty($this->a_install_config['app_twig_prefix'])) {
             $app_twig_prefix = $this->a_install_config['app_twig_prefix'];
-            $app_theme       = $this->a_install_config['app_theme_name'] ?? 'base_fluid';
+            $app_theme       = $this->a_install_config['app_theme_name'] ?? 'base';
             $main_twig     = 'false';
             if (!empty($this->a_install_config['main_twig'])
               && $this->a_install_config['main_twig'] === 'true'
