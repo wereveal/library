@@ -269,9 +269,11 @@ class NewAppHelper
             $common_text         = file_get_contents(SRC_CONFIG_PATH . '/install_files/app_common.scss.txt');
             $vars_text           = file_get_contents(SRC_CONFIG_PATH . '/install_files/app_variables.scss.txt');
             $colors_text         = file_get_contents(SRC_CONFIG_PATH . '/install_files/app_colors.scss.txt');
+            $nav_text            = file_get_contents(SRC_CONFIG_PATH . '/install_files/app_nav.scss.txt');
             $styles_text         = str_replace('{app_name}', $app_name, $styles_text);
             $styles_manager_text = str_replace('{app_name}', $app_name, $styles_manager_text);
             $vars_text           = str_replace('{app_name}', $app_name, $vars_text);
+            $nav_text            = str_replace('{app_name}', $app_name, $nav_text);
             $colors_text         = str_replace('{app_name}', $app_name, $colors_text);
             $colors_forward_text = str_replace('{app_name}', $app_name, $colors_forward_text);
             $mixins_forward_text = str_replace('{app_name}', $app_name, $mixins_forward_text);
@@ -283,6 +285,7 @@ class NewAppHelper
             file_put_contents($scss_path . $file_name, $styles_manager_text);
             file_put_contents($scss_path . '_colors.scss', $colors_forward_text);
             file_put_contents($scss_path . '_mixins.scss', $mixins_forward_text);
+            file_put_contents($scss_path . '_nav.scss', $nav_text);
             file_put_contents($scss_path . '_variables.scss', $vars_forward_text);
             file_put_contents($scss_path . '_media_queries.scss', $mq_forward_text);
             $more_text = '// App specific';

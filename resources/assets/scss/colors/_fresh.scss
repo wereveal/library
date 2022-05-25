@@ -1,0 +1,42 @@
+/*! lib/colors/blue */
+@use "sass:color";
+@use "../defaults/colors" as c;
+
+$color-darkest:     #1B483F !default;
+$color-darker:      #286e60 !default;
+$color-dark:        #379683 !default;
+$color-medium:      #5cdb95 !default;
+$color-light:       #8ee4af !default;
+$color-body:        #edf5e1 !default;
+$color-complement:  #05386b !default;
+$color-default:     $color-dark !default;
+$color-med-dark:    color.scale(#5cdb95, $lightness: -30%) !default;
+$color-med-light:   color.scale(#5cdb95, $lightness: 30%) !default;
+$color-lighter:     color.scale(#8ee4af, $lightness: 30%) !default;
+$color-lightest:    color.scale(#8ee4af, $lightness: 60%) !default;
+$color-container:   $color-lightest !default;
+$color-border:      $color-darkest !default;
+$color-shadow:      color.scale(c.$gray-darkest, $alpha: -35%) !default;
+$color-shadow-alt:  color.scale(c.$gray-complement, $alpha: -35%) !default;
+$color-heading:     $color-darkest !default;
+$color-heading-alt: $color-complement !default;
+
+/* Gradient */
+$gradient-start:         $color-light !default;
+$gradient-stop:          $color-lightest !default;
+
+/* Misc */
+$border-color:           $color-light !default;
+$row-light:              $color-lightest;
+$row-medium:             $color-light;
+$row-dark:               $color-dark;
+
+/* Navbar */
+$navbar-text-color:      $color-darkest !default;
+$navbar-link-active:     $color-dark !default;
+$navbar-link-hover:      $color-med-dark !default;
+$navbar-sub-bg:          $color-lightest !default;
+$navbar-sub-bg-hover:    $color-light !default;
+$navbar-sub-text-color:  $color-darkest !default;
+$navbar-sub-link-active: $color-dark !default;
+$navbar-sub-link-hover:  $color-darkest !default;
