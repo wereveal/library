@@ -36,7 +36,6 @@ use Twig\Error\RuntimeError as TwigErrorRuntime;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 3.0.0-alpha.1
  * @date    2021-11-30 18:08:09
- * @todo    Fix all the bugs
  * @change_log
  * - v3.0.0-alpha.1 - updating to php 8 finding a lot of bugs, failure                          - 2021-11-30 wer
  * - v2.1.0         - Added the shared content to the default twig values                       - 2018-12-18 wer
@@ -298,7 +297,7 @@ trait ViewTraits
             'fonts_dir'      => FONTS_DIR,
             'images_dir'     => IMAGES_DIR,
             'js_dir'         => JS_DIR,
-            'vendor_dir'     => VENDOR_ASSETS,
+            'public_vendor'  => PUBLIC_VENDOR,
             'public_dir'     => PUBLIC_DIR,
             'site_url'       => SITE_URL,
             'rights_holder'  => RIGHTS_HOLDER,

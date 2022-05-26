@@ -304,9 +304,9 @@ class ConstantsCreator
             /** @var string 'SCSS_DIR_NAME' */
             define('SCSS_DIR_NAME', 'scss');
         }
-        if (!defined('VENDOR_DIR_NAME')) {
-            /** @var string 'VENDOR_DIR_NAME' */
-            define('VENDOR_DIR_NAME', 'vendor');
+        if (!defined('PUBLIC_VENDOR_DIR_NAME')) {
+            /** @var string 'PUBLIC_VENDOR_DIR_NAME' */
+            define('PUBLIC_VENDOR_DIR_NAME', 'vendor');
         }
         /** @var string 'CSS_DIR' */
         define('CSS_DIR',       ASSETS_DIR . '/' . CSS_DIR_NAME);
@@ -322,8 +322,8 @@ class ConstantsCreator
         define('JS_DIR',        ASSETS_DIR . '/' . JS_DIR_NAME);
         /** @var string 'SCSS_DIR' */
         define('SCSS_DIR',      ASSETS_DIR . '/' . SCSS_DIR_NAME);
-        /** @var string 'VENDOR_ASSETS' */
-        define('VENDOR_ASSETS', ASSETS_DIR . '/' . VENDOR_DIR_NAME);
+        /** @var string 'PUBLIC_VENDOR' */
+        define('PUBLIC_VENDOR', ASSETS_DIR . '/' . PUBLIC_VENDOR_DIR_NAME);
         /** @var string 'CSS_PATH' */
         define('CSS_PATH',    PUBLIC_PATH . CSS_DIR);
         /** @var string 'FILES_PATH' */

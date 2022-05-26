@@ -2,7 +2,7 @@
 {% block vendorStylesheets %}
     {{ parent() }}
     {% if which_page is not same as('list') %}
-        <link rel="stylesheet" type="text/css" href="{{ vendor_dir }}/jquery-datetimepicker/jquery.datetimepicker.css">
+        <link rel="stylesheet" type="text/css" href="{{ public_vendor }}/jquery-datetimepicker/jquery.datetimepicker.css">
     {% endif %}
 {% endblock %}
 {% block body %}
@@ -15,7 +15,7 @@
 {% block bottomJs %}
     {{ parent() }}
     {% if which_page is not same as('list') %}
-    <script src="{{ vendor_dir }}/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js"></script>
+    <script src="{{ public_vendor }}/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js"></script>
     <script src="{{ js_dir }}/config.js"></script>
     {{ include(lib_snippets ~ 'form_validation_js.twig') }}
     {% endif %}

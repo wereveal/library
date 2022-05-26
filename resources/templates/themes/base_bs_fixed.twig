@@ -13,7 +13,7 @@
     <meta name="description" content="{{ description }}">
 {% endblock %}
 {% block meta %}{% endblock %}
-{% set fontawesomePro = vendor_dir ~ '/@fortawesome/fontawesome-pro' %}
+{% set fontawesomePro = public_vendor ~ '/@fortawesome/fontawesome-pro' %}
 {% set fav = 'far' %}
 {% set falv = 'fal' %}
 {% block vendorStylesheets %}
@@ -108,7 +108,7 @@
         <p class="font-tiny">Library Base Bootstrap Fixed Tpl</p>
 {% endblock %}
 {% block bottomVendorJs %}
-    <script src="{{ vendor_dir }}/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ public_vendor }}/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}
 {% block bottomJs %}{% endblock %}
 {% block finally %}
@@ -127,7 +127,7 @@
     'fonts_dir',
     'images_dir',
     'js_dir',
-    'vendor_dir',
+    'public_vendor',
     'mainNavName',
     'a_message',
     'page_prefix',
