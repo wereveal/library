@@ -1,5 +1,8 @@
     <nav class="navbar navbar-expand-md navbar-dark navbar-color no-margin" role="navigation">
-        <div class="container container-nav">
+        <div class="container-fluid">
+        {% block navbarBrand %}
+            <a class="navbar-brand" href="#"><span class="{{ fav }} fa-cog fa-2x"></span></a>
+        {% endblock navbarBrand %}
         {% block navbarToggler %}
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#{{ mainNavName }}">
             <span class="fa-layers fa-fw">
@@ -8,9 +11,7 @@
             </span>
             </button>
         {% endblock navbarToggler %}
-        {% block navbarBrand %}
-            <a class="navbar-brand" href="#"><span class="{{ fav }} fa-cog fa-2x"></span></a>
-        {% endblock navbarBrand %}
+
             <div class="collapse navbar-collapse" id="{{ mainNavName }}">
                 <ul class="navbar-nav mr-auto">
             {% for menu in a_menus %}
@@ -32,7 +33,7 @@
                     </li>
                 {% else %}
                     <li class="nav-item dropdown">
-                        <a id="menu-{{ menu.nav_id }}" class="nav-link dropdown-toggle{{ menu.nav_css }}{{ active_url }}" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ menu.nav_text }}</a>
+                        <a id="menu-{{ menu.nav_id }}" class="nav-link dropdown-toggle{{ menu.nav_css }}{{ active_url }}" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">{{ menu.nav_text }}</a>
                         <div class="dropdown-menu" aria-labelledby="menu-{{ menu.nav_id }}">
                             <a class="dropdown-item{{ extra_css }}{{ active_url }}" href="{{ public_dir }}{{ menu.url }}">{{ menu.nav_text }} Home</a>
                         {% for child in menu.submenu %}
