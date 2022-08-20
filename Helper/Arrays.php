@@ -68,7 +68,7 @@ class Arrays
             else {
                 $value = trim($value);
                 if (count($a_allowed_keys) >= 1) {
-                    if (in_array($key, $a_allowed_keys, false)) {
+                    if (in_array($key, $a_allowed_keys)) {
                         $a_clean[$key] = htmlentities($value, $ent_flag);
                     }
                 }
@@ -359,7 +359,7 @@ class Arrays
                 }
                 elseif ($value === '') {
                     if ($a_keys_to_check !== []) {
-                        if (in_array($key, $a_keys_to_check, false)) {
+                        if (in_array($key, $a_keys_to_check)) {
                             return true;
                         }
                     }
@@ -592,7 +592,7 @@ class Arrays
     {
         if ($a_pairs === [] || $a_allowed_keys === []) { return []; }
         foreach ($a_pairs as $key => $value) {
-            if (!in_array($key, $a_allowed_keys, false)) {
+            if (!in_array($key, $a_allowed_keys)) {
                 unset($a_pairs[$key]);
             }
         }
@@ -719,7 +719,7 @@ class Arrays
             else {
                 $value = trim($value);
                 if (count($a_allowed_keys) >= 1) {
-                    if (!in_array($key, $a_allowed_keys, false)) {
+                    if (!in_array($key, $a_allowed_keys)) {
                         $a_clean[$key] = strip_tags($value, $allowable_tags);
                     }
                 }

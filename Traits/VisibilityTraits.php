@@ -66,7 +66,7 @@ trait VisibilityTraits {
     public function __set(string $var, string $val)
     {
         $a_backtrace = debug_backtrace();
-        if ($this->private_properties === null || $this->private_properties === []) {
+        if ($this->private_properties === []) {
             $this->$var = $val;
         }
         if (!array_key_exists($var, $this->private_properties)

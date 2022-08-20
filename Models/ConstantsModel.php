@@ -358,7 +358,7 @@ SQL;
      */
     public function makeValidName(string $const_name = ''):string
     {
-        $const_name = Strings::removeTagsWithDecode($const_name, ENT_QUOTES);
+        $const_name = Strings::removeTagsWithDecode($const_name);
         $const_name = preg_replace('/[^a-zA-Z_ ]/', '', $const_name);
         $const_name = trim($const_name);
         $const_name = preg_replace('/(\s+)/', '_', $const_name);
@@ -373,7 +373,7 @@ SQL;
      */
     public function makeValidValue(string $const_value = ''):string
     {
-        $const_value = Strings::removeTagsWithDecode($const_value, ENT_QUOTES);
+        $const_value = Strings::removeTagsWithDecode($const_value);
         return htmlentities($const_value, ENT_QUOTES);
     }
 

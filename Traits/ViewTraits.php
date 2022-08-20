@@ -580,10 +580,10 @@ trait ViewTraits
      */
     protected function createNewOrderNumber(array $a_used = [], int $value = 0):int
     {
-        if (!in_array($value, $a_used, false)) {
+        if (!in_array($value, $a_used)) {
             return $value;
         }
-        if (!in_array($value + 1, $a_used, false)) {
+        if (!in_array($value + 1, $a_used)) {
             return $value + 1;
         }
         return $this->createNewOrderNumber($a_used, $value + 1);
@@ -847,7 +847,7 @@ trait ViewTraits
             $order_number = !empty($a_link['nav_order'])
                 ? (int)$a_link['nav_order']
                 : 99;
-            if (in_array($order_number, $a_used_order, false)) {
+            if (in_array($order_number, $a_used_order)) {
                 $new_order_number = $this->createNewOrderNumber($a_used_order, $order_number);
                 $a_used_order[] = $new_order_number;
                 $a_new_nav[$new_order_number] = $a_link;

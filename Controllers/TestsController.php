@@ -61,33 +61,14 @@ class TestsController
      */
     public function route():string
     {
-        switch ($this->form_action) {
-            case 'ConstantsModel':
-                $o_test = new ConstantsModelTester($this->o_di);
-                break;
-            case 'UrlsModel':
-                $o_test = new UrlsModelTester($this->o_di);
-                break;
-            case 'NavgroupsModel':
-                $o_test = new NavgroupsModelTester($this->o_di);
-                break;
-            case 'NavigationModel':
-                $o_test = new NavigationModelTester($this->o_di);
-                break;
-            case 'NavNgMapModel':
-                $o_test = new NavNgMapModelTester($this->o_di);
-                break;
-            case 'PageModel':
-                $o_test = new PageModelTester($this->o_di);
-                break;
-            case 'PeopleModel':
-                $o_test = new PeopleModelTester($this->o_di);
-                break;
-            case 'GroupsModel':
-            case 'Login':
-            case 'RoutesModel':
-            default:
-                return $this->o_view->renderList();
+        $test_dir = dirname(__DIR__) . '/Tests';
+        $a_files = scandir($test_dir);
+        $the_tester = $this->form_action . 'Tester';
+        if (in_array($the_tester . '.php', $a_files)) {
+            $o_test = new $the_tester($this->o_di);
+        }
+        else {
+            return $this->o_view->renderList();
         }
         $a_test_results = $o_test->runTests();
         $o_test->cleanupDbTests();

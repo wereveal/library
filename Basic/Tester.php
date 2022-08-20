@@ -1,6 +1,7 @@
 <?php
 /**
  * Class Tester
+ * Obsolete - Turned into a Trait
  *
  * @package Ritc_Library
  */
@@ -20,6 +21,7 @@ use Ritc\Library\Helper\LocateFile;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 4.0.0
  * @date    2021-11-26 14:01:47
+ * @deprecated 2022-06-13 16:40:09
  * @change_log
  * - v4.0.0 - Updated for php 8                                                         - 2021-11-26 wer
  * - v3.7.0 - Updated to handle ReflectionException                                     - 2018-05-19 wer

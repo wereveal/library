@@ -506,7 +506,7 @@ SQL;
         }
         $a_skip_keys = $this->prepareListArray($a_skip_keys);
         foreach ($a_values as $key => $value) {
-            if (!in_array($key, $a_skip_keys, false)) {
+            if (!in_array($key, $a_skip_keys)) {
                 if ($set_sql === '' ) {
                     $set_sql = 'SET ' . str_replace(':', '', $key) . " = {$key} ";
                 }
@@ -895,9 +895,9 @@ SQL;
     {
         foreach ($a_values as $key => $value) {
             if (
-                !in_array($key, $a_required_keys, false) &&
-                !in_array(':' . $key, $a_required_keys, false) &&
-                !in_array(str_replace(':', '', $key), $a_required_keys, false)
+                !in_array($key, $a_required_keys) &&
+                !in_array(':' . $key, $a_required_keys) &&
+                !in_array(str_replace(':', '', $key), $a_required_keys)
             ) {
                 unset($a_values[$key]);
             }
@@ -1059,11 +1059,11 @@ SQL;
         catch (ModelException) {
             return false;
         }
-        if (!in_array($table_name, $a_tables, false)) {
+        if (!in_array($table_name, $a_tables)) {
             $test_table_name = $this->db_prefix .$table_name;
-            if (!in_array($test_table_name, $a_tables, false)) {
+            if (!in_array($test_table_name, $a_tables)) {
                 $test_table_name = $this->lib_prefix . $table_name;
-                if (!in_array($test_table_name, $a_tables, false)) {
+                if (!in_array($test_table_name, $a_tables)) {
                     return false;
                 }
             }

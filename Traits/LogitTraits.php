@@ -65,14 +65,14 @@ trait LogitTraits
             switch ($log_type) {
                 case LOG_ON:
                 case LOG_CUSTOM:
-                    $this->o_elog->setLogMethod(LOG_CUSTOM);
+                    $this->o_elog->setLogMethod();
                     $this->o_elog->setFromLocation($location);
-                    trigger_error($message, E_USER_NOTICE);
+                    trigger_error($message);
                     break;
                 case LOG_JSON:
                     $this->o_elog->setLogMethod(LOG_JSON);
                     $this->o_elog->setFromLocation($location);
-                    trigger_error($message, E_USER_NOTICE);
+                    trigger_error($message);
                     break;
                 default:
                     $this->o_elog->write($message, $log_type, $location);

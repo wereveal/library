@@ -85,12 +85,7 @@ class RoutesHelper
             return true;
         }
         $a_compare_uri = $this->createComparisonUri($request_uri);
-        foreach ($a_compare_uri as $uri) {
-            if ($uri === $route_path) {
-                return true;
-            }
-        }
-        return false;
+        return in_array($route_path, $a_compare_uri, true);
     }
 
     /**

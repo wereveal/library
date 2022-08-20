@@ -116,7 +116,7 @@ class PageComplexModel
         }
         $sql_where = '';
         foreach ($a_search_for as $key => $value) {
-            if (in_array($key, $a_allowed_keys, false)) {
+            if (in_array($key, $a_allowed_keys)) {
                 $search_for = $key[0] . '.' . $key;
                 $placeholder = ':' . $key;
                 $sql_where .= $sql_where === ''

@@ -83,7 +83,7 @@ class MimeTypeHelper
         }
         $a_mime_types = self::mapMimeToExtension();
         foreach ($a_mime_types as $mime_type => $a_extensions) {
-            if (in_array($ext, $a_extensions, false)) {
+            if (in_array($ext, $a_extensions)) {
                 return $mime_type;
             }
         }
@@ -103,7 +103,7 @@ class MimeTypeHelper
             return false;
         }
         $a_extensions = self::getExtensionFromMime($mime_type);
-        return in_array($ext, $a_extensions, false);
+        return in_array($ext, $a_extensions);
     }
 
     /**

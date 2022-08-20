@@ -522,7 +522,7 @@ class PeopleModel extends ModelAbstract
         $a_fix_these = ['login_id', 'real_name', 'short_name', 'description'];
         foreach ($a_fix_these as $key) {
             if (isset($a_person[$key])) {
-                $a_person[$key] = Strings::removeTagsWithDecode($a_person[$key], ENT_QUOTES);
+                $a_person[$key] = Strings::removeTagsWithDecode($a_person[$key]);
                 if ($key === 'short_name') {
                     $a_person[$key] = Strings::makeAlphanumeric($a_person[$key]);
                 }

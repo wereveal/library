@@ -124,7 +124,7 @@ class Session
     public function clear(array $a_not_these = array()):void
     {
         foreach ($_SESSION as $key=>$value) {
-            if (in_array($key, $a_not_these, false) === false) {
+            if (in_array($key, $a_not_these) === false) {
                 unset($_SESSION[$key]);
             }
         }
@@ -395,7 +395,7 @@ class Session
     {
         foreach ($a_vars as $name=>$value) {
             if (count($a_allowed_keys) > 0) {
-                if (in_array($name, $a_allowed_keys, false)) {
+                if (in_array($name, $a_allowed_keys)) {
                     $_SESSION[$name] = $value;
                 }
             }

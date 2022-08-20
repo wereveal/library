@@ -20,7 +20,7 @@ use Ritc\Library\Helper\LocateFile;
  * @author  William E Reveal <bill@revealitconsulting.com>
  * @version 4.2.0
  * @date    2017-10-19 14:03:18
- * @todo    get this working or delete it
+ * @todo    get this working
  * @change_log
  * - v4.2.0 - updated setValues and setOrder to not use an empty parameter              - 2017-10-19 wer
  * - v4.1.0 - Added new methods specific to model testing                               - 2017-06-20 wer

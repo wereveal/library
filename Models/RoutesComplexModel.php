@@ -418,9 +418,9 @@ class RoutesComplexModel
         $a_route['route_immutable'] = empty($a_route['route_immutable'])
             ? 'false'
             : $a_route['route_immutable'];
-        $a_route['route_class'] = Strings::removeTagsWithDecode($a_route['route_class'], ENT_QUOTES);
+        $a_route['route_class'] = Strings::removeTagsWithDecode($a_route['route_class']);
         $a_route['route_class'] = Strings::makeCamelCase($a_route['route_class'], false);
-        $a_route['route_method'] = Strings::removeTagsWithDecode($a_route['route_method'], ENT_QUOTES);
+        $a_route['route_method'] = Strings::removeTagsWithDecode($a_route['route_method']);
         $a_route['route_method'] = Strings::makeCamelCase($a_route['route_method']);
         return $a_route;
     }

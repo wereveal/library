@@ -193,7 +193,7 @@ class Elog
             case LOG_CUSTOM:
             case LOG_ON:
             case LOG_JSON:
-                return trigger_error($the_string, E_USER_NOTICE);
+                return trigger_error($the_string);
             case LOG_WARN:
                 return trigger_error($the_string, E_USER_WARNING);
             case LOG_ALWAYS:
