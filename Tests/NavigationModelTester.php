@@ -5,10 +5,10 @@
  */
 namespace Ritc\Library\Tests;
 
-use Ritc\Library\Basic\Tester;
 use Ritc\Library\Models\NavigationModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\TesterTraits;
 
 /**
  * NavigationModel class tester.
@@ -20,8 +20,9 @@ use Ritc\Library\Services\Di;
  * - v1.0.0-alpha.0 - Initial version        - 2017-06-09 wer
  * @todo Ritc/Library/Tests/NavigationModelTester.php - Everything
  */
-class NavigationModelTester extends Tester
+class NavigationModelTester
 {
+    use TesterTraits;
     /** @var NavigationModel */
     protected NavigationModel $o_nav_db;
 

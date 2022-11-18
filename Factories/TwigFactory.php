@@ -1,6 +1,4 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
-/** @noinspection PhpUndefinedConstantInspection */
-
+<?php
 /**
  * Class TwigFactory
  * @package Ritc_Library

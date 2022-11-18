@@ -48,8 +48,8 @@ class NavgroupsController implements ConfigControllerInterface
     public function route():string
     {
         return match ($this->form_action) {
-            'new'    => $this->o_view->renderForm(),
-            'modify' => $this->o_view->renderForm($this->a_post),
+            'new'    => $this->o_view->render([]),
+            'modify' => $this->o_view->render($this->a_post),
             'verify' => $this->verifyDelete(),
             'save'   => $this->save(),
             'update' => $this->update(),

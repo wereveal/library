@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUndefinedConstantInspection */
+<?php
 
 namespace Ritc\Library\Helper;
 

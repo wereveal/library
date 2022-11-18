@@ -55,7 +55,6 @@ class UrlsModel extends ModelAbstract
      * @param int|array $id
      * @return bool
      * @throws ModelException
-     * @noinspection PhpUndefinedConstantInspection
      */
     public function delete($id = -1):bool
     {

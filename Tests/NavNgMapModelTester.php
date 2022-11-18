@@ -5,10 +5,10 @@
  */
 namespace Ritc\Library\Tests;
 
-use Ritc\Library\Basic\Tester;
 use Ritc\Library\Models\NavNgMapModel;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\TesterTraits;
 
 /**
  * NavNgMapModel class tester.
@@ -21,9 +21,9 @@ use Ritc\Library\Services\Di;
  * - v1.0.0-alpha.0 - Initial version                           - 2017-06-09 wer
  * @todo Ritc/Library/Tests/NavNgMapModelTester.php - Everything
  */
-class NavNgMapModelTester extends Tester
-
+class NavNgMapModelTester
 {
+    use TesterTraits;
     /** @var NavNgMapModel */
     protected NavNgMapModel $o_db;
 

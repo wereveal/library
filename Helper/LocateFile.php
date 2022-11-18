@@ -1,6 +1,4 @@
 <?php
-/** @noinspection PhpUndefinedConstantInspection */
-
 /**
  * Class LocateFile
  * @package Ritc_Library

@@ -1398,12 +1398,13 @@ class DbModel
     /**
      * Use the \PDO::quote function to make the string safe for use in a query.
      * Used only when not using a prepared sql statement.
-     * @see \PDO::quote
-     * @param $value (str)
+     *
+     * @param string $value
      * @return string - quoted string
      * @throws ModelException
+     *@see \PDO::quote
      */
-    public function quoteString($value): string
+    public function quoteString(string $value): string
     {
         try {
             return $this->o_pdo->quote($value);

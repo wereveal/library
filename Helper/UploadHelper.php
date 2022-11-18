@@ -175,7 +175,6 @@ class UploadHelper
      *                        'final_file_name' => '',
      *                        'save_path'       => ''
      *                        ]
-     * @noinspection PhpUndefinedConstantInspection
      */
     public function createUploadValues(array $a_upload_values = [], string $file_path = '/files', bool $only_safe = true):array
     {

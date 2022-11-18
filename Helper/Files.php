@@ -1,4 +1,5 @@
-<?php /** @noinspection PhpUndefinedClassConstantInspection */
+<?php /** @noinspection PhpUndefinedConstantInspection */
+/** @noinspection PhpUndefinedClassConstantInspection */
 
 /**
  * Class Files

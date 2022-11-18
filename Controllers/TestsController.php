@@ -1,4 +1,11 @@
-<?php
+<?php /** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+/** @noinspection PhpUnusedAliasInspection */
+
 /**
  * Class TestsController
  * @package Ritc_Library

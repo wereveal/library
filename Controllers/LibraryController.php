@@ -56,7 +56,6 @@ class LibraryController implements ControllerInterface
         $this->setupManagerController($o_di);
         $this->o_view = new LibraryView($this->o_di);
         if (!defined('LIB_TWIG_PREFIX')) {
-            /** @var string LIB_TWIG_PREFIX */
             define('LIB_TWIG_PREFIX', 'lib_');
         }
     }

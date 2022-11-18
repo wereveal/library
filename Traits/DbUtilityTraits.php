@@ -1,4 +1,4 @@
-<?php /** @noinspection JsonEncodingApiUsageInspection */
+<?php
 /** @noinspection PhpClassHasTooManyDeclaredMembersInspection */
 /**
  * Trait DbUtilityTraits

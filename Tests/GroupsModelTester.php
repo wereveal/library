@@ -1,17 +1,16 @@
-<?php /** @noinspection UnusedConstructorDependenciesInspection */
-
+<?php
 /**
  * Class GroupsModelTester
  * @package Ritc_Library
  */
 namespace Ritc\Library\Tests;
 
-use Ritc\Library\Basic\Tester;
 use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Models\GroupsModel;
+use Ritc\Library\Traits\TesterTraits;
 
 /**
  * Tests the Group Model Class.
@@ -25,8 +24,9 @@ use Ritc\Library\Models\GroupsModel;
  * - 0.1.0          - Initial version                           - unknown wer
  * @todo Everything
  */
-class GroupsModelTester extends Tester
+class GroupsModelTester
 {
+    use TesterTraits;
     /** @var int  */
     protected int $new_id;
     /** @var DbModel */

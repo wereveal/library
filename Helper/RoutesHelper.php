@@ -1,5 +1,4 @@
-<?php /** @noinspection SpellCheckingInspection */
-
+<?php
 /**
  * Class RoutesHelper
  *

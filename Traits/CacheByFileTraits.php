@@ -14,7 +14,7 @@ use Ritc\Library\Helper\ExceptionHelper;
  * @change_log
  * - v1.0.0-beta.1 - initial version                            - 2022-03-14 wer
  */
-trait CacheTraits
+trait CacheByFileTraits
 {
     /** @var string */
     protected string $cache_path;

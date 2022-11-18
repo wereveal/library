@@ -4,7 +4,7 @@ namespace Ritc\Library\Services;
 use Ritc\Library\Exceptions\CacheException;
 use Ritc\Library\Helper\CacheHelper;
 use Ritc\Library\Interfaces\CacheInterface;
-use Ritc\Library\Traits\CacheTraits;
+use Ritc\Library\Traits\CacheByFileTraits;
 
 /**
  * Class CacheByFile
@@ -19,7 +19,7 @@ use Ritc\Library\Traits\CacheTraits;
  */
 class CacheByFile implements CacheInterface
 {
-    use CacheTraits;
+    use CacheByFileTraits;
 
     /**
      * Constructor for class.

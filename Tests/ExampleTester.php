@@ -14,7 +14,7 @@ class ExampleTester
 {
     use TesterTraits;
 
-    public function __construct(Di $o_di)
+    public function __construct()
     {
         /* NOTE:
          * This is an example of one way to do it.

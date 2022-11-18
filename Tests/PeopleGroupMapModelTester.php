@@ -5,12 +5,12 @@
  */
 namespace Ritc\Library\Tests;
 
-use Ritc\Library\Basic\Tester;
 use Ritc\Library\Exceptions\FactoryException;
 use Ritc\Library\Factories\PdoFactory;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Models\PeopleGroupMapModel;
+use Ritc\Library\Traits\TesterTraits;
 
 /**
  * Tests the Group Model Class.
@@ -24,8 +24,9 @@ use Ritc\Library\Models\PeopleGroupMapModel;
  * - 1.0.0-alpha.0  - Initial rewrite version       - 2016-03-05 wer
  * - 0.1.0          - Initial version               - unknown wer
  */
-class PeopleGroupMapModelTester extends Tester
+class PeopleGroupMapModelTester
 {
+    use TesterTraits;
     /** @var int */
     protected int $new_id;
     /** @var DbModel */

@@ -5,12 +5,12 @@
  */
 namespace Ritc\Library\Tests;
 
-use Ritc\Library\Basic\Tester;
 use Ritc\Library\Exceptions\ModelException;
 use Ritc\Library\Helper\Arrays;
 use Ritc\Library\Services\DbModel;
 use Ritc\Library\Services\Di;
 use Ritc\Library\Models\PageModel;
+use Ritc\Library\Traits\TesterTraits;
 
 /**
  * Class PageModelTester.
@@ -24,8 +24,9 @@ use Ritc\Library\Models\PageModel;
  * - 1.0.0-alpha.0  - Initial rewrite version       - 2016-03-05 wer
  * - 0.1.0          - Initial version               - unknown wer
  */
-class PageModelTester extends Tester
+class PageModelTester
 {
+    use TesterTraits;
     /** @var DbModel */
     private DbModel $o_db;
     /** @var PageModel */

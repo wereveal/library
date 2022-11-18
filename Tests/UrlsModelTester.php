@@ -5,9 +5,9 @@
  */
 namespace Ritc\Library\Tests;
 
-use Ritc\Library\Basic\Tester;
 use Ritc\Library\Models\UrlsModel;
 use Ritc\Library\Services\Di;
+use Ritc\Library\Traits\TesterTraits;
 
 /**
  * Tests the Group Model Class.
@@ -20,8 +20,9 @@ use Ritc\Library\Services\Di;
  * - 1.0.0-alpha.1  - updated for php 8 standards               - 2021-12-01 wer
  * - 1.0.0-alpha.0  - initial version                           - unknown wer
  */
-class UrlsModelTester extends Tester
+class UrlsModelTester
 {
+    use TesterTraits;
     /** @var UrlsModel */
     protected UrlsModel $o_model;
 

@@ -41,8 +41,43 @@ return [
 
     ],
     'getCacheType' => [],
-    'set' => [],
-    'get' => [],
+    'set' => [
+        'good' => [
+            'test_values'      => ['key' => 'goodTest',
+                                   'value' => 'success',
+                                   'default' => 'failure'],
+            'expected_results' => 'success'
+        ],
+        'bad' => [
+            'test_value'       => ['key' => 'badTest',
+                                   'value' => false,
+                                   'default' => 'failure'],
+            'expected_results' => 'failure'
+        ],
+        'empty' => [
+            'test_value'       => ['key' => '',
+                                   'value' => '',
+                                   'default' => ''],
+            'expected_results' => ''
+        ]
+    ],
+    'get' => [
+        'good' => [
+            'test_values'      => ['key' => 'goodTest',
+                                   'default' => 'failure'],
+            'expected_results' => 'success'
+        ],
+        'bad' => [
+            'test_value'       => ['key' => 'badTest',
+                                   'default' => 'failure'],
+            'expected_results' => 'failure'
+        ],
+        'empty' => [
+            'test_value'       => ['key' => 'emptyTest',
+                                   'default' => ''],
+            'expected_results' => ''
+        ]
+    ],
     'setMultiple' => [],
     'getMultiple' => [],
     'getMultipleByPrefix' => [],

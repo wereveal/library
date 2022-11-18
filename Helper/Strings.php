@@ -1,8 +1,6 @@
 <?php
 /**
  * @noinspection RegExpRedundantEscape
- * @noinspection PhpUndefinedConstantInspection
- * @noinspection NotOptimalRegularExpressionsInspection
  */
 
 /**

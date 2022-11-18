@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUndefinedConstantInspection */
+<?php
 /**
  * Class TwigComplexModel
  * @package Ritc_Library

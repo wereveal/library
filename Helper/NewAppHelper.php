@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUndefinedConstantInspection */
+<?php
 /**
  * Class NewAppHelper
  * @package Ritc_Library

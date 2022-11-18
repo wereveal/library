@@ -48,7 +48,6 @@ class TwigDirsModel extends ModelAbstract
      * @param int $prefix_id Required.
      * @return array
      * @throws ModelException
-     * @noinspection PhpUndefinedConstantInspection
      */
     public function createDefaultDirs(int $prefix_id = -1):array
     {
